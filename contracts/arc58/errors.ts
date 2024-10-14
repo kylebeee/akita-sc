@@ -1,0 +1,16 @@
+export const errs = {
+    ADMIN_CANNOT_BE_CONTROLLED: 'Admin and controlled address cannot be the same',
+    MUST_BE_DEPLOYED_FROM_FACTORY: 'This contract must be deployed from a factory',
+    ONLY_ADMIN_CAN_UPDATE: 'Only an admin can update the application',
+    ONLY_ADMIN_CAN_CHANGE_REVOKE: 'Only an admin can change the revocation app',
+    ONLY_ADMIN_CAN_CHANGE_ADMIN: 'Only an admin can change the admin account',
+    ONLY_ADMIN_CAN_REKEY: 'Only an admin can rekey the account',
+    ONLY_ADMIN_CAN_ADD_PLUGIN: 'Only an admin can add a plugin',
+    ONLY_ADMIN_CAN_CHANGE_NICKNAME: 'Only an admin can change the nickname',
+    NAMED_PLUGIN_ALREADY_EXISTS: 'A plugin with this name already exists',
+    ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN: 'Only an admin or revocation app can remove plugins',
+    SENDER_NOT_ALLOWED_TO_CALL_PLUGIN: 'This sender is not allowed to trigger this plugin',
+    PLUGIN_DOES_NOT_CONTROL_WALLET: 'This plugin is not in control of the account',
+    PLUGIN_DOES_NOT_HAVE_ADMIN_PRIVILEGES: 'This plugin does not have admin privileges',
+    DOMAIN_MUST_BE_LONGER_THAN_ZERO: 'Domain must not be length 0',
+}
