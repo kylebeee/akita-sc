@@ -2,13 +2,14 @@
 
 This repo is a central repository for all of Akita's main contracts
 
-## Abstracted Account Factory
+## Abstracted Account
 [The Abstracted Account Factory](./contracts/arc58/abstracted_account_factory.algo.ts) is the factory contract for producing new Abstracted Accounts, thus all have the same creator address.
 
-## Abstracted Account
 [The Abstracted Account Wallet](./contracts/arc58/abstracted_account.algo.ts) is the entry point for the Akita ecosystem. It allows us to bring the web3 experience up to par with the convenience of web2 while maintaining self-sovereignty.
 
-## Secp256r1 Passkey Logic Signature
+## Keys
+Contracts for key management of delegation for the abstracted account. We support 
+
 [The Secp256r1 Passkey Logic Signature](./contracts/keys/secp256r1_passkey.algo.ts) account is a passkey approval smart signature account. Typically within our systems we use these as admin or access keys for the abstracted account.
 
 ## Plugins

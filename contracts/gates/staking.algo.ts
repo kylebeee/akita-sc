@@ -1,5 +1,6 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { AKITA_TIME_LOCK_PLUGIN_ID, Operation } from './base.algo';
+import { AKITA_TIME_LOCK_PLUGIN_ID, Operator } from './gate.algo';
+import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo } from './operators';
 import { AssetLock, StakeValue, StakingPlugin } from '../arc58/plugins/staking.algo';
 
 const errs = {
@@ -11,20 +12,20 @@ const ONE_DAY = 86400
 const ONE_YEAR_IN_DAYS = 365
 
 interface AssetLockChecks {
-    op: Operation;
+    op: Operator;
     value: uint64;
 }
 
 interface LockExpirationChecks {
     power: uint64;
-    op: Operation;
+    op: Operator;
     value: uint64;
 }
 
 export class StakingGatePlugin extends Contract {
     programVersion = 10;
 
-    private stakingAmountGate(user: Address, locks: AssetLock[], checks: AssetLockChecks[]): boolean {
+    stakingAmountGate(user: Address, locks: AssetLock[], checks: AssetLockChecks[]): boolean {
 
         assert(locks.length === checks.length, errs.LOCKS_AND_CHECKS_LENGTH_MISMATCH)
 
@@ -34,21 +35,21 @@ export class StakingGatePlugin extends Contract {
             fee: 0,
         });
 
-        for (let i = 0; i < checks.length; i++) {
+        for (let i = 0; i < checks.length; i += 1) {
 
             assert(checks[i].op > 5, errs.BAD_OPERATION);
 
-            if (checks[i].op === Operation.Equal && lockInfo[i].amount !== checks[i].value) {
+            if (checks[i].op === Equal && lockInfo[i].amount !== checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.NotEqual && lockInfo[i].amount === checks[i].value) {
+            } else if (checks[i].op === NotEqual && lockInfo[i].amount === checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.LessThan && lockInfo[i].amount >= checks[i].value) {
+            } else if (checks[i].op === LessThan && lockInfo[i].amount >= checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.LessThanOrEqualTo && lockInfo[i].amount > checks[i].value) {
+            } else if (checks[i].op === LessThanOrEqualTo && lockInfo[i].amount > checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.GreaterThan && lockInfo[i].amount <= checks[i].value) {
+            } else if (checks[i].op === GreaterThan && lockInfo[i].amount <= checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.GreaterThanOrEqualTo && lockInfo[i].amount < checks[i].value) {
+            } else if (checks[i].op === GreaterThanOrEqualTo && lockInfo[i].amount < checks[i].value) {
                 return false;
             }
         }
@@ -56,7 +57,7 @@ export class StakingGatePlugin extends Contract {
         return true;
     }
 
-    private stakingPowerGate(user: Address, assets: AssetID[], checks: LockExpirationChecks[]): boolean {
+    stakingPowerGate(user: Address, assets: AssetID[], checks: LockExpirationChecks[]): boolean {
 
         assert(assets.length === checks.length, errs.LOCKS_AND_CHECKS_LENGTH_MISMATCH)
 
@@ -66,24 +67,24 @@ export class StakingGatePlugin extends Contract {
             fee: 0,
         });
         
-        for (let i = 0; i < checks.length; i++) {
+        for (let i = 0; i < checks.length; i += 1) {
 
             assert(checks[i].op > 5, errs.BAD_OPERATION);
 
             const remainingDays = (lockInfo[i].expiration - globals.latestTimestamp) / ONE_DAY;
             const power = (lockInfo[i].amount / ONE_YEAR_IN_DAYS) * remainingDays;
 
-            if (checks[i].op === Operation.Equal && power !== checks[i].value) {
+            if (checks[i].op === Equal && power !== checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.NotEqual && power === checks[i].value) {
+            } else if (checks[i].op === NotEqual && power === checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.LessThan && power >= checks[i].value) {
+            } else if (checks[i].op === LessThan && power >= checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.LessThanOrEqualTo && power > checks[i].value) {
+            } else if (checks[i].op === LessThanOrEqualTo && power > checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.GreaterThan && power <= checks[i].value) {
+            } else if (checks[i].op === GreaterThan && power <= checks[i].value) {
                 return false;
-            } else if (checks[i].op === Operation.GreaterThanOrEqualTo && power < checks[i].value) {
+            } else if (checks[i].op === GreaterThanOrEqualTo && power < checks[i].value) {
                 return false;
             }
         }

@@ -1,7 +1,7 @@
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
-import algosdk, { Algodv2, makeBasicAccountTransactionSigner } from 'algosdk'; import { AbstractedAccountClient } from '../contracts/clients/AbstractedAccountClient';
+import algosdk, { Algodv2, makeBasicAccountTransactionSigner } from 'algosdk'; import { AbstractedAccountClient } from '../clients/AbstractedAccountClient';
 import { microAlgos } from '@algorandfoundation/algokit-utils';
 
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';

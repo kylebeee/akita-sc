@@ -86,7 +86,7 @@ export class AbstractedAccount extends Contract {
       const txn = this.txnGroup[i];
 
       // The transaction is an explicit rekey back
-      if (txn.sender === this.controlledAddress.value && txn.rekeyTo === this.controlledAddress.value) {
+      if (txn.sender === this.controlledAddress.value && txn.rekeyTo === this.app.address) {
         rekeyedBack = true;
         break;
       }
@@ -94,6 +94,7 @@ export class AbstractedAccount extends Contract {
       // The transaction is an application call to this app's arc58_verifyAuthAddr method
       if (
         txn.typeEnum === TransactionType.ApplicationCall &&
+        txn.onCompletion === 0 &&
         txn.applicationID === this.app &&
         txn.numAppArgs === 1 &&
         txn.applicationArgs[0] === method('arc58_verifyAuthAddr()void')
@@ -211,6 +212,7 @@ export class AbstractedAccount extends Contract {
     this.factoryApp.value = globals.callerApplicationID
   }
 
+  @allow.call("UpdateApplication")
   updateApplication(version: string): void {
     assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_UPDATE);
     this.version.value = version;
@@ -226,7 +228,11 @@ export class AbstractedAccount extends Contract {
     this.revocationApp.value = newRevocationApp;
   }
 
-
+  /**
+   * Changes the nickname of the wallet
+   * 
+   * @param nickname the new nickname of the wallet
+   */
   setNickname(nickname: string): void {
     assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
     this.nickname.value = nickname;

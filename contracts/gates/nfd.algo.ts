@@ -13,7 +13,7 @@ const NFD_VERIFIED_ADDRESSES_PROPERTY_NAME = 'v.caAlgo.0.as';
 export class NFDGatePlugin extends Contract {
     programVersion = 10;
 
-    private nfdGate(user: Address, NFD: AppID, root: string): boolean {
+    nfdGate(user: Address, NFD: AppID, root: string): boolean {
         const nfdName = NFD.globalState(NFD_NAME_KEY) as bytes;
 
         if (

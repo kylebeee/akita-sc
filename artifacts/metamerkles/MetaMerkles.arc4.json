@@ -1,0 +1,246 @@
+{
+  "name": "MetaMerkles",
+  "desc": "",
+  "methods": [
+    {
+      "name": "addRoot",
+      "desc": "Creates two boxes and adds a merkle root\nusing a  to the root box map and also a list type to the\nmetadata attached to the root in the data box map",
+      "args": [
+        {
+          "name": "pmt",
+          "type": "pay",
+          "desc": "the fee to cover box storage allocation"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "desc": "the name alias of the root being added"
+        },
+        {
+          "name": "root",
+          "type": "byte[32]",
+          "desc": "a merkle tree root"
+        },
+        {
+          "name": "schema",
+          "type": "uint64",
+          "desc": "an index of the schema enum from box storage"
+        },
+        {
+          "name": "type",
+          "type": "uint64",
+          "desc": "an index of the tree type enum from box storage"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "deleteRoot",
+      "desc": "Deletes the merkle root from the root box map",
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "updateRoot",
+      "desc": "Replaces the merkle root with another",
+      "args": [
+        {
+          "name": "name",
+          "type": "string",
+          "desc": "the name of the merkle group data"
+        },
+        {
+          "name": "newRoot",
+          "type": "byte[32]",
+          "desc": "the new 32 byte merkle tree root"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "addData",
+      "desc": "Registers a key & value in the data box map that\ncorresponds to a merkle root in the root box map",
+      "args": [
+        {
+          "name": "pmt",
+          "type": "pay",
+          "desc": "the payment to cover the increased mbr of adding to box storage"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "deleteData",
+      "desc": "Deletes a metadata key & value pair from the data box map",
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "verify",
+      "desc": "verify an inclusion in a double sha256 based merkle tree",
+      "args": [
+        {
+          "name": "address",
+          "type": "address",
+          "desc": "the address of the merkle tree root creator"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "desc": "The name alias of the root"
+        },
+        {
+          "name": "leaf",
+          "type": "byte[32]",
+          "desc": "The hashed leaf to verify"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]",
+          "desc": "The merkle proof"
+        },
+        {
+          "name": "type",
+          "type": "uint64",
+          "desc": "The type check for the lists purpose"
+        }
+      ],
+      "returns": {
+        "type": "bool",
+        "desc": "a boolean indicating whether the proof is valid"
+      }
+    },
+    {
+      "name": "read",
+      "desc": "Fetch a metadata properties",
+      "readonly": true,
+      "args": [
+        {
+          "name": "address",
+          "type": "address",
+          "desc": "the address of the merkle tree root creator"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "key",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "verifiedRead",
+      "desc": "Read metadata from box storage and verify the data provided is included\nin the merkle tree given a sha256'd 32 byte merkle tree root & a proof\nthats pre-computed off chain.\n\n\nverify an inclusion in a merkle tree\n& read an associated key value pair\n& check against the underlying data's schema\n& check against the underlying data's list type or purpose",
+      "args": [
+        {
+          "name": "address",
+          "type": "address",
+          "desc": "the address of the merkle tree root creator"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "leaf",
+          "type": "byte[32]"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]"
+        },
+        {
+          "name": "schema",
+          "type": "uint64"
+        },
+        {
+          "name": "key",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "addType",
+      "args": [
+        {
+          "name": "pmt",
+          "type": "pay"
+        },
+        {
+          "name": "desc",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "addSchema",
+      "args": [
+        {
+          "name": "pmt",
+          "type": "pay"
+        },
+        {
+          "name": "desc",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    }
+  ]
+}

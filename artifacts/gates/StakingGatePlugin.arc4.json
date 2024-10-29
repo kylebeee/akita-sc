@@ -1,0 +1,53 @@
+{
+  "name": "StakingGatePlugin",
+  "desc": "",
+  "methods": [
+    {
+      "name": "stakingAmountGate",
+      "args": [
+        {
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "name": "locks",
+          "type": "(uint64,bool)[]"
+        },
+        {
+          "name": "checks",
+          "type": "(uint64,uint64)[]"
+        }
+      ],
+      "returns": {
+        "type": "bool"
+      }
+    },
+    {
+      "name": "stakingPowerGate",
+      "args": [
+        {
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "name": "assets",
+          "type": "uint64[]"
+        },
+        {
+          "name": "checks",
+          "type": "(uint64,uint64,uint64)[]"
+        }
+      ],
+      "returns": {
+        "type": "bool"
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    }
+  ]
+}

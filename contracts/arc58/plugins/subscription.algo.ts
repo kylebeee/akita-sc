@@ -7,14 +7,21 @@ const errs = {
   PLUGIN_NOT_AUTH_ADDR: 'This plugin does not have control of the account',
   SERVICE_INDEX_MUST_BE_ABOVE_ZERO: 'Service indexes are always above zero',
   SERVICE_DOES_NOT_EXIST: 'Service does not exist',
-  SERVICE_MUST_NOT_BE_SHUTDOWN: 'Service must not be shutdown',
   USER_ALREADY_BLOCKED: 'User is already blocked',
   USER_NOT_BLOCKED: 'User is not blocked',
   BLOCKED: 'This account is blocked by the recipient',
   SERVICE_IS_SHUTDOWN: 'Service offering is shutdown',
   SERVICE_IS_PAUSED: 'Service offering is paused',
   BAD_WINDOW: 'Invalid payment window',
+  NO_DONATIONS: "Donations aren't applicable to passes",
+  SUBSCRIPTION_DOES_NOT_EXIST: 'Subscription does not exist',
+  PASS_COUNT_OVERFLOW: 'More addresses than available passes',
 }
+
+interface ServicesKey {
+    user: Address;
+    index: uint64;
+};
 
 interface ServicesValue {
   shutdown: boolean;
@@ -27,11 +34,6 @@ interface ServicesValue {
   allowTraversal: boolean;
 }
 
-interface ServicesKey {
-  user: Address;
-  index: uint64;
-};
-
 interface BlockListKey {
   user: Address;
   blocked: Address;
@@ -42,7 +44,7 @@ interface SubscriptionKey {
   index: uint64;
 };
 
-interface SubscriptionValue {
+interface SubscriptionInfo {
   recipient: Address;
   index: uint64;
   startDate: uint64;
@@ -56,8 +58,19 @@ interface SubscriptionValue {
 interface PassesKey {
   user: Address;
   index: uint64;
-  passIndex: uint64;
 }
+
+export type SubscriptionInfoWithPasses = {
+  recipient: Address;
+  index: uint64;
+  startDate: uint64;
+  amount: uint64;
+  interval: uint64;
+  asa: AssetID;
+  lastPayment: uint64;
+  streak: uint64;
+  passes: Address[];
+};
 
 // eslint-disable-next-line no-unused-vars
 export class SubscriptionPlugin extends Contract {
@@ -69,6 +82,12 @@ export class SubscriptionPlugin extends Contract {
    */
   version = GlobalStateKey<uint64>();
 
+  // 2_500 + (400 * (40 + 88)) = 53_700
+  subscriptions = BoxMap<SubscriptionKey, SubscriptionInfo>();
+
+  // 2_500 + (400 * (32 + 8)) = 18_500
+  subscriptionslist = BoxMap<Address, uint64>();
+
   /**
    * services is a map of services a specific merchant has
    * denoted by the merchant address + index of the offer as a key
@@ -79,7 +98,7 @@ export class SubscriptionPlugin extends Contract {
 
   serviceslist = BoxMap<Address, uint64>({ prefix: 'l' })
 
-  /**	 
+  /**  
    * blocks allow merchants to specify which addresses cannot subscribe
    * key will be merchant address + blocked address
    * 32 + 32 = 64 bytes
@@ -87,15 +106,7 @@ export class SubscriptionPlugin extends Contract {
    */
   blocks = BoxMap<BlockListKey, bytes<0>>();
 
-  // 2_500 + (400 * (40 + 88)) = 53_700
-  subscriptions = BoxMap<SubscriptionKey, SubscriptionValue>();
-
-  // 2_500 + (400 * (32 + 8)) = 18_500
-  subscriptionslist = BoxMap<Address, uint64>();
-
-  passes = BoxMap<PassesKey, Address>({ prefix: 'p' });
-
-  // passeslist = BoxMap<PassesListKey, uint64>({})
+  passes = BoxMap<PassesKey, Address[]>({ prefix: 'p' });
 
   private controls(address: Address): boolean {
     return address.authAddr === this.app.address;
@@ -150,8 +161,33 @@ export class SubscriptionPlugin extends Contract {
     // after a payment was made in the last window
     // but not during the current window
     if (sub.lastPayment >= lastWindowStart && !(sub.lastPayment >= currentWindowStart)) {
-      this.subscriptions(subKey).value.streak++;
+      this.subscriptions(subKey).value.streak += 1;
     }
+  }
+
+  getSubsriptionInfo(user: Address, index: uint64): SubscriptionInfoWithPasses {
+    const key: SubscriptionKey = { user: user, index: index };
+
+    assert(this.subscriptions(key).exists, errs.SUBSCRIPTION_DOES_NOT_EXIST);
+    
+    const subInfo = this.subscriptions(key).value;
+    
+    let passes: Address[] = [];
+    if (this.passes(key).exists) {
+      passes = this.passes(key).value
+    }
+
+    return {
+      recipient: subInfo.recipient,
+      index: subInfo.index,
+      startDate: subInfo.startDate,
+      amount: subInfo.amount,
+      interval: subInfo.interval,
+      asa: subInfo.asa,
+      lastPayment: subInfo.lastPayment,
+      streak: subInfo.streak,
+      passes: passes,
+    };
   }
 
   /**
@@ -178,7 +214,7 @@ export class SubscriptionPlugin extends Contract {
     let index: uint64 = 0;
     if (this.serviceslist(sender).exists) {
       index = this.serviceslist(sender).value;
-      this.serviceslist(sender).value++;
+      this.serviceslist(sender).value += 1;
     } else {
       index = 1;
       this.serviceslist(sender).value = 1;
@@ -241,7 +277,7 @@ export class SubscriptionPlugin extends Contract {
     // ensure the box exists
     assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST);
     // ensure the service isn't already shutdown
-    assert(!this.services(boxKey).value.shutdown, errs.SERVICE_MUST_NOT_BE_SHUTDOWN);
+    assert(!this.services(boxKey).value.shutdown, errs.SERVICE_IS_SHUTDOWN);
 
     this.services(boxKey).value.active = false;
   }
@@ -258,7 +294,7 @@ export class SubscriptionPlugin extends Contract {
     // ensure the box exists
     assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST);
     // ensure the service isn't already shutdown
-    assert(!this.services(boxKey).value.shutdown, errs.SERVICE_MUST_NOT_BE_SHUTDOWN);
+    assert(!this.services(boxKey).value.shutdown, errs.SERVICE_IS_SHUTDOWN);
 
     this.services(boxKey).value.active = true;
   }
@@ -275,9 +311,20 @@ export class SubscriptionPlugin extends Contract {
     // ensure the box exists
     assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST);
     // ensure the service isn't already shutdown
-    assert(!this.services(boxKey).value.shutdown, errs.SERVICE_MUST_NOT_BE_SHUTDOWN);
+    assert(!this.services(boxKey).value.shutdown, errs.SERVICE_IS_SHUTDOWN);
 
-    this.services(boxKey).value.shutdown = true;
+    const service = clone(this.services(boxKey).value);
+
+    this.services(boxKey).value = {
+      shutdown: true,
+      active: false,
+      interval: service.interval,
+      asa: service.asa,
+      amount: service.amount,
+      passes: service.passes,
+      cid: service.cid,
+      allowTraversal: service.allowTraversal,
+    };
   }
 
   /**
@@ -376,7 +423,7 @@ export class SubscriptionPlugin extends Contract {
     let subscriptionsListExists: boolean = this.subscriptionslist(sender).exists;
     if (subscriptionsListExists) {
       subIndex = this.subscriptionslist(sender).value;
-      this.subscriptionslist(sender).value++;
+      this.subscriptionslist(sender).value += 1;
     } else {
       algoMBRFee += 18_500;
       subIndex = 0;
@@ -540,5 +587,28 @@ export class SubscriptionPlugin extends Contract {
 
   streakCheck(sender: Address, index: uint64): void {
     this.updateStreak(sender, index, 0);
+  }
+
+  setPasses(sender: Address, index: uint64, addresses: Address[]): void {
+    assert(index > 0, errs.NO_DONATIONS)
+    
+    const subscriptionsKey: SubscriptionKey = { user: sender, index: index };
+    
+    assert(this.subscriptions(subscriptionsKey).exists, errs.SUBSCRIPTION_DOES_NOT_EXIST)
+    
+    const sub = this.subscriptions(subscriptionsKey).value;
+    
+    const serviceKey: ServicesKey = { user: sub.recipient, index: index };
+    const service = this.services(serviceKey).value;
+
+    assert(service.active, errs.SERVICE_IS_PAUSED);
+    assert(!service.shutdown, errs.SERVICE_IS_SHUTDOWN);
+    assert(service.passes >= addresses.length, errs.PASS_COUNT_OVERFLOW)
+    
+    for (let i = 0; i < addresses.length; i += 1) {
+      assert(!this.blocks({ user: sub.recipient, blocked: addresses[i] }).exists, errs.BLOCKED);
+    }
+
+    this.passes(subscriptionsKey).value = addresses;
   }
 }

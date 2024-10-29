@@ -2,10 +2,14 @@ import { Contract } from '@algorandfoundation/tealscript';
 import { OptInPlugin } from './optin.algo';
 import { AbstractedAccount } from '../abstracted_account.algo';
 import { StakeValue, StakingPlugin } from './staking.algo';
+import { SubscriptionPlugin } from './subscription.algo';
+import { Gate } from '../../gates/gate.algo';
 
 type bytes59 = bytes<59>;
 
 type bytes24 = bytes<24>;
+
+const GATE_APP_ID = 0;
 
 const NFD_REGISTRY_ID = 0
 const NFD_REGISTRY_ADDRESS = addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
@@ -21,11 +25,10 @@ const TEN_THOUSAND_AKITA = 10_000_000_000;
 const AKITA_SOCIAL_TREASURY = addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
 const AKC_CREATOR_ADDRESS = addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
 
-const AKITA_SUBSCRIPTION_FACTORY_ID = 0;
-const AKITA_SUBSCRIPTION_FACTORY_ADDRESS = addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
+const SUBSCRIPTION_PLUGIN_APP_ID = 0;
 const AKITA_SUBSCRIPTION_RECEIVER_ADDRESS = addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
 
-const ARC58_CONTROLLED_WALLET_KEY = 'c';
+const ARC58_CONTROLLED_ADDRESS_KEY = 'c';
 
 const OPT_IN_PLUGIN_APP_ID = 0;
 const ARC59_ROUTER_APP_ID = 0;
@@ -79,6 +82,7 @@ const errs = {
     ALREADY_REACTED: 'This account already reacted to this post with this NFT',
     WRONG_FOLLOWER_KEY: 'Wrong follower key',
     FEE_TOO_SMALL: 'Fee is too small',
+    DOES_NOT_PASS_GATE: 'Gate check failed to pass'
 }
 
 interface FollowsKey {
@@ -106,8 +110,10 @@ interface PostValue {
     timestamp: uint64;
     // collectible dictates whether the post can be collected or not
     collectible: boolean;
-    // collectibleID is the asset id of the collectible
-    collectibleID: AssetID;
+    // who's allowed to reply using gates
+    replyFilterIndex: uint64;
+    // who's allowed to react using gates
+    reactFilterIndex: uint64;
 }
 
 interface VotesValue {
@@ -146,7 +152,7 @@ export interface MetaValue {
     // the last time the user interacted with the network
     lastActive: uint64;
     // the cached subscription App ID for the user
-    subscription: AppID;
+    subscriptionIndex: uint64;
     // the cached NFD for the user
     NFD: AppID;
     // the last time the NFD was updated and cached against this contract
@@ -161,8 +167,10 @@ export interface MetaValue {
     followerCount: uint64;
     // whether the account is automated
     automated: boolean;
-    // global rules
-    // wallPosts: 'anyone' | 'followers' | 'holders' | 'disabled'
+    // who's allowed to follow you using gates
+    followFilterIndex: uint64;
+    // who's allowed to post on your wall using gates
+    addressFilterIndex: uint64;
 }
 
 interface arc59GetSendAssetInfoResponse {
@@ -218,6 +226,8 @@ export class AkitaSocialPlugin extends Contract {
     // banned cost: 2_500 + (400 * (33 + 8)) = 18,500
     banned = BoxMap<Address, uint64>({ prefix: 'b' });
 
+    subscriptionStateModifier = BoxMap<uint64, uint64>();
+
     // -------------------------------------------------------------
     // misc private methods ----------------------------------------
     // -------------------------------------------------------------
@@ -234,34 +244,39 @@ export class AkitaSocialPlugin extends Contract {
         return this.blocks({ user: user, blocked: blocked }).exists;
     }
 
-    private isSubscribed(address: Address, subscription: AppID): boolean {
+    private gate(filterIndex: uint64, args: bytes[]): boolean {
+        return sendMethodCall<typeof Gate.prototype.check, boolean>({
+            applicationID: AppID.fromUint64(GATE_APP_ID),
+            methodArgs: [
+                filterIndex,
+                args,
+            ]
+        })
+    }
 
-        // ensure the app is a subscription contract
-        const genuine = (subscription.creator === AKITA_SUBSCRIPTION_FACTORY_ADDRESS);
-
-        // ensure the user is the recipient of the subscription
-        const fromSubscriber = (subscription.globalState('sender') as Address) === address;
-
+    private isSubscribed(address: Address, index: uint64): { active: boolean, index: uint64, streak: uint64 } {
+        const info = sendMethodCall<typeof SubscriptionPlugin.prototype.getSubsriptionInfo>({
+            applicationID: AppID.fromUint64(SUBSCRIPTION_PLUGIN_APP_ID),
+            methodArgs: [ address, index ],
+            fee: 0,
+        });
+        
         // ensure they're subscribed to an Akita offering
-        const toAkita = (subscription.globalState('recipient') as Address) === AKITA_SUBSCRIPTION_RECEIVER_ADDRESS;
+        const toAkita = info.recipient === AKITA_SUBSCRIPTION_RECEIVER_ADDRESS
 
         // box index zero is reserved for donations
         // if its higher than zero then they're subscribed to an offer
-        const notDonating = (subscription.globalState('box_index') as uint64) !== 0;
+        const notDonating = info.index !== 0;
 
-        const startDate = subscription.globalState('start_date') as uint64;
-        const interval = subscription.globalState('interval') as uint64;
-        const lastPayment = subscription.globalState('last_payment') as uint64;
-        
         const lastWindowStart = globals.latestTimestamp - (
-            ((globals.latestTimestamp - startDate) % interval) + interval
+            ((globals.latestTimestamp - info.startDate) % info.interval) + info.interval
         );
 
         // this doesn't tell us about the consistency of their payments,
         // only that their subscription isn't currently stale
-        const notStale = lastPayment > lastWindowStart;
+        const notStale = info.lastPayment > lastWindowStart;
 
-        return genuine && fromSubscriber && toAkita && notDonating && notStale;
+        return { active: (toAkita && notDonating && notStale), index: info.index, streak: info.streak };
     }
 
     private isNFD(NFD: AppID): boolean {
@@ -276,7 +291,7 @@ export class AkitaSocialPlugin extends Contract {
             ],
             applications: [NFD],
             fee: 0,
-        })
+        });
 
         return btoi(this.itxn.lastLog) !== 0;
     }
@@ -318,7 +333,7 @@ export class AkitaSocialPlugin extends Contract {
         const meta = this.meta(address).value;
 
         const stakedAktaImpact = this.getStakingImpactScore(address); // Staked AKTA | up to 250
-        const subscriberImpact = this.getSubscriberImpactScore(address, meta.subscription); // Akita Subscriber | up to 250
+        const subscriberImpact = this.getSubscriberImpactScore(address, meta.subscriptionIndex); // Akita Subscriber | up to 250
         const socialImpact = this.getSocialImpactScore(address); // Social Activity | up to 250
         const nfdScore = this.getNFDImpactScore(address, meta.NFD); // NFD | up to 150
         const heldAkitaImpact = this.getHeldAktaImpactScore(address); // Held AKTA | up to 50
@@ -377,22 +392,22 @@ export class AkitaSocialPlugin extends Contract {
         return (capped * 50) / ONE_MILLION_AKITA;
     }
 
-    private getSubscriberImpactScore(address: Address, subscription: AppID): uint64 {
+    private getSubscriberImpactScore(address: Address, subscriptionIndex: uint64): uint64 {
         let subscriberImpact = 0;
         
-        const activeSubscription = this.isSubscribed(address, subscription);
+        const subscriptionState = this.isSubscribed(address, subscriptionIndex);
 
-        if (!activeSubscription) {
+        if (!subscriptionState.active) {
             return subscriberImpact;
         }
-        
-        // the streak will be up to date because we check for staleness in isSubscribed
-        const streak = subscription.globalState('streak') as uint64;
 
-        if (streak >= 12) { 
-            subscriberImpact += 250
+        const modifier = this.subscriptionStateModifier(subscriptionState.index).value;        
+
+        // the streak will be up to date because we check for staleness in isSubscribed
+        if (subscriptionState.streak >= 12) { 
+            subscriberImpact += (250 / modifier)
         } else {
-            subscriberImpact += streak * 20;
+            subscriberImpact += (subscriptionState.streak * 20) / modifier;
         }
 
         return subscriberImpact;
@@ -565,6 +580,8 @@ export class AkitaSocialPlugin extends Contract {
     }
 
     private arc58OptInAndSendReactionPayments(sender: Address, recipientAppID: AppID, tax: uint64): void {
+        const recipientAddress = recipientAppID.globalState(ARC58_CONTROLLED_ADDRESS_KEY) as Address;
+
         this.pendingGroup.addMethodCall<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin, void>({
             sender: sender,
             applicationID: recipientAppID,
@@ -578,11 +595,11 @@ export class AkitaSocialPlugin extends Contract {
             sender: sender,
             applicationID: AppID.fromUint64(OPT_IN_PLUGIN_APP_ID),
             methodArgs: [
-                recipientAppID.address, // the arc58 wallet the opt in plugin currently controls
+                recipientAddress,
                 AssetID.fromUint64(AKITA_ASSET_ID),
                 {
                     sender: sender, // sender pays the recipient mbr
-                    receiver: recipientAppID.globalState(ARC58_CONTROLLED_WALLET_KEY) as Address,
+                    receiver: recipientAddress,
                     amount: globals.assetOptInMinBalance,
                     fee: 0,
                 }
@@ -606,7 +623,7 @@ export class AkitaSocialPlugin extends Contract {
 
         this.pendingGroup.addAssetTransfer({
             sender: sender,
-            assetReceiver: recipientAppID.address,
+            assetReceiver: recipientAddress,
             assetAmount: (REACT_FEE - tax),
             xferAsset: AssetID.fromUint64(AKITA_ASSET_ID),
             rekeyTo: sender,
@@ -617,11 +634,13 @@ export class AkitaSocialPlugin extends Contract {
     }
 
     private arc59OptInAndSendReactionPayments(sender: Address, recipientAppID: AppID, tax: uint64): void {
+        const recipientAddress = recipientAppID.globalState(ARC58_CONTROLLED_ADDRESS_KEY) as Address;
+
         const canCallData = sendMethodCall<[Address, uint64], arc59GetSendAssetInfoResponse>({
             name: 'arc59_getSendAssetInfo',
             applicationID: AppID.fromUint64(ARC59_ROUTER_APP_ID),
             methodArgs: [
-                recipientAppID.address,
+                recipientAddress,
                 AKITA_ASSET_ID,
             ],
             fee: 0,
@@ -670,7 +689,7 @@ export class AkitaSocialPlugin extends Contract {
                     xferAsset: AssetID.fromUint64(AKITA_ASSET_ID),
                     fee: 0,
                 },
-                recipientAppID.address,
+                recipientAddress,
                 receiverAlgoNeededForClaim,
             ],
             fee: 0
@@ -721,7 +740,8 @@ export class AkitaSocialPlugin extends Contract {
                 isAmendment: false,
                 timestamp: globals.latestTimestamp,
                 collectible: false,
-                collectibleID: AssetID.fromUint64(0),
+                replyFilterIndex: 0,
+                reactFilterIndex: 0,
             };
         }
     }
@@ -782,7 +802,14 @@ export class AkitaSocialPlugin extends Contract {
         this.votes(ref).value = { voteCount: newCount, isNegative: isNegative };
     }
 
-    private createPost(sender: Address, cid: bytes59, collectible: boolean, isAmendment: boolean): void {
+    private createPost(
+        sender: Address,
+        cid: bytes59,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+        isAmendment: boolean,
+    ): void {
         assert(!this.isBanned(sender), errs.BANNED);
 
         // update streak before we measure impact
@@ -809,7 +836,8 @@ export class AkitaSocialPlugin extends Contract {
             isAmendment: isAmendment,
             timestamp: globals.latestTimestamp,
             collectible: collectible,
-            collectibleID: AssetID.fromUint64(0),
+            replyFilterIndex: replyFilterIndex,
+            reactFilterIndex: reactFilterIndex,
         };
 
         this.posts(postID).value = post;
@@ -817,11 +845,24 @@ export class AkitaSocialPlugin extends Contract {
         this.votelist({ user: sender, ref: postID }).value = { impact: impact, isUp: true };
     }
 
-    private createReply(sender: Address, cid: bytes59, ref: bytes32, collectible: boolean, isAmendment: boolean): void {
+    private createReply(
+        sender: Address,
+        cid: bytes59,
+        ref: bytes32,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+        args: bytes[],
+        isAmendment: boolean,
+    ): void {
         assert(!this.isBanned(sender), errs.BANNED);
         assert(this.posts(ref).exists, errs.POST_NOT_FOUND);
         const post = this.posts(ref).value;
         assert(!this.isBlocked(post.creator, sender), errs.BLOCKED);
+
+        if (post.replyFilterIndex !== 0) {
+            assert(this.gate(post.replyFilterIndex, args), errs.DOES_NOT_PASS_GATE);
+        }
 
         // update streak before we measure impact
         // this way we guarantee the box exists
@@ -858,7 +899,8 @@ export class AkitaSocialPlugin extends Contract {
             isAmendment: isAmendment,
             timestamp: globals.latestTimestamp,
             collectible: collectible,
-            collectibleID: AssetID.fromUint64(0),
+            replyFilterIndex: replyFilterIndex,
+            reactFilterIndex: reactFilterIndex,
         };
 
         this.posts(replyPostID).value = replyPost;
@@ -902,7 +944,8 @@ export class AkitaSocialPlugin extends Contract {
                 }
             } else {
                 // calls 2 transactions
-                this.sendReactionPayments(sender, postCreatorMeta.walletAppID.address, tax)
+                const address = postCreatorMeta.walletAppID.globalState(ARC58_CONTROLLED_ADDRESS_KEY) as Address;
+                this.sendReactionPayments(sender, address, tax)
             }
         } else {
             sendAssetTransfer({
@@ -921,12 +964,16 @@ export class AkitaSocialPlugin extends Contract {
         this.votelist({ user: sender, ref: ref }).value = { impact: senderImpact, isUp: isUp };
     }
 
-    private createReaction(sender: Address, ref: bytes32, NFT: AssetID): void {
+    private createReaction(sender: Address, ref: bytes32, NFT: AssetID, args: bytes[]): void {
         assert(!this.isBanned(sender), errs.BANNED);
         assert(this.posts(ref).exists, errs.POST_NOT_FOUND);
         const post = this.posts(ref).value;
         assert(!this.isBlocked(post.creator, sender), errs.BLOCKED);
         assert(sender.assetBalance(NFT) > 0, errs.USER_DOES_NOT_OWN_NFT);
+
+        if (post.reactFilterIndex !== 0) {
+            assert(this.gate(post.reactFilterIndex, args), errs.DOES_NOT_PASS_GATE);
+        }
 
         const reactionListKey: ReactionListKey = {
             user: rawBytes(sender).substring(0, 24) as bytes24,
@@ -952,7 +999,8 @@ export class AkitaSocialPlugin extends Contract {
                 this.arc59OptInAndSendReactionPayments(sender, creatorMeta.walletAppID, tax);
             }
         } else {
-            this.sendReactionPayments(sender, creatorMeta.walletAppID.address, tax)
+            const address = creatorMeta.walletAppID.globalState(ARC58_CONTROLLED_ADDRESS_KEY) as Address;
+            this.sendReactionPayments(sender, address, tax)
         }
 
         const reactionExists = this.reactions({ ref: ref, NFT: NFT }).exists;
@@ -969,53 +1017,122 @@ export class AkitaSocialPlugin extends Contract {
     // content methods ---------------------------------------------
     // -------------------------------------------------------------
 
-    post(sender: Address, cid: bytes59, collectible: boolean): void {
-        this.createPost(sender, cid, collectible, false);
+    post(
+        sender: Address,
+        cid: bytes59,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64
+    ): void {
+        this.createPost(sender, cid, collectible, replyFilterIndex, reactFilterIndex, false);
     }
 
-    editPost(sender: Address, cid: bytes59, collectible: boolean, amendment: bytes32): void {
+    editPost(
+        sender: Address,
+        cid: bytes59,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+        amendment: bytes32
+    ): void {
         assert(this.posts(amendment).exists, errs.POST_NOT_FOUND);
-        const post = this.posts(amendment).value;
+        const post = clone(this.posts(amendment).value);
         assert(post.creator === sender, errs.NOT_YOUR_POST_TO_EDIT);
         assert(post.ref === EMPTY_BYTES32);
 
-        this.posts(amendment).value.amendment = this.txn.txID;
-        this.posts(amendment).value.collectible = false;
+        this.posts(amendment).value = {
+            ref: post.ref,
+            cid: post.cid,
+            creator: post.creator,
+            amendment: this.txn.txID as bytes32,
+            isAmendment: post.isAmendment,
+            timestamp: post.timestamp,
+            collectible: false,
+            replyFilterIndex: post.replyFilterIndex,
+            reactFilterIndex: post.reactFilterIndex
+        };
 
-        this.createPost(sender, cid, collectible, true);
+        this.createPost(sender, cid, collectible, replyFilterIndex, reactFilterIndex, true);
     }
 
-    replyPost(sender: Address, cid: bytes59, ref: bytes32, collectible: boolean): void {
-        this.createReply(sender, cid, ref, collectible, false);
+    replyPost(
+        sender: Address,
+        cid: bytes59,
+        ref: bytes32,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+        args: bytes[],
+    ): void {
+        this.createReply(sender, cid, ref, collectible, replyFilterIndex, reactFilterIndex, args, false);
     }
 
-    replyAsset(sender: Address, cid: bytes59, ref: AssetID, collectible: boolean): void {
+    replyAsset(
+        sender: Address,
+        cid: bytes59,
+        ref: AssetID,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+    ): void {
         assert(ref.id !== 0, errs.INVALID_ASSET)
         const paddedRef = itob(ref.id) as bytes32;
         this.createEmptyPostIfNecessary(paddedRef, ref.creator);
-        this.createReply(sender, cid, paddedRef, collectible, false);
+        this.createReply(sender, cid, paddedRef, collectible, replyFilterIndex, reactFilterIndex, [], false);
     }
 
-    replyAddress(sender: Address, cid: bytes59, ref: Address, collectible: boolean): void {
+    replyAddress(
+        sender: Address,
+        cid: bytes59,
+        ref: Address,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+        args: bytes[]
+    ): void {
+        
+        if (this.meta(ref).exists) {
+            const meta = this.meta(ref).value;
+
+            if (meta.addressFilterIndex !== 0) {
+                assert(this.gate(meta.addressFilterIndex, args), errs.DOES_NOT_PASS_GATE);
+            }
+        }
+
         const r = rawBytes(ref) as bytes32;
         this.createEmptyPostIfNecessary(r, ref);
-        this.createReply(sender, cid, r, collectible, false);
+        this.createReply(sender, cid, r, collectible, replyFilterIndex, reactFilterIndex, [], false);
     }
 
-    replyApp(sender: Address, cid: bytes59, ref: AppID, collectible: boolean): void {
+    replyApp(
+        sender: Address,
+        cid: bytes59,
+        ref: AppID,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+    ): void {
         assert(ref.id !== 0, errs.INVALID_APP)
         const paddedRef = itob(ref.id) as bytes32;
         this.createEmptyPostIfNecessary(paddedRef, ref.creator);
-        this.createReply(sender, cid, paddedRef, collectible, false);
+        this.createReply(sender, cid, paddedRef, collectible, replyFilterIndex, reactFilterIndex, [], false);
     }
 
-    editReply(sender: Address, cid: bytes59, collectible: boolean, amendment: bytes32): void {
+    editReply(
+        sender: Address,
+        cid: bytes59,
+        collectible: boolean,
+        replyFilterIndex: uint64,
+        reactFilterIndex: uint64,
+        args: bytes[],
+        amendment: bytes32
+    ): void {
         assert(this.posts(amendment).exists, errs.REPLY_NOT_FOUND);
         const post = this.posts(amendment).value;
         assert(post.creator === sender, errs.NOT_YOUR_POST_TO_EDIT);
         assert(post.ref !== EMPTY_BYTES32, errs.NOT_A_REPLY);
         this.posts(amendment).value.amendment = this.txn.txID;
-        this.createReply(sender, cid, post.ref, collectible, true);
+        this.createReply(sender, cid, post.ref, collectible, replyFilterIndex, reactFilterIndex, args, true);
     }
 
     votePost(sender: Address, ref: bytes32, isUp: boolean): void {
@@ -1059,28 +1176,37 @@ export class AkitaSocialPlugin extends Contract {
         this.createVote(sender, ref, !isUp);
     }
 
-    reactionPost(sender: Address, ref: bytes32, NFT: AssetID): void {
-        this.createReaction(sender, ref, NFT);
+    reactPost(sender: Address, ref: bytes32, NFT: AssetID, args: bytes[]): void {
+        this.createReaction(sender, ref, NFT, args);
     }
 
-    reactionAsset(sender: Address, ref: AssetID, NFT: AssetID): void {
+    reactAsset(sender: Address, ref: AssetID, NFT: AssetID): void {
         assert(ref.id !== 0, errs.INVALID_ASSET)
         const paddedRef = itob(ref.id) as bytes32;
         this.createEmptyPostIfNecessary(paddedRef, ref.creator);
-        this.createReaction(sender, paddedRef, NFT);
+        this.createReaction(sender, paddedRef, NFT, []);
     }
 
-    reactionAddress(sender: Address, ref: Address, NFT: AssetID): void {
+    reactAddress(sender: Address, ref: Address, NFT: AssetID, args: bytes[]): void {
+
+        if (this.meta(ref).exists) {
+            const meta = this.meta(ref).value;
+
+            if (meta.addressFilterIndex !== 0) {
+                assert(this.gate(meta.addressFilterIndex, args), errs.DOES_NOT_PASS_GATE);
+            }
+        }
+
         const r = rawBytes(ref) as bytes32;
         this.createEmptyPostIfNecessary(r, ref);
-        this.createReaction(sender, r, NFT);
+        this.createReaction(sender, r, NFT, []);
     }
 
-    reactionApp(sender: Address, ref: AppID, NFT: AssetID): void {
+    reactApp(sender: Address, ref: AppID, NFT: AssetID): void {
         assert(ref.id !== 0, errs.INVALID_APP)
         const paddedRef = itob(ref.id) as bytes32;
         this.createEmptyPostIfNecessary(paddedRef, ref.creator);
-        this.createReaction(sender, paddedRef, NFT);
+        this.createReaction(sender, paddedRef, NFT, []);
     }
 
     deleteReaction(sender: Address, ref: bytes32, NFT: AssetID): void {
@@ -1102,25 +1228,25 @@ export class AkitaSocialPlugin extends Contract {
         this.reactionlist(reactionListKey).delete();
     }
 
-    collect(sender: Address, ref: bytes32): void {
-        assert(!this.isBanned(sender), errs.BANNED);
-        assert(this.posts(ref).exists, errs.POST_NOT_FOUND);
-        const post = this.posts(ref).value;
-        assert(!this.isBlocked(post.creator, sender), errs.BLOCKED);
+    // collect(sender: Address, ref: bytes32): void {
+    //     assert(!this.isBanned(sender), errs.BANNED);
+    //     assert(this.posts(ref).exists, errs.POST_NOT_FOUND);
+    //     const post = this.posts(ref).value;
+    //     assert(!this.isBlocked(post.creator, sender), errs.BLOCKED);
 
-        // not bot?
+    //     // not bot?
 
 
 
-        // mint asset if necessary
-        // user opts in
-    }
+    //     // mint asset if necessary
+    //     // user opts in
+    // }
 
     // -------------------------------------------------------------
     // user methods ------------------------------------------------
     // -------------------------------------------------------------
 
-    follow(sender: Address, address: Address): void {
+    follow(sender: Address, address: Address, args: bytes[]): void {
         assert(this.controls(sender), errs.PLUGIN_NOT_AUTH_ADDR);
         assert(!this.isBanned(sender), errs.BANNED);
         assert(!this.isBlocked(address, sender), errs.BLOCKED);
@@ -1128,10 +1254,16 @@ export class AkitaSocialPlugin extends Contract {
         const senderIsAutomated = this.meta(sender).value.automated;
         assert(!senderIsAutomated, errs.AUTOMATED_ACCOUNT);
 
-        const followerIndex = this.meta(address).value.followerIndex;
+        const meta = this.meta(address).value;
+
+        if (meta.followFilterIndex !== 0) {
+            assert(this.gate(meta.followFilterIndex, args), errs.DOES_NOT_PASS_GATE);
+        }
+
+        const followerIndex = meta.followerIndex;
         this.follows({ user: address, index: (followerIndex + 1) }).value = sender;
-        this.meta(address).value.followerIndex++;
-        this.meta(address).value.followerCount++;
+        this.meta(address).value.followerIndex += 1;
+        this.meta(address).value.followerCount += 1;
     }
 
     unfollow(sender: Address, address: Address, followerIndex: uint64): void {
@@ -1140,7 +1272,7 @@ export class AkitaSocialPlugin extends Contract {
         assert(this.follows({ user: address, index: followerIndex }).value === sender, errs.WRONG_FOLLOWER_KEY);
 
         this.follows({ user: address, index: followerIndex }).delete();
-        this.meta(address).value.followerCount--;
+        this.meta(address).value.followerCount -= 1;
     }
 
     // we dont remove followers because that requires us to know the index
@@ -1186,10 +1318,9 @@ export class AkitaSocialPlugin extends Contract {
     // meta methods ------------------------------------------------
     // -------------------------------------------------------------
 
-    cacheMeta(walletAppID: AppID, automated: boolean, subscription: AppID, NFD: AppID, akitaNFT: AssetID): uint64 {
-        assert(this.controls(walletAppID.address), errs.PLUGIN_NOT_AUTH_ADDR);
-        
-        const address = walletAppID.address;
+    cacheMeta(walletAppID: AppID, automated: boolean, subscriptionIndex: uint64, NFD: AppID, akitaNFT: AssetID): uint64 {
+        const address = walletAppID.globalState(ARC58_CONTROLLED_ADDRESS_KEY) as Address;
+        assert(this.controls(address), errs.PLUGIN_NOT_AUTH_ADDR);
 
         if (!this.meta(address).exists) {
             if (automated) {
@@ -1198,7 +1329,7 @@ export class AkitaSocialPlugin extends Contract {
                     streak: 1,
                     startDate: globals.latestTimestamp,
                     lastActive: globals.latestTimestamp,
-                    subscription: AppID.fromUint64(0),
+                    subscriptionIndex: 0,
                     NFD: AppID.fromUint64(0),
                     nfdTimeChanged: 0,
                     nfdImpact: 0,
@@ -1206,6 +1337,8 @@ export class AkitaSocialPlugin extends Contract {
                     followerIndex: 0,
                     followerCount: 0,
                     automated: true,
+                    followFilterIndex: 0,
+                    addressFilterIndex: 0,
                 };
                 return 0;
             }
@@ -1213,8 +1346,8 @@ export class AkitaSocialPlugin extends Contract {
             assert(!this.meta(address).value.automated, errs.AUTOMATED_ACCOUNT);
         }
 
-        if (subscription.id !== 0) {
-            assert(this.isSubscribed(address, subscription), errs.NOT_A_SUBSCRIPTION);
+        if (subscriptionIndex !== 0) {
+            assert(this.isSubscribed(address, subscriptionIndex).active, errs.NOT_A_SUBSCRIPTION);
         }
         
         let nfdTimeChanged: uint64 = 0;
@@ -1237,7 +1370,7 @@ export class AkitaSocialPlugin extends Contract {
                 streak: 1,
                 startDate: globals.latestTimestamp,
                 lastActive: globals.latestTimestamp,
-                subscription: subscription,
+                subscriptionIndex: subscriptionIndex,
                 NFD: NFD,
                 nfdTimeChanged: nfdTimeChanged,
                 nfdImpact: nfdImpact,
@@ -1245,11 +1378,13 @@ export class AkitaSocialPlugin extends Contract {
                 followerIndex: 0,
                 followerCount: 0,
                 automated: false,
+                followFilterIndex: 0,
+                addressFilterIndex: 0,
             };
         } else {
             const meta = clone(this.meta(address).value);
 
-            meta.subscription = subscription;
+            meta.subscriptionIndex = subscriptionIndex;
             meta.NFD = NFD;
             meta.nfdTimeChanged = nfdTimeChanged;
             meta.nfdImpact = nfdImpact;
@@ -1259,6 +1394,11 @@ export class AkitaSocialPlugin extends Contract {
         }
 
         return nfdImpact;
+    }
+
+    updateSubscriptionStateModifier(subscriptionIndex: uint64, newModifier: uint64): void {
+        // assert that the call is from the dao contract
+        this.subscriptionStateModifier(subscriptionIndex).value = newModifier;
     }
 
     // -------------------------------------------------------------

@@ -1,61 +1,60 @@
 import { Contract } from '@algorandfoundation/tealscript';
 
-import { META_MERKLE_APP_ID, Operation } from './base.algo';
-import { MetaMerkles } from '../metamerkles/metamerkles.algo';
+import { Operator } from './gate.algo';
+import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo, IncludedIn, NotIncludedIn } from './operators';
+
+export interface RegistryInfo {
+    op: Operator;
+    values: uint64[];
+}
 
 export class AssetGatePlugin extends Contract {
     programVersion = 10;
 
+    registryCounter = GlobalStateKey<uint64>({ key: 'c' });
+
+    registry = BoxMap<uint64, RegistryInfo>();
+
     // gates based on holding an asset
-    private assetGate(user: Address, asset: AssetID, op: Operation, value: uint64[]): boolean {
-        if (op === Operation.Equal) {
-            return user.assetBalance(asset) === value[0];
-        } else if (op === Operation.NotEqual) {
-            return user.assetBalance(asset) !== value[0];
-        } else if (op === Operation.LessThan) {
-            return user.assetBalance(asset) < value[0];
-        } else if (op === Operation.LessThanOrEqualTo) {
-            return user.assetBalance(asset) <= value[0];
-        } else if (op === Operation.GreaterThan) {
-            return user.assetBalance(asset) > value[0];
-        } else if (op === Operation.GreaterThanOrEqualTo) {
-            return user.assetBalance(asset) >= value[0];
-        } else if (op === Operation.IncludedIn) {
-            value.forEach((v) => {
-                if (user.assetBalance(asset) === v)
+    private assetGate(user: Address, asset: AssetID, op: Operator, values: uint64[]): boolean {
+        if (op === Equal) {
+            return user.assetBalance(asset) === values[0];
+        } else if (op === NotEqual) {
+            return user.assetBalance(asset) !== values[0];
+        } else if (op === LessThan) {
+            return user.assetBalance(asset) < values[0];
+        } else if (op === LessThanOrEqualTo) {
+            return user.assetBalance(asset) <= values[0];
+        } else if (op === GreaterThan) {
+            return user.assetBalance(asset) > values[0];
+        } else if (op === GreaterThanOrEqualTo) {
+            return user.assetBalance(asset) >= values[0];
+        } else if (op === IncludedIn) {
+            for (let i = 0; i < values.length; i += 1) {
+                if (user.assetBalance(asset) === values[i]) {
                     return true;
-            });
-            
+                }
+            }
+
             return false;
-        } else if (op === Operation.NotIncludedIn) {
-            value.forEach((v) => {
-                if (user.assetBalance(asset) === v)
+        } else if (op === NotIncludedIn) {
+            for (let i = 0; i < values.length; i += 1) {
+                if (user.assetBalance(asset) === values[i]) {
                     return false;
-            });
-            
+                }
+            }
+
             return true;
         }
 
         return false
     }
 
-    private assetMerkleGate(user: Address, asset: AssetID, rootCreator: Address, root: bytes32, proof: bytes32[], schema: uint64, treeType: uint64): boolean {
+    register(args: bytes[]): uint64 {
+        return 0;
+    }
 
-        if (!(user.assetBalance(asset) > 0)) {
-            return false;
-        }
-
-        return sendMethodCall<typeof MetaMerkles.prototype.verify, boolean>({
-            applicationID: AppID.fromUint64(META_MERKLE_APP_ID),
-            methodArgs: [
-                rootCreator,
-                root,
-                sha256(sha256(itob(asset.id))),
-                proof,
-                schema,
-                treeType
-            ],
-            fee: 0,
-        });
+    check(args: bytes[]): boolean {
+        return false;
     }
 }

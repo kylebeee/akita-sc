@@ -58,18 +58,20 @@ export class StakingPlugin extends Contract {
     @abi.readonly
     getInfoList(user: Address, locks: AssetLock[]): StakeValue[] {
         let results: StakeValue[] = [];
-        locks.forEach(lock => {
+        for (let i = 0; i < locks.length; i += 1) {
+            const lock = locks[i];
             results.push(this.stake({ user: user, asset: lock.asset, locked: lock.locked }).value);
-        })
+        }
         return results;
     }
 
     @abi.readonly
     getLockedInfoList(user: Address, assets: AssetID[]): StakeValue[] {
         let results: StakeValue[] = [];
-        assets.forEach(asset => {
+        for (let i = 0; i < assets.length; i += 1) {
+            const asset = assets[i];
             results.push(this.stake({ user: user, asset: asset, locked: true }).value);
-        })
+        }
         return results;
     }
 

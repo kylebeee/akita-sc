@@ -1,11 +1,13 @@
 import { Contract } from '@algorandfoundation/tealscript';
 import { AkitaSocialPlugin, MetaValue } from '../arc58/plugins/akita_social.algo';
-import { AKITA_SOCIAL_PLUGIN_ID, Operation } from './base.algo';
+import { AKITA_SOCIAL_PLUGIN_ID, Operator } from './gate.algo';
+import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo, IncludedIn, NotIncludedIn } from './operators';
+
 
 export class FollowerGatePlugin extends Contract {
     programVersion = 10;
 
-    private followGate(user: Address, index: uint64, follower: Address): boolean {
+    followGate(user: Address, index: uint64, follower: Address): boolean {
         return sendMethodCall<typeof AkitaSocialPlugin.prototype.isFollower, boolean>({
             applicationID: AppID.fromUint64(AKITA_SOCIAL_PLUGIN_ID),
             methodArgs: [
@@ -18,37 +20,39 @@ export class FollowerGatePlugin extends Contract {
     }
 
     // gates based on follower count
-    private followerCountGate(user: Address, op: Operation, value: uint64[]): boolean {
+    followerCountGate(user: Address, op: Operator, values: uint64[]): boolean {
         const meta = sendMethodCall<typeof AkitaSocialPlugin.prototype.getMeta, MetaValue>({
             applicationID: AppID.fromUint64(AKITA_SOCIAL_PLUGIN_ID),
             methodArgs: [ user ],
             fee: 0,
         });
 
-        if (op === Operation.Equal) {
-            return meta.followerCount === value[0];
-        } else if (op === Operation.NotEqual) {
-            return meta.followerCount !== value[0];
-        } else if (op === Operation.LessThan) {
-            return meta.followerCount < value[0];
-        } else if (op === Operation.LessThanOrEqualTo) {
-            return meta.followerCount <= value[0];
-        } else if (op === Operation.GreaterThan) {
-            return meta.followerCount > value[0];
-        } else if (op === Operation.GreaterThanOrEqualTo) {
-            return meta.followerCount >= value[0];
-        } else if (op === Operation.IncludedIn) {
-            value.forEach((v) => {
-                if (meta.followerCount === v)
+        if (op === Equal) {
+            return meta.followerCount === values[0];
+        } else if (op === NotEqual) {
+            return meta.followerCount !== values[0];
+        } else if (op === LessThan) {
+            return meta.followerCount < values[0];
+        } else if (op === LessThanOrEqualTo) {
+            return meta.followerCount <= values[0];
+        } else if (op === GreaterThan) {
+            return meta.followerCount > values[0];
+        } else if (op === GreaterThanOrEqualTo) {
+            return meta.followerCount >= values[0];
+        } else if (op === IncludedIn) {
+            for (let i = 0; i < values.length; i += 1) {
+                if (meta.followerCount === values[i]) { 
                     return true;
-            });
+                }
+            }
 
             return false;
-        } else if (op === Operation.NotIncludedIn) {
-            value.forEach((v) => {
-                if (meta.followerCount === v)
+        } else if (op === NotIncludedIn) {
+            for (let i = 0; i < values.length; i += 1) {
+                if (meta.followerCount === values[i]) {
                     return false;
-            });
+                }
+            }
 
             return true;
         }
@@ -56,7 +60,7 @@ export class FollowerGatePlugin extends Contract {
         return false
     }
 
-    private followerIndexGate(user: Address, index: uint64, follower: Address, op: Operation, value: uint64[]): boolean {
+    followerIndexGate(user: Address, index: uint64, follower: Address, op: Operator, values: uint64[]): boolean {
         const isFollower = sendMethodCall<typeof AkitaSocialPlugin.prototype.isFollower, boolean>({
             applicationID: AppID.fromUint64(AKITA_SOCIAL_PLUGIN_ID),
             methodArgs: [
@@ -71,30 +75,30 @@ export class FollowerGatePlugin extends Contract {
             return false;
         }
 
-        if (op === Operation.Equal) {
-            return index === value[0];
-        } else if (op === Operation.NotEqual) {
-            return index !== value[0];
-        } else if (op === Operation.LessThan) {
-            return index < value[0];
-        } else if (op === Operation.LessThanOrEqualTo) {
-            return index <= value[0];
-        } else if (op === Operation.GreaterThan) {
-            return index > value[0];
-        } else if (op === Operation.GreaterThanOrEqualTo) {
-            return index >= value[0];
-        } else if (op === Operation.IncludedIn) {
-            value.forEach((v) => {
-                if (index === v)
+        if (op === Equal) {
+            return index === values[0];
+        } else if (op === NotEqual) {
+            return index !== values[0];
+        } else if (op === LessThan) {
+            return index < values[0];
+        } else if (op === LessThanOrEqualTo) {
+            return index <= values[0];
+        } else if (op === GreaterThan) {
+            return index > values[0];
+        } else if (op === GreaterThanOrEqualTo) {
+            return index >= values[0];
+        } else if (op === IncludedIn) {
+            for (let i = 0; i < values.length; i += 1) {
+                if (index === values[i])
                     return true;
-            });
+            }
             
             return false;
-        } else if (op === Operation.NotIncludedIn) {
-            value.forEach((v) => {
-                if (index === v)
+        } else if (op === NotIncludedIn) {
+            for (let i = 0; i < values.length; i += 1) {
+                if (index === values[i])
                     return false;
-            });
+            }
             
             return true;
         }

@@ -1,0 +1,287 @@
+{
+  "name": "SubscriptionPlugin",
+  "desc": "",
+  "methods": [
+    {
+      "name": "getSubsriptionInfo",
+      "args": [
+        {
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "name": "index",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])"
+      }
+    },
+    {
+      "name": "newService",
+      "desc": "newService creates a new service for a merchant",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address",
+          "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "interval",
+          "type": "uint64",
+          "desc": "The interval in seconds"
+        },
+        {
+          "name": "asa",
+          "type": "uint64",
+          "desc": "The asa to be used for the subscription"
+        },
+        {
+          "name": "amount",
+          "type": "uint64",
+          "desc": "The amount of the asa to be used for the subscription"
+        },
+        {
+          "name": "passes",
+          "type": "uint64",
+          "desc": "The number of accounts the subscription can be shared with"
+        },
+        {
+          "name": "cid",
+          "type": "byte[59]",
+          "desc": "The ipfs cid of the subscription contract"
+        },
+        {
+          "name": "allowTraversal",
+          "type": "bool",
+          "desc": "Indicates whether the user can downgrade\nor upgrade the subscription to a different service from the user without losing their streak"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "pauseService",
+      "desc": "pauseService pauses a service for a merchant\nit does not shutdown pre-existing subscriptions\nit simply prevents new subscriptions from being created\nfor a specific service",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address",
+          "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "index",
+          "type": "uint64",
+          "desc": "The index of the box to be used for the subscription"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "activateService",
+      "desc": "activateService activates an service for a merchant",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "name": "index",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "shutdownService",
+      "desc": "shutdownService permanently shuts down an service for a merchant\nit also shutsdown pre-existing subscriptions",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address",
+          "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "index",
+          "type": "uint64",
+          "desc": "The index of the box to be used for the subscription"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "isShutdown",
+      "desc": "serviceIsActive checks if an service is shutdown",
+      "readonly": true,
+      "args": [
+        {
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "name": "boxIndex",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "bool"
+      }
+    },
+    {
+      "name": "block",
+      "desc": "block blacklists an address for a merchant",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address",
+          "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "address",
+          "type": "address",
+          "desc": "The address to be blocked"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "unblock",
+      "desc": "unblock removes an address from a merchants blocks",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "name": "address",
+          "type": "address",
+          "desc": "The address to be unblocked"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "isBlocked",
+      "desc": "isBlocked checks if an address is blocked for a merchant",
+      "readonly": true,
+      "args": [
+        {
+          "name": "merchant",
+          "type": "address",
+          "desc": "The merchant address to be checked"
+        },
+        {
+          "name": "address",
+          "type": "address",
+          "desc": "The address to be checked"
+        }
+      ],
+      "returns": {
+        "type": "bool"
+      }
+    },
+    {
+      "name": "subscribe",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "name": "index",
+          "type": "uint64"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "interval",
+          "type": "uint64"
+        },
+        {
+          "name": "asa",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "triggerPayment",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "name": "index",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "streakCheck",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "name": "index",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "setPasses",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "name": "index",
+          "type": "uint64"
+        },
+        {
+          "name": "addresses",
+          "type": "address[]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    }
+  ]
+}

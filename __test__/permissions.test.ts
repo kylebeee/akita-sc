@@ -2,8 +2,8 @@ import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk from 'algosdk';
-import { AbstractedAccountClient } from '../contracts/clients/AbstractedAccountClient';
-import { OptInPluginClient } from '../contracts/clients/OptInPluginClient';
+import { AbstractedAccountClient } from '../clients/AbstractedAccountClient';
+import { OptInPluginClient } from '../clients/OptInPluginClient';
 
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 algokit.Config.configure({ populateAppCallResources: true });

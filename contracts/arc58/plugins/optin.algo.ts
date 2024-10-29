@@ -17,6 +17,7 @@ export class OptInPlugin extends Contract {
       assetAmount: 0,
       xferAsset: asset,
       rekeyTo: sender,
+      fee: 0,
     });
   }
 }

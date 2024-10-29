@@ -7,3 +7,8 @@
 // - reservations - list something specifically for another address or group?
 // - general listings - selling xyz bundle for xyz assets
 // - royalties? - maybe
+import { Contract } from '@algorandfoundation/tealscript';
+
+export class MerkleSwapPlugin extends Contract {
+    
+}
