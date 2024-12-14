@@ -15,7 +15,7 @@
         }
       ],
       "returns": {
-        "type": "(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])"
+        "type": "(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])"
       }
     },
     {
@@ -24,8 +24,13 @@
       "args": [
         {
           "name": "sender",
-          "type": "address",
+          "type": "uint64",
           "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool",
+          "desc": "Indicates whether the user wants to rekey back after the transaction"
         },
         {
           "name": "interval",
@@ -33,7 +38,7 @@
           "desc": "The interval in seconds"
         },
         {
-          "name": "asa",
+          "name": "asset",
           "type": "uint64",
           "desc": "The asa to be used for the subscription"
         },
@@ -48,14 +53,13 @@
           "desc": "The number of accounts the subscription can be shared with"
         },
         {
-          "name": "cid",
-          "type": "byte[59]",
-          "desc": "The ipfs cid of the subscription contract"
+          "name": "gate",
+          "type": "uint64"
         },
         {
-          "name": "allowTraversal",
-          "type": "bool",
-          "desc": "Indicates whether the user can downgrade\nor upgrade the subscription to a different service from the user without losing their streak"
+          "name": "cid",
+          "type": "byte[59]",
+          "desc": "The ipfs cid of the subscription contract\nor upgrade the subscription to a different service from the user without losing their streak"
         }
       ],
       "returns": {
@@ -68,8 +72,12 @@
       "args": [
         {
           "name": "sender",
-          "type": "address",
+          "type": "uint64",
           "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "index",
@@ -87,11 +95,18 @@
       "args": [
         {
           "name": "sender",
-          "type": "address"
+          "type": "uint64",
+          "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool",
+          "desc": "Indicates whether the user wants to rekey back after the transaction"
         },
         {
           "name": "index",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "The index of the box to be used for the subscription"
         }
       ],
       "returns": {
@@ -104,8 +119,12 @@
       "args": [
         {
           "name": "sender",
-          "type": "address",
+          "type": "uint64",
           "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "index",
@@ -141,8 +160,12 @@
       "args": [
         {
           "name": "sender",
-          "type": "address",
+          "type": "uint64",
           "desc": "The address the plugin currently controls"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "address",
@@ -160,7 +183,11 @@
       "args": [
         {
           "name": "sender",
-          "type": "address"
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "address",
@@ -197,15 +224,15 @@
       "args": [
         {
           "name": "sender",
-          "type": "address"
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "recipient",
           "type": "address"
-        },
-        {
-          "name": "index",
-          "type": "uint64"
         },
         {
           "name": "amount",
@@ -216,8 +243,20 @@
           "type": "uint64"
         },
         {
-          "name": "asa",
+          "name": "asset",
           "type": "uint64"
+        },
+        {
+          "name": "index",
+          "type": "uint64"
+        },
+        {
+          "name": "gate",
+          "type": "uint64"
+        },
+        {
+          "name": "args",
+          "type": "byte[][]"
         }
       ],
       "returns": {
@@ -229,11 +268,19 @@
       "args": [
         {
           "name": "sender",
-          "type": "address"
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "index",
           "type": "uint64"
+        },
+        {
+          "name": "args",
+          "type": "byte[][]"
         }
       ],
       "returns": {
@@ -261,7 +308,11 @@
       "args": [
         {
           "name": "sender",
-          "type": "address"
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "index",

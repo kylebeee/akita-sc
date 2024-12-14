@@ -42,7 +42,8 @@
       "args": [
         {
           "name": "name",
-          "type": "string"
+          "type": "string",
+          "desc": "the name of the merkle tree root"
         }
       ],
       "returns": {
@@ -79,15 +80,18 @@
         },
         {
           "name": "name",
-          "type": "string"
+          "type": "string",
+          "desc": "the name of the merkle tree root"
         },
         {
           "name": "key",
-          "type": "string"
+          "type": "string",
+          "desc": "the metadata key eg."
         },
         {
           "name": "value",
-          "type": "string"
+          "type": "string",
+          "desc": "the metadata value eg.  encoded as a bytestring for 5%"
         }
       ],
       "returns": {
@@ -100,11 +104,13 @@
       "args": [
         {
           "name": "name",
-          "type": "string"
+          "type": "string",
+          "desc": "the name of the merkle tree root"
         },
         {
           "name": "key",
-          "type": "string"
+          "type": "string",
+          "desc": "the metadata key you want to remove"
         }
       ],
       "returns": {
@@ -158,15 +164,18 @@
         },
         {
           "name": "name",
-          "type": "string"
+          "type": "string",
+          "desc": "the name of the merkle tree root"
         },
         {
           "name": "key",
-          "type": "string"
+          "type": "string",
+          "desc": "the metadata key eg."
         }
       ],
       "returns": {
-        "type": "string"
+        "type": "string",
+        "desc": "the value set eg.  encoded as a bytestring for 5%"
       }
     },
     {
@@ -180,27 +189,33 @@
         },
         {
           "name": "name",
-          "type": "string"
+          "type": "string",
+          "desc": "the name of the root"
         },
         {
           "name": "leaf",
-          "type": "byte[32]"
+          "type": "byte[32]",
+          "desc": "the leaf node to be verified"
         },
         {
           "name": "proof",
-          "type": "byte[32][]"
+          "type": "byte[32][]",
+          "desc": "the proof the hash is included"
         },
         {
-          "name": "schema",
-          "type": "uint64"
+          "name": "type",
+          "type": "uint64",
+          "desc": "the list type that helps contracts ensure\nthe lists purpose isn't being misused ( 0 if the caller doesnt care )"
         },
         {
           "name": "key",
-          "type": "string"
+          "type": "string",
+          "desc": "the metadata key eg."
         }
       ],
       "returns": {
-        "type": "string"
+        "type": "string",
+        "desc": "a string of metadata"
       }
     },
     {

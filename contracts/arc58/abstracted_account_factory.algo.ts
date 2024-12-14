@@ -3,8 +3,8 @@ import { AbstractedAccount } from "./abstracted_account.algo";
 
 export class AbstractedAccountFactory extends Contract {
 
-    abstractedAccountVersion = GlobalStateKey<string>();
-    revocationAppID = GlobalStateKey<AppID>();
+    abstractedAccountVersion = GlobalStateKey<string>({ key: 'version' });
+    revocationAppID = GlobalStateKey<AppID>({ key: 'revocation_app_id' });
 
     createApplication(version: string, revocationAppID: AppID): void {
         this.abstractedAccountVersion.value = version;
@@ -15,10 +15,9 @@ export class AbstractedAccountFactory extends Contract {
         assert(this.txn.sender === this.app.creator)
     }
 
-    mint(pmt: PayTxn, controlledAddress: Address, admin: Address, nickname: string): AppID {
-        // 100_000 * (1+ExtraProgramPages) + (28_500) * schema.NumUint + (50_000) * schema.NumByteSlice
+    mint(pmt: PayTxn, admin: Address, nickname: string): AppID {
         assert(pmt.amount === (
-                200_000 // requires 1 extra page
+                300_000 // requires 3 extra pages
                 + (28_500 * AbstractedAccount.schema.global.numUint)
                 + (50_000 * AbstractedAccount.schema.global.numByteSlice)
             )
@@ -28,7 +27,6 @@ export class AbstractedAccountFactory extends Contract {
         sendMethodCall<typeof AbstractedAccount.prototype.createApplication>({
             methodArgs: [
                 this.abstractedAccountVersion.value,
-                controlledAddress,
                 admin,
                 this.revocationAppID.value,
                 nickname,

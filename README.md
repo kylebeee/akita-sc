@@ -13,36 +13,48 @@ Contracts for key management of delegation for the abstracted account. We suppor
 [The Secp256r1 Passkey Logic Signature](./contracts/keys/secp256r1_passkey.algo.ts) account is a passkey approval smart signature account. Typically within our systems we use these as admin or access keys for the abstracted account.
 
 ## Plugins
-[The OptIn plugin](./contracts/arc58/plugins/optin.algo.ts) is a plugin that allows anyone to opt the abstracted account into an asset, provided they pay for the MBR.
-
-[The Subscription plugin](./contracts/arc58/plugins/subscription.algo.ts) is a plugin that allows someone to set up a recurring payment from the abstracted account.
 
 [The Akita Social plugin](./contracts/arc58/plugins/akita_social.algo.ts) is the core plugin for the akita social protocol.
 
+[The Hyper Swap Plugin](./contracts/arc58/plugins/hyper_swap.algo.ts) is a merkle tree based escrow/swap contract boasting artificial atomicity with practically unbounded list lengths.
+
+[The NFD Plugin](./contracts/arc58/plugins/nfd.algo.ts) is a plugin for managing your NFDs
+
+[The OptIn plugin](./contracts/arc58/plugins/optin.algo.ts) is a plugin that allows anyone to opt the abstracted account into an asset, provided they pay for the MBR.
+
 [The Staking Plugin](./contracts/arc58/plugins/staking.algo.ts) is a universal time staking plugin supporting with and without locks.
 
-[The MBR Plugin](./contracts/arc58/plugins/mbr.algo.ts) is an artifical MBR contract where you can allow apps to lock funds in order to interact or use them.
+[The Subscription plugin](./contracts/arc58/plugins/subscription.algo.ts) is a plugin that allows someone to set up a recurring payment from the abstracted account.
 
-[The Merkle Swap Plugin](./contracts/arc58/plugins/merkle_swap.algo.ts) is a merkle tree based escrow/swap contract boasting artificial atomicity with practically unbounded list lengths.
+## DAO
+
+[The Akita DAO](./contracts/dao/dao.algo.ts) is the DAO controlling the distribution of $BONES as well as managing Akita Social & default revocation app for ARC58 based Akita Wallets.
 
 ## Gates
-[The Impact gate](./contracts/gates/impact.algo.ts) is a subroutine library for filtering interactions by a users impact score within the Akita social protocol.
 
-[The Follower gate](./contracts/gates/follower.algo.ts) is a subroutine library for filtering interactions based on following within the Akita social protocol.
+[The Main gate](./contracts//gates/gate.algo.ts) is the entrypoint contract for interacting with all other gates.
 
-[The Subscription gate](./contracts/gates/subscription.algo.ts) is a subroutine library for filtering interactions by a users subscription status.
+[The Asset gate](./contracts/gates/asset.algo.ts) is a child contract for filtering interactions by ASA.
 
-[The Staking gate](./contracts/gates/staking.algo.ts) is a subroutine library for filtering interactions by a users staking status.
+[The Follower Count gate](./contracts/gates/follower.algo.ts) is a child contract for filtering interactions based on follower count within the Akita social protocol.
 
-[The NFD gate](./contracts/gates/nfd.algo.ts) is a subroutine library for filtering interactions by a NFDs.
+[The Follower Index gate](./contracts/gates/follower_index.algo.ts) is a child contract for filtering interactions based on follower index within the Akita social protocol.
 
-[The Asset gate](./contracts/gates/asset.algo.ts) is a subroutine library for filtering interactions by ASA.
+[The Impact gate](./contracts/gates/impact.algo.ts) is a child contract for filtering interactions by a users impact score within the Akita social protocol.
 
-[The Collection gate](./contracts/gates/collection.algo.ts) is a subroutine library for filtering interactions by Meta Merkle based NFT collections.
+[The Merkle Address gate](./contracts/gates/merkle_address.algo.ts) is a child contract for filtering interactions by a Meta Merkle list of Addresses.
 
-[The Trait gate](./contracts/gates/trait.algo.ts) is a subroutine library for filtering interactions by Meta Merkle based NFT traits within a collection.
+[The Merkle Asset gate](./contracts/gates/merkle_asset.algo.ts) is a child contract for filtering interactions by a Meta Merkle list of Assets.
 
-[The Merkle gate](./contracts/gates/merkle.algo.ts) is a subroutine library for filtering interactions by a generic Meta Merkle entry.
+[The NFD Root gate](./contracts/gates/nfd_root.algo.ts) is a child contract for filtering interactions by an NFD root.
+
+[The NFD gate](./contracts/gates/nfd.algo.ts) is a child contract for filtering interactions by NFD.
+
+[The Staking Amount gate](./contracts/gates/staking_amount.algo.ts) is a child contract for filtering interactions by a users staked amount.
+
+[The Staking Power gate](./contracts/gates/staking_power.algo.ts) is a child contract for filtering interactions by a users staking power.
+
+[The Subscription gate](./contracts/gates/subscription.algo.ts) is a child contract for filtering interactions by a users subscription status.
 
 ## Actions
 

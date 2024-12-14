@@ -66,6 +66,11 @@ export class StakingPlugin extends Contract {
     }
 
     @abi.readonly
+    getLockedInfo(user: Address, asset: AssetID): StakeValue {
+        return this.stake({ user: user, asset: asset, locked: true }).value;
+    }
+
+    @abi.readonly
     getLockedInfoList(user: Address, assets: AssetID[]): StakeValue[] {
         let results: StakeValue[] = [];
         for (let i = 0; i < assets.length; i += 1) {

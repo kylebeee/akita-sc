@@ -1,0 +1,226 @@
+{
+  "name": "HyperAtomicSwapPlugin",
+  "desc": "",
+  "methods": [
+    {
+      "name": "offer",
+      "desc": "Creates a merkle tree based atomic payment/xfer group",
+      "args": [
+        {
+          "name": "sender",
+          "type": "address",
+          "desc": "the account creating the offering"
+        },
+        {
+          "name": "root",
+          "type": "byte[32]",
+          "desc": "the merkle tree root of trades consisting of from address, recipient address, asset id & amount"
+        },
+        {
+          "name": "leaves",
+          "type": "uint64",
+          "desc": "the number of leaves in the tree"
+        },
+        {
+          "name": "participantsRoot",
+          "type": "byte[32]",
+          "desc": "the merkle tree root of participating addresses"
+        },
+        {
+          "name": "participantLeaves",
+          "type": "uint64",
+          "desc": "the number of leaves in the participant tree"
+        },
+        {
+          "name": "expiration",
+          "type": "uint64",
+          "desc": "the unix timestamp that the offer auto-expires at if it has not been accepted by all participants"
+        },
+        {
+          "name": "marketplace",
+          "type": "address",
+          "desc": "the address of the marketplace to pay the fee to"
+        },
+        {
+          "name": "marketFee",
+          "type": "uint64",
+          "desc": "the fee to pay the marketplace for facilitating the offer"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "accept",
+      "desc": "Accepts an offer",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64",
+          "desc": "the account accepting the offering"
+        },
+        {
+          "name": "id",
+          "type": "uint64",
+          "desc": "the id of the offer being accepted"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]",
+          "desc": "the bytes32 array proof of inclusion in the participants list"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "escrow",
+      "desc": "Escrows the assets in the trade for a given leaf in the tree",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64",
+          "desc": "the sender in the offer leaf"
+        },
+        {
+          "name": "id",
+          "type": "uint64",
+          "desc": "the id of the offer"
+        },
+        {
+          "name": "receiver",
+          "type": "address",
+          "desc": "the recipient in the offer leaf"
+        },
+        {
+          "name": "asset",
+          "type": "uint64",
+          "desc": "the asset in the offer leaf"
+        },
+        {
+          "name": "amount",
+          "type": "uint64",
+          "desc": "the amount in the offer leaf"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]",
+          "desc": "the proof to verify the details are part of the tree"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "disburse",
+      "desc": "Disburses assets for a leaf in the tree, ensuring ordered processing",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64",
+          "desc": "the sender abstracted account app id in the leaf"
+        },
+        {
+          "name": "id",
+          "type": "uint64",
+          "desc": "the id of the offer"
+        },
+        {
+          "name": "receiver",
+          "type": "uint64",
+          "desc": "the recipient abstracted account app id for the address in the leaf"
+        },
+        {
+          "name": "asset",
+          "type": "uint64",
+          "desc": "the asset being transferred"
+        },
+        {
+          "name": "amount",
+          "type": "uint64",
+          "desc": "the amount being transferred"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "cancel",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64",
+          "desc": "the abstracted account of the user cancelling the swap"
+        },
+        {
+          "name": "id",
+          "type": "uint64",
+          "desc": "the id of the offer being cancelled"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]",
+          "desc": "a proof of inclusion in the participants list"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "withdraw",
+      "desc": "Withdraws your assets from a cancelled swap if they're escrowed",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64",
+          "desc": "the abstracted account of the user reclaiming their assets"
+        },
+        {
+          "name": "id",
+          "type": "uint64",
+          "desc": "the id of the cancelled offer"
+        },
+        {
+          "name": "receiver",
+          "type": "address",
+          "desc": "the receiver of the leaf's swap"
+        },
+        {
+          "name": "asset",
+          "type": "uint64",
+          "desc": "the asset of the leaf's swap"
+        },
+        {
+          "name": "amount",
+          "type": "uint64",
+          "desc": "the amount of the leaf's swap"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]",
+          "desc": "the proof that the leaf is in the tree"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool",
+          "desc": "whether the abstracted account should be rekeyed back at the end"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    }
+  ]
+}

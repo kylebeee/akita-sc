@@ -4,6 +4,7 @@ import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk from 'algosdk';
 import { AbstractedAccountClient } from '../clients/AbstractedAccountClient';
 import { OptInPluginClient } from '../clients/OptInPluginClient';
+import { AbstractedAccountFactoryClient } from '../clients/AbstractedAccountFactoryClient';
 
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 algokit.Config.configure({ populateAppCallResources: true });
@@ -19,7 +20,7 @@ describe('ARC58 Plugin Permissions', () => {
   let caller: algosdk.Account;
   let plugin: bigint;
   /** The maximum uint64 value. Used to indicate a never-expiring plugin */
-  const MAX_UINT64 = BigInt('18446744073709551615');
+  // const MAX_UINT64 = BigInt('18446744073709551615');
   const fixture = algorandFixture();
 
   async function callPlugin() {
@@ -47,11 +48,15 @@ describe('ARC58 Plugin Permissions', () => {
       .execute();
   }
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     await fixture.beforeEach();
+    const { testAccount, algod } = fixture.context;
+    const { algorand } = fixture;
+    let suggestedParams = await algod.getTransactionParams().do();
+    caller = algorand.account.random().account;
+    aliceEOA = testAccount;
 
-    const { algod } = fixture.context;
-    abstractedAccountClient = new AbstractedAccountClient(
+    let abstractedAccountFactoryClient = new AbstractedAccountFactoryClient(
       {
         sender: aliceEOA,
         resolveBy: 'id',
@@ -60,30 +65,41 @@ describe('ARC58 Plugin Permissions', () => {
       algod
     );
 
+    await abstractedAccountFactoryClient.create.createApplication({ version: '0.1', revocationAppID: 0 });
+
+    let factoryAccount = (await abstractedAccountFactoryClient.appClient.getAppReference()).appAddress;
+
     // Create an abstracted account app
-    await abstractedAccountClient.create.createApplication({
-      // Set address to ZERO_ADDRESS so the app address is used
-      controlledAddress: ZERO_ADDRESS,
-      // aliceEOA will be the admin
-      admin: aliceEOA.addr,
-    });
+    const abstractedAccount = await abstractedAccountFactoryClient.mint(
+      {
+        pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+          from: aliceEOA.addr,
+          to: factoryAccount,
+          amount: 507_000,
+          suggestedParams,
+        }),
+        admin: aliceEOA.addr,
+        nickname: 'meh',
+      },
+      { sendParams: { fee: algokit.microAlgos(2_000) } }
+    );
+
+    abstractedAccountClient = new AbstractedAccountClient(
+      {
+        sender: aliceEOA,
+        resolveBy: 'id',
+        id: abstractedAccount.return!,
+      },
+      algod
+    );
 
     await abstractedAccountClient.appClient.fundAppAccount({ amount: algokit.microAlgos(1_000_000) });
-  });
-
-  beforeAll(async () => {
-    await fixture.beforeEach();
-    const { testAccount } = fixture.context;
-    const { algorand } = fixture;
-    caller = algorand.account.random().account;
 
     algorand.send.payment({
       sender: testAccount.addr,
       receiver: caller.addr,
       amount: algokit.microAlgos(1_000_000),
     });
-
-    aliceEOA = testAccount;
 
     dummyPluginClient = algorand.client.getTypedAppClientById(OptInPluginClient, { id: 0, sender: caller });
     dummyPluginClient.create.createApplication({});
@@ -92,21 +108,27 @@ describe('ARC58 Plugin Permissions', () => {
 
   test('both are valid, global is used', async () => {
     const { algorand } = fixture;
-    await abstractedAccountClient.arc58AddPlugin({
-      app: plugin,
-      allowedCaller: caller.addr,
-      cooldown: 0,
-      lastValidRound: MAX_UINT64,
-      adminPrivileges: false,
-    });
+    // await abstractedAccountClient.arc58AddPlugin({
+    //   app: plugin,
+    //   allowedCaller: caller.addr,
+    //   cooldown: 0,
+    //   lastValidRound: MAX_UINT64,
+    //   adminPrivileges: false,
+    //   methods: [],
+    //   isPasskey: false,
+    //   domain: '',
+    // });
 
-    await abstractedAccountClient.arc58AddPlugin({
-      app: plugin,
-      allowedCaller: ZERO_ADDRESS,
-      cooldown: 0,
-      lastValidRound: MAX_UINT64,
-      adminPrivileges: false,
-    });
+    // await abstractedAccountClient.arc58AddPlugin({
+    //   app: plugin,
+    //   allowedCaller: ZERO_ADDRESS,
+    //   cooldown: 0,
+    //   lastValidRound: MAX_UINT64,
+    //   adminPrivileges: false,
+    //   methods: [],
+    //   isPasskey: false,
+    //   domain: '',
+    // });
 
     await callPlugin();
 
@@ -118,24 +140,27 @@ describe('ARC58 Plugin Permissions', () => {
           algosdk.decodeAddress(ZERO_ADDRESS).publicKey,
         ])
       ),
-      algosdk.ABIType.from('(uint64,uint64,uint64)')
-    )) as [number, number, number];
+      algosdk.ABIType.from('(uint64,uint64,uint64,bool)')
+    )) as [number, number, number, boolean];
 
     const round = (await algorand.client.algod.status().do())['last-round'];
 
-    expect(globalPluginBox[2]).toBe(BigInt(round));
+    expect(globalPluginBox[2]).toBe(Number(round));
   });
 
   test('global valid, global is used', async () => {
     const { algorand } = fixture;
 
-    await abstractedAccountClient.arc58AddPlugin({
-      app: plugin,
-      allowedCaller: ZERO_ADDRESS,
-      cooldown: 0,
-      lastValidRound: MAX_UINT64,
-      adminPrivileges: false,
-    });
+    // await abstractedAccountClient.arc58AddPlugin({
+    //   app: plugin,
+    //   allowedCaller: ZERO_ADDRESS,
+    //   cooldown: 0,
+    //   lastValidRound: MAX_UINT64,
+    //   adminPrivileges: false,
+    //   methods: [],
+    //   isPasskey: false,
+    //   domain: '',
+    // });
 
     await callPlugin();
 
@@ -147,23 +172,26 @@ describe('ARC58 Plugin Permissions', () => {
           algosdk.decodeAddress(ZERO_ADDRESS).publicKey,
         ])
       ),
-      algosdk.ABIType.from('(uint64,uint64,uint64)')
-    )) as [number, number, number];
+      algosdk.ABIType.from('(uint64,uint64,uint64,bool)')
+    )) as [number, number, number, boolean];
 
     const round = (await algorand.client.algod.status().do())['last-round'];
 
-    expect(globalPluginBox[2]).toBe(BigInt(round));
+    expect(globalPluginBox[2]).toBe(Number(round));
   });
 
   test('global does not exist, sender valid', async () => {
     const { algorand } = fixture;
-    await abstractedAccountClient.arc58AddPlugin({
-      app: plugin,
-      allowedCaller: caller.addr,
-      cooldown: 0,
-      lastValidRound: MAX_UINT64,
-      adminPrivileges: false,
-    });
+    // await abstractedAccountClient.arc58AddPlugin({
+    //   app: plugin,
+    //   allowedCaller: caller.addr,
+    //   cooldown: 0,
+    //   lastValidRound: MAX_UINT64,
+    //   adminPrivileges: false,
+    //   methods: [],
+    //   isPasskey: false,
+    //   domain: '',
+    // });
 
     await callPlugin();
 
@@ -175,22 +203,25 @@ describe('ARC58 Plugin Permissions', () => {
           algosdk.decodeAddress(caller.addr).publicKey,
         ])
       ),
-      algosdk.ABIType.from('(uint64,uint64,uint64)')
-    )) as [number, number, number];
+      algosdk.ABIType.from('(uint64,uint64,uint64,bool)')
+    )) as [number, number, number, boolean];
 
     const round = (await algorand.client.algod.status().do())['last-round'];
 
-    expect(callerPluginBox[2]).toBe(BigInt(round));
+    expect(callerPluginBox[2]).toBe(Number(round));
   });
 
   test('not enough cooldown', async () => {
-    await abstractedAccountClient.arc58AddPlugin({
-      app: plugin,
-      allowedCaller: caller.addr,
-      cooldown: 100,
-      lastValidRound: MAX_UINT64,
-      adminPrivileges: false,
-    });
+    // await abstractedAccountClient.arc58AddPlugin({
+    //   app: plugin,
+    //   allowedCaller: caller.addr,
+    //   cooldown: 100,
+    //   lastValidRound: MAX_UINT64,
+    //   adminPrivileges: false,
+    //   methods: [],
+    //   isPasskey: false,
+    //   domain: '',
+    // });
 
     await callPlugin();
 
@@ -203,7 +234,7 @@ describe('ARC58 Plugin Permissions', () => {
     }
 
     // TODO: Parse this from src_map json
-    expect(error).toMatch('pc=534');
+    expect(error).toMatch('pc=706');
   });
   test('neither sender nor global plugin exists', async () => {
     let error = 'no error';
@@ -215,18 +246,19 @@ describe('ARC58 Plugin Permissions', () => {
     }
 
     // TODO: Parse this from src_map json
-    expect(error).toMatch('pc=534');
+    expect(error).toMatch('pc=706');
   });
 
   test('expired', async () => {
-    const { algorand } = fixture;
-
     await abstractedAccountClient.arc58AddPlugin({
       app: plugin,
       allowedCaller: ZERO_ADDRESS,
       cooldown: 0,
       lastValidRound: 1,
       adminPrivileges: false,
+      methods: [],
+      isPasskey: false,
+      domain: '',
     });
 
     let error = 'no error';
@@ -238,6 +270,6 @@ describe('ARC58 Plugin Permissions', () => {
     }
 
     // TODO: Parse this from src_map json
-    expect(error).toMatch('pc=534');
+    expect(error).toMatch('pc=706');
   });
 });

@@ -1,14 +1,26 @@
 import { Contract } from '@algorandfoundation/tealscript';
 
 import { Operator } from './gate.algo';
-import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo, IncludedIn, NotIncludedIn } from './operators';
+import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo, IncludedIn, NotIncludedIn } from '../../utils/operators';
 
-export interface RegistryInfo {
-    op: Operator;
-    values: uint64[];
+const errs = {
+    INVALID_ARG_COUNT: 'Invalid number of arguments',
 }
 
-export class AssetGatePlugin extends Contract {
+export const RegsitryInfoParamsLength = len<Operator>() + len<uint64>();
+export type RegistryInfo = {
+    op: Operator;
+    value: uint64;
+}
+
+export const AssetGateCheckParamsLength = len<uint64>() + len<Address>() + len<AssetID>();
+export type AssetGateCheckParams = {
+    registryIndex: uint64;
+    user: Address;
+    asset: AssetID;
+};
+
+export class AssetGate extends Contract {
     programVersion = 10;
 
     registryCounter = GlobalStateKey<uint64>({ key: 'c' });
@@ -16,45 +28,37 @@ export class AssetGatePlugin extends Contract {
     registry = BoxMap<uint64, RegistryInfo>();
 
     // gates based on holding an asset
-    private assetGate(user: Address, asset: AssetID, op: Operator, values: uint64[]): boolean {
+    private assetGate(user: Address, asset: AssetID, op: Operator, value: uint64): boolean {        
         if (op === Equal) {
-            return user.assetBalance(asset) === values[0];
+            return user.assetBalance(asset) === value;
         } else if (op === NotEqual) {
-            return user.assetBalance(asset) !== values[0];
+            return user.assetBalance(asset) !== value;
         } else if (op === LessThan) {
-            return user.assetBalance(asset) < values[0];
+            return user.assetBalance(asset) < value;
         } else if (op === LessThanOrEqualTo) {
-            return user.assetBalance(asset) <= values[0];
+            return user.assetBalance(asset) <= value;
         } else if (op === GreaterThan) {
-            return user.assetBalance(asset) > values[0];
+            return user.assetBalance(asset) > value;
         } else if (op === GreaterThanOrEqualTo) {
-            return user.assetBalance(asset) >= values[0];
-        } else if (op === IncludedIn) {
-            for (let i = 0; i < values.length; i += 1) {
-                if (user.assetBalance(asset) === values[i]) {
-                    return true;
-                }
-            }
-
-            return false;
-        } else if (op === NotIncludedIn) {
-            for (let i = 0; i < values.length; i += 1) {
-                if (user.assetBalance(asset) === values[i]) {
-                    return false;
-                }
-            }
-
-            return true;
+            return user.assetBalance(asset) >= value;
         }
 
-        return false
-    }
-
-    register(args: bytes[]): uint64 {
-        return 0;
-    }
-
-    check(args: bytes[]): boolean {
         return false;
+    }
+
+    register(args: bytes): uint64 {
+        assert(args.length === RegsitryInfoParamsLength, errs.INVALID_ARG_COUNT);
+        const params = castBytes<RegistryInfo>(args);
+        const counter = this.registryCounter.value;
+        this.registry(counter).value = params;
+        this.registryCounter.value += 1;
+        return counter;
+    }
+
+    check(args: bytes): boolean {
+        assert(args.length === AssetGateCheckParamsLength, errs.INVALID_ARG_COUNT);
+        const params = castBytes<AssetGateCheckParams>(args);
+        const info = this.registry(params.registryIndex).value;
+        return this.assetGate(params.user, params.asset, info.op, info.value);
     }
 }

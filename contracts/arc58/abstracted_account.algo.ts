@@ -1,15 +1,31 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { AkitaDomain, RekeyNote } from './constants';
-import { errs } from './errors';
+import { AkitaDomain, bytes4 } from '../../utils/constants';
 
-type PluginsKey = {
+const errs = {
+  ADMIN_CANNOT_BE_CONTROLLED: 'Admin and controlled address cannot be the same',
+  MUST_BE_DEPLOYED_FROM_FACTORY: 'This contract must be deployed from a factory',
+  ONLY_ADMIN_CAN_UPDATE: 'Only an admin can update the application',
+  ONLY_ADMIN_CAN_CHANGE_REVOKE: 'Only an admin can change the revocation app',
+  ONLY_ADMIN_CAN_CHANGE_ADMIN: 'Only an admin can change the admin account',
+  ONLY_ADMIN_CAN_REKEY: 'Only an admin can rekey the account',
+  ONLY_ADMIN_CAN_ADD_PLUGIN: 'Only an admin can add a plugin',
+  ONLY_ADMIN_CAN_CHANGE_NICKNAME: 'Only an admin can change the nickname',
+  NAMED_PLUGIN_ALREADY_EXISTS: 'A plugin with this name already exists',
+  ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN: 'Only an admin or revocation app can remove plugins',
+  SENDER_NOT_ALLOWED_TO_CALL_PLUGIN: 'This sender is not allowed to trigger this plugin',
+  PLUGIN_DOES_NOT_CONTROL_WALLET: 'This plugin is not in control of the account',
+  PLUGIN_DOES_NOT_HAVE_ADMIN_PRIVILEGES: 'This plugin does not have admin privileges',
+  DOMAIN_MUST_BE_LONGER_THAN_ZERO: 'Domain must not be length 0',
+}
+
+export type PluginsKey = {
   /** The application containing plugin logic */
   application: AppID;
   /** The address that is allowed to initiate a rekey to the plugin */
   allowedCaller: Address;
 };
 
-type PluginInfo = {
+export type PluginInfo = {
   /** The last round at which this plugin can be called */
   lastValidRound: uint64;
   /** The number of rounds that must pass before the plugin can be called again */
@@ -20,7 +36,7 @@ type PluginInfo = {
   adminPrivileges: boolean;
 };
 
-type MethodsKey = {
+export type MethodsKey = {
   /** The application containing plugin logic */
   application: AppID;
   /** The address that is allowed to initiate a rekey to the plugin */
@@ -32,25 +48,23 @@ export class AbstractedAccount extends Contract {
   programVersion = 10;
 
   /** the version number of the wallet */
-  version = GlobalStateKey<string>({ key: 'v' });
+  version = GlobalStateKey<string>({ key: 'version' });
 
+  // TODO: check that we really need this
   /** the application ID for the contract that deployed this wallet */
-  factoryApp = GlobalStateKey<AppID>({ key: 'f' })
+  factoryApp = GlobalStateKey<AppID>({ key: 'factory_app_id' })
 
   /** The admin of the abstracted account. This address can add plugins and initiate rekeys */
-  admin = GlobalStateKey<Address>({ key: 'a' });
-
-  /** The address this app controls */
-  controlledAddress = GlobalStateKey<Address>({ key: 'c' });
+  admin = GlobalStateKey<Address>({ key: 'admin' });
 
   /** The app that can revoke plugins */
-  revocationApp = GlobalStateKey<AppID>({ key: 'r' });
+  revocationApp = GlobalStateKey<AppID>({ key: 'revocation_app_id' });
 
   /** A user defined nickname for their wallet */
-  nickname = GlobalStateKey<string>({ key: 'n' });
+  nickname = GlobalStateKey<string>({ key: 'nickname' });
 
   /**
-   * Plugins that add functionality to the controlledAddress and the account that has permission to use it.
+   * Plugins that add functionality to the contract wallet and the account that has permission to use it.
    */
   plugins = BoxMap<PluginsKey, PluginInfo>({ prefix: 'p' });
 
@@ -58,7 +72,7 @@ export class AbstractedAccount extends Contract {
    * methods restrict plugin delegation only to the method names allowed for the delegation
    * a methods box entry missing means that all methods on the plugin are allowed
    */
-  methods = BoxMap<MethodsKey, bytes<4>[]>({ prefix: 'm' });
+  methods = BoxMap<MethodsKey, bytes4[]>({ prefix: 'm' });
 
   /**
    * Passkeys on the account and their corresponding domain names
@@ -69,53 +83,46 @@ export class AbstractedAccount extends Contract {
    * we track this onchain so we can assist with 'sign-in from another device' functionality
    * as well as uses like DAO based domain revocation
    */
-  passkeys = BoxMap<Address, string>();
+  domainKeys = BoxMap<Address, string>();
 
   /**
    * Plugins that have been given a name for discoverability
    */
   namedPlugins = BoxMap<bytes, PluginsKey>({ prefix: 'n' });
 
+  private ensuresRekeyBack(txn: Txn): boolean {
+    return (
+      txn.applicationArgs[0] === method('arc58_verifyAuthAddr()void') &&
+      txn.numAppArgs === 1 &&
+      txn.typeEnum === TransactionType.ApplicationCall &&
+      txn.applicationID === this.app &&
+      txn.onCompletion === 0
+    )
+  }
+
   /**
    * Ensure that by the end of the group the abstracted account has control of its address
    */
   private verifyRekeyToAbstractedAccount(): void {
-    let rekeyedBack = false;
+    let rekeysBack = false;
 
     for (let i = (this.txn.groupIndex + 1); i < this.txnGroup.length; i += 1) {
       const txn = this.txnGroup[i];
 
       // The transaction is an explicit rekey back
-      if (txn.sender === this.controlledAddress.value && txn.rekeyTo === this.app.address) {
-        rekeyedBack = true;
+      if (txn.sender === this.app.address && txn.rekeyTo === this.app.address) {
+        rekeysBack = true;
         break;
       }
 
       // The transaction is an application call to this app's arc58_verifyAuthAddr method
-      if (
-        txn.typeEnum === TransactionType.ApplicationCall &&
-        txn.onCompletion === 0 &&
-        txn.applicationID === this.app &&
-        txn.numAppArgs === 1 &&
-        txn.applicationArgs[0] === method('arc58_verifyAuthAddr()void')
-      ) {
-        rekeyedBack = true;
+      if (this.ensuresRekeyBack(txn)) {
+        rekeysBack = true;
         break;
       }
     }
 
-    assert(rekeyedBack);
-  }
-
-  /**
-   * What the value of this.address.value.authAddr should be when this.controlledAddress
-   * is able to be controlled by this app. It will either be this.app.address or zeroAddress
-   * 
-   * @returns the auth address that the contract should be rekeyed back to at the end of a flash rekey
-   */
-  private getAuthAddr(): Address {
-    return this.controlledAddress.value === this.app.address
-      ? Address.zeroAddress : this.app.address;
+    assert(rekeysBack);
   }
 
   /**
@@ -125,8 +132,8 @@ export class AbstractedAccount extends Contract {
   private isAdmin(): boolean {
     return (
       this.txn.sender === this.admin.value ||
-      this.passkeys(this.txn.sender).exists &&
-      this.passkeys(this.txn.sender).value == AkitaDomain
+      this.domainKeys(this.txn.sender).exists &&
+      this.domainKeys(this.txn.sender).value == AkitaDomain
     );
   }
 
@@ -158,9 +165,10 @@ export class AbstractedAccount extends Contract {
       const txn = this.txnGroup[i];
 
       if (
+        // 
         txn.typeEnum !== TransactionType.ApplicationCall ||
         (txn.applicationID !== app && txn.applicationID !== this.app) ||
-        txn.sender !== caller
+        (caller !== Address.zeroAddress && txn.sender !== caller)
       ) {
         continue;
       }
@@ -171,7 +179,7 @@ export class AbstractedAccount extends Contract {
 
       let currentMethodAllowed: boolean = false;
       for (let ii = 0; ii < allowedMethods.length; ii += 1) {
-        if ((txn.applicationArgs[0] as bytes<4>) === allowedMethods[ii]) {
+        if ((txn.applicationArgs[0] as bytes4) === allowedMethods[ii]) {
           currentMethodAllowed = true;
         }
       }
@@ -189,23 +197,19 @@ export class AbstractedAccount extends Contract {
    * This is not part of ARC58 and implementation specific.
    *
    * @param version The version of the abstracted account application
-   * @param controlledAddress The address of the abstracted account. If zeroAddress, then the address of the contract account will be used
    * @param admin The address of the admin for this application
    * @param revocationApp The application ID of the revocation app associated with this abstracted account
    * @param nickname A user-friendly name for this abstracted account
    */
   createApplication(
     version: string,
-    controlledAddress: Address,
     admin: Address,
     revocationApp: AppID,
     nickname: string,
   ): void {
-    assert(admin !== controlledAddress, errs.ADMIN_CANNOT_BE_CONTROLLED);
     assert(globals.callerApplicationID !== AppID.fromUint64(0), errs.MUST_BE_DEPLOYED_FROM_FACTORY)
 
     this.version.value = version;
-    this.controlledAddress.value = controlledAddress === Address.zeroAddress ? this.app.address : controlledAddress;
     this.admin.value = admin;
     this.revocationApp.value = revocationApp;
     this.nickname.value = nickname;
@@ -259,7 +263,7 @@ export class AbstractedAccount extends Contract {
   arc58_pluginChangeAdmin(plugin: AppID, allowedCaller: Address, newAdmin: Address): void {
     verifyTxn(this.txn, { sender: plugin.address });
 
-    assert(this.controlledAddress.value.authAddr === plugin.address, errs.PLUGIN_DOES_NOT_CONTROL_WALLET);
+    assert(this.app.address.authAddr === plugin.address, errs.PLUGIN_DOES_NOT_CONTROL_WALLET);
 
     const key: PluginsKey = { application: plugin, allowedCaller: allowedCaller };
 
@@ -281,7 +285,7 @@ export class AbstractedAccount extends Contract {
    * Verify the abstracted account is rekeyed to this app
    */
   arc58_verifyAuthAddr(): void {
-    assert(this.controlledAddress.value.authAddr === this.getAuthAddr());
+    assert(this.app.address.authAddr === globals.zeroAddress);
   }
 
   /**
@@ -291,10 +295,9 @@ export class AbstractedAccount extends Contract {
    * @param flash Whether or not this should be a flash rekey. If true, the rekey back to the app address must done in the same txn group as this call
    */
   arc58_rekeyTo(addr: Address, flash: boolean): void {
-    verifyAppCallTxn(this.txn, { sender: this.admin.value });
+    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_REKEY);
 
     sendPayment({
-      sender: this.controlledAddress.value,
       receiver: addr,
       rekeyTo: addr,
       fee: 0,
@@ -330,8 +333,7 @@ export class AbstractedAccount extends Contract {
       assert(this.pluginCallAllowed(plugin, this.txn.sender), 'This sender is not allowed to trigger this plugin');
 
     sendPayment({
-      sender: this.controlledAddress.value,
-      receiver: this.controlledAddress.value,
+      receiver: this.app.address,
       rekeyTo: plugin.address,
     });
 
@@ -368,8 +370,8 @@ export class AbstractedAccount extends Contract {
     lastValidRound: uint64,
     cooldown: uint64,
     adminPrivileges: boolean,
-    methods: bytes<4>[],
-    isPasskey: boolean,
+    methods: bytes4[],
+    domainKey: boolean,
     domain: string,
   ): void {
     assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_ADD_PLUGIN);
@@ -385,9 +387,9 @@ export class AbstractedAccount extends Contract {
       this.methods(key).value = methods;
     }
 
-    if (isPasskey) {
+    if (domainKey) {
       assert(domain.length > 0, errs.DOMAIN_MUST_BE_LONGER_THAN_ZERO);
-      this.passkeys(allowedCaller).value = domain;
+      this.domainKeys(allowedCaller).value = domain;
     }
   }
 

@@ -1,4 +1,5 @@
 import { Contract } from '@algorandfoundation/tealscript';
+import { bytes16, EMPTY_BYTES_16, EMPTY_BYTES_32 } from '../../utils/constants';
 
 const errs = {
   KEY_TOO_LONG: 'max key length is 32 bytes',
@@ -20,12 +21,6 @@ const errs = {
   TREE_TYPE_KEY_ALREADY_EXISTS: 'tree type key already exists for this root'
 }
 
-const rootKeyLength = 64;
-const truncatedKeyLength = 32;
-const schemaKeyByteLength = 8;
-const treeTypeKeyByteLength = 5;
-const uint64ByteLength = 8;
-
 const maxDataKeyLength = 15;
 const maxDataLength = 1024;
 
@@ -33,34 +28,29 @@ const reservedDataKeyPrefix = 'l.';
 const treeSchemaKey = 'l.schema';
 const treeTypeKey = 'l.type';
 
-export const rootMinBalance: uint64 = 2_500 + (400 * rootKeyLength);
-export const schemaMinBalance: uint64 = 2_500 + (400 * ((truncatedKeyLength + schemaKeyByteLength) + uint64ByteLength));
-export const treeTypeMinBalance: uint64 = 2_500 + (400 * ((truncatedKeyLength + treeTypeKeyByteLength) + uint64ByteLength));
+export const MAX_ROOT_BOX_MBR = 40_900;
+export const MAX_SCHEMA_BOX_MBR = 21_700;
+export const MAX_TYPE_BOX_MBR = 20_900;
 
-type bytes16 = bytes<16>;
+export type RootKey = {
+  address: Address,
+  name: string
+};
 
-interface RootKey { address: Address, name: string };
-
-interface DataKey { address: bytes16, name: string, key: string };
-
-interface InternalMetaKeys {
-  root: RootKey;
-  schema: DataKey;
-  type: DataKey;
-}
-
-interface InternalMetaValues {
-  root: bytes32;
-  schema: uint64;
-  type: uint64;
-}
+export type DataKey = {
+  address: bytes16,
+  name: string,
+  key: string
+};
 
 export class MetaMerkles extends Contract {
 
   // 0: Unspecified
-  // 1: String
-  // 2: Uint64
-  // 3: DoubleUint64
+  // 1: string
+  // 2: uint64
+  // 3: uint64,uint64
+  // 4: address,address,uint64,uint64
+  // 5: address,address,uint64,uint64,uint64
   schemaIndex = GlobalStateKey<uint64>({ key: 's' });
   schemas = BoxMap<uint64, string>();
 
@@ -75,14 +65,38 @@ export class MetaMerkles extends Contract {
   // which means accounting for box key & leaf
   // and a byte length of 66 for each proof in the
   // array, max we can verify is 30, plenty.
+  // max_mbr: (400 * (64 + 32)) = 38_400: + 2_500 = 40_900
   roots = BoxMap<RootKey, bytes32>();
 
   // rootData is the box map for managing the data
   // associated with a group
+  // max_schema_mbr: (400 * (32 + 8 + 8)) = 19_200 + 2_500 = 21_700
+  // max_type_mbr: (400 * (32 + 6 + 8)) = 18_400 + 2_500 = 20_900
   data = BoxMap<DataKey, string>({ prefix: 'd' });
 
-  private createRoot(pmt: PayTxn, name: string, root: bytes32, treeSchema: uint64, treeType: uint64): void {
+  private getRootBoxDelta(name: string): uint64 {
+    const pre = globals.currentApplicationAddress.minBalance;
+    const rKey: RootKey = { address: globals.zeroAddress, name: name };
+    this.roots(rKey).value = EMPTY_BYTES_32;
+    const delta = globals.currentApplicationAddress.minBalance - pre;
+    this.roots(rKey).delete();
+    return delta;
+  }
 
+  private getDataBoxDelta(name: string, key: string, value: string): uint64 {
+    const pre = globals.currentApplicationAddress.minBalance;
+    const dKey: DataKey = { address: EMPTY_BYTES_16, name: name, key: key };
+    this.data(dKey).value = value;
+    const delta = globals.currentApplicationAddress.minBalance - pre;
+    this.data(dKey).delete();
+    return delta;
+  }
+
+  private rootCosts(name: string): uint64 {
+    const rootCost = this.getRootBoxDelta(name);
+    const schemaCost = this.getDataBoxDelta(name, treeSchemaKey, itob(0));
+    const typeCost = this.getDataBoxDelta(name, treeTypeKey, itob(0));
+    return rootCost + schemaCost + typeCost;
   }
 
   /** 
@@ -126,7 +140,7 @@ export class MetaMerkles extends Contract {
 
     verifyPayTxn(pmt, {
       receiver: this.app.address,
-      amount: rootMinBalance + schemaMinBalance + treeTypeMinBalance,
+      amount: this.rootCosts(name),
     });
 
     this.roots(rootKey).value = root;
@@ -137,7 +151,7 @@ export class MetaMerkles extends Contract {
   /**
    * Deletes the merkle root from the root box map
    * 
-   * @param root the 32 byte merkle tree root
+   * @param name the name of the merkle tree root
    */
   deleteRoot(name: string): void {
     const truncatedAddress = extract3(this.txn.sender, 0, 16) as bytes16;
@@ -168,7 +182,8 @@ export class MetaMerkles extends Contract {
     // return their MBR
     sendPayment({
       receiver: this.txn.sender,
-      amount: rootMinBalance,
+      amount: this.rootCosts(name),
+      fee: 0,
     })
   }
 
@@ -189,7 +204,7 @@ export class MetaMerkles extends Contract {
    * corresponds to a merkle root in the root box map
    * 
    * @param pmt the payment to cover the increased mbr of adding to box storage
-   * @param root the 32 byte merkle tree root
+   * @param name the name of the merkle tree root
    * @param key the metadata key eg. `Royalty`
    * @param value the metadata value eg. `5` encoded as a bytestring for 5%
    */
@@ -218,7 +233,7 @@ export class MetaMerkles extends Contract {
   /**
    * Deletes a metadata key & value pair from the data box map
    * 
-   * @param root the sha256'd 32 byte merkle tree root
+   * @param name the name of the merkle tree root
    * @param key the metadata key you want to remove
    */
   deleteData(name: string, key: string): void {
@@ -294,7 +309,7 @@ export class MetaMerkles extends Contract {
    * Fetch a metadata properties
    * 
    * @param address the address of the merkle tree root creator
-   * @param root the 32 byte merkle tree root
+   * @param name the name of the merkle tree root
    * @param key the metadata key eg. `Royalty`
    * @returns the value set eg. `5` encoded as a bytestring for 5%
    */
@@ -315,12 +330,11 @@ export class MetaMerkles extends Contract {
    * & check against the underlying data's list type or purpose
    * 
    * @param address the address of the merkle tree root creator
-   * @param root the sha256'd 32 byte merkle tree root
+   * @param name the name of the root
+   * @param leaf the leaf node to be verified
    * @param proof the proof the hash is included
-   * @param data the data being verified
    * @param key the metadata key eg. `Royalty`
-   * @param schema the schema to verify the underlying data shape ( 0 if the caller doesnt care )
-   * @param treeType the list type that helps contracts ensure 
+   * @param type the list type that helps contracts ensure 
    * the lists purpose isn't being misused ( 0 if the caller doesnt care )
    * @returns a string of metadata
    */
@@ -329,10 +343,10 @@ export class MetaMerkles extends Contract {
     name: string,
     leaf: bytes32,
     proof: bytes32[],
-    schema: uint64,
+    type: uint64,
     key: string,
   ): string {
-    assert(this.verify(address, name, leaf, proof, schema), errs.FAILED_TO_VERIFY_INCLUSION);
+    assert(this.verify(address, name, leaf, proof, type), errs.FAILED_TO_VERIFY_INCLUSION);
     return this.read(address, name, key);
   }
 

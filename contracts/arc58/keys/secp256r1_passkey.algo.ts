@@ -14,9 +14,7 @@ export class Secp256r1Passkey extends LogicSig {
     sSig: bytes32,
     rSig: bytes32
   ): void {
-
-    const c = sha256(cdOne + cdTwo + cdThree);
-    const h = sha256(authData + c);
+    const h = sha256(authData + sha256(cdOne + cdTwo + cdThree));
 
     if (this.txnGroup.length > 1) {
       assert(globals.groupID === base64Decode("URLEncoding", cdTwo));

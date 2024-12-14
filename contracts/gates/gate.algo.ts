@@ -1,4 +1,5 @@
 import { Contract } from '@algorandfoundation/tealscript';
+import { bytes0 } from '../../utils/constants';
 
 export const AKITA_SOCIAL_PLUGIN_ID = 0;
 export const AKITA_TIME_LOCK_PLUGIN_ID = 0;
@@ -32,7 +33,7 @@ export class Gate extends Contract {
 
     filterRegistryCounter = GlobalStateKey<uint64>({ key: 'c' });
 
-    appRegistry = BoxMap<AppID, bytes<0>>();
+    appRegistry = BoxMap<AppID, bytes0>();
 
     filterRegistry = BoxMap<uint64, GateFilterEntry[]>({ prefix: 'f' });
 
@@ -127,26 +128,5 @@ export class Gate extends Contract {
             end = i;
         }
         return end;
-    }
-}
-
-const GATE_APP_ID = 0;
-const FILTER_INDEX = 0;
-
-class MockGateUsage extends Contract {
-
-    private gateAssertion(args: bytes[]): boolean {
-        return sendMethodCall<typeof Gate.prototype.check, boolean>({
-            applicationID: AppID.fromUint64(GATE_APP_ID),
-            methodArgs: [
-                FILTER_INDEX,
-                args,
-            ]
-        });
-    }
-
-    doABarrelRoll(args: bytes[]): void {
-        assert(this.gateAssertion(args));
-        // do a barrel roll
     }
 }

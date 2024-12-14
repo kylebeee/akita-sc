@@ -1,5 +1,5 @@
-import { Contract } from '@algorandfoundation/tealscript';
+// import { Contract } from '@algorandfoundation/tealscript';
 
-export class NFDPlugin extends Contract {
+// export class NFDPlugin extends Contract {
     
-}
+// }

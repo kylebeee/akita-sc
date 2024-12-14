@@ -1,0 +1,1711 @@
+{
+  "name": "MerkleAssetGate",
+  "desc": "",
+  "methods": [
+    {
+      "name": "register",
+      "args": [
+        {
+          "name": "args",
+          "type": "byte[]"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "check",
+      "args": [
+        {
+          "name": "args",
+          "type": "byte[]"
+        }
+      ],
+      "returns": {
+        "type": "bool"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [
+          "NoOp"
+        ],
+        "call": []
+      }
+    }
+  ],
+  "arcs": [
+    4,
+    56
+  ],
+  "structs": {
+    "RegistryInfo": [
+      {
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "name": "name",
+        "type": "string"
+      }
+    ]
+  },
+  "state": {
+    "schema": {
+      "global": {
+        "bytes": 0,
+        "ints": 1
+      },
+      "local": {
+        "bytes": 0,
+        "ints": 0
+      }
+    },
+    "keys": {
+      "global": {
+        "registryCounter": {
+          "key": "Yw==",
+          "keyType": "AVMBytes",
+          "valueType": "uint64"
+        }
+      },
+      "local": {},
+      "box": {}
+    },
+    "maps": {
+      "global": {},
+      "local": {},
+      "box": {
+        "registry": {
+          "keyType": "uint64",
+          "valueType": "RegistryInfo"
+        }
+      }
+    }
+  },
+  "bareActions": {
+    "create": [],
+    "call": []
+  },
+  "sourceInfo": {
+    "approval": {
+      "sourceInfo": [
+        {
+          "teal": 1,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            0
+          ]
+        },
+        {
+          "teal": 2,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "teal": 3,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17
+          ]
+        },
+        {
+          "teal": 15,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            18,
+            19
+          ]
+        },
+        {
+          "teal": 16,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            20
+          ]
+        },
+        {
+          "teal": 17,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            21,
+            22
+          ]
+        },
+        {
+          "teal": 18,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            23
+          ]
+        },
+        {
+          "teal": 19,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            24,
+            25
+          ]
+        },
+        {
+          "teal": 20,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            26
+          ]
+        },
+        {
+          "teal": 21,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        {
+          "teal": 25,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "errorMessage": "The requested action is not implemented in this contract. Are you using the correct OnComplete? Did you set your app ID?",
+          "pc": [
+            53
+          ]
+        },
+        {
+          "teal": 30,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            54
+          ]
+        },
+        {
+          "teal": 33,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            55,
+            56,
+            57
+          ]
+        },
+        {
+          "teal": 34,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            58,
+            59,
+            60
+          ]
+        },
+        {
+          "teal": 37,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            61,
+            62,
+            63
+          ]
+        },
+        {
+          "teal": 38,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            64
+          ]
+        },
+        {
+          "teal": 39,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            65
+          ]
+        },
+        {
+          "teal": 40,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            66
+          ]
+        },
+        {
+          "teal": 41,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            67
+          ]
+        },
+        {
+          "teal": 42,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            68
+          ]
+        },
+        {
+          "teal": 46,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            69,
+            70,
+            71
+          ]
+        },
+        {
+          "teal": 49,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            72
+          ]
+        },
+        {
+          "teal": 50,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            73
+          ]
+        },
+        {
+          "teal": 54,
+          "source": "contracts/gates/merkle_asset.algo.ts:43",
+          "pc": [
+            74,
+            75
+          ]
+        },
+        {
+          "teal": 55,
+          "source": "contracts/gates/merkle_asset.algo.ts:43",
+          "pc": [
+            76
+          ]
+        },
+        {
+          "teal": 56,
+          "source": "contracts/gates/merkle_asset.algo.ts:43",
+          "pc": [
+            77
+          ]
+        },
+        {
+          "teal": 57,
+          "source": "contracts/gates/merkle_asset.algo.ts:43",
+          "pc": [
+            78
+          ]
+        },
+        {
+          "teal": 58,
+          "source": "contracts/gates/merkle_asset.algo.ts:43",
+          "pc": [
+            79
+          ]
+        },
+        {
+          "teal": 62,
+          "source": "contracts/gates/merkle_asset.algo.ts:44",
+          "pc": [
+            80,
+            81
+          ]
+        },
+        {
+          "teal": 63,
+          "source": "contracts/gates/merkle_asset.algo.ts:44",
+          "pc": [
+            82,
+            83
+          ]
+        },
+        {
+          "teal": 67,
+          "source": "contracts/gates/merkle_asset.algo.ts:45",
+          "pc": [
+            84
+          ]
+        },
+        {
+          "teal": 68,
+          "source": "contracts/gates/merkle_asset.algo.ts:45",
+          "pc": [
+            85
+          ]
+        },
+        {
+          "teal": 69,
+          "source": "contracts/gates/merkle_asset.algo.ts:45",
+          "pc": [
+            86,
+            87
+          ]
+        },
+        {
+          "teal": 73,
+          "source": "contracts/gates/merkle_asset.algo.ts:46",
+          "pc": [
+            88,
+            89
+          ]
+        },
+        {
+          "teal": 74,
+          "source": "contracts/gates/merkle_asset.algo.ts:46",
+          "pc": [
+            90
+          ]
+        },
+        {
+          "teal": 75,
+          "source": "contracts/gates/merkle_asset.algo.ts:46",
+          "pc": [
+            91
+          ]
+        },
+        {
+          "teal": 76,
+          "source": "contracts/gates/merkle_asset.algo.ts:46",
+          "pc": [
+            92
+          ]
+        },
+        {
+          "teal": 77,
+          "source": "contracts/gates/merkle_asset.algo.ts:46",
+          "pc": [
+            93
+          ]
+        },
+        {
+          "teal": 78,
+          "source": "contracts/gates/merkle_asset.algo.ts:46",
+          "pc": [
+            94,
+            95
+          ]
+        },
+        {
+          "teal": 79,
+          "source": "contracts/gates/merkle_asset.algo.ts:46",
+          "pc": [
+            96
+          ]
+        },
+        {
+          "teal": 83,
+          "source": "contracts/gates/merkle_asset.algo.ts:47",
+          "pc": [
+            97
+          ]
+        },
+        {
+          "teal": 84,
+          "source": "contracts/gates/merkle_asset.algo.ts:47",
+          "pc": [
+            98
+          ]
+        },
+        {
+          "teal": 85,
+          "source": "contracts/gates/merkle_asset.algo.ts:47",
+          "pc": [
+            99
+          ]
+        },
+        {
+          "teal": 86,
+          "source": "contracts/gates/merkle_asset.algo.ts:47",
+          "pc": [
+            100
+          ]
+        },
+        {
+          "teal": 87,
+          "source": "contracts/gates/merkle_asset.algo.ts:47",
+          "pc": [
+            101
+          ]
+        },
+        {
+          "teal": 88,
+          "source": "contracts/gates/merkle_asset.algo.ts:47",
+          "pc": [
+            102
+          ]
+        },
+        {
+          "teal": 89,
+          "source": "contracts/gates/merkle_asset.algo.ts:47",
+          "pc": [
+            103
+          ]
+        },
+        {
+          "teal": 93,
+          "source": "contracts/gates/merkle_asset.algo.ts:48",
+          "pc": [
+            104,
+            105
+          ]
+        },
+        {
+          "teal": 96,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            106,
+            107
+          ]
+        },
+        {
+          "teal": 99,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            108,
+            109
+          ]
+        },
+        {
+          "teal": 100,
+          "source": "contracts/gates/merkle_asset.algo.ts:42",
+          "pc": [
+            110
+          ]
+        },
+        {
+          "teal": 105,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            111
+          ]
+        },
+        {
+          "teal": 108,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            112,
+            113,
+            114
+          ]
+        },
+        {
+          "teal": 109,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            115,
+            116,
+            117
+          ]
+        },
+        {
+          "teal": 112,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            118,
+            119,
+            120
+          ]
+        },
+        {
+          "teal": 113,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            121,
+            122,
+            123
+          ]
+        },
+        {
+          "teal": 114,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            124
+          ]
+        },
+        {
+          "teal": 115,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            125,
+            126
+          ]
+        },
+        {
+          "teal": 116,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            127
+          ]
+        },
+        {
+          "teal": 117,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            128
+          ]
+        },
+        {
+          "teal": 118,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            129
+          ]
+        },
+        {
+          "teal": 119,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            130
+          ]
+        },
+        {
+          "teal": 120,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            131
+          ]
+        },
+        {
+          "teal": 124,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            132,
+            133,
+            134
+          ]
+        },
+        {
+          "teal": 127,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            135
+          ]
+        },
+        {
+          "teal": 128,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            136
+          ]
+        },
+        {
+          "teal": 132,
+          "source": "contracts/gates/merkle_asset.algo.ts:52",
+          "pc": [
+            137,
+            138
+          ]
+        },
+        {
+          "teal": 133,
+          "source": "contracts/gates/merkle_asset.algo.ts:52",
+          "pc": [
+            139
+          ]
+        },
+        {
+          "teal": 134,
+          "source": "contracts/gates/merkle_asset.algo.ts:52",
+          "pc": [
+            140,
+            141
+          ]
+        },
+        {
+          "teal": 135,
+          "source": "contracts/gates/merkle_asset.algo.ts:52",
+          "pc": [
+            142
+          ]
+        },
+        {
+          "teal": 136,
+          "source": "contracts/gates/merkle_asset.algo.ts:52",
+          "pc": [
+            143
+          ]
+        },
+        {
+          "teal": 140,
+          "source": "contracts/gates/merkle_asset.algo.ts:53",
+          "pc": [
+            144,
+            145
+          ]
+        },
+        {
+          "teal": 141,
+          "source": "contracts/gates/merkle_asset.algo.ts:53",
+          "pc": [
+            146,
+            147
+          ]
+        },
+        {
+          "teal": 146,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            148,
+            149
+          ]
+        },
+        {
+          "teal": 147,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            150,
+            151
+          ]
+        },
+        {
+          "teal": 148,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            152,
+            153
+          ]
+        },
+        {
+          "teal": 149,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            154,
+            155,
+            156
+          ]
+        },
+        {
+          "teal": 150,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            157,
+            158
+          ]
+        },
+        {
+          "teal": 151,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            159,
+            160
+          ]
+        },
+        {
+          "teal": 152,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            161,
+            162
+          ]
+        },
+        {
+          "teal": 153,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            163,
+            164,
+            165
+          ]
+        },
+        {
+          "teal": 154,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            166
+          ]
+        },
+        {
+          "teal": 155,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            167,
+            168
+          ]
+        },
+        {
+          "teal": 156,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            169
+          ]
+        },
+        {
+          "teal": 157,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            170
+          ]
+        },
+        {
+          "teal": 158,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            171
+          ]
+        },
+        {
+          "teal": 159,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            172
+          ]
+        },
+        {
+          "teal": 160,
+          "source": "contracts/gates/merkle_asset.algo.ts:55",
+          "pc": [
+            173,
+            174,
+            175
+          ]
+        },
+        {
+          "teal": 165,
+          "source": "contracts/gates/merkle_asset.algo.ts:56",
+          "pc": [
+            176
+          ]
+        },
+        {
+          "teal": 166,
+          "source": "contracts/gates/merkle_asset.algo.ts:56",
+          "pc": [
+            177,
+            178,
+            179
+          ]
+        },
+        {
+          "teal": 171,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            180,
+            181
+          ]
+        },
+        {
+          "teal": 172,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            182,
+            183
+          ]
+        },
+        {
+          "teal": 173,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            184,
+            185
+          ]
+        },
+        {
+          "teal": 174,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            186,
+            187,
+            188
+          ]
+        },
+        {
+          "teal": 175,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            189
+          ]
+        },
+        {
+          "teal": 176,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            190
+          ]
+        },
+        {
+          "teal": 177,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            191,
+            192
+          ]
+        },
+        {
+          "teal": 191,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            193
+          ]
+        },
+        {
+          "teal": 192,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            194,
+            195
+          ]
+        },
+        {
+          "teal": 193,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            196,
+            197
+          ]
+        },
+        {
+          "teal": 194,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            198,
+            199,
+            200,
+            201,
+            202,
+            203
+          ]
+        },
+        {
+          "teal": 195,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            204,
+            205
+          ]
+        },
+        {
+          "teal": 199,
+          "source": "contracts/gates/merkle_asset.algo.ts:62",
+          "pc": [
+            206
+          ]
+        },
+        {
+          "teal": 200,
+          "source": "contracts/gates/merkle_asset.algo.ts:62",
+          "pc": [
+            207,
+            208
+          ]
+        },
+        {
+          "teal": 210,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            209,
+            210
+          ]
+        },
+        {
+          "teal": 211,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            211
+          ]
+        },
+        {
+          "teal": 214,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "errorMessage": "box value does not exist: this.registry(params.registryIndex).value",
+          "pc": [
+            212
+          ]
+        },
+        {
+          "teal": 215,
+          "source": "contracts/gates/merkle_asset.algo.ts:64",
+          "pc": [
+            213,
+            214
+          ]
+        },
+        {
+          "teal": 216,
+          "source": "contracts/gates/merkle_asset.algo.ts:64",
+          "pc": [
+            215,
+            216
+          ]
+        },
+        {
+          "teal": 217,
+          "source": "contracts/gates/merkle_asset.algo.ts:64",
+          "pc": [
+            217,
+            218,
+            219
+          ]
+        },
+        {
+          "teal": 218,
+          "source": "contracts/gates/merkle_asset.algo.ts:64",
+          "pc": [
+            220,
+            221
+          ]
+        },
+        {
+          "teal": 219,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            222,
+            223
+          ]
+        },
+        {
+          "teal": 220,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "pc": [
+            224
+          ]
+        },
+        {
+          "teal": 223,
+          "source": "contracts/gates/merkle_asset.algo.ts:59",
+          "errorMessage": "box value does not exist: this.registry(params.registryIndex).value",
+          "pc": [
+            225
+          ]
+        },
+        {
+          "teal": 224,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            226,
+            227
+          ]
+        },
+        {
+          "teal": 225,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            228
+          ]
+        },
+        {
+          "teal": 226,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            229,
+            230
+          ]
+        },
+        {
+          "teal": 227,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            231,
+            232
+          ]
+        },
+        {
+          "teal": 228,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            233,
+            234
+          ]
+        },
+        {
+          "teal": 229,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            235
+          ]
+        },
+        {
+          "teal": 230,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            236
+          ]
+        },
+        {
+          "teal": 231,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            237,
+            238
+          ]
+        },
+        {
+          "teal": 232,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            239
+          ]
+        },
+        {
+          "teal": 233,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            240
+          ]
+        },
+        {
+          "teal": 234,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            241
+          ]
+        },
+        {
+          "teal": 235,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            242
+          ]
+        },
+        {
+          "teal": 236,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            243
+          ]
+        },
+        {
+          "teal": 237,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            244
+          ]
+        },
+        {
+          "teal": 238,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            245
+          ]
+        },
+        {
+          "teal": 239,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            246,
+            247,
+            248
+          ]
+        },
+        {
+          "teal": 240,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            249
+          ]
+        },
+        {
+          "teal": 241,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            250
+          ]
+        },
+        {
+          "teal": 242,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            251
+          ]
+        },
+        {
+          "teal": 243,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            252,
+            253,
+            254
+          ]
+        },
+        {
+          "teal": 244,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            255
+          ]
+        },
+        {
+          "teal": 245,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            256
+          ]
+        },
+        {
+          "teal": 246,
+          "source": "contracts/gates/merkle_asset.algo.ts:65",
+          "pc": [
+            257,
+            258
+          ]
+        },
+        {
+          "teal": 247,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            259,
+            260
+          ]
+        },
+        {
+          "teal": 248,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            261,
+            262
+          ]
+        },
+        {
+          "teal": 249,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            263,
+            264
+          ]
+        },
+        {
+          "teal": 250,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            265,
+            266,
+            267
+          ]
+        },
+        {
+          "teal": 251,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            268
+          ]
+        },
+        {
+          "teal": 252,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            269
+          ]
+        },
+        {
+          "teal": 253,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            270
+          ]
+        },
+        {
+          "teal": 254,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            271
+          ]
+        },
+        {
+          "teal": 255,
+          "source": "contracts/gates/merkle_asset.algo.ts:66",
+          "pc": [
+            272,
+            273
+          ]
+        },
+        {
+          "teal": 256,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            274,
+            275
+          ]
+        },
+        {
+          "teal": 257,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            276,
+            277
+          ]
+        },
+        {
+          "teal": 258,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            278,
+            279
+          ]
+        },
+        {
+          "teal": 259,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            280,
+            281
+          ]
+        },
+        {
+          "teal": 260,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            282,
+            283
+          ]
+        },
+        {
+          "teal": 261,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            284,
+            285
+          ]
+        },
+        {
+          "teal": 262,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            286
+          ]
+        },
+        {
+          "teal": 263,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            287
+          ]
+        },
+        {
+          "teal": 264,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            288,
+            289
+          ]
+        },
+        {
+          "teal": 265,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            290
+          ]
+        },
+        {
+          "teal": 266,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            291
+          ]
+        },
+        {
+          "teal": 267,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            292
+          ]
+        },
+        {
+          "teal": 268,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            293
+          ]
+        },
+        {
+          "teal": 269,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            294
+          ]
+        },
+        {
+          "teal": 270,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            295
+          ]
+        },
+        {
+          "teal": 271,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            296
+          ]
+        },
+        {
+          "teal": 272,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            297,
+            298,
+            299
+          ]
+        },
+        {
+          "teal": 273,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            300
+          ]
+        },
+        {
+          "teal": 274,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            301
+          ]
+        },
+        {
+          "teal": 275,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            302
+          ]
+        },
+        {
+          "teal": 276,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            303
+          ]
+        },
+        {
+          "teal": 277,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            304
+          ]
+        },
+        {
+          "teal": 278,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            305,
+            306,
+            307
+          ]
+        },
+        {
+          "teal": 279,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            308
+          ]
+        },
+        {
+          "teal": 280,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            309
+          ]
+        },
+        {
+          "teal": 281,
+          "source": "contracts/gates/merkle_asset.algo.ts:67",
+          "pc": [
+            310,
+            311
+          ]
+        },
+        {
+          "teal": 282,
+          "source": "contracts/gates/merkle_asset.algo.ts:68",
+          "pc": [
+            312,
+            313,
+            314,
+            315,
+            316,
+            317,
+            318,
+            319,
+            320,
+            321
+          ]
+        },
+        {
+          "teal": 283,
+          "source": "contracts/gates/merkle_asset.algo.ts:68",
+          "pc": [
+            322,
+            323
+          ]
+        },
+        {
+          "teal": 287,
+          "source": "contracts/gates/merkle_asset.algo.ts:70",
+          "pc": [
+            324
+          ]
+        },
+        {
+          "teal": 288,
+          "source": "contracts/gates/merkle_asset.algo.ts:70",
+          "pc": [
+            325,
+            326
+          ]
+        },
+        {
+          "teal": 291,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            327
+          ]
+        },
+        {
+          "teal": 292,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            328,
+            329
+          ]
+        },
+        {
+          "teal": 293,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            330
+          ]
+        },
+        {
+          "teal": 294,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            331
+          ]
+        },
+        {
+          "teal": 295,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            332,
+            333
+          ]
+        },
+        {
+          "teal": 296,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            334,
+            335,
+            336
+          ]
+        },
+        {
+          "teal": 297,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            337
+          ]
+        },
+        {
+          "teal": 298,
+          "source": "contracts/gates/merkle_asset.algo.ts:61",
+          "pc": [
+            338
+          ]
+        },
+        {
+          "teal": 302,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            339,
+            340
+          ]
+        },
+        {
+          "teal": 305,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            341,
+            342
+          ]
+        },
+        {
+          "teal": 306,
+          "source": "contracts/gates/merkle_asset.algo.ts:51",
+          "pc": [
+            343
+          ]
+        },
+        {
+          "teal": 309,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            344
+          ]
+        },
+        {
+          "teal": 310,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            345
+          ]
+        },
+        {
+          "teal": 313,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            346,
+            347,
+            348,
+            349,
+            350,
+            351
+          ]
+        },
+        {
+          "teal": 314,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            352,
+            353,
+            354
+          ]
+        },
+        {
+          "teal": 315,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            355,
+            356,
+            357,
+            358
+          ]
+        },
+        {
+          "teal": 318,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "errorMessage": "this contract does not implement the given ABI method for create NoOp",
+          "pc": [
+            359
+          ]
+        },
+        {
+          "teal": 321,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            360,
+            361,
+            362,
+            363,
+            364,
+            365
+          ]
+        },
+        {
+          "teal": 322,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            366,
+            367,
+            368,
+            369,
+            370,
+            371
+          ]
+        },
+        {
+          "teal": 323,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            372,
+            373,
+            374
+          ]
+        },
+        {
+          "teal": 324,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "pc": [
+            375,
+            376,
+            377,
+            378,
+            379,
+            380
+          ]
+        },
+        {
+          "teal": 327,
+          "source": "contracts/gates/merkle_asset.algo.ts:35",
+          "errorMessage": "this contract does not implement the given ABI method for call NoOp",
+          "pc": [
+            381
+          ]
+        }
+      ],
+      "pcOffsetMethod": "none"
+    },
+    "clear": {
+      "sourceInfo": [],
+      "pcOffsetMethod": "none"
+    }
+  },
+  "source": {
+    "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCmludGNibG9jayAwIDEgMzIgMiA2CmJ5dGVjYmxvY2sgMHggMHg2MyAweDE1MWY3Yzc1CgovLyBUaGlzIFRFQUwgd2FzIGdlbmVyYXRlZCBieSBURUFMU2NyaXB0IHYwLjEwNS41Ci8vIGh0dHBzOi8vZ2l0aHViLmNvbS9hbGdvcmFuZGZvdW5kYXRpb24vVEVBTFNjcmlwdAoKLy8gVGhpcyBjb250cmFjdCBpcyBjb21wbGlhbnQgd2l0aCBhbmQvb3IgaW1wbGVtZW50cyB0aGUgZm9sbG93aW5nIEFSQ3M6IFsgQVJDNCBdCgovLyBUaGUgZm9sbG93aW5nIHRlbiBsaW5lcyBvZiBURUFMIGhhbmRsZSBpbml0aWFsIHByb2dyYW0gZmxvdwovLyBUaGlzIHBhdHRlcm4gaXMgdXNlZCB0byBtYWtlIGl0IGVhc3kgZm9yIGFueW9uZSB0byBwYXJzZSB0aGUgc3RhcnQgb2YgdGhlIHByb2dyYW0gYW5kIGRldGVybWluZSBpZiBhIHNwZWNpZmljIGFjdGlvbiBpcyBhbGxvd2VkCi8vIEhlcmUsIGFjdGlvbiByZWZlcnMgdG8gdGhlIE9uQ29tcGxldGUgaW4gY29tYmluYXRpb24gd2l0aCB3aGV0aGVyIHRoZSBhcHAgaXMgYmVpbmcgY3JlYXRlZCBvciBjYWxsZWQKLy8gRXZlcnkgcG9zc2libGUgYWN0aW9uIGZvciB0aGlzIGNvbnRyYWN0IGlzIHJlcHJlc2VudGVkIGluIHRoZSBzd2l0Y2ggc3RhdGVtZW50Ci8vIElmIHRoZSBhY3Rpb24gaXMgbm90IGltcGxlbWVudGVkIGluIHRoZSBjb250cmFjdCwgaXRzIHJlc3BlY3RpdmUgYnJhbmNoIHdpbGwgYmUgIipOT1RfSU1QTEVNRU5URUQiIHdoaWNoIGp1c3QgY29udGFpbnMgImVyciIKdHhuIEFwcGxpY2F0aW9uSUQKIQppbnRjIDQgLy8gNgoqCnR4biBPbkNvbXBsZXRpb24KKwpzd2l0Y2ggKmNhbGxfTm9PcCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKmNyZWF0ZV9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRAoKKk5PVF9JTVBMRU1FTlRFRDoKCS8vIFRoZSByZXF1ZXN0ZWQgYWN0aW9uIGlzIG5vdCBpbXBsZW1lbnRlZCBpbiB0aGlzIGNvbnRyYWN0LiBBcmUgeW91IHVzaW5nIHRoZSBjb3JyZWN0IE9uQ29tcGxldGU/IERpZCB5b3Ugc2V0IHlvdXIgYXBwIElEPwoJZXJyCgovLyByZWdpc3RlcihieXRlW10pdWludDY0CiphYmlfcm91dGVfcmVnaXN0ZXI6CgkvLyBUaGUgQUJJIHJldHVybiBwcmVmaXgKCWJ5dGVjIDIgLy8gMHgxNTFmN2M3NQoKCS8vIGFyZ3M6IGJ5dGVbXQoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQoJZXh0cmFjdCAyIDAKCgkvLyBleGVjdXRlIHJlZ2lzdGVyKGJ5dGVbXSl1aW50NjQKCWNhbGxzdWIgcmVnaXN0ZXIKCWl0b2IKCWNvbmNhdAoJbG9nCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyByZWdpc3RlcihhcmdzOiBieXRlcyk6IHVpbnQ2NApyZWdpc3RlcjoKCXByb3RvIDEgMQoKCS8vIFB1c2ggZW1wdHkgYnl0ZXMgYWZ0ZXIgdGhlIGZyYW1lIHBvaW50ZXIgdG8gcmVzZXJ2ZSBzcGFjZSBmb3IgbG9jYWwgdmFyaWFibGVzCglieXRlYyAwIC8vIDB4CglkdXAKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbWVya2xlX2Fzc2V0LmFsZ28udHM6NDMKCS8vIGFzc2VydChhcmdzLmxlbmd0aCA+IGxlbjxBZGRyZXNzPigpLCBlcnJzLklOVkFMSURfQVJHX0NPVU5UKQoJZnJhbWVfZGlnIC0xIC8vIGFyZ3M6IGJ5dGVzCglsZW4KCWludGMgMiAvLyAzMgoJPgoJYXNzZXJ0CgoJLy8gY29udHJhY3RzL2dhdGVzL21lcmtsZV9hc3NldC5hbGdvLnRzOjQ0CgkvLyBwYXJhbXMgPSBjYXN0Qnl0ZXM8UmVnaXN0cnlJbmZvPihhcmdzKQoJZnJhbWVfZGlnIC0xIC8vIGFyZ3M6IGJ5dGVzCglmcmFtZV9idXJ5IDAgLy8gcGFyYW1zOiAoYWRkcmVzcyxzdHJpbmcpCgoJLy8gY29udHJhY3RzL2dhdGVzL21lcmtsZV9hc3NldC5hbGdvLnRzOjQ1CgkvLyBjb3VudGVyID0gdGhpcy5yZWdpc3RyeUNvdW50ZXIudmFsdWUKCWJ5dGVjIDEgLy8gICJjIgoJYXBwX2dsb2JhbF9nZXQKCWZyYW1lX2J1cnkgMSAvLyBjb3VudGVyOiB1aW50NjQKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbWVya2xlX2Fzc2V0LmFsZ28udHM6NDYKCS8vIHRoaXMucmVnaXN0cnkoY291bnRlcikudmFsdWUgPSBwYXJhbXMKCWZyYW1lX2RpZyAxIC8vIGNvdW50ZXI6IHVpbnQ2NAoJaXRvYgoJZHVwCglib3hfZGVsCglwb3AKCWZyYW1lX2RpZyAwIC8vIHBhcmFtczogKGFkZHJlc3Msc3RyaW5nKQoJYm94X3B1dAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9tZXJrbGVfYXNzZXQuYWxnby50czo0NwoJLy8gdGhpcy5yZWdpc3RyeUNvdW50ZXIudmFsdWUgKz0gMQoJYnl0ZWMgMSAvLyAgImMiCglhcHBfZ2xvYmFsX2dldAoJaW50YyAxIC8vIDEKCSsKCWJ5dGVjIDEgLy8gICJjIgoJc3dhcAoJYXBwX2dsb2JhbF9wdXQKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbWVya2xlX2Fzc2V0LmFsZ28udHM6NDgKCS8vIHJldHVybiBjb3VudGVyOwoJZnJhbWVfZGlnIDEgLy8gY291bnRlcjogdWludDY0CgoJLy8gc2V0IHRoZSBzdWJyb3V0aW5lIHJldHVybiB2YWx1ZQoJZnJhbWVfYnVyeSAwCgoJLy8gcG9wIGFsbCBsb2NhbCB2YXJpYWJsZXMgZnJvbSB0aGUgc3RhY2sKCXBvcG4gMQoJcmV0c3ViCgovLyBjaGVjayhieXRlW10pYm9vbAoqYWJpX3JvdXRlX2NoZWNrOgoJLy8gVGhlIEFCSSByZXR1cm4gcHJlZml4CglieXRlYyAyIC8vIDB4MTUxZjdjNzUKCgkvLyBhcmdzOiBieXRlW10KCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWV4dHJhY3QgMiAwCgoJLy8gZXhlY3V0ZSBjaGVjayhieXRlW10pYm9vbAoJY2FsbHN1YiBjaGVjawoJcHVzaGJ5dGVzIDB4MDAKCWludGMgMCAvLyAwCgl1bmNvdmVyIDIKCXNldGJpdAoJY29uY2F0Cglsb2cKCWludGMgMSAvLyAxCglyZXR1cm4KCi8vIGNoZWNrKGFyZ3M6IGJ5dGVzKTogYm9vbGVhbgpjaGVjazoKCXByb3RvIDEgMQoKCS8vIFB1c2ggZW1wdHkgYnl0ZXMgYWZ0ZXIgdGhlIGZyYW1lIHBvaW50ZXIgdG8gcmVzZXJ2ZSBzcGFjZSBmb3IgbG9jYWwgdmFyaWFibGVzCglieXRlYyAwIC8vIDB4CglkdXAKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbWVya2xlX2Fzc2V0LmFsZ28udHM6NTIKCS8vIGFzc2VydChhcmdzLmxlbmd0aCA+PSAobGVuPHVpbnQ2ND4oKSArIGxlbjxBZGRyZXNzPigpICsgbGVuPEFzc2V0SUQ+KCkgKyBsZW48Ynl0ZXMzMj4oKSksIGVycnMuSU5WQUxJRF9BUkdfQ09VTlQpCglmcmFtZV9kaWcgLTEgLy8gYXJnczogYnl0ZXMKCWxlbgoJcHVzaGludCA4MAoJPj0KCWFzc2VydAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9tZXJrbGVfYXNzZXQuYWxnby50czo1MwoJLy8gcGFyYW1zID0gY2FzdEJ5dGVzPE1lcmtsZUFzc2V0R2F0ZUNoZWNrUGFyYW1zPihhcmdzKQoJZnJhbWVfZGlnIC0xIC8vIGFyZ3M6IGJ5dGVzCglmcmFtZV9idXJ5IDAgLy8gcGFyYW1zOiAodWludDY0LGFkZHJlc3MsdWludDY0LGJ5dGVbMzJdW10pCgoJLy8gKmlmMF9jb25kaXRpb24KCS8vIGNvbnRyYWN0cy9nYXRlcy9tZXJrbGVfYXNzZXQuYWxnby50czo1NQoJLy8gIShwYXJhbXMudXNlci5hc3NldEJhbGFuY2UocGFyYW1zLmFzc2V0KSA+IDApCglmcmFtZV9kaWcgMCAvLyBwYXJhbXM6ICh1aW50NjQsYWRkcmVzcyx1aW50NjQsYnl0ZVszMl1bXSkKCXN0b3JlIDI1NSAvLyBmdWxsIGFycmF5Cglsb2FkIDI1NSAvLyBmdWxsIGFycmF5CglleHRyYWN0IDggMzIKCWZyYW1lX2RpZyAwIC8vIHBhcmFtczogKHVpbnQ2NCxhZGRyZXNzLHVpbnQ2NCxieXRlWzMyXVtdKQoJc3RvcmUgMjU1IC8vIGZ1bGwgYXJyYXkKCWxvYWQgMjU1IC8vIGZ1bGwgYXJyYXkKCWV4dHJhY3QgNDAgOAoJYnRvaQoJYXNzZXRfaG9sZGluZ19nZXQgQXNzZXRCYWxhbmNlCglwb3AKCWludGMgMCAvLyAwCgk+CgkhCglieiAqaWYwX2VuZAoKCS8vICppZjBfY29uc2VxdWVudAoJLy8gY29udHJhY3RzL2dhdGVzL21lcmtsZV9hc3NldC5hbGdvLnRzOjU2CgkvLyByZXR1cm4gZmFsc2U7CglpbnRjIDAgLy8gMAoJYiAqY2hlY2sqcmV0dXJuCgoqaWYwX2VuZDoKCS8vIGNvbnRyYWN0cy9nYXRlcy9tZXJrbGVfYXNzZXQuYWxnby50czo1OQoJLy8gcmVnaXN0cnlJbmZvID0gdGhpcy5yZWdpc3RyeShwYXJhbXMucmVnaXN0cnlJbmRleCkudmFsdWUKCWZyYW1lX2RpZyAwIC8vIHBhcmFtczogKHVpbnQ2NCxhZGRyZXNzLHVpbnQ2NCxieXRlWzMyXVtdKQoJc3RvcmUgMjU1IC8vIGZ1bGwgYXJyYXkKCWxvYWQgMjU1IC8vIGZ1bGwgYXJyYXkKCWV4dHJhY3QgMCA4CglidG9pCglpdG9iCglmcmFtZV9idXJ5IDEgLy8gc3RvcmFnZSBrZXkvL3JlZ2lzdHJ5SW5mbwoKCS8vIGNvbnRyYWN0cy9nYXRlcy9tZXJrbGVfYXNzZXQuYWxnby50czo2MQoJLy8gcmV0dXJuIHNlbmRNZXRob2RDYWxsPHR5cGVvZiBNZXRhTWVya2xlcy5wcm90b3R5cGUudmVyaWZ5LCBib29sZWFuPih7CgkvLyAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiBBcHBJRC5mcm9tVWludDY0KEFraXRhQXBwSURzTWV0YU1lcmtsZXMpLAoJLy8gICAgICAgICAgICAgbWV0aG9kQXJnczogWwoJLy8gICAgICAgICAgICAgICAgIHJlZ2lzdHJ5SW5mby5jcmVhdG9yLAoJLy8gICAgICAgICAgICAgICAgIHJlZ2lzdHJ5SW5mby5uYW1lLAoJLy8gICAgICAgICAgICAgICAgIHNoYTI1NihzaGEyNTYoaXRvYihwYXJhbXMuYXNzZXQuaWQpKSksCgkvLyAgICAgICAgICAgICAgICAgcGFyYW1zLnByb29mLAoJLy8gICAgICAgICAgICAgICAgIE1FUktMRV9UUkVFX1RZUEVfQVNTRVQsCgkvLyAgICAgICAgICAgICBdLAoJLy8gICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICB9KTsKCWl0eG5fYmVnaW4KCWludGMgNCAvLyAgYXBwbAoJaXR4bl9maWVsZCBUeXBlRW51bQoJcHVzaGJ5dGVzIDB4MmJmM2NjNWEgLy8gbWV0aG9kICJ2ZXJpZnkoYWRkcmVzcyxzdHJpbmcsYnl0ZVszMl0sYnl0ZVszMl1bXSx1aW50NjQpYm9vbCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2dhdGVzL21lcmtsZV9hc3NldC5hbGdvLnRzOjYyCgkvLyBhcHBsaWNhdGlvbklEOiBBcHBJRC5mcm9tVWludDY0KEFraXRhQXBwSURzTWV0YU1lcmtsZXMpCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbklECgoJLy8gY29udHJhY3RzL2dhdGVzL21lcmtsZV9hc3NldC5hbGdvLnRzOjYzCgkvLyBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgcmVnaXN0cnlJbmZvLmNyZWF0b3IsCgkvLyAgICAgICAgICAgICAgICAgcmVnaXN0cnlJbmZvLm5hbWUsCgkvLyAgICAgICAgICAgICAgICAgc2hhMjU2KHNoYTI1NihpdG9iKHBhcmFtcy5hc3NldC5pZCkpKSwKCS8vICAgICAgICAgICAgICAgICBwYXJhbXMucHJvb2YsCgkvLyAgICAgICAgICAgICAgICAgTUVSS0xFX1RSRUVfVFlQRV9BU1NFVCwKCS8vICAgICAgICAgICAgIF0KCWZyYW1lX2RpZyAxIC8vIHN0b3JhZ2Uga2V5Ly9yZWdpc3RyeUluZm8KCWJveF9nZXQKCgkvLyBib3ggdmFsdWUgZG9lcyBub3QgZXhpc3Q6IHRoaXMucmVnaXN0cnkocGFyYW1zLnJlZ2lzdHJ5SW5kZXgpLnZhbHVlCglhc3NlcnQKCXN0b3JlIDI1NSAvLyBmdWxsIGFycmF5Cglsb2FkIDI1NSAvLyBmdWxsIGFycmF5CglleHRyYWN0IDAgMzIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgMSAvLyBzdG9yYWdlIGtleS8vcmVnaXN0cnlJbmZvCglib3hfZ2V0CgoJLy8gYm94IHZhbHVlIGRvZXMgbm90IGV4aXN0OiB0aGlzLnJlZ2lzdHJ5KHBhcmFtcy5yZWdpc3RyeUluZGV4KS52YWx1ZQoJYXNzZXJ0CglzdG9yZSAyNTUgLy8gZnVsbCBhcnJheQoJaW50YyAyIC8vIDMyCglsb2FkIDI1NSAvLyBmdWxsIGFycmF5Cglsb2FkIDI1NSAvLyBmdWxsIGFycmF5Cgl1bmNvdmVyIDIKCWV4dHJhY3RfdWludDE2CglkdXAgLy8gZHVwbGljYXRlIHN0YXJ0IG9mIGVsZW1lbnQKCWxvYWQgMjU1IC8vIGZ1bGwgYXJyYXkKCXN3YXAKCWV4dHJhY3RfdWludDE2IC8vIGdldCBudW1iZXIgb2YgZWxlbWVudHMKCWludGMgMSAvLyAgZ2V0IHR5cGUgbGVuZ3RoCgkqIC8vIG11bHRpcGx5IGJ5IHR5cGUgbGVuZ3RoCglpbnRjIDMgLy8gMgoJKyAvLyBhZGQgdHdvIGZvciBsZW5ndGgKCWV4dHJhY3QzCglleHRyYWN0IDIgMAoJZHVwCglsZW4KCWl0b2IKCWV4dHJhY3QgNiAyCglzd2FwCgljb25jYXQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgMCAvLyBwYXJhbXM6ICh1aW50NjQsYWRkcmVzcyx1aW50NjQsYnl0ZVszMl1bXSkKCXN0b3JlIDI1NSAvLyBmdWxsIGFycmF5Cglsb2FkIDI1NSAvLyBmdWxsIGFycmF5CglleHRyYWN0IDQwIDgKCWJ0b2kKCWl0b2IKCXNoYTI1NgoJc2hhMjU2CglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIDAgLy8gcGFyYW1zOiAodWludDY0LGFkZHJlc3MsdWludDY0LGJ5dGVbMzJdW10pCglzdG9yZSAyNTUgLy8gZnVsbCBhcnJheQoJcHVzaGludCA0OAoJbG9hZCAyNTUgLy8gZnVsbCBhcnJheQoJbG9hZCAyNTUgLy8gZnVsbCBhcnJheQoJdW5jb3ZlciAyCglleHRyYWN0X3VpbnQxNgoJZHVwIC8vIGR1cGxpY2F0ZSBzdGFydCBvZiBlbGVtZW50Cglsb2FkIDI1NSAvLyBmdWxsIGFycmF5Cglzd2FwCglleHRyYWN0X3VpbnQxNiAvLyBnZXQgbnVtYmVyIG9mIGVsZW1lbnRzCglpbnRjIDIgLy8gIGdldCB0eXBlIGxlbmd0aAoJKiAvLyBtdWx0aXBseSBieSB0eXBlIGxlbmd0aAoJaW50YyAzIC8vIDIKCSsgLy8gYWRkIHR3byBmb3IgbGVuZ3RoCglleHRyYWN0MwoJZXh0cmFjdCAyIDAKCWR1cAoJbGVuCglpbnRjIDIgLy8gMzIKCS8KCWl0b2IKCWV4dHJhY3QgNiAyCglzd2FwCgljb25jYXQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglwdXNoYnl0ZXMgMHgwMDAwMDAwMDAwMDAwMDAxCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9nYXRlcy9tZXJrbGVfYXNzZXQuYWxnby50czo3MAoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBTdWJtaXQgaW5uZXIgdHJhbnNhY3Rpb24KCWl0eG5fc3VibWl0CglpdHhuIE51bUxvZ3MKCWludGMgMSAvLyAxCgktCglpdHhuYXMgTG9ncwoJZXh0cmFjdCA0IDAKCWludGMgMCAvLyAwCglnZXRiaXQKCipjaGVjaypyZXR1cm46CgkvLyBzZXQgdGhlIHN1YnJvdXRpbmUgcmV0dXJuIHZhbHVlCglmcmFtZV9idXJ5IDAKCgkvLyBwb3AgYWxsIGxvY2FsIHZhcmlhYmxlcyBmcm9tIHRoZSBzdGFjawoJcG9wbiAxCglyZXRzdWIKCiphYmlfcm91dGVfY3JlYXRlQXBwbGljYXRpb246CglpbnRjIDEgLy8gMQoJcmV0dXJuCgoqY3JlYXRlX05vT3A6CglwdXNoYnl0ZXMgMHhiODQ0N2IzNiAvLyBtZXRob2QgImNyZWF0ZUFwcGxpY2F0aW9uKCl2b2lkIgoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAoJbWF0Y2ggKmFiaV9yb3V0ZV9jcmVhdGVBcHBsaWNhdGlvbgoKCS8vIHRoaXMgY29udHJhY3QgZG9lcyBub3QgaW1wbGVtZW50IHRoZSBnaXZlbiBBQkkgbWV0aG9kIGZvciBjcmVhdGUgTm9PcAoJZXJyCgoqY2FsbF9Ob09wOgoJcHVzaGJ5dGVzIDB4NmJjZDM5NTMgLy8gbWV0aG9kICJyZWdpc3RlcihieXRlW10pdWludDY0IgoJcHVzaGJ5dGVzIDB4YzYxYzg2MmIgLy8gbWV0aG9kICJjaGVjayhieXRlW10pYm9vbCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfcmVnaXN0ZXIgKmFiaV9yb3V0ZV9jaGVjawoKCS8vIHRoaXMgY29udHJhY3QgZG9lcyBub3QgaW1wbGVtZW50IHRoZSBnaXZlbiBBQkkgbWV0aG9kIGZvciBjYWxsIE5vT3AKCWVycg==",
+    "clear": "I3ByYWdtYSB2ZXJzaW9uIDEw"
+  },
+  "byteCode": {
+    "approval": "CiAFAAEgAgYmAwABYwQVH3x1MRgUIQQLMRkIjQwBMwAAAAAAAAAAAAABJQAAAAAAAAAAAAAAKjYaAVcCAIgABRZQsCNDigEBKEmL/xUkDUSL/4wAKWSMAYsBFkm8SIsAvylkIwgpTGeLAYwARgGJKjYaAVcCAIgAC4ABACJPAlRQsCNDigEBKEmL/xWBUA9Ei/+MAIsANf80/1cIIIsANf80/1coCBdwAEgiDRRBAAQiQgCfiwA1/zT/VwAIFxaMAbEhBLIQgAQr88xashoishiLAb5ENf80/1cAILIaiwG+RDX/JDT/NP9PAllJNP9MWSMLJQhYVwIASRUWVwYCTFCyGosANf80/1coCBcWAQGyGosANf+BMDT/NP9PAllJNP9MWSQLJQhYVwIASRUkChZXBgJMULIagAgAAAAAAAAAAbIaIrIBs7Q7IwnFOlcEACJTjABGAYkjQ4AEuER7NjYaAI4B//EAgARrzTlTgATGHIYrNhoAjgL+uf7yAA==",
+    "clear": "Cg=="
+  },
+  "compilerInfo": {
+    "compiler": "algod",
+    "compilerVersion": {
+      "major": 3,
+      "minor": 25,
+      "patch": 0,
+      "commitHash": "9855f57c"
+    }
+  }
+}
