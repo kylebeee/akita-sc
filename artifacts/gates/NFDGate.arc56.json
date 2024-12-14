@@ -1,0 +1,1995 @@
+{
+  "name": "NFDGate",
+  "desc": "",
+  "methods": [
+    {
+      "name": "register",
+      "args": [
+        {
+          "name": "args",
+          "type": "byte[]"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "check",
+      "args": [
+        {
+          "name": "args",
+          "type": "byte[]"
+        }
+      ],
+      "returns": {
+        "type": "bool"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [
+          "NoOp"
+        ],
+        "call": []
+      }
+    }
+  ],
+  "arcs": [
+    4,
+    56
+  ],
+  "structs": {
+    "RegistryInfo": [
+      {
+        "name": "root",
+        "type": "string"
+      }
+    ]
+  },
+  "state": {
+    "schema": {
+      "global": {
+        "bytes": 0,
+        "ints": 1
+      },
+      "local": {
+        "bytes": 0,
+        "ints": 0
+      }
+    },
+    "keys": {
+      "global": {
+        "registryCounter": {
+          "key": "Yw==",
+          "keyType": "AVMBytes",
+          "valueType": "uint64"
+        }
+      },
+      "local": {},
+      "box": {}
+    },
+    "maps": {
+      "global": {},
+      "local": {},
+      "box": {
+        "registry": {
+          "keyType": "uint64",
+          "valueType": "RegistryInfo"
+        }
+      }
+    }
+  },
+  "bareActions": {
+    "create": [],
+    "call": []
+  },
+  "sourceInfo": {
+    "approval": {
+      "sourceInfo": [
+        {
+          "teal": 1,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            0
+          ]
+        },
+        {
+          "teal": 2,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        },
+        {
+          "teal": 3,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ]
+        },
+        {
+          "teal": 15,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            19,
+            20
+          ]
+        },
+        {
+          "teal": 16,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            21
+          ]
+        },
+        {
+          "teal": 17,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            22
+          ]
+        },
+        {
+          "teal": 18,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            23
+          ]
+        },
+        {
+          "teal": 19,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            24,
+            25
+          ]
+        },
+        {
+          "teal": 20,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            26
+          ]
+        },
+        {
+          "teal": 21,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52
+          ]
+        },
+        {
+          "teal": 25,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "errorMessage": "The requested action is not implemented in this contract. Are you using the correct OnComplete? Did you set your app ID?",
+          "pc": [
+            53
+          ]
+        },
+        {
+          "teal": 29,
+          "source": "contracts/gates/nfd_root.algo.ts:34",
+          "pc": [
+            54,
+            55,
+            56
+          ]
+        },
+        {
+          "teal": 32,
+          "source": "contracts/gates/nfd_root.algo.ts:34",
+          "pc": [
+            57
+          ]
+        },
+        {
+          "teal": 33,
+          "source": "contracts/gates/nfd_root.algo.ts:34",
+          "pc": [
+            58,
+            59
+          ]
+        },
+        {
+          "teal": 37,
+          "source": "contracts/gates/nfd_root.algo.ts:35",
+          "pc": [
+            60,
+            61
+          ]
+        },
+        {
+          "teal": 38,
+          "source": "contracts/gates/nfd_root.algo.ts:35",
+          "pc": [
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69
+          ]
+        },
+        {
+          "teal": 39,
+          "source": "contracts/gates/nfd_root.algo.ts:35",
+          "pc": [
+            70
+          ]
+        },
+        {
+          "teal": 42,
+          "source": "contracts/gates/nfd_root.algo.ts:35",
+          "errorMessage": "global state value does not exist: NFD.globalState(NFD_NAME_KEY)",
+          "pc": [
+            71
+          ]
+        },
+        {
+          "teal": 43,
+          "source": "contracts/gates/nfd_root.algo.ts:35",
+          "pc": [
+            72,
+            73
+          ]
+        },
+        {
+          "teal": 49,
+          "source": "contracts/gates/nfd_root.algo.ts:38",
+          "pc": [
+            74,
+            75
+          ]
+        },
+        {
+          "teal": 50,
+          "source": "contracts/gates/nfd_root.algo.ts:38",
+          "pc": [
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90
+          ]
+        },
+        {
+          "teal": 51,
+          "source": "contracts/gates/nfd_root.algo.ts:38",
+          "pc": [
+            91
+          ]
+        },
+        {
+          "teal": 52,
+          "source": "contracts/gates/nfd_root.algo.ts:38",
+          "pc": [
+            92
+          ]
+        },
+        {
+          "teal": 53,
+          "source": "contracts/gates/nfd_root.algo.ts:38",
+          "pc": [
+            93
+          ]
+        },
+        {
+          "teal": 54,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            94
+          ]
+        },
+        {
+          "teal": 55,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            95,
+            96,
+            97
+          ]
+        },
+        {
+          "teal": 56,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            98,
+            99
+          ]
+        },
+        {
+          "teal": 57,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            100,
+            101
+          ]
+        },
+        {
+          "teal": 58,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            102,
+            103
+          ]
+        },
+        {
+          "teal": 59,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            104
+          ]
+        },
+        {
+          "teal": 60,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            105,
+            106
+          ]
+        },
+        {
+          "teal": 61,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            107
+          ]
+        },
+        {
+          "teal": 62,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            108,
+            109
+          ]
+        },
+        {
+          "teal": 63,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            110
+          ]
+        },
+        {
+          "teal": 64,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            111
+          ]
+        },
+        {
+          "teal": 65,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            112,
+            113
+          ]
+        },
+        {
+          "teal": 66,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            114
+          ]
+        },
+        {
+          "teal": 67,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            115,
+            116
+          ]
+        },
+        {
+          "teal": 68,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            117
+          ]
+        },
+        {
+          "teal": 69,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            118
+          ]
+        },
+        {
+          "teal": 70,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            119
+          ]
+        },
+        {
+          "teal": 71,
+          "source": "contracts/gates/nfd_root.algo.ts:39",
+          "pc": [
+            120
+          ]
+        },
+        {
+          "teal": 74,
+          "source": "contracts/gates/nfd_root.algo.ts:37",
+          "pc": [
+            121,
+            122,
+            123
+          ]
+        },
+        {
+          "teal": 79,
+          "source": "contracts/gates/nfd_root.algo.ts:41",
+          "pc": [
+            124
+          ]
+        },
+        {
+          "teal": 80,
+          "source": "contracts/gates/nfd_root.algo.ts:41",
+          "pc": [
+            125,
+            126,
+            127
+          ]
+        },
+        {
+          "teal": 94,
+          "source": "contracts/gates/nfd_root.algo.ts:44",
+          "pc": [
+            128
+          ]
+        },
+        {
+          "teal": 95,
+          "source": "contracts/gates/nfd_root.algo.ts:44",
+          "pc": [
+            129
+          ]
+        },
+        {
+          "teal": 96,
+          "source": "contracts/gates/nfd_root.algo.ts:44",
+          "pc": [
+            130,
+            131
+          ]
+        },
+        {
+          "teal": 100,
+          "source": "contracts/gates/nfd_root.algo.ts:45",
+          "pc": [
+            132
+          ]
+        },
+        {
+          "teal": 101,
+          "source": "contracts/gates/nfd_root.algo.ts:45",
+          "pc": [
+            133,
+            134
+          ]
+        },
+        {
+          "teal": 109,
+          "source": "contracts/gates/nfd_root.algo.ts:47",
+          "pc": [
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154
+          ]
+        },
+        {
+          "teal": 110,
+          "source": "contracts/gates/nfd_root.algo.ts:47",
+          "pc": [
+            155,
+            156
+          ]
+        },
+        {
+          "teal": 111,
+          "source": "contracts/gates/nfd_root.algo.ts:48",
+          "pc": [
+            157,
+            158
+          ]
+        },
+        {
+          "teal": 112,
+          "source": "contracts/gates/nfd_root.algo.ts:48",
+          "pc": [
+            159,
+            160
+          ]
+        },
+        {
+          "teal": 113,
+          "source": "contracts/gates/nfd_root.algo.ts:49",
+          "pc": [
+            161,
+            162
+          ]
+        },
+        {
+          "teal": 114,
+          "source": "contracts/gates/nfd_root.algo.ts:49",
+          "pc": [
+            163
+          ]
+        },
+        {
+          "teal": 115,
+          "source": "contracts/gates/nfd_root.algo.ts:49",
+          "pc": [
+            164,
+            165
+          ]
+        },
+        {
+          "teal": 119,
+          "source": "contracts/gates/nfd_root.algo.ts:51",
+          "pc": [
+            166,
+            167
+          ]
+        },
+        {
+          "teal": 120,
+          "source": "contracts/gates/nfd_root.algo.ts:51",
+          "pc": [
+            168,
+            169
+          ]
+        },
+        {
+          "teal": 124,
+          "source": "contracts/gates/nfd_root.algo.ts:52",
+          "pc": [
+            170
+          ]
+        },
+        {
+          "teal": 125,
+          "source": "contracts/gates/nfd_root.algo.ts:52",
+          "pc": [
+            171,
+            172
+          ]
+        },
+        {
+          "teal": 128,
+          "source": "contracts/gates/nfd_root.algo.ts:44",
+          "pc": [
+            173
+          ]
+        },
+        {
+          "teal": 133,
+          "source": "contracts/gates/nfd_root.algo.ts:55",
+          "pc": [
+            174,
+            175
+          ]
+        },
+        {
+          "teal": 134,
+          "source": "contracts/gates/nfd_root.algo.ts:55",
+          "pc": [
+            176
+          ]
+        },
+        {
+          "teal": 135,
+          "source": "contracts/gates/nfd_root.algo.ts:55",
+          "pc": [
+            177
+          ]
+        },
+        {
+          "teal": 136,
+          "source": "contracts/gates/nfd_root.algo.ts:55",
+          "pc": [
+            178
+          ]
+        },
+        {
+          "teal": 137,
+          "source": "contracts/gates/nfd_root.algo.ts:55",
+          "pc": [
+            179,
+            180,
+            181
+          ]
+        },
+        {
+          "teal": 142,
+          "source": "contracts/gates/nfd_root.algo.ts:56",
+          "pc": [
+            182
+          ]
+        },
+        {
+          "teal": 143,
+          "source": "contracts/gates/nfd_root.algo.ts:56",
+          "pc": [
+            183,
+            184,
+            185
+          ]
+        },
+        {
+          "teal": 155,
+          "source": "contracts/gates/nfd_root.algo.ts:59",
+          "pc": [
+            186
+          ]
+        },
+        {
+          "teal": 156,
+          "source": "contracts/gates/nfd_root.algo.ts:59",
+          "pc": [
+            187
+          ]
+        },
+        {
+          "teal": 157,
+          "source": "contracts/gates/nfd_root.algo.ts:59",
+          "pc": [
+            188,
+            189
+          ]
+        },
+        {
+          "teal": 161,
+          "source": "contracts/gates/nfd_root.algo.ts:60",
+          "pc": [
+            190,
+            191
+          ]
+        },
+        {
+          "teal": 162,
+          "source": "contracts/gates/nfd_root.algo.ts:60",
+          "pc": [
+            192,
+            193
+          ]
+        },
+        {
+          "teal": 169,
+          "source": "contracts/gates/nfd_root.algo.ts:62",
+          "pc": [
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208
+          ]
+        },
+        {
+          "teal": 170,
+          "source": "contracts/gates/nfd_root.algo.ts:62",
+          "pc": [
+            209,
+            210
+          ]
+        },
+        {
+          "teal": 171,
+          "source": "contracts/gates/nfd_root.algo.ts:63",
+          "pc": [
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225
+          ]
+        },
+        {
+          "teal": 172,
+          "source": "contracts/gates/nfd_root.algo.ts:63",
+          "pc": [
+            226,
+            227
+          ]
+        },
+        {
+          "teal": 176,
+          "source": "contracts/gates/nfd_root.algo.ts:65",
+          "pc": [
+            228
+          ]
+        },
+        {
+          "teal": 177,
+          "source": "contracts/gates/nfd_root.algo.ts:65",
+          "pc": [
+            229,
+            230
+          ]
+        },
+        {
+          "teal": 180,
+          "source": "contracts/gates/nfd_root.algo.ts:59",
+          "pc": [
+            231
+          ]
+        },
+        {
+          "teal": 184,
+          "source": "contracts/gates/nfd_root.algo.ts:68",
+          "pc": [
+            232,
+            233
+          ]
+        },
+        {
+          "teal": 185,
+          "source": "contracts/gates/nfd_root.algo.ts:68",
+          "pc": [
+            234,
+            235
+          ]
+        },
+        {
+          "teal": 189,
+          "source": "contracts/gates/nfd_root.algo.ts:69",
+          "pc": [
+            236
+          ]
+        },
+        {
+          "teal": 190,
+          "source": "contracts/gates/nfd_root.algo.ts:69",
+          "pc": [
+            237,
+            238
+          ]
+        },
+        {
+          "teal": 194,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            239
+          ]
+        },
+        {
+          "teal": 195,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            240,
+            241
+          ]
+        },
+        {
+          "teal": 200,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            242,
+            243
+          ]
+        },
+        {
+          "teal": 201,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            244,
+            245
+          ]
+        },
+        {
+          "teal": 202,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            246
+          ]
+        },
+        {
+          "teal": 203,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            247
+          ]
+        },
+        {
+          "teal": 204,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            248,
+            249,
+            250
+          ]
+        },
+        {
+          "teal": 208,
+          "source": "contracts/gates/nfd_root.algo.ts:71",
+          "pc": [
+            251,
+            252
+          ]
+        },
+        {
+          "teal": 209,
+          "source": "contracts/gates/nfd_root.algo.ts:71",
+          "pc": [
+            253,
+            254
+          ]
+        },
+        {
+          "teal": 210,
+          "source": "contracts/gates/nfd_root.algo.ts:71",
+          "pc": [
+            255
+          ]
+        },
+        {
+          "teal": 211,
+          "source": "contracts/gates/nfd_root.algo.ts:71",
+          "pc": [
+            256
+          ]
+        },
+        {
+          "teal": 212,
+          "source": "contracts/gates/nfd_root.algo.ts:71",
+          "pc": [
+            257,
+            258
+          ]
+        },
+        {
+          "teal": 217,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            259,
+            260
+          ]
+        },
+        {
+          "teal": 218,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            261,
+            262
+          ]
+        },
+        {
+          "teal": 219,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            263
+          ]
+        },
+        {
+          "teal": 220,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            264
+          ]
+        },
+        {
+          "teal": 221,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            265,
+            266,
+            267
+          ]
+        },
+        {
+          "teal": 222,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            268,
+            269
+          ]
+        },
+        {
+          "teal": 223,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            270,
+            271
+          ]
+        },
+        {
+          "teal": 224,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            272
+          ]
+        },
+        {
+          "teal": 225,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            273
+          ]
+        },
+        {
+          "teal": 228,
+          "source": "contracts/gates/nfd_root.algo.ts:72",
+          "pc": [
+            274,
+            275,
+            276
+          ]
+        },
+        {
+          "teal": 233,
+          "source": "contracts/gates/nfd_root.algo.ts:73",
+          "pc": [
+            277
+          ]
+        },
+        {
+          "teal": 234,
+          "source": "contracts/gates/nfd_root.algo.ts:73",
+          "pc": [
+            278,
+            279
+          ]
+        },
+        {
+          "teal": 241,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            280,
+            281
+          ]
+        },
+        {
+          "teal": 242,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            282
+          ]
+        },
+        {
+          "teal": 243,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            283
+          ]
+        },
+        {
+          "teal": 244,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            284,
+            285
+          ]
+        },
+        {
+          "teal": 245,
+          "source": "contracts/gates/nfd_root.algo.ts:70",
+          "pc": [
+            286,
+            287,
+            288
+          ]
+        },
+        {
+          "teal": 251,
+          "source": "contracts/gates/nfd_root.algo.ts:77",
+          "pc": [
+            289,
+            290
+          ]
+        },
+        {
+          "teal": 252,
+          "source": "contracts/gates/nfd_root.algo.ts:77",
+          "pc": [
+            291,
+            292,
+            293
+          ]
+        },
+        {
+          "teal": 257,
+          "source": "contracts/gates/nfd_root.algo.ts:78",
+          "pc": [
+            294
+          ]
+        },
+        {
+          "teal": 258,
+          "source": "contracts/gates/nfd_root.algo.ts:78",
+          "pc": [
+            295,
+            296,
+            297
+          ]
+        },
+        {
+          "teal": 263,
+          "source": "contracts/gates/nfd_root.algo.ts:81",
+          "pc": [
+            298
+          ]
+        },
+        {
+          "teal": 267,
+          "source": "contracts/gates/nfd_root.algo.ts:34",
+          "pc": [
+            299,
+            300
+          ]
+        },
+        {
+          "teal": 270,
+          "source": "contracts/gates/nfd_root.algo.ts:34",
+          "pc": [
+            301,
+            302
+          ]
+        },
+        {
+          "teal": 271,
+          "source": "contracts/gates/nfd_root.algo.ts:34",
+          "pc": [
+            303
+          ]
+        },
+        {
+          "teal": 276,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            304
+          ]
+        },
+        {
+          "teal": 279,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            305,
+            306,
+            307
+          ]
+        },
+        {
+          "teal": 280,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            308,
+            309,
+            310
+          ]
+        },
+        {
+          "teal": 283,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            311,
+            312,
+            313
+          ]
+        },
+        {
+          "teal": 284,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            314
+          ]
+        },
+        {
+          "teal": 285,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            315
+          ]
+        },
+        {
+          "teal": 286,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            316
+          ]
+        },
+        {
+          "teal": 287,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            317
+          ]
+        },
+        {
+          "teal": 288,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            318
+          ]
+        },
+        {
+          "teal": 292,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            319,
+            320,
+            321
+          ]
+        },
+        {
+          "teal": 295,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            322
+          ]
+        },
+        {
+          "teal": 299,
+          "source": "contracts/gates/nfd_root.algo.ts:85",
+          "pc": [
+            323,
+            324
+          ]
+        },
+        {
+          "teal": 300,
+          "source": "contracts/gates/nfd_root.algo.ts:85",
+          "pc": [
+            325
+          ]
+        },
+        {
+          "teal": 301,
+          "source": "contracts/gates/nfd_root.algo.ts:85",
+          "pc": [
+            326
+          ]
+        },
+        {
+          "teal": 302,
+          "source": "contracts/gates/nfd_root.algo.ts:85",
+          "pc": [
+            327
+          ]
+        },
+        {
+          "teal": 303,
+          "source": "contracts/gates/nfd_root.algo.ts:85",
+          "pc": [
+            328
+          ]
+        },
+        {
+          "teal": 307,
+          "source": "contracts/gates/nfd_root.algo.ts:86",
+          "pc": [
+            329
+          ]
+        },
+        {
+          "teal": 308,
+          "source": "contracts/gates/nfd_root.algo.ts:86",
+          "pc": [
+            330
+          ]
+        },
+        {
+          "teal": 309,
+          "source": "contracts/gates/nfd_root.algo.ts:86",
+          "pc": [
+            331,
+            332
+          ]
+        },
+        {
+          "teal": 313,
+          "source": "contracts/gates/nfd_root.algo.ts:87",
+          "pc": [
+            333,
+            334
+          ]
+        },
+        {
+          "teal": 314,
+          "source": "contracts/gates/nfd_root.algo.ts:87",
+          "pc": [
+            335
+          ]
+        },
+        {
+          "teal": 315,
+          "source": "contracts/gates/nfd_root.algo.ts:87",
+          "pc": [
+            336
+          ]
+        },
+        {
+          "teal": 316,
+          "source": "contracts/gates/nfd_root.algo.ts:87",
+          "pc": [
+            337
+          ]
+        },
+        {
+          "teal": 317,
+          "source": "contracts/gates/nfd_root.algo.ts:87",
+          "pc": [
+            338
+          ]
+        },
+        {
+          "teal": 318,
+          "source": "contracts/gates/nfd_root.algo.ts:87",
+          "pc": [
+            339,
+            340
+          ]
+        },
+        {
+          "teal": 319,
+          "source": "contracts/gates/nfd_root.algo.ts:87",
+          "pc": [
+            341
+          ]
+        },
+        {
+          "teal": 323,
+          "source": "contracts/gates/nfd_root.algo.ts:88",
+          "pc": [
+            342
+          ]
+        },
+        {
+          "teal": 324,
+          "source": "contracts/gates/nfd_root.algo.ts:88",
+          "pc": [
+            343
+          ]
+        },
+        {
+          "teal": 325,
+          "source": "contracts/gates/nfd_root.algo.ts:88",
+          "pc": [
+            344
+          ]
+        },
+        {
+          "teal": 326,
+          "source": "contracts/gates/nfd_root.algo.ts:88",
+          "pc": [
+            345
+          ]
+        },
+        {
+          "teal": 327,
+          "source": "contracts/gates/nfd_root.algo.ts:88",
+          "pc": [
+            346
+          ]
+        },
+        {
+          "teal": 328,
+          "source": "contracts/gates/nfd_root.algo.ts:88",
+          "pc": [
+            347
+          ]
+        },
+        {
+          "teal": 329,
+          "source": "contracts/gates/nfd_root.algo.ts:88",
+          "pc": [
+            348
+          ]
+        },
+        {
+          "teal": 333,
+          "source": "contracts/gates/nfd_root.algo.ts:89",
+          "pc": [
+            349,
+            350
+          ]
+        },
+        {
+          "teal": 336,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            351,
+            352
+          ]
+        },
+        {
+          "teal": 337,
+          "source": "contracts/gates/nfd_root.algo.ts:84",
+          "pc": [
+            353
+          ]
+        },
+        {
+          "teal": 342,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            354
+          ]
+        },
+        {
+          "teal": 345,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            355,
+            356,
+            357
+          ]
+        },
+        {
+          "teal": 346,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            358,
+            359,
+            360
+          ]
+        },
+        {
+          "teal": 349,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            361,
+            362,
+            363
+          ]
+        },
+        {
+          "teal": 350,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            364,
+            365,
+            366
+          ]
+        },
+        {
+          "teal": 351,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            367
+          ]
+        },
+        {
+          "teal": 352,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            368,
+            369
+          ]
+        },
+        {
+          "teal": 353,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            370
+          ]
+        },
+        {
+          "teal": 354,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            371
+          ]
+        },
+        {
+          "teal": 355,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            372
+          ]
+        },
+        {
+          "teal": 356,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            373
+          ]
+        },
+        {
+          "teal": 357,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            374
+          ]
+        },
+        {
+          "teal": 361,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            375,
+            376,
+            377
+          ]
+        },
+        {
+          "teal": 364,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            378
+          ]
+        },
+        {
+          "teal": 365,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            379
+          ]
+        },
+        {
+          "teal": 369,
+          "source": "contracts/gates/nfd_root.algo.ts:93",
+          "pc": [
+            380,
+            381
+          ]
+        },
+        {
+          "teal": 370,
+          "source": "contracts/gates/nfd_root.algo.ts:93",
+          "pc": [
+            382
+          ]
+        },
+        {
+          "teal": 374,
+          "source": "contracts/gates/nfd_root.algo.ts:20",
+          "pc": [
+            383,
+            384
+          ]
+        },
+        {
+          "teal": 378,
+          "source": "contracts/gates/nfd_root.algo.ts:20",
+          "pc": [
+            385
+          ]
+        },
+        {
+          "teal": 379,
+          "source": "contracts/gates/nfd_root.algo.ts:20",
+          "pc": [
+            386
+          ]
+        },
+        {
+          "teal": 383,
+          "source": "contracts/gates/nfd_root.algo.ts:20",
+          "pc": [
+            387,
+            388
+          ]
+        },
+        {
+          "teal": 384,
+          "source": "contracts/gates/nfd_root.algo.ts:20",
+          "pc": [
+            389
+          ]
+        },
+        {
+          "teal": 385,
+          "source": "contracts/gates/nfd_root.algo.ts:93",
+          "pc": [
+            390
+          ]
+        },
+        {
+          "teal": 386,
+          "source": "contracts/gates/nfd_root.algo.ts:93",
+          "pc": [
+            391
+          ]
+        },
+        {
+          "teal": 390,
+          "source": "contracts/gates/nfd_root.algo.ts:94",
+          "pc": [
+            392,
+            393
+          ]
+        },
+        {
+          "teal": 391,
+          "source": "contracts/gates/nfd_root.algo.ts:94",
+          "pc": [
+            394,
+            395
+          ]
+        },
+        {
+          "teal": 395,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            396,
+            397
+          ]
+        },
+        {
+          "teal": 396,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            398,
+            399,
+            400
+          ]
+        },
+        {
+          "teal": 397,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            401
+          ]
+        },
+        {
+          "teal": 398,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            402
+          ]
+        },
+        {
+          "teal": 399,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            403
+          ]
+        },
+        {
+          "teal": 402,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "errorMessage": "box value does not exist: this.registry(params.registryIndex).value",
+          "pc": [
+            404
+          ]
+        },
+        {
+          "teal": 403,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            405,
+            406
+          ]
+        },
+        {
+          "teal": 404,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            407
+          ]
+        },
+        {
+          "teal": 405,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            408,
+            409
+          ]
+        },
+        {
+          "teal": 406,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            410,
+            411
+          ]
+        },
+        {
+          "teal": 407,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            412,
+            413
+          ]
+        },
+        {
+          "teal": 408,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            414
+          ]
+        },
+        {
+          "teal": 409,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            415
+          ]
+        },
+        {
+          "teal": 410,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            416,
+            417
+          ]
+        },
+        {
+          "teal": 411,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            418
+          ]
+        },
+        {
+          "teal": 412,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            419
+          ]
+        },
+        {
+          "teal": 413,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            420
+          ]
+        },
+        {
+          "teal": 414,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            421
+          ]
+        },
+        {
+          "teal": 415,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            422,
+            423
+          ]
+        },
+        {
+          "teal": 416,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            424
+          ]
+        },
+        {
+          "teal": 417,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            425
+          ]
+        },
+        {
+          "teal": 418,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            426,
+            427,
+            428
+          ]
+        },
+        {
+          "teal": 419,
+          "source": "contracts/gates/nfd_root.algo.ts:95",
+          "pc": [
+            429,
+            430
+          ]
+        },
+        {
+          "teal": 423,
+          "source": "contracts/gates/nfd_root.algo.ts:97",
+          "pc": [
+            431,
+            432
+          ]
+        },
+        {
+          "teal": 424,
+          "source": "contracts/gates/nfd_root.algo.ts:97",
+          "pc": [
+            433,
+            434
+          ]
+        },
+        {
+          "teal": 425,
+          "source": "contracts/gates/nfd_root.algo.ts:97",
+          "pc": [
+            435,
+            436,
+            437
+          ]
+        },
+        {
+          "teal": 426,
+          "source": "contracts/gates/nfd_root.algo.ts:97",
+          "pc": [
+            438
+          ]
+        },
+        {
+          "teal": 427,
+          "source": "contracts/gates/nfd_root.algo.ts:97",
+          "pc": [
+            439,
+            440
+          ]
+        },
+        {
+          "teal": 428,
+          "source": "contracts/gates/nfd_root.algo.ts:97",
+          "pc": [
+            441,
+            442,
+            443
+          ]
+        },
+        {
+          "teal": 429,
+          "source": "contracts/gates/nfd_root.algo.ts:97",
+          "pc": [
+            444,
+            445,
+            446
+          ]
+        },
+        {
+          "teal": 432,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            447,
+            448
+          ]
+        },
+        {
+          "teal": 435,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            449,
+            450
+          ]
+        },
+        {
+          "teal": 436,
+          "source": "contracts/gates/nfd_root.algo.ts:92",
+          "pc": [
+            451
+          ]
+        },
+        {
+          "teal": 439,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            452
+          ]
+        },
+        {
+          "teal": 440,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            453
+          ]
+        },
+        {
+          "teal": 443,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            454,
+            455,
+            456,
+            457,
+            458,
+            459
+          ]
+        },
+        {
+          "teal": 444,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            460,
+            461,
+            462
+          ]
+        },
+        {
+          "teal": 445,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            463,
+            464,
+            465,
+            466
+          ]
+        },
+        {
+          "teal": 448,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "errorMessage": "this contract does not implement the given ABI method for create NoOp",
+          "pc": [
+            467
+          ]
+        },
+        {
+          "teal": 451,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            468,
+            469,
+            470,
+            471,
+            472,
+            473
+          ]
+        },
+        {
+          "teal": 452,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            474,
+            475,
+            476,
+            477,
+            478,
+            479
+          ]
+        },
+        {
+          "teal": 453,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            480,
+            481,
+            482
+          ]
+        },
+        {
+          "teal": 454,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "pc": [
+            483,
+            484,
+            485,
+            486,
+            487,
+            488
+          ]
+        },
+        {
+          "teal": 457,
+          "source": "contracts/gates/nfd_root.algo.ts:27",
+          "errorMessage": "this contract does not implement the given ABI method for call NoOp",
+          "pc": [
+            489
+          ]
+        }
+      ],
+      "pcOffsetMethod": "none"
+    },
+    "clear": {
+      "sourceInfo": [],
+      "pcOffsetMethod": "none"
+    }
+  },
+  "source": {
+    "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCmludGNibG9jayAwIDEgNiAzMiA1IDgKYnl0ZWNibG9jayAweCAweDYzIDB4MTUxZjdjNzUKCi8vIFRoaXMgVEVBTCB3YXMgZ2VuZXJhdGVkIGJ5IFRFQUxTY3JpcHQgdjAuMTA2LjAKLy8gaHR0cHM6Ly9naXRodWIuY29tL2FsZ29yYW5kZm91bmRhdGlvbi9URUFMU2NyaXB0CgovLyBUaGlzIGNvbnRyYWN0IGlzIGNvbXBsaWFudCB3aXRoIGFuZC9vciBpbXBsZW1lbnRzIHRoZSBmb2xsb3dpbmcgQVJDczogWyBBUkM0IF0KCi8vIFRoZSBmb2xsb3dpbmcgdGVuIGxpbmVzIG9mIFRFQUwgaGFuZGxlIGluaXRpYWwgcHJvZ3JhbSBmbG93Ci8vIFRoaXMgcGF0dGVybiBpcyB1c2VkIHRvIG1ha2UgaXQgZWFzeSBmb3IgYW55b25lIHRvIHBhcnNlIHRoZSBzdGFydCBvZiB0aGUgcHJvZ3JhbSBhbmQgZGV0ZXJtaW5lIGlmIGEgc3BlY2lmaWMgYWN0aW9uIGlzIGFsbG93ZWQKLy8gSGVyZSwgYWN0aW9uIHJlZmVycyB0byB0aGUgT25Db21wbGV0ZSBpbiBjb21iaW5hdGlvbiB3aXRoIHdoZXRoZXIgdGhlIGFwcCBpcyBiZWluZyBjcmVhdGVkIG9yIGNhbGxlZAovLyBFdmVyeSBwb3NzaWJsZSBhY3Rpb24gZm9yIHRoaXMgY29udHJhY3QgaXMgcmVwcmVzZW50ZWQgaW4gdGhlIHN3aXRjaCBzdGF0ZW1lbnQKLy8gSWYgdGhlIGFjdGlvbiBpcyBub3QgaW1wbGVtZW50ZWQgaW4gdGhlIGNvbnRyYWN0LCBpdHMgcmVzcGVjdGl2ZSBicmFuY2ggd2lsbCBiZSAiKk5PVF9JTVBMRU1FTlRFRCIgd2hpY2gganVzdCBjb250YWlucyAiZXJyIgp0eG4gQXBwbGljYXRpb25JRAohCmludGMgMiAvLyA2CioKdHhuIE9uQ29tcGxldGlvbgorCnN3aXRjaCAqY2FsbF9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqY3JlYXRlX05vT3AgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVECgoqTk9UX0lNUExFTUVOVEVEOgoJLy8gVGhlIHJlcXVlc3RlZCBhY3Rpb24gaXMgbm90IGltcGxlbWVudGVkIGluIHRoaXMgY29udHJhY3QuIEFyZSB5b3UgdXNpbmcgdGhlIGNvcnJlY3QgT25Db21wbGV0ZT8gRGlkIHlvdSBzZXQgeW91ciBhcHAgSUQ/CgllcnIKCi8vIG5mZEdhdGUodXNlcjogQWRkcmVzcywgTkZEOiBBcHBJRCwgcm9vdDogc3RyaW5nKTogYm9vbGVhbgpuZmRHYXRlOgoJcHJvdG8gMyAxCgoJLy8gUHVzaCBlbXB0eSBieXRlcyBhZnRlciB0aGUgZnJhbWUgcG9pbnRlciB0byByZXNlcnZlIHNwYWNlIGZvciBsb2NhbCB2YXJpYWJsZXMKCWJ5dGVjIDAgLy8gMHgKCWR1cG4gNAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjM1CgkvLyBuZmROYW1lID0gTkZELmdsb2JhbFN0YXRlKE5GRF9OQU1FX0tFWSkgYXMgYnl0ZXMKCWZyYW1lX2RpZyAtMiAvLyBORkQ6IEFwcElECglwdXNoYnl0ZXMgImkubmFtZSIKCWFwcF9nbG9iYWxfZ2V0X2V4CgoJLy8gZ2xvYmFsIHN0YXRlIHZhbHVlIGRvZXMgbm90IGV4aXN0OiBORkQuZ2xvYmFsU3RhdGUoTkZEX05BTUVfS0VZKQoJYXNzZXJ0CglmcmFtZV9idXJ5IDAgLy8gbmZkTmFtZTogYnl0ZVtdCgoJLy8gKmlmMF9jb25kaXRpb24KCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjM4CgkvLyBORkQuZ2xvYmFsU3RhdGVFeGlzdHMoTkZEX1BBUkVOVF9BUFBfS0VZKQoJLy8gICAgICAgICAgICAgJiYgcm9vdCAhPT0gZXh0cmFjdDMobmZkTmFtZSwgKG5mZE5hbWUubGVuZ3RoIC0gKHJvb3QubGVuZ3RoICsgNSkpLCAobmZkTmFtZS5sZW5ndGggLSA1KSkKCWZyYW1lX2RpZyAtMiAvLyBORkQ6IEFwcElECglwdXNoYnl0ZXMgImkucGFyZW50QXBwSUQiCglhcHBfZ2xvYmFsX2dldF9leAoJc3dhcAoJcG9wCglkdXAKCWJ6ICpza2lwX2FuZDAKCWZyYW1lX2RpZyAtMyAvLyByb290OiBzdHJpbmcKCWZyYW1lX2RpZyAwIC8vIG5mZE5hbWU6IGJ5dGVbXQoJZnJhbWVfZGlnIDAgLy8gbmZkTmFtZTogYnl0ZVtdCglsZW4KCWZyYW1lX2RpZyAtMyAvLyByb290OiBzdHJpbmcKCWxlbgoJaW50YyA0IC8vIDUKCSsKCS0KCWZyYW1lX2RpZyAwIC8vIG5mZE5hbWU6IGJ5dGVbXQoJbGVuCglpbnRjIDQgLy8gNQoJLQoJZXh0cmFjdDMKCSE9CgkmJgoKKnNraXBfYW5kMDoKCWJ6ICppZjBfZW5kCgoJLy8gKmlmMF9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo0MQoJLy8gcmV0dXJuIGZhbHNlOwoJaW50YyAwIC8vIDAKCWIgKm5mZEdhdGUqcmV0dXJuCgoqaWYwX2VuZDoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjQ0CgkvLyBzZW5kQXBwQ2FsbCh7CgkvLyAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiBBcHBJRC5mcm9tVWludDY0KE90aGVyQXBwSURzTkZEUmVnaXN0cnkpLAoJLy8gICAgICAgICAgICAgYXBwbGljYXRpb25BcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgTkZEX1ZBTElEX0FQUF9BUkcsCgkvLyAgICAgICAgICAgICAgICAgbmZkTmFtZSwKCS8vICAgICAgICAgICAgICAgICBpdG9iKE5GRC5pZCksCgkvLyAgICAgICAgICAgICBdLAoJLy8gICAgICAgICAgICAgYXBwbGljYXRpb25zOiBbTkZEXSwKCS8vICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgfSkKCWl0eG5fYmVnaW4KCWludGMgMiAvLyAgYXBwbAoJaXR4bl9maWVsZCBUeXBlRW51bQoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjQ1CgkvLyBhcHBsaWNhdGlvbklEOiBBcHBJRC5mcm9tVWludDY0KE90aGVyQXBwSURzTkZEUmVnaXN0cnkpCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbklECgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NDYKCS8vIGFwcGxpY2F0aW9uQXJnczogWwoJLy8gICAgICAgICAgICAgICAgIE5GRF9WQUxJRF9BUFBfQVJHLAoJLy8gICAgICAgICAgICAgICAgIG5mZE5hbWUsCgkvLyAgICAgICAgICAgICAgICAgaXRvYihORkQuaWQpLAoJLy8gICAgICAgICAgICAgXQoJcHVzaGJ5dGVzICJpc192YWxpZF9uZmRfYXBwaWQiCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIDAgLy8gbmZkTmFtZTogYnl0ZVtdCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC0yIC8vIE5GRDogQXBwSUQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NTEKCS8vIGFwcGxpY2F0aW9uczogW05GRF0KCWZyYW1lX2RpZyAtMiAvLyBORkQ6IEFwcElECglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9ucwoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjUyCgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vIFN1Ym1pdCBpbm5lciB0cmFuc2FjdGlvbgoJaXR4bl9zdWJtaXQKCgkvLyAqaWYxX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NTUKCS8vIGJ0b2kodGhpcy5pdHhuLmxhc3RMb2cpID09PSAwCglpdHhuIExhc3RMb2cKCWJ0b2kKCWludGMgMCAvLyAwCgk9PQoJYnogKmlmMV9lbmQKCgkvLyAqaWYxX2NvbnNlcXVlbnQKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjU2CgkvLyByZXR1cm4gZmFsc2U7CglpbnRjIDAgLy8gMAoJYiAqbmZkR2F0ZSpyZXR1cm4KCippZjFfZW5kOgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NTkKCS8vIHNlbmRBcHBDYWxsKHsKCS8vICAgICAgICAgICAgIGFwcGxpY2F0aW9uSUQ6IE5GRCwKCS8vICAgICAgICAgICAgIGFwcGxpY2F0aW9uQXJnczogWwoJLy8gICAgICAgICAgICAgICAgIE5GRF9SRUFEX1BST1BFUlRZX0FSRywKCS8vICAgICAgICAgICAgICAgICBORkRfVkVSSUZJRURfQUREUkVTU0VTX1BST1BFUlRZX05BTUUsCgkvLyAgICAgICAgICAgICBdLAoJLy8gICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICB9KQoJaXR4bl9iZWdpbgoJaW50YyAyIC8vICBhcHBsCglpdHhuX2ZpZWxkIFR5cGVFbnVtCgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NjAKCS8vIGFwcGxpY2F0aW9uSUQ6IE5GRAoJZnJhbWVfZGlnIC0yIC8vIE5GRDogQXBwSUQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjYxCgkvLyBhcHBsaWNhdGlvbkFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICBORkRfUkVBRF9QUk9QRVJUWV9BUkcsCgkvLyAgICAgICAgICAgICAgICAgTkZEX1ZFUklGSUVEX0FERFJFU1NFU19QUk9QRVJUWV9OQU1FLAoJLy8gICAgICAgICAgICAgXQoJcHVzaGJ5dGVzICJyZWFkX3Byb3BlcnR5IgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCXB1c2hieXRlcyAidi5jYUFsZ28uMC5hcyIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NjUKCS8vIGZlZTogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRmVlCgoJLy8gU3VibWl0IGlubmVyIHRyYW5zYWN0aW9uCglpdHhuX3N1Ym1pdAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjY4CgkvLyBjYUFsZ29EYXRhID0gdGhpcy5pdHhuLmxhc3RMb2cKCWl0eG4gTGFzdExvZwoJZnJhbWVfYnVyeSAxIC8vIGNhQWxnb0RhdGE6IGJ5dGVbXQoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjY5CgkvLyBleGlzdHM6IGJvb2xlYW4gPSBmYWxzZQoJaW50YyAwIC8vIDAKCWZyYW1lX2J1cnkgMiAvLyBleGlzdHM6IGJvb2xlYW4KCgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo3MAoJLy8gZm9yIChsZXQgaSA9IDA7IGkgPCBjYUFsZ29EYXRhLmxlbmd0aDsgaSArPSAzMikKCWludGMgMCAvLyAwCglmcmFtZV9idXJ5IDMgLy8gaTogdWludDY0CgoqZm9yXzA6CgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo3MAoJLy8gaSA8IGNhQWxnb0RhdGEubGVuZ3RoCglmcmFtZV9kaWcgMyAvLyBpOiB1aW50NjQKCWZyYW1lX2RpZyAxIC8vIGNhQWxnb0RhdGE6IGJ5dGVbXQoJbGVuCgk8CglieiAqZm9yXzBfZW5kCgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NzEKCS8vIGFkZHIgPSBleHRyYWN0MyhjYUFsZ29EYXRhLCBpLCAzMikKCWZyYW1lX2RpZyAxIC8vIGNhQWxnb0RhdGE6IGJ5dGVbXQoJZnJhbWVfZGlnIDMgLy8gaTogdWludDY0CglpbnRjIDMgLy8gMzIKCWV4dHJhY3QzCglmcmFtZV9idXJ5IDQgLy8gYWRkcjogYnl0ZVtdCgoJLy8gKmlmMl9jb25kaXRpb24KCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjcyCgkvLyBhZGRyICE9PSByYXdCeXRlcyhnbG9iYWxzLnplcm9BZGRyZXNzKSAmJiBhZGRyID09PSByYXdCeXRlcyh1c2VyKQoJZnJhbWVfZGlnIDQgLy8gYWRkcjogYnl0ZVtdCglnbG9iYWwgWmVyb0FkZHJlc3MKCSE9CglkdXAKCWJ6ICpza2lwX2FuZDEKCWZyYW1lX2RpZyA0IC8vIGFkZHI6IGJ5dGVbXQoJZnJhbWVfZGlnIC0xIC8vIHVzZXI6IEFkZHJlc3MKCT09CgkmJgoKKnNraXBfYW5kMToKCWJ6ICppZjJfZW5kCgoJLy8gKmlmMl9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo3MwoJLy8gZXhpc3RzID0gdHJ1ZQoJaW50YyAxIC8vIDEKCWZyYW1lX2J1cnkgMiAvLyBleGlzdHM6IGJvb2xlYW4KCippZjJfZW5kOgoKKmZvcl8wX2NvbnRpbnVlOgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6NzAKCS8vIGkgKz0gMzIKCWZyYW1lX2RpZyAzIC8vIGk6IHVpbnQ2NAoJaW50YyAzIC8vIDMyCgkrCglmcmFtZV9idXJ5IDMgLy8gaTogdWludDY0CgliICpmb3JfMAoKKmZvcl8wX2VuZDoKCS8vICppZjNfY29uZGl0aW9uCgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo3NwoJLy8gZXhpc3RzCglmcmFtZV9kaWcgMiAvLyBleGlzdHM6IGJvb2xlYW4KCWJ6ICppZjNfZW5kCgoJLy8gKmlmM19jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo3OAoJLy8gcmV0dXJuIHRydWU7CglpbnRjIDEgLy8gMQoJYiAqbmZkR2F0ZSpyZXR1cm4KCippZjNfZW5kOgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6ODEKCS8vIHJldHVybiBmYWxzZTsKCWludGMgMCAvLyAwCgoqbmZkR2F0ZSpyZXR1cm46CgkvLyBzZXQgdGhlIHN1YnJvdXRpbmUgcmV0dXJuIHZhbHVlCglmcmFtZV9idXJ5IDAKCgkvLyBwb3AgYWxsIGxvY2FsIHZhcmlhYmxlcyBmcm9tIHRoZSBzdGFjawoJcG9wbiA0CglyZXRzdWIKCi8vIHJlZ2lzdGVyKGJ5dGVbXSl1aW50NjQKKmFiaV9yb3V0ZV9yZWdpc3RlcjoKCS8vIFRoZSBBQkkgcmV0dXJuIHByZWZpeAoJYnl0ZWMgMiAvLyAweDE1MWY3Yzc1CgoJLy8gYXJnczogYnl0ZVtdCgl0eG5hIEFwcGxpY2F0aW9uQXJncyAxCglleHRyYWN0IDIgMAoKCS8vIGV4ZWN1dGUgcmVnaXN0ZXIoYnl0ZVtdKXVpbnQ2NAoJY2FsbHN1YiByZWdpc3RlcgoJaXRvYgoJY29uY2F0Cglsb2cKCWludGMgMSAvLyAxCglyZXR1cm4KCi8vIHJlZ2lzdGVyKGFyZ3M6IGJ5dGVzKTogdWludDY0CnJlZ2lzdGVyOgoJcHJvdG8gMSAxCgoJLy8gUHVzaCBlbXB0eSBieXRlcyBhZnRlciB0aGUgZnJhbWUgcG9pbnRlciB0byByZXNlcnZlIHNwYWNlIGZvciBsb2NhbCB2YXJpYWJsZXMKCWJ5dGVjIDAgLy8gMHgKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo4NQoJLy8gYXNzZXJ0KGFyZ3MubGVuZ3RoID49IDAsIGVycnMuSU5WQUxJRF9BUkdfQ09VTlQpCglmcmFtZV9kaWcgLTEgLy8gYXJnczogYnl0ZXMKCWxlbgoJaW50YyAwIC8vIDAKCT49Cglhc3NlcnQKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo4NgoJLy8gY291bnRlciA9IHRoaXMucmVnaXN0cnlDb3VudGVyLnZhbHVlCglieXRlYyAxIC8vICAiYyIKCWFwcF9nbG9iYWxfZ2V0CglmcmFtZV9idXJ5IDAgLy8gY291bnRlcjogdWludDY0CgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6ODcKCS8vIHRoaXMucmVnaXN0cnkoY291bnRlcikudmFsdWUgPSBjYXN0Qnl0ZXM8UmVnaXN0cnlJbmZvPihhcmdzKQoJZnJhbWVfZGlnIDAgLy8gY291bnRlcjogdWludDY0CglpdG9iCglkdXAKCWJveF9kZWwKCXBvcAoJZnJhbWVfZGlnIC0xIC8vIGFyZ3M6IGJ5dGVzCglib3hfcHV0CgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6ODgKCS8vIHRoaXMucmVnaXN0cnlDb3VudGVyLnZhbHVlICs9IDEKCWJ5dGVjIDEgLy8gICJjIgoJYXBwX2dsb2JhbF9nZXQKCWludGMgMSAvLyAxCgkrCglieXRlYyAxIC8vICAiYyIKCXN3YXAKCWFwcF9nbG9iYWxfcHV0CgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6ODkKCS8vIHJldHVybiBjb3VudGVyOwoJZnJhbWVfZGlnIDAgLy8gY291bnRlcjogdWludDY0CgoJLy8gc2V0IHRoZSBzdWJyb3V0aW5lIHJldHVybiB2YWx1ZQoJZnJhbWVfYnVyeSAwCglyZXRzdWIKCi8vIGNoZWNrKGJ5dGVbXSlib29sCiphYmlfcm91dGVfY2hlY2s6CgkvLyBUaGUgQUJJIHJldHVybiBwcmVmaXgKCWJ5dGVjIDIgLy8gMHgxNTFmN2M3NQoKCS8vIGFyZ3M6IGJ5dGVbXQoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQoJZXh0cmFjdCAyIDAKCgkvLyBleGVjdXRlIGNoZWNrKGJ5dGVbXSlib29sCgljYWxsc3ViIGNoZWNrCglwdXNoYnl0ZXMgMHgwMAoJaW50YyAwIC8vIDAKCXVuY292ZXIgMgoJc2V0Yml0Cgljb25jYXQKCWxvZwoJaW50YyAxIC8vIDEKCXJldHVybgoKLy8gY2hlY2soYXJnczogYnl0ZXMpOiBib29sZWFuCmNoZWNrOgoJcHJvdG8gMSAxCgoJLy8gUHVzaCBlbXB0eSBieXRlcyBhZnRlciB0aGUgZnJhbWUgcG9pbnRlciB0byByZXNlcnZlIHNwYWNlIGZvciBsb2NhbCB2YXJpYWJsZXMKCWJ5dGVjIDAgLy8gMHgKCWR1cAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjkzCgkvLyBhc3NlcnQoYXJncy5sZW5ndGggPT09IE5GRFJvb3RHYXRlQ2hlY2tQYXJhbXNMZW5ndGgsIGVycnMuSU5WQUxJRF9BUkdfQ09VTlQpCglmcmFtZV9kaWcgLTEgLy8gYXJnczogYnl0ZXMKCWxlbgoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjIwCgkvLyBsZW48dWludDY0PigpCglpbnRjIDUgLy8gOAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9uZmRfcm9vdC5hbGdvLnRzOjIwCgkvLyBsZW48QWRkcmVzcz4oKQoJaW50YyAzIC8vIDMyCgkrCgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6MjAKCS8vIGxlbjxBcHBJRD4oKQoJaW50YyA1IC8vIDgKCSsKCT09Cglhc3NlcnQKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo5NAoJLy8gcGFyYW1zID0gY2FzdEJ5dGVzPE5GRFJvb3RHYXRlQ2hlY2tQYXJhbXM+KGFyZ3MpCglmcmFtZV9kaWcgLTEgLy8gYXJnczogYnl0ZXMKCWZyYW1lX2J1cnkgMCAvLyBwYXJhbXM6ICh1aW50NjQsYWRkcmVzcyx1aW50NjQpCgoJLy8gY29udHJhY3RzL2dhdGVzL25mZF9yb290LmFsZ28udHM6OTUKCS8vIHJvb3QgPSB0aGlzLnJlZ2lzdHJ5KHBhcmFtcy5yZWdpc3RyeUluZGV4KS52YWx1ZS5yb290CglmcmFtZV9kaWcgMCAvLyBwYXJhbXM6ICh1aW50NjQsYWRkcmVzcyx1aW50NjQpCglleHRyYWN0IDAgOAoJYnRvaQoJaXRvYgoJYm94X2dldAoKCS8vIGJveCB2YWx1ZSBkb2VzIG5vdCBleGlzdDogdGhpcy5yZWdpc3RyeShwYXJhbXMucmVnaXN0cnlJbmRleCkudmFsdWUKCWFzc2VydAoJc3RvcmUgMjU1IC8vIGZ1bGwgYXJyYXkKCWludGMgMCAvLyAwCglsb2FkIDI1NSAvLyBmdWxsIGFycmF5Cglsb2FkIDI1NSAvLyBmdWxsIGFycmF5Cgl1bmNvdmVyIDIKCWV4dHJhY3RfdWludDE2CglkdXAgLy8gZHVwbGljYXRlIHN0YXJ0IG9mIGVsZW1lbnQKCWxvYWQgMjU1IC8vIGZ1bGwgYXJyYXkKCXN3YXAKCWV4dHJhY3RfdWludDE2IC8vIGdldCBudW1iZXIgb2YgZWxlbWVudHMKCWludGMgMSAvLyAgZ2V0IHR5cGUgbGVuZ3RoCgkqIC8vIG11bHRpcGx5IGJ5IHR5cGUgbGVuZ3RoCglwdXNoaW50IDIKCSsgLy8gYWRkIHR3byBmb3IgbGVuZ3RoCglleHRyYWN0MwoJZXh0cmFjdCAyIDAKCWZyYW1lX2J1cnkgMSAvLyByb290OiBzdHJpbmcKCgkvLyBjb250cmFjdHMvZ2F0ZXMvbmZkX3Jvb3QuYWxnby50czo5NwoJLy8gcmV0dXJuIHRoaXMubmZkR2F0ZShwYXJhbXMudXNlciwgcGFyYW1zLk5GRCwgcm9vdCk7CglmcmFtZV9kaWcgMSAvLyByb290OiBzdHJpbmcKCWZyYW1lX2RpZyAwIC8vIHBhcmFtczogKHVpbnQ2NCxhZGRyZXNzLHVpbnQ2NCkKCWV4dHJhY3QgNDAgOAoJYnRvaQoJZnJhbWVfZGlnIDAgLy8gcGFyYW1zOiAodWludDY0LGFkZHJlc3MsdWludDY0KQoJZXh0cmFjdCA4IDMyCgljYWxsc3ViIG5mZEdhdGUKCgkvLyBzZXQgdGhlIHN1YnJvdXRpbmUgcmV0dXJuIHZhbHVlCglmcmFtZV9idXJ5IDAKCgkvLyBwb3AgYWxsIGxvY2FsIHZhcmlhYmxlcyBmcm9tIHRoZSBzdGFjawoJcG9wbiAxCglyZXRzdWIKCiphYmlfcm91dGVfY3JlYXRlQXBwbGljYXRpb246CglpbnRjIDEgLy8gMQoJcmV0dXJuCgoqY3JlYXRlX05vT3A6CglwdXNoYnl0ZXMgMHhiODQ0N2IzNiAvLyBtZXRob2QgImNyZWF0ZUFwcGxpY2F0aW9uKCl2b2lkIgoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAoJbWF0Y2ggKmFiaV9yb3V0ZV9jcmVhdGVBcHBsaWNhdGlvbgoKCS8vIHRoaXMgY29udHJhY3QgZG9lcyBub3QgaW1wbGVtZW50IHRoZSBnaXZlbiBBQkkgbWV0aG9kIGZvciBjcmVhdGUgTm9PcAoJZXJyCgoqY2FsbF9Ob09wOgoJcHVzaGJ5dGVzIDB4NmJjZDM5NTMgLy8gbWV0aG9kICJyZWdpc3RlcihieXRlW10pdWludDY0IgoJcHVzaGJ5dGVzIDB4YzYxYzg2MmIgLy8gbWV0aG9kICJjaGVjayhieXRlW10pYm9vbCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfcmVnaXN0ZXIgKmFiaV9yb3V0ZV9jaGVjawoKCS8vIHRoaXMgY29udHJhY3QgZG9lcyBub3QgaW1wbGVtZW50IHRoZSBnaXZlbiBBQkkgbWV0aG9kIGZvciBjYWxsIE5vT3AKCWVycg==",
+    "clear": "I3ByYWdtYSB2ZXJzaW9uIDEw"
+  },
+  "byteCode": {
+    "approval": "CiAGAAEGIAUIJgMAAWMEFR98dTEYFCQLMRkIjQwBnwAAAAAAAAAAAAABkQAAAAAAAAAAAAAAigMBKEcEi/6ABmkubmFtZWVEjACL/oANaS5wYXJlbnRBcHBJRGVMSElBABeL/YsAiwAVi/0VIQQICYsAFSEECVgTEEEABCJCAKuxJLIQIrIYgBJpc192YWxpZF9uZmRfYXBwaWSyGosAshqL/hayGov+sjIisgGztD4XIhJBAAQiQgBxsSSyEIv+shiADXJlYWRfcHJvcGVydHmyGoANdi5jYUFsZ28uMC5hc7IaIrIBs7Q+jAEijAIijAOLA4sBFQxBACaLAYsDJViMBIsEMgMTSUEABosEi/8SEEEAAyOMAosDJQiMA0L/0YsCQQAEI0IAASKMAEYEiSo2GgFXAgCIAAUWULAjQ4oBASiL/xUiD0QpZIwAiwAWSbxIi/+/KWQjCClMZ4sAjACJKjYaAVcCAIgAC4ABACJPAlRQsCNDigEBKEmL/xUhBSUIIQUIEkSL/4wAiwBXAAgXFr5ENf8iNP80/08CWUk0/0xZIwuBAghYVwIAjAGLAYsAVygIF4sAVwggiP53jABGAYkjQ4AEuER7NjYaAI4B//EAgARrzTlTgATGHIYrNhoAjgL/R/95AA==",
+    "clear": "Cg=="
+  },
+  "compilerInfo": {
+    "compiler": "algod",
+    "compilerVersion": {
+      "major": 3,
+      "minor": 26,
+      "patch": 0,
+      "commitHash": "0d10b244"
+    }
+  }
+}

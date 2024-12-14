@@ -242,7 +242,7 @@ export class AkitaDAO extends Contract {
     /**
      * Group hashes that the DAO has approved to be submitted
      */
-    executions = BoxMap<ExecutionKey, ExecutionInfo>({ prefix: 'e' });
+    executions = BoxMap<ExecutionKey, ExecutionInfo>();
 
     /** the distribution map of the bones token 
      * 
@@ -254,7 +254,7 @@ export class AkitaDAO extends Contract {
     distribution = BoxMap<uint64, DistributionDetails>({ prefix: 'd' });
 
     /** the rewards allocated to service usage */
-    serviceRewards = BoxMap<Address, uint64>();
+    serviceRewards = BoxMap<Address, uint64>({ prefix: 'e' });
 
     /** the rewards allocated to social ussage */
     socialRewards = BoxMap<uint64, uint64>({ prefix: 'o' });
@@ -303,7 +303,7 @@ export class AkitaDAO extends Contract {
         let methodRestrictions = this.plugins(key).value.methodRestrictions;
         let executionKeyRequired = this.plugins(key).value.executionKeyRequired;
         let validExecution = !executionKeyRequired;
-        let hash: bytes32 = '';
+        let hash: string = '';
 
         for (let i = this.txn.groupIndex; i < this.txnGroup.length; i += 1) {
             const txn = this.txnGroup[i];
@@ -326,7 +326,7 @@ export class AkitaDAO extends Contract {
         }
 
         if (executionKeyRequired) {
-            validExecution = hash === executionKey;
+            validExecution = executionKey === (hash as bytes32);
         }
 
         return rekeysBack && validExecution;
@@ -360,105 +360,93 @@ export class AkitaDAO extends Contract {
         return true;
     }
 
-    private txnHash(txn: Txn, hash: bytes32): bytes32 {
+    private txnHash(txn: Txn, hash: string): bytes32 {
         let common = (
             hash
             + txn.sender
             + itob(txn.typeEnum)
             + txn.note
             + txn.rekeyTo
-            + txn.fee
+            + itob(txn.fee)
         );
 
         if (txn.typeEnum === TransactionType.Payment) {
-            let paymentHash = (
+            return sha256(
                 common
                 + txn.receiver
-                + txn.amount
+                + itob(txn.amount)
                 + txn.closeRemainderTo
             );
-
-            return sha256(paymentHash);
-
         } else if (txn.typeEnum === TransactionType.KeyRegistration) {
-            let keyRegHash = (
-                common
-                + txn.votePk
-                + txn.selectionPK
-                + txn.stateProofPk
-                + txn.voteFirst
-                + txn.voteLast
-                + txn.voteKeyDilution
-            );
-
-            return sha256(keyRegHash);
-
+            assert(false, 'unknown transaction type');
+            return hash as bytes32;
+            // TODO: add support for key registration txns
+            // return sha256(
+            //     common
+            //     + txn.votePk
+            //     + txn.selectionPK
+            //     + txn.stateProofPk
+            //     + txn.voteFirst
+            //     + txn.voteLast
+            //     + txn.voteKeyDilution
+            // );
         } else if (txn.typeEnum === TransactionType.AssetConfig) {
             assert(txn.configAsset.metadataHash.length <= 32, 'metadata hash too long');
 
-            let assetConfigHash = (
+            // + txn.configAsset.url
+
+            return sha256(
                 common
-                + txn.configAsset.id
-                + txn.configAsset.total
-                + txn.configAsset.decimals
-                + txn.configAsset.defaultFrozen
+                + itob(txn.configAsset.id)
+                + itob(txn.configAsset.total)
+                + itob(txn.configAsset.decimals)
+                + (txn.configAsset.defaultFrozen ? '1' : '0')
                 + txn.configAsset.unitName
                 + txn.configAsset.name
-                + txn.configAsset.url
                 + txn.configAsset.metadataHash
                 + txn.configAsset.manager
                 + txn.configAsset.reserve
                 + txn.configAsset.freeze
                 + txn.configAsset.clawback
             );
-
-            return sha256(assetConfigHash);
-
         } else if (txn.typeEnum === TransactionType.AssetTransfer) {
-            let assetTransferHash = (
+            return sha256(
                 common
-                + txn.xferAsset
-                + txn.assetAmount
+                + itob(txn.xferAsset)
+                + itob(txn.assetAmount)
                 + txn.assetSender
                 + txn.assetReceiver
                 + txn.assetCloseTo
             );
-
-            return sha256(assetTransferHash);
-
         } else if (txn.typeEnum === TransactionType.AssetFreeze) {
-            let assetFreezeHash = (
+            return sha256(
                 common
                 + txn.freezeAssetAccount
-                + txn.freezeAsset
-                + txn.freezeAssetFrozen
+                + itob(txn.freezeAsset)
+                + (txn.freezeAssetFrozen ? '1' : '0')
             );
-
-            return sha256(assetFreezeHash);
-
         } else if (txn.typeEnum === TransactionType.ApplicationCall) {
-            let appCallHash = (
+
+            // + txn.accounts
+            // + txn.applicationArgs
+            // + txn.applications
+            // + txn.assets
+
+            return sha256(
                 common
-                + txn.applicationID
-                + txn.onCompletion
-                + txn.accounts
+                + itob(txn.applicationID)
+                + itob(txn.onCompletion)
                 + txn.approvalProgram
-                + txn.applicationArgs
                 + txn.clearStateProgram
-                + txn.applications
-                + txn.assets
-                + txn.globalNumUint
-                + txn.globalNumByteSlice
-                + txn.localNumUint
-                + txn.localNumByteSlice
-                + txn.extraProgramPages
+                + itob(txn.globalNumUint)
+                + itob(txn.globalNumByteSlice)
+                + itob(txn.localNumUint)
+                + itob(txn.localNumByteSlice)
+                + itob(txn.extraProgramPages)
             );
-
-            return sha256(appCallHash);
-
         } else {
             assert(false, 'unknown transaction type');
-            return hash;
+            return hash as bytes32;
         }
     }
 

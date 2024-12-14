@@ -1,0 +1,2149 @@
+{
+  "name": "StakingPowerGate",
+  "desc": "",
+  "methods": [
+    {
+      "name": "register",
+      "args": [
+        {
+          "name": "args",
+          "type": "byte[]"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "check",
+      "args": [
+        {
+          "name": "args",
+          "type": "byte[]"
+        }
+      ],
+      "returns": {
+        "type": "bool"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [
+          "NoOp"
+        ],
+        "call": []
+      }
+    }
+  ],
+  "arcs": [
+    4,
+    56
+  ],
+  "structs": {
+    "RegistryInfo": [
+      {
+        "name": "op",
+        "type": "uint64"
+      },
+      {
+        "name": "asset",
+        "type": "uint64"
+      },
+      {
+        "name": "power",
+        "type": "uint64"
+      }
+    ]
+  },
+  "state": {
+    "schema": {
+      "global": {
+        "bytes": 0,
+        "ints": 1
+      },
+      "local": {
+        "bytes": 0,
+        "ints": 0
+      }
+    },
+    "keys": {
+      "global": {
+        "registryCounter": {
+          "key": "Yw==",
+          "keyType": "AVMBytes",
+          "valueType": "uint64"
+        }
+      },
+      "local": {},
+      "box": {}
+    },
+    "maps": {
+      "global": {},
+      "local": {},
+      "box": {
+        "registry": {
+          "keyType": "uint64",
+          "valueType": "RegistryInfo"
+        }
+      }
+    }
+  },
+  "bareActions": {
+    "create": [],
+    "call": []
+  },
+  "sourceInfo": {
+    "approval": {
+      "sourceInfo": [
+        {
+          "teal": 1,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            0
+          ]
+        },
+        {
+          "teal": 2,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "teal": 3,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17
+          ]
+        },
+        {
+          "teal": 15,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            18,
+            19
+          ]
+        },
+        {
+          "teal": 16,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            20
+          ]
+        },
+        {
+          "teal": 17,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            21
+          ]
+        },
+        {
+          "teal": 18,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            22
+          ]
+        },
+        {
+          "teal": 19,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            23,
+            24
+          ]
+        },
+        {
+          "teal": 20,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            25
+          ]
+        },
+        {
+          "teal": 21,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51
+          ]
+        },
+        {
+          "teal": 25,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "errorMessage": "The requested action is not implemented in this contract. Are you using the correct OnComplete? Did you set your app ID?",
+          "pc": [
+            52
+          ]
+        },
+        {
+          "teal": 29,
+          "source": "contracts/gates/staking_power.algo.ts:36",
+          "pc": [
+            53,
+            54,
+            55
+          ]
+        },
+        {
+          "teal": 32,
+          "source": "contracts/gates/staking_power.algo.ts:36",
+          "pc": [
+            56
+          ]
+        },
+        {
+          "teal": 33,
+          "source": "contracts/gates/staking_power.algo.ts:36",
+          "pc": [
+            57,
+            58
+          ]
+        },
+        {
+          "teal": 41,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            59
+          ]
+        },
+        {
+          "teal": 42,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            60
+          ]
+        },
+        {
+          "teal": 43,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            61,
+            62
+          ]
+        },
+        {
+          "teal": 44,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            63,
+            64,
+            65,
+            66,
+            67,
+            68
+          ]
+        },
+        {
+          "teal": 45,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            69,
+            70
+          ]
+        },
+        {
+          "teal": 49,
+          "source": "contracts/gates/staking_power.algo.ts:38",
+          "pc": [
+            71
+          ]
+        },
+        {
+          "teal": 50,
+          "source": "contracts/gates/staking_power.algo.ts:38",
+          "pc": [
+            72,
+            73
+          ]
+        },
+        {
+          "teal": 54,
+          "source": "contracts/gates/staking_power.algo.ts:39",
+          "pc": [
+            74,
+            75
+          ]
+        },
+        {
+          "teal": 55,
+          "source": "contracts/gates/staking_power.algo.ts:39",
+          "pc": [
+            76,
+            77
+          ]
+        },
+        {
+          "teal": 56,
+          "source": "contracts/gates/staking_power.algo.ts:39",
+          "pc": [
+            78,
+            79
+          ]
+        },
+        {
+          "teal": 57,
+          "source": "contracts/gates/staking_power.algo.ts:39",
+          "pc": [
+            80
+          ]
+        },
+        {
+          "teal": 58,
+          "source": "contracts/gates/staking_power.algo.ts:39",
+          "pc": [
+            81,
+            82
+          ]
+        },
+        {
+          "teal": 62,
+          "source": "contracts/gates/staking_power.algo.ts:40",
+          "pc": [
+            83
+          ]
+        },
+        {
+          "teal": 63,
+          "source": "contracts/gates/staking_power.algo.ts:40",
+          "pc": [
+            84,
+            85
+          ]
+        },
+        {
+          "teal": 66,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            86
+          ]
+        },
+        {
+          "teal": 67,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            87,
+            88
+          ]
+        },
+        {
+          "teal": 68,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            89
+          ]
+        },
+        {
+          "teal": 69,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            90
+          ]
+        },
+        {
+          "teal": 70,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            91,
+            92
+          ]
+        },
+        {
+          "teal": 71,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            93,
+            94,
+            95
+          ]
+        },
+        {
+          "teal": 72,
+          "source": "contracts/gates/staking_power.algo.ts:37",
+          "pc": [
+            96,
+            97
+          ]
+        },
+        {
+          "teal": 76,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            98,
+            99
+          ]
+        },
+        {
+          "teal": 77,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            100,
+            101,
+            102
+          ]
+        },
+        {
+          "teal": 78,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            103
+          ]
+        },
+        {
+          "teal": 79,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            104,
+            105
+          ]
+        },
+        {
+          "teal": 80,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            106
+          ]
+        },
+        {
+          "teal": 81,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            107,
+            108,
+            109,
+            110
+          ]
+        },
+        {
+          "teal": 82,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            111
+          ]
+        },
+        {
+          "teal": 83,
+          "source": "contracts/gates/staking_power.algo.ts:43",
+          "pc": [
+            112,
+            113
+          ]
+        },
+        {
+          "teal": 87,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            114,
+            115
+          ]
+        },
+        {
+          "teal": 88,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            116,
+            117,
+            118
+          ]
+        },
+        {
+          "teal": 89,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            119
+          ]
+        },
+        {
+          "teal": 90,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            120,
+            121,
+            122
+          ]
+        },
+        {
+          "teal": 91,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            123
+          ]
+        },
+        {
+          "teal": 92,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            124,
+            125
+          ]
+        },
+        {
+          "teal": 93,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            126
+          ]
+        },
+        {
+          "teal": 94,
+          "source": "contracts/gates/staking_power.algo.ts:44",
+          "pc": [
+            127,
+            128
+          ]
+        },
+        {
+          "teal": 99,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            129,
+            130
+          ]
+        },
+        {
+          "teal": 100,
+          "source": "utils/operators.ts:3",
+          "pc": [
+            131
+          ]
+        },
+        {
+          "teal": 101,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            132
+          ]
+        },
+        {
+          "teal": 102,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            133
+          ]
+        },
+        {
+          "teal": 103,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            134,
+            135,
+            136
+          ]
+        },
+        {
+          "teal": 104,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            137,
+            138
+          ]
+        },
+        {
+          "teal": 105,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            139,
+            140
+          ]
+        },
+        {
+          "teal": 106,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            141
+          ]
+        },
+        {
+          "teal": 107,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            142
+          ]
+        },
+        {
+          "teal": 110,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            143,
+            144,
+            145
+          ]
+        },
+        {
+          "teal": 115,
+          "source": "contracts/gates/staking_power.algo.ts:47",
+          "pc": [
+            146
+          ]
+        },
+        {
+          "teal": 116,
+          "source": "contracts/gates/staking_power.algo.ts:47",
+          "pc": [
+            147,
+            148,
+            149
+          ]
+        },
+        {
+          "teal": 117,
+          "source": "contracts/gates/staking_power.algo.ts:46",
+          "pc": [
+            150,
+            151,
+            152
+          ]
+        },
+        {
+          "teal": 122,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            153,
+            154
+          ]
+        },
+        {
+          "teal": 123,
+          "source": "utils/operators.ts:4",
+          "pc": [
+            155,
+            156
+          ]
+        },
+        {
+          "teal": 124,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            157
+          ]
+        },
+        {
+          "teal": 125,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            158
+          ]
+        },
+        {
+          "teal": 126,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            159,
+            160,
+            161
+          ]
+        },
+        {
+          "teal": 127,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            162,
+            163
+          ]
+        },
+        {
+          "teal": 128,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            164,
+            165
+          ]
+        },
+        {
+          "teal": 129,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            166
+          ]
+        },
+        {
+          "teal": 130,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            167
+          ]
+        },
+        {
+          "teal": 133,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            168,
+            169,
+            170
+          ]
+        },
+        {
+          "teal": 138,
+          "source": "contracts/gates/staking_power.algo.ts:49",
+          "pc": [
+            171
+          ]
+        },
+        {
+          "teal": 139,
+          "source": "contracts/gates/staking_power.algo.ts:49",
+          "pc": [
+            172,
+            173,
+            174
+          ]
+        },
+        {
+          "teal": 140,
+          "source": "contracts/gates/staking_power.algo.ts:48",
+          "pc": [
+            175,
+            176,
+            177
+          ]
+        },
+        {
+          "teal": 145,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            178,
+            179
+          ]
+        },
+        {
+          "teal": 146,
+          "source": "utils/operators.ts:5",
+          "pc": [
+            180,
+            181
+          ]
+        },
+        {
+          "teal": 147,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            182
+          ]
+        },
+        {
+          "teal": 148,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            183
+          ]
+        },
+        {
+          "teal": 149,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            184,
+            185,
+            186
+          ]
+        },
+        {
+          "teal": 150,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            187,
+            188
+          ]
+        },
+        {
+          "teal": 151,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            189,
+            190
+          ]
+        },
+        {
+          "teal": 152,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            191
+          ]
+        },
+        {
+          "teal": 153,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            192
+          ]
+        },
+        {
+          "teal": 156,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            193,
+            194,
+            195
+          ]
+        },
+        {
+          "teal": 161,
+          "source": "contracts/gates/staking_power.algo.ts:51",
+          "pc": [
+            196
+          ]
+        },
+        {
+          "teal": 162,
+          "source": "contracts/gates/staking_power.algo.ts:51",
+          "pc": [
+            197,
+            198,
+            199
+          ]
+        },
+        {
+          "teal": 163,
+          "source": "contracts/gates/staking_power.algo.ts:50",
+          "pc": [
+            200,
+            201,
+            202
+          ]
+        },
+        {
+          "teal": 168,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            203,
+            204
+          ]
+        },
+        {
+          "teal": 169,
+          "source": "utils/operators.ts:6",
+          "pc": [
+            205,
+            206
+          ]
+        },
+        {
+          "teal": 170,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            207
+          ]
+        },
+        {
+          "teal": 171,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            208
+          ]
+        },
+        {
+          "teal": 172,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            209,
+            210,
+            211
+          ]
+        },
+        {
+          "teal": 173,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            212,
+            213
+          ]
+        },
+        {
+          "teal": 174,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            214,
+            215
+          ]
+        },
+        {
+          "teal": 175,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            216
+          ]
+        },
+        {
+          "teal": 176,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            217
+          ]
+        },
+        {
+          "teal": 179,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            218,
+            219,
+            220
+          ]
+        },
+        {
+          "teal": 184,
+          "source": "contracts/gates/staking_power.algo.ts:53",
+          "pc": [
+            221
+          ]
+        },
+        {
+          "teal": 185,
+          "source": "contracts/gates/staking_power.algo.ts:53",
+          "pc": [
+            222,
+            223,
+            224
+          ]
+        },
+        {
+          "teal": 186,
+          "source": "contracts/gates/staking_power.algo.ts:52",
+          "pc": [
+            225,
+            226,
+            227
+          ]
+        },
+        {
+          "teal": 191,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            228,
+            229
+          ]
+        },
+        {
+          "teal": 192,
+          "source": "utils/operators.ts:7",
+          "pc": [
+            230,
+            231
+          ]
+        },
+        {
+          "teal": 193,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            232
+          ]
+        },
+        {
+          "teal": 194,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            233
+          ]
+        },
+        {
+          "teal": 195,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            234,
+            235,
+            236
+          ]
+        },
+        {
+          "teal": 196,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            237,
+            238
+          ]
+        },
+        {
+          "teal": 197,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            239,
+            240
+          ]
+        },
+        {
+          "teal": 198,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            241
+          ]
+        },
+        {
+          "teal": 199,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            242
+          ]
+        },
+        {
+          "teal": 202,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            243,
+            244,
+            245
+          ]
+        },
+        {
+          "teal": 207,
+          "source": "contracts/gates/staking_power.algo.ts:55",
+          "pc": [
+            246
+          ]
+        },
+        {
+          "teal": 208,
+          "source": "contracts/gates/staking_power.algo.ts:55",
+          "pc": [
+            247,
+            248,
+            249
+          ]
+        },
+        {
+          "teal": 209,
+          "source": "contracts/gates/staking_power.algo.ts:54",
+          "pc": [
+            250,
+            251,
+            252
+          ]
+        },
+        {
+          "teal": 214,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            253,
+            254
+          ]
+        },
+        {
+          "teal": 215,
+          "source": "utils/operators.ts:8",
+          "pc": [
+            255
+          ]
+        },
+        {
+          "teal": 216,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            256
+          ]
+        },
+        {
+          "teal": 217,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            257
+          ]
+        },
+        {
+          "teal": 218,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            258,
+            259,
+            260
+          ]
+        },
+        {
+          "teal": 219,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            261,
+            262
+          ]
+        },
+        {
+          "teal": 220,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            263,
+            264
+          ]
+        },
+        {
+          "teal": 221,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            265
+          ]
+        },
+        {
+          "teal": 222,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            266
+          ]
+        },
+        {
+          "teal": 225,
+          "source": "contracts/gates/staking_power.algo.ts:56",
+          "pc": [
+            267,
+            268,
+            269
+          ]
+        },
+        {
+          "teal": 230,
+          "source": "contracts/gates/staking_power.algo.ts:57",
+          "pc": [
+            270
+          ]
+        },
+        {
+          "teal": 231,
+          "source": "contracts/gates/staking_power.algo.ts:57",
+          "pc": [
+            271,
+            272,
+            273
+          ]
+        },
+        {
+          "teal": 236,
+          "source": "contracts/gates/staking_power.algo.ts:60",
+          "pc": [
+            274
+          ]
+        },
+        {
+          "teal": 240,
+          "source": "contracts/gates/staking_power.algo.ts:36",
+          "pc": [
+            275,
+            276
+          ]
+        },
+        {
+          "teal": 243,
+          "source": "contracts/gates/staking_power.algo.ts:36",
+          "pc": [
+            277,
+            278
+          ]
+        },
+        {
+          "teal": 244,
+          "source": "contracts/gates/staking_power.algo.ts:36",
+          "pc": [
+            279
+          ]
+        },
+        {
+          "teal": 249,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            280
+          ]
+        },
+        {
+          "teal": 252,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            281,
+            282,
+            283
+          ]
+        },
+        {
+          "teal": 253,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            284,
+            285,
+            286
+          ]
+        },
+        {
+          "teal": 256,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            287,
+            288,
+            289
+          ]
+        },
+        {
+          "teal": 257,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            290
+          ]
+        },
+        {
+          "teal": 258,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            291
+          ]
+        },
+        {
+          "teal": 259,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            292
+          ]
+        },
+        {
+          "teal": 260,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            293
+          ]
+        },
+        {
+          "teal": 261,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            294
+          ]
+        },
+        {
+          "teal": 265,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            295,
+            296,
+            297
+          ]
+        },
+        {
+          "teal": 268,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            298
+          ]
+        },
+        {
+          "teal": 269,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            299
+          ]
+        },
+        {
+          "teal": 273,
+          "source": "contracts/gates/staking_power.algo.ts:64",
+          "pc": [
+            300,
+            301
+          ]
+        },
+        {
+          "teal": 274,
+          "source": "contracts/gates/staking_power.algo.ts:64",
+          "pc": [
+            302
+          ]
+        },
+        {
+          "teal": 278,
+          "source": "contracts/gates/staking_power.algo.ts:16",
+          "pc": [
+            303
+          ]
+        },
+        {
+          "teal": 282,
+          "source": "contracts/gates/staking_power.algo.ts:16",
+          "pc": [
+            304
+          ]
+        },
+        {
+          "teal": 283,
+          "source": "contracts/gates/staking_power.algo.ts:16",
+          "pc": [
+            305
+          ]
+        },
+        {
+          "teal": 287,
+          "source": "contracts/gates/staking_power.algo.ts:16",
+          "pc": [
+            306
+          ]
+        },
+        {
+          "teal": 288,
+          "source": "contracts/gates/staking_power.algo.ts:16",
+          "pc": [
+            307
+          ]
+        },
+        {
+          "teal": 289,
+          "source": "contracts/gates/staking_power.algo.ts:64",
+          "pc": [
+            308
+          ]
+        },
+        {
+          "teal": 290,
+          "source": "contracts/gates/staking_power.algo.ts:64",
+          "pc": [
+            309
+          ]
+        },
+        {
+          "teal": 294,
+          "source": "contracts/gates/staking_power.algo.ts:66",
+          "pc": [
+            310,
+            311
+          ]
+        },
+        {
+          "teal": 295,
+          "source": "contracts/gates/staking_power.algo.ts:66",
+          "pc": [
+            312,
+            313
+          ]
+        },
+        {
+          "teal": 299,
+          "source": "contracts/gates/staking_power.algo.ts:67",
+          "pc": [
+            314,
+            315
+          ]
+        },
+        {
+          "teal": 300,
+          "source": "contracts/gates/staking_power.algo.ts:67",
+          "pc": [
+            316,
+            317,
+            318
+          ]
+        },
+        {
+          "teal": 301,
+          "source": "contracts/gates/staking_power.algo.ts:67",
+          "pc": [
+            319
+          ]
+        },
+        {
+          "teal": 302,
+          "source": "contracts/gates/staking_power.algo.ts:67",
+          "pc": [
+            320,
+            321
+          ]
+        },
+        {
+          "teal": 303,
+          "source": "contracts/gates/staking_power.algo.ts:67",
+          "pc": [
+            322
+          ]
+        },
+        {
+          "teal": 304,
+          "source": "contracts/gates/staking_power.algo.ts:67",
+          "pc": [
+            323
+          ]
+        },
+        {
+          "teal": 305,
+          "source": "contracts/gates/staking_power.algo.ts:67",
+          "pc": [
+            324
+          ]
+        },
+        {
+          "teal": 309,
+          "source": "contracts/gates/staking_power.algo.ts:69",
+          "pc": [
+            325
+          ]
+        },
+        {
+          "teal": 310,
+          "source": "contracts/gates/staking_power.algo.ts:69",
+          "pc": [
+            326
+          ]
+        },
+        {
+          "teal": 311,
+          "source": "contracts/gates/staking_power.algo.ts:69",
+          "pc": [
+            327,
+            328
+          ]
+        },
+        {
+          "teal": 315,
+          "source": "contracts/gates/staking_power.algo.ts:70",
+          "pc": [
+            329,
+            330
+          ]
+        },
+        {
+          "teal": 316,
+          "source": "contracts/gates/staking_power.algo.ts:70",
+          "pc": [
+            331
+          ]
+        },
+        {
+          "teal": 317,
+          "source": "contracts/gates/staking_power.algo.ts:70",
+          "pc": [
+            332,
+            333
+          ]
+        },
+        {
+          "teal": 318,
+          "source": "contracts/gates/staking_power.algo.ts:70",
+          "pc": [
+            334
+          ]
+        },
+        {
+          "teal": 322,
+          "source": "contracts/gates/staking_power.algo.ts:71",
+          "pc": [
+            335
+          ]
+        },
+        {
+          "teal": 323,
+          "source": "contracts/gates/staking_power.algo.ts:71",
+          "pc": [
+            336
+          ]
+        },
+        {
+          "teal": 324,
+          "source": "contracts/gates/staking_power.algo.ts:71",
+          "pc": [
+            337
+          ]
+        },
+        {
+          "teal": 325,
+          "source": "contracts/gates/staking_power.algo.ts:71",
+          "pc": [
+            338
+          ]
+        },
+        {
+          "teal": 326,
+          "source": "contracts/gates/staking_power.algo.ts:71",
+          "pc": [
+            339
+          ]
+        },
+        {
+          "teal": 327,
+          "source": "contracts/gates/staking_power.algo.ts:71",
+          "pc": [
+            340
+          ]
+        },
+        {
+          "teal": 328,
+          "source": "contracts/gates/staking_power.algo.ts:71",
+          "pc": [
+            341
+          ]
+        },
+        {
+          "teal": 332,
+          "source": "contracts/gates/staking_power.algo.ts:72",
+          "pc": [
+            342,
+            343
+          ]
+        },
+        {
+          "teal": 335,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            344,
+            345
+          ]
+        },
+        {
+          "teal": 338,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            346,
+            347
+          ]
+        },
+        {
+          "teal": 339,
+          "source": "contracts/gates/staking_power.algo.ts:63",
+          "pc": [
+            348
+          ]
+        },
+        {
+          "teal": 344,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            349
+          ]
+        },
+        {
+          "teal": 347,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            350,
+            351,
+            352
+          ]
+        },
+        {
+          "teal": 348,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            353,
+            354,
+            355
+          ]
+        },
+        {
+          "teal": 351,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            356,
+            357,
+            358
+          ]
+        },
+        {
+          "teal": 352,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            359,
+            360,
+            361
+          ]
+        },
+        {
+          "teal": 353,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            362
+          ]
+        },
+        {
+          "teal": 354,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            363,
+            364
+          ]
+        },
+        {
+          "teal": 355,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            365
+          ]
+        },
+        {
+          "teal": 356,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            366
+          ]
+        },
+        {
+          "teal": 357,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            367
+          ]
+        },
+        {
+          "teal": 358,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            368
+          ]
+        },
+        {
+          "teal": 359,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            369
+          ]
+        },
+        {
+          "teal": 363,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            370,
+            371,
+            372
+          ]
+        },
+        {
+          "teal": 366,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            373
+          ]
+        },
+        {
+          "teal": 367,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            374
+          ]
+        },
+        {
+          "teal": 371,
+          "source": "contracts/gates/staking_power.algo.ts:76",
+          "pc": [
+            375,
+            376
+          ]
+        },
+        {
+          "teal": 372,
+          "source": "contracts/gates/staking_power.algo.ts:76",
+          "pc": [
+            377
+          ]
+        },
+        {
+          "teal": 376,
+          "source": "contracts/gates/staking_power.algo.ts:23",
+          "pc": [
+            378
+          ]
+        },
+        {
+          "teal": 380,
+          "source": "contracts/gates/staking_power.algo.ts:23",
+          "pc": [
+            379,
+            380
+          ]
+        },
+        {
+          "teal": 381,
+          "source": "contracts/gates/staking_power.algo.ts:23",
+          "pc": [
+            381
+          ]
+        },
+        {
+          "teal": 382,
+          "source": "contracts/gates/staking_power.algo.ts:76",
+          "pc": [
+            382
+          ]
+        },
+        {
+          "teal": 383,
+          "source": "contracts/gates/staking_power.algo.ts:76",
+          "pc": [
+            383
+          ]
+        },
+        {
+          "teal": 387,
+          "source": "contracts/gates/staking_power.algo.ts:77",
+          "pc": [
+            384,
+            385
+          ]
+        },
+        {
+          "teal": 388,
+          "source": "contracts/gates/staking_power.algo.ts:77",
+          "pc": [
+            386,
+            387
+          ]
+        },
+        {
+          "teal": 392,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            388,
+            389
+          ]
+        },
+        {
+          "teal": 393,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            390,
+            391,
+            392
+          ]
+        },
+        {
+          "teal": 394,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            393
+          ]
+        },
+        {
+          "teal": 395,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            394
+          ]
+        },
+        {
+          "teal": 396,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            395,
+            396
+          ]
+        },
+        {
+          "teal": 400,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            397,
+            398
+          ]
+        },
+        {
+          "teal": 401,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            399
+          ]
+        },
+        {
+          "teal": 405,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            400,
+            401
+          ]
+        },
+        {
+          "teal": 406,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            402,
+            403,
+            404
+          ]
+        },
+        {
+          "teal": 407,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            405
+          ]
+        },
+        {
+          "teal": 408,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            406
+          ]
+        },
+        {
+          "teal": 409,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            407,
+            408
+          ]
+        },
+        {
+          "teal": 410,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            409
+          ]
+        },
+        {
+          "teal": 411,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            410
+          ]
+        },
+        {
+          "teal": 415,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            411
+          ]
+        },
+        {
+          "teal": 416,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            412
+          ]
+        },
+        {
+          "teal": 420,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            413,
+            414
+          ]
+        },
+        {
+          "teal": 421,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            415,
+            416,
+            417
+          ]
+        },
+        {
+          "teal": 422,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            418
+          ]
+        },
+        {
+          "teal": 423,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            419
+          ]
+        },
+        {
+          "teal": 424,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            420,
+            421
+          ]
+        },
+        {
+          "teal": 425,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            422
+          ]
+        },
+        {
+          "teal": 426,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            423
+          ]
+        },
+        {
+          "teal": 430,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            424
+          ]
+        },
+        {
+          "teal": 431,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            425
+          ]
+        },
+        {
+          "teal": 435,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            426,
+            427
+          ]
+        },
+        {
+          "teal": 436,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            428,
+            429,
+            430
+          ]
+        },
+        {
+          "teal": 437,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            431
+          ]
+        },
+        {
+          "teal": 438,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            432
+          ]
+        },
+        {
+          "teal": 439,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            433,
+            434
+          ]
+        },
+        {
+          "teal": 440,
+          "source": "contracts/gates/staking_power.algo.ts:78",
+          "pc": [
+            435
+          ]
+        },
+        {
+          "teal": 441,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            436
+          ]
+        },
+        {
+          "teal": 445,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            437,
+            438
+          ]
+        },
+        {
+          "teal": 446,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            439,
+            440,
+            441
+          ]
+        },
+        {
+          "teal": 447,
+          "source": "contracts/gates/staking_power.algo.ts:79",
+          "pc": [
+            442,
+            443,
+            444
+          ]
+        },
+        {
+          "teal": 450,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            445,
+            446
+          ]
+        },
+        {
+          "teal": 453,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            447,
+            448
+          ]
+        },
+        {
+          "teal": 454,
+          "source": "contracts/gates/staking_power.algo.ts:75",
+          "pc": [
+            449
+          ]
+        },
+        {
+          "teal": 457,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            450
+          ]
+        },
+        {
+          "teal": 458,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            451
+          ]
+        },
+        {
+          "teal": 461,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            452,
+            453,
+            454,
+            455,
+            456,
+            457
+          ]
+        },
+        {
+          "teal": 462,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            458,
+            459,
+            460
+          ]
+        },
+        {
+          "teal": 463,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            461,
+            462,
+            463,
+            464
+          ]
+        },
+        {
+          "teal": 466,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "errorMessage": "this contract does not implement the given ABI method for create NoOp",
+          "pc": [
+            465
+          ]
+        },
+        {
+          "teal": 469,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            466,
+            467,
+            468,
+            469,
+            470,
+            471
+          ]
+        },
+        {
+          "teal": 470,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            472,
+            473,
+            474,
+            475,
+            476,
+            477
+          ]
+        },
+        {
+          "teal": 471,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            478,
+            479,
+            480
+          ]
+        },
+        {
+          "teal": 472,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "pc": [
+            481,
+            482,
+            483,
+            484,
+            485,
+            486
+          ]
+        },
+        {
+          "teal": 475,
+          "source": "contracts/gates/staking_power.algo.ts:29",
+          "errorMessage": "this contract does not implement the given ABI method for call NoOp",
+          "pc": [
+            487
+          ]
+        }
+      ],
+      "pcOffsetMethod": "none"
+    },
+    "clear": {
+      "sourceInfo": [],
+      "pcOffsetMethod": "none"
+    }
+  },
+  "source": {
+    "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCmludGNibG9jayAwIDggMSA2IDUKYnl0ZWNibG9jayAweCAweDYzIDB4MTUxZjdjNzUKCi8vIFRoaXMgVEVBTCB3YXMgZ2VuZXJhdGVkIGJ5IFRFQUxTY3JpcHQgdjAuMTA2LjAKLy8gaHR0cHM6Ly9naXRodWIuY29tL2FsZ29yYW5kZm91bmRhdGlvbi9URUFMU2NyaXB0CgovLyBUaGlzIGNvbnRyYWN0IGlzIGNvbXBsaWFudCB3aXRoIGFuZC9vciBpbXBsZW1lbnRzIHRoZSBmb2xsb3dpbmcgQVJDczogWyBBUkM0IF0KCi8vIFRoZSBmb2xsb3dpbmcgdGVuIGxpbmVzIG9mIFRFQUwgaGFuZGxlIGluaXRpYWwgcHJvZ3JhbSBmbG93Ci8vIFRoaXMgcGF0dGVybiBpcyB1c2VkIHRvIG1ha2UgaXQgZWFzeSBmb3IgYW55b25lIHRvIHBhcnNlIHRoZSBzdGFydCBvZiB0aGUgcHJvZ3JhbSBhbmQgZGV0ZXJtaW5lIGlmIGEgc3BlY2lmaWMgYWN0aW9uIGlzIGFsbG93ZWQKLy8gSGVyZSwgYWN0aW9uIHJlZmVycyB0byB0aGUgT25Db21wbGV0ZSBpbiBjb21iaW5hdGlvbiB3aXRoIHdoZXRoZXIgdGhlIGFwcCBpcyBiZWluZyBjcmVhdGVkIG9yIGNhbGxlZAovLyBFdmVyeSBwb3NzaWJsZSBhY3Rpb24gZm9yIHRoaXMgY29udHJhY3QgaXMgcmVwcmVzZW50ZWQgaW4gdGhlIHN3aXRjaCBzdGF0ZW1lbnQKLy8gSWYgdGhlIGFjdGlvbiBpcyBub3QgaW1wbGVtZW50ZWQgaW4gdGhlIGNvbnRyYWN0LCBpdHMgcmVzcGVjdGl2ZSBicmFuY2ggd2lsbCBiZSAiKk5PVF9JTVBMRU1FTlRFRCIgd2hpY2gganVzdCBjb250YWlucyAiZXJyIgp0eG4gQXBwbGljYXRpb25JRAohCmludGMgMyAvLyA2CioKdHhuIE9uQ29tcGxldGlvbgorCnN3aXRjaCAqY2FsbF9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqY3JlYXRlX05vT3AgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVECgoqTk9UX0lNUExFTUVOVEVEOgoJLy8gVGhlIHJlcXVlc3RlZCBhY3Rpb24gaXMgbm90IGltcGxlbWVudGVkIGluIHRoaXMgY29udHJhY3QuIEFyZSB5b3UgdXNpbmcgdGhlIGNvcnJlY3QgT25Db21wbGV0ZT8gRGlkIHlvdSBzZXQgeW91ciBhcHAgSUQ/CgllcnIKCi8vIHN0YWtpbmdQb3dlckdhdGUodXNlcjogQWRkcmVzcywgb3A6IE9wZXJhdG9yLCBhc3NldDogQXNzZXRJRCwgcG93ZXI6IHVpbnQ2NCk6IGJvb2xlYW4Kc3Rha2luZ1Bvd2VyR2F0ZToKCXByb3RvIDQgMQoKCS8vIFB1c2ggZW1wdHkgYnl0ZXMgYWZ0ZXIgdGhlIGZyYW1lIHBvaW50ZXIgdG8gcmVzZXJ2ZSBzcGFjZSBmb3IgbG9jYWwgdmFyaWFibGVzCglieXRlYyAwIC8vIDB4CglkdXBuIDIKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjM3CgkvLyBsb2NrSW5mbyA9IHNlbmRNZXRob2RDYWxsPHR5cGVvZiBTdGFraW5nUGx1Z2luLnByb3RvdHlwZS5nZXRMb2NrZWRJbmZvLCBTdGFrZVZhbHVlPih7CgkvLyAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiBBcHBJRC5mcm9tVWludDY0KEFraXRhQXBwSURzU3Rha2luZ1BsdWdpbiksCgkvLyAgICAgICAgICAgICBtZXRob2RBcmdzOiBbIHVzZXIsIGFzc2V0IF0sCgkvLyAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgIH0pCglpdHhuX2JlZ2luCglpbnRjIDMgLy8gIGFwcGwKCWl0eG5fZmllbGQgVHlwZUVudW0KCXB1c2hieXRlcyAweDEwYjA3NDViIC8vIG1ldGhvZCAiZ2V0TG9ja2VkSW5mbyhhZGRyZXNzLHVpbnQ2NCkodWludDY0LHVpbnQ2NCx1aW50NjQpIgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjM4CgkvLyBhcHBsaWNhdGlvbklEOiBBcHBJRC5mcm9tVWludDY0KEFraXRhQXBwSURzU3Rha2luZ1BsdWdpbikKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjM5CgkvLyBtZXRob2RBcmdzOiBbIHVzZXIsIGFzc2V0IF0KCWZyYW1lX2RpZyAtMSAvLyB1c2VyOiBBZGRyZXNzCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC0zIC8vIGFzc2V0OiBBc3NldElECglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NDAKCS8vIGZlZTogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRmVlCgoJLy8gU3VibWl0IGlubmVyIHRyYW5zYWN0aW9uCglpdHhuX3N1Ym1pdAoJaXR4biBOdW1Mb2dzCglpbnRjIDIgLy8gMQoJLQoJaXR4bmFzIExvZ3MKCWV4dHJhY3QgNCAwCglmcmFtZV9idXJ5IDAgLy8gbG9ja0luZm86ICh1aW50NjQsdWludDY0LHVpbnQ2NCkKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjQzCgkvLyByZW1haW5pbmdEYXlzID0gKGxvY2tJbmZvLmV4cGlyYXRpb24gLSBnbG9iYWxzLmxhdGVzdFRpbWVzdGFtcCkgLyBPTkVfREFZCglmcmFtZV9kaWcgMCAvLyBsb2NrSW5mbzogKHVpbnQ2NCx1aW50NjQsdWludDY0KQoJZXh0cmFjdCAxNiA4CglidG9pCglnbG9iYWwgTGF0ZXN0VGltZXN0YW1wCgktCglwdXNoaW50IDg2NDAwCgkvCglmcmFtZV9idXJ5IDEgLy8gcmVtYWluaW5nRGF5czogdWludDY0CgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo0NAoJLy8gdXNlclBvd2VyID0gKGxvY2tJbmZvLmFtb3VudCAvIE9ORV9ZRUFSX0lOX0RBWVMpICogcmVtYWluaW5nRGF5cwoJZnJhbWVfZGlnIDAgLy8gbG9ja0luZm86ICh1aW50NjQsdWludDY0LHVpbnQ2NCkKCWV4dHJhY3QgMCA4CglidG9pCglwdXNoaW50IDM2NQoJLwoJZnJhbWVfZGlnIDEgLy8gcmVtYWluaW5nRGF5czogdWludDY0CgkqCglmcmFtZV9idXJ5IDIgLy8gdXNlclBvd2VyOiB1aW50NjQKCgkvLyAqaWYwX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo0NgoJLy8gb3AgPT09IEVxdWFsICYmIHVzZXJQb3dlciAhPT0gcG93ZXIKCWZyYW1lX2RpZyAtMiAvLyBvcDogT3BlcmF0b3IKCWludGMgMiAvLyAxCgk9PQoJZHVwCglieiAqc2tpcF9hbmQwCglmcmFtZV9kaWcgMiAvLyB1c2VyUG93ZXI6IHVpbnQ2NAoJZnJhbWVfZGlnIC00IC8vIHBvd2VyOiB1aW50NjQKCSE9CgkmJgoKKnNraXBfYW5kMDoKCWJ6ICppZjBfZWxzZWlmMV9jb25kaXRpb24KCgkvLyAqaWYwX2NvbnNlcXVlbnQKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NDcKCS8vIHJldHVybiBmYWxzZTsKCWludGMgMCAvLyAwCgliICpzdGFraW5nUG93ZXJHYXRlKnJldHVybgoJYiAqaWYwX2VuZAoKKmlmMF9lbHNlaWYxX2NvbmRpdGlvbjoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NDgKCS8vIG9wID09PSBOb3RFcXVhbCAmJiB1c2VyUG93ZXIgPT09IHBvd2VyCglmcmFtZV9kaWcgLTIgLy8gb3A6IE9wZXJhdG9yCglwdXNoaW50IDIKCT09CglkdXAKCWJ6ICpza2lwX2FuZDEKCWZyYW1lX2RpZyAyIC8vIHVzZXJQb3dlcjogdWludDY0CglmcmFtZV9kaWcgLTQgLy8gcG93ZXI6IHVpbnQ2NAoJPT0KCSYmCgoqc2tpcF9hbmQxOgoJYnogKmlmMF9lbHNlaWYyX2NvbmRpdGlvbgoKCS8vICppZjBfZWxzZWlmMV9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjQ5CgkvLyByZXR1cm4gZmFsc2U7CglpbnRjIDAgLy8gMAoJYiAqc3Rha2luZ1Bvd2VyR2F0ZSpyZXR1cm4KCWIgKmlmMF9lbmQKCippZjBfZWxzZWlmMl9jb25kaXRpb246CgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjUwCgkvLyBvcCA9PT0gTGVzc1RoYW4gJiYgdXNlclBvd2VyID49IHBvd2VyCglmcmFtZV9kaWcgLTIgLy8gb3A6IE9wZXJhdG9yCglwdXNoaW50IDMKCT09CglkdXAKCWJ6ICpza2lwX2FuZDIKCWZyYW1lX2RpZyAyIC8vIHVzZXJQb3dlcjogdWludDY0CglmcmFtZV9kaWcgLTQgLy8gcG93ZXI6IHVpbnQ2NAoJPj0KCSYmCgoqc2tpcF9hbmQyOgoJYnogKmlmMF9lbHNlaWYzX2NvbmRpdGlvbgoKCS8vICppZjBfZWxzZWlmMl9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjUxCgkvLyByZXR1cm4gZmFsc2U7CglpbnRjIDAgLy8gMAoJYiAqc3Rha2luZ1Bvd2VyR2F0ZSpyZXR1cm4KCWIgKmlmMF9lbmQKCippZjBfZWxzZWlmM19jb25kaXRpb246CgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjUyCgkvLyBvcCA9PT0gTGVzc1RoYW5PckVxdWFsVG8gJiYgdXNlclBvd2VyID4gcG93ZXIKCWZyYW1lX2RpZyAtMiAvLyBvcDogT3BlcmF0b3IKCXB1c2hpbnQgNAoJPT0KCWR1cAoJYnogKnNraXBfYW5kMwoJZnJhbWVfZGlnIDIgLy8gdXNlclBvd2VyOiB1aW50NjQKCWZyYW1lX2RpZyAtNCAvLyBwb3dlcjogdWludDY0Cgk+CgkmJgoKKnNraXBfYW5kMzoKCWJ6ICppZjBfZWxzZWlmNF9jb25kaXRpb24KCgkvLyAqaWYwX2Vsc2VpZjNfY29uc2VxdWVudAoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo1MwoJLy8gcmV0dXJuIGZhbHNlOwoJaW50YyAwIC8vIDAKCWIgKnN0YWtpbmdQb3dlckdhdGUqcmV0dXJuCgliICppZjBfZW5kCgoqaWYwX2Vsc2VpZjRfY29uZGl0aW9uOgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo1NAoJLy8gb3AgPT09IEdyZWF0ZXJUaGFuICYmIHVzZXJQb3dlciA8PSBwb3dlcgoJZnJhbWVfZGlnIC0yIC8vIG9wOiBPcGVyYXRvcgoJaW50YyA0IC8vIDUKCT09CglkdXAKCWJ6ICpza2lwX2FuZDQKCWZyYW1lX2RpZyAyIC8vIHVzZXJQb3dlcjogdWludDY0CglmcmFtZV9kaWcgLTQgLy8gcG93ZXI6IHVpbnQ2NAoJPD0KCSYmCgoqc2tpcF9hbmQ0OgoJYnogKmlmMF9lbHNlaWY1X2NvbmRpdGlvbgoKCS8vICppZjBfZWxzZWlmNF9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjU1CgkvLyByZXR1cm4gZmFsc2U7CglpbnRjIDAgLy8gMAoJYiAqc3Rha2luZ1Bvd2VyR2F0ZSpyZXR1cm4KCWIgKmlmMF9lbmQKCippZjBfZWxzZWlmNV9jb25kaXRpb246CgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjU2CgkvLyBvcCA9PT0gR3JlYXRlclRoYW5PckVxdWFsVG8gJiYgdXNlclBvd2VyIDwgcG93ZXIKCWZyYW1lX2RpZyAtMiAvLyBvcDogT3BlcmF0b3IKCWludGMgMyAvLyA2Cgk9PQoJZHVwCglieiAqc2tpcF9hbmQ1CglmcmFtZV9kaWcgMiAvLyB1c2VyUG93ZXI6IHVpbnQ2NAoJZnJhbWVfZGlnIC00IC8vIHBvd2VyOiB1aW50NjQKCTwKCSYmCgoqc2tpcF9hbmQ1OgoJYnogKmlmMF9lbmQKCgkvLyAqaWYwX2Vsc2VpZjVfY29uc2VxdWVudAoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo1NwoJLy8gcmV0dXJuIGZhbHNlOwoJaW50YyAwIC8vIDAKCWIgKnN0YWtpbmdQb3dlckdhdGUqcmV0dXJuCgoqaWYwX2VuZDoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NjAKCS8vIHJldHVybiB0cnVlOwoJaW50YyAyIC8vIDEKCipzdGFraW5nUG93ZXJHYXRlKnJldHVybjoKCS8vIHNldCB0aGUgc3Vicm91dGluZSByZXR1cm4gdmFsdWUKCWZyYW1lX2J1cnkgMAoKCS8vIHBvcCBhbGwgbG9jYWwgdmFyaWFibGVzIGZyb20gdGhlIHN0YWNrCglwb3BuIDIKCXJldHN1YgoKLy8gcmVnaXN0ZXIoYnl0ZVtdKXVpbnQ2NAoqYWJpX3JvdXRlX3JlZ2lzdGVyOgoJLy8gVGhlIEFCSSByZXR1cm4gcHJlZml4CglieXRlYyAyIC8vIDB4MTUxZjdjNzUKCgkvLyBhcmdzOiBieXRlW10KCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWV4dHJhY3QgMiAwCgoJLy8gZXhlY3V0ZSByZWdpc3RlcihieXRlW10pdWludDY0CgljYWxsc3ViIHJlZ2lzdGVyCglpdG9iCgljb25jYXQKCWxvZwoJaW50YyAyIC8vIDEKCXJldHVybgoKLy8gcmVnaXN0ZXIoYXJnczogYnl0ZXMpOiB1aW50NjQKcmVnaXN0ZXI6Cglwcm90byAxIDEKCgkvLyBQdXNoIGVtcHR5IGJ5dGVzIGFmdGVyIHRoZSBmcmFtZSBwb2ludGVyIHRvIHJlc2VydmUgc3BhY2UgZm9yIGxvY2FsIHZhcmlhYmxlcwoJYnl0ZWMgMCAvLyAweAoJZHVwCgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo2NAoJLy8gYXNzZXJ0KGFyZ3MubGVuZ3RoID09PSBSZWdpc3RyeUluZm9QYXJhbXNMZW5ndGgsIGVycnMuSU5WQUxJRF9BUkdfQ09VTlQpCglmcmFtZV9kaWcgLTEgLy8gYXJnczogYnl0ZXMKCWxlbgoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6MTYKCS8vIGxlbjxPcGVyYXRvcj4oKQoJaW50YyAxIC8vIDgKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjE2CgkvLyBsZW48QXNzZXRJRD4oKQoJaW50YyAxIC8vIDgKCSsKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjE2CgkvLyBsZW48dWludDY0PigpCglpbnRjIDEgLy8gOAoJKwoJPT0KCWFzc2VydAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NjYKCS8vIHBhcmFtcyA9IGNhc3RCeXRlczxSZWdpc3RyeUluZm8+KGFyZ3MpCglmcmFtZV9kaWcgLTEgLy8gYXJnczogYnl0ZXMKCWZyYW1lX2J1cnkgMCAvLyBwYXJhbXM6ICh1aW50NjQsdWludDY0LHVpbnQ2NCkKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjY3CgkvLyBhc3NlcnQoIShwYXJhbXMub3AgPiA1KSwgZXJycy5CQURfT1BFUkFUSU9OKQoJZnJhbWVfZGlnIDAgLy8gcGFyYW1zOiAodWludDY0LHVpbnQ2NCx1aW50NjQpCglleHRyYWN0IDAgOAoJYnRvaQoJaW50YyA0IC8vIDUKCT4KCSEKCWFzc2VydAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NjkKCS8vIGNvdW50ZXIgPSB0aGlzLnJlZ2lzdHJ5Q291bnRlci52YWx1ZQoJYnl0ZWMgMSAvLyAgImMiCglhcHBfZ2xvYmFsX2dldAoJZnJhbWVfYnVyeSAxIC8vIGNvdW50ZXI6IHVpbnQ2NAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NzAKCS8vIHRoaXMucmVnaXN0cnkoY291bnRlcikudmFsdWUgPSBjYXN0Qnl0ZXM8UmVnaXN0cnlJbmZvPihhcmdzKQoJZnJhbWVfZGlnIDEgLy8gY291bnRlcjogdWludDY0CglpdG9iCglmcmFtZV9kaWcgLTEgLy8gYXJnczogYnl0ZXMKCWJveF9wdXQKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjcxCgkvLyB0aGlzLnJlZ2lzdHJ5Q291bnRlci52YWx1ZSArPSAxCglieXRlYyAxIC8vICAiYyIKCWFwcF9nbG9iYWxfZ2V0CglpbnRjIDIgLy8gMQoJKwoJYnl0ZWMgMSAvLyAgImMiCglzd2FwCglhcHBfZ2xvYmFsX3B1dAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NzIKCS8vIHJldHVybiBjb3VudGVyOwoJZnJhbWVfZGlnIDEgLy8gY291bnRlcjogdWludDY0CgoJLy8gc2V0IHRoZSBzdWJyb3V0aW5lIHJldHVybiB2YWx1ZQoJZnJhbWVfYnVyeSAwCgoJLy8gcG9wIGFsbCBsb2NhbCB2YXJpYWJsZXMgZnJvbSB0aGUgc3RhY2sKCXBvcG4gMQoJcmV0c3ViCgovLyBjaGVjayhieXRlW10pYm9vbAoqYWJpX3JvdXRlX2NoZWNrOgoJLy8gVGhlIEFCSSByZXR1cm4gcHJlZml4CglieXRlYyAyIC8vIDB4MTUxZjdjNzUKCgkvLyBhcmdzOiBieXRlW10KCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWV4dHJhY3QgMiAwCgoJLy8gZXhlY3V0ZSBjaGVjayhieXRlW10pYm9vbAoJY2FsbHN1YiBjaGVjawoJcHVzaGJ5dGVzIDB4MDAKCWludGMgMCAvLyAwCgl1bmNvdmVyIDIKCXNldGJpdAoJY29uY2F0Cglsb2cKCWludGMgMiAvLyAxCglyZXR1cm4KCi8vIGNoZWNrKGFyZ3M6IGJ5dGVzKTogYm9vbGVhbgpjaGVjazoKCXByb3RvIDEgMQoKCS8vIFB1c2ggZW1wdHkgYnl0ZXMgYWZ0ZXIgdGhlIGZyYW1lIHBvaW50ZXIgdG8gcmVzZXJ2ZSBzcGFjZSBmb3IgbG9jYWwgdmFyaWFibGVzCglieXRlYyAwIC8vIDB4CglkdXAKCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjc2CgkvLyBhc3NlcnQoYXJncy5sZW5ndGggPj0gU3Rha2luZ1Bvd2VyR2F0ZUNoZWNrUGFyYW1zTGVuZ3RoLCBlcnJzLklOVkFMSURfQVJHX0NPVU5UKQoJZnJhbWVfZGlnIC0xIC8vIGFyZ3M6IGJ5dGVzCglsZW4KCgkvLyBjb250cmFjdHMvZ2F0ZXMvc3Rha2luZ19wb3dlci5hbGdvLnRzOjIzCgkvLyBsZW48dWludDY0PigpCglpbnRjIDEgLy8gOAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6MjMKCS8vIGxlbjxBZGRyZXNzPigpCglwdXNoaW50IDMyCgkrCgk+PQoJYXNzZXJ0CgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo3NwoJLy8gcGFyYW1zID0gY2FzdEJ5dGVzPFN0YWtpbmdQb3dlckdhdGVDaGVja1BhcmFtcz4oYXJncykKCWZyYW1lX2RpZyAtMSAvLyBhcmdzOiBieXRlcwoJZnJhbWVfYnVyeSAwIC8vIHBhcmFtczogKHVpbnQ2NCxhZGRyZXNzKQoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NzgKCS8vIGluZm8gPSB0aGlzLnJlZ2lzdHJ5KHBhcmFtcy5yZWdpc3RyeUluZGV4KS52YWx1ZQoJZnJhbWVfZGlnIDAgLy8gcGFyYW1zOiAodWludDY0LGFkZHJlc3MpCglleHRyYWN0IDAgOAoJYnRvaQoJaXRvYgoJZnJhbWVfYnVyeSAxIC8vIHN0b3JhZ2Uga2V5Ly9pbmZvCgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo3OQoJLy8gcmV0dXJuIHRoaXMuc3Rha2luZ1Bvd2VyR2F0ZShwYXJhbXMudXNlciwgaW5mby5vcCwgaW5mby5hc3NldCwgaW5mby5wb3dlcik7CglwdXNoaW50IDE2IC8vIGhlYWRPZmZzZXQKCWludGMgMSAvLyA4CgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo3OAoJLy8gcGFyYW1zLnJlZ2lzdHJ5SW5kZXgKCWZyYW1lX2RpZyAwIC8vIHBhcmFtczogKHVpbnQ2NCxhZGRyZXNzKQoJZXh0cmFjdCAwIDgKCWJ0b2kKCWl0b2IKCWNvdmVyIDIKCWJveF9leHRyYWN0CglidG9pCgoJLy8gY29udHJhY3RzL2dhdGVzL3N0YWtpbmdfcG93ZXIuYWxnby50czo3OQoJLy8gaW5mby5hc3NldAoJaW50YyAxIC8vICBoZWFkT2Zmc2V0CglpbnRjIDEgLy8gOAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NzgKCS8vIHBhcmFtcy5yZWdpc3RyeUluZGV4CglmcmFtZV9kaWcgMCAvLyBwYXJhbXM6ICh1aW50NjQsYWRkcmVzcykKCWV4dHJhY3QgMCA4CglidG9pCglpdG9iCgljb3ZlciAyCglib3hfZXh0cmFjdAoJYnRvaQoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NzkKCS8vIGluZm8ub3AKCWludGMgMCAvLyAwCglpbnRjIDEgLy8gOAoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NzgKCS8vIHBhcmFtcy5yZWdpc3RyeUluZGV4CglmcmFtZV9kaWcgMCAvLyBwYXJhbXM6ICh1aW50NjQsYWRkcmVzcykKCWV4dHJhY3QgMCA4CglidG9pCglpdG9iCgljb3ZlciAyCglib3hfZXh0cmFjdAoJYnRvaQoKCS8vIGNvbnRyYWN0cy9nYXRlcy9zdGFraW5nX3Bvd2VyLmFsZ28udHM6NzkKCS8vIHBhcmFtcy51c2VyCglmcmFtZV9kaWcgMCAvLyBwYXJhbXM6ICh1aW50NjQsYWRkcmVzcykKCWV4dHJhY3QgOCAzMgoJY2FsbHN1YiBzdGFraW5nUG93ZXJHYXRlCgoJLy8gc2V0IHRoZSBzdWJyb3V0aW5lIHJldHVybiB2YWx1ZQoJZnJhbWVfYnVyeSAwCgoJLy8gcG9wIGFsbCBsb2NhbCB2YXJpYWJsZXMgZnJvbSB0aGUgc3RhY2sKCXBvcG4gMQoJcmV0c3ViCgoqYWJpX3JvdXRlX2NyZWF0ZUFwcGxpY2F0aW9uOgoJaW50YyAyIC8vIDEKCXJldHVybgoKKmNyZWF0ZV9Ob09wOgoJcHVzaGJ5dGVzIDB4Yjg0NDdiMzYgLy8gbWV0aG9kICJjcmVhdGVBcHBsaWNhdGlvbigpdm9pZCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfY3JlYXRlQXBwbGljYXRpb24KCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY3JlYXRlIE5vT3AKCWVycgoKKmNhbGxfTm9PcDoKCXB1c2hieXRlcyAweDZiY2QzOTUzIC8vIG1ldGhvZCAicmVnaXN0ZXIoYnl0ZVtdKXVpbnQ2NCIKCXB1c2hieXRlcyAweGM2MWM4NjJiIC8vIG1ldGhvZCAiY2hlY2soYnl0ZVtdKWJvb2wiCgl0eG5hIEFwcGxpY2F0aW9uQXJncyAwCgltYXRjaCAqYWJpX3JvdXRlX3JlZ2lzdGVyICphYmlfcm91dGVfY2hlY2sKCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY2FsbCBOb09wCgllcnI=",
+    "clear": "I3ByYWdtYSB2ZXJzaW9uIDEw"
+  },
+  "byteCode": {
+    "approval": "CiAFAAgBBgUmAwABYwQVH3x1MRgUJQsxGQiNDAGeAAAAAAAAAAAAAAGQAAAAAAAAAAAAAACKBAEoRwKxJbIQgAQQsHRbshoishiL/7Iai/0WshoisgGztDskCcU6VwQAjACLAFcQCBcyBwmBgKMFCowBiwBXAAgXge0CCosBC4wCi/4kEklBAAaLAov8ExBBAAciQgB9QgB5i/6BAhJJQQAGiwKL/BIQQQAHIkIAZEIAYIv+gQMSSUEABosCi/wPEEEAByJCAEtCAEeL/oEEEklBAAaLAov8DRBBAAciQgAyQgAui/4hBBJJQQAGiwKL/A4QQQAHIkIAGUIAFYv+JRJJQQAGiwKL/AwQQQAEIkIAASSMAEYCiSo2GgFXAgCIAAUWULAkQ4oBAShJi/8VIyMIIwgSRIv/jACLAFcACBchBA0URClkjAGLARaL/78pZCQIKUxniwGMAEYBiSo2GgFXAgCIAAuAAQAiTwJUULAkQ4oBAShJi/8VI4EgCA9Ei/+MAIsAVwAIFxaMAYEQI4sAVwAIFxZOAroXIyOLAFcACBcWTgK6FyIjiwBXAAgXFk4CuheLAFcIIIj+eIwARgGJJEOABLhEezY2GgCOAf/xAIAEa805U4AExhyGKzYaAI4C/zH/dgA=",
+    "clear": "Cg=="
+  },
+  "compilerInfo": {
+    "compiler": "algod",
+    "compilerVersion": {
+      "major": 3,
+      "minor": 26,
+      "patch": 0,
+      "commitHash": "0d10b244"
+    }
+  }
+}
