@@ -175,6 +175,23 @@ getDataBoxDelta:
 	popn 2
 	retsub
 
+// rootCosts(string)uint64
+*abi_route_rootCosts:
+	// The ABI return prefix
+	bytec 8 // 0x151f7c75
+
+	// name: string
+	txna ApplicationArgs 1
+	extract 2 0
+
+	// execute rootCosts(string)uint64
+	callsub rootCosts
+	itob
+	concat
+	log
+	intc 0 // 1
+	return
+
 // rootCosts(name: string): uint64
 rootCosts:
 	proto 1 1
@@ -183,13 +200,13 @@ rootCosts:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:96
+	// contracts/metaMerkles/meta_merkles.algo.ts:97
 	// rootCost = this.getRootBoxDelta(name)
 	frame_dig -1 // name: string
 	callsub getRootBoxDelta
 	frame_bury 0 // rootCost: uint64
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:97
+	// contracts/metaMerkles/meta_merkles.algo.ts:98
 	// schemaCost = this.getDataBoxDelta(name, treeSchemaKey, itob(0))
 	bytec 10 // 0x0000000000000000
 	bytec 3 // "l.schema"
@@ -197,7 +214,7 @@ rootCosts:
 	callsub getDataBoxDelta
 	frame_bury 1 // schemaCost: uint64
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:98
+	// contracts/metaMerkles/meta_merkles.algo.ts:99
 	// typeCost = this.getDataBoxDelta(name, treeTypeKey, itob(0))
 	bytec 10 // 0x0000000000000000
 	bytec 4 // "l.type"
@@ -205,7 +222,7 @@ rootCosts:
 	callsub getDataBoxDelta
 	frame_bury 2 // typeCost: uint64
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:99
+	// contracts/metaMerkles/meta_merkles.algo.ts:100
 	// return rootCost + schemaCost + typeCost;
 	frame_dig 0 // rootCost: uint64
 	frame_dig 1 // schemaCost: uint64
@@ -279,7 +296,7 @@ addRoot:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:114
+	// contracts/metaMerkles/meta_merkles.algo.ts:115
 	// assert(name.length <= 32, 'Cannot add root with name longer than 32 bytes')
 	frame_dig -2 // name: string
 	len
@@ -289,7 +306,7 @@ addRoot:
 	// Cannot add root with name longer than 32 bytes
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:115
+	// contracts/metaMerkles/meta_merkles.algo.ts:116
 	// assert(this.schemas(schema).exists, errs.NO_TREE_SCHEMA)
 	frame_dig -4 // schema: uint64
 	itob
@@ -298,7 +315,7 @@ addRoot:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:116
+	// contracts/metaMerkles/meta_merkles.algo.ts:117
 	// assert(this.types(type).exists, errs.NO_TREE_TYPE)
 	bytec 7 //  "t"
 	frame_dig -5 // type: uint64
@@ -309,7 +326,7 @@ addRoot:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:118
+	// contracts/metaMerkles/meta_merkles.algo.ts:119
 	// truncatedAddress = extract3(this.txn.sender, 0, 16) as bytes16
 	txn Sender
 	extract 0 16
@@ -323,7 +340,7 @@ addRoot:
 	extract 0 16
 	frame_bury 0 // truncatedAddress: byte[16]
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:120
+	// contracts/metaMerkles/meta_merkles.algo.ts:121
 	// rootKey: RootKey = {
 	//       address: this.txn.sender,
 	//       name: name
@@ -345,7 +362,7 @@ addRoot:
 	concat // concat head and tail
 	frame_bury 1 // rootKey: RootKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:125
+	// contracts/metaMerkles/meta_merkles.algo.ts:126
 	// schemaKey: DataKey = {
 	//       address: truncatedAddress,
 	//       name: name,
@@ -376,7 +393,7 @@ addRoot:
 	concat // concat head and tail
 	frame_bury 2 // schemaKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:131
+	// contracts/metaMerkles/meta_merkles.algo.ts:132
 	// typeKey: DataKey = {
 	//       address: truncatedAddress,
 	//       name: name,
@@ -407,7 +424,7 @@ addRoot:
 	concat // concat head and tail
 	frame_bury 3 // typeKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:137
+	// contracts/metaMerkles/meta_merkles.algo.ts:138
 	// assert(!this.roots(rootKey).exists, errs.NAME_TAKEN)
 	frame_dig 1 // rootKey: RootKey
 	box_len
@@ -416,7 +433,7 @@ addRoot:
 	!
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:138
+	// contracts/metaMerkles/meta_merkles.algo.ts:139
 	// assert(!this.data(schemaKey).exists, errs.TREE_SCHEMA_KEY_ALREADY_EXISTS)
 	bytec 1 //  "d"
 	frame_dig 2 // schemaKey: DataKey
@@ -427,7 +444,7 @@ addRoot:
 	!
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:139
+	// contracts/metaMerkles/meta_merkles.algo.ts:140
 	// assert(!this.data(typeKey).exists, errs.TREE_TYPE_KEY_ALREADY_EXISTS)
 	bytec 1 //  "d"
 	frame_dig 3 // typeKey: DataKey
@@ -438,7 +455,7 @@ addRoot:
 	!
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:141
+	// contracts/metaMerkles/meta_merkles.algo.ts:142
 	// verifyPayTxn(pmt, {
 	//       receiver: this.app.address,
 	//       amount: this.rootCosts(name),
@@ -462,13 +479,13 @@ addRoot:
 	// transaction verification failed: {"txn":"pmt","field":"amount","expected":"this.rootCosts(name)"}
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:146
+	// contracts/metaMerkles/meta_merkles.algo.ts:147
 	// this.roots(rootKey).value = root
 	frame_dig 1 // rootKey: RootKey
 	frame_dig -3 // root: bytes32
 	box_put
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:147
+	// contracts/metaMerkles/meta_merkles.algo.ts:148
 	// this.data(schemaKey).value = itob(schema)
 	bytec 1 //  "d"
 	frame_dig 2 // schemaKey: DataKey
@@ -486,7 +503,7 @@ addRoot:
 	concat
 	box_put
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:148
+	// contracts/metaMerkles/meta_merkles.algo.ts:149
 	// this.data(typeKey).value = itob(type)
 	bytec 1 //  "d"
 	frame_dig 3 // typeKey: DataKey
@@ -528,7 +545,7 @@ deleteRoot:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:157
+	// contracts/metaMerkles/meta_merkles.algo.ts:158
 	// truncatedAddress = extract3(this.txn.sender, 0, 16) as bytes16
 	txn Sender
 	extract 0 16
@@ -542,7 +559,7 @@ deleteRoot:
 	extract 0 16
 	frame_bury 0 // truncatedAddress: byte[16]
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:159
+	// contracts/metaMerkles/meta_merkles.algo.ts:160
 	// rootKey: RootKey = {
 	//       address: this.txn.sender,
 	//       name: name
@@ -564,7 +581,7 @@ deleteRoot:
 	concat // concat head and tail
 	frame_bury 1 // rootKey: RootKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:164
+	// contracts/metaMerkles/meta_merkles.algo.ts:165
 	// schemaKey: DataKey = {
 	//       address: truncatedAddress,
 	//       name: name,
@@ -595,7 +612,7 @@ deleteRoot:
 	concat // concat head and tail
 	frame_bury 2 // schemaKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:170
+	// contracts/metaMerkles/meta_merkles.algo.ts:171
 	// typeKey: DataKey = {
 	//       address: truncatedAddress,
 	//       name: name,
@@ -626,7 +643,7 @@ deleteRoot:
 	concat // concat head and tail
 	frame_bury 3 // typeKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:176
+	// contracts/metaMerkles/meta_merkles.algo.ts:177
 	// assert(this.roots(rootKey).exists, errs.NO_NAME)
 	frame_dig 1 // rootKey: RootKey
 	box_len
@@ -634,26 +651,26 @@ deleteRoot:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:178
+	// contracts/metaMerkles/meta_merkles.algo.ts:179
 	// this.roots(rootKey).delete()
 	frame_dig 1 // rootKey: RootKey
 	box_del
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:179
+	// contracts/metaMerkles/meta_merkles.algo.ts:180
 	// this.data(schemaKey).delete()
 	bytec 1 //  "d"
 	frame_dig 2 // schemaKey: DataKey
 	concat
 	box_del
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:180
+	// contracts/metaMerkles/meta_merkles.algo.ts:181
 	// this.data(typeKey).delete()
 	bytec 1 //  "d"
 	frame_dig 3 // typeKey: DataKey
 	concat
 	box_del
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:183
+	// contracts/metaMerkles/meta_merkles.algo.ts:184
 	// sendPayment({
 	//       receiver: this.txn.sender,
 	//       amount: this.rootCosts(name),
@@ -663,18 +680,18 @@ deleteRoot:
 	intc 0 //  pay
 	itxn_field TypeEnum
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:184
+	// contracts/metaMerkles/meta_merkles.algo.ts:185
 	// receiver: this.txn.sender
 	txn Sender
 	itxn_field Receiver
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:185
+	// contracts/metaMerkles/meta_merkles.algo.ts:186
 	// amount: this.rootCosts(name)
 	frame_dig -1 // name: string
 	callsub rootCosts
 	itxn_field Amount
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:186
+	// contracts/metaMerkles/meta_merkles.algo.ts:187
 	// fee: 0
 	intc 2 // 0
 	itxn_field Fee
@@ -716,7 +733,7 @@ updateRoot:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:197
+	// contracts/metaMerkles/meta_merkles.algo.ts:198
 	// key: RootKey = { address: this.txn.sender, name: name }
 	bytec 0 //  initial head
 	bytec 0 //  initial tail
@@ -735,7 +752,7 @@ updateRoot:
 	concat // concat head and tail
 	frame_bury 0 // key: RootKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:198
+	// contracts/metaMerkles/meta_merkles.algo.ts:199
 	// assert(this.roots(key).exists, errs.NO_NAME)
 	frame_dig 0 // key: RootKey
 	box_len
@@ -743,7 +760,7 @@ updateRoot:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:199
+	// contracts/metaMerkles/meta_merkles.algo.ts:200
 	// this.roots(key).value = newRoot
 	frame_dig 0 // key: RootKey
 	frame_dig -2 // newRoot: bytes32
@@ -797,7 +814,7 @@ addData:
 	bytec 0 // 0x
 	dup
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:212
+	// contracts/metaMerkles/meta_merkles.algo.ts:213
 	// rootKey: RootKey = { address: this.txn.sender, name: name }
 	bytec 0 //  initial head
 	bytec 0 //  initial tail
@@ -816,7 +833,7 @@ addData:
 	concat // concat head and tail
 	frame_bury 0 // rootKey: RootKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:214
+	// contracts/metaMerkles/meta_merkles.algo.ts:215
 	// assert(key.length <= maxDataKeyLength, errs.KEY_TOO_LONG)
 	frame_dig -3 // key: string
 	len
@@ -824,7 +841,7 @@ addData:
 	<=
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:215
+	// contracts/metaMerkles/meta_merkles.algo.ts:216
 	// assert(value.length <= maxDataLength, errs.DATA_TOO_LONG)
 	frame_dig -4 // value: string
 	len
@@ -832,7 +849,7 @@ addData:
 	<=
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:216
+	// contracts/metaMerkles/meta_merkles.algo.ts:217
 	// assert(key.length < 2 || !(extract3(key, 0, 2) === reservedDataKeyPrefix), errs.RESERVED_KEY_PREFIX)
 	frame_dig -3 // key: string
 	len
@@ -850,7 +867,7 @@ addData:
 *skip_or0:
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:217
+	// contracts/metaMerkles/meta_merkles.algo.ts:218
 	// assert(this.roots(rootKey).exists, errs.NO_ROOT_FOR_DATA)
 	frame_dig 0 // rootKey: RootKey
 	box_len
@@ -858,7 +875,7 @@ addData:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:219
+	// contracts/metaMerkles/meta_merkles.algo.ts:220
 	// verifyPayTxn(pmt, {
 	//       receiver: this.app.address,
 	//       amount: this.getBoxCreateMinBalance(48 + key.length, value.length),
@@ -887,7 +904,7 @@ addData:
 	// transaction verification failed: {"txn":"pmt","field":"amount","expected":"this.getBoxCreateMinBalance(48 + key.length, value.length)"}
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:224
+	// contracts/metaMerkles/meta_merkles.algo.ts:225
 	// dataKey: DataKey = {
 	//       address: extract3(this.txn.sender, 0, 16) as bytes16,
 	//       name: name,
@@ -927,7 +944,7 @@ addData:
 	concat // concat head and tail
 	frame_bury 1 // dataKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:230
+	// contracts/metaMerkles/meta_merkles.algo.ts:231
 	// this.data(dataKey).value = value
 	bytec 1 //  "d"
 	frame_dig 1 // dataKey: DataKey
@@ -973,7 +990,7 @@ deleteData:
 	bytec 0 // 0x
 	dup
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:240
+	// contracts/metaMerkles/meta_merkles.algo.ts:241
 	// dataKey: DataKey = {
 	//       address: extract3(this.txn.sender, 0, 16) as bytes16,
 	//       name: name,
@@ -1013,7 +1030,7 @@ deleteData:
 	concat // concat head and tail
 	frame_bury 0 // dataKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:246
+	// contracts/metaMerkles/meta_merkles.algo.ts:247
 	// assert(this.data(dataKey).exists, errs.NO_DATA)
 	bytec 1 //  "d"
 	frame_dig 0 // dataKey: DataKey
@@ -1023,7 +1040,7 @@ deleteData:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:248
+	// contracts/metaMerkles/meta_merkles.algo.ts:249
 	// valueLength = this.data(dataKey).value.length
 	bytec 1 //  "d"
 	frame_dig 0 // dataKey: DataKey
@@ -1036,14 +1053,14 @@ deleteData:
 	len
 	frame_bury 1 // valueLength: uint64
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:250
+	// contracts/metaMerkles/meta_merkles.algo.ts:251
 	// this.data(dataKey).delete()
 	bytec 1 //  "d"
 	frame_dig 0 // dataKey: DataKey
 	concat
 	box_del
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:252
+	// contracts/metaMerkles/meta_merkles.algo.ts:253
 	// sendPayment({
 	//       receiver: this.txn.sender,
 	//       amount: this.getBoxCreateMinBalance(32 + key.length, valueLength),
@@ -1053,12 +1070,12 @@ deleteData:
 	intc 0 //  pay
 	itxn_field TypeEnum
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:253
+	// contracts/metaMerkles/meta_merkles.algo.ts:254
 	// receiver: this.txn.sender
 	txn Sender
 	itxn_field Receiver
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:254
+	// contracts/metaMerkles/meta_merkles.algo.ts:255
 	// amount: this.getBoxCreateMinBalance(32 + key.length, valueLength)
 	frame_dig 1 // valueLength: uint64
 	intc 1 // 32
@@ -1068,7 +1085,7 @@ deleteData:
 	callsub getBoxCreateMinBalance
 	itxn_field Amount
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:255
+	// contracts/metaMerkles/meta_merkles.algo.ts:256
 	// fee: 0
 	intc 2 // 0
 	itxn_field Fee
@@ -1143,7 +1160,7 @@ verify:
 	bytec 0 // 0x
 	dupn 4
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:271
+	// contracts/metaMerkles/meta_merkles.algo.ts:272
 	// truncatedAddress = extract3(address, 0, 16) as bytes16
 	frame_dig -1 // address: Address
 	extract 0 16
@@ -1157,7 +1174,7 @@ verify:
 	extract 0 16
 	frame_bury 0 // truncatedAddress: byte[16]
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:273
+	// contracts/metaMerkles/meta_merkles.algo.ts:274
 	// rootKey: RootKey = {
 	//       address: this.txn.sender,
 	//       name: name
@@ -1179,7 +1196,7 @@ verify:
 	concat // concat head and tail
 	frame_bury 1 // rootKey: RootKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:278
+	// contracts/metaMerkles/meta_merkles.algo.ts:279
 	// schemaKey: DataKey = {
 	//       address: truncatedAddress,
 	//       name: name,
@@ -1210,7 +1227,7 @@ verify:
 	concat // concat head and tail
 	frame_bury 2 // schemaKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:284
+	// contracts/metaMerkles/meta_merkles.algo.ts:285
 	// typeKey: DataKey = {
 	//       address: truncatedAddress,
 	//       name: name,
@@ -1241,7 +1258,7 @@ verify:
 	concat // concat head and tail
 	frame_bury 3 // typeKey: DataKey
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:290
+	// contracts/metaMerkles/meta_merkles.algo.ts:291
 	// assert(this.roots(rootKey).exists, errs.NO_NAME)
 	frame_dig 1 // rootKey: RootKey
 	box_len
@@ -1249,7 +1266,7 @@ verify:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:291
+	// contracts/metaMerkles/meta_merkles.algo.ts:292
 	// assert(this.data(schemaKey).exists, errs.NO_TREE_SCHEMA)
 	bytec 1 //  "d"
 	frame_dig 2 // schemaKey: DataKey
@@ -1259,7 +1276,7 @@ verify:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:292
+	// contracts/metaMerkles/meta_merkles.algo.ts:293
 	// assert(this.data(typeKey).exists, errs.NO_TREE_TYPE)
 	bytec 1 //  "d"
 	frame_dig 3 // typeKey: DataKey
@@ -1269,7 +1286,7 @@ verify:
 	pop
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:294
+	// contracts/metaMerkles/meta_merkles.algo.ts:295
 	// assert(btoi(this.data(typeKey).value) === type, errs.TYPE_MISMATCH)
 	bytec 1 //  "d"
 	frame_dig 3 // typeKey: DataKey
@@ -1284,13 +1301,13 @@ verify:
 	==
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:297
+	// contracts/metaMerkles/meta_merkles.algo.ts:298
 	// for (let i = 0; i < proof.length; i += 1)
 	intc 2 // 0
 	frame_bury 4 // i: uint64
 
 *for_0:
-	// contracts/metaMerkles/meta_merkles.algo.ts:297
+	// contracts/metaMerkles/meta_merkles.algo.ts:298
 	// i < proof.length
 	frame_dig 4 // i: uint64
 	frame_dig -4 // proof: bytes32[]
@@ -1301,7 +1318,7 @@ verify:
 	bz *for_0_end
 
 	// *if0_condition
-	// contracts/metaMerkles/meta_merkles.algo.ts:298
+	// contracts/metaMerkles/meta_merkles.algo.ts:299
 	// globals.opcodeBudget < 50
 	global OpcodeBudget
 	pushint 50
@@ -1309,7 +1326,7 @@ verify:
 	bz *if0_end
 
 	// *if0_consequent
-	// contracts/metaMerkles/meta_merkles.algo.ts:299
+	// contracts/metaMerkles/meta_merkles.algo.ts:300
 	// increaseOpcodeBudget()
 	itxn_begin
 	intc 5 //  appl
@@ -1325,7 +1342,7 @@ verify:
 	itxn_submit
 
 *if0_end:
-	// contracts/metaMerkles/meta_merkles.algo.ts:302
+	// contracts/metaMerkles/meta_merkles.algo.ts:303
 	// hash = this.hash(proof[i], hash)
 	frame_dig -3 // leaf: bytes32
 	frame_dig -4 // proof: bytes32[]
@@ -1343,7 +1360,7 @@ verify:
 	frame_bury -3 // hash: bytes32
 
 *for_0_continue:
-	// contracts/metaMerkles/meta_merkles.algo.ts:297
+	// contracts/metaMerkles/meta_merkles.algo.ts:298
 	// i += 1
 	frame_dig 4 // i: uint64
 	intc 0 // 1
@@ -1352,7 +1369,7 @@ verify:
 	b *for_0
 
 *for_0_end:
-	// contracts/metaMerkles/meta_merkles.algo.ts:305
+	// contracts/metaMerkles/meta_merkles.algo.ts:306
 	// return hash === this.roots(rootKey).value;
 	frame_dig -3 // leaf: bytes32
 	frame_dig 1 // rootKey: RootKey
@@ -1419,7 +1436,7 @@ read:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:318
+	// contracts/metaMerkles/meta_merkles.algo.ts:319
 	// truncatedAddress = extract3(address, 0, 16) as bytes16
 	frame_dig -1 // address: Address
 	extract 0 16
@@ -1433,7 +1450,7 @@ read:
 	extract 0 16
 	frame_bury 0 // truncatedAddress: byte[16]
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:319
+	// contracts/metaMerkles/meta_merkles.algo.ts:320
 	// return this.data({ address: truncatedAddress, name: name, key: key }).value
 	bytec 1 //  "d"
 	bytec 0 //  initial head
@@ -1546,7 +1563,7 @@ read:
 verifiedRead:
 	proto 6 1
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:349
+	// contracts/metaMerkles/meta_merkles.algo.ts:350
 	// assert(this.verify(address, name, leaf, proof, type), errs.FAILED_TO_VERIFY_INCLUSION)
 	frame_dig -5 // type: uint64
 	frame_dig -4 // proof: bytes32[]
@@ -1556,7 +1573,7 @@ verifiedRead:
 	callsub verify
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:350
+	// contracts/metaMerkles/meta_merkles.algo.ts:351
 	// return this.read(address, name, key);
 	frame_dig -6 // key: string
 	frame_dig -2 // name: string
@@ -1591,7 +1608,7 @@ verifiedRead:
 addType:
 	proto 2 0
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:354
+	// contracts/metaMerkles/meta_merkles.algo.ts:355
 	// verifyPayTxn(pmt, {
 	//       receiver: this.app.address,
 	//       amount: 100_000_000,
@@ -1614,7 +1631,7 @@ addType:
 	// transaction verification failed: {"txn":"pmt","field":"amount","expected":"100_000_000"}
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:359
+	// contracts/metaMerkles/meta_merkles.algo.ts:360
 	// assert(desc.length <= 1024, errs.DATA_TOO_LONG)
 	frame_dig -2 // desc: string
 	len
@@ -1622,7 +1639,7 @@ addType:
 	<=
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:361
+	// contracts/metaMerkles/meta_merkles.algo.ts:362
 	// this.types(this.typesIndex.value).value = desc
 	bytec 7 //  "t"
 	dup
@@ -1641,7 +1658,7 @@ addType:
 	concat
 	box_put
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:362
+	// contracts/metaMerkles/meta_merkles.algo.ts:363
 	// this.typesIndex.value = (this.typesIndex.value + 1)
 	bytec 7 //  "t"
 	dup
@@ -1678,7 +1695,7 @@ addType:
 addSchema:
 	proto 2 0
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:366
+	// contracts/metaMerkles/meta_merkles.algo.ts:367
 	// verifyPayTxn(pmt, {
 	//       receiver: this.app.address,
 	//       amount: 100_000_000,
@@ -1701,7 +1718,7 @@ addSchema:
 	// transaction verification failed: {"txn":"pmt","field":"amount","expected":"100_000_000"}
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:371
+	// contracts/metaMerkles/meta_merkles.algo.ts:372
 	// assert(desc.length <= 1024, errs.DATA_TOO_LONG)
 	frame_dig -2 // desc: string
 	len
@@ -1709,7 +1726,7 @@ addSchema:
 	<=
 	assert
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:373
+	// contracts/metaMerkles/meta_merkles.algo.ts:374
 	// this.schemas(this.schemaIndex.value).value = desc
 	bytec 9 //  "s"
 	app_global_get
@@ -1726,7 +1743,7 @@ addSchema:
 	concat
 	box_put
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:374
+	// contracts/metaMerkles/meta_merkles.algo.ts:375
 	// this.schemaIndex.value = (this.schemaIndex.value + 1)
 	bytec 9 //  "s"
 	dup
@@ -1741,7 +1758,7 @@ hash:
 	proto 2 1
 
 	// *if1_condition
-	// contracts/metaMerkles/meta_merkles.algo.ts:378
+	// contracts/metaMerkles/meta_merkles.algo.ts:379
 	// btobigint(a) > btobigint(b)
 	frame_dig -1 // a: bytes32
 	frame_dig -2 // b: bytes32
@@ -1749,7 +1766,7 @@ hash:
 	bz *if1_else
 
 	// *if1_consequent
-	// contracts/metaMerkles/meta_merkles.algo.ts:379
+	// contracts/metaMerkles/meta_merkles.algo.ts:380
 	// return sha256(b + a)
 	frame_dig -2 // b: bytes32
 	frame_dig -1 // a: bytes32
@@ -1759,7 +1776,7 @@ hash:
 	b *if1_end
 
 *if1_else:
-	// contracts/metaMerkles/meta_merkles.algo.ts:381
+	// contracts/metaMerkles/meta_merkles.algo.ts:382
 	// return sha256(a + b);
 	frame_dig -1 // a: bytes32
 	frame_dig -2 // b: bytes32
@@ -1774,7 +1791,7 @@ hash:
 getBoxCreateMinBalance:
 	proto 2 1
 
-	// contracts/metaMerkles/meta_merkles.algo.ts:386
+	// contracts/metaMerkles/meta_merkles.algo.ts:387
 	// return 2_500 + (400 * (a + b))
 	pushint 2_500
 	pushint 400
@@ -1798,6 +1815,7 @@ getBoxCreateMinBalance:
 	err
 
 *call_NoOp:
+	pushbytes 0x72b25981 // method "rootCosts(string)uint64"
 	pushbytes 0x64ccf1d3 // method "addRoot(pay,string,byte[32],uint64,uint64)void"
 	pushbytes 0xdf287a7d // method "deleteRoot(string)void"
 	pushbytes 0xc6d3d704 // method "updateRoot(string,byte[32])void"
@@ -1809,7 +1827,7 @@ getBoxCreateMinBalance:
 	pushbytes 0x51067bbc // method "addType(pay,string)void"
 	pushbytes 0xc12e0be7 // method "addSchema(pay,string)void"
 	txna ApplicationArgs 0
-	match *abi_route_addRoot *abi_route_deleteRoot *abi_route_updateRoot *abi_route_addData *abi_route_deleteData *abi_route_verify *abi_route_read *abi_route_verifiedRead *abi_route_addType *abi_route_addSchema
+	match *abi_route_rootCosts *abi_route_addRoot *abi_route_deleteRoot *abi_route_updateRoot *abi_route_addData *abi_route_deleteData *abi_route_verify *abi_route_read *abi_route_verifiedRead *abi_route_addType *abi_route_addSchema
 
 	// this contract does not implement the given ABI method for call NoOp
 	err

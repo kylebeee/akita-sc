@@ -225,14 +225,25 @@
         {
           "name": "methods",
           "type": "byte[4][]"
-        },
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "assignDomain",
+      "desc": "Assign a domain to a passkey",
+      "args": [
         {
-          "name": "domainKey",
-          "type": "bool"
+          "name": "caller",
+          "type": "address",
+          "desc": "The address of the passkey"
         },
         {
           "name": "domain",
-          "type": "string"
+          "type": "string",
+          "desc": "The domain to assign to the passkey"
         }
       ],
       "returns": {
@@ -251,6 +262,10 @@
         {
           "name": "allowedCaller",
           "type": "address"
+        },
+        {
+          "name": "methods",
+          "type": "byte[4][]"
         }
       ],
       "returns": {
@@ -290,6 +305,10 @@
           "name": "adminPrivileges",
           "type": "bool",
           "desc": "Whether the plugin has permissions to change the admin account"
+        },
+        {
+          "name": "methods",
+          "type": "byte[4][]"
         }
       ],
       "returns": {
@@ -304,6 +323,54 @@
           "name": "name",
           "type": "string",
           "desc": "The plugin name"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "arc58_addMethod",
+      "desc": "Add a method restriction to a plugin",
+      "args": [
+        {
+          "name": "app",
+          "type": "uint64",
+          "desc": "The plugin app"
+        },
+        {
+          "name": "allowedCaller",
+          "type": "address",
+          "desc": "The address of that's allowed to call the app"
+        },
+        {
+          "name": "method",
+          "type": "byte[4]",
+          "desc": "The method signature to add"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "arc58_removeMethod",
+      "desc": "Remove a method restriction from a plugin",
+      "args": [
+        {
+          "name": "app",
+          "type": "uint64",
+          "desc": "The plugin app"
+        },
+        {
+          "name": "allowedCaller",
+          "type": "address",
+          "desc": "The address of that's allowed to call the app"
+        },
+        {
+          "name": "method",
+          "type": "byte[4]",
+          "desc": "The method signature to remove"
         }
       ],
       "returns": {

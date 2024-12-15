@@ -28,7 +28,7 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 controls:
 	proto 1 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:362
+	// contracts/arc58/plugins/akita_social.algo.ts:360
 	// return address.authAddr === this.app.address;
 	frame_dig -1 // address: Address
 	acct_params_get AcctAuthAddr
@@ -41,7 +41,7 @@ controls:
 rekeyBack:
 	proto 1 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:366
+	// contracts/arc58/plugins/akita_social.algo.ts:364
 	// sendPayment({
 	//             sender: address,
 	//             amount: 0,
@@ -53,27 +53,27 @@ rekeyBack:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:367
+	// contracts/arc58/plugins/akita_social.algo.ts:365
 	// sender: address
 	frame_dig -1 // address: Address
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:368
+	// contracts/arc58/plugins/akita_social.algo.ts:366
 	// amount: 0
 	intc 0 // 0
 	itxn_field Amount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:369
+	// contracts/arc58/plugins/akita_social.algo.ts:367
 	// receiver: address
 	frame_dig -1 // address: Address
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:370
+	// contracts/arc58/plugins/akita_social.algo.ts:368
 	// rekeyTo: address
 	frame_dig -1 // address: Address
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/akita_social.algo.ts:371
+	// contracts/arc58/plugins/akita_social.algo.ts:369
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -86,7 +86,7 @@ rekeyBack:
 isBanned:
 	proto 1 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:376
+	// contracts/arc58/plugins/akita_social.algo.ts:374
 	// return this.banned(address).exists && this.banned(address).value > globals.latestTimestamp;
 	bytec 7 //  "b"
 	frame_dig -1 // address: Address
@@ -119,7 +119,7 @@ isBlocked:
 	bytec 0 // 0x
 	dup
 
-	// contracts/arc58/plugins/akita_social.algo.ts:380
+	// contracts/arc58/plugins/akita_social.algo.ts:378
 	// userSplice = extract3(user, 0, 24) as bytes24
 	frame_dig -1 // user: Address
 	extract 0 24
@@ -133,7 +133,7 @@ isBlocked:
 	extract 0 24
 	frame_bury 0 // userSplice: byte[24]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:381
+	// contracts/arc58/plugins/akita_social.algo.ts:379
 	// blockedSplice = extract3(blocked, 0, 24) as bytes24
 	frame_dig -2 // blocked: Address
 	extract 0 24
@@ -147,7 +147,7 @@ isBlocked:
 	extract 0 24
 	frame_bury 1 // blockedSplice: byte[24]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:382
+	// contracts/arc58/plugins/akita_social.algo.ts:380
 	// return this.blocks({ user: userSplice, blocked: blockedSplice }).exists;
 	bytec 7 //  "b"
 	frame_dig 0 // userSplice: byte[24]
@@ -169,7 +169,7 @@ isBlocked:
 gate:
 	proto 2 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:386
+	// contracts/arc58/plugins/akita_social.algo.ts:384
 	// return sendMethodCall<typeof Gate.prototype.check, boolean>({
 	//             applicationID: AppID.fromUint64(AkitaAppIDsGate),
 	//             methodArgs: [
@@ -184,12 +184,12 @@ gate:
 	pushbytes 0xb5feb87b // method "check(uint64,byte[][])bool"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:387
+	// contracts/arc58/plugins/akita_social.algo.ts:385
 	// applicationID: AppID.fromUint64(AkitaAppIDsGate)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:388
+	// contracts/arc58/plugins/akita_social.algo.ts:386
 	// methodArgs: [
 	//                 filterIndex,
 	//                 args,
@@ -200,7 +200,7 @@ gate:
 	frame_dig -2 // args: bytes[]
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:392
+	// contracts/arc58/plugins/akita_social.algo.ts:390
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -224,7 +224,7 @@ isSubscribed:
 	bytec 0 // 0x
 	dupn 4
 
-	// contracts/arc58/plugins/akita_social.algo.ts:397
+	// contracts/arc58/plugins/akita_social.algo.ts:395
 	// info = sendMethodCall<typeof SubscriptionPlugin.prototype.getSubsriptionInfo>({
 	//             applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin),
 	//             methodArgs: [address, index],
@@ -236,12 +236,12 @@ isSubscribed:
 	pushbytes 0x3362f0b0 // method "getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:398
+	// contracts/arc58/plugins/akita_social.algo.ts:396
 	// applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:399
+	// contracts/arc58/plugins/akita_social.algo.ts:397
 	// methodArgs: [address, index]
 	frame_dig -1 // address: Address
 	itxn_field ApplicationArgs
@@ -249,7 +249,7 @@ isSubscribed:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:400
+	// contracts/arc58/plugins/akita_social.algo.ts:398
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -263,20 +263,17 @@ isSubscribed:
 	extract 4 0
 	frame_bury 0 // info: (address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])
 
-	// contracts/arc58/plugins/akita_social.algo.ts:404
-	// toAkita = info.recipient === AkitaSubscriptionsReceiverAddress
+	// contracts/arc58/plugins/akita_social.algo.ts:403
+	// toAkita = info.recipient === addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ')
 	frame_dig 0 // info: (address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])
 	store 255 // full array
 	load 255 // full array
 	extract 0 32
-
-	// utils/constants.ts:19
-	// addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ')
 	bytec 5 //  addr "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"
 	==
 	frame_bury 1 // toAkita: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:408
+	// contracts/arc58/plugins/akita_social.algo.ts:407
 	// notDonating = info.index !== 0
 	frame_dig 0 // info: (address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])
 	store 255 // full array
@@ -287,7 +284,7 @@ isSubscribed:
 	!=
 	frame_bury 2 // notDonating: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:410
+	// contracts/arc58/plugins/akita_social.algo.ts:409
 	// lastWindowStart = globals.latestTimestamp - (
 	//             ((globals.latestTimestamp - info.startDate) % info.interval) + info.interval
 	//         )
@@ -314,7 +311,7 @@ isSubscribed:
 	-
 	frame_bury 3 // lastWindowStart: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:416
+	// contracts/arc58/plugins/akita_social.algo.ts:415
 	// notStale = info.lastPayment > lastWindowStart
 	frame_dig 0 // info: (address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])
 	store 255 // full array
@@ -325,7 +322,7 @@ isSubscribed:
 	>
 	frame_bury 4 // notStale: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:418
+	// contracts/arc58/plugins/akita_social.algo.ts:417
 	// return { active: (toAkita && notDonating && notStale), index: info.index, streak: info.streak };
 	bytec 2 // 0x00
 	intc 0 // 0
@@ -372,7 +369,7 @@ isNFD:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:422
+	// contracts/arc58/plugins/akita_social.algo.ts:421
 	// nfdName = NFD.globalState(NFD_NAME_KEY) as bytes
 	frame_dig -1 // NFD: AppID
 	pushbytes "i.name"
@@ -382,7 +379,7 @@ isNFD:
 	assert
 	frame_bury 0 // nfdName: byte[]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:424
+	// contracts/arc58/plugins/akita_social.algo.ts:423
 	// sendAppCall({
 	//             applicationID: AppID.fromUint64(OtherAppIDsNFDRegistry),
 	//             applicationArgs: [
@@ -397,12 +394,12 @@ isNFD:
 	intc 3 //  appl
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:425
+	// contracts/arc58/plugins/akita_social.algo.ts:424
 	// applicationID: AppID.fromUint64(OtherAppIDsNFDRegistry)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:426
+	// contracts/arc58/plugins/akita_social.algo.ts:425
 	// applicationArgs: [
 	//                 'is_valid_nfd_appid',
 	//                 nfdName,
@@ -416,12 +413,12 @@ isNFD:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:431
+	// contracts/arc58/plugins/akita_social.algo.ts:430
 	// applications: [NFD]
 	frame_dig -1 // NFD: AppID
 	itxn_field Applications
 
-	// contracts/arc58/plugins/akita_social.algo.ts:432
+	// contracts/arc58/plugins/akita_social.algo.ts:431
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -429,7 +426,7 @@ isNFD:
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/arc58/plugins/akita_social.algo.ts:435
+	// contracts/arc58/plugins/akita_social.algo.ts:434
 	// return btoi(this.itxn.lastLog) !== 0;
 	itxn LastLog
 	btoi
@@ -444,14 +441,11 @@ isNFD:
 isAkitaNFT:
 	proto 1 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:439
-	// return akitaNFT.creator === AkitaCollectionsAddress;
+	// contracts/arc58/plugins/akita_social.algo.ts:438
+	// return akitaNFT.creator === addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
 	frame_dig -1 // akitaNFT: AssetID
 	asset_params_get AssetCreator
 	pop
-
-	// utils/constants.ts:15
-	// addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ')
 	bytec 5 //  addr "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"
 	==
 	retsub
@@ -460,7 +454,7 @@ isAkitaNFT:
 userHolds:
 	proto 2 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:443
+	// contracts/arc58/plugins/akita_social.algo.ts:442
 	// return address.assetBalance(NFT) > 0;
 	frame_dig -1 // address: Address
 	frame_dig -2 // NFT: AssetID
@@ -478,7 +472,7 @@ addressVerifiedOnNFD:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/arc58/plugins/akita_social.algo.ts:449
+	// contracts/arc58/plugins/akita_social.algo.ts:448
 	// sendAppCall({
 	//             applicationID: NFD,
 	//             applicationArgs: ['read_property', 'v.caAlgo.0.as'],
@@ -488,19 +482,19 @@ addressVerifiedOnNFD:
 	intc 3 //  appl
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:450
+	// contracts/arc58/plugins/akita_social.algo.ts:449
 	// applicationID: NFD
 	frame_dig -2 // NFD: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:451
+	// contracts/arc58/plugins/akita_social.algo.ts:450
 	// applicationArgs: ['read_property', 'v.caAlgo.0.as']
 	bytec 10 //  "read_property"
 	itxn_field ApplicationArgs
 	pushbytes 0x762e6361416c676f2e302e6173 // "v.caAlgo.0.as"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:452
+	// contracts/arc58/plugins/akita_social.algo.ts:451
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -508,18 +502,18 @@ addressVerifiedOnNFD:
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/arc58/plugins/akita_social.algo.ts:455
+	// contracts/arc58/plugins/akita_social.algo.ts:454
 	// caAlgoData = this.itxn.lastLog
 	itxn LastLog
 	frame_bury 0 // caAlgoData: byte[]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:457
+	// contracts/arc58/plugins/akita_social.algo.ts:456
 	// for (let i = 0; i < caAlgoData.length; i += 32)
 	intc 0 // 0
 	frame_bury 1 // i: uint64
 
 *for_0:
-	// contracts/arc58/plugins/akita_social.algo.ts:457
+	// contracts/arc58/plugins/akita_social.algo.ts:456
 	// i < caAlgoData.length
 	frame_dig 1 // i: uint64
 	frame_dig 0 // caAlgoData: byte[]
@@ -527,7 +521,7 @@ addressVerifiedOnNFD:
 	<
 	bz *for_0_end
 
-	// contracts/arc58/plugins/akita_social.algo.ts:458
+	// contracts/arc58/plugins/akita_social.algo.ts:457
 	// addr = extract3(caAlgoData, i, 32)
 	frame_dig 0 // caAlgoData: byte[]
 	frame_dig 1 // i: uint64
@@ -536,7 +530,7 @@ addressVerifiedOnNFD:
 	frame_bury 2 // addr: byte[]
 
 	// *if0_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:459
+	// contracts/arc58/plugins/akita_social.algo.ts:458
 	// addr !== rawBytes(globals.zeroAddress) && addr === rawBytes(address)
 	frame_dig 2 // addr: byte[]
 	global ZeroAddress
@@ -552,7 +546,7 @@ addressVerifiedOnNFD:
 	bz *if0_end
 
 	// *if0_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:460
+	// contracts/arc58/plugins/akita_social.algo.ts:459
 	// return true;
 	intc 1 // 1
 	b *addressVerifiedOnNFD*return
@@ -560,7 +554,7 @@ addressVerifiedOnNFD:
 *if0_end:
 
 *for_0_continue:
-	// contracts/arc58/plugins/akita_social.algo.ts:457
+	// contracts/arc58/plugins/akita_social.algo.ts:456
 	// i += 32
 	frame_dig 1 // i: uint64
 	intc 2 // 32
@@ -569,7 +563,7 @@ addressVerifiedOnNFD:
 	b *for_0
 
 *for_0_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:464
+	// contracts/arc58/plugins/akita_social.algo.ts:463
 	// return false;
 	intc 0 // 0
 
@@ -589,18 +583,18 @@ userImpact:
 	bytec 0 // 0x
 	dupn 7
 
-	// contracts/arc58/plugins/akita_social.algo.ts:472
+	// contracts/arc58/plugins/akita_social.algo.ts:471
 	// meta = this.meta(address).value
 	frame_dig -1 // address: Address
 	frame_bury 0 // storage key//meta
 
-	// contracts/arc58/plugins/akita_social.algo.ts:474
+	// contracts/arc58/plugins/akita_social.algo.ts:473
 	// stakedAktaImpact = this.getStakingImpactScore(address)
 	frame_dig -1 // address: Address
 	callsub getStakingImpactScore
 	frame_bury 1 // stakedAktaImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:475
+	// contracts/arc58/plugins/akita_social.algo.ts:474
 	// subscriberImpact = this.getSubscriberImpactScore(address, meta.subscriptionIndex)
 	frame_dig 0 // storage key//meta
 	box_get
@@ -615,13 +609,13 @@ userImpact:
 	callsub getSubscriberImpactScore
 	frame_bury 2 // subscriberImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:476
+	// contracts/arc58/plugins/akita_social.algo.ts:475
 	// socialImpact = this.getSocialImpactScore(address)
 	frame_dig -1 // address: Address
 	callsub getSocialImpactScore
 	frame_bury 3 // socialImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:477
+	// contracts/arc58/plugins/akita_social.algo.ts:476
 	// nfdScore = this.getNFDImpactScore(address, meta.NFD)
 	frame_dig 0 // storage key//meta
 	box_get
@@ -636,13 +630,13 @@ userImpact:
 	callsub getNFDImpactScore
 	frame_bury 4 // nfdScore: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:478
+	// contracts/arc58/plugins/akita_social.algo.ts:477
 	// heldAkitaImpact = this.getHeldAktaImpactScore(address)
 	frame_dig -1 // address: Address
 	callsub getHeldAktaImpactScore
 	frame_bury 5 // heldAkitaImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:479
+	// contracts/arc58/plugins/akita_social.algo.ts:478
 	// nftImpact = this.getNFTImpactScore(address, meta.akitaNFT)
 	frame_dig 0 // storage key//meta
 	box_get
@@ -657,7 +651,7 @@ userImpact:
 	callsub getNFTImpactScore
 	frame_bury 6 // nftImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:481
+	// contracts/arc58/plugins/akita_social.algo.ts:480
 	// total = stakedAktaImpact + subscriberImpact + socialImpact + nfdScore + heldAkitaImpact + nftImpact
 	frame_dig 1 // stakedAktaImpact: uint64
 	frame_dig 2 // subscriberImpact: uint64
@@ -673,7 +667,7 @@ userImpact:
 	frame_bury 7 // total: uint64
 
 	// *if1_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:482
+	// contracts/arc58/plugins/akita_social.algo.ts:481
 	// total === 0
 	frame_dig 7 // total: uint64
 	intc 0 // 0
@@ -681,13 +675,13 @@ userImpact:
 	bz *if1_end
 
 	// *if1_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:483
+	// contracts/arc58/plugins/akita_social.algo.ts:482
 	// return 1
 	intc 1 // 1
 	b *userImpact*return
 
 *if1_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:486
+	// contracts/arc58/plugins/akita_social.algo.ts:485
 	// return total;
 	frame_dig 7 // total: uint64
 
@@ -707,7 +701,7 @@ getStakingImpactScore:
 	bytec 0 // 0x
 	dupn 4
 
-	// contracts/arc58/plugins/akita_social.algo.ts:491
+	// contracts/arc58/plugins/akita_social.algo.ts:490
 	// info = sendMethodCall<typeof StakingPlugin.prototype.getInfo, StakeValue>({
 	//             applicationID: AppID.fromUint64(AkitaAppIDsStakingPlugin),
 	//             methodArgs: [
@@ -725,12 +719,12 @@ getStakingImpactScore:
 	pushbytes 0xb67aca2a // method "getInfo(address,(uint64,bool))(uint64,uint64,uint64)"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:492
+	// contracts/arc58/plugins/akita_social.algo.ts:491
 	// applicationID: AppID.fromUint64(AkitaAppIDsStakingPlugin)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:493
+	// contracts/arc58/plugins/akita_social.algo.ts:492
 	// methodArgs: [
 	//                 address,
 	//                 {
@@ -748,7 +742,7 @@ getStakingImpactScore:
 	concat
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:500
+	// contracts/arc58/plugins/akita_social.algo.ts:499
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -762,7 +756,7 @@ getStakingImpactScore:
 	extract 4 0
 	frame_bury 0 // info: (uint64,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:503
+	// contracts/arc58/plugins/akita_social.algo.ts:502
 	// elapsed = globals.latestTimestamp - info.lastUpdate
 	global LatestTimestamp
 	frame_dig 0 // info: (uint64,uint64,uint64)
@@ -772,7 +766,7 @@ getStakingImpactScore:
 	frame_bury 1 // elapsed: uint64
 
 	// *if2_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:506
+	// contracts/arc58/plugins/akita_social.algo.ts:505
 	// info.amount < TEN_THOUSAND_AKITA || elapsed < THIRTY_DAYS
 	frame_dig 0 // info: (uint64,uint64,uint64)
 	extract 0 8
@@ -790,13 +784,13 @@ getStakingImpactScore:
 	bz *if2_end
 
 	// *if2_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:507
+	// contracts/arc58/plugins/akita_social.algo.ts:506
 	// return 0;
 	intc 0 // 0
 	b *getStakingImpactScore*return
 
 *if2_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:511
+	// contracts/arc58/plugins/akita_social.algo.ts:510
 	// amtCapped = info.amount >= TWO_HUNDRED_THOUSAND_AKITA ? TWO_HUNDRED_THOUSAND_AKITA : info.amount
 	frame_dig 0 // info: (uint64,uint64,uint64)
 	extract 0 8
@@ -815,7 +809,7 @@ getStakingImpactScore:
 *ternary0_end:
 	frame_bury 2 // amtCapped: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:514
+	// contracts/arc58/plugins/akita_social.algo.ts:513
 	// maxScore = (amtCapped * 250) / TWO_HUNDRED_THOUSAND_AKITA
 	frame_dig 2 // amtCapped: uint64
 	intc 24 // 250
@@ -824,7 +818,7 @@ getStakingImpactScore:
 	/
 	frame_bury 3 // maxScore: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:517
+	// contracts/arc58/plugins/akita_social.algo.ts:516
 	// timeCapped = elapsed >= ONE_YEAR ? ONE_YEAR : elapsed
 	frame_dig 1 // elapsed: uint64
 	intc 12 // 31536000
@@ -839,7 +833,7 @@ getStakingImpactScore:
 *ternary1_end:
 	frame_bury 4 // timeCapped: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:519
+	// contracts/arc58/plugins/akita_social.algo.ts:518
 	// return (timeCapped * maxScore) / ONE_YEAR;
 	frame_dig 4 // timeCapped: uint64
 	frame_dig 3 // maxScore: uint64
@@ -863,7 +857,7 @@ getHeldAktaImpactScore:
 	bytec 0 // 0x
 	dup
 
-	// contracts/arc58/plugins/akita_social.algo.ts:523
+	// contracts/arc58/plugins/akita_social.algo.ts:522
 	// amount = address.assetBalance(AkitaAssetAkita)
 	frame_dig -1 // address: Address
 	intc 0 // 0
@@ -872,7 +866,7 @@ getHeldAktaImpactScore:
 	frame_bury 0 // amount: uint64
 
 	// *if3_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:526
+	// contracts/arc58/plugins/akita_social.algo.ts:525
 	// amount < TEN_THOUSAND_AKITA
 	frame_dig 0 // amount: uint64
 	intc 16 // 10000000000
@@ -880,13 +874,13 @@ getHeldAktaImpactScore:
 	bz *if3_end
 
 	// *if3_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:527
+	// contracts/arc58/plugins/akita_social.algo.ts:526
 	// return 0;
 	intc 0 // 0
 	b *getHeldAktaImpactScore*return
 
 *if3_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:530
+	// contracts/arc58/plugins/akita_social.algo.ts:529
 	// capped = amount >= ONE_MILLION_AKITA ? ONE_MILLION_AKITA : amount
 	frame_dig 0 // amount: uint64
 	intc 11 // 1000000000000
@@ -901,7 +895,7 @@ getHeldAktaImpactScore:
 *ternary2_end:
 	frame_bury 1 // capped: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:531
+	// contracts/arc58/plugins/akita_social.algo.ts:530
 	// return (capped * 50) / ONE_MILLION_AKITA;
 	frame_dig 1 // capped: uint64
 	intc 9 // 50
@@ -925,12 +919,12 @@ getSubscriberImpactScore:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/arc58/plugins/akita_social.algo.ts:535
+	// contracts/arc58/plugins/akita_social.algo.ts:534
 	// subscriberImpact = 0
 	intc 0 // 0
 	frame_bury 0 // subscriberImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:537
+	// contracts/arc58/plugins/akita_social.algo.ts:536
 	// subscriptionState = this.isSubscribed(address, subscriptionIndex)
 	frame_dig -2 // subscriptionIndex: uint64
 	frame_dig -1 // address: Address
@@ -938,7 +932,7 @@ getSubscriberImpactScore:
 	frame_bury 1 // subscriptionState: (bool,uint64,uint64)
 
 	// *if4_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:539
+	// contracts/arc58/plugins/akita_social.algo.ts:538
 	// !subscriptionState.active
 	frame_dig 1 // subscriptionState: (bool,uint64,uint64)
 	store 255 // full array
@@ -949,13 +943,13 @@ getSubscriberImpactScore:
 	bz *if4_end
 
 	// *if4_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:540
+	// contracts/arc58/plugins/akita_social.algo.ts:539
 	// return subscriberImpact;
 	frame_dig 0 // subscriberImpact: uint64
 	b *getSubscriberImpactScore*return
 
 *if4_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:543
+	// contracts/arc58/plugins/akita_social.algo.ts:542
 	// modifier = this.subscriptionStateModifier(subscriptionState.index).value
 	bytec 21 //  "s"
 	frame_dig 1 // subscriptionState: (bool,uint64,uint64)
@@ -973,7 +967,7 @@ getSubscriberImpactScore:
 	frame_bury 2 // modifier: uint64
 
 	// *if5_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:546
+	// contracts/arc58/plugins/akita_social.algo.ts:545
 	// subscriptionState.streak >= 12
 	frame_dig 1 // subscriptionState: (bool,uint64,uint64)
 	store 255 // full array
@@ -985,7 +979,7 @@ getSubscriberImpactScore:
 	bz *if5_else
 
 	// *if5_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:547
+	// contracts/arc58/plugins/akita_social.algo.ts:546
 	// subscriberImpact += (250 / modifier)
 	frame_dig 0 // subscriberImpact: uint64
 	intc 24 // 250
@@ -996,7 +990,7 @@ getSubscriberImpactScore:
 	b *if5_end
 
 *if5_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:549
+	// contracts/arc58/plugins/akita_social.algo.ts:548
 	// subscriberImpact += (subscriptionState.streak * 20) / modifier
 	frame_dig 0 // subscriberImpact: uint64
 	frame_dig 1 // subscriptionState: (bool,uint64,uint64)
@@ -1012,7 +1006,7 @@ getSubscriberImpactScore:
 	frame_bury 0 // subscriberImpact: uint64
 
 *if5_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:552
+	// contracts/arc58/plugins/akita_social.algo.ts:551
 	// return subscriberImpact;
 	frame_dig 0 // subscriberImpact: uint64
 
@@ -1032,13 +1026,13 @@ calcNFDImpactScore:
 	bytec 0 // 0x
 	dupn 5
 
-	// contracts/arc58/plugins/akita_social.algo.ts:557
+	// contracts/arc58/plugins/akita_social.algo.ts:556
 	// nfdImpact = 50
 	intc 9 // 50
 	frame_bury 0 // nfdImpact: uint64
 
 	// *if6_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:560
+	// contracts/arc58/plugins/akita_social.algo.ts:559
 	// NFD.globalStateExists('i.parentAppID')
 	//             && btoi(NFD.globalState('i.parentAppID') as bytes) === AppID.fromUint64(OtherAppIDsAkitaRootNFD).id
 	frame_dig -1 // NFD: AppID
@@ -1063,7 +1057,7 @@ calcNFDImpactScore:
 	bz *if6_end
 
 	// *if6_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:563
+	// contracts/arc58/plugins/akita_social.algo.ts:562
 	// nfdImpact += 50
 	frame_dig 0 // nfdImpact: uint64
 	intc 9 // 50
@@ -1071,27 +1065,27 @@ calcNFDImpactScore:
 	frame_bury 0 // nfdImpact: uint64
 
 *if6_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:566
+	// contracts/arc58/plugins/akita_social.algo.ts:565
 	// hasVerifiedDomain = false
 	intc 0 // 0
 	frame_bury 1 // hasVerifiedDomain: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:567
+	// contracts/arc58/plugins/akita_social.algo.ts:566
 	// hasVerifiedTwitter = false
 	intc 0 // 0
 	frame_bury 2 // hasVerifiedTwitter: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:568
+	// contracts/arc58/plugins/akita_social.algo.ts:567
 	// hasVerifiedDiscord = false
 	intc 0 // 0
 	frame_bury 3 // hasVerifiedDiscord: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:569
+	// contracts/arc58/plugins/akita_social.algo.ts:568
 	// hasVerifiedTelegram = false
 	intc 0 // 0
 	frame_bury 4 // hasVerifiedTelegram: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:570
+	// contracts/arc58/plugins/akita_social.algo.ts:569
 	// version = extract3((NFD.globalState('i.ver') as bytes), 0, 2)
 	frame_dig -1 // NFD: AppID
 	pushbytes 0x692e766572 // "i.ver"
@@ -1103,7 +1097,7 @@ calcNFDImpactScore:
 	frame_bury 5 // version: byte[]
 
 	// *if7_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:572
+	// contracts/arc58/plugins/akita_social.algo.ts:571
 	// version === '1.'
 	frame_dig 5 // version: byte[]
 	pushbytes 0x312e // "1."
@@ -1111,7 +1105,7 @@ calcNFDImpactScore:
 	bz *if7_else
 
 	// *if7_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:573
+	// contracts/arc58/plugins/akita_social.algo.ts:572
 	// hasVerifiedDomain = NFD.globalStateExists('v.domain')
 	frame_dig -1 // NFD: AppID
 	bytec 18 //  "v.domain"
@@ -1120,7 +1114,7 @@ calcNFDImpactScore:
 	pop
 	frame_bury 1 // hasVerifiedDomain: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:574
+	// contracts/arc58/plugins/akita_social.algo.ts:573
 	// hasVerifiedTwitter = NFD.globalStateExists('v.twitter')
 	frame_dig -1 // NFD: AppID
 	bytec 16 //  "v.twitter"
@@ -1129,7 +1123,7 @@ calcNFDImpactScore:
 	pop
 	frame_bury 2 // hasVerifiedTwitter: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:575
+	// contracts/arc58/plugins/akita_social.algo.ts:574
 	// hasVerifiedDiscord = NFD.globalStateExists('v.discord')
 	frame_dig -1 // NFD: AppID
 	bytec 17 //  "v.discord"
@@ -1138,7 +1132,7 @@ calcNFDImpactScore:
 	pop
 	frame_bury 3 // hasVerifiedDiscord: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:576
+	// contracts/arc58/plugins/akita_social.algo.ts:575
 	// hasVerifiedTelegram = NFD.globalStateExists('v.telegram')
 	frame_dig -1 // NFD: AppID
 	bytec 15 //  "v.telegram"
@@ -1149,7 +1143,7 @@ calcNFDImpactScore:
 	b *if7_end
 
 *if7_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:578
+	// contracts/arc58/plugins/akita_social.algo.ts:577
 	// sendAppCall({
 	//                 applicationID: NFD,
 	//                 applicationArgs: ['read_property', 'v.domain'],
@@ -1159,19 +1153,19 @@ calcNFDImpactScore:
 	intc 3 //  appl
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:579
+	// contracts/arc58/plugins/akita_social.algo.ts:578
 	// applicationID: NFD
 	frame_dig -1 // NFD: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:580
+	// contracts/arc58/plugins/akita_social.algo.ts:579
 	// applicationArgs: ['read_property', 'v.domain']
 	bytec 10 //  "read_property"
 	itxn_field ApplicationArgs
 	bytec 18 //  "v.domain"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:581
+	// contracts/arc58/plugins/akita_social.algo.ts:580
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1179,14 +1173,14 @@ calcNFDImpactScore:
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/arc58/plugins/akita_social.algo.ts:583
+	// contracts/arc58/plugins/akita_social.algo.ts:582
 	// hasVerifiedDomain = this.itxn.lastLog !== ''
 	itxn LastLog
 	bytec 0 //  ""
 	!=
 	frame_bury 1 // hasVerifiedDomain: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:585
+	// contracts/arc58/plugins/akita_social.algo.ts:584
 	// sendAppCall({
 	//                 applicationID: NFD,
 	//                 applicationArgs: ['read_property', 'v.twitter'],
@@ -1196,19 +1190,19 @@ calcNFDImpactScore:
 	intc 3 //  appl
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:586
+	// contracts/arc58/plugins/akita_social.algo.ts:585
 	// applicationID: NFD
 	frame_dig -1 // NFD: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:587
+	// contracts/arc58/plugins/akita_social.algo.ts:586
 	// applicationArgs: ['read_property', 'v.twitter']
 	bytec 10 //  "read_property"
 	itxn_field ApplicationArgs
 	bytec 16 //  "v.twitter"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:588
+	// contracts/arc58/plugins/akita_social.algo.ts:587
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1216,14 +1210,14 @@ calcNFDImpactScore:
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/arc58/plugins/akita_social.algo.ts:590
+	// contracts/arc58/plugins/akita_social.algo.ts:589
 	// hasVerifiedTwitter = this.itxn.lastLog !== ''
 	itxn LastLog
 	bytec 0 //  ""
 	!=
 	frame_bury 2 // hasVerifiedTwitter: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:592
+	// contracts/arc58/plugins/akita_social.algo.ts:591
 	// sendAppCall({
 	//                 applicationID: NFD,
 	//                 applicationArgs: ['read_property', 'v.discord'],
@@ -1233,19 +1227,19 @@ calcNFDImpactScore:
 	intc 3 //  appl
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:593
+	// contracts/arc58/plugins/akita_social.algo.ts:592
 	// applicationID: NFD
 	frame_dig -1 // NFD: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:594
+	// contracts/arc58/plugins/akita_social.algo.ts:593
 	// applicationArgs: ['read_property', 'v.discord']
 	bytec 10 //  "read_property"
 	itxn_field ApplicationArgs
 	bytec 17 //  "v.discord"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:595
+	// contracts/arc58/plugins/akita_social.algo.ts:594
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1253,14 +1247,14 @@ calcNFDImpactScore:
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/arc58/plugins/akita_social.algo.ts:597
+	// contracts/arc58/plugins/akita_social.algo.ts:596
 	// hasVerifiedDiscord = this.itxn.lastLog !== ''
 	itxn LastLog
 	bytec 0 //  ""
 	!=
 	frame_bury 3 // hasVerifiedDiscord: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:599
+	// contracts/arc58/plugins/akita_social.algo.ts:598
 	// sendAppCall({
 	//                 applicationID: NFD,
 	//                 applicationArgs: ['read_property', 'v.telegram'],
@@ -1270,19 +1264,19 @@ calcNFDImpactScore:
 	intc 3 //  appl
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:600
+	// contracts/arc58/plugins/akita_social.algo.ts:599
 	// applicationID: NFD
 	frame_dig -1 // NFD: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:601
+	// contracts/arc58/plugins/akita_social.algo.ts:600
 	// applicationArgs: ['read_property', 'v.telegram']
 	bytec 10 //  "read_property"
 	itxn_field ApplicationArgs
 	bytec 15 //  "v.telegram"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:602
+	// contracts/arc58/plugins/akita_social.algo.ts:601
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1290,7 +1284,7 @@ calcNFDImpactScore:
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/arc58/plugins/akita_social.algo.ts:604
+	// contracts/arc58/plugins/akita_social.algo.ts:603
 	// hasVerifiedTelegram = this.itxn.lastLog !== ''
 	itxn LastLog
 	bytec 0 //  ""
@@ -1299,13 +1293,13 @@ calcNFDImpactScore:
 
 *if7_end:
 	// *if8_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:608
+	// contracts/arc58/plugins/akita_social.algo.ts:607
 	// hasVerifiedDomain
 	frame_dig 1 // hasVerifiedDomain: bool
 	bz *if8_end
 
 	// *if8_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:609
+	// contracts/arc58/plugins/akita_social.algo.ts:608
 	// nfdImpact += 10
 	frame_dig 0 // nfdImpact: uint64
 	intc 14 // 10
@@ -1314,13 +1308,13 @@ calcNFDImpactScore:
 
 *if8_end:
 	// *if9_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:612
+	// contracts/arc58/plugins/akita_social.algo.ts:611
 	// hasVerifiedTwitter
 	frame_dig 2 // hasVerifiedTwitter: bool
 	bz *if9_end
 
 	// *if9_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:613
+	// contracts/arc58/plugins/akita_social.algo.ts:612
 	// nfdImpact += 20
 	frame_dig 0 // nfdImpact: uint64
 	intc 15 // 20
@@ -1329,13 +1323,13 @@ calcNFDImpactScore:
 
 *if9_end:
 	// *if10_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:616
+	// contracts/arc58/plugins/akita_social.algo.ts:615
 	// hasVerifiedDiscord
 	frame_dig 3 // hasVerifiedDiscord: bool
 	bz *if10_end
 
 	// *if10_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:617
+	// contracts/arc58/plugins/akita_social.algo.ts:616
 	// nfdImpact += 10
 	frame_dig 0 // nfdImpact: uint64
 	intc 14 // 10
@@ -1344,13 +1338,13 @@ calcNFDImpactScore:
 
 *if10_end:
 	// *if11_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:620
+	// contracts/arc58/plugins/akita_social.algo.ts:619
 	// hasVerifiedTelegram
 	frame_dig 4 // hasVerifiedTelegram: bool
 	bz *if11_end
 
 	// *if11_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:621
+	// contracts/arc58/plugins/akita_social.algo.ts:620
 	// nfdImpact += 10
 	frame_dig 0 // nfdImpact: uint64
 	intc 14 // 10
@@ -1358,7 +1352,7 @@ calcNFDImpactScore:
 	frame_bury 0 // nfdImpact: uint64
 
 *if11_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:624
+	// contracts/arc58/plugins/akita_social.algo.ts:623
 	// return nfdImpact;
 	frame_dig 0 // nfdImpact: uint64
 
@@ -1377,12 +1371,12 @@ getNFDImpactScore:
 	bytec 0 // 0x
 	dup
 
-	// contracts/arc58/plugins/akita_social.algo.ts:628
+	// contracts/arc58/plugins/akita_social.algo.ts:627
 	// meta = this.meta(address).value
 	frame_dig -1 // address: Address
 	frame_bury 0 // storage key//meta
 
-	// contracts/arc58/plugins/akita_social.algo.ts:629
+	// contracts/arc58/plugins/akita_social.algo.ts:628
 	// timeChanged = btoi(meta.NFD.globalState(NFD_TIME_CHANGED_KEY) as bytes)
 	frame_dig 0 // storage key//meta
 	box_get
@@ -1401,7 +1395,7 @@ getNFDImpactScore:
 	btoi
 	frame_bury 1 // timeChanged: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:631
+	// contracts/arc58/plugins/akita_social.algo.ts:630
 	// assert(NFD.id === meta.NFD.id, errs.INVALID_NFD)
 	frame_dig -2 // NFD: AppID
 	frame_dig 0 // storage key//meta
@@ -1416,7 +1410,7 @@ getNFDImpactScore:
 	==
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:632
+	// contracts/arc58/plugins/akita_social.algo.ts:631
 	// assert(meta.nfdTimeChanged === timeChanged, errs.NFD_CHANGED)
 	frame_dig 0 // storage key//meta
 	box_get
@@ -1431,7 +1425,7 @@ getNFDImpactScore:
 	==
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:634
+	// contracts/arc58/plugins/akita_social.algo.ts:633
 	// return meta.nfdImpact;
 	frame_dig 0 // storage key//meta
 	box_get
@@ -1458,18 +1452,18 @@ getSocialImpactScore:
 	bytec 0 // 0x
 	dupn 4
 
-	// contracts/arc58/plugins/akita_social.algo.ts:639
+	// contracts/arc58/plugins/akita_social.algo.ts:638
 	// socialImpact = 0
 	intc 0 // 0
 	frame_bury 0 // socialImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:641
+	// contracts/arc58/plugins/akita_social.algo.ts:640
 	// meta = this.meta(address).value
 	frame_dig -1 // address: Address
 	frame_bury 1 // storage key//meta
 
 	// *if12_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:643
+	// contracts/arc58/plugins/akita_social.algo.ts:642
 	// meta.streak >= 60
 	frame_dig 1 // storage key//meta
 	box_get
@@ -1485,7 +1479,7 @@ getSocialImpactScore:
 	bz *if12_else
 
 	// *if12_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:644
+	// contracts/arc58/plugins/akita_social.algo.ts:643
 	// socialImpact += 100
 	frame_dig 0 // socialImpact: uint64
 	intc 23 // 100
@@ -1494,7 +1488,7 @@ getSocialImpactScore:
 	b *if12_end
 
 *if12_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:647
+	// contracts/arc58/plugins/akita_social.algo.ts:646
 	// socialImpact += (meta.streak * 100) / 60
 	frame_dig 0 // socialImpact: uint64
 	frame_dig 1 // storage key//meta
@@ -1514,7 +1508,7 @@ getSocialImpactScore:
 	frame_bury 0 // socialImpact: uint64
 
 *if12_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:652
+	// contracts/arc58/plugins/akita_social.algo.ts:651
 	// accountAge = globals.latestTimestamp - meta.startDate
 	global LatestTimestamp
 	frame_dig 1 // storage key//meta
@@ -1530,7 +1524,7 @@ getSocialImpactScore:
 	frame_bury 2 // accountAge: uint64
 
 	// *if13_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:655
+	// contracts/arc58/plugins/akita_social.algo.ts:654
 	// accountAge >= twoYearsInSeconds
 	frame_dig 2 // accountAge: uint64
 	intc 17 // 63072000
@@ -1538,7 +1532,7 @@ getSocialImpactScore:
 	bz *if13_else
 
 	// *if13_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:656
+	// contracts/arc58/plugins/akita_social.algo.ts:655
 	// socialImpact += 75
 	frame_dig 0 // socialImpact: uint64
 	intc 8 // 75
@@ -1547,7 +1541,7 @@ getSocialImpactScore:
 	b *if13_end
 
 *if13_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:659
+	// contracts/arc58/plugins/akita_social.algo.ts:658
 	// socialImpact += (accountAge * 75) / twoYearsInSeconds
 	frame_dig 0 // socialImpact: uint64
 	frame_dig 2 // accountAge: uint64
@@ -1560,7 +1554,7 @@ getSocialImpactScore:
 
 *if13_end:
 	// *if14_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:663
+	// contracts/arc58/plugins/akita_social.algo.ts:662
 	// this.votes(rawBytes(address) as bytes32).exists
 	bytec 6 //  "v"
 	frame_dig -1 // address: Address
@@ -1579,7 +1573,7 @@ getSocialImpactScore:
 	bz *if14_end
 
 	// *if14_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:664
+	// contracts/arc58/plugins/akita_social.algo.ts:663
 	// score = this.votes(rawBytes(address) as bytes32).value
 	bytec 6 //  "v"
 	frame_dig -1 // address: Address
@@ -1594,7 +1588,7 @@ getSocialImpactScore:
 	concat
 	frame_bury 3 // storage key//score
 
-	// contracts/arc58/plugins/akita_social.algo.ts:666
+	// contracts/arc58/plugins/akita_social.algo.ts:665
 	// impact = (score.voteCount * 75) / 100_000
 	frame_dig 3 // storage key//score
 	box_get
@@ -1612,7 +1606,7 @@ getSocialImpactScore:
 	frame_bury 4 // impact: uint64
 
 	// *if15_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:667
+	// contracts/arc58/plugins/akita_social.algo.ts:666
 	// impact > 75
 	frame_dig 4 // impact: uint64
 	intc 8 // 75
@@ -1620,14 +1614,14 @@ getSocialImpactScore:
 	bz *if15_end
 
 	// *if15_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:668
+	// contracts/arc58/plugins/akita_social.algo.ts:667
 	// impact = 75
 	intc 8 // 75
 	frame_bury 4 // impact: uint64
 
 *if15_end:
 	// *if16_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:671
+	// contracts/arc58/plugins/akita_social.algo.ts:670
 	// score.isNegative
 	frame_dig 3 // storage key//score
 	box_get
@@ -1642,7 +1636,7 @@ getSocialImpactScore:
 
 	// *if16_consequent
 	// *if17_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:673
+	// contracts/arc58/plugins/akita_social.algo.ts:672
 	// socialImpact > impact
 	frame_dig 0 // socialImpact: uint64
 	frame_dig 4 // impact: uint64
@@ -1650,7 +1644,7 @@ getSocialImpactScore:
 	bz *if17_else
 
 	// *if17_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:674
+	// contracts/arc58/plugins/akita_social.algo.ts:673
 	// socialImpact -= impact
 	frame_dig 0 // socialImpact: uint64
 	frame_dig 4 // impact: uint64
@@ -1659,7 +1653,7 @@ getSocialImpactScore:
 	b *if17_end
 
 *if17_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:676
+	// contracts/arc58/plugins/akita_social.algo.ts:675
 	// socialImpact = 0
 	intc 0 // 0
 	frame_bury 0 // socialImpact: uint64
@@ -1668,7 +1662,7 @@ getSocialImpactScore:
 	b *if16_end
 
 *if16_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:680
+	// contracts/arc58/plugins/akita_social.algo.ts:679
 	// socialImpact += impact
 	frame_dig 0 // socialImpact: uint64
 	frame_dig 4 // impact: uint64
@@ -1678,7 +1672,7 @@ getSocialImpactScore:
 *if16_end:
 
 *if14_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:684
+	// contracts/arc58/plugins/akita_social.algo.ts:683
 	// return socialImpact;
 	frame_dig 0 // socialImpact: uint64
 
@@ -1696,7 +1690,7 @@ getNFTImpactScore:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:688
+	// contracts/arc58/plugins/akita_social.algo.ts:687
 	// prefix = extract3(asa.unitName, 0, 3)
 	frame_dig -2 // asa: AssetID
 	asset_params_get AssetUnitName
@@ -1705,21 +1699,15 @@ getNFTImpactScore:
 	frame_bury 0 // prefix: byte[]
 
 	// *if18_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:689
-	// asa.creator === AkitaCollectionsAddress && address.assetBalance(asa) > 0
+	// contracts/arc58/plugins/akita_social.algo.ts:688
+	// asa.creator === addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ') && address.assetBalance(asa) > 0
 	frame_dig -2 // asa: AssetID
 	asset_params_get AssetCreator
 	pop
-
-	// utils/constants.ts:15
-	// addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ')
 	bytec 5 //  addr "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"
 	==
 	dup
 	bz *skip_and5
-
-	// contracts/arc58/plugins/akita_social.algo.ts:689
-	// address.assetBalance(asa)
 	frame_dig -1 // address: Address
 	frame_dig -2 // asa: AssetID
 	asset_holding_get AssetBalance
@@ -1733,7 +1721,7 @@ getNFTImpactScore:
 
 	// *if18_consequent
 	// *if19_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:690
+	// contracts/arc58/plugins/akita_social.algo.ts:689
 	// prefix === AkitaCollectionsPrefixAKC
 	frame_dig 0 // prefix: byte[]
 	pushbytes "AKC"
@@ -1741,14 +1729,14 @@ getNFTImpactScore:
 	bz *if19_end
 
 	// *if19_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:691
+	// contracts/arc58/plugins/akita_social.algo.ts:690
 	// return 50;
 	intc 9 // 50
 	b *getNFTImpactScore*return
 
 *if19_end:
 	// *if20_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:693
+	// contracts/arc58/plugins/akita_social.algo.ts:692
 	// prefix === AkitaCollectionsPrefixAOG
 	frame_dig 0 // prefix: byte[]
 	pushbytes "AOG"
@@ -1756,7 +1744,7 @@ getNFTImpactScore:
 	bz *if20_end
 
 	// *if20_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:694
+	// contracts/arc58/plugins/akita_social.algo.ts:693
 	// return 25;
 	pushint 25
 	b *getNFTImpactScore*return
@@ -1764,7 +1752,7 @@ getNFTImpactScore:
 *if20_end:
 
 *if18_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:697
+	// contracts/arc58/plugins/akita_social.algo.ts:696
 	// return 0;
 	intc 0 // 0
 
@@ -1780,7 +1768,7 @@ getTax:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:705
+	// contracts/arc58/plugins/akita_social.algo.ts:704
 	// taxRate = MAX_TAX - ((MAX_TAX - MIN_TAX) * (impact - 1)) / 999
 	intc 15 // 20
 	pushint 19
@@ -1793,7 +1781,7 @@ getTax:
 	-
 	frame_bury 0 // taxRate: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:706
+	// contracts/arc58/plugins/akita_social.algo.ts:705
 	// return (REACT_FEE * taxRate - 1) / 1001
 	intc 5 // 10000000
 	frame_dig 0 // taxRate: uint64
@@ -1811,7 +1799,7 @@ getTax:
 canCallArc58OptIn:
 	proto 2 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:710
+	// contracts/arc58/plugins/akita_social.algo.ts:709
 	// return sendMethodCall<typeof AbstractedAccount.prototype.arc58_canCall, boolean>({
 	//             sender: sender,
 	//             applicationID: walletAppID,
@@ -1827,17 +1815,17 @@ canCallArc58OptIn:
 	pushbytes 0xe9026da8 // method "arc58_canCall(uint64,address)bool"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:711
+	// contracts/arc58/plugins/akita_social.algo.ts:710
 	// sender: sender
 	frame_dig -1 // sender: Address
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:712
+	// contracts/arc58/plugins/akita_social.algo.ts:711
 	// applicationID: walletAppID
 	frame_dig -2 // walletAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:713
+	// contracts/arc58/plugins/akita_social.algo.ts:712
 	// methodArgs: [
 	//                 AppID.fromUint64(AkitaAppIDsOptinPlugin),
 	//                 sender,
@@ -1847,7 +1835,7 @@ canCallArc58OptIn:
 	frame_dig -1 // sender: Address
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:717
+	// contracts/arc58/plugins/akita_social.algo.ts:716
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1867,7 +1855,7 @@ canCallArc58OptIn:
 arc58OptInAndSendReactionPayments:
 	proto 4 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:722
+	// contracts/arc58/plugins/akita_social.algo.ts:721
 	// this.pendingGroup.addMethodCall<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin, void>({
 	//             sender: sender.address,
 	//             applicationID: recipientAppID,
@@ -1882,31 +1870,31 @@ arc58OptInAndSendReactionPayments:
 	pushbytes 0x7c766ddc // method "arc58_rekeyToPlugin(uint64)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:723
+	// contracts/arc58/plugins/akita_social.algo.ts:722
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:724
+	// contracts/arc58/plugins/akita_social.algo.ts:723
 	// applicationID: recipientAppID
 	frame_dig -3 // recipientAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:725
+	// contracts/arc58/plugins/akita_social.algo.ts:724
 	// methodArgs: [
 	//                 AppID.fromUint64(AkitaAppIDsOptinPlugin)
 	//             ]
 	bytec 1 // 0x0000000000000000
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:728
+	// contracts/arc58/plugins/akita_social.algo.ts:727
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/arc58/plugins/akita_social.algo.ts:731
+	// contracts/arc58/plugins/akita_social.algo.ts:730
 	// this.pendingGroup.addMethodCall<typeof OptInPlugin.prototype.optInToAsset, void>({
 	//             sender: sender.address,
 	//             applicationID: AppID.fromUint64(AkitaAppIDsOptinPlugin),
@@ -1927,26 +1915,26 @@ arc58OptInAndSendReactionPayments:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:739
+	// contracts/arc58/plugins/akita_social.algo.ts:738
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:740
+	// contracts/arc58/plugins/akita_social.algo.ts:739
 	// receiver: recipientAppID.address
 	frame_dig -3 // recipientAppID: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:741
+	// contracts/arc58/plugins/akita_social.algo.ts:740
 	// amount: globals.assetOptInMinBalance
 	global AssetOptInMinBalance
 	itxn_field Amount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:742
+	// contracts/arc58/plugins/akita_social.algo.ts:741
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1956,19 +1944,19 @@ arc58OptInAndSendReactionPayments:
 	pushbytes 0xbfcbeee9 // method "optInToAsset(uint64,bool,uint64,pay)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:732
+	// contracts/arc58/plugins/akita_social.algo.ts:731
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:733
+	// contracts/arc58/plugins/akita_social.algo.ts:732
 	// applicationID: AppID.fromUint64(AkitaAppIDsOptinPlugin)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:734
+	// contracts/arc58/plugins/akita_social.algo.ts:733
 	// methodArgs: [
 	//                 recipientAppID,
 	//                 true,
@@ -1992,12 +1980,12 @@ arc58OptInAndSendReactionPayments:
 	bytec 1 // 0x0000000000000000
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:745
+	// contracts/arc58/plugins/akita_social.algo.ts:744
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/arc58/plugins/akita_social.algo.ts:748
+	// contracts/arc58/plugins/akita_social.algo.ts:747
 	// this.pendingGroup.addMethodCall<typeof AbstractedAccount.prototype.arc58_verifyAuthAddr, void>({
 	//             sender: sender.address,
 	//             applicationID: recipientAppID,
@@ -2009,24 +1997,24 @@ arc58OptInAndSendReactionPayments:
 	pushbytes 0x0f885493 // method "arc58_verifyAuthAddr()void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:749
+	// contracts/arc58/plugins/akita_social.algo.ts:748
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:750
+	// contracts/arc58/plugins/akita_social.algo.ts:749
 	// applicationID: recipientAppID
 	frame_dig -3 // recipientAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:751
+	// contracts/arc58/plugins/akita_social.algo.ts:750
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/arc58/plugins/akita_social.algo.ts:754
+	// contracts/arc58/plugins/akita_social.algo.ts:753
 	// this.pendingGroup.addAssetTransfer({
 	//             sender: sender.address,
 	//             assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address,
@@ -2038,43 +2026,43 @@ arc58OptInAndSendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:755
+	// contracts/arc58/plugins/akita_social.algo.ts:754
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:756
+	// contracts/arc58/plugins/akita_social.algo.ts:755
 	// assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:757
+	// contracts/arc58/plugins/akita_social.algo.ts:756
 	// assetAmount: tax
 	frame_dig -4 // tax: uint64
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:758
+	// contracts/arc58/plugins/akita_social.algo.ts:757
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:759
+	// contracts/arc58/plugins/akita_social.algo.ts:758
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 	// *if21_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:762
+	// contracts/arc58/plugins/akita_social.algo.ts:761
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if21_else
 
 	// *if21_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:763
+	// contracts/arc58/plugins/akita_social.algo.ts:762
 	// this.pendingGroup.addAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: recipientAppID.address,
@@ -2087,47 +2075,47 @@ arc58OptInAndSendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:764
+	// contracts/arc58/plugins/akita_social.algo.ts:763
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:765
+	// contracts/arc58/plugins/akita_social.algo.ts:764
 	// assetReceiver: recipientAppID.address
 	frame_dig -3 // recipientAppID: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:766
+	// contracts/arc58/plugins/akita_social.algo.ts:765
 	// assetAmount: (REACT_FEE - tax)
 	intc 5 // 10000000
 	frame_dig -4 // tax: uint64
 	-
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:767
+	// contracts/arc58/plugins/akita_social.algo.ts:766
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:768
+	// contracts/arc58/plugins/akita_social.algo.ts:767
 	// rekeyTo: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/akita_social.algo.ts:769
+	// contracts/arc58/plugins/akita_social.algo.ts:768
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 	b *if21_end
 
 *if21_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:772
+	// contracts/arc58/plugins/akita_social.algo.ts:771
 	// this.pendingGroup.addAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: recipientAppID.address,
@@ -2139,39 +2127,39 @@ arc58OptInAndSendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:773
+	// contracts/arc58/plugins/akita_social.algo.ts:772
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:774
+	// contracts/arc58/plugins/akita_social.algo.ts:773
 	// assetReceiver: recipientAppID.address
 	frame_dig -3 // recipientAppID: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:775
+	// contracts/arc58/plugins/akita_social.algo.ts:774
 	// assetAmount: (REACT_FEE - tax)
 	intc 5 // 10000000
 	frame_dig -4 // tax: uint64
 	-
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:776
+	// contracts/arc58/plugins/akita_social.algo.ts:775
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:777
+	// contracts/arc58/plugins/akita_social.algo.ts:776
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if21_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:781
+	// contracts/arc58/plugins/akita_social.algo.ts:780
 	// this.pendingGroup.submit()
 	itxn_submit
 	retsub
@@ -2184,7 +2172,7 @@ arc59OptInAndSendReactionPayments:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/arc58/plugins/akita_social.algo.ts:785
+	// contracts/arc58/plugins/akita_social.algo.ts:784
 	// canCallData = sendMethodCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo, arc59GetSendAssetInfoResponse>({
 	//             applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
 	//             methodArgs: [
@@ -2199,12 +2187,12 @@ arc59OptInAndSendReactionPayments:
 	pushbytes 0xcaa8daa5 // method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:786
+	// contracts/arc58/plugins/akita_social.algo.ts:785
 	// applicationID: AppID.fromUint64(OtherAppIDsAssetInbox)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:787
+	// contracts/arc58/plugins/akita_social.algo.ts:786
 	// methodArgs: [
 	//                 recipientAppID.address,
 	//                 AssetID.fromUint64(AkitaAssetAkita).id,
@@ -2216,7 +2204,7 @@ arc59OptInAndSendReactionPayments:
 	bytec 1 // 0x0000000000000000
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:791
+	// contracts/arc58/plugins/akita_social.algo.ts:790
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -2230,7 +2218,7 @@ arc59OptInAndSendReactionPayments:
 	extract 4 0
 	frame_bury 0 // canCallData: (uint64,uint64,bool,bool,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:794
+	// contracts/arc58/plugins/akita_social.algo.ts:793
 	// mbr = canCallData.mbr
 	frame_dig 0 // canCallData: (uint64,uint64,bool,bool,uint64)
 	store 255 // full array
@@ -2239,7 +2227,7 @@ arc59OptInAndSendReactionPayments:
 	btoi
 	frame_bury 1 // mbr: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:795
+	// contracts/arc58/plugins/akita_social.algo.ts:794
 	// routerOptedIn = canCallData.routerOptedIn
 	frame_dig 0 // canCallData: (uint64,uint64,bool,bool,uint64)
 	store 255 // full array
@@ -2248,7 +2236,7 @@ arc59OptInAndSendReactionPayments:
 	getbit
 	frame_bury 2 // routerOptedIn: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:796
+	// contracts/arc58/plugins/akita_social.algo.ts:795
 	// receiverAlgoNeededForClaim = canCallData.receiverAlgoNeededForClaim
 	frame_dig 0 // canCallData: (uint64,uint64,bool,bool,uint64)
 	store 255 // full array
@@ -2258,7 +2246,7 @@ arc59OptInAndSendReactionPayments:
 	frame_bury 3 // receiverAlgoNeededForClaim: uint64
 
 	// *if22_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:798
+	// contracts/arc58/plugins/akita_social.algo.ts:797
 	// mbr || receiverAlgoNeededForClaim
 	frame_dig 1 // mbr: uint64
 	dup
@@ -2270,7 +2258,7 @@ arc59OptInAndSendReactionPayments:
 	bz *if22_end
 
 	// *if22_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:799
+	// contracts/arc58/plugins/akita_social.algo.ts:798
 	// this.pendingGroup.addPayment({
 	//                 sender: sender.address,
 	//                 receiver: AppID.fromUint64(OtherAppIDsAssetInbox).address,
@@ -2281,42 +2269,42 @@ arc59OptInAndSendReactionPayments:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:800
+	// contracts/arc58/plugins/akita_social.algo.ts:799
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:801
+	// contracts/arc58/plugins/akita_social.algo.ts:800
 	// receiver: AppID.fromUint64(OtherAppIDsAssetInbox).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:802
+	// contracts/arc58/plugins/akita_social.algo.ts:801
 	// amount: (mbr + receiverAlgoNeededForClaim)
 	frame_dig 1 // mbr: uint64
 	frame_dig 3 // receiverAlgoNeededForClaim: uint64
 	+
 	itxn_field Amount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:803
+	// contracts/arc58/plugins/akita_social.algo.ts:802
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if22_end:
 	// *if23_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:807
+	// contracts/arc58/plugins/akita_social.algo.ts:806
 	// !routerOptedIn
 	frame_dig 2 // routerOptedIn: bool
 	!
 	bz *if23_end
 
 	// *if23_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:808
+	// contracts/arc58/plugins/akita_social.algo.ts:807
 	// this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_optRouterIn, void>({
 	//                 sender: sender.address,
 	//                 applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
@@ -2329,30 +2317,30 @@ arc59OptInAndSendReactionPayments:
 	pushbytes 0xe8540810 // method "arc59_optRouterIn(uint64)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:809
+	// contracts/arc58/plugins/akita_social.algo.ts:808
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:810
+	// contracts/arc58/plugins/akita_social.algo.ts:809
 	// applicationID: AppID.fromUint64(OtherAppIDsAssetInbox)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:811
+	// contracts/arc58/plugins/akita_social.algo.ts:810
 	// methodArgs: [AssetID.fromUint64(AkitaAssetAkita).id]
 	bytec 1 // 0x0000000000000000
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:812
+	// contracts/arc58/plugins/akita_social.algo.ts:811
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if23_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:816
+	// contracts/arc58/plugins/akita_social.algo.ts:815
 	// this.pendingGroup.addAssetTransfer({
 	//             sender: sender.address,
 	//             assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address,
@@ -2364,43 +2352,43 @@ arc59OptInAndSendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:817
+	// contracts/arc58/plugins/akita_social.algo.ts:816
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:818
+	// contracts/arc58/plugins/akita_social.algo.ts:817
 	// assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:819
+	// contracts/arc58/plugins/akita_social.algo.ts:818
 	// assetAmount: tax
 	frame_dig -4 // tax: uint64
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:820
+	// contracts/arc58/plugins/akita_social.algo.ts:819
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:821
+	// contracts/arc58/plugins/akita_social.algo.ts:820
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 	// *if24_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:824
+	// contracts/arc58/plugins/akita_social.algo.ts:823
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if24_else
 
 	// *if24_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:825
+	// contracts/arc58/plugins/akita_social.algo.ts:824
 	// this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_sendAsset, Address>({
 	//                 sender: sender.address,
 	//                 applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
@@ -2422,33 +2410,33 @@ arc59OptInAndSendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:830
+	// contracts/arc58/plugins/akita_social.algo.ts:829
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:831
+	// contracts/arc58/plugins/akita_social.algo.ts:830
 	// assetReceiver: AppID.fromUint64(OtherAppIDsAssetInbox).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:832
+	// contracts/arc58/plugins/akita_social.algo.ts:831
 	// assetAmount: (REACT_FEE - tax)
 	intc 5 // 10000000
 	frame_dig -4 // tax: uint64
 	-
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:833
+	// contracts/arc58/plugins/akita_social.algo.ts:832
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:834
+	// contracts/arc58/plugins/akita_social.algo.ts:833
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -2458,19 +2446,19 @@ arc59OptInAndSendReactionPayments:
 	bytec 20 //  method "arc59_sendAsset(axfer,address,uint64)address"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:826
+	// contracts/arc58/plugins/akita_social.algo.ts:825
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:827
+	// contracts/arc58/plugins/akita_social.algo.ts:826
 	// applicationID: AppID.fromUint64(OtherAppIDsAssetInbox)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:828
+	// contracts/arc58/plugins/akita_social.algo.ts:827
 	// methodArgs: [
 	//                     {
 	//                         sender: sender.address,
@@ -2490,21 +2478,21 @@ arc59OptInAndSendReactionPayments:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:839
+	// contracts/arc58/plugins/akita_social.algo.ts:838
 	// rekeyTo: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/akita_social.algo.ts:840
+	// contracts/arc58/plugins/akita_social.algo.ts:839
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 	b *if24_end
 
 *if24_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:843
+	// contracts/arc58/plugins/akita_social.algo.ts:842
 	// this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_sendAsset, Address>({
 	//                 sender: sender.address,
 	//                 applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
@@ -2525,33 +2513,33 @@ arc59OptInAndSendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:848
+	// contracts/arc58/plugins/akita_social.algo.ts:847
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:849
+	// contracts/arc58/plugins/akita_social.algo.ts:848
 	// assetReceiver: AppID.fromUint64(OtherAppIDsAssetInbox).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:850
+	// contracts/arc58/plugins/akita_social.algo.ts:849
 	// assetAmount: (REACT_FEE - tax)
 	intc 5 // 10000000
 	frame_dig -4 // tax: uint64
 	-
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:851
+	// contracts/arc58/plugins/akita_social.algo.ts:850
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:852
+	// contracts/arc58/plugins/akita_social.algo.ts:851
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -2561,19 +2549,19 @@ arc59OptInAndSendReactionPayments:
 	bytec 20 //  method "arc59_sendAsset(axfer,address,uint64)address"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:844
+	// contracts/arc58/plugins/akita_social.algo.ts:843
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:845
+	// contracts/arc58/plugins/akita_social.algo.ts:844
 	// applicationID: AppID.fromUint64(OtherAppIDsAssetInbox)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/akita_social.algo.ts:846
+	// contracts/arc58/plugins/akita_social.algo.ts:845
 	// methodArgs: [
 	//                     {
 	//                         sender: sender.address,
@@ -2593,13 +2581,13 @@ arc59OptInAndSendReactionPayments:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/akita_social.algo.ts:857
+	// contracts/arc58/plugins/akita_social.algo.ts:856
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if24_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:861
+	// contracts/arc58/plugins/akita_social.algo.ts:860
 	// this.pendingGroup.submit()
 	itxn_submit
 	retsub
@@ -2608,7 +2596,7 @@ arc59OptInAndSendReactionPayments:
 sendReactionPayments:
 	proto 4 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:865
+	// contracts/arc58/plugins/akita_social.algo.ts:864
 	// this.pendingGroup.addAssetTransfer({
 	//             sender: sender.address,
 	//             assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address,
@@ -2620,43 +2608,43 @@ sendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:866
+	// contracts/arc58/plugins/akita_social.algo.ts:865
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:867
+	// contracts/arc58/plugins/akita_social.algo.ts:866
 	// assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:868
+	// contracts/arc58/plugins/akita_social.algo.ts:867
 	// assetAmount: tax
 	frame_dig -4 // tax: uint64
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:869
+	// contracts/arc58/plugins/akita_social.algo.ts:868
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:870
+	// contracts/arc58/plugins/akita_social.algo.ts:869
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 	// *if25_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:873
+	// contracts/arc58/plugins/akita_social.algo.ts:872
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if25_else
 
 	// *if25_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:874
+	// contracts/arc58/plugins/akita_social.algo.ts:873
 	// this.pendingGroup.addAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: recipientAddress,
@@ -2669,45 +2657,45 @@ sendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:875
+	// contracts/arc58/plugins/akita_social.algo.ts:874
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:876
+	// contracts/arc58/plugins/akita_social.algo.ts:875
 	// assetReceiver: recipientAddress
 	frame_dig -3 // recipientAddress: Address
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:877
+	// contracts/arc58/plugins/akita_social.algo.ts:876
 	// assetAmount: (REACT_FEE - tax)
 	intc 5 // 10000000
 	frame_dig -4 // tax: uint64
 	-
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:878
+	// contracts/arc58/plugins/akita_social.algo.ts:877
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:879
+	// contracts/arc58/plugins/akita_social.algo.ts:878
 	// rekeyTo: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/akita_social.algo.ts:880
+	// contracts/arc58/plugins/akita_social.algo.ts:879
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 	b *if25_end
 
 *if25_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:883
+	// contracts/arc58/plugins/akita_social.algo.ts:882
 	// this.pendingGroup.addAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: recipientAddress,
@@ -2719,37 +2707,37 @@ sendReactionPayments:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:884
+	// contracts/arc58/plugins/akita_social.algo.ts:883
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:885
+	// contracts/arc58/plugins/akita_social.algo.ts:884
 	// assetReceiver: recipientAddress
 	frame_dig -3 // recipientAddress: Address
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:886
+	// contracts/arc58/plugins/akita_social.algo.ts:885
 	// assetAmount: (REACT_FEE - tax)
 	intc 5 // 10000000
 	frame_dig -4 // tax: uint64
 	-
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:887
+	// contracts/arc58/plugins/akita_social.algo.ts:886
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:888
+	// contracts/arc58/plugins/akita_social.algo.ts:887
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if25_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:892
+	// contracts/arc58/plugins/akita_social.algo.ts:891
 	// this.pendingGroup.submit()
 	itxn_submit
 	retsub
@@ -2759,7 +2747,7 @@ createEmptyPostIfNecessary:
 	proto 2 0
 
 	// *if26_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:900
+	// contracts/arc58/plugins/akita_social.algo.ts:899
 	// !this.posts(ref).exists
 	bytec 3 //  "p"
 	frame_dig -1 // ref: bytes32
@@ -2771,7 +2759,7 @@ createEmptyPostIfNecessary:
 	bz *if26_end
 
 	// *if26_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:901
+	// contracts/arc58/plugins/akita_social.algo.ts:900
 	// this.posts(ref).value = {
 	//                 ref: ref,
 	//                 cid: EMPTY_BYTES_59,
@@ -2830,7 +2818,7 @@ updateStreak:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/arc58/plugins/akita_social.algo.ts:923
+	// contracts/arc58/plugins/akita_social.algo.ts:922
 	// assert(this.meta(address).exists, errs.META_DOESNT_EXIST)
 	frame_dig -1 // address: Address
 	box_len
@@ -2838,7 +2826,7 @@ updateStreak:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:925
+	// contracts/arc58/plugins/akita_social.algo.ts:924
 	// meta = clone(this.meta(address).value)
 	frame_dig -1 // address: Address
 	box_get
@@ -2847,7 +2835,7 @@ updateStreak:
 	assert
 	frame_bury 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:927
+	// contracts/arc58/plugins/akita_social.algo.ts:926
 	// thisWindowStart = globals.latestTimestamp - (
 	//             (globals.latestTimestamp - meta.startDate) % ONE_DAY
 	//         )
@@ -2864,7 +2852,7 @@ updateStreak:
 	-
 	frame_bury 1 // thisWindowStart: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:930
+	// contracts/arc58/plugins/akita_social.algo.ts:929
 	// lastWindowStart = thisWindowStart - ONE_DAY
 	frame_dig 1 // thisWindowStart: uint64
 	intc 19 // 86400
@@ -2872,7 +2860,7 @@ updateStreak:
 	frame_bury 2 // lastWindowStart: uint64
 
 	// *if27_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:934
+	// contracts/arc58/plugins/akita_social.algo.ts:933
 	// lastWindowStart > meta.lastActive
 	frame_dig 2 // lastWindowStart: uint64
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
@@ -2884,7 +2872,7 @@ updateStreak:
 	bz *if27_end
 
 	// *if27_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:935
+	// contracts/arc58/plugins/akita_social.algo.ts:934
 	// meta.streak = 1
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -2893,7 +2881,7 @@ updateStreak:
 	replace2 8
 	frame_bury 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:936
+	// contracts/arc58/plugins/akita_social.algo.ts:935
 	// meta.lastActive = globals.latestTimestamp
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -2904,19 +2892,19 @@ updateStreak:
 	replace3
 	frame_bury 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:937
+	// contracts/arc58/plugins/akita_social.algo.ts:936
 	// this.meta(address).value = meta
 	frame_dig -1 // address: Address
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	box_put
 
-	// contracts/arc58/plugins/akita_social.algo.ts:938
+	// contracts/arc58/plugins/akita_social.algo.ts:937
 	// return;
 	retsub
 
 *if27_end:
 	// *if28_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:943
+	// contracts/arc58/plugins/akita_social.algo.ts:942
 	// meta.lastActive < thisWindowStart
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -2928,7 +2916,7 @@ updateStreak:
 	bz *if28_end
 
 	// *if28_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:944
+	// contracts/arc58/plugins/akita_social.algo.ts:943
 	// meta.streak = meta.streak + 1
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -2945,7 +2933,7 @@ updateStreak:
 	replace3
 	frame_bury 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:945
+	// contracts/arc58/plugins/akita_social.algo.ts:944
 	// meta.lastActive = globals.latestTimestamp
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -2956,7 +2944,7 @@ updateStreak:
 	replace3
 	frame_bury 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:946
+	// contracts/arc58/plugins/akita_social.algo.ts:945
 	// this.meta(address).value = meta
 	frame_dig -1 // address: Address
 	frame_dig 0 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
@@ -2973,14 +2961,14 @@ calcVotes:
 	bytec 0 // 0x
 	dupn 6
 
-	// contracts/arc58/plugins/akita_social.algo.ts:953
+	// contracts/arc58/plugins/akita_social.algo.ts:952
 	// votesData = this.votes(ref).value
 	bytec 6 //  "v"
 	frame_dig -1 // ref: bytes32
 	concat
 	frame_bury 0 // storage key//votesData
 
-	// contracts/arc58/plugins/akita_social.algo.ts:954
+	// contracts/arc58/plugins/akita_social.algo.ts:953
 	// isNegative = votesData.isNegative
 	frame_dig 0 // storage key//votesData
 	box_get
@@ -2993,7 +2981,7 @@ calcVotes:
 	getbit
 	frame_bury 1 // isNegative: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:955
+	// contracts/arc58/plugins/akita_social.algo.ts:954
 	// voteCount = votesData.voteCount
 	frame_dig 0 // storage key//votesData
 	box_get
@@ -3006,7 +2994,7 @@ calcVotes:
 	btoi
 	frame_bury 2 // voteCount: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:958
+	// contracts/arc58/plugins/akita_social.algo.ts:957
 	// differingDirections = (isUp && isNegative) || (!isUp && !isNegative)
 	frame_dig -2 // isUp: boolean
 	dup
@@ -3031,7 +3019,7 @@ calcVotes:
 *skip_or2:
 	frame_bury 3 // differingDirections: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:961
+	// contracts/arc58/plugins/akita_social.algo.ts:960
 	// flip = impact > voteCount && differingDirections
 	frame_dig -3 // impact: uint64
 	frame_dig 2 // voteCount: uint64
@@ -3045,20 +3033,20 @@ calcVotes:
 	frame_bury 4 // flip: bool
 
 	// *if29_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:962
+	// contracts/arc58/plugins/akita_social.algo.ts:961
 	// flip
 	frame_dig 4 // flip: bool
 	bz *if29_end
 
 	// *if29_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:963
+	// contracts/arc58/plugins/akita_social.algo.ts:962
 	// newCount = impact - voteCount
 	frame_dig -3 // impact: uint64
 	frame_dig 2 // voteCount: uint64
 	-
 	frame_bury 5 // newCount: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:964
+	// contracts/arc58/plugins/akita_social.algo.ts:963
 	// return { newCount: newCount, isNegative: !isNegative };
 	frame_dig 5 // newCount: uint64
 	itob
@@ -3071,7 +3059,7 @@ calcVotes:
 	b *calcVotes*return
 
 *if29_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:967
+	// contracts/arc58/plugins/akita_social.algo.ts:966
 	// newCount = differingDirections ? voteCount - impact : voteCount + impact
 	frame_dig 3 // differingDirections: bool
 	bz *ternary3_false
@@ -3088,7 +3076,7 @@ calcVotes:
 *ternary3_end:
 	frame_bury 6 // newCount: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:968
+	// contracts/arc58/plugins/akita_social.algo.ts:967
 	// return { newCount: newCount, isNegative: isNegative };
 	frame_dig 6 // newCount: uint64
 	itob
@@ -3114,7 +3102,7 @@ updateVotes:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/arc58/plugins/akita_social.algo.ts:972
+	// contracts/arc58/plugins/akita_social.algo.ts:971
 	// calcData = this.calcVotes(ref, isUp, impact)
 	frame_dig -3 // impact: uint64
 	frame_dig -2 // isUp: boolean
@@ -3122,7 +3110,7 @@ updateVotes:
 	callsub calcVotes
 	frame_bury 0 // calcData: (uint64,bool)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:973
+	// contracts/arc58/plugins/akita_social.algo.ts:972
 	// newCount = calcData.newCount
 	frame_dig 0 // calcData: (uint64,bool)
 	store 255 // full array
@@ -3131,7 +3119,7 @@ updateVotes:
 	btoi
 	frame_bury 1 // newCount: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:974
+	// contracts/arc58/plugins/akita_social.algo.ts:973
 	// isNegative = calcData.isNegative
 	frame_dig 0 // calcData: (uint64,bool)
 	store 255 // full array
@@ -3140,7 +3128,7 @@ updateVotes:
 	getbit
 	frame_bury 2 // isNegative: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:975
+	// contracts/arc58/plugins/akita_social.algo.ts:974
 	// this.votes(ref).value = { voteCount: newCount, isNegative: isNegative }
 	bytec 6 //  "v"
 	frame_dig -1 // ref: bytes32
@@ -3163,7 +3151,7 @@ createPost:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/arc58/plugins/akita_social.algo.ts:987
+	// contracts/arc58/plugins/akita_social.algo.ts:986
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3172,14 +3160,14 @@ createPost:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:991
+	// contracts/arc58/plugins/akita_social.algo.ts:990
 	// this.updateStreak(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	callsub updateStreak
 
-	// contracts/arc58/plugins/akita_social.algo.ts:993
+	// contracts/arc58/plugins/akita_social.algo.ts:992
 	// impact = this.userImpact(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3188,13 +3176,13 @@ createPost:
 	frame_bury 0 // impact: uint64
 
 	// *if30_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:995
+	// contracts/arc58/plugins/akita_social.algo.ts:994
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if30_else
 
 	// *if30_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:996
+	// contracts/arc58/plugins/akita_social.algo.ts:995
 	// sendAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address,
@@ -3207,38 +3195,38 @@ createPost:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:997
+	// contracts/arc58/plugins/akita_social.algo.ts:996
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:998
+	// contracts/arc58/plugins/akita_social.algo.ts:997
 	// assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:999
+	// contracts/arc58/plugins/akita_social.algo.ts:998
 	// assetAmount: POST_FEE
 	intc 18 // 100000000
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1000
+	// contracts/arc58/plugins/akita_social.algo.ts:999
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1001
+	// contracts/arc58/plugins/akita_social.algo.ts:1000
 	// rekeyTo: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1002
+	// contracts/arc58/plugins/akita_social.algo.ts:1001
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -3248,7 +3236,7 @@ createPost:
 	b *if30_end
 
 *if30_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1005
+	// contracts/arc58/plugins/akita_social.algo.ts:1004
 	// sendAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address,
@@ -3260,31 +3248,31 @@ createPost:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1006
+	// contracts/arc58/plugins/akita_social.algo.ts:1005
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1007
+	// contracts/arc58/plugins/akita_social.algo.ts:1006
 	// assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1008
+	// contracts/arc58/plugins/akita_social.algo.ts:1007
 	// assetAmount: POST_FEE
 	intc 18 // 100000000
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1009
+	// contracts/arc58/plugins/akita_social.algo.ts:1008
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1010
+	// contracts/arc58/plugins/akita_social.algo.ts:1009
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -3293,7 +3281,7 @@ createPost:
 	itxn_submit
 
 *if30_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1014
+	// contracts/arc58/plugins/akita_social.algo.ts:1013
 	// postID = this.txn.txID as bytes32
 	txn TxID
 	bytec 5 // 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -3306,7 +3294,7 @@ createPost:
 	extract 0 32
 	frame_bury 1 // postID: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1015
+	// contracts/arc58/plugins/akita_social.algo.ts:1014
 	// post: PostValue = {
 	//             ref: EMPTY_BYTES_32,
 	//             cid: cid,
@@ -3348,7 +3336,7 @@ createPost:
 	concat
 	frame_bury 2 // post: PostValue
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1027
+	// contracts/arc58/plugins/akita_social.algo.ts:1026
 	// this.posts(postID).value = post
 	bytec 3 //  "p"
 	frame_dig 1 // postID: byte[32]
@@ -3356,14 +3344,14 @@ createPost:
 	frame_dig 2 // post: PostValue
 	box_put
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1028
+	// contracts/arc58/plugins/akita_social.algo.ts:1027
 	// this.updateVotes(postID, true, impact)
 	frame_dig 0 // impact: uint64
 	intc 1 // 1
 	frame_dig 1 // postID: byte[32]
 	callsub updateVotes
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1029
+	// contracts/arc58/plugins/akita_social.algo.ts:1028
 	// voteListKey: VoteListKey = {
 	//             user: extract3(sender.address, 0, 24) as bytes24,
 	//             ref: extract3(postID, 0, 24) as bytes24,
@@ -3393,7 +3381,7 @@ createPost:
 	concat
 	frame_bury 3 // voteListKey: VoteListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1033
+	// contracts/arc58/plugins/akita_social.algo.ts:1032
 	// this.votelist(voteListKey).value = { impact: impact, isUp: true }
 	bytec 6 //  "v"
 	frame_dig 3 // voteListKey: VoteListKey
@@ -3416,7 +3404,7 @@ createReply:
 	bytec 0 // 0x
 	dupn 8
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1047
+	// contracts/arc58/plugins/akita_social.algo.ts:1046
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3425,7 +3413,7 @@ createReply:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1048
+	// contracts/arc58/plugins/akita_social.algo.ts:1047
 	// assert(this.posts(ref).exists, errs.POST_NOT_FOUND)
 	bytec 3 //  "p"
 	frame_dig -4 // ref: bytes32
@@ -3435,14 +3423,14 @@ createReply:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1049
+	// contracts/arc58/plugins/akita_social.algo.ts:1048
 	// post = this.posts(ref).value
 	bytec 3 //  "p"
 	frame_dig -4 // ref: bytes32
 	concat
 	frame_bury 0 // storage key//post
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1050
+	// contracts/arc58/plugins/akita_social.algo.ts:1049
 	// assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3460,7 +3448,7 @@ createReply:
 	assert
 
 	// *if31_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1052
+	// contracts/arc58/plugins/akita_social.algo.ts:1051
 	// post.replyGateIndex !== 0
 	frame_dig 0 // storage key//post
 	box_get
@@ -3476,7 +3464,7 @@ createReply:
 	bz *if31_end
 
 	// *if31_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1053
+	// contracts/arc58/plugins/akita_social.algo.ts:1052
 	// assert(this.gate(post.replyGateIndex, args), errs.DOES_NOT_PASS_GATE)
 	frame_dig -8 // args: bytes[]
 	frame_dig 0 // storage key//post
@@ -3492,14 +3480,14 @@ createReply:
 	assert
 
 *if31_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1058
+	// contracts/arc58/plugins/akita_social.algo.ts:1057
 	// this.updateStreak(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	callsub updateStreak
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1060
+	// contracts/arc58/plugins/akita_social.algo.ts:1059
 	// creatorMeta = this.meta(post.creator).value
 	frame_dig 0 // storage key//post
 	box_get
@@ -3511,7 +3499,7 @@ createReply:
 	extract 91 32
 	frame_bury 1 // storage key//creatorMeta
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1061
+	// contracts/arc58/plugins/akita_social.algo.ts:1060
 	// postCreatorImpact = this.userImpact(post.creator)
 	frame_dig 0 // storage key//post
 	box_get
@@ -3524,14 +3512,14 @@ createReply:
 	callsub userImpact
 	frame_bury 2 // postCreatorImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1062
+	// contracts/arc58/plugins/akita_social.algo.ts:1061
 	// tax = this.getTax(postCreatorImpact)
 	frame_dig 2 // postCreatorImpact: uint64
 	callsub getTax
 	frame_bury 3 // tax: uint64
 
 	// *if32_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1064
+	// contracts/arc58/plugins/akita_social.algo.ts:1063
 	// !post.creator.isOptedInToAsset(AkitaAssetAkita)
 	frame_dig 0 // storage key//post
 	box_get
@@ -3549,7 +3537,7 @@ createReply:
 	bz *if32_else
 
 	// *if32_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1066
+	// contracts/arc58/plugins/akita_social.algo.ts:1065
 	// canCallArc58OptIn = this.canCallArc58OptIn(sender.address, creatorMeta.walletAppID)
 	frame_dig 1 // storage key//creatorMeta
 	box_get
@@ -3567,13 +3555,13 @@ createReply:
 	frame_bury 4 // canCallArc58OptIn: bool
 
 	// *if33_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1067
+	// contracts/arc58/plugins/akita_social.algo.ts:1066
 	// canCallArc58OptIn
 	frame_dig 4 // canCallArc58OptIn: bool
 	bz *if33_else
 
 	// *if33_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1069
+	// contracts/arc58/plugins/akita_social.algo.ts:1068
 	// this.arc58OptInAndSendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID, tax)
 	frame_dig 3 // tax: uint64
 	frame_dig 1 // storage key//creatorMeta
@@ -3591,7 +3579,7 @@ createReply:
 	b *if33_end
 
 *if33_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1072
+	// contracts/arc58/plugins/akita_social.algo.ts:1071
 	// this.arc59OptInAndSendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID, tax)
 	frame_dig 3 // tax: uint64
 	frame_dig 1 // storage key//creatorMeta
@@ -3611,7 +3599,7 @@ createReply:
 	b *if32_end
 
 *if32_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1076
+	// contracts/arc58/plugins/akita_social.algo.ts:1075
 	// this.sendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID.address, tax)
 	frame_dig 3 // tax: uint64
 	frame_dig 1 // storage key//creatorMeta
@@ -3630,7 +3618,7 @@ createReply:
 	callsub sendReactionPayments
 
 *if32_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1079
+	// contracts/arc58/plugins/akita_social.algo.ts:1078
 	// replyPostID = this.txn.txID as bytes32
 	txn TxID
 	bytec 5 // 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -3643,7 +3631,7 @@ createReply:
 	extract 0 32
 	frame_bury 5 // replyPostID: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1080
+	// contracts/arc58/plugins/akita_social.algo.ts:1079
 	// replyPost: PostValue = {
 	//             ref: ref,
 	//             cid: cid,
@@ -3685,7 +3673,7 @@ createReply:
 	concat
 	frame_bury 6 // replyPost: PostValue
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1092
+	// contracts/arc58/plugins/akita_social.algo.ts:1091
 	// this.posts(replyPostID).value = replyPost
 	bytec 3 //  "p"
 	frame_dig 5 // replyPostID: byte[32]
@@ -3693,7 +3681,7 @@ createReply:
 	frame_dig 6 // replyPost: PostValue
 	box_put
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1094
+	// contracts/arc58/plugins/akita_social.algo.ts:1093
 	// senderImpact = this.userImpact(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3701,14 +3689,14 @@ createReply:
 	callsub userImpact
 	frame_bury 7 // senderImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1095
+	// contracts/arc58/plugins/akita_social.algo.ts:1094
 	// this.updateVotes(replyPostID, true, senderImpact)
 	frame_dig 7 // senderImpact: uint64
 	intc 1 // 1
 	frame_dig 5 // replyPostID: byte[32]
 	callsub updateVotes
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1096
+	// contracts/arc58/plugins/akita_social.algo.ts:1095
 	// voteListKey: VoteListKey = {
 	//             user: extract3(sender.address, 0, 24) as bytes24,
 	//             ref: extract3(replyPostID, 0, 24) as bytes24,
@@ -3738,7 +3726,7 @@ createReply:
 	concat
 	frame_bury 8 // voteListKey: VoteListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1100
+	// contracts/arc58/plugins/akita_social.algo.ts:1099
 	// this.votelist(voteListKey).value = { impact: senderImpact, isUp: true }
 	bytec 6 //  "v"
 	frame_dig 8 // voteListKey: VoteListKey
@@ -3761,7 +3749,7 @@ createVote:
 	bytec 0 // 0x
 	dupn 7
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1104
+	// contracts/arc58/plugins/akita_social.algo.ts:1103
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3770,7 +3758,7 @@ createVote:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1105
+	// contracts/arc58/plugins/akita_social.algo.ts:1104
 	// assert(this.posts(ref).exists, errs.POST_NOT_FOUND)
 	bytec 3 //  "p"
 	frame_dig -3 // ref: bytes32
@@ -3780,14 +3768,14 @@ createVote:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1107
+	// contracts/arc58/plugins/akita_social.algo.ts:1106
 	// post = this.posts(ref).value
 	bytec 3 //  "p"
 	frame_dig -3 // ref: bytes32
 	concat
 	frame_bury 0 // storage key//post
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1108
+	// contracts/arc58/plugins/akita_social.algo.ts:1107
 	// assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3804,7 +3792,7 @@ createVote:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1109
+	// contracts/arc58/plugins/akita_social.algo.ts:1108
 	// voteListKey: VoteListKey = {
 	//             user: extract3(sender.address, 0, 24) as bytes24,
 	//             ref: extract3(ref, 0, 24) as bytes24,
@@ -3834,7 +3822,7 @@ createVote:
 	concat
 	frame_bury 1 // voteListKey: VoteListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1113
+	// contracts/arc58/plugins/akita_social.algo.ts:1112
 	// assert(!this.votelist(voteListKey).exists, errs.ALREADY_VOTED)
 	bytec 6 //  "v"
 	frame_dig 1 // voteListKey: VoteListKey
@@ -3845,7 +3833,7 @@ createVote:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1114
+	// contracts/arc58/plugins/akita_social.algo.ts:1113
 	// assert(sender.address !== post.creator, errs.NO_SELF_VOTE)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3861,7 +3849,7 @@ createVote:
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1116
+	// contracts/arc58/plugins/akita_social.algo.ts:1115
 	// senderIsAutomated = this.meta(sender.address).value.automated
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3876,13 +3864,13 @@ createVote:
 	getbit
 	frame_bury 2 // senderIsAutomated: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1117
+	// contracts/arc58/plugins/akita_social.algo.ts:1116
 	// assert(!senderIsAutomated, errs.AUTOMATED_ACCOUNT)
 	frame_dig 2 // senderIsAutomated: bool
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1121
+	// contracts/arc58/plugins/akita_social.algo.ts:1120
 	// this.updateStreak(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -3890,13 +3878,13 @@ createVote:
 	callsub updateStreak
 
 	// *if34_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1123
+	// contracts/arc58/plugins/akita_social.algo.ts:1122
 	// isUp
 	frame_dig -4 // isUp: boolean
 	bz *if34_elseif1_condition
 
 	// *if34_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1124
+	// contracts/arc58/plugins/akita_social.algo.ts:1123
 	// creatorMeta = this.meta(post.creator).value
 	frame_dig 0 // storage key//post
 	box_get
@@ -3908,7 +3896,7 @@ createVote:
 	extract 91 32
 	frame_bury 3 // storage key//creatorMeta
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1126
+	// contracts/arc58/plugins/akita_social.algo.ts:1125
 	// recipientImpact = this.userImpact(post.creator)
 	frame_dig 0 // storage key//post
 	box_get
@@ -3921,14 +3909,14 @@ createVote:
 	callsub userImpact
 	frame_bury 4 // recipientImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1127
+	// contracts/arc58/plugins/akita_social.algo.ts:1126
 	// tax = this.getTax(recipientImpact)
 	frame_dig 4 // recipientImpact: uint64
 	callsub getTax
 	frame_bury 5 // tax: uint64
 
 	// *if35_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1129
+	// contracts/arc58/plugins/akita_social.algo.ts:1128
 	// !post.creator.isOptedInToAsset(AkitaAssetAkita)
 	frame_dig 0 // storage key//post
 	box_get
@@ -3946,7 +3934,7 @@ createVote:
 	bz *if35_else
 
 	// *if35_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1131
+	// contracts/arc58/plugins/akita_social.algo.ts:1130
 	// canCallArc58OptIn = this.canCallArc58OptIn(sender.address, creatorMeta.walletAppID)
 	frame_dig 3 // storage key//creatorMeta
 	box_get
@@ -3964,13 +3952,13 @@ createVote:
 	frame_bury 6 // canCallArc58OptIn: bool
 
 	// *if36_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1132
+	// contracts/arc58/plugins/akita_social.algo.ts:1131
 	// canCallArc58OptIn
 	frame_dig 6 // canCallArc58OptIn: bool
 	bz *if36_else
 
 	// *if36_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1134
+	// contracts/arc58/plugins/akita_social.algo.ts:1133
 	// this.arc58OptInAndSendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID, tax)
 	frame_dig 5 // tax: uint64
 	frame_dig 3 // storage key//creatorMeta
@@ -3988,7 +3976,7 @@ createVote:
 	b *if36_end
 
 *if36_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1137
+	// contracts/arc58/plugins/akita_social.algo.ts:1136
 	// this.arc59OptInAndSendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID, tax)
 	frame_dig 5 // tax: uint64
 	frame_dig 3 // storage key//creatorMeta
@@ -4008,7 +3996,7 @@ createVote:
 	b *if35_end
 
 *if35_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1141
+	// contracts/arc58/plugins/akita_social.algo.ts:1140
 	// this.sendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID.address, tax)
 	frame_dig 5 // tax: uint64
 	frame_dig 3 // storage key//creatorMeta
@@ -4030,13 +4018,13 @@ createVote:
 	b *if34_end
 
 *if34_elseif1_condition:
-	// contracts/arc58/plugins/akita_social.algo.ts:1143
+	// contracts/arc58/plugins/akita_social.algo.ts:1142
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if34_else
 
 	// *if34_elseif1_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1144
+	// contracts/arc58/plugins/akita_social.algo.ts:1143
 	// sendAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address,
@@ -4049,38 +4037,38 @@ createVote:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1145
+	// contracts/arc58/plugins/akita_social.algo.ts:1144
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1146
+	// contracts/arc58/plugins/akita_social.algo.ts:1145
 	// assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1147
+	// contracts/arc58/plugins/akita_social.algo.ts:1146
 	// assetAmount: REACT_FEE
 	intc 5 // 10000000
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1148
+	// contracts/arc58/plugins/akita_social.algo.ts:1147
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1149
+	// contracts/arc58/plugins/akita_social.algo.ts:1148
 	// rekeyTo: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1150
+	// contracts/arc58/plugins/akita_social.algo.ts:1149
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -4090,7 +4078,7 @@ createVote:
 	b *if34_end
 
 *if34_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1153
+	// contracts/arc58/plugins/akita_social.algo.ts:1152
 	// sendAssetTransfer({
 	//                 sender: sender.address,
 	//                 assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address,
@@ -4102,31 +4090,31 @@ createVote:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1154
+	// contracts/arc58/plugins/akita_social.algo.ts:1153
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1155
+	// contracts/arc58/plugins/akita_social.algo.ts:1154
 	// assetReceiver: AppID.fromUint64(AkitaAppIDsDAO).address
 	intc 0 // 0
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1156
+	// contracts/arc58/plugins/akita_social.algo.ts:1155
 	// assetAmount: REACT_FEE
 	intc 5 // 10000000
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1157
+	// contracts/arc58/plugins/akita_social.algo.ts:1156
 	// xferAsset: AssetID.fromUint64(AkitaAssetAkita)
 	intc 0 // 0
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1158
+	// contracts/arc58/plugins/akita_social.algo.ts:1157
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -4135,7 +4123,7 @@ createVote:
 	itxn_submit
 
 *if34_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1163
+	// contracts/arc58/plugins/akita_social.algo.ts:1162
 	// senderImpact = this.userImpact(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -4143,14 +4131,14 @@ createVote:
 	callsub userImpact
 	frame_bury 7 // senderImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1164
+	// contracts/arc58/plugins/akita_social.algo.ts:1163
 	// this.updateVotes(ref, isUp, senderImpact)
 	frame_dig 7 // senderImpact: uint64
 	frame_dig -4 // isUp: boolean
 	frame_dig -3 // ref: bytes32
 	callsub updateVotes
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1165
+	// contracts/arc58/plugins/akita_social.algo.ts:1164
 	// this.votelist(voteListKey).value = { impact: senderImpact, isUp: isUp }
 	bytec 6 //  "v"
 	frame_dig 1 // voteListKey: VoteListKey
@@ -4173,7 +4161,7 @@ createReaction:
 	bytec 0 // 0x
 	dupn 6
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1169
+	// contracts/arc58/plugins/akita_social.algo.ts:1168
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -4182,7 +4170,7 @@ createReaction:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1170
+	// contracts/arc58/plugins/akita_social.algo.ts:1169
 	// assert(this.posts(ref).exists, errs.POST_NOT_FOUND)
 	bytec 3 //  "p"
 	frame_dig -3 // ref: bytes32
@@ -4192,14 +4180,14 @@ createReaction:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1171
+	// contracts/arc58/plugins/akita_social.algo.ts:1170
 	// post = this.posts(ref).value
 	bytec 3 //  "p"
 	frame_dig -3 // ref: bytes32
 	concat
 	frame_bury 0 // storage key//post
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1172
+	// contracts/arc58/plugins/akita_social.algo.ts:1171
 	// assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -4216,7 +4204,7 @@ createReaction:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1173
+	// contracts/arc58/plugins/akita_social.algo.ts:1172
 	// assert(sender.address.assetBalance(NFT) > 0, errs.USER_DOES_NOT_OWN_NFT)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -4229,7 +4217,7 @@ createReaction:
 	assert
 
 	// *if37_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1175
+	// contracts/arc58/plugins/akita_social.algo.ts:1174
 	// post.reactGateIndex !== 0
 	frame_dig 0 // storage key//post
 	box_get
@@ -4245,7 +4233,7 @@ createReaction:
 	bz *if37_end
 
 	// *if37_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1176
+	// contracts/arc58/plugins/akita_social.algo.ts:1175
 	// assert(this.gate(post.reactGateIndex, args), errs.DOES_NOT_PASS_GATE)
 	frame_dig -5 // args: bytes[]
 	frame_dig 0 // storage key//post
@@ -4261,7 +4249,7 @@ createReaction:
 	assert
 
 *if37_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1179
+	// contracts/arc58/plugins/akita_social.algo.ts:1178
 	// reactionListKey: ReactionListKey = {
 	//             user: rawBytes(sender).substring(0, 24) as bytes24,
 	//             ref: rawBytes(ref).substring(0, 24) as bytes24,
@@ -4294,7 +4282,7 @@ createReaction:
 	concat
 	frame_bury 1 // reactionListKey: ReactionListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1185
+	// contracts/arc58/plugins/akita_social.algo.ts:1184
 	// assert(!this.reactionlist(reactionListKey).exists, errs.ALREADY_REACTED)
 	frame_dig 1 // reactionListKey: ReactionListKey
 	box_len
@@ -4303,14 +4291,14 @@ createReaction:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1189
+	// contracts/arc58/plugins/akita_social.algo.ts:1188
 	// this.updateStreak(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	callsub updateStreak
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1191
+	// contracts/arc58/plugins/akita_social.algo.ts:1190
 	// creatorMeta = this.meta(post.creator).value
 	frame_dig 0 // storage key//post
 	box_get
@@ -4322,7 +4310,7 @@ createReaction:
 	extract 91 32
 	frame_bury 2 // storage key//creatorMeta
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1192
+	// contracts/arc58/plugins/akita_social.algo.ts:1191
 	// recipientImpact = this.userImpact(post.creator)
 	frame_dig 0 // storage key//post
 	box_get
@@ -4335,14 +4323,14 @@ createReaction:
 	callsub userImpact
 	frame_bury 3 // recipientImpact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1193
+	// contracts/arc58/plugins/akita_social.algo.ts:1192
 	// tax = this.getTax(recipientImpact)
 	frame_dig 3 // recipientImpact: uint64
 	callsub getTax
 	frame_bury 4 // tax: uint64
 
 	// *if38_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1195
+	// contracts/arc58/plugins/akita_social.algo.ts:1194
 	// !post.creator.isOptedInToAsset(AkitaAssetAkita)
 	frame_dig 0 // storage key//post
 	box_get
@@ -4360,7 +4348,7 @@ createReaction:
 	bz *if38_else
 
 	// *if38_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1196
+	// contracts/arc58/plugins/akita_social.algo.ts:1195
 	// canCallArc58OptIn = this.canCallArc58OptIn(sender.address, creatorMeta.walletAppID)
 	frame_dig 2 // storage key//creatorMeta
 	box_get
@@ -4378,13 +4366,13 @@ createReaction:
 	frame_bury 5 // canCallArc58OptIn: bool
 
 	// *if39_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1197
+	// contracts/arc58/plugins/akita_social.algo.ts:1196
 	// canCallArc58OptIn
 	frame_dig 5 // canCallArc58OptIn: bool
 	bz *if39_else
 
 	// *if39_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1198
+	// contracts/arc58/plugins/akita_social.algo.ts:1197
 	// this.arc58OptInAndSendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID, tax)
 	frame_dig 4 // tax: uint64
 	frame_dig 2 // storage key//creatorMeta
@@ -4402,7 +4390,7 @@ createReaction:
 	b *if39_end
 
 *if39_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1200
+	// contracts/arc58/plugins/akita_social.algo.ts:1199
 	// this.arc59OptInAndSendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID, tax)
 	frame_dig 4 // tax: uint64
 	frame_dig 2 // storage key//creatorMeta
@@ -4422,7 +4410,7 @@ createReaction:
 	b *if38_end
 
 *if38_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1203
+	// contracts/arc58/plugins/akita_social.algo.ts:1202
 	// this.sendReactionPayments(sender, rekeyBack, creatorMeta.walletAppID.address, tax)
 	frame_dig 4 // tax: uint64
 	frame_dig 2 // storage key//creatorMeta
@@ -4441,7 +4429,7 @@ createReaction:
 	callsub sendReactionPayments
 
 *if38_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1206
+	// contracts/arc58/plugins/akita_social.algo.ts:1205
 	// reactionExists = this.reactions({ ref: ref, NFT: NFT }).exists
 	bytec 9 //  "r"
 	frame_dig -3 // ref: bytes32
@@ -4455,13 +4443,13 @@ createReaction:
 	frame_bury 6 // reactionExists: bool
 
 	// *if40_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1207
+	// contracts/arc58/plugins/akita_social.algo.ts:1206
 	// reactionExists
 	frame_dig 6 // reactionExists: bool
 	bz *if40_else
 
 	// *if40_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1208
+	// contracts/arc58/plugins/akita_social.algo.ts:1207
 	// this.reactions({ ref: ref, NFT: NFT }).value += 1
 	bytec 9 //  "r"
 	frame_dig -3 // ref: bytes32
@@ -4488,7 +4476,7 @@ createReaction:
 	b *if40_end
 
 *if40_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1210
+	// contracts/arc58/plugins/akita_social.algo.ts:1209
 	// this.reactions({ ref: ref, NFT: NFT }).value = 1
 	bytec 9 //  "r"
 	frame_dig -3 // ref: bytes32
@@ -4500,7 +4488,7 @@ createReaction:
 	box_put
 
 *if40_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1213
+	// contracts/arc58/plugins/akita_social.algo.ts:1212
 	// this.reactionlist(reactionListKey).create(0)
 	frame_dig 1 // reactionListKey: ReactionListKey
 	intc 0 // 0
@@ -4565,7 +4553,7 @@ createReaction:
 post:
 	proto 6 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1228
+	// contracts/arc58/plugins/akita_social.algo.ts:1227
 	// this.createPost(sender, rekeyBack, cid, collectible, replyGateIndex, reactGateIndex, false)
 	intc 0 // 0
 	frame_dig -6 // reactGateIndex: uint64
@@ -4647,7 +4635,7 @@ editPost:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1240
+	// contracts/arc58/plugins/akita_social.algo.ts:1239
 	// assert(this.posts(amendment).exists, errs.POST_NOT_FOUND)
 	bytec 3 //  "p"
 	frame_dig -7 // amendment: bytes32
@@ -4657,7 +4645,7 @@ editPost:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1241
+	// contracts/arc58/plugins/akita_social.algo.ts:1240
 	// post = clone(this.posts(amendment).value)
 	bytec 3 //  "p"
 	frame_dig -7 // amendment: bytes32
@@ -4668,7 +4656,7 @@ editPost:
 	assert
 	frame_bury 0 // post: (byte[32],byte[59],address,byte[32],bool,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1242
+	// contracts/arc58/plugins/akita_social.algo.ts:1241
 	// assert(post.creator === sender.address, errs.NOT_YOUR_POST_TO_EDIT)
 	frame_dig 0 // post: (byte[32],byte[59],address,byte[32],bool,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -4680,7 +4668,7 @@ editPost:
 	==
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1243
+	// contracts/arc58/plugins/akita_social.algo.ts:1242
 	// assert(post.ref === EMPTY_BYTES_32)
 	frame_dig 0 // post: (byte[32],byte[59],address,byte[32],bool,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -4690,7 +4678,7 @@ editPost:
 	==
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1245
+	// contracts/arc58/plugins/akita_social.algo.ts:1244
 	// this.posts(amendment).value = {
 	//             ref: post.ref,
 	//             cid: post.cid,
@@ -4766,7 +4754,7 @@ editPost:
 	concat
 	box_put
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1257
+	// contracts/arc58/plugins/akita_social.algo.ts:1256
 	// this.createPost(sender, rekeyBack, cid, collectible, replyGateIndex, reactGateIndex, true)
 	intc 1 // 1
 	frame_dig -6 // reactGateIndex: uint64
@@ -4848,7 +4836,7 @@ editPost:
 replyPost:
 	proto 8 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1270
+	// contracts/arc58/plugins/akita_social.algo.ts:1269
 	// this.createReply(sender, rekeyBack, cid, ref, collectible, replyGateIndex, reactGateIndex, args, false)
 	intc 0 // 0
 	frame_dig -8 // args: bytes[]
@@ -4926,14 +4914,14 @@ replyAsset:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1282
+	// contracts/arc58/plugins/akita_social.algo.ts:1281
 	// assert(ref.id !== 0, errs.INVALID_ASSET)
 	frame_dig -4 // ref: AssetID
 	intc 0 // 0
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1283
+	// contracts/arc58/plugins/akita_social.algo.ts:1282
 	// paddedRef = itob(ref.id) as bytes32
 	frame_dig -4 // ref: AssetID
 	itob
@@ -4947,7 +4935,7 @@ replyAsset:
 	extract 0 32
 	frame_bury 0 // paddedRef: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1284
+	// contracts/arc58/plugins/akita_social.algo.ts:1283
 	// this.createEmptyPostIfNecessary(paddedRef, ref.creator)
 	frame_dig -4 // ref: AssetID
 	asset_params_get AssetCreator
@@ -4955,7 +4943,7 @@ replyAsset:
 	frame_dig 0 // paddedRef: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1285
+	// contracts/arc58/plugins/akita_social.algo.ts:1284
 	// this.createReply(sender, rekeyBack, cid, paddedRef, collectible, replyGateIndex, reactGateIndex, [], false)
 	intc 0 // 0
 	bytec 0 // 0x
@@ -5044,7 +5032,7 @@ replyAddress:
 	dup
 
 	// *if41_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1299
+	// contracts/arc58/plugins/akita_social.algo.ts:1298
 	// this.meta(ref).exists
 	frame_dig -3 // ref: Address
 	box_len
@@ -5053,13 +5041,13 @@ replyAddress:
 	bz *if41_end
 
 	// *if41_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1300
+	// contracts/arc58/plugins/akita_social.algo.ts:1299
 	// meta = this.meta(ref).value
 	frame_dig -3 // ref: Address
 	frame_bury 0 // storage key//meta
 
 	// *if42_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1302
+	// contracts/arc58/plugins/akita_social.algo.ts:1301
 	// meta.addressFilterIndex !== 0
 	frame_dig 0 // storage key//meta
 	box_get
@@ -5075,7 +5063,7 @@ replyAddress:
 	bz *if42_end
 
 	// *if42_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1303
+	// contracts/arc58/plugins/akita_social.algo.ts:1302
 	// assert(this.gate(meta.addressFilterIndex, args), errs.DOES_NOT_PASS_GATE)
 	frame_dig -7 // args: bytes[]
 	frame_dig 0 // storage key//meta
@@ -5093,7 +5081,7 @@ replyAddress:
 *if42_end:
 
 *if41_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1307
+	// contracts/arc58/plugins/akita_social.algo.ts:1306
 	// r = rawBytes(ref) as bytes32
 	frame_dig -3 // ref: Address
 	bytec 5 // 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -5106,13 +5094,13 @@ replyAddress:
 	extract 0 32
 	frame_bury 1 // r: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1308
+	// contracts/arc58/plugins/akita_social.algo.ts:1307
 	// this.createEmptyPostIfNecessary(r, ref)
 	frame_dig -3 // ref: Address
 	frame_dig 1 // r: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1309
+	// contracts/arc58/plugins/akita_social.algo.ts:1308
 	// this.createReply(sender, rekeyBack, cid, r, collectible, replyGateIndex, reactGateIndex, [], false)
 	intc 0 // 0
 	bytec 0 // 0x
@@ -5190,14 +5178,14 @@ replyApp:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1321
+	// contracts/arc58/plugins/akita_social.algo.ts:1320
 	// assert(ref.id !== 0, errs.INVALID_APP)
 	frame_dig -3 // ref: AppID
 	intc 0 // 0
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1322
+	// contracts/arc58/plugins/akita_social.algo.ts:1321
 	// paddedRef = itob(ref.id) as bytes32
 	frame_dig -3 // ref: AppID
 	itob
@@ -5211,7 +5199,7 @@ replyApp:
 	extract 0 32
 	frame_bury 0 // paddedRef: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1323
+	// contracts/arc58/plugins/akita_social.algo.ts:1322
 	// this.createEmptyPostIfNecessary(paddedRef, ref.creator)
 	frame_dig -3 // ref: AppID
 	app_params_get AppCreator
@@ -5219,7 +5207,7 @@ replyApp:
 	frame_dig 0 // paddedRef: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1324
+	// contracts/arc58/plugins/akita_social.algo.ts:1323
 	// this.createReply(sender, rekeyBack, cid, paddedRef, collectible, replyGateIndex, reactGateIndex, [], false)
 	intc 0 // 0
 	bytec 0 // 0x
@@ -5306,7 +5294,7 @@ editReply:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1337
+	// contracts/arc58/plugins/akita_social.algo.ts:1336
 	// assert(this.posts(amendment).exists, errs.REPLY_NOT_FOUND)
 	bytec 3 //  "p"
 	frame_dig -7 // amendment: bytes32
@@ -5316,14 +5304,14 @@ editReply:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1338
+	// contracts/arc58/plugins/akita_social.algo.ts:1337
 	// post = this.posts(amendment).value
 	bytec 3 //  "p"
 	frame_dig -7 // amendment: bytes32
 	concat
 	frame_bury 0 // storage key//post
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1339
+	// contracts/arc58/plugins/akita_social.algo.ts:1338
 	// assert(post.creator === sender.address, errs.NOT_YOUR_POST_TO_EDIT)
 	frame_dig 0 // storage key//post
 	box_get
@@ -5339,7 +5327,7 @@ editReply:
 	==
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1340
+	// contracts/arc58/plugins/akita_social.algo.ts:1339
 	// assert(post.ref !== EMPTY_BYTES_32, errs.NOT_A_REPLY)
 	frame_dig 0 // storage key//post
 	box_get
@@ -5353,7 +5341,7 @@ editReply:
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1341
+	// contracts/arc58/plugins/akita_social.algo.ts:1340
 	// this.posts(amendment).value.amendment = this.txn.txID
 	bytec 3 //  "p"
 	frame_dig -7 // amendment: bytes32
@@ -5378,7 +5366,7 @@ editReply:
 	cover 2
 	box_replace
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1342
+	// contracts/arc58/plugins/akita_social.algo.ts:1341
 	// this.createReply(sender, rekeyBack, cid, post.ref, collectible, replyGateIndex, reactGateIndex, args, true)
 	intc 1 // 1
 	frame_dig -6 // args: bytes[]
@@ -5448,7 +5436,7 @@ editReply:
 votePost:
 	proto 4 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1346
+	// contracts/arc58/plugins/akita_social.algo.ts:1345
 	// this.createVote(sender, rekeyBack, ref, isUp)
 	frame_dig -4 // isUp: boolean
 	frame_dig -3 // ref: bytes32
@@ -5503,14 +5491,14 @@ voteAsset:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1350
+	// contracts/arc58/plugins/akita_social.algo.ts:1349
 	// assert(ref.id !== 0, errs.INVALID_ASSET)
 	frame_dig -3 // ref: AssetID
 	intc 0 // 0
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1351
+	// contracts/arc58/plugins/akita_social.algo.ts:1350
 	// paddedRef = itob(ref.id) as bytes32
 	frame_dig -3 // ref: AssetID
 	itob
@@ -5524,7 +5512,7 @@ voteAsset:
 	extract 0 32
 	frame_bury 0 // paddedRef: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1352
+	// contracts/arc58/plugins/akita_social.algo.ts:1351
 	// this.createEmptyPostIfNecessary(paddedRef, ref.creator)
 	frame_dig -3 // ref: AssetID
 	asset_params_get AssetCreator
@@ -5532,7 +5520,7 @@ voteAsset:
 	frame_dig 0 // paddedRef: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1353
+	// contracts/arc58/plugins/akita_social.algo.ts:1352
 	// this.createVote(sender, rekeyBack, paddedRef, isUp)
 	frame_dig -4 // isUp: boolean
 	frame_dig 0 // paddedRef: byte[32]
@@ -5593,7 +5581,7 @@ voteAddress:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1357
+	// contracts/arc58/plugins/akita_social.algo.ts:1356
 	// r = rawBytes(ref) as bytes32
 	frame_dig -3 // ref: Address
 	bytec 5 // 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -5606,13 +5594,13 @@ voteAddress:
 	extract 0 32
 	frame_bury 0 // r: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1358
+	// contracts/arc58/plugins/akita_social.algo.ts:1357
 	// this.createEmptyPostIfNecessary(r, ref)
 	frame_dig -3 // ref: Address
 	frame_dig 0 // r: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1359
+	// contracts/arc58/plugins/akita_social.algo.ts:1358
 	// this.createVote(sender, rekeyBack, r, isUp)
 	frame_dig -4 // isUp: boolean
 	frame_dig 0 // r: byte[32]
@@ -5667,14 +5655,14 @@ voteApp:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1363
+	// contracts/arc58/plugins/akita_social.algo.ts:1362
 	// assert(ref.id !== 0, errs.INVALID_APP)
 	frame_dig -3 // ref: AppID
 	intc 0 // 0
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1364
+	// contracts/arc58/plugins/akita_social.algo.ts:1363
 	// paddedRef = itob(ref.id) as bytes32
 	frame_dig -3 // ref: AppID
 	itob
@@ -5688,7 +5676,7 @@ voteApp:
 	extract 0 32
 	frame_bury 0 // paddedRef: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1365
+	// contracts/arc58/plugins/akita_social.algo.ts:1364
 	// this.createEmptyPostIfNecessary(paddedRef, ref.creator)
 	frame_dig -3 // ref: AppID
 	app_params_get AppCreator
@@ -5696,7 +5684,7 @@ voteApp:
 	frame_dig 0 // paddedRef: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1366
+	// contracts/arc58/plugins/akita_social.algo.ts:1365
 	// this.createVote(sender, rekeyBack, paddedRef, isUp)
 	frame_dig -4 // isUp: boolean
 	frame_dig 0 // paddedRef: byte[32]
@@ -5758,7 +5746,7 @@ editVote:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1370
+	// contracts/arc58/plugins/akita_social.algo.ts:1369
 	// voteListKey: VoteListKey = {
 	//             user: extract3(sender.address, 0, 24) as bytes24,
 	//             ref: extract3(ref, 0, 24) as bytes24,
@@ -5788,7 +5776,7 @@ editVote:
 	concat
 	frame_bury 0 // voteListKey: VoteListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1374
+	// contracts/arc58/plugins/akita_social.algo.ts:1373
 	// assert(this.votelist(voteListKey).exists, errs.HAVENT_VOTED)
 	bytec 6 //  "v"
 	frame_dig 0 // voteListKey: VoteListKey
@@ -5798,14 +5786,14 @@ editVote:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1376
+	// contracts/arc58/plugins/akita_social.algo.ts:1375
 	// voteListData = this.votelist(voteListKey).value
 	bytec 6 //  "v"
 	frame_dig 0 // voteListKey: VoteListKey
 	concat
 	frame_bury 1 // storage key//voteListData
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1377
+	// contracts/arc58/plugins/akita_social.algo.ts:1376
 	// impact = voteListData.impact
 	frame_dig 1 // storage key//voteListData
 	box_get
@@ -5818,7 +5806,7 @@ editVote:
 	btoi
 	frame_bury 2 // impact: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1378
+	// contracts/arc58/plugins/akita_social.algo.ts:1377
 	// isUp = voteListData.isUp
 	frame_dig 1 // storage key//voteListData
 	box_get
@@ -5831,7 +5819,7 @@ editVote:
 	getbit
 	frame_bury 3 // isUp: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1381
+	// contracts/arc58/plugins/akita_social.algo.ts:1380
 	// this.updateVotes(ref, !isUp, impact)
 	frame_dig 2 // impact: uint64
 	frame_dig 3 // isUp: bool
@@ -5840,19 +5828,19 @@ editVote:
 	callsub updateVotes
 
 	// *if43_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1382
+	// contracts/arc58/plugins/akita_social.algo.ts:1381
 	// !flip
 	frame_dig -4 // flip: boolean
 	!
 	bz *if43_end
 
 	// *if43_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1383
+	// contracts/arc58/plugins/akita_social.algo.ts:1382
 	// return;
 	retsub
 
 *if43_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1386
+	// contracts/arc58/plugins/akita_social.algo.ts:1385
 	// this.createVote(sender, rekeyBack, ref, !isUp)
 	frame_dig 3 // isUp: bool
 	!
@@ -5906,7 +5894,7 @@ editVote:
 reactPost:
 	proto 5 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1390
+	// contracts/arc58/plugins/akita_social.algo.ts:1389
 	// this.createReaction(sender, rekeyBack, ref, NFT, args)
 	frame_dig -5 // args: bytes[]
 	frame_dig -4 // NFT: AssetID
@@ -5954,14 +5942,14 @@ reactAsset:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1394
+	// contracts/arc58/plugins/akita_social.algo.ts:1393
 	// assert(ref.id !== 0, errs.INVALID_ASSET)
 	frame_dig -3 // ref: AssetID
 	intc 0 // 0
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1395
+	// contracts/arc58/plugins/akita_social.algo.ts:1394
 	// paddedRef = itob(ref.id) as bytes32
 	frame_dig -3 // ref: AssetID
 	itob
@@ -5975,7 +5963,7 @@ reactAsset:
 	extract 0 32
 	frame_bury 0 // paddedRef: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1396
+	// contracts/arc58/plugins/akita_social.algo.ts:1395
 	// this.createEmptyPostIfNecessary(paddedRef, ref.creator)
 	frame_dig -3 // ref: AssetID
 	asset_params_get AssetCreator
@@ -5983,7 +5971,7 @@ reactAsset:
 	frame_dig 0 // paddedRef: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1397
+	// contracts/arc58/plugins/akita_social.algo.ts:1396
 	// this.createReaction(sender, rekeyBack, paddedRef, NFT, [])
 	bytec 0 // 0x
 	frame_dig -4 // NFT: AssetID
@@ -6042,7 +6030,7 @@ reactAddress:
 	dup
 
 	// *if44_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1402
+	// contracts/arc58/plugins/akita_social.algo.ts:1401
 	// this.meta(ref).exists
 	frame_dig -3 // ref: Address
 	box_len
@@ -6051,13 +6039,13 @@ reactAddress:
 	bz *if44_end
 
 	// *if44_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1403
+	// contracts/arc58/plugins/akita_social.algo.ts:1402
 	// meta = this.meta(ref).value
 	frame_dig -3 // ref: Address
 	frame_bury 0 // storage key//meta
 
 	// *if45_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1405
+	// contracts/arc58/plugins/akita_social.algo.ts:1404
 	// meta.addressFilterIndex !== 0
 	frame_dig 0 // storage key//meta
 	box_get
@@ -6073,7 +6061,7 @@ reactAddress:
 	bz *if45_end
 
 	// *if45_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1406
+	// contracts/arc58/plugins/akita_social.algo.ts:1405
 	// assert(this.gate(meta.addressFilterIndex, args), errs.DOES_NOT_PASS_GATE)
 	frame_dig -5 // args: bytes[]
 	frame_dig 0 // storage key//meta
@@ -6091,7 +6079,7 @@ reactAddress:
 *if45_end:
 
 *if44_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1410
+	// contracts/arc58/plugins/akita_social.algo.ts:1409
 	// r = rawBytes(ref) as bytes32
 	frame_dig -3 // ref: Address
 	bytec 5 // 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -6104,13 +6092,13 @@ reactAddress:
 	extract 0 32
 	frame_bury 1 // r: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1411
+	// contracts/arc58/plugins/akita_social.algo.ts:1410
 	// this.createEmptyPostIfNecessary(r, ref)
 	frame_dig -3 // ref: Address
 	frame_dig 1 // r: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1412
+	// contracts/arc58/plugins/akita_social.algo.ts:1411
 	// this.createReaction(sender, rekeyBack, r, NFT, [])
 	bytec 0 // 0x
 	frame_dig -4 // NFT: AssetID
@@ -6158,14 +6146,14 @@ reactApp:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1416
+	// contracts/arc58/plugins/akita_social.algo.ts:1415
 	// assert(ref.id !== 0, errs.INVALID_APP)
 	frame_dig -3 // ref: AppID
 	intc 0 // 0
 	!=
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1417
+	// contracts/arc58/plugins/akita_social.algo.ts:1416
 	// paddedRef = itob(ref.id) as bytes32
 	frame_dig -3 // ref: AppID
 	itob
@@ -6179,7 +6167,7 @@ reactApp:
 	extract 0 32
 	frame_bury 0 // paddedRef: byte[32]
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1418
+	// contracts/arc58/plugins/akita_social.algo.ts:1417
 	// this.createEmptyPostIfNecessary(paddedRef, ref.creator)
 	frame_dig -3 // ref: AppID
 	app_params_get AppCreator
@@ -6187,7 +6175,7 @@ reactApp:
 	frame_dig 0 // paddedRef: byte[32]
 	callsub createEmptyPostIfNecessary
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1419
+	// contracts/arc58/plugins/akita_social.algo.ts:1418
 	// this.createReaction(sender, rekeyBack, paddedRef, NFT, [])
 	bytec 0 // 0x
 	frame_dig -4 // NFT: AssetID
@@ -6242,7 +6230,7 @@ deleteReaction:
 	bytec 0 // 0x
 	dup
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1423
+	// contracts/arc58/plugins/akita_social.algo.ts:1422
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6250,7 +6238,7 @@ deleteReaction:
 	callsub controls
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1424
+	// contracts/arc58/plugins/akita_social.algo.ts:1423
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6259,7 +6247,7 @@ deleteReaction:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1425
+	// contracts/arc58/plugins/akita_social.algo.ts:1424
 	// assert(this.posts(ref).exists, errs.POST_NOT_FOUND)
 	bytec 3 //  "p"
 	frame_dig -3 // ref: bytes32
@@ -6269,14 +6257,14 @@ deleteReaction:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1426
+	// contracts/arc58/plugins/akita_social.algo.ts:1425
 	// post = this.posts(ref).value
 	bytec 3 //  "p"
 	frame_dig -3 // ref: bytes32
 	concat
 	frame_bury 0 // storage key//post
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1427
+	// contracts/arc58/plugins/akita_social.algo.ts:1426
 	// assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6293,7 +6281,7 @@ deleteReaction:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1429
+	// contracts/arc58/plugins/akita_social.algo.ts:1428
 	// reactionListKey: ReactionListKey = {
 	//             user: rawBytes(sender.address).substring(0, 24) as bytes24,
 	//             ref: rawBytes(ref).substring(0, 24) as bytes24,
@@ -6327,7 +6315,7 @@ deleteReaction:
 	concat
 	frame_bury 1 // reactionListKey: ReactionListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1434
+	// contracts/arc58/plugins/akita_social.algo.ts:1433
 	// assert(this.reactionlist(reactionListKey).exists, errs.ALREADY_REACTED)
 	frame_dig 1 // reactionListKey: ReactionListKey
 	box_len
@@ -6335,7 +6323,7 @@ deleteReaction:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1436
+	// contracts/arc58/plugins/akita_social.algo.ts:1435
 	// this.reactions({ ref: ref, NFT: NFT }).value -= 1
 	bytec 9 //  "r"
 	frame_dig -3 // ref: bytes32
@@ -6360,19 +6348,19 @@ deleteReaction:
 	itob
 	box_put
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1437
+	// contracts/arc58/plugins/akita_social.algo.ts:1436
 	// this.reactionlist(reactionListKey).delete()
 	frame_dig 1 // reactionListKey: ReactionListKey
 	box_del
 
 	// *if46_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1439
+	// contracts/arc58/plugins/akita_social.algo.ts:1438
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if46_end
 
 	// *if46_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1440
+	// contracts/arc58/plugins/akita_social.algo.ts:1439
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6426,7 +6414,7 @@ follow:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1449
+	// contracts/arc58/plugins/akita_social.algo.ts:1448
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6434,7 +6422,7 @@ follow:
 	callsub controls
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1450
+	// contracts/arc58/plugins/akita_social.algo.ts:1449
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6443,7 +6431,7 @@ follow:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1451
+	// contracts/arc58/plugins/akita_social.algo.ts:1450
 	// assert(!this.isBlocked(address, sender.address), errs.BLOCKED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6453,7 +6441,7 @@ follow:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1453
+	// contracts/arc58/plugins/akita_social.algo.ts:1452
 	// senderIsAutomated = this.meta(sender.address).value.automated
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6468,19 +6456,19 @@ follow:
 	getbit
 	frame_bury 0 // senderIsAutomated: bool
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1454
+	// contracts/arc58/plugins/akita_social.algo.ts:1453
 	// assert(!senderIsAutomated, errs.AUTOMATED_ACCOUNT)
 	frame_dig 0 // senderIsAutomated: bool
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1456
+	// contracts/arc58/plugins/akita_social.algo.ts:1455
 	// meta = this.meta(address).value
 	frame_dig -3 // address: Address
 	frame_bury 1 // storage key//meta
 
 	// *if47_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1458
+	// contracts/arc58/plugins/akita_social.algo.ts:1457
 	// meta.followFilterIndex !== 0
 	frame_dig 1 // storage key//meta
 	box_get
@@ -6496,7 +6484,7 @@ follow:
 	bz *if47_end
 
 	// *if47_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1459
+	// contracts/arc58/plugins/akita_social.algo.ts:1458
 	// assert(this.gate(meta.followFilterIndex, args), errs.DOES_NOT_PASS_GATE)
 	frame_dig -4 // args: bytes[]
 	frame_dig 1 // storage key//meta
@@ -6512,7 +6500,7 @@ follow:
 	assert
 
 *if47_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1462
+	// contracts/arc58/plugins/akita_social.algo.ts:1461
 	// followerIndex = meta.followerIndex
 	frame_dig 1 // storage key//meta
 	box_get
@@ -6525,7 +6513,7 @@ follow:
 	btoi
 	frame_bury 2 // followerIndex: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1463
+	// contracts/arc58/plugins/akita_social.algo.ts:1462
 	// this.follows({ user: address, index: (followerIndex + 1) }).value = sender.address
 	bytec 13 //  "f"
 	frame_dig -3 // address: Address
@@ -6540,7 +6528,7 @@ follow:
 	pop
 	box_put
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1464
+	// contracts/arc58/plugins/akita_social.algo.ts:1463
 	// this.meta(address).value.followerIndex += 1
 	frame_dig -3 // address: Address
 	box_get
@@ -6566,7 +6554,7 @@ follow:
 	cover 2
 	box_replace
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1465
+	// contracts/arc58/plugins/akita_social.algo.ts:1464
 	// this.meta(address).value.followerCount += 1
 	frame_dig -3 // address: Address
 	box_get
@@ -6593,13 +6581,13 @@ follow:
 	box_replace
 
 	// *if48_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1467
+	// contracts/arc58/plugins/akita_social.algo.ts:1466
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if48_end
 
 	// *if48_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1468
+	// contracts/arc58/plugins/akita_social.algo.ts:1467
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6650,7 +6638,7 @@ follow:
 unfollow:
 	proto 4 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1473
+	// contracts/arc58/plugins/akita_social.algo.ts:1472
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6658,7 +6646,7 @@ unfollow:
 	callsub controls
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1474
+	// contracts/arc58/plugins/akita_social.algo.ts:1473
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6667,7 +6655,7 @@ unfollow:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1475
+	// contracts/arc58/plugins/akita_social.algo.ts:1474
 	// assert(this.follows({ user: address, index: followerIndex }).value === sender.address, errs.WRONG_FOLLOWER_KEY)
 	bytec 13 //  "f"
 	frame_dig -3 // address: Address
@@ -6685,7 +6673,7 @@ unfollow:
 	==
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1477
+	// contracts/arc58/plugins/akita_social.algo.ts:1476
 	// this.follows({ user: address, index: followerIndex }).delete()
 	bytec 13 //  "f"
 	frame_dig -3 // address: Address
@@ -6695,7 +6683,7 @@ unfollow:
 	concat
 	box_del
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1478
+	// contracts/arc58/plugins/akita_social.algo.ts:1477
 	// this.meta(address).value.followerCount -= 1
 	frame_dig -3 // address: Address
 	box_get
@@ -6722,13 +6710,13 @@ unfollow:
 	box_replace
 
 	// *if49_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1480
+	// contracts/arc58/plugins/akita_social.algo.ts:1479
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if49_end
 
 	// *if49_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1481
+	// contracts/arc58/plugins/akita_social.algo.ts:1480
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6778,7 +6766,7 @@ block:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1488
+	// contracts/arc58/plugins/akita_social.algo.ts:1487
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6786,7 +6774,7 @@ block:
 	callsub controls
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1489
+	// contracts/arc58/plugins/akita_social.algo.ts:1488
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6795,7 +6783,7 @@ block:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1491
+	// contracts/arc58/plugins/akita_social.algo.ts:1490
 	// blocksKey: BlockListKey = {
 	//             user: extract3(sender.address, 0, 24) as bytes24,
 	//             blocked: extract3(address, 0, 24) as bytes24,
@@ -6825,7 +6813,7 @@ block:
 	concat
 	frame_bury 0 // blocksKey: BlockListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1495
+	// contracts/arc58/plugins/akita_social.algo.ts:1494
 	// this.blocks(blocksKey).create(0)
 	bytec 7 //  "b"
 	frame_dig 0 // blocksKey: BlockListKey
@@ -6835,13 +6823,13 @@ block:
 	pop
 
 	// *if50_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1497
+	// contracts/arc58/plugins/akita_social.algo.ts:1496
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if50_end
 
 	// *if50_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1498
+	// contracts/arc58/plugins/akita_social.algo.ts:1497
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6891,7 +6879,7 @@ unblock:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1503
+	// contracts/arc58/plugins/akita_social.algo.ts:1502
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6899,7 +6887,7 @@ unblock:
 	callsub controls
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1504
+	// contracts/arc58/plugins/akita_social.algo.ts:1503
 	// assert(!this.isBanned(sender.address), errs.BANNED)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -6908,7 +6896,7 @@ unblock:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1506
+	// contracts/arc58/plugins/akita_social.algo.ts:1505
 	// blocksKey: BlockListKey = {
 	//             user: extract3(sender.address, 0, 24) as bytes24,
 	//             blocked: extract3(address, 0, 24) as bytes24,
@@ -6938,7 +6926,7 @@ unblock:
 	concat
 	frame_bury 0 // blocksKey: BlockListKey
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1510
+	// contracts/arc58/plugins/akita_social.algo.ts:1509
 	// this.blocks(blocksKey).delete()
 	bytec 7 //  "b"
 	frame_dig 0 // blocksKey: BlockListKey
@@ -6946,13 +6934,13 @@ unblock:
 	box_del
 
 	// *if51_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1512
+	// contracts/arc58/plugins/akita_social.algo.ts:1511
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if51_end
 
 	// *if51_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1513
+	// contracts/arc58/plugins/akita_social.algo.ts:1512
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7079,7 +7067,7 @@ removeModerator:
 ban:
 	proto 4 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1530
+	// contracts/arc58/plugins/akita_social.algo.ts:1529
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7087,7 +7075,7 @@ ban:
 	callsub controls
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1531
+	// contracts/arc58/plugins/akita_social.algo.ts:1530
 	// assert(this.moderators(sender.address).exists, errs.NOT_A_MODERATOR)
 	bytec 22 //  "m"
 	frame_dig -1 // sender: AppID
@@ -7099,7 +7087,7 @@ ban:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1532
+	// contracts/arc58/plugins/akita_social.algo.ts:1531
 	// assert(!this.banned(address).exists, errs.ALREADY_BANNED)
 	bytec 7 //  "b"
 	frame_dig -3 // address: Address
@@ -7110,7 +7098,7 @@ ban:
 	!
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1533
+	// contracts/arc58/plugins/akita_social.algo.ts:1532
 	// this.banned(address).value = expiration
 	bytec 7 //  "b"
 	frame_dig -3 // address: Address
@@ -7120,13 +7108,13 @@ ban:
 	box_put
 
 	// *if52_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1535
+	// contracts/arc58/plugins/akita_social.algo.ts:1534
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if52_end
 
 	// *if52_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1536
+	// contracts/arc58/plugins/akita_social.algo.ts:1535
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7173,7 +7161,7 @@ ban:
 unban:
 	proto 3 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1541
+	// contracts/arc58/plugins/akita_social.algo.ts:1540
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7181,7 +7169,7 @@ unban:
 	callsub controls
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1542
+	// contracts/arc58/plugins/akita_social.algo.ts:1541
 	// assert(this.moderators(sender.address).exists, errs.NOT_A_MODERATOR)
 	bytec 22 //  "m"
 	frame_dig -1 // sender: AppID
@@ -7193,7 +7181,7 @@ unban:
 	pop
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1543
+	// contracts/arc58/plugins/akita_social.algo.ts:1542
 	// this.banned(address).delete()
 	bytec 7 //  "b"
 	frame_dig -3 // address: Address
@@ -7201,13 +7189,13 @@ unban:
 	box_del
 
 	// *if53_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1545
+	// contracts/arc58/plugins/akita_social.algo.ts:1544
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if53_end
 
 	// *if53_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1546
+	// contracts/arc58/plugins/akita_social.algo.ts:1545
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7326,7 +7314,7 @@ cacheMeta:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1571
+	// contracts/arc58/plugins/akita_social.algo.ts:1570
 	// assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7335,7 +7323,7 @@ cacheMeta:
 	assert
 
 	// *if54_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1572
+	// contracts/arc58/plugins/akita_social.algo.ts:1571
 	// !this.meta(sender.address).exists
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7348,13 +7336,13 @@ cacheMeta:
 
 	// *if54_consequent
 	// *if55_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1573
+	// contracts/arc58/plugins/akita_social.algo.ts:1572
 	// automated
 	frame_dig -3 // automated: boolean
 	bz *if55_end
 
 	// *if55_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1574
+	// contracts/arc58/plugins/akita_social.algo.ts:1573
 	// this.meta(sender.address).value = {
 	//                     walletAppID: sender,
 	//                     streak: 1,
@@ -7409,7 +7397,7 @@ cacheMeta:
 	concat
 	box_put
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1590
+	// contracts/arc58/plugins/akita_social.algo.ts:1589
 	// return 0;
 	intc 0 // 0
 	b *cacheMeta*return
@@ -7418,7 +7406,7 @@ cacheMeta:
 	b *if54_end
 
 *if54_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1593
+	// contracts/arc58/plugins/akita_social.algo.ts:1592
 	// assert(!this.meta(sender.address).value.automated, errs.AUTOMATED_ACCOUNT)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7436,7 +7424,7 @@ cacheMeta:
 
 *if54_end:
 	// *if56_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1596
+	// contracts/arc58/plugins/akita_social.algo.ts:1595
 	// subscriptionIndex !== 0
 	frame_dig -4 // subscriptionIndex: uint64
 	intc 0 // 0
@@ -7444,7 +7432,7 @@ cacheMeta:
 	bz *if56_end
 
 	// *if56_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1597
+	// contracts/arc58/plugins/akita_social.algo.ts:1596
 	// assert(this.isSubscribed(sender.address, subscriptionIndex).active, errs.NOT_A_SUBSCRIPTION)
 	frame_dig -4 // subscriptionIndex: uint64
 	frame_dig -1 // sender: AppID
@@ -7458,18 +7446,18 @@ cacheMeta:
 	assert
 
 *if56_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1600
+	// contracts/arc58/plugins/akita_social.algo.ts:1599
 	// nfdTimeChanged: uint64 = 0
 	intc 0 // 0
 	frame_bury 0 // nfdTimeChanged: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1601
+	// contracts/arc58/plugins/akita_social.algo.ts:1600
 	// nfdImpact: uint64 = 0
 	intc 0 // 0
 	frame_bury 1 // nfdImpact: uint64
 
 	// *if57_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1602
+	// contracts/arc58/plugins/akita_social.algo.ts:1601
 	// NFD.id !== 0
 	frame_dig -5 // NFD: AppID
 	intc 0 // 0
@@ -7477,13 +7465,13 @@ cacheMeta:
 	bz *if57_end
 
 	// *if57_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1603
+	// contracts/arc58/plugins/akita_social.algo.ts:1602
 	// assert(this.isNFD(NFD), errs.NOT_AN_NFD)
 	frame_dig -5 // NFD: AppID
 	callsub isNFD
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1604
+	// contracts/arc58/plugins/akita_social.algo.ts:1603
 	// assert(this.addressVerifiedOnNFD(sender.address, NFD), errs.USER_DOES_NOT_OWN_NFD)
 	frame_dig -5 // NFD: AppID
 	frame_dig -1 // sender: AppID
@@ -7492,7 +7480,7 @@ cacheMeta:
 	callsub addressVerifiedOnNFD
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1605
+	// contracts/arc58/plugins/akita_social.algo.ts:1604
 	// nfdTimeChanged = btoi(NFD.globalState(NFD_TIME_CHANGED_KEY) as bytes)
 	frame_dig -5 // NFD: AppID
 	bytec 19 // "i.timeChanged"
@@ -7503,7 +7491,7 @@ cacheMeta:
 	btoi
 	frame_bury 0 // nfdTimeChanged: uint64
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1606
+	// contracts/arc58/plugins/akita_social.algo.ts:1605
 	// nfdImpact = this.calcNFDImpactScore(NFD)
 	frame_dig -5 // NFD: AppID
 	callsub calcNFDImpactScore
@@ -7511,7 +7499,7 @@ cacheMeta:
 
 *if57_end:
 	// *if58_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1609
+	// contracts/arc58/plugins/akita_social.algo.ts:1608
 	// akitaNFT.id !== 0
 	frame_dig -6 // akitaNFT: AssetID
 	intc 0 // 0
@@ -7519,13 +7507,13 @@ cacheMeta:
 	bz *if58_end
 
 	// *if58_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1610
+	// contracts/arc58/plugins/akita_social.algo.ts:1609
 	// assert(this.isAkitaNFT(akitaNFT), errs.NOT_AN_AKITA_NFT)
 	frame_dig -6 // akitaNFT: AssetID
 	callsub isAkitaNFT
 	assert
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1611
+	// contracts/arc58/plugins/akita_social.algo.ts:1610
 	// assert(this.userHolds(sender.address, akitaNFT), errs.USER_DOES_NOT_OWN_NFT)
 	frame_dig -6 // akitaNFT: AssetID
 	frame_dig -1 // sender: AppID
@@ -7536,7 +7524,7 @@ cacheMeta:
 
 *if58_end:
 	// *if59_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1614
+	// contracts/arc58/plugins/akita_social.algo.ts:1613
 	// !this.meta(sender.address).exists
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7548,7 +7536,7 @@ cacheMeta:
 	bz *if59_else
 
 	// *if59_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1615
+	// contracts/arc58/plugins/akita_social.algo.ts:1614
 	// this.meta(sender.address).value = {
 	//                 walletAppID: sender,
 	//                 streak: 1,
@@ -7610,7 +7598,7 @@ cacheMeta:
 	b *if59_end
 
 *if59_else:
-	// contracts/arc58/plugins/akita_social.algo.ts:1632
+	// contracts/arc58/plugins/akita_social.algo.ts:1631
 	// meta = clone(this.meta(sender.address).value)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7621,7 +7609,7 @@ cacheMeta:
 	assert
 	frame_bury 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1634
+	// contracts/arc58/plugins/akita_social.algo.ts:1633
 	// meta.subscriptionIndex = subscriptionIndex
 	frame_dig 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -7632,7 +7620,7 @@ cacheMeta:
 	replace3
 	frame_bury 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1635
+	// contracts/arc58/plugins/akita_social.algo.ts:1634
 	// meta.NFD = NFD
 	frame_dig 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -7643,7 +7631,7 @@ cacheMeta:
 	replace3
 	frame_bury 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1636
+	// contracts/arc58/plugins/akita_social.algo.ts:1635
 	// meta.nfdTimeChanged = nfdTimeChanged
 	frame_dig 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -7654,7 +7642,7 @@ cacheMeta:
 	replace3
 	frame_bury 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1637
+	// contracts/arc58/plugins/akita_social.algo.ts:1636
 	// meta.nfdImpact = nfdImpact
 	frame_dig 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -7665,7 +7653,7 @@ cacheMeta:
 	replace3
 	frame_bury 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1638
+	// contracts/arc58/plugins/akita_social.algo.ts:1637
 	// meta.akitaNFT = akitaNFT
 	frame_dig 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 	store 255 // full array
@@ -7676,7 +7664,7 @@ cacheMeta:
 	replace3
 	frame_bury 2 // meta: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1640
+	// contracts/arc58/plugins/akita_social.algo.ts:1639
 	// this.meta(sender.address).value = meta
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7686,13 +7674,13 @@ cacheMeta:
 
 *if59_end:
 	// *if60_condition
-	// contracts/arc58/plugins/akita_social.algo.ts:1643
+	// contracts/arc58/plugins/akita_social.algo.ts:1642
 	// rekeyBack
 	frame_dig -2 // rekeyBack: boolean
 	bz *if60_end
 
 	// *if60_consequent
-	// contracts/arc58/plugins/akita_social.algo.ts:1644
+	// contracts/arc58/plugins/akita_social.algo.ts:1643
 	// this.rekeyBack(sender.address)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -7700,7 +7688,7 @@ cacheMeta:
 	callsub rekeyBack
 
 *if60_end:
-	// contracts/arc58/plugins/akita_social.algo.ts:1647
+	// contracts/arc58/plugins/akita_social.algo.ts:1646
 	// return nfdImpact;
 	frame_dig 1 // nfdImpact: uint64
 
@@ -7731,7 +7719,7 @@ cacheMeta:
 updateSubscriptionStateModifier:
 	proto 2 0
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1652
+	// contracts/arc58/plugins/akita_social.algo.ts:1651
 	// this.subscriptionStateModifier(subscriptionIndex).value = newModifier
 	bytec 21 //  "s"
 	frame_dig -1 // subscriptionIndex: uint64
@@ -7769,7 +7757,7 @@ updateSubscriptionStateModifier:
 getUserImpact:
 	proto 1 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1661
+	// contracts/arc58/plugins/akita_social.algo.ts:1660
 	// return this.userImpact(address);
 	frame_dig -1 // address: Address
 	callsub userImpact
@@ -7819,7 +7807,7 @@ getUserImpact:
 isFollower:
 	proto 3 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1666
+	// contracts/arc58/plugins/akita_social.algo.ts:1665
 	// return this.follows({ user: user, index: index }).value === follower;
 	bytec 13 //  "f"
 	frame_dig -1 // user: Address
@@ -7861,7 +7849,7 @@ isFollower:
 getMeta:
 	proto 1 1
 
-	// contracts/arc58/plugins/akita_social.algo.ts:1671
+	// contracts/arc58/plugins/akita_social.algo.ts:1670
 	// return this.meta(user).value;
 	frame_dig -1 // user: Address
 	box_get

@@ -1,8 +1,8 @@
 import { describe, test, expect, beforeAll, beforeEach } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
-import algosdk, { ALGORAND_MIN_TX_FEE } from 'algosdk';
-import { MetaMerklesClient } from '../clients/MetaMerklesClient';
+import algosdk, { ALGORAND_MIN_TX_FEE, makeBasicAccountTransactionSigner } from 'algosdk';
+import { MetaMerklesClient, MetaMerklesFactory } from '../clients/MetaMerklesClient';
 import { StandardMerkleTree } from "@joe-p/merkle-tree";
 
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account';
@@ -26,114 +26,129 @@ describe('MetaMerkles', () => {
   beforeAll(async () => {
     await fixture.beforeEach();
     const { algod, testAccount } = fixture.context;
+    const { algorand } = fixture;
+    const dispenser = await algorand.account.dispenserFromEnvironment();
     bobsAccount = testAccount;
-    
-    treeValues = [0,1,2];
+
+    treeValues = [0, 1, 2];
     tree = StandardMerkleTree.of(treeValues, 'uint64', { hashFunction: 'sha256' });
 
-    await algokit.ensureFunded({
-      accountToFund: bobsAccount.addr,
-      minSpendingBalance: algokit.algos(1000),
-    }, algod)
-
-    const { algorand } = fixture;
-    suggestedParams = await algod.getTransactionParams().do();
-
-    metaMerklesClient = new MetaMerklesClient(
-      {
-        sender: bobsAccount,
-        resolveBy: 'id',
-        id: 0,
-      },
-      algorand.client.algod
+    await algorand.account.ensureFunded(
+      bobsAccount.addr,
+      dispenser,
+      algokit.algos(1000),
     );
 
-    // await abstractedAccountClient.appClient.fundAppAccount({ amount: algokit.microAlgos(200_000) });
+    suggestedParams = await algod.getTransactionParams().do();
 
-    await metaMerklesClient.create.createApplication({});
+    const minter = new MetaMerklesFactory({
+      defaultSender: bobsAccount.addr,
+      defaultSigner: makeBasicAccountTransactionSigner(bobsAccount),
+      algorand
+    })
 
-    metaMerklesAppAddress = (await metaMerklesClient.appClient.getAppReference()).appAddress;
+    const results = await minter.send.create.createApplication()
 
-    await metaMerklesClient.addSchema({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'Unspecified'
+    metaMerklesClient = results.appClient;
+
+    metaMerklesAppAddress = metaMerklesClient.appAddress;
+
+    await metaMerklesClient.send.addSchema({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'Unspecified'
+      }
+    })
+
+    await metaMerklesClient.send.addSchema({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'String'
+      }
+    })
+
+    await metaMerklesClient.send.addSchema({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'Uint64'
+      }
+    })
+
+    await metaMerklesClient.send.addSchema({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'DoubleUint64'
+      }
+    })
+
+    await metaMerklesClient.send.addType({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'Unspecified'
+      }
+    })
+
+    await metaMerklesClient.send.addType({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'Collection'
+      }
+    })
+
+    await metaMerklesClient.send.addType({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'Trait'
+      }
+    })
+
+    await metaMerklesClient.send.addType({
+      args: {
+        pmt: await algorand.createTransaction.payment({
+          sender: bobsAccount.addr,
+          signer: makeBasicAccountTransactionSigner(bobsAccount),
+          receiver: metaMerklesAppAddress,
+          amount: (100).algo(),
+        }),
+        desc: 'Trade'
+      }
     });
 
-    await metaMerklesClient.addSchema({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'String'
-    });
-
-    await metaMerklesClient.addSchema({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'Uint64'
-    });
-
-    await metaMerklesClient.addSchema({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'DoubleUint64'
-    });
-
-    // set all the default schema and types
-    await metaMerklesClient.addType({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'Unspecified'
-    });
-
-    await metaMerklesClient.addType({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'Collection'
-    });
-
-    await metaMerklesClient.addType({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'Trait'
-    });
-
-    await metaMerklesClient.addType({
-      pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: bobsAccount.addr,
-        to: metaMerklesAppAddress,
-        amount: 100_000_000,
-        suggestedParams,
-      }),
-      desc: 'Trade'
-    });
   });
 
   describe('Metamerkles program', () => {
@@ -145,29 +160,32 @@ describe('MetaMerkles', () => {
       console.log(JSON.stringify(tree.dump()));
       console.log(Buffer.from(tree.root.slice(2), 'hex').length);
 
-      await metaMerklesClient.addRoot(
-        {
+      const rootCosts = (await metaMerklesClient.send.rootCosts({ args: { name: 'meh' }})).return!;
+
+      await metaMerklesClient.send.addRoot({
+        sender: bobsAccount.addr,
+        args: {
           pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
             from: bobsAccount.addr,
             to: metaMerklesAppAddress,
-            amount: MAX_ROOT_BOX_MBR + MAX_SCHEMA_BOX_MBR + MAX_TYPE_BOX_MBR,
+            amount: rootCosts,
             suggestedParams,
           }),
-          name: 'meh',  
+          name: 'meh',
           root: Buffer.from(tree.root.slice(2), 'hex'),
           schema: 2,
           type: 1,
         },
-        { sender: bobsAccount }
-      );
+      });
     });
 
     test('AddData', async () => {
       const key = 'royalty';
       const value = '5';
 
-      await metaMerklesClient.addData(
-        {
+      await metaMerklesClient.send.addData({
+        sender: bobsAccount.addr,
+        args: {
           pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
             from: bobsAccount.addr,
             to: metaMerklesAppAddress,
@@ -178,8 +196,7 @@ describe('MetaMerkles', () => {
           key: 'royalty',
           value: '5'
         },
-        { sender: bobsAccount }
-      );      
+      });
     });
 
     test('VerifiedRead', async () => {
@@ -190,14 +207,15 @@ describe('MetaMerkles', () => {
           p = tree.getProof(i);
         }
       }
-      
+
       const fee = algokit.microAlgos(ALGORAND_MIN_TX_FEE * (p.length + 2));
-      
+
       const leaf = Buffer.from(tree.leafHash(0).slice(2), 'hex');
       const proof = p.map(n => Buffer.from(n.slice(2), 'hex'));
 
-      const response = await metaMerklesClient.verifiedRead(
-        {
+      const response = await metaMerklesClient.send.verifiedRead({
+        sender: bobsAccount.addr,
+        args: {
           address: bobsAccount.addr,
           name: 'meh',
           leaf,
@@ -205,14 +223,14 @@ describe('MetaMerkles', () => {
           key: 'royalty',
           type: 1,
         },
-        { sender: bobsAccount, sendParams: { fee }}
-      );
+        extraFee: fee,
+      });
 
       console.log(response);
     })
 
     test('updateRoot', async () => {
-      
+
     })
   });
 });

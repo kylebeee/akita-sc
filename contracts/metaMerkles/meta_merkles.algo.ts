@@ -92,7 +92,8 @@ export class MetaMerkles extends Contract {
     return delta;
   }
 
-  private rootCosts(name: string): uint64 {
+  @abi.readonly
+  rootCosts(name: string): uint64 {
     const rootCost = this.getRootBoxDelta(name);
     const schemaCost = this.getDataBoxDelta(name, treeSchemaKey, itob(0));
     const typeCost = this.getDataBoxDelta(name, treeTypeKey, itob(0));

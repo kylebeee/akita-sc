@@ -12,10 +12,8 @@ import {
     AkitaAppIDsStakingPlugin,
     AkitaAppIDsSubscriptionPlugin,
     AkitaAssetAkita,
-    AkitaCollectionsAddress,
     AkitaCollectionsPrefixAKC,
     AkitaCollectionsPrefixAOG,
-    AkitaSubscriptionsReceiverAddress,
     bytes0,
     bytes24,
     bytes59,
@@ -401,7 +399,8 @@ export class AkitaSocialPlugin extends Contract {
         });
 
         // ensure they're subscribed to an Akita offering
-        const toAkita = info.recipient === AkitaSubscriptionsReceiverAddress;
+        // TODO: replace this with the real Akita Subscription Receiver Address
+        const toAkita = info.recipient === addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
 
         // box index zero is reserved for donations
         // if its higher than zero then they're subscribed to an offer
@@ -436,7 +435,7 @@ export class AkitaSocialPlugin extends Contract {
     }
 
     private isAkitaNFT(akitaNFT: AssetID): boolean {
-        return akitaNFT.creator === AkitaCollectionsAddress;
+        return akitaNFT.creator === addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
     }
 
     private userHolds(address: Address, NFT: AssetID): boolean {
@@ -686,7 +685,7 @@ export class AkitaSocialPlugin extends Contract {
 
     private getNFTImpactScore(address: Address, asa: AssetID): uint64 {
         const prefix = extract3(asa.unitName, 0, 3)
-        if (asa.creator === AkitaCollectionsAddress && address.assetBalance(asa) > 0) {
+        if (asa.creator === addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ') && address.assetBalance(asa) > 0) {
             if (prefix === AkitaCollectionsPrefixAKC) {
                 return 50;
             }

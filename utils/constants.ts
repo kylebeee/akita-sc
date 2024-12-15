@@ -12,11 +12,8 @@ export const EMPTY_BYTES_16: bytes16 = 'AAAAAAAAAAAAAAAA' as bytes16;
 export const EMPTY_BYTES_32: bytes32 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' as bytes32;
 export const EMPTY_BYTES_59: bytes59 = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' as bytes59;
 
-export const AkitaCollectionsAddress = addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
 export const AkitaCollectionsPrefixAKC = 'AKC';
 export const AkitaCollectionsPrefixAOG = 'AOG';
-
-export const AkitaSubscriptionsReceiverAddress = addr('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ');
 
 export const AkitaAppIDsActionsPoll = 0;
 
