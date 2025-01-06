@@ -4,7 +4,335 @@
   "methods": [
     {
       "name": "createApplication",
+      "args": [
+        {
+          "name": "appID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "deleteApplication",
       "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "gas",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "deleteFields",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "fieldNames",
+          "type": "byte[][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "updateFields",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "fieldAndVals",
+          "type": "byte[][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "offerForSale",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "sellAmount",
+          "type": "uint64"
+        },
+        {
+          "name": "reservedFor",
+          "type": "address"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "cancelSale",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "postOffer",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "offer",
+          "type": "uint64"
+        },
+        {
+          "name": "note",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "purchase",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "updateHash",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "hash",
+          "type": "byte[]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "contractLock",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "lock",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "segmentLock",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "lock",
+          "type": "bool"
+        },
+        {
+          "name": "usdPrice",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "vaultOptInLock",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "lock",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "vaultOptIn",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "assets",
+          "type": "uint64[]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "vaultSend",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "name": "note",
+          "type": "string"
+        },
+        {
+          "name": "asset",
+          "type": "uint64"
+        },
+        {
+          "name": "otherAssets",
+          "type": "uint64[]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "renew",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "setPrimaryAddress",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "fieldName",
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "type": "address"
+        }
+      ],
       "returns": {
         "type": "void"
       }

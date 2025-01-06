@@ -7,7 +7,7 @@ import { StandardMerkleTree } from "@joe-p/merkle-tree";
 
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account';
 import { HexString } from '@joe-p/merkle-tree/dist/bytes';
-import { MAX_ROOT_BOX_MBR, MAX_SCHEMA_BOX_MBR, MAX_TYPE_BOX_MBR } from '../contracts/metaMerkles/meta_merkles.algo';
+import { MAX_ROOT_BOX_MBR, MAX_SCHEMA_BOX_MBR, MAX_TYPE_BOX_MBR } from '../contracts/meta_merkles/meta_merkles.algo';
 
 const fixture = algorandFixture();
 algokit.Config.configure({ populateAppCallResources: true });

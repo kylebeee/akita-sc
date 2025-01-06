@@ -8,8 +8,12 @@
       "args": [
         {
           "name": "sender",
-          "type": "address",
+          "type": "uint64",
           "desc": "the account creating the offering"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "root",
@@ -61,6 +65,10 @@
           "desc": "the account accepting the offering"
         },
         {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
           "name": "id",
           "type": "uint64",
           "desc": "the id of the offer being accepted"
@@ -83,6 +91,10 @@
           "name": "sender",
           "type": "uint64",
           "desc": "the sender in the offer leaf"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "id",
@@ -124,6 +136,10 @@
           "desc": "the sender abstracted account app id in the leaf"
         },
         {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
           "name": "id",
           "type": "uint64",
           "desc": "the id of the offer"
@@ -157,6 +173,10 @@
           "desc": "the abstracted account of the user cancelling the swap"
         },
         {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
           "name": "id",
           "type": "uint64",
           "desc": "the id of the offer being cancelled"
@@ -179,6 +199,11 @@
           "name": "sender",
           "type": "uint64",
           "desc": "the abstracted account of the user reclaiming their assets"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool",
+          "desc": "whether the abstracted account should be rekeyed back at the end"
         },
         {
           "name": "id",
@@ -204,11 +229,6 @@
           "name": "proof",
           "type": "byte[32][]",
           "desc": "the proof that the leaf is in the tree"
-        },
-        {
-          "name": "rekeyBack",
-          "type": "bool",
-          "desc": "whether the abstracted account should be rekeyed back at the end"
         }
       ],
       "returns": {

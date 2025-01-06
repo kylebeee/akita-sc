@@ -1,7 +1,9 @@
 import { Contract } from '@algorandfoundation/tealscript';
+import { Staking, STAKING_TYPE_HARD, STAKING_TYPE_HEARTBEAT, STAKING_TYPE_LOCK, STAKING_TYPE_SOFT, StakingType } from '../../staking/staking.algo';
+import { AkitaAppIDsStaking } from '../../../utils/constants';
 
 const lockMBR = 28_900;
-
+const heartBeatMBR = 44_100;
 const ONE_YEAR = 31_536_000; // 365 days * 24 hours * 60 minutes * 60 seconds
 
 const errs = {
@@ -12,186 +14,143 @@ const errs = {
     PLUGIN_NOT_AUTH_ADDR: 'This plugin does not have control of the account'
 }
 
-interface StakeKey {
-    user: Address;
-    asset: AssetID;
-    locked: boolean;
-}
-
-export interface StakeValue {
-    amount: uint64;
-    lastUpdate: uint64;
-    expiration: uint64;
-}
-
-export interface AssetLock {
-    asset: AssetID;
-    locked: boolean;
-}
-
 export class StakingPlugin extends Contract {
 
-    // 2_500 + (400 * (42 + 24)) = 28,900
-    stake = BoxMap<StakeKey, StakeValue>();
+    stake(
+        sender: AppID,
+        rekeyBack: boolean,
+        type: StakingType,
+        amount: uint64,
+        expiration: uint64,
+        isUpdate: boolean
+    ): void {
+        const akitaStakingApp = AppID.fromUint64(AkitaAppIDsStaking);
+        const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK;
 
-    private controls(address: Address): boolean {
-        return address.authAddr === this.app.address;
-    }
-
-    @abi.readonly
-    timeLeft(user: Address, asset: AssetID): uint64 {
-
-        const sk: StakeKey = { user: user, asset: asset, locked: true };
-        
-        if (!this.stake(sk).exists || globals.latestTimestamp >= this.stake(sk).value.expiration) {
-            return 0;
-        }
-
-        return this.stake(sk).value.expiration - globals.latestTimestamp;
-    }
-
-    @abi.readonly
-    getInfo(user: Address, lock: AssetLock): StakeValue {
-        return this.stake({ user: user, asset: lock.asset, locked: lock.locked }).value;
-    }
-
-    @abi.readonly
-    getInfoList(user: Address, locks: AssetLock[]): StakeValue[] {
-        let results: StakeValue[] = [];
-        for (let i = 0; i < locks.length; i += 1) {
-            const lock = locks[i];
-            results.push(this.stake({ user: user, asset: lock.asset, locked: lock.locked }).value);
-        }
-        return results;
-    }
-
-    @abi.readonly
-    getLockedInfo(user: Address, asset: AssetID): StakeValue {
-        return this.stake({ user: user, asset: asset, locked: true }).value;
-    }
-
-    @abi.readonly
-    getLockedInfoList(user: Address, assets: AssetID[]): StakeValue[] {
-        let results: StakeValue[] = [];
-        for (let i = 0; i < assets.length; i += 1) {
-            const asset = assets[i];
-            results.push(this.stake({ user: user, asset: asset, locked: true }).value);
-        }
-        return results;
-    }
-
-    deposit(user: Address, asset: AssetID, locked: boolean, amount:uint64, expiration: uint64): void {
-        const inTheFuture = expiration > globals.latestTimestamp;
-        const lessThanOneYearInTheFuture = expiration <= (globals.latestTimestamp + ONE_YEAR);
-
-        assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, errs.BAD_EXPIRATION);
-        const sk: StakeKey = { user: user, asset: asset, locked: locked };
-
-        if (this.stake(sk).exists) {
-            const currentLock = this.stake(sk).value;
-            assert(expiration >= currentLock.expiration || !locked, errs.BAD_EXPIRATION_UPDATE);
-
-            if (asset.id === 0) {
-                sendPayment({
-                    sender: user,
-                    receiver: this.app.address,
-                    amount: amount,
-                });
-
-                this.stake(sk).value = {
-                    amount: (currentLock.amount + amount),
-                    lastUpdate: globals.latestTimestamp,
-                    expiration: expiration
-                };
+        let sendAmount = 0;
+        if (!isUpdate) {
+            if (isEscrow) {
+                sendAmount = amount + lockMBR;
+            } else if (type === STAKING_TYPE_HEARTBEAT) {
+                sendAmount = lockMBR + heartBeatMBR;
             } else {
-                sendAssetTransfer({
-                    sender: user,
-                    assetAmount: amount,
-                    assetReceiver: this.app.address,
-                    xferAsset: asset,
-                });
-
-                this.stake(sk).value = {
-                    amount: (currentLock.amount + amount),
-                    lastUpdate: globals.latestTimestamp,
-                    expiration: expiration
-                };
+                sendAmount = lockMBR
             }
-        } else if (asset.id === 0) {
-            sendPayment({
-                sender: user,
-                receiver: this.app.address,
-                amount: amount + lockMBR,
-                fee: 0,
-            });
-
-            this.stake(sk).value = {
-                amount: amount,
-                lastUpdate: globals.latestTimestamp,
-                expiration: expiration
-            };
         } else {
-            
-            let mbrAmount = lockMBR;
-            if (!this.app.address.isOptedInToAsset(asset)) {
-                mbrAmount += globals.assetOptInMinBalance;
-
-                this.pendingGroup.addAssetTransfer({
-                    sender: this.app.address,
-                    assetAmount: 0,
-                    assetReceiver: this.app.address,
-                    xferAsset: asset,
-                    fee: 0,
-                });
+            if (isEscrow) {
+                sendAmount = amount;
             }
-
-            this.pendingGroup.addPayment({
-                sender: user,
-                receiver: this.app.address,
-                amount: mbrAmount,
-                fee: 0,
-            });
-
-            this.pendingGroup.addAssetTransfer({
-                sender: user,
-                assetAmount: amount,
-                assetReceiver: this.app.address,
-                xferAsset: asset,
-                fee: 0,
-            });
-
-            this.pendingGroup.submit();
-
-            this.stake(sk).value = {
-                amount: amount,
-                lastUpdate: globals.latestTimestamp,
-                expiration: expiration,
-            };
         }
+
+        sendMethodCall<typeof Staking.prototype.stake, void>({
+            applicationID: akitaStakingApp,
+            methodArgs: [
+                {
+                    sender: sender.address,
+                    amount: sendAmount,
+                    receiver: akitaStakingApp.address,
+                },
+                type,
+                amount,
+                expiration,
+                isUpdate
+            ],
+            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+            fee: 0,
+        });
     }
 
-    withdraw(user: Address, asset: AssetID, locked: boolean): void {
-        assert(this.controls(user), errs.PLUGIN_NOT_AUTH_ADDR);
+    stakeAsa(
+        sender: AppID,
+        rekeyBack: boolean,
+        asset: AssetID,
+        type: StakingType,
+        amount: uint64,
+        expiration: uint64,
+        isUpdate: boolean
+    ) {
+        const akitaStakingApp = AppID.fromUint64(AkitaAppIDsStaking);
+        const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK;
 
-        const sk: StakeKey = { user: user, asset: asset, locked: locked };
-        assert(this.stake(sk).exists, errs.NO_LOCK);
-
-        const currentLock = this.stake(sk).value;
-        assert(!locked || currentLock.expiration < globals.latestTimestamp, errs.LOCKED);
-
-        if (asset.id === 0) {
-            sendPayment({
-                amount: currentLock.amount,
-                receiver: user,
-                fee: 0,
-            });
+        let sendAmount = 0;
+        let assetAmount = 0;
+        if (!isUpdate) {
+            if (isEscrow) {
+                assetAmount = amount;
+            } else if (type === STAKING_TYPE_HEARTBEAT) {
+                sendAmount = lockMBR + heartBeatMBR;
+            } else {
+                sendAmount = lockMBR;
+            }
         } else {
-            sendAssetTransfer({
-                assetAmount: currentLock.amount,
-                assetReceiver: user,
-                xferAsset: asset,
-            });
+            if (isEscrow) {
+                assetAmount = amount;
+            }
         }
-        this.stake(sk).delete();
+
+        sendMethodCall<typeof Staking.prototype.stakeAsa, void>({
+            applicationID: akitaStakingApp,
+            methodArgs: [
+                {
+                    sender: sender.address,
+                    amount: sendAmount,
+                    receiver: akitaStakingApp.address,
+                },
+                {
+                    sender: sender.address,
+                    assetAmount: amount,
+                    assetReceiver: akitaStakingApp.address,
+                    xferAsset: asset,
+                },
+                type,
+                amount,
+                expiration,
+                isUpdate
+            ],
+            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+            fee: 0,
+        });
+    }
+
+    withdraw(
+        sender: AppID,
+        rekeyBack: boolean,
+        asset: AssetID,
+        type: StakingType
+    ): void {
+        sendMethodCall<typeof Staking.prototype.withdraw, void>({
+            applicationID: AppID.fromUint64(AkitaAppIDsStaking),
+            methodArgs: [ asset, type ],
+            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+            fee: 0,
+        });
+    }
+
+    createHeartbeat(
+        sender: AppID,
+        rekeyBack: boolean,
+        address: Address,
+        asset: AssetID
+    ): void {
+        sendMethodCall<typeof Staking.prototype.createHeartbeat, void>({
+            applicationID: AppID.fromUint64(AkitaAppIDsStaking),
+            methodArgs: [ address, asset ],
+            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+            fee: 0,
+        });
+    }
+
+    softCheck(
+        sender: AppID,
+        rekeyBack: boolean,
+        address: Address,
+        asset: AssetID,
+    ): void {
+        sendMethodCall<typeof Staking.prototype.softCheck, void>({
+            applicationID: AppID.fromUint64(AkitaAppIDsStaking),
+            methodArgs: [ address, asset ],
+            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+            fee: 0,
+        });
     }
 }

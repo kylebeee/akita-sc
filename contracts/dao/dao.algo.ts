@@ -1,5 +1,30 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { bytes0, bytes4, bytes59 } from '../../utils/constants';
+
+const errs = {
+    PLUGIN_DOES_NOT_EXIST: 'Plugin does not exist',
+    PLUGIN_EXPIRED: 'Plugin has expired',
+    PLUGIN_ON_COOLDOWN: 'Plugin is on cooldown',
+    METHOD_NOT_ALLOWED: 'Method not allowed',
+    INVALID_EXECUTION_KEY: 'Invalid execution key',
+    DOES_NOT_REKEY_BACK: 'Does not rekey back',
+    NO_METHOD_SIGNATURE: 'No method signature provided',
+    INVALID_METHOD_SIGNATURE_LENGTH: 'Invalid method signature length',
+    KEY_REGISTRATION_NOT_SUPPORTED: 'Key registration not supported',
+    METADATA_HASH_TOO_LONG: 'Metadata hash is too long',
+    UNKNOWN_TRANSACTION_TYPE: 'Unknown transaction type',
+    ALREADY_INITIALIZED: 'Already initialized',
+    VERSION_CANNOT_BE_EMPTY: 'Version cannot be empty',
+    PLUGIN_DOES_NOT_CONTROL_WALLET: 'This plugin is not in control of the account',
+    DISBURSEMENT_DOES_NOT_EXIST: 'Disbursement does not exist',
+    DISBURSEMENT_LOCKED: 'Disbursement is still locked',
+    DISBURSEMENT_FULLY_DISTRIBUTED: 'Disbursement is fully distributed',
+    ALLOCATION_DOES_NOT_EXIST: 'Allocation does not exist',
+    UNKNOWN_DISBURSEMENT_TYPE: 'Unknown disbursement type',
+    TIME_NOT_FAR_ENOUGH_IN_THE_FUTURE: 'Time is not far enough in the future, must be at least 60 seconds from now',
+    TOKEN_ALLOCATION_BOX_DOES_NOT_EXIST: 'Token allocation box does not exist',
+    TOKEN_ALLOCATION_BOX_ALREADY_EXISTS: 'Token allocation box already exists',
+    INSUFFICIENT_AKITA: 'Insufficient Akita',
+};
 
 const STATUS_INIT = 0;
 const STATUS_LOADING_REWARDS = 1;
@@ -7,7 +32,7 @@ const STATUS_DISTRIBUTING_REWARDS = 2;
 const STATUS_RUNNING = 3;
 
 const DEFAULT_VERSION: bytes = '1.0';
-const DEFAULT_CONTENT_POLICY: bytes59 = 'ipfs://mrehhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh';
+const DEFAULT_CONTENT_POLICY: bytes<59> = 'ipfs://mrehhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh';
 const DEFAULT_MINIMUM_REWARDS_IMPACT = 400;
 const DEFAULT_SOCIAL_POST_FEE = 100_000_000;
 const DEFAULT_SOCIAL_REACT_FEE = 10_000_000;
@@ -68,14 +93,15 @@ export const PROPOSAL_TYPE_REMOVE_SOCIAL_GATE = 27;
 
 export const PLUGIN_STATUS_APPROVED = 1;
 
-export type DistributionDetails = {
-    amount: uint64;
-}
-
 export type ProposalDetails = {
-    cid: bytes59;
+    status: uint64;
     action: uint64;
-    args: bytes;
+    cid: bytes<59>;
+    creator: Address;
+    created: uint64;
+    votes: uint64;
+    plugin: AppID;
+    executionKey: ExecutionKey;
 }
 
 export type PluginsKey = {
@@ -92,20 +118,11 @@ export type PluginInfo = {
     cooldown: uint64;
     /** The last round the plugin was called */
     lastCalled: uint64;
-    /** Whether the plugin has method restrictions on it being called */
-    methodRestrictions: boolean;
+    /** The methods that are allowed to be called for the plugin by the address */
+    methods: bytes<4>[];
     /** Whether the plugin requires concensus on txn group executions for this plugin */
     executionKeyRequired: boolean;
 };
-
-export type MethodsKey = {
-    /** The application containing plugin logic */
-    application: AppID;
-    /** The address that is allowed to initiate a rekey to the plugin */
-    allowedCaller: Address;
-    /** The 4 byte method signature */
-    method: bytes4;
-}
 
 export type ExecutionKey = bytes32;
 
@@ -116,117 +133,149 @@ export type ExecutionInfo = {
     lastValidRound: uint64;
 };
 
-export type RewardsDistributionDetails = {
-    address: Address;
-    amount: uint64;
+
+// distribute Bones for DAU
+// distribute Bones for Bones Stakers
+// distribute Bones for Service Usage
+// distribute AKTA & other tokens for Bones Stakers
+
+export type DAOInitFeeArgs = {
+    socialPostFee: uint64;
+    socialReactFee: uint64;
+    stakingPoolCreationFee: uint64;
+    subscriptionServiceCreationFee: uint64;
+    subscriptionPaymentPercentage: uint64;
+    subscriptionTriggerPercentage: uint64;
+    omnigemSaleFee: uint64;
+    nftListingCreationFee: uint64;
+    nftShuffleCreationFee: uint64;
+    auctionCreationFee: uint64;
+    hyperSwapOfferFee: uint64;
+    krbyPercentage: uint64;
+    moderatorPercentage: uint64;
 }
 
 export type AkitaDAOState = {
     status: uint64;
     version: string;
-    contentPolicy: bytes59;
+    contentPolicy: bytes<59>;
     minimumRewardsImpact: uint64;
     socialPostFee: uint64;
     socialReactFee: uint64;
     stakingPoolCreationFee: uint64;
     subscriptionServiceCreationFee: uint64;
-    subscriptionPaymentPercentageFee: uint64;
+    subscriptionPaymentPercentage: uint64;
+    subscriptionTriggerPercentage: uint64;
     omnigemSaleFee: uint64;
     nftListingCreationFee: uint64;
     nftShuffleCreationFee: uint64;
     auctionCreationFee: uint64;
-    hyperSwapFee: uint64;
-    krbyPercentageFee: uint64;
-    moderatorPercentageFee: uint64;
-    lastDistribution: uint64;
+    hyperSwapOfferFee: uint64;
+    krbyPercentage: uint64;
+    moderatorPercentage: uint64;
     minimumProposalThreshold: uint64;
     minimumVoteThreshold: uint64;
-    bonesAsset: AssetID;
-    circulatingBones: uint64;
+    bonesID: AssetID;
     revocationAddress: Address;
 }
 
+export type CallerUsed = {
+    global: boolean;
+    local: boolean;
+};
+
 /**
  * The Akita DAO contract has several responsibilities:
- * - Manages the distribution of the bones token
- * - Manages the content policy of the protocol
- * - Manages the minimum impact score to qualify for daily distribution
- * - Sets the fee to post on akita social
- * - Sets the fee to react on akita social
- * - Sets the fee structure for Akita Staking
- * - Sets the fee structure for Akita Subscriptions
- * - Sets the fee structure for Akita NFT Listings
- * - Sets the fee structure for Akita NFT Shuffles
- * - Sets the fee structure for Akita Auctions
- * - Sets the fee structure for Akita Asset Swaps
+ * [-] Manages the disbursement of the bones token
+ * [x] Manages the content policy of the protocol
+ * [-] Manages the minimum impact score to qualify for daily disbursement
+ * [x] Sets the fee to post on akita social
+ * [x] Sets the fee to react on akita social
+ * [-] Sets the fee structure for Akita Staking
+ * [x] Sets the fee structure for Akita Subscriptions
+ * [-] Sets the fee structure for Akita NFT Listings
+ * [-] Sets the fee structure for Akita NFT Shuffles
+ * [-] Sets the fee structure for Akita Auctions
+ * [-] Sets the fee structure for Akita Asset Swaps
  */
 
 export class AkitaDAO extends Contract {
     programVersion = 10;
 
     /** state of the DAO */
-    status = GlobalStateKey<uint64>({ key: 's' });
+    status = GlobalStateKey<uint64>({ key: 'status' });
     /** the version number of the DAO */
-    version = GlobalStateKey<string>({ key: 'v' });
+    version = GlobalStateKey<string>({ key: 'version' });
     /** the content policy of the protocol */
-    contentPolicy = GlobalStateKey<bytes59>({ key: 'cp' });
-    /** the minimum impact score to qualify for daily distribution */
-    minimumRewardsImpact = GlobalStateKey<uint64>({ key: 'mri' });
+    contentPolicy = GlobalStateKey<bytes<59>>({ key: 'content_policy' });
+    /** the minimum impact score to qualify for daily disbursement */
+    minimumRewardsImpact = GlobalStateKey<uint64>({ key: 'minimum_rewards_impact' });
 
     // fees
     /** the cost to post on akita social */
-    socialPostFee = GlobalStateKey<uint64>({ key: 'spf' });
+    socialPostFee = GlobalStateKey<uint64>({ key: 'social_post_fee' });
     /** the cost to react to something on akita social */
-    socialReactFee = GlobalStateKey<uint64>({ key: 'srf' });
+    socialReactFee = GlobalStateKey<uint64>({ key: 'social_react_fee' });
+    /** the smallest percentage of tax the system takes for social interactions */
+    socialImpactTaxMinimum = GlobalStateKey<uint64>({ key: 'social_impact_tax_minimum' });
+    /** the largest percentage of tax  */
+    socialImpactTaxMaximum = GlobalStateKey<uint64>({ key: 'social_impact_tax_maximum' });
+    /** the cost to distribute rewards */
+    rewardsDistributionFee = GlobalStateKey<uint64>({ key: 'rewards_distribution_fee' });
     /** the cost to create a staking pool */
-    stakingPoolCreationFee = GlobalStateKey<uint64>({ key: 'spcf' });
+    stakingPoolCreationFee = GlobalStateKey<uint64>({ key: 'staking_pool_creation_fee' });
     /** the cost to create a subscription service */
-    subscriptionServiceCreationFee = GlobalStateKey<uint64>({ key: 'sscf' });
-    /** the per-payment cost of subscriptions */
-    subscriptionPaymentPercentageFee = GlobalStateKey<uint64>({ key: 'sppf' });
+    subscriptionServiceCreationFee = GlobalStateKey<uint64>({ key: 'subscription_service_creation_fee' });
+    /** the per-payment percentage of subscriptions as a whole number. eg. 3.5% is 35 */
+    subscriptionPaymentPercentage = GlobalStateKey<uint64>({ key: 'subscription_payment_percentage' });
+    /** the per-payment trigger percentage of subscriptions */
+    subscriptionTriggerPercentage = GlobalStateKey<uint64>({ key: 'subscription_trigger_percentage' });
     /** omnigem sale fee */
-    omnigemSaleFee = GlobalStateKey<uint64>({ key: 'ogsf' });
+    omnigemSaleFee = GlobalStateKey<uint64>({ key: 'omnigem_sale_fee' });
     /** the nft listing fee */
-    nftListingCreationFee = GlobalStateKey<uint64>({ key: 'nlcf' });
+    nftListingCreationFee = GlobalStateKey<uint64>({ key: 'nft_listing_creation_fee' });
+    /** the nft listing sale fee */
+    nftListingSaleFee = GlobalStateKey<uint64>({ key: 'nft_listing_sale_fee' });
     /** the nft shuffle fee */
-    nftShuffleCreationFee = GlobalStateKey<uint64>({ key: 'nscf' });
+    nftShuffleCreationFee = GlobalStateKey<uint64>({ key: 'nft_shuffle_creation_fee' });
+    /** the nft shuffle sale fee */
+    nftShuffleSaleFee = GlobalStateKey<uint64>({ key: 'nft_shuffle_sale_fee' });
     /** the auction fee */
-    auctionCreationFee = GlobalStateKey<uint64>({ key: 'acf' });
+    auctionCreationFee = GlobalStateKey<uint64>({ key: 'auction_creation_fee' });
     /** the asset swap fee */
-    hyperSwapFee = GlobalStateKey<uint64>({ key: 'hsf' });
+    hyperSwapOfferFee = GlobalStateKey<uint64>({ key: 'hyper_swap_offer_fee' });
 
-    /** the percentage of total rewards allocated to krby */
-    krbyPercentageFee = GlobalStateKey<uint64>({ key: 'kpf' });
+    /**
+     * The percentage of total rewards allocated to krby expressed in the hundreds
+     * eg. 3% is 300, 12.75% is 1275
+     * 
+    */
+    krbyPercentage = GlobalStateKey<uint64>({ key: 'krby_percentage' });
     /** moderator fee */
-    moderatorPercentageFee = GlobalStateKey<uint64>({ key: 'mpf' });
+    moderatorPercentage = GlobalStateKey<uint64>({ key: 'moderator_percentage' });
 
     // internal state variables
 
     /** the unix timestamp of the last rewards distribution */
-    lastDistribution = GlobalStateKey<uint64>({ key: 'ld' });
+    // lastDistribution = GlobalStateKey<uint64>({ key: 'last_distribution' });
     /** the minimum staking power needed to create a proposal */
-    minimumProposalThreshold = GlobalStateKey<uint64>({ key: 'mpt' });
+    minimumProposalThreshold = GlobalStateKey<uint64>({ key: 'minimum_proposal_threshold' });
     /** the minimum of positive votes necessary to pass a proposal */
-    minimumVoteThreshold = GlobalStateKey<uint64>({ key: 'mvt' });
+    minimumVoteThreshold = GlobalStateKey<uint64>({ key: 'minimum_vote_threshold' });
+    /** the akita token asset id */
+    akitaID = GlobalStateKey<AssetID>({ key: 'akita_id' });
     /** the Bones governance asa */
-    bonesAsset = GlobalStateKey<AssetID>({ key: 'b' });
-    /** the Bones that are currently allocated but not claimed */
-    allocatedBones = GlobalStateKey<uint64>({ key: 'ab' });
-    /** the circulating supply of bones */
-    circulatingBones = GlobalStateKey<uint64>({ key: 'cb' });
-
-    /** the Akita tokens that are allocated to some usage */
-    allocatedAkita = GlobalStateKey<uint64>({ key: 'aa' });
+    bonesID = GlobalStateKey<AssetID>({ key: 'bones_id' });
 
     /** revocation msig */
-    revocationAddress = GlobalStateKey<Address>({ key: 'ra' });
+    revocationAddress = GlobalStateKey<Address>({ key: 'revocation_address' });
     /** the next proposal id */
-    proposalID = GlobalStateKey<uint64>({ key: 'pid' });
-    /** the cursor id of the social rewards box */
-    socialRewardsCursor = GlobalStateKey<uint64>({ key: 'src' });
+    _proposalID = GlobalStateKey<uint64>({ key: 'proposal_id' });
+    /** the daily disbursement cursor */
+    _disbursementCursor = GlobalStateKey<uint64>({ key: 'disbursement_cursor' });
 
     /** voting state of a proposal */
-    proposals = BoxMap<uint64, ProposalDetails>({ dynamicSize: true });
+    proposals = BoxMap<uint64, ProposalDetails>();
 
     /**
      * Plugins that add functionality to the DAO
@@ -234,33 +283,55 @@ export class AkitaDAO extends Contract {
     plugins = BoxMap<PluginsKey, PluginInfo>({ prefix: 'p' });
 
     /**
-     * methods restrict plugin delegation only to the method names allowed for the delegation
-     * a methods box entry missing means that all methods on the plugin are allowed
-     */
-    methods = BoxMap<MethodsKey, bytes4[]>({ prefix: 'm' });
-
-    /**
      * Group hashes that the DAO has approved to be submitted
      */
     executions = BoxMap<ExecutionKey, ExecutionInfo>();
 
-    /** the distribution map of the bones token 
+    /**
      * 
-     * the key is the date the distribution is available to be allocated to users
-     * the value is the amount of bones allocated to that day
-     * 
-     * 
-    */
-    distribution = BoxMap<uint64, DistributionDetails>({ prefix: 'd' });
+     */
+    // tokenAllocations = BoxMap<AssetID, uint64>();
 
-    /** the rewards allocated to service usage */
-    serviceRewards = BoxMap<Address, uint64>({ prefix: 'e' });
+    private controls(address: Address): boolean {
+        return address.authAddr === this.app.address;
+    }
 
-    /** the rewards allocated to social ussage */
-    socialRewards = BoxMap<uint64, uint64>({ prefix: 'o' });
+    private rekeyBack(address: Address) {
+        sendPayment({
+            sender: address,
+            amount: 0,
+            receiver: address,
+            rekeyTo: address,
+            fee: 0,
+        });
+    }
 
-    /** the rewards allocated to each staker */
-    stakingRewards = BoxMap<Address, uint64>({ prefix: 's' });
+    private newProposalID(): uint64 {
+        const id = this._proposalID.value;
+        this._proposalID.value += 1;
+        return id;
+    }
+
+    private assertPluginCallAllowed(app: AppID, caller: Address): void {
+        const key: PluginsKey = { application: app, allowedCaller: caller };
+
+        assert(this.plugins(key).exists, errs.PLUGIN_DOES_NOT_EXIST);
+        assert(this.plugins(key).value.lastValidRound >= globals.round, errs.PLUGIN_EXPIRED);
+        assert(
+            (globals.round - this.plugins(key).value.lastCalled) >= this.plugins(key).value.cooldown,
+            errs.PLUGIN_ON_COOLDOWN
+        );
+    }
+
+    private pluginCallAllowed(app: AppID, caller: Address): boolean {
+        const key: PluginsKey = { application: app, allowedCaller: caller };
+
+        return (
+            this.plugins(key).exists &&
+            this.plugins(key).value.lastValidRound >= globals.round &&
+            (globals.round - this.plugins(key).value.lastCalled) >= this.plugins(key).value.cooldown
+        );
+    }
 
     private ensuresRekeyBack(txn: Txn): boolean {
         if (txn.sender === this.app.address && txn.rekeyTo === this.app.address) {
@@ -268,92 +339,149 @@ export class AkitaDAO extends Contract {
         }
 
         return (
-            txn.applicationArgs[0] === method('verifyAuthAddr()void') &&
-            txn.numAppArgs === 1 &&
             txn.typeEnum === TransactionType.ApplicationCall &&
             txn.applicationID === this.app &&
-            txn.onCompletion === 0
+            txn.numAppArgs === 1 &&
+            txn.onCompletion === 0 &&
+            txn.applicationArgs[0] === method('arc58_verifyAuthAddr()void')
         )
-    }
-
-    private pluginCallAllowed(app: AppID, caller: Address, executionKey: ExecutionKey): boolean {
-        const key: PluginsKey = { application: app, allowedCaller: caller };
-
-        return (
-            this.plugins(key).exists &&
-            this.plugins(key).value.lastValidRound >= globals.round &&
-            globals.round - this.plugins(key).value.lastCalled >= this.plugins(key).value.cooldown &&
-            // validate the transaction group
-            this.validateCall(app, caller, executionKey)
-        );
     }
 
     /**
      * Guarantee that our txn group is valid in a single loop over all txns in the group
      * 
-     * @param app 
-     * @param caller 
-     * @param executionKey 
-     * @returns 
+     * @param app the plugin app id being validated
+     * @param methodOffsets the indices of the methods being used in the group
+     * @param checkGlobal whether to check the global caller for method restrictions
+     * @param checkLocal whether to check the local caller for method restrictions
+     * @param executionKey the execution key required for the txn group
+     * 
      */
-    private validateCall(app: AppID, caller: Address, executionKey: ExecutionKey): boolean {
-        const key: PluginsKey = { application: app, allowedCaller: caller };
+    private assertValidGroup(
+        app: AppID,
+        methodOffsets: uint64[],
+        checkGlobal: boolean,
+        checkLocal: boolean,
+        executionKey: ExecutionKey
+    ): CallerUsed {
+        const globalKey: PluginsKey = { application: app, allowedCaller: Address.zeroAddress };
+        const key: PluginsKey = { application: app, allowedCaller: this.txn.sender };
 
         let rekeysBack = false;
-        let methodRestrictions = this.plugins(key).value.methodRestrictions;
-        let executionKeyRequired = this.plugins(key).value.executionKeyRequired;
-        let validExecution = !executionKeyRequired;
+        const executionKeyRequired = this.plugins(key).value.executionKeyRequired;
+        const globalRestrictions = checkGlobal && this.plugins(globalKey).value.methods.length > 0;
+        const localRestrictions = checkLocal && this.plugins(key).value.methods.length > 0;
+        let methodIndex = 0;
         let hash: string = '';
+        let callerUsed: CallerUsed = {
+            global: checkGlobal && !globalRestrictions,
+            local: checkLocal && !localRestrictions,
+        };
 
-        for (let i = this.txn.groupIndex; i < this.txnGroup.length; i += 1) {
+        for (let i = (this.txn.groupIndex + 1); i < this.txnGroup.length; i += 1) {
             const txn = this.txnGroup[i];
 
             if (this.ensuresRekeyBack(txn)) {
                 rekeysBack = true;
             }
 
-            if (methodRestrictions && !this.methodCallAllowed(txn, app, caller)) {
-                return false;
+            // we dont need to check method restrictions at all if none exist
+            // & skip transactions that aren't relevant
+            if ((!globalRestrictions && !localRestrictions) || this.shouldSkipMethodCheck(txn, app)) {
+                continue;
             }
 
-            if (executionKeyRequired) {
+            const globalValid = (
+                checkGlobal && (
+                    !globalRestrictions
+                    || (
+                        methodIndex < methodOffsets.length
+                        && this.methodCallAllowed(txn, app, Address.zeroAddress, methodOffsets[methodIndex])
+                    )
+                )
+            );
+
+            const localValid = (
+                checkLocal && (
+                    !localRestrictions
+                    || (
+                        methodIndex < methodOffsets.length
+                        && this.methodCallAllowed(txn, app, this.txn.sender, methodOffsets[methodIndex])
+                    )
+                )
+            );
+
+            assert(globalValid || localValid, errs.METHOD_NOT_ALLOWED);
+
+            // default to using global if both are valid
+            // due to plugins having cooldowns we want to
+            // properly attribute which is being used
+            // in the case of both being allowed we default to global
+            if (globalValid) {
+                callerUsed.global = true;
+            } else if (localValid) {
+                callerUsed.local = true;
+            }
+
+            methodIndex += 1;
+
+            // we only need the hash of the transactions that take place
+            // while the plugin has control of the DAO account
+            if (!rekeysBack && executionKeyRequired) {
                 if (globals.opcodeBudget < 50) {
                     increaseOpcodeBudget();
                 }
-
                 hash = this.txnHash(txn, hash)
             }
         }
 
         if (executionKeyRequired) {
-            validExecution = executionKey === (hash as bytes32);
+            assert(executionKey === (hash as bytes32), errs.INVALID_EXECUTION_KEY);
         }
 
-        return rekeysBack && validExecution;
+        assert(rekeysBack, errs.DOES_NOT_REKEY_BACK);
+
+        return callerUsed;
     }
 
-    private methodCallAllowed(txn: Txn, app: AppID, caller: Address): boolean {
+    private shouldSkipMethodCheck(txn: Txn, app: AppID): boolean {
         if (
             // ignore non-application calls
             txn.typeEnum !== TransactionType.ApplicationCall ||
             // ignore calls to other applications
             (txn.applicationID !== app && txn.applicationID !== this.app) ||
-            // if its globally allowed, ignore the caller
-            // otherwise ignore calls from other addresses
-            (caller !== Address.zeroAddress && txn.sender !== caller) ||
             // ignore rekey back assert app call
             this.ensuresRekeyBack(txn)
         ) {
             return true;
         }
 
-        const key: MethodsKey = {
+        return false;
+    }
+
+    /**
+     * Checks if the method call is allowed
+     * 
+     * @param txn the transaction being validated
+     * @param app the plugin app id being validated
+     * @param caller the address that triggered the plugin or global address
+     * @returns whether the method call is allowed
+     * 
+     */
+    private methodCallAllowed(txn: Txn, app: AppID, caller: Address, offset: uint64): boolean {
+
+        assert(txn.numAppArgs > 0, errs.NO_METHOD_SIGNATURE);
+        assert(len(txn.applicationArgs[0]) === 4, errs.INVALID_METHOD_SIGNATURE_LENGTH);
+
+        const key: PluginsKey = {
             application: app,
             allowedCaller: caller,
-            method: txn.applicationArgs[0] as bytes4
         };
 
-        if (!this.methods(key).exists) {
+        const methods = this.plugins(key).value.methods;
+        const allowedMethod = methods[offset];
+
+        if (allowedMethod === txn.applicationArgs[0] as bytes<4>) {
             return false;
         }
 
@@ -378,7 +506,7 @@ export class AkitaDAO extends Contract {
                 + txn.closeRemainderTo
             );
         } else if (txn.typeEnum === TransactionType.KeyRegistration) {
-            assert(false, 'unknown transaction type');
+            assert(false, errs.KEY_REGISTRATION_NOT_SUPPORTED);
             return hash as bytes32;
             // TODO: add support for key registration txns
             // return sha256(
@@ -391,7 +519,7 @@ export class AkitaDAO extends Contract {
             //     + txn.voteKeyDilution
             // );
         } else if (txn.typeEnum === TransactionType.AssetConfig) {
-            assert(txn.configAsset.metadataHash.length <= 32, 'metadata hash too long');
+            assert(txn.configAsset.metadataHash.length <= 32, errs.METADATA_HASH_TOO_LONG);
 
             // + txn.configAsset.url
 
@@ -427,10 +555,64 @@ export class AkitaDAO extends Contract {
             );
         } else if (txn.typeEnum === TransactionType.ApplicationCall) {
 
-            // + txn.accounts
-            // + txn.applicationArgs
-            // + txn.applications
-            // + txn.assets
+            let max = 0;
+            let accountHash = '';
+            let appArgHash = '';
+            let assetHash = '';
+            let applicationHash = '';
+
+            if (txn.numAccounts > max) {
+                max = txn.numAccounts;
+            }
+
+            if (txn.numAppArgs > max) {
+                max = txn.numAppArgs;
+            }
+
+            if (txn.numAssets > max) {
+                max = txn.numAssets;
+            }
+
+            // @ts-expect-error
+            if (txn.numApplications > max) {
+                // @ts-expect-error
+                max = txn.numApplications;
+            }
+
+            for (let i = 0; i < max; i += 1) {
+                if (txn.numAccounts > i) {
+                    accountHash = accountHash + txn.accounts[i];
+                }
+
+                if (txn.numAppArgs > i) {
+                    appArgHash = appArgHash + txn.applicationArgs[i];
+                }
+
+                if (txn.numAssets > i) {
+                    assetHash = assetHash + itob(txn.assets[i]);
+                }
+
+                // @ts-expect-error
+                if (txn.numApplications > i) {
+                    applicationHash = applicationHash + itob(txn.applications[i]);
+                }
+            }
+
+            if (accountHash.length > 0) {
+                accountHash = sha256(accountHash);
+            }
+
+            if (appArgHash.length > 0) {
+                appArgHash = sha256(appArgHash);
+            }
+
+            if (assetHash.length > 0) {
+                assetHash = sha256(assetHash);
+            }
+
+            if (applicationHash.length > 0) {
+                applicationHash = sha256(applicationHash);
+            }
 
             return sha256(
                 common
@@ -438,6 +620,10 @@ export class AkitaDAO extends Contract {
                 + itob(txn.onCompletion)
                 + txn.approvalProgram
                 + txn.clearStateProgram
+                + accountHash
+                + appArgHash
+                + assetHash
+                + applicationHash
                 + itob(txn.globalNumUint)
                 + itob(txn.globalNumByteSlice)
                 + itob(txn.localNumUint)
@@ -445,14 +631,12 @@ export class AkitaDAO extends Contract {
                 + itob(txn.extraProgramPages)
             );
         } else {
-            assert(false, 'unknown transaction type');
+            assert(false, errs.UNKNOWN_TRANSACTION_TYPE);
             return hash as bytes32;
         }
     }
 
-    createApplication(): void {
-
-    }
+    createApplication(): void { }
 
     updateApplication(): void {
 
@@ -460,26 +644,15 @@ export class AkitaDAO extends Contract {
 
     init(
         version: string,
-        contentPolicy: bytes59,
+        contentPolicy: bytes<59>,
         minimumRewardsImpact: uint64,
-        socialPostFee: uint64,
-        socialReactFee: uint64,
-        stakingPoolCreationFee: uint64,
-        subscriptionServiceCreationFee: uint64,
-        subscriptionPaymentPercentageFee: uint64,
-        omnigemSaleFee: uint64,
-        nftListingCreationFee: uint64,
-        nftShuffleCreationFee: uint64,
-        auctionCreationFee: uint64,
-        hyperSwapFee: uint64,
-        krbyPercentageFee: uint64,
-        moderatorPercentageFee: uint64,
+        fees: DAOInitFeeArgs,
         minimumProposalThreshold: uint64,
         minimumVoteThreshold: uint64,
         revocationAddress: Address,
     ): void {
-        assert(this.version.value === '', 'already initialized');
-        assert(version !== '', 'version cannot be empty');
+        assert(this.version.value.length === 0, errs.ALREADY_INITIALIZED);
+        assert(version !== '', errs.VERSION_CANNOT_BE_EMPTY);
 
         const bones = sendAssetCreation({
             configAssetName: 'Bones',
@@ -496,59 +669,116 @@ export class AkitaDAO extends Contract {
         });
 
         this.status.value = STATUS_INIT;
-        this.version.value = DEFAULT_VERSION;
+        this.version.value = version;
         this.contentPolicy.value = contentPolicy;
         this.minimumRewardsImpact.value = minimumRewardsImpact;
-        this.socialPostFee.value = socialPostFee;
-        this.socialReactFee.value = socialReactFee;
-        this.stakingPoolCreationFee.value = stakingPoolCreationFee;
-        this.subscriptionServiceCreationFee.value = subscriptionServiceCreationFee;
-        this.subscriptionPaymentPercentageFee.value = subscriptionPaymentPercentageFee;
-        this.omnigemSaleFee.value = omnigemSaleFee;
-        this.nftListingCreationFee.value = nftListingCreationFee;
-        this.nftShuffleCreationFee.value = nftShuffleCreationFee;
-        this.auctionCreationFee.value = auctionCreationFee;
-        this.hyperSwapFee.value = hyperSwapFee;
-        this.krbyPercentageFee.value = krbyPercentageFee;
-        this.moderatorPercentageFee.value = moderatorPercentageFee;
-        this.lastDistribution.value = 0;
+        this.socialPostFee.value = fees.socialPostFee;
+        this.socialReactFee.value = fees.socialReactFee;
+        this.stakingPoolCreationFee.value = fees.stakingPoolCreationFee;
+        this.subscriptionServiceCreationFee.value = fees.subscriptionServiceCreationFee;
+        this.subscriptionPaymentPercentage.value = fees.subscriptionPaymentPercentage;
+        this.subscriptionTriggerPercentage.value = fees.subscriptionTriggerPercentage;
+        this.omnigemSaleFee.value = fees.omnigemSaleFee;
+        this.nftListingCreationFee.value = fees.nftListingCreationFee;
+        this.nftShuffleCreationFee.value = fees.nftShuffleCreationFee;
+        this.auctionCreationFee.value = fees.auctionCreationFee;
+        this.hyperSwapOfferFee.value = fees.hyperSwapOfferFee;
+        this.krbyPercentage.value = fees.krbyPercentage;
+        this.moderatorPercentage.value = fees.moderatorPercentage;
         this.minimumProposalThreshold.value = minimumProposalThreshold;
         this.minimumVoteThreshold.value = minimumVoteThreshold;
-        this.bonesAsset.value = bones;
+        this.bonesID.value = bones;
         this.revocationAddress.value = revocationAddress;
-        this.proposalID.value = 0;
+        this._proposalID.value = 0;
     }
 
     /**
      * Verify the abstracted account is rekeyed to this app
      */
-    verifyAuthAddr(): void {
+    arc58_verifyAuthAddr(): void {
         assert(this.app.address.authAddr === globals.zeroAddress);
     }
 
-    rekeyToPlugin(plugin: AppID, executionKey: ExecutionKey): void {
-        const globalAllowed = this.pluginCallAllowed(plugin, Address.zeroAddress, executionKey);
+    /**
+     * Temporarily rekey to an approved plugin app address
+     *
+     * @param plugin The app to rekey to
+     * @param methodOffsets The indices of the methods being used in the group
+     * if the plugin has method restrictions these indices are required to match
+     * the methods used on each subsequent call to the plugin within the group
+     * @param executionKey The execution key required for the txn group
+     * TODO: ask joe about method overloading for ABI & ARCs to see if we can leave this as is
+     */
+    arc58_rekeyToPlugin(plugin: AppID, methodOffsets: uint64[], executionKey: bytes<32>): void {
+        const globalExists = this.plugins({ application: plugin, allowedCaller: Address.zeroAddress }).exists;
+        const localExists = this.plugins({ application: plugin, allowedCaller: this.txn.sender }).exists;
 
-        if (!globalAllowed)
-            assert(this.pluginCallAllowed(plugin, this.txn.sender, executionKey), 'This sender is not allowed to trigger this plugin');
+        let globalAllowed = false;
+        let locallyAllowed = false;
+
+        if (globalExists) {
+            globalAllowed = this.pluginCallAllowed(plugin, Address.zeroAddress);
+        }
+
+        if (localExists) {
+            locallyAllowed = this.pluginCallAllowed(plugin, this.txn.sender);
+        }
+
+        // if the plugin does not exist or is not allowed by either the global or local caller
+        // then the call is not allowed, assert check so we error out cleanly
+        if (
+            (!globalExists && !localExists)
+            || (globalExists && !globalAllowed && !locallyAllowed)
+        ) {
+            this.assertPluginCallAllowed(plugin, Address.zeroAddress);
+        } else if (localExists && !locallyAllowed && !globalAllowed) {
+            this.assertPluginCallAllowed(plugin, this.txn.sender);
+        }
+
+        const used = this.assertValidGroup(plugin, methodOffsets, globalAllowed, locallyAllowed, executionKey);
 
         sendPayment({
             receiver: this.app.address,
             rekeyTo: plugin.address,
+            note: 'rekeying to plugin app',
+            fee: 0,
         });
 
-        this.plugins({
-            application: plugin,
-            allowedCaller: globalAllowed ? Address.zeroAddress : this.txn.sender,
-        }).value.lastCalled = globals.round;
+        if (used.global) {
+            this.plugins({
+                application: plugin,
+                allowedCaller: Address.zeroAddress
+            }).value.lastCalled = globals.round;
+        }
+
+        if (used.local) {
+            this.plugins({
+                application: plugin,
+                allowedCaller: this.txn.sender
+            }).value.lastCalled = globals.round;
+        }
     }
 
-    buildRewards(): void {
-        assert(this.status.value === STATUS_LOADING_REWARDS, 'invalid state');
+    newProposal(proposalType: uint64): void {
+        const id = this.newProposalID();
+
+
     }
 
-    claimRewards(): void {
+    createDailyDisbursement(): void {
 
+        // calc the amount to distribute
+        const bonesAmount = this.app.address.assetBalance(this.bonesID.value);
+
+
+        // const krbyFee = (amount * this.krbyPercentage.value) - 1 / 10_000 + 1;
+        // const modFee = (amount * this.moderatorPercentage.value) - 1 / 10_000 + 1;
+
+        // distribute to krby
+
+        // distribute to moderators
+
+        // distribute to stakers
     }
 
     getState(): AkitaDAOState {
@@ -561,19 +791,18 @@ export class AkitaDAO extends Contract {
             socialReactFee: this.socialReactFee.value,
             stakingPoolCreationFee: this.stakingPoolCreationFee.value,
             subscriptionServiceCreationFee: this.subscriptionServiceCreationFee.value,
-            subscriptionPaymentPercentageFee: this.subscriptionPaymentPercentageFee.value,
+            subscriptionPaymentPercentage: this.subscriptionPaymentPercentage.value,
+            subscriptionTriggerPercentage: this.subscriptionTriggerPercentage.value,
             omnigemSaleFee: this.omnigemSaleFee.value,
             nftListingCreationFee: this.nftListingCreationFee.value,
             nftShuffleCreationFee: this.nftShuffleCreationFee.value,
             auctionCreationFee: this.auctionCreationFee.value,
-            hyperSwapFee: this.hyperSwapFee.value,
-            krbyPercentageFee: this.krbyPercentageFee.value,
-            moderatorPercentageFee: this.moderatorPercentageFee.value,
-            lastDistribution: this.lastDistribution.value,
+            hyperSwapOfferFee: this.hyperSwapOfferFee.value,
+            krbyPercentage: this.krbyPercentage.value,
+            moderatorPercentage: this.moderatorPercentage.value,
             minimumProposalThreshold: this.minimumProposalThreshold.value,
             minimumVoteThreshold: this.minimumVoteThreshold.value,
-            bonesAsset: this.bonesAsset.value,
-            circulatingBones: this.circulatingBones.value,
+            bonesID: this.bonesID.value,
             revocationAddress: this.revocationAddress.value,
         }
     }

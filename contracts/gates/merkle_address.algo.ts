@@ -1,6 +1,6 @@
 import { Contract } from '@algorandfoundation/tealscript';
 
-import { MetaMerkles } from '../metaMerkles/meta_merkles.algo';
+import { MetaMerkles } from '../meta_merkles/meta_merkles.algo';
 import { AkitaAppIDsMetaMerkles } from '../../utils/constants';
 
 const errs = {
@@ -30,17 +30,22 @@ export type MerkleAddressGateCheckParams = {
 export class MerkleAssetGate extends Contract {
     programVersion = 10;
 
-    registryCounter = GlobalStateKey<uint64>({ key: 'c' });
+    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
+
+    private newRegistryID(): uint64 {
+        const id = this._registryCursor.value;
+        this._registryCursor.value += 1;
+        return id;
+    }
 
     register(args: bytes): uint64 {
         assert(args.length >= RegistryInfoLengthMinimum, errs.INVALID_ARG_COUNT);
         const params = castBytes<RegistryInfo>(args);
-        const counter = this.registryCounter.value;
-        this.registry(counter).value = params;
-        this.registryCounter.value += 1;
-        return counter;
+        const id = this.newRegistryID();
+        this.registry(id).value = params;
+        return id;
     }
 
     check(args: bytes): boolean {

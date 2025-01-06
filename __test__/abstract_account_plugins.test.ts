@@ -7,6 +7,8 @@ import { SubscriptionPluginClient, SubscriptionPluginFactory } from '../clients/
 import { OptInPluginClient, OptInPluginFactory } from '../clients/OptInPluginClient';
 import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../clients/AbstractedAccountFactoryClient';
 
+export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 614_000;
+
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 algokit.Config.configure({ populateAppCallResources: true });
 const fixture = algorandFixture();
@@ -60,7 +62,7 @@ describe('Abstracted Subscription Program', () => {
     const mintPayment = makePaymentTxnWithSuggestedParamsFromObject({
       from: aliceEOA.addr,
       to: abstractedAccountFactoryClient.appAddress,
-      amount: 507000,
+      amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
       suggestedParams: suggestedParams
     })
     
@@ -153,6 +155,8 @@ describe('Abstracted Subscription Program', () => {
         amount: algokit.microAlgos(50_200)
       });
 
+      console.log('optInPluginID', optInPluginID);
+
       // Add opt-in plugin
       await abstractedAccountClient.send.arc58AddNamedPlugin({
         sender: aliceEOA.addr,
@@ -201,7 +205,7 @@ describe('Abstracted Subscription Program', () => {
         .arc58RekeyToNamedPlugin({
           sender: bob.addr,
           signer: makeBasicAccountTransactionSigner(bob),
-          args: { name: 'optIn' },
+          args: { name: 'optIn', methodOffsets: [] },
           extraFee: (1_000).microAlgo(),
           boxReferences: boxes,
           assetReferences: [asset],

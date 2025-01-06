@@ -1,9 +1,9 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { AkitaDomain, bytes0, bytes4 } from '../../utils/constants';
+import { AkitaDomain } from '../../utils/constants';
 
 const errs = {
   ADMIN_CANNOT_BE_CONTROLLED: 'Admin and controlled address cannot be the same',
-  MUST_BE_DEPLOYED_FROM_FACTORY: 'This contract must be deployed from a factory',
+  BAD_DEPLOYER: 'This contract must be deployed from a factory',
   ONLY_ADMIN_CAN_UPDATE: 'Only an admin can update the application',
   ONLY_ADMIN_CAN_CHANGE_REVOKE: 'Only an admin can change the revocation app',
   ONLY_ADMIN_CAN_CHANGE_ADMIN: 'Only an admin can change the admin account',
@@ -11,6 +11,7 @@ const errs = {
   ONLY_ADMIN_CAN_ADD_PLUGIN: 'Only an admin can add a plugin',
   ONLY_ADMIN_CAN_ADD_METHOD_RESTRICTION: 'Only an admin can add a method restriction',
   ONLY_ADMIN_CAN_CHANGE_NICKNAME: 'Only an admin can change the nickname',
+  DOES_NOT_HOLD_ASSET: 'The account does not hold the asset',
   NAMED_PLUGIN_ALREADY_EXISTS: 'A plugin with this name already exists',
   ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN: 'Only an admin or revocation app can remove plugins',
   ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_METHOD_RESTRICTION: 'Only an admin or revocation app can remove method restrictions',
@@ -37,20 +38,16 @@ export type PluginInfo = {
   cooldown: uint64;
   /** The last round the plugin was called */
   lastCalled: uint64;
-  /** The number of methods on the plugin, zero indicates no restrictions */
-  methodRestrictions: uint64;
   /** Whether the plugin has permissions to change the admin account */
   adminPrivileges: boolean;
+  /** The methods that are allowed to be called for the plugin by the address */
+  methods: bytes<4>[];
 };
 
-export type MethodsKey = {
-  /** The application containing plugin logic */
-  application: AppID;
-  /** The address that is allowed to initiate a rekey to the plugin */
-  allowedCaller: Address;
-  /** The 4 byte method signature */
-  method: bytes<4>;
-}
+export type CallerUsed = {
+  global: boolean;
+  local: boolean;
+};
 
 export class AbstractedAccount extends Contract {
   /** Target AVM 10 */
@@ -59,7 +56,6 @@ export class AbstractedAccount extends Contract {
   /** the version number of the wallet */
   version = GlobalStateKey<string>({ key: 'version' });
 
-  // TODO: check that we really need this
   /** the application ID for the contract that deployed this wallet */
   factoryApp = GlobalStateKey<AppID>({ key: 'factory_app_id' })
 
@@ -71,17 +67,17 @@ export class AbstractedAccount extends Contract {
 
   /** A user defined nickname for their wallet */
   nickname = GlobalStateKey<string>({ key: 'nickname' });
+  /** A user defined NFT to display as their avatar that the user owns */
+  avatar = GlobalStateKey<AssetID>({ key: 'avatar' });
+  /** A user defined NFT to display as their banner that the user owns */
+  banner = GlobalStateKey<AssetID>({ key: 'banner' });
+  /** A user defined description */
+  bio = GlobalStateKey<string>({ key: 'bio' });
 
   /**
    * Plugins that add functionality to the contract wallet and the account that has permission to use it.
    */
-  plugins = BoxMap<PluginsKey, PluginInfo>({ prefix: 'p' });
-
-  /**
-   * methods restrict plugin delegation only to the method names allowed for the delegation
-   * a methods box entry missing means that all methods on the plugin are allowed
-   */
-  methods = BoxMap<MethodsKey, bytes0>({ prefix: 'm' });
+  plugins = BoxMap<PluginsKey, PluginInfo>({ prefix: 'p', dynamicSize: true });
 
   /**
    * Passkeys on the account and their corresponding domain names
@@ -139,6 +135,7 @@ export class AbstractedAccount extends Contract {
       globals.round - this.plugins(key).value.lastCalled >= this.plugins(key).value.cooldown
     );
   }
+
   private ensuresRekeyBack(txn: Txn): boolean {
     if (txn.sender === this.app.address && txn.rekeyTo === this.app.address) {
       return true;
@@ -173,13 +170,19 @@ export class AbstractedAccount extends Contract {
    * @param checkGlobal whether to check the global caller for method restrictions
    * @param checkLocal whether to check the local caller for method restrictions
    */
-  private assertValidGroup(app: AppID, checkGlobal: boolean, checkLocal: boolean): void {
+  private assertValidGroup(app: AppID, methodOffsets: uint64[], checkGlobal: boolean, checkLocal: boolean): CallerUsed {
     const gkey: PluginsKey = { application: app, allowedCaller: Address.zeroAddress };
     const key: PluginsKey = { application: app, allowedCaller: this.txn.sender };
 
     let rekeysBack = false;
-    let gRestrictions = checkGlobal && this.plugins(gkey).value.methodRestrictions > 0;
-    let lrestrictions = checkLocal && this.plugins(key).value.methodRestrictions > 0;
+
+    const globalRestrictions = checkGlobal && this.plugins(gkey).size > 29;
+    const localRestrictions = checkLocal && this.plugins(key).size > 29;
+    let methodIndex = 0;
+    let callerUsed: CallerUsed = {
+      global: checkGlobal && !globalRestrictions,
+      local: checkLocal && !localRestrictions,
+    };
 
     for (let i = (this.txn.groupIndex + 1); i < this.txnGroup.length; i += 1) {
       const txn = this.txnGroup[i];
@@ -188,15 +191,65 @@ export class AbstractedAccount extends Contract {
         rekeysBack = true;
       }
 
-      const gAllowed = !gRestrictions || this.methodCallAllowed(txn, app, Address.zeroAddress);
-      const gValid = checkGlobal && gAllowed;
-      const lAllowed = !lrestrictions || this.methodCallAllowed(txn, app, this.txn.sender);
-      const lValid = checkLocal && lAllowed;
+      // we dont need to check method restrictions at all if none exist
+      // & skip transactions that aren't relevant
+      if ((!globalRestrictions && !localRestrictions) || this.shouldSkipMethodCheck(txn, app)) {
+        continue;
+      }
 
-      assert(gValid || lValid, 'method not allowed');
+      const globalValid = (
+        checkGlobal && (
+          !globalRestrictions
+          || (
+            methodIndex < methodOffsets.length
+            && this.methodCallAllowed(txn, app, Address.zeroAddress, methodOffsets[methodIndex])
+          )
+        )
+      );
+
+      const localValid = (
+        checkLocal && (
+          !localRestrictions
+          || (
+            methodIndex < methodOffsets.length
+            && this.methodCallAllowed(txn, app, this.txn.sender, methodOffsets[methodIndex])
+          )
+        )
+      );
+
+      assert(globalValid || localValid, 'method not allowed');
+
+      // default to using global if both are valid
+      // due to plugins having cooldowns we want to
+      // properly attribute which is being used
+      // in the case of both being allowed we default to global
+      if (globalValid) {
+        callerUsed.global = true;
+      } else if (localValid) {
+        callerUsed.local = true;
+      }
+
+      methodIndex += 1;
     }
 
     assert(rekeysBack, 'no rekey back found');
+
+    return callerUsed;
+  }
+
+  private shouldSkipMethodCheck(txn: Txn, app: AppID): boolean {
+    if (
+      // ignore non-application calls
+      txn.typeEnum !== TransactionType.ApplicationCall ||
+      // ignore calls to other applications
+      (txn.applicationID !== app && txn.applicationID !== this.app) ||
+      // ignore rekey back assert app call
+      this.ensuresRekeyBack(txn)
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -207,31 +260,20 @@ export class AbstractedAccount extends Contract {
    * @param caller the address that triggered the plugin or global address
    * @returns whether the method call is allowed
    */
-  private methodCallAllowed(txn: Txn, app: AppID, caller: Address): boolean {
-    if (
-      // ignore non-application calls
-      txn.typeEnum !== TransactionType.ApplicationCall ||
-      // ignore calls to other applications
-      (txn.applicationID !== app && txn.applicationID !== this.app) ||
-      // if its globally allowed, ignore the caller
-      // otherwise ignore calls from other addresses
-      (caller !== Address.zeroAddress && txn.sender !== caller) ||
-      // ignore rekey back assert app call
-      this.ensuresRekeyBack(txn)
-    ) {
-      return true;
-    }
+  private methodCallAllowed(txn: Txn, app: AppID, caller: Address, offset: uint64): boolean {
 
     assert(txn.numAppArgs > 0, 'no method signature provided');
     assert(len(txn.applicationArgs[0]) === 4, 'invalid method signature length');
 
-    const key: MethodsKey = {
+    const key: PluginsKey = {
       application: app,
       allowedCaller: caller,
-      method: txn.applicationArgs[0] as bytes<4>
     };
 
-    if (!this.methods(key).exists) {
+    const methods = this.plugins(key).value.methods;
+    const allowedMethod = methods[offset];
+
+    if (allowedMethod === txn.applicationArgs[0] as bytes<4>) {
       return false;
     }
 
@@ -253,7 +295,7 @@ export class AbstractedAccount extends Contract {
     revocationApp: AppID,
     nickname: string,
   ): void {
-    assert(globals.callerApplicationID !== AppID.fromUint64(0), errs.MUST_BE_DEPLOYED_FROM_FACTORY)
+    assert(globals.callerApplicationID !== AppID.fromUint64(0), errs.BAD_DEPLOYER)
 
     this.version.value = version;
     this.admin.value = admin;
@@ -286,6 +328,38 @@ export class AbstractedAccount extends Contract {
   setNickname(nickname: string): void {
     assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
     this.nickname.value = nickname;
+  }
+
+  /**
+   * Changes the avatar of the wallet
+   * 
+   * @param avatar the new avatar of the wallet
+   */
+  setAvatar(avatar: AssetID): void {
+    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    assert(this.app.address.assetBalance(avatar) > 0, errs.DOES_NOT_HOLD_ASSET);
+    this.avatar.value = avatar;
+  }
+
+  /**
+   * Changes the banner of the wallet
+   * 
+   * @param banner the new banner of the wallet
+   */
+  setBanner(banner: AssetID): void {
+    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    assert(this.app.address.assetBalance(banner) > 0, errs.DOES_NOT_HOLD_ASSET);
+    this.banner.value = banner;
+  }
+
+  /**
+   * Changes the bio of the wallet
+   * 
+   * @param bio the new bio of the wallet
+   */
+  setBio(bio: string): void {
+    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    this.bio.value = bio;
   }
 
   /**
@@ -371,16 +445,20 @@ export class AbstractedAccount extends Contract {
    * Temporarily rekey to an approved plugin app address
    *
    * @param plugin The app to rekey to
+   * @param methodOffsets The indices of the methods being used in the group
+   * if the plugin has method restrictions these indices are required to match
+   * the methods used on each subsequent call to the plugin within the group
+   * 
    */
-  arc58_rekeyToPlugin(plugin: AppID): void {
+  arc58_rekeyToPlugin(plugin: AppID, methodOffsets: uint64[]): void {
     const globalExists = this.plugins({ application: plugin, allowedCaller: Address.zeroAddress }).exists;
     const localExists = this.plugins({ application: plugin, allowedCaller: this.txn.sender }).exists;
 
-    let globalAllowed = false;
+    let globallyAllowed = false;
     let locallyAllowed = false;
 
     if (globalExists) {
-      globalAllowed = this.pluginCallAllowed(plugin, Address.zeroAddress);
+      globallyAllowed = this.pluginCallAllowed(plugin, Address.zeroAddress);
     }
 
     if (localExists) {
@@ -391,34 +469,48 @@ export class AbstractedAccount extends Contract {
     // then the call is not allowed, assert check so we error out cleanly
     if (
       (!globalExists && !localExists)
-      || (globalExists && !globalAllowed && !locallyAllowed)
+      || (globalExists && !globallyAllowed && !locallyAllowed)
     ) {
       this.assertPluginCallAllowed(plugin, Address.zeroAddress);
-    } else if (localExists && !locallyAllowed && !globalAllowed) {
+    } else if (localExists && !locallyAllowed && !globallyAllowed) {
       this.assertPluginCallAllowed(plugin, this.txn.sender);
     }
 
-    this.assertValidGroup(plugin, globalAllowed, locallyAllowed);
+    const used = this.assertValidGroup(plugin, methodOffsets, globallyAllowed, locallyAllowed);
 
     sendPayment({
       receiver: this.app.address,
       rekeyTo: plugin.address,
       note: 'rekeying to plugin app',
+      fee: 0,
     });
 
-    this.plugins({
-      application: plugin,
-      allowedCaller: globalAllowed ? Address.zeroAddress : this.txn.sender,
-    }).value.lastCalled = globals.round;
+    if (used.global) {
+      this.plugins({
+        application: plugin,
+        allowedCaller: Address.zeroAddress
+      }).value.lastCalled = globals.round;
+    }
+
+    if (used.local) {
+      this.plugins({
+        application: plugin,
+        allowedCaller: this.txn.sender
+      }).value.lastCalled = globals.round;
+    }
   }
 
   /**
    * Temporarily rekey to a named plugin app address
    *
    * @param name The name of the plugin to rekey to
+   * @param methodOffsets The indices of the methods being used in the group
+   * if the plugin has method restrictions these indices are required to match
+   * the methods used on each subsequent call to the plugin within the group
+   * 
    */
-  arc58_rekeyToNamedPlugin(name: string): void {
-    this.arc58_rekeyToPlugin(this.namedPlugins(name).value.application);
+  arc58_rekeyToNamedPlugin(name: string, methodOffsets: uint64[]): void {
+    this.arc58_rekeyToPlugin(this.namedPlugins(name).value.application, methodOffsets);
   }
 
   /**
@@ -430,6 +522,8 @@ export class AbstractedAccount extends Contract {
    * @param lastValidRound The round when the permission expires
    * @param cooldown  The number of rounds that must pass before the plugin can be called again
    * @param adminPrivileges Whether the plugin has permissions to change the admin account
+   * @param methods The methods that are allowed to be called for the plugin by the address
+   * 
    */
   arc58_addPlugin(
     app: AppID,
@@ -437,22 +531,18 @@ export class AbstractedAccount extends Contract {
     lastValidRound: uint64,
     cooldown: uint64,
     adminPrivileges: boolean,
-    methods: bytes4[],
+    methods: bytes<4>[],
   ): void {
     assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_ADD_PLUGIN);
     const key: PluginsKey = { application: app, allowedCaller: allowedCaller };
-    
+
     this.plugins(key).value = {
       lastValidRound: lastValidRound,
       cooldown: cooldown,
       lastCalled: 0,
-      methodRestrictions: methods.length,
       adminPrivileges: adminPrivileges,
+      methods: methods,
     };
-
-    for (let i = 0; i < methods.length; i += 1) {
-      this.methods({ application: app, allowedCaller: allowedCaller, method: methods[i] }).create();
-    }
   }
 
   /**
@@ -471,22 +561,12 @@ export class AbstractedAccount extends Contract {
    *
    * @param app The app to remove
    */
-  arc58_removePlugin(app: AppID, allowedCaller: Address, methods: bytes4[]): void {
+  arc58_removePlugin(app: AppID, allowedCaller: Address): void {
     assert(this.isAdmin() || this.canRevoke(), errs.ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
 
     const key: PluginsKey = { application: app, allowedCaller: allowedCaller };
 
     assert(this.plugins(key).exists, 'plugin does not exist');
-
-    let methodRestrictionCount = this.plugins(key).value.methodRestrictions;
-    for (let i = 0; i < methods.length; i += 1) {
-      const methodKey: MethodsKey = { application: app, allowedCaller: allowedCaller, method: methods[i] };
-      assert(this.methods(methodKey).exists, 'method does not exist');
-      methodRestrictionCount -= 1;
-      this.methods(methodKey).delete();
-    }
-
-    assert(methodRestrictionCount === 0, 'plugin has method restrictions');
 
     this.plugins(key).delete();
   }
@@ -501,6 +581,8 @@ export class AbstractedAccount extends Contract {
    * @param lastValidRound The round when the permission expires
    * @param cooldown  The number of rounds that must pass before the plugin can be called again
    * @param adminPrivileges Whether the plugin has permissions to change the admin account
+   * @param methods The methods that are allowed to be called for the plugin by the address
+   * 
    */
   arc58_addNamedPlugin(
     name: string,
@@ -521,21 +603,18 @@ export class AbstractedAccount extends Contract {
       lastValidRound: lastValidRound,
       cooldown: cooldown,
       lastCalled: 0,
-      methodRestrictions: methods.length,
       adminPrivileges: adminPrivileges,
+      methods: methods,
     };
 
     this.plugins(key).value = pluginInfo
-
-    for (let i = 0; i < methods.length; i += 1) {
-      this.methods({ application: app, allowedCaller: allowedCaller, method: methods[i] }).create();
-    }
   }
 
   /**
    * Remove a named plugin
    *
    * @param name The plugin name
+   * 
    */
   arc58_removeNamedPlugin(name: string): void {
     assert(this.isAdmin() || this.canRevoke(), errs.ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
@@ -543,50 +622,8 @@ export class AbstractedAccount extends Contract {
     assert(this.namedPlugins(name).exists, 'plugin does not exist');
     const app = this.namedPlugins(name).value;
     assert(this.plugins(app).exists, 'plugin does not exist');
-    assert(this.plugins(app).value.methodRestrictions === 0, 'plugin has method restrictions');
 
     this.namedPlugins(name).delete();
     this.plugins(app).delete();
-  }
-
-  /**
-   * Add a method restriction to a plugin
-   * 
-   * @param app The plugin app
-   * @param allowedCaller The address of that's allowed to call the app
-   * @param method The method signature to add
-   * 
-   */
-  arc58_addMethod(app: AppID, allowedCaller: Address, method: bytes<4>): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_ADD_METHOD_RESTRICTION);
-
-    const pluginKey: PluginsKey = { application: app, allowedCaller: allowedCaller };
-    const methodKey: MethodsKey = { application: app, allowedCaller: allowedCaller, method: method };
-
-    assert(this.plugins(pluginKey).exists, errs.PLUGIN_DOES_NOT_EXIST);
-    assert(!this.methods(methodKey).exists, errs.METHOD_ALREADY_EXISTS);
-
-    this.plugins(pluginKey).value.methodRestrictions += 1;
-    this.methods({ application: app, allowedCaller: allowedCaller, method: method }).create();
-  }
-
-  /**
-   * Remove a method restriction from a plugin
-   * 
-   * @param app The plugin app
-   * @param allowedCaller The address of that's allowed to call the app 
-   * @param method The method signature to remove
-   */
-  arc58_removeMethod(app: AppID, allowedCaller: Address, method: bytes<4>): void {
-    assert(this.isAdmin() || this.canRevoke(), errs.ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_METHOD_RESTRICTION);
-
-    const pluginKey: PluginsKey = { application: app, allowedCaller: allowedCaller };
-    const methodKey: MethodsKey = { application: app, allowedCaller: allowedCaller, method: method };
-
-    assert(this.plugins(pluginKey).exists, errs.PLUGIN_DOES_NOT_EXIST);
-    assert(this.methods(methodKey).exists, errs.METHOD_DOES_NOT_EXIST);
-
-    this.plugins(pluginKey).value.methodRestrictions -= 1;
-    this.methods(methodKey).delete();
   }
 }

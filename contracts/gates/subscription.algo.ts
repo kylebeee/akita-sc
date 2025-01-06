@@ -1,6 +1,6 @@
 import { Contract } from '@algorandfoundation/tealscript';
 import { AkitaAppIDsSubscriptionPlugin } from '../../utils/constants';
-import { SubscriptionPlugin } from '../arc58/plugins/subscription.algo';
+import { SubscriptionPlugin } from '../arc58/plugins/subscriptions.algo';
 
 const errs = {
     INVALID_ARG_COUNT: 'Invalid number of arguments',
@@ -21,9 +21,15 @@ export type SubscriptionGateCheckParams = {
 export class SubscriptionGate extends Contract {
     programVersion = 10;
 
-    registryCounter = GlobalStateKey<uint64>({ key: 'c' });
+    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
+
+    private newRegistryID(): uint64 {
+        const id = this._registryCursor.value;
+        this._registryCursor.value += 1;
+        return id;
+    }
 
     private subscriptionGate(address: Address, merchant: Address, index: uint64): boolean {
         const info = sendMethodCall<typeof SubscriptionPlugin.prototype.getSubsriptionInfo>({
@@ -49,10 +55,9 @@ export class SubscriptionGate extends Contract {
     register(args: bytes): uint64 {
         assert(args.length === RegistryInfoLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<RegistryInfo>(args);
-        const counter = this.registryCounter.value
-        this.registry(counter).value = params;
-        this.registryCounter.value += 1;
-        return counter;
+        const id = this.newRegistryID();
+        this.registry(id).value = params;
+        return id;
     }
 
     check(args: bytes): boolean {

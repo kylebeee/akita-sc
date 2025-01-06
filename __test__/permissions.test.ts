@@ -2,9 +2,10 @@ import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk, { makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
-import { AbstractedAccountClient, AbstractedAccountFactory } from '../clients/AbstractedAccountClient';
+import { AbstractedAccountClient } from '../clients/AbstractedAccountClient';
 import { OptInPluginClient, OptInPluginFactory } from '../clients/OptInPluginClient';
 import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../clients/AbstractedAccountFactoryClient';
+import { ABSTRACTED_ACCOUNT_MINT_PAYMENT } from './abstract_account_plugins.test';
 
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 algokit.Config.configure({ populateAppCallResources: true });
@@ -30,24 +31,12 @@ describe('ARC58 Plugin Permissions', () => {
 
   const fixture = algorandFixture();
 
-  async function callPlugin(suggestedParams: algosdk.SuggestedParams, pluginClient: OptInPluginClient, asset: bigint) {
-    // const boxes = [
-    //   new Uint8Array(
-    //     Buffer.concat([
-    //       Buffer.from('p'),
-    //       Buffer.from(algosdk.encodeUint64(plugin)),
-    //       algosdk.decodeAddress(ZERO_ADDRESS).publicKey,
-    //     ])
-    //   ),
-    //   new Uint8Array(
-    //     Buffer.concat([
-    //       Buffer.from('p'),
-    //       Buffer.from(algosdk.encodeUint64(plugin)),
-    //       algosdk.decodeAddress(caller.addr).publicKey,
-    //     ])
-    //   ),
-    // ];
-
+  async function callPlugin(
+    suggestedParams: algosdk.SuggestedParams,
+    pluginClient: OptInPluginClient,
+    asset: bigint,
+    offsets: number[] = []
+  ) {
     const mbrPayment = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: caller.addr,
       to: abstractedAccountClient.appAddress,
@@ -76,7 +65,7 @@ describe('ARC58 Plugin Permissions', () => {
       .arc58RekeyToPlugin({
         sender: caller.addr,
         signer: makeBasicAccountTransactionSigner(caller),
-        args: { plugin },
+        args: { plugin, methodOffsets: offsets },
         extraFee: (1000).microAlgos()
       })
       // Add the mbr payment
@@ -114,7 +103,7 @@ describe('ARC58 Plugin Permissions', () => {
     const mintPayment = makePaymentTxnWithSuggestedParamsFromObject({
       from: aliceEOA.addr,
       to: abstractedAccountFactoryClient.appAddress,
-      amount: 507000,
+      amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
       suggestedParams: suggestedParams
     })
     
@@ -220,8 +209,8 @@ describe('ARC58 Plugin Permissions', () => {
           algosdk.decodeAddress(ZERO_ADDRESS).publicKey,
         ])
       ),
-      algosdk.ABIType.from('(uint64,uint64,uint64,uint64,bool)')
-    )) as [number, number, number, number, boolean];
+      algosdk.ABIType.from('(uint64,uint64,uint64,bool,byte[4][])')
+    )) as [number, number, number, boolean, string[]];
 
     const round = (await algorand.client.algod.status().do())['last-round'];
 
@@ -254,8 +243,8 @@ describe('ARC58 Plugin Permissions', () => {
           algosdk.decodeAddress(ZERO_ADDRESS).publicKey,
         ])
       ),
-      algosdk.ABIType.from('(uint64,uint64,uint64,uint64,bool)')
-    )) as [number, number, number, number, boolean];
+      algosdk.ABIType.from('(uint64,uint64,uint64,bool,byte[4][])')
+    )) as [number, number, number, boolean, string[]];
 
     const round = (await algorand.client.algod.status().do())['last-round'];
 
@@ -287,8 +276,8 @@ describe('ARC58 Plugin Permissions', () => {
           algosdk.decodeAddress(caller.addr).publicKey,
         ])
       ),
-      algosdk.ABIType.from('(uint64,uint64,uint64,uint64,bool)')
-    )) as [number, number, number, number, boolean];
+      algosdk.ABIType.from('(uint64,uint64,uint64,bool,byte[4][])')
+    )) as [number, number, number, boolean, string[]];
 
     const round = (await algorand.client.algod.status().do())['last-round'];
 
@@ -308,12 +297,14 @@ describe('ARC58 Plugin Permissions', () => {
         lastValidRound: MAX_UINT64,
         adminPrivileges: false,
         methods: [
-          optInToAssetSelector
+          optInToAssetSelector,
+          Buffer.from('dddd'),
+          Buffer.from('aaaa'),
         ]
       }
     });
 
-    await callPlugin(suggestedParams, optInPluginClient, asset);
+    await callPlugin(suggestedParams, optInPluginClient, asset, [0]);
 
     const callerPluginBox = (await abstractedAccountClient.appClient.getBoxValueFromABIType(
       new Uint8Array(
@@ -323,11 +314,14 @@ describe('ARC58 Plugin Permissions', () => {
           algosdk.decodeAddress(caller.addr).publicKey,
         ])
       ),
-      algosdk.ABIType.from('(uint64,uint64,uint64,uint64,bool)')
-    )) as [number, number, number, number, boolean];
+      algosdk.ABIType.from('(uint64,uint64,uint64,bool,byte[4][])')
+    )) as [number, number, number, boolean, string[]];
+
+    console.log('callerPluginBox: ', callerPluginBox);
 
     const round = (await algorand.client.algod.status().do())['last-round'];
 
+    // @ts-ignore
     expect(callerPluginBox[2]).toBe(BigInt(round));
   });
 
@@ -356,7 +350,7 @@ describe('ARC58 Plugin Permissions', () => {
     }
 
     // TODO: Parse this from src_map json
-    expect(error).toMatch('pc=249');
+    expect(error).toMatch('pc=251');
   });
 
   test('neither sender nor global plugin exists', async () => {
@@ -369,7 +363,7 @@ describe('ARC58 Plugin Permissions', () => {
     }
 
     // TODO: Parse this from src_map json
-    expect(error).toMatch('pc=198');
+    expect(error).toMatch('pc=200');
   });
 
   test('expired', async () => {
@@ -395,7 +389,7 @@ describe('ARC58 Plugin Permissions', () => {
     }
 
     // TODO: Parse this from src_map json
-    expect(error).toMatch('pc=216');
+    expect(error).toMatch('pc=218');
   });
 
   test('method not allowed', async () => {
@@ -423,6 +417,6 @@ describe('ARC58 Plugin Permissions', () => {
     }
 
     // TODO: Parse this from src_map json
-    expect(error).toMatch('pc=639');
+    expect(error).toMatch('pc=737');
   });
 });

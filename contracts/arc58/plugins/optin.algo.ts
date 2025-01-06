@@ -11,23 +11,13 @@ export class OptInPlugin extends Contract {
       },
     });
 
-    if (rekeyBack) {
-      sendAssetTransfer({
-        sender: sender.address,
-        assetReceiver: sender.address,
-        assetAmount: 0,
-        xferAsset: asset,
-        rekeyTo: sender.address,
-        fee: 0,
-      });
-    } else {
-      sendAssetTransfer({
-        sender: sender.address,
-        assetReceiver: sender.address,
-        assetAmount: 0,
-        xferAsset: asset,
-        fee: 0,
-      });
-    }
+    sendAssetTransfer({
+      sender: sender.address,
+      assetReceiver: sender.address,
+      assetAmount: 0,
+      xferAsset: asset,
+      rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+      fee: 0,
+    });
   }
 }

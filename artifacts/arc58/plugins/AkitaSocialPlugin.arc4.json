@@ -3,6 +3,22 @@
   "desc": "",
   "methods": [
     {
+      "name": "createApplication",
+      "args": [
+        {
+          "name": "version",
+          "type": "string"
+        },
+        {
+          "name": "daoAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
       "name": "post",
       "args": [
         {
@@ -154,6 +170,10 @@
           "type": "uint64"
         },
         {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
           "name": "cid",
           "type": "byte[59]"
         },
@@ -176,10 +196,6 @@
         {
           "name": "args",
           "type": "byte[][]"
-        },
-        {
-          "name": "rekeyBack",
-          "type": "bool"
         }
       ],
       "returns": {
@@ -192,6 +208,10 @@
         {
           "name": "sender",
           "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "cid",
@@ -212,10 +232,6 @@
         {
           "name": "reactGateIndex",
           "type": "uint64"
-        },
-        {
-          "name": "rekeyBack",
-          "type": "bool"
         }
       ],
       "returns": {
@@ -228,6 +244,10 @@
         {
           "name": "sender",
           "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "cid",
@@ -252,10 +272,6 @@
         {
           "name": "amendment",
           "type": "byte[32]"
-        },
-        {
-          "name": "rekeyBack",
-          "type": "bool"
         }
       ],
       "returns": {
@@ -663,6 +679,26 @@
       }
     },
     {
+      "name": "flagPost",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "ref",
+          "type": "byte[32]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
       "name": "unban",
       "args": [
         {
@@ -683,35 +719,51 @@
       }
     },
     {
-      "name": "addGate",
-      "args": [],
-      "returns": {
-        "type": "void"
-      }
-    },
-    {
-      "name": "removeGate",
-      "args": [],
-      "returns": {
-        "type": "void"
-      }
-    },
-    {
       "name": "addAction",
-      "args": [],
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "actionAppID",
+          "type": "uint64"
+        },
+        {
+          "name": "content",
+          "type": "byte[59]"
+        }
+      ],
       "returns": {
         "type": "void"
       }
     },
     {
       "name": "removeAction",
-      "args": [],
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "actionAppID",
+          "type": "uint64"
+        }
+      ],
       "returns": {
         "type": "void"
       }
     },
     {
-      "name": "cacheMeta",
+      "name": "initMeta",
       "args": [
         {
           "name": "sender",
@@ -743,27 +795,11 @@
       }
     },
     {
-      "name": "updateSubscriptionStateModifier",
-      "args": [
-        {
-          "name": "subscriptionIndex",
-          "type": "uint64"
-        },
-        {
-          "name": "newModifier",
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "void"
-      }
-    },
-    {
-      "name": "getUserImpact",
+      "name": "getUserSocialImpact",
       "readonly": true,
       "args": [
         {
-          "name": "address",
+          "name": "user",
           "type": "address"
         }
       ],
@@ -802,14 +838,7 @@
         }
       ],
       "returns": {
-        "type": "(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)"
-      }
-    },
-    {
-      "name": "createApplication",
-      "args": [],
-      "returns": {
-        "type": "void"
+        "type": "(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)"
       }
     }
   ]

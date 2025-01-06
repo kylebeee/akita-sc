@@ -1,0 +1,114 @@
+{
+  "name": "Raffle",
+  "desc": "",
+  "methods": [
+    {
+      "name": "createApplication",
+      "args": [
+        {
+          "name": "ticketAsset",
+          "type": "uint64"
+        },
+        {
+          "name": "startingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "endingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "minTickets",
+          "type": "uint64"
+        },
+        {
+          "name": "maxTickets",
+          "type": "uint64"
+        },
+        {
+          "name": "prize",
+          "type": "uint64"
+        },
+        {
+          "name": "prizeAmount",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "init",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "enter",
+      "args": [
+        {
+          "name": "pmt",
+          "type": "pay"
+        },
+        {
+          "name": "xfer",
+          "type": "axfer"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "raffle",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "findWinner",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "claimPrize",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "claimTickets",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "refund",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "deleteApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "getState",
+      "args": [],
+      "returns": {
+        "type": "(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64,bool)"
+      }
+    }
+  ]
+}

@@ -3,104 +3,19 @@
   "desc": "",
   "methods": [
     {
-      "name": "timeLeft",
-      "readonly": true,
+      "name": "stake",
       "args": [
         {
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "name": "asset",
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "uint64"
-      }
-    },
-    {
-      "name": "getInfo",
-      "readonly": true,
-      "args": [
-        {
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "name": "lock",
-          "type": "(uint64,bool)"
-        }
-      ],
-      "returns": {
-        "type": "(uint64,uint64,uint64)"
-      }
-    },
-    {
-      "name": "getInfoList",
-      "readonly": true,
-      "args": [
-        {
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "name": "locks",
-          "type": "(uint64,bool)[]"
-        }
-      ],
-      "returns": {
-        "type": "(uint64,uint64,uint64)[]"
-      }
-    },
-    {
-      "name": "getLockedInfo",
-      "readonly": true,
-      "args": [
-        {
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "name": "asset",
-          "type": "uint64"
-        }
-      ],
-      "returns": {
-        "type": "(uint64,uint64,uint64)"
-      }
-    },
-    {
-      "name": "getLockedInfoList",
-      "readonly": true,
-      "args": [
-        {
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "name": "assets",
-          "type": "uint64[]"
-        }
-      ],
-      "returns": {
-        "type": "(uint64,uint64,uint64)[]"
-      }
-    },
-    {
-      "name": "deposit",
-      "args": [
-        {
-          "name": "user",
-          "type": "address"
-        },
-        {
-          "name": "asset",
+          "name": "sender",
           "type": "uint64"
         },
         {
-          "name": "locked",
+          "name": "rekeyBack",
           "type": "bool"
+        },
+        {
+          "name": "type",
+          "type": "uint64"
         },
         {
           "name": "amount",
@@ -109,6 +24,46 @@
         {
           "name": "expiration",
           "type": "uint64"
+        },
+        {
+          "name": "isUpdate",
+          "type": "bool"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "stakeAsa",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "asset",
+          "type": "uint64"
+        },
+        {
+          "name": "type",
+          "type": "uint64"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "expiration",
+          "type": "uint64"
+        },
+        {
+          "name": "isUpdate",
+          "type": "bool"
         }
       ],
       "returns": {
@@ -119,16 +74,68 @@
       "name": "withdraw",
       "args": [
         {
-          "name": "user",
-          "type": "address"
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
         },
         {
           "name": "asset",
           "type": "uint64"
         },
         {
-          "name": "locked",
+          "name": "type",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "createHeartbeat",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
           "type": "bool"
+        },
+        {
+          "name": "address",
+          "type": "address"
+        },
+        {
+          "name": "asset",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "softCheck",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "address",
+          "type": "address"
+        },
+        {
+          "name": "asset",
+          "type": "uint64"
         }
       ],
       "returns": {

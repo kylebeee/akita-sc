@@ -1,0 +1,207 @@
+{
+  "name": "HyperSwap",
+  "desc": "",
+  "methods": [
+    {
+      "name": "offer",
+      "desc": "Creates a merkle tree based atomic payment/xfer group",
+      "args": [
+        {
+          "name": "mbrPayment",
+          "type": "pay"
+        },
+        {
+          "name": "feePayment",
+          "type": "pay"
+        },
+        {
+          "name": "root",
+          "type": "byte[32]"
+        },
+        {
+          "name": "leaves",
+          "type": "uint64"
+        },
+        {
+          "name": "participantsRoot",
+          "type": "byte[32]"
+        },
+        {
+          "name": "participantLeaves",
+          "type": "uint64"
+        },
+        {
+          "name": "expiration",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "accept",
+      "desc": "Accepts an offer",
+      "args": [
+        {
+          "name": "mbrPayment",
+          "type": "pay"
+        },
+        {
+          "name": "id",
+          "type": "uint64"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "escrow",
+      "desc": "Escrows the assets in the trade for a given leaf in the tree",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "id",
+          "type": "uint64"
+        },
+        {
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "escrowAsa",
+      "desc": "Escrows the assets in the trade for a given leaf in the tree",
+      "args": [
+        {
+          "name": "mbrPayment",
+          "type": "pay"
+        },
+        {
+          "name": "assetXfer",
+          "type": "axfer"
+        },
+        {
+          "name": "id",
+          "type": "uint64"
+        },
+        {
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "name": "asset",
+          "type": "uint64"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "disburse",
+      "desc": "Disburses assets for a leaf in the tree, ensuring ordered processing",
+      "args": [
+        {
+          "name": "id",
+          "type": "uint64"
+        },
+        {
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "name": "asset",
+          "type": "uint64"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "cancel",
+      "args": [
+        {
+          "name": "id",
+          "type": "uint64"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "withdraw",
+      "desc": "Withdraws your assets from a cancelled swap if they're escrowed",
+      "args": [
+        {
+          "name": "id",
+          "type": "uint64"
+        },
+        {
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "name": "asset",
+          "type": "uint64"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    }
+  ]
+}

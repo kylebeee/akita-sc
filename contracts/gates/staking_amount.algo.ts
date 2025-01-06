@@ -1,7 +1,7 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { AKITA_TIME_LOCK_PLUGIN_ID, Operator } from './gate.algo';
+import { Operator } from './gate.algo';
 import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo } from '../../utils/operators';
-import { AssetLock, StakeValue, StakingPlugin } from '../arc58/plugins/staking.algo';
+import { StakeValue, Staking, StakingType } from '../staking/staking.algo';
 import { AkitaAppIDsStakingPlugin } from '../../utils/constants';
 
 const errs = {
@@ -14,27 +14,33 @@ export const RegistryInfoParamsLength = len<Operator>() + len<AssetID>() + len<b
 export type RegistryInfo = {
     op: Operator;
     asset: AssetID;
-    locked: boolean;
+    type: StakingType;
     amount: uint64;
 }
 
 export const StakingAmountGateCheckParamsLength = len<uint64>() + len<Address>();
 export type StakingAmountGateCheckParams = {
-    registryIndex: uint64;
+    registryID: uint64;
     user: Address;
 }
 
 export class StakingAmountGate extends Contract {
     programVersion = 10;
 
-    registryCounter = GlobalStateKey<uint64>({ key: 'c' });
+    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
-    private stakingAmountGate(user: Address, op: Operator, asset: AssetID, locked: boolean, amount: uint64): boolean {
-        const lockInfo = sendMethodCall<typeof StakingPlugin.prototype.getInfo, StakeValue>({
+    private newRegistryID(): uint64 {
+        const id = this._registryCursor.value;
+        this._registryCursor.value += 1;
+        return id;
+    }
+
+    private stakingAmountGate(user: Address, op: Operator, asset: AssetID, type: StakingType, amount: uint64): boolean {
+        const lockInfo = sendMethodCall<typeof Staking.prototype.getInfo, StakeValue>({
             applicationID: AppID.fromUint64(AkitaAppIDsStakingPlugin),
-            methodArgs: [ user, { asset: asset, locked: locked } ],
+            methodArgs: [ user, { asset: asset, type: type } ],
             fee: 0,
         });
 
@@ -61,16 +67,15 @@ export class StakingAmountGate extends Contract {
         const params = castBytes<RegistryInfo>(args);
         assert(!(params.op > 5), errs.BAD_OPERATION);
 
-        const counter = this.registryCounter.value;
-        this.registry(counter).value = params;
-        this.registryCounter.value += 1;
-        return counter;
+        const id = this.newRegistryID();
+        this.registry(id).value = params;
+        return id;
     }
 
     check(args: bytes): boolean {
         assert(args.length >= StakingAmountGateCheckParamsLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<StakingAmountGateCheckParams>(args);
-        const info = this.registry(params.registryIndex).value;
-        return this.stakingAmountGate(params.user, info.op, info.asset, info.locked, info.amount);
+        const info = this.registry(params.registryID).value;
+        return this.stakingAmountGate(params.user, info.op, info.asset, info.type, info.amount);
     }
 }

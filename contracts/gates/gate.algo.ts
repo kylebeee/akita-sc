@@ -1,5 +1,4 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { bytes0 } from '../../utils/constants';
 
 export const AKITA_SOCIAL_PLUGIN_ID = 0;
 export const AKITA_TIME_LOCK_PLUGIN_ID = 0;
@@ -31,46 +30,16 @@ class MockGate extends Contract {
 
 export class Gate extends Contract {
 
-    filterRegistryCounter = GlobalStateKey<uint64>({ key: 'c' });
+    _gateCursor = GlobalStateKey<uint64>({ key: 'gate_cursor' });
 
-    appRegistry = BoxMap<AppID, bytes0>();
+    appRegistry = BoxMap<AppID, bytes<0>>();
 
-    filterRegistry = BoxMap<uint64, GateFilterEntry[]>({ prefix: 'f' });
+    gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ prefix: 'f' });
 
-    register(filters: GateFilter[], args: bytes[]): uint64 {
-        let entries: GateFilterEntry[] = [];
-        let lastFilterLayer: uint64 = 0;
-        for (let i = 0; i < filters.length; i += 1) {
-            assert(this.appRegistry(filters[i].app).exists);
-            assert(filters[i].layer >= lastFilterLayer)
-            lastFilterLayer = filters[i].layer;
-
-            const registryEntry = sendMethodCall<typeof MockGate.prototype.register, uint64>({
-                applicationID: filters[i].app,
-                methodArgs: [ args[i] ],
-                fee: 0,
-            });
-
-            const entry: GateFilterEntry = {
-                layer: filters[i].layer,
-                app: filters[i].app,
-                registeryEntry: registryEntry,
-                operator: filters[i].operator,
-            };
-
-            entries.push(entry);
-        }
-
-        const counter = this.filterRegistryCounter.value
-        this.filterRegistry(counter).value = entries;
-        this.filterRegistryCounter.value += 1;        
-        return counter;
-    }
-
-    check(filterIndex: uint64, args: bytes[]): boolean {
-        assert(this.filterRegistry(filterIndex).exists);
-        const filters = this.filterRegistry(filterIndex).value;
-        return this.evaluateFilters(filters, 0, (filters.length - 1), args);
+    private newGateID(): uint64 {
+        const id = this._gateCursor.value;
+        this._gateCursor.value += 1;
+        return id;
     }
 
     private evaluateFilters(filters: GateFilterEntry[], start: uint64, end: uint64, args: bytes[]): boolean {
@@ -128,5 +97,40 @@ export class Gate extends Contract {
             end = i;
         }
         return end;
+    }
+
+    register(filters: GateFilter[], args: bytes[]): uint64 {
+        let entries: GateFilterEntry[] = [];
+        let lastFilterLayer: uint64 = 0;
+        for (let i = 0; i < filters.length; i += 1) {
+            assert(this.appRegistry(filters[i].app).exists);
+            assert(filters[i].layer >= lastFilterLayer)
+            lastFilterLayer = filters[i].layer;
+
+            const registryEntry = sendMethodCall<typeof MockGate.prototype.register, uint64>({
+                applicationID: filters[i].app,
+                methodArgs: [ args[i] ],
+                fee: 0,
+            });
+
+            const entry: GateFilterEntry = {
+                layer: filters[i].layer,
+                app: filters[i].app,
+                registeryEntry: registryEntry,
+                operator: filters[i].operator,
+            };
+
+            entries.push(entry);
+        }
+
+        const id = this.newGateID();
+        this.gateRegistry(id).value = entries;
+        return id;
+    }
+
+    check(gateID: uint64, args: bytes[]): boolean {
+        assert(this.gateRegistry(gateID).exists);
+        const filters = this.gateRegistry(gateID).value;
+        return this.evaluateFilters(filters, 0, (filters.length - 1), args);
     }
 }

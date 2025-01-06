@@ -3,11 +3,51 @@
   "desc": "",
   "methods": [
     {
-      "name": "useGate",
+      "name": "createApplication",
       "args": [
         {
-          "name": "index",
+          "name": "type",
           "type": "uint64"
+        },
+        {
+          "name": "gateID",
+          "type": "uint64"
+        },
+        {
+          "name": "endTime",
+          "type": "uint64"
+        },
+        {
+          "name": "maxSelected",
+          "type": "uint64"
+        },
+        {
+          "name": "question",
+          "type": "string"
+        },
+        {
+          "name": "options",
+          "type": "string[]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "vote",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "votes",
+          "type": "uint64[]"
         },
         {
           "name": "args",
@@ -19,8 +59,13 @@
       }
     },
     {
-      "name": "createApplication",
-      "args": [],
+      "name": "deleteBoxes",
+      "args": [
+        {
+          "name": "address",
+          "type": "address"
+        }
+      ],
       "returns": {
         "type": "void"
       }

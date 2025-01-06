@@ -3,11 +3,13 @@ import { AbstractedAccount } from "./abstracted_account.algo";
 
 export class AbstractedAccountFactory extends Contract {
 
-    abstractedAccountVersion = GlobalStateKey<string>({ key: 'version' });
+    /** the version of the child contract */
+    childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
+    /** the default app thats allowed to revoke plugins */
     revocationAppID = GlobalStateKey<AppID>({ key: 'revocation_app_id' });
 
     createApplication(version: string, revocationAppID: AppID): void {
-        this.abstractedAccountVersion.value = version;
+        this.childContractVersion.value = version;
         this.revocationAppID.value = revocationAppID;
     }
 
@@ -26,7 +28,7 @@ export class AbstractedAccountFactory extends Contract {
 
         sendMethodCall<typeof AbstractedAccount.prototype.createApplication>({
             methodArgs: [
-                this.abstractedAccountVersion.value,
+                this.childContractVersion.value,
                 admin,
                 this.revocationAppID.value,
                 nickname,

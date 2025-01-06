@@ -5,6 +5,7 @@ import algosdk, { makeBasicAccountTransactionSigner, makePaymentTxnWithSuggested
 import { microAlgos } from '@algorandfoundation/algokit-utils';
 import { AbstractedAccountClient, AbstractedAccountFactory } from '../clients/AbstractedAccountClient';
 import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../clients/AbstractedAccountFactoryClient';
+import { ABSTRACTED_ACCOUNT_MINT_PAYMENT } from './abstract_account_plugins.test';
 
 const fixture = algorandFixture();
 
@@ -49,7 +50,7 @@ describe('Rekeying Test', () => {
     const mintPayment = makePaymentTxnWithSuggestedParamsFromObject({
       from: aliceEOA.addr,
       to: abstractedAccountFactoryClient.appAddress,
-      amount: 507000,
+      amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
       suggestedParams: suggestedParams
     })
     

@@ -1,16 +1,12 @@
 import { Contract } from '@algorandfoundation/tealscript';
 
-export type bytes0 = bytes<0>;
-export type bytes4 = bytes<4>;
-export type bytes16 = bytes<16>;
-export type bytes24 = bytes<24>;
-export type bytes59 = bytes<59>;
-
 export const AkitaDomain = 'akita.community';
 
-export const EMPTY_BYTES_16: bytes16 = 'AAAAAAAAAAAAAAAA' as bytes16;
-export const EMPTY_BYTES_32: bytes32 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' as bytes32;
-export const EMPTY_BYTES_59: bytes59 = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' as bytes59;
+export const EMPTY_BYTES_16: bytes<16> = 'AAAAAAAAAAAAAAAA' as bytes<16>;
+export const EMPTY_BYTES_32: bytes<32> = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' as bytes<32>;
+export const EMPTY_BYTES_59: bytes<59> = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' as bytes<59>;
+
+export const AkitaNFTCreatorAddress = addr('AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI');
 
 export const AkitaCollectionsPrefixAKC = 'AKC';
 export const AkitaCollectionsPrefixAOG = 'AOG';
@@ -21,6 +17,7 @@ export const AkitaAppIDsAbstractedAccountFactory = 0;
 export const AkitaAppIDsAbstractedAccount = 0;
 
 export const AkitaAppIDsAkitaSocialPlugin = 0;
+export const AkitaAppIDsAkitaSocialImpactPlugin = 1;
 export const AkitaAppIDsAkitaHyperSwapPlugin = 0;
 export const AkitaAppIDsAkitaMBRPlugin = 0;
 export const AkitaAppIDsNFDPlugin = 0;
@@ -43,7 +40,10 @@ export const AkitaAppIDsStakingPowerGate = 0;
 export const AkitaAppIDsSubscriptionGate = 0;
 export const AkitaAppIDsSubscriptionStreakGate = 0;
 
+export const AkitaAppIDsHyperSwap = 0;
 export const AkitaAppIDsMetaMerkles = 0;
+export const AkitaAppIDsRewards = 0;
+export const AkitaAppIDsStaking = 0;
 
 export const AkitaAssetAkita = 0; // 523683256
 export const AkitaAssetBones = 0;

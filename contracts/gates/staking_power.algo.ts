@@ -1,7 +1,7 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { AKITA_TIME_LOCK_PLUGIN_ID, Operator } from './gate.algo';
+import { Operator } from './gate.algo';
 import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo } from '../../utils/operators';
-import { StakeValue, StakingPlugin } from '../arc58/plugins/staking.algo';
+import { StakeValue, Staking } from '../staking/staking.algo';
 import { AkitaAppIDsStakingPlugin } from '../../utils/constants';
 
 const errs = {
@@ -29,12 +29,18 @@ export type StakingPowerGateCheckParams = {
 export class StakingPowerGate extends Contract {
     programVersion = 10;
 
-    registryCounter = GlobalStateKey<uint64>({ key: 'c' });
+    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
+    private newRegistryID(): uint64 {
+        const id = this._registryCursor.value;
+        this._registryCursor.value += 1;
+        return id;
+    }
+
     private stakingPowerGate(user: Address, op: Operator, asset: AssetID, power: uint64): boolean {
-        const lockInfo = sendMethodCall<typeof StakingPlugin.prototype.getLockedInfo, StakeValue>({
+        const lockInfo = sendMethodCall<typeof Staking.prototype.getLockedInfo, StakeValue>({
             applicationID: AppID.fromUint64(AkitaAppIDsStakingPlugin),
             methodArgs: [ user, asset ],
             fee: 0,
@@ -66,10 +72,9 @@ export class StakingPowerGate extends Contract {
         const params = castBytes<RegistryInfo>(args);
         assert(!(params.op > 5), errs.BAD_OPERATION);
 
-        const counter = this.registryCounter.value;
-        this.registry(counter).value = castBytes<RegistryInfo>(args);
-        this.registryCounter.value += 1;
-        return counter;
+        const id = this.newRegistryID();
+        this.registry(id).value = castBytes<RegistryInfo>(args);
+        return id;
     }
 
     check(args: bytes): boolean {
