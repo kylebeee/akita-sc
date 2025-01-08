@@ -75,19 +75,19 @@ export class MetaMerkles extends Contract {
   data = BoxMap<DataKey, string>({ prefix: 'd' });
 
   private getRootBoxDelta(name: string): uint64 {
-    const pre = globals.currentApplicationAddress.minBalance;
+    const pre = this.app.address.minBalance;
     const rKey: RootKey = { address: globals.zeroAddress, name: name };
     this.roots(rKey).value = EMPTY_BYTES_32;
-    const delta = globals.currentApplicationAddress.minBalance - pre;
+    const delta = this.app.address.minBalance - pre;
     this.roots(rKey).delete();
     return delta;
   }
 
   private getDataBoxDelta(name: string, key: string, value: string): uint64 {
-    const pre = globals.currentApplicationAddress.minBalance;
+    const pre = this.app.address.minBalance;
     const dKey: DataKey = { address: EMPTY_BYTES_16, name: name, key: key };
     this.data(dKey).value = value;
-    const delta = globals.currentApplicationAddress.minBalance - pre;
+    const delta = this.app.address.minBalance - pre;
     this.data(dKey).delete();
     return delta;
   }
@@ -111,13 +111,13 @@ export class MetaMerkles extends Contract {
    * @param schema an index of the schema enum from box storage
    * @param type an index of the tree type enum from box storage
    */
-  addRoot(pmt: PayTxn, name: string, root: bytes32, schema: uint64, type: uint64): void {
+  addRoot(payment: PayTxn, name: string, root: bytes32, schema: uint64, type: uint64): void {
     assert(name.length <= 32, 'Cannot add root with name longer than 32 bytes');
     assert(this.schemas(schema).exists, errs.NO_TREE_SCHEMA);
     assert(this.types(type).exists, errs.NO_TREE_TYPE);
 
     const truncatedAddress = extract3(this.txn.sender, 0, 16) as bytes<16>;
-    
+
     const rootKey: RootKey = {
       address: this.txn.sender,
       name: name
@@ -139,7 +139,7 @@ export class MetaMerkles extends Contract {
     assert(!this.data(schemaKey).exists, errs.TREE_SCHEMA_KEY_ALREADY_EXISTS);
     assert(!this.data(typeKey).exists, errs.TREE_TYPE_KEY_ALREADY_EXISTS);
 
-    verifyPayTxn(pmt, {
+    verifyPayTxn(payment, {
       receiver: this.app.address,
       amount: this.rootCosts(name),
     });
@@ -156,7 +156,7 @@ export class MetaMerkles extends Contract {
    */
   deleteRoot(name: string): void {
     const truncatedAddress = extract3(this.txn.sender, 0, 16) as bytes<16>;
-    
+
     const rootKey: RootKey = {
       address: this.txn.sender,
       name: name
@@ -209,7 +209,7 @@ export class MetaMerkles extends Contract {
    * @param key the metadata key eg. `Royalty`
    * @param value the metadata value eg. `5` encoded as a bytestring for 5%
    */
-  addData(pmt: PayTxn, name: string, key: string, value: string): void {
+  addData(payment: PayTxn, name: string, key: string, value: string): void {
     const rootKey: RootKey = { address: this.txn.sender, name: name };
 
     assert(key.length <= maxDataKeyLength, errs.KEY_TOO_LONG);
@@ -217,7 +217,7 @@ export class MetaMerkles extends Contract {
     assert(key.length < 2 || !(extract3(key, 0, 2) === reservedDataKeyPrefix), errs.RESERVED_KEY_PREFIX)
     assert(this.roots(rootKey).exists, errs.NO_ROOT_FOR_DATA);
 
-    verifyPayTxn(pmt, {
+    verifyPayTxn(payment, {
       receiver: this.app.address,
       amount: this.getBoxCreateMinBalance(48 + key.length, value.length),
     });
@@ -258,19 +258,19 @@ export class MetaMerkles extends Contract {
   }
 
   /**
-     * verify an inclusion in a double sha256 based merkle tree
-     *
-     * @param address the address of the merkle tree root creator
-     * @param name The name alias of the root
-     * @param leaf The hashed leaf to verify
-     * @param proof The merkle proof
-     * @param type The type check for the lists purpose
-     *
-     * @returns a boolean indicating whether the proof is valid
-     */
+   * verify an inclusion in a double sha256 based merkle tree
+   *
+   * @param address the address of the merkle tree root creator
+   * @param name The name alias of the root
+   * @param leaf The hashed leaf to verify
+   * @param proof The merkle proof
+   * @param type The type check for the lists purpose
+   *
+   * @returns a boolean indicating whether the proof is valid
+   */
   verify(address: Address, name: string, leaf: bytes32, proof: bytes32[], type: uint64): boolean {
     const truncatedAddress = extract3(address, 0, 16) as bytes<16>;
-    
+
     const rootKey: RootKey = {
       address: this.txn.sender,
       name: name
@@ -288,11 +288,14 @@ export class MetaMerkles extends Contract {
       key: treeTypeKey
     };
 
-    assert(this.roots(rootKey).exists, errs.NO_NAME);
-    assert(this.data(schemaKey).exists, errs.NO_TREE_SCHEMA);
-    assert(this.data(typeKey).exists, errs.NO_TREE_TYPE);
-
-    assert(btoi(this.data(typeKey).value) === type, errs.TYPE_MISMATCH);
+    if (
+      !this.roots(rootKey).exists
+      || !this.data(schemaKey).exists
+      || !this.data(typeKey).exists
+      || btoi(this.data(typeKey).value) !== type
+    ) {
+      return false;
+    }
 
     let hash = leaf;
     for (let i = 0; i < proof.length; i += 1) {
@@ -319,6 +322,7 @@ export class MetaMerkles extends Contract {
     const truncatedAddress = extract3(address, 0, 16) as bytes<16>;
     return this.data({ address: truncatedAddress, name: name, key: key }).value
   }
+
 
   /**
    * Read metadata from box storage and verify the data provided is included
@@ -347,12 +351,46 @@ export class MetaMerkles extends Contract {
     type: uint64,
     key: string,
   ): string {
+    const verified = this.verify(address, name, leaf, proof, type);
+    if (!verified) {
+      return '';
+    }
+    return this.read(address, name, key);
+  }
+
+  /**
+   * Read metadata from box storage and verify the data provided is included
+   * in the merkle tree given a sha256'd 32 byte merkle tree root & a proof
+   * thats pre-computed off chain.
+   * 
+   * verify an inclusion in a merkle tree 
+   * & read an associated key value pair
+   * & check against the underlying data's schema
+   * & check against the underlying data's list type or purpose
+   * 
+   * @param address the address of the merkle tree root creator
+   * @param name the name of the root
+   * @param leaf the leaf node to be verified
+   * @param proof the proof the hash is included
+   * @param key the metadata key eg. `Royalty`
+   * @param type the list type that helps contracts ensure 
+   * the lists purpose isn't being misused ( 0 if the caller doesnt care )
+   * @returns a string of metadata
+   */
+  verifiedMustRead(
+    address: Address,
+    name: string,
+    leaf: bytes32,
+    proof: bytes32[],
+    type: uint64,
+    key: string,
+  ): string {
     assert(this.verify(address, name, leaf, proof, type), errs.FAILED_TO_VERIFY_INCLUSION);
     return this.read(address, name, key);
   }
 
-  addType(pmt: PayTxn, desc: string): void {
-    verifyPayTxn(pmt, {
+  addType(payment: PayTxn, desc: string): void {
+    verifyPayTxn(payment, {
       receiver: this.app.address,
       amount: 100_000_000,
     });
@@ -363,8 +401,8 @@ export class MetaMerkles extends Contract {
     this.typesIndex.value = (this.typesIndex.value + 1);
   }
 
-  addSchema(pmt: PayTxn, desc: string): void {
-    verifyPayTxn(pmt, {
+  addSchema(payment: PayTxn, desc: string): void {
+    verifyPayTxn(payment, {
       receiver: this.app.address,
       amount: 100_000_000,
     });

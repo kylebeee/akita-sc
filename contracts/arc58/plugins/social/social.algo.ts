@@ -12,6 +12,7 @@ import {
     OtherAppIDsAssetInbox,
 } from '../../../../utils/constants';
 import { AkitaSocialImpact } from './impact.algo';
+import { ContractWithGate } from '../../../../utils/base_contracts/gate.algo';
 
 const errs = {
     BANNED: 'This account is banned',
@@ -42,7 +43,7 @@ const errs = {
     ALREADY_REACTED: 'This account already reacted to this post with this NFT',
     WRONG_FOLLOWER_KEY: 'Wrong follower key',
     FEE_TOO_SMALL: 'Fee is too small',
-    DOES_NOT_PASS_GATE: 'Gate check failed to pass',
+    FAILED_GATE: 'Failed gate',
     NOT_DAO: 'Not the DAO',
     ALREADY_A_MODERATOR: 'Already a moderator',
     ALREADY_FLAGGED: 'Already flagged',
@@ -141,7 +142,7 @@ export type MetaValue = {
     addressGateID: uint64;
 }
 
-export class AkitaSocialPlugin extends Contract {
+export class AkitaSocialPlugin extends ContractWithGate {
     programVersion = 10;
 
     /** the current version of the akita social contract */
@@ -353,17 +354,6 @@ export class AkitaSocialPlugin extends Contract {
         return this.blocks({ user: userSplice, blocked: blockedSplice }).exists;
     }
 
-    private gate(gateID: uint64, args: bytes[]): boolean {
-        return sendMethodCall<typeof Gate.prototype.check, boolean>({
-            applicationID: AppID.fromUint64(AkitaAppIDsGate),
-            methodArgs: [
-                gateID,
-                args,
-            ],
-            fee: 0
-        });
-    }
-
     // -------------------------------------------------------------
     // impact private methods --------------------------------------
     // -------------------------------------------------------------
@@ -463,6 +453,7 @@ export class AkitaSocialPlugin extends Contract {
                 []
             ],
             fee: 0,
+            isFirstTxn: true,
         });
 
         const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
@@ -533,6 +524,7 @@ export class AkitaSocialPlugin extends Contract {
                 receiver: AppID.fromUint64(OtherAppIDsAssetInbox).address,
                 amount: (mbr + receiverAlgoNeededForClaim),
                 fee: 0,
+                isFirstTxn: true,
             });
         }
 
@@ -541,7 +533,8 @@ export class AkitaSocialPlugin extends Contract {
                 sender: sender.address,
                 applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
                 methodArgs: [akitaToken.id],
-                fee: 0
+                fee: 0,
+                isFirstTxn: !(mbr || receiverAlgoNeededForClaim),
             });
         }
 
@@ -551,6 +544,7 @@ export class AkitaSocialPlugin extends Contract {
             assetAmount: tax,
             xferAsset: akitaToken,
             fee: 0,
+            isFirstTxn: routerOptedIn && !(mbr || receiverAlgoNeededForClaim)
         });
 
         const reactionFee = this.daoAppID.value.globalState(SOCIAL_REACT_KEY) as uint64;
@@ -585,6 +579,7 @@ export class AkitaSocialPlugin extends Contract {
             assetAmount: tax,
             xferAsset: akitaToken,
             fee: 0,
+            isFirstTxn: true,
         });
 
         const reactionFee = this.daoAppID.value.globalState(SOCIAL_REACT_KEY) as uint64;
@@ -755,7 +750,7 @@ export class AkitaSocialPlugin extends Contract {
         assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED);
 
         if (post.replyGateIndex !== 0) {
-            assert(this.gate(post.replyGateIndex, args), errs.DOES_NOT_PASS_GATE);
+            assert(this.gate(post.replyGateIndex, args), errs.FAILED_GATE);
         }
 
         // update streak before we measure impact
@@ -877,7 +872,7 @@ export class AkitaSocialPlugin extends Contract {
         assert(sender.address.assetBalance(NFT) > 0, errs.USER_DOES_NOT_OWN_NFT);
 
         if (post.reactGateIndex !== 0) {
-            assert(this.gate(post.reactGateIndex, args), errs.DOES_NOT_PASS_GATE);
+            assert(this.gate(post.reactGateIndex, args), errs.FAILED_GATE);
         }
 
         const reactionListKey: ReactionListKey = {
@@ -1014,7 +1009,7 @@ export class AkitaSocialPlugin extends Contract {
             const meta = this.meta(ref).value;
 
             if (meta.addressGateID !== 0) {
-                assert(this.gate(meta.addressGateID, args), errs.DOES_NOT_PASS_GATE);
+                assert(this.gate(meta.addressGateID, args), errs.FAILED_GATE);
             }
         }
 
@@ -1117,7 +1112,7 @@ export class AkitaSocialPlugin extends Contract {
             const meta = this.meta(ref).value;
 
             if (meta.addressGateID !== 0) {
-                assert(this.gate(meta.addressGateID, args), errs.DOES_NOT_PASS_GATE);
+                assert(this.gate(meta.addressGateID, args), errs.FAILED_GATE);
             }
         }
 
@@ -1170,7 +1165,7 @@ export class AkitaSocialPlugin extends Contract {
         const meta = this.meta(address).value;
 
         if (meta.followGateID !== 0) {
-            assert(this.gate(meta.followGateID, args), errs.DOES_NOT_PASS_GATE);
+            assert(this.gate(meta.followGateID, args), errs.FAILED_GATE);
         }
 
         const followerIndex = meta.followerIndex;

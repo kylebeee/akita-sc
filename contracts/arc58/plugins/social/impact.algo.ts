@@ -1,11 +1,11 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { SubscriptionPlugin } from '../subscriptions.algo';
-import { AkitaAppIDsAkitaSocialPlugin, AkitaAppIDsStakingPlugin, AkitaAppIDsSubscriptionPlugin, AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress, OtherAppIDsAkitaRootNFD, OtherAppIDsNFDRegistry } from '../../../../utils/constants';
+import { AkitaAppIDsAkitaSocialPlugin, AkitaAppIDsStakingPlugin, AkitaAppIDsSubscriptions, AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress, OtherAppIDsAkitaRootNFD, OtherAppIDsNFDRegistry } from '../../../../utils/constants';
 import { NFDRegistry } from '../../../../utils/types/nfd_registry';
 
 import { NFD } from '../../../../utils/types/nfd';
 import { AkitaSocialPlugin } from './social.algo';
 import { StakeValue, Staking, STAKING_TYPE_SOFT } from '../../../staking/staking.algo';
+import { Subscriptions } from '../../../subscriptions/subscriptions.algo';
 
 const errs = {
     INVALID_NFD: 'Invalid NFD',
@@ -107,8 +107,8 @@ export class AkitaSocialImpact extends Contract {
     }
 
     private isSubscribed(address: Address, index: uint64): { active: boolean, index: uint64, streak: uint64 } {
-        const info = sendMethodCall<typeof SubscriptionPlugin.prototype.getSubsriptionInfo>({
-            applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin),
+        const info = sendMethodCall<typeof Subscriptions.prototype.getSubsriptionInfo>({
+            applicationID: AppID.fromUint64(AkitaAppIDsSubscriptions),
             methodArgs: [address, index],
             fee: 0,
         });

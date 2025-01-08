@@ -1724,7 +1724,7 @@ init:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:654
+	// contracts/dao/dao.algo.ts:656
 	// assert(this.version.value.length === 0, errs.ALREADY_INITIALIZED)
 	bytec 5 //  "version"
 	app_global_get
@@ -1734,14 +1734,14 @@ init:
 	==
 	assert
 
-	// contracts/dao/dao.algo.ts:655
+	// contracts/dao/dao.algo.ts:657
 	// assert(version !== '', errs.VERSION_CANNOT_BE_EMPTY)
 	frame_dig -1 // version: string
 	bytec 0 //  ""
 	!=
 	assert
 
-	// contracts/dao/dao.algo.ts:657
+	// contracts/dao/dao.algo.ts:659
 	// bones = sendAssetCreation({
 	//             configAssetName: 'Bones',
 	//             configAssetUnitName: 'BONES',
@@ -1759,57 +1759,57 @@ init:
 	intc 8 //  acfg
 	itxn_field TypeEnum
 
-	// contracts/dao/dao.algo.ts:658
+	// contracts/dao/dao.algo.ts:660
 	// configAssetName: 'Bones'
 	pushbytes 0x426f6e6573 // "Bones"
 	itxn_field ConfigAssetName
 
-	// contracts/dao/dao.algo.ts:659
+	// contracts/dao/dao.algo.ts:661
 	// configAssetUnitName: 'BONES'
 	pushbytes 0x424f4e4553 // "BONES"
 	itxn_field ConfigAssetUnitName
 
-	// contracts/dao/dao.algo.ts:660
+	// contracts/dao/dao.algo.ts:662
 	// configAssetTotal: 100_000_000_000_000
 	pushint 100_000_000_000_000
 	itxn_field ConfigAssetTotal
 
-	// contracts/dao/dao.algo.ts:661
+	// contracts/dao/dao.algo.ts:663
 	// configAssetDecimals: 2
 	intc 5 // 2
 	itxn_field ConfigAssetDecimals
 
-	// contracts/dao/dao.algo.ts:662
+	// contracts/dao/dao.algo.ts:664
 	// configAssetManager: this.app.address
 	global CurrentApplicationAddress
 	itxn_field ConfigAssetManager
 
-	// contracts/dao/dao.algo.ts:663
+	// contracts/dao/dao.algo.ts:665
 	// configAssetReserve: this.app.address
 	global CurrentApplicationAddress
 	itxn_field ConfigAssetReserve
 
-	// contracts/dao/dao.algo.ts:664
+	// contracts/dao/dao.algo.ts:666
 	// configAssetFreeze: globals.zeroAddress
 	global ZeroAddress
 	itxn_field ConfigAssetFreeze
 
-	// contracts/dao/dao.algo.ts:665
+	// contracts/dao/dao.algo.ts:667
 	// configAssetClawback: globals.zeroAddress
 	global ZeroAddress
 	itxn_field ConfigAssetClawback
 
-	// contracts/dao/dao.algo.ts:666
+	// contracts/dao/dao.algo.ts:668
 	// configAssetDefaultFrozen: 0
 	intc 0 // 0
 	itxn_field ConfigAssetDefaultFrozen
 
-	// contracts/dao/dao.algo.ts:667
+	// contracts/dao/dao.algo.ts:669
 	// configAssetURL: ''
 	bytec 0 //  ""
 	itxn_field ConfigAssetURL
 
-	// contracts/dao/dao.algo.ts:668
+	// contracts/dao/dao.algo.ts:670
 	// configAssetMetadataHash: ''
 	bytec 0 //  ""
 	itxn_field ConfigAssetMetadataHash
@@ -1823,13 +1823,13 @@ init:
 	itxn CreatedAssetID
 	frame_bury 0 // bones: uint64
 
-	// contracts/dao/dao.algo.ts:671
+	// contracts/dao/dao.algo.ts:673
 	// this.status.value = STATUS_INIT
 	bytec 24 //  "status"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:672
+	// contracts/dao/dao.algo.ts:674
 	// this.version.value = version
 	bytec 5 //  "version"
 	frame_dig -1 // version: string
@@ -1841,19 +1841,19 @@ init:
 	concat
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:673
+	// contracts/dao/dao.algo.ts:675
 	// this.contentPolicy.value = contentPolicy
 	bytec 23 //  "content_policy"
 	frame_dig -2 // contentPolicy: bytes<59>
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:674
+	// contracts/dao/dao.algo.ts:676
 	// this.minimumRewardsImpact.value = minimumRewardsImpact
 	bytec 13 //  "minimum_rewards_impact"
 	frame_dig -3 // minimumRewardsImpact: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:675
+	// contracts/dao/dao.algo.ts:677
 	// this.socialPostFee.value = fees.socialPostFee
 	bytec 21 //  "social_post_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1861,7 +1861,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:676
+	// contracts/dao/dao.algo.ts:678
 	// this.socialReactFee.value = fees.socialReactFee
 	bytec 19 //  "social_react_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1869,7 +1869,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:677
+	// contracts/dao/dao.algo.ts:679
 	// this.stakingPoolCreationFee.value = fees.stakingPoolCreationFee
 	bytec 10 //  "staking_pool_creation_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1877,7 +1877,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:678
+	// contracts/dao/dao.algo.ts:680
 	// this.subscriptionServiceCreationFee.value = fees.subscriptionServiceCreationFee
 	bytec 6 //  "subscription_service_creation_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1885,7 +1885,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:679
+	// contracts/dao/dao.algo.ts:681
 	// this.subscriptionPaymentPercentage.value = fees.subscriptionPaymentPercentage
 	bytec 7 //  "subscription_payment_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1893,7 +1893,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:680
+	// contracts/dao/dao.algo.ts:682
 	// this.subscriptionTriggerPercentage.value = fees.subscriptionTriggerPercentage
 	bytec 8 //  "subscription_trigger_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1901,7 +1901,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:681
+	// contracts/dao/dao.algo.ts:683
 	// this.omnigemSaleFee.value = fees.omnigemSaleFee
 	bytec 20 //  "omnigem_sale_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1909,7 +1909,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:682
+	// contracts/dao/dao.algo.ts:684
 	// this.nftListingCreationFee.value = fees.nftListingCreationFee
 	bytec 11 //  "nft_listing_creation_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1917,7 +1917,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:683
+	// contracts/dao/dao.algo.ts:685
 	// this.nftShuffleCreationFee.value = fees.nftShuffleCreationFee
 	bytec 12 //  "nft_shuffle_creation_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1925,7 +1925,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:684
+	// contracts/dao/dao.algo.ts:686
 	// this.auctionCreationFee.value = fees.auctionCreationFee
 	bytec 15 //  "auction_creation_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1933,7 +1933,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:685
+	// contracts/dao/dao.algo.ts:687
 	// this.hyperSwapOfferFee.value = fees.hyperSwapOfferFee
 	bytec 16 //  "hyper_swap_offer_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1941,7 +1941,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:686
+	// contracts/dao/dao.algo.ts:688
 	// this.krbyPercentage.value = fees.krbyPercentage
 	bytec 22 //  "krby_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1949,7 +1949,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:687
+	// contracts/dao/dao.algo.ts:689
 	// this.moderatorPercentage.value = fees.moderatorPercentage
 	bytec 17 //  "moderator_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1957,31 +1957,31 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:688
+	// contracts/dao/dao.algo.ts:690
 	// this.minimumProposalThreshold.value = minimumProposalThreshold
 	bytec 9 //  "minimum_proposal_threshold"
 	frame_dig -5 // minimumProposalThreshold: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:689
+	// contracts/dao/dao.algo.ts:691
 	// this.minimumVoteThreshold.value = minimumVoteThreshold
 	bytec 14 //  "minimum_vote_threshold"
 	frame_dig -6 // minimumVoteThreshold: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:690
+	// contracts/dao/dao.algo.ts:692
 	// this.bonesID.value = bones
 	bytec 4 //  "bones_id"
 	frame_dig 0 // bones: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:691
+	// contracts/dao/dao.algo.ts:693
 	// this.revocationAddress.value = revocationAddress
 	bytec 18 //  "revocation_address"
 	frame_dig -7 // revocationAddress: Address
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:692
+	// contracts/dao/dao.algo.ts:694
 	// this._proposalID.value = 0
 	bytec 2 //  "proposal_id"
 	intc 0 // 0
@@ -2001,7 +2001,7 @@ init:
 arc58_verifyAuthAddr:
 	proto 0 0
 
-	// contracts/dao/dao.algo.ts:699
+	// contracts/dao/dao.algo.ts:701
 	// assert(this.app.address.authAddr === globals.zeroAddress)
 	global CurrentApplicationAddress
 	acct_params_get AcctAuthAddr
@@ -2053,7 +2053,7 @@ arc58_rekeyToPlugin:
 	bytec 0 // 0x
 	dupn 4
 
-	// contracts/dao/dao.algo.ts:713
+	// contracts/dao/dao.algo.ts:715
 	// globalExists = this.plugins({ application: plugin, allowedCaller: Address.zeroAddress }).exists
 	bytec 1 //  "p"
 	frame_dig -1 // plugin: AppID
@@ -2066,7 +2066,7 @@ arc58_rekeyToPlugin:
 	pop
 	frame_bury 0 // globalExists: bool
 
-	// contracts/dao/dao.algo.ts:714
+	// contracts/dao/dao.algo.ts:716
 	// localExists = this.plugins({ application: plugin, allowedCaller: this.txn.sender }).exists
 	bytec 1 //  "p"
 	frame_dig -1 // plugin: AppID
@@ -2079,24 +2079,24 @@ arc58_rekeyToPlugin:
 	pop
 	frame_bury 1 // localExists: bool
 
-	// contracts/dao/dao.algo.ts:716
+	// contracts/dao/dao.algo.ts:718
 	// globalAllowed = false
 	intc 0 // 0
 	frame_bury 2 // globalAllowed: bool
 
-	// contracts/dao/dao.algo.ts:717
+	// contracts/dao/dao.algo.ts:719
 	// locallyAllowed = false
 	intc 0 // 0
 	frame_bury 3 // locallyAllowed: bool
 
 	// *if22_condition
-	// contracts/dao/dao.algo.ts:719
+	// contracts/dao/dao.algo.ts:721
 	// globalExists
 	frame_dig 0 // globalExists: bool
 	bz *if22_end
 
 	// *if22_consequent
-	// contracts/dao/dao.algo.ts:720
+	// contracts/dao/dao.algo.ts:722
 	// globalAllowed = this.pluginCallAllowed(plugin, Address.zeroAddress)
 	global ZeroAddress
 	frame_dig -1 // plugin: AppID
@@ -2105,13 +2105,13 @@ arc58_rekeyToPlugin:
 
 *if22_end:
 	// *if23_condition
-	// contracts/dao/dao.algo.ts:723
+	// contracts/dao/dao.algo.ts:725
 	// localExists
 	frame_dig 1 // localExists: bool
 	bz *if23_end
 
 	// *if23_consequent
-	// contracts/dao/dao.algo.ts:724
+	// contracts/dao/dao.algo.ts:726
 	// locallyAllowed = this.pluginCallAllowed(plugin, this.txn.sender)
 	txn Sender
 	frame_dig -1 // plugin: AppID
@@ -2120,7 +2120,7 @@ arc58_rekeyToPlugin:
 
 *if23_end:
 	// *if24_condition
-	// contracts/dao/dao.algo.ts:730
+	// contracts/dao/dao.algo.ts:732
 	// (!globalExists && !localExists)
 	//             || (globalExists && !globalAllowed && !locallyAllowed)
 	frame_dig 0 // globalExists: bool
@@ -2155,7 +2155,7 @@ arc58_rekeyToPlugin:
 	bz *if24_elseif1_condition
 
 	// *if24_consequent
-	// contracts/dao/dao.algo.ts:733
+	// contracts/dao/dao.algo.ts:735
 	// this.assertPluginCallAllowed(plugin, Address.zeroAddress)
 	global ZeroAddress
 	frame_dig -1 // plugin: AppID
@@ -2163,7 +2163,7 @@ arc58_rekeyToPlugin:
 	b *if24_end
 
 *if24_elseif1_condition:
-	// contracts/dao/dao.algo.ts:734
+	// contracts/dao/dao.algo.ts:736
 	// localExists && !locallyAllowed && !globalAllowed
 	frame_dig 1 // localExists: bool
 	dup
@@ -2183,14 +2183,14 @@ arc58_rekeyToPlugin:
 	bz *if24_end
 
 	// *if24_elseif1_consequent
-	// contracts/dao/dao.algo.ts:735
+	// contracts/dao/dao.algo.ts:737
 	// this.assertPluginCallAllowed(plugin, this.txn.sender)
 	txn Sender
 	frame_dig -1 // plugin: AppID
 	callsub assertPluginCallAllowed
 
 *if24_end:
-	// contracts/dao/dao.algo.ts:738
+	// contracts/dao/dao.algo.ts:740
 	// used = this.assertValidGroup(plugin, methodOffsets, globalAllowed, locallyAllowed, executionKey)
 	frame_dig -3 // executionKey: bytes<32>
 	frame_dig 3 // locallyAllowed: bool
@@ -2200,7 +2200,7 @@ arc58_rekeyToPlugin:
 	callsub assertValidGroup
 	frame_bury 4 // used: (bool,bool)
 
-	// contracts/dao/dao.algo.ts:740
+	// contracts/dao/dao.algo.ts:742
 	// sendPayment({
 	//             receiver: this.app.address,
 	//             rekeyTo: plugin.address,
@@ -2211,24 +2211,24 @@ arc58_rekeyToPlugin:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/dao/dao.algo.ts:741
+	// contracts/dao/dao.algo.ts:743
 	// receiver: this.app.address
 	global CurrentApplicationAddress
 	itxn_field Receiver
 
-	// contracts/dao/dao.algo.ts:742
+	// contracts/dao/dao.algo.ts:744
 	// rekeyTo: plugin.address
 	frame_dig -1 // plugin: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field RekeyTo
 
-	// contracts/dao/dao.algo.ts:743
+	// contracts/dao/dao.algo.ts:745
 	// note: 'rekeying to plugin app'
 	pushbytes 0x72656b6579696e6720746f20706c7567696e20617070 // "rekeying to plugin app"
 	itxn_field Note
 
-	// contracts/dao/dao.algo.ts:744
+	// contracts/dao/dao.algo.ts:746
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -2237,7 +2237,7 @@ arc58_rekeyToPlugin:
 	itxn_submit
 
 	// *if25_condition
-	// contracts/dao/dao.algo.ts:747
+	// contracts/dao/dao.algo.ts:749
 	// used.global
 	frame_dig 4 // used: (bool,bool)
 	store 255 // full array
@@ -2247,7 +2247,7 @@ arc58_rekeyToPlugin:
 	bz *if25_end
 
 	// *if25_consequent
-	// contracts/dao/dao.algo.ts:748
+	// contracts/dao/dao.algo.ts:750
 	// this.plugins({
 	//                 application: plugin,
 	//                 allowedCaller: Address.zeroAddress
@@ -2282,7 +2282,7 @@ arc58_rekeyToPlugin:
 
 *if25_end:
 	// *if26_condition
-	// contracts/dao/dao.algo.ts:754
+	// contracts/dao/dao.algo.ts:756
 	// used.local
 	frame_dig 4 // used: (bool,bool)
 	store 255 // full array
@@ -2292,7 +2292,7 @@ arc58_rekeyToPlugin:
 	bz *if26_end
 
 	// *if26_consequent
-	// contracts/dao/dao.algo.ts:755
+	// contracts/dao/dao.algo.ts:757
 	// this.plugins({
 	//                 application: plugin,
 	//                 allowedCaller: this.txn.sender
@@ -2346,7 +2346,7 @@ newProposal:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:763
+	// contracts/dao/dao.algo.ts:765
 	// id = this.newProposalID()
 	callsub newProposalID
 	frame_bury 0 // id: uint64
@@ -2366,7 +2366,7 @@ createDailyDisbursement:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:771
+	// contracts/dao/dao.algo.ts:773
 	// bonesAmount = this.app.address.assetBalance(this.bonesID.value)
 	global CurrentApplicationAddress
 	bytec 4 //  "bones_id"
@@ -2392,7 +2392,7 @@ createDailyDisbursement:
 getState:
 	proto 0 1
 
-	// contracts/dao/dao.algo.ts:785
+	// contracts/dao/dao.algo.ts:787
 	// return {
 	//             status: this.status.value,
 	//             version: this.version.value,

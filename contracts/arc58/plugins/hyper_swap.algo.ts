@@ -26,6 +26,7 @@ export class HyperSwapPlugin extends Contract {
             amount: globals.assetOptInMinBalance,
             receiver: this.app.address,
             fee: 0,
+            isFirstTxn: true,
         });
         
         this.pendingGroup.addMethodCall<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin, void>({

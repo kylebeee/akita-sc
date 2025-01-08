@@ -636,7 +636,9 @@ export class AkitaDAO extends Contract {
         }
     }
 
-    createApplication(): void { }
+    createApplication(): void {
+        // TODO: Add the optin plugin immediately
+    }
 
     updateApplication(): void {
 

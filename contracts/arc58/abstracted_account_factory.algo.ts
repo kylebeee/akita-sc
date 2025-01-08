@@ -17,14 +17,16 @@ export class AbstractedAccountFactory extends Contract {
         assert(this.txn.sender === this.app.creator)
     }
 
-    mint(pmt: PayTxn, admin: Address, nickname: string): AppID {
-        assert(pmt.amount === (
+    mint(payment: PayTxn, admin: Address, nickname: string): AppID {
+        
+        verifyPayTxn(payment, {
+            receiver: this.app.address,
+            amount: (
                 300_000 // requires 3 extra pages
                 + (28_500 * AbstractedAccount.schema.global.numUint)
                 + (50_000 * AbstractedAccount.schema.global.numByteSlice)
-            )
-        );
-        assert(pmt.receiver === this.app.address);
+            ),
+        });
 
         sendMethodCall<typeof AbstractedAccount.prototype.createApplication>({
             methodArgs: [
@@ -37,7 +39,7 @@ export class AbstractedAccountFactory extends Contract {
             clearStateProgram: AbstractedAccount.clearProgram(),
             globalNumUint: AbstractedAccount.schema.global.numUint,
             globalNumByteSlice: AbstractedAccount.schema.global.numByteSlice,
-            extraProgramPages: 1,
+            extraProgramPages: 3,
             fee: 0,
         });
 

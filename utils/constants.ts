@@ -23,7 +23,7 @@ export const AkitaAppIDsAkitaMBRPlugin = 0;
 export const AkitaAppIDsNFDPlugin = 0;
 export const AkitaAppIDsOptinPlugin = 0;
 export const AkitaAppIDsStakingPlugin = 0;
-export const AkitaAppIDsSubscriptionPlugin = 0;
+export const AkitaAppIDsSubscriptionsPlugin = 0;
 
 export const AkitaAppIDsDAO = 0;
 
@@ -37,13 +37,14 @@ export const AkitaAppIDsMerkleAssetGate = 0;
 export const AkitaAppIDsNFDGate = 0;
 export const AkitaAppIDsStakingAmountGate = 0;
 export const AkitaAppIDsStakingPowerGate = 0;
-export const AkitaAppIDsSubscriptionGate = 0;
-export const AkitaAppIDsSubscriptionStreakGate = 0;
+export const AkitaAppIDsSubscriptionsGate = 0;
+export const AkitaAppIDsSubscriptionsStreakGate = 0;
 
 export const AkitaAppIDsHyperSwap = 0;
 export const AkitaAppIDsMetaMerkles = 0;
 export const AkitaAppIDsRewards = 0;
 export const AkitaAppIDsStaking = 0;
+export const AkitaAppIDsSubscriptions = 0;
 
 export const AkitaAssetAkita = 0; // 523683256
 export const AkitaAssetBones = 0;

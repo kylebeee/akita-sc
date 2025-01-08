@@ -63,37 +63,37 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 createApplication:
 	proto 7 0
 
-	// contracts/raffle.algo.ts:110
+	// contracts/raffle/raffle.algo.ts:111
 	// this._entryID.value = 0
 	bytec 16 //  "entry_ids"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/raffle.algo.ts:111
+	// contracts/raffle/raffle.algo.ts:112
 	// this._entryCursor.value = 0
 	bytec 3 //  "entry_cursor"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/raffle.algo.ts:112
+	// contracts/raffle/raffle.algo.ts:113
 	// this._entryCursorTotal.value = 0
 	bytec 4 //  "entry_cursor_total"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/raffle.algo.ts:113
+	// contracts/raffle/raffle.algo.ts:114
 	// this.ticketAsset.value = ticketAsset
 	bytec 2 //  "ticket_asset"
 	frame_dig -1 // ticketAsset: AssetID
 	app_global_put
 
-	// contracts/raffle.algo.ts:114
+	// contracts/raffle/raffle.algo.ts:115
 	// this.startingRound.value = startingRound
 	bytec 12 //  "starting_round"
 	frame_dig -2 // startingRound: uint64
 	app_global_put
 
-	// contracts/raffle.algo.ts:115
+	// contracts/raffle/raffle.algo.ts:116
 	// assert(
 	//             endingRound > startingRound
 	//             && endingRound > (globals.round + APPROX_ROUNDS_IN_ONE_HOUR),
@@ -114,61 +114,61 @@ createApplication:
 *skip_and0:
 	assert
 
-	// contracts/raffle.algo.ts:120
+	// contracts/raffle/raffle.algo.ts:121
 	// this.endingRound.value = endingRound
 	bytec 9 //  "ending_round"
 	frame_dig -3 // endingRound: uint64
 	app_global_put
 
-	// contracts/raffle.algo.ts:121
+	// contracts/raffle/raffle.algo.ts:122
 	// this.minTickets.value = minTickets
 	bytec 13 //  "min_tickets"
 	frame_dig -4 // minTickets: uint64
 	app_global_put
 
-	// contracts/raffle.algo.ts:122
+	// contracts/raffle/raffle.algo.ts:123
 	// this.maxTickets.value = maxTickets
 	bytec 14 //  "max_tickets"
 	frame_dig -5 // maxTickets: uint64
 	app_global_put
 
-	// contracts/raffle.algo.ts:123
+	// contracts/raffle/raffle.algo.ts:124
 	// this.entryCount.value = 0
 	bytec 1 //  "entry_count"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/raffle.algo.ts:124
+	// contracts/raffle/raffle.algo.ts:125
 	// this.ticketCount.value = 0
 	bytec 10 //  "ticket_count"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/raffle.algo.ts:125
+	// contracts/raffle/raffle.algo.ts:126
 	// this.winningTicket.value = 0
 	bytec 5 //  "winning_ticket"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/raffle.algo.ts:126
+	// contracts/raffle/raffle.algo.ts:127
 	// this.winningAddress.value = Address.zeroAddress
 	bytec 8 //  "winning_address"
 	global ZeroAddress
 	app_global_put
 
-	// contracts/raffle.algo.ts:127
+	// contracts/raffle/raffle.algo.ts:128
 	// this.prize.value = prize
 	bytec 6 //  "prize"
 	frame_dig -6 // prize: AssetID
 	app_global_put
 
-	// contracts/raffle.algo.ts:128
+	// contracts/raffle/raffle.algo.ts:129
 	// this.prizeAmount.value = prizeAmount
 	bytec 11 //  "prize_amount"
 	frame_dig -7 // prizeAmount: uint64
 	app_global_put
 
-	// contracts/raffle.algo.ts:129
+	// contracts/raffle/raffle.algo.ts:130
 	// this.prizeClaimed.value = false
 	bytec 7 //  "prize_claimed"
 	intc 0 // 0
@@ -190,7 +190,7 @@ createApplication:
 init:
 	proto 0 0
 
-	// contracts/raffle.algo.ts:133
+	// contracts/raffle/raffle.algo.ts:134
 	// assert(this.txn.sender === this.app.creator, errs.CREATOR_ONLY)
 	txn Sender
 	txna Applications 0
@@ -199,7 +199,7 @@ init:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:135
+	// contracts/raffle/raffle.algo.ts:136
 	// this.pendingGroup.addAssetTransfer({
 	//             assetSender: this.app.address,
 	//             assetReceiver: this.app.address,
@@ -210,22 +210,22 @@ init:
 	intc 2 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:136
+	// contracts/raffle/raffle.algo.ts:137
 	// assetSender: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetSender
 
-	// contracts/raffle.algo.ts:137
+	// contracts/raffle/raffle.algo.ts:138
 	// assetReceiver: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetReceiver
 
-	// contracts/raffle.algo.ts:138
+	// contracts/raffle/raffle.algo.ts:139
 	// assetAmount: 0
 	intc 0 // 0
 	itxn_field AssetAmount
 
-	// contracts/raffle.algo.ts:139
+	// contracts/raffle/raffle.algo.ts:140
 	// xferAsset: this.ticketAsset.value
 	bytec 2 //  "ticket_asset"
 	app_global_get
@@ -235,7 +235,7 @@ init:
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/raffle.algo.ts:142
+	// contracts/raffle/raffle.algo.ts:143
 	// this.pendingGroup.addAssetTransfer({
 	//             assetSender: this.app.address,
 	//             assetReceiver: this.app.address,
@@ -246,22 +246,22 @@ init:
 	intc 2 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:143
+	// contracts/raffle/raffle.algo.ts:144
 	// assetSender: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetSender
 
-	// contracts/raffle.algo.ts:144
+	// contracts/raffle/raffle.algo.ts:145
 	// assetReceiver: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetReceiver
 
-	// contracts/raffle.algo.ts:145
+	// contracts/raffle/raffle.algo.ts:146
 	// assetAmount: 0
 	intc 0 // 0
 	itxn_field AssetAmount
 
-	// contracts/raffle.algo.ts:146
+	// contracts/raffle/raffle.algo.ts:147
 	// xferAsset: this.prize.value
 	bytec 6 //  "prize"
 	app_global_get
@@ -271,7 +271,7 @@ init:
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/raffle.algo.ts:149
+	// contracts/raffle/raffle.algo.ts:150
 	// this.pendingGroup.submit()
 	itxn_submit
 	retsub
@@ -311,7 +311,7 @@ init:
 enter:
 	proto 2 0
 
-	// contracts/raffle.algo.ts:153
+	// contracts/raffle/raffle.algo.ts:154
 	// assert(globals.round >= this.startingRound.value, errs.NOT_STARTED)
 	global Round
 	bytec 12 //  "starting_round"
@@ -319,7 +319,7 @@ enter:
 	>=
 	assert
 
-	// contracts/raffle.algo.ts:154
+	// contracts/raffle/raffle.algo.ts:155
 	// assert(globals.round <= this.endingRound.value, errs.ENDED)
 	global Round
 	bytec 9 //  "ending_round"
@@ -327,7 +327,7 @@ enter:
 	<=
 	assert
 
-	// contracts/raffle.algo.ts:156
+	// contracts/raffle/raffle.algo.ts:157
 	// assert(pmt.amount === ENTRY_MBR, errs.INVALID_MBR_AMOUNT)
 	frame_dig -1 // pmt: PayTxn
 	gtxns Amount
@@ -335,7 +335,7 @@ enter:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:157
+	// contracts/raffle/raffle.algo.ts:158
 	// assert(pmt.receiver === this.app.address, errs.INVALID_MBR_RECIPIENT)
 	frame_dig -1 // pmt: PayTxn
 	gtxns Receiver
@@ -343,7 +343,7 @@ enter:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:159
+	// contracts/raffle/raffle.algo.ts:160
 	// assert(xfer.xferAsset === this.ticketAsset.value, errs.INVALID_ASSET)
 	frame_dig -2 // xfer: AssetTransferTxn
 	gtxns XferAsset
@@ -352,7 +352,7 @@ enter:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:160
+	// contracts/raffle/raffle.algo.ts:161
 	// assert(xfer.assetAmount >= this.minTickets.value, errs.BELOW_MIN)
 	frame_dig -2 // xfer: AssetTransferTxn
 	gtxns AssetAmount
@@ -361,7 +361,7 @@ enter:
 	>=
 	assert
 
-	// contracts/raffle.algo.ts:161
+	// contracts/raffle/raffle.algo.ts:162
 	// assert(xfer.assetAmount <= this.maxTickets.value, errs.ABOVE_MAX)
 	frame_dig -2 // xfer: AssetTransferTxn
 	gtxns AssetAmount
@@ -370,7 +370,7 @@ enter:
 	<=
 	assert
 
-	// contracts/raffle.algo.ts:162
+	// contracts/raffle/raffle.algo.ts:163
 	// assert(xfer.assetReceiver === this.app.address, errs.INVALID_RECEIVER)
 	frame_dig -2 // xfer: AssetTransferTxn
 	gtxns AssetReceiver
@@ -378,7 +378,7 @@ enter:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:164
+	// contracts/raffle/raffle.algo.ts:165
 	// assert(!this.entriesByAddress(this.txn.sender).exists, errs.ALREADY_ENTERED)
 	txn Sender
 	box_len
@@ -387,7 +387,7 @@ enter:
 	!
 	assert
 
-	// contracts/raffle.algo.ts:166
+	// contracts/raffle/raffle.algo.ts:167
 	// this.entries(this.entryCount.value).value = this.txn.sender
 	bytec 1 //  "entry_count"
 	app_global_get
@@ -395,7 +395,7 @@ enter:
 	txn Sender
 	box_put
 
-	// contracts/raffle.algo.ts:167
+	// contracts/raffle/raffle.algo.ts:168
 	// this.entriesByAddress(this.txn.sender).value = this.entryCount.value
 	txn Sender
 	bytec 1 //  "entry_count"
@@ -403,7 +403,7 @@ enter:
 	itob
 	box_put
 
-	// contracts/raffle.algo.ts:168
+	// contracts/raffle/raffle.algo.ts:169
 	// this.entryCount.value += 1
 	bytec 1 //  "entry_count"
 	app_global_get
@@ -413,7 +413,7 @@ enter:
 	swap
 	app_global_put
 
-	// contracts/raffle.algo.ts:169
+	// contracts/raffle/raffle.algo.ts:170
 	// this.ticketCount.value += xfer.assetAmount
 	bytec 10 //  "ticket_count"
 	app_global_get
@@ -440,7 +440,7 @@ raffle:
 	bytec 0 // 0x
 	dupn 5
 
-	// contracts/raffle.algo.ts:173
+	// contracts/raffle/raffle.algo.ts:174
 	// roundToUse = (this.endingRound.value + 1)
 	bytec 9 //  "ending_round"
 	app_global_get
@@ -448,7 +448,7 @@ raffle:
 	+
 	frame_bury 0 // roundToUse: uint64
 
-	// contracts/raffle.algo.ts:174
+	// contracts/raffle/raffle.algo.ts:175
 	// assert(globals.round >= (roundToUse + 8), errs.NOT_ENOUGH_TIME)
 	global Round
 	frame_dig 0 // roundToUse: uint64
@@ -457,7 +457,7 @@ raffle:
 	>=
 	assert
 
-	// contracts/raffle.algo.ts:175
+	// contracts/raffle/raffle.algo.ts:176
 	// assert(this.winningTicket.value === 0, errs.ENDED)
 	bytec 5 //  "winning_ticket"
 	app_global_get
@@ -465,7 +465,7 @@ raffle:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:177
+	// contracts/raffle/raffle.algo.ts:178
 	// seed = sendMethodCall<typeof RandomnessBeacon.prototype.get, bytes>({
 	//             applicationID: RANDOMNESS_BEACON_APPID_TESTNET,
 	//             methodArgs: [ roundToUse, this.txn.txID ],
@@ -477,14 +477,14 @@ raffle:
 	pushbytes 0x189392c5 // method "get(uint64,byte[])byte[]"
 	itxn_field ApplicationArgs
 
-	// contracts/raffle.algo.ts:178
+	// contracts/raffle/raffle.algo.ts:179
 	// applicationID: RANDOMNESS_BEACON_APPID_TESTNET
-	// contracts/raffle.algo.ts:27
+	// contracts/raffle/raffle.algo.ts:28
 	// AppID.fromUint64(600011887)
 	pushint 600011887
 	itxn_field ApplicationID
 
-	// contracts/raffle.algo.ts:179
+	// contracts/raffle/raffle.algo.ts:180
 	// methodArgs: [ roundToUse, this.txn.txID ]
 	frame_dig 0 // roundToUse: uint64
 	itob
@@ -498,7 +498,7 @@ raffle:
 	concat
 	itxn_field ApplicationArgs
 
-	// contracts/raffle.algo.ts:180
+	// contracts/raffle/raffle.algo.ts:181
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -513,24 +513,18 @@ raffle:
 	extract 2 0
 	frame_bury 1 // seed: byte[]
 
-	// *if0_condition
-	// contracts/raffle.algo.ts:183
-	// seed.length === 0
+	// contracts/raffle/raffle.algo.ts:184
+	// assert(seed.length > 0, errs.FAILED_TO_GET_SEED)
 	frame_dig 1 // seed: byte[]
 	len
 	intc 0 // 0
-	==
-	bz *if0_end
+	>
+	assert
 
-	// *if0_consequent
-	// contracts/raffle.algo.ts:184
-	// return;
-	retsub
-
-*if0_end:
-	// contracts/raffle.algo.ts:187
-	// rngState = pcg64Init(seed as bytes<16>)
+	// contracts/raffle/raffle.algo.ts:186
+	// rngState = pcg64Init(substring3(seed, 0, 16) as bytes<16>)
 	frame_dig 1 // seed: byte[]
+	substring 0 16
 	pushbytes 0x00000000000000000000000000000000
 	concat
 	dup
@@ -542,25 +536,25 @@ raffle:
 	callsub pcg64Init
 	frame_bury 2 // rngState: (uint64,uint64)
 
-	// contracts/raffle.algo.ts:189
+	// contracts/raffle/raffle.algo.ts:188
 	// upperBound = this.ticketCount.value
 	bytec 10 //  "ticket_count"
 	app_global_get
 	frame_bury 3 // upperBound: uint64
 
-	// *if1_condition
-	// contracts/raffle.algo.ts:190
+	// *if0_condition
+	// contracts/raffle/raffle.algo.ts:189
 	// upperBound < MAX_UINT64
 	frame_dig 3 // upperBound: uint64
 
-	// contracts/raffle.algo.ts:32
+	// contracts/raffle/raffle.algo.ts:33
 	// Uint<64>('18446744073709551615')
 	intc 6 // 18446744073709551615
 	<
-	bz *if1_end
+	bz *if0_end
 
-	// *if1_consequent
-	// contracts/raffle.algo.ts:191
+	// *if0_consequent
+	// contracts/raffle/raffle.algo.ts:190
 	// upperBound = upperBound += 1
 	frame_dig 3 // upperBound: uint64
 	intc 1 // 1
@@ -571,8 +565,8 @@ raffle:
 	load 245 // assignment value
 	frame_bury 3 // upperBound: uint64
 
-*if1_end:
-	// contracts/raffle.algo.ts:194
+*if0_end:
+	// contracts/raffle/raffle.algo.ts:193
 	// rngResult = pcg64Random(rngState, 1, upperBound, 1)
 	intc 1 // 1
 	frame_dig 3 // upperBound: uint64
@@ -581,7 +575,7 @@ raffle:
 	callsub pcg64Random
 	frame_bury 4 // rngResult: ((uint64,uint64),uint64[])
 
-	// contracts/raffle.algo.ts:195
+	// contracts/raffle/raffle.algo.ts:194
 	// winningTicket = rngResult[1][0]
 	frame_dig 4 // rngResult: ((uint64,uint64),uint64[])
 	store 255 // full array
@@ -599,7 +593,7 @@ raffle:
 	btoi
 	frame_bury 5 // winningTicket: uint64
 
-	// contracts/raffle.algo.ts:197
+	// contracts/raffle/raffle.algo.ts:196
 	// this.winningTicket.value = winningTicket
 	bytec 5 //  "winning_ticket"
 	frame_dig 5 // winningTicket: uint64
@@ -621,7 +615,7 @@ findWinner:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/raffle.algo.ts:201
+	// contracts/raffle/raffle.algo.ts:200
 	// assert(this.winningTicket.value > 0, errs.NO_WINNING_TICKET_YET)
 	bytec 5 //  "winning_ticket"
 	app_global_get
@@ -629,12 +623,12 @@ findWinner:
 	>
 	assert
 
-	// contracts/raffle.algo.ts:203
+	// contracts/raffle/raffle.algo.ts:202
 	// groupIndex = 0
 	intc 0 // 0
 	frame_bury 0 // groupIndex: uint64
 
-	// contracts/raffle.algo.ts:204
+	// contracts/raffle/raffle.algo.ts:203
 	// for (
 	//             let i = this._entryCursor.value;
 	//             i < this.entryCount.value || groupIndex === 15;
@@ -645,7 +639,7 @@ findWinner:
 	frame_bury 1 // i: uint64
 
 *for_0:
-	// contracts/raffle.algo.ts:206
+	// contracts/raffle/raffle.algo.ts:205
 	// i < this.entryCount.value || groupIndex === 15
 	frame_dig 1 // i: uint64
 	bytec 1 //  "entry_count"
@@ -661,7 +655,7 @@ findWinner:
 *skip_or0:
 	bz *for_0_end
 
-	// contracts/raffle.algo.ts:209
+	// contracts/raffle/raffle.algo.ts:208
 	// assert(this.entries(i).exists, errs.ENTRY_DOES_NOT_EXIST)
 	frame_dig 1 // i: uint64
 	itob
@@ -670,14 +664,14 @@ findWinner:
 	pop
 	assert
 
-	// contracts/raffle.algo.ts:210
+	// contracts/raffle/raffle.algo.ts:209
 	// groupIndex += 1
 	frame_dig 0 // groupIndex: uint64
 	intc 1 // 1
 	+
 	frame_bury 0 // groupIndex: uint64
 
-	// contracts/raffle.algo.ts:212
+	// contracts/raffle/raffle.algo.ts:211
 	// entryAmount = this.entriesByAddress(this.entries(i).value).value
 	frame_dig 1 // i: uint64
 	itob
@@ -692,7 +686,7 @@ findWinner:
 	btoi
 	frame_bury 2 // entryAmount: uint64
 
-	// contracts/raffle.algo.ts:213
+	// contracts/raffle/raffle.algo.ts:212
 	// isWinner = this._entryCursorTotal.value + entryAmount >= this.winningTicket.value
 	bytec 4 //  "entry_cursor_total"
 	app_global_get
@@ -703,14 +697,14 @@ findWinner:
 	>=
 	frame_bury 3 // isWinner: bool
 
-	// *if2_condition
-	// contracts/raffle.algo.ts:215
+	// *if1_condition
+	// contracts/raffle/raffle.algo.ts:214
 	// isWinner
 	frame_dig 3 // isWinner: bool
-	bz *if2_end
+	bz *if1_end
 
-	// *if2_consequent
-	// contracts/raffle.algo.ts:216
+	// *if1_consequent
+	// contracts/raffle/raffle.algo.ts:215
 	// this.winningAddress.value = this.entries(i).value
 	bytec 8 //  "winning_address"
 	frame_dig 1 // i: uint64
@@ -721,8 +715,8 @@ findWinner:
 	assert
 	app_global_put
 
-*if2_end:
-	// contracts/raffle.algo.ts:219
+*if1_end:
+	// contracts/raffle/raffle.algo.ts:218
 	// this.entriesByAddress(this.entries(i).value).delete()
 	frame_dig 1 // i: uint64
 	itob
@@ -732,13 +726,13 @@ findWinner:
 	assert
 	box_del
 
-	// contracts/raffle.algo.ts:220
+	// contracts/raffle/raffle.algo.ts:219
 	// this.entries(i).delete()
 	frame_dig 1 // i: uint64
 	itob
 	box_del
 
-	// contracts/raffle.algo.ts:223
+	// contracts/raffle/raffle.algo.ts:222
 	// sendPayment({
 	//                 receiver: this.entries(i).value,
 	//                 amount: ENTRY_MBR,
@@ -748,7 +742,7 @@ findWinner:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:224
+	// contracts/raffle/raffle.algo.ts:223
 	// receiver: this.entries(i).value
 	frame_dig 1 // i: uint64
 	itob
@@ -758,12 +752,12 @@ findWinner:
 	assert
 	itxn_field Receiver
 
-	// contracts/raffle.algo.ts:225
+	// contracts/raffle/raffle.algo.ts:224
 	// amount: ENTRY_MBR
 	intc 4 // 37000
 	itxn_field Amount
 
-	// contracts/raffle.algo.ts:226
+	// contracts/raffle/raffle.algo.ts:225
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -771,13 +765,13 @@ findWinner:
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/raffle.algo.ts:229
+	// contracts/raffle/raffle.algo.ts:228
 	// this._entryCursor.value = i
 	bytec 3 //  "entry_cursor"
 	frame_dig 1 // i: uint64
 	app_global_put
 
-	// contracts/raffle.algo.ts:230
+	// contracts/raffle/raffle.algo.ts:229
 	// this._entryCursorTotal.value += entryAmount
 	bytec 4 //  "entry_cursor_total"
 	app_global_get
@@ -788,7 +782,7 @@ findWinner:
 	app_global_put
 
 *for_0_continue:
-	// contracts/raffle.algo.ts:207
+	// contracts/raffle/raffle.algo.ts:206
 	// i += 1
 	frame_dig 1 // i: uint64
 	intc 1 // 1
@@ -810,7 +804,7 @@ findWinner:
 claimPrize:
 	proto 0 0
 
-	// contracts/raffle.algo.ts:235
+	// contracts/raffle/raffle.algo.ts:234
 	// assert(!this.prizeClaimed.value, errs.PRIZE_ALREADY_CLAIMED)
 	bytec 7 //  "prize_claimed"
 	app_global_get
@@ -819,17 +813,17 @@ claimPrize:
 	!
 	assert
 
-	// *if3_condition
-	// contracts/raffle.algo.ts:237
+	// *if2_condition
+	// contracts/raffle/raffle.algo.ts:236
 	// this.prize.value.id === 0
 	bytec 6 //  "prize"
 	app_global_get
 	intc 0 // 0
 	==
-	bz *if3_else
+	bz *if2_else
 
-	// *if3_consequent
-	// contracts/raffle.algo.ts:238
+	// *if2_consequent
+	// contracts/raffle/raffle.algo.ts:237
 	// sendPayment({
 	//                 receiver: this.winningAddress.value,
 	//                 amount: this.prizeAmount.value,
@@ -839,29 +833,29 @@ claimPrize:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:239
+	// contracts/raffle/raffle.algo.ts:238
 	// receiver: this.winningAddress.value
 	bytec 8 //  "winning_address"
 	app_global_get
 	itxn_field Receiver
 
-	// contracts/raffle.algo.ts:240
+	// contracts/raffle/raffle.algo.ts:239
 	// amount: this.prizeAmount.value
 	bytec 11 //  "prize_amount"
 	app_global_get
 	itxn_field Amount
 
-	// contracts/raffle.algo.ts:241
+	// contracts/raffle/raffle.algo.ts:240
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 	// Submit inner transaction
 	itxn_submit
-	b *if3_end
+	b *if2_end
 
-*if3_else:
-	// contracts/raffle.algo.ts:244
+*if2_else:
+	// contracts/raffle/raffle.algo.ts:243
 	// sendAssetTransfer({
 	//                 assetSender: this.app.address,
 	//                 assetReceiver: this.winningAddress.value,
@@ -873,30 +867,30 @@ claimPrize:
 	intc 2 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:245
+	// contracts/raffle/raffle.algo.ts:244
 	// assetSender: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetSender
 
-	// contracts/raffle.algo.ts:246
+	// contracts/raffle/raffle.algo.ts:245
 	// assetReceiver: this.winningAddress.value
 	bytec 8 //  "winning_address"
 	app_global_get
 	itxn_field AssetReceiver
 
-	// contracts/raffle.algo.ts:247
+	// contracts/raffle/raffle.algo.ts:246
 	// assetAmount: this.prizeAmount.value
 	bytec 11 //  "prize_amount"
 	app_global_get
 	itxn_field AssetAmount
 
-	// contracts/raffle.algo.ts:248
+	// contracts/raffle/raffle.algo.ts:247
 	// xferAsset: this.prize.value
 	bytec 6 //  "prize"
 	app_global_get
 	itxn_field XferAsset
 
-	// contracts/raffle.algo.ts:249
+	// contracts/raffle/raffle.algo.ts:248
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -904,8 +898,8 @@ claimPrize:
 	// Submit inner transaction
 	itxn_submit
 
-*if3_end:
-	// contracts/raffle.algo.ts:253
+*if2_end:
+	// contracts/raffle/raffle.algo.ts:252
 	// this.prizeClaimed.value = true
 	bytec 7 //  "prize_claimed"
 	intc 1 // 1
@@ -927,7 +921,7 @@ claimPrize:
 claimTickets:
 	proto 0 0
 
-	// contracts/raffle.algo.ts:257
+	// contracts/raffle/raffle.algo.ts:256
 	// assert(this.txn.sender === this.app.creator, errs.CREATOR_ONLY)
 	txn Sender
 	txna Applications 0
@@ -936,7 +930,7 @@ claimTickets:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:258
+	// contracts/raffle/raffle.algo.ts:257
 	// assert(this.prizeClaimed.value, errs.PRIZE_NOT_CLAIMED)
 	bytec 7 //  "prize_claimed"
 	app_global_get
@@ -944,7 +938,7 @@ claimTickets:
 	getbit
 	assert
 
-	// contracts/raffle.algo.ts:260
+	// contracts/raffle/raffle.algo.ts:259
 	// sendAssetTransfer({
 	//             assetSender: this.app.address,
 	//             assetReceiver: this.app.creator,
@@ -957,19 +951,19 @@ claimTickets:
 	intc 2 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:261
+	// contracts/raffle/raffle.algo.ts:260
 	// assetSender: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetSender
 
-	// contracts/raffle.algo.ts:262
+	// contracts/raffle/raffle.algo.ts:261
 	// assetReceiver: this.app.creator
 	txna Applications 0
 	app_params_get AppCreator
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/raffle.algo.ts:263
+	// contracts/raffle/raffle.algo.ts:262
 	// assetAmount: this.app.address.assetBalance(this.ticketAsset.value)
 	global CurrentApplicationAddress
 	bytec 2 //  "ticket_asset"
@@ -978,20 +972,20 @@ claimTickets:
 	pop
 	itxn_field AssetAmount
 
-	// contracts/raffle.algo.ts:264
+	// contracts/raffle/raffle.algo.ts:263
 	// assetCloseTo: this.app.creator
 	txna Applications 0
 	app_params_get AppCreator
 	pop
 	itxn_field AssetCloseTo
 
-	// contracts/raffle.algo.ts:265
+	// contracts/raffle/raffle.algo.ts:264
 	// xferAsset: this.ticketAsset.value
 	bytec 2 //  "ticket_asset"
 	app_global_get
 	itxn_field XferAsset
 
-	// contracts/raffle.algo.ts:266
+	// contracts/raffle/raffle.algo.ts:265
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1015,7 +1009,7 @@ refund:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/raffle.algo.ts:271
+	// contracts/raffle/raffle.algo.ts:270
 	// assert(this.winningTicket.value === 0, errs.NO_WINNING_TICKET_YET)
 	bytec 5 //  "winning_ticket"
 	app_global_get
@@ -1023,7 +1017,7 @@ refund:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:272
+	// contracts/raffle/raffle.algo.ts:271
 	// assert(globals.round > this.endingRound.value + 1285, errs.NOT_ENOUGH_TIME)
 	global Round
 	bytec 9 //  "ending_round"
@@ -1033,12 +1027,12 @@ refund:
 	>
 	assert
 
-	// contracts/raffle.algo.ts:274
+	// contracts/raffle/raffle.algo.ts:273
 	// groupIndex = 0
 	intc 0 // 0
 	frame_bury 0 // groupIndex: uint64
 
-	// contracts/raffle.algo.ts:275
+	// contracts/raffle/raffle.algo.ts:274
 	// for (
 	//             let i = this._entryCursor.value;
 	//             i < this.entryCount.value || groupIndex === 15;
@@ -1049,7 +1043,7 @@ refund:
 	frame_bury 1 // i: uint64
 
 *for_1:
-	// contracts/raffle.algo.ts:277
+	// contracts/raffle/raffle.algo.ts:276
 	// i < this.entryCount.value || groupIndex === 15
 	frame_dig 1 // i: uint64
 	bytec 1 //  "entry_count"
@@ -1065,7 +1059,7 @@ refund:
 *skip_or1:
 	bz *for_1_end
 
-	// contracts/raffle.algo.ts:280
+	// contracts/raffle/raffle.algo.ts:279
 	// assert(this.entries(i).exists, errs.ENTRY_DOES_NOT_EXIST)
 	frame_dig 1 // i: uint64
 	itob
@@ -1074,14 +1068,14 @@ refund:
 	pop
 	assert
 
-	// contracts/raffle.algo.ts:281
+	// contracts/raffle/raffle.algo.ts:280
 	// groupIndex += 1
 	frame_dig 0 // groupIndex: uint64
 	intc 1 // 1
 	+
 	frame_bury 0 // groupIndex: uint64
 
-	// contracts/raffle.algo.ts:283
+	// contracts/raffle/raffle.algo.ts:282
 	// entryAmount = this.entriesByAddress(this.entries(i).value).value
 	frame_dig 1 // i: uint64
 	itob
@@ -1096,17 +1090,17 @@ refund:
 	btoi
 	frame_bury 2 // entryAmount: uint64
 
-	// *if4_condition
-	// contracts/raffle.algo.ts:285
+	// *if3_condition
+	// contracts/raffle/raffle.algo.ts:284
 	// this.ticketAsset.value.id === 0
 	bytec 2 //  "ticket_asset"
 	app_global_get
 	intc 0 // 0
 	==
-	bz *if4_else
+	bz *if3_else
 
-	// *if4_consequent
-	// contracts/raffle.algo.ts:286
+	// *if3_consequent
+	// contracts/raffle/raffle.algo.ts:285
 	// sendPayment({
 	//                     receiver: this.entries(i).value,
 	//                     amount: ENTRY_MBR + entryAmount,
@@ -1116,7 +1110,7 @@ refund:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:287
+	// contracts/raffle/raffle.algo.ts:286
 	// receiver: this.entries(i).value
 	frame_dig 1 // i: uint64
 	itob
@@ -1126,24 +1120,24 @@ refund:
 	assert
 	itxn_field Receiver
 
-	// contracts/raffle.algo.ts:288
+	// contracts/raffle/raffle.algo.ts:287
 	// amount: ENTRY_MBR + entryAmount
 	intc 4 // 37000
 	frame_dig 2 // entryAmount: uint64
 	+
 	itxn_field Amount
 
-	// contracts/raffle.algo.ts:289
+	// contracts/raffle/raffle.algo.ts:288
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 	// Submit inner transaction
 	itxn_submit
-	b *if4_end
+	b *if3_end
 
-*if4_else:
-	// contracts/raffle.algo.ts:292
+*if3_else:
+	// contracts/raffle/raffle.algo.ts:291
 	// this.pendingGroup.addAssetTransfer({
 	//                     assetSender: this.app.address,
 	//                     assetReceiver: this.entries(i).value,
@@ -1155,12 +1149,12 @@ refund:
 	intc 2 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:293
+	// contracts/raffle/raffle.algo.ts:292
 	// assetSender: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetSender
 
-	// contracts/raffle.algo.ts:294
+	// contracts/raffle/raffle.algo.ts:293
 	// assetReceiver: this.entries(i).value
 	frame_dig 1 // i: uint64
 	itob
@@ -1170,23 +1164,23 @@ refund:
 	assert
 	itxn_field AssetReceiver
 
-	// contracts/raffle.algo.ts:295
+	// contracts/raffle/raffle.algo.ts:294
 	// assetAmount: entryAmount
 	frame_dig 2 // entryAmount: uint64
 	itxn_field AssetAmount
 
-	// contracts/raffle.algo.ts:296
+	// contracts/raffle/raffle.algo.ts:295
 	// xferAsset: this.ticketAsset.value
 	bytec 2 //  "ticket_asset"
 	app_global_get
 	itxn_field XferAsset
 
-	// contracts/raffle.algo.ts:297
+	// contracts/raffle/raffle.algo.ts:296
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/raffle.algo.ts:300
+	// contracts/raffle/raffle.algo.ts:299
 	// this.pendingGroup.addPayment({
 	//                     receiver: this.entries(i).value,
 	//                     amount: ENTRY_MBR,
@@ -1196,7 +1190,7 @@ refund:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:301
+	// contracts/raffle/raffle.algo.ts:300
 	// receiver: this.entries(i).value
 	frame_dig 1 // i: uint64
 	itob
@@ -1206,22 +1200,22 @@ refund:
 	assert
 	itxn_field Receiver
 
-	// contracts/raffle.algo.ts:302
+	// contracts/raffle/raffle.algo.ts:301
 	// amount: ENTRY_MBR
 	intc 4 // 37000
 	itxn_field Amount
 
-	// contracts/raffle.algo.ts:303
+	// contracts/raffle/raffle.algo.ts:302
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/raffle.algo.ts:306
+	// contracts/raffle/raffle.algo.ts:305
 	// this.pendingGroup.submit()
 	itxn_submit
 
-*if4_end:
-	// contracts/raffle.algo.ts:309
+*if3_end:
+	// contracts/raffle/raffle.algo.ts:308
 	// this.entriesByAddress(this.entries(i).value).delete()
 	frame_dig 1 // i: uint64
 	itob
@@ -1231,19 +1225,19 @@ refund:
 	assert
 	box_del
 
-	// contracts/raffle.algo.ts:310
+	// contracts/raffle/raffle.algo.ts:309
 	// this.entries(i).delete()
 	frame_dig 1 // i: uint64
 	itob
 	box_del
 
-	// contracts/raffle.algo.ts:312
+	// contracts/raffle/raffle.algo.ts:311
 	// this._entryCursor.value = i
 	bytec 3 //  "entry_cursor"
 	frame_dig 1 // i: uint64
 	app_global_put
 
-	// contracts/raffle.algo.ts:313
+	// contracts/raffle/raffle.algo.ts:312
 	// this._entryCursorTotal.value += entryAmount
 	bytec 4 //  "entry_cursor_total"
 	app_global_get
@@ -1254,7 +1248,7 @@ refund:
 	app_global_put
 
 *for_1_continue:
-	// contracts/raffle.algo.ts:278
+	// contracts/raffle/raffle.algo.ts:277
 	// i += 1
 	frame_dig 1 // i: uint64
 	intc 1 // 1
@@ -1263,18 +1257,18 @@ refund:
 	b *for_1
 
 *for_1_end:
-	// *if5_condition
-	// contracts/raffle.algo.ts:316
+	// *if4_condition
+	// contracts/raffle/raffle.algo.ts:315
 	// this._entryCursor.value === this.entryCount.value
 	bytec 3 //  "entry_cursor"
 	app_global_get
 	bytec 1 //  "entry_count"
 	app_global_get
 	==
-	bz *if5_end
+	bz *if4_end
 
-	// *if5_consequent
-	// contracts/raffle.algo.ts:317
+	// *if4_consequent
+	// contracts/raffle/raffle.algo.ts:316
 	// this.pendingGroup.addAssetTransfer({
 	//                 assetSender: this.app.address,
 	//                 assetReceiver: this.app.creator,
@@ -1287,19 +1281,19 @@ refund:
 	intc 2 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:318
+	// contracts/raffle/raffle.algo.ts:317
 	// assetSender: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetSender
 
-	// contracts/raffle.algo.ts:319
+	// contracts/raffle/raffle.algo.ts:318
 	// assetReceiver: this.app.creator
 	txna Applications 0
 	app_params_get AppCreator
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/raffle.algo.ts:320
+	// contracts/raffle/raffle.algo.ts:319
 	// assetAmount: this.app.address.assetBalance(this.prize.value)
 	global CurrentApplicationAddress
 	bytec 6 //  "prize"
@@ -1308,25 +1302,25 @@ refund:
 	pop
 	itxn_field AssetAmount
 
-	// contracts/raffle.algo.ts:321
+	// contracts/raffle/raffle.algo.ts:320
 	// assetCloseTo: this.app.creator
 	txna Applications 0
 	app_params_get AppCreator
 	pop
 	itxn_field AssetCloseTo
 
-	// contracts/raffle.algo.ts:322
+	// contracts/raffle/raffle.algo.ts:321
 	// xferAsset: this.prize.value
 	bytec 6 //  "prize"
 	app_global_get
 	itxn_field XferAsset
 
-	// contracts/raffle.algo.ts:323
+	// contracts/raffle/raffle.algo.ts:322
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/raffle.algo.ts:326
+	// contracts/raffle/raffle.algo.ts:325
 	// this.pendingGroup.addPayment({
 	//                 receiver: this.app.creator,
 	//                 amount: this.app.address.balance,
@@ -1337,33 +1331,33 @@ refund:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/raffle.algo.ts:327
+	// contracts/raffle/raffle.algo.ts:326
 	// receiver: this.app.creator
 	txna Applications 0
 	app_params_get AppCreator
 	pop
 	itxn_field Receiver
 
-	// contracts/raffle.algo.ts:328
+	// contracts/raffle/raffle.algo.ts:327
 	// amount: this.app.address.balance
 	global CurrentApplicationAddress
 	acct_params_get AcctBalance
 	pop
 	itxn_field Amount
 
-	// contracts/raffle.algo.ts:329
+	// contracts/raffle/raffle.algo.ts:328
 	// closeRemainderTo: this.app.creator
 	txna Applications 0
 	app_params_get AppCreator
 	pop
 	itxn_field CloseRemainderTo
 
-	// contracts/raffle.algo.ts:330
+	// contracts/raffle/raffle.algo.ts:329
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-*if5_end:
+*if4_end:
 	retsub
 
 // deleteApplication()void
@@ -1377,7 +1371,7 @@ refund:
 deleteApplication:
 	proto 0 0
 
-	// contracts/raffle.algo.ts:336
+	// contracts/raffle/raffle.algo.ts:335
 	// assert(this.txn.sender === this.app.creator, errs.CREATOR_ONLY)
 	txn Sender
 	txna Applications 0
@@ -1386,7 +1380,7 @@ deleteApplication:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:337
+	// contracts/raffle/raffle.algo.ts:336
 	// assert(this._entryCursor.value === this.entryCount.value, errs.BOXES_ARENT_CLEARED)
 	bytec 3 //  "entry_cursor"
 	app_global_get
@@ -1395,7 +1389,7 @@ deleteApplication:
 	==
 	assert
 
-	// contracts/raffle.algo.ts:338
+	// contracts/raffle/raffle.algo.ts:337
 	// assert(this.prizeClaimed.value, errs.PRIZE_NOT_CLAIMED)
 	bytec 7 //  "prize_claimed"
 	app_global_get
@@ -1403,7 +1397,7 @@ deleteApplication:
 	getbit
 	assert
 
-	// contracts/raffle.algo.ts:339
+	// contracts/raffle/raffle.algo.ts:338
 	// assert(this.app.address.assetBalance(this.ticketAsset.value) === 0, errs.TICKETS_NOT_RECLAIMED)
 	global CurrentApplicationAddress
 	bytec 2 //  "ticket_asset"
@@ -1431,7 +1425,7 @@ deleteApplication:
 getState:
 	proto 0 1
 
-	// contracts/raffle.algo.ts:343
+	// contracts/raffle/raffle.algo.ts:342
 	// return {
 	//             entryID: this._entryID.value,
 	//             entryCursor: this._entryCursor.value,
@@ -1562,7 +1556,7 @@ pcg64Random:
 	frame_dig -1 // state: PCG64STATE
 	frame_bury 3 // newState: (uint64,uint64)
 
-	// *if6_condition
+	// *if5_condition
 	// utils/types/lib_pcg/pcg64.algo.ts:35
 	// lowerBound === 0 && upperBound === 0
 	frame_dig -2 // lowerBound: uint64
@@ -1576,9 +1570,9 @@ pcg64Random:
 	&&
 
 *skip_and1:
-	bz *if6_else
+	bz *if5_else
 
-	// *if6_consequent
+	// *if5_consequent
 	// utils/types/lib_pcg/pcg64.algo.ts:36
 	// for (let i = 0; i < length; i = i + 1)
 	intc 0 // 0
@@ -1624,18 +1618,18 @@ pcg64Random:
 	b *for_2
 
 *for_2_end:
-	b *if6_end
+	b *if5_end
 
-*if6_else:
-	// *if7_condition
+*if5_else:
+	// *if6_condition
 	// utils/types/lib_pcg/pcg64.algo.ts:42
 	// upperBound !== 0
 	frame_dig -3 // upperBound: uint64
 	intc 0 // 0
 	!=
-	bz *if7_else
+	bz *if6_else
 
-	// *if7_consequent
+	// *if6_consequent
 	// utils/types/lib_pcg/pcg64.algo.ts:43
 	// assert(upperBound > 1)
 	frame_dig -3 // upperBound: uint64
@@ -1658,9 +1652,9 @@ pcg64Random:
 	frame_dig -2 // lowerBound: uint64
 	-
 	frame_bury 1 // absoluteBound: uint64
-	b *if7_end
+	b *if6_end
 
-*if7_else:
+*if6_else:
 	// utils/types/lib_pcg/pcg64.algo.ts:49
 	// assert(lowerBound < Uint<64>('18446744073709551615'))
 	frame_dig -2 // lowerBound: uint64
@@ -1693,7 +1687,7 @@ pcg64Random:
 	btoi
 	frame_bury 1 // absoluteBound: uint64
 
-*if7_end:
+*if6_end:
 	// utils/types/lib_pcg/pcg64.algo.ts:57
 	// threshold = __uint64Twos(absoluteBound) % absoluteBound
 	frame_dig 1 // absoluteBound: uint64
@@ -1735,7 +1729,7 @@ pcg64Random:
 	extract 0 16
 	frame_bury 3 // newState: (uint64,uint64)
 
-	// *if8_condition
+	// *if7_condition
 	// utils/types/lib_pcg/pcg64.algo.ts:64
 	// stepResult[1] >= threshold
 	frame_dig 7 // stepResult: ((uint64,uint64),uint64)
@@ -1743,9 +1737,9 @@ pcg64Random:
 	btoi
 	frame_dig 2 // threshold: uint64
 	>=
-	bz *if8_end
+	bz *if7_end
 
-	// *if8_consequent
+	// *if7_consequent
 	// utils/types/lib_pcg/pcg64.algo.ts:65
 	// result.push((stepResult[1] % absoluteBound) + lowerBound)
 	frame_dig 0 // result: uint64[]
@@ -1761,7 +1755,7 @@ pcg64Random:
 	frame_bury 0 // result: uint64[]
 	b *while_0_end
 
-*if8_end:
+*if7_end:
 	b *while_0
 
 *while_0_end:
@@ -1777,7 +1771,7 @@ pcg64Random:
 
 *for_3_end:
 
-*if6_end:
+*if5_end:
 	// utils/types/lib_pcg/pcg64.algo.ts:72
 	// return [newState, result];
 	bytec 0 //  initial head

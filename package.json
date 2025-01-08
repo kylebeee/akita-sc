@@ -4,11 +4,8 @@
   "license": "MIT",
   "scripts": {
     "generate-client": "algokit generate client artifacts/ --language typescript  --output clients/{contract_name}Client.ts",
-    "compile-contract": "tealscript contracts/actions/*.algo.ts artifacts/actions && tealscript contracts/arc58/*.algo.ts artifacts/arc58 && tealscript contracts/arc58/plugins/*.algo.ts artifacts/arc58/plugins && tealscript contracts/arc58/plugins/social/*.algo.ts artifacts/arc58/plugins && tealscript contracts/dao/*.algo.ts artifacts/dao && tealscript contracts/gates/*.algo.ts artifacts/gates && tealscript contracts/keys/*.algo.ts artifacts/keys && tealscript contracts/hyper_swap/*.algo.ts artifacts/hyper_swap && tealscript contracts/meta_merkles/*.algo.ts artifacts/meta_merkles && tealscript contracts/rewards/*.algo.ts artifacts/rewards",
-    "generate-components": "algokit-generate-component contracts/artifacts/*.arc32.json contracts/artifacts/components",
-    "compile-raffle": "tealscript contracts/raffle.algo.ts artifacts/raffle",
-    "generate-raffle-client": "algokit generate client artifacts/raffle --language typescript  --output clients/{contract_name}Client.ts",
-    "build-raffle": "npm run compile-raffle && npm run generate-raffle-client",
+    "compile-contract": "tealscript contracts/actions/*.algo.ts artifacts/actions && tealscript contracts/arc58/*.algo.ts artifacts/arc58 && tealscript contracts/arc58/plugins/*.algo.ts artifacts/arc58/plugins && tealscript contracts/arc58/plugins/social/*.algo.ts artifacts/arc58/plugins && tealscript contracts/keys/*.algo.ts artifacts/keys && tealscript contracts/dao/*.algo.ts artifacts/dao && tealscript contracts/gates/*.algo.ts artifacts/gates && tealscript contracts/hyper_swap/*.algo.ts artifacts/hyper_swap && tealscript contracts/meta_merkles/*.algo.ts artifacts/meta_merkles && tealscript contracts/raffle/*.algo.ts artifacts/raffle && tealscript contracts/rewards/*.algo.ts artifacts/rewards && tealscript contracts/staking/*.algo.ts artifacts/staking && tealscript contracts/subscriptions/*.algo.ts artifacts/subscriptions",
+    "generate-components": "algokit-generate-component contracts/artifacts/*.arc32.json contracts/artifacts/components",  
     "build": "npm run compile-contract && npm run generate-client",
     "test": "npm run build && jest --verbose",
     "lint": "eslint . --ext .ts",

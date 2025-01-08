@@ -1,6 +1,6 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { AkitaAppIDsSubscriptionPlugin } from '../../utils/constants';
-import { SubscriptionPlugin } from '../arc58/plugins/subscriptions.algo';
+import { Subscriptions } from '../subscriptions/subscriptions.algo';
+import { AkitaAppIDsSubscriptions } from '../../utils/constants';
 
 const errs = {
     INVALID_ARG_COUNT: 'Invalid number of arguments',
@@ -32,8 +32,8 @@ export class SubscriptionGate extends Contract {
     }
 
     private subscriptionGate(address: Address, merchant: Address, index: uint64): boolean {
-        const info = sendMethodCall<typeof SubscriptionPlugin.prototype.getSubsriptionInfo>({
-            applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin),
+        const info = sendMethodCall<typeof Subscriptions.prototype.getSubsriptionInfo>({
+            applicationID: AppID.fromUint64(AkitaAppIDsSubscriptions),
             methodArgs: [address, index],
             fee: 0,
         });

@@ -31,13 +31,13 @@ newRegistryID:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/gates/subscription_streak.algo.ts:33
+	// contracts/gates/subscription_streak.algo.ts:34
 	// id = this._registryCursor.value
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	frame_bury 0 // id: uint64
 
-	// contracts/gates/subscription_streak.algo.ts:34
+	// contracts/gates/subscription_streak.algo.ts:35
 	// this._registryCursor.value += 1
 	bytec 1 //  "registry_cursor"
 	app_global_get
@@ -47,7 +47,7 @@ newRegistryID:
 	swap
 	app_global_put
 
-	// contracts/gates/subscription_streak.algo.ts:35
+	// contracts/gates/subscription_streak.algo.ts:36
 	// return id;
 	frame_dig 0 // id: uint64
 
@@ -63,9 +63,9 @@ subscriptionStreakGate:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/gates/subscription_streak.algo.ts:39
-	// info = sendMethodCall<typeof SubscriptionPlugin.prototype.getSubsriptionInfo>({
-	//             applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin),
+	// contracts/gates/subscription_streak.algo.ts:40
+	// info = sendMethodCall<typeof Subscriptions.prototype.getSubsriptionInfo>({
+	//             applicationID: AppID.fromUint64(AkitaAppIDsSubscriptions),
 	//             methodArgs: [address, index],
 	//             fee: 0,
 	//         })
@@ -75,12 +75,12 @@ subscriptionStreakGate:
 	pushbytes 0x3362f0b0 // method "getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])"
 	itxn_field ApplicationArgs
 
-	// contracts/gates/subscription_streak.algo.ts:40
-	// applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin)
+	// contracts/gates/subscription_streak.algo.ts:41
+	// applicationID: AppID.fromUint64(AkitaAppIDsSubscriptions)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/gates/subscription_streak.algo.ts:41
+	// contracts/gates/subscription_streak.algo.ts:42
 	// methodArgs: [address, index]
 	frame_dig -1 // address: Address
 	itxn_field ApplicationArgs
@@ -88,7 +88,7 @@ subscriptionStreakGate:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/gates/subscription_streak.algo.ts:42
+	// contracts/gates/subscription_streak.algo.ts:43
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -102,7 +102,7 @@ subscriptionStreakGate:
 	extract 4 0
 	frame_bury 0 // info: (address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])
 
-	// contracts/gates/subscription_streak.algo.ts:46
+	// contracts/gates/subscription_streak.algo.ts:47
 	// toMerchant = info.recipient === merchant
 	frame_dig 0 // info: (address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])
 	store 255 // full array
@@ -112,7 +112,7 @@ subscriptionStreakGate:
 	==
 	frame_bury 1 // toMerchant: bool
 
-	// contracts/gates/subscription_streak.algo.ts:48
+	// contracts/gates/subscription_streak.algo.ts:49
 	// lastWindowStart = globals.latestTimestamp - (
 	//             ((globals.latestTimestamp - info.startDate) % info.interval) + info.interval
 	//         )
@@ -139,7 +139,7 @@ subscriptionStreakGate:
 	-
 	frame_bury 2 // lastWindowStart: uint64
 
-	// contracts/gates/subscription_streak.algo.ts:54
+	// contracts/gates/subscription_streak.algo.ts:55
 	// notStale = info.lastPayment > lastWindowStart
 	frame_dig 0 // info: (address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])
 	store 255 // full array
@@ -151,7 +151,7 @@ subscriptionStreakGate:
 	frame_bury 3 // notStale: bool
 
 	// *if0_condition
-	// contracts/gates/subscription_streak.algo.ts:56
+	// contracts/gates/subscription_streak.algo.ts:57
 	// !(toMerchant && notStale)
 	frame_dig 1 // toMerchant: bool
 	dup
@@ -164,14 +164,14 @@ subscriptionStreakGate:
 	bz *if0_end
 
 	// *if0_consequent
-	// contracts/gates/subscription_streak.algo.ts:57
+	// contracts/gates/subscription_streak.algo.ts:58
 	// return false;
 	intc 0 // 0
 	b *subscriptionStreakGate*return
 
 *if0_end:
 	// *if1_condition
-	// contracts/gates/subscription_streak.algo.ts:60
+	// contracts/gates/subscription_streak.algo.ts:61
 	// op === Equal && info.streak !== streak
 	frame_dig -4 // op: Operator
 	intc 1 // 1
@@ -191,14 +191,14 @@ subscriptionStreakGate:
 	bz *if1_elseif1_condition
 
 	// *if1_consequent
-	// contracts/gates/subscription_streak.algo.ts:61
+	// contracts/gates/subscription_streak.algo.ts:62
 	// return false;
 	intc 0 // 0
 	b *subscriptionStreakGate*return
 	b *if1_end
 
 *if1_elseif1_condition:
-	// contracts/gates/subscription_streak.algo.ts:62
+	// contracts/gates/subscription_streak.algo.ts:63
 	// op === NotEqual && info.streak === streak
 	frame_dig -4 // op: Operator
 	pushint 2
@@ -218,14 +218,14 @@ subscriptionStreakGate:
 	bz *if1_elseif2_condition
 
 	// *if1_elseif1_consequent
-	// contracts/gates/subscription_streak.algo.ts:63
+	// contracts/gates/subscription_streak.algo.ts:64
 	// return false;
 	intc 0 // 0
 	b *subscriptionStreakGate*return
 	b *if1_end
 
 *if1_elseif2_condition:
-	// contracts/gates/subscription_streak.algo.ts:64
+	// contracts/gates/subscription_streak.algo.ts:65
 	// op === LessThan && info.streak >= streak
 	frame_dig -4 // op: Operator
 	pushint 3
@@ -245,14 +245,14 @@ subscriptionStreakGate:
 	bz *if1_elseif3_condition
 
 	// *if1_elseif2_consequent
-	// contracts/gates/subscription_streak.algo.ts:65
+	// contracts/gates/subscription_streak.algo.ts:66
 	// return false;
 	intc 0 // 0
 	b *subscriptionStreakGate*return
 	b *if1_end
 
 *if1_elseif3_condition:
-	// contracts/gates/subscription_streak.algo.ts:66
+	// contracts/gates/subscription_streak.algo.ts:67
 	// op === LessThanOrEqualTo && info.streak > streak
 	frame_dig -4 // op: Operator
 	pushint 4
@@ -272,14 +272,14 @@ subscriptionStreakGate:
 	bz *if1_elseif4_condition
 
 	// *if1_elseif3_consequent
-	// contracts/gates/subscription_streak.algo.ts:67
+	// contracts/gates/subscription_streak.algo.ts:68
 	// return false;
 	intc 0 // 0
 	b *subscriptionStreakGate*return
 	b *if1_end
 
 *if1_elseif4_condition:
-	// contracts/gates/subscription_streak.algo.ts:68
+	// contracts/gates/subscription_streak.algo.ts:69
 	// op === GreaterThan && info.streak <= streak
 	frame_dig -4 // op: Operator
 	pushint 5
@@ -299,14 +299,14 @@ subscriptionStreakGate:
 	bz *if1_elseif5_condition
 
 	// *if1_elseif4_consequent
-	// contracts/gates/subscription_streak.algo.ts:69
+	// contracts/gates/subscription_streak.algo.ts:70
 	// return false;
 	intc 0 // 0
 	b *subscriptionStreakGate*return
 	b *if1_end
 
 *if1_elseif5_condition:
-	// contracts/gates/subscription_streak.algo.ts:70
+	// contracts/gates/subscription_streak.algo.ts:71
 	// op === GreaterThanOrEqualTo && info.streak < streak
 	frame_dig -4 // op: Operator
 	intc 4 // 6
@@ -326,13 +326,13 @@ subscriptionStreakGate:
 	bz *if1_end
 
 	// *if1_elseif5_consequent
-	// contracts/gates/subscription_streak.algo.ts:71
+	// contracts/gates/subscription_streak.algo.ts:72
 	// return false;
 	intc 0 // 0
 	b *subscriptionStreakGate*return
 
 *if1_end:
-	// contracts/gates/subscription_streak.algo.ts:74
+	// contracts/gates/subscription_streak.algo.ts:75
 	// return true;
 	intc 1 // 1
 
@@ -369,50 +369,50 @@ register:
 	bytec 0 // 0x
 	dup
 
-	// contracts/gates/subscription_streak.algo.ts:78
+	// contracts/gates/subscription_streak.algo.ts:79
 	// assert(args.length === RegistryInfoLength, errs.INVALID_ARG_COUNT)
 	frame_dig -1 // args: bytes
 	len
 
-	// contracts/gates/subscription_streak.algo.ts:11
+	// contracts/gates/subscription_streak.algo.ts:12
 	// len<Address>()
 	intc 3 // 32
 
-	// contracts/gates/subscription_streak.algo.ts:11
+	// contracts/gates/subscription_streak.algo.ts:12
 	// len<uint64>()
 	intc 2 // 8
 	+
 
-	// contracts/gates/subscription_streak.algo.ts:11
+	// contracts/gates/subscription_streak.algo.ts:12
 	// len<Operator>()
 	intc 2 // 8
 	+
 
-	// contracts/gates/subscription_streak.algo.ts:11
+	// contracts/gates/subscription_streak.algo.ts:12
 	// len<uint64>()
 	intc 2 // 8
 	+
 	==
 	assert
 
-	// contracts/gates/subscription_streak.algo.ts:79
+	// contracts/gates/subscription_streak.algo.ts:80
 	// params = castBytes<RegistryInfo>(args)
 	frame_dig -1 // args: bytes
 	frame_bury 0 // params: (address,uint64,uint64,uint64)
 
-	// contracts/gates/subscription_streak.algo.ts:80
+	// contracts/gates/subscription_streak.algo.ts:81
 	// id = this.newRegistryID()
 	callsub newRegistryID
 	frame_bury 1 // id: uint64
 
-	// contracts/gates/subscription_streak.algo.ts:81
+	// contracts/gates/subscription_streak.algo.ts:82
 	// this.registry(id).value = params
 	frame_dig 1 // id: uint64
 	itob
 	frame_dig 0 // params: (address,uint64,uint64,uint64)
 	box_put
 
-	// contracts/gates/subscription_streak.algo.ts:82
+	// contracts/gates/subscription_streak.algo.ts:83
 	// return id;
 	frame_dig 1 // id: uint64
 
@@ -451,28 +451,28 @@ check:
 	bytec 0 // 0x
 	dup
 
-	// contracts/gates/subscription_streak.algo.ts:86
+	// contracts/gates/subscription_streak.algo.ts:87
 	// assert(args.length === SubscriptionGateCheckParamsLength, errs.INVALID_ARG_COUNT)
 	frame_dig -1 // args: bytes
 	len
 
-	// contracts/gates/subscription_streak.algo.ts:19
+	// contracts/gates/subscription_streak.algo.ts:20
 	// len<uint64>()
 	intc 2 // 8
 
-	// contracts/gates/subscription_streak.algo.ts:19
+	// contracts/gates/subscription_streak.algo.ts:20
 	// len<Address>()
 	intc 3 // 32
 	+
 	==
 	assert
 
-	// contracts/gates/subscription_streak.algo.ts:87
+	// contracts/gates/subscription_streak.algo.ts:88
 	// params = castBytes<SubscriptionGateCheckParams>(args)
 	frame_dig -1 // args: bytes
 	frame_bury 0 // params: (uint64,address)
 
-	// contracts/gates/subscription_streak.algo.ts:88
+	// contracts/gates/subscription_streak.algo.ts:89
 	// info = this.registry(params.registryIndex).value
 	frame_dig 0 // params: (uint64,address)
 	extract 0 8
@@ -480,12 +480,12 @@ check:
 	itob
 	frame_bury 1 // storage key//info
 
-	// contracts/gates/subscription_streak.algo.ts:89
+	// contracts/gates/subscription_streak.algo.ts:90
 	// return this.subscriptionStreakGate(params.user, info.merchant, info.index, info.op, info.streak);
 	pushint 48 // headOffset
 	intc 2 // 8
 
-	// contracts/gates/subscription_streak.algo.ts:88
+	// contracts/gates/subscription_streak.algo.ts:89
 	// params.registryIndex
 	frame_dig 0 // params: (uint64,address)
 	extract 0 8
@@ -495,12 +495,12 @@ check:
 	box_extract
 	btoi
 
-	// contracts/gates/subscription_streak.algo.ts:89
+	// contracts/gates/subscription_streak.algo.ts:90
 	// info.op
 	pushint 40 // headOffset
 	intc 2 // 8
 
-	// contracts/gates/subscription_streak.algo.ts:88
+	// contracts/gates/subscription_streak.algo.ts:89
 	// params.registryIndex
 	frame_dig 0 // params: (uint64,address)
 	extract 0 8
@@ -510,12 +510,12 @@ check:
 	box_extract
 	btoi
 
-	// contracts/gates/subscription_streak.algo.ts:89
+	// contracts/gates/subscription_streak.algo.ts:90
 	// info.index
 	intc 3 //  headOffset
 	intc 2 // 8
 
-	// contracts/gates/subscription_streak.algo.ts:88
+	// contracts/gates/subscription_streak.algo.ts:89
 	// params.registryIndex
 	frame_dig 0 // params: (uint64,address)
 	extract 0 8
@@ -525,12 +525,12 @@ check:
 	box_extract
 	btoi
 
-	// contracts/gates/subscription_streak.algo.ts:89
+	// contracts/gates/subscription_streak.algo.ts:90
 	// info.merchant
 	intc 0 // 0
 	intc 3 // 32
 
-	// contracts/gates/subscription_streak.algo.ts:88
+	// contracts/gates/subscription_streak.algo.ts:89
 	// params.registryIndex
 	frame_dig 0 // params: (uint64,address)
 	extract 0 8
@@ -539,7 +539,7 @@ check:
 	cover 2
 	box_extract
 
-	// contracts/gates/subscription_streak.algo.ts:89
+	// contracts/gates/subscription_streak.algo.ts:90
 	// params.user
 	frame_dig 0 // params: (uint64,address)
 	extract 8 32

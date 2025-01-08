@@ -64,8 +64,8 @@ subscriptionGate:
 	dupn 3
 
 	// contracts/gates/subscription.algo.ts:35
-	// info = sendMethodCall<typeof SubscriptionPlugin.prototype.getSubsriptionInfo>({
-	//             applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin),
+	// info = sendMethodCall<typeof Subscriptions.prototype.getSubsriptionInfo>({
+	//             applicationID: AppID.fromUint64(AkitaAppIDsSubscriptions),
 	//             methodArgs: [address, index],
 	//             fee: 0,
 	//         })
@@ -76,7 +76,7 @@ subscriptionGate:
 	itxn_field ApplicationArgs
 
 	// contracts/gates/subscription.algo.ts:36
-	// applicationID: AppID.fromUint64(AkitaAppIDsSubscriptionPlugin)
+	// applicationID: AppID.fromUint64(AkitaAppIDsSubscriptions)
 	intc 1 // 0
 	itxn_field ApplicationID
 

@@ -16,23 +16,28 @@
         },
         {
           "name": "root",
-          "type": "byte[32]"
+          "type": "byte[32]",
+          "desc": "the merkle tree root of trades consisting of from address, recipient address, asset id & amount"
         },
         {
           "name": "leaves",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the number of leaves in the tree"
         },
         {
           "name": "participantsRoot",
-          "type": "byte[32]"
+          "type": "byte[32]",
+          "desc": "the merkle tree root of participating addresses"
         },
         {
           "name": "participantLeaves",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the number of leaves in the participant tree"
         },
         {
           "name": "expiration",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the unix timestamp that the offer auto-expires at if it has not been accepted by all participants"
         }
       ],
       "returns": {
@@ -49,11 +54,13 @@
         },
         {
           "name": "id",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the id of the offer being accepted"
         },
         {
           "name": "proof",
-          "type": "byte[32][]"
+          "type": "byte[32][]",
+          "desc": "the bytes32 array proof of inclusion in the participants list"
         }
       ],
       "returns": {
@@ -70,11 +77,13 @@
         },
         {
           "name": "id",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the id of the offer"
         },
         {
           "name": "receiver",
-          "type": "address"
+          "type": "address",
+          "desc": "the recipient in the offer leaf"
         },
         {
           "name": "amount",
@@ -103,23 +112,28 @@
         },
         {
           "name": "id",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the id of the offer"
         },
         {
           "name": "receiver",
-          "type": "address"
+          "type": "address",
+          "desc": "the recipient in the offer leaf"
         },
         {
           "name": "asset",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the asset in the offer leaf"
         },
         {
           "name": "amount",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the amount in the offer leaf"
         },
         {
           "name": "proof",
-          "type": "byte[32][]"
+          "type": "byte[32][]",
+          "desc": "the proof to verify the details are part of the tree"
         }
       ],
       "returns": {
@@ -132,19 +146,23 @@
       "args": [
         {
           "name": "id",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the id of the offer"
         },
         {
           "name": "receiver",
-          "type": "address"
+          "type": "address",
+          "desc": "the recipient abstracted account app id for the address in the leaf"
         },
         {
           "name": "asset",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the asset being transferred"
         },
         {
           "name": "amount",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the amount being transferred"
         }
       ],
       "returns": {
@@ -156,11 +174,13 @@
       "args": [
         {
           "name": "id",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the id of the offer being cancelled"
         },
         {
           "name": "proof",
-          "type": "byte[32][]"
+          "type": "byte[32][]",
+          "desc": "a proof of inclusion in the participants list"
         }
       ],
       "returns": {
@@ -173,23 +193,28 @@
       "args": [
         {
           "name": "id",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the id of the cancelled offer"
         },
         {
           "name": "receiver",
-          "type": "address"
+          "type": "address",
+          "desc": "the receiver of the leaf's swap"
         },
         {
           "name": "asset",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the asset of the leaf's swap"
         },
         {
           "name": "amount",
-          "type": "uint64"
+          "type": "uint64",
+          "desc": "the amount of the leaf's swap"
         },
         {
           "name": "proof",
-          "type": "byte[32][]"
+          "type": "byte[32][]",
+          "desc": "the proof that the leaf is in the tree"
         }
       ],
       "returns": {

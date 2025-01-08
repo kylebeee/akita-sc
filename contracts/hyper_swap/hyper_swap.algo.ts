@@ -1,9 +1,7 @@
 import { Contract } from '@algorandfoundation/tealscript';
 import { MAX_ROOT_BOX_MBR, MAX_SCHEMA_BOX_MBR, MAX_TYPE_BOX_MBR, MetaMerkles } from '../meta_merkles/meta_merkles.algo';
-import { AbstractedAccount } from '../arc58/abstracted_account.algo';
-import { OptInPlugin } from '../arc58/plugins/optin.algo';
 import { arc59GetSendAssetInfoResponse, AssetInbox } from '../../utils/types/asset_inbox';
-import { AkitaAppIDsDAO, AkitaAppIDsMetaMerkles, AkitaAppIDsOptinPlugin, OtherAppIDsAssetInbox } from '../../utils/constants';
+import { AkitaAppIDsDAO, AkitaAppIDsMetaMerkles, OtherAppIDsAssetInbox } from '../../utils/constants';
 
 const errs = {
     OFFER_NAME_TOO_LONG: 'offers name is longer than 12 characters',
@@ -125,6 +123,7 @@ export class HyperSwap extends Contract {
                 receiver: AppID.fromUint64(OtherAppIDsAssetInbox).address,
                 amount: (mbr + receiverAlgoNeededForClaim),
                 fee: 0,
+                isFirstTxn: true,
             });
         }
 
@@ -132,7 +131,8 @@ export class HyperSwap extends Contract {
             this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_optRouterIn, void>({
                 applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
                 methodArgs: [asset.id],
-                fee: 0
+                fee: 0,
+                isFirstTxn: !(mbr || receiverAlgoNeededForClaim),
             });
         }
 
@@ -148,7 +148,8 @@ export class HyperSwap extends Contract {
                 recipient,
                 receiverAlgoNeededForClaim,
             ],
-            fee: 0
+            fee: 0,
+            isFirstTxn: routerOptedIn && !(mbr || receiverAlgoNeededForClaim),
         });
 
         this.pendingGroup.submit();
@@ -157,7 +158,7 @@ export class HyperSwap extends Contract {
     /**
      * Creates a merkle tree based atomic payment/xfer group
      * 
-     * @param sender the account creating the offering
+     * 
      * @param root the merkle tree root of trades consisting of from address, recipient address, asset id & amount
      * @param leaves the number of leaves in the tree
      * @param participantsRoot the merkle tree root of participating addresses
@@ -210,6 +211,7 @@ export class HyperSwap extends Contract {
                 META_MERKLE_TRADE_TYPE
             ],
             fee: 0,
+            isFirstTxn: true,
         });
 
         // add the participants root to the meta merkle contract
@@ -257,7 +259,7 @@ export class HyperSwap extends Contract {
     /**
      * Accepts an offer
      * 
-     * @param sender the account accepting the offering
+     *
      * @param id the id of the offer being accepted
      * @param proof the bytes32 array proof of inclusion in the participants list
      */
@@ -315,7 +317,7 @@ export class HyperSwap extends Contract {
     /**
      * Escrows the assets in the trade for a given leaf in the tree
      * 
-     * @param sender the sender in the offer leaf
+     *
      * @param id the id of the offer
      * @param receiver the recipient in the offer leaf
      * @param asset the asset in the offer leaf
@@ -374,7 +376,7 @@ export class HyperSwap extends Contract {
     /**
      * Escrows the assets in the trade for a given leaf in the tree
      * 
-     * @param sender the sender in the offer leaf
+     *
      * @param id the id of the offer
      * @param receiver the recipient in the offer leaf
      * @param asset the asset in the offer leaf
@@ -459,7 +461,7 @@ export class HyperSwap extends Contract {
     /**
      * Disburses assets for a leaf in the tree, ensuring ordered processing
      * 
-     * @param sender the sender abstracted account app id in the leaf
+     *
      * @param id the id of the offer
      * @param receiver the recipient abstracted account app id for the address in the leaf
      * @param asset the asset being transferred
@@ -497,6 +499,7 @@ export class HyperSwap extends Contract {
                     assetAmount: amount,
                     assetReceiver: receiver,
                     fee: 0,
+                    isFirstTxn: true,
                 });
 
                 let refundAmount = this.hashes({ id: id, hash: hash }).value;
@@ -536,7 +539,7 @@ export class HyperSwap extends Contract {
 
     /**
      * 
-     * @param sender the abstracted account of the user cancelling the swap
+     *
      * @param id the id of the offer being cancelled
      * @param proof a proof of inclusion in the participants list
      */
@@ -568,7 +571,7 @@ export class HyperSwap extends Contract {
     /**
      * Withdraws your assets from a cancelled swap if they're escrowed
      * 
-     * @param sender the abstracted account of the user reclaiming their assets
+     *
      * @param id the id of the cancelled offer
      * @param receiver the receiver of the leaf's swap
      * @param asset the asset of the leaf's swap
@@ -577,16 +580,12 @@ export class HyperSwap extends Contract {
      * @param rekeyBack whether the abstracted account should be rekeyed back at the end
      */
     withdraw(
-        // sender: AppID,
-        // rekeyBack: boolean,
         id: uint64,
         receiver: Address,
         asset: AssetID,
         amount: uint64,
         proof: bytes32[],
     ) {
-        // ensure this contract currently controls the sender
-        // assert(this.controls(sender.address));
         // ensure the offer exists
         assert(this.offers(id).exists);
         const offer = this.offers(id).value;
@@ -630,31 +629,8 @@ export class HyperSwap extends Contract {
                 amount: amount + refundAmount,
                 receiver: this.txn.sender,
                 fee: 0,
-            })
-
-            // if (rekeyBack) {
-            //     this.rekeyBack(sender.address);
-            // }
+            });
         } else {
-            // opt the user back into their asset if necessary
-            // if (!sender.address.isOptedInToAsset(asset) && rekeyBack) {
-            //     this.pendingGroup.addAssetTransfer({
-            //         sender: sender.address,
-            //         xferAsset: asset,
-            //         assetAmount: 0,
-            //         assetReceiver: sender.address,
-            //         rekeyTo: sender.address,
-            //         fee: 0,
-            //     });
-            // } else if (!sender.address.isOptedInToAsset(asset)) {
-            //     this.pendingGroup.addAssetTransfer({
-            //         sender: sender.address,
-            //         xferAsset: asset,
-            //         assetAmount: 0,
-            //         assetReceiver: sender.address,
-            //         fee: 0,
-            //     });
-            // }
             // send the user their asset back
             this.pendingGroup.addAssetTransfer({
                 xferAsset: asset,
