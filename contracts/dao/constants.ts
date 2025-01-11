@@ -1,0 +1,1 @@
+export const AKITA_DAO_VRF_BEACON_APP_ID_KEY: string = 'vrf_beacon_app_id';

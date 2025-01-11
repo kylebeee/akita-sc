@@ -24,51 +24,53 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 	// The requested action is not implemented in this contract. Are you using the correct OnComplete? Did you set your app ID?
 	err
 
-// gate(index: uint64, args: bytes[]): boolean
+// gate(caller: Address, index: uint64, args: bytes[]): boolean
 gate:
-	proto 2 1
+	proto 3 1
 
 	// *if0_condition
-	// contracts/subscriptions/subscriptions.algo.ts:149
+	// utils/base_contracts/gate.algo.ts:10
 	// index === 0
-	frame_dig -1 // index: uint64
+	frame_dig -2 // index: uint64
 	intc 0 // 0
 	==
 	bz *if0_end
 
 	// *if0_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:150
+	// utils/base_contracts/gate.algo.ts:11
 	// return true;
 	intc 1 // 1
 	retsub
 
 *if0_end:
-	// contracts/subscriptions/subscriptions.algo.ts:153
+	// utils/base_contracts/gate.algo.ts:14
 	// return sendMethodCall<typeof Gate.prototype.check, boolean>({
 	//             applicationID: AppID.fromUint64(AkitaAppIDsGate),
-	//             methodArgs: [index, args],
+	//             methodArgs: [caller, index, args],
 	//             fee: 0
 	//         });
 	itxn_begin
 	intc 11 //  appl
 	itxn_field TypeEnum
-	pushbytes 0xb5feb87b // method "check(uint64,byte[][])bool"
+	pushbytes 0x200f7421 // method "check(address,uint64,byte[][])bool"
 	itxn_field ApplicationArgs
 
-	// contracts/subscriptions/subscriptions.algo.ts:154
+	// utils/base_contracts/gate.algo.ts:15
 	// applicationID: AppID.fromUint64(AkitaAppIDsGate)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/subscriptions/subscriptions.algo.ts:155
-	// methodArgs: [index, args]
-	frame_dig -1 // index: uint64
+	// utils/base_contracts/gate.algo.ts:16
+	// methodArgs: [caller, index, args]
+	frame_dig -1 // caller: Address
+	itxn_field ApplicationArgs
+	frame_dig -2 // index: uint64
 	itob
 	itxn_field ApplicationArgs
-	frame_dig -2 // args: bytes[]
+	frame_dig -3 // args: bytes[]
 	itxn_field ApplicationArgs
 
-	// contracts/subscriptions/subscriptions.algo.ts:156
+	// utils/base_contracts/gate.algo.ts:17
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -88,7 +90,7 @@ gate:
 getLatestWindowStart:
 	proto 2 1
 
-	// contracts/subscriptions/subscriptions.algo.ts:161
+	// contracts/subscriptions/subscriptions.algo.ts:148
 	// return globals.latestTimestamp - ((globals.latestTimestamp - startDate) % interval);
 	global LatestTimestamp
 	global LatestTimestamp
@@ -107,7 +109,7 @@ updateStreak:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/subscriptions/subscriptions.algo.ts:165
+	// contracts/subscriptions/subscriptions.algo.ts:152
 	// subKey: SubscriptionKey = { address: sender, index: index }
 	frame_dig -1 // sender: Address
 	frame_dig -2 // index: uint64
@@ -115,12 +117,12 @@ updateStreak:
 	concat
 	frame_bury 0 // subKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:166
+	// contracts/subscriptions/subscriptions.algo.ts:153
 	// sub = this.subscriptions(subKey).value
 	frame_dig 0 // subKey: SubscriptionKey
 	frame_bury 1 // storage key//sub
 
-	// contracts/subscriptions/subscriptions.algo.ts:168
+	// contracts/subscriptions/subscriptions.algo.ts:155
 	// currentWindowStart = this.getLatestWindowStart(sub.startDate, sub.interval)
 	frame_dig 0 // subKey: SubscriptionKey
 	intc 13 //  headOffset
@@ -135,7 +137,7 @@ updateStreak:
 	callsub getLatestWindowStart
 	frame_bury 2 // currentWindowStart: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:169
+	// contracts/subscriptions/subscriptions.algo.ts:156
 	// lastWindowStart = (currentWindowStart - sub.interval)
 	frame_dig 2 // currentWindowStart: uint64
 	frame_dig 0 // subKey: SubscriptionKey
@@ -147,7 +149,7 @@ updateStreak:
 	frame_bury 3 // lastWindowStart: uint64
 
 	// *if1_condition
-	// contracts/subscriptions/subscriptions.algo.ts:171
+	// contracts/subscriptions/subscriptions.algo.ts:158
 	// sub.lastPayment < lastWindowStart
 	frame_dig 0 // subKey: SubscriptionKey
 	intc 9 //  headOffset
@@ -159,7 +161,7 @@ updateStreak:
 	bz *if1_end
 
 	// *if1_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:173
+	// contracts/subscriptions/subscriptions.algo.ts:160
 	// this.subscriptions(subKey).value.streak = elseStreak
 	intc 14 //  headOffset
 	frame_dig -3 // elseStreak: uint64
@@ -168,13 +170,13 @@ updateStreak:
 	cover 2
 	box_replace
 
-	// contracts/subscriptions/subscriptions.algo.ts:174
+	// contracts/subscriptions/subscriptions.algo.ts:161
 	// return;
 	retsub
 
 *if1_end:
 	// *if2_condition
-	// contracts/subscriptions/subscriptions.algo.ts:180
+	// contracts/subscriptions/subscriptions.algo.ts:167
 	// sub.lastPayment >= lastWindowStart && !(sub.lastPayment >= currentWindowStart)
 	frame_dig 0 // subKey: SubscriptionKey
 	intc 9 //  headOffset
@@ -199,7 +201,7 @@ updateStreak:
 	bz *if2_end
 
 	// *if2_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:181
+	// contracts/subscriptions/subscriptions.algo.ts:168
 	// this.subscriptions(subKey).value.streak += 1
 	intc 14 //  headOffset
 	frame_dig 0 // subKey: SubscriptionKey
@@ -217,11 +219,11 @@ updateStreak:
 *if2_end:
 	retsub
 
-// arc58OptIn(recipientAppID: AppID, asset: AssetID): void
-arc58OptIn:
-	proto 2 0
+// arc58OptInAkitaDAO(asset: AssetID): void
+arc58OptInAkitaDAO:
+	proto 1 0
 
-	// contracts/subscriptions/subscriptions.algo.ts:186
+	// contracts/subscriptions/subscriptions.algo.ts:173
 	// this.pendingGroup.addPayment({
 	//             amount: globals.assetOptInMinBalance,
 	//             receiver: this.app.address,
@@ -231,24 +233,24 @@ arc58OptIn:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:187
+	// contracts/subscriptions/subscriptions.algo.ts:174
 	// amount: globals.assetOptInMinBalance
 	global AssetOptInMinBalance
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:188
+	// contracts/subscriptions/subscriptions.algo.ts:175
 	// receiver: this.app.address
 	global CurrentApplicationAddress
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:189
+	// contracts/subscriptions/subscriptions.algo.ts:176
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:192
+	// contracts/subscriptions/subscriptions.algo.ts:179
 	// this.pendingGroup.addMethodCall<typeof AkitaDAO.prototype.arc58_rekeyToPlugin, void>({
-	//             applicationID: recipientAppID,
+	//             applicationID: this.daoAppID.value,
 	//             methodArgs: [
 	//                 AppID.fromUint64(AkitaAppIDsOptinPlugin),
 	//                 [],
@@ -262,12 +264,13 @@ arc58OptIn:
 	pushbytes 0x42089fbe // method "arc58_rekeyToPlugin(uint64,uint64[],byte[32])void"
 	itxn_field ApplicationArgs
 
-	// contracts/subscriptions/subscriptions.algo.ts:193
-	// applicationID: recipientAppID
-	frame_dig -1 // recipientAppID: AppID
+	// contracts/subscriptions/subscriptions.algo.ts:180
+	// applicationID: this.daoAppID.value
+	bytec 2 //  "dao_app_id"
+	app_global_get
 	itxn_field ApplicationID
 
-	// contracts/subscriptions/subscriptions.algo.ts:194
+	// contracts/subscriptions/subscriptions.algo.ts:181
 	// methodArgs: [
 	//                 AppID.fromUint64(AkitaAppIDsOptinPlugin),
 	//                 [],
@@ -280,20 +283,20 @@ arc58OptIn:
 	pushbytes 0x4141414141414141414141414141414141414141414141414141414141414141 // "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 	itxn_field ApplicationArgs
 
-	// contracts/subscriptions/subscriptions.algo.ts:199
+	// contracts/subscriptions/subscriptions.algo.ts:186
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:202
+	// contracts/subscriptions/subscriptions.algo.ts:189
 	// this.pendingGroup.addMethodCall<typeof OptInPlugin.prototype.optInToAsset, void>({
 	//             applicationID: AppID.fromUint64(AkitaAppIDsOptinPlugin),
 	//             methodArgs: [
-	//                 recipientAppID,
+	//                 this.daoAppID.value,
 	//                 true,
 	//                 asset,
 	//                 {
-	//                     receiver: recipientAppID.address,
+	//                     receiver: this.daoAppID.value.address,
 	//                     amount: globals.assetOptInMinBalance,
 	//                     fee: 0,
 	//                 }
@@ -304,19 +307,20 @@ arc58OptIn:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:209
-	// receiver: recipientAppID.address
-	frame_dig -1 // recipientAppID: AppID
+	// contracts/subscriptions/subscriptions.algo.ts:196
+	// receiver: this.daoAppID.value.address
+	bytec 2 //  "dao_app_id"
+	app_global_get
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:210
+	// contracts/subscriptions/subscriptions.algo.ts:197
 	// amount: globals.assetOptInMinBalance
 	global AssetOptInMinBalance
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:211
+	// contracts/subscriptions/subscriptions.algo.ts:198
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -326,23 +330,24 @@ arc58OptIn:
 	pushbytes 0xbfcbeee9 // method "optInToAsset(uint64,bool,uint64,pay)void"
 	itxn_field ApplicationArgs
 
-	// contracts/subscriptions/subscriptions.algo.ts:203
+	// contracts/subscriptions/subscriptions.algo.ts:190
 	// applicationID: AppID.fromUint64(AkitaAppIDsOptinPlugin)
 	intc 0 // 0
 	itxn_field ApplicationID
 
-	// contracts/subscriptions/subscriptions.algo.ts:204
+	// contracts/subscriptions/subscriptions.algo.ts:191
 	// methodArgs: [
-	//                 recipientAppID,
+	//                 this.daoAppID.value,
 	//                 true,
 	//                 asset,
 	//                 {
-	//                     receiver: recipientAppID.address,
+	//                     receiver: this.daoAppID.value.address,
 	//                     amount: globals.assetOptInMinBalance,
 	//                     fee: 0,
 	//                 }
 	//             ]
-	frame_dig -1 // recipientAppID: AppID
+	bytec 2 //  "dao_app_id"
+	app_global_get
 	itob
 	itxn_field ApplicationArgs
 	intc 1 // 1
@@ -351,18 +356,18 @@ arc58OptIn:
 	uncover 2
 	setbit
 	itxn_field ApplicationArgs
-	frame_dig -2 // asset: AssetID
+	frame_dig -1 // asset: AssetID
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/subscriptions/subscriptions.algo.ts:214
+	// contracts/subscriptions/subscriptions.algo.ts:201
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:217
+	// contracts/subscriptions/subscriptions.algo.ts:204
 	// this.pendingGroup.addMethodCall<typeof AbstractedAccount.prototype.arc58_verifyAuthAddr, void>({
-	//             applicationID: recipientAppID,
+	//             applicationID: this.daoAppID.value,
 	//             fee: 0,
 	//         })
 	itxn_next
@@ -371,17 +376,18 @@ arc58OptIn:
 	pushbytes 0x0f885493 // method "arc58_verifyAuthAddr()void"
 	itxn_field ApplicationArgs
 
-	// contracts/subscriptions/subscriptions.algo.ts:218
-	// applicationID: recipientAppID
-	frame_dig -1 // recipientAppID: AppID
+	// contracts/subscriptions/subscriptions.algo.ts:205
+	// applicationID: this.daoAppID.value
+	bytec 2 //  "dao_app_id"
+	app_global_get
 	itxn_field ApplicationID
 
-	// contracts/subscriptions/subscriptions.algo.ts:219
+	// contracts/subscriptions/subscriptions.algo.ts:206
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:222
+	// contracts/subscriptions/subscriptions.algo.ts:209
 	// this.pendingGroup.submit()
 	itxn_submit
 	retsub
@@ -430,7 +436,7 @@ arc58OptIn:
 isBlocked:
 	proto 2 1
 
-	// contracts/subscriptions/subscriptions.algo.ts:232
+	// contracts/subscriptions/subscriptions.algo.ts:219
 	// return this.blocks({ address: merchant, blocked: address }).exists;
 	frame_dig -1 // merchant: Address
 	frame_dig -2 // address: Address
@@ -476,7 +482,7 @@ isBlocked:
 isShutdown:
 	proto 2 1
 
-	// contracts/subscriptions/subscriptions.algo.ts:240
+	// contracts/subscriptions/subscriptions.algo.ts:227
 	// return this.services({ address: merchant, index: boxIndex }).value.status === ServiceStatusShutdown;
 	intc 0 // 0
 	intc 2 // 8
@@ -527,7 +533,7 @@ getSubsriptionInfo:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/subscriptions/subscriptions.algo.ts:245
+	// contracts/subscriptions/subscriptions.algo.ts:232
 	// key: SubscriptionKey = { address: address, index: index }
 	frame_dig -1 // address: Address
 	frame_dig -2 // index: uint64
@@ -535,7 +541,7 @@ getSubsriptionInfo:
 	concat
 	frame_bury 0 // key: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:247
+	// contracts/subscriptions/subscriptions.algo.ts:234
 	// assert(this.subscriptions(key).exists, errs.SUBSCRIPTION_DOES_NOT_EXIST)
 	frame_dig 0 // key: SubscriptionKey
 	box_len
@@ -543,18 +549,18 @@ getSubsriptionInfo:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:249
+	// contracts/subscriptions/subscriptions.algo.ts:236
 	// subInfo = this.subscriptions(key).value
 	frame_dig 0 // key: SubscriptionKey
 	frame_bury 1 // storage key//subInfo
 
-	// contracts/subscriptions/subscriptions.algo.ts:251
+	// contracts/subscriptions/subscriptions.algo.ts:238
 	// passes: Address[] = []
 	bytec 0 // 0x
 	frame_bury 2 // passes: Address[]
 
 	// *if3_condition
-	// contracts/subscriptions/subscriptions.algo.ts:252
+	// contracts/subscriptions/subscriptions.algo.ts:239
 	// this.passes(key).exists
 	bytec 10 //  "p"
 	frame_dig 0 // key: SubscriptionKey
@@ -565,7 +571,7 @@ getSubsriptionInfo:
 	bz *if3_end
 
 	// *if3_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:253
+	// contracts/subscriptions/subscriptions.algo.ts:240
 	// passes = this.passes(key).value
 	bytec 10 //  "p"
 	frame_dig 0 // key: SubscriptionKey
@@ -578,7 +584,7 @@ getSubsriptionInfo:
 	frame_bury 2 // passes: Address[]
 
 *if3_end:
-	// contracts/subscriptions/subscriptions.algo.ts:256
+	// contracts/subscriptions/subscriptions.algo.ts:243
 	// return {
 	//             recipient: subInfo.recipient,
 	//             index: subInfo.index,
@@ -705,7 +711,7 @@ getSubsriptionInfo:
 isFirstSubscription:
 	proto 1 1
 
-	// contracts/subscriptions/subscriptions.algo.ts:272
+	// contracts/subscriptions/subscriptions.algo.ts:259
 	// return !this.subscriptionslist(address).exists;
 	frame_dig -1 // address: Address
 	box_len
@@ -787,13 +793,13 @@ newService:
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/subscriptions/subscriptions.algo.ts:295
+	// contracts/subscriptions/subscriptions.algo.ts:282
 	// index: uint64 = 0
 	intc 0 // 0
 	frame_bury 0 // index: uint64
 
 	// *if4_condition
-	// contracts/subscriptions/subscriptions.algo.ts:296
+	// contracts/subscriptions/subscriptions.algo.ts:283
 	// this.serviceslist(this.txn.sender).exists
 	bytec 6 //  "l"
 	txn Sender
@@ -804,7 +810,7 @@ newService:
 	bz *if4_else
 
 	// *if4_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:297
+	// contracts/subscriptions/subscriptions.algo.ts:284
 	// index = this.serviceslist(this.txn.sender).value
 	bytec 6 //  "l"
 	txn Sender
@@ -816,7 +822,7 @@ newService:
 	btoi
 	frame_bury 0 // index: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:298
+	// contracts/subscriptions/subscriptions.algo.ts:285
 	// this.serviceslist(this.txn.sender).value += 1
 	bytec 6 //  "l"
 	txn Sender
@@ -837,12 +843,12 @@ newService:
 	b *if4_end
 
 *if4_else:
-	// contracts/subscriptions/subscriptions.algo.ts:300
+	// contracts/subscriptions/subscriptions.algo.ts:287
 	// index = 1
 	intc 1 // 1
 	frame_bury 0 // index: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:301
+	// contracts/subscriptions/subscriptions.algo.ts:288
 	// this.serviceslist(this.txn.sender).value = 1
 	bytec 6 //  "l"
 	txn Sender
@@ -851,7 +857,7 @@ newService:
 	box_put
 
 *if4_end:
-	// contracts/subscriptions/subscriptions.algo.ts:304
+	// contracts/subscriptions/subscriptions.algo.ts:291
 	// boxKey: ServicesKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig 0 // index: uint64
@@ -859,28 +865,28 @@ newService:
 	concat
 	frame_bury 1 // boxKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:307
+	// contracts/subscriptions/subscriptions.algo.ts:294
 	// assert(amount > 3, errs.MIN_AMOUNT_IS_THREE)
 	frame_dig -4 // amount: uint64
 	intc 15 // 3
 	>
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:309
+	// contracts/subscriptions/subscriptions.algo.ts:296
 	// assert(interval >= 60, errs.MIN_INTERVAL_IS_SIXTY)
 	frame_dig -2 // interval: uint64
 	intc 16 // 60
 	>=
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:311
+	// contracts/subscriptions/subscriptions.algo.ts:298
 	// assert(passes <= 5, errs.MAX_PASSES_IS_FIVE)
 	frame_dig -5 // passes: uint64
 	pushint 5
 	<=
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:313
+	// contracts/subscriptions/subscriptions.algo.ts:300
 	// serviceCreationFee = this.daoAppID.value.globalState(SUBSCRIPTION_SERVICE_CREATION_FEE) as uint64
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -891,13 +897,13 @@ newService:
 	assert
 	frame_bury 2 // serviceCreationFee: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:315
+	// contracts/subscriptions/subscriptions.algo.ts:302
 	// requiredAmount = serviceCreationFee
 	frame_dig 2 // serviceCreationFee: uint64
 	frame_bury 3 // requiredAmount: uint64
 
 	// *if5_condition
-	// contracts/subscriptions/subscriptions.algo.ts:316
+	// contracts/subscriptions/subscriptions.algo.ts:303
 	// asset.id !== 0
 	frame_dig -3 // asset: AssetID
 	intc 0 // 0
@@ -905,7 +911,7 @@ newService:
 	bz *if5_end
 
 	// *if5_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:317
+	// contracts/subscriptions/subscriptions.algo.ts:304
 	// requiredAmount += globals.assetOptInMinBalance
 	frame_dig 3 // requiredAmount: uint64
 	global AssetOptInMinBalance
@@ -913,7 +919,7 @@ newService:
 	frame_bury 3 // requiredAmount: uint64
 
 *if5_end:
-	// contracts/subscriptions/subscriptions.algo.ts:320
+	// contracts/subscriptions/subscriptions.algo.ts:307
 	// verifyPayTxn(payment, {
 	//             amount: requiredAmount,
 	//             receiver: this.app.address,
@@ -936,7 +942,7 @@ newService:
 	// transaction verification failed: {"txn":"payment","field":"receiver","expected":"this.app.address"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:325
+	// contracts/subscriptions/subscriptions.algo.ts:312
 	// this.services(boxKey).value = {
 	//             status: ServiceStatusPaused,
 	//             interval: interval,
@@ -969,7 +975,7 @@ newService:
 	concat
 	box_put
 
-	// contracts/subscriptions/subscriptions.algo.ts:335
+	// contracts/subscriptions/subscriptions.algo.ts:322
 	// return index;
 	frame_dig 0 // index: uint64
 
@@ -1004,7 +1010,7 @@ pauseService:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/subscriptions/subscriptions.algo.ts:346
+	// contracts/subscriptions/subscriptions.algo.ts:333
 	// boxKey: ServicesKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig -1 // index: uint64
@@ -1012,14 +1018,14 @@ pauseService:
 	concat
 	frame_bury 0 // boxKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:349
+	// contracts/subscriptions/subscriptions.algo.ts:336
 	// assert(index > 0, errs.SERVICE_INDEX_MUST_BE_ABOVE_ZERO)
 	frame_dig -1 // index: uint64
 	intc 0 // 0
 	>
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:351
+	// contracts/subscriptions/subscriptions.algo.ts:338
 	// assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST)
 	bytec 1 //  "s"
 	frame_dig 0 // boxKey: ServicesKey
@@ -1029,7 +1035,7 @@ pauseService:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:353
+	// contracts/subscriptions/subscriptions.algo.ts:340
 	// assert(this.services(boxKey).value.status === ServiceStatusActive, errs.SERVICE_IS_NOT_ACTIVE)
 	intc 0 // 0
 	intc 2 // 8
@@ -1043,7 +1049,7 @@ pauseService:
 	==
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:355
+	// contracts/subscriptions/subscriptions.algo.ts:342
 	// this.services(boxKey).value.status = ServiceStatusPaused
 	intc 0 // 0
 	bytec 4 // 0x0000000000000001
@@ -1076,7 +1082,7 @@ activateService:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/subscriptions/subscriptions.algo.ts:364
+	// contracts/subscriptions/subscriptions.algo.ts:351
 	// boxKey: ServicesKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig -1 // index: uint64
@@ -1084,7 +1090,7 @@ activateService:
 	concat
 	frame_bury 0 // boxKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:367
+	// contracts/subscriptions/subscriptions.algo.ts:354
 	// assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST)
 	bytec 1 //  "s"
 	frame_dig 0 // boxKey: ServicesKey
@@ -1094,7 +1100,7 @@ activateService:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:369
+	// contracts/subscriptions/subscriptions.algo.ts:356
 	// assert(this.services(boxKey).value.status === ServiceStatusPaused, errs.SERVICE_IS_NOT_PAUSED)
 	intc 0 // 0
 	intc 2 // 8
@@ -1108,7 +1114,7 @@ activateService:
 	==
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:371
+	// contracts/subscriptions/subscriptions.algo.ts:358
 	// this.services(boxKey).value.status = ServiceStatusActive
 	intc 0 // 0
 	bytec 3 // 0x0000000000000000
@@ -1141,7 +1147,7 @@ shutdownService:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/subscriptions/subscriptions.algo.ts:380
+	// contracts/subscriptions/subscriptions.algo.ts:367
 	// boxKey: ServicesKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig -1 // index: uint64
@@ -1149,7 +1155,7 @@ shutdownService:
 	concat
 	frame_bury 0 // boxKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:382
+	// contracts/subscriptions/subscriptions.algo.ts:369
 	// assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST)
 	bytec 1 //  "s"
 	frame_dig 0 // boxKey: ServicesKey
@@ -1159,7 +1165,7 @@ shutdownService:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:384
+	// contracts/subscriptions/subscriptions.algo.ts:371
 	// assert(this.services(boxKey).value.status !== ServiceStatusShutdown, errs.SERVICE_IS_SHUTDOWN)
 	intc 0 // 0
 	intc 2 // 8
@@ -1173,7 +1179,7 @@ shutdownService:
 	!=
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:386
+	// contracts/subscriptions/subscriptions.algo.ts:373
 	// this.services(boxKey).value.status = ServiceStatusShutdown
 	intc 0 // 0
 	pushbytes 0x0000000000000002
@@ -1224,14 +1230,14 @@ block:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/subscriptions/subscriptions.algo.ts:395
+	// contracts/subscriptions/subscriptions.algo.ts:382
 	// boxKey: BlockListKey = { address: this.txn.sender, blocked: address }
 	txn Sender
 	frame_dig -2 // address: Address
 	concat
 	frame_bury 0 // boxKey: BlockListKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:398
+	// contracts/subscriptions/subscriptions.algo.ts:385
 	// assert(!this.blocks(boxKey).exists, errs.USER_ALREADY_BLOCKED)
 	frame_dig 0 // boxKey: BlockListKey
 	box_len
@@ -1240,7 +1246,7 @@ block:
 	!
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:401
+	// contracts/subscriptions/subscriptions.algo.ts:388
 	// verifyPayTxn(payment, {
 	//             receiver: this.app.address,
 	//             amount: blockMBR,
@@ -1263,7 +1269,7 @@ block:
 	// transaction verification failed: {"txn":"payment","field":"amount","expected":"blockMBR"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:406
+	// contracts/subscriptions/subscriptions.algo.ts:393
 	// this.blocks(boxKey).create(0)
 	frame_dig 0 // boxKey: BlockListKey
 	intc 0 // 0
@@ -1298,14 +1304,14 @@ unblock:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/subscriptions/subscriptions.algo.ts:414
+	// contracts/subscriptions/subscriptions.algo.ts:401
 	// boxKey: BlockListKey = { address: this.txn.sender, blocked: address }
 	txn Sender
 	frame_dig -1 // address: Address
 	concat
 	frame_bury 0 // boxKey: BlockListKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:417
+	// contracts/subscriptions/subscriptions.algo.ts:404
 	// assert(this.blocks(boxKey).exists, errs.USER_NOT_BLOCKED)
 	frame_dig 0 // boxKey: BlockListKey
 	box_len
@@ -1313,12 +1319,12 @@ unblock:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:419
+	// contracts/subscriptions/subscriptions.algo.ts:406
 	// this.blocks(boxKey).delete()
 	frame_dig 0 // boxKey: BlockListKey
 	box_del
 
-	// contracts/subscriptions/subscriptions.algo.ts:421
+	// contracts/subscriptions/subscriptions.algo.ts:408
 	// sendPayment({
 	//             receiver: this.txn.sender,
 	//             amount: blockMBR,
@@ -1328,17 +1334,17 @@ unblock:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:422
+	// contracts/subscriptions/subscriptions.algo.ts:409
 	// receiver: this.txn.sender
 	txn Sender
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:423
+	// contracts/subscriptions/subscriptions.algo.ts:410
 	// amount: blockMBR
 	intc 18 // 28100
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:424
+	// contracts/subscriptions/subscriptions.algo.ts:411
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1399,28 +1405,28 @@ subscribe:
 	bytec 0 // 0x
 	dupn 12
 
-	// contracts/subscriptions/subscriptions.algo.ts:437
+	// contracts/subscriptions/subscriptions.algo.ts:424
 	// assert(amount > 3, errs.MIN_AMOUNT_IS_THREE)
 	frame_dig -3 // amount: uint64
 	intc 15 // 3
 	>
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:439
+	// contracts/subscriptions/subscriptions.algo.ts:426
 	// assert(interval >= 60, errs.MIN_INTERVAL_IS_SIXTY)
 	frame_dig -4 // interval: uint64
 	intc 16 // 60
 	>=
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:441
+	// contracts/subscriptions/subscriptions.algo.ts:428
 	// blocksKey: BlockListKey = { address: recipient, blocked: this.txn.sender }
 	frame_dig -2 // recipient: Address
 	txn Sender
 	concat
 	frame_bury 0 // blocksKey: BlockListKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:443
+	// contracts/subscriptions/subscriptions.algo.ts:430
 	// assert(!this.blocks(blocksKey).exists, errs.BLOCKED)
 	frame_dig 0 // blocksKey: BlockListKey
 	box_len
@@ -1429,12 +1435,12 @@ subscribe:
 	!
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:445
+	// contracts/subscriptions/subscriptions.algo.ts:432
 	// gate = 0
 	intc 0 // 0
 	frame_bury 1 // gate: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:447
+	// contracts/subscriptions/subscriptions.algo.ts:434
 	// isDonation = index === 0
 	frame_dig -5 // index: uint64
 	intc 0 // 0
@@ -1442,14 +1448,14 @@ subscribe:
 	frame_bury 2 // isDonation: bool
 
 	// *if6_condition
-	// contracts/subscriptions/subscriptions.algo.ts:448
+	// contracts/subscriptions/subscriptions.algo.ts:435
 	// !isDonation
 	frame_dig 2 // isDonation: bool
 	!
 	bz *if6_end
 
 	// *if6_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:449
+	// contracts/subscriptions/subscriptions.algo.ts:436
 	// boxKey: ServicesKey = { address: recipient, index: index }
 	frame_dig -2 // recipient: Address
 	frame_dig -5 // index: uint64
@@ -1457,7 +1463,7 @@ subscribe:
 	concat
 	frame_bury 3 // boxKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:451
+	// contracts/subscriptions/subscriptions.algo.ts:438
 	// assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST)
 	bytec 1 //  "s"
 	frame_dig 3 // boxKey: ServicesKey
@@ -1467,14 +1473,14 @@ subscribe:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:453
+	// contracts/subscriptions/subscriptions.algo.ts:440
 	// service = this.services(boxKey).value
 	bytec 1 //  "s"
 	frame_dig 3 // boxKey: ServicesKey
 	concat
 	frame_bury 4 // storage key//service
 
-	// contracts/subscriptions/subscriptions.algo.ts:455
+	// contracts/subscriptions/subscriptions.algo.ts:442
 	// assert(service.status === ServiceStatusActive, errs.SERVICE_IS_NOT_ACTIVE)
 	intc 0 // 0
 	intc 2 // 8
@@ -1488,7 +1494,7 @@ subscribe:
 	==
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:457
+	// contracts/subscriptions/subscriptions.algo.ts:444
 	// assert(service.asset.id === 0, errs.ASA_MISMATCH)
 	intc 20 //  headOffset
 	intc 2 // 8
@@ -1502,8 +1508,8 @@ subscribe:
 	==
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:459
-	// assert(this.gate(service.gate, args), errs.FAILED_GATE)
+	// contracts/subscriptions/subscriptions.algo.ts:446
+	// assert(this.gate(this.txn.sender, service.gate, args), errs.FAILED_GATE)
 	frame_dig -6 // args: bytes[]
 	intc 6 //  headOffset
 	intc 2 // 8
@@ -1513,10 +1519,11 @@ subscribe:
 	cover 2
 	box_extract
 	btoi
+	txn Sender
 	callsub gate
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:461
+	// contracts/subscriptions/subscriptions.algo.ts:448
 	// amount = service.amount
 	intc 21 //  headOffset
 	intc 2 // 8
@@ -1528,7 +1535,7 @@ subscribe:
 	btoi
 	frame_bury -3 // amount: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:462
+	// contracts/subscriptions/subscriptions.algo.ts:449
 	// interval = service.interval
 	intc 2 //  headOffset
 	intc 2 // 8
@@ -1540,7 +1547,7 @@ subscribe:
 	btoi
 	frame_bury -4 // interval: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:463
+	// contracts/subscriptions/subscriptions.algo.ts:450
 	// gate = service.gate
 	intc 6 //  headOffset
 	intc 2 // 8
@@ -1553,17 +1560,17 @@ subscribe:
 	frame_bury 1 // gate: uint64
 
 *if6_end:
-	// contracts/subscriptions/subscriptions.algo.ts:466
+	// contracts/subscriptions/subscriptions.algo.ts:453
 	// algoMBRFee = subscriptionsMBR
 	intc 19 // 53700
 	frame_bury 5 // algoMBRFee: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:467
+	// contracts/subscriptions/subscriptions.algo.ts:454
 	// subIndex = 0
 	intc 0 // 0
 	frame_bury 6 // subIndex: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:469
+	// contracts/subscriptions/subscriptions.algo.ts:456
 	// firstSubscription = this.subscriptionslist(this.txn.sender).exists
 	txn Sender
 	box_len
@@ -1572,19 +1579,19 @@ subscribe:
 	frame_bury 7 // firstSubscription: bool
 
 	// *if7_condition
-	// contracts/subscriptions/subscriptions.algo.ts:470
+	// contracts/subscriptions/subscriptions.algo.ts:457
 	// firstSubscription
 	frame_dig 7 // firstSubscription: bool
 	bz *if7_else
 
 	// *if7_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:471
+	// contracts/subscriptions/subscriptions.algo.ts:458
 	// this.subscriptionslist(this.txn.sender).value = 0
 	txn Sender
 	bytec 3 // 0x0000000000000000
 	box_put
 
-	// contracts/subscriptions/subscriptions.algo.ts:472
+	// contracts/subscriptions/subscriptions.algo.ts:459
 	// algoMBRFee += subscriptionsListMBR
 	frame_dig 5 // algoMBRFee: uint64
 	intc 17 // 18500
@@ -1593,7 +1600,7 @@ subscribe:
 	b *if7_end
 
 *if7_else:
-	// contracts/subscriptions/subscriptions.algo.ts:474
+	// contracts/subscriptions/subscriptions.algo.ts:461
 	// this.subscriptionslist(this.txn.sender).value += 1
 	txn Sender
 	box_get
@@ -1608,7 +1615,7 @@ subscribe:
 	itob
 	box_put
 
-	// contracts/subscriptions/subscriptions.algo.ts:475
+	// contracts/subscriptions/subscriptions.algo.ts:462
 	// subIndex = this.subscriptionslist(this.txn.sender).value
 	txn Sender
 	box_get
@@ -1619,7 +1626,7 @@ subscribe:
 	frame_bury 6 // subIndex: uint64
 
 *if7_end:
-	// contracts/subscriptions/subscriptions.algo.ts:478
+	// contracts/subscriptions/subscriptions.algo.ts:465
 	// subscriptionKey: SubscriptionKey = { address: this.txn.sender, index: subIndex }
 	txn Sender
 	frame_dig 6 // subIndex: uint64
@@ -1627,7 +1634,7 @@ subscribe:
 	concat
 	frame_bury 8 // subscriptionKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:480
+	// contracts/subscriptions/subscriptions.algo.ts:467
 	// this.subscriptions(subscriptionKey).value = {
 	//             recipient: recipient,
 	//             index: index,
@@ -1668,7 +1675,7 @@ subscribe:
 	concat
 	box_put
 
-	// contracts/subscriptions/subscriptions.algo.ts:493
+	// contracts/subscriptions/subscriptions.algo.ts:480
 	// akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -1679,7 +1686,7 @@ subscribe:
 	assert
 	frame_bury 9 // akitaPercentage: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:494
+	// contracts/subscriptions/subscriptions.algo.ts:481
 	// triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -1690,7 +1697,7 @@ subscribe:
 	assert
 	frame_bury 10 // triggerPercentage: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:495
+	// contracts/subscriptions/subscriptions.algo.ts:482
 	// initialFee = (amount * (akitaPercentage + triggerPercentage) - 1) / 1000 + 1
 	frame_dig -3 // amount: uint64
 	frame_dig 9 // akitaPercentage: uint64
@@ -1705,14 +1712,14 @@ subscribe:
 	+
 	frame_bury 11 // initialFee: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:496
+	// contracts/subscriptions/subscriptions.algo.ts:483
 	// leftOver = amount - (initialFee)
 	frame_dig -3 // amount: uint64
 	frame_dig 11 // initialFee: uint64
 	-
 	frame_bury 12 // leftOver: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:498
+	// contracts/subscriptions/subscriptions.algo.ts:485
 	// verifyPayTxn(payment, {
 	//             receiver: this.app.address,
 	//             amount: {
@@ -1739,7 +1746,7 @@ subscribe:
 	// transaction verification failed: {"txn":"payment","field":"amount","condition":"greaterThanEqualTo","expected":">=(amount + algoMBRFee)"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:505
+	// contracts/subscriptions/subscriptions.algo.ts:492
 	// this.pendingGroup.addPayment({
 	//             receiver: this.daoAppID.value.address,
 	//             amount: initialFee,
@@ -1749,7 +1756,7 @@ subscribe:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:506
+	// contracts/subscriptions/subscriptions.algo.ts:493
 	// receiver: this.daoAppID.value.address
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -1757,17 +1764,17 @@ subscribe:
 	pop
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:507
+	// contracts/subscriptions/subscriptions.algo.ts:494
 	// amount: initialFee
 	frame_dig 11 // initialFee: uint64
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:508
+	// contracts/subscriptions/subscriptions.algo.ts:495
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:511
+	// contracts/subscriptions/subscriptions.algo.ts:498
 	// this.pendingGroup.addPayment({
 	//             receiver: recipient,
 	//             amount: leftOver,
@@ -1777,22 +1784,22 @@ subscribe:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:512
+	// contracts/subscriptions/subscriptions.algo.ts:499
 	// receiver: recipient
 	frame_dig -2 // recipient: Address
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:513
+	// contracts/subscriptions/subscriptions.algo.ts:500
 	// amount: leftOver
 	frame_dig 12 // leftOver: uint64
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:514
+	// contracts/subscriptions/subscriptions.algo.ts:501
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:517
+	// contracts/subscriptions/subscriptions.algo.ts:504
 	// this.pendingGroup.submit()
 	itxn_submit
 	retsub
@@ -1824,7 +1831,7 @@ subscribe:
 optin:
 	proto 2 0
 
-	// contracts/subscriptions/subscriptions.algo.ts:522
+	// contracts/subscriptions/subscriptions.algo.ts:509
 	// assert(!this.app.address.isOptedInToAsset(asset), errs.ALREADY_OPTED_IN)
 	global CurrentApplicationAddress
 	frame_dig -2 // asset: AssetID
@@ -1834,7 +1841,7 @@ optin:
 	!
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:524
+	// contracts/subscriptions/subscriptions.algo.ts:511
 	// verifyPayTxn(payment, {
 	//             receiver: this.app.address,
 	//             amount: globals.assetOptInMinBalance,
@@ -1857,7 +1864,7 @@ optin:
 	// transaction verification failed: {"txn":"payment","field":"amount","expected":"globals.assetOptInMinBalance"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:529
+	// contracts/subscriptions/subscriptions.algo.ts:516
 	// sendAssetTransfer({
 	//             assetReceiver: this.app.address,
 	//             xferAsset: asset,
@@ -1868,22 +1875,22 @@ optin:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:530
+	// contracts/subscriptions/subscriptions.algo.ts:517
 	// assetReceiver: this.app.address
 	global CurrentApplicationAddress
 	itxn_field AssetReceiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:531
+	// contracts/subscriptions/subscriptions.algo.ts:518
 	// xferAsset: asset
 	frame_dig -2 // asset: AssetID
 	itxn_field XferAsset
 
-	// contracts/subscriptions/subscriptions.algo.ts:532
+	// contracts/subscriptions/subscriptions.algo.ts:519
 	// assetAmount: 0
 	intc 0 // 0
 	itxn_field AssetAmount
 
-	// contracts/subscriptions/subscriptions.algo.ts:533
+	// contracts/subscriptions/subscriptions.algo.ts:520
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1956,28 +1963,28 @@ subscribeAsa:
 	bytec 0 // 0x
 	dupn 12
 
-	// contracts/subscriptions/subscriptions.algo.ts:547
+	// contracts/subscriptions/subscriptions.algo.ts:534
 	// assert(amount > 3, errs.MIN_AMOUNT_IS_THREE)
 	frame_dig -4 // amount: uint64
 	intc 15 // 3
 	>
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:549
+	// contracts/subscriptions/subscriptions.algo.ts:536
 	// assert(interval >= 60, errs.MIN_INTERVAL_IS_SIXTY)
 	frame_dig -5 // interval: uint64
 	intc 16 // 60
 	>=
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:551
+	// contracts/subscriptions/subscriptions.algo.ts:538
 	// blocksKey: BlockListKey = { address: recipient, blocked: this.txn.sender }
 	frame_dig -3 // recipient: Address
 	txn Sender
 	concat
 	frame_bury 0 // blocksKey: BlockListKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:553
+	// contracts/subscriptions/subscriptions.algo.ts:540
 	// assert(!this.blocks(blocksKey).exists, errs.BLOCKED)
 	frame_dig 0 // blocksKey: BlockListKey
 	box_len
@@ -1986,12 +1993,12 @@ subscribeAsa:
 	!
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:555
+	// contracts/subscriptions/subscriptions.algo.ts:542
 	// gate = 0
 	intc 0 // 0
 	frame_bury 1 // gate: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:557
+	// contracts/subscriptions/subscriptions.algo.ts:544
 	// isDonation = index === 0
 	frame_dig -6 // index: uint64
 	intc 0 // 0
@@ -1999,14 +2006,14 @@ subscribeAsa:
 	frame_bury 2 // isDonation: bool
 
 	// *if8_condition
-	// contracts/subscriptions/subscriptions.algo.ts:558
+	// contracts/subscriptions/subscriptions.algo.ts:545
 	// !isDonation
 	frame_dig 2 // isDonation: bool
 	!
 	bz *if8_end
 
 	// *if8_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:559
+	// contracts/subscriptions/subscriptions.algo.ts:546
 	// boxKey: ServicesKey = { address: recipient, index: index }
 	frame_dig -3 // recipient: Address
 	frame_dig -6 // index: uint64
@@ -2014,7 +2021,7 @@ subscribeAsa:
 	concat
 	frame_bury 3 // boxKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:561
+	// contracts/subscriptions/subscriptions.algo.ts:548
 	// assert(this.services(boxKey).exists, errs.SERVICE_DOES_NOT_EXIST)
 	bytec 1 //  "s"
 	frame_dig 3 // boxKey: ServicesKey
@@ -2024,14 +2031,14 @@ subscribeAsa:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:563
+	// contracts/subscriptions/subscriptions.algo.ts:550
 	// service = this.services(boxKey).value
 	bytec 1 //  "s"
 	frame_dig 3 // boxKey: ServicesKey
 	concat
 	frame_bury 4 // storage key//service
 
-	// contracts/subscriptions/subscriptions.algo.ts:565
+	// contracts/subscriptions/subscriptions.algo.ts:552
 	// assert(service.status === ServiceStatusActive, errs.SERVICE_IS_NOT_ACTIVE)
 	intc 0 // 0
 	intc 2 // 8
@@ -2045,7 +2052,7 @@ subscribeAsa:
 	==
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:567
+	// contracts/subscriptions/subscriptions.algo.ts:554
 	// assert(service.asset === assetXfer.xferAsset, errs.ASA_MISMATCH)
 	intc 20 //  headOffset
 	intc 2 // 8
@@ -2060,8 +2067,8 @@ subscribeAsa:
 	==
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:569
-	// assert(this.gate(service.gate, args), errs.FAILED_GATE)
+	// contracts/subscriptions/subscriptions.algo.ts:556
+	// assert(this.gate(this.txn.sender, service.gate, args), errs.FAILED_GATE)
 	frame_dig -7 // args: bytes[]
 	intc 6 //  headOffset
 	intc 2 // 8
@@ -2071,10 +2078,11 @@ subscribeAsa:
 	cover 2
 	box_extract
 	btoi
+	txn Sender
 	callsub gate
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:571
+	// contracts/subscriptions/subscriptions.algo.ts:558
 	// amount = service.amount
 	intc 21 //  headOffset
 	intc 2 // 8
@@ -2086,7 +2094,7 @@ subscribeAsa:
 	btoi
 	frame_bury -4 // amount: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:572
+	// contracts/subscriptions/subscriptions.algo.ts:559
 	// interval = service.interval
 	intc 2 //  headOffset
 	intc 2 // 8
@@ -2098,7 +2106,7 @@ subscribeAsa:
 	btoi
 	frame_bury -5 // interval: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:573
+	// contracts/subscriptions/subscriptions.algo.ts:560
 	// gate = service.gate
 	intc 6 //  headOffset
 	intc 2 // 8
@@ -2111,17 +2119,17 @@ subscribeAsa:
 	frame_bury 1 // gate: uint64
 
 *if8_end:
-	// contracts/subscriptions/subscriptions.algo.ts:576
+	// contracts/subscriptions/subscriptions.algo.ts:563
 	// algoMBRFee = subscriptionsMBR
 	intc 19 // 53700
 	frame_bury 5 // algoMBRFee: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:577
+	// contracts/subscriptions/subscriptions.algo.ts:564
 	// subIndex = 0
 	intc 0 // 0
 	frame_bury 6 // subIndex: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:579
+	// contracts/subscriptions/subscriptions.algo.ts:566
 	// firstSubscription = this.subscriptionslist(this.txn.sender).exists
 	txn Sender
 	box_len
@@ -2130,19 +2138,19 @@ subscribeAsa:
 	frame_bury 7 // firstSubscription: bool
 
 	// *if9_condition
-	// contracts/subscriptions/subscriptions.algo.ts:580
+	// contracts/subscriptions/subscriptions.algo.ts:567
 	// firstSubscription
 	frame_dig 7 // firstSubscription: bool
 	bz *if9_else
 
 	// *if9_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:581
+	// contracts/subscriptions/subscriptions.algo.ts:568
 	// this.subscriptionslist(this.txn.sender).value = 0
 	txn Sender
 	bytec 3 // 0x0000000000000000
 	box_put
 
-	// contracts/subscriptions/subscriptions.algo.ts:582
+	// contracts/subscriptions/subscriptions.algo.ts:569
 	// algoMBRFee += subscriptionsListMBR
 	frame_dig 5 // algoMBRFee: uint64
 	intc 17 // 18500
@@ -2151,7 +2159,7 @@ subscribeAsa:
 	b *if9_end
 
 *if9_else:
-	// contracts/subscriptions/subscriptions.algo.ts:584
+	// contracts/subscriptions/subscriptions.algo.ts:571
 	// this.subscriptionslist(this.txn.sender).value += 1
 	txn Sender
 	box_get
@@ -2166,7 +2174,7 @@ subscribeAsa:
 	itob
 	box_put
 
-	// contracts/subscriptions/subscriptions.algo.ts:585
+	// contracts/subscriptions/subscriptions.algo.ts:572
 	// subIndex = this.subscriptionslist(this.txn.sender).value
 	txn Sender
 	box_get
@@ -2178,7 +2186,7 @@ subscribeAsa:
 
 *if9_end:
 	// *if10_condition
-	// contracts/subscriptions/subscriptions.algo.ts:588
+	// contracts/subscriptions/subscriptions.algo.ts:575
 	// !this.daoAppID.value.address.isOptedInToAsset(assetXfer.xferAsset)
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -2193,15 +2201,13 @@ subscribeAsa:
 	bz *if10_end
 
 	// *if10_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:589
-	// this.arc58OptIn(this.daoAppID.value, assetXfer.xferAsset)
+	// contracts/subscriptions/subscriptions.algo.ts:576
+	// this.arc58OptInAkitaDAO(assetXfer.xferAsset)
 	frame_dig -2 // assetXfer: AssetTransferTxn
 	gtxns XferAsset
-	bytec 2 //  "dao_app_id"
-	app_global_get
-	callsub arc58OptIn
+	callsub arc58OptInAkitaDAO
 
-	// contracts/subscriptions/subscriptions.algo.ts:590
+	// contracts/subscriptions/subscriptions.algo.ts:577
 	// algoMBRFee += globals.assetOptInMinBalance
 	frame_dig 5 // algoMBRFee: uint64
 	global AssetOptInMinBalance
@@ -2209,7 +2215,7 @@ subscribeAsa:
 	frame_bury 5 // algoMBRFee: uint64
 
 *if10_end:
-	// contracts/subscriptions/subscriptions.algo.ts:593
+	// contracts/subscriptions/subscriptions.algo.ts:580
 	// subscriptionKey: SubscriptionKey = { address: this.txn.sender, index: subIndex }
 	txn Sender
 	frame_dig 6 // subIndex: uint64
@@ -2217,7 +2223,7 @@ subscribeAsa:
 	concat
 	frame_bury 8 // subscriptionKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:595
+	// contracts/subscriptions/subscriptions.algo.ts:582
 	// this.subscriptions(subscriptionKey).value = {
 	//             recipient: recipient,
 	//             index: index,
@@ -2260,7 +2266,7 @@ subscribeAsa:
 	concat
 	box_put
 
-	// contracts/subscriptions/subscriptions.algo.ts:608
+	// contracts/subscriptions/subscriptions.algo.ts:595
 	// akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -2271,7 +2277,7 @@ subscribeAsa:
 	assert
 	frame_bury 9 // akitaPercentage: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:609
+	// contracts/subscriptions/subscriptions.algo.ts:596
 	// triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -2282,7 +2288,7 @@ subscribeAsa:
 	assert
 	frame_bury 10 // triggerPercentage: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:610
+	// contracts/subscriptions/subscriptions.algo.ts:597
 	// initialFee = (amount * (akitaPercentage + triggerPercentage) - 1) / 1000 + 1
 	frame_dig -4 // amount: uint64
 	frame_dig 9 // akitaPercentage: uint64
@@ -2297,14 +2303,14 @@ subscribeAsa:
 	+
 	frame_bury 11 // initialFee: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:611
+	// contracts/subscriptions/subscriptions.algo.ts:598
 	// leftOver = amount - initialFee
 	frame_dig -4 // amount: uint64
 	frame_dig 11 // initialFee: uint64
 	-
 	frame_bury 12 // leftOver: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:613
+	// contracts/subscriptions/subscriptions.algo.ts:600
 	// verifyPayTxn(payment, {
 	//             receiver: this.app.address,
 	//             amount: {
@@ -2329,7 +2335,7 @@ subscribeAsa:
 	// transaction verification failed: {"txn":"payment","field":"amount","condition":"greaterThanEqualTo","expected":">=algoMBRFee"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:620
+	// contracts/subscriptions/subscriptions.algo.ts:607
 	// verifyAssetTransferTxn(assetXfer, {
 	//             assetReceiver: this.app.address,
 	//             assetAmount: amount,
@@ -2352,7 +2358,7 @@ subscribeAsa:
 	// transaction verification failed: {"txn":"assetXfer","field":"assetAmount","expected":"amount"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:625
+	// contracts/subscriptions/subscriptions.algo.ts:612
 	// this.pendingGroup.addAssetTransfer({
 	//             assetReceiver: this.daoAppID.value.address,
 	//             xferAsset: assetXfer.xferAsset,
@@ -2363,7 +2369,7 @@ subscribeAsa:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:626
+	// contracts/subscriptions/subscriptions.algo.ts:613
 	// assetReceiver: this.daoAppID.value.address
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -2371,23 +2377,23 @@ subscribeAsa:
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:627
+	// contracts/subscriptions/subscriptions.algo.ts:614
 	// xferAsset: assetXfer.xferAsset
 	frame_dig -2 // assetXfer: AssetTransferTxn
 	gtxns XferAsset
 	itxn_field XferAsset
 
-	// contracts/subscriptions/subscriptions.algo.ts:628
+	// contracts/subscriptions/subscriptions.algo.ts:615
 	// assetAmount: initialFee
 	frame_dig 11 // initialFee: uint64
 	itxn_field AssetAmount
 
-	// contracts/subscriptions/subscriptions.algo.ts:629
+	// contracts/subscriptions/subscriptions.algo.ts:616
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:632
+	// contracts/subscriptions/subscriptions.algo.ts:619
 	// this.pendingGroup.addAssetTransfer({
 	//             assetReceiver: recipient,
 	//             xferAsset: assetXfer.xferAsset,
@@ -2398,28 +2404,28 @@ subscribeAsa:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:633
+	// contracts/subscriptions/subscriptions.algo.ts:620
 	// assetReceiver: recipient
 	frame_dig -3 // recipient: Address
 	itxn_field AssetReceiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:634
+	// contracts/subscriptions/subscriptions.algo.ts:621
 	// xferAsset: assetXfer.xferAsset
 	frame_dig -2 // assetXfer: AssetTransferTxn
 	gtxns XferAsset
 	itxn_field XferAsset
 
-	// contracts/subscriptions/subscriptions.algo.ts:635
+	// contracts/subscriptions/subscriptions.algo.ts:622
 	// assetAmount: leftOver
 	frame_dig 12 // leftOver: uint64
 	itxn_field AssetAmount
 
-	// contracts/subscriptions/subscriptions.algo.ts:636
+	// contracts/subscriptions/subscriptions.algo.ts:623
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:639
+	// contracts/subscriptions/subscriptions.algo.ts:626
 	// this.pendingGroup.submit()
 	itxn_submit
 	retsub
@@ -2455,7 +2461,7 @@ deposit:
 	bytec 0 // 0x
 	dup
 
-	// contracts/subscriptions/subscriptions.algo.ts:643
+	// contracts/subscriptions/subscriptions.algo.ts:630
 	// subKey: SubscriptionKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig -2 // index: uint64
@@ -2463,7 +2469,7 @@ deposit:
 	concat
 	frame_bury 0 // subKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:645
+	// contracts/subscriptions/subscriptions.algo.ts:632
 	// assert(this.subscriptions(subKey).exists, errs.SUBSCRIPTION_DOES_NOT_EXIST)
 	frame_dig 0 // subKey: SubscriptionKey
 	box_len
@@ -2471,12 +2477,12 @@ deposit:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:647
+	// contracts/subscriptions/subscriptions.algo.ts:634
 	// sub = this.subscriptions(subKey).value
 	frame_dig 0 // subKey: SubscriptionKey
 	frame_bury 1 // storage key//sub
 
-	// contracts/subscriptions/subscriptions.algo.ts:649
+	// contracts/subscriptions/subscriptions.algo.ts:636
 	// verifyPayTxn(payment, {
 	//             receiver: this.app.address,
 	//             amount: sub.amount,
@@ -2503,7 +2509,7 @@ deposit:
 	// transaction verification failed: {"txn":"payment","field":"amount","expected":"sub.amount"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:654
+	// contracts/subscriptions/subscriptions.algo.ts:641
 	// this.subscriptions(subKey).value.escrowed += sub.amount
 	intc 8 //  headOffset
 	frame_dig 0 // subKey: SubscriptionKey
@@ -2554,7 +2560,7 @@ depositAsa:
 	bytec 0 // 0x
 	dup
 
-	// contracts/subscriptions/subscriptions.algo.ts:658
+	// contracts/subscriptions/subscriptions.algo.ts:645
 	// subKey: SubscriptionKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig -2 // index: uint64
@@ -2562,7 +2568,7 @@ depositAsa:
 	concat
 	frame_bury 0 // subKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:660
+	// contracts/subscriptions/subscriptions.algo.ts:647
 	// assert(this.subscriptions(subKey).exists, errs.SUBSCRIPTION_DOES_NOT_EXIST)
 	frame_dig 0 // subKey: SubscriptionKey
 	box_len
@@ -2570,12 +2576,12 @@ depositAsa:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:662
+	// contracts/subscriptions/subscriptions.algo.ts:649
 	// sub = this.subscriptions(subKey).value
 	frame_dig 0 // subKey: SubscriptionKey
 	frame_bury 1 // storage key//sub
 
-	// contracts/subscriptions/subscriptions.algo.ts:664
+	// contracts/subscriptions/subscriptions.algo.ts:651
 	// verifyAssetTransferTxn(assetXfer, {
 	//             assetReceiver: this.app.address,
 	//             assetAmount: sub.amount,
@@ -2602,7 +2608,7 @@ depositAsa:
 	// transaction verification failed: {"txn":"assetXfer","field":"assetAmount","expected":"sub.amount"}
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:669
+	// contracts/subscriptions/subscriptions.algo.ts:656
 	// this.subscriptions(subKey).value.escrowed += sub.amount
 	intc 8 //  headOffset
 	frame_dig 0 // subKey: SubscriptionKey
@@ -2645,7 +2651,7 @@ withdraw:
 	bytec 0 // 0x
 	dup
 
-	// contracts/subscriptions/subscriptions.algo.ts:673
+	// contracts/subscriptions/subscriptions.algo.ts:660
 	// subKey: SubscriptionKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig -1 // index: uint64
@@ -2653,7 +2659,7 @@ withdraw:
 	concat
 	frame_bury 0 // subKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:675
+	// contracts/subscriptions/subscriptions.algo.ts:662
 	// assert(this.subscriptions(subKey).exists, errs.SUBSCRIPTION_DOES_NOT_EXIST)
 	frame_dig 0 // subKey: SubscriptionKey
 	box_len
@@ -2661,12 +2667,12 @@ withdraw:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:677
+	// contracts/subscriptions/subscriptions.algo.ts:664
 	// sub = this.subscriptions(subKey).value
 	frame_dig 0 // subKey: SubscriptionKey
 	frame_bury 1 // storage key//sub
 
-	// contracts/subscriptions/subscriptions.algo.ts:679
+	// contracts/subscriptions/subscriptions.algo.ts:666
 	// assert(sub.escrowed > amount, errs.NOT_ENOUGH_FUNDS)
 	frame_dig 0 // subKey: SubscriptionKey
 	intc 8 //  headOffset
@@ -2678,7 +2684,7 @@ withdraw:
 	assert
 
 	// *if11_condition
-	// contracts/subscriptions/subscriptions.algo.ts:681
+	// contracts/subscriptions/subscriptions.algo.ts:668
 	// sub.asset.id !== 0
 	frame_dig 0 // subKey: SubscriptionKey
 	intc 7 //  headOffset
@@ -2690,7 +2696,7 @@ withdraw:
 	bz *if11_else
 
 	// *if11_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:682
+	// contracts/subscriptions/subscriptions.algo.ts:669
 	// sendAssetTransfer({
 	//                 assetReceiver: this.txn.sender,
 	//                 xferAsset: sub.asset,
@@ -2701,12 +2707,12 @@ withdraw:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:683
+	// contracts/subscriptions/subscriptions.algo.ts:670
 	// assetReceiver: this.txn.sender
 	txn Sender
 	itxn_field AssetReceiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:684
+	// contracts/subscriptions/subscriptions.algo.ts:671
 	// xferAsset: sub.asset
 	frame_dig 0 // subKey: SubscriptionKey
 	intc 7 //  headOffset
@@ -2715,12 +2721,12 @@ withdraw:
 	btoi
 	itxn_field XferAsset
 
-	// contracts/subscriptions/subscriptions.algo.ts:685
+	// contracts/subscriptions/subscriptions.algo.ts:672
 	// assetAmount: amount
 	frame_dig -2 // amount: uint64
 	itxn_field AssetAmount
 
-	// contracts/subscriptions/subscriptions.algo.ts:686
+	// contracts/subscriptions/subscriptions.algo.ts:673
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -2730,7 +2736,7 @@ withdraw:
 	b *if11_end
 
 *if11_else:
-	// contracts/subscriptions/subscriptions.algo.ts:689
+	// contracts/subscriptions/subscriptions.algo.ts:676
 	// sendPayment({
 	//                 receiver: this.txn.sender,
 	//                 amount: amount,
@@ -2740,17 +2746,17 @@ withdraw:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:690
+	// contracts/subscriptions/subscriptions.algo.ts:677
 	// receiver: this.txn.sender
 	txn Sender
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:691
+	// contracts/subscriptions/subscriptions.algo.ts:678
 	// amount: amount
 	frame_dig -2 // amount: uint64
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:692
+	// contracts/subscriptions/subscriptions.algo.ts:679
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -2759,7 +2765,7 @@ withdraw:
 	itxn_submit
 
 *if11_end:
-	// contracts/subscriptions/subscriptions.algo.ts:696
+	// contracts/subscriptions/subscriptions.algo.ts:683
 	// this.subscriptions(subKey).value.escrowed = 0
 	frame_dig 0 // subKey: SubscriptionKey
 	intc 8 //  headOffset
@@ -2799,7 +2805,7 @@ triggerPayment:
 	bytec 0 // 0x
 	dupn 9
 
-	// contracts/subscriptions/subscriptions.algo.ts:700
+	// contracts/subscriptions/subscriptions.algo.ts:687
 	// subscriptionsKey: SubscriptionKey = { address: address, index: index }
 	frame_dig -1 // address: Address
 	frame_dig -2 // index: uint64
@@ -2807,7 +2813,7 @@ triggerPayment:
 	concat
 	frame_bury 0 // subscriptionsKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:703
+	// contracts/subscriptions/subscriptions.algo.ts:690
 	// assert(this.subscriptions(subscriptionsKey).exists)
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	box_len
@@ -2815,12 +2821,12 @@ triggerPayment:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:705
+	// contracts/subscriptions/subscriptions.algo.ts:692
 	// sub = this.subscriptions(subscriptionsKey).value
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	frame_bury 1 // storage key//sub
 
-	// contracts/subscriptions/subscriptions.algo.ts:707
+	// contracts/subscriptions/subscriptions.algo.ts:694
 	// blocksKey: BlockListKey = { address: sub.recipient, blocked: address }
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 0 // 0
@@ -2830,7 +2836,7 @@ triggerPayment:
 	concat
 	frame_bury 2 // blocksKey: BlockListKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:710
+	// contracts/subscriptions/subscriptions.algo.ts:697
 	// assert(!this.blocks(blocksKey).exists, errs.BLOCKED)
 	frame_dig 2 // blocksKey: BlockListKey
 	box_len
@@ -2840,7 +2846,7 @@ triggerPayment:
 	assert
 
 	// *if12_condition
-	// contracts/subscriptions/subscriptions.algo.ts:712
+	// contracts/subscriptions/subscriptions.algo.ts:699
 	// index > 0
 	frame_dig -2 // index: uint64
 	intc 0 // 0
@@ -2848,7 +2854,7 @@ triggerPayment:
 	bz *if12_end
 
 	// *if12_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:713
+	// contracts/subscriptions/subscriptions.algo.ts:700
 	// servicesKey: ServicesKey = { address: sub.recipient, index: sub.index }
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 0 // 0
@@ -2863,7 +2869,7 @@ triggerPayment:
 	concat
 	frame_bury 3 // servicesKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:715
+	// contracts/subscriptions/subscriptions.algo.ts:702
 	// assert(this.services(servicesKey).value.status !== ServiceStatusShutdown, errs.SERVICE_IS_SHUTDOWN)
 	intc 0 // 0
 	intc 2 // 8
@@ -2878,7 +2884,7 @@ triggerPayment:
 	assert
 
 *if12_end:
-	// contracts/subscriptions/subscriptions.algo.ts:719
+	// contracts/subscriptions/subscriptions.algo.ts:706
 	// assert(sub.lastPayment < this.getLatestWindowStart(sub.startDate, sub.interval), errs.BAD_WINDOW)
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 9 //  headOffset
@@ -2899,7 +2905,7 @@ triggerPayment:
 	<
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:721
+	// contracts/subscriptions/subscriptions.algo.ts:708
 	// assert(sub.escrowed > sub.amount, errs.NOT_ENOUGH_FUNDS)
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 8 //  headOffset
@@ -2914,7 +2920,7 @@ triggerPayment:
 	>
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:723
+	// contracts/subscriptions/subscriptions.algo.ts:710
 	// isAsa = sub.asset.id !== 0
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 7 //  headOffset
@@ -2925,7 +2931,7 @@ triggerPayment:
 	!=
 	frame_bury 4 // isAsa: bool
 
-	// contracts/subscriptions/subscriptions.algo.ts:725
+	// contracts/subscriptions/subscriptions.algo.ts:712
 	// akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -2936,7 +2942,7 @@ triggerPayment:
 	assert
 	frame_bury 5 // akitaPercentage: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:726
+	// contracts/subscriptions/subscriptions.algo.ts:713
 	// akitaFee = (sub.amount * akitaPercentage - 1) / 1000 + 1
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 5 //  headOffset
@@ -2953,7 +2959,7 @@ triggerPayment:
 	+
 	frame_bury 6 // akitaFee: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:727
+	// contracts/subscriptions/subscriptions.algo.ts:714
 	// triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -2964,7 +2970,7 @@ triggerPayment:
 	assert
 	frame_bury 7 // triggerPercentage: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:728
+	// contracts/subscriptions/subscriptions.algo.ts:715
 	// triggerFee = (sub.amount * triggerPercentage - 1) / 1000 + 1
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 5 //  headOffset
@@ -2981,7 +2987,7 @@ triggerPayment:
 	+
 	frame_bury 8 // triggerFee: uint64
 
-	// contracts/subscriptions/subscriptions.algo.ts:729
+	// contracts/subscriptions/subscriptions.algo.ts:716
 	// leftOver = sub.amount - (akitaFee + triggerFee)
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 5 //  headOffset
@@ -2995,13 +3001,13 @@ triggerPayment:
 	frame_bury 9 // leftOver: uint64
 
 	// *if13_condition
-	// contracts/subscriptions/subscriptions.algo.ts:731
+	// contracts/subscriptions/subscriptions.algo.ts:718
 	// isAsa
 	frame_dig 4 // isAsa: bool
 	bz *if13_else
 
 	// *if13_consequent
-	// contracts/subscriptions/subscriptions.algo.ts:732
+	// contracts/subscriptions/subscriptions.algo.ts:719
 	// this.pendingGroup.addAssetTransfer({
 	//                 assetReceiver: this.daoAppID.value.address,
 	//                 xferAsset: sub.asset,
@@ -3012,7 +3018,7 @@ triggerPayment:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:733
+	// contracts/subscriptions/subscriptions.algo.ts:720
 	// assetReceiver: this.daoAppID.value.address
 	bytec 2 //  "dao_app_id"
 	app_global_get
@@ -3020,7 +3026,7 @@ triggerPayment:
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:734
+	// contracts/subscriptions/subscriptions.algo.ts:721
 	// xferAsset: sub.asset
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 7 //  headOffset
@@ -3029,17 +3035,17 @@ triggerPayment:
 	btoi
 	itxn_field XferAsset
 
-	// contracts/subscriptions/subscriptions.algo.ts:735
+	// contracts/subscriptions/subscriptions.algo.ts:722
 	// assetAmount: akitaFee
 	frame_dig 6 // akitaFee: uint64
 	itxn_field AssetAmount
 
-	// contracts/subscriptions/subscriptions.algo.ts:736
+	// contracts/subscriptions/subscriptions.algo.ts:723
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:739
+	// contracts/subscriptions/subscriptions.algo.ts:726
 	// this.pendingGroup.addAssetTransfer({
 	//                 assetReceiver: this.txn.sender,
 	//                 xferAsset: sub.asset,
@@ -3050,12 +3056,12 @@ triggerPayment:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:740
+	// contracts/subscriptions/subscriptions.algo.ts:727
 	// assetReceiver: this.txn.sender
 	txn Sender
 	itxn_field AssetReceiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:741
+	// contracts/subscriptions/subscriptions.algo.ts:728
 	// xferAsset: sub.asset
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 7 //  headOffset
@@ -3064,17 +3070,17 @@ triggerPayment:
 	btoi
 	itxn_field XferAsset
 
-	// contracts/subscriptions/subscriptions.algo.ts:742
+	// contracts/subscriptions/subscriptions.algo.ts:729
 	// assetAmount: triggerFee
 	frame_dig 8 // triggerFee: uint64
 	itxn_field AssetAmount
 
-	// contracts/subscriptions/subscriptions.algo.ts:743
+	// contracts/subscriptions/subscriptions.algo.ts:730
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:746
+	// contracts/subscriptions/subscriptions.algo.ts:733
 	// this.pendingGroup.addAssetTransfer({
 	//                 assetReceiver: sub.recipient,
 	//                 xferAsset: sub.asset,
@@ -3085,7 +3091,7 @@ triggerPayment:
 	intc 4 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:747
+	// contracts/subscriptions/subscriptions.algo.ts:734
 	// assetReceiver: sub.recipient
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 0 // 0
@@ -3093,7 +3099,7 @@ triggerPayment:
 	box_extract
 	itxn_field AssetReceiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:748
+	// contracts/subscriptions/subscriptions.algo.ts:735
 	// xferAsset: sub.asset
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 7 //  headOffset
@@ -3102,21 +3108,21 @@ triggerPayment:
 	btoi
 	itxn_field XferAsset
 
-	// contracts/subscriptions/subscriptions.algo.ts:749
+	// contracts/subscriptions/subscriptions.algo.ts:736
 	// assetAmount: leftOver
 	frame_dig 9 // leftOver: uint64
 	itxn_field AssetAmount
 
-	// contracts/subscriptions/subscriptions.algo.ts:750
+	// contracts/subscriptions/subscriptions.algo.ts:737
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 	b *if13_end
 
 *if13_else:
-	// contracts/subscriptions/subscriptions.algo.ts:754
+	// contracts/subscriptions/subscriptions.algo.ts:741
 	// this.pendingGroup.addPayment({
-	//                 receiver: globals.currentApplicationAddress,
+	//                 receiver: this.app.address,
 	//                 amount: akitaFee,
 	//                 fee: 0,
 	//             })
@@ -3124,22 +3130,22 @@ triggerPayment:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:755
-	// receiver: globals.currentApplicationAddress
+	// contracts/subscriptions/subscriptions.algo.ts:742
+	// receiver: this.app.address
 	global CurrentApplicationAddress
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:756
+	// contracts/subscriptions/subscriptions.algo.ts:743
 	// amount: akitaFee
 	frame_dig 6 // akitaFee: uint64
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:757
+	// contracts/subscriptions/subscriptions.algo.ts:744
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:760
+	// contracts/subscriptions/subscriptions.algo.ts:747
 	// this.pendingGroup.addPayment({
 	//                 receiver: this.txn.sender,
 	//                 amount: triggerFee,
@@ -3149,22 +3155,22 @@ triggerPayment:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:761
+	// contracts/subscriptions/subscriptions.algo.ts:748
 	// receiver: this.txn.sender
 	txn Sender
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:762
+	// contracts/subscriptions/subscriptions.algo.ts:749
 	// amount: triggerFee
 	frame_dig 8 // triggerFee: uint64
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:763
+	// contracts/subscriptions/subscriptions.algo.ts:750
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/subscriptions/subscriptions.algo.ts:766
+	// contracts/subscriptions/subscriptions.algo.ts:753
 	// this.pendingGroup.addPayment({
 	//                 receiver: sub.recipient,
 	//                 amount: leftOver,
@@ -3174,7 +3180,7 @@ triggerPayment:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/subscriptions/subscriptions.algo.ts:767
+	// contracts/subscriptions/subscriptions.algo.ts:754
 	// receiver: sub.recipient
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 0 // 0
@@ -3182,29 +3188,29 @@ triggerPayment:
 	box_extract
 	itxn_field Receiver
 
-	// contracts/subscriptions/subscriptions.algo.ts:768
+	// contracts/subscriptions/subscriptions.algo.ts:755
 	// amount: leftOver
 	frame_dig 9 // leftOver: uint64
 	itxn_field Amount
 
-	// contracts/subscriptions/subscriptions.algo.ts:769
+	// contracts/subscriptions/subscriptions.algo.ts:756
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if13_end:
-	// contracts/subscriptions/subscriptions.algo.ts:773
+	// contracts/subscriptions/subscriptions.algo.ts:760
 	// this.pendingGroup.submit()
 	itxn_submit
 
-	// contracts/subscriptions/subscriptions.algo.ts:774
+	// contracts/subscriptions/subscriptions.algo.ts:761
 	// this.updateStreak(address, index, 1)
 	intc 1 // 1
 	frame_dig -2 // index: uint64
 	frame_dig -1 // address: Address
 	callsub updateStreak
 
-	// contracts/subscriptions/subscriptions.algo.ts:775
+	// contracts/subscriptions/subscriptions.algo.ts:762
 	// this.subscriptions(subscriptionsKey).value.lastPayment = globals.latestTimestamp
 	intc 9 //  headOffset
 	global LatestTimestamp
@@ -3239,7 +3245,7 @@ triggerPayment:
 streakCheck:
 	proto 2 0
 
-	// contracts/subscriptions/subscriptions.algo.ts:779
+	// contracts/subscriptions/subscriptions.algo.ts:766
 	// this.updateStreak(sender, index, 0)
 	intc 0 // 0
 	frame_dig -2 // index: uint64
@@ -3270,14 +3276,14 @@ setPasses:
 	bytec 0 // 0x
 	dupn 4
 
-	// contracts/subscriptions/subscriptions.algo.ts:783
+	// contracts/subscriptions/subscriptions.algo.ts:770
 	// assert(index > 0, errs.NO_DONATIONS)
 	frame_dig -1 // index: uint64
 	intc 0 // 0
 	>
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:784
+	// contracts/subscriptions/subscriptions.algo.ts:771
 	// subscriptionsKey: SubscriptionKey = { address: this.txn.sender, index: index }
 	txn Sender
 	frame_dig -1 // index: uint64
@@ -3285,7 +3291,7 @@ setPasses:
 	concat
 	frame_bury 0 // subscriptionsKey: SubscriptionKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:786
+	// contracts/subscriptions/subscriptions.algo.ts:773
 	// assert(this.subscriptions(subscriptionsKey).exists, errs.SUBSCRIPTION_DOES_NOT_EXIST)
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	box_len
@@ -3293,12 +3299,12 @@ setPasses:
 	pop
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:788
+	// contracts/subscriptions/subscriptions.algo.ts:775
 	// sub = this.subscriptions(subscriptionsKey).value
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	frame_bury 1 // storage key//sub
 
-	// contracts/subscriptions/subscriptions.algo.ts:790
+	// contracts/subscriptions/subscriptions.algo.ts:777
 	// serviceKey: ServicesKey = { address: sub.recipient, index: index }
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 0 // 0
@@ -3309,14 +3315,14 @@ setPasses:
 	concat
 	frame_bury 2 // serviceKey: ServicesKey
 
-	// contracts/subscriptions/subscriptions.algo.ts:791
+	// contracts/subscriptions/subscriptions.algo.ts:778
 	// service = this.services(serviceKey).value
 	bytec 1 //  "s"
 	frame_dig 2 // serviceKey: ServicesKey
 	concat
 	frame_bury 3 // storage key//service
 
-	// contracts/subscriptions/subscriptions.algo.ts:793
+	// contracts/subscriptions/subscriptions.algo.ts:780
 	// assert(service.status !== ServiceStatusShutdown, errs.SERVICE_IS_SHUTDOWN)
 	intc 0 // 0
 	intc 2 // 8
@@ -3330,7 +3336,7 @@ setPasses:
 	!=
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:794
+	// contracts/subscriptions/subscriptions.algo.ts:781
 	// assert(service.passes >= addresses.length, errs.PASS_COUNT_OVERFLOW)
 	intc 3 //  headOffset
 	intc 2 // 8
@@ -3347,13 +3353,13 @@ setPasses:
 	>=
 	assert
 
-	// contracts/subscriptions/subscriptions.algo.ts:796
+	// contracts/subscriptions/subscriptions.algo.ts:783
 	// for (let i = 0; i < addresses.length; i += 1)
 	intc 0 // 0
 	frame_bury 4 // i: uint64
 
 *for_0:
-	// contracts/subscriptions/subscriptions.algo.ts:796
+	// contracts/subscriptions/subscriptions.algo.ts:783
 	// i < addresses.length
 	frame_dig 4 // i: uint64
 	frame_dig -2 // addresses: Address[]
@@ -3363,7 +3369,7 @@ setPasses:
 	<
 	bz *for_0_end
 
-	// contracts/subscriptions/subscriptions.algo.ts:797
+	// contracts/subscriptions/subscriptions.algo.ts:784
 	// assert(!this.blocks({ address: sub.recipient, blocked: addresses[i] }).exists, errs.BLOCKED)
 	frame_dig 0 // subscriptionsKey: SubscriptionKey
 	intc 0 // 0
@@ -3388,7 +3394,7 @@ setPasses:
 	assert
 
 *for_0_continue:
-	// contracts/subscriptions/subscriptions.algo.ts:796
+	// contracts/subscriptions/subscriptions.algo.ts:783
 	// i += 1
 	frame_dig 4 // i: uint64
 	intc 1 // 1
@@ -3397,7 +3403,7 @@ setPasses:
 	b *for_0
 
 *for_0_end:
-	// contracts/subscriptions/subscriptions.algo.ts:800
+	// contracts/subscriptions/subscriptions.algo.ts:787
 	// this.passes(subscriptionsKey).value = addresses
 	bytec 10 //  "p"
 	frame_dig 0 // subscriptionsKey: SubscriptionKey

@@ -3,8 +3,31 @@
   "desc": "",
   "methods": [
     {
+      "name": "optin",
+      "desc": "optin tells the contract to opt into an asa",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay",
+          "desc": "The payment transaction"
+        },
+        {
+          "name": "asset",
+          "type": "uint64",
+          "desc": "The asset to be opted into"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
       "name": "createApplication",
       "args": [
+        {
+          "name": "prize",
+          "type": "uint64"
+        },
         {
           "name": "ticketAsset",
           "type": "uint64"
@@ -18,6 +41,10 @@
           "type": "uint64"
         },
         {
+          "name": "seller",
+          "type": "address"
+        },
+        {
           "name": "minTickets",
           "type": "uint64"
         },
@@ -26,11 +53,11 @@
           "type": "uint64"
         },
         {
-          "name": "prize",
+          "name": "gateID",
           "type": "uint64"
         },
         {
-          "name": "prizeAmount",
+          "name": "vrfBeaconAppID",
           "type": "uint64"
         }
       ],
@@ -39,22 +66,43 @@
       }
     },
     {
-      "name": "init",
+      "name": "isLive",
       "args": [],
       "returns": {
-        "type": "void"
+        "type": "bool",
+        "desc": "a boolean of whether the auction is live"
       }
     },
     {
       "name": "enter",
       "args": [
         {
-          "name": "pmt",
+          "name": "payment",
           "type": "pay"
         },
         {
-          "name": "xfer",
+          "name": "args",
+          "type": "byte[][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "enterAsa",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "assetXfer",
           "type": "axfer"
+        },
+        {
+          "name": "args",
+          "type": "byte[][]"
         }
       ],
       "returns": {
@@ -76,21 +124,7 @@
       }
     },
     {
-      "name": "claimPrize",
-      "args": [],
-      "returns": {
-        "type": "void"
-      }
-    },
-    {
-      "name": "claimTickets",
-      "args": [],
-      "returns": {
-        "type": "void"
-      }
-    },
-    {
-      "name": "refund",
+      "name": "claimRafflePrize",
       "args": [],
       "returns": {
         "type": "void"
@@ -107,7 +141,7 @@
       "name": "getState",
       "args": [],
       "returns": {
-        "type": "(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64,bool)"
+        "type": "(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64,uint64)"
       }
     }
   ]

@@ -32,13 +32,13 @@ newRegistryID:
 	bytec 0 // 0x
 
 	// contracts/gates/staking_amount.algo.ts:35
-	// id = this._registryCursor.value
+	// id = this.registryCursor.value
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	frame_bury 0 // id: uint64
 
 	// contracts/gates/staking_amount.algo.ts:36
-	// this._registryCursor.value += 1
+	// this.registryCursor.value += 1
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	intc 2 // 1
@@ -386,12 +386,12 @@ check:
 	len
 
 	// contracts/gates/staking_amount.algo.ts:21
-	// len<uint64>()
-	intc 1 // 8
-
-	// contracts/gates/staking_amount.algo.ts:21
 	// len<Address>()
 	pushint 32
+
+	// contracts/gates/staking_amount.algo.ts:21
+	// len<uint64>()
+	intc 1 // 8
 	+
 	>=
 	assert
@@ -399,12 +399,12 @@ check:
 	// contracts/gates/staking_amount.algo.ts:77
 	// params = castBytes<StakingAmountGateCheckParams>(args)
 	frame_dig -1 // args: bytes
-	frame_bury 0 // params: (uint64,address)
+	frame_bury 0 // params: (address,uint64)
 
 	// contracts/gates/staking_amount.algo.ts:78
 	// info = this.registry(params.registryID).value
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	frame_bury 1 // storage key//info
@@ -416,8 +416,8 @@ check:
 
 	// contracts/gates/staking_amount.algo.ts:78
 	// params.registryID
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -431,8 +431,8 @@ check:
 
 	// contracts/gates/staking_amount.algo.ts:78
 	// params.registryID
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -446,8 +446,8 @@ check:
 
 	// contracts/gates/staking_amount.algo.ts:78
 	// params.registryID
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -461,8 +461,8 @@ check:
 
 	// contracts/gates/staking_amount.algo.ts:78
 	// params.registryID
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -471,8 +471,8 @@ check:
 
 	// contracts/gates/staking_amount.algo.ts:79
 	// params.user
-	frame_dig 0 // params: (uint64,address)
-	extract 8 32
+	frame_dig 0 // params: (address,uint64)
+	extract 0 32
 	callsub stakingAmountGate
 
 	// set the subroutine return value

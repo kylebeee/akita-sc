@@ -12,22 +12,22 @@ export type RegistryInfo = {
     index: uint64;
 };
 
-export const SubscriptionGateCheckParamsLength = len<uint64>() + len<Address>();
+export const SubscriptionGateCheckParamsLength = len<Address>() + len<uint64>();
 export type SubscriptionGateCheckParams = {
-    registryIndex: uint64;
     user: Address;
+    registryID: uint64;
 };
 
 export class SubscriptionGate extends Contract {
     programVersion = 10;
 
-    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
+    registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
     private newRegistryID(): uint64 {
-        const id = this._registryCursor.value;
-        this._registryCursor.value += 1;
+        const id = this.registryCursor.value;
+        this.registryCursor.value += 1;
         return id;
     }
 
@@ -63,7 +63,7 @@ export class SubscriptionGate extends Contract {
     check(args: bytes): boolean {
         assert(args.length === SubscriptionGateCheckParamsLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<SubscriptionGateCheckParams>(args);
-        const info = this.registry(params.registryIndex).value;
+        const info = this.registry(params.registryID).value;
         return this.subscriptionGate(params.user, info.merchant, info.index);
     }   
 }

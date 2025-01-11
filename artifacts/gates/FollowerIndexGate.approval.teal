@@ -32,13 +32,13 @@ newRegistryID:
 	bytec 0 // 0x
 
 	// contracts/gates/follower_index.algo.ts:33
-	// id = this._registryCursor.value
+	// id = this.registryCursor.value
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	frame_bury 0 // id: uint64
 
 	// contracts/gates/follower_index.algo.ts:34
-	// this._registryCursor.value += 1
+	// this.registryCursor.value += 1
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	intc 1 // 1
@@ -367,7 +367,7 @@ check:
 	frame_bury 0 // params: (uint64,uint64,address)
 
 	// contracts/gates/follower_index.algo.ts:81
-	// info = this.registry(params.registryIndex).value
+	// info = this.registry(params.registryID).value
 	frame_dig 0 // params: (uint64,uint64,address)
 	extract 0 8
 	btoi
@@ -380,7 +380,7 @@ check:
 	intc 2 // 8
 
 	// contracts/gates/follower_index.algo.ts:81
-	// params.registryIndex
+	// params.registryID
 	frame_dig 0 // params: (uint64,uint64,address)
 	extract 0 8
 	btoi
@@ -395,7 +395,7 @@ check:
 	intc 2 // 8
 
 	// contracts/gates/follower_index.algo.ts:81
-	// params.registryIndex
+	// params.registryID
 	frame_dig 0 // params: (uint64,uint64,address)
 	extract 0 8
 	btoi
@@ -421,7 +421,7 @@ check:
 	intc 3 // 32
 
 	// contracts/gates/follower_index.algo.ts:81
-	// params.registryIndex
+	// params.registryID
 	frame_dig 0 // params: (uint64,uint64,address)
 	extract 0 8
 	btoi

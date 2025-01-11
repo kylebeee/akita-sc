@@ -20,29 +20,24 @@
       "desc": "Creates two boxes and adds a merkle root\nusing a  to the root box map and also a list type to the\nmetadata attached to the root in the data box map",
       "args": [
         {
-          "name": "pmt",
-          "type": "pay",
-          "desc": "the fee to cover box storage allocation"
+          "name": "payment",
+          "type": "pay"
         },
         {
           "name": "name",
-          "type": "string",
-          "desc": "the name alias of the root being added"
+          "type": "string"
         },
         {
           "name": "root",
-          "type": "byte[32]",
-          "desc": "a merkle tree root"
+          "type": "byte[32]"
         },
         {
           "name": "schema",
-          "type": "uint64",
-          "desc": "an index of the schema enum from box storage"
+          "type": "uint64"
         },
         {
           "name": "type",
-          "type": "uint64",
-          "desc": "an index of the tree type enum from box storage"
+          "type": "uint64"
         }
       ],
       "returns": {
@@ -87,24 +82,20 @@
       "desc": "Registers a key & value in the data box map that\ncorresponds to a merkle root in the root box map",
       "args": [
         {
-          "name": "pmt",
-          "type": "pay",
-          "desc": "the payment to cover the increased mbr of adding to box storage"
+          "name": "payment",
+          "type": "pay"
         },
         {
           "name": "name",
-          "type": "string",
-          "desc": "the name of the merkle tree root"
+          "type": "string"
         },
         {
           "name": "key",
-          "type": "string",
-          "desc": "the metadata key eg."
+          "type": "string"
         },
         {
           "name": "value",
-          "type": "string",
-          "desc": "the metadata value eg.  encoded as a bytestring for 5%"
+          "type": "string"
         }
       ],
       "returns": {
@@ -232,10 +223,50 @@
       }
     },
     {
+      "name": "verifiedMustRead",
+      "desc": "Read metadata from box storage and verify the data provided is included\nin the merkle tree given a sha256'd 32 byte merkle tree root & a proof\nthats pre-computed off chain.\n\n\nverify an inclusion in a merkle tree\n& read an associated key value pair\n& check against the underlying data's schema\n& check against the underlying data's list type or purpose",
+      "args": [
+        {
+          "name": "address",
+          "type": "address",
+          "desc": "the address of the merkle tree root creator"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "desc": "the name of the root"
+        },
+        {
+          "name": "leaf",
+          "type": "byte[32]",
+          "desc": "the leaf node to be verified"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]",
+          "desc": "the proof the hash is included"
+        },
+        {
+          "name": "type",
+          "type": "uint64",
+          "desc": "the list type that helps contracts ensure\nthe lists purpose isn't being misused ( 0 if the caller doesnt care )"
+        },
+        {
+          "name": "key",
+          "type": "string",
+          "desc": "the metadata key eg."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "desc": "a string of metadata"
+      }
+    },
+    {
       "name": "addType",
       "args": [
         {
-          "name": "pmt",
+          "name": "payment",
           "type": "pay"
         },
         {
@@ -251,7 +282,7 @@
       "name": "addSchema",
       "args": [
         {
-          "name": "pmt",
+          "name": "payment",
           "type": "pay"
         },
         {

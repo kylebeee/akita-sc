@@ -1,0 +1,4431 @@
+{
+  "name": "RafflePlugin",
+  "desc": "",
+  "methods": [
+    {
+      "name": "new",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "prize",
+          "type": "uint64"
+        },
+        {
+          "name": "prizeAmount",
+          "type": "uint64"
+        },
+        {
+          "name": "ticketAsset",
+          "type": "uint64"
+        },
+        {
+          "name": "startingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "endingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "minTickets",
+          "type": "uint64"
+        },
+        {
+          "name": "maxTickets",
+          "type": "uint64"
+        },
+        {
+          "name": "gateID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "enter",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "raffleAppID",
+          "type": "uint64"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "args",
+          "type": "byte[][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "raffle",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "raffleAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "findWinner",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "raffleAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "claimRafflePrize",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "raffleAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "deleteRaffleApplication",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "raffleAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [
+          "NoOp"
+        ],
+        "call": []
+      }
+    }
+  ],
+  "arcs": [
+    4,
+    56
+  ],
+  "structs": {},
+  "state": {
+    "schema": {
+      "global": {
+        "bytes": 0,
+        "ints": 0
+      },
+      "local": {
+        "bytes": 0,
+        "ints": 0
+      }
+    },
+    "keys": {
+      "global": {},
+      "local": {},
+      "box": {}
+    },
+    "maps": {
+      "global": {},
+      "local": {},
+      "box": {}
+    }
+  },
+  "bareActions": {
+    "create": [],
+    "call": []
+  },
+  "sourceInfo": {
+    "approval": {
+      "sourceInfo": [
+        {
+          "teal": 15,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            1,
+            2
+          ]
+        },
+        {
+          "teal": 16,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            3
+          ]
+        },
+        {
+          "teal": 17,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            4
+          ]
+        },
+        {
+          "teal": 18,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            5
+          ]
+        },
+        {
+          "teal": 19,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            6,
+            7
+          ]
+        },
+        {
+          "teal": 20,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            8
+          ]
+        },
+        {
+          "teal": 21,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34
+          ]
+        },
+        {
+          "teal": 25,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "errorMessage": "The requested action is not implemented in this contract. Are you using the correct OnComplete? Did you set your app ID?",
+          "pc": [
+            35
+          ]
+        },
+        {
+          "teal": 30,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            36,
+            37,
+            38,
+            39,
+            40,
+            41
+          ]
+        },
+        {
+          "teal": 33,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:26",
+          "pc": [
+            42,
+            43,
+            44
+          ]
+        },
+        {
+          "teal": 34,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:26",
+          "pc": [
+            45
+          ]
+        },
+        {
+          "teal": 37,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:25",
+          "pc": [
+            46,
+            47,
+            48
+          ]
+        },
+        {
+          "teal": 38,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:25",
+          "pc": [
+            49
+          ]
+        },
+        {
+          "teal": 41,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:24",
+          "pc": [
+            50,
+            51,
+            52
+          ]
+        },
+        {
+          "teal": 42,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:24",
+          "pc": [
+            53
+          ]
+        },
+        {
+          "teal": 45,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:23",
+          "pc": [
+            54,
+            55,
+            56
+          ]
+        },
+        {
+          "teal": 46,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:23",
+          "pc": [
+            57
+          ]
+        },
+        {
+          "teal": 49,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:22",
+          "pc": [
+            58,
+            59,
+            60
+          ]
+        },
+        {
+          "teal": 50,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:22",
+          "pc": [
+            61
+          ]
+        },
+        {
+          "teal": 53,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:21",
+          "pc": [
+            62,
+            63,
+            64
+          ]
+        },
+        {
+          "teal": 54,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:21",
+          "pc": [
+            65
+          ]
+        },
+        {
+          "teal": 57,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:20",
+          "pc": [
+            66,
+            67,
+            68
+          ]
+        },
+        {
+          "teal": 58,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:20",
+          "pc": [
+            69
+          ]
+        },
+        {
+          "teal": 61,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:19",
+          "pc": [
+            70,
+            71,
+            72
+          ]
+        },
+        {
+          "teal": 62,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:19",
+          "pc": [
+            73
+          ]
+        },
+        {
+          "teal": 65,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "pc": [
+            74,
+            75,
+            76
+          ]
+        },
+        {
+          "teal": 66,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "pc": [
+            77
+          ]
+        },
+        {
+          "teal": 67,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "pc": [
+            78
+          ]
+        },
+        {
+          "teal": 68,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "pc": [
+            79
+          ]
+        },
+        {
+          "teal": 69,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "pc": [
+            80
+          ]
+        },
+        {
+          "teal": 72,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "errorMessage": "argument 8 (rekeyBack) for new must be a bool",
+          "pc": [
+            81
+          ]
+        },
+        {
+          "teal": 73,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "pc": [
+            82
+          ]
+        },
+        {
+          "teal": 74,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:18",
+          "pc": [
+            83
+          ]
+        },
+        {
+          "teal": 77,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:17",
+          "pc": [
+            84,
+            85,
+            86
+          ]
+        },
+        {
+          "teal": 78,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:17",
+          "pc": [
+            87
+          ]
+        },
+        {
+          "teal": 81,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            88,
+            89,
+            90
+          ]
+        },
+        {
+          "teal": 82,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            91
+          ]
+        },
+        {
+          "teal": 83,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            92
+          ]
+        },
+        {
+          "teal": 84,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            93
+          ]
+        },
+        {
+          "teal": 85,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            94
+          ]
+        },
+        {
+          "teal": 86,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            95
+          ]
+        },
+        {
+          "teal": 90,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            96,
+            97,
+            98
+          ]
+        },
+        {
+          "teal": 93,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            99
+          ]
+        },
+        {
+          "teal": 94,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            100,
+            101
+          ]
+        },
+        {
+          "teal": 98,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            102,
+            103
+          ]
+        },
+        {
+          "teal": 99,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            104,
+            105
+          ]
+        },
+        {
+          "teal": 100,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            106
+          ]
+        },
+        {
+          "teal": 101,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            107,
+            108
+          ]
+        },
+        {
+          "teal": 102,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            109,
+            110
+          ]
+        },
+        {
+          "teal": 103,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            111
+          ]
+        },
+        {
+          "teal": 104,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            112,
+            113
+          ]
+        },
+        {
+          "teal": 105,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            114
+          ]
+        },
+        {
+          "teal": 106,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:28",
+          "pc": [
+            115
+          ]
+        },
+        {
+          "teal": 110,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            116
+          ]
+        },
+        {
+          "teal": 111,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            117,
+            118
+          ]
+        },
+        {
+          "teal": 112,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            119
+          ]
+        },
+        {
+          "teal": 113,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            120,
+            121
+          ]
+        },
+        {
+          "teal": 114,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            122,
+            123
+          ]
+        },
+        {
+          "teal": 115,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            124
+          ]
+        },
+        {
+          "teal": 116,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            125
+          ]
+        },
+        {
+          "teal": 117,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            126
+          ]
+        },
+        {
+          "teal": 118,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:30",
+          "pc": [
+            127,
+            128
+          ]
+        },
+        {
+          "teal": 123,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:32",
+          "pc": [
+            129,
+            130
+          ]
+        },
+        {
+          "teal": 124,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:32",
+          "pc": [
+            131,
+            132,
+            133
+          ]
+        },
+        {
+          "teal": 143,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:37",
+          "pc": [
+            134
+          ]
+        },
+        {
+          "teal": 144,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:37",
+          "pc": [
+            135
+          ]
+        },
+        {
+          "teal": 145,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:37",
+          "pc": [
+            136,
+            137
+          ]
+        },
+        {
+          "teal": 149,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:38",
+          "pc": [
+            138,
+            139
+          ]
+        },
+        {
+          "teal": 150,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:38",
+          "pc": [
+            140,
+            141
+          ]
+        },
+        {
+          "teal": 151,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:38",
+          "pc": [
+            142
+          ]
+        },
+        {
+          "teal": 152,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:38",
+          "pc": [
+            143,
+            144
+          ]
+        },
+        {
+          "teal": 156,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:39",
+          "pc": [
+            145
+          ]
+        },
+        {
+          "teal": 157,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:39",
+          "pc": [
+            146,
+            147
+          ]
+        },
+        {
+          "teal": 158,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:39",
+          "pc": [
+            148
+          ]
+        },
+        {
+          "teal": 159,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:39",
+          "pc": [
+            149,
+            150
+          ]
+        },
+        {
+          "teal": 163,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:40",
+          "pc": [
+            151,
+            152
+          ]
+        },
+        {
+          "teal": 164,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:40",
+          "pc": [
+            153,
+            154
+          ]
+        },
+        {
+          "teal": 168,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:41",
+          "pc": [
+            155
+          ]
+        },
+        {
+          "teal": 169,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:41",
+          "pc": [
+            156,
+            157
+          ]
+        },
+        {
+          "teal": 170,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:33",
+          "pc": [
+            158
+          ]
+        },
+        {
+          "teal": 171,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:33",
+          "pc": [
+            159
+          ]
+        },
+        {
+          "teal": 172,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:33",
+          "pc": [
+            160,
+            161
+          ]
+        },
+        {
+          "teal": 173,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:33",
+          "pc": [
+            162,
+            163,
+            164,
+            165,
+            166,
+            167
+          ]
+        },
+        {
+          "teal": 174,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:33",
+          "pc": [
+            168,
+            169
+          ]
+        },
+        {
+          "teal": 178,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:34",
+          "pc": [
+            170,
+            171
+          ]
+        },
+        {
+          "teal": 179,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:34",
+          "pc": [
+            172,
+            173
+          ]
+        },
+        {
+          "teal": 180,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:34",
+          "pc": [
+            174
+          ]
+        },
+        {
+          "teal": 181,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:34",
+          "pc": [
+            175,
+            176
+          ]
+        },
+        {
+          "teal": 185,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:35",
+          "pc": [
+            177
+          ]
+        },
+        {
+          "teal": 186,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:35",
+          "pc": [
+            178,
+            179
+          ]
+        },
+        {
+          "teal": 198,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:43",
+          "pc": [
+            180,
+            181
+          ]
+        },
+        {
+          "teal": 199,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:43",
+          "pc": [
+            182
+          ]
+        },
+        {
+          "teal": 200,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:43",
+          "pc": [
+            183,
+            184
+          ]
+        },
+        {
+          "teal": 204,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:45",
+          "pc": [
+            185
+          ]
+        },
+        {
+          "teal": 205,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:45",
+          "pc": [
+            186,
+            187
+          ]
+        },
+        {
+          "teal": 210,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:50",
+          "pc": [
+            188
+          ]
+        },
+        {
+          "teal": 211,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:50",
+          "pc": [
+            189,
+            190
+          ]
+        },
+        {
+          "teal": 215,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:51",
+          "pc": [
+            191,
+            192
+          ]
+        },
+        {
+          "teal": 216,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:51",
+          "pc": [
+            193
+          ]
+        },
+        {
+          "teal": 217,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:51",
+          "pc": [
+            194
+          ]
+        },
+        {
+          "teal": 218,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:51",
+          "pc": [
+            195,
+            196
+          ]
+        },
+        {
+          "teal": 223,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:52",
+          "pc": [
+            197,
+            198
+          ]
+        },
+        {
+          "teal": 224,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:52",
+          "pc": [
+            199,
+            200,
+            201
+          ]
+        },
+        {
+          "teal": 229,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:53",
+          "pc": [
+            202,
+            203
+          ]
+        },
+        {
+          "teal": 230,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:53",
+          "pc": [
+            204,
+            205
+          ]
+        },
+        {
+          "teal": 235,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:56",
+          "pc": [
+            206,
+            207
+          ]
+        },
+        {
+          "teal": 236,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:56",
+          "pc": [
+            208
+          ]
+        },
+        {
+          "teal": 237,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:56",
+          "pc": [
+            209
+          ]
+        },
+        {
+          "teal": 238,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:56",
+          "pc": [
+            210,
+            211
+          ]
+        },
+        {
+          "teal": 243,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:57",
+          "pc": [
+            212,
+            213
+          ]
+        },
+        {
+          "teal": 244,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:57",
+          "pc": [
+            214,
+            215,
+            216
+          ]
+        },
+        {
+          "teal": 249,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:58",
+          "pc": [
+            217,
+            218
+          ]
+        },
+        {
+          "teal": 250,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:58",
+          "pc": [
+            219,
+            220
+          ]
+        },
+        {
+          "teal": 251,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:58",
+          "pc": [
+            221
+          ]
+        },
+        {
+          "teal": 252,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:58",
+          "pc": [
+            222,
+            223
+          ]
+        },
+        {
+          "teal": 262,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:64",
+          "pc": [
+            224,
+            225,
+            226,
+            227
+          ]
+        },
+        {
+          "teal": 263,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:65",
+          "pc": [
+            228,
+            229
+          ]
+        },
+        {
+          "teal": 264,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:65",
+          "pc": [
+            230
+          ]
+        },
+        {
+          "teal": 265,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:61",
+          "pc": [
+            231,
+            232
+          ]
+        },
+        {
+          "teal": 293,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:72",
+          "pc": [
+            233
+          ]
+        },
+        {
+          "teal": 294,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:72",
+          "pc": [
+            234
+          ]
+        },
+        {
+          "teal": 295,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:72",
+          "pc": [
+            235,
+            236
+          ]
+        },
+        {
+          "teal": 299,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:73",
+          "pc": [
+            237,
+            238
+          ]
+        },
+        {
+          "teal": 300,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:73",
+          "pc": [
+            239,
+            240
+          ]
+        },
+        {
+          "teal": 301,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:73",
+          "pc": [
+            241
+          ]
+        },
+        {
+          "teal": 302,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:73",
+          "pc": [
+            242,
+            243
+          ]
+        },
+        {
+          "teal": 306,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:74",
+          "pc": [
+            244
+          ]
+        },
+        {
+          "teal": 307,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:74",
+          "pc": [
+            245,
+            246
+          ]
+        },
+        {
+          "teal": 308,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:74",
+          "pc": [
+            247
+          ]
+        },
+        {
+          "teal": 309,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:74",
+          "pc": [
+            248,
+            249
+          ]
+        },
+        {
+          "teal": 313,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:75",
+          "pc": [
+            250,
+            251
+          ]
+        },
+        {
+          "teal": 314,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:75",
+          "pc": [
+            252,
+            253
+          ]
+        },
+        {
+          "teal": 318,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:76",
+          "pc": [
+            254
+          ]
+        },
+        {
+          "teal": 319,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:76",
+          "pc": [
+            255,
+            256
+          ]
+        },
+        {
+          "teal": 320,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:78",
+          "pc": [
+            257
+          ]
+        },
+        {
+          "teal": 321,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:78",
+          "pc": [
+            258,
+            259
+          ]
+        },
+        {
+          "teal": 322,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:78",
+          "pc": [
+            260,
+            261
+          ]
+        },
+        {
+          "teal": 326,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:79",
+          "pc": [
+            262,
+            263
+          ]
+        },
+        {
+          "teal": 327,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:79",
+          "pc": [
+            264,
+            265
+          ]
+        },
+        {
+          "teal": 328,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:79",
+          "pc": [
+            266
+          ]
+        },
+        {
+          "teal": 329,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:79",
+          "pc": [
+            267,
+            268
+          ]
+        },
+        {
+          "teal": 333,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:80",
+          "pc": [
+            269
+          ]
+        },
+        {
+          "teal": 334,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:80",
+          "pc": [
+            270,
+            271
+          ]
+        },
+        {
+          "teal": 335,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:80",
+          "pc": [
+            272
+          ]
+        },
+        {
+          "teal": 336,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:80",
+          "pc": [
+            273,
+            274
+          ]
+        },
+        {
+          "teal": 340,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:81",
+          "pc": [
+            275,
+            276
+          ]
+        },
+        {
+          "teal": 341,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:81",
+          "pc": [
+            277,
+            278
+          ]
+        },
+        {
+          "teal": 345,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:82",
+          "pc": [
+            279,
+            280
+          ]
+        },
+        {
+          "teal": 346,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:82",
+          "pc": [
+            281,
+            282
+          ]
+        },
+        {
+          "teal": 350,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:83",
+          "pc": [
+            283
+          ]
+        },
+        {
+          "teal": 351,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:83",
+          "pc": [
+            284,
+            285
+          ]
+        },
+        {
+          "teal": 352,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:68",
+          "pc": [
+            286
+          ]
+        },
+        {
+          "teal": 353,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:68",
+          "pc": [
+            287
+          ]
+        },
+        {
+          "teal": 354,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:68",
+          "pc": [
+            288,
+            289
+          ]
+        },
+        {
+          "teal": 355,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:68",
+          "pc": [
+            290,
+            291,
+            292,
+            293,
+            294,
+            295
+          ]
+        },
+        {
+          "teal": 356,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:68",
+          "pc": [
+            296,
+            297
+          ]
+        },
+        {
+          "teal": 360,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:69",
+          "pc": [
+            298,
+            299
+          ]
+        },
+        {
+          "teal": 361,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:69",
+          "pc": [
+            300,
+            301
+          ]
+        },
+        {
+          "teal": 362,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:69",
+          "pc": [
+            302
+          ]
+        },
+        {
+          "teal": 363,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:69",
+          "pc": [
+            303,
+            304
+          ]
+        },
+        {
+          "teal": 367,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:70",
+          "pc": [
+            305
+          ]
+        },
+        {
+          "teal": 368,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:70",
+          "pc": [
+            306,
+            307
+          ]
+        },
+        {
+          "teal": 392,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:85",
+          "pc": [
+            308,
+            309
+          ]
+        },
+        {
+          "teal": 393,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:85",
+          "pc": [
+            310
+          ]
+        },
+        {
+          "teal": 394,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:85",
+          "pc": [
+            311,
+            312
+          ]
+        },
+        {
+          "teal": 395,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:86",
+          "pc": [
+            313,
+            314
+          ]
+        },
+        {
+          "teal": 396,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:86",
+          "pc": [
+            315
+          ]
+        },
+        {
+          "teal": 397,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:86",
+          "pc": [
+            316,
+            317
+          ]
+        },
+        {
+          "teal": 398,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:87",
+          "pc": [
+            318,
+            319
+          ]
+        },
+        {
+          "teal": 399,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:87",
+          "pc": [
+            320
+          ]
+        },
+        {
+          "teal": 400,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:87",
+          "pc": [
+            321,
+            322
+          ]
+        },
+        {
+          "teal": 401,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:88",
+          "pc": [
+            323,
+            324
+          ]
+        },
+        {
+          "teal": 402,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:88",
+          "pc": [
+            325
+          ]
+        },
+        {
+          "teal": 403,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:88",
+          "pc": [
+            326,
+            327
+          ]
+        },
+        {
+          "teal": 404,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:89",
+          "pc": [
+            328,
+            329
+          ]
+        },
+        {
+          "teal": 405,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:89",
+          "pc": [
+            330
+          ]
+        },
+        {
+          "teal": 406,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:89",
+          "pc": [
+            331,
+            332
+          ]
+        },
+        {
+          "teal": 407,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:90",
+          "pc": [
+            333,
+            334
+          ]
+        },
+        {
+          "teal": 408,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:90",
+          "pc": [
+            335
+          ]
+        },
+        {
+          "teal": 409,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:90",
+          "pc": [
+            336,
+            337
+          ]
+        },
+        {
+          "teal": 412,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:68",
+          "pc": [
+            338
+          ]
+        },
+        {
+          "teal": 413,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:68",
+          "pc": [
+            339,
+            340
+          ]
+        },
+        {
+          "teal": 417,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:94",
+          "pc": [
+            341
+          ]
+        },
+        {
+          "teal": 421,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:96",
+          "pc": [
+            342,
+            343
+          ]
+        },
+        {
+          "teal": 424,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            344,
+            345
+          ]
+        },
+        {
+          "teal": 427,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            346,
+            347
+          ]
+        },
+        {
+          "teal": 428,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:16",
+          "pc": [
+            348
+          ]
+        },
+        {
+          "teal": 433,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            349,
+            350,
+            351
+          ]
+        },
+        {
+          "teal": 436,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            352,
+            353,
+            354
+          ]
+        },
+        {
+          "teal": 437,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            355
+          ]
+        },
+        {
+          "teal": 440,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            356,
+            357,
+            358
+          ]
+        },
+        {
+          "teal": 441,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            359
+          ]
+        },
+        {
+          "teal": 444,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            360,
+            361,
+            362
+          ]
+        },
+        {
+          "teal": 445,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            363
+          ]
+        },
+        {
+          "teal": 446,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            364
+          ]
+        },
+        {
+          "teal": 447,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            365
+          ]
+        },
+        {
+          "teal": 448,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            366
+          ]
+        },
+        {
+          "teal": 451,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "errorMessage": "argument 3 (rekeyBack) for enter must be a bool",
+          "pc": [
+            367
+          ]
+        },
+        {
+          "teal": 452,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            368
+          ]
+        },
+        {
+          "teal": 453,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            369
+          ]
+        },
+        {
+          "teal": 456,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            370,
+            371,
+            372
+          ]
+        },
+        {
+          "teal": 457,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            373
+          ]
+        },
+        {
+          "teal": 460,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            374,
+            375,
+            376
+          ]
+        },
+        {
+          "teal": 461,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            377
+          ]
+        },
+        {
+          "teal": 462,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            378
+          ]
+        },
+        {
+          "teal": 466,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            379,
+            380,
+            381
+          ]
+        },
+        {
+          "teal": 469,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            382
+          ]
+        },
+        {
+          "teal": 473,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            383,
+            384
+          ]
+        },
+        {
+          "teal": 474,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            385,
+            386
+          ]
+        },
+        {
+          "teal": 475,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            387
+          ]
+        },
+        {
+          "teal": 476,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            388
+          ]
+        },
+        {
+          "teal": 477,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            389,
+            390
+          ]
+        },
+        {
+          "teal": 478,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            391
+          ]
+        },
+        {
+          "teal": 479,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            392
+          ]
+        },
+        {
+          "teal": 480,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:100",
+          "pc": [
+            393
+          ]
+        },
+        {
+          "teal": 484,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:102",
+          "pc": [
+            394,
+            395
+          ]
+        },
+        {
+          "teal": 485,
+          "source": "contracts/raffle/contants.ts:1",
+          "pc": [
+            396,
+            397,
+            398,
+            399,
+            400,
+            401,
+            402,
+            403,
+            404,
+            405,
+            406,
+            407,
+            408,
+            409
+          ]
+        },
+        {
+          "teal": 486,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:102",
+          "pc": [
+            410
+          ]
+        },
+        {
+          "teal": 489,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:102",
+          "errorMessage": "global state value does not exist: raffleAppID.globalState(AKITA_RAFFLE_TICKET_ASSET_KEY)",
+          "pc": [
+            411
+          ]
+        },
+        {
+          "teal": 490,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:102",
+          "pc": [
+            412,
+            413
+          ]
+        },
+        {
+          "teal": 495,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:104",
+          "pc": [
+            414,
+            415
+          ]
+        },
+        {
+          "teal": 496,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:104",
+          "pc": [
+            416
+          ]
+        },
+        {
+          "teal": 497,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:104",
+          "pc": [
+            417
+          ]
+        },
+        {
+          "teal": 498,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:104",
+          "pc": [
+            418,
+            419,
+            420
+          ]
+        },
+        {
+          "teal": 517,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:109",
+          "pc": [
+            421
+          ]
+        },
+        {
+          "teal": 518,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:109",
+          "pc": [
+            422
+          ]
+        },
+        {
+          "teal": 519,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:109",
+          "pc": [
+            423,
+            424
+          ]
+        },
+        {
+          "teal": 523,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:110",
+          "pc": [
+            425,
+            426
+          ]
+        },
+        {
+          "teal": 524,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:110",
+          "pc": [
+            427,
+            428
+          ]
+        },
+        {
+          "teal": 525,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:110",
+          "pc": [
+            429
+          ]
+        },
+        {
+          "teal": 526,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:110",
+          "pc": [
+            430,
+            431
+          ]
+        },
+        {
+          "teal": 530,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:111",
+          "pc": [
+            432,
+            433
+          ]
+        },
+        {
+          "teal": 531,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:111",
+          "pc": [
+            434,
+            435
+          ]
+        },
+        {
+          "teal": 532,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:111",
+          "pc": [
+            436
+          ]
+        },
+        {
+          "teal": 533,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:111",
+          "pc": [
+            437,
+            438
+          ]
+        },
+        {
+          "teal": 537,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:112",
+          "pc": [
+            439,
+            440
+          ]
+        },
+        {
+          "teal": 538,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:112",
+          "pc": [
+            441,
+            442
+          ]
+        },
+        {
+          "teal": 542,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:113",
+          "pc": [
+            443
+          ]
+        },
+        {
+          "teal": 543,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:113",
+          "pc": [
+            444,
+            445
+          ]
+        },
+        {
+          "teal": 544,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:105",
+          "pc": [
+            446
+          ]
+        },
+        {
+          "teal": 545,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:105",
+          "pc": [
+            447
+          ]
+        },
+        {
+          "teal": 546,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:105",
+          "pc": [
+            448,
+            449
+          ]
+        },
+        {
+          "teal": 547,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:105",
+          "pc": [
+            450,
+            451,
+            452,
+            453,
+            454,
+            455
+          ]
+        },
+        {
+          "teal": 548,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:105",
+          "pc": [
+            456,
+            457
+          ]
+        },
+        {
+          "teal": 552,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:106",
+          "pc": [
+            458,
+            459
+          ]
+        },
+        {
+          "teal": 553,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:106",
+          "pc": [
+            460,
+            461
+          ]
+        },
+        {
+          "teal": 554,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:106",
+          "pc": [
+            462
+          ]
+        },
+        {
+          "teal": 555,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:106",
+          "pc": [
+            463,
+            464
+          ]
+        },
+        {
+          "teal": 559,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:107",
+          "pc": [
+            465,
+            466
+          ]
+        },
+        {
+          "teal": 560,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:107",
+          "pc": [
+            467,
+            468
+          ]
+        },
+        {
+          "teal": 572,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:115",
+          "pc": [
+            469,
+            470
+          ]
+        },
+        {
+          "teal": 573,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:115",
+          "pc": [
+            471,
+            472
+          ]
+        },
+        {
+          "teal": 577,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            473,
+            474
+          ]
+        },
+        {
+          "teal": 578,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            475,
+            476,
+            477
+          ]
+        },
+        {
+          "teal": 579,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            478,
+            479
+          ]
+        },
+        {
+          "teal": 580,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            480,
+            481
+          ]
+        },
+        {
+          "teal": 581,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            482
+          ]
+        },
+        {
+          "teal": 582,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            483,
+            484,
+            485
+          ]
+        },
+        {
+          "teal": 585,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            486,
+            487
+          ]
+        },
+        {
+          "teal": 588,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:117",
+          "pc": [
+            488,
+            489
+          ]
+        },
+        {
+          "teal": 592,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:118",
+          "pc": [
+            490
+          ]
+        },
+        {
+          "teal": 593,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:118",
+          "pc": [
+            491,
+            492
+          ]
+        },
+        {
+          "teal": 596,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:105",
+          "pc": [
+            493
+          ]
+        },
+        {
+          "teal": 597,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:104",
+          "pc": [
+            494,
+            495,
+            496
+          ]
+        },
+        {
+          "teal": 623,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:125",
+          "pc": [
+            497
+          ]
+        },
+        {
+          "teal": 624,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:125",
+          "pc": [
+            498
+          ]
+        },
+        {
+          "teal": 625,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:125",
+          "pc": [
+            499,
+            500
+          ]
+        },
+        {
+          "teal": 629,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:126",
+          "pc": [
+            501,
+            502
+          ]
+        },
+        {
+          "teal": 630,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:126",
+          "pc": [
+            503,
+            504
+          ]
+        },
+        {
+          "teal": 631,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:126",
+          "pc": [
+            505
+          ]
+        },
+        {
+          "teal": 632,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:126",
+          "pc": [
+            506,
+            507
+          ]
+        },
+        {
+          "teal": 636,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:127",
+          "pc": [
+            508,
+            509
+          ]
+        },
+        {
+          "teal": 637,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:127",
+          "pc": [
+            510,
+            511
+          ]
+        },
+        {
+          "teal": 638,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:127",
+          "pc": [
+            512
+          ]
+        },
+        {
+          "teal": 639,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:127",
+          "pc": [
+            513,
+            514
+          ]
+        },
+        {
+          "teal": 643,
+          "source": "contracts/raffle/raffle.algo.ts:39",
+          "pc": [
+            515,
+            516,
+            517,
+            518
+          ]
+        },
+        {
+          "teal": 644,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:128",
+          "pc": [
+            519,
+            520
+          ]
+        },
+        {
+          "teal": 648,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:129",
+          "pc": [
+            521
+          ]
+        },
+        {
+          "teal": 649,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:129",
+          "pc": [
+            522,
+            523
+          ]
+        },
+        {
+          "teal": 650,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:131",
+          "pc": [
+            524
+          ]
+        },
+        {
+          "teal": 651,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:131",
+          "pc": [
+            525,
+            526
+          ]
+        },
+        {
+          "teal": 652,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:131",
+          "pc": [
+            527,
+            528
+          ]
+        },
+        {
+          "teal": 656,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:132",
+          "pc": [
+            529,
+            530
+          ]
+        },
+        {
+          "teal": 657,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:132",
+          "pc": [
+            531,
+            532
+          ]
+        },
+        {
+          "teal": 658,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:132",
+          "pc": [
+            533
+          ]
+        },
+        {
+          "teal": 659,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:132",
+          "pc": [
+            534,
+            535
+          ]
+        },
+        {
+          "teal": 663,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:133",
+          "pc": [
+            536,
+            537
+          ]
+        },
+        {
+          "teal": 664,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:133",
+          "pc": [
+            538,
+            539
+          ]
+        },
+        {
+          "teal": 665,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:133",
+          "pc": [
+            540
+          ]
+        },
+        {
+          "teal": 666,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:133",
+          "pc": [
+            541,
+            542
+          ]
+        },
+        {
+          "teal": 670,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:134",
+          "pc": [
+            543,
+            544
+          ]
+        },
+        {
+          "teal": 671,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:134",
+          "pc": [
+            545,
+            546
+          ]
+        },
+        {
+          "teal": 675,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:135",
+          "pc": [
+            547,
+            548
+          ]
+        },
+        {
+          "teal": 676,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:135",
+          "pc": [
+            549,
+            550
+          ]
+        },
+        {
+          "teal": 680,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:136",
+          "pc": [
+            551
+          ]
+        },
+        {
+          "teal": 681,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:136",
+          "pc": [
+            552,
+            553
+          ]
+        },
+        {
+          "teal": 682,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:121",
+          "pc": [
+            554
+          ]
+        },
+        {
+          "teal": 683,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:121",
+          "pc": [
+            555
+          ]
+        },
+        {
+          "teal": 684,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:121",
+          "pc": [
+            556,
+            557
+          ]
+        },
+        {
+          "teal": 685,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:121",
+          "pc": [
+            558,
+            559,
+            560,
+            561,
+            562,
+            563
+          ]
+        },
+        {
+          "teal": 686,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:121",
+          "pc": [
+            564,
+            565
+          ]
+        },
+        {
+          "teal": 690,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:122",
+          "pc": [
+            566,
+            567
+          ]
+        },
+        {
+          "teal": 691,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:122",
+          "pc": [
+            568,
+            569
+          ]
+        },
+        {
+          "teal": 692,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:122",
+          "pc": [
+            570
+          ]
+        },
+        {
+          "teal": 693,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:122",
+          "pc": [
+            571,
+            572
+          ]
+        },
+        {
+          "teal": 697,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:123",
+          "pc": [
+            573,
+            574
+          ]
+        },
+        {
+          "teal": 698,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:123",
+          "pc": [
+            575,
+            576
+          ]
+        },
+        {
+          "teal": 717,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:138",
+          "pc": [
+            577,
+            578
+          ]
+        },
+        {
+          "teal": 718,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:138",
+          "pc": [
+            579,
+            580
+          ]
+        },
+        {
+          "teal": 722,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            581,
+            582
+          ]
+        },
+        {
+          "teal": 723,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            583,
+            584,
+            585
+          ]
+        },
+        {
+          "teal": 724,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            586,
+            587
+          ]
+        },
+        {
+          "teal": 725,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            588,
+            589
+          ]
+        },
+        {
+          "teal": 726,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            590
+          ]
+        },
+        {
+          "teal": 727,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            591,
+            592,
+            593
+          ]
+        },
+        {
+          "teal": 730,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            594,
+            595
+          ]
+        },
+        {
+          "teal": 733,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:140",
+          "pc": [
+            596,
+            597
+          ]
+        },
+        {
+          "teal": 737,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:141",
+          "pc": [
+            598
+          ]
+        },
+        {
+          "teal": 738,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:141",
+          "pc": [
+            599,
+            600
+          ]
+        },
+        {
+          "teal": 741,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:121",
+          "pc": [
+            601
+          ]
+        },
+        {
+          "teal": 744,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:99",
+          "pc": [
+            602
+          ]
+        },
+        {
+          "teal": 749,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            603,
+            604,
+            605
+          ]
+        },
+        {
+          "teal": 750,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            606
+          ]
+        },
+        {
+          "teal": 753,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            607,
+            608,
+            609
+          ]
+        },
+        {
+          "teal": 754,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            610
+          ]
+        },
+        {
+          "teal": 755,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            611
+          ]
+        },
+        {
+          "teal": 756,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            612
+          ]
+        },
+        {
+          "teal": 757,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            613
+          ]
+        },
+        {
+          "teal": 760,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "errorMessage": "argument 1 (rekeyBack) for raffle must be a bool",
+          "pc": [
+            614
+          ]
+        },
+        {
+          "teal": 761,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            615
+          ]
+        },
+        {
+          "teal": 762,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            616
+          ]
+        },
+        {
+          "teal": 765,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            617,
+            618,
+            619
+          ]
+        },
+        {
+          "teal": 766,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            620
+          ]
+        },
+        {
+          "teal": 769,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            621,
+            622,
+            623
+          ]
+        },
+        {
+          "teal": 770,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            624
+          ]
+        },
+        {
+          "teal": 771,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            625
+          ]
+        },
+        {
+          "teal": 775,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            626,
+            627,
+            628
+          ]
+        },
+        {
+          "teal": 779,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            629,
+            630
+          ]
+        },
+        {
+          "teal": 780,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            631,
+            632
+          ]
+        },
+        {
+          "teal": 781,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            633
+          ]
+        },
+        {
+          "teal": 782,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            634
+          ]
+        },
+        {
+          "teal": 783,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            635,
+            636
+          ]
+        },
+        {
+          "teal": 784,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            637
+          ]
+        },
+        {
+          "teal": 785,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            638
+          ]
+        },
+        {
+          "teal": 786,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:147",
+          "pc": [
+            639
+          ]
+        },
+        {
+          "teal": 795,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:149",
+          "pc": [
+            640
+          ]
+        },
+        {
+          "teal": 796,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:149",
+          "pc": [
+            641
+          ]
+        },
+        {
+          "teal": 797,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:149",
+          "pc": [
+            642,
+            643
+          ]
+        },
+        {
+          "teal": 798,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:149",
+          "pc": [
+            644,
+            645,
+            646,
+            647,
+            648,
+            649
+          ]
+        },
+        {
+          "teal": 799,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:149",
+          "pc": [
+            650,
+            651
+          ]
+        },
+        {
+          "teal": 803,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:150",
+          "pc": [
+            652,
+            653
+          ]
+        },
+        {
+          "teal": 804,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:150",
+          "pc": [
+            654,
+            655
+          ]
+        },
+        {
+          "teal": 805,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:150",
+          "pc": [
+            656
+          ]
+        },
+        {
+          "teal": 806,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:150",
+          "pc": [
+            657,
+            658
+          ]
+        },
+        {
+          "teal": 810,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:151",
+          "pc": [
+            659,
+            660
+          ]
+        },
+        {
+          "teal": 811,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:151",
+          "pc": [
+            661,
+            662
+          ]
+        },
+        {
+          "teal": 815,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            663,
+            664
+          ]
+        },
+        {
+          "teal": 816,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            665,
+            666,
+            667
+          ]
+        },
+        {
+          "teal": 817,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            668,
+            669
+          ]
+        },
+        {
+          "teal": 818,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            670,
+            671
+          ]
+        },
+        {
+          "teal": 819,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            672
+          ]
+        },
+        {
+          "teal": 820,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            673,
+            674,
+            675
+          ]
+        },
+        {
+          "teal": 823,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            676,
+            677
+          ]
+        },
+        {
+          "teal": 826,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:152",
+          "pc": [
+            678,
+            679
+          ]
+        },
+        {
+          "teal": 830,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:153",
+          "pc": [
+            680
+          ]
+        },
+        {
+          "teal": 831,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:153",
+          "pc": [
+            681,
+            682
+          ]
+        },
+        {
+          "teal": 834,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:149",
+          "pc": [
+            683
+          ]
+        },
+        {
+          "teal": 835,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:146",
+          "pc": [
+            684
+          ]
+        },
+        {
+          "teal": 840,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            685,
+            686,
+            687
+          ]
+        },
+        {
+          "teal": 841,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            688
+          ]
+        },
+        {
+          "teal": 844,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            689,
+            690,
+            691
+          ]
+        },
+        {
+          "teal": 845,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            692
+          ]
+        },
+        {
+          "teal": 846,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            693
+          ]
+        },
+        {
+          "teal": 847,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            694
+          ]
+        },
+        {
+          "teal": 848,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            695
+          ]
+        },
+        {
+          "teal": 851,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "errorMessage": "argument 1 (rekeyBack) for findWinner must be a bool",
+          "pc": [
+            696
+          ]
+        },
+        {
+          "teal": 852,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            697
+          ]
+        },
+        {
+          "teal": 853,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            698
+          ]
+        },
+        {
+          "teal": 856,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            699,
+            700,
+            701
+          ]
+        },
+        {
+          "teal": 857,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            702
+          ]
+        },
+        {
+          "teal": 860,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            703,
+            704,
+            705
+          ]
+        },
+        {
+          "teal": 861,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            706
+          ]
+        },
+        {
+          "teal": 862,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            707
+          ]
+        },
+        {
+          "teal": 866,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            708,
+            709,
+            710
+          ]
+        },
+        {
+          "teal": 870,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            711,
+            712
+          ]
+        },
+        {
+          "teal": 871,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            713,
+            714
+          ]
+        },
+        {
+          "teal": 872,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            715
+          ]
+        },
+        {
+          "teal": 873,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            716
+          ]
+        },
+        {
+          "teal": 874,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            717,
+            718
+          ]
+        },
+        {
+          "teal": 875,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            719
+          ]
+        },
+        {
+          "teal": 876,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            720
+          ]
+        },
+        {
+          "teal": 877,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:158",
+          "pc": [
+            721
+          ]
+        },
+        {
+          "teal": 886,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:160",
+          "pc": [
+            722
+          ]
+        },
+        {
+          "teal": 887,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:160",
+          "pc": [
+            723
+          ]
+        },
+        {
+          "teal": 888,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:160",
+          "pc": [
+            724,
+            725
+          ]
+        },
+        {
+          "teal": 889,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:160",
+          "pc": [
+            726,
+            727,
+            728,
+            729,
+            730,
+            731
+          ]
+        },
+        {
+          "teal": 890,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:160",
+          "pc": [
+            732,
+            733
+          ]
+        },
+        {
+          "teal": 894,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:161",
+          "pc": [
+            734,
+            735
+          ]
+        },
+        {
+          "teal": 895,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:161",
+          "pc": [
+            736,
+            737
+          ]
+        },
+        {
+          "teal": 896,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:161",
+          "pc": [
+            738
+          ]
+        },
+        {
+          "teal": 897,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:161",
+          "pc": [
+            739,
+            740
+          ]
+        },
+        {
+          "teal": 901,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:162",
+          "pc": [
+            741,
+            742
+          ]
+        },
+        {
+          "teal": 902,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:162",
+          "pc": [
+            743,
+            744
+          ]
+        },
+        {
+          "teal": 906,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            745,
+            746
+          ]
+        },
+        {
+          "teal": 907,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            747,
+            748,
+            749
+          ]
+        },
+        {
+          "teal": 908,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            750,
+            751
+          ]
+        },
+        {
+          "teal": 909,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            752,
+            753
+          ]
+        },
+        {
+          "teal": 910,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            754
+          ]
+        },
+        {
+          "teal": 911,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            755,
+            756,
+            757
+          ]
+        },
+        {
+          "teal": 914,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            758,
+            759
+          ]
+        },
+        {
+          "teal": 917,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:163",
+          "pc": [
+            760,
+            761
+          ]
+        },
+        {
+          "teal": 921,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:164",
+          "pc": [
+            762
+          ]
+        },
+        {
+          "teal": 922,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:164",
+          "pc": [
+            763,
+            764
+          ]
+        },
+        {
+          "teal": 925,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:160",
+          "pc": [
+            765
+          ]
+        },
+        {
+          "teal": 926,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:157",
+          "pc": [
+            766
+          ]
+        },
+        {
+          "teal": 931,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            767,
+            768,
+            769
+          ]
+        },
+        {
+          "teal": 932,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            770
+          ]
+        },
+        {
+          "teal": 935,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            771,
+            772,
+            773
+          ]
+        },
+        {
+          "teal": 936,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            774
+          ]
+        },
+        {
+          "teal": 937,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            775
+          ]
+        },
+        {
+          "teal": 938,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            776
+          ]
+        },
+        {
+          "teal": 939,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            777
+          ]
+        },
+        {
+          "teal": 942,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "errorMessage": "argument 1 (rekeyBack) for claimRafflePrize must be a bool",
+          "pc": [
+            778
+          ]
+        },
+        {
+          "teal": 943,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            779
+          ]
+        },
+        {
+          "teal": 944,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            780
+          ]
+        },
+        {
+          "teal": 947,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            781,
+            782,
+            783
+          ]
+        },
+        {
+          "teal": 948,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            784
+          ]
+        },
+        {
+          "teal": 951,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            785,
+            786,
+            787
+          ]
+        },
+        {
+          "teal": 952,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            788
+          ]
+        },
+        {
+          "teal": 953,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            789
+          ]
+        },
+        {
+          "teal": 957,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            790,
+            791,
+            792
+          ]
+        },
+        {
+          "teal": 961,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            793,
+            794
+          ]
+        },
+        {
+          "teal": 962,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            795,
+            796
+          ]
+        },
+        {
+          "teal": 963,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            797
+          ]
+        },
+        {
+          "teal": 964,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            798
+          ]
+        },
+        {
+          "teal": 965,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            799,
+            800
+          ]
+        },
+        {
+          "teal": 966,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            801
+          ]
+        },
+        {
+          "teal": 967,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            802
+          ]
+        },
+        {
+          "teal": 968,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:169",
+          "pc": [
+            803
+          ]
+        },
+        {
+          "teal": 977,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:171",
+          "pc": [
+            804
+          ]
+        },
+        {
+          "teal": 978,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:171",
+          "pc": [
+            805
+          ]
+        },
+        {
+          "teal": 979,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:171",
+          "pc": [
+            806,
+            807
+          ]
+        },
+        {
+          "teal": 980,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:171",
+          "pc": [
+            808,
+            809,
+            810,
+            811,
+            812,
+            813
+          ]
+        },
+        {
+          "teal": 981,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:171",
+          "pc": [
+            814,
+            815
+          ]
+        },
+        {
+          "teal": 985,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:172",
+          "pc": [
+            816,
+            817
+          ]
+        },
+        {
+          "teal": 986,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:172",
+          "pc": [
+            818,
+            819
+          ]
+        },
+        {
+          "teal": 987,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:172",
+          "pc": [
+            820
+          ]
+        },
+        {
+          "teal": 988,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:172",
+          "pc": [
+            821,
+            822
+          ]
+        },
+        {
+          "teal": 992,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:173",
+          "pc": [
+            823,
+            824
+          ]
+        },
+        {
+          "teal": 993,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:173",
+          "pc": [
+            825,
+            826
+          ]
+        },
+        {
+          "teal": 997,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            827,
+            828
+          ]
+        },
+        {
+          "teal": 998,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            829,
+            830,
+            831
+          ]
+        },
+        {
+          "teal": 999,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            832,
+            833
+          ]
+        },
+        {
+          "teal": 1000,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            834,
+            835
+          ]
+        },
+        {
+          "teal": 1001,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            836
+          ]
+        },
+        {
+          "teal": 1002,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            837,
+            838,
+            839
+          ]
+        },
+        {
+          "teal": 1005,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            840,
+            841
+          ]
+        },
+        {
+          "teal": 1008,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:174",
+          "pc": [
+            842,
+            843
+          ]
+        },
+        {
+          "teal": 1012,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:175",
+          "pc": [
+            844
+          ]
+        },
+        {
+          "teal": 1013,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:175",
+          "pc": [
+            845,
+            846
+          ]
+        },
+        {
+          "teal": 1016,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:171",
+          "pc": [
+            847
+          ]
+        },
+        {
+          "teal": 1017,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:168",
+          "pc": [
+            848
+          ]
+        },
+        {
+          "teal": 1022,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            849,
+            850,
+            851
+          ]
+        },
+        {
+          "teal": 1023,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            852
+          ]
+        },
+        {
+          "teal": 1026,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            853,
+            854,
+            855
+          ]
+        },
+        {
+          "teal": 1027,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            856
+          ]
+        },
+        {
+          "teal": 1028,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            857
+          ]
+        },
+        {
+          "teal": 1029,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            858
+          ]
+        },
+        {
+          "teal": 1030,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            859
+          ]
+        },
+        {
+          "teal": 1033,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "errorMessage": "argument 1 (rekeyBack) for deleteRaffleApplication must be a bool",
+          "pc": [
+            860
+          ]
+        },
+        {
+          "teal": 1034,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            861
+          ]
+        },
+        {
+          "teal": 1035,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            862
+          ]
+        },
+        {
+          "teal": 1038,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            863,
+            864,
+            865
+          ]
+        },
+        {
+          "teal": 1039,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            866
+          ]
+        },
+        {
+          "teal": 1042,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            867,
+            868,
+            869
+          ]
+        },
+        {
+          "teal": 1043,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            870
+          ]
+        },
+        {
+          "teal": 1044,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            871
+          ]
+        },
+        {
+          "teal": 1048,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            872,
+            873,
+            874
+          ]
+        },
+        {
+          "teal": 1052,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            875,
+            876
+          ]
+        },
+        {
+          "teal": 1053,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            877,
+            878
+          ]
+        },
+        {
+          "teal": 1054,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            879
+          ]
+        },
+        {
+          "teal": 1055,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            880
+          ]
+        },
+        {
+          "teal": 1056,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            881,
+            882
+          ]
+        },
+        {
+          "teal": 1057,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            883
+          ]
+        },
+        {
+          "teal": 1058,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            884
+          ]
+        },
+        {
+          "teal": 1059,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:180",
+          "pc": [
+            885
+          ]
+        },
+        {
+          "teal": 1068,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:182",
+          "pc": [
+            886
+          ]
+        },
+        {
+          "teal": 1069,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:182",
+          "pc": [
+            887
+          ]
+        },
+        {
+          "teal": 1070,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:182",
+          "pc": [
+            888,
+            889
+          ]
+        },
+        {
+          "teal": 1071,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:182",
+          "pc": [
+            890,
+            891,
+            892,
+            893,
+            894,
+            895
+          ]
+        },
+        {
+          "teal": 1072,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:182",
+          "pc": [
+            896,
+            897
+          ]
+        },
+        {
+          "teal": 1076,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:183",
+          "pc": [
+            898,
+            899
+          ]
+        },
+        {
+          "teal": 1077,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:183",
+          "pc": [
+            900,
+            901
+          ]
+        },
+        {
+          "teal": 1078,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:183",
+          "pc": [
+            902
+          ]
+        },
+        {
+          "teal": 1079,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:183",
+          "pc": [
+            903,
+            904
+          ]
+        },
+        {
+          "teal": 1083,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:184",
+          "pc": [
+            905,
+            906
+          ]
+        },
+        {
+          "teal": 1084,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:184",
+          "pc": [
+            907,
+            908
+          ]
+        },
+        {
+          "teal": 1088,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            909,
+            910
+          ]
+        },
+        {
+          "teal": 1089,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            911,
+            912,
+            913
+          ]
+        },
+        {
+          "teal": 1090,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            914,
+            915
+          ]
+        },
+        {
+          "teal": 1091,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            916,
+            917
+          ]
+        },
+        {
+          "teal": 1092,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            918
+          ]
+        },
+        {
+          "teal": 1093,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            919,
+            920,
+            921
+          ]
+        },
+        {
+          "teal": 1096,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            922,
+            923
+          ]
+        },
+        {
+          "teal": 1099,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:185",
+          "pc": [
+            924,
+            925
+          ]
+        },
+        {
+          "teal": 1103,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:186",
+          "pc": [
+            926
+          ]
+        },
+        {
+          "teal": 1104,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:186",
+          "pc": [
+            927,
+            928
+          ]
+        },
+        {
+          "teal": 1107,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:182",
+          "pc": [
+            929
+          ]
+        },
+        {
+          "teal": 1108,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:179",
+          "pc": [
+            930
+          ]
+        },
+        {
+          "teal": 1111,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            931
+          ]
+        },
+        {
+          "teal": 1112,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            932
+          ]
+        },
+        {
+          "teal": 1115,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            933,
+            934,
+            935,
+            936,
+            937,
+            938
+          ]
+        },
+        {
+          "teal": 1116,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            939,
+            940,
+            941
+          ]
+        },
+        {
+          "teal": 1117,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            942,
+            943,
+            944,
+            945
+          ]
+        },
+        {
+          "teal": 1120,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "errorMessage": "this contract does not implement the given ABI method for create NoOp",
+          "pc": [
+            946
+          ]
+        },
+        {
+          "teal": 1123,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            947,
+            948,
+            949,
+            950,
+            951,
+            952
+          ]
+        },
+        {
+          "teal": 1124,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            953,
+            954,
+            955,
+            956,
+            957,
+            958
+          ]
+        },
+        {
+          "teal": 1125,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            959,
+            960,
+            961,
+            962,
+            963,
+            964
+          ]
+        },
+        {
+          "teal": 1126,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            965,
+            966,
+            967,
+            968,
+            969,
+            970
+          ]
+        },
+        {
+          "teal": 1127,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            971,
+            972,
+            973,
+            974,
+            975,
+            976
+          ]
+        },
+        {
+          "teal": 1128,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            977,
+            978,
+            979,
+            980,
+            981,
+            982
+          ]
+        },
+        {
+          "teal": 1129,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            983,
+            984,
+            985
+          ]
+        },
+        {
+          "teal": 1130,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "pc": [
+            986,
+            987,
+            988,
+            989,
+            990,
+            991,
+            992,
+            993,
+            994,
+            995,
+            996,
+            997,
+            998,
+            999
+          ]
+        },
+        {
+          "teal": 1133,
+          "source": "contracts/arc58/plugins/raffle.algo.ts:11",
+          "errorMessage": "this contract does not implement the given ABI method for call NoOp",
+          "pc": [
+            1000
+          ]
+        }
+      ],
+      "pcOffsetMethod": "cblocks"
+    },
+    "clear": {
+      "sourceInfo": [],
+      "pcOffsetMethod": "none"
+    }
+  },
+  "source": {
+    "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCmludGNibG9jayAwIDEgVE1QTF9mYWN0b3J5QXBwSUQgNiA0CmJ5dGVjYmxvY2sgMHgKCi8vIFRoaXMgVEVBTCB3YXMgZ2VuZXJhdGVkIGJ5IFRFQUxTY3JpcHQgdjAuMTA2LjEKLy8gaHR0cHM6Ly9naXRodWIuY29tL2FsZ29yYW5kZm91bmRhdGlvbi9URUFMU2NyaXB0CgovLyBUaGlzIGNvbnRyYWN0IGlzIGNvbXBsaWFudCB3aXRoIGFuZC9vciBpbXBsZW1lbnRzIHRoZSBmb2xsb3dpbmcgQVJDczogWyBBUkM0IF0KCi8vIFRoZSBmb2xsb3dpbmcgdGVuIGxpbmVzIG9mIFRFQUwgaGFuZGxlIGluaXRpYWwgcHJvZ3JhbSBmbG93Ci8vIFRoaXMgcGF0dGVybiBpcyB1c2VkIHRvIG1ha2UgaXQgZWFzeSBmb3IgYW55b25lIHRvIHBhcnNlIHRoZSBzdGFydCBvZiB0aGUgcHJvZ3JhbSBhbmQgZGV0ZXJtaW5lIGlmIGEgc3BlY2lmaWMgYWN0aW9uIGlzIGFsbG93ZWQKLy8gSGVyZSwgYWN0aW9uIHJlZmVycyB0byB0aGUgT25Db21wbGV0ZSBpbiBjb21iaW5hdGlvbiB3aXRoIHdoZXRoZXIgdGhlIGFwcCBpcyBiZWluZyBjcmVhdGVkIG9yIGNhbGxlZAovLyBFdmVyeSBwb3NzaWJsZSBhY3Rpb24gZm9yIHRoaXMgY29udHJhY3QgaXMgcmVwcmVzZW50ZWQgaW4gdGhlIHN3aXRjaCBzdGF0ZW1lbnQKLy8gSWYgdGhlIGFjdGlvbiBpcyBub3QgaW1wbGVtZW50ZWQgaW4gdGhlIGNvbnRyYWN0LCBpdHMgcmVzcGVjdGl2ZSBicmFuY2ggd2lsbCBiZSAiKk5PVF9JTVBMRU1FTlRFRCIgd2hpY2gganVzdCBjb250YWlucyAiZXJyIgp0eG4gQXBwbGljYXRpb25JRAohCmludGMgMyAvLyA2CioKdHhuIE9uQ29tcGxldGlvbgorCnN3aXRjaCAqY2FsbF9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqY3JlYXRlX05vT3AgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVECgoqTk9UX0lNUExFTUVOVEVEOgoJLy8gVGhlIHJlcXVlc3RlZCBhY3Rpb24gaXMgbm90IGltcGxlbWVudGVkIGluIHRoaXMgY29udHJhY3QuIEFyZSB5b3UgdXNpbmcgdGhlIGNvcnJlY3QgT25Db21wbGV0ZT8gRGlkIHlvdSBzZXQgeW91ciBhcHAgSUQ/CgllcnIKCi8vIG5ldyh1aW50NjQsYm9vbCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KXVpbnQ2NAoqYWJpX3JvdXRlX25ldzoKCS8vIFRoZSBBQkkgcmV0dXJuIHByZWZpeAoJcHVzaGJ5dGVzIDB4MTUxZjdjNzUKCgkvLyBnYXRlSUQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMTAKCWJ0b2kKCgkvLyBtYXhUaWNrZXRzOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDkKCWJ0b2kKCgkvLyBtaW5UaWNrZXRzOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDgKCWJ0b2kKCgkvLyBlbmRpbmdSb3VuZDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyA3CglidG9pCgoJLy8gc3RhcnRpbmdSb3VuZDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyA2CglidG9pCgoJLy8gdGlja2V0QXNzZXQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNQoJYnRvaQoKCS8vIHByaXplQW1vdW50OiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDQKCWJ0b2kKCgkvLyBwcml6ZTogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyAzCglidG9pCgoJLy8gcmVrZXlCYWNrOiBib29sCgl0eG5hIEFwcGxpY2F0aW9uQXJncyAyCglkdXAKCWxlbgoJaW50YyAxIC8vIDEKCT09CgoJLy8gYXJndW1lbnQgOCAocmVrZXlCYWNrKSBmb3IgbmV3IG11c3QgYmUgYSBib29sCglhc3NlcnQKCWludGMgMCAvLyAwCglnZXRiaXQKCgkvLyBzZW5kZXI6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQoJYnRvaQoKCS8vIGV4ZWN1dGUgbmV3KHVpbnQ2NCxib29sLHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQpdWludDY0CgljYWxsc3ViIG5ldwoJaXRvYgoJY29uY2F0Cglsb2cKCWludGMgMSAvLyAxCglyZXR1cm4KCi8vIG5ldyhzZW5kZXI6IEFwcElELCByZWtleUJhY2s6IGJvb2xlYW4sIHByaXplOiBBc3NldElELCBwcml6ZUFtb3VudDogdWludDY0LCB0aWNrZXRBc3NldDogQXNzZXRJRCwgc3RhcnRpbmdSb3VuZDogdWludDY0LCBlbmRpbmdSb3VuZDogdWludDY0LCBtaW5UaWNrZXRzOiB1aW50NjQsIG1heFRpY2tldHM6IHVpbnQ2NCwgZ2F0ZUlEOiB1aW50NjQpOiBBcHBJRApuZXc6Cglwcm90byAxMCAxCgoJLy8gUHVzaCBlbXB0eSBieXRlcyBhZnRlciB0aGUgZnJhbWUgcG9pbnRlciB0byByZXNlcnZlIHNwYWNlIGZvciBsb2NhbCB2YXJpYWJsZXMKCWJ5dGVjIDAgLy8gMHgKCWR1cG4gNAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjI4CgkvLyBhc3NlcnQoc2VuZGVyLmFkZHJlc3MuYXNzZXRCYWxhbmNlKHByaXplKSA+PSBwcml6ZUFtb3VudCwgZXJycy5OT1RfRU5PVUdIX0FTU0VUKQoJZnJhbWVfZGlnIC0xIC8vIHNlbmRlcjogQXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJZnJhbWVfZGlnIC0zIC8vIHByaXplOiBBc3NldElECglhc3NldF9ob2xkaW5nX2dldCBBc3NldEJhbGFuY2UKCXBvcAoJZnJhbWVfZGlnIC00IC8vIHByaXplQW1vdW50OiB1aW50NjQKCT49Cglhc3NlcnQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czozMAoJLy8gbmVlZHNUb09wdEludG9Qcml6ZSA9ICF0aGlzLmZhY3RvcnlBcHBJRC5hZGRyZXNzLmlzT3B0ZWRJblRvQXNzZXQocHJpemUpCglpbnRjIDIgLy8gVE1QTF9mYWN0b3J5QXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJZnJhbWVfZGlnIC0zIC8vIHByaXplOiBBc3NldElECglhc3NldF9ob2xkaW5nX2dldCBBc3NldEJhbGFuY2UKCXN3YXAKCXBvcAoJIQoJZnJhbWVfYnVyeSAwIC8vIG5lZWRzVG9PcHRJbnRvUHJpemU6IGJvb2wKCgkvLyAqaWYwX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MzIKCS8vIG5lZWRzVG9PcHRJbnRvUHJpemUKCWZyYW1lX2RpZyAwIC8vIG5lZWRzVG9PcHRJbnRvUHJpemU6IGJvb2wKCWJ6ICppZjBfZW5kCgoJLy8gKmlmMF9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czozMwoJLy8gdGhpcy5wZW5kaW5nR3JvdXAuYWRkTWV0aG9kQ2FsbDx0eXBlb2YgUmFmZmxlRmFjdG9yeS5wcm90b3R5cGUub3B0aW4sIHZvaWQ+KHsKCS8vICAgICAgICAgICAgICAgICBzZW5kZXI6IHNlbmRlci5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgIGFwcGxpY2F0aW9uSUQ6IHRoaXMuZmFjdG9yeUFwcElELAoJLy8gICAgICAgICAgICAgICAgIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHJlY2VpdmVyOiB0aGlzLmZhY3RvcnlBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgYW1vdW50OiBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgICAgICB9LAoJLy8gICAgICAgICAgICAgICAgICAgICBwcml6ZQoJLy8gICAgICAgICAgICAgICAgIF0sCgkvLyAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgIGlzRmlyc3RUeG46IHRydWUKCS8vICAgICAgICAgICAgIH0pCglpdHhuX25leHQKCWludGMgMSAvLyAgcGF5CglpdHhuX2ZpZWxkIFR5cGVFbnVtCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MzgKCS8vIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MKCWZyYW1lX2RpZyAtMSAvLyBzZW5kZXI6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWl0eG5fZmllbGQgU2VuZGVyCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MzkKCS8vIHJlY2VpdmVyOiB0aGlzLmZhY3RvcnlBcHBJRC5hZGRyZXNzCglpbnRjIDIgLy8gVE1QTF9mYWN0b3J5QXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBSZWNlaXZlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjQwCgkvLyBhbW91bnQ6IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UKCWdsb2JhbCBBc3NldE9wdEluTWluQmFsYW5jZQoJaXR4bl9maWVsZCBBbW91bnQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo0MQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCWl0eG5fYmVnaW4KCWludGMgMyAvLyAgYXBwbAoJaXR4bl9maWVsZCBUeXBlRW51bQoJcHVzaGJ5dGVzIDB4M2VhMTE4MzIgLy8gbWV0aG9kICJvcHRpbihwYXksdWludDY0KXZvaWQiCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjM0CgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjM1CgkvLyBhcHBsaWNhdGlvbklEOiB0aGlzLmZhY3RvcnlBcHBJRAoJaW50YyAyIC8vIFRNUExfZmFjdG9yeUFwcElECglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czozNgoJLy8gbWV0aG9kQXJnczogWwoJLy8gICAgICAgICAgICAgICAgICAgICB7CgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBzZW5kZXI6IHNlbmRlci5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHRoaXMuZmFjdG9yeUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIHByaXplCgkvLyAgICAgICAgICAgICAgICAgXQoJZnJhbWVfZGlnIC0zIC8vIHByaXplOiBBc3NldElECglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjQ1CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKKmlmMF9lbmQ6CgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo1MAoJLy8gb3B0aW5NQlIgPSAwCglpbnRjIDAgLy8gMAoJZnJhbWVfYnVyeSAxIC8vIG9wdGluTUJSOiB1aW50NjQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo1MQoJLy8gcHJpemVBc3NldElzQWxnbyA9IHByaXplLmlkID09PSAwCglmcmFtZV9kaWcgLTMgLy8gcHJpemU6IEFzc2V0SUQKCWludGMgMCAvLyAwCgk9PQoJZnJhbWVfYnVyeSAyIC8vIHByaXplQXNzZXRJc0FsZ286IGJvb2wKCgkvLyAqaWYxX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6NTIKCS8vIHByaXplQXNzZXRJc0FsZ28KCWZyYW1lX2RpZyAyIC8vIHByaXplQXNzZXRJc0FsZ286IGJvb2wKCWJ6ICppZjFfZW5kCgoJLy8gKmlmMV9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo1MwoJLy8gb3B0aW5NQlIgPSBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlCglnbG9iYWwgQXNzZXRPcHRJbk1pbkJhbGFuY2UKCWZyYW1lX2J1cnkgMSAvLyBvcHRpbk1CUjogdWludDY0CgoqaWYxX2VuZDoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjU2CgkvLyB0aWNrZXRBc3NldElzQWxnbyA9IHRpY2tldEFzc2V0LmlkID09PSAwCglmcmFtZV9kaWcgLTUgLy8gdGlja2V0QXNzZXQ6IEFzc2V0SUQKCWludGMgMCAvLyAwCgk9PQoJZnJhbWVfYnVyeSAzIC8vIHRpY2tldEFzc2V0SXNBbGdvOiBib29sCgoJLy8gKmlmMl9jb25kaXRpb24KCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjU3CgkvLyB0aWNrZXRBc3NldElzQWxnbwoJZnJhbWVfZGlnIDMgLy8gdGlja2V0QXNzZXRJc0FsZ286IGJvb2wKCWJ6ICppZjJfZW5kCgoJLy8gKmlmMl9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo1OAoJLy8gb3B0aW5NQlIgKz0gZ2xvYmFscy5hc3NldE9wdEluTWluQmFsYW5jZQoJZnJhbWVfZGlnIDEgLy8gb3B0aW5NQlI6IHVpbnQ2NAoJZ2xvYmFsIEFzc2V0T3B0SW5NaW5CYWxhbmNlCgkrCglmcmFtZV9idXJ5IDEgLy8gb3B0aW5NQlI6IHVpbnQ2NAoKKmlmMl9lbmQ6CgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo2MQoJLy8gbWJyQW1vdW50ID0gKAoJLy8gICAgICAgICAgICAgMTAwXzAwMCAvLyByZXF1aXJlcyAzIGV4dHJhIHBhZ2VzCgkvLyAgICAgICAgICAgICArICgyOF81MDAgKiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1VaW50KQoJLy8gICAgICAgICAgICAgKyAoNTBfMDAwICogUmFmZmxlLnNjaGVtYS5nbG9iYWwubnVtQnl0ZVNsaWNlKQoJLy8gICAgICAgICAgICAgKyBvcHRpbk1CUgoJLy8gICAgICAgICApCglwdXNoaW50IDY3NzUwMAoJZnJhbWVfZGlnIDEgLy8gb3B0aW5NQlI6IHVpbnQ2NAoJKwoJZnJhbWVfYnVyeSA0IC8vIG1ickFtb3VudDogdWludDY0CgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6NjgKCS8vIHRoaXMucGVuZGluZ0dyb3VwLmFkZE1ldGhvZENhbGw8dHlwZW9mIFJhZmZsZUZhY3RvcnkucHJvdG90eXBlLm5ldywgQXBwSUQ+KHsKCS8vICAgICAgICAgICAgIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiB0aGlzLmZhY3RvcnlBcHBJRCwKCS8vICAgICAgICAgICAgIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICB7CgkvLyAgICAgICAgICAgICAgICAgICAgIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgIHJlY2VpdmVyOiB0aGlzLmZhY3RvcnlBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IG1ickFtb3VudCwKCS8vICAgICAgICAgICAgICAgICAgICAgZmVlOiAwCgkvLyAgICAgICAgICAgICAgICAgfSwKCS8vICAgICAgICAgICAgICAgICB7CgkvLyAgICAgICAgICAgICAgICAgICAgIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgIGFzc2V0UmVjZWl2ZXI6IHRoaXMuZmFjdG9yeUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgIGFzc2V0QW1vdW50OiBwcml6ZUFtb3VudCwKCS8vICAgICAgICAgICAgICAgICAgICAgeGZlckFzc2V0OiBwcml6ZSwKCS8vICAgICAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgdGlja2V0QXNzZXQsCgkvLyAgICAgICAgICAgICAgICAgc3RhcnRpbmdSb3VuZCwKCS8vICAgICAgICAgICAgICAgICBlbmRpbmdSb3VuZCwKCS8vICAgICAgICAgICAgICAgICBtaW5UaWNrZXRzLAoJLy8gICAgICAgICAgICAgICAgIG1heFRpY2tldHMsCgkvLyAgICAgICAgICAgICAgICAgZ2F0ZUlELAoJLy8gICAgICAgICAgICAgXSwKCS8vICAgICAgICAgfSkKCWl0eG5fbmV4dAoJaW50YyAxIC8vICBwYXkKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo3MwoJLy8gc2VuZGVyOiBzZW5kZXIuYWRkcmVzcwoJZnJhbWVfZGlnIC0xIC8vIHNlbmRlcjogQXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBTZW5kZXIKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo3NAoJLy8gcmVjZWl2ZXI6IHRoaXMuZmFjdG9yeUFwcElELmFkZHJlc3MKCWludGMgMiAvLyBUTVBMX2ZhY3RvcnlBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFJlY2VpdmVyCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6NzUKCS8vIGFtb3VudDogbWJyQW1vdW50CglmcmFtZV9kaWcgNCAvLyBtYnJBbW91bnQ6IHVpbnQ2NAoJaXR4bl9maWVsZCBBbW91bnQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo3NgoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCWl0eG5fbmV4dAoJaW50YyA0IC8vICBheGZlcgoJaXR4bl9maWVsZCBUeXBlRW51bQoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjc5CgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjgwCgkvLyBhc3NldFJlY2VpdmVyOiB0aGlzLmZhY3RvcnlBcHBJRC5hZGRyZXNzCglpbnRjIDIgLy8gVE1QTF9mYWN0b3J5QXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBBc3NldFJlY2VpdmVyCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6ODEKCS8vIGFzc2V0QW1vdW50OiBwcml6ZUFtb3VudAoJZnJhbWVfZGlnIC00IC8vIHByaXplQW1vdW50OiB1aW50NjQKCWl0eG5fZmllbGQgQXNzZXRBbW91bnQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo4MgoJLy8geGZlckFzc2V0OiBwcml6ZQoJZnJhbWVfZGlnIC0zIC8vIHByaXplOiBBc3NldElECglpdHhuX2ZpZWxkIFhmZXJBc3NldAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjgzCgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoJaXR4bl9uZXh0CglpbnRjIDMgLy8gIGFwcGwKCWl0eG5fZmllbGQgVHlwZUVudW0KCXB1c2hieXRlcyAweDlmNTQ1MjQwIC8vIG1ldGhvZCAibmV3KHBheSxheGZlcix1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCl1aW50NjQiCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjY5CgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjcwCgkvLyBhcHBsaWNhdGlvbklEOiB0aGlzLmZhY3RvcnlBcHBJRAoJaW50YyAyIC8vIFRNUExfZmFjdG9yeUFwcElECglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czo3MQoJLy8gbWV0aG9kQXJnczogWwoJLy8gICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHRoaXMuZmFjdG9yeUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgIGFtb3VudDogbWJyQW1vdW50LAoJLy8gICAgICAgICAgICAgICAgICAgICBmZWU6IDAKCS8vICAgICAgICAgICAgICAgICB9LAoJLy8gICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgYXNzZXRSZWNlaXZlcjogdGhpcy5mYWN0b3J5QXBwSUQuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgYXNzZXRBbW91bnQ6IHByaXplQW1vdW50LAoJLy8gICAgICAgICAgICAgICAgICAgICB4ZmVyQXNzZXQ6IHByaXplLAoJLy8gICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgfSwKCS8vICAgICAgICAgICAgICAgICB0aWNrZXRBc3NldCwKCS8vICAgICAgICAgICAgICAgICBzdGFydGluZ1JvdW5kLAoJLy8gICAgICAgICAgICAgICAgIGVuZGluZ1JvdW5kLAoJLy8gICAgICAgICAgICAgICAgIG1pblRpY2tldHMsCgkvLyAgICAgICAgICAgICAgICAgbWF4VGlja2V0cywKCS8vICAgICAgICAgICAgICAgICBnYXRlSUQsCgkvLyAgICAgICAgICAgICBdCglmcmFtZV9kaWcgLTUgLy8gdGlja2V0QXNzZXQ6IEFzc2V0SUQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgLTYgLy8gc3RhcnRpbmdSb3VuZDogdWludDY0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC03IC8vIGVuZGluZ1JvdW5kOiB1aW50NjQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgLTggLy8gbWluVGlja2V0czogdWludDY0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC05IC8vIG1heFRpY2tldHM6IHVpbnQ2NAoJaXRvYgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCWZyYW1lX2RpZyAtMTAgLy8gZ2F0ZUlEOiB1aW50NjQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gRmVlIGZpZWxkIG5vdCBzZXQsIGRlZmF1bHRpbmcgdG8gMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRmVlCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6OTQKCS8vIHRoaXMucGVuZGluZ0dyb3VwLnN1Ym1pdCgpCglpdHhuX3N1Ym1pdAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjk2CgkvLyByZXR1cm4gdGhpcy5pdHhuLmNyZWF0ZWRBcHBsaWNhdGlvbklEOwoJaXR4biBDcmVhdGVkQXBwbGljYXRpb25JRAoKCS8vIHNldCB0aGUgc3Vicm91dGluZSByZXR1cm4gdmFsdWUKCWZyYW1lX2J1cnkgMAoKCS8vIHBvcCBhbGwgbG9jYWwgdmFyaWFibGVzIGZyb20gdGhlIHN0YWNrCglwb3BuIDQKCXJldHN1YgoKLy8gZW50ZXIodWludDY0LGJvb2wsdWludDY0LHVpbnQ2NCxieXRlW11bXSl2b2lkCiphYmlfcm91dGVfZW50ZXI6CgkvLyBhcmdzOiBieXRlW11bXQoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNQoKCS8vIGFtb3VudDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyA0CglidG9pCgoJLy8gcmFmZmxlQXBwSUQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwoJYnRvaQoKCS8vIHJla2V5QmFjazogYm9vbAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgoJZHVwCglsZW4KCWludGMgMSAvLyAxCgk9PQoKCS8vIGFyZ3VtZW50IDMgKHJla2V5QmFjaykgZm9yIGVudGVyIG11c3QgYmUgYSBib29sCglhc3NlcnQKCWludGMgMCAvLyAwCglnZXRiaXQKCgkvLyBzZW5kZXI6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQoJYnRvaQoKCS8vIGV4ZWN1dGUgZW50ZXIodWludDY0LGJvb2wsdWludDY0LHVpbnQ2NCxieXRlW11bXSl2b2lkCgljYWxsc3ViIGVudGVyCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyBlbnRlcihzZW5kZXI6IEFwcElELCByZWtleUJhY2s6IGJvb2xlYW4sIHJhZmZsZUFwcElEOiBBcHBJRCwgYW1vdW50OiB1aW50NjQsIGFyZ3M6IGJ5dGVzW10pOiB2b2lkCmVudGVyOgoJcHJvdG8gNSAwCgoJLy8gUHVzaCBlbXB0eSBieXRlcyBhZnRlciB0aGUgZnJhbWUgcG9pbnRlciB0byByZXNlcnZlIHNwYWNlIGZvciBsb2NhbCB2YXJpYWJsZXMKCWJ5dGVjIDAgLy8gMHgKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMDAKCS8vIGFzc2VydChyYWZmbGVBcHBJRC5jcmVhdG9yID09PSB0aGlzLmZhY3RvcnlBcHBJRC5hZGRyZXNzLCBlcnJzLkNSRUFUT1JfTk9UX1JBRkZMRV9GQUNUT1JZKQoJZnJhbWVfZGlnIC0zIC8vIHJhZmZsZUFwcElEOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQ3JlYXRvcgoJcG9wCglpbnRjIDIgLy8gVE1QTF9mYWN0b3J5QXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJPT0KCWFzc2VydAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjEwMgoJLy8gdGlja2V0QXNzZXQgPSByYWZmbGVBcHBJRC5nbG9iYWxTdGF0ZShBS0lUQV9SQUZGTEVfVElDS0VUX0FTU0VUX0tFWSkgYXMgQXNzZXRJRAoJZnJhbWVfZGlnIC0zIC8vIHJhZmZsZUFwcElEOiBBcHBJRAoJcHVzaGJ5dGVzIDB4NzQ2OTYzNmI2NTc0NWY2MTczNzM2NTc0IC8vICJ0aWNrZXRfYXNzZXQiCglhcHBfZ2xvYmFsX2dldF9leAoKCS8vIGdsb2JhbCBzdGF0ZSB2YWx1ZSBkb2VzIG5vdCBleGlzdDogcmFmZmxlQXBwSUQuZ2xvYmFsU3RhdGUoQUtJVEFfUkFGRkxFX1RJQ0tFVF9BU1NFVF9LRVkpCglhc3NlcnQKCWZyYW1lX2J1cnkgMCAvLyB0aWNrZXRBc3NldDogdWludDY0CgoJLy8gKmlmM19jb25kaXRpb24KCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjEwNAoJLy8gdGlja2V0QXNzZXQuaWQgPT09IDAKCWZyYW1lX2RpZyAwIC8vIHRpY2tldEFzc2V0OiB1aW50NjQKCWludGMgMCAvLyAwCgk9PQoJYnogKmlmM19lbHNlCgoJLy8gKmlmM19jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMDUKCS8vIHNlbmRNZXRob2RDYWxsPHR5cGVvZiBSYWZmbGUucHJvdG90eXBlLmVudGVyLCB2b2lkPih7CgkvLyAgICAgICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiByYWZmbGVBcHBJRCwKCS8vICAgICAgICAgICAgICAgICBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICByZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIGFtb3VudDogYW1vdW50LAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgICAgICB9LAoJLy8gICAgICAgICAgICAgICAgICAgICBhcmdzLAoJLy8gICAgICAgICAgICAgICAgIF0sCgkvLyAgICAgICAgICAgICAgICAgcmVrZXlUbzogcmVrZXlCYWNrID8gc2VuZGVyLmFkZHJlc3MgOiBnbG9iYWxzLnplcm9BZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgIGZlZTogMAoJLy8gICAgICAgICAgICAgfSkKCWl0eG5fYmVnaW4KCWludGMgMSAvLyAgcGF5CglpdHhuX2ZpZWxkIFR5cGVFbnVtCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTEwCgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjExMQoJLy8gcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBSZWNlaXZlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjExMgoJLy8gYW1vdW50OiBhbW91bnQKCWZyYW1lX2RpZyAtNCAvLyBhbW91bnQ6IHVpbnQ2NAoJaXR4bl9maWVsZCBBbW91bnQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMTMKCS8vIGZlZTogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRmVlCglpdHhuX25leHQKCWludGMgMyAvLyAgYXBwbAoJaXR4bl9maWVsZCBUeXBlRW51bQoJcHVzaGJ5dGVzIDB4NzVlYjc3MDIgLy8gbWV0aG9kICJlbnRlcihwYXksYnl0ZVtdW10pdm9pZCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTA2CgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjEwNwoJLy8gYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjEwOAoJLy8gbWV0aG9kQXJnczogWwoJLy8gICAgICAgICAgICAgICAgICAgICB7CgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBzZW5kZXI6IHNlbmRlci5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IGFtb3VudCwKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgICAgICAgICAgICAgfSwKCS8vICAgICAgICAgICAgICAgICAgICAgYXJncywKCS8vICAgICAgICAgICAgICAgICBdCglmcmFtZV9kaWcgLTUgLy8gYXJnczogYnl0ZXNbXQoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMTcKCS8vIHJla2V5VG86IHJla2V5QmFjayA/IHNlbmRlci5hZGRyZXNzIDogZ2xvYmFscy56ZXJvQWRkcmVzcwoJZnJhbWVfZGlnIC0yIC8vIHJla2V5QmFjazogYm9vbGVhbgoJYnogKnRlcm5hcnkwX2ZhbHNlCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCgliICp0ZXJuYXJ5MF9lbmQKCip0ZXJuYXJ5MF9mYWxzZToKCWdsb2JhbCBaZXJvQWRkcmVzcwoKKnRlcm5hcnkwX2VuZDoKCWl0eG5fZmllbGQgUmVrZXlUbwoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjExOAoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBTdWJtaXQgaW5uZXIgdHJhbnNhY3Rpb24KCWl0eG5fc3VibWl0CgliICppZjNfZW5kCgoqaWYzX2Vsc2U6CgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMjEKCS8vIHNlbmRNZXRob2RDYWxsPHR5cGVvZiBSYWZmbGUucHJvdG90eXBlLmVudGVyQXNhLCB2b2lkPih7CgkvLyAgICAgICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiByYWZmbGVBcHBJRCwKCS8vICAgICAgICAgICAgICAgICBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICByZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIGFtb3VudDogZW50cnlNQlIsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhc3NldFJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgYXNzZXRBbW91bnQ6IGFtb3VudCwKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHhmZXJBc3NldDogdGlja2V0QXNzZXQsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIGFyZ3MsCgkvLyAgICAgICAgICAgICAgICAgXSwKCS8vICAgICAgICAgICAgICAgICByZWtleVRvOiByZWtleUJhY2sgPyBzZW5kZXIuYWRkcmVzcyA6IGdsb2JhbHMuemVyb0FkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgZmVlOiAwCgkvLyAgICAgICAgICAgICB9KQoJaXR4bl9iZWdpbgoJaW50YyAxIC8vICBwYXkKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMjYKCS8vIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MKCWZyYW1lX2RpZyAtMSAvLyBzZW5kZXI6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWl0eG5fZmllbGQgU2VuZGVyCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTI3CgkvLyByZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcwoJZnJhbWVfZGlnIC0zIC8vIHJhZmZsZUFwcElEOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFJlY2VpdmVyCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTI4CgkvLyBhbW91bnQ6IGVudHJ5TUJSCglwdXNoaW50IDM3MDAwCglpdHhuX2ZpZWxkIEFtb3VudAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjEyOQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCWl0eG5fbmV4dAoJaW50YyA0IC8vICBheGZlcgoJaXR4bl9maWVsZCBUeXBlRW51bQoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjEzMgoJLy8gc2VuZGVyOiBzZW5kZXIuYWRkcmVzcwoJZnJhbWVfZGlnIC0xIC8vIHNlbmRlcjogQXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBTZW5kZXIKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMzMKCS8vIGFzc2V0UmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBBc3NldFJlY2VpdmVyCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTM0CgkvLyBhc3NldEFtb3VudDogYW1vdW50CglmcmFtZV9kaWcgLTQgLy8gYW1vdW50OiB1aW50NjQKCWl0eG5fZmllbGQgQXNzZXRBbW91bnQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMzUKCS8vIHhmZXJBc3NldDogdGlja2V0QXNzZXQKCWZyYW1lX2RpZyAwIC8vIHRpY2tldEFzc2V0OiB1aW50NjQKCWl0eG5fZmllbGQgWGZlckFzc2V0CgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTM2CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoJaXR4bl9uZXh0CglpbnRjIDMgLy8gIGFwcGwKCWl0eG5fZmllbGQgVHlwZUVudW0KCXB1c2hieXRlcyAweDJmNzFjMjRjIC8vIG1ldGhvZCAiZW50ZXJBc2EocGF5LGF4ZmVyLGJ5dGVbXVtdKXZvaWQiCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjEyMgoJLy8gc2VuZGVyOiBzZW5kZXIuYWRkcmVzcwoJZnJhbWVfZGlnIC0xIC8vIHNlbmRlcjogQXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBTZW5kZXIKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMjMKCS8vIGFwcGxpY2F0aW9uSUQ6IHJhZmZsZUFwcElECglmcmFtZV9kaWcgLTMgLy8gcmFmZmxlQXBwSUQ6IEFwcElECglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxMjQKCS8vIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgYW1vdW50OiBlbnRyeU1CUiwKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgICAgICAgICAgICAgfSwKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIGFzc2V0UmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhc3NldEFtb3VudDogYW1vdW50LAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgeGZlckFzc2V0OiB0aWNrZXRBc3NldCwKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgICAgICAgICAgICAgfSwKCS8vICAgICAgICAgICAgICAgICAgICAgYXJncywKCS8vICAgICAgICAgICAgICAgICBdCglmcmFtZV9kaWcgLTUgLy8gYXJnczogYnl0ZXNbXQoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxNDAKCS8vIHJla2V5VG86IHJla2V5QmFjayA/IHNlbmRlci5hZGRyZXNzIDogZ2xvYmFscy56ZXJvQWRkcmVzcwoJZnJhbWVfZGlnIC0yIC8vIHJla2V5QmFjazogYm9vbGVhbgoJYnogKnRlcm5hcnkxX2ZhbHNlCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCgliICp0ZXJuYXJ5MV9lbmQKCip0ZXJuYXJ5MV9mYWxzZToKCWdsb2JhbCBaZXJvQWRkcmVzcwoKKnRlcm5hcnkxX2VuZDoKCWl0eG5fZmllbGQgUmVrZXlUbwoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE0MQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBTdWJtaXQgaW5uZXIgdHJhbnNhY3Rpb24KCWl0eG5fc3VibWl0CgoqaWYzX2VuZDoKCXJldHN1YgoKLy8gcmFmZmxlKHVpbnQ2NCxib29sLHVpbnQ2NCl2b2lkCiphYmlfcm91dGVfcmFmZmxlOgoJLy8gcmFmZmxlQXBwSUQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwoJYnRvaQoKCS8vIHJla2V5QmFjazogYm9vbAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgoJZHVwCglsZW4KCWludGMgMSAvLyAxCgk9PQoKCS8vIGFyZ3VtZW50IDEgKHJla2V5QmFjaykgZm9yIHJhZmZsZSBtdXN0IGJlIGEgYm9vbAoJYXNzZXJ0CglpbnRjIDAgLy8gMAoJZ2V0Yml0CgoJLy8gc2VuZGVyOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWJ0b2kKCgkvLyBleGVjdXRlIHJhZmZsZSh1aW50NjQsYm9vbCx1aW50NjQpdm9pZAoJY2FsbHN1YiByYWZmbGUKCWludGMgMSAvLyAxCglyZXR1cm4KCi8vIHJhZmZsZShzZW5kZXI6IEFwcElELCByZWtleUJhY2s6IGJvb2xlYW4sIHJhZmZsZUFwcElEOiBBcHBJRCk6IHZvaWQKcmFmZmxlOgoJcHJvdG8gMyAwCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTQ3CgkvLyBhc3NlcnQocmFmZmxlQXBwSUQuY3JlYXRvciA9PT0gdGhpcy5mYWN0b3J5QXBwSUQuYWRkcmVzcywgZXJycy5DUkVBVE9SX05PVF9SQUZGTEVfRkFDVE9SWSkKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcENyZWF0b3IKCXBvcAoJaW50YyAyIC8vIFRNUExfZmFjdG9yeUFwcElECglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCT09Cglhc3NlcnQKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxNDkKCS8vIHNlbmRNZXRob2RDYWxsPHR5cGVvZiBSYWZmbGUucHJvdG90eXBlLnJhZmZsZT4oewoJLy8gICAgICAgICAgICAgc2VuZGVyOiBzZW5kZXIuYWRkcmVzcywKCS8vICAgICAgICAgICAgIGFwcGxpY2F0aW9uSUQ6IHJhZmZsZUFwcElELAoJLy8gICAgICAgICAgICAgcmVrZXlUbzogcmVrZXlCYWNrID8gc2VuZGVyLmFkZHJlc3MgOiBnbG9iYWxzLnplcm9BZGRyZXNzLAoJLy8gICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICB9KQoJaXR4bl9iZWdpbgoJaW50YyAzIC8vICBhcHBsCglpdHhuX2ZpZWxkIFR5cGVFbnVtCglwdXNoYnl0ZXMgMHg2OTY1MDFkZSAvLyBtZXRob2QgInJhZmZsZSgpdm9pZCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTUwCgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE1MQoJLy8gYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE1MgoJLy8gcmVrZXlUbzogcmVrZXlCYWNrID8gc2VuZGVyLmFkZHJlc3MgOiBnbG9iYWxzLnplcm9BZGRyZXNzCglmcmFtZV9kaWcgLTIgLy8gcmVrZXlCYWNrOiBib29sZWFuCglieiAqdGVybmFyeTJfZmFsc2UKCWZyYW1lX2RpZyAtMSAvLyBzZW5kZXI6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWIgKnRlcm5hcnkyX2VuZAoKKnRlcm5hcnkyX2ZhbHNlOgoJZ2xvYmFsIFplcm9BZGRyZXNzCgoqdGVybmFyeTJfZW5kOgoJaXR4bl9maWVsZCBSZWtleVRvCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTUzCgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vIFN1Ym1pdCBpbm5lciB0cmFuc2FjdGlvbgoJaXR4bl9zdWJtaXQKCXJldHN1YgoKLy8gZmluZFdpbm5lcih1aW50NjQsYm9vbCx1aW50NjQpdm9pZAoqYWJpX3JvdXRlX2ZpbmRXaW5uZXI6CgkvLyByYWZmbGVBcHBJRDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyAzCglidG9pCgoJLy8gcmVrZXlCYWNrOiBib29sCgl0eG5hIEFwcGxpY2F0aW9uQXJncyAyCglkdXAKCWxlbgoJaW50YyAxIC8vIDEKCT09CgoJLy8gYXJndW1lbnQgMSAocmVrZXlCYWNrKSBmb3IgZmluZFdpbm5lciBtdXN0IGJlIGEgYm9vbAoJYXNzZXJ0CglpbnRjIDAgLy8gMAoJZ2V0Yml0CgoJLy8gc2VuZGVyOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWJ0b2kKCgkvLyBleGVjdXRlIGZpbmRXaW5uZXIodWludDY0LGJvb2wsdWludDY0KXZvaWQKCWNhbGxzdWIgZmluZFdpbm5lcgoJaW50YyAxIC8vIDEKCXJldHVybgoKLy8gZmluZFdpbm5lcihzZW5kZXI6IEFwcElELCByZWtleUJhY2s6IGJvb2xlYW4sIHJhZmZsZUFwcElEOiBBcHBJRCk6IHZvaWQKZmluZFdpbm5lcjoKCXByb3RvIDMgMAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE1OAoJLy8gYXNzZXJ0KHJhZmZsZUFwcElELmNyZWF0b3IgPT09IHRoaXMuZmFjdG9yeUFwcElELmFkZHJlc3MsIGVycnMuQ1JFQVRPUl9OT1RfUkFGRkxFX0ZBQ1RPUlkpCglmcmFtZV9kaWcgLTMgLy8gcmFmZmxlQXBwSUQ6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBDcmVhdG9yCglwb3AKCWludGMgMiAvLyBUTVBMX2ZhY3RvcnlBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCgk9PQoJYXNzZXJ0CgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTYwCgkvLyBzZW5kTWV0aG9kQ2FsbDx0eXBlb2YgUmFmZmxlLnByb3RvdHlwZS5maW5kV2lubmVyPih7CgkvLyAgICAgICAgICAgICBzZW5kZXI6IHNlbmRlci5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQsCgkvLyAgICAgICAgICAgICByZWtleVRvOiByZWtleUJhY2sgPyBzZW5kZXIuYWRkcmVzcyA6IGdsb2JhbHMuemVyb0FkZHJlc3MsCgkvLyAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgIH0pCglpdHhuX2JlZ2luCglpbnRjIDMgLy8gIGFwcGwKCWl0eG5fZmllbGQgVHlwZUVudW0KCXB1c2hieXRlcyAweGI3MzNkNTE5IC8vIG1ldGhvZCAiZmluZFdpbm5lcigpdm9pZCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTYxCgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE2MgoJLy8gYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE2MwoJLy8gcmVrZXlUbzogcmVrZXlCYWNrID8gc2VuZGVyLmFkZHJlc3MgOiBnbG9iYWxzLnplcm9BZGRyZXNzCglmcmFtZV9kaWcgLTIgLy8gcmVrZXlCYWNrOiBib29sZWFuCglieiAqdGVybmFyeTNfZmFsc2UKCWZyYW1lX2RpZyAtMSAvLyBzZW5kZXI6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWIgKnRlcm5hcnkzX2VuZAoKKnRlcm5hcnkzX2ZhbHNlOgoJZ2xvYmFsIFplcm9BZGRyZXNzCgoqdGVybmFyeTNfZW5kOgoJaXR4bl9maWVsZCBSZWtleVRvCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTY0CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vIFN1Ym1pdCBpbm5lciB0cmFuc2FjdGlvbgoJaXR4bl9zdWJtaXQKCXJldHN1YgoKLy8gY2xhaW1SYWZmbGVQcml6ZSh1aW50NjQsYm9vbCx1aW50NjQpdm9pZAoqYWJpX3JvdXRlX2NsYWltUmFmZmxlUHJpemU6CgkvLyByYWZmbGVBcHBJRDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyAzCglidG9pCgoJLy8gcmVrZXlCYWNrOiBib29sCgl0eG5hIEFwcGxpY2F0aW9uQXJncyAyCglkdXAKCWxlbgoJaW50YyAxIC8vIDEKCT09CgoJLy8gYXJndW1lbnQgMSAocmVrZXlCYWNrKSBmb3IgY2xhaW1SYWZmbGVQcml6ZSBtdXN0IGJlIGEgYm9vbAoJYXNzZXJ0CglpbnRjIDAgLy8gMAoJZ2V0Yml0CgoJLy8gc2VuZGVyOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWJ0b2kKCgkvLyBleGVjdXRlIGNsYWltUmFmZmxlUHJpemUodWludDY0LGJvb2wsdWludDY0KXZvaWQKCWNhbGxzdWIgY2xhaW1SYWZmbGVQcml6ZQoJaW50YyAxIC8vIDEKCXJldHVybgoKLy8gY2xhaW1SYWZmbGVQcml6ZShzZW5kZXI6IEFwcElELCByZWtleUJhY2s6IGJvb2xlYW4sIHJhZmZsZUFwcElEOiBBcHBJRCk6IHZvaWQKY2xhaW1SYWZmbGVQcml6ZToKCXByb3RvIDMgMAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE2OQoJLy8gYXNzZXJ0KHJhZmZsZUFwcElELmNyZWF0b3IgPT09IHRoaXMuZmFjdG9yeUFwcElELmFkZHJlc3MsIGVycnMuQ1JFQVRPUl9OT1RfUkFGRkxFX0ZBQ1RPUlkpCglmcmFtZV9kaWcgLTMgLy8gcmFmZmxlQXBwSUQ6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBDcmVhdG9yCglwb3AKCWludGMgMiAvLyBUTVBMX2ZhY3RvcnlBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCgk9PQoJYXNzZXJ0CgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTcxCgkvLyBzZW5kTWV0aG9kQ2FsbDx0eXBlb2YgUmFmZmxlLnByb3RvdHlwZS5jbGFpbVJhZmZsZVByaXplPih7CgkvLyAgICAgICAgICAgICBzZW5kZXI6IHNlbmRlci5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQsCgkvLyAgICAgICAgICAgICByZWtleVRvOiByZWtleUJhY2sgPyBzZW5kZXIuYWRkcmVzcyA6IGdsb2JhbHMuemVyb0FkZHJlc3MsCgkvLyAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgIH0pCglpdHhuX2JlZ2luCglpbnRjIDMgLy8gIGFwcGwKCWl0eG5fZmllbGQgVHlwZUVudW0KCXB1c2hieXRlcyAweDY1ZmNhOThiIC8vIG1ldGhvZCAiY2xhaW1SYWZmbGVQcml6ZSgpdm9pZCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTcyCgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE3MwoJLy8gYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE3NAoJLy8gcmVrZXlUbzogcmVrZXlCYWNrID8gc2VuZGVyLmFkZHJlc3MgOiBnbG9iYWxzLnplcm9BZGRyZXNzCglmcmFtZV9kaWcgLTIgLy8gcmVrZXlCYWNrOiBib29sZWFuCglieiAqdGVybmFyeTRfZmFsc2UKCWZyYW1lX2RpZyAtMSAvLyBzZW5kZXI6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWIgKnRlcm5hcnk0X2VuZAoKKnRlcm5hcnk0X2ZhbHNlOgoJZ2xvYmFsIFplcm9BZGRyZXNzCgoqdGVybmFyeTRfZW5kOgoJaXR4bl9maWVsZCBSZWtleVRvCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTc1CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vIFN1Ym1pdCBpbm5lciB0cmFuc2FjdGlvbgoJaXR4bl9zdWJtaXQKCXJldHN1YgoKLy8gZGVsZXRlUmFmZmxlQXBwbGljYXRpb24odWludDY0LGJvb2wsdWludDY0KXZvaWQKKmFiaV9yb3V0ZV9kZWxldGVSYWZmbGVBcHBsaWNhdGlvbjoKCS8vIHJhZmZsZUFwcElEOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDMKCWJ0b2kKCgkvLyByZWtleUJhY2s6IGJvb2wKCXR4bmEgQXBwbGljYXRpb25BcmdzIDIKCWR1cAoJbGVuCglpbnRjIDEgLy8gMQoJPT0KCgkvLyBhcmd1bWVudCAxIChyZWtleUJhY2spIGZvciBkZWxldGVSYWZmbGVBcHBsaWNhdGlvbiBtdXN0IGJlIGEgYm9vbAoJYXNzZXJ0CglpbnRjIDAgLy8gMAoJZ2V0Yml0CgoJLy8gc2VuZGVyOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWJ0b2kKCgkvLyBleGVjdXRlIGRlbGV0ZVJhZmZsZUFwcGxpY2F0aW9uKHVpbnQ2NCxib29sLHVpbnQ2NCl2b2lkCgljYWxsc3ViIGRlbGV0ZVJhZmZsZUFwcGxpY2F0aW9uCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyBkZWxldGVSYWZmbGVBcHBsaWNhdGlvbihzZW5kZXI6IEFwcElELCByZWtleUJhY2s6IGJvb2xlYW4sIHJhZmZsZUFwcElEOiBBcHBJRCk6IHZvaWQKZGVsZXRlUmFmZmxlQXBwbGljYXRpb246Cglwcm90byAzIDAKCgkvLyBjb250cmFjdHMvYXJjNTgvcGx1Z2lucy9yYWZmbGUuYWxnby50czoxODAKCS8vIGFzc2VydChyYWZmbGVBcHBJRC5jcmVhdG9yID09PSB0aGlzLmZhY3RvcnlBcHBJRC5hZGRyZXNzLCBlcnJzLkNSRUFUT1JfTk9UX1JBRkZMRV9GQUNUT1JZKQoJZnJhbWVfZGlnIC0zIC8vIHJhZmZsZUFwcElEOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQ3JlYXRvcgoJcG9wCglpbnRjIDIgLy8gVE1QTF9mYWN0b3J5QXBwSUQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJPT0KCWFzc2VydAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE4MgoJLy8gc2VuZE1ldGhvZENhbGw8dHlwZW9mIFJhZmZsZS5wcm90b3R5cGUuZGVsZXRlQXBwbGljYXRpb24+KHsKCS8vICAgICAgICAgICAgIHNlbmRlcjogc2VuZGVyLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiByYWZmbGVBcHBJRCwKCS8vICAgICAgICAgICAgIHJla2V5VG86IHJla2V5QmFjayA/IHNlbmRlci5hZGRyZXNzIDogZ2xvYmFscy56ZXJvQWRkcmVzcywKCS8vICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgfSkKCWl0eG5fYmVnaW4KCWludGMgMyAvLyAgYXBwbAoJaXR4bl9maWVsZCBUeXBlRW51bQoJcHVzaGJ5dGVzIDB4MjQ4N2MzMmMgLy8gbWV0aG9kICJkZWxldGVBcHBsaWNhdGlvbigpdm9pZCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTgzCgkvLyBzZW5kZXI6IHNlbmRlci5hZGRyZXNzCglmcmFtZV9kaWcgLTEgLy8gc2VuZGVyOiBBcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE4NAoJLy8gYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQKCWZyYW1lX2RpZyAtMyAvLyByYWZmbGVBcHBJRDogQXBwSUQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3JhZmZsZS5hbGdvLnRzOjE4NQoJLy8gcmVrZXlUbzogcmVrZXlCYWNrID8gc2VuZGVyLmFkZHJlc3MgOiBnbG9iYWxzLnplcm9BZGRyZXNzCglmcmFtZV9kaWcgLTIgLy8gcmVrZXlCYWNrOiBib29sZWFuCglieiAqdGVybmFyeTVfZmFsc2UKCWZyYW1lX2RpZyAtMSAvLyBzZW5kZXI6IEFwcElECglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWIgKnRlcm5hcnk1X2VuZAoKKnRlcm5hcnk1X2ZhbHNlOgoJZ2xvYmFsIFplcm9BZGRyZXNzCgoqdGVybmFyeTVfZW5kOgoJaXR4bl9maWVsZCBSZWtleVRvCgoJLy8gY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcmFmZmxlLmFsZ28udHM6MTg2CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vIFN1Ym1pdCBpbm5lciB0cmFuc2FjdGlvbgoJaXR4bl9zdWJtaXQKCXJldHN1YgoKKmFiaV9yb3V0ZV9jcmVhdGVBcHBsaWNhdGlvbjoKCWludGMgMSAvLyAxCglyZXR1cm4KCipjcmVhdGVfTm9PcDoKCXB1c2hieXRlcyAweGI4NDQ3YjM2IC8vIG1ldGhvZCAiY3JlYXRlQXBwbGljYXRpb24oKXZvaWQiCgl0eG5hIEFwcGxpY2F0aW9uQXJncyAwCgltYXRjaCAqYWJpX3JvdXRlX2NyZWF0ZUFwcGxpY2F0aW9uCgoJLy8gdGhpcyBjb250cmFjdCBkb2VzIG5vdCBpbXBsZW1lbnQgdGhlIGdpdmVuIEFCSSBtZXRob2QgZm9yIGNyZWF0ZSBOb09wCgllcnIKCipjYWxsX05vT3A6CglwdXNoYnl0ZXMgMHgxMjQ4MTViMyAvLyBtZXRob2QgIm5ldyh1aW50NjQsYm9vbCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KXVpbnQ2NCIKCXB1c2hieXRlcyAweGI4YmQ3NmNjIC8vIG1ldGhvZCAiZW50ZXIodWludDY0LGJvb2wsdWludDY0LHVpbnQ2NCxieXRlW11bXSl2b2lkIgoJcHVzaGJ5dGVzIDB4YTQzODVlMWIgLy8gbWV0aG9kICJyYWZmbGUodWludDY0LGJvb2wsdWludDY0KXZvaWQiCglwdXNoYnl0ZXMgMHhiNTFjNGM5ZSAvLyBtZXRob2QgImZpbmRXaW5uZXIodWludDY0LGJvb2wsdWludDY0KXZvaWQiCglwdXNoYnl0ZXMgMHhiZDMyMDQ2NSAvLyBtZXRob2QgImNsYWltUmFmZmxlUHJpemUodWludDY0LGJvb2wsdWludDY0KXZvaWQiCglwdXNoYnl0ZXMgMHg3NzJiMjQ4NyAvLyBtZXRob2QgImRlbGV0ZVJhZmZsZUFwcGxpY2F0aW9uKHVpbnQ2NCxib29sLHVpbnQ2NCl2b2lkIgoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAoJbWF0Y2ggKmFiaV9yb3V0ZV9uZXcgKmFiaV9yb3V0ZV9lbnRlciAqYWJpX3JvdXRlX3JhZmZsZSAqYWJpX3JvdXRlX2ZpbmRXaW5uZXIgKmFiaV9yb3V0ZV9jbGFpbVJhZmZsZVByaXplICphYmlfcm91dGVfZGVsZXRlUmFmZmxlQXBwbGljYXRpb24KCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY2FsbCBOb09wCgllcnI=",
+    "clear": "I3ByYWdtYSB2ZXJzaW9uIDEw"
+  },
+  "templateVariables": {
+    "factoryAppID": {
+      "type": "uint64"
+    }
+  },
+  "scratchVariables": {
+    "factoryAppID": {
+      "type": "uint64",
+      "slot": 200
+    }
+  },
+  "compilerInfo": {
+    "compiler": "algod",
+    "compilerVersion": {
+      "major": 3,
+      "minor": 27,
+      "patch": 0,
+      "commitHash": "f54f0997"
+    }
+  }
+}

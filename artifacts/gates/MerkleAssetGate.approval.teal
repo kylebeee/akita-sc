@@ -32,13 +32,13 @@ newRegistryID:
 	bytec 0 // 0x
 
 	// contracts/gates/merkle_asset.algo.ts:39
-	// id = this._registryCursor.value
+	// id = this.registryCursor.value
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	frame_bury 0 // id: uint64
 
 	// contracts/gates/merkle_asset.algo.ts:40
-	// this._registryCursor.value += 1
+	// this.registryCursor.value += 1
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	intc 1 // 1
@@ -158,16 +158,16 @@ check:
 	// contracts/gates/merkle_asset.algo.ts:54
 	// params = castBytes<MerkleAssetGateCheckParams>(args)
 	frame_dig -1 // args: bytes
-	frame_bury 0 // params: (uint64,address,uint64,byte[32][])
+	frame_bury 0 // params: (address,uint64,uint64,byte[32][])
 
 	// *if0_condition
 	// contracts/gates/merkle_asset.algo.ts:56
 	// !(params.user.assetBalance(params.asset) > 0)
-	frame_dig 0 // params: (uint64,address,uint64,byte[32][])
+	frame_dig 0 // params: (address,uint64,uint64,byte[32][])
 	store 255 // full array
 	load 255 // full array
-	extract 8 32
-	frame_dig 0 // params: (uint64,address,uint64,byte[32][])
+	extract 0 32
+	frame_dig 0 // params: (address,uint64,uint64,byte[32][])
 	store 255 // full array
 	load 255 // full array
 	extract 40 8
@@ -187,11 +187,11 @@ check:
 
 *if0_end:
 	// contracts/gates/merkle_asset.algo.ts:60
-	// registryInfo = this.registry(params.registryIndex).value
-	frame_dig 0 // params: (uint64,address,uint64,byte[32][])
+	// registryInfo = this.registry(params.registryID).value
+	frame_dig 0 // params: (address,uint64,uint64,byte[32][])
 	store 255 // full array
 	load 255 // full array
-	extract 0 8
+	extract 32 8
 	btoi
 	itob
 	frame_bury 1 // storage key//registryInfo
@@ -230,7 +230,7 @@ check:
 	frame_dig 1 // storage key//registryInfo
 	box_get
 
-	// box value does not exist: this.registry(params.registryIndex).value
+	// box value does not exist: this.registry(params.registryID).value
 	assert
 	store 255 // full array
 	load 255 // full array
@@ -239,7 +239,7 @@ check:
 	frame_dig 1 // storage key//registryInfo
 	box_get
 
-	// box value does not exist: this.registry(params.registryIndex).value
+	// box value does not exist: this.registry(params.registryID).value
 	assert
 	store 255 // full array
 	intc 2 // 32
@@ -264,7 +264,7 @@ check:
 	swap
 	concat
 	itxn_field ApplicationArgs
-	frame_dig 0 // params: (uint64,address,uint64,byte[32][])
+	frame_dig 0 // params: (address,uint64,uint64,byte[32][])
 	store 255 // full array
 	load 255 // full array
 	extract 40 8
@@ -273,7 +273,7 @@ check:
 	sha256
 	sha256
 	itxn_field ApplicationArgs
-	frame_dig 0 // params: (uint64,address,uint64,byte[32][])
+	frame_dig 0 // params: (address,uint64,uint64,byte[32][])
 	store 255 // full array
 	pushint 48
 	load 255 // full array

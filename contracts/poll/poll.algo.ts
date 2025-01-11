@@ -17,8 +17,10 @@ const errs = {
     INVALID_VOTE: 'Invalid vote args',
     INVALID_VOTE_COUNT: 'Invalid number of vote args',
     INVALID_VOTE_OPTION: 'Invalid vote option',
-    FAILED_GATE: 'Failed gate check',
+    FAILED_GATE: 'Gate check failed',
 }
+
+const voteMBR = 15_300;
 
 export type PollType = uint64;
 export const SingleChoice: PollType = 0;
@@ -67,10 +69,6 @@ export class Poll extends ContractWithGate {
     */
     votes = BoxMap<Address, bytes<0>>();
 
-    private controls(address: Address): boolean {
-        return address.authAddr === this.app.address;
-    }
-
     private getUserImpact(user: Address): uint64 {
         return sendMethodCall<typeof AkitaSocialImpact.prototype.getUserImpact, uint64>({
             applicationID: AppID.fromUint64(AkitaAppIDsAkitaSocialImpactPlugin),
@@ -81,11 +79,11 @@ export class Poll extends ContractWithGate {
 
     createApplication(
         type: PollType,
-        gateID: uint64,
         endTime: uint64,
         maxSelected: uint64,
         question: string,
         options: string[],
+        gateID: uint64,
     ): void {
         assert(globals.callerApplicationID !== AppID.fromUint64(0), errs.BAD_DEPLOYER);
         assert(globals.latestTimestamp < endTime, errs.INVALID_END_TIME);
@@ -122,23 +120,27 @@ export class Poll extends ContractWithGate {
         }
     }
 
-    vote(sender: AppID, rekeyBack: boolean, votes: uint64[], args: bytes[]): void {
+    vote(payment: PayTxn, votes: uint64[], args: bytes[]): void {
         assert(globals.latestTimestamp <= this.endTime.value, errs.POLL_ENDED);
-        assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR);
-        assert(!this.votes(sender.address).exists, errs.ALREADY_VOTED);
+        assert(!this.votes(this.txn.sender).exists, errs.ALREADY_VOTED);
         assert(votes.length <= 5 && votes.length >= 1, errs.INVALID_VOTE);
-        assert(this.gate(this.gateID.value, args), errs.FAILED_GATE);
+        assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
 
-        sendPayment({
-            sender: sender.address,
+        verifyPayTxn(payment, {
+            amount: voteMBR,
             receiver: this.app.address,
-            amount: 15_300,
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-        });
+        })
+
+        // sendPayment({
+        //     sender: sender.address,
+        //     receiver: this.app.address,
+        //     amount: 15_300,
+        //     rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+        // });
 
         let impact = 1;
         if (this.type.value === SingleChoiceImpact || this.type.value === MultipleChoiceImpact) {
-            impact = this.getUserImpact(sender.address);
+            impact = this.getUserImpact(this.txn.sender);
         }
 
         if (this.type.value === SingleChoice || this.type.value === SingleChoiceImpact) {
@@ -175,7 +177,7 @@ export class Poll extends ContractWithGate {
             }
         }
 
-        this.votes(sender.address).create();
+        this.votes(this.txn.sender).create();
         this.boxCount.value += 1;
     }
 

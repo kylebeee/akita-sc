@@ -4,6 +4,7 @@ import { Operator } from './gate.algo';
 import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo, IncludedIn, NotIncludedIn } from '../../utils/operators';
 
 const errs = {
+    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
     INVALID_ARG_COUNT: 'Invalid number of arguments',
 }
 
@@ -13,23 +14,34 @@ export type RegistryInfo = {
     value: uint64;
 }
 
-export const AssetGateCheckParamsLength = len<uint64>() + len<Address>() + len<AssetID>();
+export const AssetGateCheckParamsLength = len<Address>() + len<uint64>() + len<AssetID>();
 export type AssetGateCheckParams = {
-    registryIndex: uint64;
     user: Address;
+    registryID: uint64;
     asset: AssetID;
 };
 
 export class AssetGate extends Contract {
     programVersion = 10;
 
-    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
+    /** The App ID of the Akita DAO contract */
+    akitaDaoAppID = TemplateVar<AppID>();
+
+    createApplication(): void {
+        this.registryCursor.value = 0;
+    }
+
+    updateApplication(): void {
+        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
+    }
+
+    registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
     private newRegistryID(): uint64 {
-        const id = this._registryCursor.value;
-        this._registryCursor.value += 1;
+        const id = this.registryCursor.value;
+        this.registryCursor.value += 1;
         return id;
     }
 
@@ -63,7 +75,7 @@ export class AssetGate extends Contract {
     check(args: bytes): boolean {
         assert(args.length === AssetGateCheckParamsLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<AssetGateCheckParams>(args);
-        const info = this.registry(params.registryIndex).value;
+        const info = this.registry(params.registryID).value;
         return this.assetGate(params.user, params.asset, info.op, info.value);
     }
 }

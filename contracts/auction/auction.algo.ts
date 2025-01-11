@@ -1,104 +1,294 @@
-import { Contract } from '@algorandfoundation/tealscript';
-import { ContractWithOptInCreatorOnly } from '../../utils/base_contracts/optin.algo';
+import { ContractWithOptInCreatorOnlyArc59AndGate } from '../../utils/base_contracts/gate.algo';
+import { pcg64Init, pcg64Random } from '../../utils/types/lib_pcg/pcg64.algo';
+import { RoyaltyAmounts } from '../../utils/types/royalties';
+import { RandomnessBeacon } from '../../utils/types/vrf_beacon';
 
-// sniping is defined as bidding in the last 30 seconds
-const SNIPE_RANGE: uint64 = 60
-// if a snipe bid takes place, extend the auction by an additional 2 minutes
-const SNIPE_EXTENSION: uint64 = 120
-
-const RANDOMNESS_BEACON_APPID: AppID = AppID.fromUint64(1615566206);
-
-interface BidInfo {
-    address: Address,
-    amount: uint64;
-    refunded: boolean
+const errs = {
+    MUST_BE_CALLED_FROM_FACTORY: 'must be called from the factory',
+    AUCTION_NOT_LIVE: 'auction is not live',
+    AUCTION_HAS_NOT_ENDED: 'auction has not ended',
+    PRIZE_ALREADY_CLAIMED: 'prize already claimed',
+    HIGHEST_BIDS_ALREADY_GATHERED: 'highest bids already gathered',
+    NOT_ENOUGH_TIME: 'not enough time has passed',
+    HIGHEST_BIDS_NOT_GATHERED: 'highest bids not gathered',
+    CANNOT_REFUND_MOST_RECENT_BID: 'cannot refund most recent bid',
+    BID_NOT_FOUND: 'bid not found',
+    BID_ALREADY_EXISTS: 'bid already exists',
+    BID_ALREADY_REFUNDED: 'bid already refunded',
+    WINNER_ALREADY_DRAWN: 'winner already drawn',
+    WINNING_NUMBER_NOT_FOUND: 'winning number not found',
+    WINNER_ALREADY_FOUND: 'winner already found',
+    WINNER_NOT_FOUND: 'winner not found',
+    RAFFLE_ALREADY_PRIZE_CLAIMED: 'raffle prize already claimed',
+    PRIZE_NOT_CLAIMED: 'prize not claimed',
+    RAFFLE_WINNER_NOT_FOUND: 'raffle winner not found',
+    RAFFLE_WINNER_HAS_NOT_CLAIMED: 'raffle winner has not claimed',
 }
 
-export class Auction extends ContractWithOptInCreatorOnly {
+// sniping is defined as bidding in the last 45 rounds (~2 minutes at 2.7s blocktime)
+export const SNIPE_RANGE: uint64 = 45
+// if a snipe bid takes place, extend the auction by an additional 120 (~5 minutes at 2.7s blocktime)
+export const SNIPE_EXTENSION: uint64 = 120
 
+// const RANDOMNESS_BEACON_APPID: AppID = AppID.fromUint64(1615566206);
+
+const bidsByAddressMBR = 18_500;
+export const bidMBR = 34_900 + bidsByAddressMBR;
+
+export type BidInfo = {
+    address: Address,
+    amount: uint64,
+    refunded: boolean,
+    marketplace: Address,
+}
+
+export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
+    /** the asset up for auction */
+    prize = GlobalStateKey<AssetID>({ key: 'prize' });
+    /** whether the prize has been claimed */
+    prizeClaimed = GlobalStateKey<boolean>({ key: 'prize_claimed' });
+    /** the asset that is being used for bidding in the auction */
+    bidAsset = GlobalStateKey<AssetID>({ key: 'bid_asset' });
+    /** the percentage fee to take for the raffle on each bid in hundreds to support two decimals */
+    bidFee = GlobalStateKey<uint64>({ key: 'bid_fee' })
+    /** the starting amount to begin bids at */
+    startingBid = GlobalStateKey<uint64>({ key: 'starting_bid' });
+    /** the smallest amount each new bid need increment the auction price */
+    bidMinimumIncrease = GlobalStateKey<uint64>({ key: 'bid_minimum_increase' });
+    /** the round that the auction starts on */
+    startingRound = GlobalStateKey<uint64>({ key: 'starting_round' });
+    /** the round that the auction ends on */
+    endingRound = GlobalStateKey<uint64>({ key: 'ending_round' });
     /** the address selling the asset */
     seller = GlobalStateKey<Address>({ key: 'seller' });
-    /** the creator royalties */
-    creatorRoyalties = GlobalStateKey<uint64>({ key: 'creator_royalties' });
-    /**  */
-    marketplace = GlobalStateKey<Address>({ key: 'marketplace' });
-
-    marketplaceRoyalties = GlobalStateKey<uint64>({ key: 'marketplace_royalties' });
-
-    startingRound = GlobalStateKey<uint64>({  key: 'starting_round' });
-    
-    endingRound = GlobalStateKey<uint64>({ key: 'ending_round' });
-    // last bid is the index of the box key with the bid info
-    lastBid = GlobalStateKey<uint64>({ key: 'last_bid' });
-    /** the minimum amount each new bid needs to increase */
-    minBidIncrease = GlobalStateKey<uint64>({ key: 'min_bid_increase' });
-
-    prize = GlobalStateKey<AssetID>({ key: 'asset' });
-    
-    prizeAmount = GlobalStateKey<uint64>();
-
-    startingBid = GlobalStateKey<uint64>();
-
-    biddingFee = GlobalStateKey<uint64>()
-
-    feesAccumulated = GlobalStateKey<uint64>();
-
-    bidTotal = GlobalStateKey<uint64>();
-
-    refundCount = GlobalStateKey<uint64>();
-
-    raffleClaimed = GlobalStateKey<uint64>();
-
+    /** the royalty percentage the creator will get for the auction */
+    creatorRoyalty = GlobalStateKey<uint64>({ key: 'creator_royalty' });
     /** 
-     * when we go through the participants for the raffle
-     * it may take multiple groups of txns so we have a variable
-     * for tracking how far through the list we are
+     * The address of the marketplace that created the auction to send the fee to
+     * 
+     * IMPORTANT: this is a double sided marketplace fee contract
+     * the marketplace referred to internally in the contract
+     * is the listing side marketplace.
+     * the buyer side marketplace provides their address at
+     * the time of purchase
     */
-    gatherHighestBidsCursor = GlobalStateKey<uint64>();
-
+    marketplace = GlobalStateKey<Address>({ key: 'marketplace' });
+    /** the royalty percentage each side of the market will take for the auction  */
+    marketplaceRoyalties = GlobalStateKey<uint64>({ key: 'marketplace_royalties' });
+    /** the gate ID to use to check if the user is qualified to bid in the auction */
+    gateID = GlobalStateKey<uint64>({ key: 'gate_id' });
+    /** the app ID to fetch VRF proofs from */
+    vrfBeaconAppID = GlobalStateKey<AppID>({ key: 'vrf_beacon_app_id' });
+    /** counter for how many times we've failed to get rng from the beacon */
+    vrfGetFailureCount = GlobalStateKey<uint64>({ key: 'vrf_get_failure_count' });
+    /** the number of bids that have been refunded */
+    refundCount = GlobalStateKey<uint64>({ key: 'refund_count' });
+    /** the total sum of all bids */
+    bidTotal = GlobalStateKey<uint128>({ key: 'bid_total' });
+    /** the total sum of all highest bids */
+    weightedBidTotal = GlobalStateKey<uint64>();
+    /** the id or index of the last bid */
+    bidID = GlobalStateKey<uint64>({ key: 'bid_id' });
+    /** the total amount collected for the loser raffle */
+    raffleAmount = GlobalStateKey<uint64>({ key: 'raffle_amount' });
+    /** whether the raffle winner has claimed their prize */
+    rafflePrizeClaimed = GlobalStateKey<boolean>({ key: 'raffle_prize_claimed' });
     /**
      * we count how many unique addresses bid so we can 
      * properly get each bids % of the total bid amount
     */
-    uniqueAddressCount = GlobalStateKey<uint64>();
-
-    /**
-     * 
-     */
-    weightedTotal = GlobalStateKey<uint128>();
-
+    uniqueAddressCount = GlobalStateKey<uint64>({ key: 'unique_address_count' });
     /** 
      * when we go through the participants for the raffle
      * it may take multiple groups of txns so we have a variable
      * for tracking how far through the list we are
     */
-    findRaffleWinnerCursor = GlobalStateKey<uint64>();
-
-    vrfRound = GlobalStateKey<uint64>();
-
+    findWinnerCursor = GlobalStateKey<uint64>({ key: 'find_winner_cursor' });
+    /** tracks sum iterated over during find raffle loop */
+    findWinnerTotalCursor = GlobalStateKey<uint64>({ key: 'find_winner_total_cursor' });
+    
     /**
      * we get the winning number from the randomness beacon
      * after the auction ends & we have ran gatherHighestBids
      * to compile our list 
      */
-    winningNumber = GlobalStateKey<uint64>();
+    winningTicket = GlobalStateKey<uint64>({ key: 'winning_number' });
+    /** the winning address of the raffle */
+    raffleWinner = GlobalStateKey<Address>({ key: 'raffle_winner' });
 
-    downCount = GlobalStateKey<uint64>();
-
-    winningAddress = GlobalStateKey<Address>();
-
+    /**
+     * the list of bids in the auction
+     */
     bids = BoxMap<uint64, BidInfo>();
-
     /** 
      * when we run our raffle we need to transform
      * our list of bids into an address based box
     */
     bidsByAddress = BoxMap<Address, uint64>();
 
+    private newBidID(): uint64 {
+        const id = this.bidID.value;
+        this.bidID.value += 1;
+        return id;
+    }
+
+    private getBidFee(amount: uint64): uint64 {
+        return (amount * this.bidFee.value - 1) / 100 + 1
+    }
+
+    private getAmounts(amount: uint64): RoyaltyAmounts {
+        let creatorAmount = wideRatio([amount, this.creatorRoyalty.value], [10000]);
+        if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
+            creatorAmount = 1;
+        }
+
+        let marketplaceAmount = wideRatio([amount, this.marketplaceRoyalties.value], [10000]);
+        if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
+            marketplaceAmount = 1;
+        }
+
+        const sellerAmount = amount - (creatorAmount + (2 * marketplaceAmount));
+
+        return {
+            creator: creatorAmount,
+            marketplace: marketplaceAmount,
+            seller: sellerAmount
+        }
+    }
+
+    private transferPurchaseToBuyer(buyer: Address): void {
+        // transfer asa to buyer
+        const prizeAmount = this.app.address.assetBalance(this.prize.value);
+        // transfer asa to buyer
+        if (buyer.isOptedInToAsset(this.prize.value)) {
+            sendAssetTransfer({
+                assetCloseTo: buyer,
+                assetReceiver: buyer,
+                assetAmount: prizeAmount,
+                xferAsset: this.prize.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                buyer,
+                this.prize.value,
+                prizeAmount,
+                true
+            );
+        }
+    }
+
+    private completeAlgoPayments(amount: uint64, buySideMarketplace: Address): void {
+        // get the royalty payment amounts
+        const amounts = this.getAmounts(amount);
+        
+        // pay the creator        
+        sendPayment({
+            receiver: this.prize.value.creator,
+            amount: amounts.creator,
+            fee: 0,
+        });
+
+        // pay listing marketplace
+        sendPayment({
+            receiver: this.marketplace.value,
+            amount: amounts.marketplace,
+            fee: 0,
+        });
+
+        // pay buying marketplace
+        sendPayment({
+            receiver: buySideMarketplace,
+            amount: amounts.marketplace,
+            fee: 0,
+        });
+
+        // pay seller
+        sendPayment({
+            receiver: this.seller.value,
+            amount: amounts.seller,
+            fee: 0,
+        });
+    }
+
+    private completeAsaPayments(amount: uint64, buySideMarketplace: Address): void {
+        // get the royalty payment amounts
+        const amounts = this.getAmounts(amount);
+
+        // pay the creator
+        if (this.prize.value.creator.isOptedInToAsset(this.bidAsset.value)) {
+            sendAssetTransfer({
+                assetReceiver: this.prize.value.creator,
+                assetAmount: amounts.creator,
+                xferAsset: this.bidAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                this.prize.value.creator,
+                this.bidAsset.value,
+                amounts.creator,
+                false
+            );
+        }
+
+        // pay listing marketplace
+        if (this.marketplace.value.isOptedInToAsset(this.bidAsset.value)) {
+            sendAssetTransfer({
+                assetReceiver: this.marketplace.value,
+                assetAmount: amounts.marketplace,
+                xferAsset: this.bidAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                this.marketplace.value,
+                this.bidAsset.value,
+                amounts.marketplace,
+                false
+            );
+        }
+
+        // pay buying marketplace
+        if (buySideMarketplace.isOptedInToAsset(this.bidAsset.value)) {
+            sendAssetTransfer({
+                assetReceiver: buySideMarketplace,
+                assetAmount: amounts.marketplace,
+                xferAsset: this.bidAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                buySideMarketplace,
+                this.bidAsset.value,
+                amounts.marketplace,
+                false
+            );
+        }
+
+        // pay seller
+        if (this.seller.value.isOptedInToAsset(this.bidAsset.value)) {
+            sendAssetTransfer({
+                assetReceiver: this.seller.value,
+                assetAmount: amounts.seller,
+                xferAsset: this.bidAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                this.seller.value,
+                this.bidAsset.value,
+                amounts.seller,
+                false
+            );
+        }
+    }
+
     /**
      * 
      * @returns a boolean of whether the auction is live
      */
+    @abi.readonly
     isLive(): boolean {
         return (
             globals.round <= this.startingRound.value
@@ -106,66 +296,65 @@ export class Auction extends ContractWithOptInCreatorOnly {
         )
     }
 
-    protected getBidFee(amt: uint64): uint64 {
-        if (this.biddingFee.value > 0) {
-            return (amt * this.biddingFee.value - 1) / 100 + 1
-        }
-        return 0
-    }
-
-    init(
-        asset: AssetID,
-        seller: Address,
+    createApplication(
+        prize: AssetID,
+        bidAsset: AssetID,
+        bidFee: uint64,
+        startingBid: uint64,
+        bidMinimumIncrease: uint64,
         startingRound: uint64,
         endingRound: uint64,
-        minBidIncrease: uint64,
-        creatorRoyalties: uint64,
+        seller: Address,
+        creatorRoyalty: uint64,
         marketplace: Address,
         marketplaceRoyalties: uint64,
-        startingBid: uint64,
-        biddingFee: uint64,
+        gateID: uint64,
+        vrfBeaconAppID: AppID,
     ) {
+        assert(this.txn.sender === globals.creatorAddress, errs.MUST_BE_CALLED_FROM_FACTORY);
 
-        assert(this.txn.sender === globals.creatorAddress)
-
-        this.seller.value = seller;
-        this.creatorRoyalties.value = creatorRoyalties;
-        this.marketplace.value = marketplace;
-        this.marketplaceRoyalties.value = marketplaceRoyalties;
+        this.prize.value = prize;
+        this.prizeClaimed.value = false;
+        this.bidAsset.value = bidAsset;
+        this.bidFee.value = bidFee;
+        this.startingBid.value = startingBid;
+        this.bidMinimumIncrease.value = bidMinimumIncrease;
         this.startingRound.value = startingRound;
         this.endingRound.value = endingRound;
-        this.lastBid.value = 0;
-        this.minBidIncrease.value = minBidIncrease;
-        this.prize.value = asset;
-        this.prizeAmount.value = this.app.address.assetBalance(asset);
-        this.startingBid.value = startingBid;
-        this.biddingFee.value = biddingFee;
-        this.feesAccumulated.value = 0;
-        this.bidTotal.value = 0;
+        this.seller.value = seller;
+        this.creatorRoyalty.value = creatorRoyalty;
+        this.marketplace.value = marketplace;
+        this.marketplaceRoyalties.value = marketplaceRoyalties;
+        this.gateID.value = gateID;
+        this.vrfBeaconAppID.value = vrfBeaconAppID;
+
         this.refundCount.value = 0;
-        this.raffleClaimed.value = 0;
-        this.gatherHighestBidsCursor.value = 0;
+        this.bidTotal.value = 0 as uint128;
+        this.weightedBidTotal.value = 0;
+        this.bidID.value = 0;
+        this.raffleAmount.value = 0;
+        this.rafflePrizeClaimed.value = false;
         this.uniqueAddressCount.value = 0;
-        this.weightedTotal.value = 0;
-        this.findRaffleWinnerCursor.value = 0;
-        this.vrfRound.value = 0;
-        this.winningNumber.value = 0;
-        this.downCount.value = 0;
-        this.winningAddress.value = globals.zeroAddress;
+        this.findWinnerCursor.value = 0;
+        this.findWinnerTotalCursor.value = 0;
+        this.winningTicket.value = 0;
+        this.raffleWinner.value = globals.zeroAddress;
     }
 
-    bid(payment: PayTxn) {
+    bid(payment: PayTxn, marketplace: Address): void {
 
-        const newBidIndex = this.lastBid.value + 1;
+        const id = this.newBidID();
 
-        assert(this.isLive());
-        assert(!this.bids(newBidIndex).exists);
+        assert(this.isLive(), errs.AUCTION_NOT_LIVE);
+        assert(!this.bids(id).exists, errs.BID_ALREADY_EXISTS);
 
-        const lastBidInfo = this.bids(this.lastBid.value).value;
-
-        const requiredAmount = lastBidInfo.amount
-            + this.getBoxCreateMinBalance(8, 41)
-            + this.minimumBidIncrease.value;
+        let minimumBidAmount = bidMBR;
+        if (id > 0) {
+            const lastBidInfo = this.bids(id - 1).value;
+            minimumBidAmount += lastBidInfo.amount + this.bidMinimumIncrease.value;
+        } else {
+            minimumBidAmount += this.startingBid.value;
+        }
 
         /** 
          * Verify payment transaction, if we ignore
@@ -174,241 +363,267 @@ export class Auction extends ContractWithOptInCreatorOnly {
         */
         verifyPayTxn(payment, {
             receiver: this.app.address,
-            amount: { greaterThan: requiredAmount },
+            amount: {
+                greaterThanEqualTo: minimumBidAmount
+            }
         });
 
-        const bidAmount = payment.amount - this.getBoxCreateMinBalance(8, 41);
+        const bidAmount = payment.amount - bidMBR;
 
-        this.bids(newBidIndex).value = {
+        this.bids(id).value = {
             address: this.txn.sender,
             amount: bidAmount,
             refunded: false,
+            marketplace: marketplace,
         };
 
-        // increment the bid number
-        this.lastBid.value = newBidIndex;
+        if (this.bidsByAddress(this.txn.sender).exists) {
+            const lastBid = this.bidsByAddress(this.txn.sender).value;
+            this.weightedBidTotal.value += (bidAmount - lastBid);
+            this.bidsByAddress(this.txn.sender).value = bidAmount;
+        } else {
+            this.uniqueAddressCount.value += 1;
+            this.weightedBidTotal.value += bidAmount;
+            this.bidsByAddress(this.txn.sender).value = bidAmount
+        }
 
         // if this is a snipe increase the time left by 2 minutes
-        if (globals.latestTimestamp > (this.endingRound.value - SNIPE_RANGE)) {
+        if (globals.round > (this.endingRound.value - SNIPE_RANGE)) {
             this.endingRound.value += SNIPE_EXTENSION;
         }
 
-        const bidFee = this.getBidFee(bidAmount);
+        if (this.bidFee.value > 0) {
+            const bidFee = this.getBidFee(bidAmount);
+            this.raffleAmount.value += bidFee;
+        }
 
-        this.feesAccumulated.value += bidFee;
-        this.bidTotal.value += bidAmount;
+        this.bidTotal.value += bidAmount as uint128;
     }
 
-    refundLostBid(bidIndex: uint64): void {
-        // make sure were not refunding the last bid
-        assert(bidIndex !== this.lastBid.value);
-        // make sure the bid exists
-        assert(this.bids(bidIndex).exists);
-        // get bid info
-        const bid = this.bids(bidIndex).value;
-        // make sure its not already refunded
-        assert(!bid.refunded);
-        // mark the bid as refunded
-        this.bids(bidIndex).value = {
-            address: bid.address,
-            amount: bid.amount,
-            refunded: true,
+    bidAsa(payment: PayTxn, assetXfer: AssetTransferTxn, marketplace: Address): void {
+
+        const id = this.newBidID();
+
+        assert(this.isLive(), errs.AUCTION_NOT_LIVE);
+        assert(!this.bids(id).exists, errs.BID_ALREADY_EXISTS);
+
+        let minimumBidAmount = 0;
+        if (id > 0) {
+            const lastBidInfo = this.bids(id - 1).value;
+            minimumBidAmount += lastBidInfo.amount + this.bidMinimumIncrease.value;
+        } else {
+            minimumBidAmount += this.startingBid.value;
+        }
+
+        /** 
+         * Verify payment transaction, if we ignore
+         * who sent the payment we can allow txn
+         * sponsorships
+        */
+        verifyPayTxn(payment, {
+            receiver: this.app.address,
+            amount: bidMBR,
+        });
+
+        verifyAssetTransferTxn(assetXfer, {
+            assetReceiver: this.app.address,
+            assetAmount: { greaterThanEqualTo: minimumBidAmount },
+        });
+
+        const bidAmount = payment.amount - bidMBR;
+
+        this.bids(id).value = {
+            address: this.txn.sender,
+            amount: bidAmount,
+            refunded: false,
+            marketplace: marketplace,
         };
+
+        if (this.bidsByAddress(this.txn.sender).exists) {
+            const lastBid = this.bidsByAddress(this.txn.sender).value;
+            this.weightedBidTotal.value += (bidAmount - lastBid);
+            this.bidsByAddress(this.txn.sender).value = bidAmount;
+        } else {
+            this.uniqueAddressCount.value += 1;
+            this.weightedBidTotal.value += bidAmount;
+            this.bidsByAddress(this.txn.sender).value = bidAmount
+        }
+
+        // if this is a snipe increase the time left by 2 minutes
+        if (globals.round > (this.endingRound.value - SNIPE_RANGE)) {
+            this.endingRound.value += SNIPE_EXTENSION;
+        }
+
+        if (this.bidFee.value > 0) {
+            const bidFee = this.getBidFee(bidAmount);
+            this.raffleAmount.value += bidFee;
+        }
+
+        this.bidTotal.value += bidAmount as uint128;
+    }
+
+    refundBid(id: uint64): void {
+        // make sure were not refunding the last bid
+        assert(id < this.bidID.value, errs.CANNOT_REFUND_MOST_RECENT_BID);
+        // make sure the bid exists
+        assert(this.bids(id).exists, errs.BID_NOT_FOUND);
+        // get bid info
+        const bid = this.bids(id).value;
+        // make sure its not already refunded
+        assert(!bid.refunded, errs.BID_ALREADY_REFUNDED);
+        // mark the bid as refunded
+        this.bids(id).value.refunded = true;
 
         const bidFee = this.getBidFee(bid.amount);
 
         const returnAmount = bid.amount - bidFee
 
-        // return the bidders funds
-        sendPayment({
-            amount: returnAmount,
-            receiver: bid.address,
-        });
+        if (this.bidAsset.value.id === 0) {
+            // return the bidders funds
+            sendPayment({
+                amount: returnAmount,
+                receiver: bid.address,
+                fee: 0,
+            });
+        } else {
+            sendAssetTransfer({
+                assetAmount: returnAmount,
+                assetReceiver: bid.address,
+                xferAsset: this.bidAsset.value,
+                fee: 0,
+            });
+        }
         // increment our refund counter
         this.refundCount.value += 1;
     }
 
-    claim(): void {
+    claimPrize(): void {
         // make sure the auction has ended
-        assert(globals.latestTimestamp > this.end.value)
+        assert(globals.round > this.endingRound.value, errs.AUCTION_HAS_NOT_ENDED)
+        assert(!this.prizeClaimed.value, errs.PRIZE_ALREADY_CLAIMED);
+
         // get the winners details
-        const winner = this.bids(this.lastBid.value).value;
+        const winner = this.bids(this.bidID.value).value;
 
-        // transfer asa to buyer
+        this.transferPurchaseToBuyer(winner.address);
 
-        // pay creator
-
-        // pay listing marketplace
-
-        // pay buying marketplace
-
-        if (this.biddingFee.value > 0) {
-            // pick a random index
-            RANDOMNESS_BEACON_APPID
-
-
-            // payout bidding fees to participant
-
+        if (this.bidAsset.value.id === 0) {
+            this.completeAlgoPayments(winner.amount, winner.marketplace);
+        } else {
+            this.completeAsaPayments(winner.amount, winner.marketplace);
         }
 
-        // close out to seller
+        this.prizeClaimed.value = true;
     }
 
-    gatherHighestBids(payment: PayTxn): void {
-        // make sure the auction has ended
-        assert(globals.latestTimestamp > this.end.value);
+    raffle(): void {
+        const roundToUse = (this.endingRound.value + 1) + (4 * this.vrfGetFailureCount.value);
+        assert(globals.round >= roundToUse + 8, errs.NOT_ENOUGH_TIME);
+        assert(this.winningTicket.value === 0, errs.WINNER_ALREADY_DRAWN);
 
-        const startingIndex = this.gatherHighestBidsCursor.value;
-
-        const remainder = (this.lastBid.value - 1) - this.gatherHighestBidsCursor.value;
-
-        if (remainder === 0) {
-            return;
-        }
-
-        // at most with calling this (15 * 8) / 2 because of box reference limits
-        const iterationAmount = (remainder > 60) ? 60 : remainder;
-
-        const amountRequirement = iterationAmount * this.getBoxCreateMinBalance(32, 8);
-
-        verifyPayTxn(payment, {
-            amount: { greaterThanEqualTo: amountRequirement }
-        })
-
-        for (let i = startingIndex; i < iterationAmount; i += 1) {
-
-            const bid = this.bids(i).value;
-            if (this.bidsByAddress(bid.address).exists) {
-                // add the difference between their last bid amount and this one
-                this.weightedTotal.value += bid.amount - this.bidsByAddress(bid.address).value;
-            } else {
-
-                this.weightedTotal.value += bid.amount
-                this.uniqueAddressCount.value += 1;
-                this.bidsByAddress(bid.address).value = bid.amount;
-            }
-        }
-
-        this.gatherHighestBidsCursor.value += iterationAmount;
-    }
-
-    queueDrawRound(): void {
-        assert(globals.latestTimestamp > this.end.value)
-        assert(this.vrfRound.value === 0)
-        this.vrfRound.value = globals.round + 3
-    }
-
-    drawWinner(): void {
-        assert(this.vrfRound.value !== 0)
-        assert(globals.round > this.vrfRound.value)
-
-        let data = sendMethodCall<[uint64, string], string>({
-            name: 'must_get',
-            methodArgs: [
-                this.vrfRound.value,
-                (itob(this.lastBid.value) + this.txn.sender)
-            ],
-            // beacon application id
-            applicationID: RANDOMNESS_BEACON_APPID,
+        const seed = sendMethodCall<typeof RandomnessBeacon.prototype.get, bytes>({
+            applicationID: this.vrfBeaconAppID.value,
+            methodArgs: [roundToUse, this.txn.txID],
             fee: 0,
         });
 
-        const max = this.weightedTotal.value;
-        let result: uint64 = 0;
-        if (this.isPowerOfTwo(max)) {
-            // if its a power of 2 we can just modulo
-            result = btoi(data.substring(24, 32)) % max;
-        } else {
-
-            const maxMinusOne = max - 1;
-            const bitLen = bitlen(maxMinusOne);
-            const k = (bitLen + 7) / 8;
-            const b = bitLen % 8 === 0 ? 8 : bitLen % 8;
-
-            let randomInt: uint64;
-            let offset = 0;
-
-            // this will loop at most 5 times
-            // since the data is always 32 bytes
-            // 5th loop fails out
-            while (true) {
-                let part = data.slice(offset, offset + 8);
-                offset += 8;
-
-                if (offset === 32) {
-                    // pick a new round for randomness
-                    this.vrfRound.value = globals.round + 3;
-                    // fail out
-                    assert(false)
-                }
-
-                // part = setbyte(part, 0, (getbyte(part, 0) & ((1 << b) - 1)));
-                const bitMask = ((1 << b) - 1)
-                const extracted = extract3(part, 0, 1);
-                const newByte = extracted & bitMask;
-                part = replace3(part, 0, newByte);
-                randomInt = btoi(part);
-
-                if (randomInt < max) {
-                    result = randomInt;
-                    break;
-                }
-            }
-        }
-    }
-
-    findRaffleWinner(): void {
-
-        assert(globals.latestTimestamp > this.end.value);
-        assert(this.winningAddress.value !== globals.zeroAddress)
-
-        // walk down the index from the winner to find the
-        const startingIndex = this.findRaffleWinnerCursor.value;
-
-        const remainder = (this.lastBid.value - 1) - this.findRaffleWinnerCursor.value;
-
-        if (remainder === 0) {
+        if (seed.length === 0) {
+            this.vrfGetFailureCount.value += 1;
             return;
         }
 
-        // at most with calling this (15 * 8) / 2 because of box reference limits
-        const iterationAmount = (remainder > 60) ? 60 : remainder;
+        let rngState = pcg64Init(substring3(seed, 0, 16) as bytes<16>);
+        const rngResult = pcg64Random(rngState, 1, this.weightedBidTotal.value, 1);
+        this.winningTicket.value = rngResult[1][0];
+    }
+
+    findWinner(): void {
+        assert(globals.round < this.endingRound.value, errs.AUCTION_HAS_NOT_ENDED);
+        assert(this.winningTicket.value !== 0, errs.WINNING_NUMBER_NOT_FOUND);
+        const complete = (this.bidID.value - 1) === this.findWinnerCursor.value;
+        assert(!complete, errs.WINNER_ALREADY_FOUND);
+
+        // walk the index from the winner to find the
+        const startingIndex = this.findWinnerCursor.value;
+        const remainder = (this.bidID.value - 1) - this.findWinnerCursor.value;
+        // at most with calling this (15 * 4) / 2 because of box reference limits
+        const iterationAmount = (remainder > 30) ? 30 : remainder;
 
         for (let i = startingIndex; i < iterationAmount; i += 1) {
-            // reverse index
-            const ri = (this.lastBid.value - 1) - i;
-
-            const bid = this.bids(ri).value;
+            const bid = this.bids(i).value;
             const amt = this.bidsByAddress(bid.address).value;
 
             // bids cant match so if we hit
             // an address where the bids dont match
             // we know its an address we've already seen
             if (bid.amount !== amt) {
+                // we can delete the bid
+                this.bids(i).delete();
+                
+                sendPayment({
+                    receiver: bid.address,
+                    amount: (bidMBR - bidsByAddressMBR),
+                    fee: 0,
+                });
                 continue;
+            } else {
+                // we can delete both the bid and the bidsByAddress
+                this.bids(i).delete();
+                this.bidsByAddress(bid.address).delete();
+
+                sendPayment({
+                    receiver: bid.address,
+                    amount: bidMBR,
+                    fee: 0,
+                });
             }
 
-            if (this.downCount.value === 0) {
-                this.downCount.value = this.weightedTotal.value - this.winningNumber.value;
+            const isWinner = (this.findWinnerTotalCursor.value + bid.amount) >= this.winningTicket.value;
+            if (isWinner) {
+                this.raffleWinner.value = bid.address;
             }
 
-            if (bid.amount < this.downCount.value) {
-                this.downCount.value -= bid.amount;
-                continue;
-            }
-
-            // WINNER
-            this.winningAddress.value = bid.address;
+            this.findWinnerTotalCursor.value += bid.amount;
         }
 
-        this.findRaffleWinnerCursor.value += iterationAmount;
+        this.findWinnerCursor.value += iterationAmount;
+    }
+
+    claimRafflePrize(): void {
+        assert(this.raffleWinner.value !== globals.zeroAddress, errs.WINNER_NOT_FOUND);
+        assert(!this.rafflePrizeClaimed.value, errs.RAFFLE_ALREADY_PRIZE_CLAIMED)
+        
+        if (this.bidAsset.value.id === 0) {
+            sendPayment({
+                receiver: this.raffleWinner.value,
+                amount: this.raffleAmount.value,
+                fee: 0,
+            });
+        } else {
+            if (this.raffleWinner.value.isOptedInToAsset(this.bidAsset.value)) {
+                sendAssetTransfer({
+                    assetReceiver: this.raffleWinner.value,
+                    assetAmount: this.raffleAmount.value,
+                    xferAsset: this.bidAsset.value,
+                    fee: 0,
+                });
+            } else {
+                this.arc59OptInAndSend(
+                    this.raffleWinner.value,
+                    this.bidAsset.value,
+                    this.raffleAmount.value,
+                    false
+                );
+            }
+        }
+
+        this.rafflePrizeClaimed.value = true;
     }
 
     deleteApplication(): void {
-
-        assert(this.refundCount.value === (this.lastBid.value + 1))
-        assert(this.app.address.assetBalance(this.asset.value) === 0);
-        assert(this.raffleClaimed.value > 0)
+        assert(this.refundCount.value === (this.bidID.value + 1))
+        assert(this.prizeClaimed.value, errs.PRIZE_NOT_CLAIMED)
+        assert(this.rafflePrizeClaimed.value, errs.RAFFLE_WINNER_HAS_NOT_CLAIMED);
     }
     /**
      * deletes the application & returns the mbr + asset
@@ -416,15 +631,14 @@ export class Auction extends ContractWithOptInCreatorOnly {
      */
     @allow.call('DeleteApplication')
     cancel(): void {
-
         assert(this.txn.sender == this.seller.value);
-        assert(globals.latestTimestamp < this.start.value)
+        assert(globals.round < this.startingRound.value)
 
         this.pendingGroup.addAssetTransfer({
-            assetReceiver: this.seller.value,
             assetCloseTo: this.seller.value,
-            assetAmount: this.app.address.assetBalance(this.asset.value),
-            xferAsset: this.asset.value,
+            assetReceiver: this.seller.value,
+            assetAmount: this.app.address.assetBalance(this.prize.value),
+            xferAsset: this.prize.value,
             fee: 0,
             isFirstTxn: true,
         });

@@ -1,5 +1,9 @@
 import { Contract } from '@algorandfoundation/tealscript';
 
+const errs = {
+    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
+}
+
 export const AKITA_SOCIAL_PLUGIN_ID = 0;
 export const AKITA_TIME_LOCK_PLUGIN_ID = 0;
 export const META_MERKLE_APP_ID = 0;
@@ -30,22 +34,25 @@ class MockGate extends Contract {
 
 export class Gate extends Contract {
 
-    _gateCursor = GlobalStateKey<uint64>({ key: 'gate_cursor' });
+    /** The App ID of the Akita DAO contract */
+    akitaDaoAppID = TemplateVar<AppID>();
+
+    gateCursor = GlobalStateKey<uint64>({ key: 'gate_cursor' });
 
     appRegistry = BoxMap<AppID, bytes<0>>();
 
     gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ prefix: 'f' });
 
     private newGateID(): uint64 {
-        const id = this._gateCursor.value;
-        this._gateCursor.value += 1;
+        const id = this.gateCursor.value;
+        this.gateCursor.value += 1;
         return id;
     }
 
-    private evaluateFilters(filters: GateFilterEntry[], start: uint64, end: uint64, args: bytes[]): boolean {
+    private evaluateFilters(caller: Address, filters: GateFilterEntry[], start: uint64, end: uint64, args: bytes[]): boolean {
         if (start > end) return true;
 
-        let result = this.evaluateFilter(filters[start], args[start]);
+        let result = this.evaluateFilter(caller, filters[start], args[start]);
         
         for (let i = start; i < end; i += 1) {
 
@@ -54,7 +61,7 @@ export class Gate extends Contract {
             }
 
             const currentOperator = filters[i].operator;
-            const nextResult = this.evaluateFilter(filters[i + 1], args[i + 1]);
+            const nextResult = this.evaluateFilter(caller, filters[i + 1], args[i + 1]);
 
             if (currentOperator === AND) {
                 result = result && nextResult;
@@ -65,7 +72,7 @@ export class Gate extends Contract {
             // Handle nested logic
             if (i + 1 < end && filters[i + 2].layer > filters[i + 1].layer) {
                 const nestedEnd = this.findEndOfLayer(filters, i + 2, filters[i + 2].layer);
-                const nestedResult = this.evaluateFilters(filters, i + 2, nestedEnd, args);
+                const nestedResult = this.evaluateFilters(caller, filters, i + 2, nestedEnd, args);
                 
                 if (currentOperator === AND) {
                     result = result && nestedResult;
@@ -80,10 +87,11 @@ export class Gate extends Contract {
         return result;
     }
 
-    private evaluateFilter(filter: GateFilterEntry, args: bytes): boolean {
+    private evaluateFilter(caller: Address, filter: GateFilterEntry, args: bytes): boolean {
+        const argsWithCaller =  concat(caller, args);
         return sendMethodCall<typeof MockGate.prototype.check, boolean>({
             applicationID: filter.app,
-            methodArgs: [args],
+            methodArgs: [argsWithCaller],
             fee: 0,
         });
     }
@@ -97,6 +105,14 @@ export class Gate extends Contract {
             end = i;
         }
         return end;
+    }
+
+    createApplication(): void {
+        this.gateCursor.value = 0;
+    }
+
+    updateApplication(): void {
+        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
     }
 
     register(filters: GateFilter[], args: bytes[]): uint64 {
@@ -128,9 +144,9 @@ export class Gate extends Contract {
         return id;
     }
 
-    check(gateID: uint64, args: bytes[]): boolean {
+    check(caller: Address, gateID: uint64, args: bytes[]): boolean {
         assert(this.gateRegistry(gateID).exists);
         const filters = this.gateRegistry(gateID).value;
-        return this.evaluateFilters(filters, 0, (filters.length - 1), args);
+        return this.evaluateFilters(caller, filters, 0, (filters.length - 1), args);
     }
 }

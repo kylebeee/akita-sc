@@ -5,7 +5,6 @@ import { Gate } from '../../../gates/gate.algo';
 import { arc59GetSendAssetInfoResponse, AssetInbox } from '../../../../utils/types/asset_inbox';
 import {
     AkitaAppIDsAkitaSocialImpactPlugin,
-    AkitaAppIDsGate,
     AkitaAppIDsOptinPlugin,
     EMPTY_BYTES_32,
     EMPTY_BYTES_59,
@@ -15,6 +14,7 @@ import { AkitaSocialImpact } from './impact.algo';
 import { ContractWithGate } from '../../../../utils/base_contracts/gate.algo';
 
 const errs = {
+    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
     BANNED: 'This account is banned',
     BLOCKED: 'This account is blocked by the user',
     BAD_CID: 'Invalid IPFS CID length',
@@ -43,7 +43,7 @@ const errs = {
     ALREADY_REACTED: 'This account already reacted to this post with this NFT',
     WRONG_FOLLOWER_KEY: 'Wrong follower key',
     FEE_TOO_SMALL: 'Fee is too small',
-    FAILED_GATE: 'Failed gate',
+    FAILED_GATE: 'Gate check failed',
     NOT_DAO: 'Not the DAO',
     ALREADY_A_MODERATOR: 'Already a moderator',
     ALREADY_FLAGGED: 'Already flagged',
@@ -147,8 +147,8 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
     /** the current version of the akita social contract */
     version = GlobalStateKey<string>({ key: 'version' });
-    /** the app id for the Akita DAO */
-    daoAppID = GlobalStateKey<AppID>({ key: 'dao_app_id' });
+    /** The App ID of the Akita DAO contract */
+    akitaDaoAppID = TemplateVar<AppID>();
 
     // -------------------------------------------------------------
     // box maps ----------------------------------------------------
@@ -295,20 +295,6 @@ export class AkitaSocialPlugin extends ContractWithGate {
      */
     banned = BoxMap<Address, uint64>({ prefix: 'b', allowPotentialCollisions: true });
 
-
-    // /**
-    //  * the gates usable on an akita post
-    //  * 
-    //  * key: the index of the gate
-    //  * key_length: 1 + 8: 9
-    //  * 
-    //  * value: the application ID of the gate
-    //  * value_length: 8
-    //  * 
-    //  * cost: 2_500 + (400 * 9) = 9_300
-    //  */
-    // gates = BoxMap<AppID, bytes<0>>({ prefix: 'g' });
-
     /**
      * the actions usable on an akita post
      * 
@@ -327,7 +313,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
     // -------------------------------------------------------------
 
     private isDAO(address: Address): boolean {
-        return address === this.daoAppID.value.address;
+        return address === this.akitaDaoAppID.address;
     }
 
     private controls(address: Address): boolean {
@@ -424,11 +410,11 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
     private getTax(impact: uint64): uint64 {
         // social_impact_tax_minimum
-        const minTax = this.daoAppID.value.globalState(SOCIAL_IMPACT_TAX_MINIMUM_KEY) as uint64;
-        const maxTax = this.daoAppID.value.globalState(SOCIAL_IMPACT_TAX_MAXIMUM_KEY) as uint64;
+        const minTax = this.akitaDaoAppID.globalState(SOCIAL_IMPACT_TAX_MINIMUM_KEY) as uint64;
+        const maxTax = this.akitaDaoAppID.globalState(SOCIAL_IMPACT_TAX_MAXIMUM_KEY) as uint64;
 
         const taxRate = maxTax - ((maxTax - minTax) * (impact - 1)) / 999
-        const reactionFee = this.daoAppID.value.globalState(SOCIAL_REACT_KEY) as uint64;
+        const reactionFee = this.akitaDaoAppID.globalState(SOCIAL_REACT_KEY) as uint64;
         return (reactionFee * taxRate - 1) / 1000 + 1
     }
 
@@ -456,7 +442,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
             isFirstTxn: true,
         });
 
-        const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
+        const akitaToken = this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID;
 
         this.pendingGroup.addMethodCall<typeof OptInPlugin.prototype.optInToAsset, void>({
             sender: sender.address,
@@ -483,13 +469,13 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         this.pendingGroup.addAssetTransfer({
             sender: sender.address,
-            assetReceiver: this.daoAppID.value.address,
+            assetReceiver: this.akitaDaoAppID.address,
             assetAmount: tax,
             xferAsset: akitaToken,
             fee: 0,
         });
 
-        const reactionFee = this.daoAppID.value.globalState(SOCIAL_REACT_KEY) as uint64;
+        const reactionFee = this.akitaDaoAppID.globalState(SOCIAL_REACT_KEY) as uint64;
 
         this.pendingGroup.addAssetTransfer({
             sender: sender.address,
@@ -504,7 +490,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
     }
 
     private arc59OptInAndSendReactionPayments(sender: AppID, rekeyBack: boolean, recipientAppID: AppID, tax: uint64): void {
-        const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
+        const akitaToken = this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID;
         const canCallData = sendMethodCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo, arc59GetSendAssetInfoResponse>({
             applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
             methodArgs: [
@@ -540,14 +526,14 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         this.pendingGroup.addAssetTransfer({
             sender: sender.address,
-            assetReceiver: this.daoAppID.value.address,
+            assetReceiver: this.akitaDaoAppID.address,
             assetAmount: tax,
             xferAsset: akitaToken,
             fee: 0,
             isFirstTxn: routerOptedIn && !(mbr || receiverAlgoNeededForClaim)
         });
 
-        const reactionFee = this.daoAppID.value.globalState(SOCIAL_REACT_KEY) as uint64;
+        const reactionFee = this.akitaDaoAppID.globalState(SOCIAL_REACT_KEY) as uint64;
 
         this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_sendAsset, Address>({
             sender: sender.address,
@@ -571,18 +557,18 @@ export class AkitaSocialPlugin extends ContractWithGate {
     }
 
     private sendReactionPayments(sender: AppID, rekeyBack: boolean, recipientAddress: Address, tax: uint64): void {
-        const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
+        const akitaToken = this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID;
 
         this.pendingGroup.addAssetTransfer({
             sender: sender.address,
-            assetReceiver: this.daoAppID.value.address,
+            assetReceiver: this.akitaDaoAppID.address,
             assetAmount: tax,
             xferAsset: akitaToken,
             fee: 0,
             isFirstTxn: true,
         });
 
-        const reactionFee = this.daoAppID.value.globalState(SOCIAL_REACT_KEY) as uint64;
+        const reactionFee = this.akitaDaoAppID.globalState(SOCIAL_REACT_KEY) as uint64;
 
         this.pendingGroup.addAssetTransfer({
             sender: sender.address,
@@ -697,13 +683,13 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         const impact = this.getUserImpact(sender.address);
 
-        const postFee = this.daoAppID.value.globalState(SOCIAL_POST_FEE) as uint64;
+        const postFee = this.akitaDaoAppID.globalState(SOCIAL_POST_FEE) as uint64;
 
-        const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
+        const akitaToken = this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID;
 
         sendAssetTransfer({
             sender: sender.address,
-            assetReceiver: this.daoAppID.value.address,
+            assetReceiver: this.akitaDaoAppID.address,
             assetAmount: postFee,
             xferAsset: akitaToken,
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
@@ -750,7 +736,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED);
 
         if (post.replyGateIndex !== 0) {
-            assert(this.gate(post.replyGateIndex, args), errs.FAILED_GATE);
+            assert(this.gate(sender.address, post.replyGateIndex, args), errs.FAILED_GATE);
         }
 
         // update streak before we measure impact
@@ -760,7 +746,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         const creatorMeta = this.meta(post.creator).value;
         const postCreatorImpact = this.getUserImpact(post.creator);
         const tax = this.getTax(postCreatorImpact);
-        const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
+        const akitaToken = this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID;
 
         if (!post.creator.isOptedInToAsset(akitaToken)) {
             // calls a transaction
@@ -818,7 +804,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         const senderIsAutomated = this.meta(sender.address).value.automated;
         assert(!senderIsAutomated, errs.AUTOMATED_ACCOUNT);
 
-        const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
+        const akitaToken = this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID;
 
         // update streak before we measure impact
         // this way we guarantee the box exists
@@ -846,11 +832,11 @@ export class AkitaSocialPlugin extends ContractWithGate {
             }
         } else {
 
-            const reactionFee = this.daoAppID.value.globalState(SOCIAL_REACT_KEY) as uint64;
+            const reactionFee = this.akitaDaoAppID.globalState(SOCIAL_REACT_KEY) as uint64;
 
             sendAssetTransfer({
                 sender: sender.address,
-                assetReceiver: this.daoAppID.value.address,
+                assetReceiver: this.akitaDaoAppID.address,
                 assetAmount: reactionFee,
                 xferAsset: akitaToken,
                 rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
@@ -872,7 +858,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         assert(sender.address.assetBalance(NFT) > 0, errs.USER_DOES_NOT_OWN_NFT);
 
         if (post.reactGateIndex !== 0) {
-            assert(this.gate(post.reactGateIndex, args), errs.FAILED_GATE);
+            assert(this.gate(sender.address, post.reactGateIndex, args), errs.FAILED_GATE);
         }
 
         const reactionListKey: ReactionListKey = {
@@ -890,7 +876,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         const creatorMeta = this.meta(post.creator).value;
         const recipientImpact = this.getUserImpact(post.creator);
         const tax = this.getTax(recipientImpact);
-        const akitaToken = this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID;
+        const akitaToken = this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID;
 
         if (!post.creator.isOptedInToAsset(akitaToken)) {
             const canCallArc58OptIn = this.canCallArc58OptIn(sender.address, creatorMeta.walletAppID);
@@ -917,9 +903,13 @@ export class AkitaSocialPlugin extends ContractWithGate {
     // lifecycle methods ---------------------------------------------
     // -------------------------------------------------------------
 
-    createApplication(version: string, daoAppID: AppID): void {
+    createApplication(version: string): void {
         this.version.value = version;
-        this.daoAppID.value = daoAppID;
+    }
+
+    updateApplication(version: string): void {
+        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
+        this.version.value = version;
     }
 
     // -------------------------------------------------------------
@@ -1009,7 +999,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
             const meta = this.meta(ref).value;
 
             if (meta.addressGateID !== 0) {
-                assert(this.gate(meta.addressGateID, args), errs.FAILED_GATE);
+                assert(this.gate(sender.address, meta.addressGateID, args), errs.FAILED_GATE);
             }
         }
 
@@ -1112,7 +1102,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
             const meta = this.meta(ref).value;
 
             if (meta.addressGateID !== 0) {
-                assert(this.gate(meta.addressGateID, args), errs.FAILED_GATE);
+                assert(this.gate(sender.address, meta.addressGateID, args), errs.FAILED_GATE);
             }
         }
 
@@ -1165,7 +1155,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         const meta = this.meta(address).value;
 
         if (meta.followGateID !== 0) {
-            assert(this.gate(meta.followGateID, args), errs.FAILED_GATE);
+            assert(this.gate(sender.address, meta.followGateID, args), errs.FAILED_GATE);
         }
 
         const followerIndex = meta.followerIndex;

@@ -1,6 +1,4 @@
-import { Contract } from '@algorandfoundation/tealscript';
-import { AkitaAppIDsGate, AkitaAppIDsOptinPlugin, EMPTY_BYTES_32 } from '../../utils/constants';
-import { Gate } from '../gates/gate.algo';
+import { AkitaAppIDsOptinPlugin, EMPTY_BYTES_32 } from '../../utils/constants';
 import { AbstractedAccount } from '../arc58/abstracted_account.algo';
 import { AkitaDAO } from '../dao/dao.algo';
 import { OptInPlugin } from '../arc58/plugins/optin.algo';
@@ -445,7 +443,7 @@ export class Subscriptions extends ContractWithGate {
             // ensure its an algo subscription
             assert(service.asset.id === 0, errs.ASA_MISMATCH);
             // ensure the gate check passes
-            assert(this.gate(service.gate, args), errs.FAILED_GATE);
+            assert(this.gate(this.txn.sender, service.gate, args), errs.FAILED_GATE);
             // overwrite the details for the subscription
             amount = service.amount;
             interval = service.interval;
@@ -555,7 +553,7 @@ export class Subscriptions extends ContractWithGate {
             // ensure its an algo subscription
             assert(service.asset === assetXfer.xferAsset, errs.ASA_MISMATCH);
             // ensure the gate check passes
-            assert(this.gate(service.gate, args), errs.FAILED_GATE);
+            assert(this.gate(this.txn.sender, service.gate, args), errs.FAILED_GATE);
             // overwrite the details for the subscription
             amount = service.amount;
             interval = service.interval;

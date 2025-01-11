@@ -1,7 +1,15 @@
-import { ContractWithOptInCreatorOnly } from '../../utils/base_contracts/optin.algo';
+import { ContractWithOptInCreatorOnlyArc59AndGate } from '../../utils/base_contracts/gate.algo';
+import { RoyaltyAmounts } from '../../utils/types/royalties';
 
 const errs = {
     MUST_BE_CALLED_FROM_FACTORY: 'must be called from the factory',
+    INVALID_EXPIRATION_ROUND: 'invalid expiration round',
+    PAYMENT_ASSET_MUST_BE_ALGO: 'payment asset must be algo',
+    LISTING_EXPIRED: 'listing expired',
+    ONLY_SELLER_CAN_DELIST: 'only the seller can delist',
+    FAILED_GATE: 'gate check failed',
+    RESERVED_FOR_DIFFERENT_ADDRESS: 'reserved for different address',
+    MUST_BE_SELLER: 'must be the seller',
 }
 
 export type Royalties = {
@@ -9,7 +17,7 @@ export type Royalties = {
     marketplace: uint64,
 }
 
-export class Listing extends ContractWithOptInCreatorOnly {
+export class Listing extends ContractWithOptInCreatorOnlyArc59AndGate {
     /** the asset for sale */
     asset = GlobalStateKey<AssetID>({ key: 'asset' });
     /** the price of the asset */
@@ -18,9 +26,8 @@ export class Listing extends ContractWithOptInCreatorOnly {
     paymentAsset = GlobalStateKey<AssetID>({ key: 'payment_asset' });
     /** the address selling the asset */
     seller = GlobalStateKey<Address>({ key: 'seller' });
-    /* 
-     * 
-     * the address of the marketplace that listed the asset to send the fee to
+    /** 
+     * The address of the marketplace that listed the asset to send the fee to
      * 
      * IMPORTANT: this is a double sided marketplace fee contract
      * the marketplace referred to internally in the contract
@@ -30,39 +37,177 @@ export class Listing extends ContractWithOptInCreatorOnly {
     */
     marketplace = GlobalStateKey<Address>({ key: 'marketplace' });
     /** the amount the creator will get for the sale */
-    creatorAmount = GlobalStateKey<uint64>({ key: 'creator_amount' });
-    /** the amount the seller will get for the sale */
-    sellerAmount = GlobalStateKey<uint64>({ key: 'seller_amount' });
+    creatorRoyalty = GlobalStateKey<uint64>({ key: 'creator_royalty' });
     /** the amount the marketplace will get for the sale */
-    marketplaceAmount = GlobalStateKey<uint64>({ key: 'marketplace_amount' })
-    /** the round the listing expires on */
-    expiration = GlobalStateKey<uint64>({ key: 'expiration' });
+    marketplaceRoyalties = GlobalStateKey<uint64>({ key: 'marketplace_royalties' })
+    /** the round the listing expires on, once this passes all that can be done is delist */
+    expirationRound = GlobalStateKey<uint64>({ key: 'expiration_round' });
     /** the address the sale is reserved for */
     reservedFor = GlobalStateKey<Address>({ key: 'reserved_for' });
     /** the gate ID to use to check if the user is qualified to buy */
     gateID = GlobalStateKey<uint64>({ key: 'gate_id' });
 
     /**
-     * set the calculated amounts for each party
-     * @param {uint64} price the listing sale price
-     * @param {(uint64, uint64)} royalties the % the creator & marketplace should get of the sale
-    */
-    private calcAndSetPrices(price: uint64, royalties: Royalties): void {
-        /** 
-         * the extra - 1 & + 1 on these operations is to round to the ceiling
-         * this means that when an extremely low unit price/asa is used
-         * we dont accidentally take zero fees
-         * on the other hand that means that in certain cases the fee may be a
-         * higher % than what was set
-        */
-        const creatorAmount = (price * royalties.creator - 1) / 10000 + 1;
-        this.creatorAmount.value = creatorAmount;
+     * 
+     * @returns whether the payment asset is algo
+     */
+    private paidInAlgo(): boolean {
+        return (this.paymentAsset.value === AssetID.fromUint64(0)) ? true : false;
+    }
 
-        const marketplaceAmount = (price * royalties.marketplace - 1) / 10000 + 1;
-        this.marketplaceAmount.value = marketplaceAmount;
+    private getAmounts(amount: uint64): RoyaltyAmounts {
+        let creatorAmount = wideRatio([amount, this.creatorRoyalty.value], [10000]);
+        if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
+            creatorAmount = 1;
+        }
 
-        const sellerAmount = price - (creatorAmount + (2 * marketplaceAmount));
-        this.sellerAmount.value = sellerAmount;
+        let marketplaceAmount = wideRatio([amount, this.marketplaceRoyalties.value], [10000]);
+        if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
+            marketplaceAmount = 1;
+        }
+
+        const sellerAmount = this.price.value - (creatorAmount + (2 * marketplaceAmount));
+
+        return {
+            creator: creatorAmount,
+            marketplace: marketplaceAmount,
+            seller: sellerAmount,
+        }
+    }
+
+    private transferPurchaseToBuyer(buyer: Address): void {
+        // transfer asa to buyer
+        if (buyer.isOptedInToAsset(this.asset.value)) {
+            // transfer the purchase to the caller & opt out of the asset
+            sendAssetTransfer({
+                assetCloseTo: buyer,
+                assetReceiver: buyer,
+                assetAmount: this.app.address.assetBalance(this.asset.value),
+                xferAsset: this.asset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                buyer,
+                this.asset.value,
+                this.app.address.assetBalance(this.asset.value),
+                true,
+            );
+        }
+    }
+
+    private completeAlgoPayments(marketplace: Address): void {
+        // get the royalty payment amounts
+        const amounts = this.getAmounts(this.price.value);
+
+        // pay the creator
+        sendPayment({
+            amount: amounts.creator,
+            receiver: this.asset.value.creator,
+            fee: 0,
+        });
+
+        // pay listing marketplace
+        sendPayment({
+            amount: amounts.marketplace,
+            receiver: this.marketplace.value,
+            fee: 0
+        });
+
+        // pay buying marketplace
+        sendPayment({
+            amount: amounts.marketplace,
+            receiver: marketplace,
+            fee: 0,
+        });
+
+        // pay the seller
+        sendPayment({
+            closeRemainderTo: this.seller.value,
+            amount: amounts.seller,
+            fee: 0,
+            note: this.asset.value.name + ' Sold',
+        });
+    }
+
+    private completeAsaPayments(marketplace: Address): void {
+        // get the royalty payment amounts
+        const amounts = this.getAmounts(this.price.value);
+
+        // pay the creator
+        if (this.asset.value.creator.isOptedInToAsset(this.paymentAsset.value)) {
+            sendAssetTransfer({
+                assetReceiver: this.asset.value.creator,
+                assetAmount: amounts.creator,
+                xferAsset: this.paymentAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                this.asset.value.creator,
+                this.paymentAsset.value,
+                amounts.creator,
+                false,
+            );
+        }
+
+        // pay listing marketplace
+        if (this.marketplace.value.isOptedInToAsset(this.paymentAsset.value)) {
+            sendAssetTransfer({
+                assetReceiver: this.marketplace.value,
+                assetAmount: amounts.marketplace,
+                xferAsset: this.paymentAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                this.marketplace.value,
+                this.paymentAsset.value,
+                amounts.marketplace,
+                false,
+            );
+        }
+        
+        // pay buying marketplace
+        if (marketplace.isOptedInToAsset(this.paymentAsset.value)) {
+            sendAssetTransfer({
+                assetReceiver: marketplace,
+                assetAmount: amounts.marketplace,
+                xferAsset: this.paymentAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                marketplace,
+                this.paymentAsset.value,
+                amounts.marketplace,
+                false,
+            );
+        }
+
+        // pay seller
+        if (this.seller.value.isOptedInToAsset(this.paymentAsset.value)) {
+            sendAssetTransfer({
+                assetCloseTo: this.seller.value,
+                assetReceiver: this.seller.value,
+                assetAmount: amounts.seller,
+                xferAsset: this.paymentAsset.value,
+                fee: 0,
+            });
+        } else {
+            this.arc59OptInAndSend(
+                this.seller.value,
+                this.paymentAsset.value,
+                amounts.seller,
+                true,
+            );
+        }
+
+        // pay the seller
+        sendPayment({
+            closeRemainderTo: this.seller.value,
+            fee: 0,
+        });
     }
 
     /**
@@ -70,9 +215,11 @@ export class Listing extends ContractWithOptInCreatorOnly {
      * @param {uint64} asset the asa ID that is to be sold
      * @param {Address} seller the wallet of the account selling the asset
      * @param {uint64} price the price the asset should be sold for
-     * @param {uint64} creatorRoyalties the royalty % for the asset creator
+     * @param {uint64} paymentAsset the asset to use for payment
+     * @param {uint64} creatorRoyalty the royalty % for the asset creator
      * @param {uint64} marketplace the wallet that the listing fee should go to
      * @param {uint64} marketplaceRoyalties the % the marketplaces will split
+     * @param {uint64} expirationRound the round the listing expires on
      * @param {Address} reservedFor the address thats allowed to purchase
      * @param {uint64} gateID the gate ID to use to check if the user is qualified to buy
      * @throws {Error} - if the caller is not the factory
@@ -82,9 +229,10 @@ export class Listing extends ContractWithOptInCreatorOnly {
         seller: Address,
         price: uint64,
         paymentAsset: AssetID,
-        creatorRoyalties: uint64,
+        creatorRoyalty: uint64,
         marketplace: Address,
         marketplaceRoyalties: uint64,
+        expirationRound: uint64,
         reservedFor: Address,
         gateID: uint64,
     ): void {
@@ -94,80 +242,92 @@ export class Listing extends ContractWithOptInCreatorOnly {
         this.seller.value = seller;
         this.price.value = price;
         this.paymentAsset.value = paymentAsset;
+        this.creatorRoyalty.value = creatorRoyalty;
         this.marketplace.value = marketplace;
+        this.marketplaceRoyalties.value = marketplaceRoyalties;
+        assert(expirationRound == 0 || expirationRound > globals.round, errs.INVALID_EXPIRATION_ROUND);
+        this.expirationRound.value = expirationRound;
         this.reservedFor.value = reservedFor;
-        this.gateID.value = gateID;
-        this.calcAndSetPrices(
-            price,
-            {
-                creator: creatorRoyalties,
-                marketplace: marketplaceRoyalties,
-            }
-        );
+        this.gateID.value = gateID; 
     }
 
     /**
      * 
      * @param {PayTxn} payment - the payment for purchasing the asset
-     * @param {Address} marketPlaceSeller - the payment side marketplace address to pay for selling the asset
+     * @param {Address} buyer - the buyer of the asset
+     * @param {Address} listingSeller - the payment side marketplace address to pay for selling the asset
+     * @param {bytes[]} args - the args to pass to the gate
      * @throws {Error} - if the caller is not the reserved address
      * @throws {Error} - if the payment is not correct
      */
     @allow.call('DeleteApplication')
     purchase(
         payment: PayTxn,
-        marketPlaceSeller: Address
+        buyer: Address,
+        marketplace: Address,
+        args: bytes[]
     ): void {
+        assert(this.txn.sender === globals.creatorAddress, errs.MUST_BE_CALLED_FROM_FACTORY);
+        assert(this.paymentAsset.value.id === 0, errs.PAYMENT_ASSET_MUST_BE_ALGO);
+        assert(this.expirationRound.value == 0 || this.expirationRound.value > globals.round, errs.LISTING_EXPIRED);
+        assert(this.gate(buyer, this.gateID.value, args), errs.FAILED_GATE);
+
         if (this.reservedFor.value !== globals.zeroAddress) {
-            assert(this.txn.sender === this.reservedFor.value)
+            assert(buyer === this.reservedFor.value, errs.RESERVED_FOR_DIFFERENT_ADDRESS);
         }
 
         // if we decouple the caller & payment sender
         // then we effectively can create a system where
         // you can purchase an NFT on behalf of another
         verifyPayTxn(payment, {
+            sender: this.app.creator,
             amount: this.price.value,
             receiver: this.app.address,
-            closeRemainderTo: globals.zeroAddress,
-            rekeyTo: globals.zeroAddress,
-        })
-
-        // transfer the purchase to the caller
-        this.pendingGroup.addAssetTransfer({
-            assetReceiver: this.txn.sender,
-            assetAmount: this.app.address.assetBalance(this.asset.value),
-            xferAsset: this.asset.value,
-            fee: 0
         });
 
-        // pay the creator their royalty
-        this.pendingGroup.addPayment({
-            amount: this.creatorAmount.value,
-            receiver: this.asset.value.creator,
-            fee: 0
+        this.transferPurchaseToBuyer(buyer);
+        this.completeAlgoPayments(marketplace);
+    }
+
+    /**
+     * 
+     * @param {PayTxn} payment - the payment for purchasing the asset
+     * @param {Address} listingSeller - the payment side marketplace address to pay for selling the asset
+     * @throws {Error} - if the caller is not the reserved address
+     * @throws {Error} - if the payment is not correct
+     */
+    @allow.call('DeleteApplication')
+    purchaseAsa(
+        assetXfer: AssetTransferTxn,
+        buyer: Address,
+        marketplace: Address,
+        args: bytes[]
+    ): void {
+        assert(this.txn.sender === globals.creatorAddress, errs.MUST_BE_CALLED_FROM_FACTORY);
+        assert(this.paymentAsset.value.id !== 0, errs.PAYMENT_ASSET_MUST_BE_ALGO);
+        assert(this.expirationRound.value == 0 || this.expirationRound.value > globals.round, errs.LISTING_EXPIRED);
+        assert(this.gate(buyer, this.gateID.value, args), errs.FAILED_GATE);
+
+        if (this.reservedFor.value !== globals.zeroAddress) {
+            assert(buyer === this.reservedFor.value, errs.RESERVED_FOR_DIFFERENT_ADDRESS);
+        }
+
+        // if we decouple the caller & payment sender
+        // then we effectively can create a system where
+        // you can purchase an NFT on behalf of another
+        verifyAssetTransferTxn(assetXfer, {
+            sender: this.app.creator,
+            assetAmount: this.price.value,
+            assetReceiver: this.app.address,
         });
 
-        // pay the listing side ui
-        this.pendingGroup.addPayment({
-            amount: this.marketplaceAmount.value,
-            receiver: this.marketplace.value,
-            fee: 0
-        });
+        this.transferPurchaseToBuyer(buyer);
+        this.completeAsaPayments(marketplace);
+    }
 
-        // pay the seller side ui
-        this.pendingGroup.addPayment({
-            amount: this.marketplaceAmount.value,
-            receiver: marketPlaceSeller,
-            fee: 0,
-        });
-
-        // pay the seller
-        this.pendingGroup.addPayment({
-            closeRemainderTo: this.seller.value,
-            fee: 0,
-        });
-
-        this.pendingGroup.submit();
+    changePrice(price: uint64): void {
+        assert(this.txn.sender === this.seller.value, errs.MUST_BE_SELLER);
+        this.price.value = price;
     }
 
     /**
@@ -175,8 +335,8 @@ export class Listing extends ContractWithOptInCreatorOnly {
      */
     @allow.call('DeleteApplication')
     delist(caller: Address): void {
-        assert(this.txn.sender === globals.creatorAddress);
-        assert(this.seller.value === caller);
+        assert(this.txn.sender === globals.creatorAddress, errs.MUST_BE_CALLED_FROM_FACTORY);
+        assert(this.seller.value === caller, errs.ONLY_SELLER_CAN_DELIST);
 
         this.pendingGroup.addAssetTransfer({
             assetReceiver: this.seller.value,
@@ -187,6 +347,17 @@ export class Listing extends ContractWithOptInCreatorOnly {
             isFirstTxn: true,
         });
 
+        if (!this.paidInAlgo()) {
+            // opt out of payment asset
+            this.pendingGroup.addAssetTransfer({
+                assetReceiver: this.seller.value,
+                assetCloseTo: this.seller.value,
+                assetAmount: this.app.address.assetBalance(this.paymentAsset.value),
+                xferAsset: this.paymentAsset.value,
+                fee: 0,
+            });
+        }
+
         this.pendingGroup.addPayment({
             closeRemainderTo: this.seller.value,
             amount: this.app.address.balance,
@@ -196,175 +367,3 @@ export class Listing extends ContractWithOptInCreatorOnly {
         this.pendingGroup.submit();
     }
 }
-
-// eslint-disable-next-line no-unused-vars
-// export class AsaListing extends ListingBase {
-
-//     paymentAsset = GlobalStateKey<AssetID>();
-
-//     /**
-//      * init sets up the terms of the listing
-//      * 
-//      * @param asset the asa ID that is to be sold
-//      * @param seller the wallet of the account selling the asset
-//      * @param price the price the asset should be sold for
-//      * @param paymentAsset the asset used for purchase
-//      * @param creatorRoyalties the royalty % for the asset creator
-//      * @param marketplace the wallet that the listing fee should go to
-//      * @param marketplaceRoyalties the % the marketplaces will split
-//      * @param reservedFor the address thats allowed to purchase
-//      */
-//     init(
-//         asset: AssetID,
-//         seller: Address,
-//         price: uint64,
-//         paymentAsset: AssetID,
-//         creatorRoyalties: uint64,
-//         marketplace: Address,
-//         marketplaceRoyalties: uint64,
-//         reservedFor: Address,
-//     ): void {
-//         assert(this.txn.sender === globals.creatorAddress)
-
-//         this.asset.value = asset;
-//         this.seller.value = seller;
-//         this.creator.value = asset.creator;
-//         this.marketplace.value = marketplace;
-//         this.price.value = price;
-//         this.paymentAsset.value = paymentAsset;
-//         this.reservedFor.value = reservedFor;
-//         this.calcAndSetPrices(price, creatorRoyalties, marketplaceRoyalties);
-//     }
-
-//     /**
-//      * Deletes the app and returns the asset/mbr to the seller
-//      */
-//     @allow.call('DeleteApplication')
-//     delist(): void {
-//         assert(this.txn.sender == this.seller.value);
-
-//         this.pendingGroup.addAssetTransfer({
-//             assetReceiver: this.seller.value,
-//             assetCloseTo: this.seller.value,
-//             assetAmount: this.app.address.assetBalance(this.asset.value),
-//             xferAsset: this.asset.value,
-//             fee: 0,
-//             isFirstTxn: true,
-//         });
-
-//         if (!this.paidInAlgo()) {
-//             // opt out of payment asset
-//             this.pendingGroup.addAssetTransfer({
-//                 assetReceiver: this.seller.value,
-//                 assetCloseTo: this.seller.value,
-//                 assetAmount: this.app.address.assetBalance(this.paymentAsset.value),
-//                 xferAsset: this.paymentAsset.value,
-//                 fee: 0,
-//             });
-//         }
-
-//         this.pendingGroup.addPayment({
-//             closeRemainderTo: this.seller.value,
-//             amount: this.app.address.balance,
-//             fee: 0,
-//         });
-
-//         this.pendingGroup.submit();
-//     }
-
-//     @allow.call('DeleteApplication')
-//     purchase(
-//         assetXfer: AssetTransferTxn,
-//         marketPlaceSeller: Address
-//     ): void {
-//         if (this.reservedFor.value !== globals.zeroAddress) {
-//             assert(this.txn.sender === this.reservedFor.value)
-//         }
-
-//         // if we decouple the caller & payment sender
-//         // then we effectively can create a system where
-//         // you can purchase an NFT on behalf of another
-//         verifyAssetTransferTxn(assetXfer, {
-//             assetAmount: this.price.value,
-//             assetReceiver: this.app.address,
-//             assetCloseTo: globals.zeroAddress,
-//             rekeyTo: globals.zeroAddress,
-//         })
-
-//         // transfer the purchase to the caller
-//         this.addAssetTransferWithRouterFallBack({
-//             assetReceiver: this.txn.sender,
-//             assetAmount: this.app.address.assetBalance(this.asset.value),
-//             xferAsset: this.asset.value,
-//             fee: 0
-//         });
-
-//         // pay the creator their royalty
-//         this.addAssetTransferWithRouterFallBack({
-//             assetAmount: this.creatorAmount.value,
-//             assetReceiver: this.creator.value,
-//             xferAsset: this.paymentAsset.value,
-//             fee: 0
-//         });
-
-//         // pay the listing side ui
-//         this.addAssetTransferWithRouterFallBack({
-//             assetAmount: this.marketplaceAmount.value,
-//             assetReceiver: this.marketplace.value,
-//             xferAsset: this.paymentAsset.value,
-//             fee: 0
-//         });
-
-//         // pay the seller side ui
-//         this.addAssetTransferWithRouterFallBack({
-//             assetAmount: this.marketplaceAmount.value,
-//             assetReceiver: marketPlaceSeller,
-//             xferAsset: this.paymentAsset.value,
-//             fee: 0,
-//         });
-
-//         this.addAssetTransferWithRouterFallBack({
-//             assetAmount: this.app.address.assetBalance(this.paymentAsset.value),
-//             assetCloseTo: this.seller.value,
-//             assetReceiver: this.seller.value,
-//             xferAsset: this.paymentAsset.value,
-//             fee: 0,
-//         })
-
-//         // pay the seller
-//         this.pendingGroup.addPayment({
-//             closeRemainderTo: this.seller.value,
-//             fee: 0,
-//         });
-
-//         this.pendingGroup.submit();
-//     }
-
-//     /**
-//      * 
-//      * @returns whether the payment asset is algo
-//      */
-//     private paidInAlgo(): boolean {
-//         return (this.paymentAsset.value === AssetID.fromUint64(0)) ? true : false;
-//     }
-
-//     /**
-//      * 
-//      * @param params general asset transfer params
-//      */
-//     private addAssetTransferWithRouterFallBack(params: {
-//         xferAsset: AssetID;
-//         assetAmount: uint64;
-//         assetSender?: Address | undefined;
-//         assetReceiver: Address;
-//         assetCloseTo?: Address | undefined;
-//         fee?: uint64 | undefined;
-//         sender?: Address | undefined;
-//         rekeyTo?: Address | undefined;
-//         note?: string | undefined;
-//     }): void {
-//         // TODO: check if assetReceiver | assetCloseTo is opted in
-//         this.pendingGroup.addAssetTransfer(params);
-//         // TODO: if they're not opted send it to the ARC59 ASA Router
-//     }
-// }

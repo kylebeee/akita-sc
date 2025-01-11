@@ -5,6 +5,8 @@ import { AbstractedAccount } from '../../contracts/arc58/abstracted_account.algo
 import { OptInPlugin } from '../../contracts/arc58/plugins/optin.algo';
 
 export class ContractWithOptIn extends Contract {
+    programVersion = 10;
+
     /**
      * optin tells the contract to opt into an asa
      * @param payment The payment transaction
@@ -27,6 +29,8 @@ export class ContractWithOptIn extends Contract {
 }
 
 export class ContractWithOptInCreatorOnly extends Contract {
+    programVersion = 10;
+
     /**
      * optin tells the contract to opt into an asa
      * @param payment The payment transaction
@@ -51,9 +55,12 @@ export class ContractWithOptInCreatorOnly extends Contract {
 }
 
 export class ContractWithArc59Send extends Contract {
-    protected arc59OptInAndSend(recipient: Address, asset: AssetID, amount: uint64): void {
+    programVersion = 10;
+
+    protected arc59OptInAndSend(recipient: Address, asset: AssetID, amount: uint64, closeOut: boolean): void {
+        const assetInboxAppID = AppID.fromUint64(OtherAppIDsAssetInbox);
         const canCallData = sendMethodCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo, arc59GetSendAssetInfoResponse>({
-            applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
+            applicationID: assetInboxAppID,
             methodArgs: [
                 recipient,
                 asset.id,
@@ -67,7 +74,7 @@ export class ContractWithArc59Send extends Contract {
 
         if (mbr || receiverAlgoNeededForClaim) {
             this.pendingGroup.addPayment({
-                receiver: AppID.fromUint64(OtherAppIDsAssetInbox).address,
+                receiver: assetInboxAppID.address,
                 amount: (mbr + receiverAlgoNeededForClaim),
                 fee: 0,
             });
@@ -75,32 +82,52 @@ export class ContractWithArc59Send extends Contract {
 
         if (!routerOptedIn) {
             this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_optRouterIn, void>({
-                applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
+                applicationID: assetInboxAppID,
                 methodArgs: [asset.id],
                 fee: 0
             });
         }
 
-        this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_sendAsset, Address>({
-            applicationID: AppID.fromUint64(OtherAppIDsAssetInbox),
-            methodArgs: [
-                {
-                    assetReceiver: AppID.fromUint64(OtherAppIDsAssetInbox).address,
-                    assetAmount: amount,
-                    xferAsset: asset,
-                    fee: 0,
-                },
-                recipient,
-                receiverAlgoNeededForClaim,
-            ],
-            fee: 0
-        });
+        if (closeOut) {
+            this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_sendAsset, Address>({
+                applicationID: assetInboxAppID,
+                methodArgs: [
+                    {
+                        assetCloseTo: assetInboxAppID.address,
+                        assetReceiver: assetInboxAppID.address,
+                        assetAmount: amount,
+                        xferAsset: asset,
+                        fee: 0,
+                    },
+                    recipient,
+                    receiverAlgoNeededForClaim,
+                ],
+                fee: 0
+            });
+        } else {
+            this.pendingGroup.addMethodCall<typeof AssetInbox.prototype.arc59_sendAsset, Address>({
+                applicationID: assetInboxAppID,
+                methodArgs: [
+                    {
+                        assetReceiver: assetInboxAppID.address,
+                        assetAmount: amount,
+                        xferAsset: asset,
+                        fee: 0,
+                    },
+                    recipient,
+                    receiverAlgoNeededForClaim,
+                ],
+                fee: 0
+            });
+        }
 
         this.pendingGroup.submit();
     }
 }
 
 export class ContractWithArc58Send extends Contract {
+    programVersion = 10;
+
     protected arc58OptInAndSend(recipientAppID: AppID, asset: AssetID, amount: uint64): void {
         this.pendingGroup.addPayment({
             amount: globals.assetOptInMinBalance,
@@ -147,3 +174,16 @@ export class ContractWithArc58Send extends Contract {
         this.pendingGroup.submit();
     }
 }
+
+export class ContractWithOptInCreatorOnlyArc59
+    extends Contract.extend(
+        ContractWithOptInCreatorOnly,
+        ContractWithArc59Send
+    ) {}
+
+export class ContractWithOptInCreatorOnlyArc59AndArc58 
+    extends Contract.extend(
+        ContractWithOptInCreatorOnly,
+        ContractWithArc59Send,
+        ContractWithArc58Send
+    ) {}

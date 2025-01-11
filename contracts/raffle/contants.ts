@@ -1,0 +1,1 @@
+export const AKITA_RAFFLE_TICKET_ASSET_KEY: string = 'ticket_asset';

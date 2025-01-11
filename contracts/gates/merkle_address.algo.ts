@@ -20,23 +20,23 @@ export type RegistryInfo = {
     name: string;
 }
 
-export const MerkleAddressGateCheckParamsLengthMinimum = len<uint64>() + len<Address>() + 64;
+export const MerkleAddressGateCheckParamsLengthMinimum = len<Address>() + len<uint64>() + 64;
 export type MerkleAddressGateCheckParams = {
-    registryIndex: uint64;
     user: Address;
+    registryID: uint64;
     proof: bytes32[];
 }
 
 export class MerkleAssetGate extends Contract {
     programVersion = 10;
 
-    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
+    registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
     private newRegistryID(): uint64 {
-        const id = this._registryCursor.value;
-        this._registryCursor.value += 1;
+        const id = this.registryCursor.value;
+        this.registryCursor.value += 1;
         return id;
     }
 
@@ -52,7 +52,7 @@ export class MerkleAssetGate extends Contract {
         assert(args.length >= MerkleAddressGateCheckParamsLengthMinimum, errs.INVALID_ARG_COUNT);
         const params = castBytes<MerkleAddressGateCheckParams>(args);
 
-        const registryInfo = this.registry(params.registryIndex).value;
+        const registryInfo = this.registry(params.registryID).value;
 
         return sendMethodCall<typeof MetaMerkles.prototype.verify, boolean>({
             applicationID: AppID.fromUint64(AkitaAppIDsMetaMerkles),

@@ -210,7 +210,8 @@ export class AkitaDAO extends Contract {
     contentPolicy = GlobalStateKey<bytes<59>>({ key: 'content_policy' });
     /** the minimum impact score to qualify for daily disbursement */
     minimumRewardsImpact = GlobalStateKey<uint64>({ key: 'minimum_rewards_impact' });
-
+    /** the vrf beacon Akita apps should use */
+    vrfBeaconAppID = GlobalStateKey<AppID>({ key: 'vrf_beacon_app_id' });
     // fees
     /** the cost to post on akita social */
     socialPostFee = GlobalStateKey<uint64>({ key: 'social_post_fee' });
@@ -270,9 +271,9 @@ export class AkitaDAO extends Contract {
     /** revocation msig */
     revocationAddress = GlobalStateKey<Address>({ key: 'revocation_address' });
     /** the next proposal id */
-    _proposalID = GlobalStateKey<uint64>({ key: 'proposal_id' });
+    proposalID = GlobalStateKey<uint64>({ key: 'proposal_id' });
     /** the daily disbursement cursor */
-    _disbursementCursor = GlobalStateKey<uint64>({ key: 'disbursement_cursor' });
+    disbursementCursor = GlobalStateKey<uint64>({ key: 'disbursement_cursor' });
 
     /** voting state of a proposal */
     proposals = BoxMap<uint64, ProposalDetails>();
@@ -292,23 +293,9 @@ export class AkitaDAO extends Contract {
      */
     // tokenAllocations = BoxMap<AssetID, uint64>();
 
-    private controls(address: Address): boolean {
-        return address.authAddr === this.app.address;
-    }
-
-    private rekeyBack(address: Address) {
-        sendPayment({
-            sender: address,
-            amount: 0,
-            receiver: address,
-            rekeyTo: address,
-            fee: 0,
-        });
-    }
-
     private newProposalID(): uint64 {
-        const id = this._proposalID.value;
-        this._proposalID.value += 1;
+        const id = this.proposalID.value;
+        this.proposalID.value += 1;
         return id;
     }
 
@@ -640,9 +627,9 @@ export class AkitaDAO extends Contract {
         // TODO: Add the optin plugin immediately
     }
 
-    updateApplication(): void {
+    // updateApplication(): void {
 
-    }
+    // }
 
     init(
         version: string,
@@ -691,7 +678,7 @@ export class AkitaDAO extends Contract {
         this.minimumVoteThreshold.value = minimumVoteThreshold;
         this.bonesID.value = bones;
         this.revocationAddress.value = revocationAddress;
-        this._proposalID.value = 0;
+        this.proposalID.value = 0;
     }
 
     /**

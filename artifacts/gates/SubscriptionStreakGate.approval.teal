@@ -32,13 +32,13 @@ newRegistryID:
 	bytec 0 // 0x
 
 	// contracts/gates/subscription_streak.algo.ts:34
-	// id = this._registryCursor.value
+	// id = this.registryCursor.value
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	frame_bury 0 // id: uint64
 
 	// contracts/gates/subscription_streak.algo.ts:35
-	// this._registryCursor.value += 1
+	// this.registryCursor.value += 1
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	intc 1 // 1
@@ -470,12 +470,12 @@ check:
 	// contracts/gates/subscription_streak.algo.ts:88
 	// params = castBytes<SubscriptionGateCheckParams>(args)
 	frame_dig -1 // args: bytes
-	frame_bury 0 // params: (uint64,address)
+	frame_bury 0 // params: (address,uint64)
 
 	// contracts/gates/subscription_streak.algo.ts:89
-	// info = this.registry(params.registryIndex).value
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// info = this.registry(params.registryID).value
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	frame_bury 1 // storage key//info
@@ -486,9 +486,9 @@ check:
 	intc 2 // 8
 
 	// contracts/gates/subscription_streak.algo.ts:89
-	// params.registryIndex
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// params.registryID
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -501,9 +501,9 @@ check:
 	intc 2 // 8
 
 	// contracts/gates/subscription_streak.algo.ts:89
-	// params.registryIndex
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// params.registryID
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -516,9 +516,9 @@ check:
 	intc 2 // 8
 
 	// contracts/gates/subscription_streak.algo.ts:89
-	// params.registryIndex
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// params.registryID
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -531,9 +531,9 @@ check:
 	intc 3 // 32
 
 	// contracts/gates/subscription_streak.algo.ts:89
-	// params.registryIndex
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// params.registryID
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -541,8 +541,8 @@ check:
 
 	// contracts/gates/subscription_streak.algo.ts:90
 	// params.user
-	frame_dig 0 // params: (uint64,address)
-	extract 8 32
+	frame_dig 0 // params: (address,uint64)
+	extract 0 32
 	callsub subscriptionStreakGate
 
 	// set the subroutine return value

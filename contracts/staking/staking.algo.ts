@@ -5,6 +5,7 @@ const heartBeatMBR = 44_100;
 const ONE_YEAR = 31_536_000; // 365 days * 24 hours * 60 minutes * 60 seconds
 
 const errs = {
+    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
     NO_LOCK: 'Lock not found',
     BAD_EXPIRATION: 'Expiration must be in the future or hardlock disabled',
     BAD_EXPIRATION_UPDATE: 'Expiration must be greater than or equal to the current unlock time or hardlock disabled',
@@ -76,7 +77,9 @@ export type StakeInfo = {
 }
 
 export class Staking extends Contract {
-
+    
+    /** The App ID of the Akita DAO contract */
+    akitaDaoAppID = TemplateVar<AppID>();
     /** The address that is allowed to call the 'beat' method to create heartbeat records */
     heartbeatManagerAddress = GlobalStateKey<Address>({ key: 'heartbeat_manager_address' });
 
@@ -84,10 +87,6 @@ export class Staking extends Contract {
     stakes = BoxMap<StakeKey, StakeValue>();
     // 2_500 + (400 * (40 + 64)) = 44,100
     heartbeats = BoxMap<HeartbeatKey, StaticArray<HeartbeatValues, 4>>();
-
-    private controls(address: Address): boolean {
-        return address.authAddr === this.app.address;
-    }
 
     @abi.readonly
     timeLeft(address: Address, asset: AssetID): uint64 {
@@ -143,6 +142,12 @@ export class Staking extends Contract {
             results.push(this.stakes({ address: address, asset: asset, type: STAKING_TYPE_LOCK }).value);
         }
         return results;
+    }
+
+    createApplication(): void {}
+
+    updateApplication(): void {
+        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
     }
 
     stake(

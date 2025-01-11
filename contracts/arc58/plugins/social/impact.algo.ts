@@ -40,6 +40,8 @@ const NFD_VERIFIED_TELEGRAM_KEY = 'v.telegram';
 
 const AKITA_TOKEN_KEY = 'akita_id';
 
+const subscriptionStateModifierMBR = 9_300;
+
 export type MetaValue = {
     // the cached subscription App ID for the user
     subscriptionIndex: uint64;
@@ -55,8 +57,8 @@ export type MetaValue = {
 
 export class AkitaSocialImpact extends Contract {
 
-    /** the app id for the Akita DAO */
-    daoAppID = GlobalStateKey<AppID>({ key: 'dao_app_id' });
+    /** The App ID of the Akita DAO contract */
+    akitaDaoAppID = TemplateVar<AppID>();
 
     /**
      * A map of the meta data for each user
@@ -85,21 +87,7 @@ export class AkitaSocialImpact extends Contract {
     subscriptionStateModifier = BoxMap<uint64, uint64>({ prefix: 's' });
 
     private isDAO(address: Address): boolean {
-        return address === this.daoAppID.value.address;
-    }
-
-    private controls(address: Address): boolean {
-        return address.authAddr === this.app.address;
-    }
-
-    private rekeyBack(address: Address) {
-        sendPayment({
-            sender: address,
-            amount: 0,
-            receiver: address,
-            rekeyTo: address,
-            fee: 0,
-        });
+        return address === this.akitaDaoAppID.address;
     }
 
     private userHolds(address: Address, NFT: AssetID): boolean {
@@ -114,7 +102,7 @@ export class AkitaSocialImpact extends Contract {
         });
 
         // ensure they're subscribed to an Akita offering
-        const toAkita = info.recipient === this.daoAppID.value.address;
+        const toAkita = info.recipient === this.akitaDaoAppID.address;
 
         // box index zero is reserved for donations
         // if its higher than zero then they're subscribed to an offer
@@ -212,7 +200,7 @@ export class AkitaSocialImpact extends Contract {
             methodArgs: [
                 address,
                 {
-                    asset: this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID,
+                    asset: this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID,
                     type: STAKING_TYPE_SOFT,
                 },
             ],
@@ -239,7 +227,7 @@ export class AkitaSocialImpact extends Contract {
     }
 
     private getHeldAktaImpactScore(address: Address): uint64 {
-        const amount = address.assetBalance(this.daoAppID.value.globalState(AKITA_TOKEN_KEY) as AssetID);
+        const amount = address.assetBalance(this.akitaDaoAppID.globalState(AKITA_TOKEN_KEY) as AssetID);
 
         // if the amount is too low short circuit
         if (amount < TEN_THOUSAND_AKITA) {
@@ -418,18 +406,14 @@ export class AkitaSocialImpact extends Contract {
         return nfdImpact;
     }
 
-    updateSubscriptionStateModifier(sender: AppID, rekeyBack: boolean, subscriptionIndex: uint64, newModifier: uint64): void {
-        assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR);
-        assert(this.isDAO(sender.address), errs.NOT_DAO);
+    updateSubscriptionStateModifier(payment: PayTxn, subscriptionIndex: uint64, newModifier: uint64): void {
+        assert(this.isDAO(this.txn.sender), errs.NOT_DAO);
 
         this.subscriptionStateModifier(subscriptionIndex).value = newModifier;
 
-        sendPayment({
-            sender: sender.address,
+        verifyPayTxn(payment, {
             receiver: this.app.address,
-            amount: 9_300,
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
+            amount: subscriptionStateModifierMBR,
         });
     }
 }

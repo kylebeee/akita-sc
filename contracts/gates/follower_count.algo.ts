@@ -14,22 +14,22 @@ export type RegistryInfo = {
     value: uint64;
 }
 
-export const FollowerCountGateCheckParamsLength = len<uint64>() + len<Address>();
+export const FollowerCountGateCheckParamsLength = len<Address>() + len<uint64>();
 export type FollowerCountGateCheckParams = {
-    registryIndex: uint64;
     user: Address;
+    registryID: uint64;
 }
 
 export class FollowerCountGate extends Contract {
     programVersion = 10;
 
-    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
+    registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
     private newRegistryID(): uint64 {
-        const id = this._registryCursor.value;
-        this._registryCursor.value += 1;
+        const id = this.registryCursor.value;
+        this.registryCursor.value += 1;
         return id;
     }
 
@@ -68,7 +68,7 @@ export class FollowerCountGate extends Contract {
     check(args: bytes): boolean {
         assert(args.length === FollowerCountGateCheckParamsLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<FollowerCountGateCheckParams>(args);
-        const info = this.registry(params.registryIndex).value;
+        const info = this.registry(params.registryID).value;
         return this.followerCountGate(params.user, info.op, info.value);
     }
 }

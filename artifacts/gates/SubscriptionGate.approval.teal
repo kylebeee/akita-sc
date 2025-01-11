@@ -32,13 +32,13 @@ newRegistryID:
 	bytec 0 // 0x
 
 	// contracts/gates/subscription.algo.ts:29
-	// id = this._registryCursor.value
+	// id = this.registryCursor.value
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	frame_bury 0 // id: uint64
 
 	// contracts/gates/subscription.algo.ts:30
-	// this._registryCursor.value += 1
+	// this.registryCursor.value += 1
 	bytec 1 //  "registry_cursor"
 	app_global_get
 	intc 0 // 1
@@ -269,12 +269,12 @@ check:
 	len
 
 	// contracts/gates/subscription.algo.ts:15
-	// len<uint64>()
-	intc 3 // 8
-
-	// contracts/gates/subscription.algo.ts:15
 	// len<Address>()
 	intc 2 // 32
+
+	// contracts/gates/subscription.algo.ts:15
+	// len<uint64>()
+	intc 3 // 8
 	+
 	==
 	assert
@@ -282,12 +282,12 @@ check:
 	// contracts/gates/subscription.algo.ts:65
 	// params = castBytes<SubscriptionGateCheckParams>(args)
 	frame_dig -1 // args: bytes
-	frame_bury 0 // params: (uint64,address)
+	frame_bury 0 // params: (address,uint64)
 
 	// contracts/gates/subscription.algo.ts:66
-	// info = this.registry(params.registryIndex).value
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// info = this.registry(params.registryID).value
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	frame_bury 1 // storage key//info
@@ -298,9 +298,9 @@ check:
 	intc 3 // 8
 
 	// contracts/gates/subscription.algo.ts:66
-	// params.registryIndex
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// params.registryID
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -313,9 +313,9 @@ check:
 	intc 2 // 32
 
 	// contracts/gates/subscription.algo.ts:66
-	// params.registryIndex
-	frame_dig 0 // params: (uint64,address)
-	extract 0 8
+	// params.registryID
+	frame_dig 0 // params: (address,uint64)
+	extract 32 8
 	btoi
 	itob
 	cover 2
@@ -323,8 +323,8 @@ check:
 
 	// contracts/gates/subscription.algo.ts:67
 	// params.user
-	frame_dig 0 // params: (uint64,address)
-	extract 8 32
+	frame_dig 0 // params: (address,uint64)
+	extract 0 32
 	callsub subscriptionGate
 
 	// set the subroutine return value

@@ -14,28 +14,29 @@ export class PollFactory extends Contract {
         options: string[],
     ): AppID {
 
-        assert(pmt.amount === (
+        verifyPayTxn(payment, {
+            receiver: this.app.address,
+            amount: (
                 100_000 // requires 3 extra pages
                 + (28_500 * Poll.schema.global.numUint)
                 + (50_000 * Poll.schema.global.numByteSlice)
-            )
-        );
-        assert(pmt.receiver === this.app.address);
+            ),
+        });
 
         sendMethodCall<typeof Poll.prototype.createApplication>({
             methodArgs: [
                 type,
-                gateID,
                 endTime,
                 selectionMax,
                 question,
                 options,
+                gateID
             ],
             approvalProgram: Poll.approvalProgram(),
             clearStateProgram: Poll.clearProgram(),
             globalNumUint: Poll.schema.global.numUint,
             globalNumByteSlice: Poll.schema.global.numByteSlice,
-            // extraProgramPages: 1,
+            extraProgramPages: 0,
             fee: 0,
         });
 

@@ -1,8 +1,14 @@
 import { Contract } from "@algorandfoundation/tealscript";
 import { AbstractedAccount } from "./abstracted_account.algo";
 
+const errs = {
+    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
+}
+
 export class AbstractedAccountFactory extends Contract {
 
+    /** The App ID of the Akita DAO contract */
+    akitaDaoAppID = TemplateVar<AppID>();
     /** the version of the child contract */
     childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
     /** the default app thats allowed to revoke plugins */
@@ -14,7 +20,7 @@ export class AbstractedAccountFactory extends Contract {
     }
 
     updateApplication(): void {
-        assert(this.txn.sender === this.app.creator)
+        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
     }
 
     mint(payment: PayTxn, admin: Address, nickname: string): AppID {

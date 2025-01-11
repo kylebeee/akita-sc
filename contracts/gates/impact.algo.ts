@@ -15,22 +15,22 @@ export type RegistryInfo = {
     value: uint64;
 };
 
-export const ImpactGateCheckParamsLength = len<uint64>() + len<Address>();
+export const ImpactGateCheckParamsLength = len<Address>() + len<uint64>();
 export type ImpactGateCheckParams = {
-    registryIndex: uint64;
     user: Address;
+    registryID: uint64;
 }
 
 export class ImpactGate extends Contract {
     programVersion = 10;
 
-    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
+    registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
     private newRegistryID(): uint64 {
-        const id = this._registryCursor.value;
-        this._registryCursor.value += 1;
+        const id = this.registryCursor.value;
+        this.registryCursor.value += 1;
         return id;
     }
 
@@ -69,7 +69,7 @@ export class ImpactGate extends Contract {
     check(args: bytes): boolean {
         assert(args.length === ImpactGateCheckParamsLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<ImpactGateCheckParams>(args);
-        const info = this.registry(params.registryIndex).value;
+        const info = this.registry(params.registryID).value;
         return this.impactGate(params.user, info.op, info.value);
     }
 }

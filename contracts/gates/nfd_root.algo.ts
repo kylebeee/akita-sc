@@ -17,23 +17,23 @@ export type RegistryInfo = {
     root: string;
 }
 
-export const NFDRootGateCheckParamsLength = len<uint64>() + len<Address>() + len<AppID>();
+export const NFDRootGateCheckParamsLength = len<Address>() + len<uint64>() + len<AppID>();
 export type NFDRootGateCheckParams = {
-    registryIndex: uint64;
     user: Address;
+    registryID: uint64;
     NFD: AppID;
 }
 
 export class NFDGate extends Contract {
     programVersion = 10;
 
-    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
+    registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
     private newRegistryID(): uint64 {
-        const id = this._registryCursor.value;
-        this._registryCursor.value += 1;
+        const id = this.registryCursor.value;
+        this.registryCursor.value += 1;
         return id;
     }
 
@@ -97,7 +97,7 @@ export class NFDGate extends Contract {
     check(args: bytes): boolean {
         assert(args.length === NFDRootGateCheckParamsLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<NFDRootGateCheckParams>(args);
-        const root = this.registry(params.registryIndex).value.root;
+        const root = this.registry(params.registryID).value.root;
 
         return this.nfdGate(params.user, params.NFD, root);
     }

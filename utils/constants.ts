@@ -1,5 +1,7 @@
 import { Contract } from '@algorandfoundation/tealscript';
 
+export const MAX_UINT64 = Uint<64>('18446744073709551615');
+
 export const AkitaDomain = 'akita.community';
 
 export const EMPTY_BYTES_16: bytes<16> = 'AAAAAAAAAAAAAAAA' as bytes<16>;

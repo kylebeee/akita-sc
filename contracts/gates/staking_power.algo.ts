@@ -20,22 +20,22 @@ export type RegistryInfo = {
     power: uint64;
 }
 
-export const StakingPowerGateCheckParamsLength = len<uint64>() + len<Address>();
+export const StakingPowerGateCheckParamsLength = len<Address>() + len<uint64>();
 export type StakingPowerGateCheckParams = {
-    registryIndex: uint64;
     user: Address;
+    registryID: uint64;
 }
 
 export class StakingPowerGate extends Contract {
     programVersion = 10;
 
-    _registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
+    registryCursor = GlobalStateKey<uint64>({ key: 'registry_cursor' });
 
     registry = BoxMap<uint64, RegistryInfo>();
 
     private newRegistryID(): uint64 {
-        const id = this._registryCursor.value;
-        this._registryCursor.value += 1;
+        const id = this.registryCursor.value;
+        this.registryCursor.value += 1;
         return id;
     }
 
@@ -80,7 +80,7 @@ export class StakingPowerGate extends Contract {
     check(args: bytes): boolean {
         assert(args.length >= StakingPowerGateCheckParamsLength, errs.INVALID_ARG_COUNT);
         const params = castBytes<StakingPowerGateCheckParams>(args);
-        const info = this.registry(params.registryIndex).value;
+        const info = this.registry(params.registryID).value;
         return this.stakingPowerGate(params.user, info.op, info.asset, info.power);
     }
 }

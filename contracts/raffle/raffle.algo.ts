@@ -1,16 +1,15 @@
-import { Contract } from "@algorandfoundation/tealscript";
 import { pcg64Init, pcg64Random } from "../../utils/types/lib_pcg/pcg64.algo";
 import { RandomnessBeacon } from "../../utils/types/vrf_beacon";
-import { Gate } from "../gates/gate.algo";
-import { AkitaAppIDsGate } from "../../utils/constants";
-import { ContractWithOptInCreatorOnly } from "../../utils/base_contracts/optin.algo";
-import { ContractWithOptInCreatorOnlyAndGate } from "../../utils/base_contracts/gate.algo";
+import { MAX_UINT64 } from "../../utils/constants";
+import { ContractWithOptInCreatorOnlyArc59AndGate } from "../../utils/base_contracts/gate.algo";
 
 const errs = {
     TOO_SHORT: 'Raffles cannot be less than one hour',
     CREATOR_ONLY: 'Only the creator of this app can call this method',
     NOT_LIVE: 'Raffle is not live',
-    FAILED_GATE: 'Failed gate check',
+    TICKET_ASSET_NOT_ALGO: 'ticket asset is not algo',
+    TICKET_ASSET_ALGO: 'ticket asset is algo',
+    FAILED_GATE: 'Gate check failed',
     FAILED_TO_GET_SEED: 'Failed to get seed',
     INVALID_MBR_AMOUNT: 'Invalid mbr amount',
     INVALID_MBR_RECIPIENT: 'Invalid mbr recipient',
@@ -18,11 +17,14 @@ const errs = {
     BELOW_MIN: 'Amount is below minimum',
     ABOVE_MAX: 'Amount is above maximum',
     INVALID_RECEIVER: 'Invalid receiver',
+    RAFFLE_HAS_NOT_ENDED: 'Raffle has not ended',
+    WINNER_ALREADY_FOUND: 'Winner has already been found',
     ALREADY_ENTERED: 'You have already entered the raffle',
     NOT_ENDED: 'Raffle has not ended',
     NOT_ENOUGH_TIME: 'Not enough time has passed since the raffle ended',
-    TICKET_ALREADY_FOUND: 'Winning ticket has already been found',
+    WINNER_ALREADY_DRAWN: 'Winning ticket has already been drawn',
     ENTRY_DOES_NOT_EXIST: 'Entry does not exist',
+    WINNER_NOT_FOUND: 'Winner not found',
     PRIZE_ALREADY_CLAIMED: 'Prize has already been claimed',
     BOXES_ARENT_CLEARED: 'Boxes are not cleared',
     PRIZE_NOT_CLAIMED: 'Prize has not been claimed',
@@ -30,46 +32,43 @@ const errs = {
     TICKETS_NOT_RECLAIMED: 'Tickets have not been reclaimed',
 }
 
-const RANDOMNESS_BEACON_APPID_TESTNET: AppID = AppID.fromUint64(600011887);
-const RANDOMNESS_BEACON_APPID_MAINNET: AppID = AppID.fromUint64(1615566206);
+// const RANDOMNESS_BEACON_APPID_TESTNET: AppID = AppID.fromUint64(600011887);
+// const RANDOMNESS_BEACON_APPID_MAINNET: AppID = AppID.fromUint64(1615566206);
 
-const ENTRY_MBR = 37_000;
-const APPROX_ROUNDS_IN_ONE_HOUR = 1285;
-const MAX_UINT64 = Uint<64>('18446744073709551615');
+const entriesByAddressMBR = 18_500;
+export const entryMBR = 18_500 + entriesByAddressMBR;
+const roundsPerHour = 1285;
 
 export type RaffleState = {
-    entryID: uint64;
-    entryCursor: uint64;
-    entryCursorTotal: uint64;
     ticketAsset: AssetID;
     startingRound: uint64;
     endingRound: uint64;
+    seller: Address;
     minTickets: uint64;
     maxTickets: uint64;
     entryCount: uint64;
     ticketCount: uint64;
     winningTicket: uint64;
-    winningAddress: Address;
+    raffleWinner: Address;
     prize: AssetID;
-    prizeAmount: uint64;
-    prizeClaimed: boolean;
+    rafflePrizeClaimed: boolean;
+    gateID: uint64;
+    vrfBeaconAppID: AppID;
+    vrfGetFailureCount: uint64;
+    entryID: uint64;
+    findWinnerCursor: uint64;
+    findWinnerTotalCursor: uint64;
 }
 
-export class Raffle extends ContractWithOptInCreatorOnlyAndGate {
-    programVersion = 10;
-
-    /** The id's of the raffle entries */
-    entryID = GlobalStateKey<uint64>({ key: 'entry_ids' });
-    /** The id cursor for cleaning up entries */
-    entryCursor = GlobalStateKey<uint64>({ key: 'entry_cursor' });
-    /** The total that the entry cursor has already checked */
-    entryCursorTotal = GlobalStateKey<uint64>({ key: 'entry_cursor_total' });
+export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {    
     /** The asset required to enter the raffle */
     ticketAsset = GlobalStateKey<AssetID>({ key: 'ticket_asset' });
     /** The start round of the raffle as a unix timestamp */
     startingRound = GlobalStateKey<uint64>({ key: 'starting_round' });
     /** The end time of the raffle as a unix timestamp */
     endingRound = GlobalStateKey<uint64>({ key: 'ending_round' });
+    /** the address selling the asset */
+    seller = GlobalStateKey<Address>({ key: 'seller' });
     /** The minimum number of tickets to use for the raffle */
     minTickets = GlobalStateKey<uint64>({ key: 'min_tickets' });
     /** The maximum number of tickets users can enter the raffle with */
@@ -81,16 +80,27 @@ export class Raffle extends ContractWithOptInCreatorOnlyAndGate {
     /** the winning ticket */
     winningTicket = GlobalStateKey<uint64>({ key: 'winning_ticket' });
     /** the winning address of the raffle */
-    winningAddress = GlobalStateKey<Address>({ key: 'winning_address' });
+    raffleWinner = GlobalStateKey<Address>({ key: 'raffle_winner' });
     /** the prize for the raffle */
     prize = GlobalStateKey<AssetID>({ key: 'prize' });
-    /** the amount of the prize */
-    prizeAmount = GlobalStateKey<uint64>({ key: 'prize_amount' });
     /** Indicator for whether the prize has been claimed */
-    prizeClaimed = GlobalStateKey<boolean>({ key: 'prize_claimed' });
+    rafflePrizeClaimed = GlobalStateKey<boolean>({ key: 'raffle_prize_claimed' });
     /** the gate to use for the raffle */
     gateID = GlobalStateKey<uint64>({ key: 'gate' });
-
+    /** the app ID to fetch VRF proofs from */
+    vrfBeaconAppID = GlobalStateKey<AppID>({ key: 'vrf_beacon_app_id' });
+    /** counter for how many times we've failed to get rng from the beacon */
+    vrfGetFailureCount = GlobalStateKey<uint64>({ key: 'vrf_get_failure_count' });
+    /** The id's of the raffle entries */
+    entryID = GlobalStateKey<uint64>({ key: 'entry_id' });
+    /** 
+     * when we go through the participants for the raffle
+     * it may take multiple groups of txns so we have a variable
+     * for tracking how far through the list we are
+    */
+    findWinnerCursor = GlobalStateKey<uint64>({ key: 'find_winner_cursor' });
+    /** tracks sum iterated over during find raffle loop */
+    findWinnerTotalCursor = GlobalStateKey<uint64>({ key: 'find_winner_total_cursor' });
     /**
      * The entries for the raffle
      * 
@@ -107,36 +117,38 @@ export class Raffle extends ContractWithOptInCreatorOnlyAndGate {
     entriesByAddress = BoxMap<Address, uint64>();
 
     createApplication(
+        prize: AssetID,
         ticketAsset: AssetID,
         startingRound: uint64,
         endingRound: uint64,
+        seller: Address,
         minTickets: uint64,
         maxTickets: uint64,
-        prize: AssetID,
-        prizeAmount: uint64,
         gateID: uint64,
+        vrfBeaconAppID: AppID,
     ): void {
-        this.entryID.value = 0;
-        this.entryCursor.value = 0;
-        this.entryCursorTotal.value = 0;
+        this.prize.value = prize;
         this.ticketAsset.value = ticketAsset;
         this.startingRound.value = startingRound;
         assert(
             endingRound > startingRound
-            && endingRound > (globals.round + APPROX_ROUNDS_IN_ONE_HOUR),
+            && endingRound > (globals.round + roundsPerHour),
             errs.TOO_SHORT
         );
         this.endingRound.value = endingRound;
+        this.seller.value = seller;
         this.minTickets.value = minTickets;
         this.maxTickets.value = maxTickets;
         this.entryCount.value = 0;
         this.ticketCount.value = 0;
         this.winningTicket.value = 0;
-        this.winningAddress.value = Address.zeroAddress;
-        this.prize.value = prize;
-        this.prizeAmount.value = prizeAmount;
-        this.prizeClaimed.value = false;
+        this.raffleWinner.value = Address.zeroAddress;
+        this.rafflePrizeClaimed.value = false;
         this.gateID.value = gateID;
+        this.vrfBeaconAppID.value = vrfBeaconAppID;
+        this.entryID.value = 0;
+        this.findWinnerCursor.value = 0;
+        this.findWinnerTotalCursor.value = 0;
     }
 
     /**
@@ -150,12 +162,34 @@ export class Raffle extends ContractWithOptInCreatorOnlyAndGate {
         )
     }
 
-    enter(payment: PayTxn, assetXfer: AssetTransferTxn, args: bytes[]): void {
+    enter(payment: PayTxn, args: bytes[]): void {
         assert(this.isLive(), errs.NOT_LIVE);
-        assert(this.gate(this.gateID.value, args), errs.FAILED_GATE);
+        assert(this.ticketAsset.value.id === 0, errs.TICKET_ASSET_NOT_ALGO)
+        assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
 
         verifyPayTxn(payment, {
-            amount: ENTRY_MBR,
+            amount: {
+                greaterThanEqualTo: this.minTickets.value + entryMBR,
+                lessThanEqualTo: this.maxTickets.value + entryMBR,
+            },
+            receiver: this.app.address,
+        });
+
+        assert(!this.entriesByAddress(this.txn.sender).exists, errs.ALREADY_ENTERED)
+
+        this.entries(this.entryCount.value).value = this.txn.sender;
+        this.entriesByAddress(this.txn.sender).value = this.entryCount.value;
+        this.entryCount.value += 1;
+        this.ticketCount.value += payment.amount - entryMBR;
+    }    
+
+    enterAsa(payment: PayTxn, assetXfer: AssetTransferTxn, args: bytes[]): void {
+        assert(this.isLive(), errs.NOT_LIVE);
+        assert(this.ticketAsset.value.id !== 0, errs.TICKET_ASSET_ALGO)
+        assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
+
+        verifyPayTxn(payment, {
+            amount: entryMBR,
             receiver: this.app.address,
         });
 
@@ -177,17 +211,20 @@ export class Raffle extends ContractWithOptInCreatorOnlyAndGate {
     }
 
     raffle(): void {
-        const roundToUse = (this.endingRound.value + 1);
+        const roundToUse = (this.endingRound.value + 1) + (4 * this.vrfGetFailureCount.value);
         assert(globals.round >= (roundToUse + 8), errs.NOT_ENOUGH_TIME);
-        assert(this.winningTicket.value === 0, errs.TICKET_ALREADY_FOUND);
+        assert(this.winningTicket.value === 0, errs.WINNER_ALREADY_DRAWN);
 
         const seed = sendMethodCall<typeof RandomnessBeacon.prototype.get, bytes>({
-            applicationID: RANDOMNESS_BEACON_APPID_TESTNET,
+            applicationID: this.vrfBeaconAppID.value,
             methodArgs: [ roundToUse, this.txn.txID ],
             fee: 0,
         });
 
-        assert(seed.length > 0, errs.FAILED_TO_GET_SEED);
+        if (seed.length === 0) {
+            this.vrfGetFailureCount.value += 1;
+            return;
+        }
 
         let rngState = pcg64Init(substring3(seed, 0, 16) as bytes<16>);
 
@@ -203,164 +240,146 @@ export class Raffle extends ContractWithOptInCreatorOnlyAndGate {
     }
 
     findWinner(): void {
+        assert(globals.round < this.endingRound.value, errs.RAFFLE_HAS_NOT_ENDED)
         assert(this.winningTicket.value > 0, errs.NO_WINNING_TICKET_YET);
+        const complete = this.entryID.value === this.findWinnerCursor.value;
+        assert(!complete, errs.WINNER_ALREADY_FOUND);
 
-        let groupIndex = 0;
-        for (
-            let i = this.entryCursor.value;
-            i < this.entryCount.value || groupIndex === 15;
-            i += 1
-        ) {
-            assert(this.entries(i).exists, errs.ENTRY_DOES_NOT_EXIST);
-            groupIndex += 1;
+        // walk the index from the winner to find the
+        const startingIndex = this.findWinnerCursor.value;
+        const remainder = this.entryID.value - this.findWinnerCursor.value;
+        // at most with calling this (15 * 4) / 2 because of box reference limits
+        const iterationAmount = (remainder > 30) ? 30 : remainder;
 
-            const entryAmount = this.entriesByAddress(this.entries(i).value).value;
-            const isWinner = this.entryCursorTotal.value + entryAmount >= this.winningTicket.value;
-                
-            if (isWinner) {
-                this.winningAddress.value = this.entries(i).value;
-            }
+        for (let i = startingIndex; i < iterationAmount; i += 1) {
+            const address = this.entries(i).value;
+            const amt = this.entriesByAddress(address).value;
 
-            this.entriesByAddress(this.entries(i).value).delete();
             this.entries(i).delete();
+            this.entriesByAddress(address).delete();
 
             // return the users MBR
             sendPayment({
-                receiver: this.entries(i).value,
-                amount: ENTRY_MBR,
+                receiver: address,
+                amount: entryMBR,
                 fee: 0,
             });
 
-            this.entryCursor.value = i;
-            this.entryCursorTotal.value += entryAmount;
+            const isWinner = this.findWinnerTotalCursor.value + amt >= this.winningTicket.value;
+            if (isWinner) {
+                this.raffleWinner.value = address;
+            }
+
+            this.findWinnerTotalCursor.value += amt;
         }
+
+        this.findWinnerCursor.value = iterationAmount;
     }
 
-    claimPrize(): void {
-        assert(!this.prizeClaimed.value, errs.PRIZE_ALREADY_CLAIMED);
+    claimRafflePrize(): void {
+        assert(this.raffleWinner.value !== globals.zeroAddress, errs.WINNER_NOT_FOUND);
+        assert(!this.rafflePrizeClaimed.value, errs.PRIZE_ALREADY_CLAIMED);
 
+        let winnerAmount = 0;
         if (this.prize.value.id === 0) {
+            winnerAmount = (this.app.address.balance - this.app.address.minBalance);
+            if (this.prize.value === this.ticketAsset.value) {
+                winnerAmount -= this.ticketCount.value;
+            }
+
             sendPayment({
-                receiver: this.winningAddress.value,
-                amount: this.prizeAmount.value,
+                receiver: this.raffleWinner.value,
+                amount: winnerAmount,
                 fee: 0,
             });
         } else {
-            sendAssetTransfer({
-                assetSender: this.app.address,
-                assetReceiver: this.winningAddress.value,
-                assetAmount: this.prizeAmount.value,
-                xferAsset: this.prize.value,
-                fee: 0,
-            });
+            let shouldCloseTo = true;
+            winnerAmount = this.app.address.assetBalance(this.prize.value);
+            if (this.prize.value === this.ticketAsset.value) {
+                winnerAmount -= this.ticketCount.value;
+                shouldCloseTo = false;
+            }
+
+            if (this.raffleWinner.value.isOptedInToAsset(this.prize.value)) {
+                if (shouldCloseTo) {
+                    sendAssetTransfer({
+                        assetReceiver: this.raffleWinner.value,
+                        assetCloseTo: this.raffleWinner.value,
+                        assetAmount: winnerAmount,
+                        xferAsset: this.prize.value,
+                        fee: 0,
+                    });
+                } else {
+                    sendAssetTransfer({
+                        assetReceiver: this.raffleWinner.value,
+                        assetAmount: winnerAmount,
+                        xferAsset: this.prize.value,
+                        fee: 0,
+                    });
+                }
+            } else {
+                this.arc59OptInAndSend(
+                    this.raffleWinner.value,
+                    this.prize.value,
+                    winnerAmount,
+                    shouldCloseTo
+                );
+            }
         }
 
-        this.prizeClaimed.value = true;
-    }
-
-    claimTickets(): void {
-        assert(this.txn.sender === this.app.creator, errs.CREATOR_ONLY);
-        assert(this.prizeClaimed.value, errs.PRIZE_NOT_CLAIMED);
-
-        sendAssetTransfer({
-            assetSender: this.app.address,
-            assetReceiver: this.app.creator,
-            assetAmount: this.app.address.assetBalance(this.ticketAsset.value),
-            assetCloseTo: this.app.creator,
-            xferAsset: this.ticketAsset.value,
-            fee: 0,
-        });
-    }
-
-    refund(): void {
-        assert(this.winningTicket.value === 0, errs.NO_WINNING_TICKET_YET);
-        assert(globals.round > this.endingRound.value + 1285, errs.NOT_ENOUGH_TIME);
-
-        let groupIndex = 0;
-        for (
-            let i = this.entryCursor.value;
-            i < this.entryCount.value || groupIndex === 15;
-            i += 1
-        ) {
-            assert(this.entries(i).exists, errs.ENTRY_DOES_NOT_EXIST);
-            groupIndex += 1;
-
-            const entryAmount = this.entriesByAddress(this.entries(i).value).value;
-
-            if (this.ticketAsset.value.id === 0) {
-                sendPayment({
-                    receiver: this.entries(i).value,
-                    amount: ENTRY_MBR + entryAmount,
-                    fee: 0,
-                });
-            } else {
-                this.pendingGroup.addAssetTransfer({
-                    assetSender: this.app.address,
-                    assetReceiver: this.entries(i).value,
-                    assetAmount: entryAmount,
+        if (this.ticketAsset.value.id === 0) {
+            sendPayment({
+                receiver: this.seller.value,
+                amount: this.ticketCount.value,
+                fee: 0,
+            });
+        } else {
+            if (this.seller.value.isOptedInToAsset(this.ticketAsset.value)) {
+                sendAssetTransfer({
+                    assetReceiver: this.seller.value,
+                    assetCloseTo: this.seller.value,
+                    assetAmount: this.ticketCount.value,
                     xferAsset: this.ticketAsset.value,
                     fee: 0,
                 });
-
-                this.pendingGroup.addPayment({
-                    receiver: this.entries(i).value,
-                    amount: ENTRY_MBR,
-                    fee: 0,
-                });
-
-                this.pendingGroup.submit();
+            } else {
+                this.arc59OptInAndSend(
+                    this.seller.value,
+                    this.ticketAsset.value,
+                    this.ticketCount.value,
+                    true
+                );
             }
-
-            this.entriesByAddress(this.entries(i).value).delete();
-            this.entries(i).delete();
-
-            this.entryCursor.value = i;
-            this.entryCursorTotal.value += entryAmount;
         }
 
-        if (this.entryCursor.value === this.entryCount.value) {
-            this.pendingGroup.addAssetTransfer({
-                assetSender: this.app.address,
-                assetReceiver: this.app.creator,
-                assetAmount: this.app.address.assetBalance(this.prize.value),
-                assetCloseTo: this.app.creator,
-                xferAsset: this.prize.value,
-                fee: 0, 
-            });
-
-            this.pendingGroup.addPayment({
-                receiver: this.app.creator,
-                amount: this.app.address.balance,
-                closeRemainderTo: this.app.creator,
-                fee: 0,
-            });
-        }
+        this.rafflePrizeClaimed.value = true;
     }
 
     deleteApplication(): void {
         assert(this.txn.sender === this.app.creator, errs.CREATOR_ONLY);
-        assert(this.entryCursor.value === this.entryCount.value, errs.BOXES_ARENT_CLEARED);
-        assert(this.prizeClaimed.value, errs.PRIZE_NOT_CLAIMED);
-        assert(this.app.address.assetBalance(this.ticketAsset.value) === 0, errs.TICKETS_NOT_RECLAIMED);
+        assert(this.rafflePrizeClaimed.value, errs.PRIZE_NOT_CLAIMED);
     }
 
     getState(): RaffleState {
         return {
-            entryID: this.entryID.value,
-            entryCursor: this.entryCursor.value,
-            entryCursorTotal: this.entryCursorTotal.value,
             ticketAsset: this.ticketAsset.value,
             startingRound: this.startingRound.value,
             endingRound: this.endingRound.value,
+            seller: this.seller.value,
             minTickets: this.minTickets.value,
             maxTickets: this.maxTickets.value,
             entryCount: this.entryCount.value,
             ticketCount: this.ticketCount.value,
             winningTicket: this.winningTicket.value,
-            winningAddress: this.winningAddress.value,
+            raffleWinner: this.raffleWinner.value,
             prize: this.prize.value,
-            prizeAmount: this.prizeAmount.value,
-            prizeClaimed: this.prizeClaimed.value,
+            rafflePrizeClaimed: this.rafflePrizeClaimed.value,
+            gateID: this.gateID.value,
+            vrfBeaconAppID: this.vrfBeaconAppID.value,
+            vrfGetFailureCount: this.vrfGetFailureCount.value,
+            entryID: this.entryID.value,
+            findWinnerCursor: this.findWinnerCursor.value,
+            findWinnerTotalCursor: this.findWinnerTotalCursor.value
         }
     }
 }

@@ -4,15 +4,15 @@ import { AkitaAppIDsStaking } from '../../../utils/constants';
 
 const lockMBR = 28_900;
 const heartBeatMBR = 44_100;
-const ONE_YEAR = 31_536_000; // 365 days * 24 hours * 60 minutes * 60 seconds
+// const ONE_YEAR = 31_536_000; // 365 days * 24 hours * 60 minutes * 60 seconds
 
-const errs = {
-    NO_LOCK: 'Lock not found',
-    BAD_EXPIRATION: 'Expiration must be in the future or hardlock disabled',
-    BAD_EXPIRATION_UPDATE: 'Expiration must be greater than or equal to the current unlock time or hardlock disabled',
-    LOCKED: 'This asset is still locked',
-    PLUGIN_NOT_AUTH_ADDR: 'This plugin does not have control of the account'
-}
+// const errs = {
+//     NO_LOCK: 'Lock not found',
+//     BAD_EXPIRATION: 'Expiration must be in the future or hardlock disabled',
+//     BAD_EXPIRATION_UPDATE: 'Expiration must be greater than or equal to the current unlock time or hardlock disabled',
+//     LOCKED: 'This asset is still locked',
+//     PLUGIN_NOT_AUTH_ADDR: 'This plugin does not have control of the account'
+// }
 
 export class StakingPlugin extends Contract {
 
