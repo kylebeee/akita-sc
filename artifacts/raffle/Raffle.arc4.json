@@ -22,6 +22,15 @@
       }
     },
     {
+      "name": "isLive",
+      "readonly": true,
+      "args": [],
+      "returns": {
+        "type": "bool",
+        "desc": "a boolean of whether the auction is live"
+      }
+    },
+    {
       "name": "createApplication",
       "args": [
         {
@@ -66,11 +75,19 @@
       }
     },
     {
-      "name": "isLive",
-      "args": [],
+      "name": "init",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "weightListLength",
+          "type": "uint64"
+        }
+      ],
       "returns": {
-        "type": "bool",
-        "desc": "a boolean of whether the auction is live"
+        "type": "void"
       }
     },
     {
@@ -110,6 +127,38 @@
       }
     },
     {
+      "name": "add",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "args",
+          "type": "byte[][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "addAsa",
+      "args": [
+        {
+          "name": "assetXfer",
+          "type": "axfer"
+        },
+        {
+          "name": "args",
+          "type": "byte[][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
       "name": "raffle",
       "args": [],
       "returns": {
@@ -124,10 +173,24 @@
       }
     },
     {
+      "name": "refundMBR",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
       "name": "claimRafflePrize",
       "args": [],
       "returns": {
         "type": "void"
+      }
+    },
+    {
+      "name": "clearWeightsBoxes",
+      "args": [],
+      "returns": {
+        "type": "uint64"
       }
     },
     {

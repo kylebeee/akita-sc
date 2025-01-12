@@ -1,5 +1,12 @@
 import { ContractWithOptInCreatorOnlyArc59AndGate } from '../../utils/base_contracts/gate.algo';
+import { AkitaAppIDsAkitaSocialImpactPlugin } from '../../utils/constants';
 import { RoyaltyAmounts } from '../../utils/types/royalties';
+import { AkitaSocialImpact } from '../arc58/plugins/social/impact.algo';
+import {
+    AKITA_MARKETPLACE_COMPOSABLE_PERCENTAGE_KEY,
+    AKITA_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM_KEY,
+    AKITA_MARKETPLACE_SALE_PERCENTAGE_MINIMUM_KEY
+} from '../dao/constants';
 
 const errs = {
     MUST_BE_CALLED_FROM_FACTORY: 'must be called from the factory',
@@ -18,6 +25,8 @@ export type Royalties = {
 }
 
 export class Listing extends ContractWithOptInCreatorOnlyArc59AndGate {
+    /** The App ID of the Akita DAO contract */
+    akitaDaoAppID = GlobalStateKey<AppID>({ key: 'akita_dao_app_id' });
     /** the asset for sale */
     asset = GlobalStateKey<AssetID>({ key: 'asset' });
     /** the price of the asset */
@@ -55,18 +64,38 @@ export class Listing extends ContractWithOptInCreatorOnlyArc59AndGate {
         return (this.paymentAsset.value === AssetID.fromUint64(0)) ? true : false;
     }
 
+    private getUserImpact(address: Address): uint64 {
+        return sendMethodCall<typeof AkitaSocialImpact.prototype.getUserImpact, uint64>({
+            applicationID: AppID.fromUint64(AkitaAppIDsAkitaSocialImpactPlugin),
+            methodArgs: [ address ],
+            fee: 0,
+        })
+    }
+
     private getAmounts(amount: uint64): RoyaltyAmounts {
         let creatorAmount = wideRatio([amount, this.creatorRoyalty.value], [10000]);
         if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
             creatorAmount = 1;
         }
 
-        let marketplaceAmount = wideRatio([amount, this.marketplaceRoyalties.value], [10000]);
+        const minTax = this.akitaDaoAppID.value.globalState(AKITA_MARKETPLACE_SALE_PERCENTAGE_MINIMUM_KEY) as uint64;
+        const maxTax = this.akitaDaoAppID.value.globalState(AKITA_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM_KEY) as uint64;
+        const impact = this.getUserImpact(this.seller.value);
+        const akitaTaxRate = maxTax - wideRatio([(maxTax - minTax), (impact - 1)], [999]);
+        
+        let akitaAmount = wideRatio([amount, akitaTaxRate], [10000]);
+        if (akitaAmount === 0 && amount > 0) {
+            akitaAmount = 1;
+        }
+
+        const marketplaceTaxRate = this.akitaDaoAppID.value.globalState(AKITA_MARKETPLACE_COMPOSABLE_PERCENTAGE_KEY) as uint64;
+
+        let marketplaceAmount = wideRatio([amount, marketplaceTaxRate], [10000]);
         if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
             marketplaceAmount = 1;
         }
 
-        const sellerAmount = this.price.value - (creatorAmount + (2 * marketplaceAmount));
+        const sellerAmount = this.price.value - (creatorAmount + akitaAmount + (2 * marketplaceAmount));
 
         return {
             creator: creatorAmount,
@@ -212,39 +241,39 @@ export class Listing extends ContractWithOptInCreatorOnlyArc59AndGate {
 
     /**
      * create the listing application
+     * @param {AppID} akitaDaoAppID the app ID of the Akita DAO
      * @param {uint64} asset the asa ID that is to be sold
      * @param {Address} seller the wallet of the account selling the asset
      * @param {uint64} price the price the asset should be sold for
      * @param {uint64} paymentAsset the asset to use for payment
      * @param {uint64} creatorRoyalty the royalty % for the asset creator
      * @param {uint64} marketplace the wallet that the listing fee should go to
-     * @param {uint64} marketplaceRoyalties the % the marketplaces will split
      * @param {uint64} expirationRound the round the listing expires on
      * @param {Address} reservedFor the address thats allowed to purchase
      * @param {uint64} gateID the gate ID to use to check if the user is qualified to buy
      * @throws {Error} - if the caller is not the factory
      */
     createApplication(
+        akitaDaoAppID: AppID,
         asset: AssetID,
         seller: Address,
         price: uint64,
         paymentAsset: AssetID,
         creatorRoyalty: uint64,
         marketplace: Address,
-        marketplaceRoyalties: uint64,
         expirationRound: uint64,
         reservedFor: Address,
         gateID: uint64,
     ): void {
         assert(globals.callerApplicationID !== AppID.fromUint64(0), errs.MUST_BE_CALLED_FROM_FACTORY)
-
+        
+        this.akitaDaoAppID.value = akitaDaoAppID;
         this.asset.value = asset;
         this.seller.value = seller;
         this.price.value = price;
         this.paymentAsset.value = paymentAsset;
         this.creatorRoyalty.value = creatorRoyalty;
         this.marketplace.value = marketplace;
-        this.marketplaceRoyalties.value = marketplaceRoyalties;
         assert(expirationRound == 0 || expirationRound > globals.round, errs.INVALID_EXPIRATION_ROUND);
         this.expirationRound.value = expirationRound;
         this.reservedFor.value = reservedFor;
@@ -325,11 +354,6 @@ export class Listing extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.completeAsaPayments(marketplace);
     }
 
-    changePrice(price: uint64): void {
-        assert(this.txn.sender === this.seller.value, errs.MUST_BE_SELLER);
-        this.price.value = price;
-    }
-
     /**
      * Deletes the app and returns the asset/mbr to the seller
      */
@@ -365,5 +389,10 @@ export class Listing extends ContractWithOptInCreatorOnlyArc59AndGate {
         });
 
         this.pendingGroup.submit();
+    }
+
+    changePrice(price: uint64): void {
+        assert(this.txn.sender === this.seller.value, errs.MUST_BE_SELLER);
+        this.price.value = price;
     }
 }

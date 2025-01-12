@@ -58,6 +58,18 @@ const SOCIAL_IMPACT_TAX_MINIMUM_KEY = 'social_impact_tax_minimum';
 const SOCIAL_IMPACT_TAX_MAXIMUM_KEY = 'social_impact_tax_maximum';
 const AKITA_TOKEN_KEY = 'akita_id';
 
+export const followsMBR = 31_700;
+export const blocksMBR = 22_100;
+export const postsMBR = 88_500;
+export const votesMBR = 19_300;
+export const votelistMBR = 25_700;
+export const reactionsMBR = 22_100;
+export const reactionlistMBR = 25_300;
+export const metaMBR = 41_700;
+export const moderatorsMBR = 15_700;
+export const bannedMBR = 18_900;
+export const actionsMBR = 29_700;
+
 export type FollowsKey = {
     user: Address;
     index: uint64;
@@ -182,7 +194,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * 
      * cost: 2_500 + (400 * (49)) = 22_100
      */
-    blocks = BoxMap<BlockListKey, bytes<0>>({ prefix: 'b', allowPotentialCollisions: true });
+    blocks = BoxMap<BlockListKey, bytes<0>>({ prefix: 'b' });
 
     /**
      * A map of all the posts on the network
@@ -193,7 +205,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * value: the post data
      * value_length: 181
      * 
-     * cost: 2_500 + (400 * (33 + 181)) = 88_100
+     * cost: 2_500 + (400 * (33 + 181)) = 88_500
      */
     posts = BoxMap<bytes32, PostValue>({ prefix: 'p' });
 
@@ -208,7 +220,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * 
      * cost: 2_500 + (400 * (33 + 9)) = 19_300
      */
-    votes = BoxMap<bytes32, VotesValue>({ prefix: 'v', allowPotentialCollisions: true });
+    votes = BoxMap<bytes32, VotesValue>({ prefix: 'v' });
 
     /**
      * A map of user votes and their impact
@@ -223,7 +235,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * 
      * cost: 2_500 + (400 * (49 + 9)) = 25_700
      */
-    votelist = BoxMap<VoteListKey, VoteListValue>({ prefix: 'v', allowPotentialCollisions: true });
+    votelist = BoxMap<VoteListKey, VoteListValue>({ prefix: 'o' });
 
     /**
      * A map of counters for each post to track reactions
@@ -252,9 +264,9 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * value: empty bytes
      * value_length: 0
      * 
-     * cost: 2_500 + (400 * (56)) = 24_900
+     * cost: 2_500 + (400 * (56)) = 25_300
      */
-    reactionlist = BoxMap<ReactionListKey, bytes<0>>();
+    reactionlist = BoxMap<ReactionListKey, bytes<0>>({ prefix: 'e' });
 
     /**
      * A map of the meta data for each user
@@ -265,9 +277,9 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * value: the meta data for the user
      * value_length: 105
      * 
-     * cost: 2_500 + (400 * (32 + 105)) = 57_300
+     * cost: 2_500 + (400 * (32 + 105)) = 41_700
      */
-    meta = BoxMap<Address, MetaValue>({ allowPotentialCollisions: true });
+    meta = BoxMap<Address, MetaValue>({ prefix: 'm' });
 
     /**
      * A map of who is a moderator
@@ -280,7 +292,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * 
      * cost: 2_500 + (400 * (33)) = 15_700
      */
-    moderators = BoxMap<Address, bytes<0>>({ prefix: 'm' });
+    moderators = BoxMap<Address, bytes<0>>({ prefix: 'd' });
 
     /**
      * A map of who is banned and when they can return
@@ -293,7 +305,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * 
      * cost: 2_500 + (400 * (33 + 8)) = 18_900
      */
-    banned = BoxMap<Address, uint64>({ prefix: 'b', allowPotentialCollisions: true });
+    banned = BoxMap<Address, uint64>({ prefix: 'n' });
 
     /**
      * the actions usable on an akita post
@@ -304,7 +316,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * value: the action data
      * value_length: 65
      * 
-     * cost: 2_500 + (400 * (9 + 65)) = 28_600
+     * cost: 2_500 + (400 * (9 + 59)) = 29_700
     */
     actions = BoxMap<AppID, Action>({ prefix: 'a' });
 
@@ -360,7 +372,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         // longevity
         // if the account is older than 2 years give them 75
         const accountAge = globals.latestTimestamp - meta.startDate;
-        const twoYearsInSeconds = 63072000 // 2 years in seconds
+        const twoYearsInSeconds = 63_072_000 // 2 years in seconds
 
         if (accountAge >= twoYearsInSeconds) {
             socialImpact += 75;
@@ -413,9 +425,13 @@ export class AkitaSocialPlugin extends ContractWithGate {
         const minTax = this.akitaDaoAppID.globalState(SOCIAL_IMPACT_TAX_MINIMUM_KEY) as uint64;
         const maxTax = this.akitaDaoAppID.globalState(SOCIAL_IMPACT_TAX_MAXIMUM_KEY) as uint64;
 
-        const taxRate = maxTax - ((maxTax - minTax) * (impact - 1)) / 999
+        const taxRate = maxTax - wideRatio([(maxTax - minTax), (impact - 1)], [999]);
         const reactionFee = this.akitaDaoAppID.globalState(SOCIAL_REACT_KEY) as uint64;
-        return (reactionFee * taxRate - 1) / 1000 + 1
+        let tax = wideRatio([reactionFee, taxRate], [10000]);
+        if (tax === 0) {
+            tax = 1;
+        }
+        return tax;
     }
 
     private canCallArc58OptIn(sender: Address, walletAppID: AppID): boolean {
@@ -1167,7 +1183,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         sendPayment({
             sender: sender.address,
             receiver: this.app.address,
-            amount: 31_700,
+            amount: followsMBR,
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
         });
@@ -1232,7 +1248,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         sendPayment({
             sender: sender.address,
             receiver: this.app.address,
-            amount: 15_700,
+            amount: moderatorsMBR,
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
         });
@@ -1247,7 +1263,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         sendPayment({
             receiver: sender.address,
-            amount: 15_700,
+            amount: moderatorsMBR,
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
         });
@@ -1298,7 +1314,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         sendPayment({
             sender: sender.address,
             receiver: this.app.address,
-            amount: 28_600,
+            amount: actionsMBR,
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
         });
@@ -1313,7 +1329,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         sendPayment({
             receiver: sender.address,
-            amount: 28_600,
+            amount: actionsMBR,
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
         });
@@ -1323,7 +1339,14 @@ export class AkitaSocialPlugin extends ContractWithGate {
     // meta methods ------------------------------------------------
     // -------------------------------------------------------------
 
-    initMeta(sender: AppID, rekeyBack: boolean, automated: boolean, subscriptionIndex: uint64, NFD: AppID, akitaNFT: AssetID): uint64 {
+    initMeta(
+        sender: AppID,
+        rekeyBack: boolean,
+        automated: boolean,
+        subscriptionIndex: uint64,
+        NFD: AppID,
+        akitaNFT: AssetID
+    ): uint64 {
         assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR);
         assert(!this.meta(sender.address).exists, errs.META_ALREADY_EXISTS);
 

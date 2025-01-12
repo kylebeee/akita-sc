@@ -19,6 +19,7 @@ export class StakingPlugin extends Contract {
     stake(
         sender: AppID,
         rekeyBack: boolean,
+        asset: AssetID,
         type: StakingType,
         amount: uint64,
         expiration: uint64,
@@ -26,10 +27,11 @@ export class StakingPlugin extends Contract {
     ): void {
         const akitaStakingApp = AppID.fromUint64(AkitaAppIDsStaking);
         const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK;
+        const isAlgo = asset.id === 0;
 
         let sendAmount = 0;
         if (!isUpdate) {
-            if (isEscrow) {
+            if (isEscrow && isAlgo) {
                 sendAmount = amount + lockMBR;
             } else if (type === STAKING_TYPE_HEARTBEAT) {
                 sendAmount = lockMBR + heartBeatMBR;
@@ -37,79 +39,52 @@ export class StakingPlugin extends Contract {
                 sendAmount = lockMBR
             }
         } else {
-            if (isEscrow) {
+            if (isEscrow && isAlgo) {
                 sendAmount = amount;
             }
         }
 
-        sendMethodCall<typeof Staking.prototype.stake, void>({
-            applicationID: akitaStakingApp,
-            methodArgs: [
-                {
-                    sender: sender.address,
-                    amount: sendAmount,
-                    receiver: akitaStakingApp.address,
-                },
-                type,
-                amount,
-                expiration,
-                isUpdate
-            ],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        });
-    }
-
-    stakeAsa(
-        sender: AppID,
-        rekeyBack: boolean,
-        asset: AssetID,
-        type: StakingType,
-        amount: uint64,
-        expiration: uint64,
-        isUpdate: boolean
-    ) {
-        const akitaStakingApp = AppID.fromUint64(AkitaAppIDsStaking);
-        const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK;
-
-        let sendAmount = 0;
-        let assetAmount = 0;
-        if (!isUpdate) {
-            if (isEscrow) {
-                assetAmount = amount;
-            } else if (type === STAKING_TYPE_HEARTBEAT) {
-                sendAmount = lockMBR + heartBeatMBR;
-            } else {
-                sendAmount = lockMBR;
-            }
+        if (isAlgo) {
+            sendMethodCall<typeof Staking.prototype.stake, void>({
+                applicationID: akitaStakingApp,
+                methodArgs: [
+                    {
+                        sender: sender.address,
+                        amount: sendAmount,
+                        receiver: akitaStakingApp.address,
+                    },
+                    type,
+                    amount,
+                    expiration,
+                    isUpdate
+                ],
+                rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+                fee: 0,
+            });
         } else {
-            if (isEscrow) {
-                assetAmount = amount;
-            }
+            sendMethodCall<typeof Staking.prototype.stakeAsa, void>({
+                applicationID: akitaStakingApp,
+                methodArgs: [
+                    {
+                        sender: sender.address,
+                        amount: sendAmount,
+                        receiver: akitaStakingApp.address,
+                    },
+                    {
+                        sender: sender.address,
+                        assetAmount: amount,
+                        assetReceiver: akitaStakingApp.address,
+                        xferAsset: asset,
+                    },
+                    type,
+                    amount,
+                    expiration,
+                    isUpdate
+                ],
+                rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+                fee: 0,
+            });
         }
-
-        sendMethodCall<typeof Staking.prototype.stakeAsa, void>({
-            applicationID: akitaStakingApp,
-            methodArgs: [
-                {
-                    sender: sender.address,
-                    amount: sendAmount,
-                    receiver: akitaStakingApp.address,
-                },
-                {
-                    sender: sender.address,
-                    assetAmount: amount,
-                    assetReceiver: akitaStakingApp.address,
-                    xferAsset: asset,
-                },
-                type,
-                amount,
-                expiration,
-                isUpdate
-            ],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        });
     }
 
     withdraw(

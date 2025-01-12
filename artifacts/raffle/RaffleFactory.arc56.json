@@ -92,10 +92,58 @@
         {
           "name": "gateID",
           "type": "uint64"
+        },
+        {
+          "name": "weightsListCount",
+          "type": "uint64"
         }
       ],
       "returns": {
         "type": "uint64"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "clearWeightsBoxes",
+      "args": [
+        {
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "name": "auctionAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "actions": {
+        "create": [],
+        "call": [
+          "NoOp"
+        ]
+      }
+    },
+    {
+      "name": "deleteAuctionApp",
+      "args": [
+        {
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "name": "auctionAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
       },
       "actions": {
         "create": [],
@@ -109,7 +157,18 @@
     4,
     56
   ],
-  "structs": {},
+  "structs": {
+    "AppCreatorKey": [
+      {
+        "name": "address",
+        "type": "address"
+      },
+      {
+        "name": "appID",
+        "type": "uint64"
+      }
+    ]
+  },
   "state": {
     "schema": {
       "global": {
@@ -135,7 +194,12 @@
     "maps": {
       "global": {},
       "local": {},
-      "box": {}
+      "box": {
+        "appCreators": {
+          "keyType": "AppCreatorKey",
+          "valueType": "uint64"
+        }
+      }
     }
   },
   "bareActions": {
@@ -147,7 +211,7 @@
       "sourceInfo": [
         {
           "teal": 15,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "pc": [
             1,
             2
@@ -155,28 +219,28 @@
         },
         {
           "teal": 16,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "pc": [
             3
           ]
         },
         {
           "teal": 17,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "pc": [
             4
           ]
         },
         {
           "teal": 18,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "pc": [
             5
           ]
         },
         {
           "teal": 19,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "pc": [
             6,
             7
@@ -184,14 +248,14 @@
         },
         {
           "teal": 20,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "pc": [
             8
           ]
         },
         {
           "teal": 21,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "pc": [
             9,
             10,
@@ -223,7 +287,7 @@
         },
         {
           "teal": 25,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "errorMessage": "The requested action is not implemented in this contract. Are you using the correct OnComplete? Did you set your app ID?",
           "pc": [
             35
@@ -530,7 +594,7 @@
         },
         {
           "teal": 125,
-          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "source": "contracts/raffle/raffle_factory.algo.ts:26",
           "pc": [
             98,
             99,
@@ -539,7 +603,7 @@
         },
         {
           "teal": 126,
-          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "source": "contracts/raffle/raffle_factory.algo.ts:26",
           "pc": [
             101,
             102,
@@ -548,7 +612,7 @@
         },
         {
           "teal": 129,
-          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "source": "contracts/raffle/raffle_factory.algo.ts:26",
           "pc": [
             104,
             105,
@@ -557,21 +621,21 @@
         },
         {
           "teal": 130,
-          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "source": "contracts/raffle/raffle_factory.algo.ts:26",
           "pc": [
             107
           ]
         },
         {
           "teal": 131,
-          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "source": "contracts/raffle/raffle_factory.algo.ts:26",
           "pc": [
             108
           ]
         },
         {
           "teal": 135,
-          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "source": "contracts/raffle/raffle_factory.algo.ts:26",
           "pc": [
             109,
             110,
@@ -580,7 +644,7 @@
         },
         {
           "teal": 139,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             112,
             113,
@@ -610,7 +674,7 @@
         },
         {
           "teal": 140,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             136,
             137
@@ -618,28 +682,28 @@
         },
         {
           "teal": 141,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             138
           ]
         },
         {
           "teal": 142,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             139
           ]
         },
         {
           "teal": 143,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             140
           ]
         },
         {
           "teal": 144,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             141,
             142,
@@ -648,35 +712,35 @@
         },
         {
           "teal": 145,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             144
           ]
         },
         {
           "teal": 146,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             145
           ]
         },
         {
           "teal": 147,
-          "source": "contracts/raffle/raffle_factory.algo.ts:19",
+          "source": "contracts/raffle/raffle_factory.algo.ts:27",
           "pc": [
             146
           ]
         },
         {
           "teal": 148,
-          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "source": "contracts/raffle/raffle_factory.algo.ts:26",
           "pc": [
             147
           ]
         },
         {
           "teal": 153,
-          "source": "contracts/raffle/raffle_factory.algo.ts:22",
+          "source": "contracts/raffle/raffle_factory.algo.ts:30",
           "pc": [
             148,
             149,
@@ -685,21 +749,21 @@
         },
         {
           "teal": 154,
-          "source": "contracts/raffle/raffle_factory.algo.ts:22",
+          "source": "contracts/raffle/raffle_factory.algo.ts:30",
           "pc": [
             151
           ]
         },
         {
           "teal": 155,
-          "source": "contracts/raffle/raffle_factory.algo.ts:22",
+          "source": "contracts/raffle/raffle_factory.algo.ts:30",
           "pc": [
             152
           ]
         },
         {
           "teal": 159,
-          "source": "contracts/raffle/raffle_factory.algo.ts:22",
+          "source": "contracts/raffle/raffle_factory.algo.ts:30",
           "pc": [
             153,
             154,
@@ -708,7 +772,7 @@
         },
         {
           "teal": 163,
-          "source": "contracts/raffle/raffle_factory.algo.ts:23",
+          "source": "contracts/raffle/raffle_factory.algo.ts:31",
           "pc": [
             156,
             157
@@ -716,7 +780,7 @@
         },
         {
           "teal": 164,
-          "source": "contracts/raffle/raffle_factory.algo.ts:23",
+          "source": "contracts/raffle/raffle_factory.algo.ts:31",
           "pc": [
             158,
             159
@@ -724,7 +788,7 @@
         },
         {
           "teal": 165,
-          "source": "contracts/raffle/raffle_factory.algo.ts:23",
+          "source": "contracts/raffle/raffle_factory.algo.ts:31",
           "pc": [
             160,
             161
@@ -732,35 +796,35 @@
         },
         {
           "teal": 166,
-          "source": "contracts/raffle/raffle_factory.algo.ts:23",
+          "source": "contracts/raffle/raffle_factory.algo.ts:31",
           "pc": [
             162
           ]
         },
         {
           "teal": 167,
-          "source": "contracts/raffle/raffle_factory.algo.ts:23",
+          "source": "contracts/raffle/raffle_factory.algo.ts:31",
           "pc": [
             163
           ]
         },
         {
           "teal": 168,
-          "source": "contracts/raffle/raffle_factory.algo.ts:23",
+          "source": "contracts/raffle/raffle_factory.algo.ts:31",
           "pc": [
             164
           ]
         },
         {
           "teal": 169,
-          "source": "contracts/raffle/raffle_factory.algo.ts:22",
+          "source": "contracts/raffle/raffle_factory.algo.ts:30",
           "pc": [
             165
           ]
         },
         {
           "teal": 174,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
             166,
             167,
@@ -772,7 +836,7 @@
         },
         {
           "teal": 177,
-          "source": "contracts/raffle/raffle_factory.algo.ts:34",
+          "source": "contracts/raffle/raffle_factory.algo.ts:43",
           "pc": [
             172,
             173,
@@ -781,14 +845,14 @@
         },
         {
           "teal": 178,
-          "source": "contracts/raffle/raffle_factory.algo.ts:34",
+          "source": "contracts/raffle/raffle_factory.algo.ts:43",
           "pc": [
             175
           ]
         },
         {
           "teal": 181,
-          "source": "contracts/raffle/raffle_factory.algo.ts:33",
+          "source": "contracts/raffle/raffle_factory.algo.ts:42",
           "pc": [
             176,
             177,
@@ -797,14 +861,14 @@
         },
         {
           "teal": 182,
-          "source": "contracts/raffle/raffle_factory.algo.ts:33",
+          "source": "contracts/raffle/raffle_factory.algo.ts:42",
           "pc": [
             179
           ]
         },
         {
           "teal": 185,
-          "source": "contracts/raffle/raffle_factory.algo.ts:32",
+          "source": "contracts/raffle/raffle_factory.algo.ts:41",
           "pc": [
             180,
             181,
@@ -813,14 +877,14 @@
         },
         {
           "teal": 186,
-          "source": "contracts/raffle/raffle_factory.algo.ts:32",
+          "source": "contracts/raffle/raffle_factory.algo.ts:41",
           "pc": [
             183
           ]
         },
         {
           "teal": 189,
-          "source": "contracts/raffle/raffle_factory.algo.ts:31",
+          "source": "contracts/raffle/raffle_factory.algo.ts:40",
           "pc": [
             184,
             185,
@@ -829,14 +893,14 @@
         },
         {
           "teal": 190,
-          "source": "contracts/raffle/raffle_factory.algo.ts:31",
+          "source": "contracts/raffle/raffle_factory.algo.ts:40",
           "pc": [
             187
           ]
         },
         {
           "teal": 193,
-          "source": "contracts/raffle/raffle_factory.algo.ts:30",
+          "source": "contracts/raffle/raffle_factory.algo.ts:39",
           "pc": [
             188,
             189,
@@ -845,14 +909,14 @@
         },
         {
           "teal": 194,
-          "source": "contracts/raffle/raffle_factory.algo.ts:30",
+          "source": "contracts/raffle/raffle_factory.algo.ts:39",
           "pc": [
             191
           ]
         },
         {
           "teal": 197,
-          "source": "contracts/raffle/raffle_factory.algo.ts:29",
+          "source": "contracts/raffle/raffle_factory.algo.ts:38",
           "pc": [
             192,
             193,
@@ -861,790 +925,807 @@
         },
         {
           "teal": 198,
-          "source": "contracts/raffle/raffle_factory.algo.ts:29",
+          "source": "contracts/raffle/raffle_factory.algo.ts:38",
           "pc": [
             195
           ]
         },
         {
           "teal": 201,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
+          "source": "contracts/raffle/raffle_factory.algo.ts:37",
           "pc": [
             196,
-            197
-          ]
-        },
-        {
-          "teal": 202,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
-          "pc": [
+            197,
             198
           ]
         },
         {
-          "teal": 203,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
+          "teal": 202,
+          "source": "contracts/raffle/raffle_factory.algo.ts:37",
           "pc": [
             199
           ]
         },
         {
-          "teal": 204,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
-          "pc": [
-            200
-          ]
-        },
-        {
           "teal": 205,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
           "pc": [
-            201,
-            202
+            200,
+            201
           ]
         },
         {
           "teal": 206,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
+          "pc": [
+            202
+          ]
+        },
+        {
+          "teal": 207,
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
           "pc": [
             203
           ]
         },
         {
-          "teal": 207,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
+          "teal": 208,
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
           "pc": [
             204
           ]
         },
         {
-          "teal": 210,
-          "source": "contracts/raffle/raffle_factory.algo.ts:28",
-          "errorMessage": "argument 6 (assetXfer) for new must be a axfer transaction",
+          "teal": 209,
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
           "pc": [
-            205
+            205,
+            206
           ]
         },
         {
-          "teal": 213,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
+          "teal": 210,
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
           "pc": [
-            206,
             207
           ]
         },
         {
-          "teal": 214,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
+          "teal": 211,
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
           "pc": [
-            208,
+            208
+          ]
+        },
+        {
+          "teal": 214,
+          "source": "contracts/raffle/raffle_factory.algo.ts:36",
+          "errorMessage": "argument 7 (assetXfer) for new must be a axfer transaction",
+          "pc": [
             209
           ]
         },
         {
-          "teal": 215,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
+          "teal": 217,
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
           "pc": [
-            210
-          ]
-        },
-        {
-          "teal": 216,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
-          "pc": [
+            210,
             211
           ]
         },
         {
-          "teal": 217,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
+          "teal": 218,
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
           "pc": [
             212,
             213
           ]
         },
         {
-          "teal": 218,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
+          "teal": 219,
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
           "pc": [
             214
           ]
         },
         {
-          "teal": 219,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
+          "teal": 220,
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
           "pc": [
             215
           ]
         },
         {
-          "teal": 222,
-          "source": "contracts/raffle/raffle_factory.algo.ts:27",
-          "errorMessage": "argument 7 (payment) for new must be a pay transaction",
+          "teal": 221,
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
           "pc": [
-            216
+            216,
+            217
           ]
         },
         {
-          "teal": 225,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "teal": 222,
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
           "pc": [
-            217,
-            218,
+            218
+          ]
+        },
+        {
+          "teal": 223,
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
+          "pc": [
             219
           ]
         },
         {
           "teal": 226,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "source": "contracts/raffle/raffle_factory.algo.ts:35",
+          "errorMessage": "argument 8 (payment) for new must be a pay transaction",
           "pc": [
             220
           ]
         },
         {
-          "teal": 227,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
-          "pc": [
-            221
-          ]
-        },
-        {
-          "teal": 228,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
-          "pc": [
-            222
-          ]
-        },
-        {
           "teal": 229,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
+            221,
+            222,
             223
           ]
         },
         {
           "teal": 230,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
             224
           ]
         },
         {
-          "teal": 234,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "teal": 231,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
-            225,
-            226,
+            225
+          ]
+        },
+        {
+          "teal": 232,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
+          "pc": [
+            226
+          ]
+        },
+        {
+          "teal": 233,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
+          "pc": [
             227
           ]
         },
         {
-          "teal": 237,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "teal": 234,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
             228
           ]
         },
         {
           "teal": 238,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
             229,
-            230
-          ]
-        },
-        {
-          "teal": 242,
-          "source": "contracts/raffle/raffle_factory.algo.ts:37",
-          "pc": [
+            230,
             231
           ]
         },
         {
-          "teal": 243,
-          "source": "contracts/raffle/raffle_factory.algo.ts:37",
+          "teal": 241,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
-            232,
-            233
+            232
           ]
         },
         {
-          "teal": 247,
-          "source": "contracts/raffle/raffle_factory.algo.ts:38",
+          "teal": 242,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
           "pc": [
-            234,
+            233,
+            234
+          ]
+        },
+        {
+          "teal": 246,
+          "source": "contracts/raffle/raffle_factory.algo.ts:45",
+          "pc": [
             235
           ]
         },
         {
-          "teal": 248,
-          "source": "contracts/raffle/raffle_factory.algo.ts:38",
+          "teal": 247,
+          "source": "contracts/raffle/raffle_factory.algo.ts:45",
           "pc": [
             236,
             237
           ]
         },
         {
-          "teal": 249,
-          "source": "contracts/raffle/raffle_factory.algo.ts:38",
+          "teal": 251,
+          "source": "contracts/raffle/raffle_factory.algo.ts:46",
           "pc": [
-            238
-          ]
-        },
-        {
-          "teal": 250,
-          "source": "contracts/raffle/raffle_factory.algo.ts:38",
-          "pc": [
+            238,
             239
           ]
         },
         {
-          "teal": 251,
-          "source": "contracts/raffle/raffle_factory.algo.ts:38",
+          "teal": 252,
+          "source": "contracts/raffle/raffle_factory.algo.ts:46",
           "pc": [
             240,
             241
           ]
         },
         {
-          "teal": 256,
-          "source": "contracts/raffle/raffle_factory.algo.ts:39",
+          "teal": 253,
+          "source": "contracts/raffle/raffle_factory.algo.ts:46",
           "pc": [
-            242,
+            242
+          ]
+        },
+        {
+          "teal": 254,
+          "source": "contracts/raffle/raffle_factory.algo.ts:46",
+          "pc": [
             243
           ]
         },
         {
-          "teal": 257,
-          "source": "contracts/raffle/raffle_factory.algo.ts:39",
+          "teal": 255,
+          "source": "contracts/raffle/raffle_factory.algo.ts:46",
           "pc": [
             244,
-            245,
-            246
+            245
           ]
         },
         {
-          "teal": 262,
-          "source": "contracts/raffle/raffle_factory.algo.ts:40",
+          "teal": 260,
+          "source": "contracts/raffle/raffle_factory.algo.ts:47",
           "pc": [
-            247,
-            248
+            246,
+            247
           ]
         },
         {
-          "teal": 263,
-          "source": "contracts/raffle/raffle_factory.algo.ts:40",
+          "teal": 261,
+          "source": "contracts/raffle/raffle_factory.algo.ts:47",
           "pc": [
+            248,
             249,
             250
           ]
         },
         {
-          "teal": 268,
-          "source": "contracts/raffle/raffle_factory.algo.ts:43",
+          "teal": 266,
+          "source": "contracts/raffle/raffle_factory.algo.ts:48",
           "pc": [
             251,
             252
           ]
         },
         {
-          "teal": 269,
-          "source": "contracts/raffle/raffle_factory.algo.ts:43",
+          "teal": 267,
+          "source": "contracts/raffle/raffle_factory.algo.ts:48",
           "pc": [
-            253
-          ]
-        },
-        {
-          "teal": 270,
-          "source": "contracts/raffle/raffle_factory.algo.ts:43",
-          "pc": [
+            253,
             254
           ]
         },
         {
-          "teal": 271,
-          "source": "contracts/raffle/raffle_factory.algo.ts:43",
+          "teal": 272,
+          "source": "contracts/raffle/raffle_factory.algo.ts:51",
           "pc": [
             255,
             256
           ]
         },
         {
-          "teal": 276,
-          "source": "contracts/raffle/raffle_factory.algo.ts:44",
+          "teal": 273,
+          "source": "contracts/raffle/raffle_factory.algo.ts:51",
           "pc": [
-            257,
+            257
+          ]
+        },
+        {
+          "teal": 274,
+          "source": "contracts/raffle/raffle_factory.algo.ts:51",
+          "pc": [
             258
           ]
         },
         {
-          "teal": 277,
-          "source": "contracts/raffle/raffle_factory.algo.ts:44",
+          "teal": 275,
+          "source": "contracts/raffle/raffle_factory.algo.ts:51",
           "pc": [
             259,
-            260,
-            261
+            260
           ]
         },
         {
-          "teal": 282,
-          "source": "contracts/raffle/raffle_factory.algo.ts:45",
+          "teal": 280,
+          "source": "contracts/raffle/raffle_factory.algo.ts:52",
           "pc": [
-            262,
-            263
+            261,
+            262
           ]
         },
         {
-          "teal": 283,
-          "source": "contracts/raffle/raffle_factory.algo.ts:45",
+          "teal": 281,
+          "source": "contracts/raffle/raffle_factory.algo.ts:52",
           "pc": [
+            263,
             264,
             265
           ]
         },
         {
-          "teal": 284,
-          "source": "contracts/raffle/raffle_factory.algo.ts:45",
+          "teal": 286,
+          "source": "contracts/raffle/raffle_factory.algo.ts:53",
           "pc": [
-            266
+            266,
+            267
           ]
         },
         {
-          "teal": 285,
-          "source": "contracts/raffle/raffle_factory.algo.ts:45",
+          "teal": 287,
+          "source": "contracts/raffle/raffle_factory.algo.ts:53",
           "pc": [
-            267,
-            268
+            268,
+            269
           ]
         },
         {
-          "teal": 299,
-          "source": "contracts/raffle/raffle_factory.algo.ts:48",
+          "teal": 288,
+          "source": "contracts/raffle/raffle_factory.algo.ts:53",
           "pc": [
-            269,
             270
           ]
         },
         {
-          "teal": 300,
-          "source": "contracts/raffle/raffle_factory.algo.ts:49",
+          "teal": 289,
+          "source": "contracts/raffle/raffle_factory.algo.ts:53",
           "pc": [
             271,
             272
           ]
         },
         {
-          "teal": 301,
-          "source": "contracts/raffle/raffle_factory.algo.ts:49",
+          "teal": 305,
+          "source": "contracts/raffle/raffle_factory.algo.ts:56",
           "pc": [
             273,
             274
           ]
         },
         {
-          "teal": 302,
-          "source": "contracts/raffle/raffle_factory.algo.ts:49",
+          "teal": 306,
+          "source": "contracts/raffle/raffle_factory.algo.ts:57",
           "pc": [
-            275
-          ]
-        },
-        {
-          "teal": 305,
-          "source": "contracts/raffle/raffle_factory.algo.ts:49",
-          "errorMessage": "transaction verification failed: {\"txn\":\"payment\",\"field\":\"receiver\",\"expected\":\"this.app.address\"}",
-          "pc": [
+            275,
             276
           ]
         },
         {
-          "teal": 308,
-          "source": "contracts/raffle/raffle_factory.algo.ts:48",
+          "teal": 307,
+          "source": "contracts/raffle/raffle_factory.algo.ts:57",
           "pc": [
             277,
             278
           ]
         },
         {
-          "teal": 309,
-          "source": "contracts/raffle/raffle_factory.algo.ts:50",
+          "teal": 308,
+          "source": "contracts/raffle/raffle_factory.algo.ts:57",
           "pc": [
-            279,
+            279
+          ]
+        },
+        {
+          "teal": 311,
+          "source": "contracts/raffle/raffle_factory.algo.ts:57",
+          "errorMessage": "transaction verification failed: {\"txn\":\"payment\",\"field\":\"receiver\",\"expected\":\"this.app.address\"}",
+          "pc": [
             280
           ]
         },
         {
-          "teal": 310,
-          "source": "contracts/raffle/raffle_factory.algo.ts:53",
+          "teal": 314,
+          "source": "contracts/raffle/raffle_factory.algo.ts:56",
           "pc": [
             281,
-            282,
+            282
+          ]
+        },
+        {
+          "teal": 315,
+          "source": "contracts/raffle/raffle_factory.algo.ts:58",
+          "pc": [
             283,
             284
           ]
         },
         {
-          "teal": 311,
-          "source": "contracts/raffle/raffle_factory.algo.ts:54",
+          "teal": 316,
+          "source": "contracts/raffle/raffle_factory.algo.ts:61",
           "pc": [
             285,
-            286
-          ]
-        },
-        {
-          "teal": 312,
-          "source": "contracts/raffle/raffle_factory.algo.ts:54",
-          "pc": [
-            287
-          ]
-        },
-        {
-          "teal": 313,
-          "source": "contracts/raffle/raffle_factory.algo.ts:50",
-          "pc": [
+            286,
+            287,
             288
           ]
         },
         {
-          "teal": 316,
-          "source": "contracts/raffle/raffle_factory.algo.ts:50",
-          "errorMessage": "transaction verification failed: {\"txn\":\"payment\",\"field\":\"amount\",\"expected\":\"(\\n                100_000 // requires 3 extra pages\\n                + (28_500 * Raffle.schema.global.numUint)\\n                + (50_000 * Raffle.schema.global.numByteSlice)\\n                + optinMBR\\n            )\"}",
+          "teal": 317,
+          "source": "contracts/raffle/raffle_factory.algo.ts:62",
           "pc": [
-            289
+            289,
+            290
           ]
         },
         {
-          "teal": 321,
-          "source": "contracts/raffle/raffle_factory.algo.ts:58",
+          "teal": 318,
+          "source": "contracts/raffle/raffle_factory.algo.ts:62",
           "pc": [
-            290,
             291
           ]
         },
         {
-          "teal": 322,
-          "source": "contracts/raffle/raffle_factory.algo.ts:58",
+          "teal": 319,
+          "source": "contracts/raffle/raffle_factory.algo.ts:63",
           "pc": [
             292,
             293
           ]
         },
         {
-          "teal": 323,
-          "source": "contracts/raffle/raffle_factory.algo.ts:58",
+          "teal": 320,
+          "source": "contracts/raffle/raffle_factory.algo.ts:63",
           "pc": [
             294,
             295
           ]
         },
         {
-          "teal": 324,
-          "source": "contracts/raffle/raffle_factory.algo.ts:58",
+          "teal": 321,
+          "source": "contracts/raffle/raffle_factory.algo.ts:63",
           "pc": [
             296
           ]
         },
         {
-          "teal": 327,
-          "source": "contracts/raffle/raffle_factory.algo.ts:58",
-          "errorMessage": "transaction verification failed: {\"txn\":\"assetXfer\",\"field\":\"assetReceiver\",\"expected\":\"this.app.address\"}",
+          "teal": 322,
+          "source": "contracts/raffle/raffle_factory.algo.ts:63",
           "pc": [
             297
           ]
         },
         {
-          "teal": 349,
-          "source": "contracts/raffle/raffle_factory.algo.ts:60",
+          "teal": 323,
+          "source": "contracts/raffle/raffle_factory.algo.ts:64",
           "pc": [
-            298
-          ]
-        },
-        {
-          "teal": 350,
-          "source": "contracts/raffle/raffle_factory.algo.ts:60",
-          "pc": [
-            299
-          ]
-        },
-        {
-          "teal": 351,
-          "source": "contracts/raffle/raffle_factory.algo.ts:60",
-          "pc": [
+            298,
+            299,
             300,
             301
           ]
         },
         {
-          "teal": 352,
-          "source": "contracts/raffle/raffle_factory.algo.ts:60",
+          "teal": 324,
+          "source": "contracts/raffle/raffle_factory.algo.ts:64",
           "pc": [
-            302,
-            303,
-            304,
+            302
+          ]
+        },
+        {
+          "teal": 325,
+          "source": "contracts/raffle/raffle_factory.algo.ts:58",
+          "pc": [
+            303
+          ]
+        },
+        {
+          "teal": 328,
+          "source": "contracts/raffle/raffle_factory.algo.ts:58",
+          "errorMessage": "transaction verification failed: {\"txn\":\"payment\",\"field\":\"amount\",\"expected\":\"(\\n                100_000 // requires 3 extra pages\\n                + (28_500 * Raffle.schema.global.numUint)\\n                + (50_000 * Raffle.schema.global.numByteSlice)\\n                + optinMBR\\n                + (weightsListCount * weightsListMBR)\\n                + appCreatorsMBR\\n            )\"}",
+          "pc": [
+            304
+          ]
+        },
+        {
+          "teal": 333,
+          "source": "contracts/raffle/raffle_factory.algo.ts:68",
+          "pc": [
             305,
-            306,
-            307
+            306
           ]
         },
         {
-          "teal": 353,
-          "source": "contracts/raffle/raffle_factory.algo.ts:60",
+          "teal": 334,
+          "source": "contracts/raffle/raffle_factory.algo.ts:68",
           "pc": [
-            308,
-            309
+            307,
+            308
           ]
         },
         {
-          "teal": 367,
-          "source": "contracts/raffle/raffle_factory.algo.ts:62",
+          "teal": 335,
+          "source": "contracts/raffle/raffle_factory.algo.ts:68",
           "pc": [
-            310,
+            309,
+            310
+          ]
+        },
+        {
+          "teal": 336,
+          "source": "contracts/raffle/raffle_factory.algo.ts:68",
+          "pc": [
             311
           ]
         },
         {
-          "teal": 368,
-          "source": "contracts/raffle/raffle_factory.algo.ts:62",
+          "teal": 339,
+          "source": "contracts/raffle/raffle_factory.algo.ts:68",
+          "errorMessage": "transaction verification failed: {\"txn\":\"assetXfer\",\"field\":\"assetReceiver\",\"expected\":\"this.app.address\"}",
           "pc": [
-            312,
+            312
+          ]
+        },
+        {
+          "teal": 361,
+          "source": "contracts/raffle/raffle_factory.algo.ts:70",
+          "pc": [
             313
           ]
         },
         {
-          "teal": 369,
-          "source": "contracts/raffle/raffle_factory.algo.ts:62",
+          "teal": 362,
+          "source": "contracts/raffle/raffle_factory.algo.ts:70",
           "pc": [
             314
           ]
         },
         {
-          "teal": 370,
-          "source": "contracts/raffle/raffle_factory.algo.ts:62",
+          "teal": 363,
+          "source": "contracts/raffle/raffle_factory.algo.ts:70",
           "pc": [
             315,
             316
           ]
         },
         {
-          "teal": 371,
-          "source": "contracts/raffle/raffle_factory.algo.ts:63",
+          "teal": 364,
+          "source": "contracts/raffle/raffle_factory.algo.ts:70",
           "pc": [
             317,
-            318
-          ]
-        },
-        {
-          "teal": 372,
-          "source": "contracts/raffle/raffle_factory.algo.ts:63",
-          "pc": [
-            319
-          ]
-        },
-        {
-          "teal": 373,
-          "source": "contracts/raffle/raffle_factory.algo.ts:63",
-          "pc": [
+            318,
+            319,
             320,
-            321
+            321,
+            322
           ]
         },
         {
-          "teal": 374,
-          "source": "contracts/raffle/raffle_factory.algo.ts:64",
+          "teal": 365,
+          "source": "contracts/raffle/raffle_factory.algo.ts:70",
           "pc": [
-            322,
-            323
-          ]
-        },
-        {
-          "teal": 375,
-          "source": "contracts/raffle/raffle_factory.algo.ts:64",
-          "pc": [
+            323,
             324
           ]
         },
         {
-          "teal": 376,
-          "source": "contracts/raffle/raffle_factory.algo.ts:64",
+          "teal": 379,
+          "source": "contracts/raffle/raffle_factory.algo.ts:72",
           "pc": [
             325,
             326
           ]
         },
         {
-          "teal": 377,
-          "source": "contracts/raffle/raffle_factory.algo.ts:65",
+          "teal": 380,
+          "source": "contracts/raffle/raffle_factory.algo.ts:72",
           "pc": [
             327,
             328
           ]
         },
         {
-          "teal": 378,
-          "source": "contracts/raffle/raffle_factory.algo.ts:65",
+          "teal": 381,
+          "source": "contracts/raffle/raffle_factory.algo.ts:72",
           "pc": [
             329
           ]
         },
         {
-          "teal": 379,
-          "source": "contracts/raffle/raffle_factory.algo.ts:65",
+          "teal": 382,
+          "source": "contracts/raffle/raffle_factory.algo.ts:72",
           "pc": [
             330,
             331
           ]
         },
         {
-          "teal": 380,
-          "source": "contracts/raffle/raffle_factory.algo.ts:66",
+          "teal": 383,
+          "source": "contracts/raffle/raffle_factory.algo.ts:73",
           "pc": [
             332,
             333
           ]
         },
         {
-          "teal": 381,
-          "source": "contracts/raffle/raffle_factory.algo.ts:66",
-          "pc": [
-            334,
-            335
-          ]
-        },
-        {
-          "teal": 382,
-          "source": "contracts/raffle/raffle_factory.algo.ts:67",
-          "pc": [
-            336,
-            337
-          ]
-        },
-        {
-          "teal": 383,
-          "source": "contracts/raffle/raffle_factory.algo.ts:67",
-          "pc": [
-            338
-          ]
-        },
-        {
           "teal": 384,
-          "source": "contracts/raffle/raffle_factory.algo.ts:67",
+          "source": "contracts/raffle/raffle_factory.algo.ts:73",
           "pc": [
-            339,
-            340
+            334
           ]
         },
         {
           "teal": 385,
-          "source": "contracts/raffle/raffle_factory.algo.ts:68",
+          "source": "contracts/raffle/raffle_factory.algo.ts:73",
           "pc": [
-            341,
-            342
+            335,
+            336
           ]
         },
         {
           "teal": 386,
-          "source": "contracts/raffle/raffle_factory.algo.ts:68",
+          "source": "contracts/raffle/raffle_factory.algo.ts:74",
           "pc": [
-            343
+            337,
+            338
           ]
         },
         {
           "teal": 387,
-          "source": "contracts/raffle/raffle_factory.algo.ts:68",
+          "source": "contracts/raffle/raffle_factory.algo.ts:74",
           "pc": [
-            344,
-            345
+            339
           ]
         },
         {
           "teal": 388,
-          "source": "contracts/raffle/raffle_factory.algo.ts:69",
+          "source": "contracts/raffle/raffle_factory.algo.ts:74",
           "pc": [
-            346,
-            347
+            340,
+            341
           ]
         },
         {
           "teal": 389,
-          "source": "contracts/raffle/raffle_factory.algo.ts:69",
+          "source": "contracts/raffle/raffle_factory.algo.ts:75",
           "pc": [
-            348
+            342,
+            343
           ]
         },
         {
           "teal": 390,
-          "source": "contracts/raffle/raffle_factory.algo.ts:69",
+          "source": "contracts/raffle/raffle_factory.algo.ts:75",
+          "pc": [
+            344
+          ]
+        },
+        {
+          "teal": 391,
+          "source": "contracts/raffle/raffle_factory.algo.ts:75",
+          "pc": [
+            345,
+            346
+          ]
+        },
+        {
+          "teal": 392,
+          "source": "contracts/raffle/raffle_factory.algo.ts:76",
+          "pc": [
+            347,
+            348
+          ]
+        },
+        {
+          "teal": 393,
+          "source": "contracts/raffle/raffle_factory.algo.ts:76",
           "pc": [
             349,
             350
           ]
         },
         {
-          "teal": 391,
-          "source": "contracts/raffle/raffle_factory.algo.ts:70",
+          "teal": 394,
+          "source": "contracts/raffle/raffle_factory.algo.ts:77",
           "pc": [
             351,
             352
           ]
         },
         {
-          "teal": 392,
-          "source": "contracts/dao/constants.ts:1",
+          "teal": 395,
+          "source": "contracts/raffle/raffle_factory.algo.ts:77",
           "pc": [
-            353,
-            354,
-            355,
-            356,
-            357,
-            358,
-            359,
-            360,
-            361,
-            362,
-            363,
-            364,
-            365,
-            366,
-            367,
-            368,
-            369,
-            370,
-            371
-          ]
-        },
-        {
-          "teal": 393,
-          "source": "contracts/raffle/raffle_factory.algo.ts:70",
-          "pc": [
-            372
+            353
           ]
         },
         {
           "teal": 396,
-          "source": "contracts/raffle/raffle_factory.algo.ts:70",
-          "errorMessage": "global state value does not exist: this.akitaDaoAppID.globalState(AKITA_DAO_VRF_BEACON_APP_ID_KEY)",
+          "source": "contracts/raffle/raffle_factory.algo.ts:77",
           "pc": [
-            373
+            354,
+            355
           ]
         },
         {
           "teal": 397,
-          "source": "contracts/raffle/raffle_factory.algo.ts:70",
+          "source": "contracts/raffle/raffle_factory.algo.ts:78",
           "pc": [
-            374
+            356,
+            357
           ]
         },
         {
           "teal": 398,
-          "source": "contracts/raffle/raffle_factory.algo.ts:70",
+          "source": "contracts/raffle/raffle_factory.algo.ts:78",
           "pc": [
-            375,
-            376
+            358
+          ]
+        },
+        {
+          "teal": 399,
+          "source": "contracts/raffle/raffle_factory.algo.ts:78",
+          "pc": [
+            359,
+            360
+          ]
+        },
+        {
+          "teal": 400,
+          "source": "contracts/raffle/raffle_factory.algo.ts:79",
+          "pc": [
+            361,
+            362
+          ]
+        },
+        {
+          "teal": 401,
+          "source": "contracts/raffle/raffle_factory.algo.ts:79",
+          "pc": [
+            363
           ]
         },
         {
           "teal": 402,
-          "source": "contracts/raffle/raffle_factory.algo.ts:72",
+          "source": "contracts/raffle/raffle_factory.algo.ts:79",
           "pc": [
+            364,
+            365
+          ]
+        },
+        {
+          "teal": 403,
+          "source": "contracts/raffle/raffle_factory.algo.ts:80",
+          "pc": [
+            366,
+            367
+          ]
+        },
+        {
+          "teal": 404,
+          "source": "contracts/dao/constants.ts:1",
+          "pc": [
+            368,
+            369,
+            370,
+            371,
+            372,
+            373,
+            374,
+            375,
+            376,
             377,
             378,
             379,
@@ -1654,12 +1735,43 @@
             383,
             384,
             385,
-            386,
-            387,
-            388,
-            389,
+            386
+          ]
+        },
+        {
+          "teal": 405,
+          "source": "contracts/raffle/raffle_factory.algo.ts:80",
+          "pc": [
+            387
+          ]
+        },
+        {
+          "teal": 408,
+          "source": "contracts/raffle/raffle_factory.algo.ts:80",
+          "errorMessage": "global state value does not exist: this.akitaDaoAppID.globalState(AKITA_DAO_VRF_BEACON_APP_ID_KEY)",
+          "pc": [
+            388
+          ]
+        },
+        {
+          "teal": 409,
+          "source": "contracts/raffle/raffle_factory.algo.ts:80",
+          "pc": [
+            389
+          ]
+        },
+        {
+          "teal": 410,
+          "source": "contracts/raffle/raffle_factory.algo.ts:80",
+          "pc": [
             390,
-            391,
+            391
+          ]
+        },
+        {
+          "teal": 414,
+          "source": "contracts/raffle/raffle_factory.algo.ts:82",
+          "pc": [
             392,
             393,
             394,
@@ -4327,796 +4439,2887 @@
             3056,
             3057,
             3058,
-            3059
-          ]
-        },
-        {
-          "teal": 403,
-          "source": "contracts/raffle/raffle_factory.algo.ts:72",
-          "pc": [
+            3059,
             3060,
-            3061
-          ]
-        },
-        {
-          "teal": 407,
-          "source": "contracts/raffle/raffle_factory.algo.ts:73",
-          "pc": [
+            3061,
             3062,
             3063,
-            3064
-          ]
-        },
-        {
-          "teal": 408,
-          "source": "contracts/raffle/raffle_factory.algo.ts:73",
-          "pc": [
+            3064,
             3065,
-            3066
-          ]
-        },
-        {
-          "teal": 412,
-          "source": "contracts/raffle/raffle_factory.algo.ts:74",
-          "pc": [
+            3066,
             3067,
-            3068
-          ]
-        },
-        {
-          "teal": 413,
-          "source": "contracts/raffle/raffle_factory.algo.ts:74",
-          "pc": [
+            3068,
             3069,
-            3070
-          ]
-        },
-        {
-          "teal": 417,
-          "source": "contracts/raffle/raffle_factory.algo.ts:75",
-          "pc": [
+            3070,
             3071,
-            3072
-          ]
-        },
-        {
-          "teal": 418,
-          "source": "contracts/raffle/raffle_factory.algo.ts:75",
-          "pc": [
+            3072,
             3073,
-            3074
-          ]
-        },
-        {
-          "teal": 422,
-          "source": "contracts/raffle/raffle_factory.algo.ts:76",
-          "pc": [
-            3075
-          ]
-        },
-        {
-          "teal": 423,
-          "source": "contracts/raffle/raffle_factory.algo.ts:76",
-          "pc": [
+            3074,
+            3075,
             3076,
-            3077
-          ]
-        },
-        {
-          "teal": 427,
-          "source": "contracts/raffle/raffle_factory.algo.ts:77",
-          "pc": [
-            3078
-          ]
-        },
-        {
-          "teal": 428,
-          "source": "contracts/raffle/raffle_factory.algo.ts:77",
-          "pc": [
+            3077,
+            3078,
             3079,
-            3080
-          ]
-        },
-        {
-          "teal": 432,
-          "source": "contracts/raffle/raffle_factory.algo.ts:80",
-          "pc": [
+            3080,
             3081,
-            3082
-          ]
-        },
-        {
-          "teal": 433,
-          "source": "contracts/raffle/raffle_factory.algo.ts:80",
-          "pc": [
+            3082,
             3083,
-            3084
-          ]
-        },
-        {
-          "teal": 438,
-          "source": "contracts/raffle/raffle_factory.algo.ts:82",
-          "pc": [
+            3084,
             3085,
-            3086
-          ]
-        },
-        {
-          "teal": 439,
-          "source": "contracts/raffle/raffle_factory.algo.ts:82",
-          "pc": [
-            3087
-          ]
-        },
-        {
-          "teal": 440,
-          "source": "contracts/raffle/raffle_factory.algo.ts:82",
-          "pc": [
+            3086,
+            3087,
             3088,
             3089,
-            3090
-          ]
-        },
-        {
-          "teal": 456,
-          "source": "contracts/raffle/raffle_factory.algo.ts:86",
-          "pc": [
-            3091
-          ]
-        },
-        {
-          "teal": 457,
-          "source": "contracts/raffle/raffle_factory.algo.ts:86",
-          "pc": [
-            3092
-          ]
-        },
-        {
-          "teal": 458,
-          "source": "contracts/raffle/raffle_factory.algo.ts:86",
-          "pc": [
+            3090,
+            3091,
+            3092,
             3093,
-            3094
-          ]
-        },
-        {
-          "teal": 462,
-          "source": "contracts/raffle/raffle_factory.algo.ts:87",
-          "pc": [
+            3094,
             3095,
-            3096
-          ]
-        },
-        {
-          "teal": 463,
-          "source": "contracts/raffle/raffle_factory.algo.ts:87",
-          "pc": [
+            3096,
             3097,
-            3098
-          ]
-        },
-        {
-          "teal": 464,
-          "source": "contracts/raffle/raffle_factory.algo.ts:87",
-          "pc": [
-            3099
-          ]
-        },
-        {
-          "teal": 465,
-          "source": "contracts/raffle/raffle_factory.algo.ts:87",
-          "pc": [
+            3098,
+            3099,
             3100,
-            3101
-          ]
-        },
-        {
-          "teal": 469,
-          "source": "contracts/raffle/raffle_factory.algo.ts:88",
-          "pc": [
+            3101,
             3102,
-            3103
-          ]
-        },
-        {
-          "teal": 470,
-          "source": "contracts/raffle/raffle_factory.algo.ts:88",
-          "pc": [
+            3103,
             3104,
-            3105
-          ]
-        },
-        {
-          "teal": 474,
-          "source": "contracts/raffle/raffle_factory.algo.ts:89",
-          "pc": [
-            3106
-          ]
-        },
-        {
-          "teal": 475,
-          "source": "contracts/raffle/raffle_factory.algo.ts:89",
-          "pc": [
+            3105,
+            3106,
             3107,
-            3108
-          ]
-        },
-        {
-          "teal": 476,
-          "source": "contracts/raffle/raffle_factory.algo.ts:83",
-          "pc": [
-            3109
-          ]
-        },
-        {
-          "teal": 477,
-          "source": "contracts/raffle/raffle_factory.algo.ts:83",
-          "pc": [
-            3110
-          ]
-        },
-        {
-          "teal": 478,
-          "source": "contracts/raffle/raffle_factory.algo.ts:83",
-          "pc": [
+            3108,
+            3109,
+            3110,
             3111,
-            3112
-          ]
-        },
-        {
-          "teal": 479,
-          "source": "contracts/raffle/raffle_factory.algo.ts:83",
-          "pc": [
-            3113
-          ]
-        },
-        {
-          "teal": 480,
-          "source": "contracts/raffle/raffle_factory.algo.ts:83",
-          "pc": [
+            3112,
+            3113,
             3114,
-            3115
-          ]
-        },
-        {
-          "teal": 484,
-          "source": "contracts/raffle/raffle_factory.algo.ts:84",
-          "pc": [
+            3115,
             3116,
-            3117
-          ]
-        },
-        {
-          "teal": 485,
-          "source": "contracts/raffle/raffle_factory.algo.ts:84",
-          "pc": [
+            3117,
             3118,
-            3119
-          ]
-        },
-        {
-          "teal": 496,
-          "source": "contracts/raffle/raffle_factory.algo.ts:91",
-          "pc": [
+            3119,
             3120,
-            3121
-          ]
-        },
-        {
-          "teal": 497,
-          "source": "contracts/raffle/raffle_factory.algo.ts:91",
-          "pc": [
+            3121,
             3122,
-            3123
-          ]
-        },
-        {
-          "teal": 498,
-          "source": "contracts/raffle/raffle_factory.algo.ts:91",
-          "pc": [
-            3124
-          ]
-        },
-        {
-          "teal": 499,
-          "source": "contracts/raffle/raffle_factory.algo.ts:91",
-          "pc": [
+            3123,
+            3124,
             3125,
-            3126
-          ]
-        },
-        {
-          "teal": 503,
-          "source": "contracts/raffle/raffle_factory.algo.ts:93",
-          "pc": [
-            3127
-          ]
-        },
-        {
-          "teal": 504,
-          "source": "contracts/raffle/raffle_factory.algo.ts:93",
-          "pc": [
+            3126,
+            3127,
             3128,
-            3129
-          ]
-        },
-        {
-          "teal": 514,
-          "source": "contracts/raffle/raffle_factory.algo.ts:97",
-          "pc": [
-            3130
-          ]
-        },
-        {
-          "teal": 515,
-          "source": "contracts/raffle/raffle_factory.algo.ts:97",
-          "pc": [
-            3131
-          ]
-        },
-        {
-          "teal": 516,
-          "source": "contracts/raffle/raffle_factory.algo.ts:97",
-          "pc": [
+            3129,
+            3130,
+            3131,
             3132,
-            3133
-          ]
-        },
-        {
-          "teal": 520,
-          "source": "contracts/raffle/raffle_factory.algo.ts:98",
-          "pc": [
+            3133,
             3134,
-            3135
-          ]
-        },
-        {
-          "teal": 521,
-          "source": "contracts/raffle/raffle_factory.algo.ts:98",
-          "pc": [
+            3135,
             3136,
-            3137
-          ]
-        },
-        {
-          "teal": 522,
-          "source": "contracts/raffle/raffle_factory.algo.ts:98",
-          "pc": [
-            3138
-          ]
-        },
-        {
-          "teal": 523,
-          "source": "contracts/raffle/raffle_factory.algo.ts:98",
-          "pc": [
+            3137,
+            3138,
             3139,
-            3140
-          ]
-        },
-        {
-          "teal": 527,
-          "source": "contracts/raffle/raffle_factory.algo.ts:99",
-          "pc": [
+            3140,
             3141,
-            3142
-          ]
-        },
-        {
-          "teal": 528,
-          "source": "contracts/raffle/raffle_factory.algo.ts:99",
-          "pc": [
+            3142,
             3143,
-            3144
-          ]
-        },
-        {
-          "teal": 529,
-          "source": "contracts/raffle/raffle_factory.algo.ts:99",
-          "pc": [
+            3144,
             3145,
-            3146
-          ]
-        },
-        {
-          "teal": 533,
-          "source": "contracts/raffle/raffle_factory.algo.ts:100",
-          "pc": [
+            3146,
             3147,
-            3148
-          ]
-        },
-        {
-          "teal": 534,
-          "source": "contracts/raffle/raffle_factory.algo.ts:100",
-          "pc": [
+            3148,
             3149,
-            3150
-          ]
-        },
-        {
-          "teal": 535,
-          "source": "contracts/raffle/raffle_factory.algo.ts:100",
-          "pc": [
+            3150,
             3151,
-            3152
-          ]
-        },
-        {
-          "teal": 539,
-          "source": "contracts/raffle/raffle_factory.algo.ts:101",
-          "pc": [
-            3153
-          ]
-        },
-        {
-          "teal": 540,
-          "source": "contracts/raffle/raffle_factory.algo.ts:101",
-          "pc": [
+            3152,
+            3153,
             3154,
-            3155
-          ]
-        },
-        {
-          "teal": 545,
-          "source": "contracts/raffle/raffle_factory.algo.ts:104",
-          "pc": [
+            3155,
             3156,
-            3157
-          ]
-        },
-        {
-          "teal": 546,
-          "source": "contracts/raffle/raffle_factory.algo.ts:104",
-          "pc": [
-            3158
-          ]
-        },
-        {
-          "teal": 547,
-          "source": "contracts/raffle/raffle_factory.algo.ts:104",
-          "pc": [
+            3157,
+            3158,
             3159,
             3160,
-            3161
-          ]
-        },
-        {
-          "teal": 563,
-          "source": "contracts/raffle/raffle_factory.algo.ts:108",
-          "pc": [
-            3162
-          ]
-        },
-        {
-          "teal": 564,
-          "source": "contracts/raffle/raffle_factory.algo.ts:108",
-          "pc": [
-            3163
-          ]
-        },
-        {
-          "teal": 565,
-          "source": "contracts/raffle/raffle_factory.algo.ts:108",
-          "pc": [
+            3161,
+            3162,
+            3163,
             3164,
-            3165
-          ]
-        },
-        {
-          "teal": 569,
-          "source": "contracts/raffle/raffle_factory.algo.ts:109",
-          "pc": [
+            3165,
             3166,
-            3167
-          ]
-        },
-        {
-          "teal": 570,
-          "source": "contracts/raffle/raffle_factory.algo.ts:109",
-          "pc": [
+            3167,
             3168,
-            3169
-          ]
-        },
-        {
-          "teal": 571,
-          "source": "contracts/raffle/raffle_factory.algo.ts:109",
-          "pc": [
-            3170
-          ]
-        },
-        {
-          "teal": 572,
-          "source": "contracts/raffle/raffle_factory.algo.ts:109",
-          "pc": [
+            3169,
+            3170,
             3171,
-            3172
-          ]
-        },
-        {
-          "teal": 576,
-          "source": "contracts/raffle/raffle_factory.algo.ts:110",
-          "pc": [
+            3172,
             3173,
-            3174
-          ]
-        },
-        {
-          "teal": 577,
-          "source": "contracts/raffle/raffle_factory.algo.ts:110",
-          "pc": [
+            3174,
             3175,
-            3176
-          ]
-        },
-        {
-          "teal": 581,
-          "source": "contracts/raffle/raffle_factory.algo.ts:111",
-          "pc": [
-            3177
-          ]
-        },
-        {
-          "teal": 582,
-          "source": "contracts/raffle/raffle_factory.algo.ts:111",
-          "pc": [
+            3176,
+            3177,
             3178,
-            3179
-          ]
-        },
-        {
-          "teal": 583,
-          "source": "contracts/raffle/raffle_factory.algo.ts:105",
-          "pc": [
-            3180
-          ]
-        },
-        {
-          "teal": 584,
-          "source": "contracts/raffle/raffle_factory.algo.ts:105",
-          "pc": [
-            3181
-          ]
-        },
-        {
-          "teal": 585,
-          "source": "contracts/raffle/raffle_factory.algo.ts:105",
-          "pc": [
+            3179,
+            3180,
+            3181,
             3182,
-            3183
-          ]
-        },
-        {
-          "teal": 586,
-          "source": "contracts/raffle/raffle_factory.algo.ts:105",
-          "pc": [
-            3184
-          ]
-        },
-        {
-          "teal": 587,
-          "source": "contracts/raffle/raffle_factory.algo.ts:105",
-          "pc": [
+            3183,
+            3184,
             3185,
-            3186
-          ]
-        },
-        {
-          "teal": 591,
-          "source": "contracts/raffle/raffle_factory.algo.ts:106",
-          "pc": [
+            3186,
             3187,
-            3188
-          ]
-        },
-        {
-          "teal": 592,
-          "source": "contracts/raffle/raffle_factory.algo.ts:106",
-          "pc": [
+            3188,
             3189,
-            3190
-          ]
-        },
-        {
-          "teal": 603,
-          "source": "contracts/raffle/raffle_factory.algo.ts:113",
-          "pc": [
+            3190,
             3191,
-            3192
-          ]
-        },
-        {
-          "teal": 604,
-          "source": "contracts/raffle/raffle_factory.algo.ts:113",
-          "pc": [
-            3193
-          ]
-        },
-        {
-          "teal": 605,
-          "source": "contracts/raffle/raffle_factory.algo.ts:113",
-          "pc": [
+            3192,
+            3193,
             3194,
-            3195
-          ]
-        },
-        {
-          "teal": 609,
-          "source": "contracts/raffle/raffle_factory.algo.ts:115",
-          "pc": [
-            3196
-          ]
-        },
-        {
-          "teal": 610,
-          "source": "contracts/raffle/raffle_factory.algo.ts:115",
-          "pc": [
+            3195,
+            3196,
             3197,
-            3198
-          ]
-        },
-        {
-          "teal": 615,
-          "source": "contracts/raffle/raffle_factory.algo.ts:119",
-          "pc": [
-            3199
-          ]
-        },
-        {
-          "teal": 619,
-          "source": "contracts/raffle/raffle_factory.algo.ts:121",
-          "pc": [
+            3198,
+            3199,
             3200,
-            3201
-          ]
-        },
-        {
-          "teal": 622,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
-          "pc": [
+            3201,
             3202,
-            3203
-          ]
-        },
-        {
-          "teal": 625,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
-          "pc": [
+            3203,
             3204,
-            3205
-          ]
-        },
-        {
-          "teal": 626,
-          "source": "contracts/raffle/raffle_factory.algo.ts:26",
-          "pc": [
-            3206
-          ]
-        },
-        {
-          "teal": 629,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3205,
+            3206,
             3207,
             3208,
             3209,
             3210,
             3211,
-            3212
-          ]
-        },
-        {
-          "teal": 630,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3212,
             3213,
             3214,
-            3215
-          ]
-        },
-        {
-          "teal": 631,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3215,
             3216,
             3217,
             3218,
-            3219
-          ]
-        },
-        {
-          "teal": 634,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "errorMessage": "this contract does not implement the given ABI method for create NoOp",
-          "pc": [
-            3220
-          ]
-        },
-        {
-          "teal": 637,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
-            3221
-          ]
-        },
-        {
-          "teal": 638,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3219,
+            3220,
+            3221,
             3222,
             3223,
             3224,
             3225,
             3226,
-            3227
-          ]
-        },
-        {
-          "teal": 639,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3227,
             3228,
             3229,
-            3230
-          ]
-        },
-        {
-          "teal": 640,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3230,
             3231,
             3232,
             3233,
             3234,
             3235,
-            3236
-          ]
-        },
-        {
-          "teal": 643,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "errorMessage": "this contract does not implement the given ABI method for call NoOp",
-          "pc": [
-            3237
-          ]
-        },
-        {
-          "teal": 646,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3236,
+            3237,
             3238,
             3239,
             3240,
             3241,
             3242,
-            3243
-          ]
-        },
-        {
-          "teal": 647,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3243,
             3244,
             3245,
-            3246
-          ]
-        },
-        {
-          "teal": 648,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
-          "pc": [
+            3246,
             3247,
             3248,
             3249,
-            3250
+            3250,
+            3251,
+            3252,
+            3253,
+            3254,
+            3255,
+            3256,
+            3257,
+            3258,
+            3259,
+            3260,
+            3261,
+            3262,
+            3263,
+            3264,
+            3265,
+            3266,
+            3267,
+            3268,
+            3269,
+            3270,
+            3271,
+            3272,
+            3273,
+            3274,
+            3275,
+            3276,
+            3277,
+            3278,
+            3279,
+            3280,
+            3281,
+            3282,
+            3283,
+            3284,
+            3285,
+            3286,
+            3287,
+            3288,
+            3289,
+            3290,
+            3291,
+            3292,
+            3293,
+            3294,
+            3295,
+            3296,
+            3297,
+            3298,
+            3299,
+            3300,
+            3301,
+            3302,
+            3303,
+            3304,
+            3305,
+            3306,
+            3307,
+            3308,
+            3309,
+            3310,
+            3311,
+            3312,
+            3313,
+            3314,
+            3315,
+            3316,
+            3317,
+            3318,
+            3319,
+            3320,
+            3321,
+            3322,
+            3323,
+            3324,
+            3325,
+            3326,
+            3327,
+            3328,
+            3329,
+            3330,
+            3331,
+            3332,
+            3333,
+            3334,
+            3335,
+            3336,
+            3337,
+            3338,
+            3339,
+            3340,
+            3341,
+            3342,
+            3343,
+            3344,
+            3345,
+            3346,
+            3347,
+            3348,
+            3349,
+            3350,
+            3351,
+            3352,
+            3353,
+            3354,
+            3355,
+            3356,
+            3357,
+            3358,
+            3359,
+            3360,
+            3361,
+            3362,
+            3363,
+            3364,
+            3365,
+            3366,
+            3367,
+            3368,
+            3369,
+            3370,
+            3371,
+            3372,
+            3373,
+            3374,
+            3375,
+            3376,
+            3377,
+            3378,
+            3379,
+            3380,
+            3381,
+            3382,
+            3383,
+            3384,
+            3385,
+            3386,
+            3387,
+            3388,
+            3389,
+            3390,
+            3391,
+            3392,
+            3393,
+            3394,
+            3395,
+            3396,
+            3397,
+            3398,
+            3399,
+            3400,
+            3401,
+            3402,
+            3403,
+            3404,
+            3405,
+            3406,
+            3407,
+            3408,
+            3409,
+            3410,
+            3411,
+            3412,
+            3413,
+            3414,
+            3415,
+            3416,
+            3417,
+            3418,
+            3419,
+            3420,
+            3421,
+            3422,
+            3423,
+            3424,
+            3425,
+            3426,
+            3427,
+            3428,
+            3429,
+            3430,
+            3431,
+            3432,
+            3433,
+            3434,
+            3435,
+            3436,
+            3437,
+            3438,
+            3439,
+            3440,
+            3441,
+            3442,
+            3443,
+            3444,
+            3445,
+            3446,
+            3447,
+            3448,
+            3449,
+            3450,
+            3451,
+            3452,
+            3453,
+            3454,
+            3455,
+            3456,
+            3457,
+            3458,
+            3459,
+            3460,
+            3461,
+            3462,
+            3463,
+            3464,
+            3465,
+            3466,
+            3467,
+            3468,
+            3469,
+            3470,
+            3471,
+            3472,
+            3473,
+            3474,
+            3475,
+            3476,
+            3477,
+            3478,
+            3479,
+            3480,
+            3481,
+            3482,
+            3483,
+            3484,
+            3485,
+            3486,
+            3487,
+            3488,
+            3489,
+            3490,
+            3491,
+            3492,
+            3493,
+            3494,
+            3495,
+            3496,
+            3497,
+            3498,
+            3499,
+            3500,
+            3501,
+            3502,
+            3503,
+            3504,
+            3505,
+            3506,
+            3507,
+            3508,
+            3509,
+            3510,
+            3511,
+            3512,
+            3513,
+            3514,
+            3515,
+            3516,
+            3517,
+            3518,
+            3519,
+            3520,
+            3521,
+            3522,
+            3523,
+            3524,
+            3525,
+            3526,
+            3527,
+            3528,
+            3529,
+            3530,
+            3531,
+            3532,
+            3533,
+            3534,
+            3535,
+            3536,
+            3537,
+            3538,
+            3539,
+            3540,
+            3541,
+            3542,
+            3543,
+            3544,
+            3545,
+            3546,
+            3547,
+            3548,
+            3549,
+            3550,
+            3551,
+            3552,
+            3553,
+            3554,
+            3555,
+            3556,
+            3557,
+            3558,
+            3559,
+            3560,
+            3561,
+            3562,
+            3563,
+            3564,
+            3565,
+            3566,
+            3567,
+            3568,
+            3569,
+            3570,
+            3571,
+            3572,
+            3573,
+            3574,
+            3575,
+            3576,
+            3577,
+            3578,
+            3579,
+            3580,
+            3581,
+            3582,
+            3583,
+            3584,
+            3585,
+            3586,
+            3587,
+            3588,
+            3589,
+            3590,
+            3591,
+            3592,
+            3593,
+            3594,
+            3595,
+            3596,
+            3597,
+            3598,
+            3599,
+            3600,
+            3601,
+            3602,
+            3603,
+            3604,
+            3605,
+            3606,
+            3607,
+            3608,
+            3609,
+            3610,
+            3611,
+            3612,
+            3613,
+            3614,
+            3615,
+            3616,
+            3617,
+            3618,
+            3619,
+            3620,
+            3621,
+            3622,
+            3623,
+            3624,
+            3625,
+            3626,
+            3627,
+            3628,
+            3629,
+            3630,
+            3631,
+            3632,
+            3633,
+            3634,
+            3635,
+            3636,
+            3637,
+            3638,
+            3639,
+            3640,
+            3641,
+            3642,
+            3643,
+            3644,
+            3645,
+            3646,
+            3647,
+            3648,
+            3649,
+            3650,
+            3651,
+            3652,
+            3653,
+            3654,
+            3655,
+            3656,
+            3657,
+            3658,
+            3659,
+            3660,
+            3661,
+            3662,
+            3663,
+            3664,
+            3665,
+            3666,
+            3667,
+            3668,
+            3669,
+            3670,
+            3671,
+            3672,
+            3673,
+            3674,
+            3675,
+            3676,
+            3677,
+            3678,
+            3679,
+            3680,
+            3681,
+            3682,
+            3683,
+            3684,
+            3685,
+            3686,
+            3687,
+            3688,
+            3689,
+            3690,
+            3691,
+            3692,
+            3693,
+            3694,
+            3695,
+            3696,
+            3697,
+            3698,
+            3699,
+            3700,
+            3701,
+            3702,
+            3703,
+            3704,
+            3705,
+            3706,
+            3707,
+            3708,
+            3709,
+            3710,
+            3711,
+            3712,
+            3713,
+            3714,
+            3715,
+            3716,
+            3717,
+            3718,
+            3719,
+            3720,
+            3721,
+            3722,
+            3723,
+            3724,
+            3725,
+            3726,
+            3727,
+            3728,
+            3729,
+            3730,
+            3731,
+            3732,
+            3733,
+            3734,
+            3735,
+            3736,
+            3737,
+            3738,
+            3739,
+            3740,
+            3741,
+            3742,
+            3743,
+            3744,
+            3745,
+            3746,
+            3747,
+            3748,
+            3749,
+            3750,
+            3751,
+            3752,
+            3753,
+            3754,
+            3755,
+            3756,
+            3757,
+            3758,
+            3759,
+            3760,
+            3761,
+            3762,
+            3763,
+            3764,
+            3765,
+            3766,
+            3767,
+            3768,
+            3769,
+            3770,
+            3771,
+            3772,
+            3773,
+            3774,
+            3775,
+            3776,
+            3777,
+            3778,
+            3779,
+            3780,
+            3781,
+            3782,
+            3783,
+            3784,
+            3785,
+            3786,
+            3787,
+            3788,
+            3789,
+            3790,
+            3791,
+            3792,
+            3793,
+            3794,
+            3795,
+            3796,
+            3797,
+            3798,
+            3799,
+            3800,
+            3801,
+            3802,
+            3803,
+            3804,
+            3805,
+            3806,
+            3807,
+            3808,
+            3809,
+            3810,
+            3811,
+            3812,
+            3813,
+            3814,
+            3815,
+            3816,
+            3817,
+            3818,
+            3819,
+            3820,
+            3821,
+            3822,
+            3823,
+            3824,
+            3825,
+            3826,
+            3827,
+            3828,
+            3829,
+            3830,
+            3831,
+            3832,
+            3833,
+            3834,
+            3835,
+            3836,
+            3837,
+            3838,
+            3839,
+            3840,
+            3841,
+            3842,
+            3843,
+            3844,
+            3845,
+            3846,
+            3847,
+            3848,
+            3849,
+            3850,
+            3851,
+            3852,
+            3853,
+            3854,
+            3855,
+            3856,
+            3857,
+            3858,
+            3859,
+            3860,
+            3861,
+            3862,
+            3863,
+            3864,
+            3865,
+            3866,
+            3867,
+            3868,
+            3869,
+            3870,
+            3871,
+            3872,
+            3873,
+            3874,
+            3875,
+            3876,
+            3877,
+            3878,
+            3879,
+            3880,
+            3881,
+            3882,
+            3883,
+            3884,
+            3885,
+            3886,
+            3887,
+            3888,
+            3889,
+            3890,
+            3891,
+            3892,
+            3893,
+            3894,
+            3895,
+            3896,
+            3897,
+            3898,
+            3899,
+            3900,
+            3901,
+            3902,
+            3903,
+            3904,
+            3905,
+            3906,
+            3907,
+            3908,
+            3909,
+            3910,
+            3911,
+            3912,
+            3913,
+            3914,
+            3915,
+            3916,
+            3917,
+            3918,
+            3919,
+            3920,
+            3921,
+            3922,
+            3923,
+            3924,
+            3925,
+            3926,
+            3927,
+            3928,
+            3929,
+            3930,
+            3931,
+            3932,
+            3933,
+            3934,
+            3935,
+            3936,
+            3937,
+            3938,
+            3939,
+            3940,
+            3941,
+            3942,
+            3943,
+            3944,
+            3945,
+            3946,
+            3947,
+            3948,
+            3949,
+            3950,
+            3951,
+            3952,
+            3953,
+            3954,
+            3955,
+            3956,
+            3957,
+            3958,
+            3959,
+            3960,
+            3961,
+            3962,
+            3963,
+            3964,
+            3965,
+            3966,
+            3967,
+            3968,
+            3969,
+            3970,
+            3971,
+            3972,
+            3973,
+            3974,
+            3975,
+            3976,
+            3977,
+            3978,
+            3979,
+            3980,
+            3981,
+            3982,
+            3983,
+            3984,
+            3985,
+            3986,
+            3987,
+            3988,
+            3989,
+            3990,
+            3991,
+            3992,
+            3993,
+            3994,
+            3995,
+            3996,
+            3997,
+            3998,
+            3999,
+            4000,
+            4001,
+            4002,
+            4003,
+            4004,
+            4005,
+            4006,
+            4007,
+            4008,
+            4009
+          ]
+        },
+        {
+          "teal": 415,
+          "source": "contracts/raffle/raffle_factory.algo.ts:82",
+          "pc": [
+            4010,
+            4011
+          ]
+        },
+        {
+          "teal": 419,
+          "source": "contracts/raffle/raffle_factory.algo.ts:83",
+          "pc": [
+            4012,
+            4013,
+            4014
+          ]
+        },
+        {
+          "teal": 420,
+          "source": "contracts/raffle/raffle_factory.algo.ts:83",
+          "pc": [
+            4015,
+            4016
+          ]
+        },
+        {
+          "teal": 424,
+          "source": "contracts/raffle/raffle_factory.algo.ts:84",
+          "pc": [
+            4017,
+            4018
+          ]
+        },
+        {
+          "teal": 425,
+          "source": "contracts/raffle/raffle_factory.algo.ts:84",
+          "pc": [
+            4019,
+            4020
+          ]
+        },
+        {
+          "teal": 429,
+          "source": "contracts/raffle/raffle_factory.algo.ts:85",
+          "pc": [
+            4021,
+            4022
+          ]
+        },
+        {
+          "teal": 430,
+          "source": "contracts/raffle/raffle_factory.algo.ts:85",
+          "pc": [
+            4023,
+            4024
+          ]
+        },
+        {
+          "teal": 434,
+          "source": "contracts/raffle/raffle_factory.algo.ts:86",
+          "pc": [
+            4025
+          ]
+        },
+        {
+          "teal": 435,
+          "source": "contracts/raffle/raffle_factory.algo.ts:86",
+          "pc": [
+            4026,
+            4027
+          ]
+        },
+        {
+          "teal": 439,
+          "source": "contracts/raffle/raffle_factory.algo.ts:87",
+          "pc": [
+            4028
+          ]
+        },
+        {
+          "teal": 440,
+          "source": "contracts/raffle/raffle_factory.algo.ts:87",
+          "pc": [
+            4029,
+            4030
+          ]
+        },
+        {
+          "teal": 444,
+          "source": "contracts/raffle/raffle_factory.algo.ts:90",
+          "pc": [
+            4031,
+            4032
+          ]
+        },
+        {
+          "teal": 445,
+          "source": "contracts/raffle/raffle_factory.algo.ts:90",
+          "pc": [
+            4033,
+            4034
+          ]
+        },
+        {
+          "teal": 449,
+          "source": "contracts/raffle/raffle_factory.algo.ts:91",
+          "pc": [
+            4035,
+            4036
+          ]
+        },
+        {
+          "teal": 450,
+          "source": "contracts/raffle/raffle_factory.algo.ts:91",
+          "pc": [
+            4037,
+            4038
+          ]
+        },
+        {
+          "teal": 451,
+          "source": "contracts/raffle/raffle_factory.algo.ts:91",
+          "pc": [
+            4039,
+            4040
+          ]
+        },
+        {
+          "teal": 452,
+          "source": "contracts/raffle/raffle_factory.algo.ts:91",
+          "pc": [
+            4041
+          ]
+        },
+        {
+          "teal": 453,
+          "source": "contracts/raffle/raffle_factory.algo.ts:91",
+          "pc": [
+            4042
+          ]
+        },
+        {
+          "teal": 454,
+          "source": "contracts/raffle/raffle_factory.algo.ts:91",
+          "pc": [
+            4043,
+            4044,
+            4045,
+            4046,
+            4047,
+            4048,
+            4049,
+            4050,
+            4051,
+            4052
+          ]
+        },
+        {
+          "teal": 455,
+          "source": "contracts/raffle/raffle_factory.algo.ts:91",
+          "pc": [
+            4053
+          ]
+        },
+        {
+          "teal": 470,
+          "source": "contracts/raffle/raffle_factory.algo.ts:96",
+          "pc": [
+            4054
+          ]
+        },
+        {
+          "teal": 471,
+          "source": "contracts/raffle/raffle_factory.algo.ts:96",
+          "pc": [
+            4055
+          ]
+        },
+        {
+          "teal": 472,
+          "source": "contracts/raffle/raffle_factory.algo.ts:96",
+          "pc": [
+            4056,
+            4057
+          ]
+        },
+        {
+          "teal": 476,
+          "source": "contracts/raffle/raffle_factory.algo.ts:97",
+          "pc": [
+            4058,
+            4059
+          ]
+        },
+        {
+          "teal": 477,
+          "source": "contracts/raffle/raffle_factory.algo.ts:97",
+          "pc": [
+            4060,
+            4061
+          ]
+        },
+        {
+          "teal": 478,
+          "source": "contracts/raffle/raffle_factory.algo.ts:97",
+          "pc": [
+            4062
+          ]
+        },
+        {
+          "teal": 479,
+          "source": "contracts/raffle/raffle_factory.algo.ts:97",
+          "pc": [
+            4063,
+            4064
+          ]
+        },
+        {
+          "teal": 483,
+          "source": "contracts/raffle/raffle_factory.algo.ts:98",
+          "pc": [
+            4065,
+            4066
+          ]
+        },
+        {
+          "teal": 484,
+          "source": "contracts/raffle/raffle_factory.algo.ts:98",
+          "pc": [
+            4067,
+            4068
+          ]
+        },
+        {
+          "teal": 485,
+          "source": "contracts/raffle/raffle_factory.algo.ts:98",
+          "pc": [
+            4069
+          ]
+        },
+        {
+          "teal": 486,
+          "source": "contracts/raffle/raffle_factory.algo.ts:98",
+          "pc": [
+            4070,
+            4071
+          ]
+        },
+        {
+          "teal": 490,
+          "source": "contracts/raffle/raffle_factory.algo.ts:99",
+          "pc": [
+            4072
+          ]
+        },
+        {
+          "teal": 491,
+          "source": "contracts/raffle/raffle_factory.algo.ts:99",
+          "pc": [
+            4073,
+            4074
+          ]
+        },
+        {
+          "teal": 492,
+          "source": "contracts/raffle/raffle_factory.algo.ts:93",
+          "pc": [
+            4075
+          ]
+        },
+        {
+          "teal": 493,
+          "source": "contracts/raffle/raffle_factory.algo.ts:93",
+          "pc": [
+            4076
+          ]
+        },
+        {
+          "teal": 494,
+          "source": "contracts/raffle/raffle_factory.algo.ts:93",
+          "pc": [
+            4077,
+            4078
+          ]
+        },
+        {
+          "teal": 495,
+          "source": "contracts/raffle/raffle_factory.algo.ts:93",
+          "pc": [
+            4079,
+            4080,
+            4081,
+            4082,
+            4083,
+            4084
+          ]
+        },
+        {
+          "teal": 496,
+          "source": "contracts/raffle/raffle_factory.algo.ts:93",
+          "pc": [
+            4085,
+            4086
+          ]
+        },
+        {
+          "teal": 500,
+          "source": "contracts/raffle/raffle_factory.algo.ts:94",
+          "pc": [
+            4087,
+            4088
+          ]
+        },
+        {
+          "teal": 501,
+          "source": "contracts/raffle/raffle_factory.algo.ts:94",
+          "pc": [
+            4089,
+            4090
+          ]
+        },
+        {
+          "teal": 512,
+          "source": "contracts/raffle/raffle_factory.algo.ts:101",
+          "pc": [
+            4091,
+            4092
+          ]
+        },
+        {
+          "teal": 513,
+          "source": "contracts/raffle/raffle_factory.algo.ts:101",
+          "pc": [
+            4093
+          ]
+        },
+        {
+          "teal": 514,
+          "source": "contracts/raffle/raffle_factory.algo.ts:101",
+          "pc": [
+            4094,
+            4095
+          ]
+        },
+        {
+          "teal": 518,
+          "source": "contracts/raffle/raffle_factory.algo.ts:103",
+          "pc": [
+            4096
+          ]
+        },
+        {
+          "teal": 519,
+          "source": "contracts/raffle/raffle_factory.algo.ts:103",
+          "pc": [
+            4097,
+            4098
+          ]
+        },
+        {
+          "teal": 524,
+          "source": "contracts/raffle/raffle_factory.algo.ts:106",
+          "pc": [
+            4099,
+            4100
+          ]
+        },
+        {
+          "teal": 525,
+          "source": "contracts/raffle/raffle_factory.algo.ts:106",
+          "pc": [
+            4101
+          ]
+        },
+        {
+          "teal": 526,
+          "source": "contracts/raffle/raffle_factory.algo.ts:106",
+          "pc": [
+            4102,
+            4103,
+            4104
+          ]
+        },
+        {
+          "teal": 542,
+          "source": "contracts/raffle/raffle_factory.algo.ts:110",
+          "pc": [
+            4105
+          ]
+        },
+        {
+          "teal": 543,
+          "source": "contracts/raffle/raffle_factory.algo.ts:110",
+          "pc": [
+            4106
+          ]
+        },
+        {
+          "teal": 544,
+          "source": "contracts/raffle/raffle_factory.algo.ts:110",
+          "pc": [
+            4107,
+            4108
+          ]
+        },
+        {
+          "teal": 548,
+          "source": "contracts/raffle/raffle_factory.algo.ts:111",
+          "pc": [
+            4109,
+            4110
+          ]
+        },
+        {
+          "teal": 549,
+          "source": "contracts/raffle/raffle_factory.algo.ts:111",
+          "pc": [
+            4111,
+            4112
+          ]
+        },
+        {
+          "teal": 550,
+          "source": "contracts/raffle/raffle_factory.algo.ts:111",
+          "pc": [
+            4113
+          ]
+        },
+        {
+          "teal": 551,
+          "source": "contracts/raffle/raffle_factory.algo.ts:111",
+          "pc": [
+            4114,
+            4115
+          ]
+        },
+        {
+          "teal": 555,
+          "source": "contracts/raffle/raffle_factory.algo.ts:112",
+          "pc": [
+            4116,
+            4117
+          ]
+        },
+        {
+          "teal": 556,
+          "source": "contracts/raffle/raffle_factory.algo.ts:112",
+          "pc": [
+            4118,
+            4119
+          ]
+        },
+        {
+          "teal": 560,
+          "source": "contracts/raffle/raffle_factory.algo.ts:113",
+          "pc": [
+            4120
+          ]
+        },
+        {
+          "teal": 561,
+          "source": "contracts/raffle/raffle_factory.algo.ts:113",
+          "pc": [
+            4121,
+            4122
+          ]
+        },
+        {
+          "teal": 562,
+          "source": "contracts/raffle/raffle_factory.algo.ts:107",
+          "pc": [
+            4123
+          ]
+        },
+        {
+          "teal": 563,
+          "source": "contracts/raffle/raffle_factory.algo.ts:107",
+          "pc": [
+            4124
+          ]
+        },
+        {
+          "teal": 564,
+          "source": "contracts/raffle/raffle_factory.algo.ts:107",
+          "pc": [
+            4125,
+            4126
+          ]
+        },
+        {
+          "teal": 565,
+          "source": "contracts/raffle/raffle_factory.algo.ts:107",
+          "pc": [
+            4127
+          ]
+        },
+        {
+          "teal": 566,
+          "source": "contracts/raffle/raffle_factory.algo.ts:107",
+          "pc": [
+            4128,
+            4129
+          ]
+        },
+        {
+          "teal": 570,
+          "source": "contracts/raffle/raffle_factory.algo.ts:108",
+          "pc": [
+            4130,
+            4131
+          ]
+        },
+        {
+          "teal": 571,
+          "source": "contracts/raffle/raffle_factory.algo.ts:108",
+          "pc": [
+            4132,
+            4133
+          ]
+        },
+        {
+          "teal": 582,
+          "source": "contracts/raffle/raffle_factory.algo.ts:115",
+          "pc": [
+            4134,
+            4135
+          ]
+        },
+        {
+          "teal": 583,
+          "source": "contracts/raffle/raffle_factory.algo.ts:115",
+          "pc": [
+            4136,
+            4137
+          ]
+        },
+        {
+          "teal": 584,
+          "source": "contracts/raffle/raffle_factory.algo.ts:115",
+          "pc": [
+            4138
+          ]
+        },
+        {
+          "teal": 585,
+          "source": "contracts/raffle/raffle_factory.algo.ts:115",
+          "pc": [
+            4139,
+            4140
+          ]
+        },
+        {
+          "teal": 589,
+          "source": "contracts/raffle/raffle_factory.algo.ts:117",
+          "pc": [
+            4141
+          ]
+        },
+        {
+          "teal": 590,
+          "source": "contracts/raffle/raffle_factory.algo.ts:117",
+          "pc": [
+            4142,
+            4143
+          ]
+        },
+        {
+          "teal": 600,
+          "source": "contracts/raffle/raffle_factory.algo.ts:121",
+          "pc": [
+            4144
+          ]
+        },
+        {
+          "teal": 601,
+          "source": "contracts/raffle/raffle_factory.algo.ts:121",
+          "pc": [
+            4145
+          ]
+        },
+        {
+          "teal": 602,
+          "source": "contracts/raffle/raffle_factory.algo.ts:121",
+          "pc": [
+            4146,
+            4147
+          ]
+        },
+        {
+          "teal": 606,
+          "source": "contracts/raffle/raffle_factory.algo.ts:122",
+          "pc": [
+            4148,
+            4149
+          ]
+        },
+        {
+          "teal": 607,
+          "source": "contracts/raffle/raffle_factory.algo.ts:122",
+          "pc": [
+            4150,
+            4151
+          ]
+        },
+        {
+          "teal": 608,
+          "source": "contracts/raffle/raffle_factory.algo.ts:122",
+          "pc": [
+            4152
+          ]
+        },
+        {
+          "teal": 609,
+          "source": "contracts/raffle/raffle_factory.algo.ts:122",
+          "pc": [
+            4153,
+            4154
+          ]
+        },
+        {
+          "teal": 613,
+          "source": "contracts/raffle/raffle_factory.algo.ts:123",
+          "pc": [
+            4155,
+            4156
+          ]
+        },
+        {
+          "teal": 614,
+          "source": "contracts/raffle/raffle_factory.algo.ts:123",
+          "pc": [
+            4157,
+            4158
+          ]
+        },
+        {
+          "teal": 615,
+          "source": "contracts/raffle/raffle_factory.algo.ts:123",
+          "pc": [
+            4159,
+            4160
+          ]
+        },
+        {
+          "teal": 619,
+          "source": "contracts/raffle/raffle_factory.algo.ts:124",
+          "pc": [
+            4161,
+            4162
+          ]
+        },
+        {
+          "teal": 620,
+          "source": "contracts/raffle/raffle_factory.algo.ts:124",
+          "pc": [
+            4163,
+            4164
+          ]
+        },
+        {
+          "teal": 621,
+          "source": "contracts/raffle/raffle_factory.algo.ts:124",
+          "pc": [
+            4165,
+            4166
+          ]
+        },
+        {
+          "teal": 625,
+          "source": "contracts/raffle/raffle_factory.algo.ts:125",
+          "pc": [
+            4167
+          ]
+        },
+        {
+          "teal": 626,
+          "source": "contracts/raffle/raffle_factory.algo.ts:125",
+          "pc": [
+            4168,
+            4169
+          ]
+        },
+        {
+          "teal": 631,
+          "source": "contracts/raffle/raffle_factory.algo.ts:128",
+          "pc": [
+            4170,
+            4171
+          ]
+        },
+        {
+          "teal": 632,
+          "source": "contracts/raffle/raffle_factory.algo.ts:128",
+          "pc": [
+            4172
+          ]
+        },
+        {
+          "teal": 633,
+          "source": "contracts/raffle/raffle_factory.algo.ts:128",
+          "pc": [
+            4173,
+            4174,
+            4175
+          ]
+        },
+        {
+          "teal": 649,
+          "source": "contracts/raffle/raffle_factory.algo.ts:132",
+          "pc": [
+            4176
+          ]
+        },
+        {
+          "teal": 650,
+          "source": "contracts/raffle/raffle_factory.algo.ts:132",
+          "pc": [
+            4177
           ]
         },
         {
           "teal": 651,
-          "source": "contracts/raffle/raffle_factory.algo.ts:11",
+          "source": "contracts/raffle/raffle_factory.algo.ts:132",
+          "pc": [
+            4178,
+            4179
+          ]
+        },
+        {
+          "teal": 655,
+          "source": "contracts/raffle/raffle_factory.algo.ts:133",
+          "pc": [
+            4180,
+            4181
+          ]
+        },
+        {
+          "teal": 656,
+          "source": "contracts/raffle/raffle_factory.algo.ts:133",
+          "pc": [
+            4182,
+            4183
+          ]
+        },
+        {
+          "teal": 657,
+          "source": "contracts/raffle/raffle_factory.algo.ts:133",
+          "pc": [
+            4184
+          ]
+        },
+        {
+          "teal": 658,
+          "source": "contracts/raffle/raffle_factory.algo.ts:133",
+          "pc": [
+            4185,
+            4186
+          ]
+        },
+        {
+          "teal": 662,
+          "source": "contracts/raffle/raffle_factory.algo.ts:134",
+          "pc": [
+            4187,
+            4188
+          ]
+        },
+        {
+          "teal": 663,
+          "source": "contracts/raffle/raffle_factory.algo.ts:134",
+          "pc": [
+            4189,
+            4190
+          ]
+        },
+        {
+          "teal": 667,
+          "source": "contracts/raffle/raffle_factory.algo.ts:135",
+          "pc": [
+            4191
+          ]
+        },
+        {
+          "teal": 668,
+          "source": "contracts/raffle/raffle_factory.algo.ts:135",
+          "pc": [
+            4192,
+            4193
+          ]
+        },
+        {
+          "teal": 669,
+          "source": "contracts/raffle/raffle_factory.algo.ts:129",
+          "pc": [
+            4194
+          ]
+        },
+        {
+          "teal": 670,
+          "source": "contracts/raffle/raffle_factory.algo.ts:129",
+          "pc": [
+            4195
+          ]
+        },
+        {
+          "teal": 671,
+          "source": "contracts/raffle/raffle_factory.algo.ts:129",
+          "pc": [
+            4196,
+            4197
+          ]
+        },
+        {
+          "teal": 672,
+          "source": "contracts/raffle/raffle_factory.algo.ts:129",
+          "pc": [
+            4198
+          ]
+        },
+        {
+          "teal": 673,
+          "source": "contracts/raffle/raffle_factory.algo.ts:129",
+          "pc": [
+            4199,
+            4200
+          ]
+        },
+        {
+          "teal": 677,
+          "source": "contracts/raffle/raffle_factory.algo.ts:130",
+          "pc": [
+            4201,
+            4202
+          ]
+        },
+        {
+          "teal": 678,
+          "source": "contracts/raffle/raffle_factory.algo.ts:130",
+          "pc": [
+            4203,
+            4204
+          ]
+        },
+        {
+          "teal": 689,
+          "source": "contracts/raffle/raffle_factory.algo.ts:137",
+          "pc": [
+            4205,
+            4206
+          ]
+        },
+        {
+          "teal": 690,
+          "source": "contracts/raffle/raffle_factory.algo.ts:137",
+          "pc": [
+            4207
+          ]
+        },
+        {
+          "teal": 691,
+          "source": "contracts/raffle/raffle_factory.algo.ts:137",
+          "pc": [
+            4208,
+            4209
+          ]
+        },
+        {
+          "teal": 695,
+          "source": "contracts/raffle/raffle_factory.algo.ts:139",
+          "pc": [
+            4210
+          ]
+        },
+        {
+          "teal": 696,
+          "source": "contracts/raffle/raffle_factory.algo.ts:139",
+          "pc": [
+            4211,
+            4212
+          ]
+        },
+        {
+          "teal": 701,
+          "source": "contracts/raffle/raffle_factory.algo.ts:143",
+          "pc": [
+            4213
+          ]
+        },
+        {
+          "teal": 705,
+          "source": "contracts/raffle/raffle_factory.algo.ts:145",
+          "pc": [
+            4214,
+            4215
+          ]
+        },
+        {
+          "teal": 708,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
+          "pc": [
+            4216,
+            4217
+          ]
+        },
+        {
+          "teal": 711,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
+          "pc": [
+            4218,
+            4219
+          ]
+        },
+        {
+          "teal": 712,
+          "source": "contracts/raffle/raffle_factory.algo.ts:34",
+          "pc": [
+            4220
+          ]
+        },
+        {
+          "teal": 717,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4221,
+            4222,
+            4223
+          ]
+        },
+        {
+          "teal": 718,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4224
+          ]
+        },
+        {
+          "teal": 721,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4225,
+            4226,
+            4227
+          ]
+        },
+        {
+          "teal": 722,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4228
+          ]
+        },
+        {
+          "teal": 723,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4229
+          ]
+        },
+        {
+          "teal": 724,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4230,
+            4231
+          ]
+        },
+        {
+          "teal": 725,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4232
+          ]
+        },
+        {
+          "teal": 728,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "errorMessage": "argument 1 (creator) for clearWeightsBoxes must be a address",
+          "pc": [
+            4233
+          ]
+        },
+        {
+          "teal": 731,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4234,
+            4235,
+            4236
+          ]
+        },
+        {
+          "teal": 732,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4237
+          ]
+        },
+        {
+          "teal": 733,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4238
+          ]
+        },
+        {
+          "teal": 737,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4239,
+            4240,
+            4241
+          ]
+        },
+        {
+          "teal": 740,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4242
+          ]
+        },
+        {
+          "teal": 741,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4243
+          ]
+        },
+        {
+          "teal": 745,
+          "source": "contracts/raffle/raffle_factory.algo.ts:149",
+          "pc": [
+            4244,
+            4245
+          ]
+        },
+        {
+          "teal": 746,
+          "source": "contracts/raffle/raffle_factory.algo.ts:149",
+          "pc": [
+            4246,
+            4247
+          ]
+        },
+        {
+          "teal": 747,
+          "source": "contracts/raffle/raffle_factory.algo.ts:149",
+          "pc": [
+            4248
+          ]
+        },
+        {
+          "teal": 748,
+          "source": "contracts/raffle/raffle_factory.algo.ts:149",
+          "pc": [
+            4249
+          ]
+        },
+        {
+          "teal": 749,
+          "source": "contracts/raffle/raffle_factory.algo.ts:149",
+          "pc": [
+            4250,
+            4251
+          ]
+        },
+        {
+          "teal": 753,
+          "source": "contracts/raffle/raffle_factory.algo.ts:150",
+          "pc": [
+            4252,
+            4253
+          ]
+        },
+        {
+          "teal": 754,
+          "source": "contracts/raffle/raffle_factory.algo.ts:150",
+          "pc": [
+            4254
+          ]
+        },
+        {
+          "teal": 755,
+          "source": "contracts/raffle/raffle_factory.algo.ts:150",
+          "pc": [
+            4255
+          ]
+        },
+        {
+          "teal": 756,
+          "source": "contracts/raffle/raffle_factory.algo.ts:150",
+          "pc": [
+            4256
+          ]
+        },
+        {
+          "teal": 757,
+          "source": "contracts/raffle/raffle_factory.algo.ts:150",
+          "pc": [
+            4257
+          ]
+        },
+        {
+          "teal": 765,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4258
+          ]
+        },
+        {
+          "teal": 766,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4259
+          ]
+        },
+        {
+          "teal": 767,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4260,
+            4261
+          ]
+        },
+        {
+          "teal": 768,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4262,
+            4263,
+            4264,
+            4265,
+            4266,
+            4267
+          ]
+        },
+        {
+          "teal": 769,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4268,
+            4269
+          ]
+        },
+        {
+          "teal": 773,
+          "source": "contracts/raffle/raffle_factory.algo.ts:153",
+          "pc": [
+            4270,
+            4271
+          ]
+        },
+        {
+          "teal": 774,
+          "source": "contracts/raffle/raffle_factory.algo.ts:153",
+          "pc": [
+            4272,
+            4273
+          ]
+        },
+        {
+          "teal": 780,
+          "source": "contracts/raffle/raffle_factory.algo.ts:155",
+          "pc": [
+            4274
+          ]
+        },
+        {
+          "teal": 781,
+          "source": "contracts/raffle/raffle_factory.algo.ts:155",
+          "pc": [
+            4275,
+            4276
+          ]
+        },
+        {
+          "teal": 784,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4277
+          ]
+        },
+        {
+          "teal": 785,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4278,
+            4279
+          ]
+        },
+        {
+          "teal": 786,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4280
+          ]
+        },
+        {
+          "teal": 787,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4281
+          ]
+        },
+        {
+          "teal": 788,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4282,
+            4283
+          ]
+        },
+        {
+          "teal": 789,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4284,
+            4285,
+            4286
+          ]
+        },
+        {
+          "teal": 790,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4287
+          ]
+        },
+        {
+          "teal": 791,
+          "source": "contracts/raffle/raffle_factory.algo.ts:152",
+          "pc": [
+            4288,
+            4289
+          ]
+        },
+        {
+          "teal": 795,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4290,
+            4291
+          ]
+        },
+        {
+          "teal": 796,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4292
+          ]
+        },
+        {
+          "teal": 799,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "errorMessage": "box value does not exist: this.appCreators(keys).value",
+          "pc": [
+            4293
+          ]
+        },
+        {
+          "teal": 800,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4294
+          ]
+        },
+        {
+          "teal": 801,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4295,
+            4296
+          ]
+        },
+        {
+          "teal": 802,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4297
+          ]
+        },
+        {
+          "teal": 803,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4298,
+            4299
+          ]
+        },
+        {
+          "teal": 804,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4300
+          ]
+        },
+        {
+          "teal": 805,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4301
+          ]
+        },
+        {
+          "teal": 806,
+          "source": "contracts/raffle/raffle_factory.algo.ts:158",
+          "pc": [
+            4302
+          ]
+        },
+        {
+          "teal": 807,
+          "source": "contracts/raffle/raffle_factory.algo.ts:148",
+          "pc": [
+            4303
+          ]
+        },
+        {
+          "teal": 812,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4304,
+            4305,
+            4306
+          ]
+        },
+        {
+          "teal": 813,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4307
+          ]
+        },
+        {
+          "teal": 816,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4308,
+            4309,
+            4310
+          ]
+        },
+        {
+          "teal": 817,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4311
+          ]
+        },
+        {
+          "teal": 818,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4312
+          ]
+        },
+        {
+          "teal": 819,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4313,
+            4314
+          ]
+        },
+        {
+          "teal": 820,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4315
+          ]
+        },
+        {
+          "teal": 823,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "errorMessage": "argument 1 (creator) for deleteAuctionApp must be a address",
+          "pc": [
+            4316
+          ]
+        },
+        {
+          "teal": 826,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4317,
+            4318,
+            4319
+          ]
+        },
+        {
+          "teal": 827,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4320
+          ]
+        },
+        {
+          "teal": 828,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4321
+          ]
+        },
+        {
+          "teal": 832,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4322,
+            4323,
+            4324
+          ]
+        },
+        {
+          "teal": 835,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4325
+          ]
+        },
+        {
+          "teal": 836,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4326,
+            4327
+          ]
+        },
+        {
+          "teal": 840,
+          "source": "contracts/raffle/raffle_factory.algo.ts:162",
+          "pc": [
+            4328,
+            4329
+          ]
+        },
+        {
+          "teal": 841,
+          "source": "contracts/raffle/raffle_factory.algo.ts:162",
+          "pc": [
+            4330,
+            4331
+          ]
+        },
+        {
+          "teal": 842,
+          "source": "contracts/raffle/raffle_factory.algo.ts:162",
+          "pc": [
+            4332
+          ]
+        },
+        {
+          "teal": 843,
+          "source": "contracts/raffle/raffle_factory.algo.ts:162",
+          "pc": [
+            4333
+          ]
+        },
+        {
+          "teal": 844,
+          "source": "contracts/raffle/raffle_factory.algo.ts:162",
+          "pc": [
+            4334,
+            4335
+          ]
+        },
+        {
+          "teal": 848,
+          "source": "contracts/raffle/raffle_factory.algo.ts:163",
+          "pc": [
+            4336,
+            4337
+          ]
+        },
+        {
+          "teal": 849,
+          "source": "contracts/raffle/raffle_factory.algo.ts:163",
+          "pc": [
+            4338
+          ]
+        },
+        {
+          "teal": 850,
+          "source": "contracts/raffle/raffle_factory.algo.ts:163",
+          "pc": [
+            4339
+          ]
+        },
+        {
+          "teal": 851,
+          "source": "contracts/raffle/raffle_factory.algo.ts:163",
+          "pc": [
+            4340
+          ]
+        },
+        {
+          "teal": 852,
+          "source": "contracts/raffle/raffle_factory.algo.ts:163",
+          "pc": [
+            4341
+          ]
+        },
+        {
+          "teal": 856,
+          "source": "contracts/raffle/raffle_factory.algo.ts:165",
+          "pc": [
+            4342,
+            4343
+          ]
+        },
+        {
+          "teal": 857,
+          "source": "contracts/raffle/raffle_factory.algo.ts:165",
+          "pc": [
+            4344,
+            4345
+          ]
+        },
+        {
+          "teal": 858,
+          "source": "contracts/raffle/raffle_factory.algo.ts:165",
+          "pc": [
+            4346
+          ]
+        },
+        {
+          "teal": 859,
+          "source": "contracts/raffle/raffle_factory.algo.ts:165",
+          "pc": [
+            4347,
+            4348
+          ]
+        },
+        {
+          "teal": 867,
+          "source": "contracts/raffle/raffle_factory.algo.ts:166",
+          "pc": [
+            4349
+          ]
+        },
+        {
+          "teal": 868,
+          "source": "contracts/raffle/raffle_factory.algo.ts:166",
+          "pc": [
+            4350
+          ]
+        },
+        {
+          "teal": 869,
+          "source": "contracts/raffle/raffle_factory.algo.ts:166",
+          "pc": [
+            4351,
+            4352
+          ]
+        },
+        {
+          "teal": 870,
+          "source": "contracts/raffle/raffle_factory.algo.ts:166",
+          "pc": [
+            4353,
+            4354,
+            4355,
+            4356,
+            4357,
+            4358
+          ]
+        },
+        {
+          "teal": 871,
+          "source": "contracts/raffle/raffle_factory.algo.ts:166",
+          "pc": [
+            4359,
+            4360
+          ]
+        },
+        {
+          "teal": 875,
+          "source": "contracts/raffle/raffle_factory.algo.ts:167",
+          "pc": [
+            4361,
+            4362
+          ]
+        },
+        {
+          "teal": 876,
+          "source": "contracts/raffle/raffle_factory.algo.ts:167",
+          "pc": [
+            4363,
+            4364
+          ]
+        },
+        {
+          "teal": 882,
+          "source": "contracts/raffle/raffle_factory.algo.ts:169",
+          "pc": [
+            4365
+          ]
+        },
+        {
+          "teal": 883,
+          "source": "contracts/raffle/raffle_factory.algo.ts:169",
+          "pc": [
+            4366,
+            4367
+          ]
+        },
+        {
+          "teal": 886,
+          "source": "contracts/raffle/raffle_factory.algo.ts:166",
+          "pc": [
+            4368
+          ]
+        },
+        {
+          "teal": 890,
+          "source": "contracts/raffle/raffle_factory.algo.ts:171",
+          "pc": [
+            4369,
+            4370
+          ]
+        },
+        {
+          "teal": 891,
+          "source": "contracts/raffle/raffle_factory.algo.ts:171",
+          "pc": [
+            4371,
+            4372
+          ]
+        },
+        {
+          "teal": 892,
+          "source": "contracts/raffle/raffle_factory.algo.ts:171",
+          "pc": [
+            4373
+          ]
+        },
+        {
+          "teal": 893,
+          "source": "contracts/raffle/raffle_factory.algo.ts:171",
+          "pc": [
+            4374,
+            4375
+          ]
+        },
+        {
+          "teal": 901,
+          "source": "contracts/raffle/raffle_factory.algo.ts:173",
+          "pc": [
+            4376
+          ]
+        },
+        {
+          "teal": 902,
+          "source": "contracts/raffle/raffle_factory.algo.ts:173",
+          "pc": [
+            4377
+          ]
+        },
+        {
+          "teal": 903,
+          "source": "contracts/raffle/raffle_factory.algo.ts:173",
+          "pc": [
+            4378,
+            4379
+          ]
+        },
+        {
+          "teal": 907,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4380,
+            4381
+          ]
+        },
+        {
+          "teal": 908,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4382
+          ]
+        },
+        {
+          "teal": 911,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "errorMessage": "box value does not exist: this.appCreators(keys).value",
+          "pc": [
+            4383
+          ]
+        },
+        {
+          "teal": 912,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4384
+          ]
+        },
+        {
+          "teal": 913,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4385,
+            4386
+          ]
+        },
+        {
+          "teal": 914,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4387,
+            4388
+          ]
+        },
+        {
+          "teal": 915,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4389
+          ]
+        },
+        {
+          "teal": 916,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4390
+          ]
+        },
+        {
+          "teal": 917,
+          "source": "contracts/raffle/raffle_factory.algo.ts:174",
+          "pc": [
+            4391,
+            4392
+          ]
+        },
+        {
+          "teal": 921,
+          "source": "contracts/raffle/raffle_factory.algo.ts:175",
+          "pc": [
+            4393,
+            4394
+          ]
+        },
+        {
+          "teal": 922,
+          "source": "contracts/raffle/raffle_factory.algo.ts:175",
+          "pc": [
+            4395,
+            4396
+          ]
+        },
+        {
+          "teal": 926,
+          "source": "contracts/raffle/raffle_factory.algo.ts:176",
+          "pc": [
+            4397
+          ]
+        },
+        {
+          "teal": 927,
+          "source": "contracts/raffle/raffle_factory.algo.ts:176",
+          "pc": [
+            4398,
+            4399
+          ]
+        },
+        {
+          "teal": 930,
+          "source": "contracts/raffle/raffle_factory.algo.ts:173",
+          "pc": [
+            4400
+          ]
+        },
+        {
+          "teal": 931,
+          "source": "contracts/raffle/raffle_factory.algo.ts:161",
+          "pc": [
+            4401
+          ]
+        },
+        {
+          "teal": 934,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4402,
+            4403,
+            4404,
+            4405,
+            4406,
+            4407
+          ]
+        },
+        {
+          "teal": 935,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4408,
+            4409,
+            4410
+          ]
+        },
+        {
+          "teal": 936,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4411,
+            4412,
+            4413,
+            4414
+          ]
+        },
+        {
+          "teal": 939,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "errorMessage": "this contract does not implement the given ABI method for create NoOp",
+          "pc": [
+            4415
+          ]
+        },
+        {
+          "teal": 942,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4416
+          ]
+        },
+        {
+          "teal": 943,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4417,
+            4418,
+            4419,
+            4420,
+            4421,
+            4422
+          ]
+        },
+        {
+          "teal": 944,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4423,
+            4424,
+            4425,
+            4426,
+            4427,
+            4428
+          ]
+        },
+        {
+          "teal": 945,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4429,
+            4430,
+            4431,
+            4432,
+            4433,
+            4434
+          ]
+        },
+        {
+          "teal": 946,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4435,
+            4436,
+            4437
+          ]
+        },
+        {
+          "teal": 947,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4438,
+            4439,
+            4440,
+            4441,
+            4442,
+            4443,
+            4444,
+            4445,
+            4446,
+            4447
+          ]
+        },
+        {
+          "teal": 950,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "errorMessage": "this contract does not implement the given ABI method for call NoOp",
+          "pc": [
+            4448
+          ]
+        },
+        {
+          "teal": 953,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4449,
+            4450,
+            4451,
+            4452,
+            4453,
+            4454
+          ]
+        },
+        {
+          "teal": 954,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4455,
+            4456,
+            4457
+          ]
+        },
+        {
+          "teal": 955,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
+          "pc": [
+            4458,
+            4459,
+            4460,
+            4461
+          ]
+        },
+        {
+          "teal": 958,
+          "source": "contracts/raffle/raffle_factory.algo.ts:18",
           "errorMessage": "this contract does not implement the given ABI method for call UpdateApplication",
           "pc": [
-            3251
+            4462
           ]
         }
       ],
@@ -5128,7 +7331,7 @@
     }
   },
   "source": {
-    "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCmludGNibG9jayAwIDEgNiA0IFRNUExfYWtpdGFEYW9BcHBJRApieXRlY2Jsb2NrIDB4IDB4M2VhMTE4MzIKCi8vIFRoaXMgVEVBTCB3YXMgZ2VuZXJhdGVkIGJ5IFRFQUxTY3JpcHQgdjAuMTA2LjEKLy8gaHR0cHM6Ly9naXRodWIuY29tL2FsZ29yYW5kZm91bmRhdGlvbi9URUFMU2NyaXB0CgovLyBUaGlzIGNvbnRyYWN0IGlzIGNvbXBsaWFudCB3aXRoIGFuZC9vciBpbXBsZW1lbnRzIHRoZSBmb2xsb3dpbmcgQVJDczogWyBBUkM0IF0KCi8vIFRoZSBmb2xsb3dpbmcgdGVuIGxpbmVzIG9mIFRFQUwgaGFuZGxlIGluaXRpYWwgcHJvZ3JhbSBmbG93Ci8vIFRoaXMgcGF0dGVybiBpcyB1c2VkIHRvIG1ha2UgaXQgZWFzeSBmb3IgYW55b25lIHRvIHBhcnNlIHRoZSBzdGFydCBvZiB0aGUgcHJvZ3JhbSBhbmQgZGV0ZXJtaW5lIGlmIGEgc3BlY2lmaWMgYWN0aW9uIGlzIGFsbG93ZWQKLy8gSGVyZSwgYWN0aW9uIHJlZmVycyB0byB0aGUgT25Db21wbGV0ZSBpbiBjb21iaW5hdGlvbiB3aXRoIHdoZXRoZXIgdGhlIGFwcCBpcyBiZWluZyBjcmVhdGVkIG9yIGNhbGxlZAovLyBFdmVyeSBwb3NzaWJsZSBhY3Rpb24gZm9yIHRoaXMgY29udHJhY3QgaXMgcmVwcmVzZW50ZWQgaW4gdGhlIHN3aXRjaCBzdGF0ZW1lbnQKLy8gSWYgdGhlIGFjdGlvbiBpcyBub3QgaW1wbGVtZW50ZWQgaW4gdGhlIGNvbnRyYWN0LCBpdHMgcmVzcGVjdGl2ZSBicmFuY2ggd2lsbCBiZSAiKk5PVF9JTVBMRU1FTlRFRCIgd2hpY2gganVzdCBjb250YWlucyAiZXJyIgp0eG4gQXBwbGljYXRpb25JRAohCmludGMgMiAvLyA2CioKdHhuIE9uQ29tcGxldGlvbgorCnN3aXRjaCAqY2FsbF9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpjYWxsX1VwZGF0ZUFwcGxpY2F0aW9uICpOT1RfSU1QTEVNRU5URUQgKmNyZWF0ZV9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRAoKKk5PVF9JTVBMRU1FTlRFRDoKCS8vIFRoZSByZXF1ZXN0ZWQgYWN0aW9uIGlzIG5vdCBpbXBsZW1lbnRlZCBpbiB0aGlzIGNvbnRyYWN0LiBBcmUgeW91IHVzaW5nIHRoZSBjb3JyZWN0IE9uQ29tcGxldGU/IERpZCB5b3Ugc2V0IHlvdXIgYXBwIElEPwoJZXJyCgovLyBvcHRpbihwYXksdWludDY0KXZvaWQKKmFiaV9yb3V0ZV9vcHRpbjoKCS8vIGFzc2V0OiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWJ0b2kKCgkvLyBwYXltZW50OiBwYXkKCXR4biBHcm91cEluZGV4CglpbnRjIDEgLy8gMQoJLQoJZHVwCglndHhucyBUeXBlRW51bQoJaW50YyAxIC8vICBwYXkKCT09CgoJLy8gYXJndW1lbnQgMSAocGF5bWVudCkgZm9yIG9wdGluIG11c3QgYmUgYSBwYXkgdHJhbnNhY3Rpb24KCWFzc2VydAoKCS8vIGV4ZWN1dGUgb3B0aW4ocGF5LHVpbnQ2NCl2b2lkCgljYWxsc3ViIG9wdGluCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyBvcHRpbihwYXltZW50OiBQYXlUeG4sIGFzc2V0OiBBc3NldElEKTogdm9pZAovLwovLyBvcHRpbiB0ZWxscyB0aGUgY29udHJhY3QgdG8gb3B0IGludG8gYW4gYXNhCi8vIEBwYXJhbSBwYXltZW50IFRoZSBwYXltZW50IHRyYW5zYWN0aW9uCi8vIEBwYXJhbSBhc3NldCBUaGUgYXNzZXQgdG8gYmUgb3B0ZWQgaW50bwpvcHRpbjoKCXByb3RvIDIgMAoKCS8vIHV0aWxzL2Jhc2VfY29udHJhY3RzL29wdGluLmFsZ28udHM6MTYKCS8vIHZlcmlmeVBheVR4bihwYXltZW50LCB7CgkvLyAgICAgICAgICAgICByZWNlaXZlcjogdGhpcy5hcHAuYWRkcmVzcywKCS8vICAgICAgICAgICAgIGFtb3VudDogZ2xvYmFscy5hc3NldE9wdEluTWluQmFsYW5jZSwKCS8vICAgICAgICAgfSkKCS8vIHZlcmlmeSByZWNlaXZlcgoJZnJhbWVfZGlnIC0xIC8vIHBheW1lbnQ6IFBheVR4bgoJZ3R4bnMgUmVjZWl2ZXIKCWdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCgk9PQoKCS8vIHRyYW5zYWN0aW9uIHZlcmlmaWNhdGlvbiBmYWlsZWQ6IHsidHhuIjoicGF5bWVudCIsImZpZWxkIjoicmVjZWl2ZXIiLCJleHBlY3RlZCI6InRoaXMuYXBwLmFkZHJlc3MifQoJYXNzZXJ0CgoJLy8gdmVyaWZ5IGFtb3VudAoJZnJhbWVfZGlnIC0xIC8vIHBheW1lbnQ6IFBheVR4bgoJZ3R4bnMgQW1vdW50CglnbG9iYWwgQXNzZXRPcHRJbk1pbkJhbGFuY2UKCT09CgoJLy8gdHJhbnNhY3Rpb24gdmVyaWZpY2F0aW9uIGZhaWxlZDogeyJ0eG4iOiJwYXltZW50IiwiZmllbGQiOiJhbW91bnQiLCJleHBlY3RlZCI6Imdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UifQoJYXNzZXJ0CgoJLy8gdXRpbHMvYmFzZV9jb250cmFjdHMvb3B0aW4uYWxnby50czoyMQoJLy8gc2VuZEFzc2V0VHJhbnNmZXIoewoJLy8gICAgICAgICAgICAgc2VuZGVyOiB0aGlzLmFwcC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgYXNzZXRSZWNlaXZlcjogdGhpcy5hcHAuYWRkcmVzcywKCS8vICAgICAgICAgICAgIGFzc2V0QW1vdW50OiAwLAoJLy8gICAgICAgICAgICAgeGZlckFzc2V0OiBhc3NldCwKCS8vICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgfSkKCWl0eG5fYmVnaW4KCWludGMgMyAvLyAgYXhmZXIKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyB1dGlscy9iYXNlX2NvbnRyYWN0cy9vcHRpbi5hbGdvLnRzOjIyCgkvLyBzZW5kZXI6IHRoaXMuYXBwLmFkZHJlc3MKCWdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIHV0aWxzL2Jhc2VfY29udHJhY3RzL29wdGluLmFsZ28udHM6MjMKCS8vIGFzc2V0UmVjZWl2ZXI6IHRoaXMuYXBwLmFkZHJlc3MKCWdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCglpdHhuX2ZpZWxkIEFzc2V0UmVjZWl2ZXIKCgkvLyB1dGlscy9iYXNlX2NvbnRyYWN0cy9vcHRpbi5hbGdvLnRzOjI0CgkvLyBhc3NldEFtb3VudDogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgQXNzZXRBbW91bnQKCgkvLyB1dGlscy9iYXNlX2NvbnRyYWN0cy9vcHRpbi5hbGdvLnRzOjI1CgkvLyB4ZmVyQXNzZXQ6IGFzc2V0CglmcmFtZV9kaWcgLTIgLy8gYXNzZXQ6IEFzc2V0SUQKCWl0eG5fZmllbGQgWGZlckFzc2V0CgoJLy8gdXRpbHMvYmFzZV9jb250cmFjdHMvb3B0aW4uYWxnby50czoyNgoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBTdWJtaXQgaW5uZXIgdHJhbnNhY3Rpb24KCWl0eG5fc3VibWl0CglyZXRzdWIKCi8vIGNyZWF0ZUFwcGxpY2F0aW9uKHN0cmluZyl2b2lkCiphYmlfcm91dGVfY3JlYXRlQXBwbGljYXRpb246CgkvLyB2ZXJzaW9uOiBzdHJpbmcKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWV4dHJhY3QgMiAwCgoJLy8gZXhlY3V0ZSBjcmVhdGVBcHBsaWNhdGlvbihzdHJpbmcpdm9pZAoJY2FsbHN1YiBjcmVhdGVBcHBsaWNhdGlvbgoJaW50YyAxIC8vIDEKCXJldHVybgoKLy8gY3JlYXRlQXBwbGljYXRpb24odmVyc2lvbjogc3RyaW5nKTogdm9pZApjcmVhdGVBcHBsaWNhdGlvbjoKCXByb3RvIDEgMAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxOQoJLy8gdGhpcy5jaGlsZENvbnRyYWN0VmVyc2lvbi52YWx1ZSA9IHZlcnNpb24KCXB1c2hieXRlcyAweDYzNjg2OTZjNjQ1ZjYzNmY2ZTc0NzI2MTYzNzQ1Zjc2NjU3MjczNjk2ZjZlIC8vICJjaGlsZF9jb250cmFjdF92ZXJzaW9uIgoJZnJhbWVfZGlnIC0xIC8vIHZlcnNpb246IHN0cmluZwoJZHVwCglsZW4KCWl0b2IKCWV4dHJhY3QgNiAyCglzd2FwCgljb25jYXQKCWFwcF9nbG9iYWxfcHV0CglyZXRzdWIKCi8vIHVwZGF0ZUFwcGxpY2F0aW9uKCl2b2lkCiphYmlfcm91dGVfdXBkYXRlQXBwbGljYXRpb246CgkvLyBleGVjdXRlIHVwZGF0ZUFwcGxpY2F0aW9uKCl2b2lkCgljYWxsc3ViIHVwZGF0ZUFwcGxpY2F0aW9uCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyB1cGRhdGVBcHBsaWNhdGlvbigpOiB2b2lkCnVwZGF0ZUFwcGxpY2F0aW9uOgoJcHJvdG8gMCAwCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjIzCgkvLyBhc3NlcnQodGhpcy50eG4uc2VuZGVyID09PSB0aGlzLmFraXRhRGFvQXBwSUQuYWRkcmVzcywgZXJycy5OT1RfQUtJVEFfREFPKQoJdHhuIFNlbmRlcgoJaW50YyA0IC8vIFRNUExfYWtpdGFEYW9BcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCgk9PQoJYXNzZXJ0CglyZXRzdWIKCi8vIG5ldyhwYXksYXhmZXIsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQpdWludDY0CiphYmlfcm91dGVfbmV3OgoJLy8gVGhlIEFCSSByZXR1cm4gcHJlZml4CglwdXNoYnl0ZXMgMHgxNTFmN2M3NQoKCS8vIGdhdGVJRDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyA2CglidG9pCgoJLy8gbWF4VGlja2V0czogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyA1CglidG9pCgoJLy8gbWluVGlja2V0czogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyA0CglidG9pCgoJLy8gZW5kaW5nUm91bmQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMwoJYnRvaQoKCS8vIHN0YXJ0aW5nUm91bmQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgoJYnRvaQoKCS8vIHRpY2tldEFzc2V0OiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWJ0b2kKCgkvLyBhc3NldFhmZXI6IGF4ZmVyCgl0eG4gR3JvdXBJbmRleAoJaW50YyAxIC8vIDEKCS0KCWR1cAoJZ3R4bnMgVHlwZUVudW0KCWludGMgMyAvLyAgYXhmZXIKCT09CgoJLy8gYXJndW1lbnQgNiAoYXNzZXRYZmVyKSBmb3IgbmV3IG11c3QgYmUgYSBheGZlciB0cmFuc2FjdGlvbgoJYXNzZXJ0CgoJLy8gcGF5bWVudDogcGF5Cgl0eG4gR3JvdXBJbmRleAoJcHVzaGludCAyCgktCglkdXAKCWd0eG5zIFR5cGVFbnVtCglpbnRjIDEgLy8gIHBheQoJPT0KCgkvLyBhcmd1bWVudCA3IChwYXltZW50KSBmb3IgbmV3IG11c3QgYmUgYSBwYXkgdHJhbnNhY3Rpb24KCWFzc2VydAoKCS8vIGV4ZWN1dGUgbmV3KHBheSxheGZlcix1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCl1aW50NjQKCWNhbGxzdWIgbmV3CglpdG9iCgljb25jYXQKCWxvZwoJaW50YyAxIC8vIDEKCXJldHVybgoKLy8gbmV3KHBheW1lbnQ6IFBheVR4biwgYXNzZXRYZmVyOiBBc3NldFRyYW5zZmVyVHhuLCB0aWNrZXRBc3NldDogQXNzZXRJRCwgc3RhcnRpbmdSb3VuZDogdWludDY0LCBlbmRpbmdSb3VuZDogdWludDY0LCBtaW5UaWNrZXRzOiB1aW50NjQsIG1heFRpY2tldHM6IHVpbnQ2NCwgZ2F0ZUlEOiB1aW50NjQpOiBBcHBJRApuZXc6Cglwcm90byA4IDEKCgkvLyBQdXNoIGVtcHR5IGJ5dGVzIGFmdGVyIHRoZSBmcmFtZSBwb2ludGVyIHRvIHJlc2VydmUgc3BhY2UgZm9yIGxvY2FsIHZhcmlhYmxlcwoJYnl0ZWMgMCAvLyAweAoJZHVwbiAzCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjM3CgkvLyBvcHRpbk1CUiA9IDAKCWludGMgMCAvLyAwCglmcmFtZV9idXJ5IDAgLy8gb3B0aW5NQlI6IHVpbnQ2NAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czozOAoJLy8gcHJpemVBc3NldElzQWxnbyA9IGFzc2V0WGZlci54ZmVyQXNzZXQuaWQgPT09IDAKCWZyYW1lX2RpZyAtMiAvLyBhc3NldFhmZXI6IEFzc2V0VHJhbnNmZXJUeG4KCWd0eG5zIFhmZXJBc3NldAoJaW50YyAwIC8vIDAKCT09CglmcmFtZV9idXJ5IDEgLy8gcHJpemVBc3NldElzQWxnbzogYm9vbAoKCS8vICppZjBfY29uZGl0aW9uCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MzkKCS8vIHByaXplQXNzZXRJc0FsZ28KCWZyYW1lX2RpZyAxIC8vIHByaXplQXNzZXRJc0FsZ286IGJvb2wKCWJ6ICppZjBfZW5kCgoJLy8gKmlmMF9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NDAKCS8vIG9wdGluTUJSID0gZ2xvYmFscy5hc3NldE9wdEluTWluQmFsYW5jZQoJZ2xvYmFsIEFzc2V0T3B0SW5NaW5CYWxhbmNlCglmcmFtZV9idXJ5IDAgLy8gb3B0aW5NQlI6IHVpbnQ2NAoKKmlmMF9lbmQ6CgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NDMKCS8vIHRpY2tldEFzc2V0SXNBbGdvID0gdGlja2V0QXNzZXQuaWQgPT09IDAKCWZyYW1lX2RpZyAtMyAvLyB0aWNrZXRBc3NldDogQXNzZXRJRAoJaW50YyAwIC8vIDAKCT09CglmcmFtZV9idXJ5IDIgLy8gdGlja2V0QXNzZXRJc0FsZ286IGJvb2wKCgkvLyAqaWYxX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjQ0CgkvLyB0aWNrZXRBc3NldElzQWxnbwoJZnJhbWVfZGlnIDIgLy8gdGlja2V0QXNzZXRJc0FsZ286IGJvb2wKCWJ6ICppZjFfZW5kCgoJLy8gKmlmMV9jb25zZXF1ZW50CgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NDUKCS8vIG9wdGluTUJSICs9IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UKCWZyYW1lX2RpZyAwIC8vIG9wdGluTUJSOiB1aW50NjQKCWdsb2JhbCBBc3NldE9wdEluTWluQmFsYW5jZQoJKwoJZnJhbWVfYnVyeSAwIC8vIG9wdGluTUJSOiB1aW50NjQKCippZjFfZW5kOgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjQ4CgkvLyB2ZXJpZnlQYXlUeG4ocGF5bWVudCwgewoJLy8gICAgICAgICAgICAgcmVjZWl2ZXI6IHRoaXMuYXBwLmFkZHJlc3MsCgkvLyAgICAgICAgICAgICBhbW91bnQ6ICgKCS8vICAgICAgICAgICAgICAgICAxMDBfMDAwIC8vIHJlcXVpcmVzIDMgZXh0cmEgcGFnZXMKCS8vICAgICAgICAgICAgICAgICArICgyOF81MDAgKiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1VaW50KQoJLy8gICAgICAgICAgICAgICAgICsgKDUwXzAwMCAqIFJhZmZsZS5zY2hlbWEuZ2xvYmFsLm51bUJ5dGVTbGljZSkKCS8vICAgICAgICAgICAgICAgICArIG9wdGluTUJSCgkvLyAgICAgICAgICAgICApLAoJLy8gICAgICAgICB9KQoJLy8gdmVyaWZ5IHJlY2VpdmVyCglmcmFtZV9kaWcgLTEgLy8gcGF5bWVudDogUGF5VHhuCglndHhucyBSZWNlaXZlcgoJZ2xvYmFsIEN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MKCT09CgoJLy8gdHJhbnNhY3Rpb24gdmVyaWZpY2F0aW9uIGZhaWxlZDogeyJ0eG4iOiJwYXltZW50IiwiZmllbGQiOiJyZWNlaXZlciIsImV4cGVjdGVkIjoidGhpcy5hcHAuYWRkcmVzcyJ9Cglhc3NlcnQKCgkvLyB2ZXJpZnkgYW1vdW50CglmcmFtZV9kaWcgLTEgLy8gcGF5bWVudDogUGF5VHhuCglndHhucyBBbW91bnQKCXB1c2hpbnQgNjc3NTAwCglmcmFtZV9kaWcgMCAvLyBvcHRpbk1CUjogdWludDY0CgkrCgk9PQoKCS8vIHRyYW5zYWN0aW9uIHZlcmlmaWNhdGlvbiBmYWlsZWQ6IHsidHhuIjoicGF5bWVudCIsImZpZWxkIjoiYW1vdW50IiwiZXhwZWN0ZWQiOiIoXG4gICAgICAgICAgICAgICAgMTAwXzAwMCAvLyByZXF1aXJlcyAzIGV4dHJhIHBhZ2VzXG4gICAgICAgICAgICAgICAgKyAoMjhfNTAwICogUmFmZmxlLnNjaGVtYS5nbG9iYWwubnVtVWludClcbiAgICAgICAgICAgICAgICArICg1MF8wMDAgKiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1CeXRlU2xpY2UpXG4gICAgICAgICAgICAgICAgKyBvcHRpbk1CUlxuICAgICAgICAgICAgKSJ9Cglhc3NlcnQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NTgKCS8vIHZlcmlmeUFzc2V0VHJhbnNmZXJUeG4oYXNzZXRYZmVyLCB7IGFzc2V0UmVjZWl2ZXI6IHRoaXMuYXBwLmFkZHJlc3MgfSkKCS8vIHZlcmlmeSBhc3NldFJlY2VpdmVyCglmcmFtZV9kaWcgLTIgLy8gYXNzZXRYZmVyOiBBc3NldFRyYW5zZmVyVHhuCglndHhucyBBc3NldFJlY2VpdmVyCglnbG9iYWwgQ3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcwoJPT0KCgkvLyB0cmFuc2FjdGlvbiB2ZXJpZmljYXRpb24gZmFpbGVkOiB7InR4biI6ImFzc2V0WGZlciIsImZpZWxkIjoiYXNzZXRSZWNlaXZlciIsImV4cGVjdGVkIjoidGhpcy5hcHAuYWRkcmVzcyJ9Cglhc3NlcnQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NjAKCS8vIHRoaXMucGVuZGluZ0dyb3VwLmFkZE1ldGhvZENhbGw8dHlwZW9mIFJhZmZsZS5wcm90b3R5cGUuY3JlYXRlQXBwbGljYXRpb24sIHZvaWQ+KHsKCS8vICAgICAgICAgICAgIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICBhc3NldFhmZXIueGZlckFzc2V0LAoJLy8gICAgICAgICAgICAgICAgIHRpY2tldEFzc2V0LAoJLy8gICAgICAgICAgICAgICAgIHN0YXJ0aW5nUm91bmQsCgkvLyAgICAgICAgICAgICAgICAgZW5kaW5nUm91bmQsCgkvLyAgICAgICAgICAgICAgICAgdGhpcy50eG4uc2VuZGVyLAoJLy8gICAgICAgICAgICAgICAgIG1pblRpY2tldHMsCgkvLyAgICAgICAgICAgICAgICAgbWF4VGlja2V0cywKCS8vICAgICAgICAgICAgICAgICBnYXRlSUQsCgkvLyAgICAgICAgICAgICAgICAgdGhpcy5ha2l0YURhb0FwcElELmdsb2JhbFN0YXRlKEFLSVRBX0RBT19WUkZfQkVBQ09OX0FQUF9JRF9LRVkpIGFzIEFwcElELAoJLy8gICAgICAgICAgICAgXSwKCS8vICAgICAgICAgICAgIGFwcHJvdmFsUHJvZ3JhbTogUmFmZmxlLmFwcHJvdmFsUHJvZ3JhbSgpLAoJLy8gICAgICAgICAgICAgY2xlYXJTdGF0ZVByb2dyYW06IFJhZmZsZS5jbGVhclByb2dyYW0oKSwKCS8vICAgICAgICAgICAgIGdsb2JhbE51bVVpbnQ6IFJhZmZsZS5zY2hlbWEuZ2xvYmFsLm51bVVpbnQsCgkvLyAgICAgICAgICAgICBnbG9iYWxOdW1CeXRlU2xpY2U6IFJhZmZsZS5zY2hlbWEuZ2xvYmFsLm51bUJ5dGVTbGljZSwKCS8vICAgICAgICAgICAgIGV4dHJhUHJvZ3JhbVBhZ2VzOiAwLAoJLy8gICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICB9KQoJaXR4bl9uZXh0CglpbnRjIDIgLy8gIGFwcGwKCWl0eG5fZmllbGQgVHlwZUVudW0KCXB1c2hieXRlcyAweGYzNmRiZDdhIC8vIG1ldGhvZCAiY3JlYXRlQXBwbGljYXRpb24odWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LGFkZHJlc3MsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KXZvaWQiCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo2MQoJLy8gbWV0aG9kQXJnczogWwoJLy8gICAgICAgICAgICAgICAgIGFzc2V0WGZlci54ZmVyQXNzZXQsCgkvLyAgICAgICAgICAgICAgICAgdGlja2V0QXNzZXQsCgkvLyAgICAgICAgICAgICAgICAgc3RhcnRpbmdSb3VuZCwKCS8vICAgICAgICAgICAgICAgICBlbmRpbmdSb3VuZCwKCS8vICAgICAgICAgICAgICAgICB0aGlzLnR4bi5zZW5kZXIsCgkvLyAgICAgICAgICAgICAgICAgbWluVGlja2V0cywKCS8vICAgICAgICAgICAgICAgICBtYXhUaWNrZXRzLAoJLy8gICAgICAgICAgICAgICAgIGdhdGVJRCwKCS8vICAgICAgICAgICAgICAgICB0aGlzLmFraXRhRGFvQXBwSUQuZ2xvYmFsU3RhdGUoQUtJVEFfREFPX1ZSRl9CRUFDT05fQVBQX0lEX0tFWSkgYXMgQXBwSUQsCgkvLyAgICAgICAgICAgICBdCglmcmFtZV9kaWcgLTIgLy8gYXNzZXRYZmVyOiBBc3NldFRyYW5zZmVyVHhuCglndHhucyBYZmVyQXNzZXQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgLTMgLy8gdGlja2V0QXNzZXQ6IEFzc2V0SUQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgLTQgLy8gc3RhcnRpbmdSb3VuZDogdWludDY0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC01IC8vIGVuZGluZ1JvdW5kOiB1aW50NjQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgl0eG4gU2VuZGVyCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC02IC8vIG1pblRpY2tldHM6IHVpbnQ2NAoJaXRvYgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCWZyYW1lX2RpZyAtNyAvLyBtYXhUaWNrZXRzOiB1aW50NjQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgLTggLy8gZ2F0ZUlEOiB1aW50NjQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglpbnRjIDQgLy8gVE1QTF9ha2l0YURhb0FwcElECglwdXNoYnl0ZXMgMHg3NjcyNjY1ZjYyNjU2MTYzNmY2ZTVmNjE3MDcwNWY2OTY0IC8vICJ2cmZfYmVhY29uX2FwcF9pZCIKCWFwcF9nbG9iYWxfZ2V0X2V4CgoJLy8gZ2xvYmFsIHN0YXRlIHZhbHVlIGRvZXMgbm90IGV4aXN0OiB0aGlzLmFraXRhRGFvQXBwSUQuZ2xvYmFsU3RhdGUoQUtJVEFfREFPX1ZSRl9CRUFDT05fQVBQX0lEX0tFWSkKCWFzc2VydAoJaXRvYgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NzIKCS8vIGFwcHJvdmFsUHJvZ3JhbTogUmFmZmxlLmFwcHJvdmFsUHJvZ3JhbSgpCglwdXNoYnl0ZXMgMHgwYTIwMGQwMDAxMDQwNjg4YTEwMjA4MTBmZmZmZmZmZmZmZmZmZmZmZmYwMWQxODI5ZWJiZWZlZmRlODIxNGNmODI5ZWJiZWZlZmRlODIxNDAyMWUyMDI2MTYwMDBjNzQ2OTYzNmI2NTc0NWY2MzZmNzU2ZTc0MGM3NDY5NjM2YjY1NzQ1ZjYxNzM3MzY1NzQwZDcyNjE2NjY2NmM2NTVmNzc2OTZlNmU2NTcyMGI2NTZlNzQ3Mjc5NWY2MzZmNzU2ZTc0MDU3MDcyNjk3YTY1MDY3MzY1NmM2YzY1NzIxMjY2Njk2ZTY0NWY3NzY5NmU2ZTY1NzI1ZjYzNzU3MjczNmY3MjBlNzc2OTZlNmU2OTZlNjc1Zjc0Njk2MzZiNjU3NDE4NjY2OTZlNjQ1Zjc3Njk2ZTZlNjU3MjVmNzQ2Zjc0NjE2YzVmNjM3NTcyNzM2ZjcyMTQ3MjYxNjY2NjZjNjU1ZjcwNzI2OTdhNjU1ZjYzNmM2MTY5NmQ2NTY0MGM2NTZlNjQ2OTZlNjc1ZjcyNmY3NTZlNjQxNTc2NzI2NjVmNjc2NTc0NWY2NjYxNjk2Yzc1NzI2NTVmNjM2Zjc1NmU3NDBiNmQ2OTZlNWY3NDY5NjM2YjY1NzQ3MzBiNmQ2MTc4NWY3NDY5NjM2YjY1NzQ3MzA4NjU2ZTc0NzI3OTVmNjk2NDA0Njc2MTc0NjUwMTAwMTE3NjcyNjY1ZjYyNjU2MTYzNmY2ZTVmNjE3MDcwNWY2OTY0MGU3Mzc0NjE3Mjc0Njk2ZTY3NWY3MjZmNzU2ZTY0MDQwODUzMWVkNzA0MTUxZjdjNzUzMTE4MTQyNTBiMzExOTA4OGQwYzA2NWIwMDAwMDAwMDAwMDAwMDAwMDZhMTA2NGQwMDAwMDAwMDAwMDAwMDAwMDAwMDAwOGEwMzAxOGJmZTIyMTI0MTAwMDIyMzg5YjEyNWIyMTA4MDA0MjAwZjc0MjFiMjFhMjJiMjE4OGJmZmIyMWE4YmZlMTZiMjFhOGJmZGIyMWEyMmIyMDFiM2I0M2IyMzA5YzUzYTU3MDQwMDIyNTM4OTM2MWEwMTE3MzExNjIzMDk0OTM4MTAyMzEyNDQ4ODAwMDIyMzQzOGEwMjAwMzEwMDM2MzIwMDcyMDc0ODEyNDQ4YmZmMzgwNzMyMGExMjQ0OGJmZjM4MDgzMjEwMTI0NGIxMjRiMjEwMzIwYWIyMDAzMjBhYjIxNDIyYjIxMjhiZmViMjExMjJiMjAxYjM4OThhMDQwMDI4NDcwNDIyOGMwMGIxMjViMjEwODAwNGNhYThkYWE1YjIxYTIyYjIxODhiZmZiMjFhOGJmZTE2YjIxYTIyYjIwMWIzYjQzYjIzMDljNTNhNTcwNDAwOGMwMThiMDEzNWZmMzRmZjU3MDgwODE3OGMwMjhiMDEzNWZmMzRmZjgxODAwMTUzOGMwMzhiMDEzNWZmMzRmZjU3MTEwODE3OGMwNDhiMDI0OTQwMDAwMzhiMDQxMTQxMDAxNGI2MjNiMjEwMjI3MjA4NDhiMjA3OGIwMjhiMDQwOGIyMDgyMmIyMDE4YjAzMTQ0MTAwMTdiNjI1YjIxMDgwMDRlODU0MDgxMGIyMWEyMmIyMTg4YmZlMTZiMjFhMjJiMjAxOGJmYzQxMDAzNWI2MjRiMjEwMjI3MjA4NDhiMjE1MjI3MjA4NDhiMjE0OGJmZGIyMTI4YmZlYjIxMTIyYjIwMWI2MjViMjEwMjcxNGIyMWEyMmIyMTg4YmZmYjIxYThiMDQxNmIyMWEyMmIyMDE0MjAwMmNiNjI0YjIxMDIyNzIwODQ4YjIxNDhiZmRiMjEyOGJmZWIyMTEyMmIyMDFiNjI1YjIxMDI3MTRiMjFhMjJiMjE4OGJmZmIyMWE4YjA0MTZiMjFhMjJiMjAxYjM4OTM2MWEwOTE3MzYxYTA4MTczNjFhMDcxNzM2MWEwNjE3MzYxYTA1NDkxNTIxMGMxMjQ0MzYxYTA0MTczNjFhMDMxNzM2MWEwMjE3MzYxYTAxMTc4ODAwMDIyMzQzOGEwOTAwMjcwNThiZmY2NzJhOGJmZTY3MjcxMzhiZmQ2NzhiZmM4YmZkMGQ0OTQxMDAwYThiZmMzMjA2ODE4NTBhMDgwZDEwNDQyNzBiOGJmYzY3MjcwNjhiZmI2NzI3MGQ4YmZhNjcyNzBlOGJmOTY3MjcwNDIyNjcyOTIyNjcyNzA4MjI2NzJiMzIwMzY3MjcwYTIyMjcxMTIyNGYwMjU0NjcyNzEwOGJmODY3MjcxMjhiZjc2NzI3MGYyMjY3MjcwNzIyNjcyNzA5MjI2Nzg5MjcxNTg4MDAwYTI3MTEyMjRmMDI1NDUwYjAyMzQzOGEwMDAxMzIwNjI3MTM2NDBlNDk0MTAwMDczMjA2MjcwYjY0MGYxMDg5MzYxYTAxMzExNjIzMDk0OTM4MTAyMzEyNDQ4ODAwMDIyMzQzOGEwMjAwODhmZmQzNDQyYTY0MjIxMjQ0OGJmZTI3MTA2NDMxMDA4OGZkYTQ0NDhiZmYzODA4MjcwZDY0MjEwNDA4MGY0NDhiZmYzODA4MjcwZTY0MjEwNDA4MGU0NDhiZmYzODA3MzIwYTEyNDQzMTAwYmQ0YzQ4MTQ0NDI3MDQ2NDE2MzEwMGJmMzEwMDI3MDQ2NDE2YmYyNzA0NjQyMzA4MjcwNDRjNjcyOTY0OGJmZjM4MDgyMTA0MDkwODI5NGM2Nzg5MzYxYTAxMzExNjIzMDk0OTM4MTAyNDEyNDQzMTE2MjEwYTA5NDkzODEwMjMxMjQ0ODgwMDAyMjM0MzhhMDMwMDg4ZmY1MzQ0MmE2NDIyMTM0NDhiZmQyNzEwNjQzMTAwODhmZDI0NDQ4YmZmMzgwODIxMDQxMjQ0OGJmZjM4MDczMjBhMTI0NDhiZmUzODExMmE2NDEyNDQ4YmZlMzgxMjI3MGQ2NDBmNDQ4YmZlMzgxMjI3MGU2NDBlNDQ4YmZlMzgxNDMyMGExMjQ0MzEwMGJkNGM0ODE0NDQyNzA0NjQxNjMxMDBiZjMxMDAyNzA0NjQxNmJmMjcwNDY0MjMwODI3MDQ0YzY3Mjk2NDhiZmUzODEyMDgyOTRjNjc4OTg4MDAwMjIzNDM4YTAwMDAyODQ3MDUyNzBiNjQyMzA4MjQyNzBjNjQwYjA4OGMwMDMyMDY4YjAwMjEwNTA4MGY0NDI3MDg2NDIyMTI0NGIxMjViMjEwODAwNDE4OTM5MmM1YjIxYTI3MTI2NGIyMTg4YjAwMTZiMjFhMzExNzQ5MTUxNjU3MDYwMjRjNTBiMjFhMjJiMjAxYjNiNDNiMjMwOWM1M2E1NzA0MDA1NzAyMDA4YzAxOGIwMTE1MjIxMjQxMDAwYTI3MGM2NDIzMDgyNzBjNGM2Nzg5OGIwMTUxMDAxMDgwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDUwNDk1NzEwMDAyOGE4NDQ1NzAwMTA4ODA0ZTI4YzAyMjk2NDhjMDM4YjAzMjEwNzBjNDEwMDBkOGIwMzIzMDg0OTM1ZjU4YzAzMzRmNThjMDMyMzhiMDMyMzhiMDI4ODAyYzA4YzA0OGIwNDM1ZmYzNGZmMjEwNjU5MjIwODIxMGEwODM0ZmY0YzIxMDU1ODE3OGMwNTI3MDg4YjA1Njc4OTg4MDAwMjIzNDM4YTAwMDAyODQ3MDczMjA2MjcwYjY0MGM0NDI3MDg2NDIyMGQ0NDI3MGY2NDI3MDc2NDEyOGMwMDhiMDAxNDQ0MjcwNzY0OGMwMTI3MGY2NDI3MDc2NDA5OGMwMjhiMDIyMTBiMGQ0MTAwMDUyMTBiNDIwMDAyOGIwMjhjMDM4YjAxOGMwNDhiMDQ4YjAzMGM0MTAwNGQ4YjA0MTZiZTQ0OGMwNThiMDViZTQ0MTc4YzA2OGIwNDE2YmM4YjA1YmNiMTIzYjIxMDhiMDViMjA3MjEwNGIyMDgyMmIyMDFiMzI3MDk2NDhiMDYwODI3MDg2NDBmOGMwNzhiMDc0MTAwMDQyYjhiMDU2NzI3MDk2NDhiMDYwODI3MDk0YzY3OGIwNDIzMDg4YzA0NDJmZmFiMjcwNzhiMDM2Nzg5ODgwMDAyMjM0MzhhMDAwMDI4NDkyYjY0MzIwMzEzNDQyNzBhNjQyMjUzMTQ0NDIyOGMwMDI3MDU2NDIyMTI0MTAwMzAzMjBhNzMwMDQ4MzIwYTczMDE0ODA5OGMwMDI3MDU2NDJhNjQxMjQxMDAwNzhiMDAyOTY0MDk4YzAwYjEyM2IyMTAyYjY0YjIwNzhiMDBiMjA4MjJiMjAxYjM0MjAwNzEyMzhjMDEzMjBhMjcwNTY0NzAwMDQ4OGMwMDI3MDU2NDJhNjQxMjQxMDAwYThiMDAyOTY0MDk4YzAwMjI4YzAxMmI2NDI3MDU2NDcwMDA0YzQ4NDEwMDM5OGIwMTQxMDAxY2IxMjRiMjEwMmI2NGIyMTQyYjY0YjIxNThiMDBiMjEyMjcwNTY0YjIxMTIyYjIwMWIzNDIwMDE1YjEyNGIyMTAyYjY0YjIxNDhiMDBiMjEyMjcwNTY0YjIxMTIyYjIwMWIzNDIwMDBjOGIwMThiMDAyNzA1NjQyYjY0ODhmYjBkMmE2NDIyMTI0MTAwMTRiMTIzYjIxMDI3MDY2NGIyMDcyOTY0YjIwODIyYjIwMWIzNDIwMDM0MjcwNjY0MmE2NDcwMDA0YzQ4NDEwMDFkYjEyNGIyMTAyNzA2NjRiMjE0MjcwNjY0YjIxNTI5NjRiMjEyMmE2NGIyMTEyMmIyMDFiMzQyMDAwYjIzMjk2NDJhNjQyNzA2NjQ4OGZhYmUyNzBhMjMyNzExMjI0ZjAyNTQ2Nzg5ODgwMDAyMjM0MzhhMDAwMDMxMDAzNjMyMDA3MjA3NDgxMjQ0MjcwYTY0MjI1MzQ0ODkyNzE1ODgwMDA0NTBiMDIzNDM4YTAwMDEyYTY0MTYyNzEzNjQxNjUwMjcwYjY0MTY1MDI3MDY2NDUwMjcwZDY0MTY1MDI3MGU2NDE2NTAyNzA0NjQxNjUwMjk2NDE2NTAyNzA4NjQxNjUwMmI2NDUwMjcwNTY0MTY1MDI3MTEyMjI3MGE2NDIyNTM1NDUwMjcxMDY0MTY1MDI3MTI2NDE2NTAyNzBjNjQxNjUwMjcwZjY0MTY1MDI3MDc2NDE2NTAyNzA5NjQxNjUwODk4MDA0ZjM2ZGJkN2EzNjFhMDA4ZTAxZmIyMDAwODAwNDNlYTExODMyODAwNDhmYTRhMTYwODAwNDc1ZWI3NzAyODAwNDJmNzFjMjRjODAwNDY5NjUwMWRlODAwNGI3MzNkNTE5ODAwNDY1ZmNhOThiODAwNGYzYzhkYjE2MzYxYTAwOGUwOGY5OTlmYjcxZmI5NWZjMGFmYzk5ZmQ2ZWZlMTFmZjQ3MDA4MDA0MjQ4N2MzMmMzNjFhMDA4ZTAxZmYyMDAwOGEwNDAxMjg0NzA3Mjg4YzAwOGJmZjhjMDM4YmZlMjIxMjQ5NDEwMDA1OGJmZDIyMTIxMDQxMDAzMTIyOGMwNDhiMDQ4YmZjMGM0MTAwMjM4YjAzODgwMTAyOGMwNThiMDU1NzAwMTA4YzAzOGIwMDhiMDU1NzEwMDgxNzE2NTA4YzAwOGIwNDIzMDg4YzA0NDJmZmQ1NDIwMGFhOGJmZDIyMTM0MTAwMTc4YmZkMjMwZDQ0OGJmZThiZmQyMzA5MGM0NDhiZmQ4YmZlMDk4YzAxNDIwMDM4OGJmZTIxMDcwYzQ0ODAxMDAwMDAwMDAwMDAwMDAwMDEwMDAwMDAwMDAwMDAwMDAwOGJmZTE2YTE0OTkzODE0MDBlNDQ4MDA4ZmZmZmZmZmZmZmZmZmZmZmFjNDkxNTQ5MjEwNTA5NGM1MjE3OGMwMThiMDE4ODAwNzE4YjAxMTg4YzAyMjI4YzA2OGIwNjhiZmMwYzQxMDAzZjIzNDEwMDMyOGIwMzg4MDA2ZDhjMDc4YjA3NTcwMDEwOGMwMzhiMDc1NzEwMDgxNzhiMDIwZjQxMDAxNThiMDA4YjA3NTcxMDA4MTc4YjAxMTg4YmZlMDgxNjUwOGMwMDQyMDAwMzQyZmZjYThiMDYyMzA4OGMwNjQyZmZiOTI4Mjg4MDAyMDAxMjhiMDM4ODAxM2Q4YjAwNDkxNTIxMDUwYTE2NTcwNjAyNGM1MDg4MDEzYTQ4NTA4YzAwNDYwNzg5OGEwMTAxMjg0OThiZmYxYzIzMWU4YzAwOGMwMThiMDA4YzAwNDYwMTg5OGEwMTAxMjg0OThiZmY1NzAwMDgxNzg4MDBhZThjMDAyMTA4OGIwMDU3MDAwODE3MjIxMjQxMDAwNDIzNDIwMDAxMjI5MDhiZmY1NzA4MDgxNzg4MDA2OThjMDE4YjAwNTcwMDA4MTcxNjhiMDExNjUwOGIwMDU3MDgwODE3MjEwYzkwOGJmZjU3MDgwODE3ODgwMDA4MTkxNjUwOGMwMDQ2MDE4OThhMDEwMTI4NDk4YmZmODExMjkxOGJmZjFiODExYjkxODgwMDIyOGMwMDhiZmY4MTNiOTE4YzAxOGIwMDhiMDE5MThiMDA4YjAxODhmZjcwODExZjFhOTA4ODAwMDYxOThjMDA0NjAxODk4YTAxMDE4YmZmODFmZmZmZmZmZjBmMWE4OThhMDIwMTI4NDcwMzhiZmY4MWFkZmVkNWU0ZDQ4NWZkYTg1ODFkOGMwMDhjMDE4YjAwOGJmZTFlOGMwMjhjMDM4YjAyOGMwMDQ2MDM4OThhMDEwMTIxMDk4YmZmODhmZmNmMTY4YmZmODhmZjg3MTY1MDg5OGEwMTAxMjEwNjQ5MTI0NDIxMDk4YmZmMjI1Yjg4MDAwZTE2MjEwODhiZmYyMTA1NWI4ODAwMDMxNjUwODk4YTAyMDEyODQ3MDI4YmZlMjI4OGZmOWI4YzAwOGIwMDhiZmYxZThjMDE4YzAyOGJmZThiMDE4OGZmODk4YzAwNDYwMjg5OGEwNDAzOGJmYzhiZmY1MDhiZmQ4YmZlODk4YTA0MDM4YmZjOGJmZTUwOGNmYzhiZmY0OTE1OGJmZTE3MDgxNjU3MDYwMjhjZmU4YmZkNGM1MDhjZmQ4YmZjOGJmZDhiZmU4OQoJaXR4bl9maWVsZCBBcHByb3ZhbFByb2dyYW0KCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NzMKCS8vIGNsZWFyU3RhdGVQcm9ncmFtOiBSYWZmbGUuY2xlYXJQcm9ncmFtKCkKCXB1c2hieXRlcyAweDBhCglpdHhuX2ZpZWxkIENsZWFyU3RhdGVQcm9ncmFtCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjc0CgkvLyBnbG9iYWxOdW1VaW50OiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1VaW50CglwdXNoaW50IDE1CglpdHhuX2ZpZWxkIEdsb2JhbE51bVVpbnQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NzUKCS8vIGdsb2JhbE51bUJ5dGVTbGljZTogUmFmZmxlLnNjaGVtYS5nbG9iYWwubnVtQnl0ZVNsaWNlCglwdXNoaW50IDMKCWl0eG5fZmllbGQgR2xvYmFsTnVtQnl0ZVNsaWNlCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjc2CgkvLyBleHRyYVByb2dyYW1QYWdlczogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRXh0cmFQcm9ncmFtUGFnZXMKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NzcKCS8vIGZlZTogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRmVlCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjgwCgkvLyByYWZmbGVBcHBJRCA9IHRoaXMuaXR4bi5jcmVhdGVkQXBwbGljYXRpb25JRAoJaXR4biBDcmVhdGVkQXBwbGljYXRpb25JRAoJZnJhbWVfYnVyeSAzIC8vIHJhZmZsZUFwcElEOiB1aW50NjQKCgkvLyAqaWYyX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjgyCgkvLyAhcHJpemVBc3NldElzQWxnbwoJZnJhbWVfZGlnIDEgLy8gcHJpemVBc3NldElzQWxnbzogYm9vbAoJIQoJYnogKmlmMl9lbmQKCgkvLyAqaWYyX2NvbnNlcXVlbnQKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo4MwoJLy8gdGhpcy5wZW5kaW5nR3JvdXAuYWRkTWV0aG9kQ2FsbDx0eXBlb2YgUmFmZmxlLnByb3RvdHlwZS5vcHRpbiwgdm9pZD4oewoJLy8gICAgICAgICAgICAgICAgIGFwcGxpY2F0aW9uSUQ6IHJhZmZsZUFwcElELAoJLy8gICAgICAgICAgICAgICAgIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIGFzc2V0WGZlci54ZmVyQXNzZXQsCgkvLyAgICAgICAgICAgICAgICAgXSwKCS8vICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICB9KQoJaXR4bl9uZXh0CglpbnRjIDEgLy8gIHBheQoJaXR4bl9maWVsZCBUeXBlRW51bQoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo4NwoJLy8gcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MKCWZyYW1lX2RpZyAzIC8vIHJhZmZsZUFwcElEOiB1aW50NjQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBSZWNlaXZlcgoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo4OAoJLy8gYW1vdW50OiBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlCglnbG9iYWwgQXNzZXRPcHRJbk1pbkJhbGFuY2UKCWl0eG5fZmllbGQgQW1vdW50CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjg5CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoJaXR4bl9uZXh0CglpbnRjIDIgLy8gIGFwcGwKCWl0eG5fZmllbGQgVHlwZUVudW0KCWJ5dGVjIDEgLy8gIG1ldGhvZCAib3B0aW4ocGF5LHVpbnQ2NCl2b2lkIgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6ODQKCS8vIGFwcGxpY2F0aW9uSUQ6IHJhZmZsZUFwcElECglmcmFtZV9kaWcgMyAvLyByYWZmbGVBcHBJRDogdWludDY0CglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6ODUKCS8vIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIGFzc2V0WGZlci54ZmVyQXNzZXQsCgkvLyAgICAgICAgICAgICAgICAgXQoJZnJhbWVfZGlnIC0yIC8vIGFzc2V0WGZlcjogQXNzZXRUcmFuc2ZlclR4bgoJZ3R4bnMgWGZlckFzc2V0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo5MwoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCippZjJfZW5kOgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjk3CgkvLyB0aGlzLnBlbmRpbmdHcm91cC5hZGRBc3NldFRyYW5zZmVyKHsKCS8vICAgICAgICAgICAgIGFzc2V0UmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICBhc3NldEFtb3VudDogYXNzZXRYZmVyLmFzc2V0QW1vdW50LAoJLy8gICAgICAgICAgICAgeGZlckFzc2V0OiBhc3NldFhmZXIueGZlckFzc2V0LAoJLy8gICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICB9KQoJaXR4bl9uZXh0CglpbnRjIDMgLy8gIGF4ZmVyCglpdHhuX2ZpZWxkIFR5cGVFbnVtCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjk4CgkvLyBhc3NldFJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzCglmcmFtZV9kaWcgMyAvLyByYWZmbGVBcHBJRDogdWludDY0CglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWl0eG5fZmllbGQgQXNzZXRSZWNlaXZlcgoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo5OQoJLy8gYXNzZXRBbW91bnQ6IGFzc2V0WGZlci5hc3NldEFtb3VudAoJZnJhbWVfZGlnIC0yIC8vIGFzc2V0WGZlcjogQXNzZXRUcmFuc2ZlclR4bgoJZ3R4bnMgQXNzZXRBbW91bnQKCWl0eG5fZmllbGQgQXNzZXRBbW91bnQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTAwCgkvLyB4ZmVyQXNzZXQ6IGFzc2V0WGZlci54ZmVyQXNzZXQKCWZyYW1lX2RpZyAtMiAvLyBhc3NldFhmZXI6IEFzc2V0VHJhbnNmZXJUeG4KCWd0eG5zIFhmZXJBc3NldAoJaXR4bl9maWVsZCBYZmVyQXNzZXQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTAxCgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vICppZjNfY29uZGl0aW9uCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTA0CgkvLyAhdGlja2V0QXNzZXRJc0FsZ28KCWZyYW1lX2RpZyAyIC8vIHRpY2tldEFzc2V0SXNBbGdvOiBib29sCgkhCglieiAqaWYzX2VuZAoKCS8vICppZjNfY29uc2VxdWVudAoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEwNQoJLy8gdGhpcy5wZW5kaW5nR3JvdXAuYWRkTWV0aG9kQ2FsbDx0eXBlb2YgUmFmZmxlLnByb3RvdHlwZS5vcHRpbiwgdm9pZD4oewoJLy8gICAgICAgICAgICAgICAgIGFwcGxpY2F0aW9uSUQ6IHJhZmZsZUFwcElELAoJLy8gICAgICAgICAgICAgICAgIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIHRpY2tldEFzc2V0LAoJLy8gICAgICAgICAgICAgICAgIF0sCgkvLyAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgfSkKCWl0eG5fbmV4dAoJaW50YyAxIC8vICBwYXkKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTA5CgkvLyByZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcwoJZnJhbWVfZGlnIDMgLy8gcmFmZmxlQXBwSUQ6IHVpbnQ2NAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFJlY2VpdmVyCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjExMAoJLy8gYW1vdW50OiBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlCglnbG9iYWwgQXNzZXRPcHRJbk1pbkJhbGFuY2UKCWl0eG5fZmllbGQgQW1vdW50CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjExMQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCWl0eG5fbmV4dAoJaW50YyAyIC8vICBhcHBsCglpdHhuX2ZpZWxkIFR5cGVFbnVtCglieXRlYyAxIC8vICBtZXRob2QgIm9wdGluKHBheSx1aW50NjQpdm9pZCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEwNgoJLy8gYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQKCWZyYW1lX2RpZyAzIC8vIHJhZmZsZUFwcElEOiB1aW50NjQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMDcKCS8vIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIHRpY2tldEFzc2V0LAoJLy8gICAgICAgICAgICAgICAgIF0KCWZyYW1lX2RpZyAtMyAvLyB0aWNrZXRBc3NldDogQXNzZXRJRAoJaXRvYgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTE1CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKKmlmM19lbmQ6CgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTE5CgkvLyB0aGlzLnBlbmRpbmdHcm91cC5zdWJtaXQoKQoJaXR4bl9zdWJtaXQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTIxCgkvLyByZXR1cm4gdGhpcy5pdHhuLmNyZWF0ZWRBcHBsaWNhdGlvbklEOwoJaXR4biBDcmVhdGVkQXBwbGljYXRpb25JRAoKCS8vIHNldCB0aGUgc3Vicm91dGluZSByZXR1cm4gdmFsdWUKCWZyYW1lX2J1cnkgMAoKCS8vIHBvcCBhbGwgbG9jYWwgdmFyaWFibGVzIGZyb20gdGhlIHN0YWNrCglwb3BuIDMKCXJldHN1YgoKKmNyZWF0ZV9Ob09wOgoJcHVzaGJ5dGVzIDB4MTE1NzU2ZGIgLy8gbWV0aG9kICJjcmVhdGVBcHBsaWNhdGlvbihzdHJpbmcpdm9pZCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfY3JlYXRlQXBwbGljYXRpb24KCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY3JlYXRlIE5vT3AKCWVycgoKKmNhbGxfTm9PcDoKCWJ5dGVjIDEgLy8gIG1ldGhvZCAib3B0aW4ocGF5LHVpbnQ2NCl2b2lkIgoJcHVzaGJ5dGVzIDB4OWY1NDUyNDAgLy8gbWV0aG9kICJuZXcocGF5LGF4ZmVyLHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KXVpbnQ2NCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfb3B0aW4gKmFiaV9yb3V0ZV9uZXcKCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY2FsbCBOb09wCgllcnIKCipjYWxsX1VwZGF0ZUFwcGxpY2F0aW9uOgoJcHVzaGJ5dGVzIDB4NDZmNzY1MzMgLy8gbWV0aG9kICJ1cGRhdGVBcHBsaWNhdGlvbigpdm9pZCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfdXBkYXRlQXBwbGljYXRpb24KCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY2FsbCBVcGRhdGVBcHBsaWNhdGlvbgoJZXJy",
+    "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCmludGNibG9jayAwIDEgNiA0IFRNUExfYWtpdGFEYW9BcHBJRCAxMzExMzMwMCAzMgpieXRlY2Jsb2NrIDB4IDB4M2VhMTE4MzIKCi8vIFRoaXMgVEVBTCB3YXMgZ2VuZXJhdGVkIGJ5IFRFQUxTY3JpcHQgdjAuMTA2LjEKLy8gaHR0cHM6Ly9naXRodWIuY29tL2FsZ29yYW5kZm91bmRhdGlvbi9URUFMU2NyaXB0CgovLyBUaGlzIGNvbnRyYWN0IGlzIGNvbXBsaWFudCB3aXRoIGFuZC9vciBpbXBsZW1lbnRzIHRoZSBmb2xsb3dpbmcgQVJDczogWyBBUkM0IF0KCi8vIFRoZSBmb2xsb3dpbmcgdGVuIGxpbmVzIG9mIFRFQUwgaGFuZGxlIGluaXRpYWwgcHJvZ3JhbSBmbG93Ci8vIFRoaXMgcGF0dGVybiBpcyB1c2VkIHRvIG1ha2UgaXQgZWFzeSBmb3IgYW55b25lIHRvIHBhcnNlIHRoZSBzdGFydCBvZiB0aGUgcHJvZ3JhbSBhbmQgZGV0ZXJtaW5lIGlmIGEgc3BlY2lmaWMgYWN0aW9uIGlzIGFsbG93ZWQKLy8gSGVyZSwgYWN0aW9uIHJlZmVycyB0byB0aGUgT25Db21wbGV0ZSBpbiBjb21iaW5hdGlvbiB3aXRoIHdoZXRoZXIgdGhlIGFwcCBpcyBiZWluZyBjcmVhdGVkIG9yIGNhbGxlZAovLyBFdmVyeSBwb3NzaWJsZSBhY3Rpb24gZm9yIHRoaXMgY29udHJhY3QgaXMgcmVwcmVzZW50ZWQgaW4gdGhlIHN3aXRjaCBzdGF0ZW1lbnQKLy8gSWYgdGhlIGFjdGlvbiBpcyBub3QgaW1wbGVtZW50ZWQgaW4gdGhlIGNvbnRyYWN0LCBpdHMgcmVzcGVjdGl2ZSBicmFuY2ggd2lsbCBiZSAiKk5PVF9JTVBMRU1FTlRFRCIgd2hpY2gganVzdCBjb250YWlucyAiZXJyIgp0eG4gQXBwbGljYXRpb25JRAohCmludGMgMiAvLyA2CioKdHhuIE9uQ29tcGxldGlvbgorCnN3aXRjaCAqY2FsbF9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpjYWxsX1VwZGF0ZUFwcGxpY2F0aW9uICpOT1RfSU1QTEVNRU5URUQgKmNyZWF0ZV9Ob09wICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRCAqTk9UX0lNUExFTUVOVEVEICpOT1RfSU1QTEVNRU5URUQgKk5PVF9JTVBMRU1FTlRFRAoKKk5PVF9JTVBMRU1FTlRFRDoKCS8vIFRoZSByZXF1ZXN0ZWQgYWN0aW9uIGlzIG5vdCBpbXBsZW1lbnRlZCBpbiB0aGlzIGNvbnRyYWN0LiBBcmUgeW91IHVzaW5nIHRoZSBjb3JyZWN0IE9uQ29tcGxldGU/IERpZCB5b3Ugc2V0IHlvdXIgYXBwIElEPwoJZXJyCgovLyBvcHRpbihwYXksdWludDY0KXZvaWQKKmFiaV9yb3V0ZV9vcHRpbjoKCS8vIGFzc2V0OiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWJ0b2kKCgkvLyBwYXltZW50OiBwYXkKCXR4biBHcm91cEluZGV4CglpbnRjIDEgLy8gMQoJLQoJZHVwCglndHhucyBUeXBlRW51bQoJaW50YyAxIC8vICBwYXkKCT09CgoJLy8gYXJndW1lbnQgMSAocGF5bWVudCkgZm9yIG9wdGluIG11c3QgYmUgYSBwYXkgdHJhbnNhY3Rpb24KCWFzc2VydAoKCS8vIGV4ZWN1dGUgb3B0aW4ocGF5LHVpbnQ2NCl2b2lkCgljYWxsc3ViIG9wdGluCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyBvcHRpbihwYXltZW50OiBQYXlUeG4sIGFzc2V0OiBBc3NldElEKTogdm9pZAovLwovLyBvcHRpbiB0ZWxscyB0aGUgY29udHJhY3QgdG8gb3B0IGludG8gYW4gYXNhCi8vIEBwYXJhbSBwYXltZW50IFRoZSBwYXltZW50IHRyYW5zYWN0aW9uCi8vIEBwYXJhbSBhc3NldCBUaGUgYXNzZXQgdG8gYmUgb3B0ZWQgaW50bwpvcHRpbjoKCXByb3RvIDIgMAoKCS8vIHV0aWxzL2Jhc2VfY29udHJhY3RzL29wdGluLmFsZ28udHM6MTYKCS8vIHZlcmlmeVBheVR4bihwYXltZW50LCB7CgkvLyAgICAgICAgICAgICByZWNlaXZlcjogdGhpcy5hcHAuYWRkcmVzcywKCS8vICAgICAgICAgICAgIGFtb3VudDogZ2xvYmFscy5hc3NldE9wdEluTWluQmFsYW5jZSwKCS8vICAgICAgICAgfSkKCS8vIHZlcmlmeSByZWNlaXZlcgoJZnJhbWVfZGlnIC0xIC8vIHBheW1lbnQ6IFBheVR4bgoJZ3R4bnMgUmVjZWl2ZXIKCWdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCgk9PQoKCS8vIHRyYW5zYWN0aW9uIHZlcmlmaWNhdGlvbiBmYWlsZWQ6IHsidHhuIjoicGF5bWVudCIsImZpZWxkIjoicmVjZWl2ZXIiLCJleHBlY3RlZCI6InRoaXMuYXBwLmFkZHJlc3MifQoJYXNzZXJ0CgoJLy8gdmVyaWZ5IGFtb3VudAoJZnJhbWVfZGlnIC0xIC8vIHBheW1lbnQ6IFBheVR4bgoJZ3R4bnMgQW1vdW50CglnbG9iYWwgQXNzZXRPcHRJbk1pbkJhbGFuY2UKCT09CgoJLy8gdHJhbnNhY3Rpb24gdmVyaWZpY2F0aW9uIGZhaWxlZDogeyJ0eG4iOiJwYXltZW50IiwiZmllbGQiOiJhbW91bnQiLCJleHBlY3RlZCI6Imdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UifQoJYXNzZXJ0CgoJLy8gdXRpbHMvYmFzZV9jb250cmFjdHMvb3B0aW4uYWxnby50czoyMQoJLy8gc2VuZEFzc2V0VHJhbnNmZXIoewoJLy8gICAgICAgICAgICAgc2VuZGVyOiB0aGlzLmFwcC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgYXNzZXRSZWNlaXZlcjogdGhpcy5hcHAuYWRkcmVzcywKCS8vICAgICAgICAgICAgIGFzc2V0QW1vdW50OiAwLAoJLy8gICAgICAgICAgICAgeGZlckFzc2V0OiBhc3NldCwKCS8vICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgfSkKCWl0eG5fYmVnaW4KCWludGMgMyAvLyAgYXhmZXIKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyB1dGlscy9iYXNlX2NvbnRyYWN0cy9vcHRpbi5hbGdvLnRzOjIyCgkvLyBzZW5kZXI6IHRoaXMuYXBwLmFkZHJlc3MKCWdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCglpdHhuX2ZpZWxkIFNlbmRlcgoKCS8vIHV0aWxzL2Jhc2VfY29udHJhY3RzL29wdGluLmFsZ28udHM6MjMKCS8vIGFzc2V0UmVjZWl2ZXI6IHRoaXMuYXBwLmFkZHJlc3MKCWdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCglpdHhuX2ZpZWxkIEFzc2V0UmVjZWl2ZXIKCgkvLyB1dGlscy9iYXNlX2NvbnRyYWN0cy9vcHRpbi5hbGdvLnRzOjI0CgkvLyBhc3NldEFtb3VudDogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgQXNzZXRBbW91bnQKCgkvLyB1dGlscy9iYXNlX2NvbnRyYWN0cy9vcHRpbi5hbGdvLnRzOjI1CgkvLyB4ZmVyQXNzZXQ6IGFzc2V0CglmcmFtZV9kaWcgLTIgLy8gYXNzZXQ6IEFzc2V0SUQKCWl0eG5fZmllbGQgWGZlckFzc2V0CgoJLy8gdXRpbHMvYmFzZV9jb250cmFjdHMvb3B0aW4uYWxnby50czoyNgoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBTdWJtaXQgaW5uZXIgdHJhbnNhY3Rpb24KCWl0eG5fc3VibWl0CglyZXRzdWIKCi8vIGNyZWF0ZUFwcGxpY2F0aW9uKHN0cmluZyl2b2lkCiphYmlfcm91dGVfY3JlYXRlQXBwbGljYXRpb246CgkvLyB2ZXJzaW9uOiBzdHJpbmcKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWV4dHJhY3QgMiAwCgoJLy8gZXhlY3V0ZSBjcmVhdGVBcHBsaWNhdGlvbihzdHJpbmcpdm9pZAoJY2FsbHN1YiBjcmVhdGVBcHBsaWNhdGlvbgoJaW50YyAxIC8vIDEKCXJldHVybgoKLy8gY3JlYXRlQXBwbGljYXRpb24odmVyc2lvbjogc3RyaW5nKTogdm9pZApjcmVhdGVBcHBsaWNhdGlvbjoKCXByb3RvIDEgMAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoyNwoJLy8gdGhpcy5jaGlsZENvbnRyYWN0VmVyc2lvbi52YWx1ZSA9IHZlcnNpb24KCXB1c2hieXRlcyAweDYzNjg2OTZjNjQ1ZjYzNmY2ZTc0NzI2MTYzNzQ1Zjc2NjU3MjczNjk2ZjZlIC8vICJjaGlsZF9jb250cmFjdF92ZXJzaW9uIgoJZnJhbWVfZGlnIC0xIC8vIHZlcnNpb246IHN0cmluZwoJZHVwCglsZW4KCWl0b2IKCWV4dHJhY3QgNiAyCglzd2FwCgljb25jYXQKCWFwcF9nbG9iYWxfcHV0CglyZXRzdWIKCi8vIHVwZGF0ZUFwcGxpY2F0aW9uKCl2b2lkCiphYmlfcm91dGVfdXBkYXRlQXBwbGljYXRpb246CgkvLyBleGVjdXRlIHVwZGF0ZUFwcGxpY2F0aW9uKCl2b2lkCgljYWxsc3ViIHVwZGF0ZUFwcGxpY2F0aW9uCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyB1cGRhdGVBcHBsaWNhdGlvbigpOiB2b2lkCnVwZGF0ZUFwcGxpY2F0aW9uOgoJcHJvdG8gMCAwCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjMxCgkvLyBhc3NlcnQodGhpcy50eG4uc2VuZGVyID09PSB0aGlzLmFraXRhRGFvQXBwSUQuYWRkcmVzcywgZXJycy5OT1RfQUtJVEFfREFPKQoJdHhuIFNlbmRlcgoJaW50YyA0IC8vIFRNUExfYWtpdGFEYW9BcHBJRAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCgk9PQoJYXNzZXJ0CglyZXRzdWIKCi8vIG5ldyhwYXksYXhmZXIsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KXVpbnQ2NAoqYWJpX3JvdXRlX25ldzoKCS8vIFRoZSBBQkkgcmV0dXJuIHByZWZpeAoJcHVzaGJ5dGVzIDB4MTUxZjdjNzUKCgkvLyB3ZWlnaHRzTGlzdENvdW50OiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDcKCWJ0b2kKCgkvLyBnYXRlSUQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNgoJYnRvaQoKCS8vIG1heFRpY2tldHM6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNQoJYnRvaQoKCS8vIG1pblRpY2tldHM6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgNAoJYnRvaQoKCS8vIGVuZGluZ1JvdW5kOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDMKCWJ0b2kKCgkvLyBzdGFydGluZ1JvdW5kOiB1aW50NjQKCXR4bmEgQXBwbGljYXRpb25BcmdzIDIKCWJ0b2kKCgkvLyB0aWNrZXRBc3NldDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyAxCglidG9pCgoJLy8gYXNzZXRYZmVyOiBheGZlcgoJdHhuIEdyb3VwSW5kZXgKCWludGMgMSAvLyAxCgktCglkdXAKCWd0eG5zIFR5cGVFbnVtCglpbnRjIDMgLy8gIGF4ZmVyCgk9PQoKCS8vIGFyZ3VtZW50IDcgKGFzc2V0WGZlcikgZm9yIG5ldyBtdXN0IGJlIGEgYXhmZXIgdHJhbnNhY3Rpb24KCWFzc2VydAoKCS8vIHBheW1lbnQ6IHBheQoJdHhuIEdyb3VwSW5kZXgKCXB1c2hpbnQgMgoJLQoJZHVwCglndHhucyBUeXBlRW51bQoJaW50YyAxIC8vICBwYXkKCT09CgoJLy8gYXJndW1lbnQgOCAocGF5bWVudCkgZm9yIG5ldyBtdXN0IGJlIGEgcGF5IHRyYW5zYWN0aW9uCglhc3NlcnQKCgkvLyBleGVjdXRlIG5ldyhwYXksYXhmZXIsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KXVpbnQ2NAoJY2FsbHN1YiBuZXcKCWl0b2IKCWNvbmNhdAoJbG9nCglpbnRjIDEgLy8gMQoJcmV0dXJuCgovLyBuZXcocGF5bWVudDogUGF5VHhuLCBhc3NldFhmZXI6IEFzc2V0VHJhbnNmZXJUeG4sIHRpY2tldEFzc2V0OiBBc3NldElELCBzdGFydGluZ1JvdW5kOiB1aW50NjQsIGVuZGluZ1JvdW5kOiB1aW50NjQsIG1pblRpY2tldHM6IHVpbnQ2NCwgbWF4VGlja2V0czogdWludDY0LCBnYXRlSUQ6IHVpbnQ2NCwgd2VpZ2h0c0xpc3RDb3VudDogdWludDY0KTogQXBwSUQKbmV3OgoJcHJvdG8gOSAxCgoJLy8gUHVzaCBlbXB0eSBieXRlcyBhZnRlciB0aGUgZnJhbWUgcG9pbnRlciB0byByZXNlcnZlIHNwYWNlIGZvciBsb2NhbCB2YXJpYWJsZXMKCWJ5dGVjIDAgLy8gMHgKCWR1cG4gMwoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo0NQoJLy8gb3B0aW5NQlIgPSAwCglpbnRjIDAgLy8gMAoJZnJhbWVfYnVyeSAwIC8vIG9wdGluTUJSOiB1aW50NjQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NDYKCS8vIHByaXplQXNzZXRJc0FsZ28gPSBhc3NldFhmZXIueGZlckFzc2V0LmlkID09PSAwCglmcmFtZV9kaWcgLTIgLy8gYXNzZXRYZmVyOiBBc3NldFRyYW5zZmVyVHhuCglndHhucyBYZmVyQXNzZXQKCWludGMgMCAvLyAwCgk9PQoJZnJhbWVfYnVyeSAxIC8vIHByaXplQXNzZXRJc0FsZ286IGJvb2wKCgkvLyAqaWYwX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjQ3CgkvLyBwcml6ZUFzc2V0SXNBbGdvCglmcmFtZV9kaWcgMSAvLyBwcml6ZUFzc2V0SXNBbGdvOiBib29sCglieiAqaWYwX2VuZAoKCS8vICppZjBfY29uc2VxdWVudAoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjQ4CgkvLyBvcHRpbk1CUiA9IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UKCWdsb2JhbCBBc3NldE9wdEluTWluQmFsYW5jZQoJZnJhbWVfYnVyeSAwIC8vIG9wdGluTUJSOiB1aW50NjQKCippZjBfZW5kOgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjUxCgkvLyB0aWNrZXRBc3NldElzQWxnbyA9IHRpY2tldEFzc2V0LmlkID09PSAwCglmcmFtZV9kaWcgLTMgLy8gdGlja2V0QXNzZXQ6IEFzc2V0SUQKCWludGMgMCAvLyAwCgk9PQoJZnJhbWVfYnVyeSAyIC8vIHRpY2tldEFzc2V0SXNBbGdvOiBib29sCgoJLy8gKmlmMV9jb25kaXRpb24KCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo1MgoJLy8gdGlja2V0QXNzZXRJc0FsZ28KCWZyYW1lX2RpZyAyIC8vIHRpY2tldEFzc2V0SXNBbGdvOiBib29sCglieiAqaWYxX2VuZAoKCS8vICppZjFfY29uc2VxdWVudAoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjUzCgkvLyBvcHRpbk1CUiArPSBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlCglmcmFtZV9kaWcgMCAvLyBvcHRpbk1CUjogdWludDY0CglnbG9iYWwgQXNzZXRPcHRJbk1pbkJhbGFuY2UKCSsKCWZyYW1lX2J1cnkgMCAvLyBvcHRpbk1CUjogdWludDY0CgoqaWYxX2VuZDoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo1NgoJLy8gdmVyaWZ5UGF5VHhuKHBheW1lbnQsIHsKCS8vICAgICAgICAgICAgIHJlY2VpdmVyOiB0aGlzLmFwcC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgYW1vdW50OiAoCgkvLyAgICAgICAgICAgICAgICAgMTAwXzAwMCAvLyByZXF1aXJlcyAzIGV4dHJhIHBhZ2VzCgkvLyAgICAgICAgICAgICAgICAgKyAoMjhfNTAwICogUmFmZmxlLnNjaGVtYS5nbG9iYWwubnVtVWludCkKCS8vICAgICAgICAgICAgICAgICArICg1MF8wMDAgKiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1CeXRlU2xpY2UpCgkvLyAgICAgICAgICAgICAgICAgKyBvcHRpbk1CUgoJLy8gICAgICAgICAgICAgICAgICsgKHdlaWdodHNMaXN0Q291bnQgKiB3ZWlnaHRzTGlzdE1CUikKCS8vICAgICAgICAgICAgICAgICArIGFwcENyZWF0b3JzTUJSCgkvLyAgICAgICAgICAgICApLAoJLy8gICAgICAgICB9KQoJLy8gdmVyaWZ5IHJlY2VpdmVyCglmcmFtZV9kaWcgLTEgLy8gcGF5bWVudDogUGF5VHhuCglndHhucyBSZWNlaXZlcgoJZ2xvYmFsIEN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MKCT09CgoJLy8gdHJhbnNhY3Rpb24gdmVyaWZpY2F0aW9uIGZhaWxlZDogeyJ0eG4iOiJwYXltZW50IiwiZmllbGQiOiJyZWNlaXZlciIsImV4cGVjdGVkIjoidGhpcy5hcHAuYWRkcmVzcyJ9Cglhc3NlcnQKCgkvLyB2ZXJpZnkgYW1vdW50CglmcmFtZV9kaWcgLTEgLy8gcGF5bWVudDogUGF5VHhuCglndHhucyBBbW91bnQKCXB1c2hpbnQgNzA2MDAwCglmcmFtZV9kaWcgMCAvLyBvcHRpbk1CUjogdWludDY0CgkrCglmcmFtZV9kaWcgLTkgLy8gd2VpZ2h0c0xpc3RDb3VudDogdWludDY0CglpbnRjIDUgLy8gMTMxMTMzMDAKCSoKCSsKCXB1c2hpbnQgMTg1MDAKCSsKCT09CgoJLy8gdHJhbnNhY3Rpb24gdmVyaWZpY2F0aW9uIGZhaWxlZDogeyJ0eG4iOiJwYXltZW50IiwiZmllbGQiOiJhbW91bnQiLCJleHBlY3RlZCI6IihcbiAgICAgICAgICAgICAgICAxMDBfMDAwIC8vIHJlcXVpcmVzIDMgZXh0cmEgcGFnZXNcbiAgICAgICAgICAgICAgICArICgyOF81MDAgKiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1VaW50KVxuICAgICAgICAgICAgICAgICsgKDUwXzAwMCAqIFJhZmZsZS5zY2hlbWEuZ2xvYmFsLm51bUJ5dGVTbGljZSlcbiAgICAgICAgICAgICAgICArIG9wdGluTUJSXG4gICAgICAgICAgICAgICAgKyAod2VpZ2h0c0xpc3RDb3VudCAqIHdlaWdodHNMaXN0TUJSKVxuICAgICAgICAgICAgICAgICsgYXBwQ3JlYXRvcnNNQlJcbiAgICAgICAgICAgICkifQoJYXNzZXJ0CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjY4CgkvLyB2ZXJpZnlBc3NldFRyYW5zZmVyVHhuKGFzc2V0WGZlciwgeyBhc3NldFJlY2VpdmVyOiB0aGlzLmFwcC5hZGRyZXNzIH0pCgkvLyB2ZXJpZnkgYXNzZXRSZWNlaXZlcgoJZnJhbWVfZGlnIC0yIC8vIGFzc2V0WGZlcjogQXNzZXRUcmFuc2ZlclR4bgoJZ3R4bnMgQXNzZXRSZWNlaXZlcgoJZ2xvYmFsIEN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MKCT09CgoJLy8gdHJhbnNhY3Rpb24gdmVyaWZpY2F0aW9uIGZhaWxlZDogeyJ0eG4iOiJhc3NldFhmZXIiLCJmaWVsZCI6ImFzc2V0UmVjZWl2ZXIiLCJleHBlY3RlZCI6InRoaXMuYXBwLmFkZHJlc3MifQoJYXNzZXJ0CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjcwCgkvLyB0aGlzLnBlbmRpbmdHcm91cC5hZGRNZXRob2RDYWxsPHR5cGVvZiBSYWZmbGUucHJvdG90eXBlLmNyZWF0ZUFwcGxpY2F0aW9uLCB2b2lkPih7CgkvLyAgICAgICAgICAgICBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgYXNzZXRYZmVyLnhmZXJBc3NldCwKCS8vICAgICAgICAgICAgICAgICB0aWNrZXRBc3NldCwKCS8vICAgICAgICAgICAgICAgICBzdGFydGluZ1JvdW5kLAoJLy8gICAgICAgICAgICAgICAgIGVuZGluZ1JvdW5kLAoJLy8gICAgICAgICAgICAgICAgIHRoaXMudHhuLnNlbmRlciwKCS8vICAgICAgICAgICAgICAgICBtaW5UaWNrZXRzLAoJLy8gICAgICAgICAgICAgICAgIG1heFRpY2tldHMsCgkvLyAgICAgICAgICAgICAgICAgZ2F0ZUlELAoJLy8gICAgICAgICAgICAgICAgIHRoaXMuYWtpdGFEYW9BcHBJRC5nbG9iYWxTdGF0ZShBS0lUQV9EQU9fVlJGX0JFQUNPTl9BUFBfSURfS0VZKSBhcyBBcHBJRCwKCS8vICAgICAgICAgICAgIF0sCgkvLyAgICAgICAgICAgICBhcHByb3ZhbFByb2dyYW06IFJhZmZsZS5hcHByb3ZhbFByb2dyYW0oKSwKCS8vICAgICAgICAgICAgIGNsZWFyU3RhdGVQcm9ncmFtOiBSYWZmbGUuY2xlYXJQcm9ncmFtKCksCgkvLyAgICAgICAgICAgICBnbG9iYWxOdW1VaW50OiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1VaW50LAoJLy8gICAgICAgICAgICAgZ2xvYmFsTnVtQnl0ZVNsaWNlOiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1CeXRlU2xpY2UsCgkvLyAgICAgICAgICAgICBleHRyYVByb2dyYW1QYWdlczogMCwKCS8vICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgfSkKCWl0eG5fbmV4dAoJaW50YyAyIC8vICBhcHBsCglpdHhuX2ZpZWxkIFR5cGVFbnVtCglwdXNoYnl0ZXMgMHhmMzZkYmQ3YSAvLyBtZXRob2QgImNyZWF0ZUFwcGxpY2F0aW9uKHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCxhZGRyZXNzLHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCl2b2lkIgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6NzEKCS8vIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICBhc3NldFhmZXIueGZlckFzc2V0LAoJLy8gICAgICAgICAgICAgICAgIHRpY2tldEFzc2V0LAoJLy8gICAgICAgICAgICAgICAgIHN0YXJ0aW5nUm91bmQsCgkvLyAgICAgICAgICAgICAgICAgZW5kaW5nUm91bmQsCgkvLyAgICAgICAgICAgICAgICAgdGhpcy50eG4uc2VuZGVyLAoJLy8gICAgICAgICAgICAgICAgIG1pblRpY2tldHMsCgkvLyAgICAgICAgICAgICAgICAgbWF4VGlja2V0cywKCS8vICAgICAgICAgICAgICAgICBnYXRlSUQsCgkvLyAgICAgICAgICAgICAgICAgdGhpcy5ha2l0YURhb0FwcElELmdsb2JhbFN0YXRlKEFLSVRBX0RBT19WUkZfQkVBQ09OX0FQUF9JRF9LRVkpIGFzIEFwcElELAoJLy8gICAgICAgICAgICAgXQoJZnJhbWVfZGlnIC0yIC8vIGFzc2V0WGZlcjogQXNzZXRUcmFuc2ZlclR4bgoJZ3R4bnMgWGZlckFzc2V0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC0zIC8vIHRpY2tldEFzc2V0OiBBc3NldElECglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC00IC8vIHN0YXJ0aW5nUm91bmQ6IHVpbnQ2NAoJaXRvYgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCWZyYW1lX2RpZyAtNSAvLyBlbmRpbmdSb3VuZDogdWludDY0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJdHhuIFNlbmRlcgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCWZyYW1lX2RpZyAtNiAvLyBtaW5UaWNrZXRzOiB1aW50NjQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCglmcmFtZV9kaWcgLTcgLy8gbWF4VGlja2V0czogdWludDY0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJZnJhbWVfZGlnIC04IC8vIGdhdGVJRDogdWludDY0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoJaW50YyA0IC8vIFRNUExfYWtpdGFEYW9BcHBJRAoJcHVzaGJ5dGVzIDB4NzY3MjY2NWY2MjY1NjE2MzZmNmU1ZjYxNzA3MDVmNjk2NCAvLyAidnJmX2JlYWNvbl9hcHBfaWQiCglhcHBfZ2xvYmFsX2dldF9leAoKCS8vIGdsb2JhbCBzdGF0ZSB2YWx1ZSBkb2VzIG5vdCBleGlzdDogdGhpcy5ha2l0YURhb0FwcElELmdsb2JhbFN0YXRlKEFLSVRBX0RBT19WUkZfQkVBQ09OX0FQUF9JRF9LRVkpCglhc3NlcnQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjgyCgkvLyBhcHByb3ZhbFByb2dyYW06IFJhZmZsZS5hcHByb3ZhbFByb2dyYW0oKQoJcHVzaGJ5dGVzIDB4MGEyMDEzMDAwMTA4ODAyMDA0MDZhOGE3MDIxMDQwODAwMWZmZmZmZmZmZmZmZmZmZmZmZjAxZDE4MjllYmJlZmVmZGU4MjE0Y2Y4MjllYmJlZmVmZGU4MjE0ZDRhZmEwMDY4MDgwMDEwMjA1MjA2NDI2MWIwMDBjNzQ2OTYzNmI2NTc0NWY2MzZmNzU2ZTc0MGM3NDY5NjM2YjY1NzQ1ZjYxNzM3MzY1NzQwYjY1NmU3NDcyNzk1ZjYzNmY3NTZlNzQwMTY4MGQ3MjYxNjY2NjZjNjU1Zjc3Njk2ZTZlNjU3MjA1NzA3MjY5N2E2NTAxNjExMjY2Njk2ZTY0NWY3NzY5NmU2ZTY1NzI1ZjYzNzU3MjczNmY3MjExNzI2NTY2NzU2ZTY0NWY2ZDYyNzI1ZjYzNzU3MjczNmY3MjBlNzc2OTZlNmU2OTZlNjc1Zjc0Njk2MzZiNjU3NDA2NzM2NTZjNmM2NTcyMTU2ODY5Njc2ODY1NzM3NDVmNjI2OTY0NWY2MjZmNzg1ZjYzNmY3NTZlNzQwYjZkNjk2ZTVmNzQ2OTYzNmI2NTc0NzMwYjZkNjE3ODVmNzQ2OTYzNmI2NTc0NzMwNDY3NjE3NDY1MTQ3MjYxNjY2NjZjNjU1ZjcwNzI2OTdhNjU1ZjYzNmM2MTY5NmQ2NTY0MGM2NTZlNjQ2OTZlNjc1ZjcyNmY3NTZlNjQwMTY1MTU3NjcyNjY1ZjY3NjU3NDVmNjY2MTY5NmM3NTcyNjU1ZjYzNmY3NTZlNzQwMzBhODEwMTAxMDAxMTc2NzI2NjVmNjI2NTYxNjM2ZjZlNWY2MTcwNzA1ZjY5NjQwZTczNzQ2MTcyNzQ2OTZlNjc1ZjcyNmY3NTZlNjQwNDE1MWY3Yzc1MDg2NTZlNzQ3Mjc5NWY2OTY0MDQwODUzMWVkNzMxMTgxNDIxMDUwYjMxMTkwODhkMGMwOWI2MDAwMDAwMDAwMDAwMDAwMDBhMjQwOWE4MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDhhMDMwMThiZmUyMjEyNDEwMDAyMjM4OWIxMjEwNWIyMTA4MDA0MjAwZjc0MjFiMjFhMjJiMjE4OGJmZmIyMWE4YmZlMTZiMjFhOGJmZGIyMWEyMmIyMDFiM2I0M2IyMzA5YzUzYTU3MDQwMDIyNTM4OTM2MWEwMTE3MzExNjIzMDk0OTM4MTAyMzEyNDQ4ODAwMDIyMzQzOGEwMjAwMzEwMDM2MzIwMDcyMDc0ODEyNDQ4YmZmMzgwNzMyMGExMjQ0OGJmZjM4MDgzMjEwMTI0NGIxMjEwNGIyMTAzMjBhYjIwMDMyMGFiMjE0MjJiMjEyOGJmZWIyMTEyMmIyMDFiMzg5OGEwNDAwMjg0NzA0MjI4YzAwYjEyMTA1YjIxMDgwMDRjYWE4ZGFhNWIyMWEyMmIyMTg4YmZmYjIxYThiZmUxNmIyMWEyMmIyMDFiM2I0M2IyMzA5YzUzYTU3MDQwMDhjMDE4YjAxMzVmZjM0ZmY1NzA4MDgxNzhjMDI4YjAxMzVmZjM0ZmYyMTA5NTM4YzAzOGIwMTM1ZmYzNGZmNTcxMTA4MTc4YzA0OGIwMjQ5NDAwMDAzOGIwNDExNDEwMDE0YjYyM2IyMTAyMjcyMDg0OGIyMDc4YjAyOGIwNDA4YjIwODIyYjIwMThiMDMxNDQxMDAxOGI2MjEwNWIyMTA4MDA0ZTg1NDA4MTBiMjFhMjJiMjE4OGJmZTE2YjIxYTIyYjIwMThiZmM0MTAwMzdiNjIxMDRiMjEwMjI3MjA4NDhiMjE1MjI3MjA4NDhiMjE0OGJmZGIyMTI4YmZlYjIxMTIyYjIwMWI2MjEwNWIyMTAyNzFhYjIxYTIyYjIxODhiZmZiMjFhOGIwNDE2YjIxYTIyYjIwMTQyMDAyZWI2MjEwNGIyMTAyMjcyMDg0OGIyMTQ4YmZkYjIxMjhiZmViMjExMjJiMjAxYjYyMTA1YjIxMDI3MWFiMjFhMjJiMjE4OGJmZmIyMWE4YjA0MTZiMjFhMjJiMjAxYjM4OTI3MTg4ODAwMGEyNzE1MjI0ZjAyNTQ1MGIwMjM0MzhhMDAwMTMyMDYyNzE3NjQwZTQ5NDEwMDA3MzIwNjI3MTE2NDBmMTA4OTM2MWEwOTE3MzYxYTA4MTczNjFhMDcxNzM2MWEwNjE3MzYxYTA1NDkxNTIxMTExMjQ0MzYxYTA0MTczNjFhMDMxNzM2MWEwMjE3MzYxYTAxMTc4ODAwMDIyMzQzOGEwOTAwMjcwNjhiZmY2NzJhOGJmZTY3MjcxNzhiZmQ2NzhiZmM4YmZkMGQ0OTQxMDAwYThiZmMzMjA2ODE4NTBhMDgwZDEwNDQyNzExOGJmYzY3MjcwYjhiZmI2NzI3MGQ4YmZhNjcyNzBlOGJmOTY3MmIyMjY3MjkyMjY3MjcwYTIyNjcyNzA1MzIwMzY3MjcxMDIyMjcxNTIyNGYwMjU0NjcyNzBmOGJmODY3MjcxNjhiZjc2NzI3MTkyMjY3MjcwODIyNjcyNzA5MjI2Nzg5MzYxYTAxMTczMTE2MjMwOTQ5MzgxMDIzMTI0NDg4MDAwMjIzNDM4YTAyMDAyODMxMDAzNjMyMDA3MjA3NDgxMjQ0OGJmZTIxMDQwZjQ0OGJmZjM4MDczMjBhMTI0NDhiZmYzODA4OGJmZTIxMGQwYjEyNDQyMjhjMDA4YjAwOGJmZTBjNDEwMDE1MjcwNDhiMDAxNjUwODE4MDgwMDJiOTQ4OGIwMDIzMDg4YzAwNDJmZmUzODkzNjFhMDEzMTE2MjMwOTQ5MzgxMDIzMTI0NDg4MDAwMjIzNDM4YTAyMDAyODQ5ODhmZWRmNDQyYTY0MjIxMjQ0OGJmZTI3MGY2NDMxMDA4OGZkNDA0NDI3MDczMTAwNTBiZDRjNDgxNDQ0OGJmZjM4MDgyNzBkNjQyMTA2MDgwZjQ0OGJmZjM4MDgyNzBlNjQyMTA2MDgwZTQ0OGJmZjM4MDczMjBhMTI0NDJiNjQ4YzAwMjcxMjhiMDAxNjUwMzEwMGJmMjcwNzMxMDA1MDJiNjQxNmJmOGJmZjM4MDgyMTA2MDk4YzAxOGIwMDI1MTgyNDBiOGIwMTE2MjcwNDhiMDAyNTBhMTY1MDRlMDJiYjJiNjQyMzA4MmI0YzY3Mjk2NDhiMDEwODI5NGM2Nzg5MzYxYTAxMzExNjIzMDk0OTM4MTAyMTA0MTI0NDMxMTYyMTBmMDk0OTM4MTAyMzEyNDQ4ODAwMDIyMzQzOGEwMzAwMjg0OTg4ZmUzYjQ0MmE2NDIyMTM0NDhiZmQyNzBmNjQzMTAwODhmYzljNDQyNzA3MzEwMDUwYmQ0YzQ4MTQ0NDhiZmYzODA4MjEwNjEyNDQ4YmZmMzgwNzMyMGExMjQ0OGJmZTM4MTEyYTY0MTI0NDhiZmUzODEyMjcwZDY0MGY0NDhiZmUzODEyMjcwZTY0MGU0NDhiZmUzODE0MzIwYTEyNDQyYjY0OGMwMDI3MTI4YjAwMTY1MDMxMDBiZjI3MDczMTAwNTAyYjY0MTZiZjhiZmUzODEyOGMwMThiMDAyNTE4MjQwYjhiMDExNjI3MDQ4YjAwMjUwYTE2NTA0ZTAyYmIyYjY0MjMwODJiNGM2NzI5NjQ4YjAxMDgyOTRjNjc4OTM2MWEwMTMxMTYyMzA5NDkzODEwMjMxMjQ0ODgwMDAyMjM0MzhhMDIwMDI4NDk4OGZkOTQ0NDJhNjQyMjEyNDQ4YmZlMjcwZjY0MzEwMDg4ZmJmNTQ0MjcwNzMxMDA1MGJkNGM0ODQ0MjcwNzMxMDA1MGJlNDQxNzhjMDA4YjAwMjUxODI0MGIyMjA4MjQyNzA0OGIwMDI1MGExNjUwNGUwMmJhMTc4YzAxOGJmZjM4MDgyNzBkNjQwZjQ0OGJmZjM4MDgyNzBlNjQ4YjAxMDkwZTQ0OGJmZjM4MDczMjBhMTI0NDhiMDAyNTE4MjQwYjIyMDg4YjAwMjUxODI0MGIyMjA4MjQyNzA0OGIwMDI1MGExNjUwNGUwMmJhMTc4YmZmMzgwODA4MTYyNzA0OGIwMDI1MGExNjUwNGUwMmJiMjk2NDhiMDEwODI5NGM2Nzg5MzYxYTAxMzExNjIzMDk0OTM4MTAyMTA0MTI0NDg4MDAwMjIzNDM4YTAyMDAyODQ5ODhmY2VhNDQyYTY0MjIxMzQ0OGJmZTI3MGY2NDMxMDA4OGZiNGI0NDI3MDczMTAwNTBiZDRjNDg0NDI3MDczMTAwNTBiZTQ0MTc4YzAwOGIwMDI1MTgyNDBiMjIwODI0MjcwNDhiMDAyNTBhMTY1MDRlMDJiYTE3OGMwMThiZmYzODExMmE2NDEyNDQ4YmZmMzgxMjI3MGQ2NDBmNDQ4YmZmMzgxMjI3MGU2NDhiMDEwOTBlNDQ4YmZmMzgxNDMyMGExMjQ0OGIwMDI1MTgyNDBiMjIwODhiMDAyNTE4MjQwYjIyMDgyNDI3MDQ4YjAwMjUwYTE2NTA0ZTAyYmExNzhiZmYzODEyMDgxNjI3MDQ4YjAwMjUwYTE2NTA0ZTAyYmIyOTY0OGIwMTA4Mjk0YzY3ODk4ODAwMDIyMzQzOGEwMDAwMjg0NzA0MjcxMTY0MjMwODIxMDQyNzEzNjQwYjA4OGMwMDMyMDY4YjAwMjQwODBmNDQyNzBhNjQyMjEyNDRiMTIxMDViMjEwODAwNDE4OTM5MmM1YjIxYTI3MTY2NGIyMTg4YjAwMTZiMjFhMzExNzQ5MTUxNjU3MDYwMjRjNTBiMjFhMjJiMjAxYjNiNDNiMjMwOWM1M2E1NzA0MDA1NzAyMDA4YzAxOGIwMTE1MjIxMjQxMDAwYTI3MTM2NDIzMDgyNzEzNGM2Nzg5OGIwMTUxMDAxMDgwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDUwNDk1NzEwMDAyOGE4NDQ1NzAwMTA4ODA2NWU4YzAyMjk2NDhjMDM4YjAzMjEwYTBjNDEwMDBkOGIwMzIzMDg0OTM1ZjU4YzAzMzRmNThjMDMyMzhiMDMyMzhiMDI4ODA0M2U4YzA0MjcwYThiMDQzNWZmMzRmZjIxMDc1OTIyMDgyMTBmMDgzNGZmNGMyNDU4MTc2Nzg5ODgwMDAyMjM0MzhhMDAwMDI4NDcwNzMyMDYyNzExNjQwYzQ0MjcwYTY0MjIxMzQ0MmI2NDI3MDg2NDEyOGMwMDhiMDAxNDQ0MjcwODY0OGMwMTJiNjQyNzA4NjQwOThjMDI4YjAyMjEwZTBkNDEwMDA1MjEwZTQyMDAwMjhiMDI4YzAzMjM4YzA0MjI4YzA1OGIwMThjMDY4YjA2OGIwMzBlNDEwMDY4MzIwYzIxMTIwYzQxMDAxNGIxMjEwNWIyMTAyMmIyMDEyNzE0NDliMjFlYjIxZjIxMTBiMjE5YjM4YjA2MjUxODI0MGIyMjA4MjQyNzA0OGIwNjI1MGExNjUwNGUwMmJhMTc4YzA3OGIwNDhiMDcwODhjMDUyNzBhNjQ4YjA0MGY0OTQxMDAwNzI3MGE2NDhiMDUwZTEwNDEwMDBiMjcwNTI3MTI4YjA2MTY1MGJlNDQ2NzhiMDUyMzA4OGMwNDhiMDYyMzA4OGMwNjQyZmY5MDI3MDg2NDhiMDMwODI3MDg0YzY3ODk4ODAwMDIyMzQzOGEwMDAwMjg0NzA1MmI2NDIzMDk4YzAwOGIwMDI3MDg2NDEyNDQ4YjAwMjcwOTY0MTM0NDI3MDk2NDhjMDE4YjAwMjcwOTY0MDk4YzAyOGIwMjIxMDgwZDQxMDAwNTIxMDg0MjAwMDI4YjAyOGMwMzhiMDE4YzA0OGIwNDhiMDMwYzQxMDA0YzMyMGMyMTEyMGM0MTAwMTRiMTIxMDViMjEwMjJiMjAxMjcxNDQ5YjIxZWIyMWYyMTEwYjIxOWIzMjcxMjhiMDQxNjUwYmU0NDhjMDUyNzEyOGIwNDE2NTBiYzI3MDc4YjA1NTBiY2IxMjNiMjEwOGIwNWIyMDcyMTA2YjIwODIyYjIwMWIzOGIwNDIzMDg4YzA0NDJmZmFjMjcwOTY0OGIwMzA4MjcwOTRjNjc4OTg4MDAwMjIzNDM4YTAwMDAyODQ5MjcwNTY0MzIwMzEzNDQyNzEwNjQyMjUzMTQ0NDIyOGMwMDI3MDY2NDIyMTI0MTAwMzEzMjBhNzMwMDQ4MzIwYTczMDE0ODA5OGMwMDI3MDY2NDJhNjQxMjQxMDAwNzhiMDAyOTY0MDk4YzAwYjEyM2IyMTAyNzA1NjRiMjA3OGIwMGIyMDgyMmIyMDFiMzQyMDA3ODIzOGMwMTMyMGEyNzA2NjQ3MDAwNDg4YzAwMjcwNjY0MmE2NDEyNDEwMDBhOGIwMDI5NjQwOThjMDAyMjhjMDEyNzA1NjQyNzA2NjQ3MDAwNGM0ODQxMDAzZThiMDE0MTAwMWZiMTIxMDRiMjEwMjcwNTY0YjIxNDI3MDU2NGIyMTU4YjAwYjIxMjI3MDY2NGIyMTEyMmIyMDFiMzQyMDAxN2IxMjEwNGIyMTAyNzA1NjRiMjE0OGIwMGIyMTIyNzA2NjRiMjExMjJiMjAxYjM0MjAwMGQ4YjAxOGIwMDI3MDY2NDI3MDU2NDg4Zjg0MjJhNjQyMjEyNDEwMDE0YjEyM2IyMTAyNzBiNjRiMjA3Mjk2NGIyMDgyMmIyMDFiMzQyMDAzNTI3MGI2NDJhNjQ3MDAwNGM0ODQxMDAxZWIxMjEwNGIyMTAyNzBiNjRiMjE0MjcwYjY0YjIxNTI5NjRiMjEyMmE2NGIyMTEyMmIyMDFiMzQyMDAwYjIzMjk2NDJhNjQyNzBiNjQ4OGY3ZjIyNzEwMjMyNzE1MjI0ZjAyNTQ2Nzg5MjcxODg4MDAwNTE2NTBiMDIzNDM4YTAwMDEyODQ3MDMzMTAwMzYzMjAwNzIwNzQ4MTI0NDI3MGM2NDIxMDkwZDQxMDAwNTIxMDk0MjAwMDMyNzBjNjQ4YzAwMjI4YzAxOGIwMThiMDAwYzQxMDAxYTI3MGM2NDIzMDk4YjAxMDk4YzAyMjcwNDhiMDIxNjUwYmM4YjAxMjMwODhjMDE0MmZmZGUyNzBjNjQ4YjAwMDkyNzBjNGM2NzhiMDAyMTBkMGI4YzAzYjEyM2IyMTAzNjMyMDA3MjA3NDhiMjA3OGIwM2IyMDgyMmIyMDFiMzhiMDM4YzAwNDYwMzg5ODgwMDAyMjM0MzhhMDAwMDMxMDAzNjMyMDA3MjA3NDgxMjQ0MjcxMDY0MjI1MzQ0MmI2NDIzMDkyNzA5NjQxMzQ0MjcwYzY0MjIxMjQ0ODkyNzE4ODgwMDA0NTBiMDIzNDM4YTAwMDEyYTY0MTYyNzE3NjQxNjUwMjcxMTY0MTY1MDI3MGI2NDUwMjcwZDY0MTY1MDI3MGU2NDE2NTAyYjY0MTY1MDI5NjQxNjUwMjcwYTY0MTY1MDI3MDU2NDUwMjcwNjY0MTY1MDI3MTUyMjI3MTA2NDIyNTM1NDUwMjcwZjY0MTY1MDI3MTY2NDE2NTAyNzEzNjQxNjUwMjcxOTY0MTY1MDI3MDg2NDE2NTAyNzA5NjQxNjUwODk4MDA0ZjM2ZGJkN2EzNjFhMDA4ZTAxZjdmMDAwODAwNDNlYTExODMyODAwNDhmYTRhMTYwODAwNGJkNzE0OGQwODAwNDc1ZWI3NzAyODAwNDJmNzFjMjRjODAwNDA1NGEzMDIwODAwNDQ4MjEyMWMzODAwNDY5NjUwMWRlODAwNGI3MzNkNTE5ODAwNDFlYjgyNTY0ODAwNDY1ZmNhOThiODAwNDJjOTQyNTE0ODAwNGYzYzhkYjE2MzYxYTAwOGUwZGY2MTdmNzVlZjgxOWY4NzRmOTBjZjliZmZhNjhmYjFhZmJlYmZjYjJmZDUyZmU3OWZmMWYwMDgwMDQyNDg3YzMyYzM2MWEwMDhlMDFmZWU5MDA4YTA0MDEyODQ3MDcyODhjMDA4YmZmOGMwMzhiZmUyMjEyNDk0MTAwMDU4YmZkMjIxMjEwNDEwMDMxMjI4YzA0OGIwNDhiZmMwYzQxMDAyMzhiMDM4ODAxMDA4YzA1OGIwNTU3MDAxMDhjMDM4YjAwOGIwNTU3MTAwODE3MTY1MDhjMDA4YjA0MjMwODhjMDQ0MmZmZDU0MjAwYTk4YmZkMjIxMzQxMDAxNzhiZmQyMzBkNDQ4YmZlOGJmZDIzMDkwYzQ0OGJmZDhiZmUwOThjMDE0MjAwMzc4YmZlMjEwYTBjNDQ4MDEwMDAwMDAwMDAwMDAwMDAwMTAwMDAwMDAwMDAwMDAwMDA4YmZlMTZhMTQ5OTMyMTA4MGU0NDgwMDhmZmZmZmZmZmZmZmZmZmZmYWM0OTE1NDkyNDA5NGM1MjE3OGMwMThiMDE4ODAwNzA4YjAxMTg4YzAyMjI4YzA2OGIwNjhiZmMwYzQxMDAzZjIzNDEwMDMyOGIwMzg4MDA2YzhjMDc4YjA3NTcwMDEwOGMwMzhiMDc1NzEwMDgxNzhiMDIwZjQxMDAxNThiMDA4YjA3NTcxMDA4MTc4YjAxMTg4YmZlMDgxNjUwOGMwMDQyMDAwMzQyZmZjYThiMDYyMzA4OGMwNjQyZmZiOTI4Mjg4MDAyMDAxMjhiMDM4ODAxM2I4YjAwNDkxNTI0MGExNjU3MDYwMjRjNTA4ODAxMzk0ODUwOGMwMDQ2MDc4OThhMDEwMTI4NDk4YmZmMWMyMzFlOGMwMDhjMDE4YjAwOGMwMDQ2MDE4OThhMDEwMTI4NDk4YmZmNTcwMDA4MTc4ODAwYWU4YzAwMjEwYjhiMDA1NzAwMDgxNzIyMTI0MTAwMDQyMzQyMDAwMTIyOTA4YmZmNTcwODA4MTc4ODAwNjk4YzAxOGIwMDU3MDAwODE3MTY4YjAxMTY1MDhiMDA1NzA4MDgxNzIxMTE5MDhiZmY1NzA4MDgxNzg4MDAwODE5MTY1MDhjMDA0NjAxODk4YTAxMDEyODQ5OGJmZjgxMTI5MThiZmYxYjgxMWI5MTg4MDAyMjhjMDA4YmZmODEzYjkxOGMwMThiMDA4YjAxOTE4YjAwOGIwMTg4ZmY3MDgxMWYxYTkwODgwMDA2MTk4YzAwNDYwMTg5OGEwMTAxOGJmZjgxZmZmZmZmZmYwZjFhODk4YTAyMDEyODQ3MDM4YmZmODFhZGZlZDVlNGQ0ODVmZGE4NTgxZDhjMDA4YzAxOGIwMDhiZmUxZThjMDI4YzAzOGIwMjhjMDA0NjAzODk4YTAxMDEyMTBjOGJmZjg4ZmZjZjE2OGJmZjg4ZmY4NzE2NTA4OThhMDEwMTIxMDc0OTEyNDQyMTBjOGJmZjIyNWI4ODAwMGQxNjIxMGI4YmZmMjQ1Yjg4MDAwMzE2NTA4OThhMDIwMTI4NDcwMjhiZmUyMjg4ZmY5YzhjMDA4YjAwOGJmZjFlOGMwMThjMDI4YmZlOGIwMTg4ZmY4YThjMDA0NjAyODk4YTA0MDM4YmZjOGJmZjUwOGJmZDhiZmU4OThhMDQwMzhiZmM4YmZlNTA4Y2ZjOGJmZjQ5MTU4YmZlMTcwODE2NTcwNjAyOGNmZThiZmQ0YzUwOGNmZDhiZmM4YmZkOGJmZTg5CglpdHhuX2ZpZWxkIEFwcHJvdmFsUHJvZ3JhbQoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo4MwoJLy8gY2xlYXJTdGF0ZVByb2dyYW06IFJhZmZsZS5jbGVhclByb2dyYW0oKQoJcHVzaGJ5dGVzIDB4MGEKCWl0eG5fZmllbGQgQ2xlYXJTdGF0ZVByb2dyYW0KCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6ODQKCS8vIGdsb2JhbE51bVVpbnQ6IFJhZmZsZS5zY2hlbWEuZ2xvYmFsLm51bVVpbnQKCXB1c2hpbnQgMTYKCWl0eG5fZmllbGQgR2xvYmFsTnVtVWludAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo4NQoJLy8gZ2xvYmFsTnVtQnl0ZVNsaWNlOiBSYWZmbGUuc2NoZW1hLmdsb2JhbC5udW1CeXRlU2xpY2UKCXB1c2hpbnQgMwoJaXR4bl9maWVsZCBHbG9iYWxOdW1CeXRlU2xpY2UKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6ODYKCS8vIGV4dHJhUHJvZ3JhbVBhZ2VzOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBFeHRyYVByb2dyYW1QYWdlcwoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo4NwoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6OTAKCS8vIHJhZmZsZUFwcElEID0gdGhpcy5pdHhuLmNyZWF0ZWRBcHBsaWNhdGlvbklECglpdHhuIENyZWF0ZWRBcHBsaWNhdGlvbklECglmcmFtZV9idXJ5IDMgLy8gcmFmZmxlQXBwSUQ6IHVpbnQ2NAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo5MQoJLy8gdGhpcy5hcHBDcmVhdG9ycyh7IGFkZHJlc3M6IHBheW1lbnQuc2VuZGVyLCBhcHBJRDogcmFmZmxlQXBwSUQgfSkudmFsdWUgPSBhcHBDcmVhdG9yc01CUgoJZnJhbWVfZGlnIC0xIC8vIHBheW1lbnQ6IFBheVR4bgoJZ3R4bnMgU2VuZGVyCglmcmFtZV9kaWcgMyAvLyByYWZmbGVBcHBJRDogdWludDY0CglpdG9iCgljb25jYXQKCXB1c2hieXRlcyAweDAwMDAwMDAwMDAwMDQ4NDQKCWJveF9wdXQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6OTMKCS8vIHRoaXMucGVuZGluZ0dyb3VwLmFkZE1ldGhvZENhbGw8dHlwZW9mIFJhZmZsZS5wcm90b3R5cGUuaW5pdCwgdm9pZD4oewoJLy8gICAgICAgICAgICAgYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQsCgkvLyAgICAgICAgICAgICBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICByZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcywKCS8vICAgICAgICAgICAgICAgICAgICAgYW1vdW50OiB3ZWlnaHRzTGlzdENvdW50ICogd2VpZ2h0c0xpc3RNQlIsCgkvLyAgICAgICAgICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgICAgICAgICB9LAoJLy8gICAgICAgICAgICAgICAgIHdlaWdodHNMaXN0Q291bnQKCS8vICAgICAgICAgICAgIF0sCgkvLyAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgIH0pCglpdHhuX25leHQKCWludGMgMSAvLyAgcGF5CglpdHhuX2ZpZWxkIFR5cGVFbnVtCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjk3CgkvLyByZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcwoJZnJhbWVfZGlnIDMgLy8gcmFmZmxlQXBwSUQ6IHVpbnQ2NAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFJlY2VpdmVyCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjk4CgkvLyBhbW91bnQ6IHdlaWdodHNMaXN0Q291bnQgKiB3ZWlnaHRzTGlzdE1CUgoJZnJhbWVfZGlnIC05IC8vIHdlaWdodHNMaXN0Q291bnQ6IHVpbnQ2NAoJaW50YyA1IC8vIDEzMTEzMzAwCgkqCglpdHhuX2ZpZWxkIEFtb3VudAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czo5OQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCWl0eG5fbmV4dAoJaW50YyAyIC8vICBhcHBsCglpdHhuX2ZpZWxkIFR5cGVFbnVtCglwdXNoYnl0ZXMgMHhiZDcxNDhkMCAvLyBtZXRob2QgImluaXQocGF5LHVpbnQ2NCl2b2lkIgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6OTQKCS8vIGFwcGxpY2F0aW9uSUQ6IHJhZmZsZUFwcElECglmcmFtZV9kaWcgMyAvLyByYWZmbGVBcHBJRDogdWludDY0CglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6OTUKCS8vIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICB7CgkvLyAgICAgICAgICAgICAgICAgICAgIHJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IHdlaWdodHNMaXN0Q291bnQgKiB3ZWlnaHRzTGlzdE1CUiwKCS8vICAgICAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgd2VpZ2h0c0xpc3RDb3VudAoJLy8gICAgICAgICAgICAgXQoJZnJhbWVfZGlnIC05IC8vIHdlaWdodHNMaXN0Q291bnQ6IHVpbnQ2NAoJaXRvYgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTAzCgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vICppZjJfY29uZGl0aW9uCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTA2CgkvLyAhcHJpemVBc3NldElzQWxnbwoJZnJhbWVfZGlnIDEgLy8gcHJpemVBc3NldElzQWxnbzogYm9vbAoJIQoJYnogKmlmMl9lbmQKCgkvLyAqaWYyX2NvbnNlcXVlbnQKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMDcKCS8vIHRoaXMucGVuZGluZ0dyb3VwLmFkZE1ldGhvZENhbGw8dHlwZW9mIFJhZmZsZS5wcm90b3R5cGUub3B0aW4sIHZvaWQ+KHsKCS8vICAgICAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiByYWZmbGVBcHBJRCwKCS8vICAgICAgICAgICAgICAgICBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgYW1vdW50OiBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgICAgICB9LAoJLy8gICAgICAgICAgICAgICAgICAgICBhc3NldFhmZXIueGZlckFzc2V0LAoJLy8gICAgICAgICAgICAgICAgIF0sCgkvLyAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgfSkKCWl0eG5fbmV4dAoJaW50YyAxIC8vICBwYXkKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTExCgkvLyByZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcwoJZnJhbWVfZGlnIDMgLy8gcmFmZmxlQXBwSUQ6IHVpbnQ2NAoJYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwoJcG9wCglpdHhuX2ZpZWxkIFJlY2VpdmVyCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjExMgoJLy8gYW1vdW50OiBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlCglnbG9iYWwgQXNzZXRPcHRJbk1pbkJhbGFuY2UKCWl0eG5fZmllbGQgQW1vdW50CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjExMwoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCWl0eG5fbmV4dAoJaW50YyAyIC8vICBhcHBsCglpdHhuX2ZpZWxkIFR5cGVFbnVtCglieXRlYyAxIC8vICBtZXRob2QgIm9wdGluKHBheSx1aW50NjQpdm9pZCIKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEwOAoJLy8gYXBwbGljYXRpb25JRDogcmFmZmxlQXBwSUQKCWZyYW1lX2RpZyAzIC8vIHJhZmZsZUFwcElEOiB1aW50NjQKCWl0eG5fZmllbGQgQXBwbGljYXRpb25JRAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMDkKCS8vIG1ldGhvZEFyZ3M6IFsKCS8vICAgICAgICAgICAgICAgICAgICAgewoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBhbW91bnQ6IGdsb2JhbHMuYXNzZXRPcHRJbk1pbkJhbGFuY2UsCgkvLyAgICAgICAgICAgICAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgICAgICAgICAgICAgIH0sCgkvLyAgICAgICAgICAgICAgICAgICAgIGFzc2V0WGZlci54ZmVyQXNzZXQsCgkvLyAgICAgICAgICAgICAgICAgXQoJZnJhbWVfZGlnIC0yIC8vIGFzc2V0WGZlcjogQXNzZXRUcmFuc2ZlclR4bgoJZ3R4bnMgWGZlckFzc2V0CglpdG9iCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMTcKCS8vIGZlZTogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRmVlCgoqaWYyX2VuZDoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMjEKCS8vIHRoaXMucGVuZGluZ0dyb3VwLmFkZEFzc2V0VHJhbnNmZXIoewoJLy8gICAgICAgICAgICAgYXNzZXRSZWNlaXZlcjogcmFmZmxlQXBwSUQuYWRkcmVzcywKCS8vICAgICAgICAgICAgIGFzc2V0QW1vdW50OiBhc3NldFhmZXIuYXNzZXRBbW91bnQsCgkvLyAgICAgICAgICAgICB4ZmVyQXNzZXQ6IGFzc2V0WGZlci54ZmVyQXNzZXQsCgkvLyAgICAgICAgICAgICBmZWU6IDAsCgkvLyAgICAgICAgIH0pCglpdHhuX25leHQKCWludGMgMyAvLyAgYXhmZXIKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTIyCgkvLyBhc3NldFJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzCglmcmFtZV9kaWcgMyAvLyByYWZmbGVBcHBJRDogdWludDY0CglhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCglwb3AKCWl0eG5fZmllbGQgQXNzZXRSZWNlaXZlcgoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMjMKCS8vIGFzc2V0QW1vdW50OiBhc3NldFhmZXIuYXNzZXRBbW91bnQKCWZyYW1lX2RpZyAtMiAvLyBhc3NldFhmZXI6IEFzc2V0VHJhbnNmZXJUeG4KCWd0eG5zIEFzc2V0QW1vdW50CglpdHhuX2ZpZWxkIEFzc2V0QW1vdW50CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEyNAoJLy8geGZlckFzc2V0OiBhc3NldFhmZXIueGZlckFzc2V0CglmcmFtZV9kaWcgLTIgLy8gYXNzZXRYZmVyOiBBc3NldFRyYW5zZmVyVHhuCglndHhucyBYZmVyQXNzZXQKCWl0eG5fZmllbGQgWGZlckFzc2V0CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEyNQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyAqaWYzX2NvbmRpdGlvbgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEyOAoJLy8gIXRpY2tldEFzc2V0SXNBbGdvCglmcmFtZV9kaWcgMiAvLyB0aWNrZXRBc3NldElzQWxnbzogYm9vbAoJIQoJYnogKmlmM19lbmQKCgkvLyAqaWYzX2NvbnNlcXVlbnQKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMjkKCS8vIHRoaXMucGVuZGluZ0dyb3VwLmFkZE1ldGhvZENhbGw8dHlwZW9mIFJhZmZsZS5wcm90b3R5cGUub3B0aW4sIHZvaWQ+KHsKCS8vICAgICAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiByYWZmbGVBcHBJRCwKCS8vICAgICAgICAgICAgICAgICBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgYW1vdW50OiBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgICAgICB9LAoJLy8gICAgICAgICAgICAgICAgICAgICB0aWNrZXRBc3NldCwKCS8vICAgICAgICAgICAgICAgICBdLAoJLy8gICAgICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgICAgIH0pCglpdHhuX25leHQKCWludGMgMSAvLyAgcGF5CglpdHhuX2ZpZWxkIFR5cGVFbnVtCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEzMwoJLy8gcmVjZWl2ZXI6IHJhZmZsZUFwcElELmFkZHJlc3MKCWZyYW1lX2RpZyAzIC8vIHJhZmZsZUFwcElEOiB1aW50NjQKCWFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKCXBvcAoJaXR4bl9maWVsZCBSZWNlaXZlcgoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMzQKCS8vIGFtb3VudDogZ2xvYmFscy5hc3NldE9wdEluTWluQmFsYW5jZQoJZ2xvYmFsIEFzc2V0T3B0SW5NaW5CYWxhbmNlCglpdHhuX2ZpZWxkIEFtb3VudAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMzUKCS8vIGZlZTogMAoJaW50YyAwIC8vIDAKCWl0eG5fZmllbGQgRmVlCglpdHhuX25leHQKCWludGMgMiAvLyAgYXBwbAoJaXR4bl9maWVsZCBUeXBlRW51bQoJYnl0ZWMgMSAvLyAgbWV0aG9kICJvcHRpbihwYXksdWludDY0KXZvaWQiCglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxMzAKCS8vIGFwcGxpY2F0aW9uSUQ6IHJhZmZsZUFwcElECglmcmFtZV9kaWcgMyAvLyByYWZmbGVBcHBJRDogdWludDY0CglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTMxCgkvLyBtZXRob2RBcmdzOiBbCgkvLyAgICAgICAgICAgICAgICAgICAgIHsKCS8vICAgICAgICAgICAgICAgICAgICAgICAgIHJlY2VpdmVyOiByYWZmbGVBcHBJRC5hZGRyZXNzLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgYW1vdW50OiBnbG9iYWxzLmFzc2V0T3B0SW5NaW5CYWxhbmNlLAoJLy8gICAgICAgICAgICAgICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICAgICAgICAgICAgICB9LAoJLy8gICAgICAgICAgICAgICAgICAgICB0aWNrZXRBc3NldCwKCS8vICAgICAgICAgICAgICAgICBdCglmcmFtZV9kaWcgLTMgLy8gdGlja2V0QXNzZXQ6IEFzc2V0SUQKCWl0b2IKCWl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjEzOQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCippZjNfZW5kOgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjE0MwoJLy8gdGhpcy5wZW5kaW5nR3JvdXAuc3VibWl0KCkKCWl0eG5fc3VibWl0CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjE0NQoJLy8gcmV0dXJuIHRoaXMuaXR4bi5jcmVhdGVkQXBwbGljYXRpb25JRDsKCWl0eG4gQ3JlYXRlZEFwcGxpY2F0aW9uSUQKCgkvLyBzZXQgdGhlIHN1YnJvdXRpbmUgcmV0dXJuIHZhbHVlCglmcmFtZV9idXJ5IDAKCgkvLyBwb3AgYWxsIGxvY2FsIHZhcmlhYmxlcyBmcm9tIHRoZSBzdGFjawoJcG9wbiAzCglyZXRzdWIKCi8vIGNsZWFyV2VpZ2h0c0JveGVzKGFkZHJlc3MsdWludDY0KXZvaWQKKmFiaV9yb3V0ZV9jbGVhcldlaWdodHNCb3hlczoKCS8vIGF1Y3Rpb25BcHBJRDogdWludDY0Cgl0eG5hIEFwcGxpY2F0aW9uQXJncyAyCglidG9pCgoJLy8gY3JlYXRvcjogYWRkcmVzcwoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQoJZHVwCglsZW4KCWludGMgNiAvLyAzMgoJPT0KCgkvLyBhcmd1bWVudCAxIChjcmVhdG9yKSBmb3IgY2xlYXJXZWlnaHRzQm94ZXMgbXVzdCBiZSBhIGFkZHJlc3MKCWFzc2VydAoKCS8vIGV4ZWN1dGUgY2xlYXJXZWlnaHRzQm94ZXMoYWRkcmVzcyx1aW50NjQpdm9pZAoJY2FsbHN1YiBjbGVhcldlaWdodHNCb3hlcwoJaW50YyAxIC8vIDEKCXJldHVybgoKLy8gY2xlYXJXZWlnaHRzQm94ZXMoY3JlYXRvcjogQWRkcmVzcywgYXVjdGlvbkFwcElEOiBBcHBJRCk6IHZvaWQKY2xlYXJXZWlnaHRzQm94ZXM6Cglwcm90byAyIDAKCgkvLyBQdXNoIGVtcHR5IGJ5dGVzIGFmdGVyIHRoZSBmcmFtZSBwb2ludGVyIHRvIHJlc2VydmUgc3BhY2UgZm9yIGxvY2FsIHZhcmlhYmxlcwoJYnl0ZWMgMCAvLyAweAoJZHVwCgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjE0OQoJLy8ga2V5czogQXBwQ3JlYXRvcktleSA9IHsgYWRkcmVzczogY3JlYXRvciwgYXBwSUQ6IGF1Y3Rpb25BcHBJRCB9CglmcmFtZV9kaWcgLTEgLy8gY3JlYXRvcjogQWRkcmVzcwoJZnJhbWVfZGlnIC0yIC8vIGF1Y3Rpb25BcHBJRDogQXBwSUQKCWl0b2IKCWNvbmNhdAoJZnJhbWVfYnVyeSAwIC8vIGtleXM6IEFwcENyZWF0b3JLZXkKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTUwCgkvLyBhc3NlcnQodGhpcy5hcHBDcmVhdG9ycyhrZXlzKS5leGlzdHMsIGVycnMuQVBQX0NSRUFUT1JfTk9UX0ZPVU5EKQoJZnJhbWVfZGlnIDAgLy8ga2V5czogQXBwQ3JlYXRvcktleQoJYm94X2xlbgoJc3dhcAoJcG9wCglhc3NlcnQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTUyCgkvLyByZXR1cm5lZEFtb3VudCA9IHNlbmRNZXRob2RDYWxsPHR5cGVvZiBSYWZmbGUucHJvdG90eXBlLmNsZWFyV2VpZ2h0c0JveGVzLCB2b2lkPih7CgkvLyAgICAgICAgICAgICBhcHBsaWNhdGlvbklEOiBhdWN0aW9uQXBwSUQsCgkvLyAgICAgICAgICAgICBtZXRob2RBcmdzOiBbXSwKCS8vICAgICAgICAgICAgIGZlZTogMCwKCS8vICAgICAgICAgfSkKCWl0eG5fYmVnaW4KCWludGMgMiAvLyAgYXBwbAoJaXR4bl9maWVsZCBUeXBlRW51bQoJcHVzaGJ5dGVzIDB4MmM5NDI1MTQgLy8gbWV0aG9kICJjbGVhcldlaWdodHNCb3hlcygpdWludDY0IgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTUzCgkvLyBhcHBsaWNhdGlvbklEOiBhdWN0aW9uQXBwSUQKCWZyYW1lX2RpZyAtMiAvLyBhdWN0aW9uQXBwSUQ6IEFwcElECglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTU0CgkvLyBtZXRob2RBcmdzOiBbXQoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjE1NQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBTdWJtaXQgaW5uZXIgdHJhbnNhY3Rpb24KCWl0eG5fc3VibWl0CglpdHhuIE51bUxvZ3MKCWludGMgMSAvLyAxCgktCglpdHhuYXMgTG9ncwoJZXh0cmFjdCA0IDAKCWJ0b2kKCWZyYW1lX2J1cnkgMSAvLyByZXR1cm5lZEFtb3VudDogdWludDY0CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjE1OAoJLy8gdGhpcy5hcHBDcmVhdG9ycyhrZXlzKS52YWx1ZSArPSByZXR1cm5lZEFtb3VudAoJZnJhbWVfZGlnIDAgLy8ga2V5czogQXBwQ3JlYXRvcktleQoJYm94X2dldAoKCS8vIGJveCB2YWx1ZSBkb2VzIG5vdCBleGlzdDogdGhpcy5hcHBDcmVhdG9ycyhrZXlzKS52YWx1ZQoJYXNzZXJ0CglidG9pCglmcmFtZV9kaWcgMSAvLyByZXR1cm5lZEFtb3VudDogdWludDY0CgkrCglmcmFtZV9kaWcgMCAvLyBrZXlzOiBBcHBDcmVhdG9yS2V5Cglzd2FwCglpdG9iCglib3hfcHV0CglyZXRzdWIKCi8vIGRlbGV0ZUF1Y3Rpb25BcHAoYWRkcmVzcyx1aW50NjQpdm9pZAoqYWJpX3JvdXRlX2RlbGV0ZUF1Y3Rpb25BcHA6CgkvLyBhdWN0aW9uQXBwSUQ6IHVpbnQ2NAoJdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgoJYnRvaQoKCS8vIGNyZWF0b3I6IGFkZHJlc3MKCXR4bmEgQXBwbGljYXRpb25BcmdzIDEKCWR1cAoJbGVuCglpbnRjIDYgLy8gMzIKCT09CgoJLy8gYXJndW1lbnQgMSAoY3JlYXRvcikgZm9yIGRlbGV0ZUF1Y3Rpb25BcHAgbXVzdCBiZSBhIGFkZHJlc3MKCWFzc2VydAoKCS8vIGV4ZWN1dGUgZGVsZXRlQXVjdGlvbkFwcChhZGRyZXNzLHVpbnQ2NCl2b2lkCgljYWxsc3ViIGRlbGV0ZUF1Y3Rpb25BcHAKCWludGMgMSAvLyAxCglyZXR1cm4KCi8vIGRlbGV0ZUF1Y3Rpb25BcHAoY3JlYXRvcjogQWRkcmVzcywgYXVjdGlvbkFwcElEOiBBcHBJRCk6IHZvaWQKZGVsZXRlQXVjdGlvbkFwcDoKCXByb3RvIDIgMAoKCS8vIFB1c2ggZW1wdHkgYnl0ZXMgYWZ0ZXIgdGhlIGZyYW1lIHBvaW50ZXIgdG8gcmVzZXJ2ZSBzcGFjZSBmb3IgbG9jYWwgdmFyaWFibGVzCglieXRlYyAwIC8vIDB4CglkdXBuIDIKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTYyCgkvLyBrZXlzOiBBcHBDcmVhdG9yS2V5ID0geyBhZGRyZXNzOiBjcmVhdG9yLCBhcHBJRDogYXVjdGlvbkFwcElEIH0KCWZyYW1lX2RpZyAtMSAvLyBjcmVhdG9yOiBBZGRyZXNzCglmcmFtZV9kaWcgLTIgLy8gYXVjdGlvbkFwcElEOiBBcHBJRAoJaXRvYgoJY29uY2F0CglmcmFtZV9idXJ5IDAgLy8ga2V5czogQXBwQ3JlYXRvcktleQoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxNjMKCS8vIGFzc2VydCh0aGlzLmFwcENyZWF0b3JzKGtleXMpLmV4aXN0cywgZXJycy5BUFBfQ1JFQVRPUl9OT1RfRk9VTkQpCglmcmFtZV9kaWcgMCAvLyBrZXlzOiBBcHBDcmVhdG9yS2V5Cglib3hfbGVuCglzd2FwCglwb3AKCWFzc2VydAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxNjUKCS8vIG9yaWdNQlIgPSB0aGlzLmFwcC5hZGRyZXNzLm1pbkJhbGFuY2UKCWdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCglhY2N0X3BhcmFtc19nZXQgQWNjdE1pbkJhbGFuY2UKCXBvcAoJZnJhbWVfYnVyeSAxIC8vIG9yaWdNQlI6IHVpbnQ2NAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxNjYKCS8vIHNlbmRNZXRob2RDYWxsPHR5cGVvZiBSYWZmbGUucHJvdG90eXBlLmRlbGV0ZUFwcGxpY2F0aW9uLCB1aW50NjQ+KHsKCS8vICAgICAgICAgICAgIGFwcGxpY2F0aW9uSUQ6IGF1Y3Rpb25BcHBJRCwKCS8vICAgICAgICAgICAgIG1ldGhvZEFyZ3M6IFtdLAoJLy8gICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICB9KQoJaXR4bl9iZWdpbgoJaW50YyAyIC8vICBhcHBsCglpdHhuX2ZpZWxkIFR5cGVFbnVtCglwdXNoYnl0ZXMgMHgyNDg3YzMyYyAvLyBtZXRob2QgImRlbGV0ZUFwcGxpY2F0aW9uKCl2b2lkIgoJaXR4bl9maWVsZCBBcHBsaWNhdGlvbkFyZ3MKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTY3CgkvLyBhcHBsaWNhdGlvbklEOiBhdWN0aW9uQXBwSUQKCWZyYW1lX2RpZyAtMiAvLyBhdWN0aW9uQXBwSUQ6IEFwcElECglpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTY4CgkvLyBtZXRob2RBcmdzOiBbXQoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjE2OQoJLy8gZmVlOiAwCglpbnRjIDAgLy8gMAoJaXR4bl9maWVsZCBGZWUKCgkvLyBTdWJtaXQgaW5uZXIgdHJhbnNhY3Rpb24KCWl0eG5fc3VibWl0CgoJLy8gY29udHJhY3RzL3JhZmZsZS9yYWZmbGVfZmFjdG9yeS5hbGdvLnRzOjE3MQoJLy8gbmV3TUJSID0gdGhpcy5hcHAuYWRkcmVzcy5taW5CYWxhbmNlCglnbG9iYWwgQ3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcwoJYWNjdF9wYXJhbXNfZ2V0IEFjY3RNaW5CYWxhbmNlCglwb3AKCWZyYW1lX2J1cnkgMiAvLyBuZXdNQlI6IHVpbnQ2NAoKCS8vIGNvbnRyYWN0cy9yYWZmbGUvcmFmZmxlX2ZhY3RvcnkuYWxnby50czoxNzMKCS8vIHNlbmRQYXltZW50KHsKCS8vICAgICAgICAgICAgIGFtb3VudDogdGhpcy5hcHBDcmVhdG9ycyhrZXlzKS52YWx1ZSArIChvcmlnTUJSIC0gbmV3TUJSKSwKCS8vICAgICAgICAgICAgIHJlY2VpdmVyOiBjcmVhdG9yLAoJLy8gICAgICAgICAgICAgZmVlOiAwLAoJLy8gICAgICAgICB9KQoJaXR4bl9iZWdpbgoJaW50YyAxIC8vICBwYXkKCWl0eG5fZmllbGQgVHlwZUVudW0KCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTc0CgkvLyBhbW91bnQ6IHRoaXMuYXBwQ3JlYXRvcnMoa2V5cykudmFsdWUgKyAob3JpZ01CUiAtIG5ld01CUikKCWZyYW1lX2RpZyAwIC8vIGtleXM6IEFwcENyZWF0b3JLZXkKCWJveF9nZXQKCgkvLyBib3ggdmFsdWUgZG9lcyBub3QgZXhpc3Q6IHRoaXMuYXBwQ3JlYXRvcnMoa2V5cykudmFsdWUKCWFzc2VydAoJYnRvaQoJZnJhbWVfZGlnIDEgLy8gb3JpZ01CUjogdWludDY0CglmcmFtZV9kaWcgMiAvLyBuZXdNQlI6IHVpbnQ2NAoJLQoJKwoJaXR4bl9maWVsZCBBbW91bnQKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTc1CgkvLyByZWNlaXZlcjogY3JlYXRvcgoJZnJhbWVfZGlnIC0xIC8vIGNyZWF0b3I6IEFkZHJlc3MKCWl0eG5fZmllbGQgUmVjZWl2ZXIKCgkvLyBjb250cmFjdHMvcmFmZmxlL3JhZmZsZV9mYWN0b3J5LmFsZ28udHM6MTc2CgkvLyBmZWU6IDAKCWludGMgMCAvLyAwCglpdHhuX2ZpZWxkIEZlZQoKCS8vIFN1Ym1pdCBpbm5lciB0cmFuc2FjdGlvbgoJaXR4bl9zdWJtaXQKCXJldHN1YgoKKmNyZWF0ZV9Ob09wOgoJcHVzaGJ5dGVzIDB4MTE1NzU2ZGIgLy8gbWV0aG9kICJjcmVhdGVBcHBsaWNhdGlvbihzdHJpbmcpdm9pZCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfY3JlYXRlQXBwbGljYXRpb24KCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY3JlYXRlIE5vT3AKCWVycgoKKmNhbGxfTm9PcDoKCWJ5dGVjIDEgLy8gIG1ldGhvZCAib3B0aW4ocGF5LHVpbnQ2NCl2b2lkIgoJcHVzaGJ5dGVzIDB4MzcwYmEzMTcgLy8gbWV0aG9kICJuZXcocGF5LGF4ZmVyLHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCl1aW50NjQiCglwdXNoYnl0ZXMgMHg0MDdmZDMxNCAvLyBtZXRob2QgImNsZWFyV2VpZ2h0c0JveGVzKGFkZHJlc3MsdWludDY0KXZvaWQiCglwdXNoYnl0ZXMgMHhhZmUyODc5YiAvLyBtZXRob2QgImRlbGV0ZUF1Y3Rpb25BcHAoYWRkcmVzcyx1aW50NjQpdm9pZCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfb3B0aW4gKmFiaV9yb3V0ZV9uZXcgKmFiaV9yb3V0ZV9jbGVhcldlaWdodHNCb3hlcyAqYWJpX3JvdXRlX2RlbGV0ZUF1Y3Rpb25BcHAKCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY2FsbCBOb09wCgllcnIKCipjYWxsX1VwZGF0ZUFwcGxpY2F0aW9uOgoJcHVzaGJ5dGVzIDB4NDZmNzY1MzMgLy8gbWV0aG9kICJ1cGRhdGVBcHBsaWNhdGlvbigpdm9pZCIKCXR4bmEgQXBwbGljYXRpb25BcmdzIDAKCW1hdGNoICphYmlfcm91dGVfdXBkYXRlQXBwbGljYXRpb24KCgkvLyB0aGlzIGNvbnRyYWN0IGRvZXMgbm90IGltcGxlbWVudCB0aGUgZ2l2ZW4gQUJJIG1ldGhvZCBmb3IgY2FsbCBVcGRhdGVBcHBsaWNhdGlvbgoJZXJy",
     "clear": "I3ByYWdtYSB2ZXJzaW9uIDEw"
   },
   "templateVariables": {

@@ -44,6 +44,10 @@
         {
           "name": "gateID",
           "type": "uint64"
+        },
+        {
+          "name": "weightListLength",
+          "type": "uint64"
         }
       ],
       "returns": {
@@ -52,6 +56,34 @@
     },
     {
       "name": "enter",
+      "args": [
+        {
+          "name": "sender",
+          "type": "uint64"
+        },
+        {
+          "name": "rekeyBack",
+          "type": "bool"
+        },
+        {
+          "name": "raffleAppID",
+          "type": "uint64"
+        },
+        {
+          "name": "amount",
+          "type": "uint64"
+        },
+        {
+          "name": "args",
+          "type": "byte[][]"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "add",
       "args": [
         {
           "name": "sender",

@@ -1,6 +1,6 @@
 import { Contract } from '@algorandfoundation/tealscript';
-import { AuctionFactory } from '../../auction/auction_factory.algo';
-import { Auction, bidMBR } from '../../auction/auction.algo';
+import { appCreatorsMBR, AuctionFactory } from '../../auction/auction_factory.algo';
+import { Auction, bidMBR, weightsListMBR } from '../../auction/auction.algo';
 import { AKITA_AUCTION_BID_ASSET_KEY } from '../../auction/constants';
 
 const errs = {
@@ -29,8 +29,8 @@ export class AuctionPlugin extends Contract {
         startingRound: uint64,
         endingRound: uint64,
         marketplace: Address,
-        marketplaceRoyalties: uint64,
-        gateID: uint64
+        gateID: uint64,
+        weightsListCount: uint64,
     ): AppID {
         assert(prize.id !== 0, errs.AUCTION_PRIZE_CANNOT_BE_ALGO);
         assert(sender.address.assetBalance(prize) >= prizeAmount, errs.NOT_ENOUGH_ASSET);
@@ -84,6 +84,8 @@ export class AuctionPlugin extends Contract {
             + (28_500 * Auction.schema.global.numUint)
             + (50_000 * Auction.schema.global.numByteSlice)
             + optinMBR
+            + weightsListCount * weightsListMBR
+            + appCreatorsMBR
         );
 
         this.pendingGroup.addMethodCall<typeof AuctionFactory.prototype.new, AppID>({
@@ -112,8 +114,8 @@ export class AuctionPlugin extends Contract {
                 startingRound,
                 endingRound,
                 marketplace,
-                marketplaceRoyalties,
-                gateID
+                gateID,
+                weightsListCount
             ],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
@@ -123,6 +125,46 @@ export class AuctionPlugin extends Contract {
         this.pendingGroup.submit();
         
         return this.itxn.createdApplicationID;
+    }
+
+    clearWeightsBoxes(
+        sender: AppID,
+        rekeyBack: boolean,
+        creator: Address,
+        auctionAppID: AppID
+    ): void {
+        assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY);
+
+        sendMethodCall<typeof AuctionFactory.prototype.clearWeightsBoxes>({
+            sender: sender.address,
+            applicationID: this.factoryAppID,
+            methodArgs: [
+                creator,
+                auctionAppID
+            ],
+            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+            fee: 0,
+        });
+    }
+    
+    deleteAuctionApp(
+        sender: AppID,
+        rekeyBack: boolean,
+        creator: Address,
+        auctionAppID: AppID
+    ): void {
+        assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY);
+
+        sendMethodCall<typeof AuctionFactory.prototype.deleteAuctionApp>({
+            sender: sender.address,
+            applicationID: this.factoryAppID,
+            methodArgs: [
+                creator,
+                auctionAppID
+            ],
+            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
+            fee: 0,
+        });
     }
 
     bid(

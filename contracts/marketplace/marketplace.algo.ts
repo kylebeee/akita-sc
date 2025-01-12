@@ -2,8 +2,10 @@ import { ContractWithOptIn } from '../../utils/base_contracts/optin.algo';
 import { MetaMerkles } from '../meta_merkles/meta_merkles.algo';
 import { AkitaAppIDsMetaMerkles } from '../../utils/constants';
 import { Listing } from './listing.algo';
+import { AKITA_LISTING_SELLER_KEY } from './constants';
 
 const errs = {
+  NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
   PRICE_TOO_LOW: 'Lowest price is 4 units for divisibility',
   MARKETPLACE_NOT_OPTED_INTO_PAYMENT_ASSET: 'Marketplace must be opted into payment asset',
   NOT_A_LISTING: 'Not a listing contract',
@@ -22,9 +24,27 @@ const errs = {
  */
 const creatorRoyaltyDefault = 500;
 const creatorRoyaltyMaximum = 5000;
-const marketplaceRoyaltiesSingleSideMaximum = 500;
+
+let childContractMBR = (
+  100_000
+  + (28_500 * Listing.schema.global.numUint)
+  + (50_000 * Listing.schema.global.numByteSlice)
+);
 
 export class Marketplace extends ContractWithOptIn {
+  
+  /** the version of the child contract */
+  childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
+  /** The App ID of the Akita DAO contract */
+  akitaDaoAppID = TemplateVar<AppID>();
+
+  createApplication(version: string): void {
+    this.childContractVersion.value = version;
+  }
+
+  updateApplication(): void {
+    assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
+  }
 
   list(
     payment: PayTxn,
@@ -34,7 +54,6 @@ export class Marketplace extends ContractWithOptIn {
     name: string,
     proof: bytes<32>[],
     marketplace: Address,
-    marketplaceRoyalties: uint64,
     expirationRound: uint64,
     reservedFor: Address,
     gateID: uint64,
@@ -49,16 +68,11 @@ export class Marketplace extends ContractWithOptIn {
       ? (globals.assetOptInMinBalance)
       : (globals.assetOptInMinBalance * 2);
 
-    let childContractMBR = (
-      100_000
-      + (28_500 * Listing.schema.global.numUint)
-      + (50_000 * Listing.schema.global.numByteSlice)
-      + optinMBR
-    );
+    let mbrAmount = childContractMBR + optinMBR;
 
     // ensure they paid enough to cover the contract mint + mbr costs
     verifyPayTxn(payment, {
-      amount: childContractMBR,
+      amount: mbrAmount,
       receiver: this.app.address
     });
 
@@ -106,21 +120,17 @@ export class Marketplace extends ContractWithOptIn {
       creatorRoyalty = creatorRoyaltyMaximum
     }
 
-    if (marketplaceRoyalties > marketplaceRoyaltiesSingleSideMaximum) {
-      marketplaceRoyalties = marketplaceRoyaltiesSingleSideMaximum
-    }
-
     // mint listing contract
     // initialize child
     this.pendingGroup.addMethodCall<typeof Listing.prototype.createApplication, void>({
       methodArgs: [
+        this.akitaDaoAppID,
         assetXfer.xferAsset,
         this.txn.sender,
         price,
         paymentAsset,
         creatorRoyalty,
         marketplace,
-        marketplaceRoyalties,
         expirationRound,
         reservedFor,
         gateID,
@@ -173,7 +183,7 @@ export class Marketplace extends ContractWithOptIn {
         fee: 0,
       });
     }
-    
+
     this.pendingGroup.submit();
 
     return listingAppID;
@@ -187,6 +197,8 @@ export class Marketplace extends ContractWithOptIn {
   ): void {
     assert(appID.creator === this.app.address, errs.NOT_A_LISTING);
     verifyPayTxn(payment, { receiver: this.app.address });
+
+    const seller = appID.globalState(AKITA_LISTING_SELLER_KEY) as Address;
 
     sendMethodCall<typeof Listing.prototype.purchase>({
       onCompletion: OnCompletion.DeleteApplication,
@@ -203,6 +215,12 @@ export class Marketplace extends ContractWithOptIn {
       ],
       fee: 0,
     });
+
+    sendPayment({
+      amount: childContractMBR,
+      receiver: seller,
+      fee: 0,
+    });
   }
 
   purchaseAsa(
@@ -213,6 +231,8 @@ export class Marketplace extends ContractWithOptIn {
   ): void {
     assert(appID.creator === this.app.address, errs.NOT_A_LISTING);
     verifyAssetTransferTxn(assetXfer, { assetReceiver: this.app.address });
+
+    const seller = appID.globalState(AKITA_LISTING_SELLER_KEY) as Address;
 
     sendMethodCall<typeof Listing.prototype.purchaseAsa>({
       applicationID: appID,
@@ -229,6 +249,12 @@ export class Marketplace extends ContractWithOptIn {
       ],
       fee: 0
     });
+
+    sendPayment({
+      amount: childContractMBR,
+      receiver: seller,
+      fee: 0,
+    });
   }
 
   delist(appID: AppID): void {
@@ -238,6 +264,12 @@ export class Marketplace extends ContractWithOptIn {
       applicationID: appID,
       methodArgs: [this.txn.sender],
       onCompletion: OnCompletion.DeleteApplication,
+      fee: 0,
+    });
+
+    sendPayment({
+      amount: childContractMBR,
+      receiver: this.txn.sender,
       fee: 0,
     });
   }

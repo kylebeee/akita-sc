@@ -5,7 +5,7 @@ import { ContractWithOptInCreatorOnlyArc59AndGate } from "../../utils/base_contr
 
 const errs = {
     TOO_SHORT: 'Raffles cannot be less than one hour',
-    CREATOR_ONLY: 'Only the creator of this app can call this method',
+    MUST_BE_CALLED_FROM_FACTORY: 'Only the creator of this app can call this method',
     NOT_LIVE: 'Raffle is not live',
     TICKET_ASSET_NOT_ALGO: 'ticket asset is not algo',
     TICKET_ASSET_ALGO: 'ticket asset is algo',
@@ -25,19 +25,40 @@ const errs = {
     WINNER_ALREADY_DRAWN: 'Winning ticket has already been drawn',
     ENTRY_DOES_NOT_EXIST: 'Entry does not exist',
     WINNER_NOT_FOUND: 'Winner not found',
+    ALL_REFUNDS_COMPLETE: 'All refunds have been completed',
     PRIZE_ALREADY_CLAIMED: 'Prize has already been claimed',
     BOXES_ARENT_CLEARED: 'Boxes are not cleared',
     PRIZE_NOT_CLAIMED: 'Prize has not been claimed',
     NO_WINNING_TICKET_YET: 'No winning ticket yet',
     TICKETS_NOT_RECLAIMED: 'Tickets have not been reclaimed',
+    STILL_HAS_WEIGHTS_BOXES: 'Still has weights boxes',
+    MUST_ALLOCATE_AT_LEAST_FOUR_HIGHEST_BIDS_CHUNKS: 'Must allocate at least four weights chunks',
 }
 
 // const RANDOMNESS_BEACON_APPID_TESTNET: AppID = AppID.fromUint64(600011887);
 // const RANDOMNESS_BEACON_APPID_MAINNET: AppID = AppID.fromUint64(1615566206);
 
-const entriesByAddressMBR = 18_500;
-export const entryMBR = 18_500 + entriesByAddressMBR;
+const entriesByAddressMBR = 18_900;
+const entryMBR = 18_900;
+export const weightsListMBR = 13_113_300;
+export const entryTotalMBR = entryMBR + entriesByAddressMBR;
+
 const roundsPerHour = 1285;
+
+export type EntryInfo = {
+    address: Address;
+    location: WeightLocation;
+}
+
+export type WeightLocation = uint64;
+// 4096*8 bytes = 32KB
+export const ChunkSize = 4096;
+export const MaxChunksPerGroup = 4;
+// 8 references per txn * 16 group size / 32 references per box * box holding 4096 entries = 16_384
+export const MaxIterationsPerGroup = 16_384;
+// 4 accounts per txn * 16 group size = 64
+export const MaxRefundIterationsPerGroup = 64;
+export type WeightsList = StaticArray<{ amount: uint64 }, typeof ChunkSize>;
 
 export type RaffleState = {
     ticketAsset: AssetID;
@@ -57,10 +78,10 @@ export type RaffleState = {
     vrfGetFailureCount: uint64;
     entryID: uint64;
     findWinnerCursor: uint64;
-    findWinnerTotalCursor: uint64;
+    refundMBRCursor: uint64;
 }
 
-export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {    
+export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
     /** The asset required to enter the raffle */
     ticketAsset = GlobalStateKey<AssetID>({ key: 'ticket_asset' });
     /** The start round of the raffle as a unix timestamp */
@@ -93,28 +114,46 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
     vrfGetFailureCount = GlobalStateKey<uint64>({ key: 'vrf_get_failure_count' });
     /** The id's of the raffle entries */
     entryID = GlobalStateKey<uint64>({ key: 'entry_id' });
-    /** 
-     * when we go through the participants for the raffle
-     * it may take multiple groups of txns so we have a variable
-     * for tracking how far through the list we are
-    */
+    /** the number of boxes allocated to tracking weights */
+    weightsBoxCount = GlobalStateKey<uint64>({ key: 'highest_bid_box_count' });
+    /** cursor to track iteration of finding winner */
     findWinnerCursor = GlobalStateKey<uint64>({ key: 'find_winner_cursor' });
-    /** tracks sum iterated over during find raffle loop */
-    findWinnerTotalCursor = GlobalStateKey<uint64>({ key: 'find_winner_total_cursor' });
+    /** cursor to track iteration of MBR refunds */
+    refundMBRCursor = GlobalStateKey<uint64>({ key: 'refund_mbr_cursor' });
+
     /**
      * The entries for the raffle
      * 
-     * 2_500 + (400 * (8 + 32)) = 18_500
+     * 2_500 + (400 * (9 + 32)) = 18_900
      */
-    entries = BoxMap<uint64, Address>();
-    
+    entries = BoxMap<uint64, Address>({ prefix: 'e' });
+
+    /**
+     * weights set for bidders
+     * 
+     * 2_500 + (400 * (9 + 32_768)) = 13_113_300
+     */
+    weights = BoxMap<uint64, WeightsList>({ prefix: 'h' });
+
     /** 
      * The address map of entries for the raffle
      * 
-     * 2_500 + (400 * (32 + 8)) = 18_500
+     * 2_500 + (400 * (33 + 8)) = 18_900
      * 
     */
-    entriesByAddress = BoxMap<Address, uint64>();
+    entriesByAddress = BoxMap<Address, WeightLocation>({ prefix: 'a' });
+
+    /**
+     * 
+     * @returns a boolean of whether the auction is live
+     */
+    @abi.readonly
+    isLive(): boolean {
+        return (
+            globals.round <= this.startingRound.value
+            && globals.round >= this.endingRound.value
+        )
+    }
 
     createApplication(
         prize: AssetID,
@@ -148,48 +187,55 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.vrfBeaconAppID.value = vrfBeaconAppID;
         this.entryID.value = 0;
         this.findWinnerCursor.value = 0;
-        this.findWinnerTotalCursor.value = 0;
+        this.refundMBRCursor.value = 0;
     }
 
-    /**
-     * 
-     * @returns a boolean of whether the auction is live
-     */
-    isLive(): boolean {
-        return (
-            globals.round <= this.startingRound.value
-            && globals.round >= this.endingRound.value
-        )
+    init(payment: PayTxn, weightListLength: uint64) {
+        assert(this.txn.sender === this.app.creator, errs.MUST_BE_CALLED_FROM_FACTORY);
+        assert(weightListLength >= 4, errs.MUST_ALLOCATE_AT_LEAST_FOUR_HIGHEST_BIDS_CHUNKS);
+        verifyPayTxn(payment, {
+            receiver: this.app.address,
+            amount: (weightListLength * weightsListMBR)
+        });
+
+        for (let i = 0; i < weightListLength; i += 1) {
+            this.weights(i).create();
+        }
     }
 
     enter(payment: PayTxn, args: bytes[]): void {
         assert(this.isLive(), errs.NOT_LIVE);
         assert(this.ticketAsset.value.id === 0, errs.TICKET_ASSET_NOT_ALGO)
         assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
+        assert(!this.entriesByAddress(this.txn.sender).exists, errs.ALREADY_ENTERED)
 
         verifyPayTxn(payment, {
             amount: {
-                greaterThanEqualTo: this.minTickets.value + entryMBR,
-                lessThanEqualTo: this.maxTickets.value + entryMBR,
+                greaterThanEqualTo: this.minTickets.value + entryTotalMBR,
+                lessThanEqualTo: this.maxTickets.value + entryTotalMBR,
             },
             receiver: this.app.address,
         });
 
-        assert(!this.entriesByAddress(this.txn.sender).exists, errs.ALREADY_ENTERED)
-
-        this.entries(this.entryCount.value).value = this.txn.sender;
+        const loc = this.entryCount.value;
+        this.entries(loc).value = this.txn.sender;
         this.entriesByAddress(this.txn.sender).value = this.entryCount.value;
+
+        const amount = payment.amount - entryTotalMBR;
+        this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: amount };
+
         this.entryCount.value += 1;
-        this.ticketCount.value += payment.amount - entryMBR;
-    }    
+        this.ticketCount.value += amount;
+    }
 
     enterAsa(payment: PayTxn, assetXfer: AssetTransferTxn, args: bytes[]): void {
         assert(this.isLive(), errs.NOT_LIVE);
         assert(this.ticketAsset.value.id !== 0, errs.TICKET_ASSET_ALGO)
         assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
+        assert(!this.entriesByAddress(this.txn.sender).exists, errs.ALREADY_ENTERED)
 
         verifyPayTxn(payment, {
-            amount: entryMBR,
+            amount: entryTotalMBR,
             receiver: this.app.address,
         });
 
@@ -202,12 +248,58 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
             assetReceiver: this.app.address,
         });
 
-        assert(!this.entriesByAddress(this.txn.sender).exists, errs.ALREADY_ENTERED)
-
-        this.entries(this.entryCount.value).value = this.txn.sender;
+        const loc = this.entryCount.value;
+        this.entries(loc).value = this.txn.sender;
         this.entriesByAddress(this.txn.sender).value = this.entryCount.value;
+
+        const amount = assetXfer.assetAmount;
+        this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: amount };
+
         this.entryCount.value += 1;
-        this.ticketCount.value += assetXfer.assetAmount;
+        this.ticketCount.value += amount;
+    }
+
+    add(payment: PayTxn, args: bytes[]): void {
+        assert(this.isLive(), errs.NOT_LIVE);
+        assert(this.ticketAsset.value.id === 0, errs.TICKET_ASSET_NOT_ALGO)
+        assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
+        assert(this.entriesByAddress(this.txn.sender).exists, errs.ENTRY_DOES_NOT_EXIST);
+
+        const loc = this.entriesByAddress(this.txn.sender).value;
+        const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize].amount;
+
+        verifyPayTxn(payment, {
+            amount: {
+                greaterThanEqualTo: this.minTickets.value,
+                lessThanEqualTo: (this.maxTickets.value - amount),
+            },
+            receiver: this.app.address,
+        });
+
+        this.weights(loc / ChunkSize).value[loc % ChunkSize].amount += payment.amount;
+        this.ticketCount.value += amount;
+    }
+
+    addAsa(assetXfer: AssetTransferTxn, args: bytes[]): void {
+        assert(this.isLive(), errs.NOT_LIVE);
+        assert(this.ticketAsset.value.id !== 0, errs.TICKET_ASSET_ALGO)
+        assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
+        assert(this.entriesByAddress(this.txn.sender).exists, errs.ENTRY_DOES_NOT_EXIST);
+
+        const loc = this.entriesByAddress(this.txn.sender).value;
+        const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize].amount;
+
+        verifyAssetTransferTxn(assetXfer, {
+            xferAsset: this.ticketAsset.value,
+            assetAmount: {
+                greaterThanEqualTo: this.minTickets.value,
+                lessThanEqualTo: (this.maxTickets.value - amount),
+            },
+            assetReceiver: this.app.address,
+        });
+
+        this.weights(loc / ChunkSize).value[loc % ChunkSize].amount += assetXfer.assetAmount;
+        this.ticketCount.value += amount;
     }
 
     raffle(): void {
@@ -217,7 +309,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
 
         const seed = sendMethodCall<typeof RandomnessBeacon.prototype.get, bytes>({
             applicationID: this.vrfBeaconAppID.value,
-            methodArgs: [ roundToUse, this.txn.txID ],
+            methodArgs: [roundToUse, this.txn.txID],
             fee: 0,
         });
 
@@ -228,52 +320,83 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
 
         let rngState = pcg64Init(substring3(seed, 0, 16) as bytes<16>);
 
+        // make upper bounds inclusive if we can
         let upperBound = this.ticketCount.value;
         if (upperBound < MAX_UINT64) {
             upperBound = upperBound += 1;
         }
 
         const rngResult = pcg64Random(rngState, 1, upperBound, 1);
-        const winningTicket = rngResult[1][0];
-
-        this.winningTicket.value = winningTicket;
+        this.winningTicket.value = rngResult[1][0];
     }
 
     findWinner(): void {
         assert(globals.round < this.endingRound.value, errs.RAFFLE_HAS_NOT_ENDED)
-        assert(this.winningTicket.value > 0, errs.NO_WINNING_TICKET_YET);
-        const complete = this.entryID.value === this.findWinnerCursor.value;
+        assert(this.winningTicket.value !== 0, errs.NO_WINNING_TICKET_YET);
+        const complete = this.entryCount.value === this.findWinnerCursor.value;
         assert(!complete, errs.WINNER_ALREADY_FOUND);
 
         // walk the index from the winner to find the
         const startingIndex = this.findWinnerCursor.value;
-        const remainder = this.entryID.value - this.findWinnerCursor.value;
-        // at most with calling this (15 * 4) / 2 because of box reference limits
-        const iterationAmount = (remainder > 30) ? 30 : remainder;
+        const remainder = this.entryCount.value - this.findWinnerCursor.value;
 
-        for (let i = startingIndex; i < iterationAmount; i += 1) {
-            const address = this.entries(i).value;
-            const amt = this.entriesByAddress(address).value;
+        const iterationAmount = (remainder > MaxIterationsPerGroup)
+            ? MaxIterationsPerGroup
+            : remainder;
 
-            this.entries(i).delete();
-            this.entriesByAddress(address).delete();
-
-            // return the users MBR
-            sendPayment({
-                receiver: address,
-                amount: entryMBR,
-                fee: 0,
-            });
-
-            const isWinner = this.findWinnerTotalCursor.value + amt >= this.winningTicket.value;
-            if (isWinner) {
-                this.raffleWinner.value = address;
+        let currentRangeStart = 1;
+        let currentRangeEnd = 0;
+        for (let i = startingIndex; i <= iterationAmount; i += 1) {
+            if (globals.opcodeBudget < 100) {
+                increaseOpcodeBudget()
             }
 
-            this.findWinnerTotalCursor.value += amt;
+            const amount = this.weights(i / ChunkSize).value[i % ChunkSize].amount;
+
+            currentRangeEnd = currentRangeStart + amount;
+            if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
+                this.raffleWinner.value = this.entries(i).value;
+            }
+
+            currentRangeStart = currentRangeEnd + 1;
         }
 
-        this.findWinnerCursor.value = iterationAmount;
+        this.findWinnerCursor.value += iterationAmount;
+    }
+
+    refundMBR(): void {
+        const totalCap = (this.entryCount.value - 1);
+        /** make sure we've already found the winner of the raffle */
+        assert(totalCap === this.findWinnerCursor.value, errs.WINNER_NOT_FOUND);
+        /** make sure we haven't already refunded all MBR */
+        assert(totalCap !== this.refundMBRCursor.value, errs.ALL_REFUNDS_COMPLETE);
+
+        const startingIndex = this.refundMBRCursor.value;
+        const remainder = totalCap - this.refundMBRCursor.value;
+
+        const iterationAmount = (remainder > MaxRefundIterationsPerGroup)
+            ? MaxRefundIterationsPerGroup
+            : remainder;
+
+        for (let i = startingIndex; i < iterationAmount; i += 1) {
+            if (globals.opcodeBudget < 100) {
+                increaseOpcodeBudget()
+            }
+
+            const entry = this.entries(i).value;
+
+            // free up the MBR
+            this.entries(i).delete();
+            this.entriesByAddress(entry).delete();
+
+            sendPayment({
+                receiver: entry,
+                amount: entryTotalMBR,
+                fee: 0,
+            });
+        }
+
+        this.refundMBRCursor.value += iterationAmount;
     }
 
     claimRafflePrize(): void {
@@ -355,9 +478,34 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.rafflePrizeClaimed.value = true;
     }
 
+    clearWeightsBoxes(): uint64 {
+        assert(this.txn.sender === this.app.creator, errs.MUST_BE_CALLED_FROM_FACTORY);
+
+        const iterationAmount = (this.weightsBoxCount.value > 128) ? 128 : this.weightsBoxCount.value;
+
+        for (let i = 0; i < iterationAmount; i += 1) {
+            const ri = (this.weightsBoxCount.value - 1) - i;
+            this.weights(ri).delete();
+        }
+
+        this.weightsBoxCount.value -= iterationAmount;
+
+        const returnAmount = iterationAmount * weightsListMBR;
+
+        sendPayment({
+            receiver: this.app.creator,
+            amount: returnAmount,
+            fee: 0,
+        });
+
+        return returnAmount;
+    }
+
     deleteApplication(): void {
-        assert(this.txn.sender === this.app.creator, errs.CREATOR_ONLY);
+        assert(this.txn.sender === this.app.creator, errs.MUST_BE_CALLED_FROM_FACTORY);
         assert(this.rafflePrizeClaimed.value, errs.PRIZE_NOT_CLAIMED);
+        assert((this.entryCount.value - 1) !== this.refundMBRCursor.value, errs.ALL_REFUNDS_COMPLETE);
+        assert(this.weightsBoxCount.value === 0, errs.STILL_HAS_WEIGHTS_BOXES);
     }
 
     getState(): RaffleState {
@@ -379,7 +527,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
             vrfGetFailureCount: this.vrfGetFailureCount.value,
             entryID: this.entryID.value,
             findWinnerCursor: this.findWinnerCursor.value,
-            findWinnerTotalCursor: this.findWinnerTotalCursor.value
+            refundMBRCursor: this.refundMBRCursor.value,
         }
     }
 }

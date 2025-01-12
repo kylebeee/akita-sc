@@ -97,6 +97,12 @@ export type SubscriptionInfoWithPasses = {
     passes: Address[];
 };
 
+export type Amounts = {
+    akitaFee: uint64;
+    triggerFee: uint64;
+    leftOver: uint64;
+}
+
 // eslint-disable-next-line no-unused-vars
 export class Subscriptions extends ContractWithGate {
     /** Target AVM 10 */
@@ -166,6 +172,28 @@ export class Subscriptions extends ContractWithGate {
         // but not during the current window
         if (sub.lastPayment >= lastWindowStart && !(sub.lastPayment >= currentWindowStart)) {
             this.subscriptions(subKey).value.streak += 1;
+        }
+    }
+
+    private getAmounts(amount: uint64): Amounts {
+        const akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64;
+        let akitaFee = wideRatio([amount, akitaPercentage], [10000]);
+        if (akitaFee === 0 && amount > 0) {
+            akitaFee = 1;
+        }
+
+        const triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64;
+        let triggerFee = wideRatio([amount, triggerPercentage], [10000]);
+        if (triggerFee === 0 && amount > 0) {
+            triggerFee = 1;
+        }
+
+        const leftOver = amount - (akitaFee + triggerFee);
+
+        return {
+            akitaFee: akitaFee,
+            triggerFee: triggerFee,
+            leftOver: leftOver,
         }
     }
 
@@ -421,7 +449,7 @@ export class Subscriptions extends ContractWithGate {
         args: bytes[],
     ): void {
         // ensure the amount is enough to take fees on
-        assert(amount > 3, errs.MIN_AMOUNT_IS_THREE);
+        assert(amount >= 3, errs.MIN_AMOUNT_IS_THREE);
         // ensure payouts cant be too fast
         assert(interval >= 60, errs.MIN_INTERVAL_IS_SIXTY)
 
@@ -477,10 +505,7 @@ export class Subscriptions extends ContractWithGate {
             escrowed: 0,
         };
 
-        const akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64;
-        const triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64;
-        const initialFee = (amount * (akitaPercentage + triggerPercentage) - 1) / 1000 + 1;
-        const leftOver = amount - (initialFee);
+        const amounts = this.getAmounts(amount);
 
         verifyPayTxn(payment, {
             receiver: this.app.address,
@@ -491,13 +516,13 @@ export class Subscriptions extends ContractWithGate {
 
         this.pendingGroup.addPayment({
             receiver: this.daoAppID.value.address,
-            amount: initialFee,
+            amount: (amounts.akitaFee + amounts.triggerFee),
             fee: 0,
         });
 
         this.pendingGroup.addPayment({
             receiver: recipient,
-            amount: leftOver,
+            amount: amounts.leftOver,
             fee: 0,
         });
 
@@ -592,10 +617,7 @@ export class Subscriptions extends ContractWithGate {
             escrowed: 0,
         };
 
-        const akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64;
-        const triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64;
-        const initialFee = (amount * (akitaPercentage + triggerPercentage) - 1) / 1000 + 1;
-        const leftOver = amount - initialFee;
+        const amounts = this.getAmounts(amount);
 
         verifyPayTxn(payment, {
             receiver: this.app.address,
@@ -612,14 +634,14 @@ export class Subscriptions extends ContractWithGate {
         this.pendingGroup.addAssetTransfer({
             assetReceiver: this.daoAppID.value.address,
             xferAsset: assetXfer.xferAsset,
-            assetAmount: initialFee,
+            assetAmount: (amounts.akitaFee + amounts.triggerFee),
             fee: 0,
         });
 
         this.pendingGroup.addAssetTransfer({
             assetReceiver: recipient,
             xferAsset: assetXfer.xferAsset,
-            assetAmount: leftOver,
+            assetAmount: amounts.leftOver,
             fee: 0,
         });
 
@@ -708,51 +730,46 @@ export class Subscriptions extends ContractWithGate {
         assert(sub.escrowed > sub.amount, errs.NOT_ENOUGH_FUNDS);
 
         const isAsa = sub.asset.id !== 0;
-
-        const akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64;
-        const akitaFee = (sub.amount * akitaPercentage - 1) / 1000 + 1;
-        const triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64;
-        const triggerFee = (sub.amount * triggerPercentage - 1) / 1000 + 1;
-        const leftOver = sub.amount - (akitaFee + triggerFee);
+        const amounts = this.getAmounts(sub.amount);
 
         if (isAsa) {
             this.pendingGroup.addAssetTransfer({
                 assetReceiver: this.daoAppID.value.address,
                 xferAsset: sub.asset,
-                assetAmount: akitaFee,
+                assetAmount: amounts.akitaFee,
                 fee: 0,
             });
 
             this.pendingGroup.addAssetTransfer({
                 assetReceiver: this.txn.sender,
                 xferAsset: sub.asset,
-                assetAmount: triggerFee,
+                assetAmount: amounts.triggerFee,
                 fee: 0,
             });
 
             this.pendingGroup.addAssetTransfer({
                 assetReceiver: sub.recipient,
                 xferAsset: sub.asset,
-                assetAmount: leftOver,
+                assetAmount: amounts.leftOver,
                 fee: 0,
             });
         } else {
             // mbr payment for subscriptions & subscriptionslist boxes
             this.pendingGroup.addPayment({
                 receiver: this.app.address,
-                amount: akitaFee,
+                amount: amounts.akitaFee,
                 fee: 0,
             });
 
             this.pendingGroup.addPayment({
                 receiver: this.txn.sender,
-                amount: triggerFee,
+                amount: amounts.triggerFee,
                 fee: 0,
             });
 
             this.pendingGroup.addPayment({
                 receiver: sub.recipient,
-                amount: leftOver,
+                amount: amounts.leftOver,
                 fee: 0,
             });
         }

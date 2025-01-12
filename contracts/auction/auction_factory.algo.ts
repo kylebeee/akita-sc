@@ -1,13 +1,15 @@
 import { ContractWithOptIn } from '../../utils/base_contracts/optin.algo';
-import { Auction } from './auction.algo';
+import { Auction, weightsListMBR } from './auction.algo';
 import { MetaMerkles } from '../meta_merkles/meta_merkles.algo';
 import { AkitaAppIDsMetaMerkles } from '../../utils/constants';
 import { AKITA_DAO_VRF_BEACON_APP_ID_KEY } from '../dao/constants';
 
 const errs = {
+    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
     BIDS_MUST_ALWAYS_INCREASE: 'bids must always increase',
     MARKETPLACE_NOT_OPTED_INTO_PAYMENT_ASSET: 'Marketplace must be opted into payment asset',
     ENDING_MUST_BE_ONE_HUNDRED_ROUNDS_AFTER_STARTING: 'ending round must be at least 100 rounds after starting',
+    APP_CREATOR_NOT_FOUND: 'App creator not found',
 }
 
 /**
@@ -23,7 +25,12 @@ const errs = {
  */
 const creatorRoyaltyDefault = 500;
 const creatorRoyaltyMaximum = 5000;
-const marketplaceRoyaltiesSingleSideMaximum = 500;
+
+export const appCreatorsMBR = 18_500;
+export type AppCreatorKey = {
+    address: Address;
+    appID: AppID;
+}
 
 export class AuctionFactory extends ContractWithOptIn {
 
@@ -31,6 +38,16 @@ export class AuctionFactory extends ContractWithOptIn {
     childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
     /** The App ID of the Akita DAO contract */
     akitaDaoAppID = TemplateVar<AppID>();
+
+    appCreators = BoxMap<AppCreatorKey, uint64>();
+
+    createApplication(version: string): void {
+        this.childContractVersion.value = version;
+    }
+
+    updateApplication(): void {
+        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
+    }
 
     new(
         payment: PayTxn,
@@ -44,8 +61,8 @@ export class AuctionFactory extends ContractWithOptIn {
         startingRound: uint64,
         endingRound: uint64,
         marketplace: Address,
-        marketplaceRoyalties: uint64,
         gateID: uint64,
+        weightsListCount: uint64,
     ): AppID {
         assert(bidMinimumIncrease > 0, errs.BIDS_MUST_ALWAYS_INCREASE);
         assert(endingRound > startingRound + 100, errs.ENDING_MUST_BE_ONE_HUNDRED_ROUNDS_AFTER_STARTING);
@@ -61,6 +78,8 @@ export class AuctionFactory extends ContractWithOptIn {
             + (28_500 * Auction.schema.global.numUint)
             + (50_000 * Auction.schema.global.numByteSlice)
             + optinMBR
+            + (weightsListCount * weightsListMBR)
+            + appCreatorsMBR
         );
 
         // ensure they paid enough to cover the contract mint + mbr costs
@@ -107,12 +126,9 @@ export class AuctionFactory extends ContractWithOptIn {
             creatorRoyalty = creatorRoyaltyMaximum
         }
 
-        if (marketplaceRoyalties > marketplaceRoyaltiesSingleSideMaximum) {
-            marketplaceRoyalties = marketplaceRoyaltiesSingleSideMaximum
-        }
-
         this.pendingGroup.addMethodCall<typeof Auction.prototype.createApplication, void>({
             methodArgs: [
+                this.akitaDaoAppID,
                 assetXfer.xferAsset,
                 bidAsset,
                 bidFee,
@@ -123,7 +139,6 @@ export class AuctionFactory extends ContractWithOptIn {
                 this.txn.sender,
                 creatorRoyalty,
                 marketplace,
-                marketplaceRoyalties,
                 gateID,
                 this.akitaDaoAppID.globalState(AKITA_DAO_VRF_BEACON_APP_ID_KEY) as AppID,
             ],
@@ -137,6 +152,20 @@ export class AuctionFactory extends ContractWithOptIn {
         });
 
         const auctionAppID = this.itxn.createdApplicationID;
+        this.appCreators({ address: payment.sender, appID: auctionAppID }).value = appCreatorsMBR;
+
+        this.pendingGroup.addMethodCall<typeof Auction.prototype.init, void>({
+            applicationID: auctionAppID,
+            methodArgs: [
+                {
+                    receiver: auctionAppID.address,
+                    amount: weightsListCount * weightsListMBR,
+                    fee: 0,
+                },
+                weightsListCount
+            ],
+            fee: 0,
+        })
 
         // optin child contract to asset (we can use the AuctionBase)
         this.pendingGroup.addMethodCall<typeof Auction.prototype.optin, void>({
@@ -179,5 +208,37 @@ export class AuctionFactory extends ContractWithOptIn {
         this.pendingGroup.submit();
 
         return auctionAppID;
+    }
+
+    clearWeightsBoxes(creator: Address, auctionAppID: AppID): void {
+        const keys: AppCreatorKey = { address: creator, appID: auctionAppID };
+        assert(this.appCreators(keys).exists, errs.APP_CREATOR_NOT_FOUND);
+        
+        const returnedAmount = sendMethodCall<typeof Auction.prototype.clearWeightsBoxes, void>({
+            applicationID: auctionAppID,
+            methodArgs: [],
+            fee: 0,
+        });
+
+        this.appCreators(keys).value += returnedAmount;
+    }
+
+    deleteAuctionApp(creator: Address, auctionAppID: AppID): void {
+        const keys: AppCreatorKey = { address: creator, appID: auctionAppID };
+        assert(this.appCreators(keys).exists, errs.APP_CREATOR_NOT_FOUND);
+
+        const origMBR = this.app.address.minBalance;
+        sendMethodCall<typeof Auction.prototype.deleteApplication, uint64>({
+            applicationID: auctionAppID,
+            methodArgs: [],
+            fee: 0,
+        });
+        const newMBR = this.app.address.minBalance;
+
+        sendPayment({
+            amount: this.appCreators(keys).value + (origMBR - newMBR),
+            receiver: creator,
+            fee: 0,
+        })
     }
 }

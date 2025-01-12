@@ -329,6 +329,7 @@ export class Staking extends Contract {
             };
         }
     }
+
     withdraw(asset: AssetID, type: StakingType): void {
         assert(type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK, errs.WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK);
 
@@ -401,8 +402,24 @@ export class Staking extends Contract {
         
         const stake = this.stakes(sk).value;
         if (asset.id === 0) {
-            return address.balance < stake.amount;
+            const valid = address.balance >= stake.amount;
+            if (!valid) {
+                this.stakes(sk).value = {
+                    amount: address.balance,
+                    lastUpdate: globals.latestTimestamp,
+                    expiration: 0,
+                };
+            }
+            return valid;
         }
-        return address.assetBalance(asset) < stake.amount;
+        const valid = address.assetBalance(asset) >= stake.amount;
+        if (!valid) {
+            this.stakes(sk).value = {
+                amount: address.assetBalance(asset),
+                lastUpdate: globals.latestTimestamp,
+                expiration: 0,
+            };
+        }
+        return valid;
     }
 }

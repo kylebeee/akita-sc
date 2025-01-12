@@ -147,9 +147,13 @@ export type DAOInitFeeArgs = {
     subscriptionPaymentPercentage: uint64;
     subscriptionTriggerPercentage: uint64;
     omnigemSaleFee: uint64;
-    nftListingCreationFee: uint64;
+    marketplaceSalePercentageMinimum: uint64;
+    marketplaceSalePercentageMaximum: uint64;
+    marketplaceComposablePercentage: uint64;
     nftShuffleCreationFee: uint64;
-    auctionCreationFee: uint64;
+    auctionSalePercentageMinimum: uint64;
+    auctionSalePercentageMaximum: uint64;
+    auctionComposablePercentage: uint64;
     hyperSwapOfferFee: uint64;
     krbyPercentage: uint64;
     moderatorPercentage: uint64;
@@ -167,9 +171,13 @@ export type AkitaDAOState = {
     subscriptionPaymentPercentage: uint64;
     subscriptionTriggerPercentage: uint64;
     omnigemSaleFee: uint64;
-    nftListingCreationFee: uint64;
+    marketplaceSalePercentageMinimum: uint64;
+    marketplaceSalePercentageMaximum: uint64;
+    marketplaceComposablePercentage: uint64;
     nftShuffleCreationFee: uint64;
-    auctionCreationFee: uint64;
+    auctionSalePercentageMinimum: uint64;
+    auctionSalePercentageMaximum: uint64;
+    auctionComposablePercentage: uint64;
     hyperSwapOfferFee: uint64;
     krbyPercentage: uint64;
     moderatorPercentage: uint64;
@@ -217,9 +225,9 @@ export class AkitaDAO extends Contract {
     socialPostFee = GlobalStateKey<uint64>({ key: 'social_post_fee' });
     /** the cost to react to something on akita social */
     socialReactFee = GlobalStateKey<uint64>({ key: 'social_react_fee' });
-    /** the smallest percentage of tax the system takes for social interactions */
+    /** the smallest percentage of tax the system takes for social interactions padded with two decimals 1% = 100 */
     socialImpactTaxMinimum = GlobalStateKey<uint64>({ key: 'social_impact_tax_minimum' });
-    /** the largest percentage of tax  */
+    /** the largest percentage of tax the system takes for social interactions padded with two decimals 20% = 2000  */
     socialImpactTaxMaximum = GlobalStateKey<uint64>({ key: 'social_impact_tax_maximum' });
     /** the cost to distribute rewards */
     rewardsDistributionFee = GlobalStateKey<uint64>({ key: 'rewards_distribution_fee' });
@@ -233,16 +241,22 @@ export class AkitaDAO extends Contract {
     subscriptionTriggerPercentage = GlobalStateKey<uint64>({ key: 'subscription_trigger_percentage' });
     /** omnigem sale fee */
     omnigemSaleFee = GlobalStateKey<uint64>({ key: 'omnigem_sale_fee' });
-    /** the nft listing fee */
-    nftListingCreationFee = GlobalStateKey<uint64>({ key: 'nft_listing_creation_fee' });
-    /** the nft listing sale fee */
-    nftListingSaleFee = GlobalStateKey<uint64>({ key: 'nft_listing_sale_fee' });
+    /** the minimum percentage to take on an NFT sale based on user impact */
+    marketplaceSalePercentageMinimum = GlobalStateKey<uint64>({ key: 'marketplace_sale_percentage_minimum' });
+    /** the maximum percentage to take on an NFT sale based on user impact */
+    marketplaceSalePercentageMaximum = GlobalStateKey<uint64>({ key: 'marketplace_sale_percentage_maximum' });
+    /** the percentage each side of the composable marketplace takes on an NFT sale */
+    marketplaceComposablePercentage = GlobalStateKey<uint64>({ key: 'marketplace_composable_percentage' }); 
     /** the nft shuffle fee */
     nftShuffleCreationFee = GlobalStateKey<uint64>({ key: 'nft_shuffle_creation_fee' });
     /** the nft shuffle sale fee */
     nftShuffleSaleFee = GlobalStateKey<uint64>({ key: 'nft_shuffle_sale_fee' });
-    /** the auction fee */
-    auctionCreationFee = GlobalStateKey<uint64>({ key: 'auction_creation_fee' });
+    /** the minimum percentage to take on an NFT auction based on user impact */
+    auctionSalePercentageMinimum = GlobalStateKey<uint64>({ key: 'auction_sale_percentage_minimum' });
+    /** the maximum percentage to take on an NFT auction based on user impact */
+    auctionSalePercentageMaximum = GlobalStateKey<uint64>({ key: 'auction_sale_percentage_maximum' });
+    /** the percentage each side of the composable auction takes on an NFT sale */
+    auctionComposablePercentage = GlobalStateKey<uint64>({ key: 'auction_composable_percentage' });
     /** the asset swap fee */
     hyperSwapOfferFee = GlobalStateKey<uint64>({ key: 'hyper_swap_offer_fee' });
 
@@ -668,9 +682,15 @@ export class AkitaDAO extends Contract {
         this.subscriptionPaymentPercentage.value = fees.subscriptionPaymentPercentage;
         this.subscriptionTriggerPercentage.value = fees.subscriptionTriggerPercentage;
         this.omnigemSaleFee.value = fees.omnigemSaleFee;
-        this.nftListingCreationFee.value = fees.nftListingCreationFee;
+
+        this.marketplaceSalePercentageMinimum.value = fees.marketplaceSalePercentageMinimum;
+        this.marketplaceSalePercentageMaximum.value = fees.marketplaceSalePercentageMaximum;
+        this.marketplaceComposablePercentage.value = fees.marketplaceComposablePercentage;
+
         this.nftShuffleCreationFee.value = fees.nftShuffleCreationFee;
-        this.auctionCreationFee.value = fees.auctionCreationFee;
+        
+
+
         this.hyperSwapOfferFee.value = fees.hyperSwapOfferFee;
         this.krbyPercentage.value = fees.krbyPercentage;
         this.moderatorPercentage.value = fees.moderatorPercentage;
@@ -770,29 +790,29 @@ export class AkitaDAO extends Contract {
         // distribute to stakers
     }
 
-    getState(): AkitaDAOState {
-        return {
-            status: this.status.value,
-            version: this.version.value,
-            contentPolicy: this.contentPolicy.value,
-            minimumRewardsImpact: this.minimumRewardsImpact.value,
-            socialPostFee: this.socialPostFee.value,
-            socialReactFee: this.socialReactFee.value,
-            stakingPoolCreationFee: this.stakingPoolCreationFee.value,
-            subscriptionServiceCreationFee: this.subscriptionServiceCreationFee.value,
-            subscriptionPaymentPercentage: this.subscriptionPaymentPercentage.value,
-            subscriptionTriggerPercentage: this.subscriptionTriggerPercentage.value,
-            omnigemSaleFee: this.omnigemSaleFee.value,
-            nftListingCreationFee: this.nftListingCreationFee.value,
-            nftShuffleCreationFee: this.nftShuffleCreationFee.value,
-            auctionCreationFee: this.auctionCreationFee.value,
-            hyperSwapOfferFee: this.hyperSwapOfferFee.value,
-            krbyPercentage: this.krbyPercentage.value,
-            moderatorPercentage: this.moderatorPercentage.value,
-            minimumProposalThreshold: this.minimumProposalThreshold.value,
-            minimumVoteThreshold: this.minimumVoteThreshold.value,
-            bonesID: this.bonesID.value,
-            revocationAddress: this.revocationAddress.value,
-        }
-    }
+    // getState(): AkitaDAOState {
+    //     return {
+    //         status: this.status.value,
+    //         version: this.version.value,
+    //         contentPolicy: this.contentPolicy.value,
+    //         minimumRewardsImpact: this.minimumRewardsImpact.value,
+    //         socialPostFee: this.socialPostFee.value,
+    //         socialReactFee: this.socialReactFee.value,
+    //         stakingPoolCreationFee: this.stakingPoolCreationFee.value,
+    //         subscriptionServiceCreationFee: this.subscriptionServiceCreationFee.value,
+    //         subscriptionPaymentPercentage: this.subscriptionPaymentPercentage.value,
+    //         subscriptionTriggerPercentage: this.subscriptionTriggerPercentage.value,
+    //         omnigemSaleFee: this.omnigemSaleFee.value,
+
+    //         nftShuffleCreationFee: this.nftShuffleCreationFee.value,
+    //         auctionCreationFee: this.auctionCreationFee.value,
+    //         hyperSwapOfferFee: this.hyperSwapOfferFee.value,
+    //         krbyPercentage: this.krbyPercentage.value,
+    //         moderatorPercentage: this.moderatorPercentage.value,
+    //         minimumProposalThreshold: this.minimumProposalThreshold.value,
+    //         minimumVoteThreshold: this.minimumVoteThreshold.value,
+    //         bonesID: this.bonesID.value,
+    //         revocationAddress: this.revocationAddress.value,
+    //     }
+    // }
 }

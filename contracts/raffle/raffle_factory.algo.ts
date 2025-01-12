@@ -1,19 +1,27 @@
 import { Contract } from "@algorandfoundation/tealscript";
-import { Raffle } from "./raffle.algo";
+import { Raffle, weightsListMBR } from "./raffle.algo";
 import { ContractWithOptIn } from "../../utils/base_contracts/optin.algo";
 import { AKITA_DAO_VRF_BEACON_APP_ID_KEY } from "../dao/constants";
 
 const errs = {
     NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
     MARKETPLACE_NOT_OPTED_INTO_TICKET_ASSET: 'factory not opted into ticket asset',
+    APP_CREATOR_NOT_FOUND: 'App creator not found',
+}
+
+export const appCreatorsMBR = 18_500;
+export type AppCreatorKey = {
+    address: Address;
+    appID: AppID;
 }
 
 export class RaffleFactory extends ContractWithOptIn {
-
     /** the version of the child contract */
     childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
     /** The App ID of the Akita DAO contract */
     akitaDaoAppID = TemplateVar<AppID>();
+
+    appCreators = BoxMap<AppCreatorKey, uint64>();
 
     createApplication(version: string): void {
         this.childContractVersion.value = version;
@@ -32,8 +40,8 @@ export class RaffleFactory extends ContractWithOptIn {
         minTickets: uint64,
         maxTickets: uint64,
         gateID: uint64,
+        weightsListCount: uint64,
     ): AppID {
-
         let optinMBR = 0;
         const prizeAssetIsAlgo = assetXfer.xferAsset.id === 0;
         if (prizeAssetIsAlgo) {
@@ -52,6 +60,8 @@ export class RaffleFactory extends ContractWithOptIn {
                 + (28_500 * Raffle.schema.global.numUint)
                 + (50_000 * Raffle.schema.global.numByteSlice)
                 + optinMBR
+                + (weightsListCount * weightsListMBR)
+                + appCreatorsMBR
             ),
         });
 
@@ -78,6 +88,20 @@ export class RaffleFactory extends ContractWithOptIn {
         });
 
         const raffleAppID = this.itxn.createdApplicationID;
+        this.appCreators({ address: payment.sender, appID: raffleAppID }).value = appCreatorsMBR;
+
+        this.pendingGroup.addMethodCall<typeof Raffle.prototype.init, void>({
+            applicationID: raffleAppID,
+            methodArgs: [
+                {
+                    receiver: raffleAppID.address,
+                    amount: weightsListCount * weightsListMBR,
+                    fee: 0,
+                },
+                weightsListCount
+            ],
+            fee: 0,
+        })
 
         if (!prizeAssetIsAlgo) {
             this.pendingGroup.addMethodCall<typeof Raffle.prototype.optin, void>({
@@ -100,7 +124,7 @@ export class RaffleFactory extends ContractWithOptIn {
             xferAsset: assetXfer.xferAsset,
             fee: 0,
         });
-        
+
         if (!ticketAssetIsAlgo) {
             this.pendingGroup.addMethodCall<typeof Raffle.prototype.optin, void>({
                 applicationID: raffleAppID,
@@ -119,5 +143,37 @@ export class RaffleFactory extends ContractWithOptIn {
         this.pendingGroup.submit();
 
         return this.itxn.createdApplicationID;
+    }
+
+    clearWeightsBoxes(creator: Address, auctionAppID: AppID): void {
+        const keys: AppCreatorKey = { address: creator, appID: auctionAppID };
+        assert(this.appCreators(keys).exists, errs.APP_CREATOR_NOT_FOUND);
+
+        const returnedAmount = sendMethodCall<typeof Raffle.prototype.clearWeightsBoxes, void>({
+            applicationID: auctionAppID,
+            methodArgs: [],
+            fee: 0,
+        });
+
+        this.appCreators(keys).value += returnedAmount;
+    }
+
+    deleteAuctionApp(creator: Address, auctionAppID: AppID): void {
+        const keys: AppCreatorKey = { address: creator, appID: auctionAppID };
+        assert(this.appCreators(keys).exists, errs.APP_CREATOR_NOT_FOUND);
+
+        const origMBR = this.app.address.minBalance;
+        sendMethodCall<typeof Raffle.prototype.deleteApplication, uint64>({
+            applicationID: auctionAppID,
+            methodArgs: [],
+            fee: 0,
+        });
+        const newMBR = this.app.address.minBalance;
+
+        sendPayment({
+            amount: this.appCreators(keys).value + (origMBR - newMBR),
+            receiver: creator,
+            fee: 0,
+        })
     }
 }

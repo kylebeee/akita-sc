@@ -40,7 +40,8 @@ const NFD_VERIFIED_TELEGRAM_KEY = 'v.telegram';
 
 const AKITA_TOKEN_KEY = 'akita_id';
 
-const subscriptionStateModifierMBR = 9_300;
+export const metaMBR = 31_700;
+export const subscriptionStateModifierMBR = 9_300;
 
 export type MetaValue = {
     // the cached subscription App ID for the user
@@ -69,9 +70,9 @@ export class AkitaSocialImpact extends Contract {
      * value: the meta data for the user
      * value_length: 105
      * 
-     * cost: 2_500 + (400 * (32 + 105)) = 57_300
+     * cost: 2_500 + (400 * (33 + 105)) = 31_700
      */
-    meta = BoxMap<Address, MetaValue>({ allowPotentialCollisions: true });
+    meta = BoxMap<Address, MetaValue>({ prefix: 'm' });
 
     /** 
      * A map of how each akita subscription affects impact calculation
@@ -283,6 +284,7 @@ export class AkitaSocialImpact extends Contract {
         if (version !== '3.') {
             return nfdImpact;
         }
+
         const domain = sendMethodCall<typeof NFD.prototype.readField, bytes>({
             applicationID: NFDAppID,
             methodArgs: [NFD_VERIFIED_DOMAIN_KEY],
