@@ -394,8 +394,6 @@ export class AkitaSocialImpact extends Contract {
                 akitaNFT: akitaNFT,
             };
         } else {
-            const meta = clone(this.meta(this.txn.sender).value);
-
             this.meta(this.txn.sender).value = {
                 subscriptionIndex: subscriptionIndex,
                 NFD: NFD,
@@ -418,4 +416,7 @@ export class AkitaSocialImpact extends Contract {
             amount: subscriptionStateModifierMBR,
         });
     }
+
+    // dummy call to allow for more references
+    gas() {}
 }

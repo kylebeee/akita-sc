@@ -68,7 +68,7 @@ export class Marketplace extends ContractWithOptIn {
       ? (globals.assetOptInMinBalance)
       : (globals.assetOptInMinBalance * 2);
 
-    let mbrAmount = childContractMBR + optinMBR;
+    const mbrAmount = childContractMBR + optinMBR;
 
     // ensure they paid enough to cover the contract mint + mbr costs
     verifyPayTxn(payment, {

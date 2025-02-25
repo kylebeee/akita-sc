@@ -33,6 +33,7 @@ const errs = {
     TICKETS_NOT_RECLAIMED: 'Tickets have not been reclaimed',
     STILL_HAS_WEIGHTS_BOXES: 'Still has weights boxes',
     MUST_ALLOCATE_AT_LEAST_FOUR_HIGHEST_BIDS_CHUNKS: 'Must allocate at least four weights chunks',
+    MUST_ALLOCATE_AT_MOST_FIFTEEN_HIGHEST_BIDS_CHUNKS: 'Must allocate at most fifteen weights chunks',
 }
 
 // const RANDOMNESS_BEACON_APPID_TESTNET: AppID = AppID.fromUint64(600011887);
@@ -77,7 +78,6 @@ export type RaffleState = {
     vrfBeaconAppID: AppID;
     vrfGetFailureCount: uint64;
     entryID: uint64;
-    findWinnerCursor: uint64;
     refundMBRCursor: uint64;
 }
 
@@ -115,9 +115,15 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
     /** The id's of the raffle entries */
     entryID = GlobalStateKey<uint64>({ key: 'entry_id' });
     /** the number of boxes allocated to tracking weights */
-    weightsBoxCount = GlobalStateKey<uint64>({ key: 'highest_bid_box_count' });
-    /** cursor to track iteration of finding winner */
-    findWinnerCursor = GlobalStateKey<uint64>({ key: 'find_winner_cursor' });
+    weightsBoxCount = GlobalStateKey<uint64>({ key: 'weights_box_count' });
+    /** totals for each box of weights for our skip list */
+    weightTotals = GlobalStateKey<StaticArray<uint64, 15>>({ key: 'w_totals' })
+    /** 
+     * cursors to track iteration of finding winner
+     * index being for the bid iteration
+     * amountIndex being the index for the amount of the bids seen
+    */
+    findWinnerCursors = GlobalStateKey<{ index: uint64, amountIndex: uint64 }>({ key: 'find_winner_cursors' });
     /** cursor to track iteration of MBR refunds */
     refundMBRCursor = GlobalStateKey<uint64>({ key: 'refund_mbr_cursor' });
 
@@ -186,18 +192,21 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.gateID.value = gateID;
         this.vrfBeaconAppID.value = vrfBeaconAppID;
         this.entryID.value = 0;
-        this.findWinnerCursor.value = 0;
-        this.refundMBRCursor.value = 0;
+        this.weightsBoxCount.value = 0;
+        this.weightTotals.value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.refundMBRCursor.value = 0;   
     }
 
     init(payment: PayTxn, weightListLength: uint64) {
         assert(this.txn.sender === this.app.creator, errs.MUST_BE_CALLED_FROM_FACTORY);
         assert(weightListLength >= 4, errs.MUST_ALLOCATE_AT_LEAST_FOUR_HIGHEST_BIDS_CHUNKS);
+        assert(weightListLength < 16, errs.MUST_ALLOCATE_AT_MOST_FIFTEEN_HIGHEST_BIDS_CHUNKS);
         verifyPayTxn(payment, {
             receiver: this.app.address,
             amount: (weightListLength * weightsListMBR)
         });
 
+        this.weightsBoxCount.value = weightListLength;
         for (let i = 0; i < weightListLength; i += 1) {
             this.weights(i).create();
         }
@@ -223,6 +232,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
 
         const amount = payment.amount - entryTotalMBR;
         this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: amount };
+        this.weightTotals.value[loc / ChunkSize] += amount;
 
         this.entryCount.value += 1;
         this.ticketCount.value += amount;
@@ -254,6 +264,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
 
         const amount = assetXfer.assetAmount;
         this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: amount };
+        this.weightTotals.value[loc / ChunkSize] += amount;
 
         this.entryCount.value += 1;
         this.ticketCount.value += amount;
@@ -277,6 +288,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         });
 
         this.weights(loc / ChunkSize).value[loc % ChunkSize].amount += payment.amount;
+        this.weightTotals.value[loc / ChunkSize] += payment.amount;
         this.ticketCount.value += amount;
     }
 
@@ -299,6 +311,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         });
 
         this.weights(loc / ChunkSize).value[loc % ChunkSize].amount += assetXfer.assetAmount;
+        this.weightTotals.value[loc / ChunkSize] += assetXfer.assetAmount;
         this.ticketCount.value += amount;
     }
 
@@ -330,44 +343,62 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.winningTicket.value = rngResult[1][0];
     }
 
+    private getWinnerWeightBoxInfo(): [uint64, uint64] {
+        let startingIndex = this.findWinnerCursors.value.index;
+        let currentRangeStart = this.findWinnerCursors.value.amountIndex;
+
+        for (let i = 0; i < this.weightsBoxCount.value; i += 1) {
+            const boxStake = this.weightTotals.value[i];
+            if (this.winningTicket.value < (currentRangeStart + boxStake)) {
+                return [startingIndex, currentRangeStart];
+            }
+
+            startingIndex += ChunkSize;
+            currentRangeStart += boxStake + 1;
+        }
+
+        return [startingIndex, currentRangeStart];
+    }
+
     findWinner(): void {
         assert(globals.round < this.endingRound.value, errs.RAFFLE_HAS_NOT_ENDED)
         assert(this.winningTicket.value !== 0, errs.NO_WINNING_TICKET_YET);
-        const complete = this.entryCount.value === this.findWinnerCursor.value;
-        assert(!complete, errs.WINNER_ALREADY_FOUND);
+        assert(this.raffleWinner.value === Address.zeroAddress, errs.WINNER_ALREADY_FOUND);
 
-        // walk the index from the winner to find the
-        const startingIndex = this.findWinnerCursor.value;
-        const remainder = this.entryCount.value - this.findWinnerCursor.value;
+        const winningBoxInfo = this.getWinnerWeightBoxInfo();
 
-        const iterationAmount = (remainder > MaxIterationsPerGroup)
-            ? MaxIterationsPerGroup
-            : remainder;
+        // walk the index to find the winner
+        const startingIndex = winningBoxInfo[0];
+        let currentRangeStart = winningBoxInfo[1];
+        let currentRangeEnd = 0
 
-        let currentRangeStart = 1;
-        let currentRangeEnd = 0;
-        for (let i = startingIndex; i <= iterationAmount; i += 1) {
-            if (globals.opcodeBudget < 100) {
-                increaseOpcodeBudget()
-            }
+        const remainder = this.entryCount.value - startingIndex;
+        const iterationAmount = (remainder > ChunkSize) ? ChunkSize : remainder;
 
-            const amount = this.weights(i / ChunkSize).value[i % ChunkSize].amount;
+        const weight = this.weights(startingIndex / ChunkSize).value;
 
-            currentRangeEnd = currentRangeStart + amount;
+        const opUpIterationAmount = ((iterationAmount * 40) / 700)
+        log(' op up iteration amount: ' + opUpIterationAmount.toString())
+        for (let i = 0; i <= opUpIterationAmount; i += 1) {
+            increaseOpcodeBudget()
+        }
+
+        for (let i = 0; i < iterationAmount; i += 1) {
+            currentRangeEnd = currentRangeStart + weight[i].amount;
             if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
-                this.raffleWinner.value = this.entries(i).value;
+                this.raffleWinner.value = this.entries((startingIndex + i + 1)).value;
             }
-
             currentRangeStart = currentRangeEnd + 1;
         }
 
-        this.findWinnerCursor.value += iterationAmount;
+        this.findWinnerCursors.value.index += iterationAmount;
+        this.findWinnerCursors.value.amountIndex = currentRangeStart;
     }
 
     refundMBR(): void {
         const totalCap = (this.entryCount.value - 1);
         /** make sure we've already found the winner of the raffle */
-        assert(totalCap === this.findWinnerCursor.value, errs.WINNER_NOT_FOUND);
+        assert(this.raffleWinner.value !== Address.zeroAddress, errs.WINNER_NOT_FOUND);
         /** make sure we haven't already refunded all MBR */
         assert(totalCap !== this.refundMBRCursor.value, errs.ALL_REFUNDS_COMPLETE);
 
@@ -378,17 +409,16 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
             ? MaxRefundIterationsPerGroup
             : remainder;
 
+        const opUpIterationAmount = ((iterationAmount * 100) / 700)
+        log(' op up iteration amount: ' + opUpIterationAmount.toString())
+        for (let i = 0; i <= opUpIterationAmount; i += 1) {
+            increaseOpcodeBudget()
+        }
+
         for (let i = startingIndex; i < iterationAmount; i += 1) {
-            if (globals.opcodeBudget < 100) {
-                increaseOpcodeBudget()
-            }
-
             const entry = this.entries(i).value;
-
-            // free up the MBR
             this.entries(i).delete();
             this.entriesByAddress(entry).delete();
-
             sendPayment({
                 receiver: entry,
                 amount: entryTotalMBR,
@@ -481,16 +511,12 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
     clearWeightsBoxes(): uint64 {
         assert(this.txn.sender === this.app.creator, errs.MUST_BE_CALLED_FROM_FACTORY);
 
-        const iterationAmount = (this.weightsBoxCount.value > 128) ? 128 : this.weightsBoxCount.value;
-
-        for (let i = 0; i < iterationAmount; i += 1) {
+        for (let i = 0; i < this.weightsBoxCount.value; i += 1) {
             const ri = (this.weightsBoxCount.value - 1) - i;
             this.weights(ri).delete();
         }
 
-        this.weightsBoxCount.value -= iterationAmount;
-
-        const returnAmount = iterationAmount * weightsListMBR;
+        const returnAmount = this.weightsBoxCount.value * weightsListMBR;
 
         sendPayment({
             receiver: this.app.creator,
@@ -498,6 +524,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
             fee: 0,
         });
 
+        this.weightsBoxCount.value = 0;
         return returnAmount;
     }
 
@@ -526,7 +553,6 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
             vrfBeaconAppID: this.vrfBeaconAppID.value,
             vrfGetFailureCount: this.vrfGetFailureCount.value,
             entryID: this.entryID.value,
-            findWinnerCursor: this.findWinnerCursor.value,
             refundMBRCursor: this.refundMBRCursor.value,
         }
     }

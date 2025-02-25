@@ -76,6 +76,11 @@ export type StakeInfo = {
     type: StakingType;
 }
 
+export type AssetCheck = {
+    asset: AssetID;
+    amount: uint64;
+}
+
 export class Staking extends Contract {
     
     /** The App ID of the Akita DAO contract */
@@ -89,7 +94,7 @@ export class Staking extends Contract {
     heartbeats = BoxMap<HeartbeatKey, StaticArray<HeartbeatValues, 4>>();
 
     @abi.readonly
-    timeLeft(address: Address, asset: AssetID): uint64 {
+    getTimeLeft(address: Address, asset: AssetID): uint64 {
         const sk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_LOCK };
 
         if (!this.stakes(sk).exists || globals.latestTimestamp >= this.stakes(sk).value.expiration) {
@@ -100,17 +105,53 @@ export class Staking extends Contract {
     }
 
     @abi.readonly
+    mustGetTimeLeft(address: Address, asset: AssetID): uint64 {
+        const sk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_LOCK };
+        assert(this.stakes(sk).exists, errs.NO_LOCK);
+        assert(globals.latestTimestamp < this.stakes(sk).value.expiration, errs.LOCKED);
+        return this.stakes(sk).value.expiration - globals.latestTimestamp;
+    }
+
+    @abi.readonly
     getInfo(address: Address, stake: StakeInfo): StakeValue {
-        return this.stakes({ address: address, asset: stake.asset, type: stake.type }).value;
+        const sk: StakeKey = { address: address, asset: stake.asset, type: stake.type };
+        if (!this.stakes(sk).exists) {
+            return { amount: 0, lastUpdate: 0, expiration: 0 };
+        }
+        return this.stakes(sk).value;
+    }
+
+    @abi.readonly
+    mustGetInfo(address: Address, stake: StakeInfo): StakeValue {
+        const sk: StakeKey = { address: address, asset: stake.asset, type: stake.type };
+        assert(this.stakes(sk).exists, errs.NO_LOCK);
+        return this.stakes(sk).value;
     }
 
     @abi.readonly
     getHeartbeat(address: Address, asset: AssetID): StaticArray<HeartbeatValues, 4> {
+        const hbk: HeartbeatKey = { address: address, asset: asset };
+        if (!this.heartbeats(hbk).exists) {
+            const z: HeartbeatValues = { amount: 0, timestamp: 0 };
+            return [z, z, z, z];
+        }
+
+        return this.heartbeats({ address: address, asset: asset }).value;
+    }
+
+    @abi.readonly
+    mustGetHeartbeat(address: Address, asset: AssetID): StaticArray<HeartbeatValues, 4> {
+        const hbk: HeartbeatKey = { address: address, asset: asset };
+        assert(this.heartbeats(hbk).exists, errs.HEARBEAT_NOT_FOUND);
         return this.heartbeats({ address: address, asset: asset }).value;
     }
 
     @abi.readonly
     getHeartbeatAverage(address: Address, asset: AssetID): uint64 {
+        if (!this.heartbeats({ address: address, asset: asset }).exists) {
+            return 0;
+        }
+
         const heartbeats = this.heartbeats({ address: address, asset: asset }).value as StaticArray<HeartbeatValues, 4>;
         let total = 0;
         heartbeats.forEach((hb) => {
@@ -120,28 +161,62 @@ export class Staking extends Contract {
     }
 
     @abi.readonly
-    getInfoList(address: Address, stakes: StakeInfo[]): StakeValue[] {
-        let results: StakeValue[] = [];
-        for (let i = 0; i < stakes.length; i += 1) {
-            const stake = stakes[i];
-            results.push(this.stakes({ address: address, asset: stake.asset, type: stake.type }).value);
-        }
-        return results;
+    mustGetHeartbeatAverage(address: Address, asset: AssetID): uint64 {
+        assert(this.heartbeats({ address: address, asset: asset }).exists, errs.HEARBEAT_NOT_FOUND);
+        
+        const heartbeats = this.heartbeats({ address: address, asset: asset }).value as StaticArray<HeartbeatValues, 4>;
+        let total = 0;
+        heartbeats.forEach((hb) => {
+            total += hb.amount;
+        });
+        return total / heartbeats.length;
     }
 
     @abi.readonly
-    getLockedInfo(address: Address, asset: AssetID): StakeValue {
-        return this.stakes({ address: address, asset: asset, type: STAKING_TYPE_LOCK }).value;
-    }
-
-    @abi.readonly
-    getLockedInfoList(address: Address, assets: AssetID[]): StakeValue[] {
+    getInfoList(address: Address, type: StakingType, assets: AssetID[]): StakeValue[] {
         let results: StakeValue[] = [];
         for (let i = 0; i < assets.length; i += 1) {
-            const asset = assets[i];
-            results.push(this.stakes({ address: address, asset: asset, type: STAKING_TYPE_LOCK }).value);
+            const sk = { address: address, asset: assets[i], type: type };
+            if (!this.stakes(sk).exists) {
+                results.push({ amount: 0, lastUpdate: 0, expiration: 0 });
+                continue;
+            }
+            results.push(this.stakes(sk).value);
         }
         return results;
+    }
+
+    @abi.readonly
+    mustGetInfoList(address: Address, type: StakingType, assets: AssetID[]): StakeValue[] {
+        let results: StakeValue[] = [];
+        for (let i = 0; i < assets.length; i += 1) {
+            const sk = { address: address, asset: assets[i], type: type };
+            assert(this.stakes(sk).exists, errs.STAKE_NOT_FOUND);
+            results.push(this.stakes(sk).value);
+        }
+        return results;
+    }
+
+    @abi.readonly
+    stakeCheck(address: Address, assetChecks: AssetCheck[], type: StakingType): boolean {
+        for (let i = 0; i < assetChecks.length; i += 1) {
+            const sk: StakeKey = { address: address, asset: assetChecks[i].asset, type: type };
+            if (!this.stakes(sk).exists) {
+                return false;
+            }
+
+            const stake = this.stakes(sk).value;
+            
+            let amountToCheck = stake.amount
+            if (type === STAKING_TYPE_HEARTBEAT) {
+                amountToCheck = this.getHeartbeatAverage(address, assetChecks[i].asset)
+            }
+
+            if (assetChecks[i].amount >= amountToCheck) {
+                return false;
+            }
+        }
+        return true;
     }
 
     createApplication(): void {}

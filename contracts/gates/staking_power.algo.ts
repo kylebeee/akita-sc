@@ -1,7 +1,7 @@
 import { Contract } from '@algorandfoundation/tealscript';
 import { Operator } from './gate.algo';
 import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo } from '../../utils/operators';
-import { StakeValue, Staking } from '../staking/staking.algo';
+import { StakeValue, Staking, STAKING_TYPE_LOCK } from '../staking/staking.algo';
 import { AkitaAppIDsStakingPlugin } from '../../utils/constants';
 
 const errs = {
@@ -40,9 +40,9 @@ export class StakingPowerGate extends Contract {
     }
 
     private stakingPowerGate(user: Address, op: Operator, asset: AssetID, power: uint64): boolean {
-        const lockInfo = sendMethodCall<typeof Staking.prototype.getLockedInfo, StakeValue>({
+        const lockInfo = sendMethodCall<typeof Staking.prototype.getInfo, StakeValue>({
             applicationID: AppID.fromUint64(AkitaAppIDsStakingPlugin),
-            methodArgs: [ user, asset ],
+            methodArgs: [ user, { asset, type: STAKING_TYPE_LOCK } ],
             fee: 0,
         });
         

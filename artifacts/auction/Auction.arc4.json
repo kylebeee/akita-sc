@@ -1,0 +1,215 @@
+{
+  "name": "Auction",
+  "desc": "",
+  "methods": [
+    {
+      "name": "optin",
+      "desc": "optin tells the contract to opt into an asa",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay",
+          "desc": "The payment transaction"
+        },
+        {
+          "name": "asset",
+          "type": "uint64",
+          "desc": "The asset to be opted into"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "isLive",
+      "readonly": true,
+      "args": [],
+      "returns": {
+        "type": "bool",
+        "desc": "a boolean of whether the auction is live"
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [
+        {
+          "name": "akitaDaoAppID",
+          "type": "uint64"
+        },
+        {
+          "name": "prize",
+          "type": "uint64"
+        },
+        {
+          "name": "bidAsset",
+          "type": "uint64"
+        },
+        {
+          "name": "bidFee",
+          "type": "uint64"
+        },
+        {
+          "name": "startingBid",
+          "type": "uint64"
+        },
+        {
+          "name": "bidMinimumIncrease",
+          "type": "uint64"
+        },
+        {
+          "name": "startingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "endingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "name": "creatorRoyalty",
+          "type": "uint64"
+        },
+        {
+          "name": "marketplace",
+          "type": "address"
+        },
+        {
+          "name": "gateID",
+          "type": "uint64"
+        },
+        {
+          "name": "vrfBeaconAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "init",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "weightListLength",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "bid",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "marketplace",
+          "type": "address"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "bidAsa",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "assetXfer",
+          "type": "axfer"
+        },
+        {
+          "name": "marketplace",
+          "type": "address"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "refundBid",
+      "args": [
+        {
+          "name": "id",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "claimPrize",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "raffle",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "findWinner",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "refundMBR",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "claimRafflePrize",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "clearWeightsBoxes",
+      "args": [],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "deleteApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "cancel",
+      "desc": "deletes the application & returns the mbr + asset\nto the seller IF the auction hasn't started",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    }
+  ]
+}

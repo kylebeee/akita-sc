@@ -58,7 +58,7 @@ describe('Rekeying Test', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        pmt: mintPayment,
+        payment: mintPayment,
         admin: aliceEOA.addr,
         nickname: 'Alice'
       },

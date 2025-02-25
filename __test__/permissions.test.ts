@@ -25,7 +25,7 @@ describe('ARC58 Plugin Permissions', () => {
   /** The suggested params for transactions */
   let suggestedParams: algosdk.SuggestedParams;
   /** The maximum uint64 value. Used to indicate a never-expiring plugin */
-  const MAX_UINT64 = BigInt('18446744073709551615');
+  const MAX_UINT64 = 18446744073709551615n;
   /** a created asset id to use */
   let asset: bigint;
 
@@ -111,7 +111,7 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        pmt: mintPayment,
+        payment: mintPayment,
         admin: aliceEOA.addr,
         nickname: 'Alice'
       },
@@ -167,7 +167,7 @@ describe('ARC58 Plugin Permissions', () => {
     // Create an asset
     const txn = await algorand.send.assetCreate({
       sender: aliceEOA.addr,
-      total: BigInt(1),
+      total: 1n,
       decimals: 0,
       defaultFrozen: false,
     });

@@ -32,7 +32,7 @@ const STATUS_DISTRIBUTING_REWARDS = 2;
 const STATUS_RUNNING = 3;
 
 const DEFAULT_VERSION: bytes = '1.0';
-const DEFAULT_CONTENT_POLICY: bytes<59> = 'ipfs://mrehhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh';
+const DEFAULT_CONTENT_POLICY: bytes<36> = 'ipfs://mrehhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh';
 const DEFAULT_MINIMUM_REWARDS_IMPACT = 400;
 const DEFAULT_SOCIAL_POST_FEE = 100_000_000;
 const DEFAULT_SOCIAL_REACT_FEE = 10_000_000;
@@ -96,7 +96,7 @@ export const PLUGIN_STATUS_APPROVED = 1;
 export type ProposalDetails = {
     status: uint64;
     action: uint64;
-    cid: bytes<59>;
+    cid: bytes<36>;
     creator: Address;
     created: uint64;
     votes: uint64;
@@ -150,11 +150,10 @@ export type DAOInitFeeArgs = {
     marketplaceSalePercentageMinimum: uint64;
     marketplaceSalePercentageMaximum: uint64;
     marketplaceComposablePercentage: uint64;
-    nftShuffleCreationFee: uint64;
+    nftShuffleSalePercentage: uint64;
     auctionSalePercentageMinimum: uint64;
     auctionSalePercentageMaximum: uint64;
     auctionComposablePercentage: uint64;
-    hyperSwapOfferFee: uint64;
     krbyPercentage: uint64;
     moderatorPercentage: uint64;
 }
@@ -162,7 +161,7 @@ export type DAOInitFeeArgs = {
 export type AkitaDAOState = {
     status: uint64;
     version: string;
-    contentPolicy: bytes<59>;
+    contentPolicy: bytes<36>;
     minimumRewardsImpact: uint64;
     socialPostFee: uint64;
     socialReactFee: uint64;
@@ -215,7 +214,7 @@ export class AkitaDAO extends Contract {
     /** the version number of the DAO */
     version = GlobalStateKey<string>({ key: 'version' });
     /** the content policy of the protocol */
-    contentPolicy = GlobalStateKey<bytes<59>>({ key: 'content_policy' });
+    contentPolicy = GlobalStateKey<bytes<36>>({ key: 'content_policy' });
     /** the minimum impact score to qualify for daily disbursement */
     minimumRewardsImpact = GlobalStateKey<uint64>({ key: 'minimum_rewards_impact' });
     /** the vrf beacon Akita apps should use */
@@ -247,18 +246,14 @@ export class AkitaDAO extends Contract {
     marketplaceSalePercentageMaximum = GlobalStateKey<uint64>({ key: 'marketplace_sale_percentage_maximum' });
     /** the percentage each side of the composable marketplace takes on an NFT sale */
     marketplaceComposablePercentage = GlobalStateKey<uint64>({ key: 'marketplace_composable_percentage' }); 
-    /** the nft shuffle fee */
-    nftShuffleCreationFee = GlobalStateKey<uint64>({ key: 'nft_shuffle_creation_fee' });
-    /** the nft shuffle sale fee */
-    nftShuffleSaleFee = GlobalStateKey<uint64>({ key: 'nft_shuffle_sale_fee' });
+    /** the nft shuffle sale % fee */
+    nftShuffleSalePercentage = GlobalStateKey<uint64>({ key: 'nft_shuffle_sale_percentage' });
     /** the minimum percentage to take on an NFT auction based on user impact */
     auctionSalePercentageMinimum = GlobalStateKey<uint64>({ key: 'auction_sale_percentage_minimum' });
     /** the maximum percentage to take on an NFT auction based on user impact */
     auctionSalePercentageMaximum = GlobalStateKey<uint64>({ key: 'auction_sale_percentage_maximum' });
     /** the percentage each side of the composable auction takes on an NFT sale */
     auctionComposablePercentage = GlobalStateKey<uint64>({ key: 'auction_composable_percentage' });
-    /** the asset swap fee */
-    hyperSwapOfferFee = GlobalStateKey<uint64>({ key: 'hyper_swap_offer_fee' });
 
     /**
      * The percentage of total rewards allocated to krby expressed in the hundreds
@@ -647,7 +642,7 @@ export class AkitaDAO extends Contract {
 
     init(
         version: string,
-        contentPolicy: bytes<59>,
+        contentPolicy: bytes<36>,
         minimumRewardsImpact: uint64,
         fees: DAOInitFeeArgs,
         minimumProposalThreshold: uint64,
@@ -687,11 +682,12 @@ export class AkitaDAO extends Contract {
         this.marketplaceSalePercentageMaximum.value = fees.marketplaceSalePercentageMaximum;
         this.marketplaceComposablePercentage.value = fees.marketplaceComposablePercentage;
 
-        this.nftShuffleCreationFee.value = fees.nftShuffleCreationFee;
+        this.nftShuffleSalePercentage.value = fees.nftShuffleSalePercentage;
         
+        this.auctionSalePercentageMinimum.value = fees.auctionSalePercentageMinimum;
+        this.auctionSalePercentageMaximum.value = fees.auctionSalePercentageMaximum;
+        this.auctionComposablePercentage.value = fees.auctionComposablePercentage;
 
-
-        this.hyperSwapOfferFee.value = fees.hyperSwapOfferFee;
         this.krbyPercentage.value = fees.krbyPercentage;
         this.moderatorPercentage.value = fees.moderatorPercentage;
         this.minimumProposalThreshold.value = minimumProposalThreshold;

@@ -56,7 +56,7 @@ export class RaffleFactory extends ContractWithOptIn {
         verifyPayTxn(payment, {
             receiver: this.app.address,
             amount: (
-                100_000 // requires 3 extra pages
+                300_000 // requires 2 extra pages
                 + (28_500 * Raffle.schema.global.numUint)
                 + (50_000 * Raffle.schema.global.numByteSlice)
                 + optinMBR
@@ -83,7 +83,7 @@ export class RaffleFactory extends ContractWithOptIn {
             clearStateProgram: Raffle.clearProgram(),
             globalNumUint: Raffle.schema.global.numUint,
             globalNumByteSlice: Raffle.schema.global.numByteSlice,
-            extraProgramPages: 0,
+            extraProgramPages: 2,
             fee: 0,
         });
 

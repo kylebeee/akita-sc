@@ -1,0 +1,136 @@
+{
+  "name": "AuctionFactory",
+  "desc": "",
+  "methods": [
+    {
+      "name": "optin",
+      "desc": "optin tells the contract to opt into an asa",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay",
+          "desc": "The payment transaction"
+        },
+        {
+          "name": "asset",
+          "type": "uint64",
+          "desc": "The asset to be opted into"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "createApplication",
+      "args": [
+        {
+          "name": "version",
+          "type": "string"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "updateApplication",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "new",
+      "args": [
+        {
+          "name": "payment",
+          "type": "pay"
+        },
+        {
+          "name": "assetXfer",
+          "type": "axfer"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "proof",
+          "type": "byte[32][]"
+        },
+        {
+          "name": "bidAsset",
+          "type": "uint64"
+        },
+        {
+          "name": "bidFee",
+          "type": "uint64"
+        },
+        {
+          "name": "startingBid",
+          "type": "uint64"
+        },
+        {
+          "name": "bidMinimumIncrease",
+          "type": "uint64"
+        },
+        {
+          "name": "startingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "endingRound",
+          "type": "uint64"
+        },
+        {
+          "name": "marketplace",
+          "type": "address"
+        },
+        {
+          "name": "gateID",
+          "type": "uint64"
+        },
+        {
+          "name": "weightsListCount",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "uint64"
+      }
+    },
+    {
+      "name": "clearWeightsBoxes",
+      "args": [
+        {
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "name": "auctionAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "deleteAuctionApp",
+      "args": [
+        {
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "name": "auctionAppID",
+          "type": "uint64"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    }
+  ]
+}

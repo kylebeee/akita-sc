@@ -8,6 +8,7 @@ import { AKITA_AUCTION_COMPOSABLE_PERCENTAGE_KEY, AKITA_AUCTION_SALE_PERCENTAGE_
 
 const errs = {
     MUST_BE_CALLED_FROM_FACTORY: 'must be called from the factory',
+    NOT_APPLICABLE_TO_THIS_AUCTION: 'not applicable to this auction',
     MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS: 'must allocate at least three highest bids chunks',
     AUCTION_NOT_LIVE: 'auction is not live',
     AUCTION_HAS_NOT_ENDED: 'auction has not ended',
@@ -52,14 +53,12 @@ export type BidInfo = {
     address: Address,
     amount: uint64,
     marketplace: Address,
-    refunded: boolean,
+    refunded: uint8
 }
 
 // 4096*8 bytes = 32KB
 export const ChunkSize = 4096;
 export const MaxChunksPerGroup = 4;
-// 8 references per txn * 16 group size / 32 references per box * box holding 4096 entries = 16_384
-export const MaxIterationsPerGroup = 16_384;
 // 4 accounts per txn * 16 group size = 64
 export const MaxRefundIterationsPerGroup = 64;
 export type WeightsList = StaticArray<{ amount: uint64 }, typeof ChunkSize>;
@@ -125,9 +124,15 @@ export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
     */
     uniqueAddressCount = GlobalStateKey<uint64>({ key: 'unique_address_count' });
     /** the number of boxes allocated to tracking weights */
-    weightsBoxCount = GlobalStateKey<uint64>({ key: 'highest_bid_box_count' });
-    /** cursor to track iteration of finding winner */
-    findWinnerCursor = GlobalStateKey<uint64>({ key: 'find_winner_cursor' });
+    weightsBoxCount = GlobalStateKey<uint64>({ key: 'weights_box_count' });
+    /** totals for each box of weights for our skip list */
+    weightTotals = GlobalStateKey<StaticArray<uint64, 15>>({ key: 'w_totals' })
+    /** 
+     * cursors to track iteration of finding winner
+     * index being for the bid iteration
+     * amountIndex being the index for the amount of the bids seen
+    */
+    findWinnerCursors = GlobalStateKey<{ index: uint64, amountIndex: uint64 }>({ key: 'find_winner_cursors' });
     /** cursor to track iteration of MBR refunds */
     refundMBRCursor = GlobalStateKey<uint64>({ key: 'refund_mbr_cursor' });
     /**
@@ -196,28 +201,32 @@ export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.bids(id).value = {
             address: this.txn.sender,
             amount: bidAmount,
-            refunded: false,
+            refunded: 0,
             marketplace: marketplace,
         };
 
-        if (this.bidsByAddress(this.txn.sender).exists) {
-            const loc = this.bidsByAddress(this.txn.sender).value;
-            const lastBid = this.weights(loc / ChunkSize).value[loc % ChunkSize].amount;
-            this.weightedBidTotal.value += (bidAmount - lastBid);
-            this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: bidAmount };
-        } else {
-            const loc = this.uniqueAddressCount.value;
-            assert(loc < ChunkSize * this.weightsBoxCount.value, errs.TOO_MANY_PARTICIPANTS)
-            this.weightedBidTotal.value += bidAmount;
-            this.bidsByAddress(this.txn.sender).value = loc;
-            this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: bidAmount };
-            this.locations(loc).value = this.txn.sender;
-            this.uniqueAddressCount.value += 1;
+        if (this.bidFee.value > 0) {
+            if (this.bidsByAddress(this.txn.sender).exists) {
+                const loc = this.bidsByAddress(this.txn.sender).value;
+                const lastBid = this.weights(loc / ChunkSize).value[loc % ChunkSize].amount;
+                this.weightedBidTotal.value += (bidAmount - lastBid);
+                this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: bidAmount };
+                this.weightTotals.value[loc / ChunkSize] += (bidAmount - lastBid);
+            } else {
+                const loc = this.uniqueAddressCount.value;
+                assert(loc < ChunkSize * this.weightsBoxCount.value, errs.TOO_MANY_PARTICIPANTS)
+                this.weightedBidTotal.value += bidAmount;
+                this.bidsByAddress(this.txn.sender).value = loc;
+                this.weights(loc / ChunkSize).value[loc % ChunkSize] = { amount: bidAmount };
+                this.weightTotals.value[loc / ChunkSize] += bidAmount;
+                this.locations(loc).value = this.txn.sender;
+                this.uniqueAddressCount.value += 1;
+            }
         }
     }
 
     private getBidFee(amount: uint64): uint64 {
-        const fee = wideRatio([amount, this.bidFee.value], [10000]);
+        const fee = wideRatio([amount, this.bidFee.value], [10_000]);
         if (fee === 0 && this.bidFee.value > 0 && amount > 0) {
             return 1;
         }
@@ -443,7 +452,8 @@ export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.raffleAmount.value = 0;
         this.rafflePrizeClaimed.value = false;
         this.uniqueAddressCount.value = 0;
-        this.findWinnerCursor.value = 0;
+        this.weightTotals.value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.findWinnerCursors.value = { index: 0, amountIndex: 0 };
         this.refundMBRCursor.value = 0;
         this.winningTicket.value = 0;
         this.raffleWinner.value = globals.zeroAddress;
@@ -451,6 +461,7 @@ export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
 
     init(payment: PayTxn, weightListLength: uint64) {
         assert(this.txn.sender === this.app.creator, errs.MUST_BE_CALLED_FROM_FACTORY);
+        assert(this.bidFee.value > 0, errs.NOT_APPLICABLE_TO_THIS_AUCTION)
         assert(weightListLength >= 3, errs.MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS);
         verifyPayTxn(payment, {
             receiver: this.app.address,
@@ -550,7 +561,7 @@ export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
         // make sure its not already refunded
         assert(!bid.refunded, errs.BID_ALREADY_REFUNDED);
         // mark the bid as refunded
-        this.bids(id).value.refunded = true;
+        this.bids(id).value.refunded = 1;
 
         const bidFee = this.getBidFee(bid.amount);
 
@@ -622,52 +633,75 @@ export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.winningTicket.value = rngResult[1][0];
     }
 
-    findWinner(): void {
-        assert(globals.round < this.endingRound.value, errs.AUCTION_HAS_NOT_ENDED);
-        assert(this.winningTicket.value !== 0, errs.WINNING_NUMBER_NOT_FOUND);
-        /** minus 2 because the auction winner is not participating in the raffle */
-        const totalCap = (this.uniqueAddressCount.value - 2);
-        const complete = totalCap === this.findWinnerCursor.value;
-        assert(!complete, errs.WINNER_ALREADY_FOUND);
+    private getWinnerWeightBoxInfo(): [uint64, uint64] {
+        let startingIndex = this.findWinnerCursors.value.index;
+        let currentRangeStart = this.findWinnerCursors.value.amountIndex;
 
-        const startingIndex = this.findWinnerCursor.value;
-        const remainder = totalCap - this.findWinnerCursor.value;
-        
-        const iterationAmount = (remainder > MaxIterationsPerGroup)
-            ? MaxIterationsPerGroup
-            : remainder;
-
-        let currentRangeStart = 1;
-        let currentRangeEnd = 0;
-        let hitAuctionWinner = false;
-        for (let i = startingIndex; i <= iterationAmount; i += 1) {
-            if (globals.opcodeBudget < 100) {
-                increaseOpcodeBudget()
+        for (let i = 0; i < this.weightsBoxCount.value; i += 1) {
+            const boxStake = this.weightTotals.value[i];
+            if (this.winningTicket.value < (currentRangeStart + boxStake)) {
+                return [startingIndex, currentRangeStart];
             }
 
-            const amount = this.weights(i / ChunkSize).value[i % ChunkSize].amount;
+            startingIndex += ChunkSize;
+            currentRangeStart += boxStake + 1;
+        }
+
+        return [startingIndex, currentRangeStart];
+    }
+
+    findWinner(): void {
+        assert(this.bidFee.value > 0, errs.NOT_APPLICABLE_TO_THIS_AUCTION);
+        assert(globals.round < this.endingRound.value, errs.AUCTION_HAS_NOT_ENDED);
+        assert(this.winningTicket.value !== 0, errs.WINNING_NUMBER_NOT_FOUND);        
+        assert(this.raffleWinner.value === Address.zeroAddress, errs.WINNER_ALREADY_FOUND);
+
+        const winningBoxInfo = this.getWinnerWeightBoxInfo();
+
+        const startingIndex = winningBoxInfo[0];
+        let currentRangeStart = winningBoxInfo[1];
+        let currentRangeEnd = 0;
+
+        /**
+         * minus 2 because the auction winner is not participating in the raffle
+         * and to account for index 0 being the starting bid
+        */
+        const remainder = (this.uniqueAddressCount.value - 2) - startingIndex;
+        const iterationAmount = (remainder > ChunkSize) ? ChunkSize : remainder;
+
+        const weight = this.weights(startingIndex / ChunkSize).value;
+
+        const opUpIterationAmount = ((iterationAmount * 60) / 700)
+        log(' op up iteration amount: ' + opUpIterationAmount.toString())
+        for (let i = 0; i <= opUpIterationAmount; i += 1) {
+            increaseOpcodeBudget()
+        }
+
+        for (let i = 0; i < iterationAmount; i += 1) {
+            const amount = weight[i].amount;
             if (amount === this.highestBid.value) {
-                hitAuctionWinner = true;
+                currentRangeEnd = currentRangeStart + amount;
+                currentRangeStart = currentRangeEnd + 1;
                 continue;
             }
 
             currentRangeEnd = currentRangeStart + amount;
             if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
-                this.raffleWinner.value = this.locations(i).value;
+                this.raffleWinner.value = this.locations(startingIndex + i + 1).value;
             }
-
-            currentRangeStart = currentRangeEnd + 1;
+            currentRangeStart = currentRangeEnd + 1; 
         }
 
-        this.findWinnerCursor.value += iterationAmount - (hitAuctionWinner ? 1 : 0);        
+        this.findWinnerCursors.value.index += iterationAmount;
+        this.findWinnerCursors.value.amountIndex = currentRangeStart;
     }
 
     refundMBR(): void {
-        const totalCap = (this.uniqueAddressCount.value - 1);
+        assert(this.prizeClaimed.value, errs.PRIZE_NOT_CLAIMED);
         /** make sure we've already found the winner of the raffle */
-        assert(totalCap === this.findWinnerCursor.value, errs.WINNER_NOT_FOUND);
+        assert(this.bidFee.value === 0 || this.raffleWinner.value !== globals.zeroAddress, errs.WINNER_NOT_FOUND);
         /** make sure we haven't already refunded all MBR */
-        assert(totalCap !== this.refundMBRCursor.value, errs.ALL_REFUNDS_COMPLETE);
+        assert(this.bidID.value !== this.refundMBRCursor.value, errs.ALL_REFUNDS_COMPLETE);
 
         const startingIndex = this.refundMBRCursor.value;
         const remainder = this.bidID.value - this.refundMBRCursor.value;
@@ -682,7 +716,7 @@ export class Auction extends ContractWithOptInCreatorOnlyArc59AndGate {
             }
 
             const bid = this.bids(i).value;
-            if (!bid.refunded) {
+            if (bid.refunded === 0) {
                 this.refundBid(i);
             }
 

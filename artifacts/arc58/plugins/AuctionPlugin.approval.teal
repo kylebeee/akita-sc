@@ -24,20 +24,16 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 	// The requested action is not implemented in this contract. Are you using the correct OnComplete? Did you set your app ID?
 	err
 
-// new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64,uint64)uint64
+// new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64
 *abi_route_new:
 	// The ABI return prefix
 	pushbytes 0x151f7c75
 
 	// weightsListCount: uint64
-	txna ApplicationArgs 16
-	btoi
-
-	// gateID: uint64
 	txna ApplicationArgs 15
 	btoi
 
-	// marketplaceRoyalties: uint64
+	// gateID: uint64
 	txna ApplicationArgs 14
 	btoi
 
@@ -48,7 +44,7 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 	intc 4 // 32
 	==
 
-	// argument 3 (marketplace) for new must be a address
+	// argument 2 (marketplace) for new must be a address
 	assert
 
 	// endingRound: uint64
@@ -98,7 +94,7 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 	intc 1 // 1
 	==
 
-	// argument 14 (rekeyBack) for new must be a bool
+	// argument 13 (rekeyBack) for new must be a bool
 	assert
 	intc 0 // 0
 	getbit
@@ -107,7 +103,7 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 	txna ApplicationArgs 1
 	btoi
 
-	// execute new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64,uint64)uint64
+	// execute new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64
 	callsub new
 	itob
 	concat
@@ -115,22 +111,22 @@ switch *call_NoOp *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEMENTED *NOT_IMPLEM
 	intc 1 // 1
 	return
 
-// new(sender: AppID, rekeyBack: boolean, prize: AssetID, prizeAmount: uint64, name: string, proof: bytes<32>[], bidAsset: AssetID, bidFee: uint64, startingBid: uint64, bidMinimumIncrease: uint64, startingRound: uint64, endingRound: uint64, marketplace: Address, marketplaceRoyalties: uint64, gateID: uint64, weightsListCount: uint64): AppID
+// new(sender: AppID, rekeyBack: boolean, prize: AssetID, prizeAmount: uint64, name: string, proof: bytes<32>[], bidAsset: AssetID, bidFee: uint64, startingBid: uint64, bidMinimumIncrease: uint64, startingRound: uint64, endingRound: uint64, marketplace: Address, gateID: uint64, weightsListCount: uint64): AppID
 new:
-	proto 16 1
+	proto 15 1
 
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 	dupn 3
 
-	// contracts/arc58/plugins/auction.algo.ts:36
+	// contracts/arc58/plugins/auction.algo.ts:35
 	// assert(prize.id !== 0, errs.AUCTION_PRIZE_CANNOT_BE_ALGO)
 	frame_dig -3 // prize: AssetID
 	intc 0 // 0
 	!=
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:37
+	// contracts/arc58/plugins/auction.algo.ts:36
 	// assert(sender.address.assetBalance(prize) >= prizeAmount, errs.NOT_ENOUGH_ASSET)
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
@@ -142,7 +138,7 @@ new:
 	>=
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:39
+	// contracts/arc58/plugins/auction.algo.ts:38
 	// needsToOptIntoPrize = !this.factoryAppID.address.isOptedInToAsset(prize)
 	intc 2 // TMPL_factoryAppID
 	app_params_get AppAddress
@@ -155,13 +151,13 @@ new:
 	frame_bury 0 // needsToOptIntoPrize: bool
 
 	// *if0_condition
-	// contracts/arc58/plugins/auction.algo.ts:41
+	// contracts/arc58/plugins/auction.algo.ts:40
 	// needsToOptIntoPrize
 	frame_dig 0 // needsToOptIntoPrize: bool
 	bz *if0_end
 
 	// *if0_consequent
-	// contracts/arc58/plugins/auction.algo.ts:42
+	// contracts/arc58/plugins/auction.algo.ts:41
 	// this.pendingGroup.addMethodCall<typeof AuctionFactory.prototype.optin, void>({
 	//                 sender: sender.address,
 	//                 applicationID: this.factoryAppID,
@@ -181,26 +177,26 @@ new:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/auction.algo.ts:47
+	// contracts/arc58/plugins/auction.algo.ts:46
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:48
+	// contracts/arc58/plugins/auction.algo.ts:47
 	// receiver: this.factoryAppID.address
 	intc 2 // TMPL_factoryAppID
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/auction.algo.ts:49
+	// contracts/arc58/plugins/auction.algo.ts:48
 	// amount: globals.assetOptInMinBalance
 	global AssetOptInMinBalance
 	itxn_field Amount
 
-	// contracts/arc58/plugins/auction.algo.ts:50
+	// contracts/arc58/plugins/auction.algo.ts:49
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -210,19 +206,19 @@ new:
 	bytec 1 //  method "optin(pay,uint64)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:43
+	// contracts/arc58/plugins/auction.algo.ts:42
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:44
+	// contracts/arc58/plugins/auction.algo.ts:43
 	// applicationID: this.factoryAppID
 	intc 2 // TMPL_factoryAppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:45
+	// contracts/arc58/plugins/auction.algo.ts:44
 	// methodArgs: [
 	//                     {
 	//                         sender: sender.address,
@@ -236,13 +232,13 @@ new:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:54
+	// contracts/arc58/plugins/auction.algo.ts:53
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if0_end:
-	// contracts/arc58/plugins/auction.algo.ts:59
+	// contracts/arc58/plugins/auction.algo.ts:58
 	// needsToOptIntoBidAsset = !this.factoryAppID.address.isOptedInToAsset(bidAsset)
 	intc 2 // TMPL_factoryAppID
 	app_params_get AppAddress
@@ -255,13 +251,13 @@ new:
 	frame_bury 1 // needsToOptIntoBidAsset: bool
 
 	// *if1_condition
-	// contracts/arc58/plugins/auction.algo.ts:61
+	// contracts/arc58/plugins/auction.algo.ts:60
 	// needsToOptIntoBidAsset
 	frame_dig 1 // needsToOptIntoBidAsset: bool
 	bz *if1_end
 
 	// *if1_consequent
-	// contracts/arc58/plugins/auction.algo.ts:62
+	// contracts/arc58/plugins/auction.algo.ts:61
 	// this.pendingGroup.addMethodCall<typeof AuctionFactory.prototype.optin, void>({
 	//                 sender: sender.address,
 	//                 applicationID: this.factoryAppID,
@@ -281,26 +277,26 @@ new:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/auction.algo.ts:67
+	// contracts/arc58/plugins/auction.algo.ts:66
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:68
+	// contracts/arc58/plugins/auction.algo.ts:67
 	// receiver: this.factoryAppID.address
 	intc 2 // TMPL_factoryAppID
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/auction.algo.ts:69
+	// contracts/arc58/plugins/auction.algo.ts:68
 	// amount: globals.assetOptInMinBalance
 	global AssetOptInMinBalance
 	itxn_field Amount
 
-	// contracts/arc58/plugins/auction.algo.ts:70
+	// contracts/arc58/plugins/auction.algo.ts:69
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -310,19 +306,19 @@ new:
 	bytec 1 //  method "optin(pay,uint64)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:63
+	// contracts/arc58/plugins/auction.algo.ts:62
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:64
+	// contracts/arc58/plugins/auction.algo.ts:63
 	// applicationID: this.factoryAppID
 	intc 2 // TMPL_factoryAppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:65
+	// contracts/arc58/plugins/auction.algo.ts:64
 	// methodArgs: [
 	//                     {
 	//                         sender: sender.address,
@@ -336,13 +332,13 @@ new:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:74
+	// contracts/arc58/plugins/auction.algo.ts:73
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
 *if1_end:
-	// contracts/arc58/plugins/auction.algo.ts:79
+	// contracts/arc58/plugins/auction.algo.ts:78
 	// optinMBR = (bidAsset.id === 0)
 	//             ? (globals.assetOptInMinBalance)
 	//             : (globals.assetOptInMinBalance * 2)
@@ -361,7 +357,7 @@ new:
 *ternary0_end:
 	frame_bury 2 // optinMBR: uint64
 
-	// contracts/arc58/plugins/auction.algo.ts:83
+	// contracts/arc58/plugins/auction.algo.ts:82
 	// childContractMBR = (
 	//             100_000
 	//             + (28_500 * Auction.schema.global.numUint)
@@ -370,10 +366,10 @@ new:
 	//             + weightsListCount * weightsListMBR
 	//             + appCreatorsMBR
 	//         )
-	pushint 1055500
+	pushint 1127000
 	frame_dig 2 // optinMBR: uint64
 	+
-	frame_dig -16 // weightsListCount: uint64
+	frame_dig -15 // weightsListCount: uint64
 	pushint 13113300
 	*
 	+
@@ -381,7 +377,7 @@ new:
 	+
 	frame_bury 3 // childContractMBR: uint64
 
-	// contracts/arc58/plugins/auction.algo.ts:92
+	// contracts/arc58/plugins/auction.algo.ts:91
 	// this.pendingGroup.addMethodCall<typeof AuctionFactory.prototype.new, AppID>({
 	//             sender: sender.address,
 	//             applicationID: this.factoryAppID,
@@ -419,26 +415,26 @@ new:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/auction.algo.ts:97
+	// contracts/arc58/plugins/auction.algo.ts:96
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:98
+	// contracts/arc58/plugins/auction.algo.ts:97
 	// receiver: this.factoryAppID.address
 	intc 2 // TMPL_factoryAppID
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/auction.algo.ts:99
+	// contracts/arc58/plugins/auction.algo.ts:98
 	// amount: childContractMBR
 	frame_dig 3 // childContractMBR: uint64
 	itxn_field Amount
 
-	// contracts/arc58/plugins/auction.algo.ts:100
+	// contracts/arc58/plugins/auction.algo.ts:99
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -446,31 +442,31 @@ new:
 	intc 6 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/auction.algo.ts:103
+	// contracts/arc58/plugins/auction.algo.ts:102
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:104
+	// contracts/arc58/plugins/auction.algo.ts:103
 	// assetReceiver: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field AssetReceiver
 
-	// contracts/arc58/plugins/auction.algo.ts:105
+	// contracts/arc58/plugins/auction.algo.ts:104
 	// assetAmount: prizeAmount
 	frame_dig -4 // prizeAmount: uint64
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/auction.algo.ts:106
+	// contracts/arc58/plugins/auction.algo.ts:105
 	// xferAsset: prize
 	frame_dig -3 // prize: AssetID
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/auction.algo.ts:107
+	// contracts/arc58/plugins/auction.algo.ts:106
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -480,19 +476,19 @@ new:
 	pushbytes 0x1059cc38 // method "new(pay,axfer,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:93
+	// contracts/arc58/plugins/auction.algo.ts:92
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:94
+	// contracts/arc58/plugins/auction.algo.ts:93
 	// applicationID: this.factoryAppID
 	intc 2 // TMPL_factoryAppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:95
+	// contracts/arc58/plugins/auction.algo.ts:94
 	// methodArgs: [
 	//                 {
 	//                     sender: sender.address,
@@ -557,14 +553,14 @@ new:
 	itxn_field ApplicationArgs
 	frame_dig -13 // marketplace: Address
 	itxn_field ApplicationArgs
-	frame_dig -15 // gateID: uint64
+	frame_dig -14 // gateID: uint64
 	itob
 	itxn_field ApplicationArgs
-	frame_dig -16 // weightsListCount: uint64
+	frame_dig -15 // weightsListCount: uint64
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:121
+	// contracts/arc58/plugins/auction.algo.ts:120
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary1_false
@@ -579,16 +575,16 @@ new:
 *ternary1_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:122
+	// contracts/arc58/plugins/auction.algo.ts:121
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
 
-	// contracts/arc58/plugins/auction.algo.ts:126
+	// contracts/arc58/plugins/auction.algo.ts:125
 	// this.pendingGroup.submit()
 	itxn_submit
 
-	// contracts/arc58/plugins/auction.algo.ts:128
+	// contracts/arc58/plugins/auction.algo.ts:127
 	// return this.itxn.createdApplicationID;
 	itxn CreatedApplicationID
 
@@ -640,7 +636,7 @@ new:
 clearWeightsBoxes:
 	proto 4 0
 
-	// contracts/arc58/plugins/auction.algo.ts:137
+	// contracts/arc58/plugins/auction.algo.ts:136
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -4 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -651,7 +647,7 @@ clearWeightsBoxes:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:139
+	// contracts/arc58/plugins/auction.algo.ts:138
 	// sendMethodCall<typeof AuctionFactory.prototype.clearWeightsBoxes>({
 	//             sender: sender.address,
 	//             applicationID: this.factoryAppID,
@@ -668,19 +664,19 @@ clearWeightsBoxes:
 	pushbytes 0x407fd314 // method "clearWeightsBoxes(address,uint64)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:140
+	// contracts/arc58/plugins/auction.algo.ts:139
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:141
+	// contracts/arc58/plugins/auction.algo.ts:140
 	// applicationID: this.factoryAppID
 	intc 2 // TMPL_factoryAppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:142
+	// contracts/arc58/plugins/auction.algo.ts:141
 	// methodArgs: [
 	//                 creator,
 	//                 auctionAppID
@@ -691,7 +687,7 @@ clearWeightsBoxes:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:146
+	// contracts/arc58/plugins/auction.algo.ts:145
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary2_false
@@ -706,7 +702,7 @@ clearWeightsBoxes:
 *ternary2_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:147
+	// contracts/arc58/plugins/auction.algo.ts:146
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -756,7 +752,7 @@ clearWeightsBoxes:
 deleteAuctionApp:
 	proto 4 0
 
-	// contracts/arc58/plugins/auction.algo.ts:157
+	// contracts/arc58/plugins/auction.algo.ts:156
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -4 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -767,7 +763,7 @@ deleteAuctionApp:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:159
+	// contracts/arc58/plugins/auction.algo.ts:158
 	// sendMethodCall<typeof AuctionFactory.prototype.deleteAuctionApp>({
 	//             sender: sender.address,
 	//             applicationID: this.factoryAppID,
@@ -784,19 +780,19 @@ deleteAuctionApp:
 	pushbytes 0xafe2879b // method "deleteAuctionApp(address,uint64)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:160
+	// contracts/arc58/plugins/auction.algo.ts:159
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:161
+	// contracts/arc58/plugins/auction.algo.ts:160
 	// applicationID: this.factoryAppID
 	intc 2 // TMPL_factoryAppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:162
+	// contracts/arc58/plugins/auction.algo.ts:161
 	// methodArgs: [
 	//                 creator,
 	//                 auctionAppID
@@ -807,7 +803,7 @@ deleteAuctionApp:
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:166
+	// contracts/arc58/plugins/auction.algo.ts:165
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary3_false
@@ -822,7 +818,7 @@ deleteAuctionApp:
 *ternary3_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:167
+	// contracts/arc58/plugins/auction.algo.ts:166
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -879,7 +875,7 @@ bid:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/arc58/plugins/auction.algo.ts:178
+	// contracts/arc58/plugins/auction.algo.ts:177
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -890,7 +886,7 @@ bid:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:180
+	// contracts/arc58/plugins/auction.algo.ts:179
 	// bidAsset = auctionAppID.globalState(AKITA_AUCTION_BID_ASSET_KEY) as AssetID
 	frame_dig -3 // auctionAppID: AppID
 	pushbytes 0x6269645f6173736574 // "bid_asset"
@@ -901,7 +897,7 @@ bid:
 	frame_bury 0 // bidAsset: uint64
 
 	// *if2_condition
-	// contracts/arc58/plugins/auction.algo.ts:182
+	// contracts/arc58/plugins/auction.algo.ts:181
 	// bidAsset.id === 0
 	frame_dig 0 // bidAsset: uint64
 	intc 0 // 0
@@ -909,7 +905,7 @@ bid:
 	bz *if2_else
 
 	// *if2_consequent
-	// contracts/arc58/plugins/auction.algo.ts:183
+	// contracts/arc58/plugins/auction.algo.ts:182
 	// sendMethodCall<typeof Auction.prototype.bid>({
 	//                 sender: sender.address,
 	//                 applicationID: auctionAppID,
@@ -929,28 +925,28 @@ bid:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/auction.algo.ts:188
+	// contracts/arc58/plugins/auction.algo.ts:187
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:189
+	// contracts/arc58/plugins/auction.algo.ts:188
 	// receiver: auctionAppID.address
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/auction.algo.ts:190
+	// contracts/arc58/plugins/auction.algo.ts:189
 	// amount: amount + bidMBR
 	frame_dig -4 // amount: uint64
 	intc 5 // 34900
 	+
 	itxn_field Amount
 
-	// contracts/arc58/plugins/auction.algo.ts:191
+	// contracts/arc58/plugins/auction.algo.ts:190
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -960,19 +956,19 @@ bid:
 	pushbytes 0x4d585697 // method "bid(pay,address)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:184
+	// contracts/arc58/plugins/auction.algo.ts:183
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:185
+	// contracts/arc58/plugins/auction.algo.ts:184
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:186
+	// contracts/arc58/plugins/auction.algo.ts:185
 	// methodArgs: [
 	//                     {
 	//                         sender: sender.address,
@@ -985,7 +981,7 @@ bid:
 	frame_dig -5 // marketplace: Address
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:195
+	// contracts/arc58/plugins/auction.algo.ts:194
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary4_false
@@ -1000,7 +996,7 @@ bid:
 *ternary4_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:196
+	// contracts/arc58/plugins/auction.algo.ts:195
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1010,7 +1006,7 @@ bid:
 	b *if2_end
 
 *if2_else:
-	// contracts/arc58/plugins/auction.algo.ts:199
+	// contracts/arc58/plugins/auction.algo.ts:198
 	// sendMethodCall<typeof Auction.prototype.bidAsa>({
 	//                 sender: sender.address,
 	//                 applicationID: auctionAppID,
@@ -1036,28 +1032,28 @@ bid:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/auction.algo.ts:204
+	// contracts/arc58/plugins/auction.algo.ts:203
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:205
+	// contracts/arc58/plugins/auction.algo.ts:204
 	// receiver: auctionAppID.address
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Receiver
 
-	// contracts/arc58/plugins/auction.algo.ts:206
+	// contracts/arc58/plugins/auction.algo.ts:205
 	// amount: amount + bidMBR
 	frame_dig -4 // amount: uint64
 	intc 5 // 34900
 	+
 	itxn_field Amount
 
-	// contracts/arc58/plugins/auction.algo.ts:207
+	// contracts/arc58/plugins/auction.algo.ts:206
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1065,24 +1061,24 @@ bid:
 	intc 6 //  axfer
 	itxn_field TypeEnum
 
-	// contracts/arc58/plugins/auction.algo.ts:210
+	// contracts/arc58/plugins/auction.algo.ts:209
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:211
+	// contracts/arc58/plugins/auction.algo.ts:210
 	// assetAmount: amount
 	frame_dig -4 // amount: uint64
 	itxn_field AssetAmount
 
-	// contracts/arc58/plugins/auction.algo.ts:212
+	// contracts/arc58/plugins/auction.algo.ts:211
 	// xferAsset: bidAsset
 	frame_dig 0 // bidAsset: uint64
 	itxn_field XferAsset
 
-	// contracts/arc58/plugins/auction.algo.ts:213
+	// contracts/arc58/plugins/auction.algo.ts:212
 	// assetReceiver: auctionAppID.address
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppAddress
@@ -1098,19 +1094,19 @@ bid:
 	pushbytes 0x76952931 // method "bidAsa(pay,axfer,address)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:200
+	// contracts/arc58/plugins/auction.algo.ts:199
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:201
+	// contracts/arc58/plugins/auction.algo.ts:200
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:202
+	// contracts/arc58/plugins/auction.algo.ts:201
 	// methodArgs: [
 	//                     {
 	//                         sender: sender.address,
@@ -1129,7 +1125,7 @@ bid:
 	frame_dig -5 // marketplace: Address
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:217
+	// contracts/arc58/plugins/auction.algo.ts:216
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary5_false
@@ -1144,7 +1140,7 @@ bid:
 *ternary5_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:218
+	// contracts/arc58/plugins/auction.algo.ts:217
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1190,7 +1186,7 @@ bid:
 refundBid:
 	proto 4 0
 
-	// contracts/arc58/plugins/auction.algo.ts:229
+	// contracts/arc58/plugins/auction.algo.ts:228
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -1201,7 +1197,7 @@ refundBid:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:231
+	// contracts/arc58/plugins/auction.algo.ts:230
 	// sendMethodCall<typeof Auction.prototype.refundBid>({
 	//             sender: sender.address,
 	//             applicationID: auctionAppID,
@@ -1215,25 +1211,25 @@ refundBid:
 	pushbytes 0xb9e39c5c // method "refundBid(uint64)void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:232
+	// contracts/arc58/plugins/auction.algo.ts:231
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:233
+	// contracts/arc58/plugins/auction.algo.ts:232
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:234
+	// contracts/arc58/plugins/auction.algo.ts:233
 	// methodArgs: [id]
 	frame_dig -4 // id: uint64
 	itob
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:235
+	// contracts/arc58/plugins/auction.algo.ts:234
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary6_false
@@ -1248,7 +1244,7 @@ refundBid:
 *ternary6_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:236
+	// contracts/arc58/plugins/auction.algo.ts:235
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1288,7 +1284,7 @@ refundBid:
 claimPrize:
 	proto 3 0
 
-	// contracts/arc58/plugins/auction.algo.ts:245
+	// contracts/arc58/plugins/auction.algo.ts:244
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -1299,7 +1295,7 @@ claimPrize:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:247
+	// contracts/arc58/plugins/auction.algo.ts:246
 	// sendMethodCall<typeof Auction.prototype.claimPrize>({
 	//             sender: sender.address,
 	//             applicationID: auctionAppID,
@@ -1312,19 +1308,19 @@ claimPrize:
 	pushbytes 0x9daf050a // method "claimPrize()void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:248
+	// contracts/arc58/plugins/auction.algo.ts:247
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:249
+	// contracts/arc58/plugins/auction.algo.ts:248
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:250
+	// contracts/arc58/plugins/auction.algo.ts:249
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary7_false
@@ -1339,7 +1335,7 @@ claimPrize:
 *ternary7_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:251
+	// contracts/arc58/plugins/auction.algo.ts:250
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1379,7 +1375,7 @@ claimPrize:
 claimRafflePrize:
 	proto 3 0
 
-	// contracts/arc58/plugins/auction.algo.ts:260
+	// contracts/arc58/plugins/auction.algo.ts:259
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -1390,7 +1386,7 @@ claimRafflePrize:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:262
+	// contracts/arc58/plugins/auction.algo.ts:261
 	// sendMethodCall<typeof Auction.prototype.claimRafflePrize>({
 	//             sender: sender.address,
 	//             applicationID: auctionAppID,
@@ -1403,19 +1399,19 @@ claimRafflePrize:
 	pushbytes 0x65fca98b // method "claimRafflePrize()void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:263
+	// contracts/arc58/plugins/auction.algo.ts:262
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:264
+	// contracts/arc58/plugins/auction.algo.ts:263
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:265
+	// contracts/arc58/plugins/auction.algo.ts:264
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary8_false
@@ -1430,7 +1426,7 @@ claimRafflePrize:
 *ternary8_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:266
+	// contracts/arc58/plugins/auction.algo.ts:265
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1470,7 +1466,7 @@ claimRafflePrize:
 raffle:
 	proto 3 0
 
-	// contracts/arc58/plugins/auction.algo.ts:271
+	// contracts/arc58/plugins/auction.algo.ts:270
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -1481,7 +1477,7 @@ raffle:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:273
+	// contracts/arc58/plugins/auction.algo.ts:272
 	// sendMethodCall<typeof Auction.prototype.raffle>({
 	//             sender: sender.address,
 	//             applicationID: auctionAppID,
@@ -1494,19 +1490,19 @@ raffle:
 	pushbytes 0x696501de // method "raffle()void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:274
+	// contracts/arc58/plugins/auction.algo.ts:273
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:275
+	// contracts/arc58/plugins/auction.algo.ts:274
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:276
+	// contracts/arc58/plugins/auction.algo.ts:275
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary9_false
@@ -1521,7 +1517,7 @@ raffle:
 *ternary9_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:277
+	// contracts/arc58/plugins/auction.algo.ts:276
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1561,7 +1557,7 @@ raffle:
 findWinner:
 	proto 3 0
 
-	// contracts/arc58/plugins/auction.algo.ts:282
+	// contracts/arc58/plugins/auction.algo.ts:281
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -1572,7 +1568,7 @@ findWinner:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:284
+	// contracts/arc58/plugins/auction.algo.ts:283
 	// sendMethodCall<typeof Auction.prototype.findWinner>({
 	//             sender: sender.address,
 	//             applicationID: auctionAppID,
@@ -1585,19 +1581,19 @@ findWinner:
 	pushbytes 0xb733d519 // method "findWinner()void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:285
+	// contracts/arc58/plugins/auction.algo.ts:284
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:286
+	// contracts/arc58/plugins/auction.algo.ts:285
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:287
+	// contracts/arc58/plugins/auction.algo.ts:286
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary10_false
@@ -1612,7 +1608,7 @@ findWinner:
 *ternary10_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:288
+	// contracts/arc58/plugins/auction.algo.ts:287
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1652,7 +1648,7 @@ findWinner:
 deleteApplication:
 	proto 3 0
 
-	// contracts/arc58/plugins/auction.algo.ts:297
+	// contracts/arc58/plugins/auction.algo.ts:296
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -1663,7 +1659,7 @@ deleteApplication:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:299
+	// contracts/arc58/plugins/auction.algo.ts:298
 	// sendMethodCall<typeof Auction.prototype.deleteApplication>({
 	//             sender: sender.address,
 	//             applicationID: auctionAppID,
@@ -1676,19 +1672,19 @@ deleteApplication:
 	pushbytes 0x2487c32c // method "deleteApplication()void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:300
+	// contracts/arc58/plugins/auction.algo.ts:299
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:301
+	// contracts/arc58/plugins/auction.algo.ts:300
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:302
+	// contracts/arc58/plugins/auction.algo.ts:301
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary11_false
@@ -1703,7 +1699,7 @@ deleteApplication:
 *ternary11_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:303
+	// contracts/arc58/plugins/auction.algo.ts:302
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1743,7 +1739,7 @@ deleteApplication:
 cancel:
 	proto 3 0
 
-	// contracts/arc58/plugins/auction.algo.ts:312
+	// contracts/arc58/plugins/auction.algo.ts:311
 	// assert(auctionAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_AUCTION_FACTORY)
 	frame_dig -3 // auctionAppID: AppID
 	app_params_get AppCreator
@@ -1754,7 +1750,7 @@ cancel:
 	==
 	assert
 
-	// contracts/arc58/plugins/auction.algo.ts:314
+	// contracts/arc58/plugins/auction.algo.ts:313
 	// sendMethodCall<typeof Auction.prototype.cancel>({
 	//             sender: sender.address,
 	//             applicationID: auctionAppID,
@@ -1767,19 +1763,19 @@ cancel:
 	pushbytes 0x31f26a9b // method "cancel()void"
 	itxn_field ApplicationArgs
 
-	// contracts/arc58/plugins/auction.algo.ts:315
+	// contracts/arc58/plugins/auction.algo.ts:314
 	// sender: sender.address
 	frame_dig -1 // sender: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field Sender
 
-	// contracts/arc58/plugins/auction.algo.ts:316
+	// contracts/arc58/plugins/auction.algo.ts:315
 	// applicationID: auctionAppID
 	frame_dig -3 // auctionAppID: AppID
 	itxn_field ApplicationID
 
-	// contracts/arc58/plugins/auction.algo.ts:317
+	// contracts/arc58/plugins/auction.algo.ts:316
 	// rekeyTo: rekeyBack ? sender.address : Address.zeroAddress
 	frame_dig -2 // rekeyBack: boolean
 	bz *ternary12_false
@@ -1794,7 +1790,7 @@ cancel:
 *ternary12_end:
 	itxn_field RekeyTo
 
-	// contracts/arc58/plugins/auction.algo.ts:318
+	// contracts/arc58/plugins/auction.algo.ts:317
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -1816,7 +1812,7 @@ cancel:
 	err
 
 *call_NoOp:
-	pushbytes 0x697faf69 // method "new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64,uint64)uint64"
+	pushbytes 0x3e32740f // method "new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64"
 	pushbytes 0x37f55164 // method "clearWeightsBoxes(uint64,bool,address,uint64)void"
 	pushbytes 0xfcedb3d8 // method "deleteAuctionApp(uint64,bool,address,uint64)void"
 	pushbytes 0xf6ff4c34 // method "bid(uint64,bool,uint64,uint64,address)void"

@@ -34,7 +34,7 @@ describe('Abstracted Subscription Program', () => {
   let suggestedParams: algosdk.SuggestedParams;
 
   /** The maximum uint64 value. Used to indicate a never-expiring plugin */
-  const maxUint64 = BigInt('18446744073709551615');
+  const maxUint64 = 18446744073709551615n;
 
   beforeEach(fixture.beforeEach);
 
@@ -70,7 +70,7 @@ describe('Abstracted Subscription Program', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        pmt: mintPayment,
+        payment: mintPayment,
         admin: aliceEOA.addr,
         nickname: 'Alice'
       },
@@ -130,7 +130,7 @@ describe('Abstracted Subscription Program', () => {
       // Create an asset
       const txn = await algorand.send.assetCreate({
         sender: bob.addr,
-        total: BigInt(1),
+        total: 1n,
         decimals: 0,
         defaultFrozen: false,
       });

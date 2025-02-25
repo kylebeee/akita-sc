@@ -1,17 +1,13 @@
-import { Contract } from '@algorandfoundation/tealscript';
+import { ContractWithGate } from '../../../../utils/base_contracts/gate.algo';
 import { OptInPlugin } from '../optin.algo';
 import { AbstractedAccount } from '../../abstracted_account.algo';
-import { Gate } from '../../../gates/gate.algo';
 import { arc59GetSendAssetInfoResponse, AssetInbox } from '../../../../utils/types/asset_inbox';
 import {
     AkitaAppIDsAkitaSocialImpactPlugin,
     AkitaAppIDsOptinPlugin,
-    EMPTY_BYTES_32,
-    EMPTY_BYTES_59,
     OtherAppIDsAssetInbox,
 } from '../../../../utils/constants';
 import { AkitaSocialImpact } from './impact.algo';
-import { ContractWithGate } from '../../../../utils/base_contracts/gate.algo';
 
 const errs = {
     NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
@@ -35,7 +31,9 @@ const errs = {
     INVALID_ASSET: 'Invalid asset',
     INVALID_APP: 'Invalid App',
     NOT_YOUR_POST_TO_EDIT: 'Not your post to edit',
+    IS_A_REPLY: 'Is a reply',
     NOT_A_REPLY: 'Not a reply',
+    IS_ALREADY_AMENDED: 'Is already amended',
     AUTOMATED_ACCOUNT: 'This is an automated account',
     NO_SELF_VOTE: 'Cannot vote on your own content',
     NOT_A_MODERATOR: 'Sender is not a moderator',
@@ -60,7 +58,7 @@ const AKITA_TOKEN_KEY = 'akita_id';
 
 export const followsMBR = 31_700;
 export const blocksMBR = 22_100;
-export const postsMBR = 88_500;
+// export const postsMBR = 88_500;
 export const votesMBR = 19_300;
 export const votelistMBR = 25_700;
 export const reactionsMBR = 22_100;
@@ -80,27 +78,22 @@ export type BlockListKey = {
     blocked: bytes<24>;
 }
 
-export type PostValue = {
-    // the txn / assetID / AppID / Address referenced
-    ref: bytes32;
-    // the IPFS cid pointing to the content
-    cid: bytes<59>;
+type PostValue = {
     // the creator of the post & recipient of payments
     creator: Address;
-    // a transaction pointer to a new version of the post
-    amendment: bytes32;
-    // indicates whether the post itself is an amendment of another post
-    isAmendment: boolean;
     // the unix time that the post was created
     timestamp: uint64;
-    // collectible dictates whether the post can be collected or not
-    collectible: boolean;
-    // who's allowed to reply using gates
-    replyGateIndex: uint64;
-    // who's allowed to react using gates
-    reactGateIndex: uint64;
+    // who's allowed to reply / react using gates
+    gateID: uint64;
     // whether the post is in breach of the content policy
     againstContentPolicy: boolean;
+    // whether this post is itself an amendment to another post
+    isAmendment: boolean;
+    // a dynamic field encompassing:
+    // the 32 byte reference
+    // a 36 byte cid
+    // a 33 byte amendment reference: 'a' + 32 byte txn id
+    ref: bytes;
 }
 
 export type VotesValue = {
@@ -129,9 +122,7 @@ export type ReactionListKey = {
     NFT: AssetID;
 }
 
-export type Action = {
-    content: bytes<59>;
-}
+export type Action = { content: bytes<36> }
 
 export type MetaValue = {
     // this lets track the user addresses plugin wallet app ID for use with other plugins
@@ -203,11 +194,25 @@ export class AkitaSocialPlugin extends ContractWithGate {
      * key_length: 1 + 32: 33
      * 
      * value: the post data
-     * value_length: 181
+     * value_length: variable
      * 
-     * cost: 2_500 + (400 * (33 + 181)) = 88_500
+     * bare
+     * cost: 2_500 + (400 * (33 + 50)) = 35_700
+     * 
+     * with ref
+     * cost: 2_500 + (400 * (33 + 82)) = 48_500
+     * 
+     * with content
+     * cost: 2_500 + (400 * (33 + 86)) = 50_100
+     * 
+     * with ref & content
+     * cost: 2_500 + (400 * (33 + 118)) = 62_900
+     * 
+     * with ref & content & amendment
+     * cost: 2_500 + (400 * (33 + 151)) = 76_100
+     * 
      */
-    posts = BoxMap<bytes32, PostValue>({ prefix: 'p' });
+    posts = BoxMap<bytes32, PostValue>({ prefix: 'p', dynamicSize: true });
 
     /**
      * A map of counters for each post to track votes
@@ -425,9 +430,9 @@ export class AkitaSocialPlugin extends ContractWithGate {
         const minTax = this.akitaDaoAppID.globalState(SOCIAL_IMPACT_TAX_MINIMUM_KEY) as uint64;
         const maxTax = this.akitaDaoAppID.globalState(SOCIAL_IMPACT_TAX_MAXIMUM_KEY) as uint64;
 
-        const taxRate = maxTax - wideRatio([(maxTax - minTax), (impact - 1)], [999]);
+        const taxRate = maxTax - wideRatio([(maxTax - minTax), (impact - 1)], [1_000]);
         const reactionFee = this.akitaDaoAppID.globalState(SOCIAL_REACT_KEY) as uint64;
-        let tax = wideRatio([reactionFee, taxRate], [10000]);
+        let tax = wideRatio([reactionFee, taxRate], [10_000]);
         if (tax === 0) {
             tax = 1;
         }
@@ -605,8 +610,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
     private createEmptyPostIfNecessary(ref: bytes32, creator: Address): void {
         if (!this.posts(ref).exists) {
             this.posts(ref).value = {
-                ref: ref,
-                cid: EMPTY_BYTES_59,
+                ref: ref as bytes,
                 /** 
                  * when a user reacts to content other than posts
                  * we set the creator to the following:
@@ -615,13 +619,10 @@ export class AkitaSocialPlugin extends ContractWithGate {
                  * -   AppID: Application Creator
                 */
                 creator: creator,
-                amendment: EMPTY_BYTES_32,
-                isAmendment: false,
                 timestamp: globals.latestTimestamp,
-                collectible: false,
-                replyGateIndex: 0,
-                reactGateIndex: 0,
+                gateID: 0,
                 againstContentPolicy: false,
+                isAmendment: false,
             };
         }
     }
@@ -685,10 +686,8 @@ export class AkitaSocialPlugin extends ContractWithGate {
     private createPost(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        cid: bytes<36>,
+        gateID: uint64,
         isAmendment: boolean,
     ): void {
         assert(!this.isBanned(sender.address), errs.BANNED);
@@ -714,16 +713,12 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         const postID = this.txn.txID as bytes32;
         const post: PostValue = {
-            ref: EMPTY_BYTES_32,
-            cid: cid,
+            ref: cid as bytes,
             creator: sender.address,
-            amendment: EMPTY_BYTES_32,
-            isAmendment: isAmendment,
             timestamp: globals.latestTimestamp,
-            collectible: collectible,
-            replyGateIndex: replyGateIndex,
-            reactGateIndex: reactGateIndex,
+            gateID: gateID,
             againstContentPolicy: false,
+            isAmendment: isAmendment,
         };
 
         this.posts(postID).value = post;
@@ -738,11 +733,9 @@ export class AkitaSocialPlugin extends ContractWithGate {
     private createReply(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
+        cid: bytes<36>,
         ref: bytes32,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        gateID: uint64,
         args: bytes[],
         isAmendment: boolean,
     ): void {
@@ -751,8 +744,8 @@ export class AkitaSocialPlugin extends ContractWithGate {
         const post = this.posts(ref).value;
         assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED);
 
-        if (post.replyGateIndex !== 0) {
-            assert(this.gate(sender.address, post.replyGateIndex, args), errs.FAILED_GATE);
+        if (post.gateID !== 0) {
+            assert(this.gate(sender.address, post.gateID, args), errs.FAILED_GATE);
         }
 
         // update streak before we measure impact
@@ -781,16 +774,12 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         const replyPostID = this.txn.txID as bytes32;
         const replyPost: PostValue = {
-            ref: ref,
-            cid: cid,
+            ref: (ref + cid) as bytes,
             creator: sender.address,
-            amendment: EMPTY_BYTES_32,
-            isAmendment: isAmendment,
             timestamp: globals.latestTimestamp,
-            collectible: collectible,
-            replyGateIndex: replyGateIndex,
-            reactGateIndex: reactGateIndex,
-            againstContentPolicy: false
+            gateID: gateID,
+            againstContentPolicy: false,
+            isAmendment: isAmendment,
         };
 
         this.posts(replyPostID).value = replyPost;
@@ -873,8 +862,8 @@ export class AkitaSocialPlugin extends ContractWithGate {
         assert(!this.isBlocked(post.creator, sender.address), errs.BLOCKED);
         assert(sender.address.assetBalance(NFT) > 0, errs.USER_DOES_NOT_OWN_NFT);
 
-        if (post.reactGateIndex !== 0) {
-            assert(this.gate(sender.address, post.reactGateIndex, args), errs.FAILED_GATE);
+        if (post.gateID !== 0) {
+            assert(this.gate(sender.address, post.gateID, args), errs.FAILED_GATE);
         }
 
         const reactionListKey: ReactionListKey = {
@@ -932,83 +921,57 @@ export class AkitaSocialPlugin extends ContractWithGate {
     // content methods ---------------------------------------------
     // -------------------------------------------------------------
 
-    post(
-        sender: AppID,
-        rekeyBack: boolean,
-        cid: bytes<59>,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
-    ): void {
-        this.createPost(sender, rekeyBack, cid, collectible, replyGateIndex, reactGateIndex, false);
+    post(sender: AppID, rekeyBack: boolean, cid: bytes<36>, gateID: uint64): void {
+        this.createPost(sender, rekeyBack, cid, gateID, false);
     }
 
     editPost(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        cid: bytes<36>,
+        gateID: uint64,
         amendment: bytes32,
     ): void {
         assert(this.posts(amendment).exists, errs.POST_NOT_FOUND);
         const post = clone(this.posts(amendment).value);
         assert(post.creator === sender.address, errs.NOT_YOUR_POST_TO_EDIT);
-        assert(post.ref === EMPTY_BYTES_32);
+        assert(post.ref.length !== 68, errs.IS_A_REPLY);
+        assert(post.ref.length !== 69, errs.IS_ALREADY_AMENDED)
 
-        this.posts(amendment).value = {
-            ref: post.ref,
-            cid: post.cid,
-            creator: post.creator,
-            amendment: this.txn.txID as bytes32,
-            isAmendment: post.isAmendment,
-            timestamp: post.timestamp,
-            collectible: false,
-            replyGateIndex: post.replyGateIndex,
-            reactGateIndex: post.reactGateIndex,
-            againstContentPolicy: false
-        };
-
-        this.createPost(sender, rekeyBack, cid, collectible, replyGateIndex, reactGateIndex, true);
+        this.posts(amendment).value.ref = (post.ref + 'a' + this.txn.txID);
+        this.createPost(sender, rekeyBack, cid, gateID, true);
     }
 
     replyPost(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
+        cid: bytes<36>,
         ref: bytes32,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        gateID: uint64,
         args: bytes[],
     ): void {
-        this.createReply(sender, rekeyBack, cid, ref, collectible, replyGateIndex, reactGateIndex, args, false);
+        this.createReply(sender, rekeyBack, cid, ref, gateID, args, false);
     }
 
     replyAsset(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
+        cid: bytes<36>,
         ref: AssetID,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        gateID: uint64,
     ): void {
         assert(ref.id !== 0, errs.INVALID_ASSET)
         const paddedRef = itob(ref.id) as bytes32;
         this.createEmptyPostIfNecessary(paddedRef, ref.creator);
-        this.createReply(sender, rekeyBack, cid, paddedRef, collectible, replyGateIndex, reactGateIndex, [], false);
+        this.createReply(sender, rekeyBack, cid, paddedRef, gateID, [], false);
     }
 
     replyAddress(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
+        cid: bytes<36>,
         ref: Address,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        gateID: uint64,
         args: bytes[],
     ): void {
         if (this.meta(ref).exists) {
@@ -1021,40 +984,39 @@ export class AkitaSocialPlugin extends ContractWithGate {
 
         const r = rawBytes(ref) as bytes32;
         this.createEmptyPostIfNecessary(r, ref);
-        this.createReply(sender, rekeyBack, cid, r, collectible, replyGateIndex, reactGateIndex, [], false);
+        this.createReply(sender, rekeyBack, cid, r, gateID, [], false);
     }
 
     replyApp(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
+        cid: bytes<36>,
         ref: AppID,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        gateID: uint64,
     ): void {
         assert(ref.id !== 0, errs.INVALID_APP)
         const paddedRef = itob(ref.id) as bytes32;
         this.createEmptyPostIfNecessary(paddedRef, ref.creator);
-        this.createReply(sender, rekeyBack, cid, paddedRef, collectible, replyGateIndex, reactGateIndex, [], false);
+        this.createReply(sender, rekeyBack, cid, paddedRef, gateID, [], false);
     }
 
     editReply(
         sender: AppID,
         rekeyBack: boolean,
-        cid: bytes<59>,
-        collectible: boolean,
-        replyGateIndex: uint64,
-        reactGateIndex: uint64,
+        cid: bytes<36>,
+        gateID: uint64,
         args: bytes[],
         amendment: bytes32,
     ): void {
         assert(this.posts(amendment).exists, errs.REPLY_NOT_FOUND);
         const post = this.posts(amendment).value;
         assert(post.creator === sender.address, errs.NOT_YOUR_POST_TO_EDIT);
-        assert(post.ref !== EMPTY_BYTES_32, errs.NOT_A_REPLY);
-        this.posts(amendment).value.amendment = this.txn.txID;
-        this.createReply(sender, rekeyBack, cid, post.ref, collectible, replyGateIndex, reactGateIndex, args, true);
+        assert(post.ref.length > 36, errs.NOT_A_REPLY);
+        assert(post.ref.length !== 101, errs.IS_ALREADY_AMENDED);
+
+        this.posts(amendment).value.ref = (post.ref + 'a' + this.txn.txID);
+        const ref = post.ref.substring(0, 32) as bytes32;
+        this.createReply(sender, rekeyBack, cid, ref, gateID, args, true);
     }
 
     votePost(sender: AppID, rekeyBack: boolean, ref: bytes32, isUp: boolean,): void {
@@ -1304,7 +1266,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
         }
     }
 
-    addAction(sender: AppID, rekeyBack: boolean, actionAppID: AppID, content: bytes<59>) {
+    addAction(sender: AppID, rekeyBack: boolean, actionAppID: AppID, content: bytes<36>) {
         assert(this.controls(sender.address), errs.PLUGIN_NOT_AUTH_ADDR);
         assert(this.isDAO(sender.address), errs.NOT_DAO);
         assert(!this.actions(actionAppID).exists, errs.ALREADY_AN_ACTION);
@@ -1425,4 +1387,7 @@ export class AkitaSocialPlugin extends ContractWithGate {
     getMeta(user: Address): MetaValue {
         return this.meta(user).value;
     }
+
+    // dummy call to allow for more references
+    gas() {}
 }

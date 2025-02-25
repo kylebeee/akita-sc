@@ -32,13 +32,13 @@ newProposalID:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:311
+	// contracts/dao/dao.algo.ts:306
 	// id = this.proposalID.value
 	bytec 2 //  "proposal_id"
 	app_global_get
 	frame_bury 0 // id: uint64
 
-	// contracts/dao/dao.algo.ts:312
+	// contracts/dao/dao.algo.ts:307
 	// this.proposalID.value += 1
 	bytec 2 //  "proposal_id"
 	app_global_get
@@ -48,7 +48,7 @@ newProposalID:
 	swap
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:313
+	// contracts/dao/dao.algo.ts:308
 	// return id;
 	frame_dig 0 // id: uint64
 
@@ -63,7 +63,7 @@ assertPluginCallAllowed:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:317
+	// contracts/dao/dao.algo.ts:312
 	// key: PluginsKey = { application: app, allowedCaller: caller }
 	frame_dig -1 // app: AppID
 	itob
@@ -71,7 +71,7 @@ assertPluginCallAllowed:
 	concat
 	frame_bury 0 // key: PluginsKey
 
-	// contracts/dao/dao.algo.ts:319
+	// contracts/dao/dao.algo.ts:314
 	// assert(this.plugins(key).exists, errs.PLUGIN_DOES_NOT_EXIST)
 	bytec 1 //  "p"
 	frame_dig 0 // key: PluginsKey
@@ -81,7 +81,7 @@ assertPluginCallAllowed:
 	pop
 	assert
 
-	// contracts/dao/dao.algo.ts:320
+	// contracts/dao/dao.algo.ts:315
 	// assert(this.plugins(key).value.lastValidRound >= globals.round, errs.PLUGIN_EXPIRED)
 	bytec 1 //  "p"
 	frame_dig 0 // key: PluginsKey
@@ -98,7 +98,7 @@ assertPluginCallAllowed:
 	>=
 	assert
 
-	// contracts/dao/dao.algo.ts:321
+	// contracts/dao/dao.algo.ts:316
 	// assert(
 	//             (globals.round - this.plugins(key).value.lastCalled) >= this.plugins(key).value.cooldown,
 	//             errs.PLUGIN_ON_COOLDOWN
@@ -138,7 +138,7 @@ pluginCallAllowed:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:328
+	// contracts/dao/dao.algo.ts:323
 	// key: PluginsKey = { application: app, allowedCaller: caller }
 	frame_dig -1 // app: AppID
 	itob
@@ -146,7 +146,7 @@ pluginCallAllowed:
 	concat
 	frame_bury 0 // key: PluginsKey
 
-	// contracts/dao/dao.algo.ts:330
+	// contracts/dao/dao.algo.ts:325
 	// return (
 	//             this.plugins(key).exists &&
 	//             this.plugins(key).value.lastValidRound >= globals.round &&
@@ -215,7 +215,7 @@ ensuresRekeyBack:
 	proto 1 1
 
 	// *if0_condition
-	// contracts/dao/dao.algo.ts:338
+	// contracts/dao/dao.algo.ts:333
 	// txn.sender === this.app.address && txn.rekeyTo === this.app.address
 	frame_dig -1 // txn: Txn
 	gtxns Sender
@@ -233,13 +233,13 @@ ensuresRekeyBack:
 	bz *if0_end
 
 	// *if0_consequent
-	// contracts/dao/dao.algo.ts:339
+	// contracts/dao/dao.algo.ts:334
 	// return true;
 	intc 1 // 1
 	retsub
 
 *if0_end:
-	// contracts/dao/dao.algo.ts:342
+	// contracts/dao/dao.algo.ts:337
 	// return (
 	//             txn.typeEnum === TransactionType.ApplicationCall &&
 	//             txn.applicationID === this.app &&
@@ -305,7 +305,7 @@ assertValidGroup:
 	bytec 0 // 0x
 	dupn 12
 
-	// contracts/dao/dao.algo.ts:368
+	// contracts/dao/dao.algo.ts:363
 	// globalKey: PluginsKey = { application: app, allowedCaller: Address.zeroAddress }
 	frame_dig -1 // app: AppID
 	itob
@@ -313,7 +313,7 @@ assertValidGroup:
 	concat
 	frame_bury 0 // globalKey: PluginsKey
 
-	// contracts/dao/dao.algo.ts:369
+	// contracts/dao/dao.algo.ts:364
 	// key: PluginsKey = { application: app, allowedCaller: this.txn.sender }
 	frame_dig -1 // app: AppID
 	itob
@@ -321,12 +321,12 @@ assertValidGroup:
 	concat
 	frame_bury 1 // key: PluginsKey
 
-	// contracts/dao/dao.algo.ts:371
+	// contracts/dao/dao.algo.ts:366
 	// rekeysBack = false
 	intc 0 // 0
 	frame_bury 2 // rekeysBack: bool
 
-	// contracts/dao/dao.algo.ts:372
+	// contracts/dao/dao.algo.ts:367
 	// executionKeyRequired = this.plugins(key).value.executionKeyRequired
 	bytec 1 //  "p"
 	frame_dig 1 // key: PluginsKey
@@ -341,7 +341,7 @@ assertValidGroup:
 	getbit
 	frame_bury 3 // executionKeyRequired: bool
 
-	// contracts/dao/dao.algo.ts:373
+	// contracts/dao/dao.algo.ts:368
 	// globalRestrictions = checkGlobal && this.plugins(globalKey).value.methods.length > 0
 	frame_dig -3 // checkGlobal: boolean
 	dup
@@ -379,7 +379,7 @@ assertValidGroup:
 *skip_and7:
 	frame_bury 4 // globalRestrictions: bool
 
-	// contracts/dao/dao.algo.ts:374
+	// contracts/dao/dao.algo.ts:369
 	// localRestrictions = checkLocal && this.plugins(key).value.methods.length > 0
 	frame_dig -4 // checkLocal: boolean
 	dup
@@ -417,17 +417,17 @@ assertValidGroup:
 *skip_and8:
 	frame_bury 5 // localRestrictions: bool
 
-	// contracts/dao/dao.algo.ts:375
+	// contracts/dao/dao.algo.ts:370
 	// methodIndex = 0
 	intc 0 // 0
 	frame_bury 6 // methodIndex: uint64
 
-	// contracts/dao/dao.algo.ts:376
+	// contracts/dao/dao.algo.ts:371
 	// hash: string = ''
 	bytec 0 //  ""
 	frame_bury 7 // hash: string
 
-	// contracts/dao/dao.algo.ts:377
+	// contracts/dao/dao.algo.ts:372
 	// callerUsed: CallerUsed = {
 	//             global: checkGlobal && !globalRestrictions,
 	//             local: checkLocal && !localRestrictions,
@@ -455,7 +455,7 @@ assertValidGroup:
 	setbit
 	frame_bury 8 // callerUsed: CallerUsed
 
-	// contracts/dao/dao.algo.ts:382
+	// contracts/dao/dao.algo.ts:377
 	// for (let i = (this.txn.groupIndex + 1); i < this.txnGroup.length; i += 1)
 	txn GroupIndex
 	intc 1 // 1
@@ -463,34 +463,34 @@ assertValidGroup:
 	frame_bury 9 // i: uint64
 
 *for_0:
-	// contracts/dao/dao.algo.ts:382
+	// contracts/dao/dao.algo.ts:377
 	// i < this.txnGroup.length
 	frame_dig 9 // i: uint64
 	global GroupSize
 	<
 	bz *for_0_end
 
-	// contracts/dao/dao.algo.ts:383
+	// contracts/dao/dao.algo.ts:378
 	// txn = this.txnGroup[i]
 	frame_dig 9 // i: uint64
 	frame_bury 10 // txn: txn
 
 	// *if1_condition
-	// contracts/dao/dao.algo.ts:385
+	// contracts/dao/dao.algo.ts:380
 	// this.ensuresRekeyBack(txn)
 	frame_dig 10 // txn: txn
 	callsub ensuresRekeyBack
 	bz *if1_end
 
 	// *if1_consequent
-	// contracts/dao/dao.algo.ts:386
+	// contracts/dao/dao.algo.ts:381
 	// rekeysBack = true
 	intc 1 // 1
 	frame_bury 2 // rekeysBack: bool
 
 *if1_end:
 	// *if2_condition
-	// contracts/dao/dao.algo.ts:391
+	// contracts/dao/dao.algo.ts:386
 	// (!globalRestrictions && !localRestrictions) || this.shouldSkipMethodCheck(txn, app)
 	frame_dig 4 // globalRestrictions: bool
 	!
@@ -515,7 +515,7 @@ assertValidGroup:
 	b *for_0_continue
 
 *if2_end:
-	// contracts/dao/dao.algo.ts:395
+	// contracts/dao/dao.algo.ts:390
 	// globalValid = (
 	//                 checkGlobal && (
 	//                     !globalRestrictions
@@ -567,7 +567,7 @@ assertValidGroup:
 *skip_and12:
 	frame_bury 11 // globalValid: bool
 
-	// contracts/dao/dao.algo.ts:405
+	// contracts/dao/dao.algo.ts:400
 	// localValid = (
 	//                 checkLocal && (
 	//                     !localRestrictions
@@ -619,7 +619,7 @@ assertValidGroup:
 *skip_and14:
 	frame_bury 12 // localValid: bool
 
-	// contracts/dao/dao.algo.ts:415
+	// contracts/dao/dao.algo.ts:410
 	// assert(globalValid || localValid, errs.METHOD_NOT_ALLOWED)
 	frame_dig 11 // globalValid: bool
 	dup
@@ -631,13 +631,13 @@ assertValidGroup:
 	assert
 
 	// *if3_condition
-	// contracts/dao/dao.algo.ts:421
+	// contracts/dao/dao.algo.ts:416
 	// globalValid
 	frame_dig 11 // globalValid: bool
 	bz *if3_elseif1_condition
 
 	// *if3_consequent
-	// contracts/dao/dao.algo.ts:422
+	// contracts/dao/dao.algo.ts:417
 	// callerUsed.global = true
 	frame_dig 8 // callerUsed: CallerUsed
 	store 255 // full array
@@ -649,13 +649,13 @@ assertValidGroup:
 	b *if3_end
 
 *if3_elseif1_condition:
-	// contracts/dao/dao.algo.ts:423
+	// contracts/dao/dao.algo.ts:418
 	// localValid
 	frame_dig 12 // localValid: bool
 	bz *if3_end
 
 	// *if3_elseif1_consequent
-	// contracts/dao/dao.algo.ts:424
+	// contracts/dao/dao.algo.ts:419
 	// callerUsed.local = true
 	frame_dig 8 // callerUsed: CallerUsed
 	store 255 // full array
@@ -666,7 +666,7 @@ assertValidGroup:
 	frame_bury 8 // callerUsed: CallerUsed
 
 *if3_end:
-	// contracts/dao/dao.algo.ts:427
+	// contracts/dao/dao.algo.ts:422
 	// methodIndex += 1
 	frame_dig 6 // methodIndex: uint64
 	intc 1 // 1
@@ -674,7 +674,7 @@ assertValidGroup:
 	frame_bury 6 // methodIndex: uint64
 
 	// *if4_condition
-	// contracts/dao/dao.algo.ts:431
+	// contracts/dao/dao.algo.ts:426
 	// !rekeysBack && executionKeyRequired
 	frame_dig 2 // rekeysBack: bool
 	!
@@ -688,7 +688,7 @@ assertValidGroup:
 
 	// *if4_consequent
 	// *if5_condition
-	// contracts/dao/dao.algo.ts:432
+	// contracts/dao/dao.algo.ts:427
 	// globals.opcodeBudget < 50
 	global OpcodeBudget
 	pushint 50
@@ -696,7 +696,7 @@ assertValidGroup:
 	bz *if5_end
 
 	// *if5_consequent
-	// contracts/dao/dao.algo.ts:433
+	// contracts/dao/dao.algo.ts:428
 	// increaseOpcodeBudget()
 	itxn_begin
 	intc 4 //  appl
@@ -712,7 +712,7 @@ assertValidGroup:
 	itxn_submit
 
 *if5_end:
-	// contracts/dao/dao.algo.ts:435
+	// contracts/dao/dao.algo.ts:430
 	// hash = this.txnHash(txn, hash)
 	frame_dig 7 // hash: string
 	frame_dig 10 // txn: txn
@@ -722,7 +722,7 @@ assertValidGroup:
 *if4_end:
 
 *for_0_continue:
-	// contracts/dao/dao.algo.ts:382
+	// contracts/dao/dao.algo.ts:377
 	// i += 1
 	frame_dig 9 // i: uint64
 	intc 1 // 1
@@ -732,13 +732,13 @@ assertValidGroup:
 
 *for_0_end:
 	// *if6_condition
-	// contracts/dao/dao.algo.ts:439
+	// contracts/dao/dao.algo.ts:434
 	// executionKeyRequired
 	frame_dig 3 // executionKeyRequired: bool
 	bz *if6_end
 
 	// *if6_consequent
-	// contracts/dao/dao.algo.ts:440
+	// contracts/dao/dao.algo.ts:435
 	// assert(executionKey === (hash as bytes32), errs.INVALID_EXECUTION_KEY)
 	frame_dig -5 // executionKey: ExecutionKey
 	frame_dig 7 // hash: string
@@ -754,12 +754,12 @@ assertValidGroup:
 	assert
 
 *if6_end:
-	// contracts/dao/dao.algo.ts:443
+	// contracts/dao/dao.algo.ts:438
 	// assert(rekeysBack, errs.DOES_NOT_REKEY_BACK)
 	frame_dig 2 // rekeysBack: bool
 	assert
 
-	// contracts/dao/dao.algo.ts:445
+	// contracts/dao/dao.algo.ts:440
 	// return callerUsed;
 	frame_dig 8 // callerUsed: CallerUsed
 
@@ -775,7 +775,7 @@ shouldSkipMethodCheck:
 	proto 2 1
 
 	// *if7_condition
-	// contracts/dao/dao.algo.ts:451
+	// contracts/dao/dao.algo.ts:446
 	// txn.typeEnum !== TransactionType.ApplicationCall ||
 	//             // ignore calls to other applications
 	//             (txn.applicationID !== app && txn.applicationID !== this.app) ||
@@ -813,13 +813,13 @@ shouldSkipMethodCheck:
 	bz *if7_end
 
 	// *if7_consequent
-	// contracts/dao/dao.algo.ts:457
+	// contracts/dao/dao.algo.ts:452
 	// return true;
 	intc 1 // 1
 	retsub
 
 *if7_end:
-	// contracts/dao/dao.algo.ts:460
+	// contracts/dao/dao.algo.ts:455
 	// return false;
 	intc 0 // 0
 	retsub
@@ -839,7 +839,7 @@ methodCallAllowed:
 	bytec 0 // 0x
 	dupn 2
 
-	// contracts/dao/dao.algo.ts:474
+	// contracts/dao/dao.algo.ts:469
 	// assert(txn.numAppArgs > 0, errs.NO_METHOD_SIGNATURE)
 	frame_dig -1 // txn: Txn
 	gtxns NumAppArgs
@@ -847,7 +847,7 @@ methodCallAllowed:
 	>
 	assert
 
-	// contracts/dao/dao.algo.ts:475
+	// contracts/dao/dao.algo.ts:470
 	// assert(len(txn.applicationArgs[0]) === 4, errs.INVALID_METHOD_SIGNATURE_LENGTH)
 	frame_dig -1 // txn: Txn
 	gtxns ApplicationArgs 0
@@ -856,7 +856,7 @@ methodCallAllowed:
 	==
 	assert
 
-	// contracts/dao/dao.algo.ts:477
+	// contracts/dao/dao.algo.ts:472
 	// key: PluginsKey = {
 	//             application: app,
 	//             allowedCaller: caller,
@@ -867,7 +867,7 @@ methodCallAllowed:
 	concat
 	frame_bury 0 // key: PluginsKey
 
-	// contracts/dao/dao.algo.ts:482
+	// contracts/dao/dao.algo.ts:477
 	// methods = this.plugins(key).value.methods
 	bytec 1 //  "p"
 	frame_dig 0 // key: PluginsKey
@@ -877,7 +877,7 @@ methodCallAllowed:
 	frame_bury 2 // accessor: accessor//0//allowedMethod
 
 	// *if8_condition
-	// contracts/dao/dao.algo.ts:485
+	// contracts/dao/dao.algo.ts:480
 	// allowedMethod === txn.applicationArgs[0] as bytes<4>
 	frame_dig 1 // storage key//methods
 	box_get
@@ -910,13 +910,13 @@ methodCallAllowed:
 	bz *if8_end
 
 	// *if8_consequent
-	// contracts/dao/dao.algo.ts:486
+	// contracts/dao/dao.algo.ts:481
 	// return false;
 	intc 0 // 0
 	b *methodCallAllowed*return
 
 *if8_end:
-	// contracts/dao/dao.algo.ts:489
+	// contracts/dao/dao.algo.ts:484
 	// return true;
 	intc 1 // 1
 
@@ -936,7 +936,7 @@ txnHash:
 	bytec 0 // 0x
 	dupn 6
 
-	// contracts/dao/dao.algo.ts:493
+	// contracts/dao/dao.algo.ts:488
 	// common = (
 	//             hash
 	//             + txn.sender
@@ -966,7 +966,7 @@ txnHash:
 	frame_bury 0 // common: byte[]
 
 	// *if9_condition
-	// contracts/dao/dao.algo.ts:502
+	// contracts/dao/dao.algo.ts:497
 	// txn.typeEnum === TransactionType.Payment
 	frame_dig -1 // txn: Txn
 	gtxns TypeEnum
@@ -975,7 +975,7 @@ txnHash:
 	bz *if9_elseif1_condition
 
 	// *if9_consequent
-	// contracts/dao/dao.algo.ts:503
+	// contracts/dao/dao.algo.ts:498
 	// return sha256(
 	//                 common
 	//                 + txn.receiver
@@ -998,7 +998,7 @@ txnHash:
 	b *if9_end
 
 *if9_elseif1_condition:
-	// contracts/dao/dao.algo.ts:509
+	// contracts/dao/dao.algo.ts:504
 	// txn.typeEnum === TransactionType.KeyRegistration
 	frame_dig -1 // txn: Txn
 	gtxns TypeEnum
@@ -1007,12 +1007,12 @@ txnHash:
 	bz *if9_elseif2_condition
 
 	// *if9_elseif1_consequent
-	// contracts/dao/dao.algo.ts:510
+	// contracts/dao/dao.algo.ts:505
 	// assert(false, errs.KEY_REGISTRATION_NOT_SUPPORTED)
 	intc 0 // 0
 	assert
 
-	// contracts/dao/dao.algo.ts:511
+	// contracts/dao/dao.algo.ts:506
 	// return hash as bytes32;
 	frame_dig -2 // hash: string
 	bytec 3 // 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -1027,7 +1027,7 @@ txnHash:
 	b *if9_end
 
 *if9_elseif2_condition:
-	// contracts/dao/dao.algo.ts:522
+	// contracts/dao/dao.algo.ts:517
 	// txn.typeEnum === TransactionType.AssetConfig
 	frame_dig -1 // txn: Txn
 	gtxns TypeEnum
@@ -1036,7 +1036,7 @@ txnHash:
 	bz *if9_elseif3_condition
 
 	// *if9_elseif2_consequent
-	// contracts/dao/dao.algo.ts:523
+	// contracts/dao/dao.algo.ts:518
 	// assert(txn.configAsset.metadataHash.length <= 32, errs.METADATA_HASH_TOO_LONG)
 	frame_dig -1 // txn: Txn
 	gtxns ConfigAsset
@@ -1047,7 +1047,7 @@ txnHash:
 	<=
 	assert
 
-	// contracts/dao/dao.algo.ts:527
+	// contracts/dao/dao.algo.ts:522
 	// return sha256(
 	//                 common
 	//                 + itob(txn.configAsset.id)
@@ -1132,7 +1132,7 @@ txnHash:
 	b *if9_end
 
 *if9_elseif3_condition:
-	// contracts/dao/dao.algo.ts:541
+	// contracts/dao/dao.algo.ts:536
 	// txn.typeEnum === TransactionType.AssetTransfer
 	frame_dig -1 // txn: Txn
 	gtxns TypeEnum
@@ -1141,7 +1141,7 @@ txnHash:
 	bz *if9_elseif4_condition
 
 	// *if9_elseif3_consequent
-	// contracts/dao/dao.algo.ts:542
+	// contracts/dao/dao.algo.ts:537
 	// return sha256(
 	//                 common
 	//                 + itob(txn.xferAsset)
@@ -1173,7 +1173,7 @@ txnHash:
 	b *if9_end
 
 *if9_elseif4_condition:
-	// contracts/dao/dao.algo.ts:550
+	// contracts/dao/dao.algo.ts:545
 	// txn.typeEnum === TransactionType.AssetFreeze
 	frame_dig -1 // txn: Txn
 	gtxns TypeEnum
@@ -1182,7 +1182,7 @@ txnHash:
 	bz *if9_elseif5_condition
 
 	// *if9_elseif4_consequent
-	// contracts/dao/dao.algo.ts:551
+	// contracts/dao/dao.algo.ts:546
 	// return sha256(
 	//                 common
 	//                 + txn.freezeAssetAccount
@@ -1213,7 +1213,7 @@ txnHash:
 	b *if9_end
 
 *if9_elseif5_condition:
-	// contracts/dao/dao.algo.ts:557
+	// contracts/dao/dao.algo.ts:552
 	// txn.typeEnum === TransactionType.ApplicationCall
 	frame_dig -1 // txn: Txn
 	gtxns TypeEnum
@@ -1222,33 +1222,33 @@ txnHash:
 	bz *if9_else
 
 	// *if9_elseif5_consequent
-	// contracts/dao/dao.algo.ts:559
+	// contracts/dao/dao.algo.ts:554
 	// max = 0
 	intc 0 // 0
 	frame_bury 1 // max: uint64
 
-	// contracts/dao/dao.algo.ts:560
+	// contracts/dao/dao.algo.ts:555
 	// accountHash = ''
 	bytec 0 //  ""
 	frame_bury 2 // accountHash: byte[]
 
-	// contracts/dao/dao.algo.ts:561
+	// contracts/dao/dao.algo.ts:556
 	// appArgHash = ''
 	bytec 0 //  ""
 	frame_bury 3 // appArgHash: byte[]
 
-	// contracts/dao/dao.algo.ts:562
+	// contracts/dao/dao.algo.ts:557
 	// assetHash = ''
 	bytec 0 //  ""
 	frame_bury 4 // assetHash: byte[]
 
-	// contracts/dao/dao.algo.ts:563
+	// contracts/dao/dao.algo.ts:558
 	// applicationHash = ''
 	bytec 0 //  ""
 	frame_bury 5 // applicationHash: byte[]
 
 	// *if10_condition
-	// contracts/dao/dao.algo.ts:565
+	// contracts/dao/dao.algo.ts:560
 	// txn.numAccounts > max
 	frame_dig -1 // txn: Txn
 	gtxns NumAccounts
@@ -1257,7 +1257,7 @@ txnHash:
 	bz *if10_end
 
 	// *if10_consequent
-	// contracts/dao/dao.algo.ts:566
+	// contracts/dao/dao.algo.ts:561
 	// max = txn.numAccounts
 	frame_dig -1 // txn: Txn
 	gtxns NumAccounts
@@ -1265,7 +1265,7 @@ txnHash:
 
 *if10_end:
 	// *if11_condition
-	// contracts/dao/dao.algo.ts:569
+	// contracts/dao/dao.algo.ts:564
 	// txn.numAppArgs > max
 	frame_dig -1 // txn: Txn
 	gtxns NumAppArgs
@@ -1274,7 +1274,7 @@ txnHash:
 	bz *if11_end
 
 	// *if11_consequent
-	// contracts/dao/dao.algo.ts:570
+	// contracts/dao/dao.algo.ts:565
 	// max = txn.numAppArgs
 	frame_dig -1 // txn: Txn
 	gtxns NumAppArgs
@@ -1282,7 +1282,7 @@ txnHash:
 
 *if11_end:
 	// *if12_condition
-	// contracts/dao/dao.algo.ts:573
+	// contracts/dao/dao.algo.ts:568
 	// txn.numAssets > max
 	frame_dig -1 // txn: Txn
 	gtxns NumAssets
@@ -1291,7 +1291,7 @@ txnHash:
 	bz *if12_end
 
 	// *if12_consequent
-	// contracts/dao/dao.algo.ts:574
+	// contracts/dao/dao.algo.ts:569
 	// max = txn.numAssets
 	frame_dig -1 // txn: Txn
 	gtxns NumAssets
@@ -1299,7 +1299,7 @@ txnHash:
 
 *if12_end:
 	// *if13_condition
-	// contracts/dao/dao.algo.ts:578
+	// contracts/dao/dao.algo.ts:573
 	// txn.numApplications > max
 	frame_dig -1 // txn: Txn
 	gtxns NumApplications
@@ -1308,20 +1308,20 @@ txnHash:
 	bz *if13_end
 
 	// *if13_consequent
-	// contracts/dao/dao.algo.ts:580
+	// contracts/dao/dao.algo.ts:575
 	// max = txn.numApplications
 	frame_dig -1 // txn: Txn
 	gtxns NumApplications
 	frame_bury 1 // max: uint64
 
 *if13_end:
-	// contracts/dao/dao.algo.ts:583
+	// contracts/dao/dao.algo.ts:578
 	// for (let i = 0; i < max; i += 1)
 	intc 0 // 0
 	frame_bury 6 // i: uint64
 
 *for_1:
-	// contracts/dao/dao.algo.ts:583
+	// contracts/dao/dao.algo.ts:578
 	// i < max
 	frame_dig 6 // i: uint64
 	frame_dig 1 // max: uint64
@@ -1329,7 +1329,7 @@ txnHash:
 	bz *for_1_end
 
 	// *if14_condition
-	// contracts/dao/dao.algo.ts:584
+	// contracts/dao/dao.algo.ts:579
 	// txn.numAccounts > i
 	frame_dig -1 // txn: Txn
 	gtxns NumAccounts
@@ -1338,7 +1338,7 @@ txnHash:
 	bz *if14_end
 
 	// *if14_consequent
-	// contracts/dao/dao.algo.ts:585
+	// contracts/dao/dao.algo.ts:580
 	// accountHash = accountHash + txn.accounts[i]
 	frame_dig 2 // accountHash: byte[]
 	frame_dig -1 // txn: Txn
@@ -1349,7 +1349,7 @@ txnHash:
 
 *if14_end:
 	// *if15_condition
-	// contracts/dao/dao.algo.ts:588
+	// contracts/dao/dao.algo.ts:583
 	// txn.numAppArgs > i
 	frame_dig -1 // txn: Txn
 	gtxns NumAppArgs
@@ -1358,7 +1358,7 @@ txnHash:
 	bz *if15_end
 
 	// *if15_consequent
-	// contracts/dao/dao.algo.ts:589
+	// contracts/dao/dao.algo.ts:584
 	// appArgHash = appArgHash + txn.applicationArgs[i]
 	frame_dig 3 // appArgHash: byte[]
 	frame_dig -1 // txn: Txn
@@ -1369,7 +1369,7 @@ txnHash:
 
 *if15_end:
 	// *if16_condition
-	// contracts/dao/dao.algo.ts:592
+	// contracts/dao/dao.algo.ts:587
 	// txn.numAssets > i
 	frame_dig -1 // txn: Txn
 	gtxns NumAssets
@@ -1378,7 +1378,7 @@ txnHash:
 	bz *if16_end
 
 	// *if16_consequent
-	// contracts/dao/dao.algo.ts:593
+	// contracts/dao/dao.algo.ts:588
 	// assetHash = assetHash + itob(txn.assets[i])
 	frame_dig 4 // assetHash: byte[]
 	frame_dig -1 // txn: Txn
@@ -1390,7 +1390,7 @@ txnHash:
 
 *if16_end:
 	// *if17_condition
-	// contracts/dao/dao.algo.ts:597
+	// contracts/dao/dao.algo.ts:592
 	// txn.numApplications > i
 	frame_dig -1 // txn: Txn
 	gtxns NumApplications
@@ -1399,7 +1399,7 @@ txnHash:
 	bz *if17_end
 
 	// *if17_consequent
-	// contracts/dao/dao.algo.ts:598
+	// contracts/dao/dao.algo.ts:593
 	// applicationHash = applicationHash + itob(txn.applications[i])
 	frame_dig 5 // applicationHash: byte[]
 	frame_dig -1 // txn: Txn
@@ -1412,7 +1412,7 @@ txnHash:
 *if17_end:
 
 *for_1_continue:
-	// contracts/dao/dao.algo.ts:583
+	// contracts/dao/dao.algo.ts:578
 	// i += 1
 	frame_dig 6 // i: uint64
 	intc 1 // 1
@@ -1422,7 +1422,7 @@ txnHash:
 
 *for_1_end:
 	// *if18_condition
-	// contracts/dao/dao.algo.ts:602
+	// contracts/dao/dao.algo.ts:597
 	// accountHash.length > 0
 	frame_dig 2 // accountHash: byte[]
 	len
@@ -1431,7 +1431,7 @@ txnHash:
 	bz *if18_end
 
 	// *if18_consequent
-	// contracts/dao/dao.algo.ts:603
+	// contracts/dao/dao.algo.ts:598
 	// accountHash = sha256(accountHash)
 	frame_dig 2 // accountHash: byte[]
 	sha256
@@ -1439,7 +1439,7 @@ txnHash:
 
 *if18_end:
 	// *if19_condition
-	// contracts/dao/dao.algo.ts:606
+	// contracts/dao/dao.algo.ts:601
 	// appArgHash.length > 0
 	frame_dig 3 // appArgHash: byte[]
 	len
@@ -1448,7 +1448,7 @@ txnHash:
 	bz *if19_end
 
 	// *if19_consequent
-	// contracts/dao/dao.algo.ts:607
+	// contracts/dao/dao.algo.ts:602
 	// appArgHash = sha256(appArgHash)
 	frame_dig 3 // appArgHash: byte[]
 	sha256
@@ -1456,7 +1456,7 @@ txnHash:
 
 *if19_end:
 	// *if20_condition
-	// contracts/dao/dao.algo.ts:610
+	// contracts/dao/dao.algo.ts:605
 	// assetHash.length > 0
 	frame_dig 4 // assetHash: byte[]
 	len
@@ -1465,7 +1465,7 @@ txnHash:
 	bz *if20_end
 
 	// *if20_consequent
-	// contracts/dao/dao.algo.ts:611
+	// contracts/dao/dao.algo.ts:606
 	// assetHash = sha256(assetHash)
 	frame_dig 4 // assetHash: byte[]
 	sha256
@@ -1473,7 +1473,7 @@ txnHash:
 
 *if20_end:
 	// *if21_condition
-	// contracts/dao/dao.algo.ts:614
+	// contracts/dao/dao.algo.ts:609
 	// applicationHash.length > 0
 	frame_dig 5 // applicationHash: byte[]
 	len
@@ -1482,14 +1482,14 @@ txnHash:
 	bz *if21_end
 
 	// *if21_consequent
-	// contracts/dao/dao.algo.ts:615
+	// contracts/dao/dao.algo.ts:610
 	// applicationHash = sha256(applicationHash)
 	frame_dig 5 // applicationHash: byte[]
 	sha256
 	frame_bury 5 // applicationHash: byte[]
 
 *if21_end:
-	// contracts/dao/dao.algo.ts:618
+	// contracts/dao/dao.algo.ts:613
 	// return sha256(
 	//                 common
 	//                 + itob(txn.applicationID)
@@ -1554,12 +1554,12 @@ txnHash:
 	b *if9_end
 
 *if9_else:
-	// contracts/dao/dao.algo.ts:635
+	// contracts/dao/dao.algo.ts:630
 	// assert(false, errs.UNKNOWN_TRANSACTION_TYPE)
 	intc 0 // 0
 	assert
 
-	// contracts/dao/dao.algo.ts:636
+	// contracts/dao/dao.algo.ts:631
 	// return hash as bytes32;
 	frame_dig -2 // hash: string
 	bytec 3 // 0x0000000000000000000000000000000000000000000000000000000000000000
@@ -1594,7 +1594,7 @@ createApplication:
 	proto 0 0
 	retsub
 
-// init(string,byte[59],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void
+// init(string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void
 *abi_route_init:
 	// revocationAddress: address
 	txna ApplicationArgs 7
@@ -1614,47 +1614,47 @@ createApplication:
 	txna ApplicationArgs 5
 	btoi
 
-	// fees: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)
+	// fees: (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)
 	txna ApplicationArgs 4
 	dup
 	len
-	pushint 136
+	pushint 128
 	==
 
-	// argument 3 (fees) for init must be a (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)
+	// argument 3 (fees) for init must be a (uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)
 	assert
 
 	// minimumRewardsImpact: uint64
 	txna ApplicationArgs 3
 	btoi
 
-	// contentPolicy: byte[59]
+	// contentPolicy: byte[36]
 	txna ApplicationArgs 2
 	dup
 	len
-	pushint 59
+	pushint 36
 	==
 
-	// argument 5 (contentPolicy) for init must be a byte[59]
+	// argument 5 (contentPolicy) for init must be a byte[36]
 	assert
 
 	// version: string
 	txna ApplicationArgs 1
 	extract 2 0
 
-	// execute init(string,byte[59],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void
+	// execute init(string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void
 	callsub init
 	intc 1 // 1
 	return
 
-// init(version: string, contentPolicy: bytes<59>, minimumRewardsImpact: uint64, fees: DAOInitFeeArgs, minimumProposalThreshold: uint64, minimumVoteThreshold: uint64, revocationAddress: Address): void
+// init(version: string, contentPolicy: bytes<36>, minimumRewardsImpact: uint64, fees: DAOInitFeeArgs, minimumProposalThreshold: uint64, minimumVoteThreshold: uint64, revocationAddress: Address): void
 init:
 	proto 7 0
 
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:657
+	// contracts/dao/dao.algo.ts:652
 	// assert(this.version.value.length === 0, errs.ALREADY_INITIALIZED)
 	bytec 5 //  "version"
 	app_global_get
@@ -1664,14 +1664,14 @@ init:
 	==
 	assert
 
-	// contracts/dao/dao.algo.ts:658
+	// contracts/dao/dao.algo.ts:653
 	// assert(version !== '', errs.VERSION_CANNOT_BE_EMPTY)
 	frame_dig -1 // version: string
 	bytec 0 //  ""
 	!=
 	assert
 
-	// contracts/dao/dao.algo.ts:660
+	// contracts/dao/dao.algo.ts:655
 	// bones = sendAssetCreation({
 	//             configAssetName: 'Bones',
 	//             configAssetUnitName: 'BONES',
@@ -1689,57 +1689,57 @@ init:
 	intc 8 //  acfg
 	itxn_field TypeEnum
 
-	// contracts/dao/dao.algo.ts:661
+	// contracts/dao/dao.algo.ts:656
 	// configAssetName: 'Bones'
 	pushbytes 0x426f6e6573 // "Bones"
 	itxn_field ConfigAssetName
 
-	// contracts/dao/dao.algo.ts:662
+	// contracts/dao/dao.algo.ts:657
 	// configAssetUnitName: 'BONES'
 	pushbytes 0x424f4e4553 // "BONES"
 	itxn_field ConfigAssetUnitName
 
-	// contracts/dao/dao.algo.ts:663
+	// contracts/dao/dao.algo.ts:658
 	// configAssetTotal: 100_000_000_000_000
 	pushint 100_000_000_000_000
 	itxn_field ConfigAssetTotal
 
-	// contracts/dao/dao.algo.ts:664
+	// contracts/dao/dao.algo.ts:659
 	// configAssetDecimals: 2
 	intc 5 // 2
 	itxn_field ConfigAssetDecimals
 
-	// contracts/dao/dao.algo.ts:665
+	// contracts/dao/dao.algo.ts:660
 	// configAssetManager: this.app.address
 	global CurrentApplicationAddress
 	itxn_field ConfigAssetManager
 
-	// contracts/dao/dao.algo.ts:666
+	// contracts/dao/dao.algo.ts:661
 	// configAssetReserve: this.app.address
 	global CurrentApplicationAddress
 	itxn_field ConfigAssetReserve
 
-	// contracts/dao/dao.algo.ts:667
+	// contracts/dao/dao.algo.ts:662
 	// configAssetFreeze: globals.zeroAddress
 	global ZeroAddress
 	itxn_field ConfigAssetFreeze
 
-	// contracts/dao/dao.algo.ts:668
+	// contracts/dao/dao.algo.ts:663
 	// configAssetClawback: globals.zeroAddress
 	global ZeroAddress
 	itxn_field ConfigAssetClawback
 
-	// contracts/dao/dao.algo.ts:669
+	// contracts/dao/dao.algo.ts:664
 	// configAssetDefaultFrozen: 0
 	intc 0 // 0
 	itxn_field ConfigAssetDefaultFrozen
 
-	// contracts/dao/dao.algo.ts:670
+	// contracts/dao/dao.algo.ts:665
 	// configAssetURL: ''
 	bytec 0 //  ""
 	itxn_field ConfigAssetURL
 
-	// contracts/dao/dao.algo.ts:671
+	// contracts/dao/dao.algo.ts:666
 	// configAssetMetadataHash: ''
 	bytec 0 //  ""
 	itxn_field ConfigAssetMetadataHash
@@ -1753,13 +1753,13 @@ init:
 	itxn CreatedAssetID
 	frame_bury 0 // bones: uint64
 
-	// contracts/dao/dao.algo.ts:674
+	// contracts/dao/dao.algo.ts:669
 	// this.status.value = STATUS_INIT
 	pushbytes 0x737461747573 // "status"
 	intc 0 // 0
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:675
+	// contracts/dao/dao.algo.ts:670
 	// this.version.value = version
 	bytec 5 //  "version"
 	frame_dig -1 // version: string
@@ -1771,19 +1771,19 @@ init:
 	concat
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:676
+	// contracts/dao/dao.algo.ts:671
 	// this.contentPolicy.value = contentPolicy
 	pushbytes 0x636f6e74656e745f706f6c696379 // "content_policy"
-	frame_dig -2 // contentPolicy: bytes<59>
+	frame_dig -2 // contentPolicy: bytes<36>
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:677
+	// contracts/dao/dao.algo.ts:672
 	// this.minimumRewardsImpact.value = minimumRewardsImpact
 	pushbytes 0x6d696e696d756d5f726577617264735f696d70616374 // "minimum_rewards_impact"
 	frame_dig -3 // minimumRewardsImpact: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:678
+	// contracts/dao/dao.algo.ts:673
 	// this.socialPostFee.value = fees.socialPostFee
 	pushbytes 0x736f6369616c5f706f73745f666565 // "social_post_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1791,7 +1791,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:679
+	// contracts/dao/dao.algo.ts:674
 	// this.socialReactFee.value = fees.socialReactFee
 	pushbytes 0x736f6369616c5f72656163745f666565 // "social_react_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1799,7 +1799,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:680
+	// contracts/dao/dao.algo.ts:675
 	// this.stakingPoolCreationFee.value = fees.stakingPoolCreationFee
 	pushbytes 0x7374616b696e675f706f6f6c5f6372656174696f6e5f666565 // "staking_pool_creation_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1807,7 +1807,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:681
+	// contracts/dao/dao.algo.ts:676
 	// this.subscriptionServiceCreationFee.value = fees.subscriptionServiceCreationFee
 	pushbytes 0x737562736372697074696f6e5f736572766963655f6372656174696f6e5f666565 // "subscription_service_creation_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1815,7 +1815,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:682
+	// contracts/dao/dao.algo.ts:677
 	// this.subscriptionPaymentPercentage.value = fees.subscriptionPaymentPercentage
 	pushbytes 0x737562736372697074696f6e5f7061796d656e745f70657263656e74616765 // "subscription_payment_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1823,7 +1823,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:683
+	// contracts/dao/dao.algo.ts:678
 	// this.subscriptionTriggerPercentage.value = fees.subscriptionTriggerPercentage
 	pushbytes 0x737562736372697074696f6e5f747269676765725f70657263656e74616765 // "subscription_trigger_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1831,7 +1831,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:684
+	// contracts/dao/dao.algo.ts:679
 	// this.omnigemSaleFee.value = fees.omnigemSaleFee
 	pushbytes 0x6f6d6e6967656d5f73616c655f666565 // "omnigem_sale_fee"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1839,7 +1839,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:686
+	// contracts/dao/dao.algo.ts:681
 	// this.marketplaceSalePercentageMinimum.value = fees.marketplaceSalePercentageMinimum
 	pushbytes 0x6d61726b6574706c6163655f73616c655f70657263656e746167655f6d696e696d756d // "marketplace_sale_percentage_minimum"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1847,7 +1847,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:687
+	// contracts/dao/dao.algo.ts:682
 	// this.marketplaceSalePercentageMaximum.value = fees.marketplaceSalePercentageMaximum
 	pushbytes 0x6d61726b6574706c6163655f73616c655f70657263656e746167655f6d6178696d756d // "marketplace_sale_percentage_maximum"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1855,7 +1855,7 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:688
+	// contracts/dao/dao.algo.ts:683
 	// this.marketplaceComposablePercentage.value = fees.marketplaceComposablePercentage
 	pushbytes 0x6d61726b6574706c6163655f636f6d706f7361626c655f70657263656e74616765 // "marketplace_composable_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
@@ -1863,63 +1863,79 @@ init:
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:690
-	// this.nftShuffleCreationFee.value = fees.nftShuffleCreationFee
-	pushbytes 0x6e66745f73687566666c655f6372656174696f6e5f666565 // "nft_shuffle_creation_fee"
+	// contracts/dao/dao.algo.ts:685
+	// this.nftShuffleSalePercentage.value = fees.nftShuffleSalePercentage
+	pushbytes 0x6e66745f73687566666c655f73616c655f70657263656e74616765 // "nft_shuffle_sale_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
 	extract 80 8
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:694
-	// this.hyperSwapOfferFee.value = fees.hyperSwapOfferFee
-	pushbytes 0x68797065725f737761705f6f666665725f666565 // "hyper_swap_offer_fee"
+	// contracts/dao/dao.algo.ts:687
+	// this.auctionSalePercentageMinimum.value = fees.auctionSalePercentageMinimum
+	pushbytes 0x61756374696f6e5f73616c655f70657263656e746167655f6d696e696d756d // "auction_sale_percentage_minimum"
+	frame_dig -4 // fees: DAOInitFeeArgs
+	extract 88 8
+	btoi
+	app_global_put
+
+	// contracts/dao/dao.algo.ts:688
+	// this.auctionSalePercentageMaximum.value = fees.auctionSalePercentageMaximum
+	pushbytes 0x61756374696f6e5f73616c655f70657263656e746167655f6d6178696d756d // "auction_sale_percentage_maximum"
+	frame_dig -4 // fees: DAOInitFeeArgs
+	extract 96 8
+	btoi
+	app_global_put
+
+	// contracts/dao/dao.algo.ts:689
+	// this.auctionComposablePercentage.value = fees.auctionComposablePercentage
+	pushbytes 0x61756374696f6e5f636f6d706f7361626c655f70657263656e74616765 // "auction_composable_percentage"
+	frame_dig -4 // fees: DAOInitFeeArgs
+	extract 104 8
+	btoi
+	app_global_put
+
+	// contracts/dao/dao.algo.ts:691
+	// this.krbyPercentage.value = fees.krbyPercentage
+	pushbytes 0x6b7262795f70657263656e74616765 // "krby_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
 	extract 112 8
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:695
-	// this.krbyPercentage.value = fees.krbyPercentage
-	pushbytes 0x6b7262795f70657263656e74616765 // "krby_percentage"
+	// contracts/dao/dao.algo.ts:692
+	// this.moderatorPercentage.value = fees.moderatorPercentage
+	pushbytes 0x6d6f64657261746f725f70657263656e74616765 // "moderator_percentage"
 	frame_dig -4 // fees: DAOInitFeeArgs
 	extract 120 8
 	btoi
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:696
-	// this.moderatorPercentage.value = fees.moderatorPercentage
-	pushbytes 0x6d6f64657261746f725f70657263656e74616765 // "moderator_percentage"
-	frame_dig -4 // fees: DAOInitFeeArgs
-	extract 128 8
-	btoi
-	app_global_put
-
-	// contracts/dao/dao.algo.ts:697
+	// contracts/dao/dao.algo.ts:693
 	// this.minimumProposalThreshold.value = minimumProposalThreshold
 	pushbytes 0x6d696e696d756d5f70726f706f73616c5f7468726573686f6c64 // "minimum_proposal_threshold"
 	frame_dig -5 // minimumProposalThreshold: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:698
+	// contracts/dao/dao.algo.ts:694
 	// this.minimumVoteThreshold.value = minimumVoteThreshold
 	pushbytes 0x6d696e696d756d5f766f74655f7468726573686f6c64 // "minimum_vote_threshold"
 	frame_dig -6 // minimumVoteThreshold: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:699
+	// contracts/dao/dao.algo.ts:695
 	// this.bonesID.value = bones
 	bytec 4 //  "bones_id"
 	frame_dig 0 // bones: uint64
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:700
+	// contracts/dao/dao.algo.ts:696
 	// this.revocationAddress.value = revocationAddress
 	pushbytes 0x7265766f636174696f6e5f61646472657373 // "revocation_address"
 	frame_dig -7 // revocationAddress: Address
 	app_global_put
 
-	// contracts/dao/dao.algo.ts:701
+	// contracts/dao/dao.algo.ts:697
 	// this.proposalID.value = 0
 	bytec 2 //  "proposal_id"
 	intc 0 // 0
@@ -1939,7 +1955,7 @@ init:
 arc58_verifyAuthAddr:
 	proto 0 0
 
-	// contracts/dao/dao.algo.ts:708
+	// contracts/dao/dao.algo.ts:704
 	// assert(this.app.address.authAddr === globals.zeroAddress)
 	global CurrentApplicationAddress
 	acct_params_get AcctAuthAddr
@@ -1991,7 +2007,7 @@ arc58_rekeyToPlugin:
 	bytec 0 // 0x
 	dupn 4
 
-	// contracts/dao/dao.algo.ts:722
+	// contracts/dao/dao.algo.ts:718
 	// globalExists = this.plugins({ application: plugin, allowedCaller: Address.zeroAddress }).exists
 	bytec 1 //  "p"
 	frame_dig -1 // plugin: AppID
@@ -2004,7 +2020,7 @@ arc58_rekeyToPlugin:
 	pop
 	frame_bury 0 // globalExists: bool
 
-	// contracts/dao/dao.algo.ts:723
+	// contracts/dao/dao.algo.ts:719
 	// localExists = this.plugins({ application: plugin, allowedCaller: this.txn.sender }).exists
 	bytec 1 //  "p"
 	frame_dig -1 // plugin: AppID
@@ -2017,24 +2033,24 @@ arc58_rekeyToPlugin:
 	pop
 	frame_bury 1 // localExists: bool
 
-	// contracts/dao/dao.algo.ts:725
+	// contracts/dao/dao.algo.ts:721
 	// globalAllowed = false
 	intc 0 // 0
 	frame_bury 2 // globalAllowed: bool
 
-	// contracts/dao/dao.algo.ts:726
+	// contracts/dao/dao.algo.ts:722
 	// locallyAllowed = false
 	intc 0 // 0
 	frame_bury 3 // locallyAllowed: bool
 
 	// *if22_condition
-	// contracts/dao/dao.algo.ts:728
+	// contracts/dao/dao.algo.ts:724
 	// globalExists
 	frame_dig 0 // globalExists: bool
 	bz *if22_end
 
 	// *if22_consequent
-	// contracts/dao/dao.algo.ts:729
+	// contracts/dao/dao.algo.ts:725
 	// globalAllowed = this.pluginCallAllowed(plugin, Address.zeroAddress)
 	global ZeroAddress
 	frame_dig -1 // plugin: AppID
@@ -2043,13 +2059,13 @@ arc58_rekeyToPlugin:
 
 *if22_end:
 	// *if23_condition
-	// contracts/dao/dao.algo.ts:732
+	// contracts/dao/dao.algo.ts:728
 	// localExists
 	frame_dig 1 // localExists: bool
 	bz *if23_end
 
 	// *if23_consequent
-	// contracts/dao/dao.algo.ts:733
+	// contracts/dao/dao.algo.ts:729
 	// locallyAllowed = this.pluginCallAllowed(plugin, this.txn.sender)
 	txn Sender
 	frame_dig -1 // plugin: AppID
@@ -2058,7 +2074,7 @@ arc58_rekeyToPlugin:
 
 *if23_end:
 	// *if24_condition
-	// contracts/dao/dao.algo.ts:739
+	// contracts/dao/dao.algo.ts:735
 	// (!globalExists && !localExists)
 	//             || (globalExists && !globalAllowed && !locallyAllowed)
 	frame_dig 0 // globalExists: bool
@@ -2093,7 +2109,7 @@ arc58_rekeyToPlugin:
 	bz *if24_elseif1_condition
 
 	// *if24_consequent
-	// contracts/dao/dao.algo.ts:742
+	// contracts/dao/dao.algo.ts:738
 	// this.assertPluginCallAllowed(plugin, Address.zeroAddress)
 	global ZeroAddress
 	frame_dig -1 // plugin: AppID
@@ -2101,7 +2117,7 @@ arc58_rekeyToPlugin:
 	b *if24_end
 
 *if24_elseif1_condition:
-	// contracts/dao/dao.algo.ts:743
+	// contracts/dao/dao.algo.ts:739
 	// localExists && !locallyAllowed && !globalAllowed
 	frame_dig 1 // localExists: bool
 	dup
@@ -2121,14 +2137,14 @@ arc58_rekeyToPlugin:
 	bz *if24_end
 
 	// *if24_elseif1_consequent
-	// contracts/dao/dao.algo.ts:744
+	// contracts/dao/dao.algo.ts:740
 	// this.assertPluginCallAllowed(plugin, this.txn.sender)
 	txn Sender
 	frame_dig -1 // plugin: AppID
 	callsub assertPluginCallAllowed
 
 *if24_end:
-	// contracts/dao/dao.algo.ts:747
+	// contracts/dao/dao.algo.ts:743
 	// used = this.assertValidGroup(plugin, methodOffsets, globalAllowed, locallyAllowed, executionKey)
 	frame_dig -3 // executionKey: bytes<32>
 	frame_dig 3 // locallyAllowed: bool
@@ -2138,7 +2154,7 @@ arc58_rekeyToPlugin:
 	callsub assertValidGroup
 	frame_bury 4 // used: (bool,bool)
 
-	// contracts/dao/dao.algo.ts:749
+	// contracts/dao/dao.algo.ts:745
 	// sendPayment({
 	//             receiver: this.app.address,
 	//             rekeyTo: plugin.address,
@@ -2149,24 +2165,24 @@ arc58_rekeyToPlugin:
 	intc 1 //  pay
 	itxn_field TypeEnum
 
-	// contracts/dao/dao.algo.ts:750
+	// contracts/dao/dao.algo.ts:746
 	// receiver: this.app.address
 	global CurrentApplicationAddress
 	itxn_field Receiver
 
-	// contracts/dao/dao.algo.ts:751
+	// contracts/dao/dao.algo.ts:747
 	// rekeyTo: plugin.address
 	frame_dig -1 // plugin: AppID
 	app_params_get AppAddress
 	pop
 	itxn_field RekeyTo
 
-	// contracts/dao/dao.algo.ts:752
+	// contracts/dao/dao.algo.ts:748
 	// note: 'rekeying to plugin app'
 	pushbytes 0x72656b6579696e6720746f20706c7567696e20617070 // "rekeying to plugin app"
 	itxn_field Note
 
-	// contracts/dao/dao.algo.ts:753
+	// contracts/dao/dao.algo.ts:749
 	// fee: 0
 	intc 0 // 0
 	itxn_field Fee
@@ -2175,7 +2191,7 @@ arc58_rekeyToPlugin:
 	itxn_submit
 
 	// *if25_condition
-	// contracts/dao/dao.algo.ts:756
+	// contracts/dao/dao.algo.ts:752
 	// used.global
 	frame_dig 4 // used: (bool,bool)
 	store 255 // full array
@@ -2185,7 +2201,7 @@ arc58_rekeyToPlugin:
 	bz *if25_end
 
 	// *if25_consequent
-	// contracts/dao/dao.algo.ts:757
+	// contracts/dao/dao.algo.ts:753
 	// this.plugins({
 	//                 application: plugin,
 	//                 allowedCaller: Address.zeroAddress
@@ -2220,7 +2236,7 @@ arc58_rekeyToPlugin:
 
 *if25_end:
 	// *if26_condition
-	// contracts/dao/dao.algo.ts:763
+	// contracts/dao/dao.algo.ts:759
 	// used.local
 	frame_dig 4 // used: (bool,bool)
 	store 255 // full array
@@ -2230,7 +2246,7 @@ arc58_rekeyToPlugin:
 	bz *if26_end
 
 	// *if26_consequent
-	// contracts/dao/dao.algo.ts:764
+	// contracts/dao/dao.algo.ts:760
 	// this.plugins({
 	//                 application: plugin,
 	//                 allowedCaller: this.txn.sender
@@ -2284,7 +2300,7 @@ newProposal:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:772
+	// contracts/dao/dao.algo.ts:768
 	// id = this.newProposalID()
 	callsub newProposalID
 	frame_bury 0 // id: uint64
@@ -2304,7 +2320,7 @@ createDailyDisbursement:
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
 
-	// contracts/dao/dao.algo.ts:780
+	// contracts/dao/dao.algo.ts:776
 	// bonesAmount = this.app.address.assetBalance(this.bonesID.value)
 	global CurrentApplicationAddress
 	bytec 4 //  "bones_id"
@@ -2323,7 +2339,7 @@ createDailyDisbursement:
 	err
 
 *call_NoOp:
-	pushbytes 0x99262c96 // method "init(string,byte[59],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void"
+	pushbytes 0x79c150cc // method "init(string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void"
 	bytec 6 //  method "arc58_verifyAuthAddr()void"
 	pushbytes 0x42089fbe // method "arc58_rekeyToPlugin(uint64,uint64[],byte[32])void"
 	pushbytes 0x9023b90f // method "newProposal(uint64)void"

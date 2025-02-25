@@ -408,7 +408,7 @@ isAkitaNFT:
 	asset_params_get AssetCreator
 	pop
 
-	// utils/constants.ts:11
+	// utils/constants.ts:12
 	// addr('AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI')
 	bytec 4 //  addr "AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI"
 	==
@@ -1440,7 +1440,7 @@ getNFTImpactScore:
 	asset_params_get AssetCreator
 	pop
 
-	// utils/constants.ts:11
+	// utils/constants.ts:12
 	// addr('AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI')
 	bytec 4 //  addr "AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI"
 	==
@@ -1642,7 +1642,7 @@ cacheMeta:
 
 	// Push empty bytes after the frame pointer to reserve space for local variables
 	bytec 0 // 0x
-	dupn 2
+	dup
 
 	// *if16_condition
 	// contracts/arc58/plugins/social/impact.algo.ts:370
@@ -1781,17 +1781,6 @@ cacheMeta:
 
 *if19_else:
 	// contracts/arc58/plugins/social/impact.algo.ts:397
-	// meta = clone(this.meta(this.txn.sender).value)
-	bytec 1 //  "m"
-	txn Sender
-	concat
-	box_get
-
-	// box value does not exist: this.meta(this.txn.sender).value
-	assert
-	frame_bury 2 // meta: (uint64,uint64,uint64,uint64,uint64)
-
-	// contracts/arc58/plugins/social/impact.algo.ts:399
 	// this.meta(this.txn.sender).value = {
 	//                 subscriptionIndex: subscriptionIndex,
 	//                 NFD: NFD,
@@ -1819,7 +1808,7 @@ cacheMeta:
 	box_put
 
 *if19_end:
-	// contracts/arc58/plugins/social/impact.algo.ts:408
+	// contracts/arc58/plugins/social/impact.algo.ts:406
 	// return nfdImpact;
 	frame_dig 1 // nfdImpact: uint64
 
@@ -1827,7 +1816,7 @@ cacheMeta:
 	frame_bury 0
 
 	// pop all local variables from the stack
-	popn 2
+	popn 1
 	retsub
 
 // updateSubscriptionStateModifier(pay,uint64,uint64)void
@@ -1861,13 +1850,13 @@ cacheMeta:
 updateSubscriptionStateModifier:
 	proto 3 0
 
-	// contracts/arc58/plugins/social/impact.algo.ts:412
+	// contracts/arc58/plugins/social/impact.algo.ts:410
 	// assert(this.isDAO(this.txn.sender), errs.NOT_DAO)
 	txn Sender
 	callsub isDAO
 	assert
 
-	// contracts/arc58/plugins/social/impact.algo.ts:414
+	// contracts/arc58/plugins/social/impact.algo.ts:412
 	// this.subscriptionStateModifier(subscriptionIndex).value = newModifier
 	bytec 13 //  "s"
 	frame_dig -2 // subscriptionIndex: uint64
@@ -1877,7 +1866,7 @@ updateSubscriptionStateModifier:
 	itob
 	box_put
 
-	// contracts/arc58/plugins/social/impact.algo.ts:416
+	// contracts/arc58/plugins/social/impact.algo.ts:414
 	// verifyPayTxn(payment, {
 	//             receiver: this.app.address,
 	//             amount: subscriptionStateModifierMBR,
@@ -1901,6 +1890,18 @@ updateSubscriptionStateModifier:
 	assert
 	retsub
 
+// gas()void
+*abi_route_gas:
+	// execute gas()void
+	callsub gas
+	intc 1 // 1
+	return
+
+// gas(): void
+gas:
+	proto 0 0
+	retsub
+
 *abi_route_createApplication:
 	intc 1 // 1
 	return
@@ -1919,8 +1920,9 @@ updateSubscriptionStateModifier:
 	pushbytes 0xb6ec6a5d // method "getMeta(address)(uint64,uint64,uint64,uint64,uint64)"
 	pushbytes 0x3e6ee3d6 // method "cacheMeta(uint64,uint64,uint64)uint64"
 	pushbytes 0x9d74f5a1 // method "updateSubscriptionStateModifier(pay,uint64,uint64)void"
+	pushbytes 0x3172ca9d // method "gas()void"
 	txna ApplicationArgs 0
-	match *abi_route_socialGetUserImpact *abi_route_getUserImpact *abi_route_getMeta *abi_route_cacheMeta *abi_route_updateSubscriptionStateModifier
+	match *abi_route_socialGetUserImpact *abi_route_getUserImpact *abi_route_getMeta *abi_route_cacheMeta *abi_route_updateSubscriptionStateModifier *abi_route_gas
 
 	// this contract does not implement the given ABI method for call NoOp
 	err

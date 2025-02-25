@@ -1,11 +1,12 @@
-import { Contract } from '@algorandfoundation/tealscript';
 import { AkitaAppIDsDAO } from '../../utils/constants';
+import { ContractWithOptIn } from '../../utils/base_contracts/optin.algo';
 
 const errs = {
     PLUGIN_DOES_NOT_CONTROL_WALLET: 'Plugin does not control wallet',
     TOKEN_ALLOCATION_BOX_ALREADY_EXISTS: 'Token allocation box already exists',
     TOKEN_ALLOCATION_BOX_DOES_NOT_EXIST: 'Token allocation box does not exist',
     YOU_ARE_NOT_THE_CREATOR: 'You are not the creator of this disbursement',
+    APP_NOT_OPTED_INTO_ASSET: 'App is not opted into asset',
     DISBURSEMENT_DOES_NOT_EXIST: 'Disbursement does not exist',
     DISBURSEMENT_ALREADY_FINAL: 'Disbursement already final',
     ALLOCATION_ALREADY_EXISTS: 'Allocation already exists',
@@ -55,13 +56,8 @@ export type UserAllocationsKey = {
     address: Address;
     /** the disbursement id */
     disbursementID: uint64;
-}
-
-export type UserAllocationDetails = {
     /** the asset id being distributed */
-    assetID: AssetID;
-    /** the amount the user is owed */
-    amount: uint64;
+    asset: AssetID;
 }
 
 export type UserAlloction = {
@@ -71,7 +67,9 @@ export type UserAlloction = {
     amount: uint64;
 }
 
-export class Rewards extends Contract {
+export type AllocationReclaimDetails = Omit<UserAllocationsKey, 'disbursementID'>
+
+export class Rewards extends ContractWithOptIn {
     programVersion = 10;
 
     /** version of the subscription contract */
@@ -80,7 +78,7 @@ export class Rewards extends Contract {
     daoAppID = GlobalStateKey<AppID>({ key: 'dao_app_id' });
 
     /** the disbursement */
-    _disbursementID = GlobalStateKey<uint64>({ key: 'disbursement_id' });
+    disbursementID = GlobalStateKey<uint64>({ key: 'disbursement_id' });
 
     /** the disbursement map of the bones token 
      * 
@@ -92,14 +90,14 @@ export class Rewards extends Contract {
 
     /** the user allocations of disbursements
      * 
-     * the key is the uint64 id of the disbursement
-     * the value is the address of the account that qualified
+     * the key is the address of the qualified account with the uint64 id of the disbursement
+     * the value is the asset and amount they are owed
      */
-    userAllocations = BoxMap<UserAllocationsKey, UserAllocationDetails>({ prefix: 'u' });
+    userAllocations = BoxMap<UserAllocationsKey, uint64>({ prefix: 'u' });
 
     private newDisbursementID(): uint64 {
-        const id = this._disbursementID.value;
-        this._disbursementID.value += 1;
+        const id = this.disbursementID.value;
+        this.disbursementID.value += 1;
         return id;
     }
 
@@ -179,13 +177,14 @@ export class Rewards extends Contract {
 
         let sum = 0;
         for (let i = 0; i < allocations.length; i += 1) {
-            const userAllocationsKey: UserAllocationsKey = { disbursementID: id, address: allocations[i].address };
+            const userAllocationsKey: UserAllocationsKey = {
+                disbursementID: id,
+                address: allocations[i].address,
+                asset: AssetID.fromUint64(0),
+            };
             assert(!this.userAllocations(userAllocationsKey).exists, errs.ALLOCATION_ALREADY_EXISTS);
 
-            this.userAllocations(userAllocationsKey).value = {
-                assetID: AssetID.fromUint64(0),
-                amount: allocations[i].amount,
-            };
+            this.userAllocations(userAllocationsKey).value = allocations[i].amount;
 
             this.disbursements(id).value.allocations += 1;
             this.disbursements(id).value.amount += allocations[i].amount;
@@ -205,10 +204,10 @@ export class Rewards extends Contract {
         mbrPayment: PayTxn,
         assetXfer: AssetTransferTxn,
         id: uint64,
-        assetID: AssetID,
+        asset: AssetID,
         allocations: UserAlloction[],
-        sum: uint64,
     ): void {
+        assert(this.app.address.isOptedInToAsset(asset), errs.APP_NOT_OPTED_INTO_ASSET);
         assert(this.disbursements(id).exists, errs.DISBURSEMENT_DOES_NOT_EXIST);
 
         const disbursement = this.disbursements(id).value;
@@ -216,20 +215,21 @@ export class Rewards extends Contract {
 
         let matchSum = 0;
         for (let i = 0; i < allocations.length; i += 1) {
-            const userAllocationsKey: UserAllocationsKey = { disbursementID: id, address: allocations[i].address };
+            const userAllocationsKey: UserAllocationsKey = {
+                disbursementID: id,
+                address: allocations[i].address,
+                asset: asset,
+            };
             assert(!this.userAllocations(userAllocationsKey).exists, errs.ALLOCATION_ALREADY_EXISTS);
 
-            this.userAllocations(userAllocationsKey).value = {
-                assetID: assetID,
-                amount: allocations[i].amount,
-            };
+            this.userAllocations(userAllocationsKey).value = allocations[i].amount
 
             this.disbursements(id).value.allocations += 1;
             this.disbursements(id).value.amount += allocations[i].amount;
             matchSum += allocations[i].amount;
         }
 
-        assert(sum === matchSum, errs.INVALID_SUM);
+        assert(assetXfer.assetAmount === matchSum, errs.INVALID_SUM);
 
         // each user allocation box raises the MBR by 24,900 microAlgo
         const mbrAmount = (24_900 * allocations.length);
@@ -239,19 +239,12 @@ export class Rewards extends Contract {
             receiver: this.app.address,
         });
 
-        if (!this.app.address.isOptedInToAsset(assetID)) { 
-            this.pendingGroup.addAssetTransfer({
-                assetReceiver: this.app.address,
-                assetAmount: 0,
-                xferAsset: assetID,
-                fee: 0,
-            });
-        }
-
         verifyAssetTransferTxn(assetXfer, {
             assetReceiver: this.app.address,
-            assetAmount: sum,
-            xferAsset: assetID,
+            assetAmount: {
+                greaterThan: 0,
+            },
+            xferAsset: asset,
             fee: 0,
         });
     }
@@ -278,21 +271,25 @@ export class Rewards extends Contract {
         this.disbursements(id).value.status = DISBURSEMENT_STATUS_FINAL;
     }
 
-    claimRewards(ids: uint64[]): void {
-        for (let i = 0; i < ids.length; i += 1) {
-            assert(this.disbursements(ids[i]).exists, errs.DISBURSEMENT_DOES_NOT_EXIST);
+    claimRewards(rewards: { id: uint64, asset: AssetID }[]): void {
+        for (let i = 0; i < rewards.length; i += 1) {
+            assert(this.disbursements(rewards[i].id).exists, errs.DISBURSEMENT_DOES_NOT_EXIST);
 
-            const disbursement = this.disbursements(ids[i]).value;
+            const disbursement = this.disbursements(rewards[i].id).value;
             assert(disbursement.timeToUnlock <= globals.latestTimestamp - 60, errs.DISBURSEMENT_LOCKED);
             assert(disbursement.expiration >= globals.latestTimestamp, errs.DISBURSEMENT_LOCKED);
             assert(disbursement.amount > disbursement.distributed, errs.DISBURSEMENT_FULLY_DISTRIBUTED);
 
-            const userAllocationsKey: UserAllocationsKey = { disbursementID: ids[i], address: this.txn.sender };
+            const userAllocationsKey: UserAllocationsKey = {
+                disbursementID: rewards[i].id,
+                address: this.txn.sender,
+                asset: rewards[i].asset,
+            };
             assert(this.userAllocations(userAllocationsKey).exists, errs.ALLOCATION_DOES_NOT_EXIST);
             const userAllocation = this.userAllocations(userAllocationsKey).value;
 
-            this.disbursements(ids[i]).value.allocations -= 1;
-            this.disbursements(ids[i]).value.distributed += userAllocation.amount;
+            this.disbursements(rewards[i].id).value.allocations -= 1;
+            this.disbursements(rewards[i].id).value.distributed += userAllocation;
             this.userAllocations(userAllocationsKey).delete();
 
             this.pendingGroup.addPayment({
@@ -301,20 +298,20 @@ export class Rewards extends Contract {
                 fee: 0,
             });
 
-            const isAlgo = userAllocation.assetID.id === 0;
+            const isAlgo = rewards[i].asset.id === 0;
 
             if (!isAlgo) {
                 this.pendingGroup.addAssetTransfer({
                     assetReceiver: this.txn.sender,
-                    assetAmount: userAllocation.amount,
-                    xferAsset: userAllocation.assetID,
+                    assetAmount: userAllocation,
+                    xferAsset: rewards[i].asset,
                     fee: 0,
                     note: disbursement.note,
                 });
             } else {
                 this.pendingGroup.addPayment({
                     receiver: this.txn.sender,
-                    amount: userAllocation.amount,
+                    amount: userAllocation,
                     fee: 0,
                     note: disbursement.note,
                 });
@@ -324,7 +321,7 @@ export class Rewards extends Contract {
         }
     }
 
-    reclaimRewards(id: uint64, allocations: UserAlloction[]): void {
+    reclaimRewards(id: uint64, allocations: AllocationReclaimDetails[]): void {
         assert(this.disbursements(id).exists, errs.DISBURSEMENT_DOES_NOT_EXIST);
         const disbursement = this.disbursements(id).value;
 
@@ -333,23 +330,26 @@ export class Rewards extends Contract {
         assert(disbursement.expiration <= globals.latestTimestamp, errs.DISBURSEMENT_NOT_EXPIRED);
 
         for (let i = 0; i < allocations.length; i += 1) {
-            const userAllocationsKey: UserAllocationsKey = { disbursementID: id, address: allocations[i].address };
+            const userAllocationsKey: UserAllocationsKey = {
+                disbursementID: id,
+                address: allocations[i].address,
+                asset: allocations[i].asset,
+            };
             assert(this.userAllocations(userAllocationsKey).exists, errs.ALLOCATION_DOES_NOT_EXIST);
 
             const userAllocation = this.userAllocations(userAllocationsKey).value;
-            assert(userAllocation.amount === allocations[i].amount, errs.ALLOCATION_DOES_NOT_EXIST);
 
-            this.userAllocations(userAllocationsKey).delete();
-            this.disbursements(id).value.amount -= allocations[i].amount;
+            this.disbursements(id).value.amount -= userAllocation;
             this.disbursements(id).value.allocations -= 1;
+            this.userAllocations(userAllocationsKey).delete();
 
-            const isAlgo = userAllocation.assetID.id === 0;
+            const isAlgo = allocations[i].asset.id === 0;
 
             if (!isAlgo) {
                 this.pendingGroup.addAssetTransfer({
                     assetReceiver: disbursement.creator,
-                    assetAmount: userAllocation.amount,
-                    xferAsset: userAllocation.assetID,
+                    assetAmount: userAllocation,
+                    xferAsset: allocations[i].asset,
                     fee: 0,
                 });
 
@@ -361,7 +361,7 @@ export class Rewards extends Contract {
             } else {
                 this.pendingGroup.addPayment({
                     receiver: disbursement.creator,
-                    amount: userAllocation.amount + allocationMBR,
+                    amount: userAllocation + allocationMBR,
                     fee: 0,
                 });
             }
