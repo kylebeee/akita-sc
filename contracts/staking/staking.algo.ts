@@ -82,7 +82,6 @@ export type AssetCheck = {
 }
 
 export class Staking extends Contract {
-    
     /** The App ID of the Akita DAO contract */
     akitaDaoAppID = TemplateVar<AppID>();
     /** The address that is allowed to call the 'beat' method to create heartbeat records */

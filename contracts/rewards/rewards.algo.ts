@@ -1,4 +1,4 @@
-import { AkitaAppIDsDAO } from '../../utils/constants';
+import { AkitaAppIDsDAO, MAX_UINT64 } from '../../utils/constants';
 import { ContractWithOptIn } from '../../utils/base_contracts/optin.algo';
 
 const errs = {
@@ -76,7 +76,6 @@ export class Rewards extends ContractWithOptIn {
     version = GlobalStateKey<uint64>({ key: 'version' });
     /** the app id for the Akita DAO */
     daoAppID = GlobalStateKey<AppID>({ key: 'dao_app_id' });
-
     /** the disbursement */
     disbursementID = GlobalStateKey<uint64>({ key: 'disbursement_id' });
 
@@ -101,6 +100,24 @@ export class Rewards extends ContractWithOptIn {
         return id;
     }
 
+    getDisbursementMBR(title: string, note: string): uint64 {
+        const currentMBR = this.app.address.minBalance;
+        this.disbursements(MAX_UINT64).value = {
+            creator: this.txn.sender,
+            status: DISBURSEMENT_STATUS_DRAFT,
+            title: title,
+            amount: 0,
+            timeToUnlock: 0,
+            expiration: 0,
+            allocations: 0,
+            distributed: 0,
+            note: note,
+        };
+        const afterMBR = this.app.address.minBalance;
+        this.disbursements(MAX_UINT64).delete();
+        return (afterMBR - currentMBR)
+    }
+
     createDisbursement(
         mbrPayment: PayTxn,
         feePayment: PayTxn,
@@ -111,7 +128,8 @@ export class Rewards extends ContractWithOptIn {
     ): uint64 {
 
         const id = this.newDisbursementID();
-
+        
+        const currentMBR = this.app.address.minBalance;
         this.disbursements(id).value = {
             creator: this.txn.sender,
             status: DISBURSEMENT_STATUS_DRAFT,
@@ -123,8 +141,9 @@ export class Rewards extends ContractWithOptIn {
             distributed: 0,
             note: note,
         };
+        const afterMBR = this.app.address.minBalance;
 
-        const mbrAmount = 1_000_000;
+        const mbrAmount = (afterMBR - currentMBR);
         verifyPayTxn(mbrPayment, {
             amount: mbrAmount,
             receiver: this.app.address,
@@ -165,11 +184,7 @@ export class Rewards extends ContractWithOptIn {
         };
     }
 
-    createUserAllocations(
-        payment: PayTxn,
-        id: uint64,
-        allocations: UserAlloction[]
-    ): void {
+    createUserAllocations(payment: PayTxn, id: uint64, allocations: UserAlloction[]): void {
         assert(this.disbursements(id).exists, errs.DISBURSEMENT_DOES_NOT_EXIST);
 
         const disbursement = this.disbursements(id).value;

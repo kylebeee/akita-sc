@@ -19,7 +19,7 @@ export class RaffleFactory extends ContractWithOptIn {
     /** the version of the child contract */
     childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
     /** The App ID of the Akita DAO contract */
-    akitaDaoAppID = TemplateVar<AppID>();
+    akitaDAO = TemplateVar<AppID>();
 
     appCreators = BoxMap<AppCreatorKey, uint64>();
 
@@ -28,7 +28,7 @@ export class RaffleFactory extends ContractWithOptIn {
     }
 
     updateApplication(): void {
-        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
+        assert(this.txn.sender === this.akitaDAO.address, errs.NOT_AKITA_DAO);
     }
 
     new(
@@ -77,7 +77,7 @@ export class RaffleFactory extends ContractWithOptIn {
                 minTickets,
                 maxTickets,
                 gateID,
-                this.akitaDaoAppID.globalState(AKITA_DAO_VRF_BEACON_APP_ID_KEY) as AppID,
+                this.akitaDAO,
             ],
             approvalProgram: Raffle.approvalProgram(),
             clearStateProgram: Raffle.clearProgram(),

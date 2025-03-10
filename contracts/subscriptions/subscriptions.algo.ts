@@ -111,7 +111,7 @@ export class Subscriptions extends ContractWithGate {
     /** version of the subscription contract */
     version = GlobalStateKey<uint64>({ key: 'version' });
     /** the app id for the Akita DAO */
-    daoAppID = GlobalStateKey<AppID>({ key: 'dao_app_id' });
+    akitaDAO = GlobalStateKey<AppID>({ key: 'akita_dao' });
 
     // 2_500 + (400 * (40 + 88)) = 53_700
     subscriptions = BoxMap<SubscriptionKey, SubscriptionInfo>();
@@ -176,13 +176,13 @@ export class Subscriptions extends ContractWithGate {
     }
 
     private getAmounts(amount: uint64): Amounts {
-        const akitaPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64;
+        const akitaPercentage = this.akitaDAO.value.globalState(SUBSCRIPTION_PAYMENT_PERCENTAGE_KEY) as uint64;
         let akitaFee = wideRatio([amount, akitaPercentage], [10000]);
         if (akitaFee === 0 && amount > 0) {
             akitaFee = 1;
         }
 
-        const triggerPercentage = this.daoAppID.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64;
+        const triggerPercentage = this.akitaDAO.value.globalState(SUBSCRIPTION_TRIGGER_PERCENTAGE_KEY) as uint64;
         let triggerFee = wideRatio([amount, triggerPercentage], [10000]);
         if (triggerFee === 0 && amount > 0) {
             triggerFee = 1;
@@ -205,7 +205,7 @@ export class Subscriptions extends ContractWithGate {
         });
         
         this.pendingGroup.addMethodCall<typeof AkitaDAO.prototype.arc58_rekeyToPlugin, void>({
-            applicationID: this.daoAppID.value,
+            applicationID: this.akitaDAO.value,
             methodArgs: [
                 AppID.fromUint64(AkitaAppIDsOptinPlugin),
                 [],
@@ -217,11 +217,11 @@ export class Subscriptions extends ContractWithGate {
         this.pendingGroup.addMethodCall<typeof OptInPlugin.prototype.optInToAsset, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsOptinPlugin),
             methodArgs: [
-                this.daoAppID.value,
+                this.akitaDAO.value,
                 true,
                 asset,
                 {
-                    receiver: this.daoAppID.value.address,
+                    receiver: this.akitaDAO.value.address,
                     amount: globals.assetOptInMinBalance,
                     fee: 0,
                 }
@@ -230,7 +230,7 @@ export class Subscriptions extends ContractWithGate {
         });
 
         this.pendingGroup.addMethodCall<typeof AbstractedAccount.prototype.arc58_verifyAuthAddr, void>({
-            applicationID: this.daoAppID.value,
+            applicationID: this.akitaDAO.value,
             fee: 0,
         });
 
@@ -325,7 +325,7 @@ export class Subscriptions extends ContractWithGate {
         // family passes have a max of 5
         assert(passes <= 5, errs.MAX_PASSES_IS_FIVE);
 
-        const serviceCreationFee = this.daoAppID.value.globalState(SUBSCRIPTION_SERVICE_CREATION_FEE) as uint64;
+        const serviceCreationFee = this.akitaDAO.value.globalState(SUBSCRIPTION_SERVICE_CREATION_FEE) as uint64;
 
         let requiredAmount = serviceCreationFee;
         if (asset.id !== 0) {
@@ -515,7 +515,7 @@ export class Subscriptions extends ContractWithGate {
         });
 
         this.pendingGroup.addPayment({
-            receiver: this.daoAppID.value.address,
+            receiver: this.akitaDAO.value.address,
             amount: (amounts.akitaFee + amounts.triggerFee),
             fee: 0,
         });
@@ -597,7 +597,7 @@ export class Subscriptions extends ContractWithGate {
             subIndex = this.subscriptionslist(this.txn.sender).value;
         }
         
-        if (!this.daoAppID.value.address.isOptedInToAsset(assetXfer.xferAsset)) {
+        if (!this.akitaDAO.value.address.isOptedInToAsset(assetXfer.xferAsset)) {
             this.arc58OptInAkitaDAO(assetXfer.xferAsset);
             algoMBRFee += globals.assetOptInMinBalance;
         }
@@ -632,7 +632,7 @@ export class Subscriptions extends ContractWithGate {
         });
 
         this.pendingGroup.addAssetTransfer({
-            assetReceiver: this.daoAppID.value.address,
+            assetReceiver: this.akitaDAO.value.address,
             xferAsset: assetXfer.xferAsset,
             assetAmount: (amounts.akitaFee + amounts.triggerFee),
             fee: 0,
@@ -734,7 +734,7 @@ export class Subscriptions extends ContractWithGate {
 
         if (isAsa) {
             this.pendingGroup.addAssetTransfer({
-                assetReceiver: this.daoAppID.value.address,
+                assetReceiver: this.akitaDAO.value.address,
                 xferAsset: sub.asset,
                 assetAmount: amounts.akitaFee,
                 fee: 0,

@@ -136,7 +136,7 @@ export class AbstractedAccount extends Contract {
     );
   }
 
-  private ensuresRekeyBack(txn: Txn): boolean {
+  private txnRekeysBack(txn: Txn): boolean {
     if (txn.sender === this.app.address && txn.rekeyTo === this.app.address) {
       return true;
     }
@@ -155,7 +155,7 @@ export class AbstractedAccount extends Contract {
     for (let i = (this.txn.groupIndex + 1); i < this.txnGroup.length; i += 1) {
       const txn = this.txnGroup[i];
 
-      if (this.ensuresRekeyBack(txn)) {
+      if (this.txnRekeysBack(txn)) {
         rekeysBack = true;
       }
     }
@@ -174,11 +174,15 @@ export class AbstractedAccount extends Contract {
     const gkey: PluginsKey = { application: app, allowedCaller: Address.zeroAddress };
     const key: PluginsKey = { application: app, allowedCaller: this.txn.sender };
 
+    // whether restrictions are applicable and applied to the plugin calls in the group
+    const globalRestrictions = checkGlobal && this.plugins(gkey).value.methods.length > 0;
+    const localRestrictions = checkLocal && this.plugins(key).value.methods.length > 0;
+    
     let rekeysBack = false;
-
-    const globalRestrictions = checkGlobal && this.plugins(gkey).size > 29;
-    const localRestrictions = checkLocal && this.plugins(key).size > 29;
     let methodIndex = 0;
+    // caller used is used to track which caller was used in the group
+    // that way on the return we can properly update the lastCalled round
+    // incase the plugin has a cooldown restriction
     let callerUsed: CallerUsed = {
       global: checkGlobal && !globalRestrictions,
       local: checkLocal && !localRestrictions,
@@ -187,8 +191,9 @@ export class AbstractedAccount extends Contract {
     for (let i = (this.txn.groupIndex + 1); i < this.txnGroup.length; i += 1) {
       const txn = this.txnGroup[i];
 
-      if (this.ensuresRekeyBack(txn)) {
+      if (this.txnRekeysBack(txn)) {
         rekeysBack = true;
+        break;
       }
 
       // we dont need to check method restrictions at all if none exist
@@ -244,7 +249,7 @@ export class AbstractedAccount extends Contract {
       // ignore calls to other applications
       (txn.applicationID !== app && txn.applicationID !== this.app) ||
       // ignore rekey back assert app call
-      this.ensuresRekeyBack(txn)
+      this.txnRekeysBack(txn)
     ) {
       return true;
     }
@@ -258,10 +263,10 @@ export class AbstractedAccount extends Contract {
    * @param txn the transaction being validated
    * @param app the plugin app id being validated
    * @param caller the address that triggered the plugin or global address
+   * @param offset the starting index of the method in the txn
    * @returns whether the method call is allowed
    */
   private methodCallAllowed(txn: Txn, app: AppID, caller: Address, offset: uint64): boolean {
-
     assert(txn.numAppArgs > 0, 'no method signature provided');
     assert(len(txn.applicationArgs[0]) === 4, 'invalid method signature length');
 

@@ -2,6 +2,7 @@ import { pcg64Init, pcg64Random } from "../../utils/types/lib_pcg/pcg64.algo";
 import { RandomnessBeacon } from "../../utils/types/vrf_beacon";
 import { MAX_UINT64 } from "../../utils/constants";
 import { ContractWithOptInCreatorOnlyArc59AndGate } from "../../utils/base_contracts/gate.algo";
+import { AppList } from "../dao/dao.algo";
 
 const errs = {
     TOO_SHORT: 'Raffles cannot be less than one hour',
@@ -38,6 +39,7 @@ const errs = {
 
 // const RANDOMNESS_BEACON_APPID_TESTNET: AppID = AppID.fromUint64(600011887);
 // const RANDOMNESS_BEACON_APPID_MAINNET: AppID = AppID.fromUint64(1615566206);
+const AKITA_DAO_APP_LIST_KEY = 'app_list';
 
 const entriesByAddressMBR = 18_900;
 const entryMBR = 18_900;
@@ -75,7 +77,6 @@ export type RaffleState = {
     prize: AssetID;
     rafflePrizeClaimed: boolean;
     gateID: uint64;
-    vrfBeaconAppID: AppID;
     vrfGetFailureCount: uint64;
     entryID: uint64;
     refundMBRCursor: uint64;
@@ -109,7 +110,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
     /** the gate to use for the raffle */
     gateID = GlobalStateKey<uint64>({ key: 'gate' });
     /** the app ID to fetch VRF proofs from */
-    vrfBeaconAppID = GlobalStateKey<AppID>({ key: 'vrf_beacon_app_id' });
+    akitaDAO = GlobalStateKey<AppID>({ key: 'akita_dao' });
     /** counter for how many times we've failed to get rng from the beacon */
     vrfGetFailureCount = GlobalStateKey<uint64>({ key: 'vrf_get_failure_count' });
     /** The id's of the raffle entries */
@@ -170,7 +171,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         minTickets: uint64,
         maxTickets: uint64,
         gateID: uint64,
-        vrfBeaconAppID: AppID,
+        akitaDAOAppID: AppID,
     ): void {
         this.prize.value = prize;
         this.ticketAsset.value = ticketAsset;
@@ -190,7 +191,7 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         this.raffleWinner.value = Address.zeroAddress;
         this.rafflePrizeClaimed.value = false;
         this.gateID.value = gateID;
-        this.vrfBeaconAppID.value = vrfBeaconAppID;
+        this.akitaDAO.value = akitaDAOAppID;
         this.entryID.value = 0;
         this.weightsBoxCount.value = 0;
         this.weightTotals.value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -320,8 +321,10 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
         assert(globals.round >= (roundToUse + 8), errs.NOT_ENOUGH_TIME);
         assert(this.winningTicket.value === 0, errs.WINNER_ALREADY_DRAWN);
 
+        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
+
         const seed = sendMethodCall<typeof RandomnessBeacon.prototype.get, bytes>({
-            applicationID: this.vrfBeaconAppID.value,
+            applicationID: akitaApps.vrfBeacon,
             methodArgs: [roundToUse, this.txn.txID],
             fee: 0,
         });
@@ -550,7 +553,6 @@ export class Raffle extends ContractWithOptInCreatorOnlyArc59AndGate {
             prize: this.prize.value,
             rafflePrizeClaimed: this.rafflePrizeClaimed.value,
             gateID: this.gateID.value,
-            vrfBeaconAppID: this.vrfBeaconAppID.value,
             vrfGetFailureCount: this.vrfGetFailureCount.value,
             entryID: this.entryID.value,
             refundMBRCursor: this.refundMBRCursor.value,
