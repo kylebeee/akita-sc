@@ -61,6 +61,11 @@ export type StakeValue = {
     expiration: uint64;
 }
 
+export type EscrowValue = {
+    hard: uint64;
+    lock: uint64;
+}
+
 export type HeartbeatKey = {
     address: Address;
     asset: AssetID;
@@ -125,6 +130,25 @@ export class Staking extends Contract {
         const sk: StakeKey = { address: address, asset: stake.asset, type: stake.type };
         assert(this.stakes(sk).exists, errs.NO_LOCK);
         return this.stakes(sk).value;
+    }
+
+    @abi.readonly
+    getEscrowInfo(address: Address, asset: AssetID): EscrowValue {
+        const sk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_HARD };
+        const lk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_LOCK };
+
+        let hard = 0;
+        let lock = 0;
+
+        if (this.stakes(sk).exists) {
+            hard = this.stakes(sk).value.amount;
+        }
+
+        if (this.stakes(lk).exists) {
+            lock = this.stakes(lk).value.amount;
+        }
+
+        return { hard: hard, lock: lock };
     }
 
     @abi.readonly
