@@ -1,11 +1,14 @@
 import { Contract, GlobalState, BoxMap, assert, arc4, uint64, Account, TransactionType, Application, abimethod, gtxn, itxn, bytes, Asset, op, Bytes } from '@algorandfoundation/algorand-typescript'
-import { decodeArc4, methodSelector, Struct } from '@algorandfoundation/algorand-typescript/arc4';
 import { AssetHolding, btoi, Global, len, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { AkitaDomain } from '../../utils/constants';
-import { AbstractAccountGlobalStateKeys } from './constants';
-import { errs } from './errs';
-import { AkitaDAOGlobalStateKeys } from '../dao/constants';
-import { AppList, arc4AppList } from '../dao/types';
+import { AbstractAccountGlobalStateKeysAdmin, AbstractAccountGlobalStateKeysAkitaDAO, AbstractAccountGlobalStateKeysAvatar, AbstractAccountGlobalStateKeysBanner, AbstractAccountGlobalStateKeysBio, AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysFactoryApp, AbstractAccountGlobalStateKeysNickname, AbstractAccountGlobalStateKeysRevocationApp, AbstractAccountGlobalStateKeysVersion } from './constants';
+import { ERR_BAD_DEPLOYER, ERR_DOES_NOT_HOLD_ASSET, ERR_ONLY_ADMIN_CAN_ADD_PLUGIN, ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME, ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE, ERR_ONLY_ADMIN_CAN_UPDATE } from './errs';
+import { DynamicArray } from '@algorandfoundation/algorand-typescript/arc4';
+
+const AkitaDomain: string = 'akita.community';
+
+function pluginsKey(app: Application, caller: Account): PluginsKey {
+  return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: new arc4.Address(caller) });
+} 
 
 export class PluginsKey extends arc4.Struct<{
   /** The application containing plugin logic */
@@ -73,33 +76,33 @@ type FullPluginValidation = {
 export class AbstractedAccount extends Contract {
 
   /** the version number of the wallet */
-  version = GlobalState<string>({ key: AbstractAccountGlobalStateKeys.version });
+  version = GlobalState<string>({ key: AbstractAccountGlobalStateKeysVersion });
 
   /** The admin of the abstracted account. This address can add plugins and initiate rekeys */
-  admin = GlobalState<Account>({ key: AbstractAccountGlobalStateKeys.admin });
+  admin = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysAdmin });
 
   /** The address this app controls */
-  controlledAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeys.controlledAddress });
+  controlledAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysControlledAddress });
 
   /** the application ID for the contract that deployed this wallet */
-  factoryApp = GlobalState<Application>({ key: AbstractAccountGlobalStateKeys.factoryApp });
+  factoryApp = GlobalState<Application>({ key: AbstractAccountGlobalStateKeysFactoryApp });
 
-  akitaDAO = GlobalState<Application>({ key: AbstractAccountGlobalStateKeys.akitaDAO });
+  akitaDAO = GlobalState<Application>({ key: AbstractAccountGlobalStateKeysAkitaDAO });
 
   /** The app that can revoke plugins */
-  revocationApp = GlobalState<Application>({ key: AbstractAccountGlobalStateKeys.revocationApp });
+  revocationApp = GlobalState<Application>({ key: AbstractAccountGlobalStateKeysRevocationApp });
 
   /** A user defined nickname for their wallet */
-  nickname = GlobalState<string>({ key: AbstractAccountGlobalStateKeys.nickname });
+  nickname = GlobalState<string>({ key: AbstractAccountGlobalStateKeysNickname });
 
   /** A user defined NFT to display as their avatar that the user owns */
-  avatar = GlobalState<Asset>({ key: AbstractAccountGlobalStateKeys.avatar });
+  avatar = GlobalState<Asset>({ key: AbstractAccountGlobalStateKeysAvatar });
 
   /** A user defined NFT to display as their banner that the user owns */
-  banner = GlobalState<Asset>({ key: AbstractAccountGlobalStateKeys.banner });
+  banner = GlobalState<Asset>({ key: AbstractAccountGlobalStateKeysBanner });
 
   /** A user defined description */
-  bio = GlobalState<string>({ key: AbstractAccountGlobalStateKeys.bio });
+  bio = GlobalState<string>({ key: AbstractAccountGlobalStateKeysBio });
 
   /**
    * Plugins that add functionality to the controlledAddress and the account that has permission to use it.
@@ -130,7 +133,7 @@ export class AbstractedAccount extends Contract {
     return (
       Txn.sender === this.admin.value ||
       this.domainKeys(Txn.sender).exists &&
-      this.domainKeys(Txn.sender).value == AkitaDomain
+      this.domainKeys(Txn.sender).value === AkitaDomain
     );
   }
 
@@ -142,9 +145,7 @@ export class AbstractedAccount extends Contract {
     return Txn.sender === this.revocationApp.value.address
   }
 
-  private pluginCallAllowed(app: arc4.UintN64, caller: arc4.Address, method: arc4.StaticBytes<4>): boolean {
-    const key = new PluginsKey({ application: app, allowedCaller: caller });
-
+  private pluginCallAllowed(key: PluginsKey, method: arc4.StaticBytes<4>): boolean {
     if (!this.plugins(key).exists) {
       return false;
     }
@@ -177,7 +178,7 @@ export class AbstractedAccount extends Contract {
       && txn.numAppArgs === 1
       // @ts-expect-error
       && txn.onCompletion === arc4.OnCompleteAction.NoOp
-      && txn.appArgs(0) === methodSelector('arc58_verifyAuthAddr()void')
+      && txn.appArgs(0) === arc4.methodSelector('arc58_verifyAuthAddr()void')
     )
   }
 
@@ -230,7 +231,7 @@ export class AbstractedAccount extends Contract {
     txn: gtxn.ApplicationTxn,
     app: Application,
     caller: Account,
-    methodOffsets: arc4.DynamicArray<arc4.UintN64>,
+    methodOffsets: uint64[],
     methodIndex: uint64
   ): FullPluginValidation {
     const check = this.pluginCheck(key);
@@ -252,7 +253,7 @@ export class AbstractedAccount extends Contract {
 
     if (check.hasMethodRestrictions) {
       assert(methodIndex < methodOffsets.length, 'malformed methodOffsets');
-      methodCheck = this.methodCheck(txn, app, caller, methodOffsets[methodIndex].native);
+      methodCheck = this.methodCheck(txn, app, caller, methodOffsets[methodIndex]);
     }
 
     return {
@@ -268,7 +269,7 @@ export class AbstractedAccount extends Contract {
    * @param app the plugin app id being validated
    * @param methodOffsets the indices of the methods being used in the group
    */
-  private assertValidGroup(plugin: Application, methodOffsets: arc4.DynamicArray<arc4.UintN64>) {
+  private assertValidGroup(plugin: Application, methodOffsets: uint64[]) {
 
     const gKey = new PluginsKey({
       application: new arc4.UintN64(plugin.id),
@@ -429,20 +430,20 @@ export class AbstractedAccount extends Contract {
    */
   @abimethod({ onCreate: 'require' })
   createApplication(
-    version: arc4.Str,
-    controlledAddress: arc4.Address,
-    admin: arc4.Address,
-    revocationApp: arc4.UintN64,
-    nickname: arc4.Str,
+    version: string,
+    controlledAddress: Account,
+    admin: Account,
+    revocationApp: Application,
+    nickname: string,
   ) {
-    assert(Global.callerApplicationId !== 0, errs.BAD_DEPLOYER)
+    assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
     assert(admin !== controlledAddress);
 
-    this.version.value = version.native;
-    this.controlledAddress.value = controlledAddress.native === Global.zeroAddress ? Global.currentApplicationAddress : controlledAddress.native;
-    this.admin.value = admin.native;
-    this.revocationApp.value = Application(revocationApp.native);
-    this.nickname.value = nickname.native;
+    this.version.value = version;
+    this.controlledAddress.value = controlledAddress === Global.zeroAddress ? Global.currentApplicationAddress : controlledAddress;
+    this.admin.value = admin;
+    this.revocationApp.value = revocationApp;
+    this.nickname.value = nickname;
     this.factoryApp.value = Application(Global.callerApplicationId);
   }
 
@@ -452,7 +453,7 @@ export class AbstractedAccount extends Contract {
    */
   @abimethod({ allowActions: ['UpdateApplication'] })
   updateApplication(version: string): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_UPDATE);
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_UPDATE);
     this.version.value = version;``
   }
 
@@ -461,9 +462,9 @@ export class AbstractedAccount extends Contract {
    * 
    * @param newRevocationApp the new revocation app
    */
-  changeRevocationApp(newRevocationApp: arc4.UintN64): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_REVOKE);
-    this.revocationApp.value = Application(newRevocationApp.native);
+  changeRevocationApp(newRevocationApp: Application): void {
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE);
+    this.revocationApp.value = newRevocationApp;
   }
 
   /**
@@ -471,9 +472,9 @@ export class AbstractedAccount extends Contract {
    * 
    * @param nickname the new nickname of the wallet
    */
-  setNickname(nickname: arc4.Str): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
-    this.nickname.value = nickname.native;
+  setNickname(nickname: string): void {
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    this.nickname.value = nickname;
   }
 
   /**
@@ -481,11 +482,11 @@ export class AbstractedAccount extends Contract {
    * 
    * @param avatar the new avatar of the wallet
    */
-  setAvatar(avatar: arc4.UintN64): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
-    const amount = this.balance(new arc4.DynamicArray<arc4.UintN64>(avatar));
-    assert(amount[0].native > 0, errs.DOES_NOT_HOLD_ASSET);
-    this.avatar.value = Asset(avatar.native);
+  setAvatar(avatar: Asset): void {
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    const amount = this.balance([avatar.id]);
+    assert(amount[0] > 0, ERR_DOES_NOT_HOLD_ASSET);
+    this.avatar.value = avatar;
   }
 
   /**
@@ -493,11 +494,11 @@ export class AbstractedAccount extends Contract {
    * 
    * @param banner the new banner of the wallet
    */
-  setBanner(banner: arc4.UintN64): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
-    const amount = this.balance(new arc4.DynamicArray<arc4.UintN64>(banner));
-    assert(amount[0].native > 0, errs.DOES_NOT_HOLD_ASSET);
-    this.banner.value = Asset(banner.native);
+  setBanner(banner: Asset): void {
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    const amount = this.balance([banner.id]);
+    assert(amount[0] > 0, ERR_DOES_NOT_HOLD_ASSET);
+    this.banner.value = banner;
   }
 
   /**
@@ -506,7 +507,7 @@ export class AbstractedAccount extends Contract {
    * @param bio the new bio of the wallet
    */
   setBio(bio: string): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
     this.bio.value = bio;
   }
 
@@ -515,10 +516,10 @@ export class AbstractedAccount extends Contract {
    *
    * @param newAdmin The new admin
    */
-  arc58_changeAdmin(newAdmin: arc4.Address): void {
+  arc58_changeAdmin(newAdmin: Account): void {
     // verifyTxn(this.txn, { sender: this.admin.value });
-    assert(Txn.sender === this.admin.value, 'Sender must be the admin');
-    this.admin.value = newAdmin.native;
+    assert(this.isAdmin(), 'Sender must be the admin');
+    this.admin.value = newAdmin;
   }
 
   /**
@@ -529,22 +530,22 @@ export class AbstractedAccount extends Contract {
    * @param newAdmin The new admin
    *
    */
-  arc58_pluginChangeAdmin(plugin: arc4.UintN64, allowedCaller: arc4.Address, newAdmin: arc4.Address): void {
+  arc58_pluginChangeAdmin(plugin: Application, allowedCaller: Account, newAdmin: Account): void {
     // verifyTxn(this.txn, { sender: Application(plugin.native).address });
-    assert(Txn.sender === Application(plugin.native).address, 'Sender must be the plugin');
+    assert(Txn.sender === plugin.address, 'Sender must be the plugin');
     assert(
-      this.controlledAddress.value.authAddress === Application(plugin.native).address,
+      this.controlledAddress.value.authAddress === plugin.address,
       'This plugin is not in control of the account'
     );
 
-    const key = new PluginsKey({ application: plugin, allowedCaller: allowedCaller });
+    const key = pluginsKey(plugin, allowedCaller);
 
     assert(
       this.plugins(key).exists && this.plugins(key).value.adminPrivileges.native,
       'This plugin does not have admin privileges'
     );
 
-    this.admin.value = newAdmin.native;
+    this.admin.value = newAdmin;
   }
 
   /**
@@ -552,8 +553,8 @@ export class AbstractedAccount extends Contract {
    * because different implementations may have different ways of determining the admin.
    */
   @abimethod({ readonly: true })
-  arc58_getAdmin(): arc4.Address {
-    return new arc4.Address(this.admin.value);
+  arc58_getAdmin(): Account {
+    return this.admin.value;
   }
 
   /**
@@ -569,21 +570,21 @@ export class AbstractedAccount extends Contract {
    * @param addr The address to rekey to
    * @param flash Whether or not this should be a flash rekey. If true, the rekey back to the app address must done in the same txn group as this call
    */
-  arc58_rekeyTo(address: arc4.Address, flash: arc4.Bool): void {
+  arc58_rekeyTo(address: Account, flash: boolean): void {
     // verifyAppCallTxn(this.txn, { sender: this.admin.value });
-    assert(Txn.sender === this.admin.value, 'Sender must be the admin');
+    assert(this.isAdmin(), 'Sender must be the admin');
 
     itxn
       .payment({
         sender: this.controlledAddress.value,
-        receiver: address.native,
-        rekeyTo: address.native,
+        receiver: address,
+        rekeyTo: address,
         note: 'rekeying abstracted account',
         fee: 0,
       })
       .submit();
 
-    if (flash.native) this.assertRekeysBack();
+    if (flash) this.assertRekeysBack();
   }
 
   /**
@@ -594,11 +595,12 @@ export class AbstractedAccount extends Contract {
    * @returns whether the plugin can be called via txn sender or globally
    */
   @abimethod({ readonly: true })
-  arc58_canCall(plugin: arc4.UintN64, address: arc4.Address, method: arc4.StaticBytes<4>): boolean {
-    const globalAllowed = this.pluginCallAllowed(plugin, new arc4.Address(Global.zeroAddress), method);
+  arc58_canCall(plugin: Application, caller: Account, method: arc4.StaticBytes<4>): boolean {
+
+    const globalAllowed = this.pluginCallAllowed(pluginsKey(plugin, caller), method);
     if (globalAllowed) return true;
 
-    return this.pluginCallAllowed(plugin, address, method);
+    return this.pluginCallAllowed(pluginsKey(plugin, caller), method);
   }
 
   /**
@@ -610,15 +612,15 @@ export class AbstractedAccount extends Contract {
    * the methods used on each subsequent call to the plugin within the group
    * 
    */
-  arc58_rekeyToPlugin(plugin: arc4.UintN64, methodOffsets: arc4.DynamicArray<arc4.UintN64>): void {
+  arc58_rekeyToPlugin(plugin: Application, methodOffsets: uint64[]): void {
 
-    this.assertValidGroup(Application(plugin.native), methodOffsets);
+    this.assertValidGroup(plugin, methodOffsets);
 
     itxn
       .payment({
         sender: this.controlledAddress.value,
         receiver: this.controlledAddress.value,
-        rekeyTo: Application(plugin.native).address,
+        rekeyTo: plugin.address,
         note: 'rekeying to plugin app',
         fee: 0,
       })
@@ -634,8 +636,8 @@ export class AbstractedAccount extends Contract {
    * the methods used on each subsequent call to the plugin within the group
    * 
    */
-  arc58_rekeyToNamedPlugin(name: string, methodOffsets: arc4.DynamicArray<arc4.UintN64>): void {
-    this.arc58_rekeyToPlugin(this.namedPlugins(name).value.application, methodOffsets);
+  arc58_rekeyToNamedPlugin(name: string, methodOffsets: uint64[]): void {
+    this.arc58_rekeyToPlugin(Application(this.namedPlugins(name).value.application.native), methodOffsets);
   }
 
   /**
@@ -651,16 +653,16 @@ export class AbstractedAccount extends Contract {
    * 
    */
   arc58_addPlugin(
-    app: arc4.UintN64,
-    allowedCaller: arc4.Address,
-    lastValidRound: arc4.UintN64,
-    cooldown: arc4.UintN64,
-    adminPrivileges: arc4.Bool,
-    methods: arc4.DynamicArray<MethodRestriction>,
+    app: Application,
+    allowedCaller: Account,
+    lastValidRound: uint64,
+    cooldown: uint64,
+    adminPrivileges: boolean,
+    methods: DynamicArray<MethodRestriction>,
   ): void {
     // verifyTxn(this.txn, { sender: this.admin.value });
-    assert(Txn.sender === this.admin.value, 'Sender must be the admin');
-    const key = new PluginsKey({ application: app, allowedCaller: allowedCaller });
+    assert(this.isAdmin(), 'Sender must be the admin');
+    const key = pluginsKey(app, allowedCaller);
 
     let methodInfos = new arc4.DynamicArray<MethodInfo>();
     for (let i: uint64 = 0; i < methods.length; i += 1) {
@@ -672,10 +674,10 @@ export class AbstractedAccount extends Contract {
     }
 
     this.plugins(key).value = new PluginInfo({
-      lastValidRound: lastValidRound,
-      cooldown: cooldown,
+      lastValidRound: new arc4.UintN64(lastValidRound),
+      cooldown: new arc4.UintN64(cooldown),
       lastCalled: new arc4.UintN64(),
-      adminPrivileges: adminPrivileges,
+      adminPrivileges: new arc4.Bool(adminPrivileges),
       methods: methodInfos.copy(),
     });
   }
@@ -686,9 +688,9 @@ export class AbstractedAccount extends Contract {
    * @param caller The address of the passkey
    * @param domain The domain to assign to the passkey
    */
-  assignDomain(caller: arc4.Address, domain: arc4.Str): void {
-    assert(this.isAdmin(), errs.ONLY_ADMIN_CAN_ADD_PLUGIN);
-    this.domainKeys(caller.native).value = domain.native;
+  assignDomain(caller: Account, domain: string): void {
+    assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_ADD_PLUGIN);
+    this.domainKeys(caller).value = domain;
   }
 
   /**
@@ -699,11 +701,10 @@ export class AbstractedAccount extends Contract {
    * @param methods The methods that to remove before attempting to uninstall the plugin
    * or the global zero address for all addresses
    */
-  arc58_removePlugin(app: arc4.UintN64, allowedCaller: arc4.Address): void {
-    // verifyTxn(this.txn, { sender: this.admin.value });
-    assert(Txn.sender === this.admin.value, 'Sender must be the admin');
+  arc58_removePlugin(app: Application, allowedCaller: Account): void {
+    assert(this.isAdmin() || this.canRevoke(), 'Sender must be the admin');
 
-    const key = new PluginsKey({ application: app, allowedCaller: allowedCaller });
+    const key = pluginsKey(app, allowedCaller);
     assert(this.plugins(key).exists, 'plugin does not exist');
     this.plugins(key).delete();
   }
@@ -722,20 +723,19 @@ export class AbstractedAccount extends Contract {
    * 
    */
   arc58_addNamedPlugin(
-    name: arc4.Str,
-    app: arc4.UintN64,
-    allowedCaller: arc4.Address,
-    lastValidRound: arc4.UintN64,
-    cooldown: arc4.UintN64,
-    adminPrivileges: arc4.Bool,
-    methods: arc4.DynamicArray<MethodRestriction>,
+    name: string,
+    app: Application,
+    allowedCaller: Account,
+    lastValidRound: uint64,
+    cooldown: uint64,
+    adminPrivileges: boolean,
+    methods: DynamicArray<MethodRestriction>,
   ): void {
-    // verifyTxn(this.txn, { sender: this.admin.value });
-    assert(Txn.sender === this.admin.value, 'Sender must be the admin');
-    assert(!this.namedPlugins(name.native).exists);
+    assert(this.isAdmin(), 'Sender must be the admin');
+    assert(!this.namedPlugins(name).exists);
 
-    const key = new PluginsKey({ application: app, allowedCaller: allowedCaller });
-    this.namedPlugins(name.native).value = key.copy();
+    const key = pluginsKey(app, allowedCaller);
+    this.namedPlugins(name).value = key.copy();
 
     let methodInfos = new arc4.DynamicArray<MethodInfo>();
     for (let i: uint64 = 0; i < methods.length; i += 1) {
@@ -747,10 +747,10 @@ export class AbstractedAccount extends Contract {
     }
 
     this.plugins(key).value = new PluginInfo({
-      lastValidRound: lastValidRound,
-      cooldown: cooldown,
+      lastValidRound: new arc4.UintN64(lastValidRound),
+      cooldown: new arc4.UintN64(cooldown),
       lastCalled: new arc4.UintN64(),
-      adminPrivileges: adminPrivileges,
+      adminPrivileges: new arc4.Bool(adminPrivileges),
       methods: methodInfos.copy(),
     })
   }
@@ -761,14 +761,14 @@ export class AbstractedAccount extends Contract {
    * @param name The plugin name
    * 
    */
-  arc58_removeNamedPlugin(name: arc4.Str): void {
+  arc58_removeNamedPlugin(name: string): void {
     // verifyTxn(this.txn, { sender: this.admin.value });
-    assert(Txn.sender === this.admin.value, 'Sender must be the admin');
-    assert(this.namedPlugins(name.native).exists, 'plugin does not exist');
-    const app = this.namedPlugins(name.native).value.copy();
+    assert(this.isAdmin() || this.canRevoke(), 'Sender must be the admin');
+    assert(this.namedPlugins(name).exists, 'plugin does not exist');
+    const app = this.namedPlugins(name).value.copy();
     assert(this.plugins(app).exists, 'plugin does not exist');
 
-    this.namedPlugins(name.native).delete();
+    this.namedPlugins(name).delete();
     this.plugins(app).delete();
   }
 
@@ -776,13 +776,13 @@ export class AbstractedAccount extends Contract {
    * Get the balance of a set of assets in the account
    * 
    */
-  balance(assets: arc4.DynamicArray<arc4.UintN64>): arc4.DynamicArray<arc4.UintN64> {
-    let amounts = new arc4.DynamicArray<arc4.UintN64>();
+  balance(assets: uint64[]): uint64[] {
+    let amounts: uint64[] = [];
     for (let i: uint64 = 0; i < assets.length; i += 1) {
-      let amount = 0;
-      const asset = assets[i].native;
+      let amount: uint64 = 0;
+      const asset = Asset(assets[i]);
 
-      if (asset === 0) {
+      if (asset.id === 0) {
         amount = Global.currentApplicationAddress.balance;
       } else {
         const [holdingAmount, optedIn] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset);
@@ -791,7 +791,7 @@ export class AbstractedAccount extends Contract {
         }
       }
 
-      let staked = 0;
+      let staked: uint64 = 0;
 
       // TODO: implement when its clear how to decode the appList & we have availability on methodCalls
       // if (!accountHolds) {
@@ -810,7 +810,7 @@ export class AbstractedAccount extends Contract {
       //   staked = escrowInfo.value.staked.native + escrowInfo.value.locked.native;
       // }
 
-      amounts.push(new arc4.UintN64(amount + staked));
+      amounts = [...amounts, (amount + staked)];
     }
 
     return amounts;

@@ -1,12 +1,10 @@
-export const AbstractAccountGlobalStateKeys = {
-    version: 'version',
-    admin: 'admin',
-    controlledAddress: 'controlled_address',
-    factoryApp: 'factory_app_id',
-    akitaDAO: 'akita_dao_app_id',
-    revocationApp: 'revocation_app_id',
-    nickname: 'nickname',
-    avatar: 'avatar',
-    banner: 'banner',
-    bio: 'bio'
-}
+export const AbstractAccountGlobalStateKeysVersion = 'version';
+export const AbstractAccountGlobalStateKeysAdmin = 'admin';
+export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address';
+export const AbstractAccountGlobalStateKeysFactoryApp = 'factory_app_id';
+export const AbstractAccountGlobalStateKeysAkitaDAO = 'akita_dao_app_id';
+export const AbstractAccountGlobalStateKeysRevocationApp = 'revocation_app_id';
+export const AbstractAccountGlobalStateKeysNickname = 'nickname';
+export const AbstractAccountGlobalStateKeysAvatar = 'avatar';
+export const AbstractAccountGlobalStateKeysBanner = 'banner';
+export const AbstractAccountGlobalStateKeysBio = 'bio';

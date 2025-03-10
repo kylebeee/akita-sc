@@ -1,20 +1,17 @@
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
-
-import algosdk, { makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
+import * as algokit from '@algorandfoundation/algokit-utils';
+import algosdk, { Algodv2, makeBasicAccountTransactionSigner } from 'algosdk';
 import { microAlgos } from '@algorandfoundation/algokit-utils';
-import { AbstractedAccountClient, AbstractedAccountFactory } from '../clients/AbstractedAccountClient';
-import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../clients/AbstractedAccountFactoryClient';
-import { ABSTRACTED_ACCOUNT_MINT_PAYMENT } from './abstract_account_plugins.test';
+import { AbstractedAccountClient, AbstractedAccountFactory } from '../contracts/clients/AbstractedAccountClient';
 
+const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 const fixture = algorandFixture();
 
 describe('Rekeying Test', () => {
   // let algod: Algodv2;
   /** Alice's externally owned account (ie. a keypair account she has in Defly) */
   let aliceEOA: algosdk.Account;
-  /** The client for the abstracted account factory */
-  let abstractedAccountFactoryClient: AbstractedAccountFactoryClient;
   /** The address of Alice's new abstracted account. Sends app calls from aliceEOA unless otherwise specified */
   let aliceAbstractedAccount: string;
   /** The client for Alice's abstracted account */
@@ -32,49 +29,14 @@ describe('Rekeying Test', () => {
 
     await algod.setBlockOffsetTimestamp(60).do();
 
-    const minterFactory = new AbstractedAccountFactoryFactory({
+    const minter = new AbstractedAccountFactory({
       defaultSender: aliceEOA.addr,
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
-      algorand
+      algorand,
     });
+    const results = await minter.send.create.createApplication({ args: { admin: aliceEOA.addr, controlledAddress: ZERO_ADDRESS }});
 
-    const results = await minterFactory.send.create.createApplication({
-      args: {
-        version: '1',
-        revocationAppId: 0
-      }
-    });
-
-    abstractedAccountFactoryClient = results.appClient;
-    
-    const mintPayment = makePaymentTxnWithSuggestedParamsFromObject({
-      from: aliceEOA.addr,
-      to: abstractedAccountFactoryClient.appAddress,
-      amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
-      suggestedParams: suggestedParams
-    })
-    
-    const mResults = await abstractedAccountFactoryClient.send.mint({
-      sender: aliceEOA.addr,
-      signer: makeBasicAccountTransactionSigner(aliceEOA),
-      args: {
-        payment: mintPayment,
-        admin: aliceEOA.addr,
-        nickname: 'Alice'
-      },
-      extraFee: (2_000).microAlgo()
-    });
-    
-    const freshAbstractedAccountId = mResults.return!;
-
-    abstractedAccountClient = algorand.client.getTypedAppClientById(
-      AbstractedAccountClient,
-      {
-        defaultSender: aliceEOA.addr,
-        defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
-        appId: freshAbstractedAccountId
-      }
-    );
+    abstractedAccountClient = results.appClient;
     aliceAbstractedAccount = abstractedAccountClient.appAddress;
 
     // Fund the abstracted account with some ALGO to later spend
@@ -90,17 +52,17 @@ describe('Rekeying Test', () => {
           sender: aliceEOA.addr,
           extraFee: (1000).microAlgos(),
           args: {
-            addr: aliceEOA.addr,
+            address: aliceEOA.addr,
             flash: true,
           }
         })
         // Step two: make payment from abstracted account
         .addTransaction(algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-            from: aliceAbstractedAccount,
-            to: aliceAbstractedAccount,
-            amount: 0,
-            suggestedParams: { ...suggestedParams, fee: 1000, flatFee: true },
-          }),
+          from: aliceAbstractedAccount,
+          to: aliceAbstractedAccount,
+          amount: 0,
+          suggestedParams: { ...suggestedParams, fee: 1000, flatFee: true },
+        }),
           // signer: makeBasicAccountTransactionSigner(aliceEOA),
         ).send()
     ).rejects.toThrowError();

@@ -1,0 +1,710 @@
+{
+  "version": 3,
+  "sources": [
+    "/Users/kylebreeding/akita/contracts/akita-contracts/contracts/arc58/constants.ts",
+    "/Users/kylebreeding/akita/contracts/akita-contracts/contracts/arc58/plugins/optin.algo.ts"
+  ],
+  "mappings": ";;;;;ACGA;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;AAKE;;AAAA;AAAA;AAAA;;AAAA;AALF;;;AAAA;AAAA;;AAAA;;;;AAAA;AAAA;;;AAAA;AAAA;;AAAA;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAKE;;;AAAA;;AAHC;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;;AAGD;;;AACmC;;ADP0B;;;;;;;;;;;;;;;;;;;;ACO1B;AAAA;AAGf;;AAAA;;AAAiB;;AAA5B;AAAP;AAEA;AAMa;;AAAA;;;AAAmB;;AAAA;;AAAA;;;;;;;AAFf;;;;;;;;;;AAJjB;;;;AAOS;;;AAPT;;AAMiD;;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "@algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1"
+    },
+    "5": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "7": {
+      "op": "bz main_after_if_else@8",
+      "stack_out": []
+    },
+    "10": {
+      "op": "pushbytess 0xb8447b36 0xd9d61ea8 // method \"createApplication()void\", method \"optInToAsset(application,bool,asset,pay)void\"",
+      "defined_out": [
+        "Method(createApplication()void)",
+        "Method(optInToAsset(application,bool,asset,pay)void)"
+      ],
+      "stack_out": [
+        "Method(createApplication()void)",
+        "Method(optInToAsset(application,bool,asset,pay)void)"
+      ]
+    },
+    "22": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(createApplication()void)",
+        "Method(optInToAsset(application,bool,asset,pay)void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(createApplication()void)",
+        "Method(optInToAsset(application,bool,asset,pay)void)",
+        "tmp%2#0"
+      ]
+    },
+    "25": {
+      "op": "match main_createApplication_route@3 main_optInToAsset_route@4",
+      "stack_out": []
+    },
+    "31": {
+      "block": "main_after_if_else@8",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "32": {
+      "op": "return",
+      "stack_out": []
+    },
+    "33": {
+      "block": "main_optInToAsset_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "35": {
+      "op": "!",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "36": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "37": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "39": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "40": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_bytes[1]%0#0"
+      ],
+      "stack_out": [
+        "reinterpret_bytes[1]%0#0"
+      ]
+    },
+    "43": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "44": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "46": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "reinterpret_bytes[1]%1#0",
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "reinterpret_bytes[1]%1#0"
+      ]
+    },
+    "49": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "reinterpret_bytes[1]%1#0",
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "reinterpret_bytes[1]%1#0",
+        "0"
+      ]
+    },
+    "50": {
+      "op": "getbit",
+      "defined_out": [
+        "tmp%12#0",
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0"
+      ]
+    },
+    "51": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "reinterpret_bytes[1]%2#0",
+        "tmp%12#0",
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "reinterpret_bytes[1]%2#0"
+      ]
+    },
+    "54": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%14#0"
+      ]
+    },
+    "55": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0"
+      ]
+    },
+    "57": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "tmp%16#0"
+      ]
+    },
+    "59": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "tmp%16#0",
+        "1"
+      ]
+    },
+    "60": {
+      "op": "-",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "gtxn_idx%0#0"
+      ]
+    },
+    "61": {
+      "op": "dup",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)",
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ]
+    },
+    "62": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ]
+    },
+    "64": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay",
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ]
+    },
+    "65": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0",
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "66": {
+      "error": "transaction type is pay",
+      "op": "assert // transaction type is pay",
+      "stack_out": [
+        "tmp%12#0",
+        "tmp%13#0",
+        "tmp%15#0",
+        "gtxn_idx%0#0"
+      ]
+    },
+    "67": {
+      "callsub": "contracts/arc58/plugins/optin.algo.ts::OptInPlugin.optInToAsset",
+      "op": "callsub optInToAsset",
+      "stack_out": []
+    },
+    "70": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "71": {
+      "op": "return",
+      "stack_out": []
+    },
+    "72": {
+      "block": "main_createApplication_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "74": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "75": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "76": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "78": {
+      "op": "!",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "79": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "80": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "81": {
+      "op": "return",
+      "stack_out": []
+    },
+    "82": {
+      "subroutine": "contracts/arc58/plugins/optin.algo.ts::OptInPlugin.optInToAsset",
+      "params": {
+        "sender#0": "uint64",
+        "rekeyBack#0": "uint64",
+        "asset#0": "uint64",
+        "mbrPayment#0": "uint64"
+      },
+      "block": "optInToAsset",
+      "stack_in": [],
+      "op": "proto 4 0"
+    },
+    "85": {
+      "op": "frame_dig -4",
+      "defined_out": [
+        "sender#0 (copy)"
+      ],
+      "stack_out": [
+        "sender#0 (copy)"
+      ]
+    },
+    "87": {
+      "op": "pushbytes \"controlled_address\"",
+      "defined_out": [
+        "\"controlled_address\"",
+        "sender#0 (copy)"
+      ],
+      "stack_out": [
+        "sender#0 (copy)",
+        "\"controlled_address\""
+      ]
+    },
+    "107": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "_#0",
+        "controlledAccountBytes#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "_#0"
+      ]
+    },
+    "108": {
+      "op": "pop",
+      "defined_out": [
+        "controlledAccountBytes#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "109": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "controlledAccountBytes#0",
+        "mbrPayment#0 (copy)"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "mbrPayment#0 (copy)"
+      ]
+    },
+    "111": {
+      "op": "gtxns Amount",
+      "defined_out": [
+        "controlledAccountBytes#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "tmp%0#0"
+      ]
+    },
+    "113": {
+      "op": "global AssetOptInMinBalance",
+      "defined_out": [
+        "controlledAccountBytes#0",
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "115": {
+      "op": ">=",
+      "defined_out": [
+        "controlledAccountBytes#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "tmp%2#0"
+      ]
+    },
+    "116": {
+      "error": "asset mismatch",
+      "op": "assert // asset mismatch",
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "117": {
+      "op": "itxn_begin"
+    },
+    "118": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "controlledAccountBytes#0",
+        "rekeyBack#0 (copy)"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "rekeyBack#0 (copy)"
+      ]
+    },
+    "120": {
+      "op": "bz optInToAsset_ternary_false@2",
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "123": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "sender#0 (copy)"
+      ]
+    },
+    "125": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "controlledAccountBytes#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "127": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "defined_out": [
+        "controlledAccountBytes#0",
+        "ternary_result%0#1"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "ternary_result%0#1"
+      ]
+    },
+    "128": {
+      "block": "optInToAsset_ternary_merge@3",
+      "stack_in": [
+        "controlledAccountBytes#0",
+        "ternary_result%0#1"
+      ],
+      "op": "itxn_field RekeyTo",
+      "defined_out": [],
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "130": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "asset#0 (copy)"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "asset#0 (copy)"
+      ]
+    },
+    "132": {
+      "op": "itxn_field XferAsset",
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "134": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "0"
+      ]
+    },
+    "135": {
+      "op": "itxn_field AssetAmount",
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "137": {
+      "op": "frame_dig 0",
+      "defined_out": [
+        "controlledAccountBytes#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "controlledAccountBytes#0"
+      ]
+    },
+    "139": {
+      "op": "dup",
+      "defined_out": [
+        "controlledAccountBytes#0",
+        "controlledAccountBytes#0 (copy)"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "controlledAccountBytes#0",
+        "controlledAccountBytes#0 (copy)"
+      ]
+    },
+    "140": {
+      "op": "itxn_field AssetReceiver",
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "controlledAccountBytes#0"
+      ]
+    },
+    "142": {
+      "op": "itxn_field Sender",
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "144": {
+      "op": "pushint 4 // 4",
+      "defined_out": [
+        "4",
+        "controlledAccountBytes#0"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "4"
+      ]
+    },
+    "146": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "148": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "0"
+      ]
+    },
+    "149": {
+      "op": "itxn_field Fee",
+      "stack_out": [
+        "controlledAccountBytes#0"
+      ]
+    },
+    "151": {
+      "op": "itxn_submit"
+    },
+    "152": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "153": {
+      "block": "optInToAsset_ternary_false@2",
+      "stack_in": [
+        "controlledAccountBytes#0"
+      ],
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "ternary_result%0#1"
+      ],
+      "stack_out": [
+        "controlledAccountBytes#0",
+        "ternary_result%0#1"
+      ]
+    },
+    "155": {
+      "op": "b optInToAsset_ternary_merge@3"
+    }
+  }
+}

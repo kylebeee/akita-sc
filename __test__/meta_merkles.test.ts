@@ -55,7 +55,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addSchema({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -67,7 +67,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addSchema({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -79,7 +79,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addSchema({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -91,7 +91,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addSchema({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -103,7 +103,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addType({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -115,7 +115,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addType({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -127,7 +127,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addType({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -139,7 +139,7 @@ describe('MetaMerkles', () => {
 
     await metaMerklesClient.send.addType({
       args: {
-        pmt: await algorand.createTransaction.payment({
+        payment: await algorand.createTransaction.payment({
           sender: bobsAccount.addr,
           signer: makeBasicAccountTransactionSigner(bobsAccount),
           receiver: metaMerklesAppAddress,
@@ -165,7 +165,7 @@ describe('MetaMerkles', () => {
       await metaMerklesClient.send.addRoot({
         sender: bobsAccount.addr,
         args: {
-          pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+          payment: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
             from: bobsAccount.addr,
             to: metaMerklesAppAddress,
             amount: rootCosts,
@@ -186,7 +186,7 @@ describe('MetaMerkles', () => {
       await metaMerklesClient.send.addData({
         sender: bobsAccount.addr,
         args: {
-          pmt: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+          payment: algosdk.makePaymentTxnWithSuggestedParamsFromObject({
             from: bobsAccount.addr,
             to: metaMerklesAppAddress,
             amount: 2_500 + (400 * (48 + key.length + value.length)),

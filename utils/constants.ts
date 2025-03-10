@@ -1,15 +1,13 @@
-import { Contract } from '@algorandfoundation/tealscript';
+export const MAX_UINT64 = '18446744073709551615';
 
-export const MAX_UINT64 = Uint<64>('18446744073709551615');
+export const AkitaDomain: string = 'akita.community';
 
-export const AkitaDomain = 'akita.community';
+export const EMPTY_BYTES_16 = 'AAAAAAAAAAAAAAAA';
+export const EMPTY_BYTES_32 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+export const EMPTY_BYTES_36 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+export const EMPTY_BYTES_59 = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
-export const EMPTY_BYTES_16: bytes<16> = 'AAAAAAAAAAAAAAAA' as bytes<16>;
-export const EMPTY_BYTES_32: bytes<32> = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' as bytes<32>;
-export const EMPTY_BYTES_36: bytes<36> = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' as bytes<36>;
-export const EMPTY_BYTES_59: bytes<59> = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' as bytes<59>;
-
-export const AkitaNFTCreatorAddress = addr('AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI');
+export const AkitaNFTCreatorAddress = 'AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI';
 
 export const AkitaCollectionsPrefixAKC = 'AKC';
 export const AkitaCollectionsPrefixAOG = 'AOG';
