@@ -1,3 +1,9 @@
+import { arc4, uint64 } from "@algorandfoundation/algorand-typescript";
+
+export const arc4Zero = new arc4.UintN64(0)
+
+export const DIVISOR: uint64 = 10_000
+
 export const MAX_UINT64 = '18446744073709551615';
 
 export const AkitaDomain: string = 'akita.community';
@@ -12,45 +18,45 @@ export const AkitaNFTCreatorAddress = 'AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK
 export const AkitaCollectionsPrefixAKC = 'AKC';
 export const AkitaCollectionsPrefixAOG = 'AOG';
 
-export const AkitaAppIDsActionsPoll = 0;
+export const AkitaAppIDsActionsPoll: uint64 = 0;
 
-export const AkitaAppIDsAbstractedAccountFactory = 0;
-export const AkitaAppIDsAbstractedAccount = 0;
+export const AkitaAppIDsAbstractedAccountFactory: uint64 = 0;
+export const AkitaAppIDsAbstractedAccount: uint64 = 0;
 
-export const AkitaAppIDsAkitaSocialPlugin = 0;
-export const AkitaAppIDsAkitaSocialImpactPlugin = 1;
-export const AkitaAppIDsAkitaHyperSwapPlugin = 0;
-export const AkitaAppIDsAkitaMBRPlugin = 0;
-export const AkitaAppIDsNFDPlugin = 0;
-export const AkitaAppIDsOptinPlugin = 0;
-export const AkitaAppIDsStakingPlugin = 0;
-export const AkitaAppIDsSubscriptionsPlugin = 0;
+export const AkitaAppIDsAkitaSocialPlugin: uint64 = 0;
+export const AkitaAppIDsAkitaSocialImpactPlugin: uint64 = 1;
+export const AkitaAppIDsAkitaHyperSwapPlugin: uint64 = 0;
+export const AkitaAppIDsAkitaMBRPlugin: uint64 = 0;
+export const AkitaAppIDsNFDPlugin: uint64 = 0;
+export const AkitaAppIDsOptinPlugin: uint64 = 0;
+export const AkitaAppIDsStakingPlugin: uint64 = 0;
+export const AkitaAppIDsSubscriptionsPlugin: uint64 = 0;
 
-export const AkitaAppIDsDAO = 0;
+export const AkitaAppIDsDAO: uint64 = 0;
 
-export const AkitaAppIDsGate = 0;
-export const AkitaAppIDsAssetGate = 0;
-export const AkitaAppIDsFollowerCountGate = 0;
-export const AkitaAppIDsFollowerIndexGate = 0;
-export const AkitaAppIDsImpactGate = 0;
-export const AkitaAppIDsMerkleAddressGate = 0;
-export const AkitaAppIDsMerkleAssetGate = 0;
-export const AkitaAppIDsNFDGate = 0;
-export const AkitaAppIDsStakingAmountGate = 0;
-export const AkitaAppIDsStakingPowerGate = 0;
-export const AkitaAppIDsSubscriptionsGate = 0;
-export const AkitaAppIDsSubscriptionsStreakGate = 0;
+export const AkitaAppIDsGate: uint64 = 0;
+export const AkitaAppIDsAssetGate: uint64 = 0;
+export const AkitaAppIDsFollowerCountGate: uint64 = 0;
+export const AkitaAppIDsFollowerIndexGate: uint64 = 0;
+export const AkitaAppIDsImpactGate: uint64 = 0;
+export const AkitaAppIDsMerkleAddressGate: uint64 = 0;
+export const AkitaAppIDsMerkleAssetGate: uint64 = 0;
+export const AkitaAppIDsNFDGate: uint64 = 0;
+export const AkitaAppIDsStakingAmountGate: uint64 = 0;
+export const AkitaAppIDsStakingPowerGate: uint64 = 0;
+export const AkitaAppIDsSubscriptionsGate: uint64 = 0;
+export const AkitaAppIDsSubscriptionsStreakGate: uint64 = 0;
 
-export const AkitaAppIDsHyperSwap = 0;
-export const AkitaAppIDsMetaMerkles = 0;
-export const AkitaAppIDsRewards = 0;
-export const AkitaAppIDsStaking = 0;
-export const AkitaAppIDsSubscriptions = 0;
+export const AkitaAppIDsHyperSwap: uint64 = 0;
+export const AkitaAppIDsMetaMerkles: uint64 = 0;
+export const AkitaAppIDsRewards: uint64 = 0;
+export const AkitaAppIDsStaking: uint64 = 0;
+export const AkitaAppIDsSubscriptions: uint64 = 0;
 
-export const AkitaAssetAkita = 0; // 523683256
-export const AkitaAssetBones = 0;
-export const AkitaAssetYoink = 0; // 1073483571
+export const AkitaAssetAkita: uint64 = 0; // 523683256
+export const AkitaAssetBones: uint64 = 0;
+export const AkitaAssetYoink: uint64 = 0; // 1073483571
 
-export const OtherAppIDsAssetInbox = 0;
-export const OtherAppIDsNFDRegistry = 0;
-export const OtherAppIDsAkitaRootNFD = 0;
+export const OtherAppIDsAssetInbox: uint64 = 0;
+export const OtherAppIDsNFDRegistry: uint64 = 0;
+export const OtherAppIDsAkitaRootNFD: uint64 = 0;

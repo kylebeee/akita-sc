@@ -751,7 +751,7 @@ export class MetaMerklesFactory {
   public async deploy(params: MetaMerklesDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? MetaMerklesParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? MetaMerklesParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (MetaMerklesCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new MetaMerklesClient(result.appClient) }
   }
@@ -814,7 +814,7 @@ export class MetaMerklesFactory {
        */
       createApplication: async (params: CallParams<MetaMerklesArgs['obj']['createApplication()void'] | MetaMerklesArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(MetaMerklesParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | MetaMerklesReturns['createApplication()void'] }, appClient: new MetaMerklesClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | MetaMerklesReturns['createApplication()void']) }, appClient: new MetaMerklesClient(result.appClient) }
       },
     },
 
@@ -1290,7 +1290,7 @@ export class MetaMerklesClient {
      */
     rootCosts: async (params: CallParams<MetaMerklesArgs['obj']['rootCosts(string)uint64'] | MetaMerklesArgs['tuple']['rootCosts(string)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.rootCosts(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['rootCosts(string)uint64']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['rootCosts(string)uint64'])}
     },
 
     /**
@@ -1306,7 +1306,7 @@ export class MetaMerklesClient {
      */
     addRoot: async (params: CallParams<MetaMerklesArgs['obj']['addRoot(pay,string,byte[32],uint64,uint64)void'] | MetaMerklesArgs['tuple']['addRoot(pay,string,byte[32],uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.addRoot(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['addRoot(pay,string,byte[32],uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['addRoot(pay,string,byte[32],uint64,uint64)void'])}
     },
 
     /**
@@ -1319,7 +1319,7 @@ export class MetaMerklesClient {
      */
     deleteRoot: async (params: CallParams<MetaMerklesArgs['obj']['deleteRoot(string)void'] | MetaMerklesArgs['tuple']['deleteRoot(string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.deleteRoot(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['deleteRoot(string)void']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['deleteRoot(string)void'])}
     },
 
     /**
@@ -1332,7 +1332,7 @@ export class MetaMerklesClient {
      */
     updateRoot: async (params: CallParams<MetaMerklesArgs['obj']['updateRoot(string,byte[32])void'] | MetaMerklesArgs['tuple']['updateRoot(string,byte[32])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.updateRoot(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['updateRoot(string,byte[32])void']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['updateRoot(string,byte[32])void'])}
     },
 
     /**
@@ -1347,7 +1347,7 @@ export class MetaMerklesClient {
      */
     addData: async (params: CallParams<MetaMerklesArgs['obj']['addData(pay,string,string,string)void'] | MetaMerklesArgs['tuple']['addData(pay,string,string,string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.addData(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['addData(pay,string,string,string)void']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['addData(pay,string,string,string)void'])}
     },
 
     /**
@@ -1360,7 +1360,7 @@ export class MetaMerklesClient {
      */
     deleteData: async (params: CallParams<MetaMerklesArgs['obj']['deleteData(string,string)void'] | MetaMerklesArgs['tuple']['deleteData(string,string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.deleteData(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['deleteData(string,string)void']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['deleteData(string,string)void'])}
     },
 
     /**
@@ -1373,7 +1373,7 @@ export class MetaMerklesClient {
      */
     verify: async (params: CallParams<MetaMerklesArgs['obj']['verify(address,string,byte[32],byte[32][],uint64)bool'] | MetaMerklesArgs['tuple']['verify(address,string,byte[32],byte[32][],uint64)bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.verify(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['verify(address,string,byte[32],byte[32][],uint64)bool']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['verify(address,string,byte[32],byte[32][],uint64)bool'])}
     },
 
     /**
@@ -1388,7 +1388,7 @@ export class MetaMerklesClient {
      */
     read: async (params: CallParams<MetaMerklesArgs['obj']['read(address,string,string)string'] | MetaMerklesArgs['tuple']['read(address,string,string)string']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.read(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['read(address,string,string)string']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['read(address,string,string)string'])}
     },
 
     /**
@@ -1410,7 +1410,7 @@ export class MetaMerklesClient {
      */
     verifiedRead: async (params: CallParams<MetaMerklesArgs['obj']['verifiedRead(address,string,byte[32],byte[32][],uint64,string)string'] | MetaMerklesArgs['tuple']['verifiedRead(address,string,byte[32],byte[32][],uint64,string)string']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.verifiedRead(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['verifiedRead(address,string,byte[32],byte[32][],uint64,string)string']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['verifiedRead(address,string,byte[32],byte[32][],uint64,string)string'])}
     },
 
     /**
@@ -1432,7 +1432,7 @@ export class MetaMerklesClient {
      */
     verifiedMustRead: async (params: CallParams<MetaMerklesArgs['obj']['verifiedMustRead(address,string,byte[32],byte[32][],uint64,string)string'] | MetaMerklesArgs['tuple']['verifiedMustRead(address,string,byte[32],byte[32][],uint64,string)string']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.verifiedMustRead(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['verifiedMustRead(address,string,byte[32],byte[32][],uint64,string)string']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['verifiedMustRead(address,string,byte[32],byte[32][],uint64,string)string'])}
     },
 
     /**
@@ -1443,7 +1443,7 @@ export class MetaMerklesClient {
      */
     addType: async (params: CallParams<MetaMerklesArgs['obj']['addType(pay,string)void'] | MetaMerklesArgs['tuple']['addType(pay,string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.addType(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['addType(pay,string)void']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['addType(pay,string)void'])}
     },
 
     /**
@@ -1454,7 +1454,7 @@ export class MetaMerklesClient {
      */
     addSchema: async (params: CallParams<MetaMerklesArgs['obj']['addSchema(pay,string)void'] | MetaMerklesArgs['tuple']['addSchema(pay,string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MetaMerklesParamsFactory.addSchema(params))
-      return {...result, return: result.return as undefined | MetaMerklesReturns['addSchema(pay,string)void']}
+      return {...result, return: result.return as unknown as (undefined | MetaMerklesReturns['addSchema(pay,string)void'])}
     },
 
   }
@@ -1479,7 +1479,7 @@ export class MetaMerklesClient {
    */
   async rootCosts(params: CallParams<MetaMerklesArgs['obj']['rootCosts(string)uint64'] | MetaMerklesArgs['tuple']['rootCosts(string)uint64']>) {
     const result = await this.appClient.send.call(MetaMerklesParamsFactory.rootCosts(params))
-    return result.return as MetaMerklesReturns['rootCosts(string)uint64']
+    return result.return as unknown as MetaMerklesReturns['rootCosts(string)uint64']
   }
 
   /**
@@ -1494,7 +1494,7 @@ export class MetaMerklesClient {
    */
   async read(params: CallParams<MetaMerklesArgs['obj']['read(address,string,string)string'] | MetaMerklesArgs['tuple']['read(address,string,string)string']>) {
     const result = await this.appClient.send.call(MetaMerklesParamsFactory.read(params))
-    return result.return as MetaMerklesReturns['read(address,string,string)string']
+    return result.return as unknown as MetaMerklesReturns['read(address,string,string)string']
   }
 
   /**
@@ -1895,7 +1895,7 @@ export type MetaMerklesComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

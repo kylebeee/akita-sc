@@ -694,8 +694,8 @@ export class RaffleFactory {
   public async deploy(params: RaffleDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? RaffleParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      deleteParams: params.deleteParams?.method ? RaffleParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams,
+      createParams: params.createParams?.method ? RaffleParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (RaffleCreateCallParams & { args: Uint8Array[] }) : undefined,
+      deleteParams: params.deleteParams?.method ? RaffleParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams ? params.deleteParams as (RaffleDeleteCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new RaffleClient(result.appClient) }
   }
@@ -773,7 +773,7 @@ export class RaffleFactory {
        */
       createApplication: async (params: CallParams<RaffleArgs['obj']['createApplication(uint64,uint64,uint64,uint64,address,uint64,uint64,uint64,uint64)void'] | RaffleArgs['tuple']['createApplication(uint64,uint64,uint64,uint64,address,uint64,uint64,uint64,uint64)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(RaffleParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | RaffleReturns['createApplication(uint64,uint64,uint64,uint64,address,uint64,uint64,uint64,uint64)void'] }, appClient: new RaffleClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | RaffleReturns['createApplication(uint64,uint64,uint64,uint64,address,uint64,uint64,uint64,uint64)void']) }, appClient: new RaffleClient(result.appClient) }
       },
     },
 
@@ -1211,7 +1211,7 @@ export class RaffleClient {
        */
       deleteApplication: async (params: CallParams<RaffleArgs['obj']['deleteApplication()void'] | RaffleArgs['tuple']['deleteApplication()void']> & SendParams = {args: []}) => {
         const result = await this.appClient.send.delete(RaffleParamsFactory.delete.deleteApplication(params))
-        return {...result, return: result.return as undefined | RaffleReturns['deleteApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | RaffleReturns['deleteApplication()void'])}
       },
 
     },
@@ -1236,7 +1236,7 @@ export class RaffleClient {
      */
     optin: async (params: CallParams<RaffleArgs['obj']['optin(pay,uint64)void'] | RaffleArgs['tuple']['optin(pay,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.optin(params))
-      return {...result, return: result.return as undefined | RaffleReturns['optin(pay,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['optin(pay,uint64)void'])}
     },
 
     /**
@@ -1249,7 +1249,7 @@ export class RaffleClient {
      */
     isLive: async (params: CallParams<RaffleArgs['obj']['isLive()bool'] | RaffleArgs['tuple']['isLive()bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.isLive(params))
-      return {...result, return: result.return as undefined | RaffleReturns['isLive()bool']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['isLive()bool'])}
     },
 
     /**
@@ -1260,7 +1260,7 @@ export class RaffleClient {
      */
     init: async (params: CallParams<RaffleArgs['obj']['init(pay,uint64)void'] | RaffleArgs['tuple']['init(pay,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.init(params))
-      return {...result, return: result.return as undefined | RaffleReturns['init(pay,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['init(pay,uint64)void'])}
     },
 
     /**
@@ -1271,7 +1271,7 @@ export class RaffleClient {
      */
     enter: async (params: CallParams<RaffleArgs['obj']['enter(pay,byte[][])void'] | RaffleArgs['tuple']['enter(pay,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.enter(params))
-      return {...result, return: result.return as undefined | RaffleReturns['enter(pay,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['enter(pay,byte[][])void'])}
     },
 
     /**
@@ -1282,7 +1282,7 @@ export class RaffleClient {
      */
     enterAsa: async (params: CallParams<RaffleArgs['obj']['enterAsa(pay,axfer,byte[][])void'] | RaffleArgs['tuple']['enterAsa(pay,axfer,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.enterAsa(params))
-      return {...result, return: result.return as undefined | RaffleReturns['enterAsa(pay,axfer,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['enterAsa(pay,axfer,byte[][])void'])}
     },
 
     /**
@@ -1293,7 +1293,7 @@ export class RaffleClient {
      */
     add: async (params: CallParams<RaffleArgs['obj']['add(pay,byte[][])void'] | RaffleArgs['tuple']['add(pay,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.add(params))
-      return {...result, return: result.return as undefined | RaffleReturns['add(pay,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['add(pay,byte[][])void'])}
     },
 
     /**
@@ -1304,7 +1304,7 @@ export class RaffleClient {
      */
     addAsa: async (params: CallParams<RaffleArgs['obj']['addAsa(axfer,byte[][])void'] | RaffleArgs['tuple']['addAsa(axfer,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.addAsa(params))
-      return {...result, return: result.return as undefined | RaffleReturns['addAsa(axfer,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['addAsa(axfer,byte[][])void'])}
     },
 
     /**
@@ -1315,7 +1315,7 @@ export class RaffleClient {
      */
     raffle: async (params: CallParams<RaffleArgs['obj']['raffle()void'] | RaffleArgs['tuple']['raffle()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.raffle(params))
-      return {...result, return: result.return as undefined | RaffleReturns['raffle()void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['raffle()void'])}
     },
 
     /**
@@ -1326,7 +1326,7 @@ export class RaffleClient {
      */
     findWinner: async (params: CallParams<RaffleArgs['obj']['findWinner()void'] | RaffleArgs['tuple']['findWinner()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.findWinner(params))
-      return {...result, return: result.return as undefined | RaffleReturns['findWinner()void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['findWinner()void'])}
     },
 
     /**
@@ -1337,7 +1337,7 @@ export class RaffleClient {
      */
     refundMbr: async (params: CallParams<RaffleArgs['obj']['refundMBR()void'] | RaffleArgs['tuple']['refundMBR()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.refundMbr(params))
-      return {...result, return: result.return as undefined | RaffleReturns['refundMBR()void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['refundMBR()void'])}
     },
 
     /**
@@ -1348,7 +1348,7 @@ export class RaffleClient {
      */
     claimRafflePrize: async (params: CallParams<RaffleArgs['obj']['claimRafflePrize()void'] | RaffleArgs['tuple']['claimRafflePrize()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.claimRafflePrize(params))
-      return {...result, return: result.return as undefined | RaffleReturns['claimRafflePrize()void']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['claimRafflePrize()void'])}
     },
 
     /**
@@ -1359,7 +1359,7 @@ export class RaffleClient {
      */
     clearWeightsBoxes: async (params: CallParams<RaffleArgs['obj']['clearWeightsBoxes()uint64'] | RaffleArgs['tuple']['clearWeightsBoxes()uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.clearWeightsBoxes(params))
-      return {...result, return: result.return as undefined | RaffleReturns['clearWeightsBoxes()uint64']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['clearWeightsBoxes()uint64'])}
     },
 
     /**
@@ -1370,7 +1370,7 @@ export class RaffleClient {
      */
     getState: async (params: CallParams<RaffleArgs['obj']['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)'] | RaffleArgs['tuple']['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(RaffleParamsFactory.getState(params))
-      return {...result, return: result.return as undefined | RaffleReturns['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)']}
+      return {...result, return: result.return as unknown as (undefined | RaffleReturns['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)'])}
     },
 
   }
@@ -1395,7 +1395,7 @@ export class RaffleClient {
    */
   async isLive(params: CallParams<RaffleArgs['obj']['isLive()bool'] | RaffleArgs['tuple']['isLive()bool']> = {args: []}) {
     const result = await this.appClient.send.call(RaffleParamsFactory.isLive(params))
-    return result.return as RaffleReturns['isLive()bool']
+    return result.return as unknown as RaffleReturns['isLive()bool']
   }
 
   /**
@@ -1484,11 +1484,11 @@ export class RaffleClient {
       /**
        * Get the current value of the gateID key in global state
        */
-      gateId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("gateId")) as bigint | undefined },
+      gateId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("gateID")) as bigint | undefined },
       /**
        * Get the current value of the vrfBeaconAppID key in global state
        */
-      vrfBeaconAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("vrfBeaconAppId")) as bigint | undefined },
+      vrfBeaconAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("vrfBeaconAppID")) as bigint | undefined },
       /**
        * Get the current value of the vrfGetFailureCount key in global state
        */
@@ -1496,7 +1496,7 @@ export class RaffleClient {
       /**
        * Get the current value of the entryID key in global state
        */
-      entryId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("entryId")) as bigint | undefined },
+      entryId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("entryID")) as bigint | undefined },
       /**
        * Get the current value of the weightsBoxCount key in global state
        */
@@ -1508,7 +1508,7 @@ export class RaffleClient {
       /**
        * Get the current value of the refundMBRCursor key in global state
        */
-      refundMbrCursor: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("refundMbrCursor")) as bigint | undefined },
+      refundMbrCursor: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("refundMBRCursor")) as bigint | undefined },
     },
     /**
      * Methods to access box state for the current Raffle app
@@ -1869,7 +1869,7 @@ export type RaffleComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

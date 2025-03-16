@@ -302,7 +302,7 @@ export class NfdGateFactory {
   public async deploy(params: NfdGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? NfdGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? NfdGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (NfdGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new NfdGateClient(result.appClient) }
   }
@@ -365,7 +365,7 @@ export class NfdGateFactory {
        */
       createApplication: async (params: CallParams<NfdGateArgs['obj']['createApplication()void'] | NfdGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(NfdGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | NfdGateReturns['createApplication()void'] }, appClient: new NfdGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | NfdGateReturns['createApplication()void']) }, appClient: new NfdGateClient(result.appClient) }
       },
     },
 
@@ -549,7 +549,7 @@ export class NfdGateClient {
      */
     register: async (params: CallParams<NfdGateArgs['obj']['register(byte[])uint64'] | NfdGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | NfdGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | NfdGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -560,7 +560,7 @@ export class NfdGateClient {
      */
     check: async (params: CallParams<NfdGateArgs['obj']['check(byte[])bool'] | NfdGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | NfdGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | NfdGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -674,7 +674,7 @@ export type NfdGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

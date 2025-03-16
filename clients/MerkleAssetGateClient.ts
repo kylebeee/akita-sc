@@ -344,7 +344,7 @@ export class MerkleAssetGateFactory {
   public async deploy(params: MerkleAssetGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? MerkleAssetGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? MerkleAssetGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (MerkleAssetGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new MerkleAssetGateClient(result.appClient) }
   }
@@ -407,7 +407,7 @@ export class MerkleAssetGateFactory {
        */
       createApplication: async (params: CallParams<MerkleAssetGateArgs['obj']['createApplication()void'] | MerkleAssetGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(MerkleAssetGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | MerkleAssetGateReturns['createApplication()void'] }, appClient: new MerkleAssetGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | MerkleAssetGateReturns['createApplication()void']) }, appClient: new MerkleAssetGateClient(result.appClient) }
       },
     },
 
@@ -591,7 +591,7 @@ export class MerkleAssetGateClient {
      */
     register: async (params: CallParams<MerkleAssetGateArgs['obj']['register(byte[])uint64'] | MerkleAssetGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MerkleAssetGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | MerkleAssetGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | MerkleAssetGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -602,7 +602,7 @@ export class MerkleAssetGateClient {
      */
     check: async (params: CallParams<MerkleAssetGateArgs['obj']['check(byte[])bool'] | MerkleAssetGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MerkleAssetGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | MerkleAssetGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | MerkleAssetGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -760,7 +760,7 @@ export type MerkleAssetGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

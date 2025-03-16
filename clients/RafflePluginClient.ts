@@ -450,7 +450,7 @@ export class RafflePluginFactory {
   public async deploy(params: RafflePluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? RafflePluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? RafflePluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (RafflePluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new RafflePluginClient(result.appClient) }
   }
@@ -513,7 +513,7 @@ export class RafflePluginFactory {
        */
       createApplication: async (params: CallParams<RafflePluginArgs['obj']['createApplication()void'] | RafflePluginArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(RafflePluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | RafflePluginReturns['createApplication()void'] }, appClient: new RafflePluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | RafflePluginReturns['createApplication()void']) }, appClient: new RafflePluginClient(result.appClient) }
       },
     },
 
@@ -797,7 +797,7 @@ export class RafflePluginClient {
      */
     new: async (params: CallParams<RafflePluginArgs['obj']['new(uint64,bool,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64'] | RafflePluginArgs['tuple']['new(uint64,bool,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RafflePluginParamsFactory.new(params))
-      return {...result, return: result.return as undefined | RafflePluginReturns['new(uint64,bool,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | RafflePluginReturns['new(uint64,bool,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)uint64'])}
     },
 
     /**
@@ -808,7 +808,7 @@ export class RafflePluginClient {
      */
     enter: async (params: CallParams<RafflePluginArgs['obj']['enter(uint64,bool,uint64,uint64,byte[][])void'] | RafflePluginArgs['tuple']['enter(uint64,bool,uint64,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RafflePluginParamsFactory.enter(params))
-      return {...result, return: result.return as undefined | RafflePluginReturns['enter(uint64,bool,uint64,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | RafflePluginReturns['enter(uint64,bool,uint64,uint64,byte[][])void'])}
     },
 
     /**
@@ -819,7 +819,7 @@ export class RafflePluginClient {
      */
     add: async (params: CallParams<RafflePluginArgs['obj']['add(uint64,bool,uint64,uint64,byte[][])void'] | RafflePluginArgs['tuple']['add(uint64,bool,uint64,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RafflePluginParamsFactory.add(params))
-      return {...result, return: result.return as undefined | RafflePluginReturns['add(uint64,bool,uint64,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | RafflePluginReturns['add(uint64,bool,uint64,uint64,byte[][])void'])}
     },
 
     /**
@@ -830,7 +830,7 @@ export class RafflePluginClient {
      */
     raffle: async (params: CallParams<RafflePluginArgs['obj']['raffle(uint64,bool,uint64)void'] | RafflePluginArgs['tuple']['raffle(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RafflePluginParamsFactory.raffle(params))
-      return {...result, return: result.return as undefined | RafflePluginReturns['raffle(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RafflePluginReturns['raffle(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -841,7 +841,7 @@ export class RafflePluginClient {
      */
     findWinner: async (params: CallParams<RafflePluginArgs['obj']['findWinner(uint64,bool,uint64)void'] | RafflePluginArgs['tuple']['findWinner(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RafflePluginParamsFactory.findWinner(params))
-      return {...result, return: result.return as undefined | RafflePluginReturns['findWinner(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RafflePluginReturns['findWinner(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -852,7 +852,7 @@ export class RafflePluginClient {
      */
     claimRafflePrize: async (params: CallParams<RafflePluginArgs['obj']['claimRafflePrize(uint64,bool,uint64)void'] | RafflePluginArgs['tuple']['claimRafflePrize(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RafflePluginParamsFactory.claimRafflePrize(params))
-      return {...result, return: result.return as undefined | RafflePluginReturns['claimRafflePrize(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RafflePluginReturns['claimRafflePrize(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -863,7 +863,7 @@ export class RafflePluginClient {
      */
     deleteRaffleApplication: async (params: CallParams<RafflePluginArgs['obj']['deleteRaffleApplication(uint64,bool,uint64)void'] | RafflePluginArgs['tuple']['deleteRaffleApplication(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RafflePluginParamsFactory.deleteRaffleApplication(params))
-      return {...result, return: result.return as undefined | RafflePluginReturns['deleteRaffleApplication(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RafflePluginReturns['deleteRaffleApplication(uint64,bool,uint64)void'])}
     },
 
   }
@@ -1062,7 +1062,7 @@ export type RafflePluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

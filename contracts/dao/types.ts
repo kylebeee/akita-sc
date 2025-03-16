@@ -1,17 +1,28 @@
 import { Account, Application, arc4, Asset, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
 
 export type ProposalDetails = {
-    status: uint64;
-    action: uint64;
-    cid: bytes;
-    creator: Account;
-    created: uint64;
-    votes: uint64;
-    plugin: Application;
-    executionKey: ExecutionKey;
+    status: uint64
+    action: uint64
+    cid: bytes
+    created: uint64
+    votes: uint64
+    plugin: uint64
+    executionKey: ExecutionKey
+    creator: arc4.Address
 }
 
-export type ExecutionKey = bytes;
+export class arc4ProposalDetails extends arc4.Struct<{
+    status: arc4.UintN64
+    action: arc4.UintN64
+    cid: arc4.StaticBytes<36>
+    created: arc4.UintN64
+    votes: arc4.UintN64
+    plugin: arc4.UintN64
+    executionKey: ExecutionKey
+    creator: arc4.Address
+}> {}
+
+export type ExecutionKey = arc4.StaticBytes<32>
 
 export type ExecutionInfo = {
     /** whether the txn group has been executed */
@@ -19,6 +30,11 @@ export type ExecutionInfo = {
     /** The last round at which this plugin can be called */
     lastValidRound: uint64;
 };
+
+export class arc4ExecutionInfo extends arc4.Struct<{
+    executed: arc4.Bool
+    lastValidRound: arc4.UintN64
+}> {}
 
 // distribute Bones for DAU
 // distribute Bones for Bones Stakers
@@ -43,21 +59,21 @@ export type AkitaDAOState = {
 }
 
 export type AppList = {
-    vrfBeacon: Application; // vrf beacon
-    social: Application; // social app
-    impact: Application; // impact app
-    staking: Application; // universal staking
-    rewards: Application; // akita rewards distro
-    pool: Application; // akita staking pools
-    subscriptions: Application; // akita subscriptions
-    gate: Application; // main gate
-    nfdRegistry: Application; // NFD Registry
-    nfd: Application; // Akita Root NFD
-    auction: Application; // Akita Auctions
-    hyperSwap: Application; // Akita HyperSwap
-    raffle: Application; // Akita Raffle
-    metaMerkles: Application; // Akita MetaMerkles
-    marketplace: Application; // Akita Marketplace
+    vrfBeacon: uint64; // vrf beacon
+    social: uint64; // social app
+    impact: uint64; // impact app
+    staking: uint64; // universal staking
+    rewards: uint64; // akita rewards distro
+    pool: uint64; // akita staking pools
+    subscriptions: uint64; // akita subscriptions
+    gate: uint64; // main gate
+    nfdRegistry: uint64; // NFD Registry
+    nfd: uint64; // Akita Root NFD
+    auction: uint64; // Akita Auctions
+    hyperSwap: uint64; // Akita HyperSwap
+    raffle: uint64; // Akita Raffle
+    metaMerkles: uint64; // Akita MetaMerkles
+    marketplace: uint64; // Akita Marketplace
 }
 
 export class arc4AppList extends arc4.Struct<{

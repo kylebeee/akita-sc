@@ -285,7 +285,7 @@ export class PollFactoryFactory {
   public async deploy(params: PollFactoryDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? PollFactoryParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? PollFactoryParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (PollFactoryCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new PollFactoryClient(result.appClient) }
   }
@@ -348,7 +348,7 @@ export class PollFactoryFactory {
        */
       createApplication: async (params: CallParams<PollFactoryArgs['obj']['createApplication()void'] | PollFactoryArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(PollFactoryParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | PollFactoryReturns['createApplication()void'] }, appClient: new PollFactoryClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | PollFactoryReturns['createApplication()void']) }, appClient: new PollFactoryClient(result.appClient) }
       },
     },
 
@@ -512,7 +512,7 @@ export class PollFactoryClient {
      */
     mint: async (params: CallParams<PollFactoryArgs['obj']['mint(pay,uint64,uint64,uint64,uint64,string,string[])uint64'] | PollFactoryArgs['tuple']['mint(pay,uint64,uint64,uint64,uint64,string,string[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PollFactoryParamsFactory.mint(params))
-      return {...result, return: result.return as undefined | PollFactoryReturns['mint(pay,uint64,uint64,uint64,uint64,string,string[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | PollFactoryReturns['mint(pay,uint64,uint64,uint64,uint64,string,string[])uint64'])}
     },
 
   }
@@ -609,7 +609,7 @@ export type PollFactoryComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

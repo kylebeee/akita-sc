@@ -345,7 +345,7 @@ export class FollowerIndexGateFactory {
   public async deploy(params: FollowerIndexGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? FollowerIndexGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? FollowerIndexGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (FollowerIndexGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new FollowerIndexGateClient(result.appClient) }
   }
@@ -408,7 +408,7 @@ export class FollowerIndexGateFactory {
        */
       createApplication: async (params: CallParams<FollowerIndexGateArgs['obj']['createApplication()void'] | FollowerIndexGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(FollowerIndexGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | FollowerIndexGateReturns['createApplication()void'] }, appClient: new FollowerIndexGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | FollowerIndexGateReturns['createApplication()void']) }, appClient: new FollowerIndexGateClient(result.appClient) }
       },
     },
 
@@ -592,7 +592,7 @@ export class FollowerIndexGateClient {
      */
     register: async (params: CallParams<FollowerIndexGateArgs['obj']['register(byte[])uint64'] | FollowerIndexGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(FollowerIndexGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | FollowerIndexGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | FollowerIndexGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -603,7 +603,7 @@ export class FollowerIndexGateClient {
      */
     check: async (params: CallParams<FollowerIndexGateArgs['obj']['check(byte[])bool'] | FollowerIndexGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(FollowerIndexGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | FollowerIndexGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | FollowerIndexGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -761,7 +761,7 @@ export type FollowerIndexGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

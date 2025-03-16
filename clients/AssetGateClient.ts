@@ -399,8 +399,8 @@ export class AssetGateFactory {
   public async deploy(params: AssetGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? AssetGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      updateParams: params.updateParams?.method ? AssetGateParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams,
+      createParams: params.createParams?.method ? AssetGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (AssetGateCreateCallParams & { args: Uint8Array[] }) : undefined,
+      updateParams: params.updateParams?.method ? AssetGateParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams ? params.updateParams as (AssetGateUpdateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new AssetGateClient(result.appClient) }
   }
@@ -478,7 +478,7 @@ export class AssetGateFactory {
        */
       createApplication: async (params: CallParams<AssetGateArgs['obj']['createApplication()void'] | AssetGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(AssetGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | AssetGateReturns['createApplication()void'] }, appClient: new AssetGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | AssetGateReturns['createApplication()void']) }, appClient: new AssetGateClient(result.appClient) }
       },
     },
 
@@ -688,7 +688,7 @@ export class AssetGateClient {
        */
       updateApplication: async (params: CallParams<AssetGateArgs['obj']['updateApplication()void'] | AssetGateArgs['tuple']['updateApplication()void']> & AppClientCompilationParams & SendParams = {args: []}) => {
         const result = await this.appClient.send.update(AssetGateParamsFactory.update.updateApplication(params))
-        return {...result, return: result.return as undefined | AssetGateReturns['updateApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | AssetGateReturns['updateApplication()void'])}
       },
 
     },
@@ -711,7 +711,7 @@ export class AssetGateClient {
      */
     register: async (params: CallParams<AssetGateArgs['obj']['register(byte[])uint64'] | AssetGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AssetGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | AssetGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | AssetGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -722,7 +722,7 @@ export class AssetGateClient {
      */
     check: async (params: CallParams<AssetGateArgs['obj']['check(byte[])bool'] | AssetGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AssetGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | AssetGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | AssetGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -889,7 +889,7 @@ export type AssetGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

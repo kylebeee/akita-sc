@@ -256,7 +256,7 @@ export class ActionsFactory {
   public async deploy(params: ActionsDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? ActionsParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? ActionsParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (ActionsCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new ActionsClient(result.appClient) }
   }
@@ -319,7 +319,7 @@ export class ActionsFactory {
        */
       createApplication: async (params: CallParams<ActionsArgs['obj']['createApplication()void'] | ActionsArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(ActionsParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | ActionsReturns['createApplication()void'] }, appClient: new ActionsClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | ActionsReturns['createApplication()void']) }, appClient: new ActionsClient(result.appClient) }
       },
     },
 
@@ -532,7 +532,7 @@ export type ActionsComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

@@ -388,8 +388,8 @@ export class GateFactory {
   public async deploy(params: GateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? GateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      updateParams: params.updateParams?.method ? GateParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams,
+      createParams: params.createParams?.method ? GateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (GateCreateCallParams & { args: Uint8Array[] }) : undefined,
+      updateParams: params.updateParams?.method ? GateParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams ? params.updateParams as (GateUpdateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new GateClient(result.appClient) }
   }
@@ -467,7 +467,7 @@ export class GateFactory {
        */
       createApplication: async (params: CallParams<GateArgs['obj']['createApplication()void'] | GateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(GateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | GateReturns['createApplication()void'] }, appClient: new GateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | GateReturns['createApplication()void']) }, appClient: new GateClient(result.appClient) }
       },
     },
 
@@ -677,7 +677,7 @@ export class GateClient {
        */
       updateApplication: async (params: CallParams<GateArgs['obj']['updateApplication()void'] | GateArgs['tuple']['updateApplication()void']> & AppClientCompilationParams & SendParams = {args: []}) => {
         const result = await this.appClient.send.update(GateParamsFactory.update.updateApplication(params))
-        return {...result, return: result.return as undefined | GateReturns['updateApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | GateReturns['updateApplication()void'])}
       },
 
     },
@@ -700,7 +700,7 @@ export class GateClient {
      */
     register: async (params: CallParams<GateArgs['obj']['register((uint64,uint64,uint64)[],byte[][])uint64'] | GateArgs['tuple']['register((uint64,uint64,uint64)[],byte[][])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(GateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | GateReturns['register((uint64,uint64,uint64)[],byte[][])uint64']}
+      return {...result, return: result.return as unknown as (undefined | GateReturns['register((uint64,uint64,uint64)[],byte[][])uint64'])}
     },
 
     /**
@@ -711,7 +711,7 @@ export class GateClient {
      */
     check: async (params: CallParams<GateArgs['obj']['check(address,uint64,byte[][])bool'] | GateArgs['tuple']['check(address,uint64,byte[][])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(GateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | GateReturns['check(address,uint64,byte[][])bool']}
+      return {...result, return: result.return as unknown as (undefined | GateReturns['check(address,uint64,byte[][])bool'])}
     },
 
   }
@@ -891,7 +891,7 @@ export type GateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

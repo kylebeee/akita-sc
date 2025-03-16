@@ -1,4 +1,4 @@
-import { Contract } from '@algorandfoundation/tealscript';
+import { uint64 } from "@algorandfoundation/algorand-typescript";
 
 export const Equal: uint64 = 1;
 export const NotEqual: uint64 = 2;

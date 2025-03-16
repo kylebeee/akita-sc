@@ -1,0 +1,6 @@
+export const ERR_INVALID_PAYMENT_RECEIVER = 'Invalid payment receiver'
+export const ERR_INVALID_PAYMENT_AMOUNT = 'Invalid payment amount'
+export const ERR_INVALID_ASSET_RECEIVER = 'Invalid asset receiver'
+export const ERR_INVALID_ASSET_AMOUNT = 'Invalid asset amount'
+export const ERR_ASA_MISMATCH = 'asa mismatch'
+export const ERR_NOT_OPTED_IN = 'Not opted in'

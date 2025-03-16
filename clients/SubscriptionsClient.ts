@@ -938,7 +938,7 @@ export class SubscriptionsFactory {
   public async deploy(params: SubscriptionsDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? SubscriptionsParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? SubscriptionsParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (SubscriptionsCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new SubscriptionsClient(result.appClient) }
   }
@@ -1001,7 +1001,7 @@ export class SubscriptionsFactory {
        */
       createApplication: async (params: CallParams<SubscriptionsArgs['obj']['createApplication()void'] | SubscriptionsArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(SubscriptionsParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | SubscriptionsReturns['createApplication()void'] }, appClient: new SubscriptionsClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | SubscriptionsReturns['createApplication()void']) }, appClient: new SubscriptionsClient(result.appClient) }
       },
     },
 
@@ -1589,7 +1589,7 @@ export class SubscriptionsClient {
      */
     isBlocked: async (params: CallParams<SubscriptionsArgs['obj']['isBlocked(address,address)bool'] | SubscriptionsArgs['tuple']['isBlocked(address,address)bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.isBlocked(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['isBlocked(address,address)bool']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['isBlocked(address,address)bool'])}
     },
 
     /**
@@ -1604,7 +1604,7 @@ export class SubscriptionsClient {
      */
     isShutdown: async (params: CallParams<SubscriptionsArgs['obj']['isShutdown(address,uint64)bool'] | SubscriptionsArgs['tuple']['isShutdown(address,uint64)bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.isShutdown(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['isShutdown(address,uint64)bool']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['isShutdown(address,uint64)bool'])}
     },
 
     /**
@@ -1617,7 +1617,7 @@ export class SubscriptionsClient {
      */
     getSubsriptionInfo: async (params: CallParams<SubscriptionsArgs['obj']['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])'] | SubscriptionsArgs['tuple']['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.getSubsriptionInfo(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])'])}
     },
 
     /**
@@ -1630,7 +1630,7 @@ export class SubscriptionsClient {
      */
     isFirstSubscription: async (params: CallParams<SubscriptionsArgs['obj']['isFirstSubscription(address)bool'] | SubscriptionsArgs['tuple']['isFirstSubscription(address)bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.isFirstSubscription(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['isFirstSubscription(address)bool']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['isFirstSubscription(address)bool'])}
     },
 
     /**
@@ -1643,7 +1643,7 @@ export class SubscriptionsClient {
      */
     newService: async (params: CallParams<SubscriptionsArgs['obj']['newService(pay,uint64,uint64,uint64,uint64,uint64,byte[59])uint64'] | SubscriptionsArgs['tuple']['newService(pay,uint64,uint64,uint64,uint64,uint64,byte[59])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.newService(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['newService(pay,uint64,uint64,uint64,uint64,uint64,byte[59])uint64']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['newService(pay,uint64,uint64,uint64,uint64,uint64,byte[59])uint64'])}
     },
 
     /**
@@ -1660,7 +1660,7 @@ export class SubscriptionsClient {
      */
     pauseService: async (params: CallParams<SubscriptionsArgs['obj']['pauseService(uint64)void'] | SubscriptionsArgs['tuple']['pauseService(uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.pauseService(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['pauseService(uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['pauseService(uint64)void'])}
     },
 
     /**
@@ -1673,7 +1673,7 @@ export class SubscriptionsClient {
      */
     activateService: async (params: CallParams<SubscriptionsArgs['obj']['activateService(uint64)void'] | SubscriptionsArgs['tuple']['activateService(uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.activateService(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['activateService(uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['activateService(uint64)void'])}
     },
 
     /**
@@ -1688,7 +1688,7 @@ export class SubscriptionsClient {
      */
     shutdownService: async (params: CallParams<SubscriptionsArgs['obj']['shutdownService(uint64)void'] | SubscriptionsArgs['tuple']['shutdownService(uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.shutdownService(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['shutdownService(uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['shutdownService(uint64)void'])}
     },
 
     /**
@@ -1701,7 +1701,7 @@ export class SubscriptionsClient {
      */
     block: async (params: CallParams<SubscriptionsArgs['obj']['block(pay,address)void'] | SubscriptionsArgs['tuple']['block(pay,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.block(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['block(pay,address)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['block(pay,address)void'])}
     },
 
     /**
@@ -1714,7 +1714,7 @@ export class SubscriptionsClient {
      */
     unblock: async (params: CallParams<SubscriptionsArgs['obj']['unblock(address)void'] | SubscriptionsArgs['tuple']['unblock(address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.unblock(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['unblock(address)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['unblock(address)void'])}
     },
 
     /**
@@ -1725,7 +1725,7 @@ export class SubscriptionsClient {
      */
     subscribe: async (params: CallParams<SubscriptionsArgs['obj']['subscribe(pay,address,uint64,uint64,uint64,byte[][])void'] | SubscriptionsArgs['tuple']['subscribe(pay,address,uint64,uint64,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.subscribe(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['subscribe(pay,address,uint64,uint64,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['subscribe(pay,address,uint64,uint64,uint64,byte[][])void'])}
     },
 
     /**
@@ -1736,7 +1736,7 @@ export class SubscriptionsClient {
      */
     optin: async (params: CallParams<SubscriptionsArgs['obj']['optin(pay,uint64)void'] | SubscriptionsArgs['tuple']['optin(pay,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.optin(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['optin(pay,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['optin(pay,uint64)void'])}
     },
 
     /**
@@ -1747,7 +1747,7 @@ export class SubscriptionsClient {
      */
     subscribeAsa: async (params: CallParams<SubscriptionsArgs['obj']['subscribeAsa(pay,axfer,address,uint64,uint64,uint64,byte[][])void'] | SubscriptionsArgs['tuple']['subscribeAsa(pay,axfer,address,uint64,uint64,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.subscribeAsa(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['subscribeAsa(pay,axfer,address,uint64,uint64,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['subscribeAsa(pay,axfer,address,uint64,uint64,uint64,byte[][])void'])}
     },
 
     /**
@@ -1758,7 +1758,7 @@ export class SubscriptionsClient {
      */
     deposit: async (params: CallParams<SubscriptionsArgs['obj']['deposit(pay,uint64)void'] | SubscriptionsArgs['tuple']['deposit(pay,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.deposit(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['deposit(pay,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['deposit(pay,uint64)void'])}
     },
 
     /**
@@ -1769,7 +1769,7 @@ export class SubscriptionsClient {
      */
     depositAsa: async (params: CallParams<SubscriptionsArgs['obj']['depositAsa(axfer,uint64)void'] | SubscriptionsArgs['tuple']['depositAsa(axfer,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.depositAsa(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['depositAsa(axfer,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['depositAsa(axfer,uint64)void'])}
     },
 
     /**
@@ -1780,7 +1780,7 @@ export class SubscriptionsClient {
      */
     withdraw: async (params: CallParams<SubscriptionsArgs['obj']['withdraw(uint64,uint64)void'] | SubscriptionsArgs['tuple']['withdraw(uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.withdraw(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['withdraw(uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['withdraw(uint64,uint64)void'])}
     },
 
     /**
@@ -1791,7 +1791,7 @@ export class SubscriptionsClient {
      */
     triggerPayment: async (params: CallParams<SubscriptionsArgs['obj']['triggerPayment(address,uint64,byte[][])void'] | SubscriptionsArgs['tuple']['triggerPayment(address,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.triggerPayment(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['triggerPayment(address,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['triggerPayment(address,uint64,byte[][])void'])}
     },
 
     /**
@@ -1802,7 +1802,7 @@ export class SubscriptionsClient {
      */
     streakCheck: async (params: CallParams<SubscriptionsArgs['obj']['streakCheck(address,uint64)void'] | SubscriptionsArgs['tuple']['streakCheck(address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.streakCheck(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['streakCheck(address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['streakCheck(address,uint64)void'])}
     },
 
     /**
@@ -1813,7 +1813,7 @@ export class SubscriptionsClient {
      */
     setPasses: async (params: CallParams<SubscriptionsArgs['obj']['setPasses(uint64,address[])void'] | SubscriptionsArgs['tuple']['setPasses(uint64,address[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsParamsFactory.setPasses(params))
-      return {...result, return: result.return as undefined | SubscriptionsReturns['setPasses(uint64,address[])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsReturns['setPasses(uint64,address[])void'])}
     },
 
   }
@@ -1840,7 +1840,7 @@ export class SubscriptionsClient {
    */
   async isBlocked(params: CallParams<SubscriptionsArgs['obj']['isBlocked(address,address)bool'] | SubscriptionsArgs['tuple']['isBlocked(address,address)bool']>) {
     const result = await this.appClient.send.call(SubscriptionsParamsFactory.isBlocked(params))
-    return result.return as SubscriptionsReturns['isBlocked(address,address)bool']
+    return result.return as unknown as SubscriptionsReturns['isBlocked(address,address)bool']
   }
 
   /**
@@ -1855,7 +1855,7 @@ export class SubscriptionsClient {
    */
   async isShutdown(params: CallParams<SubscriptionsArgs['obj']['isShutdown(address,uint64)bool'] | SubscriptionsArgs['tuple']['isShutdown(address,uint64)bool']>) {
     const result = await this.appClient.send.call(SubscriptionsParamsFactory.isShutdown(params))
-    return result.return as SubscriptionsReturns['isShutdown(address,uint64)bool']
+    return result.return as unknown as SubscriptionsReturns['isShutdown(address,uint64)bool']
   }
 
   /**
@@ -1868,7 +1868,7 @@ export class SubscriptionsClient {
    */
   async getSubsriptionInfo(params: CallParams<SubscriptionsArgs['obj']['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])'] | SubscriptionsArgs['tuple']['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])']>) {
     const result = await this.appClient.send.call(SubscriptionsParamsFactory.getSubsriptionInfo(params))
-    return result.return as SubscriptionsReturns['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])']
+    return result.return as unknown as SubscriptionsReturns['getSubsriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])']
   }
 
   /**
@@ -1881,7 +1881,7 @@ export class SubscriptionsClient {
    */
   async isFirstSubscription(params: CallParams<SubscriptionsArgs['obj']['isFirstSubscription(address)bool'] | SubscriptionsArgs['tuple']['isFirstSubscription(address)bool']>) {
     const result = await this.appClient.send.call(SubscriptionsParamsFactory.isFirstSubscription(params))
-    return result.return as SubscriptionsReturns['isFirstSubscription(address)bool']
+    return result.return as unknown as SubscriptionsReturns['isFirstSubscription(address)bool']
   }
 
   /**
@@ -1909,7 +1909,7 @@ export class SubscriptionsClient {
       /**
        * Get the current value of the daoAppID key in global state
        */
-      daoAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("daoAppId")) as bigint | undefined },
+      daoAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("daoAppID")) as bigint | undefined },
     },
     /**
      * Methods to access box state for the current Subscriptions app
@@ -2408,7 +2408,7 @@ export type SubscriptionsComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

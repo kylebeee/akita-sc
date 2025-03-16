@@ -1,34 +1,61 @@
-import { Contract } from '@algorandfoundation/tealscript';
+import { arc4, bytes, itxn, OnCompleteAction, uint64 } from '@algorandfoundation/algorand-typescript';
 import { Gate } from '../../contracts/gates/gate.algo';
-import { AkitaAppIDsGate } from '../constants';
-import { ContractWithOptInCreatorOnly, ContractWithOptInCreatorOnlyArc59, ContractWithOptInCreatorOnlyArc59AndArc58 } from './optin.algo';
+import { ContractWithArc58Send, ContractWithArc59Send, ContractWithCreatorOnlyOptIn, ContractWithCreatorOnlyOptInAndArc59, ContractWithCreatorOnlyOptInAndArc59AndArc58, ContractWithOptIn } from './optin.algo';
+import { classes } from 'polytype'
+import { decodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
+import { AkitaBaseContract } from './base.algo';
 
-export class ContractWithGate extends Contract {
-    programVersion = 10;
+export class ContractWithGate extends AkitaBaseContract {
 
-    protected gate(caller: Address, index: uint64, args: bytes[]): boolean {
-        if (index === 0) {
-            return true;
-        }
-
-        return sendMethodCall<typeof Gate.prototype.check, boolean>({
-            applicationID: AppID.fromUint64(AkitaAppIDsGate),
-            methodArgs: [caller, index, args],
-            fee: 0
-        });
+  protected gate(caller: arc4.Address, index: uint64, args: bytes[]): boolean {
+    if (index === 0) {
+      return true
     }
+
+    // TODO: replace with itxn.abiCall when available
+    const appCallTxn = itxn
+      .applicationCall({
+        appId: super.getAppList().gate,
+        onCompletion: OnCompleteAction.NoOp,
+        appArgs: [
+          methodSelector(typeof Gate.prototype.check),
+          caller,
+          index,
+          args,
+        ],
+        accounts: [caller.native],
+        fee: 0,
+      })
+      .submit()
+
+    return decodeArc4<boolean>(appCallTxn.lastLog)
+  }
 }
 
-export class ContractWithOptInCreatorOnlyAndGate extends Contract.extend(ContractWithOptInCreatorOnly, ContractWithGate) {}
+export class ContractWithOptinAndGate extends classes(ContractWithOptIn, ContractWithGate) { }
 
-export class ContractWithOptInCreatorOnlyArc59AndGate
-    extends Contract.extend(
-        ContractWithGate,
-        ContractWithOptInCreatorOnlyArc59,
-    ) {}
+export class ContractWithOptinAndArc59AndGate
+  extends classes(
+    ContractWithGate,
+    ContractWithArc59Send,
+  ) { }
 
-export class ContractWithOptInCreatorOnlyArc59AndArc58AndGate
-    extends Contract.extend(
-        ContractWithGate,
-        ContractWithOptInCreatorOnlyArc59AndArc58,
-    ) {}
+export class ContractWithOptinAndArc58AndGate
+  extends classes(
+    ContractWithGate,
+    ContractWithArc58Send,
+  ) { }
+
+export class ContractWithCreatorOnlyOptInAndGate extends classes(ContractWithCreatorOnlyOptIn, ContractWithGate) { }
+
+export class ContractWithCreatorOnlyOptInAndArc59AndGate
+  extends classes(
+    ContractWithGate,
+    ContractWithCreatorOnlyOptInAndArc59,
+  ) { }
+
+export class ContractWithCreatorOnlyOptInAndArc59AndArc58AndGate
+  extends classes(
+    ContractWithGate,
+    ContractWithCreatorOnlyOptInAndArc59AndArc58,
+  ) { }

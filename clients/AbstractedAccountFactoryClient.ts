@@ -356,8 +356,8 @@ export class AbstractedAccountFactoryFactory {
   public async deploy(params: AbstractedAccountFactoryDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? AbstractedAccountFactoryParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      updateParams: params.updateParams?.method ? AbstractedAccountFactoryParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams,
+      createParams: params.createParams?.method ? AbstractedAccountFactoryParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (AbstractedAccountFactoryCreateCallParams & { args: Uint8Array[] }) : undefined,
+      updateParams: params.updateParams?.method ? AbstractedAccountFactoryParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams ? params.updateParams as (AbstractedAccountFactoryUpdateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new AbstractedAccountFactoryClient(result.appClient) }
   }
@@ -435,7 +435,7 @@ export class AbstractedAccountFactoryFactory {
        */
       createApplication: async (params: CallParams<AbstractedAccountFactoryArgs['obj']['createApplication(string,uint64)void'] | AbstractedAccountFactoryArgs['tuple']['createApplication(string,uint64)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(AbstractedAccountFactoryParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | AbstractedAccountFactoryReturns['createApplication(string,uint64)void'] }, appClient: new AbstractedAccountFactoryClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | AbstractedAccountFactoryReturns['createApplication(string,uint64)void']) }, appClient: new AbstractedAccountFactoryClient(result.appClient) }
       },
     },
 
@@ -625,7 +625,7 @@ export class AbstractedAccountFactoryClient {
        */
       updateApplication: async (params: CallParams<AbstractedAccountFactoryArgs['obj']['updateApplication()void'] | AbstractedAccountFactoryArgs['tuple']['updateApplication()void']> & AppClientCompilationParams & SendParams = {args: []}) => {
         const result = await this.appClient.send.update(AbstractedAccountFactoryParamsFactory.update.updateApplication(params))
-        return {...result, return: result.return as undefined | AbstractedAccountFactoryReturns['updateApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | AbstractedAccountFactoryReturns['updateApplication()void'])}
       },
 
     },
@@ -648,7 +648,7 @@ export class AbstractedAccountFactoryClient {
      */
     mint: async (params: CallParams<AbstractedAccountFactoryArgs['obj']['mint(pay,address,string)uint64'] | AbstractedAccountFactoryArgs['tuple']['mint(pay,address,string)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AbstractedAccountFactoryParamsFactory.mint(params))
-      return {...result, return: result.return as undefined | AbstractedAccountFactoryReturns['mint(pay,address,string)uint64']}
+      return {...result, return: result.return as unknown as (undefined | AbstractedAccountFactoryReturns['mint(pay,address,string)uint64'])}
     },
 
   }
@@ -688,7 +688,7 @@ export class AbstractedAccountFactoryClient {
       /**
        * Get the current value of the revocationAppID key in global state
        */
-      revocationAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("revocationAppId")) as bigint | undefined },
+      revocationAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("revocationAppID")) as bigint | undefined },
     },
   }
 
@@ -777,7 +777,7 @@ export type AbstractedAccountFactoryComposer<TReturns extends [...any[]] = []> =
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

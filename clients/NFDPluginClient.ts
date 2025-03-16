@@ -701,8 +701,8 @@ export class NfdPluginFactory {
   public async deploy(params: NfdPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? NfdPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      deleteParams: params.deleteParams?.method ? NfdPluginParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams,
+      createParams: params.createParams?.method ? NfdPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (NfdPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
+      deleteParams: params.deleteParams?.method ? NfdPluginParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams ? params.deleteParams as (NfdPluginDeleteCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new NfdPluginClient(result.appClient) }
   }
@@ -780,7 +780,7 @@ export class NfdPluginFactory {
        */
       createApplication: async (params: CallParams<NfdPluginArgs['obj']['createApplication(uint64)void'] | NfdPluginArgs['tuple']['createApplication(uint64)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(NfdPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | NfdPluginReturns['createApplication(uint64)void'] }, appClient: new NfdPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | NfdPluginReturns['createApplication(uint64)void']) }, appClient: new NfdPluginClient(result.appClient) }
       },
     },
 
@@ -1250,7 +1250,7 @@ export class NfdPluginClient {
        */
       deleteApplication: async (params: CallParams<NfdPluginArgs['obj']['deleteApplication()void'] | NfdPluginArgs['tuple']['deleteApplication()void']> & SendParams = {args: []}) => {
         const result = await this.appClient.send.delete(NfdPluginParamsFactory.delete.deleteApplication(params))
-        return {...result, return: result.return as undefined | NfdPluginReturns['deleteApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['deleteApplication()void'])}
       },
 
     },
@@ -1273,7 +1273,7 @@ export class NfdPluginClient {
      */
     gas: async (params: CallParams<NfdPluginArgs['obj']['gas(uint64,bool)void'] | NfdPluginArgs['tuple']['gas(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.gas(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['gas(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['gas(uint64,bool)void'])}
     },
 
     /**
@@ -1284,7 +1284,7 @@ export class NfdPluginClient {
      */
     deleteFields: async (params: CallParams<NfdPluginArgs['obj']['deleteFields(uint64,bool,byte[][])void'] | NfdPluginArgs['tuple']['deleteFields(uint64,bool,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.deleteFields(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['deleteFields(uint64,bool,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['deleteFields(uint64,bool,byte[][])void'])}
     },
 
     /**
@@ -1295,7 +1295,7 @@ export class NfdPluginClient {
      */
     updateFields: async (params: CallParams<NfdPluginArgs['obj']['updateFields(uint64,bool,byte[][])void'] | NfdPluginArgs['tuple']['updateFields(uint64,bool,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.updateFields(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['updateFields(uint64,bool,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['updateFields(uint64,bool,byte[][])void'])}
     },
 
     /**
@@ -1306,7 +1306,7 @@ export class NfdPluginClient {
      */
     offerForSale: async (params: CallParams<NfdPluginArgs['obj']['offerForSale(uint64,bool,uint64,address)void'] | NfdPluginArgs['tuple']['offerForSale(uint64,bool,uint64,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.offerForSale(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['offerForSale(uint64,bool,uint64,address)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['offerForSale(uint64,bool,uint64,address)void'])}
     },
 
     /**
@@ -1317,7 +1317,7 @@ export class NfdPluginClient {
      */
     cancelSale: async (params: CallParams<NfdPluginArgs['obj']['cancelSale(uint64,bool)void'] | NfdPluginArgs['tuple']['cancelSale(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.cancelSale(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['cancelSale(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['cancelSale(uint64,bool)void'])}
     },
 
     /**
@@ -1328,7 +1328,7 @@ export class NfdPluginClient {
      */
     postOffer: async (params: CallParams<NfdPluginArgs['obj']['postOffer(uint64,bool,uint64,string)void'] | NfdPluginArgs['tuple']['postOffer(uint64,bool,uint64,string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.postOffer(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['postOffer(uint64,bool,uint64,string)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['postOffer(uint64,bool,uint64,string)void'])}
     },
 
     /**
@@ -1339,7 +1339,7 @@ export class NfdPluginClient {
      */
     purchase: async (params: CallParams<NfdPluginArgs['obj']['purchase(uint64,bool)void'] | NfdPluginArgs['tuple']['purchase(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.purchase(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['purchase(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['purchase(uint64,bool)void'])}
     },
 
     /**
@@ -1350,7 +1350,7 @@ export class NfdPluginClient {
      */
     updateHash: async (params: CallParams<NfdPluginArgs['obj']['updateHash(uint64,bool,byte[])void'] | NfdPluginArgs['tuple']['updateHash(uint64,bool,byte[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.updateHash(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['updateHash(uint64,bool,byte[])void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['updateHash(uint64,bool,byte[])void'])}
     },
 
     /**
@@ -1361,7 +1361,7 @@ export class NfdPluginClient {
      */
     contractLock: async (params: CallParams<NfdPluginArgs['obj']['contractLock(uint64,bool,bool)void'] | NfdPluginArgs['tuple']['contractLock(uint64,bool,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.contractLock(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['contractLock(uint64,bool,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['contractLock(uint64,bool,bool)void'])}
     },
 
     /**
@@ -1372,7 +1372,7 @@ export class NfdPluginClient {
      */
     segmentLock: async (params: CallParams<NfdPluginArgs['obj']['segmentLock(uint64,bool,bool,uint64)void'] | NfdPluginArgs['tuple']['segmentLock(uint64,bool,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.segmentLock(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['segmentLock(uint64,bool,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['segmentLock(uint64,bool,bool,uint64)void'])}
     },
 
     /**
@@ -1383,7 +1383,7 @@ export class NfdPluginClient {
      */
     vaultOptInLock: async (params: CallParams<NfdPluginArgs['obj']['vaultOptInLock(uint64,bool,bool)void'] | NfdPluginArgs['tuple']['vaultOptInLock(uint64,bool,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.vaultOptInLock(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['vaultOptInLock(uint64,bool,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['vaultOptInLock(uint64,bool,bool)void'])}
     },
 
     /**
@@ -1394,7 +1394,7 @@ export class NfdPluginClient {
      */
     vaultOptIn: async (params: CallParams<NfdPluginArgs['obj']['vaultOptIn(uint64,bool,uint64[])void'] | NfdPluginArgs['tuple']['vaultOptIn(uint64,bool,uint64[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.vaultOptIn(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['vaultOptIn(uint64,bool,uint64[])void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['vaultOptIn(uint64,bool,uint64[])void'])}
     },
 
     /**
@@ -1405,7 +1405,7 @@ export class NfdPluginClient {
      */
     vaultSend: async (params: CallParams<NfdPluginArgs['obj']['vaultSend(uint64,bool,uint64,address,string,uint64,uint64[])void'] | NfdPluginArgs['tuple']['vaultSend(uint64,bool,uint64,address,string,uint64,uint64[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.vaultSend(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['vaultSend(uint64,bool,uint64,address,string,uint64,uint64[])void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['vaultSend(uint64,bool,uint64,address,string,uint64,uint64[])void'])}
     },
 
     /**
@@ -1416,7 +1416,7 @@ export class NfdPluginClient {
      */
     renew: async (params: CallParams<NfdPluginArgs['obj']['renew(uint64,bool)void'] | NfdPluginArgs['tuple']['renew(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.renew(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['renew(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['renew(uint64,bool)void'])}
     },
 
     /**
@@ -1427,7 +1427,7 @@ export class NfdPluginClient {
      */
     setPrimaryAddress: async (params: CallParams<NfdPluginArgs['obj']['setPrimaryAddress(uint64,bool,string,address)void'] | NfdPluginArgs['tuple']['setPrimaryAddress(uint64,bool,string,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(NfdPluginParamsFactory.setPrimaryAddress(params))
-      return {...result, return: result.return as undefined | NfdPluginReturns['setPrimaryAddress(uint64,bool,string,address)void']}
+      return {...result, return: result.return as unknown as (undefined | NfdPluginReturns['setPrimaryAddress(uint64,bool,string,address)void'])}
     },
 
   }
@@ -1462,7 +1462,7 @@ export class NfdPluginClient {
       /**
        * Get the current value of the appID key in global state
        */
-      appId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("appId")) as bigint | undefined },
+      appId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("appID")) as bigint | undefined },
     },
   }
 
@@ -1803,7 +1803,7 @@ export type NfdPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

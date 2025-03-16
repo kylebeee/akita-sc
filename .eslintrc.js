@@ -19,6 +19,8 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/ban-ts-comment': 'warn',
+    '@stylistic/js/semi': ["error", "never"],
+    'no-unexpected-multiline': 'error',
     'import/prefer-default-export': 'off',
     'import/extensions': [
       'error',

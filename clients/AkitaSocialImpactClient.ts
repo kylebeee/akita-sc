@@ -439,7 +439,7 @@ export class AkitaSocialImpactFactory {
   public async deploy(params: AkitaSocialImpactDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? AkitaSocialImpactParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? AkitaSocialImpactParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (AkitaSocialImpactCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new AkitaSocialImpactClient(result.appClient) }
   }
@@ -502,7 +502,7 @@ export class AkitaSocialImpactFactory {
        */
       createApplication: async (params: CallParams<AkitaSocialImpactArgs['obj']['createApplication()void'] | AkitaSocialImpactArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(AkitaSocialImpactParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | AkitaSocialImpactReturns['createApplication()void'] }, appClient: new AkitaSocialImpactClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | AkitaSocialImpactReturns['createApplication()void']) }, appClient: new AkitaSocialImpactClient(result.appClient) }
       },
     },
 
@@ -780,7 +780,7 @@ export class AkitaSocialImpactClient {
      */
     socialGetUserImpact: async (params: CallParams<AkitaSocialImpactArgs['obj']['socialGetUserImpact(address,uint64)uint64'] | AkitaSocialImpactArgs['tuple']['socialGetUserImpact(address,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.socialGetUserImpact(params))
-      return {...result, return: result.return as undefined | AkitaSocialImpactReturns['socialGetUserImpact(address,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialImpactReturns['socialGetUserImpact(address,uint64)uint64'])}
     },
 
     /**
@@ -793,7 +793,7 @@ export class AkitaSocialImpactClient {
      */
     getUserImpact: async (params: CallParams<AkitaSocialImpactArgs['obj']['getUserImpact(address)uint64'] | AkitaSocialImpactArgs['tuple']['getUserImpact(address)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.getUserImpact(params))
-      return {...result, return: result.return as undefined | AkitaSocialImpactReturns['getUserImpact(address)uint64']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialImpactReturns['getUserImpact(address)uint64'])}
     },
 
     /**
@@ -806,7 +806,7 @@ export class AkitaSocialImpactClient {
      */
     getMeta: async (params: CallParams<AkitaSocialImpactArgs['obj']['getMeta(address)(uint64,uint64,uint64,uint64,uint64)'] | AkitaSocialImpactArgs['tuple']['getMeta(address)(uint64,uint64,uint64,uint64,uint64)']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.getMeta(params))
-      return {...result, return: result.return as undefined | AkitaSocialImpactReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64)']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialImpactReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64)'])}
     },
 
     /**
@@ -817,7 +817,7 @@ export class AkitaSocialImpactClient {
      */
     cacheMeta: async (params: CallParams<AkitaSocialImpactArgs['obj']['cacheMeta(uint64,uint64,uint64)uint64'] | AkitaSocialImpactArgs['tuple']['cacheMeta(uint64,uint64,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.cacheMeta(params))
-      return {...result, return: result.return as undefined | AkitaSocialImpactReturns['cacheMeta(uint64,uint64,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialImpactReturns['cacheMeta(uint64,uint64,uint64)uint64'])}
     },
 
     /**
@@ -828,7 +828,7 @@ export class AkitaSocialImpactClient {
      */
     updateSubscriptionStateModifier: async (params: CallParams<AkitaSocialImpactArgs['obj']['updateSubscriptionStateModifier(pay,uint64,uint64)void'] | AkitaSocialImpactArgs['tuple']['updateSubscriptionStateModifier(pay,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.updateSubscriptionStateModifier(params))
-      return {...result, return: result.return as undefined | AkitaSocialImpactReturns['updateSubscriptionStateModifier(pay,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialImpactReturns['updateSubscriptionStateModifier(pay,uint64,uint64)void'])}
     },
 
     /**
@@ -839,7 +839,7 @@ export class AkitaSocialImpactClient {
      */
     gas: async (params: CallParams<AkitaSocialImpactArgs['obj']['gas()void'] | AkitaSocialImpactArgs['tuple']['gas()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.gas(params))
-      return {...result, return: result.return as undefined | AkitaSocialImpactReturns['gas()void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialImpactReturns['gas()void'])}
     },
 
   }
@@ -864,7 +864,7 @@ export class AkitaSocialImpactClient {
    */
   async socialGetUserImpact(params: CallParams<AkitaSocialImpactArgs['obj']['socialGetUserImpact(address,uint64)uint64'] | AkitaSocialImpactArgs['tuple']['socialGetUserImpact(address,uint64)uint64']>) {
     const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.socialGetUserImpact(params))
-    return result.return as AkitaSocialImpactReturns['socialGetUserImpact(address,uint64)uint64']
+    return result.return as unknown as AkitaSocialImpactReturns['socialGetUserImpact(address,uint64)uint64']
   }
 
   /**
@@ -877,7 +877,7 @@ export class AkitaSocialImpactClient {
    */
   async getUserImpact(params: CallParams<AkitaSocialImpactArgs['obj']['getUserImpact(address)uint64'] | AkitaSocialImpactArgs['tuple']['getUserImpact(address)uint64']>) {
     const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.getUserImpact(params))
-    return result.return as AkitaSocialImpactReturns['getUserImpact(address)uint64']
+    return result.return as unknown as AkitaSocialImpactReturns['getUserImpact(address)uint64']
   }
 
   /**
@@ -890,7 +890,7 @@ export class AkitaSocialImpactClient {
    */
   async getMeta(params: CallParams<AkitaSocialImpactArgs['obj']['getMeta(address)(uint64,uint64,uint64,uint64,uint64)'] | AkitaSocialImpactArgs['tuple']['getMeta(address)(uint64,uint64,uint64,uint64,uint64)']>) {
     const result = await this.appClient.send.call(AkitaSocialImpactParamsFactory.getMeta(params))
-    return result.return as AkitaSocialImpactReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64)']
+    return result.return as unknown as AkitaSocialImpactReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64)']
   }
 
   /**
@@ -1099,7 +1099,7 @@ export type AkitaSocialImpactComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

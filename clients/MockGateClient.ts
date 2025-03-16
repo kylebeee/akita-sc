@@ -302,7 +302,7 @@ export class MockGateFactory {
   public async deploy(params: MockGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? MockGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? MockGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (MockGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new MockGateClient(result.appClient) }
   }
@@ -365,7 +365,7 @@ export class MockGateFactory {
        */
       createApplication: async (params: CallParams<MockGateArgs['obj']['createApplication()void'] | MockGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(MockGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | MockGateReturns['createApplication()void'] }, appClient: new MockGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | MockGateReturns['createApplication()void']) }, appClient: new MockGateClient(result.appClient) }
       },
     },
 
@@ -549,7 +549,7 @@ export class MockGateClient {
      */
     register: async (params: CallParams<MockGateArgs['obj']['register(byte[])uint64'] | MockGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MockGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | MockGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | MockGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -560,7 +560,7 @@ export class MockGateClient {
      */
     check: async (params: CallParams<MockGateArgs['obj']['check(byte[])bool'] | MockGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MockGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | MockGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | MockGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -674,7 +674,7 @@ export type MockGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

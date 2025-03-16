@@ -346,8 +346,8 @@ export class PrizeBoxFactoryFactory {
   public async deploy(params: PrizeBoxFactoryDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? PrizeBoxFactoryParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      updateParams: params.updateParams?.method ? PrizeBoxFactoryParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams,
+      createParams: params.createParams?.method ? PrizeBoxFactoryParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (PrizeBoxFactoryCreateCallParams & { args: Uint8Array[] }) : undefined,
+      updateParams: params.updateParams?.method ? PrizeBoxFactoryParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams ? params.updateParams as (PrizeBoxFactoryUpdateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new PrizeBoxFactoryClient(result.appClient) }
   }
@@ -425,7 +425,7 @@ export class PrizeBoxFactoryFactory {
        */
       createApplication: async (params: CallParams<PrizeBoxFactoryArgs['obj']['createApplication(string)void'] | PrizeBoxFactoryArgs['tuple']['createApplication(string)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(PrizeBoxFactoryParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | PrizeBoxFactoryReturns['createApplication(string)void'] }, appClient: new PrizeBoxFactoryClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | PrizeBoxFactoryReturns['createApplication(string)void']) }, appClient: new PrizeBoxFactoryClient(result.appClient) }
       },
     },
 
@@ -615,7 +615,7 @@ export class PrizeBoxFactoryClient {
        */
       updateApplication: async (params: CallParams<PrizeBoxFactoryArgs['obj']['updateApplication()void'] | PrizeBoxFactoryArgs['tuple']['updateApplication()void']> & AppClientCompilationParams & SendParams = {args: []}) => {
         const result = await this.appClient.send.update(PrizeBoxFactoryParamsFactory.update.updateApplication(params))
-        return {...result, return: result.return as undefined | PrizeBoxFactoryReturns['updateApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | PrizeBoxFactoryReturns['updateApplication()void'])}
       },
 
     },
@@ -638,7 +638,7 @@ export class PrizeBoxFactoryClient {
      */
     mint: async (params: CallParams<PrizeBoxFactoryArgs['obj']['mint(pay,address)uint64'] | PrizeBoxFactoryArgs['tuple']['mint(pay,address)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PrizeBoxFactoryParamsFactory.mint(params))
-      return {...result, return: result.return as undefined | PrizeBoxFactoryReturns['mint(pay,address)uint64']}
+      return {...result, return: result.return as unknown as (undefined | PrizeBoxFactoryReturns['mint(pay,address)uint64'])}
     },
 
   }
@@ -762,7 +762,7 @@ export type PrizeBoxFactoryComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

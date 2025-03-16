@@ -344,7 +344,7 @@ export class FollowerCountGateFactory {
   public async deploy(params: FollowerCountGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? FollowerCountGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? FollowerCountGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (FollowerCountGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new FollowerCountGateClient(result.appClient) }
   }
@@ -407,7 +407,7 @@ export class FollowerCountGateFactory {
        */
       createApplication: async (params: CallParams<FollowerCountGateArgs['obj']['createApplication()void'] | FollowerCountGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(FollowerCountGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | FollowerCountGateReturns['createApplication()void'] }, appClient: new FollowerCountGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | FollowerCountGateReturns['createApplication()void']) }, appClient: new FollowerCountGateClient(result.appClient) }
       },
     },
 
@@ -591,7 +591,7 @@ export class FollowerCountGateClient {
      */
     register: async (params: CallParams<FollowerCountGateArgs['obj']['register(byte[])uint64'] | FollowerCountGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(FollowerCountGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | FollowerCountGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | FollowerCountGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -602,7 +602,7 @@ export class FollowerCountGateClient {
      */
     check: async (params: CallParams<FollowerCountGateArgs['obj']['check(byte[])bool'] | FollowerCountGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(FollowerCountGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | FollowerCountGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | FollowerCountGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -760,7 +760,7 @@ export type FollowerCountGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

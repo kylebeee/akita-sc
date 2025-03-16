@@ -1,9 +1,11 @@
-import { describe, test, beforeAll, beforeEach, expect, afterEach } from '@jest/globals';
+import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
-import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk';
-import { AbstractedAccountFactory } from '../clients/AbstractedAccountClient';
+import algosdk, { makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
+import { AbstractedAccountClient } from '../clients/AbstractedAccountClient';
 import { OptInPluginClient, OptInPluginFactory } from '../clients/OptInPluginClient';
+import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../clients/AbstractedAccountFactoryClient';
+import { ABSTRACTED_ACCOUNT_MINT_PAYMENT } from './abstract_account_plugins.test';
 
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 algokit.Config.configure({ populateAppCallResources: true });
@@ -11,6 +13,8 @@ algokit.Config.configure({ populateAppCallResources: true });
 describe('ARC58 Plugin Permissions', () => {
   /** Alice's externally owned account (ie. a keypair account she has in Pera) */
   let aliceEOA: algosdk.Account;
+  /** The client for the abstracted account factory */
+  let abstractedAccountFactoryClient: AbstractedAccountFactoryClient;
   /** The client for Alice's abstracted account */
   let abstractedAccountClient: AbstractedAccountClient;
   /** The client for the dummy plugin */
@@ -82,14 +86,49 @@ describe('ARC58 Plugin Permissions', () => {
 
     const { algorand } = fixture.context;
 
-    const minter = new AbstractedAccountFactory({
+    const minterFactory = new AbstractedAccountFactoryFactory({
       defaultSender: aliceEOA.addr,
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
       algorand
     });
 
-    const results = await minter.send.create.createApplication({ args: { admin: aliceEOA.addr, controlledAddress: ZERO_ADDRESS } });
-    abstractedAccountClient = results.appClient;
+    const results = await minterFactory.send.create.createApplication({
+      args: {
+        version: '1',
+        revocationAppId: 0
+      }
+    });
+
+    abstractedAccountFactoryClient = results.appClient;
+
+    const mintPayment = makePaymentTxnWithSuggestedParamsFromObject({
+      from: aliceEOA.addr,
+      to: abstractedAccountFactoryClient.appAddress,
+      amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
+      suggestedParams: suggestedParams
+    })
+
+    const mResults = await abstractedAccountFactoryClient.send.mint({
+      sender: aliceEOA.addr,
+      signer: makeBasicAccountTransactionSigner(aliceEOA),
+      args: {
+        payment: mintPayment,
+        admin: aliceEOA.addr,
+        nickname: 'Alice'
+      },
+      extraFee: (2_000).microAlgo()
+    });
+
+    const freshAbstractedAccountId = mResults.return!;
+
+    abstractedAccountClient = algorand.client.getTypedAppClientById(
+      AbstractedAccountClient,
+      {
+        defaultSender: aliceEOA.addr,
+        defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
+        appId: freshAbstractedAccountId
+      }
+    );
 
     await abstractedAccountClient.appClient.fundAppAccount({ amount: (4).algos() });
   });

@@ -1,54 +1,61 @@
-import { Contract } from "@algorandfoundation/tealscript";
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyChildContractVersion, GlobalStateKeyRevocationApp } from "../constants";
 import { AbstractedAccount } from "./abstracted_account.algo";
+import { Application, arc4, assert, Contract, Global, GlobalState, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from "./errs";
+import { ERR_NOT_AKITA_DAO } from "../errors";
+import { AkitaBaseContract } from "../../utils/base_contracts/base.algo";
 
-const errs = {
-    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
-}
-
-export class AbstractedAccountFactory extends Contract {
-
+export class AbstractedAccountFactory extends AkitaBaseContract {
     /** The App ID of the Akita DAO contract */
-    akitaDaoAppID = TemplateVar<AppID>();
+    akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     /** the version of the child contract */
-    childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
+    childContractVersion = GlobalState<string>({ key: GlobalStateKeyChildContractVersion })
     /** the default app thats allowed to revoke plugins */
-    revocationAppID = GlobalStateKey<AppID>({ key: 'revocation_app_id' });
+    revocationApp = GlobalState<Application>({ key: GlobalStateKeyRevocationApp })
 
-    createApplication(version: string, revocationAppID: AppID): void {
-        this.childContractVersion.value = version;
-        this.revocationAppID.value = revocationAppID;
+    createApplication(version: string, revocationApp: uint64): void {
+        this.childContractVersion.value = version
+        this.revocationApp.value = Application(revocationApp)
     }
 
-    updateApplication(): void {
-        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
+    updateRevocationApp(app: uint64): void {
+        assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+        this.revocationApp.value = Application(app)
     }
 
-    mint(payment: PayTxn, admin: Address, nickname: string): AppID {
-        
-        verifyPayTxn(payment, {
-            receiver: this.app.address,
-            amount: (
-                300_000 // requires 3 extra pages
-                + (28_500 * AbstractedAccount.schema.global.numUint)
-                + (50_000 * AbstractedAccount.schema.global.numByteSlice)
-            ),
-        });
+    mint(payment: gtxn.PaymentTxn, admin: arc4.Address, nickname: string): uint64 {
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        const childMBR = 300_000 + (28_500 * AbstractedAccount.schema.global.numUint) + (50_000 * AbstractedAccount.schema.global.numByteSlice)
+        assert(payment.amount === childMBR, ERR_INVALID_PAYMENT_AMOUNT)
 
-        sendMethodCall<typeof AbstractedAccount.prototype.createApplication>({
-            methodArgs: [
+        const compiled = compileArc4(AbstractedAccount)
+
+        return compiled.call.create({
+            args: [
                 this.childContractVersion.value,
                 admin,
-                this.revocationAppID.value,
+                this.revocationApp.value,
                 nickname,
             ],
-            approvalProgram: AbstractedAccount.approvalProgram(),
-            clearStateProgram: AbstractedAccount.clearProgram(),
-            globalNumUint: AbstractedAccount.schema.global.numUint,
-            globalNumByteSlice: AbstractedAccount.schema.global.numByteSlice,
             extraProgramPages: 3,
             fee: 0,
-        });
+        }).itxn.createdApp
 
-        return this.itxn.createdApplicationID;
+        // sendMethodCall<typeof AbstractedAccount.prototype.createApplication>({
+        //     methodArgs: [
+        //         this.childContractVersion.value,
+        //         admin,
+        //         this.revocationAppID.value,
+        //         nickname,
+        //     ],
+        //     approvalProgram: AbstractedAccount.approvalProgram(),
+        //     clearStateProgram: AbstractedAccount.clearProgram(),
+        //     globalNumUint: AbstractedAccount.schema.global.numUint,
+        //     globalNumByteSlice: AbstractedAccount.schema.global.numByteSlice,
+        //     extraProgramPages: 3,
+        //     fee: 0,
+        // });
+
+        // return this.itxn.createdApplicationID;
     }
 }

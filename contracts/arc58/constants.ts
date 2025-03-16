@@ -1,9 +1,6 @@
-export const AbstractAccountGlobalStateKeysVersion = 'version';
 export const AbstractAccountGlobalStateKeysAdmin = 'admin';
 export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address';
-export const AbstractAccountGlobalStateKeysFactoryApp = 'factory_app_id';
-export const AbstractAccountGlobalStateKeysAkitaDAO = 'akita_dao_app_id';
-export const AbstractAccountGlobalStateKeysRevocationApp = 'revocation_app_id';
+export const AbstractAccountGlobalStateKeysFactoryApp = 'factory_app';
 export const AbstractAccountGlobalStateKeysNickname = 'nickname';
 export const AbstractAccountGlobalStateKeysAvatar = 'avatar';
 export const AbstractAccountGlobalStateKeysBanner = 'banner';

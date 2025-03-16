@@ -1,152 +1,139 @@
-import { Contract } from '@algorandfoundation/tealscript';
-
-const errs = {
-    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
-}
-
-export const AKITA_SOCIAL_PLUGIN_ID = 0;
-export const AKITA_TIME_LOCK_PLUGIN_ID = 0;
-export const META_MERKLE_APP_ID = 0;
-
-export type Operator = uint64;
-export type LogicalOperator = uint64;
-
-export const AND = 0;
-export const OR = 1;
-
-export type GateFilter = {
-    layer: uint64, // the comparison nesting level
-    app: AppID; // the signature of the gate to use
-    operator: LogicalOperator; // the logical operator to apply between this gate filter and the next
-};
-
-export type GateFilterEntry = {
-    layer: uint64,
-    app: AppID;
-    registeryEntry: uint64,
-    operator: Operator;
-}
+import { arc4, assert, BoxMap, bytes, Contract, ensureBudget, GlobalState, itxn, OnCompleteAction, uint64 } from "@algorandfoundation/algorand-typescript";
+import { AkitaBaseContract } from "../../utils/base_contracts/base.algo";
+import { GateBoxPrefixAppRegistry, GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from "./constants";
+import { decodeArc4, methodSelector, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4";
+import { AND, arc4GateFilter, arc4GateFilterEntry, OR } from "./types";
 
 class MockGate extends Contract {
-    register(args: bytes): uint64 { return 0; }
-    check(args: bytes): boolean { return false; }
+  register(args: bytes): uint64 { return 0 }
+  check(args: bytes): boolean { return false }
 }
 
-export class Gate extends Contract {
+export class Gate extends AkitaBaseContract {
 
-    /** The App ID of the Akita DAO contract */
-    akitaDaoAppID = TemplateVar<AppID>();
+  gateCursor = GlobalState<uint64>({ key: GateGlobalStateKeyCursor });
 
-    gateCursor = GlobalStateKey<uint64>({ key: 'gate_cursor' });
+  appRegistry = BoxMap<arc4.UintN64, StaticBytes<0>>({ keyPrefix: GateBoxPrefixAppRegistry });
 
-    appRegistry = BoxMap<AppID, bytes<0>>();
+  gateRegistry = BoxMap<arc4.UintN64, arc4.DynamicArray<arc4GateFilterEntry>>({ keyPrefix: GateBoxPrefixGateRegistry });
 
-    gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ prefix: 'f' });
+  private newGateID(): arc4.UintN64 {
+    const id = this.gateCursor.value
+    this.gateCursor.value += 1
+    return new arc4.UintN64(id)
+  }
 
-    private newGateID(): uint64 {
-        const id = this.gateCursor.value;
-        this.gateCursor.value += 1;
-        return id;
-    }
+  private evaluate(caller: arc4.Address, filters: arc4.DynamicArray<arc4GateFilterEntry>, start: uint64, end: uint64, args: bytes[]): boolean {
+    if (start > end) return true;
 
-    private evaluateFilters(caller: Address, filters: GateFilterEntry[], start: uint64, end: uint64, args: bytes[]): boolean {
-        if (start > end) return true;
+    let result = this.evaluateFilter(caller, filters[start], args[start]);
 
-        let result = this.evaluateFilter(caller, filters[start], args[start]);
-        
-        for (let i = start; i < end; i += 1) {
+    ensureBudget(100 * (end - start))
 
-            if (globals.opcodeBudget < 50) {
-                increaseOpcodeBudget();
-            }
+    for (let i = start; i < end; i += 1) {
 
-            const currentOperator = filters[i].operator;
-            const nextResult = this.evaluateFilter(caller, filters[i + 1], args[i + 1]);
+      const currentOperator = filters[i].logicalOperator
+      const nextResult = this.evaluateFilter(caller, filters[i + 1], args[i + 1])
 
-            if (currentOperator === AND) {
-                result = result && nextResult;
-            } else if (currentOperator === OR) {
-                result = result || nextResult;
-            }
+      if (currentOperator.native === AND) {
+        result = result && nextResult;
+      } else if (currentOperator.native === OR) {
+        result = result || nextResult;
+      }
 
-            // Handle nested logic
-            if (i + 1 < end && filters[i + 2].layer > filters[i + 1].layer) {
-                const nestedEnd = this.findEndOfLayer(filters, i + 2, filters[i + 2].layer);
-                const nestedResult = this.evaluateFilters(caller, filters, i + 2, nestedEnd, args);
-                
-                if (currentOperator === AND) {
-                    result = result && nestedResult;
-                } else if (currentOperator === OR) {
-                    result = result || nestedResult;
-                }
+      // Handle nested logic
+      if (i + 1 < end && filters[i + 2].layer.native > filters[i + 1].layer.native) {
+        const nestedEnd = this.findEndOfLayer(filters, i + 2, filters[i + 2].layer.native);
+        const nestedResult = this.evaluate(caller, filters, i + 2, nestedEnd, args);
 
-                i = nestedEnd;
-            }
+        if (currentOperator.native === AND) {
+          result = result && nestedResult;
+        } else if (currentOperator.native === OR) {
+          result = result || nestedResult;
         }
 
-        return result;
+        i = nestedEnd;
+      }
     }
 
-    private evaluateFilter(caller: Address, filter: GateFilterEntry, args: bytes): boolean {
-        const argsWithCaller =  concat(caller, args);
-        return sendMethodCall<typeof MockGate.prototype.check, boolean>({
-            applicationID: filter.app,
-            methodArgs: [argsWithCaller],
-            fee: 0,
-        });
+    return result;
+  }
+
+  private evaluateFilter(caller: arc4.Address, filter: arc4GateFilterEntry, args: bytes): boolean {
+    const argsWithCaller = caller.bytes.concat(args)
+
+    // TODO: replace with itxn.abiCall when available
+    const result = itxn
+      .applicationCall({
+        appId: filter.app.native,
+        onCompletion: OnCompleteAction.NoOp,
+        appArgs: [
+          methodSelector(MockGate.prototype.check),
+          argsWithCaller,
+        ],
+        accounts: [caller.native],
+        fee: 0,
+      })
+      .submit()
+
+    return decodeArc4<boolean>(result.lastLog);
+  }
+
+  private findEndOfLayer(filters: arc4.DynamicArray<arc4GateFilterEntry>, start: uint64, layer: uint64): uint64 {
+    let end = start;
+    for (let i = start; i < filters.length; i += 1) {
+      if (filters[i].layer.native < layer) {
+        break;
+      }
+      end = i;
+    }
+    return end;
+  }
+
+  createApplication(): void {
+    this.gateCursor.value = 0;
+  }
+
+  register(filters: arc4.DynamicArray<arc4GateFilter>, args: bytes[]): arc4.UintN64 {
+    const entries = new arc4.DynamicArray<arc4GateFilterEntry>()
+    let lastFilterLayer: uint64 = 0
+    for (let i: uint64 = 0; i < filters.length; i += 1) {
+      assert(this.appRegistry(filters[i].app).exists)
+      assert(filters[i].layer.native >= lastFilterLayer)
+      lastFilterLayer = filters[i].layer.native
+
+      // TODO: replace with itxn.abiCall when available
+      const registerTxn = itxn
+        .applicationCall({
+          appId: filters[i].app.native,
+          onCompletion: OnCompleteAction.NoOp,
+          appArgs: [
+            methodSelector(MockGate.prototype.register),
+            args[i],
+          ],
+        })
+        .submit()
+
+      const registryEntry = new arc4.UintN64(decodeArc4<uint64>(registerTxn.lastLog))
+
+      const entry = new arc4GateFilterEntry({
+        layer: filters[i].layer,
+        app: filters[i].app,
+        registeryEntry: registryEntry,
+        logicalOperator: filters[i].logicalOperator,
+      })
+
+      entries.push(entry)
     }
 
-    private findEndOfLayer(filters: GateFilterEntry[], start: uint64, layer: uint64): uint64 {
-        let end = start;
-        for (let i = start; i < filters.length; i += 1) {
-            if (filters[i].layer < layer) {
-                break;
-            }
-            end = i;
-        }
-        return end;
-    }
+    const id = this.newGateID();
+    this.gateRegistry(id).value = entries;
+    return id;
+  }
 
-    createApplication(): void {
-        this.gateCursor.value = 0;
-    }
-
-    updateApplication(): void {
-        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
-    }
-
-    register(filters: GateFilter[], args: bytes[]): uint64 {
-        let entries: GateFilterEntry[] = [];
-        let lastFilterLayer: uint64 = 0;
-        for (let i = 0; i < filters.length; i += 1) {
-            assert(this.appRegistry(filters[i].app).exists);
-            assert(filters[i].layer >= lastFilterLayer)
-            lastFilterLayer = filters[i].layer;
-
-            const registryEntry = sendMethodCall<typeof MockGate.prototype.register, uint64>({
-                applicationID: filters[i].app,
-                methodArgs: [ args[i] ],
-                fee: 0,
-            });
-
-            const entry: GateFilterEntry = {
-                layer: filters[i].layer,
-                app: filters[i].app,
-                registeryEntry: registryEntry,
-                operator: filters[i].operator,
-            };
-
-            entries.push(entry);
-        }
-
-        const id = this.newGateID();
-        this.gateRegistry(id).value = entries;
-        return id;
-    }
-
-    check(caller: Address, gateID: uint64, args: bytes[]): boolean {
-        assert(this.gateRegistry(gateID).exists);
-        const filters = this.gateRegistry(gateID).value;
-        return this.evaluateFilters(caller, filters, 0, (filters.length - 1), args);
-    }
+  check(caller: arc4.Address, gateID: arc4.UintN64, args: bytes[]): boolean {
+    assert(this.gateRegistry(gateID).exists);
+    const filters = this.gateRegistry(gateID).value;
+    return this.evaluate(caller, filters, 0, (filters.length - 1), args);
+  }
 }

@@ -512,7 +512,7 @@ export class RewardsFactory {
   public async deploy(params: RewardsDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? RewardsParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? RewardsParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (RewardsCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new RewardsClient(result.appClient) }
   }
@@ -575,7 +575,7 @@ export class RewardsFactory {
        */
       createApplication: async (params: CallParams<RewardsArgs['obj']['createApplication()void'] | RewardsArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(RewardsParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | RewardsReturns['createApplication()void'] }, appClient: new RewardsClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | RewardsReturns['createApplication()void']) }, appClient: new RewardsClient(result.appClient) }
       },
     },
 
@@ -859,7 +859,7 @@ export class RewardsClient {
      */
     createDisbursement: async (params: CallParams<RewardsArgs['obj']['createDisbursement(pay,pay,string,uint64,uint64,string)uint64'] | RewardsArgs['tuple']['createDisbursement(pay,pay,string,uint64,uint64,string)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsParamsFactory.createDisbursement(params))
-      return {...result, return: result.return as undefined | RewardsReturns['createDisbursement(pay,pay,string,uint64,uint64,string)uint64']}
+      return {...result, return: result.return as unknown as (undefined | RewardsReturns['createDisbursement(pay,pay,string,uint64,uint64,string)uint64'])}
     },
 
     /**
@@ -870,7 +870,7 @@ export class RewardsClient {
      */
     editDisbursement: async (params: CallParams<RewardsArgs['obj']['editDisbursement(uint64,string,uint64,uint64,string)void'] | RewardsArgs['tuple']['editDisbursement(uint64,string,uint64,uint64,string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsParamsFactory.editDisbursement(params))
-      return {...result, return: result.return as undefined | RewardsReturns['editDisbursement(uint64,string,uint64,uint64,string)void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsReturns['editDisbursement(uint64,string,uint64,uint64,string)void'])}
     },
 
     /**
@@ -881,7 +881,7 @@ export class RewardsClient {
      */
     createUserAllocations: async (params: CallParams<RewardsArgs['obj']['createUserAllocations(pay,uint64,(address,uint64)[])void'] | RewardsArgs['tuple']['createUserAllocations(pay,uint64,(address,uint64)[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsParamsFactory.createUserAllocations(params))
-      return {...result, return: result.return as undefined | RewardsReturns['createUserAllocations(pay,uint64,(address,uint64)[])void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsReturns['createUserAllocations(pay,uint64,(address,uint64)[])void'])}
     },
 
     /**
@@ -892,7 +892,7 @@ export class RewardsClient {
      */
     createAsaUserAllocations: async (params: CallParams<RewardsArgs['obj']['createAsaUserAllocations(pay,axfer,uint64,uint64,(address,uint64)[],uint64)void'] | RewardsArgs['tuple']['createAsaUserAllocations(pay,axfer,uint64,uint64,(address,uint64)[],uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsParamsFactory.createAsaUserAllocations(params))
-      return {...result, return: result.return as undefined | RewardsReturns['createAsaUserAllocations(pay,axfer,uint64,uint64,(address,uint64)[],uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsReturns['createAsaUserAllocations(pay,axfer,uint64,uint64,(address,uint64)[],uint64)void'])}
     },
 
     /**
@@ -903,7 +903,7 @@ export class RewardsClient {
      */
     finalizeDisbursement: async (params: CallParams<RewardsArgs['obj']['finalizeDisbursement(uint64)void'] | RewardsArgs['tuple']['finalizeDisbursement(uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsParamsFactory.finalizeDisbursement(params))
-      return {...result, return: result.return as undefined | RewardsReturns['finalizeDisbursement(uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsReturns['finalizeDisbursement(uint64)void'])}
     },
 
     /**
@@ -914,7 +914,7 @@ export class RewardsClient {
      */
     claimRewards: async (params: CallParams<RewardsArgs['obj']['claimRewards(uint64[])void'] | RewardsArgs['tuple']['claimRewards(uint64[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsParamsFactory.claimRewards(params))
-      return {...result, return: result.return as undefined | RewardsReturns['claimRewards(uint64[])void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsReturns['claimRewards(uint64[])void'])}
     },
 
     /**
@@ -925,7 +925,7 @@ export class RewardsClient {
      */
     reclaimRewards: async (params: CallParams<RewardsArgs['obj']['reclaimRewards(uint64,(address,uint64)[])void'] | RewardsArgs['tuple']['reclaimRewards(uint64,(address,uint64)[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsParamsFactory.reclaimRewards(params))
-      return {...result, return: result.return as undefined | RewardsReturns['reclaimRewards(uint64,(address,uint64)[])void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsReturns['reclaimRewards(uint64,(address,uint64)[])void'])}
     },
 
   }
@@ -966,11 +966,11 @@ export class RewardsClient {
       /**
        * Get the current value of the daoAppID key in global state
        */
-      daoAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("daoAppId")) as bigint | undefined },
+      daoAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("daoAppID")) as bigint | undefined },
       /**
        * Get the current value of the _disbursementID key in global state
        */
-      _disbursementId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("_disbursementId")) as bigint | undefined },
+      _disbursementId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("_disbursementID")) as bigint | undefined },
     },
     /**
      * Methods to access box state for the current Rewards app
@@ -1191,7 +1191,7 @@ export type RewardsComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

@@ -345,7 +345,7 @@ export class StakingPowerGateFactory {
   public async deploy(params: StakingPowerGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? StakingPowerGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? StakingPowerGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (StakingPowerGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new StakingPowerGateClient(result.appClient) }
   }
@@ -408,7 +408,7 @@ export class StakingPowerGateFactory {
        */
       createApplication: async (params: CallParams<StakingPowerGateArgs['obj']['createApplication()void'] | StakingPowerGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(StakingPowerGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | StakingPowerGateReturns['createApplication()void'] }, appClient: new StakingPowerGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | StakingPowerGateReturns['createApplication()void']) }, appClient: new StakingPowerGateClient(result.appClient) }
       },
     },
 
@@ -592,7 +592,7 @@ export class StakingPowerGateClient {
      */
     register: async (params: CallParams<StakingPowerGateArgs['obj']['register(byte[])uint64'] | StakingPowerGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingPowerGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | StakingPowerGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | StakingPowerGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -603,7 +603,7 @@ export class StakingPowerGateClient {
      */
     check: async (params: CallParams<StakingPowerGateArgs['obj']['check(byte[])bool'] | StakingPowerGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingPowerGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | StakingPowerGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | StakingPowerGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -761,7 +761,7 @@ export type StakingPowerGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

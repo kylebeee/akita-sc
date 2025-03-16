@@ -344,7 +344,7 @@ export class SubscriptionGateFactory {
   public async deploy(params: SubscriptionGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? SubscriptionGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? SubscriptionGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (SubscriptionGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new SubscriptionGateClient(result.appClient) }
   }
@@ -407,7 +407,7 @@ export class SubscriptionGateFactory {
        */
       createApplication: async (params: CallParams<SubscriptionGateArgs['obj']['createApplication()void'] | SubscriptionGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(SubscriptionGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | SubscriptionGateReturns['createApplication()void'] }, appClient: new SubscriptionGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | SubscriptionGateReturns['createApplication()void']) }, appClient: new SubscriptionGateClient(result.appClient) }
       },
     },
 
@@ -591,7 +591,7 @@ export class SubscriptionGateClient {
      */
     register: async (params: CallParams<SubscriptionGateArgs['obj']['register(byte[])uint64'] | SubscriptionGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | SubscriptionGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -602,7 +602,7 @@ export class SubscriptionGateClient {
      */
     check: async (params: CallParams<SubscriptionGateArgs['obj']['check(byte[])bool'] | SubscriptionGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | SubscriptionGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -760,7 +760,7 @@ export type SubscriptionGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

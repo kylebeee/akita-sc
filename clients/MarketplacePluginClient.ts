@@ -375,7 +375,7 @@ export class MarketplacePluginFactory {
   public async deploy(params: MarketplacePluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? MarketplacePluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? MarketplacePluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (MarketplacePluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new MarketplacePluginClient(result.appClient) }
   }
@@ -438,7 +438,7 @@ export class MarketplacePluginFactory {
        */
       createApplication: async (params: CallParams<MarketplacePluginArgs['obj']['createApplication()void'] | MarketplacePluginArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(MarketplacePluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | MarketplacePluginReturns['createApplication()void'] }, appClient: new MarketplacePluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | MarketplacePluginReturns['createApplication()void']) }, appClient: new MarketplacePluginClient(result.appClient) }
       },
     },
 
@@ -662,7 +662,7 @@ export class MarketplacePluginClient {
      */
     list: async (params: CallParams<MarketplacePluginArgs['obj']['list(uint64,bool,uint64,uint64,uint64,uint64,string,byte[32][],address,uint64,address,uint64)uint64'] | MarketplacePluginArgs['tuple']['list(uint64,bool,uint64,uint64,uint64,uint64,string,byte[32][],address,uint64,address,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MarketplacePluginParamsFactory.list(params))
-      return {...result, return: result.return as undefined | MarketplacePluginReturns['list(uint64,bool,uint64,uint64,uint64,uint64,string,byte[32][],address,uint64,address,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | MarketplacePluginReturns['list(uint64,bool,uint64,uint64,uint64,uint64,string,byte[32][],address,uint64,address,uint64)uint64'])}
     },
 
     /**
@@ -673,7 +673,7 @@ export class MarketplacePluginClient {
      */
     purchase: async (params: CallParams<MarketplacePluginArgs['obj']['purchase(uint64,bool,uint64,address,byte[][])void'] | MarketplacePluginArgs['tuple']['purchase(uint64,bool,uint64,address,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MarketplacePluginParamsFactory.purchase(params))
-      return {...result, return: result.return as undefined | MarketplacePluginReturns['purchase(uint64,bool,uint64,address,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | MarketplacePluginReturns['purchase(uint64,bool,uint64,address,byte[][])void'])}
     },
 
     /**
@@ -684,7 +684,7 @@ export class MarketplacePluginClient {
      */
     changePrice: async (params: CallParams<MarketplacePluginArgs['obj']['changePrice(uint64,bool,uint64,uint64)void'] | MarketplacePluginArgs['tuple']['changePrice(uint64,bool,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MarketplacePluginParamsFactory.changePrice(params))
-      return {...result, return: result.return as undefined | MarketplacePluginReturns['changePrice(uint64,bool,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | MarketplacePluginReturns['changePrice(uint64,bool,uint64,uint64)void'])}
     },
 
     /**
@@ -695,7 +695,7 @@ export class MarketplacePluginClient {
      */
     delist: async (params: CallParams<MarketplacePluginArgs['obj']['delist(uint64,bool,uint64)void'] | MarketplacePluginArgs['tuple']['delist(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(MarketplacePluginParamsFactory.delist(params))
-      return {...result, return: result.return as undefined | MarketplacePluginReturns['delist(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | MarketplacePluginReturns['delist(uint64,bool,uint64)void'])}
     },
 
   }
@@ -843,7 +843,7 @@ export type MarketplacePluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

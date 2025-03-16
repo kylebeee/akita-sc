@@ -344,7 +344,7 @@ export class ImpactGateFactory {
   public async deploy(params: ImpactGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? ImpactGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? ImpactGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (ImpactGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new ImpactGateClient(result.appClient) }
   }
@@ -407,7 +407,7 @@ export class ImpactGateFactory {
        */
       createApplication: async (params: CallParams<ImpactGateArgs['obj']['createApplication()void'] | ImpactGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(ImpactGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | ImpactGateReturns['createApplication()void'] }, appClient: new ImpactGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | ImpactGateReturns['createApplication()void']) }, appClient: new ImpactGateClient(result.appClient) }
       },
     },
 
@@ -591,7 +591,7 @@ export class ImpactGateClient {
      */
     register: async (params: CallParams<ImpactGateArgs['obj']['register(byte[])uint64'] | ImpactGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(ImpactGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | ImpactGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | ImpactGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -602,7 +602,7 @@ export class ImpactGateClient {
      */
     check: async (params: CallParams<ImpactGateArgs['obj']['check(byte[])bool'] | ImpactGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(ImpactGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | ImpactGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | ImpactGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -760,7 +760,7 @@ export type ImpactGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

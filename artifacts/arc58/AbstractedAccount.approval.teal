@@ -5,34 +5,34 @@
 main:
     intcblock 0 1 8 20 192
     bytecblock "p" 0x00 "controlled_address" "" "admin" 0x001b 0x0000000000000000 0x151f7c75 "d" "revocation_app_id" "n" 0x0000 0x0f885493 "version" "nickname"
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txn NumAppArgs
     bz main_after_if_else@27
-    pushbytess 0x2bf25f1b 0x1747405b 0xf5730aef 0x9f91cccd 0x06d21d34 0x04dc7522 0x5ef0b415 0x0177ed5d 0xd1ec61fe 0x0df3feae // method "createApplication(string,account,account,application,string)void", method "updateApplication(string)void", method "changeRevocationApp(application)void", method "setNickname(string)void", method "setAvatar(asset)void", method "setBanner(asset)void", method "setBio(string)void", method "arc58_changeAdmin(account)void", method "arc58_pluginChangeAdmin(application,account,account)void", method "arc58_getAdmin()account"
+    pushbytess 0xe9934671 0x1747405b 0xf5730aef 0x9f91cccd 0x06d21d34 0x04dc7522 0x5ef0b415 0xd24b7556 0xe98e74b7 0x13bc44e4 // method "createApplication(string,address,address,application,string)void", method "updateApplication(string)void", method "changeRevocationApp(application)void", method "setNickname(string)void", method "setAvatar(asset)void", method "setBanner(asset)void", method "setBio(string)void", method "arc58_changeAdmin(address)void", method "arc58_pluginChangeAdmin(application,address,address)void", method "arc58_getAdmin()address"
     bytec 12 // method "arc58_verifyAuthAddr()void"
-    pushbytess 0x3bcc1e56 0x421e1e9d 0x5251c3bd 0x5c34f3d6 0x0c3515aa 0xf7a9468e 0x2024e196 0x428dd35d 0xe350b9d4 0x124c0a7f // method "arc58_rekeyTo(account,bool)void", method "arc58_canCall(application,account,byte[4])bool", method "arc58_rekeyToPlugin(application,uint64[])void", method "arc58_rekeyToNamedPlugin(string,uint64[])void", method "arc58_addPlugin(application,account,uint64,uint64,bool,(byte[4],uint64)[])void", method "assignDomain(account,string)void", method "arc58_removePlugin(application,account)void", method "arc58_addNamedPlugin(string,application,account,uint64,uint64,bool,(byte[4],uint64)[])void", method "arc58_removeNamedPlugin(string)void", method "balance(uint64[])uint64[]"
+    pushbytess 0xc95a5d3d 0x6e7361a3 0x5251c3bd 0x5c34f3d6 0xf445d427 0x57a51d88 0xe27c1b49 0x643303a0 0xe350b9d4 0x124c0a7f // method "arc58_rekeyTo(address,bool)void", method "arc58_canCall(application,address,byte[4])bool", method "arc58_rekeyToPlugin(application,uint64[])void", method "arc58_rekeyToNamedPlugin(string,uint64[])void", method "arc58_addPlugin(application,address,uint64,uint64,bool,(byte[4],uint64)[])void", method "assignDomain(address,string)void", method "arc58_removePlugin(application,address)void", method "arc58_addNamedPlugin(string,application,address,uint64,uint64,bool,(byte[4],uint64)[])void", method "arc58_removeNamedPlugin(string)void", method "balance(uint64[])uint64[]"
     txna ApplicationArgs 0
     match main_createApplication_route@3 main_updateApplication_route@4 main_changeRevocationApp_route@5 main_setNickname_route@6 main_setAvatar_route@7 main_setBanner_route@8 main_setBio_route@9 main_arc58_changeAdmin_route@10 main_arc58_pluginChangeAdmin_route@11 main_arc58_getAdmin_route@12 main_arc58_verifyAuthAddr_route@13 main_arc58_rekeyTo_route@14 main_arc58_canCall_route@15 main_arc58_rekeyToPlugin_route@16 main_arc58_rekeyToNamedPlugin_route@17 main_arc58_addPlugin_route@18 main_assignDomain_route@19 main_arc58_removePlugin_route@20 main_arc58_addNamedPlugin_route@21 main_arc58_removeNamedPlugin_route@22 main_balance_route@23
 
 main_after_if_else@27:
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     intc_0 // 0
     return
 
 main_balance_route@23:
-    // contracts/arc58/abstracted_account.algo.ts:779
+    // contracts/arc58/abstracted_account.algo.ts:778
     // balance(assets: uint64[]): uint64[] {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
-    // contracts/arc58/abstracted_account.algo.ts:779
+    // contracts/arc58/abstracted_account.algo.ts:778
     // balance(assets: uint64[]): uint64[] {
     callsub balance
     bytec 7 // 0x151f7c75
@@ -43,40 +43,40 @@ main_balance_route@23:
     return
 
 main_arc58_removeNamedPlugin_route@22:
-    // contracts/arc58/abstracted_account.algo.ts:764
+    // contracts/arc58/abstracted_account.algo.ts:763
     // arc58_removeNamedPlugin(name: string): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:764
+    // contracts/arc58/abstracted_account.algo.ts:763
     // arc58_removeNamedPlugin(name: string): void {
     callsub arc58_removeNamedPlugin
     intc_1 // 1
     return
 
 main_arc58_addNamedPlugin_route@21:
-    // contracts/arc58/abstracted_account.algo.ts:725-733
+    // contracts/arc58/abstracted_account.algo.ts:724-732
     // arc58_addNamedPlugin(
     //   name: string,
     //   app: Application,
-    //   allowedCaller: Account,
+    //   allowedCaller: arc4.Address,
     //   lastValidRound: uint64,
     //   cooldown: uint64,
     //   adminPrivileges: boolean,
-    //   methods: DynamicArray<MethodRestriction>,
+    //   methods: arc4.DynamicArray<MethodRestriction>,
     // ): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     extract 2 0
@@ -84,8 +84,6 @@ main_arc58_addNamedPlugin_route@21:
     btoi
     txnas Applications
     txna ApplicationArgs 3
-    btoi
-    txnas Accounts
     txna ApplicationArgs 4
     btoi
     txna ApplicationArgs 5
@@ -94,86 +92,80 @@ main_arc58_addNamedPlugin_route@21:
     intc_0 // 0
     getbit
     txna ApplicationArgs 7
-    // contracts/arc58/abstracted_account.algo.ts:725-733
+    // contracts/arc58/abstracted_account.algo.ts:724-732
     // arc58_addNamedPlugin(
     //   name: string,
     //   app: Application,
-    //   allowedCaller: Account,
+    //   allowedCaller: arc4.Address,
     //   lastValidRound: uint64,
     //   cooldown: uint64,
     //   adminPrivileges: boolean,
-    //   methods: DynamicArray<MethodRestriction>,
+    //   methods: arc4.DynamicArray<MethodRestriction>,
     // ): void {
     callsub arc58_addNamedPlugin
     intc_1 // 1
     return
 
 main_arc58_removePlugin_route@20:
-    // contracts/arc58/abstracted_account.algo.ts:704
-    // arc58_removePlugin(app: Application, allowedCaller: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:703
+    // arc58_removePlugin(app: Application, allowedCaller: arc4.Address): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Applications
     txna ApplicationArgs 2
-    btoi
-    txnas Accounts
-    // contracts/arc58/abstracted_account.algo.ts:704
-    // arc58_removePlugin(app: Application, allowedCaller: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:703
+    // arc58_removePlugin(app: Application, allowedCaller: arc4.Address): void {
     callsub arc58_removePlugin
     intc_1 // 1
     return
 
 main_assignDomain_route@19:
-    // contracts/arc58/abstracted_account.algo.ts:691
-    // assignDomain(caller: Account, domain: string): void {
+    // contracts/arc58/abstracted_account.algo.ts:690
+    // assignDomain(caller: arc4.Address, domain: string): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
-    btoi
-    txnas Accounts
     txna ApplicationArgs 2
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:691
-    // assignDomain(caller: Account, domain: string): void {
+    // contracts/arc58/abstracted_account.algo.ts:690
+    // assignDomain(caller: arc4.Address, domain: string): void {
     callsub assignDomain
     intc_1 // 1
     return
 
 main_arc58_addPlugin_route@18:
-    // contracts/arc58/abstracted_account.algo.ts:655-662
+    // contracts/arc58/abstracted_account.algo.ts:654-661
     // arc58_addPlugin(
     //   app: Application,
-    //   allowedCaller: Account,
+    //   allowedCaller: arc4.Address,
     //   lastValidRound: uint64,
     //   cooldown: uint64,
     //   adminPrivileges: boolean,
-    //   methods: DynamicArray<MethodRestriction>,
+    //   methods: arc4.DynamicArray<MethodRestriction>,
     // ): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Applications
     txna ApplicationArgs 2
-    btoi
-    txnas Accounts
     txna ApplicationArgs 3
     btoi
     txna ApplicationArgs 4
@@ -182,76 +174,74 @@ main_arc58_addPlugin_route@18:
     intc_0 // 0
     getbit
     txna ApplicationArgs 6
-    // contracts/arc58/abstracted_account.algo.ts:655-662
+    // contracts/arc58/abstracted_account.algo.ts:654-661
     // arc58_addPlugin(
     //   app: Application,
-    //   allowedCaller: Account,
+    //   allowedCaller: arc4.Address,
     //   lastValidRound: uint64,
     //   cooldown: uint64,
     //   adminPrivileges: boolean,
-    //   methods: DynamicArray<MethodRestriction>,
+    //   methods: arc4.DynamicArray<MethodRestriction>,
     // ): void {
     callsub arc58_addPlugin
     intc_1 // 1
     return
 
 main_arc58_rekeyToNamedPlugin_route@17:
-    // contracts/arc58/abstracted_account.algo.ts:639
+    // contracts/arc58/abstracted_account.algo.ts:638
     // arc58_rekeyToNamedPlugin(name: string, methodOffsets: uint64[]): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
-    // contracts/arc58/abstracted_account.algo.ts:639
+    // contracts/arc58/abstracted_account.algo.ts:638
     // arc58_rekeyToNamedPlugin(name: string, methodOffsets: uint64[]): void {
     callsub arc58_rekeyToNamedPlugin
     intc_1 // 1
     return
 
 main_arc58_rekeyToPlugin_route@16:
-    // contracts/arc58/abstracted_account.algo.ts:615
+    // contracts/arc58/abstracted_account.algo.ts:614
     // arc58_rekeyToPlugin(plugin: Application, methodOffsets: uint64[]): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Applications
     txna ApplicationArgs 2
-    // contracts/arc58/abstracted_account.algo.ts:615
+    // contracts/arc58/abstracted_account.algo.ts:614
     // arc58_rekeyToPlugin(plugin: Application, methodOffsets: uint64[]): void {
     callsub arc58_rekeyToPlugin
     intc_1 // 1
     return
 
 main_arc58_canCall_route@15:
-    // contracts/arc58/abstracted_account.algo.ts:597
+    // contracts/arc58/abstracted_account.algo.ts:596
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Applications
     txna ApplicationArgs 2
-    btoi
-    txnas Accounts
     txna ApplicationArgs 3
-    // contracts/arc58/abstracted_account.algo.ts:597
+    // contracts/arc58/abstracted_account.algo.ts:596
     // @abimethod({ readonly: true })
     callsub arc58_canCall
     bytec_1 // 0x00
@@ -266,29 +256,27 @@ main_arc58_canCall_route@15:
     return
 
 main_arc58_rekeyTo_route@14:
-    // contracts/arc58/abstracted_account.algo.ts:573
-    // arc58_rekeyTo(address: Account, flash: boolean): void {
+    // contracts/arc58/abstracted_account.algo.ts:572
+    // arc58_rekeyTo(address: arc4.Address, flash: boolean): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
-    btoi
-    txnas Accounts
     txna ApplicationArgs 2
     intc_0 // 0
     getbit
-    // contracts/arc58/abstracted_account.algo.ts:573
-    // arc58_rekeyTo(address: Account, flash: boolean): void {
+    // contracts/arc58/abstracted_account.algo.ts:572
+    // arc58_rekeyTo(address: arc4.Address, flash: boolean): void {
     callsub arc58_rekeyTo
     intc_1 // 1
     return
 
 main_arc58_verifyAuthAddr_route@13:
-    // contracts/arc58/abstracted_account.algo.ts:563
+    // contracts/arc58/abstracted_account.algo.ts:562
     // arc58_verifyAuthAddr(): void {
     txn OnCompletion
     !
@@ -300,7 +288,7 @@ main_arc58_verifyAuthAddr_route@13:
     return
 
 main_arc58_getAdmin_route@12:
-    // contracts/arc58/abstracted_account.algo.ts:555
+    // contracts/arc58/abstracted_account.algo.ts:554
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
@@ -316,144 +304,138 @@ main_arc58_getAdmin_route@12:
     return
 
 main_arc58_pluginChangeAdmin_route@11:
-    // contracts/arc58/abstracted_account.algo.ts:533
-    // arc58_pluginChangeAdmin(plugin: Application, allowedCaller: Account, newAdmin: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:532
+    // arc58_pluginChangeAdmin(plugin: Application, allowedCaller: arc4.Address, newAdmin: arc4.Address): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Applications
     txna ApplicationArgs 2
-    btoi
-    txnas Accounts
     txna ApplicationArgs 3
-    btoi
-    txnas Accounts
-    // contracts/arc58/abstracted_account.algo.ts:533
-    // arc58_pluginChangeAdmin(plugin: Application, allowedCaller: Account, newAdmin: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:532
+    // arc58_pluginChangeAdmin(plugin: Application, allowedCaller: arc4.Address, newAdmin: arc4.Address): void {
     callsub arc58_pluginChangeAdmin
     intc_1 // 1
     return
 
 main_arc58_changeAdmin_route@10:
-    // contracts/arc58/abstracted_account.algo.ts:519
-    // arc58_changeAdmin(newAdmin: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:518
+    // arc58_changeAdmin(newAdmin: arc4.Address): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // contracts/arc58/abstracted_account.algo.ts:519
-    // arc58_changeAdmin(newAdmin: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:518
+    // arc58_changeAdmin(newAdmin: arc4.Address): void {
     callsub arc58_changeAdmin
     intc_1 // 1
     return
 
 main_setBio_route@9:
-    // contracts/arc58/abstracted_account.algo.ts:509
+    // contracts/arc58/abstracted_account.algo.ts:508
     // setBio(bio: string): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:509
+    // contracts/arc58/abstracted_account.algo.ts:508
     // setBio(bio: string): void {
     callsub setBio
     intc_1 // 1
     return
 
 main_setBanner_route@8:
-    // contracts/arc58/abstracted_account.algo.ts:497
+    // contracts/arc58/abstracted_account.algo.ts:496
     // setBanner(banner: Asset): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Assets
-    // contracts/arc58/abstracted_account.algo.ts:497
+    // contracts/arc58/abstracted_account.algo.ts:496
     // setBanner(banner: Asset): void {
     callsub setBanner
     intc_1 // 1
     return
 
 main_setAvatar_route@7:
-    // contracts/arc58/abstracted_account.algo.ts:485
+    // contracts/arc58/abstracted_account.algo.ts:484
     // setAvatar(avatar: Asset): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Assets
-    // contracts/arc58/abstracted_account.algo.ts:485
+    // contracts/arc58/abstracted_account.algo.ts:484
     // setAvatar(avatar: Asset): void {
     callsub setAvatar
     intc_1 // 1
     return
 
 main_setNickname_route@6:
-    // contracts/arc58/abstracted_account.algo.ts:475
+    // contracts/arc58/abstracted_account.algo.ts:474
     // setNickname(nickname: string): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:475
+    // contracts/arc58/abstracted_account.algo.ts:474
     // setNickname(nickname: string): void {
     callsub setNickname
     intc_1 // 1
     return
 
 main_changeRevocationApp_route@5:
-    // contracts/arc58/abstracted_account.algo.ts:465
+    // contracts/arc58/abstracted_account.algo.ts:464
     // changeRevocationApp(newRevocationApp: Application): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // contracts/arc58/abstracted_account.algo.ts:465
+    // contracts/arc58/abstracted_account.algo.ts:464
     // changeRevocationApp(newRevocationApp: Application): void {
     callsub changeRevocationApp
     intc_1 // 1
     return
 
 main_updateApplication_route@4:
-    // contracts/arc58/abstracted_account.algo.ts:454
+    // contracts/arc58/abstracted_account.algo.ts:453
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -461,18 +443,18 @@ main_updateApplication_route@4:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:454
+    // contracts/arc58/abstracted_account.algo.ts:453
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub updateApplication
     intc_1 // 1
     return
 
 main_createApplication_route@3:
-    // contracts/arc58/abstracted_account.algo.ts:431
+    // contracts/arc58/abstracted_account.algo.ts:430
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -480,22 +462,18 @@ main_createApplication_route@3:
     txn ApplicationID
     !
     assert // can only call when creating
-    // contracts/arc58/abstracted_account.algo.ts:76
+    // contracts/arc58/abstracted_account.algo.ts:75
     // export class AbstractedAccount extends Contract {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
-    btoi
-    txnas Accounts
     txna ApplicationArgs 3
-    btoi
-    txnas Accounts
     txna ApplicationArgs 4
     btoi
     txnas Applications
     txna ApplicationArgs 5
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:431
+    // contracts/arc58/abstracted_account.algo.ts:430
     // @abimethod({ onCreate: 'require' })
     callsub createApplication
     intc_1 // 1
@@ -504,7 +482,7 @@ main_createApplication_route@3:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.isAdmin() -> uint64:
 isAdmin:
-    // contracts/arc58/abstracted_account.algo.ts:134
+    // contracts/arc58/abstracted_account.algo.ts:133
     // Txn.sender === this.admin.value ||
     txn Sender
     // contracts/arc58/constants.ts:2
@@ -513,58 +491,58 @@ isAdmin:
     bytec 4 // "admin"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:134
+    // contracts/arc58/abstracted_account.algo.ts:133
     // Txn.sender === this.admin.value ||
     ==
-    // contracts/arc58/abstracted_account.algo.ts:134-136
+    // contracts/arc58/abstracted_account.algo.ts:133-135
     // Txn.sender === this.admin.value ||
     // this.domainKeys(Txn.sender).exists &&
     // this.domainKeys(Txn.sender).value === AkitaDomain
     bnz isAdmin_bool_true@3
-    // contracts/arc58/abstracted_account.algo.ts:126
+    // contracts/arc58/abstracted_account.algo.ts:125
     // domainKeys = BoxMap<Account, string>({ keyPrefix: 'd' });
     bytec 8 // "d"
-    // contracts/arc58/abstracted_account.algo.ts:135
+    // contracts/arc58/abstracted_account.algo.ts:134
     // this.domainKeys(Txn.sender).exists &&
     txn Sender
-    // contracts/arc58/abstracted_account.algo.ts:126
+    // contracts/arc58/abstracted_account.algo.ts:125
     // domainKeys = BoxMap<Account, string>({ keyPrefix: 'd' });
     concat
-    // contracts/arc58/abstracted_account.algo.ts:135
+    // contracts/arc58/abstracted_account.algo.ts:134
     // this.domainKeys(Txn.sender).exists &&
     box_len
     bury 1
-    // contracts/arc58/abstracted_account.algo.ts:135-136
+    // contracts/arc58/abstracted_account.algo.ts:134-135
     // this.domainKeys(Txn.sender).exists &&
     // this.domainKeys(Txn.sender).value === AkitaDomain
     bz isAdmin_bool_false@4
-    // contracts/arc58/abstracted_account.algo.ts:126
+    // contracts/arc58/abstracted_account.algo.ts:125
     // domainKeys = BoxMap<Account, string>({ keyPrefix: 'd' });
     bytec 8 // "d"
-    // contracts/arc58/abstracted_account.algo.ts:136
+    // contracts/arc58/abstracted_account.algo.ts:135
     // this.domainKeys(Txn.sender).value === AkitaDomain
     txn Sender
-    // contracts/arc58/abstracted_account.algo.ts:126
+    // contracts/arc58/abstracted_account.algo.ts:125
     // domainKeys = BoxMap<Account, string>({ keyPrefix: 'd' });
     concat
-    // contracts/arc58/abstracted_account.algo.ts:136
+    // contracts/arc58/abstracted_account.algo.ts:135
     // this.domainKeys(Txn.sender).value === AkitaDomain
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:7
+    // contracts/arc58/abstracted_account.algo.ts:6
     // const AkitaDomain: string = 'akita.community';
     pushbytes "akita.community"
-    // contracts/arc58/abstracted_account.algo.ts:136
+    // contracts/arc58/abstracted_account.algo.ts:135
     // this.domainKeys(Txn.sender).value === AkitaDomain
     ==
-    // contracts/arc58/abstracted_account.algo.ts:135-136
+    // contracts/arc58/abstracted_account.algo.ts:134-135
     // this.domainKeys(Txn.sender).exists &&
     // this.domainKeys(Txn.sender).value === AkitaDomain
     bz isAdmin_bool_false@4
 
 isAdmin_bool_true@3:
     intc_1 // 1
-    // contracts/arc58/abstracted_account.algo.ts:133-137
+    // contracts/arc58/abstracted_account.algo.ts:132-136
     // return (
     //   Txn.sender === this.admin.value ||
     //   this.domainKeys(Txn.sender).exists &&
@@ -574,7 +552,7 @@ isAdmin_bool_true@3:
 
 isAdmin_bool_false@4:
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:133-137
+    // contracts/arc58/abstracted_account.algo.ts:132-136
     // return (
     //   Txn.sender === this.admin.value ||
     //   this.domainKeys(Txn.sender).exists &&
@@ -585,7 +563,7 @@ isAdmin_bool_false@4:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.canRevoke() -> uint64:
 canRevoke:
-    // contracts/arc58/abstracted_account.algo.ts:145
+    // contracts/arc58/abstracted_account.algo.ts:144
     // return Txn.sender === this.revocationApp.value.address
     txn Sender
     // contracts/arc58/constants.ts:6
@@ -594,7 +572,7 @@ canRevoke:
     bytec 9 // "revocation_app_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:145
+    // contracts/arc58/abstracted_account.algo.ts:144
     // return Txn.sender === this.revocationApp.value.address
     app_params_get AppAddress
     assert // application exists
@@ -604,25 +582,25 @@ canRevoke:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.pluginCallAllowed(key: bytes, method: bytes) -> uint64, bytes:
 pluginCallAllowed:
-    // contracts/arc58/abstracted_account.algo.ts:148
+    // contracts/arc58/abstracted_account.algo.ts:147
     // private pluginCallAllowed(key: PluginsKey, method: arc4.StaticBytes<4>): boolean {
     proto 2 2
     intc_0 // 0
     dup
     bytec_3 // ""
     dupn 2
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     frame_dig -2
     concat
     dup
-    // contracts/arc58/abstracted_account.algo.ts:149
+    // contracts/arc58/abstracted_account.algo.ts:148
     // if (!this.plugins(key).exists) {
     box_len
     bury 1
     bnz pluginCallAllowed_after_if_else@2
-    // contracts/arc58/abstracted_account.algo.ts:150
+    // contracts/arc58/abstracted_account.algo.ts:149
     // return false;
     intc_0 // 0
     frame_dig -2
@@ -631,7 +609,7 @@ pluginCallAllowed:
     retsub
 
 pluginCallAllowed_after_if_else@2:
-    // contracts/arc58/abstracted_account.algo.ts:153
+    // contracts/arc58/abstracted_account.algo.ts:152
     // const methods = this.plugins(key).value.methods.copy();
     frame_dig 5
     box_get
@@ -644,7 +622,7 @@ pluginCallAllowed_after_if_else@2:
     substring3
     dup
     frame_bury 0
-    // contracts/arc58/abstracted_account.algo.ts:154
+    // contracts/arc58/abstracted_account.algo.ts:153
     // let methodAllowed = methods.length > 0 ? false : true;
     intc_0 // 0
     extract_uint16
@@ -652,19 +630,19 @@ pluginCallAllowed_after_if_else@2:
     frame_bury 4
     !
     frame_bury 3
-    // contracts/arc58/abstracted_account.algo.ts:155
+    // contracts/arc58/abstracted_account.algo.ts:154
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     intc_0 // 0
     frame_bury 2
 
 pluginCallAllowed_while_top@3:
-    // contracts/arc58/abstracted_account.algo.ts:155
+    // contracts/arc58/abstracted_account.algo.ts:154
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     frame_dig 2
     frame_dig 4
     <
     bz pluginCallAllowed_block@8
-    // contracts/arc58/abstracted_account.algo.ts:156
+    // contracts/arc58/abstracted_account.algo.ts:155
     // if (methods[i].selector === method) {
     frame_dig 0
     extract 2 0
@@ -677,13 +655,13 @@ pluginCallAllowed_while_top@3:
     frame_dig -1
     ==
     bz pluginCallAllowed_after_if_else@6
-    // contracts/arc58/abstracted_account.algo.ts:157
+    // contracts/arc58/abstracted_account.algo.ts:156
     // methodAllowed = true;
     intc_1 // 1
     frame_bury 3
 
 pluginCallAllowed_block@8:
-    // contracts/arc58/abstracted_account.algo.ts:162
+    // contracts/arc58/abstracted_account.algo.ts:161
     // const p = this.plugins(key).value.copy();
     frame_dig 5
     box_get
@@ -692,17 +670,17 @@ pluginCallAllowed_block@8:
     cover 2
     frame_bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:164
+    // contracts/arc58/abstracted_account.algo.ts:163
     // p.lastValidRound.native >= Global.round
     intc_0 // 0
     extract_uint64
     global Round
     >=
-    // contracts/arc58/abstracted_account.algo.ts:164-165
+    // contracts/arc58/abstracted_account.algo.ts:163-164
     // p.lastValidRound.native >= Global.round
     // && (Global.round - p.lastCalled.native) >= p.cooldown.native
     bz pluginCallAllowed_bool_false@11
-    // contracts/arc58/abstracted_account.algo.ts:165
+    // contracts/arc58/abstracted_account.algo.ts:164
     // && (Global.round - p.lastCalled.native) >= p.cooldown.native
     global Round
     frame_dig 1
@@ -715,20 +693,20 @@ pluginCallAllowed_block@8:
     intc_2 // 8
     extract_uint64
     >=
-    // contracts/arc58/abstracted_account.algo.ts:164-165
+    // contracts/arc58/abstracted_account.algo.ts:163-164
     // p.lastValidRound.native >= Global.round
     // && (Global.round - p.lastCalled.native) >= p.cooldown.native
     bz pluginCallAllowed_bool_false@11
     intc_1 // 1
 
 pluginCallAllowed_bool_merge@12:
-    // contracts/arc58/abstracted_account.algo.ts:164-166
+    // contracts/arc58/abstracted_account.algo.ts:163-165
     // p.lastValidRound.native >= Global.round
     // && (Global.round - p.lastCalled.native) >= p.cooldown.native
     // && methodAllowed
     frame_dig 3
     &&
-    // contracts/arc58/abstracted_account.algo.ts:163-167
+    // contracts/arc58/abstracted_account.algo.ts:162-166
     // return (
     //   p.lastValidRound.native >= Global.round
     //   && (Global.round - p.lastCalled.native) >= p.cooldown.native
@@ -744,7 +722,7 @@ pluginCallAllowed_bool_false@11:
     b pluginCallAllowed_bool_merge@12
 
 pluginCallAllowed_after_if_else@6:
-    // contracts/arc58/abstracted_account.algo.ts:155
+    // contracts/arc58/abstracted_account.algo.ts:154
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     frame_dig 2
     intc_1 // 1
@@ -755,10 +733,10 @@ pluginCallAllowed_after_if_else@6:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.txnRekeysBack(txn: uint64) -> uint64:
 txnRekeysBack:
-    // contracts/arc58/abstracted_account.algo.ts:170
+    // contracts/arc58/abstracted_account.algo.ts:169
     // private txnRekeysBack(txn: gtxn.Transaction): boolean {
     proto 1 1
-    // contracts/arc58/abstracted_account.algo.ts:171
+    // contracts/arc58/abstracted_account.algo.ts:170
     // if (txn.sender === Global.currentApplicationAddress && txn.rekeyTo === Global.currentApplicationAddress) {
     frame_dig -1
     gtxns Sender
@@ -770,62 +748,62 @@ txnRekeysBack:
     global CurrentApplicationAddress
     ==
     bz txnRekeysBack_after_if_else@3
-    // contracts/arc58/abstracted_account.algo.ts:172
+    // contracts/arc58/abstracted_account.algo.ts:171
     // return true;
     intc_1 // 1
     retsub
 
 txnRekeysBack_after_if_else@3:
-    // contracts/arc58/abstracted_account.algo.ts:176
+    // contracts/arc58/abstracted_account.algo.ts:175
     // txn.type === TransactionType.ApplicationCall
     frame_dig -1
     gtxns TypeEnum
     pushint 6 // 6
     ==
-    // contracts/arc58/abstracted_account.algo.ts:176-177
+    // contracts/arc58/abstracted_account.algo.ts:175-176
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz txnRekeysBack_bool_false@9
-    // contracts/arc58/abstracted_account.algo.ts:177
+    // contracts/arc58/abstracted_account.algo.ts:176
     // && txn.appId === Global.currentApplicationId
     frame_dig -1
     gtxns ApplicationID
     global CurrentApplicationID
     ==
-    // contracts/arc58/abstracted_account.algo.ts:176-177
+    // contracts/arc58/abstracted_account.algo.ts:175-176
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz txnRekeysBack_bool_false@9
-    // contracts/arc58/abstracted_account.algo.ts:178
+    // contracts/arc58/abstracted_account.algo.ts:177
     // && txn.numAppArgs === 1
     frame_dig -1
     gtxns NumAppArgs
     intc_1 // 1
     ==
-    // contracts/arc58/abstracted_account.algo.ts:176-178
+    // contracts/arc58/abstracted_account.algo.ts:175-177
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 1
     bz txnRekeysBack_bool_false@9
-    // contracts/arc58/abstracted_account.algo.ts:180
+    // contracts/arc58/abstracted_account.algo.ts:179
     // && txn.onCompletion === arc4.OnCompleteAction.NoOp
     frame_dig -1
     gtxns OnCompletion
-    // contracts/arc58/abstracted_account.algo.ts:176-180
+    // contracts/arc58/abstracted_account.algo.ts:175-179
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 1
     // // @ts-expect-error
     // && txn.onCompletion === arc4.OnCompleteAction.NoOp
     bnz txnRekeysBack_bool_false@9
-    // contracts/arc58/abstracted_account.algo.ts:181
+    // contracts/arc58/abstracted_account.algo.ts:180
     // && txn.appArgs(0) === arc4.methodSelector('arc58_verifyAuthAddr()void')
     frame_dig -1
     intc_0 // 0
     gtxnsas ApplicationArgs
     bytec 12 // method "arc58_verifyAuthAddr()void"
     ==
-    // contracts/arc58/abstracted_account.algo.ts:176-181
+    // contracts/arc58/abstracted_account.algo.ts:175-180
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 1
@@ -834,7 +812,7 @@ txnRekeysBack_after_if_else@3:
     // && txn.appArgs(0) === arc4.methodSelector('arc58_verifyAuthAddr()void')
     bz txnRekeysBack_bool_false@9
     intc_1 // 1
-    // contracts/arc58/abstracted_account.algo.ts:175-182
+    // contracts/arc58/abstracted_account.algo.ts:174-181
     // return (
     //   txn.type === TransactionType.ApplicationCall
     //   && txn.appId === Global.currentApplicationId
@@ -847,7 +825,7 @@ txnRekeysBack_after_if_else@3:
 
 txnRekeysBack_bool_false@9:
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:175-182
+    // contracts/arc58/abstracted_account.algo.ts:174-181
     // return (
     //   txn.type === TransactionType.ApplicationCall
     //   && txn.appId === Global.currentApplicationId
@@ -861,43 +839,43 @@ txnRekeysBack_bool_false@9:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.pluginCheck(key: bytes) -> uint64, uint64, uint64, uint64, uint64, uint64, bytes:
 pluginCheck:
-    // contracts/arc58/abstracted_account.algo.ts:199
+    // contracts/arc58/abstracted_account.algo.ts:198
     // private pluginCheck(key: PluginsKey): PluginValidation {
     proto 1 7
     bytec_3 // ""
     dupn 3
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     frame_dig -1
     concat
     dup
-    // contracts/arc58/abstracted_account.algo.ts:200
+    // contracts/arc58/abstracted_account.algo.ts:199
     // const exists = this.plugins(key).exists;
     box_len
     dup
     uncover 2
     pop
-    // contracts/arc58/abstracted_account.algo.ts:201
+    // contracts/arc58/abstracted_account.algo.ts:200
     // if (!exists) {
     bnz pluginCheck_after_if_else@2
-    // contracts/arc58/abstracted_account.algo.ts:203
+    // contracts/arc58/abstracted_account.algo.ts:202
     // exists: false,
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:204
+    // contracts/arc58/abstracted_account.algo.ts:203
     // expired: true,
     intc_1 // 1
-    // contracts/arc58/abstracted_account.algo.ts:205-206
+    // contracts/arc58/abstracted_account.algo.ts:204-205
     // hasCooldown: true,
     // onCooldown: true,
     dupn 2
-    // contracts/arc58/abstracted_account.algo.ts:207
+    // contracts/arc58/abstracted_account.algo.ts:206
     // hasMethodRestrictions: false,
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:208
+    // contracts/arc58/abstracted_account.algo.ts:207
     // valid: false
     dup
-    // contracts/arc58/abstracted_account.algo.ts:202-209
+    // contracts/arc58/abstracted_account.algo.ts:201-208
     // return {
     //   exists: false,
     //   expired: true,
@@ -916,7 +894,7 @@ pluginCheck:
     retsub
 
 pluginCheck_after_if_else@2:
-    // contracts/arc58/abstracted_account.algo.ts:212
+    // contracts/arc58/abstracted_account.algo.ts:211
     // const expired = Global.round > this.plugins(key).value.lastValidRound.native;
     global Round
     frame_dig 4
@@ -928,7 +906,7 @@ pluginCheck_after_if_else@2:
     extract_uint64
     >
     frame_bury 0
-    // contracts/arc58/abstracted_account.algo.ts:213
+    // contracts/arc58/abstracted_account.algo.ts:212
     // const hasCooldown = this.plugins(key).value.cooldown.native > 0;
     dup
     box_get
@@ -938,7 +916,7 @@ pluginCheck_after_if_else@2:
     intc_0 // 0
     >
     frame_bury 1
-    // contracts/arc58/abstracted_account.algo.ts:214
+    // contracts/arc58/abstracted_account.algo.ts:213
     // const onCooldown = (Global.round - this.plugins(key).value.lastCalled.native) < this.plugins(key).value.cooldown.native;
     global Round
     dig 1
@@ -954,7 +932,7 @@ pluginCheck_after_if_else@2:
     extract_uint64
     <
     frame_bury 3
-    // contracts/arc58/abstracted_account.algo.ts:215
+    // contracts/arc58/abstracted_account.algo.ts:214
     // const hasMethodRestrictions = this.plugins(key).value.methods.length > 0;
     box_get
     assert // Box must have value
@@ -969,7 +947,7 @@ pluginCheck_after_if_else@2:
     intc_0 // 0
     >
     frame_bury 2
-    // contracts/arc58/abstracted_account.algo.ts:217
+    // contracts/arc58/abstracted_account.algo.ts:216
     // const valid = exists && !expired && !onCooldown;
     frame_dig 5
     bz pluginCheck_bool_false@6
@@ -980,7 +958,7 @@ pluginCheck_after_if_else@2:
     intc_1 // 1
 
 pluginCheck_bool_merge@7:
-    // contracts/arc58/abstracted_account.algo.ts:219-226
+    // contracts/arc58/abstracted_account.algo.ts:218-225
     // return {
     //   exists,
     //   expired,
@@ -1011,7 +989,7 @@ pluginCheck_bool_false@6:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.fullPluginCheck(key: bytes, txn: uint64, app: uint64, caller: bytes, methodOffsets: bytes, methodIndex: uint64) -> uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, bytes:
 fullPluginCheck:
-    // contracts/arc58/abstracted_account.algo.ts:229-236
+    // contracts/arc58/abstracted_account.algo.ts:228-235
     // private fullPluginCheck(
     //   key: PluginsKey,
     //   txn: gtxn.ApplicationTxn,
@@ -1025,7 +1003,7 @@ fullPluginCheck:
     dupn 2
     bytec_3 // ""
     dupn 7
-    // contracts/arc58/abstracted_account.algo.ts:237
+    // contracts/arc58/abstracted_account.algo.ts:236
     // const check = this.pluginCheck(key);
     frame_dig -6
     callsub pluginCheck
@@ -1038,10 +1016,10 @@ fullPluginCheck:
     cover 3
     cover 2
     swap
-    // contracts/arc58/abstracted_account.algo.ts:239
+    // contracts/arc58/abstracted_account.algo.ts:238
     // if (!check.valid) {
     bnz fullPluginCheck_after_if_else@4
-    // contracts/arc58/abstracted_account.algo.ts:240-245
+    // contracts/arc58/abstracted_account.algo.ts:239-244
     // return {
     //   ...check,
     //   methodAllowed: false,
@@ -1053,16 +1031,16 @@ fullPluginCheck:
     frame_dig 14
     frame_dig 13
     frame_dig 12
-    // contracts/arc58/abstracted_account.algo.ts:242
+    // contracts/arc58/abstracted_account.algo.ts:241
     // methodAllowed: false,
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:243
+    // contracts/arc58/abstracted_account.algo.ts:242
     // methodHasCooldown: true,
     intc_1 // 1
-    // contracts/arc58/abstracted_account.algo.ts:244
+    // contracts/arc58/abstracted_account.algo.ts:243
     // methodOnCooldown: true
     dup
-    // contracts/arc58/abstracted_account.algo.ts:240-245
+    // contracts/arc58/abstracted_account.algo.ts:239-244
     // return {
     //   ...check,
     //   methodAllowed: false,
@@ -1084,36 +1062,36 @@ fullPluginCheck:
     retsub
 
 fullPluginCheck_after_if_else@4:
-    // contracts/arc58/abstracted_account.algo.ts:249
+    // contracts/arc58/abstracted_account.algo.ts:248
     // methodAllowed: !check.hasMethodRestrictions,
     frame_dig 12
     dup
     !
     frame_bury 5
-    // contracts/arc58/abstracted_account.algo.ts:250
+    // contracts/arc58/abstracted_account.algo.ts:249
     // methodHasCooldown: false,
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:248-252
+    // contracts/arc58/abstracted_account.algo.ts:247-251
     // let methodCheck: MethodValidation = {
     //   methodAllowed: !check.hasMethodRestrictions,
     //   methodHasCooldown: false,
     //   methodOnCooldown: false
     // }
     frame_bury 6
-    // contracts/arc58/abstracted_account.algo.ts:251
+    // contracts/arc58/abstracted_account.algo.ts:250
     // methodOnCooldown: false
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:248-252
+    // contracts/arc58/abstracted_account.algo.ts:247-251
     // let methodCheck: MethodValidation = {
     //   methodAllowed: !check.hasMethodRestrictions,
     //   methodHasCooldown: false,
     //   methodOnCooldown: false
     // }
     frame_bury 7
-    // contracts/arc58/abstracted_account.algo.ts:254
+    // contracts/arc58/abstracted_account.algo.ts:253
     // if (check.hasMethodRestrictions) {
     bz fullPluginCheck_after_if_else@6
-    // contracts/arc58/abstracted_account.algo.ts:255
+    // contracts/arc58/abstracted_account.algo.ts:254
     // assert(methodIndex < methodOffsets.length, 'malformed methodOffsets');
     frame_dig -2
     intc_0 // 0
@@ -1121,7 +1099,7 @@ fullPluginCheck_after_if_else@4:
     frame_dig -1
     >
     assert // malformed methodOffsets
-    // contracts/arc58/abstracted_account.algo.ts:256
+    // contracts/arc58/abstracted_account.algo.ts:255
     // methodCheck = this.methodCheck(txn, app, caller, methodOffsets[methodIndex]);
     frame_dig -2
     extract 2 0
@@ -1131,7 +1109,7 @@ fullPluginCheck_after_if_else@4:
     extract_uint64
     dup
     frame_bury 8
-    // contracts/arc58/abstracted_account.algo.ts:376
+    // contracts/arc58/abstracted_account.algo.ts:375
     // assert(len(txn.appArgs(0)) === 4, 'invalid method signature length');
     frame_dig -5
     intc_0 // 0
@@ -1142,25 +1120,25 @@ fullPluginCheck_after_if_else@4:
     pushint 4 // 4
     ==
     assert // invalid method signature length
-    // contracts/arc58/abstracted_account.algo.ts:377
+    // contracts/arc58/abstracted_account.algo.ts:376
     // const selectorArg = new arc4.StaticBytes<4>(txn.appArgs(0));
     pushint 4 // 4
     ==
     assert // Length is 4
-    // contracts/arc58/abstracted_account.algo.ts:379
+    // contracts/arc58/abstracted_account.algo.ts:378
     // const key = new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: new arc4.Address(caller) });
     frame_dig -4
     itob
     frame_dig -3
     concat
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     swap
     concat
     dup
     frame_bury 2
-    // contracts/arc58/abstracted_account.algo.ts:381
+    // contracts/arc58/abstracted_account.algo.ts:380
     // const methods = this.plugins(key).value.methods.copy()
     box_get
     assert // Box must have value
@@ -1172,7 +1150,7 @@ fullPluginCheck_after_if_else@4:
     substring3
     dup
     frame_bury 1
-    // contracts/arc58/abstracted_account.algo.ts:382
+    // contracts/arc58/abstracted_account.algo.ts:381
     // const allowedMethod = methods[offset].copy();
     extract 2 0
     uncover 2
@@ -1184,7 +1162,7 @@ fullPluginCheck_after_if_else@4:
     extract3 // on error: Index access is out of bounds
     dup
     frame_bury 0
-    // contracts/arc58/abstracted_account.algo.ts:384
+    // contracts/arc58/abstracted_account.algo.ts:383
     // const hasCooldown = allowedMethod.cooldown.native > 0;
     dup
     pushint 4 // 4
@@ -1195,7 +1173,7 @@ fullPluginCheck_after_if_else@4:
     intc_0 // 0
     >
     frame_bury 3
-    // contracts/arc58/abstracted_account.algo.ts:385
+    // contracts/arc58/abstracted_account.algo.ts:384
     // const onCooldown = (Global.round - allowedMethod.lastCalled.native) < allowedMethod.cooldown.native;
     global Round
     dig 2
@@ -1204,7 +1182,7 @@ fullPluginCheck_after_if_else@4:
     -
     >
     frame_bury 9
-    // contracts/arc58/abstracted_account.algo.ts:387
+    // contracts/arc58/abstracted_account.algo.ts:386
     // if (allowedMethod.selector === selectorArg && (!hasCooldown || !onCooldown)) {
     extract 0 4 // on error: Index access is out of bounds
     ==
@@ -1215,11 +1193,11 @@ fullPluginCheck_after_if_else@4:
     bnz fullPluginCheck_after_if_else@49
 
 fullPluginCheck_if_body@46:
-    // contracts/arc58/abstracted_account.algo.ts:389
+    // contracts/arc58/abstracted_account.algo.ts:388
     // if (hasCooldown) {
     frame_dig 10
     bz fullPluginCheck_after_if_else@48
-    // contracts/arc58/abstracted_account.algo.ts:390
+    // contracts/arc58/abstracted_account.algo.ts:389
     // methods[offset].lastCalled = new arc4.UintN64(Global.round);
     global Round
     itob
@@ -1238,19 +1216,19 @@ fullPluginCheck_if_body@46:
     +
     uncover 2
     replace3
-    // contracts/arc58/abstracted_account.algo.ts:392
+    // contracts/arc58/abstracted_account.algo.ts:391
     // ...this.plugins(key).value,
     frame_dig 2
     dup
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:391-394
+    // contracts/arc58/abstracted_account.algo.ts:390-393
     // this.plugins(key).value = new PluginInfo({
     //   ...this.plugins(key).value,
     //   methods: methods.copy()
     // });
     extract 0 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:392
+    // contracts/arc58/abstracted_account.algo.ts:391
     // ...this.plugins(key).value,
     dig 1
     box_get
@@ -1351,13 +1329,13 @@ fullPluginCheck_if_body@46:
     dig 1
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:391-394
+    // contracts/arc58/abstracted_account.algo.ts:390-393
     // this.plugins(key).value = new PluginInfo({
     //   ...this.plugins(key).value,
     //   methods: methods.copy()
     // });
     extract 8 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:392
+    // contracts/arc58/abstracted_account.algo.ts:391
     // ...this.plugins(key).value,
     dig 2
     box_get
@@ -1458,13 +1436,13 @@ fullPluginCheck_if_body@46:
     dig 2
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:391-394
+    // contracts/arc58/abstracted_account.algo.ts:390-393
     // this.plugins(key).value = new PluginInfo({
     //   ...this.plugins(key).value,
     //   methods: methods.copy()
     // });
     extract 16 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:392
+    // contracts/arc58/abstracted_account.algo.ts:391
     // ...this.plugins(key).value,
     dig 3
     box_get
@@ -1565,7 +1543,7 @@ fullPluginCheck_if_body@46:
     dig 3
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:391-394
+    // contracts/arc58/abstracted_account.algo.ts:390-393
     // this.plugins(key).value = new PluginInfo({
     //   ...this.plugins(key).value,
     //   methods: methods.copy()
@@ -1576,7 +1554,7 @@ fullPluginCheck_if_body@46:
     intc_0 // 0
     uncover 2
     setbit
-    // contracts/arc58/abstracted_account.algo.ts:392
+    // contracts/arc58/abstracted_account.algo.ts:391
     // ...this.plugins(key).value,
     dig 4
     box_get
@@ -1674,7 +1652,7 @@ fullPluginCheck_if_body@46:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:391-394
+    // contracts/arc58/abstracted_account.algo.ts:390-393
     // this.plugins(key).value = new PluginInfo({
     //   ...this.plugins(key).value,
     //   methods: methods.copy()
@@ -1696,7 +1674,7 @@ fullPluginCheck_if_body@46:
     box_put
 
 fullPluginCheck_after_if_else@48:
-    // contracts/arc58/abstracted_account.algo.ts:398
+    // contracts/arc58/abstracted_account.algo.ts:397
     // methodAllowed: true,
     intc_1 // 1
     frame_dig 9
@@ -1706,7 +1684,7 @@ fullPluginCheck_after_if_else@48:
     frame_bury 5
 
 fullPluginCheck_after_if_else@6:
-    // contracts/arc58/abstracted_account.algo.ts:262
+    // contracts/arc58/abstracted_account.algo.ts:261
     // valid: check.valid && methodCheck.methodAllowed
     frame_dig 11
     bz fullPluginCheck_bool_false@41
@@ -1715,7 +1693,7 @@ fullPluginCheck_after_if_else@6:
     intc_1 // 1
 
 fullPluginCheck_bool_merge@42:
-    // contracts/arc58/abstracted_account.algo.ts:259-263
+    // contracts/arc58/abstracted_account.algo.ts:258-262
     // return {
     //   ...check,
     //   ...methodCheck,
@@ -1748,40 +1726,40 @@ fullPluginCheck_bool_false@41:
     b fullPluginCheck_bool_merge@42
 
 fullPluginCheck_after_if_else@49:
-    // contracts/arc58/abstracted_account.algo.ts:405
+    // contracts/arc58/abstracted_account.algo.ts:404
     // methodAllowed: false,
     intc_0 // 0
-    // contracts/arc58/abstracted_account.algo.ts:406
+    // contracts/arc58/abstracted_account.algo.ts:405
     // methodHasCooldown: true,
     intc_1 // 1
-    // contracts/arc58/abstracted_account.algo.ts:407
+    // contracts/arc58/abstracted_account.algo.ts:406
     // methodOnCooldown: true
     dup
     frame_bury 7
     frame_bury 6
     frame_bury 5
-    // contracts/arc58/abstracted_account.algo.ts:256
+    // contracts/arc58/abstracted_account.algo.ts:255
     // methodCheck = this.methodCheck(txn, app, caller, methodOffsets[methodIndex]);
     b fullPluginCheck_after_if_else@6
 
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.createApplication(version: bytes, controlledAddress: bytes, admin: bytes, revocationApp: uint64, nickname: bytes) -> void:
 createApplication:
-    // contracts/arc58/abstracted_account.algo.ts:431-438
+    // contracts/arc58/abstracted_account.algo.ts:430-437
     // @abimethod({ onCreate: 'require' })
     // createApplication(
     //   version: string,
-    //   controlledAddress: Account,
-    //   admin: Account,
+    //   controlledAddress: arc4.Address,
+    //   admin: arc4.Address,
     //   revocationApp: Application,
     //   nickname: string,
     // ) {
     proto 5 0
-    // contracts/arc58/abstracted_account.algo.ts:439
+    // contracts/arc58/abstracted_account.algo.ts:438
     // assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
     global CallerApplicationID
     assert // This contract must be deployed from a factory
-    // contracts/arc58/abstracted_account.algo.ts:440
+    // contracts/arc58/abstracted_account.algo.ts:439
     // assert(admin !== controlledAddress);
     frame_dig -3
     frame_dig -4
@@ -1790,12 +1768,12 @@ createApplication:
     // contracts/arc58/constants.ts:1
     // export const AbstractAccountGlobalStateKeysVersion = 'version';
     bytec 13 // "version"
-    // contracts/arc58/abstracted_account.algo.ts:442
+    // contracts/arc58/abstracted_account.algo.ts:441
     // this.version.value = version;
     frame_dig -5
     app_global_put
-    // contracts/arc58/abstracted_account.algo.ts:443
-    // this.controlledAddress.value = controlledAddress === Global.zeroAddress ? Global.currentApplicationAddress : controlledAddress;
+    // contracts/arc58/abstracted_account.algo.ts:442
+    // this.controlledAddress.value = controlledAddress.native === Global.zeroAddress ? Global.currentApplicationAddress : controlledAddress.native;
     frame_dig -4
     global ZeroAddress
     ==
@@ -1806,35 +1784,35 @@ createApplication_ternary_merge@3:
     // contracts/arc58/constants.ts:3
     // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address';
     bytec_2 // "controlled_address"
-    // contracts/arc58/abstracted_account.algo.ts:443
-    // this.controlledAddress.value = controlledAddress === Global.zeroAddress ? Global.currentApplicationAddress : controlledAddress;
+    // contracts/arc58/abstracted_account.algo.ts:442
+    // this.controlledAddress.value = controlledAddress.native === Global.zeroAddress ? Global.currentApplicationAddress : controlledAddress.native;
     swap
     app_global_put
     // contracts/arc58/constants.ts:2
     // export const AbstractAccountGlobalStateKeysAdmin = 'admin';
     bytec 4 // "admin"
-    // contracts/arc58/abstracted_account.algo.ts:444
-    // this.admin.value = admin;
+    // contracts/arc58/abstracted_account.algo.ts:443
+    // this.admin.value = admin.native;
     frame_dig -3
     app_global_put
     // contracts/arc58/constants.ts:6
     // export const AbstractAccountGlobalStateKeysRevocationApp = 'revocation_app_id';
     bytec 9 // "revocation_app_id"
-    // contracts/arc58/abstracted_account.algo.ts:445
+    // contracts/arc58/abstracted_account.algo.ts:444
     // this.revocationApp.value = revocationApp;
     frame_dig -2
     app_global_put
     // contracts/arc58/constants.ts:7
     // export const AbstractAccountGlobalStateKeysNickname = 'nickname';
     bytec 14 // "nickname"
-    // contracts/arc58/abstracted_account.algo.ts:446
+    // contracts/arc58/abstracted_account.algo.ts:445
     // this.nickname.value = nickname;
     frame_dig -1
     app_global_put
     // contracts/arc58/constants.ts:4
     // export const AbstractAccountGlobalStateKeysFactoryApp = 'factory_app_id';
     pushbytes "factory_app_id"
-    // contracts/arc58/abstracted_account.algo.ts:447
+    // contracts/arc58/abstracted_account.algo.ts:446
     // this.factoryApp.value = Application(Global.callerApplicationId);
     global CallerApplicationID
     app_global_put
@@ -1847,18 +1825,18 @@ createApplication_ternary_false@2:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.updateApplication(version: bytes) -> void:
 updateApplication:
-    // contracts/arc58/abstracted_account.algo.ts:454-455
+    // contracts/arc58/abstracted_account.algo.ts:453-454
     // @abimethod({ allowActions: ['UpdateApplication'] })
     // updateApplication(version: string): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:456
+    // contracts/arc58/abstracted_account.algo.ts:455
     // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_UPDATE);
     callsub isAdmin
     assert // Only an admin can update the application
     // contracts/arc58/constants.ts:1
     // export const AbstractAccountGlobalStateKeysVersion = 'version';
     bytec 13 // "version"
-    // contracts/arc58/abstracted_account.algo.ts:457
+    // contracts/arc58/abstracted_account.algo.ts:456
     // this.version.value = version;``
     frame_dig -1
     app_global_put
@@ -1867,17 +1845,17 @@ updateApplication:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.changeRevocationApp(newRevocationApp: uint64) -> void:
 changeRevocationApp:
-    // contracts/arc58/abstracted_account.algo.ts:465
+    // contracts/arc58/abstracted_account.algo.ts:464
     // changeRevocationApp(newRevocationApp: Application): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:466
+    // contracts/arc58/abstracted_account.algo.ts:465
     // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE);
     callsub isAdmin
     assert // Only an admin can change the revocation app
     // contracts/arc58/constants.ts:6
     // export const AbstractAccountGlobalStateKeysRevocationApp = 'revocation_app_id';
     bytec 9 // "revocation_app_id"
-    // contracts/arc58/abstracted_account.algo.ts:467
+    // contracts/arc58/abstracted_account.algo.ts:466
     // this.revocationApp.value = newRevocationApp;
     frame_dig -1
     app_global_put
@@ -1886,17 +1864,17 @@ changeRevocationApp:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.setNickname(nickname: bytes) -> void:
 setNickname:
-    // contracts/arc58/abstracted_account.algo.ts:475
+    // contracts/arc58/abstracted_account.algo.ts:474
     // setNickname(nickname: string): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:476
+    // contracts/arc58/abstracted_account.algo.ts:475
     // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
     callsub isAdmin
     assert // Only an admin can change the nickname
     // contracts/arc58/constants.ts:7
     // export const AbstractAccountGlobalStateKeysNickname = 'nickname';
     bytec 14 // "nickname"
-    // contracts/arc58/abstracted_account.algo.ts:477
+    // contracts/arc58/abstracted_account.algo.ts:476
     // this.nickname.value = nickname;
     frame_dig -1
     app_global_put
@@ -1905,14 +1883,14 @@ setNickname:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.setAvatar(avatar: uint64) -> void:
 setAvatar:
-    // contracts/arc58/abstracted_account.algo.ts:485
+    // contracts/arc58/abstracted_account.algo.ts:484
     // setAvatar(avatar: Asset): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:486
+    // contracts/arc58/abstracted_account.algo.ts:485
     // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
     callsub isAdmin
     assert // Only an admin can change the nickname
-    // contracts/arc58/abstracted_account.algo.ts:487
+    // contracts/arc58/abstracted_account.algo.ts:486
     // const amount = this.balance([avatar.id]);
     frame_dig -1
     itob
@@ -1926,14 +1904,14 @@ setAvatar:
     concat
     callsub balance
     pushint 2 // 2
-    // contracts/arc58/abstracted_account.algo.ts:488
+    // contracts/arc58/abstracted_account.algo.ts:487
     // assert(amount[0] > 0, ERR_DOES_NOT_HOLD_ASSET);
     extract_uint64
     assert // The account does not hold the asset
     // contracts/arc58/constants.ts:8
     // export const AbstractAccountGlobalStateKeysAvatar = 'avatar';
     pushbytes "avatar"
-    // contracts/arc58/abstracted_account.algo.ts:489
+    // contracts/arc58/abstracted_account.algo.ts:488
     // this.avatar.value = avatar;
     frame_dig -1
     app_global_put
@@ -1942,14 +1920,14 @@ setAvatar:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.setBanner(banner: uint64) -> void:
 setBanner:
-    // contracts/arc58/abstracted_account.algo.ts:497
+    // contracts/arc58/abstracted_account.algo.ts:496
     // setBanner(banner: Asset): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:498
+    // contracts/arc58/abstracted_account.algo.ts:497
     // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
     callsub isAdmin
     assert // Only an admin can change the nickname
-    // contracts/arc58/abstracted_account.algo.ts:499
+    // contracts/arc58/abstracted_account.algo.ts:498
     // const amount = this.balance([banner.id]);
     frame_dig -1
     itob
@@ -1963,14 +1941,14 @@ setBanner:
     concat
     callsub balance
     pushint 2 // 2
-    // contracts/arc58/abstracted_account.algo.ts:500
+    // contracts/arc58/abstracted_account.algo.ts:499
     // assert(amount[0] > 0, ERR_DOES_NOT_HOLD_ASSET);
     extract_uint64
     assert // The account does not hold the asset
     // contracts/arc58/constants.ts:9
     // export const AbstractAccountGlobalStateKeysBanner = 'banner';
     pushbytes "banner"
-    // contracts/arc58/abstracted_account.algo.ts:501
+    // contracts/arc58/abstracted_account.algo.ts:500
     // this.banner.value = banner;
     frame_dig -1
     app_global_put
@@ -1979,17 +1957,17 @@ setBanner:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.setBio(bio: bytes) -> void:
 setBio:
-    // contracts/arc58/abstracted_account.algo.ts:509
+    // contracts/arc58/abstracted_account.algo.ts:508
     // setBio(bio: string): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:510
+    // contracts/arc58/abstracted_account.algo.ts:509
     // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
     callsub isAdmin
     assert // Only an admin can change the nickname
     // contracts/arc58/constants.ts:10
     // export const AbstractAccountGlobalStateKeysBio = 'bio';
     pushbytes "bio"
-    // contracts/arc58/abstracted_account.algo.ts:511
+    // contracts/arc58/abstracted_account.algo.ts:510
     // this.bio.value = bio;
     frame_dig -1
     app_global_put
@@ -1998,18 +1976,18 @@ setBio:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_changeAdmin(newAdmin: bytes) -> void:
 arc58_changeAdmin:
-    // contracts/arc58/abstracted_account.algo.ts:519
-    // arc58_changeAdmin(newAdmin: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:518
+    // arc58_changeAdmin(newAdmin: arc4.Address): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:521
+    // contracts/arc58/abstracted_account.algo.ts:520
     // assert(this.isAdmin(), 'Sender must be the admin');
     callsub isAdmin
     assert // Sender must be the admin
     // contracts/arc58/constants.ts:2
     // export const AbstractAccountGlobalStateKeysAdmin = 'admin';
     bytec 4 // "admin"
-    // contracts/arc58/abstracted_account.algo.ts:522
-    // this.admin.value = newAdmin;
+    // contracts/arc58/abstracted_account.algo.ts:521
+    // this.admin.value = newAdmin.native;
     frame_dig -1
     app_global_put
     retsub
@@ -2017,10 +1995,10 @@ arc58_changeAdmin:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_pluginChangeAdmin(plugin: uint64, allowedCaller: bytes, newAdmin: bytes) -> void:
 arc58_pluginChangeAdmin:
-    // contracts/arc58/abstracted_account.algo.ts:533
-    // arc58_pluginChangeAdmin(plugin: Application, allowedCaller: Account, newAdmin: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:532
+    // arc58_pluginChangeAdmin(plugin: Application, allowedCaller: arc4.Address, newAdmin: arc4.Address): void {
     proto 3 0
-    // contracts/arc58/abstracted_account.algo.ts:535
+    // contracts/arc58/abstracted_account.algo.ts:534
     // assert(Txn.sender === plugin.address, 'Sender must be the plugin');
     txn Sender
     frame_dig -3
@@ -2034,7 +2012,7 @@ arc58_pluginChangeAdmin:
     bytec_2 // "controlled_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:537
+    // contracts/arc58/abstracted_account.algo.ts:536
     // this.controlledAddress.value.authAddress === plugin.address,
     acct_params_get AcctAuthAddr
     assert // account funded
@@ -2042,25 +2020,25 @@ arc58_pluginChangeAdmin:
     app_params_get AppAddress
     assert // application exists
     ==
-    // contracts/arc58/abstracted_account.algo.ts:536-539
+    // contracts/arc58/abstracted_account.algo.ts:535-538
     // assert(
     //   this.controlledAddress.value.authAddress === plugin.address,
     //   'This plugin is not in control of the account'
     // );
     assert // This plugin is not in control of the account
-    // contracts/arc58/abstracted_account.algo.ts:10
-    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: new arc4.Address(caller) });
+    // contracts/arc58/abstracted_account.algo.ts:9
+    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: caller });
     frame_dig -3
     itob
     frame_dig -2
     concat
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     swap
     concat
     dup
-    // contracts/arc58/abstracted_account.algo.ts:544
+    // contracts/arc58/abstracted_account.algo.ts:543
     // this.plugins(key).exists && this.plugins(key).value.adminPrivileges.native,
     box_len
     bury 1
@@ -2080,7 +2058,7 @@ arc58_pluginChangeAdmin:
     intc_1 // 1
 
 arc58_pluginChangeAdmin_bool_merge@4:
-    // contracts/arc58/abstracted_account.algo.ts:543-546
+    // contracts/arc58/abstracted_account.algo.ts:542-545
     // assert(
     //   this.plugins(key).exists && this.plugins(key).value.adminPrivileges.native,
     //   'This plugin does not have admin privileges'
@@ -2089,8 +2067,8 @@ arc58_pluginChangeAdmin_bool_merge@4:
     // contracts/arc58/constants.ts:2
     // export const AbstractAccountGlobalStateKeysAdmin = 'admin';
     bytec 4 // "admin"
-    // contracts/arc58/abstracted_account.algo.ts:548
-    // this.admin.value = newAdmin;
+    // contracts/arc58/abstracted_account.algo.ts:547
+    // this.admin.value = newAdmin.native;
     frame_dig -1
     app_global_put
     retsub
@@ -2108,14 +2086,14 @@ arc58_getAdmin:
     bytec 4 // "admin"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:557
-    // return this.admin.value;
+    // contracts/arc58/abstracted_account.algo.ts:556
+    // return new arc4.Address(this.admin.value);
     retsub
 
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_verifyAuthAddr() -> void:
 arc58_verifyAuthAddr:
-    // contracts/arc58/abstracted_account.algo.ts:563
+    // contracts/arc58/abstracted_account.algo.ts:562
     // arc58_verifyAuthAddr(): void {
     proto 0 0
     // contracts/arc58/constants.ts:3
@@ -2124,7 +2102,7 @@ arc58_verifyAuthAddr:
     bytec_2 // "controlled_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:564
+    // contracts/arc58/abstracted_account.algo.ts:563
     // assert(this.controlledAddress.value.authAddress === this.getAuthAddr());
     acct_params_get AcctAuthAddr
     assert // account funded
@@ -2134,21 +2112,21 @@ arc58_verifyAuthAddr:
     bytec_2 // "controlled_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:416
+    // contracts/arc58/abstracted_account.algo.ts:415
     // return this.controlledAddress.value === Global.currentApplicationAddress
     global CurrentApplicationAddress
     ==
-    // contracts/arc58/abstracted_account.algo.ts:416-418
+    // contracts/arc58/abstracted_account.algo.ts:415-417
     // return this.controlledAddress.value === Global.currentApplicationAddress
     //   ? Global.zeroAddress // contract controls itself
     //   : Global.currentApplicationAddress; // contract controls a different account
     bz arc58_verifyAuthAddr_ternary_false@3
-    // contracts/arc58/abstracted_account.algo.ts:417
+    // contracts/arc58/abstracted_account.algo.ts:416
     // ? Global.zeroAddress // contract controls itself
     global ZeroAddress
 
 arc58_verifyAuthAddr_ternary_merge@4:
-    // contracts/arc58/abstracted_account.algo.ts:564
+    // contracts/arc58/abstracted_account.algo.ts:563
     // assert(this.controlledAddress.value.authAddress === this.getAuthAddr());
     frame_dig 0
     ==
@@ -2156,7 +2134,7 @@ arc58_verifyAuthAddr_ternary_merge@4:
     retsub
 
 arc58_verifyAuthAddr_ternary_false@3:
-    // contracts/arc58/abstracted_account.algo.ts:418
+    // contracts/arc58/abstracted_account.algo.ts:417
     // : Global.currentApplicationAddress; // contract controls a different account
     global CurrentApplicationAddress
     b arc58_verifyAuthAddr_ternary_merge@4
@@ -2164,21 +2142,21 @@ arc58_verifyAuthAddr_ternary_false@3:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_rekeyTo(address: bytes, flash: uint64) -> void:
 arc58_rekeyTo:
-    // contracts/arc58/abstracted_account.algo.ts:573
-    // arc58_rekeyTo(address: Account, flash: boolean): void {
+    // contracts/arc58/abstracted_account.algo.ts:572
+    // arc58_rekeyTo(address: arc4.Address, flash: boolean): void {
     proto 2 0
     bytec_3 // ""
     dup
-    // contracts/arc58/abstracted_account.algo.ts:575
+    // contracts/arc58/abstracted_account.algo.ts:574
     // assert(this.isAdmin(), 'Sender must be the admin');
     callsub isAdmin
     assert // Sender must be the admin
-    // contracts/arc58/abstracted_account.algo.ts:577-585
+    // contracts/arc58/abstracted_account.algo.ts:576-584
     // itxn
     //   .payment({
     //     sender: this.controlledAddress.value,
-    //     receiver: address,
-    //     rekeyTo: address,
+    //     receiver: address.native,
+    //     rekeyTo: address.native,
     //     note: 'rekeying abstracted account',
     //     fee: 0,
     //   })
@@ -2190,7 +2168,7 @@ arc58_rekeyTo:
     bytec_2 // "controlled_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:582
+    // contracts/arc58/abstracted_account.algo.ts:581
     // note: 'rekeying abstracted account',
     pushbytes "rekeying abstracted account"
     itxn_field Note
@@ -2199,41 +2177,41 @@ arc58_rekeyTo:
     frame_dig -2
     itxn_field Receiver
     itxn_field Sender
-    // contracts/arc58/abstracted_account.algo.ts:577-584
+    // contracts/arc58/abstracted_account.algo.ts:576-583
     // itxn
     //   .payment({
     //     sender: this.controlledAddress.value,
-    //     receiver: address,
-    //     rekeyTo: address,
+    //     receiver: address.native,
+    //     rekeyTo: address.native,
     //     note: 'rekeying abstracted account',
     //     fee: 0,
     //   })
     intc_1 // 1
     itxn_field TypeEnum
-    // contracts/arc58/abstracted_account.algo.ts:583
+    // contracts/arc58/abstracted_account.algo.ts:582
     // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // contracts/arc58/abstracted_account.algo.ts:577-585
+    // contracts/arc58/abstracted_account.algo.ts:576-584
     // itxn
     //   .payment({
     //     sender: this.controlledAddress.value,
-    //     receiver: address,
-    //     rekeyTo: address,
+    //     receiver: address.native,
+    //     rekeyTo: address.native,
     //     note: 'rekeying abstracted account',
     //     fee: 0,
     //   })
     //   .submit();
     itxn_submit
-    // contracts/arc58/abstracted_account.algo.ts:587
+    // contracts/arc58/abstracted_account.algo.ts:586
     // if (flash) this.assertRekeysBack();
     frame_dig -1
     bz arc58_rekeyTo_after_if_else@3
-    // contracts/arc58/abstracted_account.algo.ts:186
+    // contracts/arc58/abstracted_account.algo.ts:185
     // let rekeysBack = false;
     intc_0 // 0
     frame_bury 1
-    // contracts/arc58/abstracted_account.algo.ts:187
+    // contracts/arc58/abstracted_account.algo.ts:186
     // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
     txn GroupIndex
     intc_1 // 1
@@ -2241,24 +2219,24 @@ arc58_rekeyTo:
     frame_bury 0
 
 arc58_rekeyTo_while_top@5:
-    // contracts/arc58/abstracted_account.algo.ts:187
+    // contracts/arc58/abstracted_account.algo.ts:186
     // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
     frame_dig 0
     global GroupSize
     <
     bz arc58_rekeyTo_block@10
-    // contracts/arc58/abstracted_account.algo.ts:190
+    // contracts/arc58/abstracted_account.algo.ts:189
     // if (this.txnRekeysBack(txn)) {
     frame_dig 0
     callsub txnRekeysBack
     bz arc58_rekeyTo_after_if_else@8
-    // contracts/arc58/abstracted_account.algo.ts:191
+    // contracts/arc58/abstracted_account.algo.ts:190
     // rekeysBack = true;
     intc_1 // 1
     frame_bury 1
 
 arc58_rekeyTo_block@10:
-    // contracts/arc58/abstracted_account.algo.ts:196
+    // contracts/arc58/abstracted_account.algo.ts:195
     // assert(rekeysBack, 'rekey back not found');
     frame_dig 1
     assert // rekey back not found
@@ -2267,7 +2245,7 @@ arc58_rekeyTo_after_if_else@3:
     retsub
 
 arc58_rekeyTo_after_if_else@8:
-    // contracts/arc58/abstracted_account.algo.ts:187
+    // contracts/arc58/abstracted_account.algo.ts:186
     // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
     frame_dig 0
     intc_1 // 1
@@ -2278,23 +2256,23 @@ arc58_rekeyTo_after_if_else@8:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_canCall(plugin: uint64, caller: bytes, method: bytes) -> uint64:
 arc58_canCall:
-    // contracts/arc58/abstracted_account.algo.ts:597-598
+    // contracts/arc58/abstracted_account.algo.ts:596-597
     // @abimethod({ readonly: true })
-    // arc58_canCall(plugin: Application, caller: Account, method: arc4.StaticBytes<4>): boolean {
+    // arc58_canCall(plugin: Application, caller: arc4.Address, method: arc4.StaticBytes<4>): boolean {
     proto 3 1
-    // contracts/arc58/abstracted_account.algo.ts:10
-    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: new arc4.Address(caller) });
+    // contracts/arc58/abstracted_account.algo.ts:9
+    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: caller });
     frame_dig -3
     itob
     frame_dig -2
     concat
     dup
-    // contracts/arc58/abstracted_account.algo.ts:600
+    // contracts/arc58/abstracted_account.algo.ts:599
     // const globalAllowed = this.pluginCallAllowed(pluginsKey(plugin, caller), method);
     frame_dig -1
     callsub pluginCallAllowed
     pop
-    // contracts/arc58/abstracted_account.algo.ts:601
+    // contracts/arc58/abstracted_account.algo.ts:600
     // if (globalAllowed) return true;
     bz arc58_canCall_after_if_else@2
     intc_1 // 1
@@ -2302,7 +2280,7 @@ arc58_canCall:
     retsub
 
 arc58_canCall_after_if_else@2:
-    // contracts/arc58/abstracted_account.algo.ts:603
+    // contracts/arc58/abstracted_account.algo.ts:602
     // return this.pluginCallAllowed(pluginsKey(plugin, caller), method);
     frame_dig 0
     frame_dig -1
@@ -2314,31 +2292,31 @@ arc58_canCall_after_if_else@2:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_rekeyToPlugin(plugin: uint64, methodOffsets: bytes) -> void:
 arc58_rekeyToPlugin:
-    // contracts/arc58/abstracted_account.algo.ts:615
+    // contracts/arc58/abstracted_account.algo.ts:614
     // arc58_rekeyToPlugin(plugin: Application, methodOffsets: uint64[]): void {
     proto 2 0
     bytec_3 // ""
     dupn 7
-    // contracts/arc58/abstracted_account.algo.ts:275
+    // contracts/arc58/abstracted_account.algo.ts:274
     // application: new arc4.UintN64(plugin.id),
     frame_dig -2
     itob
-    // contracts/arc58/abstracted_account.algo.ts:274-277
+    // contracts/arc58/abstracted_account.algo.ts:273-276
     // const gKey = new PluginsKey({
     //   application: new arc4.UintN64(plugin.id),
     //   allowedCaller: new arc4.Address(Global.zeroAddress)
     // });
     dup
-    // contracts/arc58/abstracted_account.algo.ts:276
+    // contracts/arc58/abstracted_account.algo.ts:275
     // allowedCaller: new arc4.Address(Global.zeroAddress)
     global ZeroAddress
-    // contracts/arc58/abstracted_account.algo.ts:274-277
+    // contracts/arc58/abstracted_account.algo.ts:273-276
     // const gKey = new PluginsKey({
     //   application: new arc4.UintN64(plugin.id),
     //   allowedCaller: new arc4.Address(Global.zeroAddress)
     // });
     concat
-    // contracts/arc58/abstracted_account.algo.ts:279
+    // contracts/arc58/abstracted_account.algo.ts:278
     // const globalCheck = this.pluginCheck(gKey);
     callsub pluginCheck
     cover 7
@@ -2348,16 +2326,16 @@ arc58_rekeyToPlugin:
     pop
     cover 2
     swap
-    // contracts/arc58/abstracted_account.algo.ts:283
+    // contracts/arc58/abstracted_account.algo.ts:282
     // allowedCaller: new arc4.Address(Txn.sender)
     txn Sender
-    // contracts/arc58/abstracted_account.algo.ts:281-284
+    // contracts/arc58/abstracted_account.algo.ts:280-283
     // const lKey = new PluginsKey({
     //   application: new arc4.UintN64(plugin.id),
     //   allowedCaller: new arc4.Address(Txn.sender)
     // });
     concat
-    // contracts/arc58/abstracted_account.algo.ts:286
+    // contracts/arc58/abstracted_account.algo.ts:285
     // const localCheck = this.pluginCheck(lKey);
     callsub pluginCheck
     cover 7
@@ -2367,7 +2345,7 @@ arc58_rekeyToPlugin:
     pop
     cover 2
     swap
-    // contracts/arc58/abstracted_account.algo.ts:288
+    // contracts/arc58/abstracted_account.algo.ts:287
     // assert(globalCheck.exists || localCheck.exists, 'plugin not found');
     bnz arc58_rekeyToPlugin_bool_true@4
     frame_dig 16
@@ -2377,10 +2355,10 @@ arc58_rekeyToPlugin_bool_true@4:
     intc_1 // 1
 
 arc58_rekeyToPlugin_bool_merge@6:
-    // contracts/arc58/abstracted_account.algo.ts:288
+    // contracts/arc58/abstracted_account.algo.ts:287
     // assert(globalCheck.exists || localCheck.exists, 'plugin not found');
     assert // plugin not found
-    // contracts/arc58/abstracted_account.algo.ts:289
+    // contracts/arc58/abstracted_account.algo.ts:288
     // assert(!globalCheck.expired || !localCheck.expired, 'plugin expired');
     frame_dig 11
     bz arc58_rekeyToPlugin_bool_true@8
@@ -2391,10 +2369,10 @@ arc58_rekeyToPlugin_bool_true@8:
     intc_1 // 1
 
 arc58_rekeyToPlugin_bool_merge@10:
-    // contracts/arc58/abstracted_account.algo.ts:289
+    // contracts/arc58/abstracted_account.algo.ts:288
     // assert(!globalCheck.expired || !localCheck.expired, 'plugin expired');
     assert // plugin expired
-    // contracts/arc58/abstracted_account.algo.ts:290
+    // contracts/arc58/abstracted_account.algo.ts:289
     // assert(!globalCheck.onCooldown || !localCheck.onCooldown, 'plugin on cooldown');
     frame_dig 10
     bz arc58_rekeyToPlugin_bool_true@12
@@ -2405,10 +2383,10 @@ arc58_rekeyToPlugin_bool_true@12:
     intc_1 // 1
 
 arc58_rekeyToPlugin_bool_merge@14:
-    // contracts/arc58/abstracted_account.algo.ts:290
+    // contracts/arc58/abstracted_account.algo.ts:289
     // assert(!globalCheck.onCooldown || !localCheck.onCooldown, 'plugin on cooldown');
     assert // plugin on cooldown
-    // contracts/arc58/abstracted_account.algo.ts:295
+    // contracts/arc58/abstracted_account.algo.ts:294
     // assert(globalCheck.valid || localCheck.valid, 'invalid plugin call');
     frame_dig 9
     bnz arc58_rekeyToPlugin_bool_true@16
@@ -2419,18 +2397,18 @@ arc58_rekeyToPlugin_bool_true@16:
     intc_1 // 1
 
 arc58_rekeyToPlugin_bool_merge@18:
-    // contracts/arc58/abstracted_account.algo.ts:295
+    // contracts/arc58/abstracted_account.algo.ts:294
     // assert(globalCheck.valid || localCheck.valid, 'invalid plugin call');
     assert // invalid plugin call
-    // contracts/arc58/abstracted_account.algo.ts:297
+    // contracts/arc58/abstracted_account.algo.ts:296
     // let rekeysBack = false;
     intc_0 // 0
     frame_bury 7
-    // contracts/arc58/abstracted_account.algo.ts:298
+    // contracts/arc58/abstracted_account.algo.ts:297
     // let methodIndex: uint64 = 0;
     intc_0 // 0
     frame_bury 6
-    // contracts/arc58/abstracted_account.algo.ts:300
+    // contracts/arc58/abstracted_account.algo.ts:299
     // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
     txn GroupIndex
     intc_1 // 1
@@ -2438,28 +2416,28 @@ arc58_rekeyToPlugin_bool_merge@18:
     frame_bury 2
 
 arc58_rekeyToPlugin_while_top@19:
-    // contracts/arc58/abstracted_account.algo.ts:300
+    // contracts/arc58/abstracted_account.algo.ts:299
     // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
     frame_dig 2
     global GroupSize
     <
     bz arc58_rekeyToPlugin_block@41
-    // contracts/arc58/abstracted_account.algo.ts:303
+    // contracts/arc58/abstracted_account.algo.ts:302
     // if (this.txnRekeysBack(txn)) {
     frame_dig 2
     callsub txnRekeysBack
     bz arc58_rekeyToPlugin_after_if_else@22
-    // contracts/arc58/abstracted_account.algo.ts:304
+    // contracts/arc58/abstracted_account.algo.ts:303
     // rekeysBack = true;
     intc_1 // 1
     frame_bury 7
 
 arc58_rekeyToPlugin_block@41:
-    // contracts/arc58/abstracted_account.algo.ts:362
+    // contracts/arc58/abstracted_account.algo.ts:361
     // assert(rekeysBack, 'no rekey back found');
     frame_dig 7
     assert // no rekey back found
-    // contracts/arc58/abstracted_account.algo.ts:619-627
+    // contracts/arc58/abstracted_account.algo.ts:618-626
     // itxn
     //   .payment({
     //     sender: this.controlledAddress.value,
@@ -2480,19 +2458,19 @@ arc58_rekeyToPlugin_block@41:
     bytec_2 // "controlled_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // contracts/arc58/abstracted_account.algo.ts:623
+    // contracts/arc58/abstracted_account.algo.ts:622
     // rekeyTo: plugin.address,
     frame_dig -2
     app_params_get AppAddress
     assert // application exists
-    // contracts/arc58/abstracted_account.algo.ts:624
+    // contracts/arc58/abstracted_account.algo.ts:623
     // note: 'rekeying to plugin app',
     pushbytes "rekeying to plugin app"
     itxn_field Note
     itxn_field RekeyTo
     itxn_field Receiver
     itxn_field Sender
-    // contracts/arc58/abstracted_account.algo.ts:619-626
+    // contracts/arc58/abstracted_account.algo.ts:618-625
     // itxn
     //   .payment({
     //     sender: this.controlledAddress.value,
@@ -2503,11 +2481,11 @@ arc58_rekeyToPlugin_block@41:
     //   })
     intc_1 // 1
     itxn_field TypeEnum
-    // contracts/arc58/abstracted_account.algo.ts:625
+    // contracts/arc58/abstracted_account.algo.ts:624
     // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // contracts/arc58/abstracted_account.algo.ts:619-627
+    // contracts/arc58/abstracted_account.algo.ts:618-626
     // itxn
     //   .payment({
     //     sender: this.controlledAddress.value,
@@ -2521,14 +2499,14 @@ arc58_rekeyToPlugin_block@41:
     retsub
 
 arc58_rekeyToPlugin_after_if_else@22:
-    // contracts/arc58/abstracted_account.algo.ts:308
+    // contracts/arc58/abstracted_account.algo.ts:307
     // if (txn.type !== TransactionType.ApplicationCall) {
     frame_dig 2
     gtxns TypeEnum
     pushint 6 // 6
     !=
     bnz arc58_rekeyToPlugin_block@39
-    // contracts/arc58/abstracted_account.algo.ts:312
+    // contracts/arc58/abstracted_account.algo.ts:311
     // assert(txn.appId.id === plugin.id, 'cannot call other apps during plugin rekey');
     frame_dig 2
     dup
@@ -2536,20 +2514,20 @@ arc58_rekeyToPlugin_after_if_else@22:
     frame_dig -2
     ==
     assert // cannot call other apps during plugin rekey
-    // contracts/arc58/abstracted_account.algo.ts:314
+    // contracts/arc58/abstracted_account.algo.ts:313
     // assert(txn.onCompletion === arc4.OnCompleteAction.NoOp, 'invalid onComplete');
     dup
     gtxns OnCompletion
     !
     assert // invalid onComplete
-    // contracts/arc58/abstracted_account.algo.ts:317
+    // contracts/arc58/abstracted_account.algo.ts:316
     // assert(txn.numAppArgs > 1, 'no app id provided');
     dup
     gtxns NumAppArgs
     intc_1 // 1
     >
     assert // no app id provided
-    // contracts/arc58/abstracted_account.algo.ts:318
+    // contracts/arc58/abstracted_account.algo.ts:317
     // assert(Application(btoi(txn.appArgs(1))) === Global.currentApplicationId, 'wrong app id');
     dup
     intc_1 // 1
@@ -2558,10 +2536,10 @@ arc58_rekeyToPlugin_after_if_else@22:
     global CurrentApplicationID
     ==
     assert // wrong app id
-    // contracts/arc58/abstracted_account.algo.ts:324
+    // contracts/arc58/abstracted_account.algo.ts:323
     // Global.zeroAddress,
     global ZeroAddress
-    // contracts/arc58/abstracted_account.algo.ts:320-327
+    // contracts/arc58/abstracted_account.algo.ts:319-326
     // const globalLoopCheck = this.fullPluginCheck(
     //   gKey,
     //   txn,
@@ -2585,10 +2563,10 @@ arc58_rekeyToPlugin_after_if_else@22:
     popn 4
     frame_bury 0
     popn 2
-    // contracts/arc58/abstracted_account.algo.ts:333
+    // contracts/arc58/abstracted_account.algo.ts:332
     // Txn.sender,
     txn Sender
-    // contracts/arc58/abstracted_account.algo.ts:329-336
+    // contracts/arc58/abstracted_account.algo.ts:328-335
     // const localLoopCheck = this.fullPluginCheck(
     //   lKey,
     //   txn,
@@ -2610,7 +2588,7 @@ arc58_rekeyToPlugin_after_if_else@22:
     popn 4
     frame_bury 3
     popn 2
-    // contracts/arc58/abstracted_account.algo.ts:338
+    // contracts/arc58/abstracted_account.algo.ts:337
     // assert(!globalLoopCheck.methodOnCooldown || !localLoopCheck.methodOnCooldown, 'method on cooldown');
     bz arc58_rekeyToPlugin_bool_true@26
     frame_dig 4
@@ -2620,10 +2598,10 @@ arc58_rekeyToPlugin_bool_true@26:
     intc_1 // 1
 
 arc58_rekeyToPlugin_bool_merge@28:
-    // contracts/arc58/abstracted_account.algo.ts:338
+    // contracts/arc58/abstracted_account.algo.ts:337
     // assert(!globalLoopCheck.methodOnCooldown || !localLoopCheck.methodOnCooldown, 'method on cooldown');
     assert // method on cooldown
-    // contracts/arc58/abstracted_account.algo.ts:339
+    // contracts/arc58/abstracted_account.algo.ts:338
     // assert(globalLoopCheck.valid || localLoopCheck.valid, 'not allowed');
     frame_dig 1
     bnz arc58_rekeyToPlugin_bool_true@30
@@ -2634,39 +2612,39 @@ arc58_rekeyToPlugin_bool_true@30:
     intc_1 // 1
 
 arc58_rekeyToPlugin_bool_merge@32:
-    // contracts/arc58/abstracted_account.algo.ts:339
+    // contracts/arc58/abstracted_account.algo.ts:338
     // assert(globalLoopCheck.valid || localLoopCheck.valid, 'not allowed');
     assert // not allowed
-    // contracts/arc58/abstracted_account.algo.ts:345
+    // contracts/arc58/abstracted_account.algo.ts:344
     // if (globalLoopCheck.valid && globalLoopCheck.hasCooldown) {
     frame_dig 1
     bz arc58_rekeyToPlugin_else_body@35
     frame_dig 0
     bz arc58_rekeyToPlugin_else_body@35
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     frame_dig 8
     concat
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dup
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dup
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:346-350
+    // contracts/arc58/abstracted_account.algo.ts:345-349
     // this.plugins(gKey).value = new PluginInfo({
     //   ...this.plugins(gKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
     //   methods: this.plugins(gKey).value.methods.copy(),
     // });
     extract 0 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 1
     box_get
@@ -2676,13 +2654,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 1
     box_get
@@ -2696,13 +2674,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 1
     box_get
@@ -2716,13 +2694,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 1
     box_get
@@ -2736,13 +2714,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 1
     box_get
@@ -2756,13 +2734,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 1
     box_get
@@ -2776,13 +2754,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 1
     box_get
@@ -2791,106 +2769,26 @@ arc58_rekeyToPlugin_bool_merge@32:
     dig 1
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:346-350
+    // contracts/arc58/abstracted_account.algo.ts:345-349
     // this.plugins(gKey).value = new PluginInfo({
     //   ...this.plugins(gKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
     //   methods: this.plugins(gKey).value.methods.copy(),
     // });
     extract 8 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 2
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 2
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
-    // ...this.plugins(gKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
-    // methods: this.plugins(gKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
-    // ...this.plugins(gKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
-    // methods: this.plugins(gKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
-    // ...this.plugins(gKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
-    // methods: this.plugins(gKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
-    // ...this.plugins(gKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
-    // methods: this.plugins(gKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 2
     box_get
@@ -2905,16 +2803,96 @@ arc58_rekeyToPlugin_bool_merge@32:
     bury 1
     assert // Box must have value
     // contracts/arc58/abstracted_account.algo.ts:348
+    // methods: this.plugins(gKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:346
+    // ...this.plugins(gKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:348
+    // methods: this.plugins(gKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:346
+    // ...this.plugins(gKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:348
+    // methods: this.plugins(gKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:346
+    // ...this.plugins(gKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:348
+    // methods: this.plugins(gKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:346
+    // ...this.plugins(gKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:347
     // lastCalled: new arc4.UintN64(Global.round),
     global Round
     itob
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 3
     box_get
@@ -2928,13 +2906,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 3
     box_get
@@ -2948,13 +2926,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 3
     box_get
@@ -2968,13 +2946,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 3
     box_get
@@ -2988,13 +2966,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 3
     box_get
@@ -3008,13 +2986,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 3
     box_get
@@ -3028,13 +3006,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 3
     box_get
@@ -3047,7 +3025,7 @@ arc58_rekeyToPlugin_bool_merge@32:
     dig 3
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:346-350
+    // contracts/arc58/abstracted_account.algo.ts:345-349
     // this.plugins(gKey).value = new PluginInfo({
     //   ...this.plugins(gKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
@@ -3059,13 +3037,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     intc_0 // 0
     uncover 2
     setbit
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 4
     box_get
@@ -3079,13 +3057,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 4
     box_get
@@ -3099,13 +3077,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 4
     box_get
@@ -3119,13 +3097,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 4
     box_get
@@ -3139,13 +3117,13 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 4
     box_get
@@ -3159,7 +3137,7 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:349
+    // contracts/arc58/abstracted_account.algo.ts:348
     // methods: this.plugins(gKey).value.methods.copy(),
     dig 4
     box_get
@@ -3170,7 +3148,7 @@ arc58_rekeyToPlugin_bool_merge@32:
     dig 1
     len
     substring3
-    // contracts/arc58/abstracted_account.algo.ts:347
+    // contracts/arc58/abstracted_account.algo.ts:346
     // ...this.plugins(gKey).value,
     dig 5
     box_get
@@ -3184,7 +3162,7 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:346-350
+    // contracts/arc58/abstracted_account.algo.ts:345-349
     // this.plugins(gKey).value = new PluginInfo({
     //   ...this.plugins(gKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
@@ -3207,7 +3185,7 @@ arc58_rekeyToPlugin_bool_merge@32:
     box_put
 
 arc58_rekeyToPlugin_after_if_else@38:
-    // contracts/arc58/abstracted_account.algo.ts:359
+    // contracts/arc58/abstracted_account.algo.ts:358
     // methodIndex += 1;
     frame_dig 6
     intc_1 // 1
@@ -3215,7 +3193,7 @@ arc58_rekeyToPlugin_after_if_else@38:
     frame_bury 6
 
 arc58_rekeyToPlugin_block@39:
-    // contracts/arc58/abstracted_account.algo.ts:300
+    // contracts/arc58/abstracted_account.algo.ts:299
     // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
     frame_dig 2
     intc_1 // 1
@@ -3224,36 +3202,36 @@ arc58_rekeyToPlugin_block@39:
     b arc58_rekeyToPlugin_while_top@19
 
 arc58_rekeyToPlugin_else_body@35:
-    // contracts/arc58/abstracted_account.algo.ts:351
+    // contracts/arc58/abstracted_account.algo.ts:350
     // } else if (localLoopCheck.valid && localLoopCheck.hasCooldown) {
     frame_dig 5
     bz arc58_rekeyToPlugin_after_if_else@38
     frame_dig 3
     bz arc58_rekeyToPlugin_after_if_else@38
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     frame_dig 12
     concat
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dup
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dup
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:352-356
+    // contracts/arc58/abstracted_account.algo.ts:351-355
     // this.plugins(lKey).value = new PluginInfo({
     //   ...this.plugins(lKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
     //   methods: this.plugins(lKey).value.methods.copy(),
     // })
     extract 0 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 1
     box_get
@@ -3263,13 +3241,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 1
     box_get
@@ -3283,13 +3261,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 1
     box_get
@@ -3303,13 +3281,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 1
     box_get
@@ -3323,13 +3301,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 1
     box_get
@@ -3343,13 +3321,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 1
     box_get
@@ -3363,13 +3341,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 1
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 1
     box_get
@@ -3378,106 +3356,26 @@ arc58_rekeyToPlugin_else_body@35:
     dig 1
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:352-356
+    // contracts/arc58/abstracted_account.algo.ts:351-355
     // this.plugins(lKey).value = new PluginInfo({
     //   ...this.plugins(lKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
     //   methods: this.plugins(lKey).value.methods.copy(),
     // })
     extract 8 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 2
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 2
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
-    // ...this.plugins(lKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
-    // methods: this.plugins(lKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
-    // ...this.plugins(lKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
-    // methods: this.plugins(lKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
-    // ...this.plugins(lKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
-    // methods: this.plugins(lKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
-    // ...this.plugins(lKey).value,
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
-    // methods: this.plugins(lKey).value.methods.copy(),
-    dig 2
-    box_get
-    bury 1
-    assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 2
     box_get
@@ -3492,16 +3390,96 @@ arc58_rekeyToPlugin_else_body@35:
     bury 1
     assert // Box must have value
     // contracts/arc58/abstracted_account.algo.ts:354
+    // methods: this.plugins(lKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:352
+    // ...this.plugins(lKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:354
+    // methods: this.plugins(lKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:352
+    // ...this.plugins(lKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:354
+    // methods: this.plugins(lKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:352
+    // ...this.plugins(lKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:354
+    // methods: this.plugins(lKey).value.methods.copy(),
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:352
+    // ...this.plugins(lKey).value,
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    dig 2
+    box_get
+    bury 1
+    assert // Box must have value
+    // contracts/arc58/abstracted_account.algo.ts:353
     // lastCalled: new arc4.UintN64(Global.round),
     global Round
     itob
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 3
     box_get
@@ -3515,13 +3493,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 3
     box_get
@@ -3535,13 +3513,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 3
     box_get
@@ -3555,13 +3533,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 3
     box_get
@@ -3575,13 +3553,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 3
     box_get
@@ -3595,13 +3573,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 3
     box_get
@@ -3615,13 +3593,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 3
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 3
     box_get
@@ -3634,7 +3612,7 @@ arc58_rekeyToPlugin_else_body@35:
     dig 3
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:352-356
+    // contracts/arc58/abstracted_account.algo.ts:351-355
     // this.plugins(lKey).value = new PluginInfo({
     //   ...this.plugins(lKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
@@ -3646,13 +3624,13 @@ arc58_rekeyToPlugin_else_body@35:
     intc_0 // 0
     uncover 2
     setbit
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 4
     box_get
@@ -3666,13 +3644,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 4
     box_get
@@ -3686,13 +3664,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 4
     box_get
@@ -3706,13 +3684,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 4
     box_get
@@ -3726,13 +3704,13 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 4
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 4
     box_get
@@ -3746,7 +3724,7 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:355
+    // contracts/arc58/abstracted_account.algo.ts:354
     // methods: this.plugins(lKey).value.methods.copy(),
     dig 4
     box_get
@@ -3757,7 +3735,7 @@ arc58_rekeyToPlugin_else_body@35:
     dig 1
     len
     substring3
-    // contracts/arc58/abstracted_account.algo.ts:353
+    // contracts/arc58/abstracted_account.algo.ts:352
     // ...this.plugins(lKey).value,
     dig 5
     box_get
@@ -3771,7 +3749,7 @@ arc58_rekeyToPlugin_else_body@35:
     box_get
     bury 1
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:352-356
+    // contracts/arc58/abstracted_account.algo.ts:351-355
     // this.plugins(lKey).value = new PluginInfo({
     //   ...this.plugins(lKey).value,
     //   lastCalled: new arc4.UintN64(Global.round),
@@ -3821,15 +3799,15 @@ arc58_rekeyToPlugin_bool_false@5:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_rekeyToNamedPlugin(name: bytes, methodOffsets: bytes) -> void:
 arc58_rekeyToNamedPlugin:
-    // contracts/arc58/abstracted_account.algo.ts:639
+    // contracts/arc58/abstracted_account.algo.ts:638
     // arc58_rekeyToNamedPlugin(name: string, methodOffsets: uint64[]): void {
     proto 2 0
-    // contracts/arc58/abstracted_account.algo.ts:115
+    // contracts/arc58/abstracted_account.algo.ts:114
     // namedPlugins = BoxMap<string, PluginsKey>({ keyPrefix: 'n' });
     bytec 10 // "n"
     frame_dig -2
     concat
-    // contracts/arc58/abstracted_account.algo.ts:640
+    // contracts/arc58/abstracted_account.algo.ts:639
     // this.arc58_rekeyToPlugin(Application(this.namedPlugins(name).value.application.native), methodOffsets);
     box_get
     assert // Box must have value
@@ -3842,35 +3820,35 @@ arc58_rekeyToNamedPlugin:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_addPlugin(app: uint64, allowedCaller: bytes, lastValidRound: uint64, cooldown: uint64, adminPrivileges: uint64, methods: bytes) -> void:
 arc58_addPlugin:
-    // contracts/arc58/abstracted_account.algo.ts:655-662
+    // contracts/arc58/abstracted_account.algo.ts:654-661
     // arc58_addPlugin(
     //   app: Application,
-    //   allowedCaller: Account,
+    //   allowedCaller: arc4.Address,
     //   lastValidRound: uint64,
     //   cooldown: uint64,
     //   adminPrivileges: boolean,
-    //   methods: DynamicArray<MethodRestriction>,
+    //   methods: arc4.DynamicArray<MethodRestriction>,
     // ): void {
     proto 6 0
-    // contracts/arc58/abstracted_account.algo.ts:664
+    // contracts/arc58/abstracted_account.algo.ts:663
     // assert(this.isAdmin(), 'Sender must be the admin');
     callsub isAdmin
     assert // Sender must be the admin
-    // contracts/arc58/abstracted_account.algo.ts:10
-    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: new arc4.Address(caller) });
+    // contracts/arc58/abstracted_account.algo.ts:9
+    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: caller });
     frame_dig -6
     itob
     frame_dig -5
     concat
-    // contracts/arc58/abstracted_account.algo.ts:667
+    // contracts/arc58/abstracted_account.algo.ts:666
     // let methodInfos = new arc4.DynamicArray<MethodInfo>();
     bytec 11 // 0x0000
-    // contracts/arc58/abstracted_account.algo.ts:668
+    // contracts/arc58/abstracted_account.algo.ts:667
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     intc_0 // 0
 
 arc58_addPlugin_while_top@1:
-    // contracts/arc58/abstracted_account.algo.ts:668
+    // contracts/arc58/abstracted_account.algo.ts:667
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     frame_dig -1
     intc_0 // 0
@@ -3878,7 +3856,7 @@ arc58_addPlugin_while_top@1:
     frame_dig 2
     >
     bz arc58_addPlugin_after_while@3
-    // contracts/arc58/abstracted_account.algo.ts:669-673
+    // contracts/arc58/abstracted_account.algo.ts:668-672
     // methodInfos.push(new MethodInfo({
     //   selector: methods[i].selector,
     //   cooldown: methods[i].cooldown,
@@ -3886,7 +3864,7 @@ arc58_addPlugin_while_top@1:
     // }));
     frame_dig 1
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:670
+    // contracts/arc58/abstracted_account.algo.ts:669
     // selector: methods[i].selector,
     frame_dig -1
     extract 2 0
@@ -3899,21 +3877,21 @@ arc58_addPlugin_while_top@1:
     extract3 // on error: Index access is out of bounds
     dup
     extract 0 4 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:671
+    // contracts/arc58/abstracted_account.algo.ts:670
     // cooldown: methods[i].cooldown,
     swap
     extract 4 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:669-673
+    // contracts/arc58/abstracted_account.algo.ts:668-672
     // methodInfos.push(new MethodInfo({
     //   selector: methods[i].selector,
     //   cooldown: methods[i].cooldown,
     //   lastCalled: new arc4.UintN64(),
     // }));
     concat
-    // contracts/arc58/abstracted_account.algo.ts:672
+    // contracts/arc58/abstracted_account.algo.ts:671
     // lastCalled: new arc4.UintN64(),
     bytec 6 // 0x0000000000000000
-    // contracts/arc58/abstracted_account.algo.ts:669-673
+    // contracts/arc58/abstracted_account.algo.ts:668-672
     // methodInfos.push(new MethodInfo({
     //   selector: methods[i].selector,
     //   cooldown: methods[i].cooldown,
@@ -3930,7 +3908,7 @@ arc58_addPlugin_while_top@1:
     swap
     concat
     frame_bury 1
-    // contracts/arc58/abstracted_account.algo.ts:668
+    // contracts/arc58/abstracted_account.algo.ts:667
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     intc_1 // 1
     +
@@ -3938,21 +3916,21 @@ arc58_addPlugin_while_top@1:
     b arc58_addPlugin_while_top@1
 
 arc58_addPlugin_after_while@3:
-    // contracts/arc58/abstracted_account.algo.ts:677
+    // contracts/arc58/abstracted_account.algo.ts:676
     // lastValidRound: new arc4.UintN64(lastValidRound),
     frame_dig -4
     itob
-    // contracts/arc58/abstracted_account.algo.ts:678
+    // contracts/arc58/abstracted_account.algo.ts:677
     // cooldown: new arc4.UintN64(cooldown),
     frame_dig -3
     itob
-    // contracts/arc58/abstracted_account.algo.ts:680
+    // contracts/arc58/abstracted_account.algo.ts:679
     // adminPrivileges: new arc4.Bool(adminPrivileges),
     bytec_1 // 0x00
     intc_0 // 0
     frame_dig -2
     setbit
-    // contracts/arc58/abstracted_account.algo.ts:676-682
+    // contracts/arc58/abstracted_account.algo.ts:675-681
     // this.plugins(key).value = new PluginInfo({
     //   lastValidRound: new arc4.UintN64(lastValidRound),
     //   cooldown: new arc4.UintN64(cooldown),
@@ -3962,10 +3940,10 @@ arc58_addPlugin_after_while@3:
     // });
     cover 2
     concat
-    // contracts/arc58/abstracted_account.algo.ts:679
+    // contracts/arc58/abstracted_account.algo.ts:678
     // lastCalled: new arc4.UintN64(),
     bytec 6 // 0x0000000000000000
-    // contracts/arc58/abstracted_account.algo.ts:676-682
+    // contracts/arc58/abstracted_account.algo.ts:675-681
     // this.plugins(key).value = new PluginInfo({
     //   lastValidRound: new arc4.UintN64(lastValidRound),
     //   cooldown: new arc4.UintN64(cooldown),
@@ -3980,12 +3958,12 @@ arc58_addPlugin_after_while@3:
     concat
     frame_dig 1
     concat
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     frame_dig 0
     concat
-    // contracts/arc58/abstracted_account.algo.ts:676-682
+    // contracts/arc58/abstracted_account.algo.ts:675-681
     // this.plugins(key).value = new PluginInfo({
     //   lastValidRound: new arc4.UintN64(lastValidRound),
     //   cooldown: new arc4.UintN64(cooldown),
@@ -4003,20 +3981,20 @@ arc58_addPlugin_after_while@3:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.assignDomain(caller: bytes, domain: bytes) -> void:
 assignDomain:
-    // contracts/arc58/abstracted_account.algo.ts:691
-    // assignDomain(caller: Account, domain: string): void {
+    // contracts/arc58/abstracted_account.algo.ts:690
+    // assignDomain(caller: arc4.Address, domain: string): void {
     proto 2 0
-    // contracts/arc58/abstracted_account.algo.ts:692
+    // contracts/arc58/abstracted_account.algo.ts:691
     // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_ADD_PLUGIN);
     callsub isAdmin
     assert // Only an admin can add a plugin
-    // contracts/arc58/abstracted_account.algo.ts:126
+    // contracts/arc58/abstracted_account.algo.ts:125
     // domainKeys = BoxMap<Account, string>({ keyPrefix: 'd' });
     bytec 8 // "d"
     frame_dig -2
     concat
-    // contracts/arc58/abstracted_account.algo.ts:693
-    // this.domainKeys(caller).value = domain;
+    // contracts/arc58/abstracted_account.algo.ts:692
+    // this.domainKeys(caller.native).value = domain;
     dup
     box_del
     pop
@@ -4027,10 +4005,10 @@ assignDomain:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_removePlugin(app: uint64, allowedCaller: bytes) -> void:
 arc58_removePlugin:
-    // contracts/arc58/abstracted_account.algo.ts:704
-    // arc58_removePlugin(app: Application, allowedCaller: Account): void {
+    // contracts/arc58/abstracted_account.algo.ts:703
+    // arc58_removePlugin(app: Application, allowedCaller: arc4.Address): void {
     proto 2 0
-    // contracts/arc58/abstracted_account.algo.ts:705
+    // contracts/arc58/abstracted_account.algo.ts:704
     // assert(this.isAdmin() || this.canRevoke(), 'Sender must be the admin');
     callsub isAdmin
     bnz arc58_removePlugin_bool_true@2
@@ -4041,27 +4019,27 @@ arc58_removePlugin_bool_true@2:
     intc_1 // 1
 
 arc58_removePlugin_bool_merge@4:
-    // contracts/arc58/abstracted_account.algo.ts:705
+    // contracts/arc58/abstracted_account.algo.ts:704
     // assert(this.isAdmin() || this.canRevoke(), 'Sender must be the admin');
     assert // Sender must be the admin
-    // contracts/arc58/abstracted_account.algo.ts:10
-    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: new arc4.Address(caller) });
+    // contracts/arc58/abstracted_account.algo.ts:9
+    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: caller });
     frame_dig -2
     itob
     frame_dig -1
     concat
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     swap
     concat
-    // contracts/arc58/abstracted_account.algo.ts:708
+    // contracts/arc58/abstracted_account.algo.ts:707
     // assert(this.plugins(key).exists, 'plugin does not exist');
     dup
     box_len
     bury 1
     assert // plugin does not exist
-    // contracts/arc58/abstracted_account.algo.ts:709
+    // contracts/arc58/abstracted_account.algo.ts:708
     // this.plugins(key).delete();
     box_del
     pop
@@ -4074,53 +4052,53 @@ arc58_removePlugin_bool_false@3:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_addNamedPlugin(name: bytes, app: uint64, allowedCaller: bytes, lastValidRound: uint64, cooldown: uint64, adminPrivileges: uint64, methods: bytes) -> void:
 arc58_addNamedPlugin:
-    // contracts/arc58/abstracted_account.algo.ts:725-733
+    // contracts/arc58/abstracted_account.algo.ts:724-732
     // arc58_addNamedPlugin(
     //   name: string,
     //   app: Application,
-    //   allowedCaller: Account,
+    //   allowedCaller: arc4.Address,
     //   lastValidRound: uint64,
     //   cooldown: uint64,
     //   adminPrivileges: boolean,
-    //   methods: DynamicArray<MethodRestriction>,
+    //   methods: arc4.DynamicArray<MethodRestriction>,
     // ): void {
     proto 7 0
-    // contracts/arc58/abstracted_account.algo.ts:734
+    // contracts/arc58/abstracted_account.algo.ts:733
     // assert(this.isAdmin(), 'Sender must be the admin');
     callsub isAdmin
     assert // Sender must be the admin
-    // contracts/arc58/abstracted_account.algo.ts:115
+    // contracts/arc58/abstracted_account.algo.ts:114
     // namedPlugins = BoxMap<string, PluginsKey>({ keyPrefix: 'n' });
     bytec 10 // "n"
     frame_dig -7
     concat
-    // contracts/arc58/abstracted_account.algo.ts:735
+    // contracts/arc58/abstracted_account.algo.ts:734
     // assert(!this.namedPlugins(name).exists);
     dup
     box_len
     bury 1
     !
     assert
-    // contracts/arc58/abstracted_account.algo.ts:10
-    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: new arc4.Address(caller) });
+    // contracts/arc58/abstracted_account.algo.ts:9
+    // return new PluginsKey({ application: new arc4.UintN64(app.id), allowedCaller: caller });
     frame_dig -6
     itob
     frame_dig -5
     concat
     dup
     cover 2
-    // contracts/arc58/abstracted_account.algo.ts:738
+    // contracts/arc58/abstracted_account.algo.ts:737
     // this.namedPlugins(name).value = key.copy();
     box_put
-    // contracts/arc58/abstracted_account.algo.ts:740
+    // contracts/arc58/abstracted_account.algo.ts:739
     // let methodInfos = new arc4.DynamicArray<MethodInfo>();
     bytec 11 // 0x0000
-    // contracts/arc58/abstracted_account.algo.ts:741
+    // contracts/arc58/abstracted_account.algo.ts:740
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     intc_0 // 0
 
 arc58_addNamedPlugin_while_top@1:
-    // contracts/arc58/abstracted_account.algo.ts:741
+    // contracts/arc58/abstracted_account.algo.ts:740
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     frame_dig -1
     intc_0 // 0
@@ -4128,7 +4106,7 @@ arc58_addNamedPlugin_while_top@1:
     frame_dig 2
     >
     bz arc58_addNamedPlugin_after_while@3
-    // contracts/arc58/abstracted_account.algo.ts:742-746
+    // contracts/arc58/abstracted_account.algo.ts:741-745
     // methodInfos.push(new MethodInfo({
     //   selector: methods[i].selector,
     //   cooldown: methods[i].cooldown,
@@ -4136,7 +4114,7 @@ arc58_addNamedPlugin_while_top@1:
     // }));
     frame_dig 1
     extract 2 0
-    // contracts/arc58/abstracted_account.algo.ts:743
+    // contracts/arc58/abstracted_account.algo.ts:742
     // selector: methods[i].selector,
     frame_dig -1
     extract 2 0
@@ -4149,21 +4127,21 @@ arc58_addNamedPlugin_while_top@1:
     extract3 // on error: Index access is out of bounds
     dup
     extract 0 4 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:744
+    // contracts/arc58/abstracted_account.algo.ts:743
     // cooldown: methods[i].cooldown,
     swap
     extract 4 8 // on error: Index access is out of bounds
-    // contracts/arc58/abstracted_account.algo.ts:742-746
+    // contracts/arc58/abstracted_account.algo.ts:741-745
     // methodInfos.push(new MethodInfo({
     //   selector: methods[i].selector,
     //   cooldown: methods[i].cooldown,
     //   lastCalled: new arc4.UintN64(),
     // }));
     concat
-    // contracts/arc58/abstracted_account.algo.ts:745
+    // contracts/arc58/abstracted_account.algo.ts:744
     // lastCalled: new arc4.UintN64(),
     bytec 6 // 0x0000000000000000
-    // contracts/arc58/abstracted_account.algo.ts:742-746
+    // contracts/arc58/abstracted_account.algo.ts:741-745
     // methodInfos.push(new MethodInfo({
     //   selector: methods[i].selector,
     //   cooldown: methods[i].cooldown,
@@ -4180,7 +4158,7 @@ arc58_addNamedPlugin_while_top@1:
     swap
     concat
     frame_bury 1
-    // contracts/arc58/abstracted_account.algo.ts:741
+    // contracts/arc58/abstracted_account.algo.ts:740
     // for (let i: uint64 = 0; i < methods.length; i += 1) {
     intc_1 // 1
     +
@@ -4188,21 +4166,21 @@ arc58_addNamedPlugin_while_top@1:
     b arc58_addNamedPlugin_while_top@1
 
 arc58_addNamedPlugin_after_while@3:
-    // contracts/arc58/abstracted_account.algo.ts:750
+    // contracts/arc58/abstracted_account.algo.ts:749
     // lastValidRound: new arc4.UintN64(lastValidRound),
     frame_dig -4
     itob
-    // contracts/arc58/abstracted_account.algo.ts:751
+    // contracts/arc58/abstracted_account.algo.ts:750
     // cooldown: new arc4.UintN64(cooldown),
     frame_dig -3
     itob
-    // contracts/arc58/abstracted_account.algo.ts:753
+    // contracts/arc58/abstracted_account.algo.ts:752
     // adminPrivileges: new arc4.Bool(adminPrivileges),
     bytec_1 // 0x00
     intc_0 // 0
     frame_dig -2
     setbit
-    // contracts/arc58/abstracted_account.algo.ts:749-755
+    // contracts/arc58/abstracted_account.algo.ts:748-754
     // this.plugins(key).value = new PluginInfo({
     //   lastValidRound: new arc4.UintN64(lastValidRound),
     //   cooldown: new arc4.UintN64(cooldown),
@@ -4212,10 +4190,10 @@ arc58_addNamedPlugin_after_while@3:
     // })
     cover 2
     concat
-    // contracts/arc58/abstracted_account.algo.ts:752
+    // contracts/arc58/abstracted_account.algo.ts:751
     // lastCalled: new arc4.UintN64(),
     bytec 6 // 0x0000000000000000
-    // contracts/arc58/abstracted_account.algo.ts:749-755
+    // contracts/arc58/abstracted_account.algo.ts:748-754
     // this.plugins(key).value = new PluginInfo({
     //   lastValidRound: new arc4.UintN64(lastValidRound),
     //   cooldown: new arc4.UintN64(cooldown),
@@ -4230,12 +4208,12 @@ arc58_addNamedPlugin_after_while@3:
     concat
     frame_dig 1
     concat
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     frame_dig 0
     concat
-    // contracts/arc58/abstracted_account.algo.ts:749-755
+    // contracts/arc58/abstracted_account.algo.ts:748-754
     // this.plugins(key).value = new PluginInfo({
     //   lastValidRound: new arc4.UintN64(lastValidRound),
     //   cooldown: new arc4.UintN64(cooldown),
@@ -4253,10 +4231,10 @@ arc58_addNamedPlugin_after_while@3:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.arc58_removeNamedPlugin(name: bytes) -> void:
 arc58_removeNamedPlugin:
-    // contracts/arc58/abstracted_account.algo.ts:764
+    // contracts/arc58/abstracted_account.algo.ts:763
     // arc58_removeNamedPlugin(name: string): void {
     proto 1 0
-    // contracts/arc58/abstracted_account.algo.ts:766
+    // contracts/arc58/abstracted_account.algo.ts:765
     // assert(this.isAdmin() || this.canRevoke(), 'Sender must be the admin');
     callsub isAdmin
     bnz arc58_removeNamedPlugin_bool_true@2
@@ -4267,42 +4245,42 @@ arc58_removeNamedPlugin_bool_true@2:
     intc_1 // 1
 
 arc58_removeNamedPlugin_bool_merge@4:
-    // contracts/arc58/abstracted_account.algo.ts:766
+    // contracts/arc58/abstracted_account.algo.ts:765
     // assert(this.isAdmin() || this.canRevoke(), 'Sender must be the admin');
     assert // Sender must be the admin
-    // contracts/arc58/abstracted_account.algo.ts:115
+    // contracts/arc58/abstracted_account.algo.ts:114
     // namedPlugins = BoxMap<string, PluginsKey>({ keyPrefix: 'n' });
     bytec 10 // "n"
     frame_dig -1
     concat
-    // contracts/arc58/abstracted_account.algo.ts:767
+    // contracts/arc58/abstracted_account.algo.ts:766
     // assert(this.namedPlugins(name).exists, 'plugin does not exist');
     dup
     box_len
     bury 1
     assert // plugin does not exist
-    // contracts/arc58/abstracted_account.algo.ts:768
+    // contracts/arc58/abstracted_account.algo.ts:767
     // const app = this.namedPlugins(name).value.copy();
     dup
     box_get
     assert // Box must have value
-    // contracts/arc58/abstracted_account.algo.ts:110
+    // contracts/arc58/abstracted_account.algo.ts:109
     // plugins = BoxMap<PluginsKey, PluginInfo>({ keyPrefix: 'p' });
     bytec_0 // "p"
     swap
     concat
-    // contracts/arc58/abstracted_account.algo.ts:769
+    // contracts/arc58/abstracted_account.algo.ts:768
     // assert(this.plugins(app).exists, 'plugin does not exist');
     dup
     box_len
     bury 1
     assert // plugin does not exist
-    // contracts/arc58/abstracted_account.algo.ts:771
+    // contracts/arc58/abstracted_account.algo.ts:770
     // this.namedPlugins(name).delete();
     swap
     box_del
     pop
-    // contracts/arc58/abstracted_account.algo.ts:772
+    // contracts/arc58/abstracted_account.algo.ts:771
     // this.plugins(app).delete();
     box_del
     pop
@@ -4315,20 +4293,20 @@ arc58_removeNamedPlugin_bool_false@3:
 
 // contracts/arc58/abstracted_account.algo.ts::AbstractedAccount.balance(assets: bytes) -> bytes:
 balance:
-    // contracts/arc58/abstracted_account.algo.ts:779
+    // contracts/arc58/abstracted_account.algo.ts:778
     // balance(assets: uint64[]): uint64[] {
     proto 1 1
     bytec_3 // ""
     dupn 2
-    // contracts/arc58/abstracted_account.algo.ts:780
+    // contracts/arc58/abstracted_account.algo.ts:779
     // let amounts: uint64[] = [];
     bytec 11 // 0x0000
-    // contracts/arc58/abstracted_account.algo.ts:781
+    // contracts/arc58/abstracted_account.algo.ts:780
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     intc_0 // 0
 
 balance_while_top@1:
-    // contracts/arc58/abstracted_account.algo.ts:781
+    // contracts/arc58/abstracted_account.algo.ts:780
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     frame_dig -1
     intc_0 // 0
@@ -4336,11 +4314,11 @@ balance_while_top@1:
     frame_dig 4
     >
     bz balance_after_while@8
-    // contracts/arc58/abstracted_account.algo.ts:782
+    // contracts/arc58/abstracted_account.algo.ts:781
     // let amount: uint64 = 0;
     intc_0 // 0
     frame_bury 0
-    // contracts/arc58/abstracted_account.algo.ts:783
+    // contracts/arc58/abstracted_account.algo.ts:782
     // const asset = Asset(assets[i]);
     frame_dig -1
     extract 2 0
@@ -4350,10 +4328,10 @@ balance_while_top@1:
     extract_uint64
     dup
     frame_bury 1
-    // contracts/arc58/abstracted_account.algo.ts:785
+    // contracts/arc58/abstracted_account.algo.ts:784
     // if (asset.id === 0) {
     bnz balance_else_body@4
-    // contracts/arc58/abstracted_account.algo.ts:786
+    // contracts/arc58/abstracted_account.algo.ts:785
     // amount = Global.currentApplicationAddress.balance;
     global CurrentApplicationAddress
     acct_params_get AcctBalance
@@ -4362,7 +4340,7 @@ balance_while_top@1:
     assert // account funded
 
 balance_after_if_else@7:
-    // contracts/arc58/abstracted_account.algo.ts:813
+    // contracts/arc58/abstracted_account.algo.ts:812
     // amounts = [...amounts, (amount + staked)];
     frame_dig 3
     extract 2 0
@@ -4387,7 +4365,7 @@ balance_after_if_else@7:
     swap
     concat
     frame_bury 3
-    // contracts/arc58/abstracted_account.algo.ts:781
+    // contracts/arc58/abstracted_account.algo.ts:780
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     frame_dig 4
     intc_1 // 1
@@ -4396,14 +4374,14 @@ balance_after_if_else@7:
     b balance_while_top@1
 
 balance_else_body@4:
-    // contracts/arc58/abstracted_account.algo.ts:788
+    // contracts/arc58/abstracted_account.algo.ts:787
     // const [holdingAmount, optedIn] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset);
     global CurrentApplicationAddress
     frame_dig 1
     asset_holding_get AssetBalance
     swap
     frame_bury 2
-    // contracts/arc58/abstracted_account.algo.ts:789
+    // contracts/arc58/abstracted_account.algo.ts:788
     // if (optedIn) {
     bz balance_after_if_else@7
     frame_dig 2
@@ -4411,7 +4389,7 @@ balance_else_body@4:
     b balance_after_if_else@7
 
 balance_after_while@8:
-    // contracts/arc58/abstracted_account.algo.ts:816
+    // contracts/arc58/abstracted_account.algo.ts:815
     // return amounts;
     frame_dig 3
     frame_bury 0

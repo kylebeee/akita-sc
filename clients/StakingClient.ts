@@ -690,8 +690,8 @@ export class StakingFactory {
   public async deploy(params: StakingDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? StakingParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      updateParams: params.updateParams?.method ? StakingParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams,
+      createParams: params.createParams?.method ? StakingParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (StakingCreateCallParams & { args: Uint8Array[] }) : undefined,
+      updateParams: params.updateParams?.method ? StakingParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams ? params.updateParams as (StakingUpdateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new StakingClient(result.appClient) }
   }
@@ -769,7 +769,7 @@ export class StakingFactory {
        */
       createApplication: async (params: CallParams<StakingArgs['obj']['createApplication()void'] | StakingArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(StakingParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | StakingReturns['createApplication()void'] }, appClient: new StakingClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | StakingReturns['createApplication()void']) }, appClient: new StakingClient(result.appClient) }
       },
     },
 
@@ -1207,7 +1207,7 @@ export class StakingClient {
        */
       updateApplication: async (params: CallParams<StakingArgs['obj']['updateApplication()void'] | StakingArgs['tuple']['updateApplication()void']> & AppClientCompilationParams & SendParams = {args: []}) => {
         const result = await this.appClient.send.update(StakingParamsFactory.update.updateApplication(params))
-        return {...result, return: result.return as undefined | StakingReturns['updateApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | StakingReturns['updateApplication()void'])}
       },
 
     },
@@ -1232,7 +1232,7 @@ export class StakingClient {
      */
     timeLeft: async (params: CallParams<StakingArgs['obj']['timeLeft(address,uint64)uint64'] | StakingArgs['tuple']['timeLeft(address,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.timeLeft(params))
-      return {...result, return: result.return as undefined | StakingReturns['timeLeft(address,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['timeLeft(address,uint64)uint64'])}
     },
 
     /**
@@ -1245,7 +1245,7 @@ export class StakingClient {
      */
     getInfo: async (params: CallParams<StakingArgs['obj']['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)'] | StakingArgs['tuple']['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.getInfo(params))
-      return {...result, return: result.return as undefined | StakingReturns['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)'])}
     },
 
     /**
@@ -1258,7 +1258,7 @@ export class StakingClient {
      */
     getHeartbeat: async (params: CallParams<StakingArgs['obj']['getHeartbeat(address,uint64)(uint64,uint64)[4]'] | StakingArgs['tuple']['getHeartbeat(address,uint64)(uint64,uint64)[4]']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.getHeartbeat(params))
-      return {...result, return: result.return as undefined | StakingReturns['getHeartbeat(address,uint64)(uint64,uint64)[4]']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['getHeartbeat(address,uint64)(uint64,uint64)[4]'])}
     },
 
     /**
@@ -1271,7 +1271,7 @@ export class StakingClient {
      */
     getHeartbeatAverage: async (params: CallParams<StakingArgs['obj']['getHeartbeatAverage(address,uint64)uint64'] | StakingArgs['tuple']['getHeartbeatAverage(address,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.getHeartbeatAverage(params))
-      return {...result, return: result.return as undefined | StakingReturns['getHeartbeatAverage(address,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['getHeartbeatAverage(address,uint64)uint64'])}
     },
 
     /**
@@ -1284,7 +1284,7 @@ export class StakingClient {
      */
     getInfoList: async (params: CallParams<StakingArgs['obj']['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]'] | StakingArgs['tuple']['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.getInfoList(params))
-      return {...result, return: result.return as undefined | StakingReturns['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]'])}
     },
 
     /**
@@ -1297,7 +1297,7 @@ export class StakingClient {
      */
     getLockedInfo: async (params: CallParams<StakingArgs['obj']['getLockedInfo(address,uint64)(uint64,uint64,uint64)'] | StakingArgs['tuple']['getLockedInfo(address,uint64)(uint64,uint64,uint64)']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.getLockedInfo(params))
-      return {...result, return: result.return as undefined | StakingReturns['getLockedInfo(address,uint64)(uint64,uint64,uint64)']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['getLockedInfo(address,uint64)(uint64,uint64,uint64)'])}
     },
 
     /**
@@ -1310,7 +1310,7 @@ export class StakingClient {
      */
     getLockedInfoList: async (params: CallParams<StakingArgs['obj']['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]'] | StakingArgs['tuple']['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.getLockedInfoList(params))
-      return {...result, return: result.return as undefined | StakingReturns['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]'])}
     },
 
     /**
@@ -1321,7 +1321,7 @@ export class StakingClient {
      */
     stake: async (params: CallParams<StakingArgs['obj']['stake(pay,uint64,uint64,uint64,bool)void'] | StakingArgs['tuple']['stake(pay,uint64,uint64,uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.stake(params))
-      return {...result, return: result.return as undefined | StakingReturns['stake(pay,uint64,uint64,uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['stake(pay,uint64,uint64,uint64,bool)void'])}
     },
 
     /**
@@ -1332,7 +1332,7 @@ export class StakingClient {
      */
     stakeAsa: async (params: CallParams<StakingArgs['obj']['stakeAsa(pay,axfer,uint64,uint64,uint64,bool)void'] | StakingArgs['tuple']['stakeAsa(pay,axfer,uint64,uint64,uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.stakeAsa(params))
-      return {...result, return: result.return as undefined | StakingReturns['stakeAsa(pay,axfer,uint64,uint64,uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['stakeAsa(pay,axfer,uint64,uint64,uint64,bool)void'])}
     },
 
     /**
@@ -1343,7 +1343,7 @@ export class StakingClient {
      */
     withdraw: async (params: CallParams<StakingArgs['obj']['withdraw(uint64,uint64)void'] | StakingArgs['tuple']['withdraw(uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.withdraw(params))
-      return {...result, return: result.return as undefined | StakingReturns['withdraw(uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['withdraw(uint64,uint64)void'])}
     },
 
     /**
@@ -1354,7 +1354,7 @@ export class StakingClient {
      */
     createHeartbeat: async (params: CallParams<StakingArgs['obj']['createHeartbeat(address,uint64)void'] | StakingArgs['tuple']['createHeartbeat(address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.createHeartbeat(params))
-      return {...result, return: result.return as undefined | StakingReturns['createHeartbeat(address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['createHeartbeat(address,uint64)void'])}
     },
 
     /**
@@ -1365,7 +1365,7 @@ export class StakingClient {
      */
     softCheck: async (params: CallParams<StakingArgs['obj']['softCheck(address,uint64)bool'] | StakingArgs['tuple']['softCheck(address,uint64)bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingParamsFactory.softCheck(params))
-      return {...result, return: result.return as undefined | StakingReturns['softCheck(address,uint64)bool']}
+      return {...result, return: result.return as unknown as (undefined | StakingReturns['softCheck(address,uint64)bool'])}
     },
 
   }
@@ -1390,7 +1390,7 @@ export class StakingClient {
    */
   async timeLeft(params: CallParams<StakingArgs['obj']['timeLeft(address,uint64)uint64'] | StakingArgs['tuple']['timeLeft(address,uint64)uint64']>) {
     const result = await this.appClient.send.call(StakingParamsFactory.timeLeft(params))
-    return result.return as StakingReturns['timeLeft(address,uint64)uint64']
+    return result.return as unknown as StakingReturns['timeLeft(address,uint64)uint64']
   }
 
   /**
@@ -1403,7 +1403,7 @@ export class StakingClient {
    */
   async getInfo(params: CallParams<StakingArgs['obj']['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)'] | StakingArgs['tuple']['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)']>) {
     const result = await this.appClient.send.call(StakingParamsFactory.getInfo(params))
-    return result.return as StakingReturns['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)']
+    return result.return as unknown as StakingReturns['getInfo(address,(uint64,uint64))(uint64,uint64,uint64)']
   }
 
   /**
@@ -1416,7 +1416,7 @@ export class StakingClient {
    */
   async getHeartbeat(params: CallParams<StakingArgs['obj']['getHeartbeat(address,uint64)(uint64,uint64)[4]'] | StakingArgs['tuple']['getHeartbeat(address,uint64)(uint64,uint64)[4]']>) {
     const result = await this.appClient.send.call(StakingParamsFactory.getHeartbeat(params))
-    return result.return as StakingReturns['getHeartbeat(address,uint64)(uint64,uint64)[4]']
+    return result.return as unknown as StakingReturns['getHeartbeat(address,uint64)(uint64,uint64)[4]']
   }
 
   /**
@@ -1429,7 +1429,7 @@ export class StakingClient {
    */
   async getHeartbeatAverage(params: CallParams<StakingArgs['obj']['getHeartbeatAverage(address,uint64)uint64'] | StakingArgs['tuple']['getHeartbeatAverage(address,uint64)uint64']>) {
     const result = await this.appClient.send.call(StakingParamsFactory.getHeartbeatAverage(params))
-    return result.return as StakingReturns['getHeartbeatAverage(address,uint64)uint64']
+    return result.return as unknown as StakingReturns['getHeartbeatAverage(address,uint64)uint64']
   }
 
   /**
@@ -1442,7 +1442,7 @@ export class StakingClient {
    */
   async getInfoList(params: CallParams<StakingArgs['obj']['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]'] | StakingArgs['tuple']['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]']>) {
     const result = await this.appClient.send.call(StakingParamsFactory.getInfoList(params))
-    return result.return as StakingReturns['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]']
+    return result.return as unknown as StakingReturns['getInfoList(address,(uint64,uint64)[])(uint64,uint64,uint64)[]']
   }
 
   /**
@@ -1455,7 +1455,7 @@ export class StakingClient {
    */
   async getLockedInfo(params: CallParams<StakingArgs['obj']['getLockedInfo(address,uint64)(uint64,uint64,uint64)'] | StakingArgs['tuple']['getLockedInfo(address,uint64)(uint64,uint64,uint64)']>) {
     const result = await this.appClient.send.call(StakingParamsFactory.getLockedInfo(params))
-    return result.return as StakingReturns['getLockedInfo(address,uint64)(uint64,uint64,uint64)']
+    return result.return as unknown as StakingReturns['getLockedInfo(address,uint64)(uint64,uint64,uint64)']
   }
 
   /**
@@ -1468,7 +1468,7 @@ export class StakingClient {
    */
   async getLockedInfoList(params: CallParams<StakingArgs['obj']['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]'] | StakingArgs['tuple']['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]']>) {
     const result = await this.appClient.send.call(StakingParamsFactory.getLockedInfoList(params))
-    return result.return as StakingReturns['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]']
+    return result.return as unknown as StakingReturns['getLockedInfoList(address,uint64[])(uint64,uint64,uint64)[]']
   }
 
   /**
@@ -1806,7 +1806,7 @@ export type StakingComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

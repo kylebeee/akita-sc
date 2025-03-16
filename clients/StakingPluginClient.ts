@@ -363,7 +363,7 @@ export class StakingPluginFactory {
   public async deploy(params: StakingPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? StakingPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? StakingPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (StakingPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new StakingPluginClient(result.appClient) }
   }
@@ -426,7 +426,7 @@ export class StakingPluginFactory {
        */
       createApplication: async (params: CallParams<StakingPluginArgs['obj']['createApplication()void'] | StakingPluginArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(StakingPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | StakingPluginReturns['createApplication()void'] }, appClient: new StakingPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | StakingPluginReturns['createApplication()void']) }, appClient: new StakingPluginClient(result.appClient) }
       },
     },
 
@@ -650,7 +650,7 @@ export class StakingPluginClient {
      */
     stake: async (params: CallParams<StakingPluginArgs['obj']['stake(uint64,bool,uint64,uint64,uint64,uint64,bool)void'] | StakingPluginArgs['tuple']['stake(uint64,bool,uint64,uint64,uint64,uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingPluginParamsFactory.stake(params))
-      return {...result, return: result.return as undefined | StakingPluginReturns['stake(uint64,bool,uint64,uint64,uint64,uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingPluginReturns['stake(uint64,bool,uint64,uint64,uint64,uint64,bool)void'])}
     },
 
     /**
@@ -661,7 +661,7 @@ export class StakingPluginClient {
      */
     withdraw: async (params: CallParams<StakingPluginArgs['obj']['withdraw(uint64,bool,uint64,uint64)void'] | StakingPluginArgs['tuple']['withdraw(uint64,bool,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingPluginParamsFactory.withdraw(params))
-      return {...result, return: result.return as undefined | StakingPluginReturns['withdraw(uint64,bool,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingPluginReturns['withdraw(uint64,bool,uint64,uint64)void'])}
     },
 
     /**
@@ -672,7 +672,7 @@ export class StakingPluginClient {
      */
     createHeartbeat: async (params: CallParams<StakingPluginArgs['obj']['createHeartbeat(uint64,bool,address,uint64)void'] | StakingPluginArgs['tuple']['createHeartbeat(uint64,bool,address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingPluginParamsFactory.createHeartbeat(params))
-      return {...result, return: result.return as undefined | StakingPluginReturns['createHeartbeat(uint64,bool,address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingPluginReturns['createHeartbeat(uint64,bool,address,uint64)void'])}
     },
 
     /**
@@ -683,7 +683,7 @@ export class StakingPluginClient {
      */
     softCheck: async (params: CallParams<StakingPluginArgs['obj']['softCheck(uint64,bool,address,uint64)void'] | StakingPluginArgs['tuple']['softCheck(uint64,bool,address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingPluginParamsFactory.softCheck(params))
-      return {...result, return: result.return as undefined | StakingPluginReturns['softCheck(uint64,bool,address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | StakingPluginReturns['softCheck(uint64,bool,address,uint64)void'])}
     },
 
   }
@@ -831,7 +831,7 @@ export type StakingPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

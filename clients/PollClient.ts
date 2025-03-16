@@ -355,7 +355,7 @@ export class PollFactory {
   public async deploy(params: PollDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? PollParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? PollParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (PollCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new PollClient(result.appClient) }
   }
@@ -418,7 +418,7 @@ export class PollFactory {
        */
       createApplication: async (params: CallParams<PollArgs['obj']['createApplication(uint64,uint64,uint64,uint64,string,string[])void'] | PollArgs['tuple']['createApplication(uint64,uint64,uint64,uint64,string,string[])void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(PollParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | PollReturns['createApplication(uint64,uint64,uint64,uint64,string,string[])void'] }, appClient: new PollClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | PollReturns['createApplication(uint64,uint64,uint64,uint64,string,string[])void']) }, appClient: new PollClient(result.appClient) }
       },
     },
 
@@ -602,7 +602,7 @@ export class PollClient {
      */
     vote: async (params: CallParams<PollArgs['obj']['vote(uint64,bool,uint64[],byte[][])void'] | PollArgs['tuple']['vote(uint64,bool,uint64[],byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PollParamsFactory.vote(params))
-      return {...result, return: result.return as undefined | PollReturns['vote(uint64,bool,uint64[],byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | PollReturns['vote(uint64,bool,uint64[],byte[][])void'])}
     },
 
     /**
@@ -613,7 +613,7 @@ export class PollClient {
      */
     deleteBoxes: async (params: CallParams<PollArgs['obj']['deleteBoxes(address)void'] | PollArgs['tuple']['deleteBoxes(address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PollParamsFactory.deleteBoxes(params))
-      return {...result, return: result.return as undefined | PollReturns['deleteBoxes(address)void']}
+      return {...result, return: result.return as unknown as (undefined | PollReturns['deleteBoxes(address)void'])}
     },
 
   }
@@ -668,7 +668,7 @@ export class PollClient {
       /**
        * Get the current value of the gateID key in global state
        */
-      gateId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("gateId")) as bigint | undefined },
+      gateId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("gateID")) as bigint | undefined },
       /**
        * Get the current value of the endTime key in global state
        */
@@ -851,7 +851,7 @@ export type PollComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

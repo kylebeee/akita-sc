@@ -607,8 +607,8 @@ export class PepeRaffleFactory {
   public async deploy(params: PepeRaffleDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? PepeRaffleParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      deleteParams: params.deleteParams?.method ? PepeRaffleParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams,
+      createParams: params.createParams?.method ? PepeRaffleParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (PepeRaffleCreateCallParams & { args: Uint8Array[] }) : undefined,
+      deleteParams: params.deleteParams?.method ? PepeRaffleParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams ? params.deleteParams as (PepeRaffleDeleteCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new PepeRaffleClient(result.appClient) }
   }
@@ -686,7 +686,7 @@ export class PepeRaffleFactory {
        */
       createApplication: async (params: CallParams<PepeRaffleArgs['obj']['createApplication()void'] | PepeRaffleArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(PepeRaffleParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | PepeRaffleReturns['createApplication()void'] }, appClient: new PepeRaffleClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | PepeRaffleReturns['createApplication()void']) }, appClient: new PepeRaffleClient(result.appClient) }
       },
     },
 
@@ -1060,7 +1060,7 @@ export class PepeRaffleClient {
        */
       deleteApplication: async (params: CallParams<PepeRaffleArgs['obj']['deleteApplication()void'] | PepeRaffleArgs['tuple']['deleteApplication()void']> & SendParams = {args: []}) => {
         const result = await this.appClient.send.delete(PepeRaffleParamsFactory.delete.deleteApplication(params))
-        return {...result, return: result.return as undefined | PepeRaffleReturns['deleteApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['deleteApplication()void'])}
       },
 
     },
@@ -1085,7 +1085,7 @@ export class PepeRaffleClient {
      */
     isLive: async (params: CallParams<PepeRaffleArgs['obj']['isLive()bool'] | PepeRaffleArgs['tuple']['isLive()bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.isLive(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['isLive()bool']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['isLive()bool'])}
     },
 
     /**
@@ -1096,7 +1096,7 @@ export class PepeRaffleClient {
      */
     init: async (params: CallParams<PepeRaffleArgs['obj']['init(pay,uint64)void'] | PepeRaffleArgs['tuple']['init(pay,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.init(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['init(pay,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['init(pay,uint64)void'])}
     },
 
     /**
@@ -1107,7 +1107,7 @@ export class PepeRaffleClient {
      */
     enter: async (params: CallParams<PepeRaffleArgs['obj']['enter(pay,axfer)void'] | PepeRaffleArgs['tuple']['enter(pay,axfer)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.enter(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['enter(pay,axfer)void']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['enter(pay,axfer)void'])}
     },
 
     /**
@@ -1118,7 +1118,7 @@ export class PepeRaffleClient {
      */
     add: async (params: CallParams<PepeRaffleArgs['obj']['add(axfer)void'] | PepeRaffleArgs['tuple']['add(axfer)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.add(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['add(axfer)void']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['add(axfer)void'])}
     },
 
     /**
@@ -1129,7 +1129,7 @@ export class PepeRaffleClient {
      */
     raffle: async (params: CallParams<PepeRaffleArgs['obj']['raffle()void'] | PepeRaffleArgs['tuple']['raffle()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.raffle(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['raffle()void']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['raffle()void'])}
     },
 
     /**
@@ -1140,7 +1140,7 @@ export class PepeRaffleClient {
      */
     findWinner: async (params: CallParams<PepeRaffleArgs['obj']['findWinner()void'] | PepeRaffleArgs['tuple']['findWinner()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.findWinner(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['findWinner()void']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['findWinner()void'])}
     },
 
     /**
@@ -1151,7 +1151,7 @@ export class PepeRaffleClient {
      */
     refundMbr: async (params: CallParams<PepeRaffleArgs['obj']['refundMBR()void'] | PepeRaffleArgs['tuple']['refundMBR()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.refundMbr(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['refundMBR()void']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['refundMBR()void'])}
     },
 
     /**
@@ -1162,7 +1162,7 @@ export class PepeRaffleClient {
      */
     claimRafflePrize: async (params: CallParams<PepeRaffleArgs['obj']['claimRafflePrize()void'] | PepeRaffleArgs['tuple']['claimRafflePrize()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.claimRafflePrize(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['claimRafflePrize()void']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['claimRafflePrize()void'])}
     },
 
     /**
@@ -1173,7 +1173,7 @@ export class PepeRaffleClient {
      */
     clearWeightsBoxes: async (params: CallParams<PepeRaffleArgs['obj']['clearWeightsBoxes()uint64'] | PepeRaffleArgs['tuple']['clearWeightsBoxes()uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.clearWeightsBoxes(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['clearWeightsBoxes()uint64']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['clearWeightsBoxes()uint64'])}
     },
 
     /**
@@ -1184,7 +1184,7 @@ export class PepeRaffleClient {
      */
     getState: async (params: CallParams<PepeRaffleArgs['obj']['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)'] | PepeRaffleArgs['tuple']['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(PepeRaffleParamsFactory.getState(params))
-      return {...result, return: result.return as undefined | PepeRaffleReturns['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)']}
+      return {...result, return: result.return as unknown as (undefined | PepeRaffleReturns['getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64,uint64)'])}
     },
 
   }
@@ -1209,7 +1209,7 @@ export class PepeRaffleClient {
    */
   async isLive(params: CallParams<PepeRaffleArgs['obj']['isLive()bool'] | PepeRaffleArgs['tuple']['isLive()bool']> = {args: []}) {
     const result = await this.appClient.send.call(PepeRaffleParamsFactory.isLive(params))
-    return result.return as PepeRaffleReturns['isLive()bool']
+    return result.return as unknown as PepeRaffleReturns['isLive()bool']
   }
 
   /**
@@ -1265,7 +1265,7 @@ export class PepeRaffleClient {
       /**
        * Get the current value of the entryID key in global state
        */
-      entryId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("entryId")) as bigint | undefined },
+      entryId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("entryID")) as bigint | undefined },
       /**
        * Get the current value of the weightsBoxCount key in global state
        */
@@ -1277,7 +1277,7 @@ export class PepeRaffleClient {
       /**
        * Get the current value of the refundMBRCursor key in global state
        */
-      refundMbrCursor: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("refundMbrCursor")) as bigint | undefined },
+      refundMbrCursor: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("refundMBRCursor")) as bigint | undefined },
     },
     /**
      * Methods to access box state for the current PepeRaffle app
@@ -1585,7 +1585,7 @@ export type PepeRaffleComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

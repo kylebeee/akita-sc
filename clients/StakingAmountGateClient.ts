@@ -346,7 +346,7 @@ export class StakingAmountGateFactory {
   public async deploy(params: StakingAmountGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? StakingAmountGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? StakingAmountGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (StakingAmountGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new StakingAmountGateClient(result.appClient) }
   }
@@ -409,7 +409,7 @@ export class StakingAmountGateFactory {
        */
       createApplication: async (params: CallParams<StakingAmountGateArgs['obj']['createApplication()void'] | StakingAmountGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(StakingAmountGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | StakingAmountGateReturns['createApplication()void'] }, appClient: new StakingAmountGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | StakingAmountGateReturns['createApplication()void']) }, appClient: new StakingAmountGateClient(result.appClient) }
       },
     },
 
@@ -593,7 +593,7 @@ export class StakingAmountGateClient {
      */
     register: async (params: CallParams<StakingAmountGateArgs['obj']['register(byte[])uint64'] | StakingAmountGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingAmountGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | StakingAmountGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | StakingAmountGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -604,7 +604,7 @@ export class StakingAmountGateClient {
      */
     check: async (params: CallParams<StakingAmountGateArgs['obj']['check(byte[])bool'] | StakingAmountGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(StakingAmountGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | StakingAmountGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | StakingAmountGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -762,7 +762,7 @@ export type StakingAmountGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

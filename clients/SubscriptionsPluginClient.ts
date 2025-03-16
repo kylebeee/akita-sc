@@ -592,7 +592,7 @@ export class SubscriptionsPluginFactory {
   public async deploy(params: SubscriptionsPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? SubscriptionsPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? SubscriptionsPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (SubscriptionsPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new SubscriptionsPluginClient(result.appClient) }
   }
@@ -655,7 +655,7 @@ export class SubscriptionsPluginFactory {
        */
       createApplication: async (params: CallParams<SubscriptionsPluginArgs['obj']['createApplication(uint64)void'] | SubscriptionsPluginArgs['tuple']['createApplication(uint64)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(SubscriptionsPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | SubscriptionsPluginReturns['createApplication(uint64)void'] }, appClient: new SubscriptionsPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | SubscriptionsPluginReturns['createApplication(uint64)void']) }, appClient: new SubscriptionsPluginClient(result.appClient) }
       },
     },
 
@@ -1039,7 +1039,7 @@ export class SubscriptionsPluginClient {
      */
     newService: async (params: CallParams<SubscriptionsPluginArgs['obj']['newService(uint64,bool,uint64,uint64,uint64,uint64,uint64,byte[59])uint64'] | SubscriptionsPluginArgs['tuple']['newService(uint64,bool,uint64,uint64,uint64,uint64,uint64,byte[59])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.newService(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['newService(uint64,bool,uint64,uint64,uint64,uint64,uint64,byte[59])uint64']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['newService(uint64,bool,uint64,uint64,uint64,uint64,uint64,byte[59])uint64'])}
     },
 
     /**
@@ -1050,7 +1050,7 @@ export class SubscriptionsPluginClient {
      */
     pauseService: async (params: CallParams<SubscriptionsPluginArgs['obj']['pauseService(uint64,bool,uint64)void'] | SubscriptionsPluginArgs['tuple']['pauseService(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.pauseService(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['pauseService(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['pauseService(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1061,7 +1061,7 @@ export class SubscriptionsPluginClient {
      */
     activateService: async (params: CallParams<SubscriptionsPluginArgs['obj']['activateService(uint64,bool,uint64)void'] | SubscriptionsPluginArgs['tuple']['activateService(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.activateService(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['activateService(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['activateService(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1072,7 +1072,7 @@ export class SubscriptionsPluginClient {
      */
     shutdownService: async (params: CallParams<SubscriptionsPluginArgs['obj']['shutdownService(uint64,bool,uint64)void'] | SubscriptionsPluginArgs['tuple']['shutdownService(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.shutdownService(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['shutdownService(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['shutdownService(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1083,7 +1083,7 @@ export class SubscriptionsPluginClient {
      */
     block: async (params: CallParams<SubscriptionsPluginArgs['obj']['block(uint64,bool,address)void'] | SubscriptionsPluginArgs['tuple']['block(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.block(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['block(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['block(uint64,bool,address)void'])}
     },
 
     /**
@@ -1094,7 +1094,7 @@ export class SubscriptionsPluginClient {
      */
     unblock: async (params: CallParams<SubscriptionsPluginArgs['obj']['unblock(uint64,bool,address)void'] | SubscriptionsPluginArgs['tuple']['unblock(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.unblock(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['unblock(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['unblock(uint64,bool,address)void'])}
     },
 
     /**
@@ -1105,7 +1105,7 @@ export class SubscriptionsPluginClient {
      */
     subscribe: async (params: CallParams<SubscriptionsPluginArgs['obj']['subscribe(uint64,bool,address,uint64,uint64,uint64,byte[][])void'] | SubscriptionsPluginArgs['tuple']['subscribe(uint64,bool,address,uint64,uint64,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.subscribe(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['subscribe(uint64,bool,address,uint64,uint64,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['subscribe(uint64,bool,address,uint64,uint64,uint64,byte[][])void'])}
     },
 
     /**
@@ -1116,7 +1116,7 @@ export class SubscriptionsPluginClient {
      */
     optin: async (params: CallParams<SubscriptionsPluginArgs['obj']['optin(uint64,bool,uint64)void'] | SubscriptionsPluginArgs['tuple']['optin(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.optin(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['optin(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['optin(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1127,7 +1127,7 @@ export class SubscriptionsPluginClient {
      */
     subscribeAsa: async (params: CallParams<SubscriptionsPluginArgs['obj']['subscribeAsa(uint64,bool,uint64,address,uint64,uint64,uint64,byte[][])void'] | SubscriptionsPluginArgs['tuple']['subscribeAsa(uint64,bool,uint64,address,uint64,uint64,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.subscribeAsa(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['subscribeAsa(uint64,bool,uint64,address,uint64,uint64,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['subscribeAsa(uint64,bool,uint64,address,uint64,uint64,uint64,byte[][])void'])}
     },
 
     /**
@@ -1138,7 +1138,7 @@ export class SubscriptionsPluginClient {
      */
     triggerPayment: async (params: CallParams<SubscriptionsPluginArgs['obj']['triggerPayment(uint64,bool,address,uint64,byte[][])void'] | SubscriptionsPluginArgs['tuple']['triggerPayment(uint64,bool,address,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.triggerPayment(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['triggerPayment(uint64,bool,address,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['triggerPayment(uint64,bool,address,uint64,byte[][])void'])}
     },
 
     /**
@@ -1149,7 +1149,7 @@ export class SubscriptionsPluginClient {
      */
     streakCheck: async (params: CallParams<SubscriptionsPluginArgs['obj']['streakCheck(uint64,bool,address,uint64)void'] | SubscriptionsPluginArgs['tuple']['streakCheck(uint64,bool,address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.streakCheck(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['streakCheck(uint64,bool,address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['streakCheck(uint64,bool,address,uint64)void'])}
     },
 
     /**
@@ -1160,7 +1160,7 @@ export class SubscriptionsPluginClient {
      */
     setPasses: async (params: CallParams<SubscriptionsPluginArgs['obj']['setPasses(uint64,bool,uint64,address[])void'] | SubscriptionsPluginArgs['tuple']['setPasses(uint64,bool,uint64,address[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionsPluginParamsFactory.setPasses(params))
-      return {...result, return: result.return as undefined | SubscriptionsPluginReturns['setPasses(uint64,bool,uint64,address[])void']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionsPluginReturns['setPasses(uint64,bool,uint64,address[])void'])}
     },
 
   }
@@ -1195,7 +1195,7 @@ export class SubscriptionsPluginClient {
       /**
        * Get the current value of the daoAppID key in global state
        */
-      daoAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("daoAppId")) as bigint | undefined },
+      daoAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("daoAppID")) as bigint | undefined },
     },
   }
 
@@ -1462,7 +1462,7 @@ export type SubscriptionsPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

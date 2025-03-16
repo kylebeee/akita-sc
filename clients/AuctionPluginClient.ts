@@ -582,8 +582,8 @@ export class AuctionPluginFactory {
   public async deploy(params: AuctionPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? AuctionPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      deleteParams: params.deleteParams?.method ? AuctionPluginParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams,
+      createParams: params.createParams?.method ? AuctionPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (AuctionPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
+      deleteParams: params.deleteParams?.method ? AuctionPluginParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams ? params.deleteParams as (AuctionPluginDeleteCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new AuctionPluginClient(result.appClient) }
   }
@@ -661,7 +661,7 @@ export class AuctionPluginFactory {
        */
       createApplication: async (params: CallParams<AuctionPluginArgs['obj']['createApplication()void'] | AuctionPluginArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(AuctionPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | AuctionPluginReturns['createApplication()void'] }, appClient: new AuctionPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | AuctionPluginReturns['createApplication()void']) }, appClient: new AuctionPluginClient(result.appClient) }
       },
     },
 
@@ -1031,7 +1031,7 @@ export class AuctionPluginClient {
        */
       deleteApplication: async (params: CallParams<AuctionPluginArgs['obj']['deleteApplication(uint64,bool,uint64)void'] | AuctionPluginArgs['tuple']['deleteApplication(uint64,bool,uint64)void']> & SendParams) => {
         const result = await this.appClient.send.delete(AuctionPluginParamsFactory.delete.deleteApplication(params))
-        return {...result, return: result.return as undefined | AuctionPluginReturns['deleteApplication(uint64,bool,uint64)void']}
+        return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['deleteApplication(uint64,bool,uint64)void'])}
       },
 
     },
@@ -1054,7 +1054,7 @@ export class AuctionPluginClient {
      */
     new: async (params: CallParams<AuctionPluginArgs['obj']['new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64'] | AuctionPluginArgs['tuple']['new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.new(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,address,uint64,uint64)uint64'])}
     },
 
     /**
@@ -1065,7 +1065,7 @@ export class AuctionPluginClient {
      */
     clearWeightsBoxes: async (params: CallParams<AuctionPluginArgs['obj']['clearWeightsBoxes(uint64,bool,address,uint64)void'] | AuctionPluginArgs['tuple']['clearWeightsBoxes(uint64,bool,address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.clearWeightsBoxes(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['clearWeightsBoxes(uint64,bool,address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['clearWeightsBoxes(uint64,bool,address,uint64)void'])}
     },
 
     /**
@@ -1076,7 +1076,7 @@ export class AuctionPluginClient {
      */
     deleteAuctionApp: async (params: CallParams<AuctionPluginArgs['obj']['deleteAuctionApp(uint64,bool,address,uint64)void'] | AuctionPluginArgs['tuple']['deleteAuctionApp(uint64,bool,address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.deleteAuctionApp(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['deleteAuctionApp(uint64,bool,address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['deleteAuctionApp(uint64,bool,address,uint64)void'])}
     },
 
     /**
@@ -1087,7 +1087,7 @@ export class AuctionPluginClient {
      */
     bid: async (params: CallParams<AuctionPluginArgs['obj']['bid(uint64,bool,uint64,uint64,address)void'] | AuctionPluginArgs['tuple']['bid(uint64,bool,uint64,uint64,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.bid(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['bid(uint64,bool,uint64,uint64,address)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['bid(uint64,bool,uint64,uint64,address)void'])}
     },
 
     /**
@@ -1098,7 +1098,7 @@ export class AuctionPluginClient {
      */
     refundBid: async (params: CallParams<AuctionPluginArgs['obj']['refundBid(uint64,bool,uint64,uint64)void'] | AuctionPluginArgs['tuple']['refundBid(uint64,bool,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.refundBid(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['refundBid(uint64,bool,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['refundBid(uint64,bool,uint64,uint64)void'])}
     },
 
     /**
@@ -1109,7 +1109,7 @@ export class AuctionPluginClient {
      */
     claimPrize: async (params: CallParams<AuctionPluginArgs['obj']['claimPrize(uint64,bool,uint64)void'] | AuctionPluginArgs['tuple']['claimPrize(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.claimPrize(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['claimPrize(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['claimPrize(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1120,7 +1120,7 @@ export class AuctionPluginClient {
      */
     claimRafflePrize: async (params: CallParams<AuctionPluginArgs['obj']['claimRafflePrize(uint64,bool,uint64)void'] | AuctionPluginArgs['tuple']['claimRafflePrize(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.claimRafflePrize(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['claimRafflePrize(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['claimRafflePrize(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1131,7 +1131,7 @@ export class AuctionPluginClient {
      */
     raffle: async (params: CallParams<AuctionPluginArgs['obj']['raffle(uint64,bool,uint64)void'] | AuctionPluginArgs['tuple']['raffle(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.raffle(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['raffle(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['raffle(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1142,7 +1142,7 @@ export class AuctionPluginClient {
      */
     findWinner: async (params: CallParams<AuctionPluginArgs['obj']['findWinner(uint64,bool,uint64)void'] | AuctionPluginArgs['tuple']['findWinner(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.findWinner(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['findWinner(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['findWinner(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1153,7 +1153,7 @@ export class AuctionPluginClient {
      */
     cancel: async (params: CallParams<AuctionPluginArgs['obj']['cancel(uint64,bool,uint64)void'] | AuctionPluginArgs['tuple']['cancel(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AuctionPluginParamsFactory.cancel(params))
-      return {...result, return: result.return as undefined | AuctionPluginReturns['cancel(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AuctionPluginReturns['cancel(uint64,bool,uint64)void'])}
     },
 
   }
@@ -1426,7 +1426,7 @@ export type AuctionPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

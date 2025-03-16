@@ -608,7 +608,7 @@ export class DualStakePluginFactory {
   public async deploy(params: DualStakePluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? DualStakePluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? DualStakePluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (DualStakePluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new DualStakePluginClient(result.appClient) }
   }
@@ -671,7 +671,7 @@ export class DualStakePluginFactory {
        */
       createApplication: async (params: CallParams<DualStakePluginArgs['obj']['createApplication(uint64)void'] | DualStakePluginArgs['tuple']['createApplication(uint64)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(DualStakePluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | DualStakePluginReturns['createApplication(uint64)void'] }, appClient: new DualStakePluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | DualStakePluginReturns['createApplication(uint64)void']) }, appClient: new DualStakePluginClient(result.appClient) }
       },
     },
 
@@ -1075,7 +1075,7 @@ export class DualStakePluginClient {
      */
     registerOnline: async (params: CallParams<DualStakePluginArgs['obj']['registerOnline(uint64,bool,byte[],byte[],byte[],uint64,uint64,uint64)void'] | DualStakePluginArgs['tuple']['registerOnline(uint64,bool,byte[],byte[],byte[],uint64,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.registerOnline(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['registerOnline(uint64,bool,byte[],byte[],byte[],uint64,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['registerOnline(uint64,bool,byte[],byte[],byte[],uint64,uint64,uint64)void'])}
     },
 
     /**
@@ -1086,7 +1086,7 @@ export class DualStakePluginClient {
      */
     registerOffline: async (params: CallParams<DualStakePluginArgs['obj']['registerOffline(uint64,bool,address)void'] | DualStakePluginArgs['tuple']['registerOffline(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.registerOffline(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['registerOffline(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['registerOffline(uint64,bool,address)void'])}
     },
 
     /**
@@ -1097,7 +1097,7 @@ export class DualStakePluginClient {
      */
     initStorage: async (params: CallParams<DualStakePluginArgs['obj']['initStorage(uint64,bool)void'] | DualStakePluginArgs['tuple']['initStorage(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.initStorage(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['initStorage(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['initStorage(uint64,bool)void'])}
     },
 
     /**
@@ -1108,7 +1108,7 @@ export class DualStakePluginClient {
      */
     withdrawPlatformFees: async (params: CallParams<DualStakePluginArgs['obj']['withdrawPlatformFees(uint64,bool,uint64)void'] | DualStakePluginArgs['tuple']['withdrawPlatformFees(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.withdrawPlatformFees(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['withdrawPlatformFees(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['withdrawPlatformFees(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -1119,7 +1119,7 @@ export class DualStakePluginClient {
      */
     mint: async (params: CallParams<DualStakePluginArgs['obj']['mint(uint64,bool)void'] | DualStakePluginArgs['tuple']['mint(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.mint(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['mint(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['mint(uint64,bool)void'])}
     },
 
     /**
@@ -1130,7 +1130,7 @@ export class DualStakePluginClient {
      */
     burn: async (params: CallParams<DualStakePluginArgs['obj']['burn(uint64,bool)void'] | DualStakePluginArgs['tuple']['burn(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.burn(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['burn(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['burn(uint64,bool)void'])}
     },
 
     /**
@@ -1141,7 +1141,7 @@ export class DualStakePluginClient {
      */
     nullun: async (params: CallParams<DualStakePluginArgs['obj']['nullun(uint64,bool)void'] | DualStakePluginArgs['tuple']['nullun(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.nullun(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['nullun(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['nullun(uint64,bool)void'])}
     },
 
     /**
@@ -1152,7 +1152,7 @@ export class DualStakePluginClient {
      */
     createAsset: async (params: CallParams<DualStakePluginArgs['obj']['createAsset(uint64,bool,byte[],byte[])void'] | DualStakePluginArgs['tuple']['createAsset(uint64,bool,byte[],byte[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.createAsset(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['createAsset(uint64,bool,byte[],byte[])void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['createAsset(uint64,bool,byte[],byte[])void'])}
     },
 
     /**
@@ -1163,7 +1163,7 @@ export class DualStakePluginClient {
      */
     configure: async (params: CallParams<DualStakePluginArgs['obj']['configure(uint64,bool,byte[],byte[],uint64,byte[],byte[],uint64,uint64,address,address)void'] | DualStakePluginArgs['tuple']['configure(uint64,bool,byte[],byte[],uint64,byte[],byte[],uint64,uint64,address,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.configure(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['configure(uint64,bool,byte[],byte[],uint64,byte[],byte[],uint64,uint64,address,address)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['configure(uint64,bool,byte[],byte[],uint64,byte[],byte[],uint64,uint64,address,address)void'])}
     },
 
     /**
@@ -1174,7 +1174,7 @@ export class DualStakePluginClient {
      */
     changeAdmin1: async (params: CallParams<DualStakePluginArgs['obj']['changeAdmin1(uint64,bool,address)void'] | DualStakePluginArgs['tuple']['changeAdmin1(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.changeAdmin1(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['changeAdmin1(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['changeAdmin1(uint64,bool,address)void'])}
     },
 
     /**
@@ -1185,7 +1185,7 @@ export class DualStakePluginClient {
      */
     changeAdmin2: async (params: CallParams<DualStakePluginArgs['obj']['changeAdmin2(uint64,bool)void'] | DualStakePluginArgs['tuple']['changeAdmin2(uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.changeAdmin2(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['changeAdmin2(uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['changeAdmin2(uint64,bool)void'])}
     },
 
     /**
@@ -1196,7 +1196,7 @@ export class DualStakePluginClient {
      */
     changeNoderunner: async (params: CallParams<DualStakePluginArgs['obj']['changeNoderunner(uint64,bool,address)void'] | DualStakePluginArgs['tuple']['changeNoderunner(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.changeNoderunner(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['changeNoderunner(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['changeNoderunner(uint64,bool,address)void'])}
     },
 
     /**
@@ -1207,7 +1207,7 @@ export class DualStakePluginClient {
      */
     changeFeeAddr: async (params: CallParams<DualStakePluginArgs['obj']['changeFeeAddr(uint64,bool,address)void'] | DualStakePluginArgs['tuple']['changeFeeAddr(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(DualStakePluginParamsFactory.changeFeeAddr(params))
-      return {...result, return: result.return as undefined | DualStakePluginReturns['changeFeeAddr(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | DualStakePluginReturns['changeFeeAddr(uint64,bool,address)void'])}
     },
 
   }
@@ -1242,7 +1242,7 @@ export class DualStakePluginClient {
       /**
        * Get the current value of the appID key in global state
        */
-      appId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("appId")) as bigint | undefined },
+      appId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("appID")) as bigint | undefined },
     },
   }
 
@@ -1526,7 +1526,7 @@ export type DualStakePluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

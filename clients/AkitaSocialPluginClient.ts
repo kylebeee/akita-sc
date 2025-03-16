@@ -1347,8 +1347,8 @@ export class AkitaSocialPluginFactory {
   public async deploy(params: AkitaSocialPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? AkitaSocialPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      updateParams: params.updateParams?.method ? AkitaSocialPluginParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams,
+      createParams: params.createParams?.method ? AkitaSocialPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (AkitaSocialPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
+      updateParams: params.updateParams?.method ? AkitaSocialPluginParamsFactory.update._resolveByMethod(params.updateParams) : params.updateParams ? params.updateParams as (AkitaSocialPluginUpdateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new AkitaSocialPluginClient(result.appClient) }
   }
@@ -1426,7 +1426,7 @@ export class AkitaSocialPluginFactory {
        */
       createApplication: async (params: CallParams<AkitaSocialPluginArgs['obj']['createApplication(string)void'] | AkitaSocialPluginArgs['tuple']['createApplication(string)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(AkitaSocialPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | AkitaSocialPluginReturns['createApplication(string)void'] }, appClient: new AkitaSocialPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | AkitaSocialPluginReturns['createApplication(string)void']) }, appClient: new AkitaSocialPluginClient(result.appClient) }
       },
     },
 
@@ -2268,7 +2268,7 @@ export class AkitaSocialPluginClient {
        */
       updateApplication: async (params: CallParams<AkitaSocialPluginArgs['obj']['updateApplication(string)void'] | AkitaSocialPluginArgs['tuple']['updateApplication(string)void']> & AppClientCompilationParams & SendParams) => {
         const result = await this.appClient.send.update(AkitaSocialPluginParamsFactory.update.updateApplication(params))
-        return {...result, return: result.return as undefined | AkitaSocialPluginReturns['updateApplication(string)void']}
+        return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['updateApplication(string)void'])}
       },
 
     },
@@ -2291,7 +2291,7 @@ export class AkitaSocialPluginClient {
      */
     post: async (params: CallParams<AkitaSocialPluginArgs['obj']['post(uint64,bool,byte[36],uint64)void'] | AkitaSocialPluginArgs['tuple']['post(uint64,bool,byte[36],uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.post(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['post(uint64,bool,byte[36],uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['post(uint64,bool,byte[36],uint64)void'])}
     },
 
     /**
@@ -2302,7 +2302,7 @@ export class AkitaSocialPluginClient {
      */
     editPost: async (params: CallParams<AkitaSocialPluginArgs['obj']['editPost(uint64,bool,byte[36],uint64,byte[32])void'] | AkitaSocialPluginArgs['tuple']['editPost(uint64,bool,byte[36],uint64,byte[32])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.editPost(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['editPost(uint64,bool,byte[36],uint64,byte[32])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['editPost(uint64,bool,byte[36],uint64,byte[32])void'])}
     },
 
     /**
@@ -2313,7 +2313,7 @@ export class AkitaSocialPluginClient {
      */
     replyPost: async (params: CallParams<AkitaSocialPluginArgs['obj']['replyPost(uint64,bool,byte[36],byte[32],uint64,byte[][])void'] | AkitaSocialPluginArgs['tuple']['replyPost(uint64,bool,byte[36],byte[32],uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.replyPost(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['replyPost(uint64,bool,byte[36],byte[32],uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['replyPost(uint64,bool,byte[36],byte[32],uint64,byte[][])void'])}
     },
 
     /**
@@ -2324,7 +2324,7 @@ export class AkitaSocialPluginClient {
      */
     replyAsset: async (params: CallParams<AkitaSocialPluginArgs['obj']['replyAsset(uint64,bool,byte[36],uint64,uint64)void'] | AkitaSocialPluginArgs['tuple']['replyAsset(uint64,bool,byte[36],uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.replyAsset(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['replyAsset(uint64,bool,byte[36],uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['replyAsset(uint64,bool,byte[36],uint64,uint64)void'])}
     },
 
     /**
@@ -2335,7 +2335,7 @@ export class AkitaSocialPluginClient {
      */
     replyAddress: async (params: CallParams<AkitaSocialPluginArgs['obj']['replyAddress(uint64,bool,byte[36],address,uint64,byte[][])void'] | AkitaSocialPluginArgs['tuple']['replyAddress(uint64,bool,byte[36],address,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.replyAddress(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['replyAddress(uint64,bool,byte[36],address,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['replyAddress(uint64,bool,byte[36],address,uint64,byte[][])void'])}
     },
 
     /**
@@ -2346,7 +2346,7 @@ export class AkitaSocialPluginClient {
      */
     replyApp: async (params: CallParams<AkitaSocialPluginArgs['obj']['replyApp(uint64,bool,byte[36],uint64,uint64)void'] | AkitaSocialPluginArgs['tuple']['replyApp(uint64,bool,byte[36],uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.replyApp(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['replyApp(uint64,bool,byte[36],uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['replyApp(uint64,bool,byte[36],uint64,uint64)void'])}
     },
 
     /**
@@ -2357,7 +2357,7 @@ export class AkitaSocialPluginClient {
      */
     editReply: async (params: CallParams<AkitaSocialPluginArgs['obj']['editReply(uint64,bool,byte[36],uint64,byte[][],byte[32])void'] | AkitaSocialPluginArgs['tuple']['editReply(uint64,bool,byte[36],uint64,byte[][],byte[32])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.editReply(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['editReply(uint64,bool,byte[36],uint64,byte[][],byte[32])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['editReply(uint64,bool,byte[36],uint64,byte[][],byte[32])void'])}
     },
 
     /**
@@ -2368,7 +2368,7 @@ export class AkitaSocialPluginClient {
      */
     votePost: async (params: CallParams<AkitaSocialPluginArgs['obj']['votePost(uint64,bool,byte[32],bool)void'] | AkitaSocialPluginArgs['tuple']['votePost(uint64,bool,byte[32],bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.votePost(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['votePost(uint64,bool,byte[32],bool)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['votePost(uint64,bool,byte[32],bool)void'])}
     },
 
     /**
@@ -2379,7 +2379,7 @@ export class AkitaSocialPluginClient {
      */
     voteAsset: async (params: CallParams<AkitaSocialPluginArgs['obj']['voteAsset(uint64,bool,uint64,bool)void'] | AkitaSocialPluginArgs['tuple']['voteAsset(uint64,bool,uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.voteAsset(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['voteAsset(uint64,bool,uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['voteAsset(uint64,bool,uint64,bool)void'])}
     },
 
     /**
@@ -2390,7 +2390,7 @@ export class AkitaSocialPluginClient {
      */
     voteAddress: async (params: CallParams<AkitaSocialPluginArgs['obj']['voteAddress(uint64,bool,address,bool)void'] | AkitaSocialPluginArgs['tuple']['voteAddress(uint64,bool,address,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.voteAddress(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['voteAddress(uint64,bool,address,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['voteAddress(uint64,bool,address,bool)void'])}
     },
 
     /**
@@ -2401,7 +2401,7 @@ export class AkitaSocialPluginClient {
      */
     voteApp: async (params: CallParams<AkitaSocialPluginArgs['obj']['voteApp(uint64,bool,uint64,bool)void'] | AkitaSocialPluginArgs['tuple']['voteApp(uint64,bool,uint64,bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.voteApp(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['voteApp(uint64,bool,uint64,bool)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['voteApp(uint64,bool,uint64,bool)void'])}
     },
 
     /**
@@ -2412,7 +2412,7 @@ export class AkitaSocialPluginClient {
      */
     editVote: async (params: CallParams<AkitaSocialPluginArgs['obj']['editVote(uint64,bool,byte[32],bool)void'] | AkitaSocialPluginArgs['tuple']['editVote(uint64,bool,byte[32],bool)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.editVote(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['editVote(uint64,bool,byte[32],bool)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['editVote(uint64,bool,byte[32],bool)void'])}
     },
 
     /**
@@ -2423,7 +2423,7 @@ export class AkitaSocialPluginClient {
      */
     reactPost: async (params: CallParams<AkitaSocialPluginArgs['obj']['reactPost(uint64,bool,byte[32],uint64,byte[][])void'] | AkitaSocialPluginArgs['tuple']['reactPost(uint64,bool,byte[32],uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.reactPost(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['reactPost(uint64,bool,byte[32],uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['reactPost(uint64,bool,byte[32],uint64,byte[][])void'])}
     },
 
     /**
@@ -2434,7 +2434,7 @@ export class AkitaSocialPluginClient {
      */
     reactAsset: async (params: CallParams<AkitaSocialPluginArgs['obj']['reactAsset(uint64,bool,uint64,uint64)void'] | AkitaSocialPluginArgs['tuple']['reactAsset(uint64,bool,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.reactAsset(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['reactAsset(uint64,bool,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['reactAsset(uint64,bool,uint64,uint64)void'])}
     },
 
     /**
@@ -2445,7 +2445,7 @@ export class AkitaSocialPluginClient {
      */
     reactAddress: async (params: CallParams<AkitaSocialPluginArgs['obj']['reactAddress(uint64,bool,address,uint64,byte[][])void'] | AkitaSocialPluginArgs['tuple']['reactAddress(uint64,bool,address,uint64,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.reactAddress(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['reactAddress(uint64,bool,address,uint64,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['reactAddress(uint64,bool,address,uint64,byte[][])void'])}
     },
 
     /**
@@ -2456,7 +2456,7 @@ export class AkitaSocialPluginClient {
      */
     reactApp: async (params: CallParams<AkitaSocialPluginArgs['obj']['reactApp(uint64,bool,uint64,uint64)void'] | AkitaSocialPluginArgs['tuple']['reactApp(uint64,bool,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.reactApp(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['reactApp(uint64,bool,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['reactApp(uint64,bool,uint64,uint64)void'])}
     },
 
     /**
@@ -2467,7 +2467,7 @@ export class AkitaSocialPluginClient {
      */
     deleteReaction: async (params: CallParams<AkitaSocialPluginArgs['obj']['deleteReaction(uint64,bool,byte[32],uint64)void'] | AkitaSocialPluginArgs['tuple']['deleteReaction(uint64,bool,byte[32],uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.deleteReaction(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['deleteReaction(uint64,bool,byte[32],uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['deleteReaction(uint64,bool,byte[32],uint64)void'])}
     },
 
     /**
@@ -2478,7 +2478,7 @@ export class AkitaSocialPluginClient {
      */
     follow: async (params: CallParams<AkitaSocialPluginArgs['obj']['follow(uint64,bool,address,byte[][])void'] | AkitaSocialPluginArgs['tuple']['follow(uint64,bool,address,byte[][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.follow(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['follow(uint64,bool,address,byte[][])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['follow(uint64,bool,address,byte[][])void'])}
     },
 
     /**
@@ -2489,7 +2489,7 @@ export class AkitaSocialPluginClient {
      */
     unfollow: async (params: CallParams<AkitaSocialPluginArgs['obj']['unfollow(uint64,bool,address,uint64)void'] | AkitaSocialPluginArgs['tuple']['unfollow(uint64,bool,address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.unfollow(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['unfollow(uint64,bool,address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['unfollow(uint64,bool,address,uint64)void'])}
     },
 
     /**
@@ -2500,7 +2500,7 @@ export class AkitaSocialPluginClient {
      */
     block: async (params: CallParams<AkitaSocialPluginArgs['obj']['block(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['block(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.block(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['block(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['block(uint64,bool,address)void'])}
     },
 
     /**
@@ -2511,7 +2511,7 @@ export class AkitaSocialPluginClient {
      */
     unblock: async (params: CallParams<AkitaSocialPluginArgs['obj']['unblock(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['unblock(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.unblock(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['unblock(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['unblock(uint64,bool,address)void'])}
     },
 
     /**
@@ -2522,7 +2522,7 @@ export class AkitaSocialPluginClient {
      */
     addModerator: async (params: CallParams<AkitaSocialPluginArgs['obj']['addModerator(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['addModerator(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.addModerator(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['addModerator(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['addModerator(uint64,bool,address)void'])}
     },
 
     /**
@@ -2533,7 +2533,7 @@ export class AkitaSocialPluginClient {
      */
     removeModerator: async (params: CallParams<AkitaSocialPluginArgs['obj']['removeModerator(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['removeModerator(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.removeModerator(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['removeModerator(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['removeModerator(uint64,bool,address)void'])}
     },
 
     /**
@@ -2544,7 +2544,7 @@ export class AkitaSocialPluginClient {
      */
     ban: async (params: CallParams<AkitaSocialPluginArgs['obj']['ban(uint64,bool,address,uint64)void'] | AkitaSocialPluginArgs['tuple']['ban(uint64,bool,address,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.ban(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['ban(uint64,bool,address,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['ban(uint64,bool,address,uint64)void'])}
     },
 
     /**
@@ -2555,7 +2555,7 @@ export class AkitaSocialPluginClient {
      */
     flagPost: async (params: CallParams<AkitaSocialPluginArgs['obj']['flagPost(uint64,bool,byte[32])void'] | AkitaSocialPluginArgs['tuple']['flagPost(uint64,bool,byte[32])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.flagPost(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['flagPost(uint64,bool,byte[32])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['flagPost(uint64,bool,byte[32])void'])}
     },
 
     /**
@@ -2566,7 +2566,7 @@ export class AkitaSocialPluginClient {
      */
     unban: async (params: CallParams<AkitaSocialPluginArgs['obj']['unban(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['unban(uint64,bool,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.unban(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['unban(uint64,bool,address)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['unban(uint64,bool,address)void'])}
     },
 
     /**
@@ -2577,7 +2577,7 @@ export class AkitaSocialPluginClient {
      */
     addAction: async (params: CallParams<AkitaSocialPluginArgs['obj']['addAction(uint64,bool,uint64,byte[36])void'] | AkitaSocialPluginArgs['tuple']['addAction(uint64,bool,uint64,byte[36])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.addAction(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['addAction(uint64,bool,uint64,byte[36])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['addAction(uint64,bool,uint64,byte[36])void'])}
     },
 
     /**
@@ -2588,7 +2588,7 @@ export class AkitaSocialPluginClient {
      */
     removeAction: async (params: CallParams<AkitaSocialPluginArgs['obj']['removeAction(uint64,bool,uint64)void'] | AkitaSocialPluginArgs['tuple']['removeAction(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.removeAction(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['removeAction(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['removeAction(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -2599,7 +2599,7 @@ export class AkitaSocialPluginClient {
      */
     initMeta: async (params: CallParams<AkitaSocialPluginArgs['obj']['initMeta(uint64,bool,bool,uint64,uint64,uint64)uint64'] | AkitaSocialPluginArgs['tuple']['initMeta(uint64,bool,bool,uint64,uint64,uint64)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.initMeta(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['initMeta(uint64,bool,bool,uint64,uint64,uint64)uint64']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['initMeta(uint64,bool,bool,uint64,uint64,uint64)uint64'])}
     },
 
     /**
@@ -2612,7 +2612,7 @@ export class AkitaSocialPluginClient {
      */
     getUserSocialImpact: async (params: CallParams<AkitaSocialPluginArgs['obj']['getUserSocialImpact(address)uint64'] | AkitaSocialPluginArgs['tuple']['getUserSocialImpact(address)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.getUserSocialImpact(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['getUserSocialImpact(address)uint64']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['getUserSocialImpact(address)uint64'])}
     },
 
     /**
@@ -2625,7 +2625,7 @@ export class AkitaSocialPluginClient {
      */
     isFollower: async (params: CallParams<AkitaSocialPluginArgs['obj']['isFollower(address,uint64,address)bool'] | AkitaSocialPluginArgs['tuple']['isFollower(address,uint64,address)bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.isFollower(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['isFollower(address,uint64,address)bool']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['isFollower(address,uint64,address)bool'])}
     },
 
     /**
@@ -2638,7 +2638,7 @@ export class AkitaSocialPluginClient {
      */
     getMeta: async (params: CallParams<AkitaSocialPluginArgs['obj']['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)'] | AkitaSocialPluginArgs['tuple']['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.getMeta(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)'])}
     },
 
     /**
@@ -2649,7 +2649,7 @@ export class AkitaSocialPluginClient {
      */
     gas: async (params: CallParams<AkitaSocialPluginArgs['obj']['gas()void'] | AkitaSocialPluginArgs['tuple']['gas()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.gas(params))
-      return {...result, return: result.return as undefined | AkitaSocialPluginReturns['gas()void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaSocialPluginReturns['gas()void'])}
     },
 
   }
@@ -2674,7 +2674,7 @@ export class AkitaSocialPluginClient {
    */
   async getUserSocialImpact(params: CallParams<AkitaSocialPluginArgs['obj']['getUserSocialImpact(address)uint64'] | AkitaSocialPluginArgs['tuple']['getUserSocialImpact(address)uint64']>) {
     const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.getUserSocialImpact(params))
-    return result.return as AkitaSocialPluginReturns['getUserSocialImpact(address)uint64']
+    return result.return as unknown as AkitaSocialPluginReturns['getUserSocialImpact(address)uint64']
   }
 
   /**
@@ -2687,7 +2687,7 @@ export class AkitaSocialPluginClient {
    */
   async isFollower(params: CallParams<AkitaSocialPluginArgs['obj']['isFollower(address,uint64,address)bool'] | AkitaSocialPluginArgs['tuple']['isFollower(address,uint64,address)bool']>) {
     const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.isFollower(params))
-    return result.return as AkitaSocialPluginReturns['isFollower(address,uint64,address)bool']
+    return result.return as unknown as AkitaSocialPluginReturns['isFollower(address,uint64,address)bool']
   }
 
   /**
@@ -2700,7 +2700,7 @@ export class AkitaSocialPluginClient {
    */
   async getMeta(params: CallParams<AkitaSocialPluginArgs['obj']['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)'] | AkitaSocialPluginArgs['tuple']['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)']>) {
     const result = await this.appClient.send.call(AkitaSocialPluginParamsFactory.getMeta(params))
-    return result.return as AkitaSocialPluginReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)']
+    return result.return as unknown as AkitaSocialPluginReturns['getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)']
   }
 
   /**
@@ -3512,7 +3512,7 @@ export type AkitaSocialPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

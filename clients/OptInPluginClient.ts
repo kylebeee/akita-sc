@@ -282,7 +282,7 @@ export class OptInPluginFactory {
   public async deploy(params: OptInPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? OptInPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? OptInPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (OptInPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new OptInPluginClient(result.appClient) }
   }
@@ -345,7 +345,7 @@ export class OptInPluginFactory {
        */
       createApplication: async (params: CallParams<OptInPluginArgs['obj']['createApplication()void'] | OptInPluginArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(OptInPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | OptInPluginReturns['createApplication()void'] }, appClient: new OptInPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | OptInPluginReturns['createApplication()void']) }, appClient: new OptInPluginClient(result.appClient) }
       },
     },
 
@@ -509,7 +509,7 @@ export class OptInPluginClient {
      */
     optInToAsset: async (params: CallParams<OptInPluginArgs['obj']['optInToAsset(uint64,bool,uint64,pay)void'] | OptInPluginArgs['tuple']['optInToAsset(uint64,bool,uint64,pay)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(OptInPluginParamsFactory.optInToAsset(params))
-      return {...result, return: result.return as undefined | OptInPluginReturns['optInToAsset(uint64,bool,uint64,pay)void']}
+      return {...result, return: result.return as unknown as (undefined | OptInPluginReturns['optInToAsset(uint64,bool,uint64,pay)void'])}
     },
 
   }
@@ -606,7 +606,7 @@ export type OptInPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

@@ -423,7 +423,7 @@ export class HyperSwapPluginFactory {
   public async deploy(params: HyperSwapPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? HyperSwapPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? HyperSwapPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (HyperSwapPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new HyperSwapPluginClient(result.appClient) }
   }
@@ -486,7 +486,7 @@ export class HyperSwapPluginFactory {
        */
       createApplication: async (params: CallParams<HyperSwapPluginArgs['obj']['createApplication()void'] | HyperSwapPluginArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(HyperSwapPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | HyperSwapPluginReturns['createApplication()void'] }, appClient: new HyperSwapPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | HyperSwapPluginReturns['createApplication()void']) }, appClient: new HyperSwapPluginClient(result.appClient) }
       },
     },
 
@@ -750,7 +750,7 @@ export class HyperSwapPluginClient {
      */
     offer: async (params: CallParams<HyperSwapPluginArgs['obj']['offer(uint64,bool,byte[32],uint64,byte[32],uint64,uint64)void'] | HyperSwapPluginArgs['tuple']['offer(uint64,bool,byte[32],uint64,byte[32],uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(HyperSwapPluginParamsFactory.offer(params))
-      return {...result, return: result.return as undefined | HyperSwapPluginReturns['offer(uint64,bool,byte[32],uint64,byte[32],uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | HyperSwapPluginReturns['offer(uint64,bool,byte[32],uint64,byte[32],uint64,uint64)void'])}
     },
 
     /**
@@ -761,7 +761,7 @@ export class HyperSwapPluginClient {
      */
     accept: async (params: CallParams<HyperSwapPluginArgs['obj']['accept(uint64,bool,uint64,byte[32][])void'] | HyperSwapPluginArgs['tuple']['accept(uint64,bool,uint64,byte[32][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(HyperSwapPluginParamsFactory.accept(params))
-      return {...result, return: result.return as undefined | HyperSwapPluginReturns['accept(uint64,bool,uint64,byte[32][])void']}
+      return {...result, return: result.return as unknown as (undefined | HyperSwapPluginReturns['accept(uint64,bool,uint64,byte[32][])void'])}
     },
 
     /**
@@ -772,7 +772,7 @@ export class HyperSwapPluginClient {
      */
     escrow: async (params: CallParams<HyperSwapPluginArgs['obj']['escrow(uint64,bool,uint64,address,uint64,byte[32][])void'] | HyperSwapPluginArgs['tuple']['escrow(uint64,bool,uint64,address,uint64,byte[32][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(HyperSwapPluginParamsFactory.escrow(params))
-      return {...result, return: result.return as undefined | HyperSwapPluginReturns['escrow(uint64,bool,uint64,address,uint64,byte[32][])void']}
+      return {...result, return: result.return as unknown as (undefined | HyperSwapPluginReturns['escrow(uint64,bool,uint64,address,uint64,byte[32][])void'])}
     },
 
     /**
@@ -783,7 +783,7 @@ export class HyperSwapPluginClient {
      */
     escrowAsa: async (params: CallParams<HyperSwapPluginArgs['obj']['escrowAsa(uint64,bool,uint64,address,uint64,uint64,byte[32][])void'] | HyperSwapPluginArgs['tuple']['escrowAsa(uint64,bool,uint64,address,uint64,uint64,byte[32][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(HyperSwapPluginParamsFactory.escrowAsa(params))
-      return {...result, return: result.return as undefined | HyperSwapPluginReturns['escrowAsa(uint64,bool,uint64,address,uint64,uint64,byte[32][])void']}
+      return {...result, return: result.return as unknown as (undefined | HyperSwapPluginReturns['escrowAsa(uint64,bool,uint64,address,uint64,uint64,byte[32][])void'])}
     },
 
     /**
@@ -794,7 +794,7 @@ export class HyperSwapPluginClient {
      */
     disburse: async (params: CallParams<HyperSwapPluginArgs['obj']['disburse(uint64,bool,uint64,uint64,address,uint64,uint64)void'] | HyperSwapPluginArgs['tuple']['disburse(uint64,bool,uint64,uint64,address,uint64,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(HyperSwapPluginParamsFactory.disburse(params))
-      return {...result, return: result.return as undefined | HyperSwapPluginReturns['disburse(uint64,bool,uint64,uint64,address,uint64,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | HyperSwapPluginReturns['disburse(uint64,bool,uint64,uint64,address,uint64,uint64)void'])}
     },
 
     /**
@@ -805,7 +805,7 @@ export class HyperSwapPluginClient {
      */
     cancel: async (params: CallParams<HyperSwapPluginArgs['obj']['cancel(uint64,bool,uint64,byte[32][])void'] | HyperSwapPluginArgs['tuple']['cancel(uint64,bool,uint64,byte[32][])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(HyperSwapPluginParamsFactory.cancel(params))
-      return {...result, return: result.return as undefined | HyperSwapPluginReturns['cancel(uint64,bool,uint64,byte[32][])void']}
+      return {...result, return: result.return as unknown as (undefined | HyperSwapPluginReturns['cancel(uint64,bool,uint64,byte[32][])void'])}
     },
 
   }
@@ -987,7 +987,7 @@ export type HyperSwapPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

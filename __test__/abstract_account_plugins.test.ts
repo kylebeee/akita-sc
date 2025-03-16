@@ -1,17 +1,22 @@
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
-import algosdk, { encodeUint64, makeBasicAccountTransactionSigner } from 'algosdk';
-import { AbstractedAccountClient, AbstractedAccountFactory } from '../contracts/clients/AbstractedAccountClient';
-import { OptInPluginClient, OptInPluginFactory } from '../contracts/clients/OptInPluginClient';
+import algosdk, { encodeUint64, makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
+import { AbstractedAccountClient, AbstractedAccountFactory } from '../clients/AbstractedAccountClient';
+import { OptInPluginClient, OptInPluginFactory } from '../clients/OptInPluginClient';
+import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../clients/AbstractedAccountFactoryClient';
 
+export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 614_000;
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
+
 algokit.Config.configure({ populateAppCallResources: true });
 const fixture = algorandFixture();
 
 describe('Abstracted Subscription Program', () => {
   /** Alice's externally owned account (ie. a keypair account she has in Pera) */
   let aliceEOA: algosdk.Account;
+  /** The client for the abstracted account factory */
+  let abstractedAccountFactoryClient: AbstractedAccountFactoryClient;
   /** The address of Alice's new abstracted account. Sends app calls from aliceEOA unless otherwise specified */
   let aliceAbstractedAccount: string;
   /** The client for Alice's abstracted account */
@@ -24,7 +29,7 @@ describe('Abstracted Subscription Program', () => {
   let suggestedParams: algosdk.SuggestedParams;
 
   /** The maximum uint64 value. Used to indicate a never-expiring plugin */
-  const maxUint64 = BigInt('18446744073709551615');
+  const maxUint64 = 18446744073709551615n;
 
   beforeEach(fixture.beforeEach);
 
@@ -34,13 +39,49 @@ describe('Abstracted Subscription Program', () => {
     suggestedParams = await algorand.getSuggestedParams();
     aliceEOA = testAccount;
 
-    const minter = new AbstractedAccountFactory({
+    const minterFactory = new AbstractedAccountFactoryFactory({
       defaultSender: aliceEOA.addr,
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
       algorand
     });
-    const results = await minter.send.create.createApplication({ args: { admin: aliceEOA.addr, controlledAddress: ZERO_ADDRESS } });
-    abstractedAccountClient = results.appClient;
+
+    const results = await minterFactory.send.create.createApplication({
+      args: {
+        version: '1',
+        revocationAppId: 0
+      }
+    });
+
+    abstractedAccountFactoryClient = results.appClient;
+
+    const mintPayment = makePaymentTxnWithSuggestedParamsFromObject({
+      from: aliceEOA.addr,
+      to: abstractedAccountFactoryClient.appAddress,
+      amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
+      suggestedParams: suggestedParams
+    })
+
+    const mResults = await abstractedAccountFactoryClient.send.mint({
+      sender: aliceEOA.addr,
+      signer: makeBasicAccountTransactionSigner(aliceEOA),
+      args: {
+        payment: mintPayment,
+        admin: aliceEOA.addr,
+        nickname: 'Alice'
+      },
+      extraFee: (2_000).microAlgo()
+    });
+
+    const freshAbstractedAccountId = mResults.return!;
+
+    abstractedAccountClient = algorand.client.getTypedAppClientById(
+      AbstractedAccountClient,
+      {
+        defaultSender: aliceEOA.addr,
+        defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
+        appId: freshAbstractedAccountId
+      }
+    );
     aliceAbstractedAccount = abstractedAccountClient.appAddress;
 
     // Fund the abstracted account with 0.2 ALGO so it can hold an ASA

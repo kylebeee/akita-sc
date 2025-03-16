@@ -444,7 +444,7 @@ export class RewardsPluginFactory {
   public async deploy(params: RewardsPluginDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? RewardsPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? RewardsPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (RewardsPluginCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new RewardsPluginClient(result.appClient) }
   }
@@ -507,7 +507,7 @@ export class RewardsPluginFactory {
        */
       createApplication: async (params: CallParams<RewardsPluginArgs['obj']['createApplication()void'] | RewardsPluginArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(RewardsPluginParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | RewardsPluginReturns['createApplication()void'] }, appClient: new RewardsPluginClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | RewardsPluginReturns['createApplication()void']) }, appClient: new RewardsPluginClient(result.appClient) }
       },
     },
 
@@ -791,7 +791,7 @@ export class RewardsPluginClient {
      */
     createDisbursement: async (params: CallParams<RewardsPluginArgs['obj']['createDisbursement(uint64,bool,string,uint64,uint64,string)uint64'] | RewardsPluginArgs['tuple']['createDisbursement(uint64,bool,string,uint64,uint64,string)uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsPluginParamsFactory.createDisbursement(params))
-      return {...result, return: result.return as undefined | RewardsPluginReturns['createDisbursement(uint64,bool,string,uint64,uint64,string)uint64']}
+      return {...result, return: result.return as unknown as (undefined | RewardsPluginReturns['createDisbursement(uint64,bool,string,uint64,uint64,string)uint64'])}
     },
 
     /**
@@ -802,7 +802,7 @@ export class RewardsPluginClient {
      */
     editDisbursement: async (params: CallParams<RewardsPluginArgs['obj']['editDisbursement(uint64,bool,uint64,string,uint64,uint64,string)void'] | RewardsPluginArgs['tuple']['editDisbursement(uint64,bool,uint64,string,uint64,uint64,string)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsPluginParamsFactory.editDisbursement(params))
-      return {...result, return: result.return as undefined | RewardsPluginReturns['editDisbursement(uint64,bool,uint64,string,uint64,uint64,string)void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsPluginReturns['editDisbursement(uint64,bool,uint64,string,uint64,uint64,string)void'])}
     },
 
     /**
@@ -813,7 +813,7 @@ export class RewardsPluginClient {
      */
     createUserAllocations: async (params: CallParams<RewardsPluginArgs['obj']['createUserAllocations(uint64,bool,uint64,(address,uint64)[],uint64)void'] | RewardsPluginArgs['tuple']['createUserAllocations(uint64,bool,uint64,(address,uint64)[],uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsPluginParamsFactory.createUserAllocations(params))
-      return {...result, return: result.return as undefined | RewardsPluginReturns['createUserAllocations(uint64,bool,uint64,(address,uint64)[],uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsPluginReturns['createUserAllocations(uint64,bool,uint64,(address,uint64)[],uint64)void'])}
     },
 
     /**
@@ -824,7 +824,7 @@ export class RewardsPluginClient {
      */
     createAsaUserAllocations: async (params: CallParams<RewardsPluginArgs['obj']['createAsaUserAllocations(uint64,bool,uint64,uint64,(address,uint64)[],uint64)void'] | RewardsPluginArgs['tuple']['createAsaUserAllocations(uint64,bool,uint64,uint64,(address,uint64)[],uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsPluginParamsFactory.createAsaUserAllocations(params))
-      return {...result, return: result.return as undefined | RewardsPluginReturns['createAsaUserAllocations(uint64,bool,uint64,uint64,(address,uint64)[],uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsPluginReturns['createAsaUserAllocations(uint64,bool,uint64,uint64,(address,uint64)[],uint64)void'])}
     },
 
     /**
@@ -835,7 +835,7 @@ export class RewardsPluginClient {
      */
     finalizeDisbursement: async (params: CallParams<RewardsPluginArgs['obj']['finalizeDisbursement(uint64,bool,uint64)void'] | RewardsPluginArgs['tuple']['finalizeDisbursement(uint64,bool,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsPluginParamsFactory.finalizeDisbursement(params))
-      return {...result, return: result.return as undefined | RewardsPluginReturns['finalizeDisbursement(uint64,bool,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsPluginReturns['finalizeDisbursement(uint64,bool,uint64)void'])}
     },
 
     /**
@@ -846,7 +846,7 @@ export class RewardsPluginClient {
      */
     claimRewards: async (params: CallParams<RewardsPluginArgs['obj']['claimRewards(uint64,bool,uint64[])void'] | RewardsPluginArgs['tuple']['claimRewards(uint64,bool,uint64[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsPluginParamsFactory.claimRewards(params))
-      return {...result, return: result.return as undefined | RewardsPluginReturns['claimRewards(uint64,bool,uint64[])void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsPluginReturns['claimRewards(uint64,bool,uint64[])void'])}
     },
 
     /**
@@ -857,7 +857,7 @@ export class RewardsPluginClient {
      */
     reclaimRewards: async (params: CallParams<RewardsPluginArgs['obj']['reclaimRewards(uint64,bool,uint64,(address,uint64)[])void'] | RewardsPluginArgs['tuple']['reclaimRewards(uint64,bool,uint64,(address,uint64)[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(RewardsPluginParamsFactory.reclaimRewards(params))
-      return {...result, return: result.return as undefined | RewardsPluginReturns['reclaimRewards(uint64,bool,uint64,(address,uint64)[])void']}
+      return {...result, return: result.return as unknown as (undefined | RewardsPluginReturns['reclaimRewards(uint64,bool,uint64,(address,uint64)[])void'])}
     },
 
   }
@@ -1056,7 +1056,7 @@ export type RewardsPluginComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

@@ -296,7 +296,7 @@ export class ActionFactory {
   public async deploy(params: ActionDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? ActionParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? ActionParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (ActionCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new ActionClient(result.appClient) }
   }
@@ -359,7 +359,7 @@ export class ActionFactory {
        */
       createApplication: async (params: CallParams<ActionArgs['obj']['createApplication()void'] | ActionArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(ActionParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | ActionReturns['createApplication()void'] }, appClient: new ActionClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | ActionReturns['createApplication()void']) }, appClient: new ActionClient(result.appClient) }
       },
     },
 
@@ -523,7 +523,7 @@ export class ActionClient {
      */
     call: async (params: CallParams<ActionArgs['obj']['call(byte[][],byte[])void'] | ActionArgs['tuple']['call(byte[][],byte[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(ActionParamsFactory.call(params))
-      return {...result, return: result.return as undefined | ActionReturns['call(byte[][],byte[])void']}
+      return {...result, return: result.return as unknown as (undefined | ActionReturns['call(byte[][],byte[])void'])}
     },
 
   }
@@ -638,7 +638,7 @@ export type ActionComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

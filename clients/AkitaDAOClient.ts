@@ -542,7 +542,7 @@ export class AkitaDaoFactory {
   public async deploy(params: AkitaDaoDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? AkitaDaoParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? AkitaDaoParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (AkitaDaoCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new AkitaDaoClient(result.appClient) }
   }
@@ -605,7 +605,7 @@ export class AkitaDaoFactory {
        */
       createApplication: async (params: CallParams<AkitaDaoArgs['obj']['createApplication()void'] | AkitaDaoArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(AkitaDaoParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | AkitaDaoReturns['createApplication()void'] }, appClient: new AkitaDaoClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | AkitaDaoReturns['createApplication()void']) }, appClient: new AkitaDaoClient(result.appClient) }
       },
     },
 
@@ -857,7 +857,7 @@ export class AkitaDaoClient {
      */
     init: async (params: CallParams<AkitaDaoArgs['obj']['init(string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void'] | AkitaDaoArgs['tuple']['init(string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaDaoParamsFactory.init(params))
-      return {...result, return: result.return as undefined | AkitaDaoReturns['init(string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaDaoReturns['init(string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,address)void'])}
     },
 
     /**
@@ -870,7 +870,7 @@ export class AkitaDaoClient {
      */
     arc58VerifyAuthAddr: async (params: CallParams<AkitaDaoArgs['obj']['arc58_verifyAuthAddr()void'] | AkitaDaoArgs['tuple']['arc58_verifyAuthAddr()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(AkitaDaoParamsFactory.arc58VerifyAuthAddr(params))
-      return {...result, return: result.return as undefined | AkitaDaoReturns['arc58_verifyAuthAddr()void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaDaoReturns['arc58_verifyAuthAddr()void'])}
     },
 
     /**
@@ -883,7 +883,7 @@ export class AkitaDaoClient {
      */
     arc58RekeyToPlugin: async (params: CallParams<AkitaDaoArgs['obj']['arc58_rekeyToPlugin(uint64,uint64[],byte[32])void'] | AkitaDaoArgs['tuple']['arc58_rekeyToPlugin(uint64,uint64[],byte[32])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaDaoParamsFactory.arc58RekeyToPlugin(params))
-      return {...result, return: result.return as undefined | AkitaDaoReturns['arc58_rekeyToPlugin(uint64,uint64[],byte[32])void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaDaoReturns['arc58_rekeyToPlugin(uint64,uint64[],byte[32])void'])}
     },
 
     /**
@@ -894,7 +894,7 @@ export class AkitaDaoClient {
      */
     newProposal: async (params: CallParams<AkitaDaoArgs['obj']['newProposal(uint64)void'] | AkitaDaoArgs['tuple']['newProposal(uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(AkitaDaoParamsFactory.newProposal(params))
-      return {...result, return: result.return as undefined | AkitaDaoReturns['newProposal(uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaDaoReturns['newProposal(uint64)void'])}
     },
 
     /**
@@ -905,7 +905,7 @@ export class AkitaDaoClient {
      */
     createDailyDisbursement: async (params: CallParams<AkitaDaoArgs['obj']['createDailyDisbursement()void'] | AkitaDaoArgs['tuple']['createDailyDisbursement()void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
       const result = await this.appClient.send.call(AkitaDaoParamsFactory.createDailyDisbursement(params))
-      return {...result, return: result.return as undefined | AkitaDaoReturns['createDailyDisbursement()void']}
+      return {...result, return: result.return as unknown as (undefined | AkitaDaoReturns['createDailyDisbursement()void'])}
     },
 
   }
@@ -986,7 +986,7 @@ export class AkitaDaoClient {
       /**
        * Get the current value of the vrfBeaconAppID key in global state
        */
-      vrfBeaconAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("vrfBeaconAppId")) as bigint | undefined },
+      vrfBeaconAppId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("vrfBeaconAppID")) as bigint | undefined },
       /**
        * Get the current value of the socialPostFee key in global state
        */
@@ -1074,11 +1074,11 @@ export class AkitaDaoClient {
       /**
        * Get the current value of the akitaID key in global state
        */
-      akitaId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("akitaId")) as bigint | undefined },
+      akitaId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("akitaID")) as bigint | undefined },
       /**
        * Get the current value of the bonesID key in global state
        */
-      bonesId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("bonesId")) as bigint | undefined },
+      bonesId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("bonesID")) as bigint | undefined },
       /**
        * Get the current value of the revocationAddress key in global state
        */
@@ -1086,7 +1086,7 @@ export class AkitaDaoClient {
       /**
        * Get the current value of the proposalID key in global state
        */
-      proposalId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("proposalId")) as bigint | undefined },
+      proposalId: async (): Promise<bigint | undefined> => { return (await this.appClient.state.global.getValue("proposalID")) as bigint | undefined },
       /**
        * Get the current value of the disbursementCursor key in global state
        */
@@ -1294,7 +1294,7 @@ export type AkitaDaoComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

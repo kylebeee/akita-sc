@@ -346,7 +346,7 @@ export class SubscriptionStreakGateFactory {
   public async deploy(params: SubscriptionStreakGateDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? SubscriptionStreakGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
+      createParams: params.createParams?.method ? SubscriptionStreakGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (SubscriptionStreakGateCreateCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new SubscriptionStreakGateClient(result.appClient) }
   }
@@ -409,7 +409,7 @@ export class SubscriptionStreakGateFactory {
        */
       createApplication: async (params: CallParams<SubscriptionStreakGateArgs['obj']['createApplication()void'] | SubscriptionStreakGateArgs['tuple']['createApplication()void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC} = {args: []}) => {
         const result = await this.appFactory.send.create(SubscriptionStreakGateParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | SubscriptionStreakGateReturns['createApplication()void'] }, appClient: new SubscriptionStreakGateClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | SubscriptionStreakGateReturns['createApplication()void']) }, appClient: new SubscriptionStreakGateClient(result.appClient) }
       },
     },
 
@@ -593,7 +593,7 @@ export class SubscriptionStreakGateClient {
      */
     register: async (params: CallParams<SubscriptionStreakGateArgs['obj']['register(byte[])uint64'] | SubscriptionStreakGateArgs['tuple']['register(byte[])uint64']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.register(params))
-      return {...result, return: result.return as undefined | SubscriptionStreakGateReturns['register(byte[])uint64']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionStreakGateReturns['register(byte[])uint64'])}
     },
 
     /**
@@ -604,7 +604,7 @@ export class SubscriptionStreakGateClient {
      */
     check: async (params: CallParams<SubscriptionStreakGateArgs['obj']['check(byte[])bool'] | SubscriptionStreakGateArgs['tuple']['check(byte[])bool']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.check(params))
-      return {...result, return: result.return as undefined | SubscriptionStreakGateReturns['check(byte[])bool']}
+      return {...result, return: result.return as unknown as (undefined | SubscriptionStreakGateReturns['check(byte[])bool'])}
     },
 
   }
@@ -762,7 +762,7 @@ export type SubscriptionStreakGateComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */

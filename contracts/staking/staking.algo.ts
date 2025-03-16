@@ -1,523 +1,547 @@
-import { Contract } from '@algorandfoundation/tealscript';
+import { abimethod, Account, arc4, assert, BoxMap, Global, GlobalState, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { AkitaBaseContract } from "../../utils/base_contracts/base.algo";
+import { EmptyHeartbeatValue, heartBeatMBR, lockMBR, ONE_YEAR, StakingBoxPrefixHeartbeats, StakingBoxPrefixStakes, StakingGlobalStateKeyHeartbeatManagerAddress } from "./constants";
+import { arc4AssetCheck, arc4EscrowValue, arc4HeartbeatKey, arc4HeartbeatValues, arc4StakeInfo, arc4StakeKey, arc4StakeValue, arc4STAKING_TYPE_HARD, arc4STAKING_TYPE_HEARTBEAT, arc4STAKING_TYPE_LOCK, arc4STAKING_TYPE_SOFT, StakeKey, STAKING_TYPE_HARD, STAKING_TYPE_HEARTBEAT, STAKING_TYPE_LOCK, STAKING_TYPE_SOFT } from "./types";
+import { ERR_BAD_EXPIRATION, ERR_BAD_EXPIRATION_UPDATE, ERR_HEARBEAT_NOT_FOUND, ERR_HEARTBEAT_CANNOT_UPDATE, ERR_INSUFFICIENT_BALANCE, ERR_LOCKED, ERR_NO_LOCK, ERR_NOT_HEARTBEAT_MANAGER, ERR_STAKE_DOESNT_EXIST, ERR_STAKE_NOT_FOUND, ERR_WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK } from "./errors";
+import { arc4Zero } from "../../utils/constants";
+import { ERR_INVALID_ASSET_AMOUNT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER, ERR_NOT_OPTED_IN } from "../../utils/errors";
+import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
 
-export const lockMBR = 28_900;
-const heartBeatMBR = 44_100;
-const ONE_YEAR = 31_536_000; // 365 days * 24 hours * 60 minutes * 60 seconds
+export class Staking extends AkitaBaseContract {
 
-const errs = {
-    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
-    NO_LOCK: 'Lock not found',
-    BAD_EXPIRATION: 'Expiration must be in the future or hardlock disabled',
-    BAD_EXPIRATION_UPDATE: 'Expiration must be greater than or equal to the current unlock time or hardlock disabled',
-    BAD_AMOUNT_HELD: 'Insufficient amount held',
-    LOCKED: 'This asset is still locked',
-    PLUGIN_NOT_AUTH_ADDR: 'This plugin does not have control of the account',
-    STAKE_NOT_FOUND: 'Stake not found',
-    INSUFFICIENT_BALANCE: 'Insufficient balance',
-    WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK: 'Withdraw is only for hard or lock',
-    HEARTBEAT_CANNOT_UPDATE: 'Heartbeat stakes cannot be updated',
-    NOT_HEARTBEAT_MANAGER: 'Only the heartbeat manager can call this method',
-    HEARBEAT_NOT_FOUND: 'Heartbeat not found',
-    STAKE_DOESNT_EXIST: 'Stake does not exist',
-}
+  /** The address that is allowed to call the 'beat' method to create heartbeat records */
+  heartbeatManagerAddress = GlobalState<Account>({ key: StakingGlobalStateKeyHeartbeatManagerAddress })
 
-export type StakingType = uint64;
+  // 2_500 + (400 * (42 + 24)) = 28,900
+  stakes = BoxMap<arc4StakeKey, arc4StakeValue>({ keyPrefix: StakingBoxPrefixStakes });
+  // 2_500 + (400 * (40 + 64)) = 44,100
+  heartbeats = BoxMap<arc4HeartbeatKey, arc4.StaticArray<arc4HeartbeatValues, 4>>({ keyPrefix: StakingBoxPrefixHeartbeats })
 
-/**
- * Heartbeat staking uses the average of the last 4 heartbeats
- * triggered with random jitter 4 times a day
- * 
-*/
-export const STAKING_TYPE_HEARTBEAT = 0;
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  getTimeLeft(address: arc4.Address, asset: arc4.UintN64): uint64 {
+    const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_LOCK })
 
-/**
- * Soft staking uses incentivized account watching to flag
- * users that drop below their committed balance
- */
-export const STAKING_TYPE_SOFT = 1;
-
-/**
- * Hard staking uses an escrowed balance
- * 
- */
-export const STAKING_TYPE_HARD = 2;
-
-/**
- * Hard locked staking uses an escrowed balance
- * and locks the balance for a set period of time
- * 
- */
-export const STAKING_TYPE_LOCK = 3;
-
-export type StakeKey = {
-    address: Address;
-    asset: AssetID;
-    type: StakingType;
-}
-
-export type StakeValue = {
-    amount: uint64;
-    lastUpdate: uint64;
-    expiration: uint64;
-}
-
-export type EscrowValue = {
-    hard: uint64;
-    lock: uint64;
-}
-
-export type HeartbeatKey = {
-    address: Address;
-    asset: AssetID;
-}
-
-export type HeartbeatValues = {
-    amount: uint64;
-    timestamp: uint64;
-}
-
-export type StakeInfo = {
-    asset: AssetID;
-    type: StakingType;
-}
-
-export type AssetCheck = {
-    asset: AssetID;
-    amount: uint64;
-}
-
-export class Staking extends Contract {
-    /** The App ID of the Akita DAO contract */
-    akitaDaoAppID = TemplateVar<AppID>();
-    /** The address that is allowed to call the 'beat' method to create heartbeat records */
-    heartbeatManagerAddress = GlobalStateKey<Address>({ key: 'heartbeat_manager_address' });
-
-    // 2_500 + (400 * (42 + 24)) = 28,900
-    stakes = BoxMap<StakeKey, StakeValue>();
-    // 2_500 + (400 * (40 + 64)) = 44,100
-    heartbeats = BoxMap<HeartbeatKey, StaticArray<HeartbeatValues, 4>>();
-
-    @abi.readonly
-    getTimeLeft(address: Address, asset: AssetID): uint64 {
-        const sk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_LOCK };
-
-        if (!this.stakes(sk).exists || globals.latestTimestamp >= this.stakes(sk).value.expiration) {
-            return 0;
-        }
-
-        return this.stakes(sk).value.expiration - globals.latestTimestamp;
+    if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration.native) {
+      return 0
     }
 
-    @abi.readonly
-    mustGetTimeLeft(address: Address, asset: AssetID): uint64 {
-        const sk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_LOCK };
-        assert(this.stakes(sk).exists, errs.NO_LOCK);
-        assert(globals.latestTimestamp < this.stakes(sk).value.expiration, errs.LOCKED);
-        return this.stakes(sk).value.expiration - globals.latestTimestamp;
+    return this.stakes(sk).value.expiration.native - Global.latestTimestamp
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  mustGetTimeLeft(address: arc4.Address, asset: arc4.UintN64): uint64 {
+    const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_LOCK })
+    assert(this.stakes(sk).exists, ERR_NO_LOCK)
+    assert(Global.latestTimestamp < this.stakes(sk).value.expiration.native, ERR_LOCKED)
+    return this.stakes(sk).value.expiration.native - Global.latestTimestamp
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  getInfo(address: arc4.Address, stake: arc4StakeInfo): arc4StakeValue {
+    const sk = new arc4StakeKey({ address, ...stake })
+    if (!this.stakes(sk).exists) {
+      return new arc4StakeValue({
+        amount: arc4Zero,
+        lastUpdate: arc4Zero,
+        expiration: arc4Zero
+      })
+    }
+    return this.stakes(sk).value;
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  mustGetInfo(address: arc4.Address, stake: arc4StakeInfo): arc4StakeValue {
+    const sk = new arc4StakeKey({ address, ...stake })
+    assert(this.stakes(sk).exists, ERR_NO_LOCK);
+    return this.stakes(sk).value;
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  getEscrowInfo(address: arc4.Address, asset: arc4.UintN64): arc4EscrowValue {
+    const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_HARD })
+    const lk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_LOCK })
+
+    let hard = arc4Zero
+    if (this.stakes(sk).exists) {
+      hard = this.stakes(sk).value.amount
     }
 
-    @abi.readonly
-    getInfo(address: Address, stake: StakeInfo): StakeValue {
-        const sk: StakeKey = { address: address, asset: stake.asset, type: stake.type };
-        if (!this.stakes(sk).exists) {
-            return { amount: 0, lastUpdate: 0, expiration: 0 };
-        }
-        return this.stakes(sk).value;
+    let lock = arc4Zero
+    if (this.stakes(lk).exists) {
+      lock = this.stakes(lk).value.amount
     }
 
-    @abi.readonly
-    mustGetInfo(address: Address, stake: StakeInfo): StakeValue {
-        const sk: StakeKey = { address: address, asset: stake.asset, type: stake.type };
-        assert(this.stakes(sk).exists, errs.NO_LOCK);
-        return this.stakes(sk).value;
+    return new arc4EscrowValue({ hard, lock })
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  getHeartbeat(address: arc4.Address, asset: arc4.UintN64): arc4.StaticArray<arc4HeartbeatValues, 4> {
+    const hbk = new arc4HeartbeatKey({ address, asset })
+    if (!this.heartbeats(hbk).exists) {
+      return new arc4.StaticArray(
+        EmptyHeartbeatValue,
+        EmptyHeartbeatValue,
+        EmptyHeartbeatValue,
+        EmptyHeartbeatValue
+      )
     }
 
-    @abi.readonly
-    getEscrowInfo(address: Address, asset: AssetID): EscrowValue {
-        const sk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_HARD };
-        const lk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_LOCK };
+    return this.heartbeats(hbk).value
+  }
 
-        let hard = 0;
-        let lock = 0;
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  mustGetHeartbeat(address: arc4.Address, asset: arc4.UintN64): arc4.StaticArray<arc4HeartbeatValues, 4> {
+    const hbk = new arc4HeartbeatKey({ address, asset })
+    assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
+    return this.heartbeats(hbk).value
+  }
 
-        if (this.stakes(sk).exists) {
-            hard = this.stakes(sk).value.amount;
-        }
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  getHeartbeatAverage(address: arc4.Address, asset: arc4.UintN64, includeStaked: arc4.Bool): uint64 {
+    const hbk = new arc4HeartbeatKey({ address, asset })
 
-        if (this.stakes(lk).exists) {
-            lock = this.stakes(lk).value.amount;
-        }
-
-        return { hard: hard, lock: lock };
+    if (!this.heartbeats(hbk).exists) {
+      return 0
     }
 
-    @abi.readonly
-    getHeartbeat(address: Address, asset: AssetID): StaticArray<HeartbeatValues, 4> {
-        const hbk: HeartbeatKey = { address: address, asset: asset };
-        if (!this.heartbeats(hbk).exists) {
-            const z: HeartbeatValues = { amount: 0, timestamp: 0 };
-            return [z, z, z, z];
-        }
+    const heartbeats = this.heartbeats(hbk).value
+    let total: uint64 = 0
 
-        return this.heartbeats({ address: address, asset: asset }).value;
+    for (let i = 0; i < heartbeats.length; i += 1) {
+      if (includeStaked.native) {
+        total += (
+          heartbeats[i].held.native
+          + heartbeats[i].hard.native
+          + heartbeats[i].lock.native
+        )
+      } else {
+        total += heartbeats[i].held.native
+      }
     }
 
-    @abi.readonly
-    mustGetHeartbeat(address: Address, asset: AssetID): StaticArray<HeartbeatValues, 4> {
-        const hbk: HeartbeatKey = { address: address, asset: asset };
-        assert(this.heartbeats(hbk).exists, errs.HEARBEAT_NOT_FOUND);
-        return this.heartbeats({ address: address, asset: asset }).value;
+    return total / heartbeats.length
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  mustGetHeartbeatAverage(address: arc4.Address, asset: arc4.UintN64, includeStaked: arc4.Bool): uint64 {
+    const hbk = new arc4HeartbeatKey({ address, asset })
+    assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
+
+    const heartbeats = this.heartbeats(hbk).value
+
+    let total: uint64 = 0
+
+    for (let i = 0; i < heartbeats.length; i += 1) {
+      if (includeStaked.native) {
+        total += (
+          heartbeats[i].held.native
+          + heartbeats[i].hard.native
+          + heartbeats[i].lock.native
+        )
+      } else {
+        total += heartbeats[i].held.native
+      }
     }
 
-    @abi.readonly
-    getHeartbeatAverage(address: Address, asset: AssetID): uint64 {
-        if (!this.heartbeats({ address: address, asset: asset }).exists) {
-            return 0;
-        }
+    return total / heartbeats.length
+  }
 
-        const heartbeats = this.heartbeats({ address: address, asset: asset }).value as StaticArray<HeartbeatValues, 4>;
-        let total = 0;
-        heartbeats.forEach((hb) => {
-            total += hb.amount;
-        });
-        return total / heartbeats.length;
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  getInfoList(address: arc4.Address, type: arc4.UintN64, assets: arc4.DynamicArray<arc4.UintN64>): arc4.DynamicArray<arc4StakeValue> {
+    let results = new arc4.DynamicArray<arc4StakeValue>()
+    for (let i = 0; i < assets.length; i += 1) {
+      const sk = new arc4StakeKey({ address, asset: assets[i], type })
+      if (!this.stakes(sk).exists) {
+        results.push(new arc4StakeValue({
+          amount: arc4Zero,
+          lastUpdate: arc4Zero,
+          expiration: arc4Zero
+        }))
+        continue
+      }
+      results.push(this.stakes(sk).value)
+    }
+    return results
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  mustGetInfoList(address: arc4.Address, type: arc4.UintN64, assets: arc4.DynamicArray<arc4.UintN64>): arc4.DynamicArray<arc4StakeValue> {
+    let results = new arc4.DynamicArray<arc4StakeValue>()
+    for (let i = 0; i < assets.length; i += 1) {
+      const sk = new arc4StakeKey({ address, asset: assets[i], type })
+      assert(this.stakes(sk).exists, ERR_STAKE_NOT_FOUND)
+      results.push(this.stakes(sk).value)
+    }
+    return results
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  stakeCheck(address: arc4.Address, assetChecks: arc4.DynamicArray<arc4AssetCheck>, type: arc4.UintN64, includeStaked: arc4.Bool): boolean {
+    for (let i = 0; i < assetChecks.length; i += 1) {
+      const sk = new arc4StakeKey({ address, asset: assetChecks[i].asset, type })
+      if (!this.stakes(sk).exists) {
+        return false
+      }
+
+      const stake = this.stakes(sk).value;
+
+      let amountToCheck: uint64 = stake.amount.native
+      if (type === arc4STAKING_TYPE_HEARTBEAT) {
+        amountToCheck = this.getHeartbeatAverage(address, assetChecks[i].asset, includeStaked)
+      }
+
+      if (assetChecks[i].amount.native >= amountToCheck) {
+        return false
+      }
     }
 
-    @abi.readonly
-    mustGetHeartbeatAverage(address: Address, asset: AssetID): uint64 {
-        assert(this.heartbeats({ address: address, asset: asset }).exists, errs.HEARBEAT_NOT_FOUND);
-        
-        const heartbeats = this.heartbeats({ address: address, asset: asset }).value as StaticArray<HeartbeatValues, 4>;
-        let total = 0;
-        heartbeats.forEach((hb) => {
-            total += hb.amount;
-        });
-        return total / heartbeats.length;
-    }
+    return true
+  }
 
-    @abi.readonly
-    getInfoList(address: Address, type: StakingType, assets: AssetID[]): StakeValue[] {
-        let results: StakeValue[] = [];
-        for (let i = 0; i < assets.length; i += 1) {
-            const sk = { address: address, asset: assets[i], type: type };
-            if (!this.stakes(sk).exists) {
-                results.push({ amount: 0, lastUpdate: 0, expiration: 0 });
-                continue;
-            }
-            results.push(this.stakes(sk).value);
-        }
-        return results;
-    }
+  // @ts-ignore
+  @abimethod({ onCreate: 'require' })
+  createApplication(): void { }
 
-    @abi.readonly
-    mustGetInfoList(address: Address, type: StakingType, assets: AssetID[]): StakeValue[] {
-        let results: StakeValue[] = [];
-        for (let i = 0; i < assets.length; i += 1) {
-            const sk = { address: address, asset: assets[i], type: type };
-            assert(this.stakes(sk).exists, errs.STAKE_NOT_FOUND);
-            results.push(this.stakes(sk).value);
-        }
-        return results;
-    }
+  stake(
+    payment: gtxn.PaymentTxn,
+    type: arc4.UintN64,
+    amount: arc4.UintN64,
+    expiration: arc4.UintN64
+  ): void {
+    const inTheFuture = expiration.native > Global.latestTimestamp
+    const lessThanOneYearInTheFuture = expiration.native <= (Global.latestTimestamp + ONE_YEAR)
+    const locked = type.native !== STAKING_TYPE_LOCK
+    const isEscrow = type.native === STAKING_TYPE_HARD || type.native === STAKING_TYPE_LOCK
+    const timestamp = new arc4.UintN64(Global.latestTimestamp)
 
-    @abi.readonly
-    stakeCheck(address: Address, assetChecks: AssetCheck[], type: StakingType): boolean {
-        for (let i = 0; i < assetChecks.length; i += 1) {
-            const sk: StakeKey = { address: address, asset: assetChecks[i].asset, type: type };
-            if (!this.stakes(sk).exists) {
-                return false;
-            }
+    assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION);
 
-            const stake = this.stakes(sk).value;
-            
-            let amountToCheck = stake.amount
-            if (type === STAKING_TYPE_HEARTBEAT) {
-                amountToCheck = this.getHeartbeatAverage(address, assetChecks[i].asset)
-            }
+    const arc4Sender = new arc4.Address(Txn.sender)
+    const sk = new arc4StakeKey({
+      address: arc4Sender,
+      asset: arc4Zero,
+      type
+    })
 
-            if (assetChecks[i].amount >= amountToCheck) {
-                return false;
-            }
-        }
-        return true;
-    }
+    const isUpdate = this.stakes(sk).exists
 
-    createApplication(): void {}
+    if (!isUpdate) {
+      if (isEscrow) {
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        assert(payment.amount === (amount.native + lockMBR), ERR_INVALID_PAYMENT_AMOUNT)
 
-    updateApplication(): void {
-        assert(this.txn.sender === this.akitaDaoAppID.address, errs.NOT_AKITA_DAO);
-    }
+      } else if (type.native === STAKING_TYPE_HEARTBEAT) {
+        // when heartbeat staking, the amount is ignored
+        // instead we record balances across wallet & escrow
+        const held = new arc4.UintN64(Txn.sender.balance)
+        let hard = arc4Zero
+        let lock = arc4Zero
 
-    stake(
-        payment: PayTxn,
-        type: StakingType,
-        amount: uint64,
-        expiration: uint64,
-        isUpdate: boolean,
-    ): void {
-        const inTheFuture = expiration > globals.latestTimestamp;
-        const lessThanOneYearInTheFuture = expiration <= (globals.latestTimestamp + ONE_YEAR);
-        const locked = type !== STAKING_TYPE_LOCK;
-        const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK;
-
-        assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, errs.BAD_EXPIRATION);
-
-        const sk: StakeKey = { address: this.txn.sender, asset: AssetID.fromUint64(0), type: type };
-
-        if (!isUpdate) {
-            if (isEscrow) {
-                verifyPayTxn(payment, {
-                    receiver: this.app.address,
-                    amount: amount + lockMBR,
-                });
-            } else if (type === STAKING_TYPE_HEARTBEAT) {
-
-                assert(this.txn.sender.balance >= amount, errs.BAD_AMOUNT_HELD);
-
-                verifyPayTxn(payment, {
-                    receiver: this.app.address,
-                    amount: heartBeatMBR + lockMBR,
-                });
-
-                const heartbeatKey: HeartbeatKey = {
-                    address: this.txn.sender,
-                    asset: AssetID.fromUint64(0)
-                };
-
-                this.heartbeats(heartbeatKey).value = [{
-                    amount: amount,
-                    timestamp: globals.latestTimestamp
-                }];
-            } else {
-                assert(this.txn.sender.balance >= amount, errs.BAD_AMOUNT_HELD);
-
-                verifyPayTxn(payment, {
-                    receiver: this.app.address,
-                    amount: lockMBR,
-                });
-            }
-
-            this.stakes(sk).value = {
-                amount: amount,
-                lastUpdate: globals.latestTimestamp,
-                expiration: expiration,
-            };
-        } else {
-            assert(this.stakes(sk).exists, errs.STAKE_NOT_FOUND);
-            assert(type !== STAKING_TYPE_HEARTBEAT, errs.HEARTBEAT_CANNOT_UPDATE);
-            const currentLock = this.stakes(sk).value;
-            assert(expiration >= currentLock.expiration || !locked, errs.BAD_EXPIRATION_UPDATE);
-
-            if (isEscrow) {
-                verifyPayTxn(payment, {
-                    receiver: this.app.address,
-                    amount: amount,
-                });
-            } else {
-                assert(this.txn.sender.balance >= (currentLock.amount + amount), errs.INSUFFICIENT_BALANCE);
-            }
-
-            this.stakes(sk).value = {
-                amount: (currentLock.amount + amount),
-                lastUpdate: globals.latestTimestamp,
-                expiration: expiration
-            };
-        }
-    }
-
-    stakeAsa(
-        payment: PayTxn,
-        assetXfer: AssetTransferTxn,
-        type: StakingType,
-        amount: uint64,
-        expiration: uint64,
-        isUpdate: boolean,
-    ): void {
-        const inTheFuture = expiration > globals.latestTimestamp;
-        const lessThanOneYearInTheFuture = expiration <= (globals.latestTimestamp + ONE_YEAR);
-        const locked = type !== STAKING_TYPE_LOCK;
-        const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK;
-
-        assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, errs.BAD_EXPIRATION);
-
-        const asset = assetXfer.xferAsset;
-        const sk: StakeKey = { address: this.txn.sender, asset: asset, type: type };
-
-        if (!isUpdate) {
-            if (isEscrow) {
-                verifyPayTxn(payment, {
-                    receiver: this.app.address,
-                    amount: lockMBR,
-                });
-
-                verifyAssetTransferTxn(assetXfer, {
-                    assetReceiver: this.app.address,
-                    assetAmount: amount,
-                    xferAsset: asset,
-                });
-            } else if (type === STAKING_TYPE_HEARTBEAT) {
-
-                assert(this.txn.sender.assetBalance(asset) >= amount, errs.BAD_AMOUNT_HELD);
-
-                verifyPayTxn(payment, {
-                    receiver: this.app.address,
-                    amount: heartBeatMBR + lockMBR,
-                });
-
-                verifyAssetTransferTxn(assetXfer, {
-                    assetAmount: 0,
-                    assetReceiver: this.app.address,
-                    xferAsset: asset,
-                });
-
-                const heartbeatKey: HeartbeatKey = {
-                    address: this.txn.sender,
-                    asset: asset
-                };
-
-                this.heartbeats(heartbeatKey).value = [{
-                    amount: amount,
-                    timestamp: globals.latestTimestamp
-                }];
-            } else {
-                assert(this.txn.sender.assetBalance(asset) >= amount, errs.BAD_AMOUNT_HELD);
-
-                verifyPayTxn(payment, {
-                    receiver: this.app.address,
-                    amount: lockMBR,
-                });
-
-                verifyAssetTransferTxn(assetXfer, {
-                    assetAmount: 0,
-                    assetReceiver: this.app.address,
-                    xferAsset: asset,
-                });
-            }
-
-            this.stakes(sk).value = {
-                amount: amount,
-                lastUpdate: globals.latestTimestamp,
-                expiration: expiration,
-            };
-        } else {
-            assert(this.stakes(sk).exists, errs.STAKE_NOT_FOUND);
-            assert(type !== STAKING_TYPE_HEARTBEAT, errs.HEARTBEAT_CANNOT_UPDATE);
-            const currentLock = this.stakes(sk).value;
-            assert(expiration >= currentLock.expiration || !locked, errs.BAD_EXPIRATION_UPDATE);
-
-            verifyPayTxn(payment, {
-                receiver: this.app.address,
-                amount: 0,
-            });
-
-            if (isEscrow) {
-                verifyAssetTransferTxn(assetXfer, {
-                    assetAmount: amount,
-                    assetReceiver: this.app.address,
-                    xferAsset: asset,
-                });
-            } else {
-                assert(this.txn.sender.assetBalance(asset) >= (currentLock.amount + amount), errs.INSUFFICIENT_BALANCE);
-            }
-
-            this.stakes(sk).value = {
-                amount: (currentLock.amount + amount),
-                lastUpdate: globals.latestTimestamp,
-                expiration: expiration
-            };
-        }
-    }
-
-    withdraw(asset: AssetID, type: StakingType): void {
-        assert(type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK, errs.WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK);
-
-        const sk: StakeKey = { address: this.txn.sender, asset: asset, type: type };
-        assert(this.stakes(sk).exists, errs.NO_LOCK);
-
-        const currentLock = this.stakes(sk).value;
-        assert(type !== STAKING_TYPE_LOCK || currentLock.expiration < globals.latestTimestamp, errs.LOCKED);
-
-        if (asset.id === 0) {
-            sendPayment({
-                amount: currentLock.amount,
-                receiver: this.txn.sender,
-                fee: 0,
-            });
-        } else {
-            sendAssetTransfer({
-                assetAmount: currentLock.amount,
-                assetReceiver: this.txn.sender,
-                xferAsset: asset,
-                fee: 0,
-            });
-        }
-        this.stakes(sk).delete();
-    }
-
-    createHeartbeat(address: Address, asset: AssetID): void {
-
-        assert(this.txn.sender === this.heartbeatManagerAddress.value, errs.NOT_HEARTBEAT_MANAGER);
-
-        const heartbeatKey: HeartbeatKey = { address: address, asset: asset };
-
-        assert(this.heartbeats(heartbeatKey).exists, errs.HEARBEAT_NOT_FOUND);
-
-        const heartbeats = this.heartbeats(heartbeatKey).value;
-
-        let amount = address.assetBalance(asset);
-        const hardStakeKey: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_HARD };
+        const hardStakeKey = new arc4StakeKey({ address: arc4Sender, asset: arc4Zero, type: arc4STAKING_TYPE_HARD })
         if (this.stakes(hardStakeKey).exists) {
-            amount += this.stakes(hardStakeKey).value.amount
+          hard = this.stakes(hardStakeKey).value.amount
         }
-
-        const lockStakeKey: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_LOCK };
+    
+        const lockStakeKey = new arc4StakeKey({ address: arc4Sender, asset: arc4Zero, type: arc4STAKING_TYPE_LOCK })
         if (this.stakes(lockStakeKey).exists) {
-            amount += this.stakes(lockStakeKey).value.amount
+          lock = this.stakes(lockStakeKey).value.amount
+        }
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        assert(payment.amount === (heartBeatMBR + lockMBR), ERR_INVALID_PAYMENT_AMOUNT)
+
+        const heartbeatKey = new arc4HeartbeatKey({
+          address: new arc4.Address(Txn.sender),
+          asset: arc4Zero
+        })
+
+        this.heartbeats(heartbeatKey).value = new arc4.StaticArray<arc4HeartbeatValues, 4>(
+          new arc4HeartbeatValues({
+            held,
+            hard,
+            lock,
+            timestamp
+          }),
+          EmptyHeartbeatValue,
+          EmptyHeartbeatValue,
+          EmptyHeartbeatValue
+        )
+      } else {
+        assert(Txn.sender.balance >= amount.native, ERR_INSUFFICIENT_BALANCE)
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        assert(payment.amount === lockMBR, ERR_INVALID_PAYMENT_AMOUNT)
+      }
+
+      this.stakes(sk).value = new arc4StakeValue({
+        amount,
+        lastUpdate: timestamp,
+        expiration,
+      })
+    } else {
+
+      assert(type.native !== STAKING_TYPE_HEARTBEAT, ERR_HEARTBEAT_CANNOT_UPDATE)
+      const currentStake = this.stakes(sk).value
+      assert(expiration >= currentStake.expiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
+
+      if (isEscrow) {
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        assert(payment.amount === amount.native, ERR_INVALID_PAYMENT_AMOUNT)
+      } else {
+        assert(Txn.sender.balance >= (currentStake.amount.native + amount.native), ERR_INSUFFICIENT_BALANCE)
+      }
+
+      const newAmount = new arc4.UintN64(currentStake.amount.native + amount.native)
+
+      this.stakes(sk).value = new arc4StakeValue({
+        amount: newAmount,
+        lastUpdate: timestamp,
+        expiration
+      })
+    }
+  }
+
+  stakeAsa(
+    payment: gtxn.PaymentTxn,
+    assetXfer: gtxn.AssetTransferTxn,
+    type: arc4.UintN64,
+    amount: arc4.UintN64,
+    expiration: arc4.UintN64
+  ): void {
+    const inTheFuture = expiration.native > Global.latestTimestamp
+    const lessThanOneYearInTheFuture = expiration.native <= (Global.latestTimestamp + ONE_YEAR)
+    const locked = type.native !== STAKING_TYPE_LOCK
+    const isEscrow = type.native === STAKING_TYPE_HARD || type.native === STAKING_TYPE_LOCK
+    const timestamp = new arc4.UintN64(Global.latestTimestamp)
+
+    assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION)
+
+    const asset = new arc4.UintN64(assetXfer.xferAsset.id)
+    const arc4Sender = new arc4.Address(Txn.sender)
+    const sk = new arc4StakeKey({
+      address: arc4Sender,
+      asset,
+      type
+    })
+
+    const isUpdate = this.stakes(sk).exists
+
+    if (!isUpdate) {
+      if (isEscrow) {
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        assert(payment.amount === lockMBR, ERR_INVALID_PAYMENT_AMOUNT)
+
+        assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
+        assert(assetXfer.assetAmount === amount.native, ERR_INVALID_ASSET_AMOUNT)
+
+      } else if (type.native === STAKING_TYPE_HEARTBEAT) {
+
+        const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset.native)
+
+        assert(optedIn, ERR_NOT_OPTED_IN)
+        assert(holdingAmount > 0, ERR_INVALID_ASSET_AMOUNT)
+
+        const held = new arc4.UintN64(holdingAmount)
+        let hard = arc4Zero
+        let lock = arc4Zero
+
+        const hardStakeKey = new arc4StakeKey({ address: arc4Sender, asset, type: arc4STAKING_TYPE_HARD })
+        if (this.stakes(hardStakeKey).exists) {
+          hard = this.stakes(hardStakeKey).value.amount
+        }
+    
+        const lockStakeKey = new arc4StakeKey({ address: arc4Sender, asset, type: arc4STAKING_TYPE_LOCK })
+        if (this.stakes(lockStakeKey).exists) {
+          lock = this.stakes(lockStakeKey).value.amount
         }
 
-        /**
-         * The index with the highest timestamp is the newest 
-         * since we only keep history of the last 4 heartbeats
-         * all we need to do is check which timestamp in the array
-         * is the highest and replace the one after it with the new heartbeat
-         * 
-        */
-        for (let i = 0; i < 4; i += 1) {
-            if (i === 3 || heartbeats[i].timestamp > heartbeats[i + 1].timestamp) {
-                const indexToModify = i === 3 ? 0 : i + 1;
-                this.heartbeats(heartbeatKey).value[indexToModify] = {
-                    amount: amount,
-                    timestamp: globals.latestTimestamp
-                }
-                return;
-            }
-        }
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        assert(payment.amount === (heartBeatMBR + lockMBR), ERR_INVALID_PAYMENT_AMOUNT)
+
+        assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
+        assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
+
+        const heartbeatKey = new arc4HeartbeatKey({
+          address: arc4Sender,
+          asset: asset
+        })
+
+        this.heartbeats(heartbeatKey).value = new arc4.StaticArray<arc4HeartbeatValues, 4>(
+          new arc4HeartbeatValues({
+            held,
+            hard,
+            lock,
+            timestamp
+          }),
+          EmptyHeartbeatValue,
+          EmptyHeartbeatValue,
+          EmptyHeartbeatValue
+        )
+      } else {
+        const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset.native)
+        assert(optedIn, ERR_NOT_OPTED_IN)
+        assert(holdingAmount >= amount.native, ERR_INSUFFICIENT_BALANCE)
+
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+        assert(payment.amount === lockMBR, ERR_INVALID_PAYMENT_AMOUNT)
+
+        assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
+        assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
+      }
+
+      this.stakes(sk).value = new arc4StakeValue({
+        amount,
+        lastUpdate: timestamp,
+        expiration,
+      })
+    } else {
+
+      assert(type.native !== STAKING_TYPE_HEARTBEAT, ERR_HEARTBEAT_CANNOT_UPDATE)
+      const currentStake = this.stakes(sk).value
+      assert(expiration >= currentStake.expiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
+
+      // updates to asa staking shouldnt require any mbr changes
+      assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+      assert(payment.amount === 0, ERR_INVALID_PAYMENT_AMOUNT)
+
+      if (isEscrow) {
+        assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
+        assert(assetXfer.assetAmount === amount.native, ERR_INVALID_ASSET_AMOUNT)
+      } else {
+        const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset.native)
+        assert(optedIn, ERR_NOT_OPTED_IN)
+        assert(holdingAmount >= (currentStake.amount.native + amount.native), ERR_INSUFFICIENT_BALANCE)
+      }
+
+      const newAmount = new arc4.UintN64(currentStake.amount.native + amount.native)
+
+      this.stakes(sk).value = new arc4StakeValue({
+        amount: newAmount,
+        lastUpdate: timestamp,
+        expiration
+      })
+    }
+  }
+
+  withdraw(asset: arc4.UintN64, type: arc4.UintN64): void {
+    assert(type.native === STAKING_TYPE_HARD || type.native === STAKING_TYPE_LOCK, ERR_WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK)
+    const arc4Sender = new arc4.Address(Txn.sender)
+    const sk = new arc4StakeKey({ address: arc4Sender, asset, type })
+    assert(this.stakes(sk).exists, ERR_NO_LOCK)
+
+    const currentStake = this.stakes(sk).value
+    assert(type.native !== STAKING_TYPE_LOCK || currentStake.expiration.native < Global.latestTimestamp, ERR_LOCKED)
+
+    if (asset.native === 0) {
+      itxn
+        .payment({
+          receiver: Txn.sender,
+          amount: currentStake.amount.native,
+          fee: 0
+        })
+        .submit()
+    } else {
+      itxn
+        .assetTransfer({
+          assetReceiver: Txn.sender,
+          assetAmount: currentStake.amount.native,
+          xferAsset: asset.native,
+          fee: 0
+        })
+        .submit()
+    }
+    this.stakes(sk).delete();
+  }
+
+  createHeartbeat(address: arc4.Address, asset: arc4.UintN64): void {
+    assert(Txn.sender === this.heartbeatManagerAddress.value, ERR_NOT_HEARTBEAT_MANAGER)
+
+    const hbk = new arc4HeartbeatKey({ address, asset })
+    assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
+
+    const timestamp = new arc4.UintN64(Global.latestTimestamp)
+    const heartbeats = this.heartbeats(hbk).value
+
+    const [holdings] = AssetHolding.assetBalance(address.native, asset.native)
+    const held = new arc4.UintN64(holdings)
+    let hard = arc4Zero
+    let lock = arc4Zero
+
+    const hardStakeKey = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_HARD })
+    if (this.stakes(hardStakeKey).exists) {
+      hard = this.stakes(hardStakeKey).value.amount
     }
 
-    softCheck(address: Address, asset: AssetID): boolean {
-        const sk: StakeKey = { address: address, asset: asset, type: STAKING_TYPE_SOFT };
-        assert(this.stakes(sk).exists, errs.STAKE_DOESNT_EXIST);
-        
-        const stake = this.stakes(sk).value;
-        if (asset.id === 0) {
-            const valid = address.balance >= stake.amount;
-            if (!valid) {
-                this.stakes(sk).value = {
-                    amount: address.balance,
-                    lastUpdate: globals.latestTimestamp,
-                    expiration: 0,
-                };
-            }
-            return valid;
-        }
-        const valid = address.assetBalance(asset) >= stake.amount;
-        if (!valid) {
-            this.stakes(sk).value = {
-                amount: address.assetBalance(asset),
-                lastUpdate: globals.latestTimestamp,
-                expiration: 0,
-            };
-        }
-        return valid;
+    const lockStakeKey = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_LOCK })
+    if (this.stakes(lockStakeKey).exists) {
+      lock = this.stakes(lockStakeKey).value.amount
     }
+
+    /**
+     * The index with the highest timestamp is the newest 
+     * since we only keep history of the last 4 heartbeats
+     * all we need to do is check which timestamp in the array
+     * is the highest and replace the one after it with the new heartbeat
+     * 
+    */
+    for (let i = 0; i < 4; i += 1) {
+      if (i === 3 || heartbeats[i].timestamp > heartbeats[i + 1].timestamp) {
+        const indexToModify = i === 3 ? 0 : i + 1;
+        this.heartbeats(hbk).value[indexToModify] = new arc4HeartbeatValues({
+          held,
+          hard,
+          lock,
+          timestamp
+        })
+        return
+      }
+    }
+  }
+
+  softCheck(address: arc4.Address, asset: arc4.UintN64): boolean {
+    const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_SOFT })
+    assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
+    
+    const stake = this.stakes(sk).value
+    const lastUpdate = new arc4.UintN64(Global.latestTimestamp)
+    
+    if (asset.native === 0) {
+      const valid = address.native.balance >= stake.amount.native
+      if (!valid) {
+        const arc4Balance = new arc4.UintN64(address.native.balance)
+
+        this.stakes(sk).value = new arc4StakeValue({
+          amount: arc4Balance,
+          lastUpdate,
+          expiration: arc4Zero,
+        })
+      }
+      return valid
+    }
+
+    const [holdingAmount, optedIn] = AssetHolding.assetBalance(address.native, asset.native)
+    assert(optedIn, ERR_NOT_OPTED_IN)
+    const valid = holdingAmount >= stake.amount.native
+    if (!valid) {
+      const arc4Balance = new arc4.UintN64(holdingAmount)
+      
+      this.stakes(sk).value = new arc4StakeValue({
+        amount: arc4Balance,
+        lastUpdate,
+        expiration: arc4Zero,
+      })
+    }
+
+    return valid
+  }
 }

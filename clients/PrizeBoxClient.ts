@@ -393,8 +393,8 @@ export class PrizeBoxFactory {
   public async deploy(params: PrizeBoxDeployParams = {}) {
     const result = await this.appFactory.deploy({
       ...params,
-      createParams: params.createParams?.method ? PrizeBoxParamsFactory.create._resolveByMethod(params.createParams) : params.createParams,
-      deleteParams: params.deleteParams?.method ? PrizeBoxParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams,
+      createParams: params.createParams?.method ? PrizeBoxParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams as (PrizeBoxCreateCallParams & { args: Uint8Array[] }) : undefined,
+      deleteParams: params.deleteParams?.method ? PrizeBoxParamsFactory.delete._resolveByMethod(params.deleteParams) : params.deleteParams ? params.deleteParams as (PrizeBoxDeleteCallParams & { args: Uint8Array[] }) : undefined,
     })
     return { result: result.result, appClient: new PrizeBoxClient(result.appClient) }
   }
@@ -472,7 +472,7 @@ export class PrizeBoxFactory {
        */
       createApplication: async (params: CallParams<PrizeBoxArgs['obj']['createApplication(address)void'] | PrizeBoxArgs['tuple']['createApplication(address)void']> & AppClientCompilationParams & CreateSchema & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
         const result = await this.appFactory.send.create(PrizeBoxParamsFactory.create.createApplication(params))
-        return { result: { ...result.result, return: result.result.return as undefined | PrizeBoxReturns['createApplication(address)void'] }, appClient: new PrizeBoxClient(result.appClient) }
+        return { result: { ...result.result, return: result.result.return as unknown as (undefined | PrizeBoxReturns['createApplication(address)void']) }, appClient: new PrizeBoxClient(result.appClient) }
       },
     },
 
@@ -702,7 +702,7 @@ export class PrizeBoxClient {
        */
       deleteApplication: async (params: CallParams<PrizeBoxArgs['obj']['deleteApplication()void'] | PrizeBoxArgs['tuple']['deleteApplication()void']> & SendParams = {args: []}) => {
         const result = await this.appClient.send.delete(PrizeBoxParamsFactory.delete.deleteApplication(params))
-        return {...result, return: result.return as undefined | PrizeBoxReturns['deleteApplication()void']}
+        return {...result, return: result.return as unknown as (undefined | PrizeBoxReturns['deleteApplication()void'])}
       },
 
     },
@@ -725,7 +725,7 @@ export class PrizeBoxClient {
      */
     transfer: async (params: CallParams<PrizeBoxArgs['obj']['transfer(address)void'] | PrizeBoxArgs['tuple']['transfer(address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PrizeBoxParamsFactory.transfer(params))
-      return {...result, return: result.return as undefined | PrizeBoxReturns['transfer(address)void']}
+      return {...result, return: result.return as unknown as (undefined | PrizeBoxReturns['transfer(address)void'])}
     },
 
     /**
@@ -736,7 +736,7 @@ export class PrizeBoxClient {
      */
     optin: async (params: CallParams<PrizeBoxArgs['obj']['optin(pay,uint64)void'] | PrizeBoxArgs['tuple']['optin(pay,uint64)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PrizeBoxParamsFactory.optin(params))
-      return {...result, return: result.return as undefined | PrizeBoxReturns['optin(pay,uint64)void']}
+      return {...result, return: result.return as unknown as (undefined | PrizeBoxReturns['optin(pay,uint64)void'])}
     },
 
     /**
@@ -747,7 +747,7 @@ export class PrizeBoxClient {
      */
     withdraw: async (params: CallParams<PrizeBoxArgs['obj']['withdraw((uint64,uint64)[])void'] | PrizeBoxArgs['tuple']['withdraw((uint64,uint64)[])void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(PrizeBoxParamsFactory.withdraw(params))
-      return {...result, return: result.return as undefined | PrizeBoxReturns['withdraw((uint64,uint64)[])void']}
+      return {...result, return: result.return as unknown as (undefined | PrizeBoxReturns['withdraw((uint64,uint64)[])void'])}
     },
 
   }
@@ -924,7 +924,7 @@ export type PrizeBoxComposer<TReturns extends [...any[]] = []> = {
   /**
    * Returns the underlying AtomicTransactionComposer instance
    */
-  composer(): TransactionComposer
+  composer(): Promise<TransactionComposer>
   /**
    * Simulates the transaction group and returns the result
    */
