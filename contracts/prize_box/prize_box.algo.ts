@@ -1,89 +1,103 @@
-import { Contract } from "@algorandfoundation/tealscript";
-
-const errs = {
-    ALREADY_OPTED_IN: 'Asset is already opted in',
-    NOT_OWNER: 'Only the owner can withdraw funds',
-    NOT_EMPTY: 'Cannot delete application with prizes',
-}
-
-export type AssetInfo = {
-    asset: AssetID;
-    amount: uint64;
-}
+import { Contract, abimethod, Account, arc4, assert, Global, GlobalState, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { ERR_INVALID_ASSET, ERR_NOT_EMPTY, ERR_NOT_OWNER } from "./errors";
+import { arc4AssetInfo } from "./types";
+import { PrizeBoxGlobalStateKeyOptinCount, PrizeBoxGlobalStateKeyOwner } from "./constants";
+import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from "../../utils/errors";
+import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 export class PrizeBox extends Contract {
-    /** the owner of the box of prizes */
-    owner = GlobalStateKey<Address>({ key: 'owner' });
-    /** the current count of prizes opted in */
-    count = GlobalStateKey<uint64>({ key: 'count' });
+  /** the owner of the box of prizes */
+  owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
+  /** the current count of prizes opted in */
+  optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
 
-    createApplication(owner: Address): void {
-        this.owner.value = owner;
-        this.count.value = 0;
-    }
+  // @ts-ignore
+  @abimethod({ onCreate: 'require' })
+  createApplication(owner: Address): void {
+    this.owner.value = owner.native
+    this.optinCount.value = 0
+  }
 
-    transfer(newOwner: Address): void {
-        assert(this.txn.sender === this.owner.value, errs.NOT_OWNER);
-        this.owner.value = newOwner;
-    }
+  /**
+   * optin tells the contract to opt into an asa
+   * @param payment The payment transaction
+   * @param asset The asset to be opted into
+   */
+  optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assert(payment.amount === Global.assetOptInMinBalance, ERR_INVALID_PAYMENT_AMOUNT)
 
-    optin(payment: PayTxn, asset: AssetID): void {
-        assert(this.txn.sender === this.owner.value, errs.NOT_OWNER);
-        // ensure the asset is not already opted in
-        assert(!this.app.address.isOptedInToAsset(asset), errs.ALREADY_OPTED_IN);
+    itxn
+      .assetTransfer({
+        assetReceiver: Global.currentApplicationAddress,
+        assetAmount: 0,
+        xferAsset: asset,
+        fee: 0,
+      })
+      .submit()
 
-        verifyPayTxn(payment, {
-            receiver: this.app.address,
-            amount: globals.assetOptInMinBalance,
-        });
+    this.optinCount.value += 1
+  }
 
-        sendAssetTransfer({
-            assetReceiver: this.app.address,
-            xferAsset: asset,
-            assetAmount: 0,
-            fee: 0,
-        });
-    }
+  transfer(newOwner: Address): void {
+    assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
+    this.owner.value = newOwner.native
+  }
 
-    withdraw(assets: AssetInfo[]): void {
-        assert(this.txn.sender === this.owner.value, errs.NOT_OWNER);
+  withdraw(assets: arc4.DynamicArray<arc4AssetInfo>): void {
+    assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
 
-        for (let i = 0; i < assets.length; i += 1) {
-            if (assets[i].asset.id !== 0) {
-                const closeOut = this.app.address.assetBalance(assets[i].asset) === assets[i].amount;
-                if (closeOut) {
-                    this.count.value -= 1;
-                    sendAssetTransfer({
-                        xferAsset: assets[i].asset,
-                        assetAmount: assets[i].amount,
-                        assetReceiver: this.owner.value,
-                        assetCloseTo: this.owner.value,
-                        fee: 0,
-                    });
-                } else {
-                    sendAssetTransfer({
-                        xferAsset: assets[i].asset,
-                        assetAmount: assets[i].amount,
-                        assetReceiver: this.owner.value,
-                        assetCloseTo: this.owner.value,
-                        fee: 0,
-                    });
-                }
-            } else {
-                sendPayment({
-                    amount: assets[i].amount,
-                    receiver: this.owner.value,
-                });
-            }
+    for (let i: uint64 = 0; i < assets.length; i += 1) {
+      if (assets[i].asset.native !== 0) {
+        const [assetHolding, optedIn] = AssetHolding.assetBalance(Global.currentApplicationAddress, assets[i].asset.native)
+        assert(optedIn, ERR_INVALID_ASSET)
+
+        const closeOut = assetHolding === assets[i].amount.native
+        if (closeOut) {
+          this.optinCount.value -= 1
+
+          itxn
+            .assetTransfer({
+              xferAsset: assets[i].asset.native,
+              assetAmount: assets[i].amount.native,
+              assetReceiver: this.owner.value,
+              assetCloseTo: this.owner.value,
+              fee: 0,
+            })
+            .submit()
+        } else {
+          itxn
+            .assetTransfer({
+              xferAsset: assets[i].asset.native,
+              assetAmount: assets[i].amount.native,
+              assetReceiver: this.owner.value,
+              fee: 0,
+            })
+            .submit()
         }
-    }
-
-    deleteApplication(): void {
-        assert(this.txn.sender === this.owner.value, errs.NOT_OWNER);
-        assert(this.count.value === 0, errs.NOT_EMPTY)
-        sendPayment({
+      } else {
+        itxn
+          .payment({
+            amount: assets[i].amount.native,
             receiver: this.owner.value,
-            closeRemainderTo: this.owner.value,
-        });
+          })
+          .submit()
+      }
     }
+  }
+
+  // @ts-ignore
+  @abimethod({ allowActions: 'DeleteApplication' })
+  deleteApplication(): void {
+    assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
+    assert(this.optinCount.value === 0, ERR_NOT_EMPTY)
+    itxn
+      .payment({
+        closeRemainderTo: this.owner.value,
+        receiver: this.owner.value,
+      })
+      .submit()
+  }
 }

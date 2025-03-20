@@ -6,6 +6,7 @@ import { ERR_BAD_EXPIRATION, ERR_BAD_EXPIRATION_UPDATE, ERR_HEARBEAT_NOT_FOUND, 
 import { arc4Zero } from "../../utils/constants";
 import { ERR_INVALID_ASSET_AMOUNT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER, ERR_NOT_OPTED_IN } from "../../utils/errors";
 import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
+import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 export class Staking extends AkitaBaseContract {
 
@@ -19,7 +20,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  getTimeLeft(address: arc4.Address, asset: arc4.UintN64): uint64 {
+  getTimeLeft(address: Address, asset: arc4.UintN64): uint64 {
     const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_LOCK })
 
     if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration.native) {
@@ -31,7 +32,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  mustGetTimeLeft(address: arc4.Address, asset: arc4.UintN64): uint64 {
+  mustGetTimeLeft(address: Address, asset: arc4.UintN64): uint64 {
     const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_LOCK })
     assert(this.stakes(sk).exists, ERR_NO_LOCK)
     assert(Global.latestTimestamp < this.stakes(sk).value.expiration.native, ERR_LOCKED)
@@ -40,7 +41,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  getInfo(address: arc4.Address, stake: arc4StakeInfo): arc4StakeValue {
+  getInfo(address: Address, stake: arc4StakeInfo): arc4StakeValue {
     const sk = new arc4StakeKey({ address, ...stake })
     if (!this.stakes(sk).exists) {
       return new arc4StakeValue({
@@ -54,7 +55,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  mustGetInfo(address: arc4.Address, stake: arc4StakeInfo): arc4StakeValue {
+  mustGetInfo(address: Address, stake: arc4StakeInfo): arc4StakeValue {
     const sk = new arc4StakeKey({ address, ...stake })
     assert(this.stakes(sk).exists, ERR_NO_LOCK);
     return this.stakes(sk).value;
@@ -62,7 +63,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  getEscrowInfo(address: arc4.Address, asset: arc4.UintN64): arc4EscrowValue {
+  getEscrowInfo(address: Address, asset: arc4.UintN64): arc4EscrowValue {
     const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_HARD })
     const lk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_LOCK })
 
@@ -81,7 +82,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  getHeartbeat(address: arc4.Address, asset: arc4.UintN64): arc4.StaticArray<arc4HeartbeatValues, 4> {
+  getHeartbeat(address: Address, asset: arc4.UintN64): arc4.StaticArray<arc4HeartbeatValues, 4> {
     const hbk = new arc4HeartbeatKey({ address, asset })
     if (!this.heartbeats(hbk).exists) {
       return new arc4.StaticArray(
@@ -97,7 +98,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  mustGetHeartbeat(address: arc4.Address, asset: arc4.UintN64): arc4.StaticArray<arc4HeartbeatValues, 4> {
+  mustGetHeartbeat(address: Address, asset: arc4.UintN64): arc4.StaticArray<arc4HeartbeatValues, 4> {
     const hbk = new arc4HeartbeatKey({ address, asset })
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     return this.heartbeats(hbk).value
@@ -105,7 +106,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  getHeartbeatAverage(address: arc4.Address, asset: arc4.UintN64, includeStaked: arc4.Bool): uint64 {
+  getHeartbeatAverage(address: Address, asset: arc4.UintN64, includeStaked: arc4.Bool): uint64 {
     const hbk = new arc4HeartbeatKey({ address, asset })
 
     if (!this.heartbeats(hbk).exists) {
@@ -132,7 +133,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  mustGetHeartbeatAverage(address: arc4.Address, asset: arc4.UintN64, includeStaked: arc4.Bool): uint64 {
+  mustGetHeartbeatAverage(address: Address, asset: arc4.UintN64, includeStaked: arc4.Bool): uint64 {
     const hbk = new arc4HeartbeatKey({ address, asset })
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
 
@@ -157,7 +158,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  getInfoList(address: arc4.Address, type: arc4.UintN64, assets: arc4.DynamicArray<arc4.UintN64>): arc4.DynamicArray<arc4StakeValue> {
+  getInfoList(address: Address, type: arc4.UintN64, assets: arc4.DynamicArray<arc4.UintN64>): arc4.DynamicArray<arc4StakeValue> {
     let results = new arc4.DynamicArray<arc4StakeValue>()
     for (let i = 0; i < assets.length; i += 1) {
       const sk = new arc4StakeKey({ address, asset: assets[i], type })
@@ -176,7 +177,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  mustGetInfoList(address: arc4.Address, type: arc4.UintN64, assets: arc4.DynamicArray<arc4.UintN64>): arc4.DynamicArray<arc4StakeValue> {
+  mustGetInfoList(address: Address, type: arc4.UintN64, assets: arc4.DynamicArray<arc4.UintN64>): arc4.DynamicArray<arc4StakeValue> {
     let results = new arc4.DynamicArray<arc4StakeValue>()
     for (let i = 0; i < assets.length; i += 1) {
       const sk = new arc4StakeKey({ address, asset: assets[i], type })
@@ -188,7 +189,7 @@ export class Staking extends AkitaBaseContract {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  stakeCheck(address: arc4.Address, assetChecks: arc4.DynamicArray<arc4AssetCheck>, type: arc4.UintN64, includeStaked: arc4.Bool): boolean {
+  stakeCheck(address: Address, assetChecks: arc4.DynamicArray<arc4AssetCheck>, type: arc4.UintN64, includeStaked: arc4.Bool): boolean {
     for (let i = 0; i < assetChecks.length; i += 1) {
       const sk = new arc4StakeKey({ address, asset: assetChecks[i].asset, type })
       if (!this.stakes(sk).exists) {
@@ -228,7 +229,7 @@ export class Staking extends AkitaBaseContract {
 
     assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION);
 
-    const arc4Sender = new arc4.Address(Txn.sender)
+    const arc4Sender = new Address(Txn.sender)
     const sk = new arc4StakeKey({
       address: arc4Sender,
       asset: arc4Zero,
@@ -262,7 +263,7 @@ export class Staking extends AkitaBaseContract {
         assert(payment.amount === (heartBeatMBR + lockMBR), ERR_INVALID_PAYMENT_AMOUNT)
 
         const heartbeatKey = new arc4HeartbeatKey({
-          address: new arc4.Address(Txn.sender),
+          address: new Address(Txn.sender),
           asset: arc4Zero
         })
 
@@ -327,7 +328,7 @@ export class Staking extends AkitaBaseContract {
     assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION)
 
     const asset = new arc4.UintN64(assetXfer.xferAsset.id)
-    const arc4Sender = new arc4.Address(Txn.sender)
+    const arc4Sender = new Address(Txn.sender)
     const sk = new arc4StakeKey({
       address: arc4Sender,
       asset,
@@ -435,7 +436,7 @@ export class Staking extends AkitaBaseContract {
 
   withdraw(asset: arc4.UintN64, type: arc4.UintN64): void {
     assert(type.native === STAKING_TYPE_HARD || type.native === STAKING_TYPE_LOCK, ERR_WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK)
-    const arc4Sender = new arc4.Address(Txn.sender)
+    const arc4Sender = new Address(Txn.sender)
     const sk = new arc4StakeKey({ address: arc4Sender, asset, type })
     assert(this.stakes(sk).exists, ERR_NO_LOCK)
 
@@ -463,7 +464,7 @@ export class Staking extends AkitaBaseContract {
     this.stakes(sk).delete();
   }
 
-  createHeartbeat(address: arc4.Address, asset: arc4.UintN64): void {
+  createHeartbeat(address: Address, asset: arc4.UintN64): void {
     assert(Txn.sender === this.heartbeatManagerAddress.value, ERR_NOT_HEARTBEAT_MANAGER)
 
     const hbk = new arc4HeartbeatKey({ address, asset })
@@ -494,7 +495,7 @@ export class Staking extends AkitaBaseContract {
      * is the highest and replace the one after it with the new heartbeat
      * 
     */
-    for (let i = 0; i < 4; i += 1) {
+    for (let i: uint64 = 0; i < 4; i += 1) {
       if (i === 3 || heartbeats[i].timestamp > heartbeats[i + 1].timestamp) {
         const indexToModify = i === 3 ? 0 : i + 1;
         this.heartbeats(hbk).value[indexToModify] = new arc4HeartbeatValues({
@@ -508,7 +509,7 @@ export class Staking extends AkitaBaseContract {
     }
   }
 
-  softCheck(address: arc4.Address, asset: arc4.UintN64): boolean {
+  softCheck(address: Address, asset: arc4.UintN64): boolean {
     const sk = new arc4StakeKey({ address, asset, type: arc4STAKING_TYPE_SOFT })
     assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
     

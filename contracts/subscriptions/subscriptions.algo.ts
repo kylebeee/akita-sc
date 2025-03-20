@@ -1,13 +1,15 @@
 import { ContractWithOptinAndArc58AndGate } from '../../utils/base_contracts/gate.algo';
-import { abimethod, arc4, assert, Asset, BigUint, biguint, BoxMap, bytes, Global, gtxn, itxn, OnCompleteAction, Uint64, uint64 } from '@algorandfoundation/algorand-typescript';
+import { abimethod, arc4, assert, Asset, BigUint, biguint, BoxMap, bytes, Global, gtxn, itxn, OnCompleteAction, uint64 } from '@algorandfoundation/algorand-typescript';
 import { Amounts, arc4BlockListKey, arc4PassesKey, arc4ServiceID, arc4ServicesKey, arc4ServicesValue, arc4SubscriptionID, arc4SubscriptionInfo, arc4SubscriptionInfoWithPasses, arc4SubscriptionKey, ServiceStatusActive, ServiceStatusPaused, ServiceStatusShutdown } from './types';
 import { blockMBR, SubscriptionsBoxPrefixBlocks, SubscriptionsBoxPrefixPasses, SubscriptionsBoxPrefixServices, SubscriptionsBoxPrefixServicesList, SubscriptionsBoxPrefixSubscriptions, SubscriptionsBoxPrefixSubscriptionsList, subscriptionsMBR } from './constants';
 import { arc4AssetAndAmount } from '../../utils/types/optin';
 import { Txn } from '@algorandfoundation/algorand-typescript/op';
-import { ERR_ASA_MISMATCH, ERR_BAD_WINDOW, ERR_BLOCKED, ERR_FAILED_GATE, ERR_INVALID_ASSET_AMOUNT, ERR_INVALID_ASSET_RECEIVER, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER, ERR_MAX_PASSES_IS_FIVE, ERR_MIN_AMOUNT_IS_THREE, ERR_MIN_INTERVAL_IS_SIXTY, ERR_NO_DONATIONS, ERR_NOT_ENOUGH_FUNDS, ERR_PASS_COUNT_OVERFLOW, ERR_SERVICE_DOES_NOT_EXIST, ERR_SERVICE_INDEX_MUST_BE_ABOVE_ZERO, ERR_SERVICE_IS_NOT_ACTIVE, ERR_SERVICE_IS_NOT_PAUSED, ERR_SERVICE_IS_SHUTDOWN, ERR_SUBSCRIPTION_DOES_NOT_EXIST, ERR_USER_ALREADY_BLOCKED, ERR_USER_NOT_BLOCKED } from './errs';
-import { methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
+import { ERR_ASA_MISMATCH, ERR_BAD_WINDOW, ERR_BLOCKED, ERR_FAILED_GATE, ERR_INVALID_ASSET_AMOUNT, ERR_INVALID_ASSET_RECEIVER, ERR_MAX_PASSES_IS_FIVE, ERR_MIN_AMOUNT_IS_THREE, ERR_MIN_INTERVAL_IS_SIXTY, ERR_NO_DONATIONS, ERR_NOT_ENOUGH_FUNDS, ERR_PASS_COUNT_OVERFLOW, ERR_SERVICE_DOES_NOT_EXIST, ERR_SERVICE_INDEX_MUST_BE_ABOVE_ZERO, ERR_SERVICE_IS_NOT_ACTIVE, ERR_SERVICE_IS_NOT_PAUSED, ERR_SERVICE_IS_SHUTDOWN, ERR_SUBSCRIPTION_DOES_NOT_EXIST, ERR_USER_ALREADY_BLOCKED, ERR_USER_NOT_BLOCKED } from './errors';
+import { Address, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
 import { AkitaDAO } from '../dao/dao.algo';
 import { arc4Zero, DIVISOR } from '../../utils/constants';
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../../utils/errors';
+import { GateArgs } from '../../utils/types/gates';
 
 // eslint-disable-next-line no-unused-vars
 export class Subscriptions extends ContractWithOptinAndArc58AndGate {
@@ -26,7 +28,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    * 
    * 2_500 + (400 * (32 + 8)) = 18_500
    */
-  subscriptionslist = BoxMap<arc4.Address, arc4SubscriptionID>({ keyPrefix: SubscriptionsBoxPrefixSubscriptionsList })
+  subscriptionslist = BoxMap<Address, arc4SubscriptionID>({ keyPrefix: SubscriptionsBoxPrefixSubscriptionsList })
 
   /**
    * services is a map of services a specific merchant has
@@ -36,7 +38,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    */
   services = BoxMap<arc4ServicesKey, arc4ServicesValue>({ keyPrefix: SubscriptionsBoxPrefixServices })
 
-  serviceslist = BoxMap<arc4.Address, arc4ServiceID>({ keyPrefix: SubscriptionsBoxPrefixServicesList })
+  serviceslist = BoxMap<Address, arc4ServiceID>({ keyPrefix: SubscriptionsBoxPrefixServicesList })
 
   /**  
    * blocks allow merchants to specify which addresses cannot subscribe
@@ -46,13 +48,13 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    */
   blocks = BoxMap<arc4BlockListKey, arc4.StaticBytes<0>>({ keyPrefix: SubscriptionsBoxPrefixBlocks })
 
-  passes = BoxMap<arc4PassesKey, arc4.DynamicArray<arc4.Address>>({ keyPrefix: SubscriptionsBoxPrefixPasses })
+  passes = BoxMap<arc4PassesKey, arc4.DynamicArray<Address>>({ keyPrefix: SubscriptionsBoxPrefixPasses })
 
   private getLatestWindowStart(startDate: uint64, interval: uint64): uint64 {
     return Global.latestTimestamp - ((Global.latestTimestamp - startDate) % interval)
   }
 
-  private updateStreak(address: arc4.Address, id: arc4SubscriptionID, elseStreak: uint64): void {
+  private updateStreak(address: Address, id: arc4SubscriptionID, elseStreak: uint64): void {
     const subKey = new arc4SubscriptionKey({ address, id })
     const sub = this.subscriptions(subKey).value
 
@@ -108,13 +110,13 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
     )
   }
 
-  private newServiceID(address: arc4.Address): arc4ServiceID {
+  private newServiceID(address: Address): arc4ServiceID {
     let id: uint64 = this.serviceslist(address).exists ? this.serviceslist(address).value.native : 0
     this.serviceslist(address).value = new arc4.UintN64(id + 1)
     return new arc4.UintN64(id)
   }
 
-  private newSubscriptionID(address: arc4.Address): arc4SubscriptionID {
+  private newSubscriptionID(address: Address): arc4SubscriptionID {
     let id: uint64 = this.subscriptionslist(address).exists ? this.subscriptionslist(address).value.native : 0
     this.subscriptionslist(address).value = new arc4.UintN64(id + 1)
     return new arc4.UintN64(id)
@@ -127,7 +129,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    */
   // @ts-ignore
   @abimethod({ readonly: true })
-  isBlocked(address: arc4.Address, blocked: arc4.Address): boolean {
+  isBlocked(address: Address, blocked: Address): boolean {
     const trimmed = new arc4.StaticBytes<31>(address.bytes.slice(0, 31))
     return this.blocks(new arc4BlockListKey({ address: trimmed, blocked })).exists
   }
@@ -137,13 +139,13 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    */
   // @ts-ignore
   @abimethod({ readonly: true })
-  isShutdown(address: arc4.Address, id: arc4.UintN64): boolean {
+  isShutdown(address: Address, id: arc4.UintN64): boolean {
     return this.services(new arc4ServicesKey({ address, id })).value.status === ServiceStatusShutdown
   }
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  getSubsriptionInfo(address: arc4.Address, id: arc4.UintN64): arc4SubscriptionInfoWithPasses {
+  getSubsriptionInfo(address: Address, id: arc4.UintN64): arc4SubscriptionInfoWithPasses {
     const key = new arc4SubscriptionKey({ address, id })
 
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
@@ -151,7 +153,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
     const subInfo = this.subscriptions(key).value
 
     const passesKey = new arc4PassesKey({ address, id })
-    let passes = new arc4.DynamicArray<arc4.Address>()
+    let passes = new arc4.DynamicArray<Address>()
     if (this.passes(passesKey).exists) {
       passes = this.passes(passesKey).value.copy()
     }
@@ -164,7 +166,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
 
   // @ts-ignore
   @abimethod({ readonly: true })
-  isFirstSubscription(address: arc4.Address): boolean {
+  isFirstSubscription(address: Address): boolean {
     return !this.subscriptionslist(address).exists;
   }
 
@@ -188,26 +190,26 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
     gate: arc4.UintN64,
     cid: arc4.StaticBytes<36>,
   ): arc4ServiceID {
-    const address = new arc4.Address(Txn.sender)
+    const address = new Address(Txn.sender)
     const id = this.newServiceID(address)
     const boxKey = new arc4ServicesKey({ address, id })
 
     // ensure the amount is enough to take fees on
-    assert(amount.native > 3, ERR_MIN_AMOUNT_IS_THREE);
+    assert(amount.native > 3, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
     assert(interval.native >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
     // family passes have a max of 5
-    assert(passes.native <= 5, ERR_MAX_PASSES_IS_FIVE);
+    assert(passes.native <= 5, ERR_MAX_PASSES_IS_FIVE)
 
-    const fee = super.getSubscriptionFees().serviceCreationFee;
+    const fee = super.getSubscriptionFees().serviceCreationFee
 
-    let requiredAmount = fee;
+    let requiredAmount = fee
     if (asset.native !== 0) {
-      requiredAmount += Global.assetOptInMinBalance;
+      requiredAmount += Global.assetOptInMinBalance
     }
 
-    assert(payment.amount === requiredAmount, ERR_INVALID_PAYMENT_AMOUNT);
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER);
+    assert(payment.amount === requiredAmount, ERR_INVALID_PAYMENT_AMOUNT)
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
 
     this.services(boxKey).value = new arc4ServicesValue({
       status: ServiceStatusPaused,
@@ -219,7 +221,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
       cid: cid,
     })
 
-    return id;
+    return id
   }
 
   /**
@@ -230,7 +232,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    * @param index The index of the box to be used for the subscription
    */
   pauseService(id: arc4ServiceID): void {
-    const boxKey = new arc4ServicesKey({ address: new arc4.Address(Txn.sender), id })
+    const boxKey = new arc4ServicesKey({ address: new Address(Txn.sender), id })
     // ensure were not using zero as a box index
     // zero is reserved for non-service based subscriptions
     assert(id.native > 0, ERR_SERVICE_INDEX_MUST_BE_ABOVE_ZERO);
@@ -248,7 +250,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    * @param index The index of the box to be used for the subscription
    */
   activateService(id: arc4ServiceID): void {
-    const boxKey = new arc4ServicesKey({ address: new arc4.Address(Txn.sender), id })
+    const boxKey = new arc4ServicesKey({ address: new Address(Txn.sender), id })
 
     // ensure the box exists
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST);
@@ -264,7 +266,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    * @param index The index of the box to be used for the subscription
    */
   shutdownService(id: arc4ServiceID): void {
-    const boxKey = new arc4ServicesKey({ address: new arc4.Address(Txn.sender), id })
+    const boxKey = new arc4ServicesKey({ address: new Address(Txn.sender), id })
     // ensure the box exists
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
     // ensure the service isn't already shutdown
@@ -278,7 +280,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    * @param payment The payment to cover mbr for blocking
    * @param blocked The address to be blocked
    */
-  block(payment: gtxn.PaymentTxn, blocked: arc4.Address): void {
+  block(payment: gtxn.PaymentTxn, blocked: Address): void {
     const address = new arc4.StaticBytes<31>(Txn.sender.bytes.slice(0, 31))
     const boxKey = new arc4BlockListKey({ address, blocked })
 
@@ -295,7 +297,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
    * unblock removes an address from a merchants blocks
    * @param blocked The address to be unblocked
    */
-  unblock(blocked: arc4.Address): void {
+  unblock(blocked: Address): void {
     const address = new arc4.StaticBytes<31>(Txn.sender.bytes.slice(0, 31))
     const boxKey = new arc4BlockListKey({ address, blocked })
 
@@ -315,11 +317,11 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
 
   subscribe(
     payment: gtxn.PaymentTxn,
-    recipient: arc4.Address,
+    recipient: Address,
     amount: arc4.UintN64,
     interval: arc4.UintN64,
     serviceID: arc4ServiceID,
-    args: bytes[],
+    args: GateArgs,
   ): void {
     // ensure the amount is enough to take fees on
     assert(amount.native >= 3, ERR_MIN_AMOUNT_IS_THREE);
@@ -327,7 +329,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
     assert(interval.native >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
 
     const trimmedRecipient = new arc4.StaticBytes<31>(recipient.bytes.slice(0, 31))
-    const arc4Sender = new arc4.Address(Txn.sender)
+    const arc4Sender = new Address(Txn.sender)
     const blocksKey = new arc4BlockListKey({ address: trimmedRecipient, blocked: arc4Sender })
     // ensure they aren't blocked
     assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
@@ -410,11 +412,11 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
   subscribeAsa(
     payment: gtxn.PaymentTxn,
     assetXfer: gtxn.AssetTransferTxn,
-    recipient: arc4.Address,
+    recipient: Address,
     amount: arc4.UintN64,
     interval: arc4.UintN64,
     serviceID: arc4ServiceID,
-    args: bytes[],
+    args: GateArgs,
   ): void {
     // ensure the amount is enough to take fees on
     assert(amount.native > 3, ERR_MIN_AMOUNT_IS_THREE)
@@ -422,7 +424,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
     assert(interval.native >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
 
     const trimmedRecipient = new arc4.StaticBytes<31>(recipient.bytes.slice(0, 31))
-    const arc4Sender = new arc4.Address(Txn.sender)
+    const arc4Sender = new Address(Txn.sender)
     const blocksKey = new arc4BlockListKey({ address: trimmedRecipient, blocked: arc4Sender })
     // ensure they aren't blocked
     assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
@@ -516,7 +518,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
   }
 
   deposit(payment: gtxn.PaymentTxn, id: arc4SubscriptionID): void {
-    const subKey = new arc4SubscriptionKey({ address: new arc4.Address(Txn.sender), id })
+    const subKey = new arc4SubscriptionKey({ address: new Address(Txn.sender), id })
 
     assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
@@ -532,7 +534,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
   }
 
   depositAsa(assetXfer: gtxn.AssetTransferTxn, id: arc4SubscriptionID): void {
-    const subKey = new arc4SubscriptionKey({ address: new arc4.Address(Txn.sender), id })
+    const subKey = new arc4SubscriptionKey({ address: new Address(Txn.sender), id })
 
     assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
@@ -548,7 +550,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
   }
 
   withdraw(id: arc4SubscriptionID, amount: arc4.UintN64): void {
-    const subKey = new arc4SubscriptionKey({ address: new arc4.Address(Txn.sender), id })
+    const subKey = new arc4SubscriptionKey({ address: new Address(Txn.sender), id })
 
     assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
@@ -579,7 +581,7 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
     this.subscriptions(subKey).value.escrowed = newEscrowAmount
   }
 
-  triggerPayment(address: arc4.Address, id: arc4SubscriptionID, args: bytes[]): void {
+  triggerPayment(address: Address, id: arc4SubscriptionID, args: bytes[]): void {
     const subscriptionsKey = new arc4SubscriptionKey({ address, id })
 
     // ensure a subscription exists
@@ -686,12 +688,12 @@ export class Subscriptions extends ContractWithOptinAndArc58AndGate {
     this.subscriptions(subscriptionsKey).value.lastPayment = arc4LatestTimestamp
   }
 
-  streakCheck(sender: arc4.Address, id: arc4SubscriptionID): void {
+  streakCheck(sender: Address, id: arc4SubscriptionID): void {
     this.updateStreak(sender, id, 0);
   }
 
-  setPasses(id: arc4SubscriptionID, addresses: arc4.DynamicArray<arc4.Address>): void {
-    const arc4Sender = new arc4.Address(Txn.sender)
+  setPasses(id: arc4SubscriptionID, addresses: arc4.DynamicArray<Address>): void {
+    const arc4Sender = new Address(Txn.sender)
     const subscriptionsKey = new arc4SubscriptionKey({ address: arc4Sender, id })
 
     assert(this.subscriptions(subscriptionsKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)

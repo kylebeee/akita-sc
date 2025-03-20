@@ -1,10 +1,12 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript";
+import { arc4, Uint64, uint64 } from "@algorandfoundation/algorand-typescript";
 
 export const arc4Zero = new arc4.UintN64(0)
 
 export const DIVISOR: uint64 = 10_000
 
-export const MAX_UINT64 = '18446744073709551615';
+export const MAX_UINT64: uint64 = Uint64('18446744073709551615')
+
+export const roundsPerHour: uint64 = 1_333
 
 export const AkitaDomain: string = 'akita.community';
 

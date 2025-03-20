@@ -2,7 +2,7 @@ import { arc4, assert, BoxMap, bytes, Global, GlobalState, itxn, uint64 } from "
 import { AkitaBaseContract } from "../../../../utils/base_contracts/base.algo";
 import { GateGlobalStateKeyRegistryCursor } from "../../constants";
 import { arc4StakingAmountGateCheckParams, arc4StakingPowerRegistryInfo } from "./types";
-import { decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { Staking } from "../../../staking/staking.algo";
 import { arc4StakeInfo, arc4STAKING_TYPE_LOCK, StakeValue } from "../../../staking/types";
 import { Equal, GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo, NotEqual } from "../../../../utils/operators";
@@ -21,7 +21,7 @@ export class StakingPowerGate extends AkitaBaseContract {
     return id
   }
 
-  private stakingPowerGate(user: arc4.Address, op: uint64, asset: uint64, power: uint64): boolean {
+  private stakingPowerGate(user: Address, op: uint64, asset: uint64, power: uint64): boolean {
 
     // TODO: replace with itxn.abiCall when available
     const infoTxn = itxn

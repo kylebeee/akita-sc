@@ -4,7 +4,7 @@ import { arc4FollowerIndexGateCheckParams, arc4FollowerIndexRegistryInfo } from 
 import { GateGlobalStateKeyRegistryCursor } from "../../constants";
 import { Operator } from "../../types";
 import { Equal, GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo, NotEqual } from "../../../../utils/operators";
-import { decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { AkitaSocialPlugin } from "../../../arc58/plugins/social/social.algo";
 import { ERR_INVALID_ARG_COUNT } from "../../errors";
 
@@ -20,7 +20,7 @@ export class FollowerIndexGate extends AkitaBaseContract {
     return id
   }
 
-  private followerIndexGate(user: arc4.Address, index: uint64, follower: arc4.Address, op: Operator, value: uint64): boolean {
+  private followerIndexGate(user: Address, index: uint64, follower: Address, op: Operator, value: uint64): boolean {
 
     const isFollowerTxn = itxn
       .applicationCall({

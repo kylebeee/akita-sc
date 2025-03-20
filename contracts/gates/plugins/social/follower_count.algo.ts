@@ -3,7 +3,7 @@ import { AkitaBaseContract } from "../../../../utils/base_contracts/base.algo";
 import { arc4FollowerCountGateCheckParams, arc4FollowerCountRegistryInfo } from "./types";
 import { GateGlobalStateKeyRegistryCursor } from "../../constants";
 import { Operator } from "../../types";
-import { decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { AkitaSocialPlugin, MetaValue } from "../../../arc58/plugins/social/social.algo";
 import { Equal, GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo, NotEqual } from "../../../../utils/operators";
 import { ERR_INVALID_ARG_COUNT } from "../../errors";
@@ -20,7 +20,7 @@ export class FollowerCountGate extends AkitaBaseContract {
         return id
     }
 
-    private followerCountGate(user: arc4.Address, op: Operator, value: uint64): boolean {
+    private followerCountGate(user: Address, op: Operator, value: uint64): boolean {
 
         // TODO: replace with itxn.abiCall when available
         const getMetaTxn = itxn

@@ -3,7 +3,7 @@ import { AkitaBaseContract } from "../../../../utils/base_contracts/base.algo";
 import { arc4ImpactGateCheckParams, arc4ImpactRegistryInfo } from "./types";
 import { GateGlobalStateKeyRegistryCursor } from "../../constants";
 import { Operator } from "../../types";
-import { decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { AkitaSocialImpact } from "../../../arc58/plugins/social/impact.algo";
 import { Equal, GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo, NotEqual } from "../../../../utils/operators";
 import { ERR_INVALID_ARG_COUNT } from "../../errors";
@@ -20,7 +20,7 @@ export class ImpactGate extends AkitaBaseContract {
         return id
     }
 
-    private impactGate(user: arc4.Address, op: Operator, value: uint64): boolean {
+    private impactGate(user: Address, op: Operator, value: uint64): boolean {
 
         // TODO: replace with itxn.abiCall when available
         const impactTxn = itxn

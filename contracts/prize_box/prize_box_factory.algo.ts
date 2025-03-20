@@ -1,38 +1,45 @@
-import { Contract } from "@algorandfoundation/tealscript";
+import { abimethod, arc4, assert, compile, Global, gtxn, itxn, OnCompleteAction, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { PrizeBox } from "./prize_box.algo";
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from "../../utils/errors";
+import { Address, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
+import { FactoryContract } from "../../utils/base_contracts/factory.algo";
 
-export class PrizeBoxFactory extends Contract {
-    /** the version of the child contract */
-    childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
+export class PrizeBoxFactory extends FactoryContract {
 
+    // @ts-ignore
+    @abimethod({ onCreate: 'require' })
     createApplication(version: string): void {
-        this.childContractVersion.value = version;
+        this.childContractVersion.value = version
     }
 
+    // @ts-ignore
+    @abimethod({ allowActions: 'UpdateApplication' })
     updateApplication(): void {
-        assert(this.txn.sender === this.app.creator)
+        assert(Txn.sender === Global.creatorAddress, 'Only the creator can update the application')
     }
 
-    mint(payment: PayTxn, owner: Address): AppID {
-        verifyPayTxn(payment, {
-            receiver: this.app.address,
-            amount: (
-                100_000
-                + (28_500 * PrizeBox.schema.global.numUint)
-                + (50_000 * PrizeBox.schema.global.numByteSlice)
-            ),
-        });
+    mint(payment: gtxn.PaymentTxn, owner: Address): uint64 {
+        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
 
-        sendMethodCall<typeof PrizeBox.prototype.createApplication>({
-            methodArgs: [owner],
-            approvalProgram: PrizeBox.approvalProgram(),
-            clearStateProgram: PrizeBox.clearProgram(),
-            globalNumUint: PrizeBox.schema.global.numUint,
-            globalNumByteSlice: PrizeBox.schema.global.numByteSlice,
-            extraProgramPages: 0,
-            fee: 0,
-        });
+        const prizeBox = compile(PrizeBox)
 
-        return this.itxn.createdApplicationID;
+        assert(payment.amount === (100_000 + (28_500 * prizeBox.globalBytes) + (50_000 * prizeBox.globalUints)), ERR_INVALID_PAYMENT_AMOUNT)
+        
+        return itxn
+            .applicationCall({
+                onCompletion:  OnCompleteAction.NoOp,
+                appArgs: [
+                    methodSelector(PrizeBox.prototype.createApplication),
+                    owner
+                ],
+                approvalProgram: prizeBox.approvalProgram,
+                clearStateProgram: prizeBox.clearStateProgram,
+                globalNumUint: prizeBox.globalUints,
+                globalNumBytes: prizeBox.globalBytes,
+                fee: 0,
+            })
+            .submit()
+            .createdApp
+            .id
     }
 }

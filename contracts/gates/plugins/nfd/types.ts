@@ -1,4 +1,5 @@
 import { arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 export type NFDRootRegistryInfo = {
     root: bytes
@@ -9,23 +10,23 @@ export class arc4NFDRootRegistryInfo extends arc4.Struct<{
 }> {}
 
 export type NFDRootGateCheckParams = {
-    user: arc4.Address
+    user: Address
     registryID: uint64
     NFD: uint64
 }
 
 export class arc4NFDRootGateCheckParams extends arc4.Struct<{
-    user: arc4.Address,
+    user: Address,
     registryID: arc4.UintN64,
     NFD: arc4.UintN64,
 }> {}
 
 export type NFDGateCheckParams = {
-    user: arc4.Address
+    user: Address
     NFD: uint64
 }
 
 export class arc4NFDGateCheckParams extends arc4.Struct<{
-    user: arc4.Address,
+    user: Address,
     NFD: arc4.UintN64,
 }> {}

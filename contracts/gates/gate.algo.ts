@@ -1,8 +1,9 @@
 import { arc4, assert, BoxMap, bytes, Contract, ensureBudget, GlobalState, itxn, OnCompleteAction, uint64 } from "@algorandfoundation/algorand-typescript";
 import { AkitaBaseContract } from "../../utils/base_contracts/base.algo";
 import { GateBoxPrefixAppRegistry, GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from "./constants";
-import { decodeArc4, methodSelector, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, decodeArc4, methodSelector, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4";
 import { AND, arc4GateFilter, arc4GateFilterEntry, OR } from "./types";
+import { GateArgs } from "../../utils/types/gates";
 
 class MockGate extends Contract {
   register(args: bytes): uint64 { return 0 }
@@ -23,17 +24,23 @@ export class Gate extends AkitaBaseContract {
     return new arc4.UintN64(id)
   }
 
-  private evaluate(caller: arc4.Address, filters: arc4.DynamicArray<arc4GateFilterEntry>, start: uint64, end: uint64, args: bytes[]): boolean {
+  private evaluate(
+    caller: Address,
+    filters: arc4.DynamicArray<arc4GateFilterEntry>,
+    start: uint64,
+    end: uint64,
+    args: GateArgs
+  ): boolean {
     if (start > end) return true;
 
-    let result = this.evaluateFilter(caller, filters[start], args[start]);
+    let result = this.evaluateFilter(caller, filters[start], args[start].native)
 
     ensureBudget(100 * (end - start))
 
     for (let i = start; i < end; i += 1) {
 
       const currentOperator = filters[i].logicalOperator
-      const nextResult = this.evaluateFilter(caller, filters[i + 1], args[i + 1])
+      const nextResult = this.evaluateFilter(caller, filters[i + 1], args[i + 1].native)
 
       if (currentOperator.native === AND) {
         result = result && nextResult;
@@ -59,7 +66,7 @@ export class Gate extends AkitaBaseContract {
     return result;
   }
 
-  private evaluateFilter(caller: arc4.Address, filter: arc4GateFilterEntry, args: bytes): boolean {
+  private evaluateFilter(caller: Address, filter: arc4GateFilterEntry, args: bytes): boolean {
     const argsWithCaller = caller.bytes.concat(args)
 
     // TODO: replace with itxn.abiCall when available
@@ -131,9 +138,9 @@ export class Gate extends AkitaBaseContract {
     return id;
   }
 
-  check(caller: arc4.Address, gateID: arc4.UintN64, args: bytes[]): boolean {
+  check(caller: Address, gateID: arc4.UintN64, args: GateArgs): boolean {
     assert(this.gateRegistry(gateID).exists);
     const filters = this.gateRegistry(gateID).value;
-    return this.evaluate(caller, filters, 0, (filters.length - 1), args);
+    return this.evaluate(caller, filters, 0, (filters.length - 1), args)
   }
 }

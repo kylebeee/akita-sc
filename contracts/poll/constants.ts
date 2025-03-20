@@ -1,0 +1,21 @@
+import { uint64 } from "@algorandfoundation/algorand-typescript";
+
+export const PollGlobalStateKeyType = 'type'
+export const PollGlobalStateKeyGateID = 'gate_id'
+export const PollGlobalStateKeyEndTime = 'end_time'
+export const PollGlobalStateKeyOptionCount = 'option_count'
+export const PollGlobalStateKeyMaxSelected = 'max_selected'
+export const PollGlobalStateKeyBoxCount = 'box_count'
+export const PollGlobalStateKeyQuestion = 'question'
+export const PollGlobalStateKeyOptionOne = 'option_one'
+export const PollGlobalStateKeyVotesOne = 'votes_one'
+export const PollGlobalStateKeyOptionTwo = 'option_two'
+export const PollGlobalStateKeyVotesTwo = 'votes_two'
+export const PollGlobalStateKeyOptionThree = 'option_three'
+export const PollGlobalStateKeyVotesThree = 'votes_three'
+export const PollGlobalStateKeyOptionFour = 'option_four'
+export const PollGlobalStateKeyVotesFour = 'votes_four'
+export const PollGlobalStateKeyOptionFive = 'option_five'
+export const PollGlobalStateKeyVotesFive = 'votes_five'
+
+export const voteMBR: uint64 = 15_300

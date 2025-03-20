@@ -1,189 +1,185 @@
-import { Contract } from '@algorandfoundation/tealscript';
-import { AkitaAppIDsAkitaSocialImpactPlugin, AkitaAppIDsGate } from '../../utils/constants';
-import { Gate } from '../gates/gate.algo';
-import { AkitaSocialImpact } from '../arc58/plugins/social/impact.algo';
-import { ContractWithGate } from '../../utils/base_contracts/gate.algo';
+import { AkitaSocialImpact } from '../arc58/plugins/social/impact.algo'
+import { ContractWithGate } from '../../utils/base_contracts/gate.algo'
+import { Account, arc4, assert, BoxMap, GlobalState, gtxn, itxn, OnCompleteAction, uint64 } from '@algorandfoundation/algorand-typescript'
+import { PollGlobalStateKeyBoxCount, PollGlobalStateKeyEndTime, PollGlobalStateKeyGateID, PollGlobalStateKeyMaxSelected, PollGlobalStateKeyOptionCount, PollGlobalStateKeyOptionFive, PollGlobalStateKeyOptionFour, PollGlobalStateKeyOptionOne, PollGlobalStateKeyOptionThree, PollGlobalStateKeyOptionTwo, PollGlobalStateKeyQuestion, PollGlobalStateKeyType, PollGlobalStateKeyVotesFive, PollGlobalStateKeyVotesFour, PollGlobalStateKeyVotesOne, PollGlobalStateKeyVotesThree, PollGlobalStateKeyVotesTwo, voteMBR } from './constants'
+import { classes } from 'polytype'
+import { AkitaBaseContract } from '../../utils/base_contracts/base.algo'
+import { abimethod, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
+import { btoi, Global, Txn } from '@algorandfoundation/algorand-typescript/op'
+import { arc4PollType, MultipleChoice, MultipleChoiceImpact, PollType, SingleChoice, SingleChoiceImpact } from './types'
+import { ERR_ALREADY_VOTED, ERR_BAD_DEPLOYER, ERR_FAILED_GATE, ERR_INVALID_END_TIME, ERR_INVALID_MAX_SELECTION, ERR_INVALID_OPTION_COUNT, ERR_INVALID_POLL_TYPE, ERR_INVALID_VOTE, ERR_INVALID_VOTE_COUNT, ERR_INVALID_VOTE_OPTION, ERR_POLL_ACTIVE, ERR_POLL_ENDED } from './errors'
+import { GateArgs } from '../../utils/types/gates'
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../../utils/errors'
 
-const errs = {
-    BAD_DEPLOYER: 'Must be deployed by an application',
-    INVALID_END_TIME: 'End time must be in the future',
-    INVALID_POLL_TYPE: 'Invalid poll type',
-    INVALID_OPTION_COUNT: 'Invalid number of options, must be between 2 and 5',
-    INVALID_MAX_SELECTION: 'Invalid maximum selection',
-    POLL_ENDED: 'Poll has ended',
-    POLL_ACTIVE: 'Poll is still active',
-    PLUGIN_NOT_AUTH_ADDR: 'This plugin does not have control of the account',
-    ALREADY_VOTED: 'User has already voted',
-    INVALID_VOTE: 'Invalid vote args',
-    INVALID_VOTE_COUNT: 'Invalid number of vote args',
-    INVALID_VOTE_OPTION: 'Invalid vote option',
-    FAILED_GATE: 'Gate check failed',
-}
+export class Poll extends classes(AkitaBaseContract, ContractWithGate) {
 
-const voteMBR = 15_300;
+  /** The type of poll: SingleChoice, MultipleChoice, SingleChoiceImpact or MultipleChoiceImpact */
+  type = GlobalState<uint64>({ key: PollGlobalStateKeyType })
+  /** the gate id to be used for filtering who can interact with this poll */
+  gateID = GlobalState<uint64>({ key: PollGlobalStateKeyGateID })
+  /** the time the poll ends as a unix timestamp */
+  endTime = GlobalState<uint64>({ key: PollGlobalStateKeyEndTime })
+  /** the number of options in the poll */
+  optionCount = GlobalState<uint64>({ key: PollGlobalStateKeyOptionCount })
+  /** the maximum number of selections in a multiple choice poll */
+  maxSelected = GlobalState<uint64>({ key: PollGlobalStateKeyMaxSelected })
+  /** the number of boxes created during the poll */
+  boxCount = GlobalState<uint64>({ key: PollGlobalStateKeyBoxCount })
+  /** the question being asked */
+  question = GlobalState<string>({ key: PollGlobalStateKeyQuestion })
 
-export type PollType = uint64;
-export const SingleChoice: PollType = 0;
-export const MultipleChoice: PollType = 1;
-export const SingleChoiceImpact: PollType = 2;
-export const MultipleChoiceImpact: PollType = 3;
+  /** the options and vote counts of the poll */
+  optionOne = GlobalState<string>({ key: PollGlobalStateKeyOptionOne })
+  votesOne = GlobalState<uint64>({ key: PollGlobalStateKeyVotesOne })
 
-export class Poll extends ContractWithGate {
-    programVersion = 10;
+  optionTwo = GlobalState<string>({ key: PollGlobalStateKeyOptionTwo })
+  votesTwo = GlobalState<uint64>({ key: PollGlobalStateKeyVotesTwo })
 
-    /** The type of poll: SingleChoice, MultipleChoice, SingleChoiceImpact or MultipleChoiceImpact */
-    type = GlobalStateKey<uint64>({ key: 'type' });
-    /** the gate id to be used for filtering who can interact with this poll */
-    gateID = GlobalStateKey<uint64>({ key: 'gate_id' });
-    /** the time the poll ends as a unix timestamp */
-    endTime = GlobalStateKey<uint64>({ key: 'end_time' });
-    /** the number of options in the poll */
-    optionCount = GlobalStateKey<uint64>({ key: 'option_count' });
-    /** the maximum number of selections in a multiple choice poll */
-    maxSelected = GlobalStateKey<uint64>({ key: 'max_selected' });
-    /** the number of boxes created during the poll */
-    boxCount = GlobalStateKey<uint64>({ key: 'box_count' });
-    /** the question being asked */
-    question = GlobalStateKey<string>({ key: 'question' });
+  optionThree = GlobalState<string>({ key: PollGlobalStateKeyOptionThree })
+  votesThree = GlobalState<uint64>({ key: PollGlobalStateKeyVotesThree })
 
-    /** the options and vote counts of the poll */
-    optionOne = GlobalStateKey<string>({ key: 'option_one' });
-    votesOne = GlobalStateKey<uint64>({ key: 'votes_one' });
+  optionFour = GlobalState<string>({ key: PollGlobalStateKeyOptionFour })
+  votesFour = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFour })
 
-    optionTwo = GlobalStateKey<string>({ key: 'option_two' });
-    votesTwo = GlobalStateKey<uint64>({ key: 'votes_two' });
+  optionFive = GlobalState<string>({ key: PollGlobalStateKeyOptionFive })
+  votesFive = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFive })
 
-    optionThree = GlobalStateKey<string>({ key: 'option_three' });
-    votesThree = GlobalStateKey<uint64>({ key: 'votes_three' });
+  /**
+   * A map of addresses to empty bytes to track who has voted
+   * 
+   * 
+  */
+  votes = BoxMap<Address, arc4.StaticBytes<0>>({ keyPrefix: '' })
 
-    optionFour = GlobalStateKey<string>({ key: 'option_four' });
-    votesFour = GlobalStateKey<uint64>({ key: 'votes_four' });
+  private getUserImpact(user: Account): uint64 {
+    const impactCall = itxn
+      .applicationCall({
+        appId: super.getAppList().impact,
+        onCompletion: OnCompleteAction.NoOp,
+        appArgs: [
+          methodSelector(AkitaSocialImpact.prototype.getUserImpact),
+          user
+        ],
+        fee: 0
+      })
+      .submit()
 
-    optionFive = GlobalStateKey<string>({ key: 'option_five' });
-    votesFive = GlobalStateKey<uint64>({ key: 'votes_five' });
+    return btoi(impactCall.lastLog)
+  }
 
-    /**
-     * A map of addresses to empty bytes to track who has voted
-     * 
-     * 
-    */
-    votes = BoxMap<Address, bytes<0>>();
+  // @ts-ignore
+  @abimethod({ onCreate: 'require' })
+  createApplication(
+    type: PollType,
+    endTime: uint64,
+    maxSelected: uint64,
+    question: string,
+    options: string[],
+    gateID: uint64,
+  ): void {
+    assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
+    assert(Global.latestTimestamp < endTime, ERR_INVALID_END_TIME)
+    assert(type < 4, ERR_INVALID_POLL_TYPE)
 
-    private getUserImpact(user: Address): uint64 {
-        return sendMethodCall<typeof AkitaSocialImpact.prototype.getUserImpact, uint64>({
-            applicationID: AppID.fromUint64(AkitaAppIDsAkitaSocialImpactPlugin),
-            methodArgs: [ user ],
-            fee: 0,
-        });
+    this.type.value = type
+    this.gateID.value = gateID
+    this.endTime.value = endTime
+    this.question.value = question
+
+    assert(options.length >= 2 && options.length <= 5, ERR_INVALID_OPTION_COUNT)
+
+    if (type === MultipleChoice || type === MultipleChoiceImpact) {
+      assert(maxSelected >= 2 && maxSelected <= (options.length - 1), ERR_INVALID_MAX_SELECTION)
+      this.maxSelected.value = maxSelected
     }
 
-    createApplication(
-        type: PollType,
-        endTime: uint64,
-        maxSelected: uint64,
-        question: string,
-        options: string[],
-        gateID: uint64,
-    ): void {
-        assert(globals.callerApplicationID !== AppID.fromUint64(0), errs.BAD_DEPLOYER);
-        assert(globals.latestTimestamp < endTime, errs.INVALID_END_TIME);
-        assert(type < 4, errs.INVALID_POLL_TYPE);
+    this.optionCount.value = options.length
+    this.boxCount.value = 0
 
-        this.type.value = type;
-        this.gateID.value = gateID;
-        this.endTime.value = endTime;
-        this.question.value = question;
+    this.optionOne.value = options[0]
+    this.optionTwo.value = options[1]
 
-        assert(options.length >= 2 && options.length <= 5, errs.INVALID_OPTION_COUNT);
-
-        if (type === MultipleChoice || type === MultipleChoiceImpact) {
-            assert(maxSelected >= 2 && maxSelected <= (options.length - 1), errs.INVALID_MAX_SELECTION);
-            this.maxSelected.value = maxSelected;
-        }
-
-        this.optionCount.value = options.length;
-        this.boxCount.value = 0;
-
-        this.optionOne.value = options[0];
-        this.optionTwo.value = options[1];
-
-        if (options.length >= 3) {
-            this.optionThree.value = options[2];
-        }
-
-        if (options.length >= 4) {
-            this.optionFour.value = options[3];
-        }
-
-        if (options.length >= 5) {
-            this.optionFive.value = options[4];
-        }
+    if (options.length >= 3) {
+      this.optionThree.value = options[2]
     }
 
-    vote(payment: PayTxn, votes: uint64[], args: bytes[]): void {
-        assert(globals.latestTimestamp <= this.endTime.value, errs.POLL_ENDED);
-        assert(!this.votes(this.txn.sender).exists, errs.ALREADY_VOTED);
-        assert(votes.length <= 5 && votes.length >= 1, errs.INVALID_VOTE);
-        assert(this.gate(this.txn.sender, this.gateID.value, args), errs.FAILED_GATE);
-
-        verifyPayTxn(payment, {
-            amount: voteMBR,
-            receiver: this.app.address,
-        })
-
-        // sendPayment({
-        //     sender: sender.address,
-        //     receiver: this.app.address,
-        //     amount: 15_300,
-        //     rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-        // });
-
-        let impact = 1;
-        if (this.type.value === SingleChoiceImpact || this.type.value === MultipleChoiceImpact) {
-            impact = this.getUserImpact(this.txn.sender);
-        }
-
-        if (this.type.value === SingleChoice || this.type.value === SingleChoiceImpact) {
-            assert(votes.length === 1, errs.INVALID_VOTE_COUNT);
-
-            if (votes[0] === 0) {
-                this.votesOne.value += 1;
-            } else if (votes[0] === 1) {
-                this.votesTwo.value += 1;
-            } else if (votes[0] === 2) {
-                this.votesThree.value += 1;
-            } else if (votes[0] === 3) {
-                this.votesFour.value += 1;
-            } else if (votes[0] === 4) {
-                this.votesFive.value += 1;
-            }
-        } else {
-            assert(votes.length <= this.maxSelected.value, errs.INVALID_VOTE_COUNT);
-
-            for (let i = 0; i < votes.length; i += 1) {
-                assert(votes[i] <= (this.optionCount.value - 1), errs.INVALID_VOTE_OPTION);
-
-                if (votes[i] === 0) {
-                    this.votesOne.value += impact;
-                } else if (votes[i] === 1) {
-                    this.votesTwo.value += impact;
-                } else if (votes[i] === 2) {
-                    this.votesThree.value += impact;
-                } else if (votes[i] === 3) {
-                    this.votesFour.value += impact;
-                } else if (votes[i] === 4) {
-                    this.votesFive.value += impact;
-                }
-            }
-        }
-
-        this.votes(this.txn.sender).create();
-        this.boxCount.value += 1;
+    if (options.length >= 4) {
+      this.optionFour.value = options[3]
     }
 
-    deleteBoxes(address: Address): void {
-        assert(globals.latestTimestamp > this.endTime.value, errs.POLL_ACTIVE);
-        this.votes(address).delete();
-        this.boxCount.value -= 1;
+    if (options.length >= 5) {
+      this.optionFive.value = options[4]
     }
+  }
+
+  vote(payment: gtxn.PaymentTxn, votes: uint64[], args: GateArgs): void {
+    assert(Global.latestTimestamp <= this.endTime.value, ERR_POLL_ENDED)
+    const arc4Sender = new Address(Txn.sender)
+    assert(!this.votes(arc4Sender).exists, ERR_ALREADY_VOTED)
+    assert(votes.length <= 5 && votes.length >= 1, ERR_INVALID_VOTE)
+    assert(this.gate(arc4Sender, this.gateID.value, args), ERR_FAILED_GATE)
+
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assert(payment.amount === voteMBR, ERR_INVALID_PAYMENT_AMOUNT)
+
+    let impact: uint64 = 1
+    if (this.type.value === SingleChoiceImpact || this.type.value === MultipleChoiceImpact) {
+      impact = this.getUserImpact(Txn.sender)
+    }
+
+    if (this.type.value === SingleChoice || this.type.value === SingleChoiceImpact) {
+      assert(votes.length === 1, ERR_INVALID_VOTE_COUNT)
+
+      if (votes[0] === 0) {
+        this.votesOne.value += 1
+      } else if (votes[0] === 1) {
+        this.votesTwo.value += 1
+      } else if (votes[0] === 2) {
+        this.votesThree.value += 1
+      } else if (votes[0] === 3) {
+        this.votesFour.value += 1
+      } else if (votes[0] === 4) {
+        this.votesFive.value += 1
+      }
+    } else {
+      assert(votes.length <= this.maxSelected.value, ERR_INVALID_VOTE_COUNT)
+
+      for (let i: uint64 = 0; i < votes.length; i += 1) {
+        assert(votes[i] <= (this.optionCount.value - 1), ERR_INVALID_VOTE_OPTION)
+
+        if (votes[i] === 0) {
+          this.votesOne.value += impact
+        } else if (votes[i] === 1) {
+          this.votesTwo.value += impact
+        } else if (votes[i] === 2) {
+          this.votesThree.value += impact
+        } else if (votes[i] === 3) {
+          this.votesFour.value += impact
+        } else if (votes[i] === 4) {
+          this.votesFive.value += impact
+        }
+      }
+    }
+
+    this.votes(arc4Sender).value = new arc4.StaticBytes<0>()
+    this.boxCount.value += 1
+  }
+
+  deleteBoxes(address: Address): void {
+    assert(Global.latestTimestamp > this.endTime.value, ERR_POLL_ACTIVE)
+
+    const beforeMBR = Global.minBalance
+    this.votes(address).delete()
+    const afterMBR = Global.minBalance
+
+    itxn
+      .payment({
+        receiver: address.native,
+        amount: (beforeMBR - afterMBR),
+        note: 'MBR refund for poll vote'
+      })
+      .submit()
+
+    this.boxCount.value -= 1
+  }
 }

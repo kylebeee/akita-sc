@@ -1,179 +1,198 @@
-import { Contract } from "@algorandfoundation/tealscript";
-import { Raffle, weightsListMBR } from "./raffle.algo";
-import { ContractWithOptIn } from "../../utils/base_contracts/optin.algo";
-import { AKITA_DAO_VRF_BEACON_APP_ID_KEY } from "../dao/constants";
+import { abimethod, Application, arc4, assert, compile, Global, gtxn, itxn, OnCompleteAction, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { ContractWithOptIn } from "../../utils/base_contracts/optin.algo"
+import { classes } from 'polytype'
+import { arc4AppCreatorKey, ServiceFactoryContract } from "../../utils/base_contracts/factory.algo";
+import { ERR_NOT_AKITA_DAO } from "../errors";
+import { Raffle } from "./raffle.algo";
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER, ERR_NOT_PRIZE_BOX_OWNER } from "../../utils/errors";
+import { appCreatorsMBR, weightsListMBR } from "./constants";
+import { Address, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
+import { ERR_APP_CREATOR_NOT_FOUND } from "./errors";
+import { btoi } from "@algorandfoundation/algorand-typescript/op";
+import { PrizeBox } from "../prize_box/prize_box.algo";
 
-const errs = {
-    NOT_AKITA_DAO: 'Only the Akita DAO can call this function',
-    MARKETPLACE_NOT_OPTED_INTO_TICKET_ASSET: 'factory not opted into ticket asset',
-    APP_CREATOR_NOT_FOUND: 'App creator not found',
-}
+export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithOptIn) {
 
-export const appCreatorsMBR = 18_500;
-export type AppCreatorKey = {
-    address: Address;
-    appID: AppID;
-}
+  // @ts-ignore
+  @abimethod({ onCreate: 'require' })
+  createApplication(version: string): void {
+    this.childContractVersion.value = version
+  }
 
-export class RaffleFactory extends ContractWithOptIn {
-    /** the version of the child contract */
-    childContractVersion = GlobalStateKey<string>({ key: 'child_contract_version' });
-    /** The App ID of the Akita DAO contract */
-    akitaDAO = TemplateVar<AppID>();
+  // @ts-ignore
+  @abimethod({ allowActions: ['UpdateApplication'] })
+  updateApplication(): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+  }
 
-    appCreators = BoxMap<AppCreatorKey, uint64>();
-
-    createApplication(version: string): void {
-        this.childContractVersion.value = version;
+  new(
+    payment: gtxn.PaymentTxn,
+    prize: uint64,
+    ticketAsset: uint64,
+    startingRound: uint64,
+    endingRound: uint64,
+    minTickets: uint64,
+    maxTickets: uint64,
+    gateID: uint64,
+    weightsListCount: uint64,
+  ): uint64 {
+    let optinMBR = Global.assetOptInMinBalance
+    const ticketAssetIsAlgo = ticketAsset === 0
+    if (!ticketAssetIsAlgo) {
+      optinMBR += Global.assetOptInMinBalance
     }
 
-    updateApplication(): void {
-        assert(this.txn.sender === this.akitaDAO.address, errs.NOT_AKITA_DAO);
-    }
+    assert(super.getPrizeBoxOwner(Application(prize)) === Global.currentApplicationAddress, ERR_NOT_PRIZE_BOX_OWNER)
 
-    new(
-        payment: PayTxn,
-        assetXfer: AssetTransferTxn,
-        ticketAsset: AssetID,
-        startingRound: uint64,
-        endingRound: uint64,
-        minTickets: uint64,
-        maxTickets: uint64,
-        gateID: uint64,
-        weightsListCount: uint64,
-    ): AppID {
-        let optinMBR = 0;
-        const prizeAssetIsAlgo = assetXfer.xferAsset.id === 0;
-        if (prizeAssetIsAlgo) {
-            optinMBR = globals.assetOptInMinBalance;
-        }
+    const raffle = compile(Raffle)
 
-        const ticketAssetIsAlgo = ticketAsset.id === 0;
-        if (ticketAssetIsAlgo) {
-            optinMBR += globals.assetOptInMinBalance;
-        }
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assert(payment.amount >=
+      (
+        300_000
+        + (28_500 * raffle.globalUints)
+        + (50_000 * raffle.globalBytes)
+        + optinMBR
+        + (weightsListCount * weightsListMBR)
+        + appCreatorsMBR
+      ),
+      ERR_INVALID_PAYMENT_AMOUNT
+    )
 
-        verifyPayTxn(payment, {
-            receiver: this.app.address,
-            amount: (
-                300_000 // requires 2 extra pages
-                + (28_500 * Raffle.schema.global.numUint)
-                + (50_000 * Raffle.schema.global.numByteSlice)
-                + optinMBR
-                + (weightsListCount * weightsListMBR)
-                + appCreatorsMBR
-            ),
-        });
+    // TODO: replace with arc4.abiCall when available
+    const mint = itxn
+      .applicationCall({
+        appArgs: [
+          methodSelector(Raffle.prototype.createApplication),
+          prize,
+          ticketAsset,
+          startingRound,
+          endingRound,
+          Txn.sender,
+          minTickets,
+          maxTickets,
+          gateID,
+          this.akitaDAO.value.id,
+        ],
+        approvalProgram: raffle.approvalProgram,
+        clearStateProgram: raffle.clearStateProgram,
+        globalNumUint: raffle.globalUints,
+        globalNumBytes: raffle.globalBytes,
+        extraProgramPages: 2,
+        fee: 0,
+      })
+      .submit()
 
-        verifyAssetTransferTxn(assetXfer, { assetReceiver: this.app.address });
+    const raffleApp = mint.createdApp
 
-        this.pendingGroup.addMethodCall<typeof Raffle.prototype.createApplication, void>({
-            methodArgs: [
-                assetXfer.xferAsset,
-                ticketAsset,
-                startingRound,
-                endingRound,
-                this.txn.sender,
-                minTickets,
-                maxTickets,
-                gateID,
-                this.akitaDAO,
-            ],
-            approvalProgram: Raffle.approvalProgram(),
-            clearStateProgram: Raffle.clearProgram(),
-            globalNumUint: Raffle.schema.global.numUint,
-            globalNumByteSlice: Raffle.schema.global.numByteSlice,
-            extraProgramPages: 2,
+    const appCreatorKey = new arc4AppCreatorKey({
+      address: new Address(payment.sender),
+      appID: new arc4.UintN64(raffleApp.id),
+    })
+    this.appCreators(appCreatorKey).value = new arc4.UintN64(appCreatorsMBR)
+
+    // TODO: replace with arc4.abiCall when available
+    itxn
+      .applicationCall({
+        appId: raffleApp,
+        appArgs: [
+          methodSelector(Raffle.prototype.init),
+          itxn.payment({
+            receiver: raffleApp.address,
+            amount: (weightsListCount * weightsListMBR),
             fee: 0,
-        });
+          }),
+          weightsListCount,
+        ],
+        fee: 0,
+      })
+      .submit()
 
-        const raffleAppID = this.itxn.createdApplicationID;
-        this.appCreators({ address: payment.sender, appID: raffleAppID }).value = appCreatorsMBR;
-
-        this.pendingGroup.addMethodCall<typeof Raffle.prototype.init, void>({
-            applicationID: raffleAppID,
-            methodArgs: [
-                {
-                    receiver: raffleAppID.address,
-                    amount: weightsListCount * weightsListMBR,
-                    fee: 0,
-                },
-                weightsListCount
-            ],
-            fee: 0,
+    if (!ticketAssetIsAlgo) {
+      // TODO: replace with arc4.abiCall when available
+      itxn
+        .applicationCall({
+          appId: raffleApp,
+          appArgs: [
+            methodSelector(Raffle.prototype.optin),
+            itxn.payment({
+              receiver: raffleApp.address,
+              amount: Global.assetOptInMinBalance,
+              fee: 0,
+            }),
+            ticketAsset,
+          ],
+          fee: 0,
         })
-
-        if (!prizeAssetIsAlgo) {
-            this.pendingGroup.addMethodCall<typeof Raffle.prototype.optin, void>({
-                applicationID: raffleAppID,
-                methodArgs: [
-                    {
-                        receiver: raffleAppID.address,
-                        amount: globals.assetOptInMinBalance,
-                        fee: 0,
-                    },
-                    assetXfer.xferAsset,
-                ],
-                fee: 0,
-            });
-        }
-
-        this.pendingGroup.addAssetTransfer({
-            assetReceiver: raffleAppID.address,
-            assetAmount: assetXfer.assetAmount,
-            xferAsset: assetXfer.xferAsset,
-            fee: 0,
-        });
-
-        if (!ticketAssetIsAlgo) {
-            this.pendingGroup.addMethodCall<typeof Raffle.prototype.optin, void>({
-                applicationID: raffleAppID,
-                methodArgs: [
-                    {
-                        receiver: raffleAppID.address,
-                        amount: globals.assetOptInMinBalance,
-                        fee: 0,
-                    },
-                    ticketAsset,
-                ],
-                fee: 0,
-            });
-        }
-
-        this.pendingGroup.submit();
-
-        return this.itxn.createdApplicationID;
+        .submit()
     }
 
-    clearWeightsBoxes(creator: Address, auctionAppID: AppID): void {
-        const keys: AppCreatorKey = { address: creator, appID: auctionAppID };
-        assert(this.appCreators(keys).exists, errs.APP_CREATOR_NOT_FOUND);
+    itxn
+      .applicationCall({
+        appId: prize,
+        onCompletion: OnCompleteAction.NoOp,
+        appArgs: [
+          methodSelector(PrizeBox.prototype.transfer),
+          raffleApp.address
+        ],
+        fee: 0,
+      })
+      .submit()
 
-        const returnedAmount = sendMethodCall<typeof Raffle.prototype.clearWeightsBoxes, void>({
-            applicationID: auctionAppID,
-            methodArgs: [],
-            fee: 0,
-        });
+    return raffleApp.id
+  }
 
-        this.appCreators(keys).value += returnedAmount;
-    }
+  clearWeightsBoxes(address: Address, appID: arc4.UintN64): void {
+    const keys = new arc4AppCreatorKey({ address, appID })
+    assert(this.appCreators(keys).exists, ERR_APP_CREATOR_NOT_FOUND)
 
-    deleteAuctionApp(creator: Address, auctionAppID: AppID): void {
-        const keys: AppCreatorKey = { address: creator, appID: auctionAppID };
-        assert(this.appCreators(keys).exists, errs.APP_CREATOR_NOT_FOUND);
+    // TODO: replace with arc4.abiCall when available
+    const appCallTxn = itxn
+      .applicationCall({
+        appId: appID.native,
+        appArgs: [
+          methodSelector(Raffle.prototype.clearWeightsBoxes),
+        ],
+        fee: 0,
+      })
+      .submit()
 
-        const origMBR = this.app.address.minBalance;
-        sendMethodCall<typeof Raffle.prototype.deleteApplication, uint64>({
-            applicationID: auctionAppID,
-            methodArgs: [],
-            fee: 0,
-        });
-        const newMBR = this.app.address.minBalance;
+    const returnedAmount = btoi(appCallTxn.lastLog)
+    const newAmount = new arc4.UintN64(this.appCreators(keys).value.native + returnedAmount)
+    this.appCreators(keys).value = newAmount
+  }
 
-        sendPayment({
-            amount: this.appCreators(keys).value + (origMBR - newMBR),
-            receiver: creator,
-            fee: 0,
-        })
-    }
+  deleteRaffle(address: Address, appID: arc4.UintN64): void {
+    const keys = new arc4AppCreatorKey({ address, appID })
+    assert(this.appCreators(keys).exists, ERR_APP_CREATOR_NOT_FOUND)
+
+    const before = Global.minBalance
+
+    itxn
+      .applicationCall({
+        appId: appID.native,
+        onCompletion: OnCompleteAction.DeleteApplication,
+        appArgs: [
+          methodSelector(Raffle.prototype.deleteApplication),
+        ],
+        fee: 0,
+      })
+      .submit()
+
+    const appCreatorAmount = this.appCreators(keys).value.native
+
+    this.appCreators(keys).delete()
+
+    const after = Global.minBalance
+
+    itxn
+      .payment({
+        amount: appCreatorAmount + (before - after),
+        receiver: address.native,
+        fee: 0
+      })
+      .submit()
+
+    this.appCreators(keys).delete()
+  }
 }

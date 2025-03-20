@@ -4,7 +4,7 @@ import { GateGlobalStateKeyRegistryCursor } from '../../constants';
 import { arc4StakingAmountGateCheckParams, arc4StakingAmountRegistryInfo, arc4StakingType } from './types';
 import { Operator } from '../../types';
 import { Equal, GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo, NotEqual } from '../../../../utils/operators';
-import { decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
+import { Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
 import { arc4StakeInfo, StakeValue, STAKING_TYPE_HEARTBEAT } from '../../../staking/types';
 import { Staking } from '../../../staking/staking.algo';
 import { ERR_INVALID_ARG_COUNT } from '../../errors';
@@ -23,7 +23,7 @@ export class StakingAmountGate extends AkitaBaseContract {
     }
 
     private stakingAmountGate(
-        user: arc4.Address,
+        user: Address,
         op: Operator,
         asset: uint64,
         amount: uint64,

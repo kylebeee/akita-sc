@@ -3,7 +3,7 @@ import { AkitaBaseContract } from '../../../../utils/base_contracts/base.algo';
 import { GateGlobalStateKeyRegistryCursor } from '../../constants';
 import { arc4SubscriptionGateCheckParams, arc4SubscriptionRegistryInfo } from './types';
 import { ERR_INVALID_ARG_COUNT } from '../../errors';
-import { decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
+import { Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
 import { Subscriptions } from '../../../subscriptions/subscriptions.algo';
 import { SubscriptionInfoWithPasses } from '../../../subscriptions/types';
 
@@ -19,7 +19,7 @@ export class SubscriptionGate extends AkitaBaseContract {
     return id
   }
 
-  private subscriptionGate(address: arc4.Address, merchant: arc4.Address, id: uint64): boolean {
+  private subscriptionGate(address: Address, merchant: Address, id: uint64): boolean {
 
     // TODO: replace with itxn.abiCall when available
     const infoTxn = itxn

@@ -2,7 +2,7 @@ import { arc4, assert, BoxMap, bytes, Global, GlobalState, itxn, uint64 } from "
 import { AkitaBaseContract } from "../../../../utils/base_contracts/base.algo";
 import { GateGlobalStateKeyRegistryCursor } from "../../constants";
 import { arc4SubscriptionGateCheckParams, arc4SubscriptionStreakRegistryInfo } from "./types";
-import { decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { Subscriptions } from "../../../subscriptions/subscriptions.algo";
 import { SubscriptionInfoWithPasses } from "../../../subscriptions/types";
 import { Equal, GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo, NotEqual } from "../../../../utils/operators";
@@ -21,8 +21,8 @@ export class SubscriptionStreakGate extends AkitaBaseContract {
   }
 
   private subscriptionStreakGate(
-    address: arc4.Address,
-    merchant: arc4.Address,
+    address: Address,
+    merchant: Address,
     id: uint64,
     op: uint64,
     streak: uint64

@@ -1,4 +1,5 @@
-import { Account, Application, arc4, Asset, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
+import { arc4, Asset, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 export type ProposalDetails = {
     status: uint64
@@ -8,7 +9,7 @@ export type ProposalDetails = {
     votes: uint64
     plugin: uint64
     executionKey: ExecutionKey
-    creator: arc4.Address
+    creator: Address
 }
 
 export class arc4ProposalDetails extends arc4.Struct<{
@@ -19,7 +20,7 @@ export class arc4ProposalDetails extends arc4.Struct<{
     votes: arc4.UintN64
     plugin: arc4.UintN64
     executionKey: ExecutionKey
-    creator: arc4.Address
+    creator: Address
 }> {}
 
 export type ExecutionKey = arc4.StaticBytes<32>
@@ -55,7 +56,7 @@ export type AkitaDAOState = {
     moderatorPercentage: arc4.UintN64;
     akitaAssets: arc4AkitaAssets;
     proposalSettings: arc4ProposalSettings;
-    revocationAddress: arc4.Address;
+    revocationAddress: Address;
 }
 
 export type AppList = {
@@ -65,10 +66,10 @@ export type AppList = {
     staking: uint64; // universal staking
     rewards: uint64; // akita rewards distro
     pool: uint64; // akita staking pools
+    prizeBox: uint64; // akita prize box
     subscriptions: uint64; // akita subscriptions
     gate: uint64; // main gate
     nfdRegistry: uint64; // NFD Registry
-    nfd: uint64; // Akita Root NFD
     auction: uint64; // Akita Auctions
     hyperSwap: uint64; // Akita HyperSwap
     raffle: uint64; // Akita Raffle
@@ -83,10 +84,10 @@ export class arc4AppList extends arc4.Struct<{
     staking: arc4.UintN64;
     rewards: arc4.UintN64;
     pool: arc4.UintN64;
+    prizeBox: arc4.UintN64;
     subscriptions: arc4.UintN64;
     gate: arc4.UintN64;
     nfdRegistry: arc4.UintN64;
-    nfd: arc4.UintN64;
     auction: arc4.UintN64;
     hyperSwap: arc4.UintN64;
     raffle: arc4.UintN64;

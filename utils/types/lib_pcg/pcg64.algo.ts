@@ -1,73 +1,68 @@
-import { __pcg32Init, __pcg32Output, __pcg32UnboundedRandom, __pcg32Step, __uint64Twos } from './pcg32.algo';
-import { pcgFirstIncrement, pcgSecondIncrement } from './consts.algo';
+import { assert, BigUint, Bytes, bytes, op, uint64, Uint64 } from '@algorandfoundation/algorand-typescript'
+import { pcgFirstIncrement, pcgSecondIncrement } from './consts.algo'
+import { __pcg32Init, __pcg32Output, __pcg32Step, __uint64Twos } from './pcg32.algo'
+import { DynamicArray, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 
-type PCG64STATE = [uint64, uint64];
+type PCG64STATE = [uint64, uint64]
 
-function __pcg64Random(state: PCG64STATE): [PCG64STATE, uint64] {
-  const highResult = __pcg32UnboundedRandom(state[0]);
+export function __pcg64UnboundedRandom(state: PCG64STATE): [PCG64STATE, uint64] {
+  const newState1 = __pcg32Step(state[0], pcgFirstIncrement)
+  const newState2 = __pcg32Step(state[1], newState1 === 0 ? op.shl(pcgSecondIncrement, 1) : pcgSecondIncrement)
 
-  const lowState = __pcg32Step(state[1], pcgSecondIncrement << (highResult[0] === 0 ? 1 : 0));
-
-  return [[highResult[0], lowState], (highResult[1] << 32) | __pcg32Output(state[1])];
+  return [[newState1, newState2], op.shl(__pcg32Output(state[0]), 32) | __pcg32Output(state[1])]
 }
 
-export function pcg64Init(seed: bytes<16>): PCG64STATE {
-  assert(seed.length === 16);
+export function pcg64Init(seed: bytes): PCG64STATE {
+  assert(seed.length === 16)
 
   return [
-    __pcg32Init(extractUint64(seed, 0), pcgFirstIncrement),
-    __pcg32Init(extractUint64(seed, 8), pcgSecondIncrement),
-  ];
+    __pcg32Init(op.extractUint64(seed, 0), pcgFirstIncrement),
+    __pcg32Init(op.extractUint64(seed, 8), pcgSecondIncrement),
+  ]
 }
 
 export function pcg64Random(
   state: PCG64STATE,
   lowerBound: uint64,
   upperBound: uint64,
-  length: uint64
-): [PCG64STATE, uint64[]] {
-  const result: uint64[] = [];
-  let absoluteBound: uint64;
-  let threshold: uint64;
+  length: uint64,
+): [PCG64STATE, DynamicArray<UintN64>] {
+  const result = new DynamicArray<UintN64>()
 
-  let newState = clone(state);
+  let absoluteBound: uint64
 
   if (lowerBound === 0 && upperBound === 0) {
-    for (let i = 0; i < length; i = i + 1) {
-      const stepResult = __pcg64Random(newState);
-      newState = stepResult[0];
-      result.push(stepResult[1]);
+    for (let i = Uint64(0); i < length; i = i + 1) {
+      const [newState, n] = __pcg64UnboundedRandom(state)
+      state = newState
+
+      result.push(new UintN64(n))
     }
   } else {
     if (upperBound !== 0) {
-      assert(upperBound > 1);
-      assert(lowerBound < upperBound - 1);
+      assert(upperBound > 1)
+      assert(lowerBound < upperBound - 1)
 
-      absoluteBound = upperBound - lowerBound;
+      absoluteBound = upperBound - lowerBound
     } else {
-      // assert(lowerBound < (1 << 64) - 1);
-      assert(lowerBound < Uint<64>('18446744073709551615'));
+      assert(lowerBound < 2 ** 64 - 1)
 
-      // I'm not sure this next commented line would actually work like that,
-      //  but it's just to explain it more clearly.
-      // absoluteBound = ((1 << 64) as uint128 - (lowerBound as uint128)) as uint64;
-      absoluteBound = (Uint<128>('18446744073709551616') - (lowerBound as uint128)) as uint64;
+      absoluteBound = op.btoi(Bytes(BigUint(2 ** 64) - BigUint(lowerBound)))
     }
 
-    threshold = __uint64Twos(absoluteBound) % absoluteBound;
+    const threshold: uint64 = __uint64Twos(absoluteBound) % absoluteBound
 
-    for (let i = 0; i < length; i = i + 1) {
-      // eslint-disable-next-line no-constant-condition
+    for (let i = Uint64(0); i < length; i = i + 1) {
       while (true) {
-        const stepResult = __pcg64Random(newState);
-        newState = stepResult[0];
-        if (stepResult[1] >= threshold) {
-          result.push((stepResult[1] % absoluteBound) + lowerBound);
-          break;
+        const [newState, candidate] = __pcg64UnboundedRandom(state)
+        state = newState
+        if (candidate >= threshold) {
+          result.push(new UintN64((candidate % absoluteBound) + lowerBound))
+          break
         }
       }
     }
   }
 
-  return [newState, result];
+  return [state, result.copy()]
 }

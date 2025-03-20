@@ -2,7 +2,7 @@ import { arc59GetSendAssetInfoResponse, AssetInbox } from '../types/asset_inbox'
 import { AbstractedAccount } from '../../contracts/arc58/abstracted_account.algo';
 import { OptInPlugin } from '../../contracts/arc58/plugins/optin.algo';
 import { Account, Application, arc4, assert, Bytes, Contract, Global, gtxn, itxn, MutableArray, OnCompleteAction, op, TemplateVar, Txn, uint64 } from '@algorandfoundation/algorand-typescript';
-import { decodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
+import { Address, decodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
 import { arc4AssetAndAmount } from '../types/optin';
 import { classes } from 'polytype'
 import { AbstractAccountGlobalStateKeysControlledAddress } from '../../contracts/arc58/constants';
@@ -57,9 +57,7 @@ export class ContractWithCreatorOnlyOptIn extends Contract {
 
 export class ContractWithArc59Send extends Contract {
 
-
-
-  protected arc59OptInAndSend(recipient: arc4.Address, asset: uint64, amount: uint64, closeOut: boolean): void {
+  protected arc59OptInAndSend(recipient: Address, asset: uint64, amount: uint64, closeOut: boolean): void {
 
     const inboxAddress = Application(assetInbox).address
 

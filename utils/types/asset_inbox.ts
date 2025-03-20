@@ -10,7 +10,7 @@ export type arc59GetSendAssetInfoResponse = {
 }
 
 export class AssetInbox extends Contract {
-    arc59_getSendAssetInfo(receiver: arc4.Address, asset: uint64): arc59GetSendAssetInfoResponse {
+    arc59_getSendAssetInfo(receiver: Address, asset: uint64): arc59GetSendAssetInfoResponse {
         return {
             itxns: 0,
             mbr: 0,
@@ -22,8 +22,8 @@ export class AssetInbox extends Contract {
 
     arc59_optRouterIn(asa: uint64) {}
 
-    arc59_sendAsset(axfer: gtxn.AssetTransferTxn, receiver: arc4.Address, additionalReceiverFunds: uint64): arc4.Address {
-        return new arc4.Address(Global.zeroAddress)
+    arc59_sendAsset(axfer: gtxn.AssetTransferTxn, receiver: Address, additionalReceiverFunds: uint64): Address {
+        return new Address(Global.zeroAddress)
     }
 }
 

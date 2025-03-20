@@ -4,10 +4,11 @@ import { ContractWithArc58Send, ContractWithArc59Send, ContractWithCreatorOnlyOp
 import { classes } from 'polytype'
 import { decodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
 import { AkitaBaseContract } from './base.algo';
+import { GateArgs } from '../types/gates';
 
 export class ContractWithGate extends AkitaBaseContract {
 
-  protected gate(caller: arc4.Address, index: uint64, args: bytes[]): boolean {
+  protected gate(caller: Address, index: uint64, args: GateArgs): boolean {
     if (index === 0) {
       return true
     }

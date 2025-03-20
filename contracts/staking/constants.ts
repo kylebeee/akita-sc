@@ -7,7 +7,7 @@ export const StakingBoxPrefixStakes = 's'
 export const StakingBoxPrefixHeartbeats = 'h'
 
 export const EmptyHeartbeatValue = new arc4HeartbeatValues({
-    soft: arc4Zero,
+    held: arc4Zero,
     hard: arc4Zero,
     lock: arc4Zero,
     timestamp: arc4Zero

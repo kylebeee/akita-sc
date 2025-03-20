@@ -5,7 +5,7 @@ import { Equal, NotEqual, LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanO
 import { arc4, assert, BoxMap, bytes, GlobalState, uint64 } from '@algorandfoundation/algorand-typescript';
 import { AkitaBaseContract } from '../../../../utils/base_contracts/base.algo';
 import { arc4AssetGateCheckParams, arc4RegistryInfo, AssetGateCheckParams } from './types';
-import { decodeArc4, interpretAsArc4 } from '@algorandfoundation/algorand-typescript/arc4';
+import { Address, decodeArc4, interpretAsArc4 } from '@algorandfoundation/algorand-typescript/arc4';
 import { AssetHolding } from '@algorandfoundation/algorand-typescript/op';
 import { ERR_INVALID_ARG_COUNT } from '../../errors';
 import { GateGlobalStateKeyRegistryCursor } from '../../constants';
@@ -23,7 +23,7 @@ export class AssetGate extends AkitaBaseContract {
     }
 
     // gates based on holding an asset
-    private assetGate(user: arc4.Address, asset: uint64, operator: Operator, value: uint64): boolean {
+    private assetGate(user: Address, asset: uint64, operator: Operator, value: uint64): boolean {
         const [balance, optedIn] = AssetHolding.assetBalance(user.native, asset)
 
         if (!optedIn) {

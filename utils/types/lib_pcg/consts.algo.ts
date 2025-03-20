@@ -1,9 +1,11 @@
-export const pcgMultiplier = Uint<64>('6364136223846793005');
+import { Uint64 } from '@algorandfoundation/algorand-typescript'
 
-export const pcgFirstIncrement = Uint<64>('1442695040888963407');
+export const pcgMultiplier = Uint64(6364136223846793005n)
 
-export const pcgSecondIncrement = Uint<64>('1442695040888963409');
+export const pcgFirstIncrement = Uint64(1442695040888963407n)
 
-export const pcgThirdIncrement = Uint<64>('1442695040888963411');
+export const pcgSecondIncrement = Uint64(1442695040888963409n)
 
-export const pcgFourthIncrement = Uint<64>('1442695040888963413');
+export const pcgThirdIncrement = Uint64(1442695040888963411n)
+
+export const pcgFourthIncrement = Uint64(1442695040888963413n)

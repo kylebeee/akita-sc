@@ -2,13 +2,13 @@ import { arc4, assert, Bytes, bytes, itxn, op, uint64 } from "@algorandfoundatio
 import { AkitaBaseContract } from "../../../../utils/base_contracts/base.algo"
 import { NFD_NAME_KEY, NFD_READ_PROPERTY_ARG, NFD_VALID_APP_ARG, NFD_VERIFIED_ADDRESSES_PROPERTY_NAME } from "./constants"
 import { itob } from "@algorandfoundation/algorand-typescript/op"
-import { decodeArc4, interpretAsArc4 } from "@algorandfoundation/algorand-typescript/arc4"
+import { Address, decodeArc4, interpretAsArc4 } from "@algorandfoundation/algorand-typescript/arc4"
 import { arc4NFDGateCheckParams } from "./types"
 import { ERR_INVALID_ARG_COUNT } from "../../errors"
 
 export class NFDGate extends AkitaBaseContract {
 
-    private nfdGate(user: arc4.Address, NFD: uint64): boolean {
+    private nfdGate(user: Address, NFD: uint64): boolean {
         const [nfdName] = op.AppGlobal.getExBytes(NFD, Bytes(NFD_NAME_KEY))
 
         // TODO: replace with itxn.abiCall when available

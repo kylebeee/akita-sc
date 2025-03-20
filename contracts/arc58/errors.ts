@@ -1,6 +1,3 @@
-export const ERR_INVALID_PAYMENT_RECEIVER = 'Payment must be sent to the current application';
-export const ERR_INVALID_PAYMENT_AMOUNT = 'Payment amount is incorrect';
-
 export const ERR_ADMIN_CANNOT_BE_CONTROLLED = 'Admin and controlled address cannot be the same';
 export const ERR_BAD_DEPLOYER = 'This contract must be deployed from a factory';
 export const ERR_ONLY_ADMIN_CAN_UPDATE = 'Only an admin can update the application';

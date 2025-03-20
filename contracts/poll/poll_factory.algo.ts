@@ -1,46 +1,51 @@
-import { Contract } from "@algorandfoundation/tealscript";
-import { Poll, PollType } from "./poll.algo";
+import { assert, compile, Global, gtxn, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { FactoryContract } from "../../utils/base_contracts/factory.algo";
+import { Poll } from "./poll.algo";
+import { PollType } from "./types";
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from "../../utils/errors";
+import { methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 
-export class PollFactory extends Contract {
+export class PollFactory extends FactoryContract {
 
-    // mints new Poll contracts
-    mint(
-        payment: PayTxn,
-        type: PollType,
-        gateID: uint64,
-        endTime: uint64,
-        selectionMax: uint64,
-        question: string,
-        options: string[],
-    ): AppID {
+  mint(
+    payment: gtxn.PaymentTxn,
+    type: PollType,
+    gateID: uint64,
+    endTime: uint64,
+    selectionMax: uint64,
+    question: string,
+    options: string[],
+  ): uint64 {
 
-        verifyPayTxn(payment, {
-            receiver: this.app.address,
-            amount: (
-                100_000 // requires 3 extra pages
-                + (28_500 * Poll.schema.global.numUint)
-                + (50_000 * Poll.schema.global.numByteSlice)
-            ),
-        });
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
 
-        sendMethodCall<typeof Poll.prototype.createApplication>({
-            methodArgs: [
-                type,
-                endTime,
-                selectionMax,
-                question,
-                options,
-                gateID
-            ],
-            approvalProgram: Poll.approvalProgram(),
-            clearStateProgram: Poll.clearProgram(),
-            globalNumUint: Poll.schema.global.numUint,
-            globalNumByteSlice: Poll.schema.global.numByteSlice,
-            extraProgramPages: 0,
-            fee: 0,
-        });
+    const poll = compile(Poll)
+    assert(payment.amount ===
+      (
+        100_000 + (28_500 * poll.globalUints) + (50_000 * poll.globalBytes)
+      ),
+      ERR_INVALID_PAYMENT_AMOUNT
+    )
 
-        // mint a new poll contract
-        return this.itxn.createdApplicationID;
-    }
+    const mint = itxn
+      .applicationCall({
+        appArgs: [
+          methodSelector(Poll.prototype.createApplication),
+          type,
+          endTime,
+          selectionMax,
+          question,
+          options,
+          gateID
+        ],
+        approvalProgram: poll.approvalProgram,
+        clearStateProgram: poll.clearStateProgram,
+        globalNumBytes: poll.globalBytes,
+        globalNumUint: poll.globalUints,
+        fee: 0,
+      })
+      .submit()
+
+    return mint.createdApp.id
+  }
 }

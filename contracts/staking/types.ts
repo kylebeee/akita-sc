@@ -1,4 +1,5 @@
 import { arc4, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 export type StakingType = uint64;
 
@@ -34,13 +35,13 @@ export const arc4STAKING_TYPE_HARD = new arc4.UintN64(STAKING_TYPE_HARD)
 export const arc4STAKING_TYPE_LOCK = new arc4.UintN64(STAKING_TYPE_LOCK)
 
 export type StakeKey = {
-    address: arc4.Address
+    address: Address
     asset: uint64
     type: StakingType
 }
 
 export class arc4StakeKey extends arc4.Struct<{
-    address: arc4.Address,
+    address: Address,
     asset: arc4.UintN64,
     type: arc4.UintN64,
 }> {}
@@ -68,12 +69,12 @@ export class arc4EscrowValue extends arc4.Struct<{
 }> {}
 
 export type HeartbeatKey = {
-    address: arc4.Address
+    address: Address
     asset: uint64
 }
 
 export class arc4HeartbeatKey extends arc4.Struct<{
-    address: arc4.Address,
+    address: Address,
     asset: arc4.UintN64,
 }> {}
 

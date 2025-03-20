@@ -12,13 +12,13 @@ export class arc4RegistryInfo extends arc4.Struct<{
 }> {}
 
 export type AssetGateCheckParams = {
-    user: arc4.Address
+    user: Address
     registryID: uint64
     asset: uint64
 }
 
 export class arc4AssetGateCheckParams extends arc4.Struct<{
-    user: arc4.Address,
+    user: Address,
     registryID: arc4.UintN64,
     asset: arc4.UintN64,
 }> {}

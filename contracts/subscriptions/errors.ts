@@ -18,7 +18,5 @@ export const ERR_NOT_ENOUGH_FUNDS = 'Not enough funds in escrow'
 export const ERR_NO_DONATIONS = "Donations aren't applicable to passes"
 export const ERR_SUBSCRIPTION_DOES_NOT_EXIST = 'Subscription does not exist'
 export const ERR_PASS_COUNT_OVERFLOW = 'More addresses than available passes'
-export const ERR_INVALID_PAYMENT_AMOUNT = 'Invalid payment amount'
-export const ERR_INVALID_PAYMENT_RECEIVER = 'Invalid payment receiver'
 export const ERR_INVALID_ASSET_AMOUNT = 'Invalid asset amount'
 export const ERR_INVALID_ASSET_RECEIVER = 'Invalid asset receiver'

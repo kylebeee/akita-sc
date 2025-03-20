@@ -1,11 +1,12 @@
 import { arc4, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 export type SubscriptionID = uint64;
 
 export type arc4SubscriptionID = arc4.UintN64
 
 export class arc4ServicesKey extends arc4.Struct<{
-    address: arc4.Address
+    address: Address
     id: arc4SubscriptionID
 }> { }
 
@@ -31,7 +32,7 @@ export class arc4ServicesValue extends arc4.Struct<{
 
 export class arc4BlockListKey extends arc4.Struct<{
     address: arc4.StaticBytes<31>
-    blocked: arc4.Address
+    blocked: Address
 }> { }
 
 // export type SubscriptionKey = {
@@ -40,12 +41,12 @@ export class arc4BlockListKey extends arc4.Struct<{
 // };
 
 export class arc4SubscriptionKey extends arc4.Struct<{
-    address: arc4.Address
+    address: Address
     id: arc4SubscriptionID
 }> { }
 
 export class arc4SubscriptionInfo extends arc4.Struct<{
-    recipient: arc4.Address
+    recipient: Address
     serviceID: arc4ServiceID
     startDate: arc4.UintN64
     amount: arc4.UintN64
@@ -58,12 +59,12 @@ export class arc4SubscriptionInfo extends arc4.Struct<{
 }> {}
 
 export class arc4PassesKey extends arc4.Struct<{
-    address: arc4.Address
+    address: Address
     id: arc4SubscriptionID
 }> { }
 
 export type SubscriptionInfoWithPasses = {
-    recipient: arc4.Address
+    recipient: Address
     serviceID: uint64
     startDate: uint64
     amount: uint64
@@ -73,11 +74,11 @@ export type SubscriptionInfoWithPasses = {
     lastPayment: uint64
     streak: uint64
     escrowed: uint64
-    passes: arc4.DynamicArray<arc4.Address>
+    passes: arc4.DynamicArray<Address>
 }
 
 export class arc4SubscriptionInfoWithPasses extends arc4.Struct<{
-    recipient: arc4.Address
+    recipient: Address
     serviceID: arc4SubscriptionID
     startDate: arc4.UintN64
     amount: arc4.UintN64
@@ -87,7 +88,7 @@ export class arc4SubscriptionInfoWithPasses extends arc4.Struct<{
     lastPayment: arc4.UintN64
     streak: arc4.UintN64
     escrowed: arc4.UintN64
-    passes: arc4.DynamicArray<arc4.Address>
+    passes: arc4.DynamicArray<Address>
 }> { }
 
 export type Amounts = {

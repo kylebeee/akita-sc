@@ -1,7 +1,7 @@
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyChildContractVersion, GlobalStateKeyRevocationApp } from "../constants";
 import { AbstractedAccount } from "./abstracted_account.algo";
 import { Application, arc4, assert, Contract, Global, GlobalState, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from "./errs";
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from "./errors";
 import { ERR_NOT_AKITA_DAO } from "../errors";
 import { AkitaBaseContract } from "../../utils/base_contracts/base.algo";
 
@@ -23,7 +23,7 @@ export class AbstractedAccountFactory extends AkitaBaseContract {
         this.revocationApp.value = Application(app)
     }
 
-    mint(payment: gtxn.PaymentTxn, admin: arc4.Address, nickname: string): uint64 {
+    mint(payment: gtxn.PaymentTxn, admin: Address, nickname: string): uint64 {
         assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
         const childMBR = 300_000 + (28_500 * AbstractedAccount.schema.global.numUint) + (50_000 * AbstractedAccount.schema.global.numByteSlice)
         assert(payment.amount === childMBR, ERR_INVALID_PAYMENT_AMOUNT)

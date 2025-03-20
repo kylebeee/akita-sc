@@ -1,47 +1,13 @@
-import { Contract } from '@algorandfoundation/tealscript';
+import { arc4, assert, BigUint, BoxMap, Contract, ensureBudget, Global, GlobalState, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript';
 import { EMPTY_BYTES_16, EMPTY_BYTES_32 } from '../../utils/constants';
-
-const errs = {
-  KEY_TOO_LONG: 'max key length is 32 bytes',
-  DATA_TOO_LONG: 'max data length is 1024 bytes',
-  RESERVED_KEY_PREFIX: 'l. is reserved for internals',
-  NAME_TAKEN: 'this name is already in use',
-  NO_NAME: 'a root with this name does not exist',
-  NO_ROOT: 'the root does not exist in box storage',
-  NO_ROOT_FOR_DATA: 'there must be a root to associate the data to',
-  ROOT_ALREADY_EXISTS: 'this root already exists',
-  FAILED_TO_VERIFY_INCLUSION: 'failed to verify inclusion',
-  SCHEMA_MISMATCH: 'list schema does not match',
-  TYPE_MISMATCH: 'list type does not match',
-  NO_DATA: 'data does not exist',
-  NEW_DATA_ALREADY_EXISTS: 'new data already exists',
-  NO_TREE_SCHEMA: 'tree schema does not exist',
-  TREE_SCHEMA_KEY_ALREADY_EXISTS: 'tree schema key already exists for this root',
-  NO_TREE_TYPE: 'tree type does not exist',
-  TREE_TYPE_KEY_ALREADY_EXISTS: 'tree type key already exists for this root'
-}
-
-const maxDataKeyLength = 15;
-const maxDataLength = 1024;
-
-const reservedDataKeyPrefix = 'l.';
-const treeSchemaKey = 'l.schema';
-const treeTypeKey = 'l.type';
-
-export const MAX_ROOT_BOX_MBR = 40_900;
-export const MAX_SCHEMA_BOX_MBR = 21_700;
-export const MAX_TYPE_BOX_MBR = 20_900;
-
-export type RootKey = {
-  address: Address,
-  name: string
-};
-
-export type DataKey = {
-  address: bytes<16>,
-  name: string,
-  key: string
-};
+import { arc4DataKey, arc4RootKey } from './types';
+import { maxDataKeyLength, maxDataLength, MetaMerklesBoxPrefixData, MetaMerklesBoxPrefixRoots, MetaMerklesBoxPrefixSchemas, MetaMerklesBoxPrefixTypes, MetaMerklesGlobalStateKeySchemaID, MetaMerklesGlobalStateKeyTypesID, reservedDataKeyPrefix, treeSchemaKey, treeTypeKey, zeroDynamicBytes } from './constants';
+import { btoi, itob, sha256, Txn } from '@algorandfoundation/algorand-typescript/op';
+import { ERR_DATA_TOO_LONG, ERR_FAILED_TO_VERIFY_INCLUSION, ERR_KEY_TOO_LONG, ERR_NAME_TAKEN, ERR_NO_DATA, ERR_NO_NAME, ERR_NO_ROOT_FOR_DATA, ERR_NO_TREE_SCHEMA, ERR_NO_TREE_TYPE, ERR_RESERVED_KEY_PREFIX, ERR_TREE_SCHEMA_KEY_ALREADY_EXISTS, ERR_TREE_TYPE_KEY_ALREADY_EXISTS } from './errors';
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../../utils/errors';
+import { bytes16, bytes32 } from '../../utils/types/base';
+import { Address } from '@algorandfoundation/algorand-typescript/arc4';
+import { Leaf, Proof } from '../../utils/types/merkles';
 
 export class MetaMerkles extends Contract {
 
@@ -51,53 +17,57 @@ export class MetaMerkles extends Contract {
   // 3: uint64,uint64
   // 4: address,address,uint64,uint64
   // 5: address,address,uint64,uint64,uint64
-  schemaIndex = GlobalStateKey<uint64>({ key: 's' });
-  schemas = BoxMap<uint64, string>();
+  schemaID = GlobalState<uint64>({ key: MetaMerklesGlobalStateKeySchemaID })
 
   // 0: Unspecified
   // 1: Collection
   // 2: Trait
   // 3: Trade
-  typesIndex = GlobalStateKey<uint64>({ key: 't' });
-  types = BoxMap<uint64, string>({ prefix: 't' });
+  typesID = GlobalState<uint64>({ key: MetaMerklesGlobalStateKeyTypesID })
 
+
+  schemas = BoxMap<arc4.UintN64, arc4.Str>({ keyPrefix: MetaMerklesBoxPrefixSchemas })
+  types = BoxMap<arc4.UintN64, arc4.Str>({ keyPrefix: MetaMerklesBoxPrefixTypes })
   // the max size of all args to a contract is 2048
   // which means accounting for box key & leaf
   // and a byte length of 66 for each proof in the
   // array, max we can verify is 30, plenty.
   // max_mbr: (400 * (64 + 32)) = 38_400: + 2_500 = 40_900
-  roots = BoxMap<RootKey, bytes32>();
+  roots = BoxMap<arc4RootKey, arc4.StaticBytes<32>>({ keyPrefix: MetaMerklesBoxPrefixRoots })
 
   // rootData is the box map for managing the data
   // associated with a group
   // max_schema_mbr: (400 * (32 + 8 + 8)) = 19_200 + 2_500 = 21_700
   // max_type_mbr: (400 * (32 + 6 + 8)) = 18_400 + 2_500 = 20_900
-  data = BoxMap<DataKey, string>({ prefix: 'd' });
+  data = BoxMap<arc4DataKey, arc4.Str>({ keyPrefix: MetaMerklesBoxPrefixData })
 
-  private getRootBoxDelta(name: string): uint64 {
-    const pre = this.app.address.minBalance;
-    const rKey: RootKey = { address: globals.zeroAddress, name: name };
-    this.roots(rKey).value = EMPTY_BYTES_32;
-    const delta = this.app.address.minBalance - pre;
-    this.roots(rKey).delete();
-    return delta;
+  private getRootBoxDelta(name: arc4.Str): uint64 {
+    const pre = Global.minBalance
+    const address = new Address(Global.zeroAddress)
+    const rKey = new arc4RootKey({ address, name })
+    this.roots(rKey).value = new arc4.StaticBytes<32>(EMPTY_BYTES_32)
+    const delta = Global.minBalance - pre
+    this.roots(rKey).delete()
+    return delta
   }
 
-  private getDataBoxDelta(name: string, key: string, value: string): uint64 {
-    const pre = this.app.address.minBalance;
-    const dKey: DataKey = { address: EMPTY_BYTES_16, name: name, key: key };
-    this.data(dKey).value = value;
-    const delta = this.app.address.minBalance - pre;
-    this.data(dKey).delete();
-    return delta;
+  private getDataBoxDelta(name: arc4.Str, key: arc4.Str, value: arc4.Str): uint64 {
+    const pre = Global.minBalance
+    const truncatedAddress = bytes16(EMPTY_BYTES_16)
+    const dKey = new arc4DataKey({ truncatedAddress, name, key })
+    this.data(dKey).value = value
+    const delta = Global.minBalance - pre
+    this.data(dKey).delete()
+    return delta
   }
 
-  @abi.readonly
-  rootCosts(name: string): uint64 {
-    const rootCost = this.getRootBoxDelta(name);
-    const schemaCost = this.getDataBoxDelta(name, treeSchemaKey, itob(0));
-    const typeCost = this.getDataBoxDelta(name, treeTypeKey, itob(0));
-    return rootCost + schemaCost + typeCost;
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  rootCosts(name: arc4.Str): uint64 {
+    const rootCost = this.getRootBoxDelta(name)
+    const schemaCost = this.getDataBoxDelta(name, treeSchemaKey, zeroDynamicBytes)
+    const typeCost = this.getDataBoxDelta(name, treeTypeKey, zeroDynamicBytes)
+    return rootCost + schemaCost + typeCost
   }
 
   /** 
@@ -111,42 +81,28 @@ export class MetaMerkles extends Contract {
    * @param schema an index of the schema enum from box storage
    * @param type an index of the tree type enum from box storage
    */
-  addRoot(payment: PayTxn, name: string, root: bytes32, schema: uint64, type: uint64): void {
-    assert(name.length <= 32, 'Cannot add root with name longer than 32 bytes');
-    assert(this.schemas(schema).exists, errs.NO_TREE_SCHEMA);
-    assert(this.types(type).exists, errs.NO_TREE_TYPE);
+  addRoot(payment: gtxn.PaymentTxn, name: arc4.Str, root: arc4.StaticBytes<32>, schema: arc4.UintN64, type: arc4.UintN64): void {
+    assert(name.bytes.length <= 31, 'Cannot add root with name longer than 31 bytes');
+    assert(this.schemas(schema).exists, ERR_NO_TREE_SCHEMA)
+    assert(this.types(type).exists, ERR_NO_TREE_TYPE)
 
-    const truncatedAddress = extract3(this.txn.sender, 0, 16) as bytes<16>;
+    const address = new Address(Txn.sender)
+    const truncatedAddress = bytes16(Txn.sender.bytes.slice(0, 16))
 
-    const rootKey: RootKey = {
-      address: this.txn.sender,
-      name: name
-    };
+    const rootKey = new arc4RootKey({ address, name })
+    const schemaKey = new arc4DataKey({ truncatedAddress, name, key: treeSchemaKey })
+    const typeKey = new arc4DataKey({ truncatedAddress, name, key: treeTypeKey })
 
-    const schemaKey: DataKey = {
-      address: truncatedAddress,
-      name: name,
-      key: treeSchemaKey
-    };
+    assert(!this.roots(rootKey).exists, ERR_NAME_TAKEN)
+    assert(!this.data(schemaKey).exists, ERR_TREE_SCHEMA_KEY_ALREADY_EXISTS)
+    assert(!this.data(typeKey).exists, ERR_TREE_TYPE_KEY_ALREADY_EXISTS)
 
-    const typeKey: DataKey = {
-      address: truncatedAddress,
-      name: name,
-      key: treeTypeKey
-    };
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assert(payment.amount === this.rootCosts(name), 'Payment amount does not match root costs')
 
-    assert(!this.roots(rootKey).exists, errs.NAME_TAKEN);
-    assert(!this.data(schemaKey).exists, errs.TREE_SCHEMA_KEY_ALREADY_EXISTS);
-    assert(!this.data(typeKey).exists, errs.TREE_TYPE_KEY_ALREADY_EXISTS);
-
-    verifyPayTxn(payment, {
-      receiver: this.app.address,
-      amount: this.rootCosts(name),
-    });
-
-    this.roots(rootKey).value = root;
-    this.data(schemaKey).value = itob(schema);
-    this.data(typeKey).value = itob(type);
+    this.roots(rootKey).value = root
+    this.data(schemaKey).value = new arc4.Str(String(itob(schema.native)))
+    this.data(typeKey).value = new arc4.Str(String(itob(type.native)))
   }
 
   /**
@@ -154,38 +110,28 @@ export class MetaMerkles extends Contract {
    * 
    * @param name the name of the merkle tree root
    */
-  deleteRoot(name: string): void {
-    const truncatedAddress = extract3(this.txn.sender, 0, 16) as bytes<16>;
+  deleteRoot(name: arc4.Str): void {
+    const arc4Sender = new Address(Txn.sender)
+    const truncatedAddress = bytes16(Txn.sender.bytes.slice(0, 16))
 
-    const rootKey: RootKey = {
-      address: this.txn.sender,
-      name: name
-    };
+    const rootKey = new arc4RootKey({ address: arc4Sender, name })
+    const schemaKey = new arc4DataKey({ truncatedAddress, name, key: treeSchemaKey })
+    const typeKey = new arc4DataKey({ truncatedAddress, name, key: treeTypeKey })
 
-    const schemaKey: DataKey = {
-      address: truncatedAddress,
-      name: name,
-      key: treeSchemaKey
-    };
+    assert(this.roots(rootKey).exists, ERR_NO_NAME)
 
-    const typeKey: DataKey = {
-      address: truncatedAddress,
-      name: name,
-      key: treeTypeKey
-    };
-
-    assert(this.roots(rootKey).exists, errs.NO_NAME);
-
-    this.roots(rootKey).delete();
-    this.data(schemaKey).delete();
-    this.data(typeKey).delete();
+    this.roots(rootKey).delete()
+    this.data(schemaKey).delete()
+    this.data(typeKey).delete()
 
     // return their MBR
-    sendPayment({
-      receiver: this.txn.sender,
-      amount: this.rootCosts(name),
-      fee: 0,
-    })
+    itxn
+      .payment({
+        receiver: Txn.sender,
+        amount: this.rootCosts(name),
+        fee: 0,
+      })
+      .submit()
   }
 
   /**
@@ -194,9 +140,10 @@ export class MetaMerkles extends Contract {
    * @param name the name of the merkle group data
    * @param newRoot the new 32 byte merkle tree root
    */
-  updateRoot(name: string, newRoot: bytes32): void {
-    const key: RootKey = { address: this.txn.sender, name: name };
-    assert(this.roots(key).exists, errs.NO_NAME);
+  updateRoot(name: arc4.Str, newRoot: arc4.StaticBytes<32>): void {
+    const address = new Address(Txn.sender)
+    const key = new arc4RootKey({ address, name })
+    assert(this.roots(key).exists, ERR_NO_NAME)
     this.roots(key).value = newRoot;
   }
 
@@ -209,24 +156,20 @@ export class MetaMerkles extends Contract {
    * @param key the metadata key eg. `Royalty`
    * @param value the metadata value eg. `5` encoded as a bytestring for 5%
    */
-  addData(payment: PayTxn, name: string, key: string, value: string): void {
-    const rootKey: RootKey = { address: this.txn.sender, name: name };
+  addData(payment: gtxn.PaymentTxn, name: arc4.Str, key: arc4.Str, value: arc4.Str): void {
+    const address = new Address(Txn.sender)
+    const rootKey = new arc4RootKey({ address, name })
 
-    assert(key.length <= maxDataKeyLength, errs.KEY_TOO_LONG);
-    assert(value.length <= maxDataLength, errs.DATA_TOO_LONG);
-    assert(key.length < 2 || !(extract3(key, 0, 2) === reservedDataKeyPrefix), errs.RESERVED_KEY_PREFIX)
-    assert(this.roots(rootKey).exists, errs.NO_ROOT_FOR_DATA);
+    assert(key.bytes.length <= maxDataKeyLength, ERR_KEY_TOO_LONG)
+    assert(value.bytes.length <= maxDataLength, ERR_DATA_TOO_LONG)
+    assert(key.bytes.length < 2 || !(key.bytes.slice(0, 2) === reservedDataKeyPrefix.bytes), ERR_RESERVED_KEY_PREFIX)
+    assert(this.roots(rootKey).exists, ERR_NO_ROOT_FOR_DATA)
 
-    verifyPayTxn(payment, {
-      receiver: this.app.address,
-      amount: this.getBoxCreateMinBalance(48 + key.length, value.length),
-    });
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assert(payment.amount === this.getBoxCreateMinBalance(48 + key.bytes.length, value.bytes.length), ERR_INVALID_PAYMENT_AMOUNT)
 
-    const dataKey: DataKey = {
-      address: extract3(this.txn.sender, 0, 16) as bytes<16>,
-      name: name,
-      key: key,
-    };
+    const truncatedAddress = bytes16(Txn.sender.bytes.slice(0, 16))
+    const dataKey = new arc4DataKey({ truncatedAddress, name, key })
 
     this.data(dataKey).value = value;
   }
@@ -237,24 +180,23 @@ export class MetaMerkles extends Contract {
    * @param name the name of the merkle tree root
    * @param key the metadata key you want to remove
    */
-  deleteData(name: string, key: string): void {
-    const dataKey: DataKey = {
-      address: extract3(this.txn.sender, 0, 16) as bytes<16>,
-      name: name,
-      key: key,
-    };
+  deleteData(name: arc4.Str, key: arc4.Str): void {
+    const truncatedAddress = bytes16(Txn.sender.bytes.slice(0, 16))
+    const dataKey = new arc4DataKey({ truncatedAddress, name, key })
 
-    assert(this.data(dataKey).exists, errs.NO_DATA);
+    assert(this.data(dataKey).exists, ERR_NO_DATA)
 
-    let valueLength = this.data(dataKey).value.length;
+    let valueLength = this.data(dataKey).value.bytes.length
 
-    this.data(dataKey).delete();
+    this.data(dataKey).delete()
 
-    sendPayment({
-      receiver: this.txn.sender,
-      amount: this.getBoxCreateMinBalance(32 + key.length, valueLength),
-      fee: 0,
-    });
+    itxn
+      .payment({
+        receiver: Txn.sender,
+        amount: this.getBoxCreateMinBalance(32 + key.bytes.length, valueLength),
+        fee: 0,
+      })
+      .submit()
   }
 
   /**
@@ -268,45 +210,31 @@ export class MetaMerkles extends Contract {
    *
    * @returns a boolean indicating whether the proof is valid
    */
-  verify(address: Address, name: string, leaf: bytes32, proof: bytes32[], type: uint64): boolean {
-    const truncatedAddress = extract3(address, 0, 16) as bytes<16>;
+  verify(address: Address, name: arc4.Str, leaf: Leaf, proof: Proof, type: uint64): boolean {
+    const arc4Sender = new Address(Txn.sender)
+    const truncatedAddress = bytes16(address.bytes.slice(0, 16))
 
-    const rootKey: RootKey = {
-      address: this.txn.sender,
-      name: name
-    };
-
-    const schemaKey: DataKey = {
-      address: truncatedAddress,
-      name: name,
-      key: treeSchemaKey
-    };
-
-    const typeKey: DataKey = {
-      address: truncatedAddress,
-      name: name,
-      key: treeTypeKey
-    };
+    const rootKey = new arc4RootKey({ address: arc4Sender, name })
+    const schemaKey = new arc4DataKey({ truncatedAddress, name, key: treeSchemaKey })
+    const typeKey = new arc4DataKey({ truncatedAddress, name, key: treeTypeKey })
 
     if (
       !this.roots(rootKey).exists
       || !this.data(schemaKey).exists
       || !this.data(typeKey).exists
-      || btoi(this.data(typeKey).value) !== type
+      || btoi(this.data(typeKey).value.bytes) !== type
     ) {
-      return false;
+      return false
     }
 
-    let hash = leaf;
-    for (let i = 0; i < proof.length; i += 1) {
-      if (globals.opcodeBudget < 50) {
-        increaseOpcodeBudget();
-      }
+    ensureBudget(proof.length * 50)
 
+    let hash = leaf
+    for (let i = 0; i < proof.length; i += 1) {
       hash = this.hash(proof[i], hash)
     }
 
-    return hash === this.roots(rootKey).value;
+    return hash === this.roots(rootKey).value
   }
 
   /**
@@ -317,10 +245,11 @@ export class MetaMerkles extends Contract {
    * @param key the metadata key eg. `Royalty`
    * @returns the value set eg. `5` encoded as a bytestring for 5%
    */
-  @abi.readonly
-  read(address: Address, name: string, key: string): string {
-    const truncatedAddress = extract3(address, 0, 16) as bytes<16>;
-    return this.data({ address: truncatedAddress, name: name, key: key }).value
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  read(address: Address, name: arc4.Str, key: arc4.Str): arc4.Str {
+    const truncatedAddress = bytes16(address.bytes.slice(0, 16))
+    return this.data(new arc4DataKey({ truncatedAddress, name, key })).value
   }
 
 
@@ -345,17 +274,17 @@ export class MetaMerkles extends Contract {
    */
   verifiedRead(
     address: Address,
-    name: string,
-    leaf: bytes32,
-    proof: bytes32[],
+    name: arc4.Str,
+    leaf: Leaf,
+    proof: Proof,
     type: uint64,
-    key: string,
-  ): string {
+    key: arc4.Str,
+  ): arc4.Str {
     const verified = this.verify(address, name, leaf, proof, type);
     if (!verified) {
-      return '';
+      return new arc4.Str('')
     }
-    return this.read(address, name, key);
+    return this.read(address, name, key)
   }
 
   /**
@@ -379,45 +308,41 @@ export class MetaMerkles extends Contract {
    */
   verifiedMustRead(
     address: Address,
-    name: string,
-    leaf: bytes32,
-    proof: bytes32[],
+    name: arc4.Str,
+    leaf: Leaf,
+    proof: Proof,
     type: uint64,
-    key: string,
-  ): string {
-    assert(this.verify(address, name, leaf, proof, type), errs.FAILED_TO_VERIFY_INCLUSION);
-    return this.read(address, name, key);
+    key: arc4.Str,
+  ): arc4.Str {
+    assert(this.verify(address, name, leaf, proof, type), ERR_FAILED_TO_VERIFY_INCLUSION)
+    return this.read(address, name, key)
   }
 
-  addType(payment: PayTxn, desc: string): void {
-    verifyPayTxn(payment, {
-      receiver: this.app.address,
-      amount: 100_000_000,
-    });
+  addType(payment: gtxn.PaymentTxn, desc: arc4.Str): void {
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assert(payment.amount === 100_000_000, ERR_INVALID_PAYMENT_AMOUNT)
 
-    assert(desc.length <= 1024, errs.DATA_TOO_LONG);
+    assert(desc.bytes.length <= 1024, ERR_DATA_TOO_LONG)
 
-    this.types(this.typesIndex.value).value = desc;
-    this.typesIndex.value = (this.typesIndex.value + 1);
+    this.types(new arc4.UintN64(this.typesID.value)).value = desc;
+    this.typesID.value += 1
   }
 
-  addSchema(payment: PayTxn, desc: string): void {
-    verifyPayTxn(payment, {
-      receiver: this.app.address,
-      amount: 100_000_000,
-    });
+  addSchema(payment: gtxn.PaymentTxn, desc: arc4.Str): void {
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assert(payment.amount === 100_000_000, ERR_INVALID_PAYMENT_AMOUNT)
 
-    assert(desc.length <= 1024, errs.DATA_TOO_LONG);
+    assert(desc.bytes.length <= 1024, ERR_DATA_TOO_LONG)
 
-    this.schemas(this.schemaIndex.value).value = desc;
-    this.schemaIndex.value = (this.schemaIndex.value + 1);
+    this.schemas(new arc4.UintN64(this.schemaID.value)).value = desc
+    this.schemaID.value += 1
   }
 
-  private hash(a: bytes32, b: bytes32): bytes32 {
-    if (btobigint(a) > btobigint(b)) {
-      return sha256(b + a)
+  private hash(a: Leaf, b: Leaf): Leaf {
+    if (BigUint(a.native) > BigUint(b.native)) {
+      return bytes32(sha256(b.native.concat(a.native)))
     } else {
-      return sha256(a + b);
+      return bytes32(sha256(a.native.concat(b.native)))
     }
   }
 

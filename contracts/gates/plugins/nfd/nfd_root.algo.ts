@@ -2,7 +2,7 @@ import { arc4, assert, BoxMap, Bytes, bytes, GlobalState, itxn, op, uint64 } fro
 import { AkitaBaseContract } from "../../../../utils/base_contracts/base.algo";
 import { GateGlobalStateKeyRegistryCursor } from "../../constants";
 import { arc4NFDRootGateCheckParams, arc4NFDRootRegistryInfo, NFDRootGateCheckParams } from "./types";
-import { decodeArc4, interpretAsArc4 } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, decodeArc4, interpretAsArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { ERR_INVALID_ARG_COUNT } from "../../errors";
 import { itob } from "@algorandfoundation/algorand-typescript/op";
 import { NFD_NAME_KEY, NFD_PARENT_APP_KEY, NFD_READ_PROPERTY_ARG, NFD_VALID_APP_ARG, NFD_VERIFIED_ADDRESSES_PROPERTY_NAME } from "./constants";
@@ -19,7 +19,7 @@ export class NFDGate extends AkitaBaseContract {
     return id
   }
 
-  private nfdGate(user: arc4.Address, NFD: uint64, root: bytes): boolean {
+  private nfdGate(user: Address, NFD: uint64, root: bytes): boolean {
     const [nfdName] = op.AppGlobal.getExBytes(NFD, Bytes(NFD_NAME_KEY))
     const [_, parentExists] = op.AppGlobal.getExBytes(NFD, Bytes(NFD_PARENT_APP_KEY))
 
