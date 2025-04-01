@@ -1,7 +1,8 @@
 export const ERR_NOT_AKITA_DAO = 'Only the Akita DAO can call this function'
 export const ERR_NO_LOCK = 'Lock not found'
 export const ERR_BAD_EXPIRATION = 'Expiration must be in the future or hardlock disabled'
-export const ERR_BAD_EXPIRATION_UPDATE = 'Expiration must be greater than or equal to the current unlock time or hardlock disabled'
+export const ERR_BAD_EXPIRATION_UPDATE =
+    'Expiration must be greater than or equal to the current unlock time or hardlock disabled'
 export const ERR_BAD_AMOUNT_HELD = 'Insufficient amount held'
 export const ERR_LOCKED = 'This asset is still locked'
 export const ERR_PLUGIN_NOT_AUTH_ADDR = 'This plugin does not have control of the account'

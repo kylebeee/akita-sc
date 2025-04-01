@@ -1,38 +1,33 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address } from "@algorandfoundation/algorand-typescript/arc4";
+import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address, DynamicArray, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 
-export type StakingType = uint64;
+export type StakingType = UintN8
 
 /**
  * Heartbeat staking uses the average of the last 4 heartbeats
  * triggered with random jitter 4 times a day
- * 
-*/
-export const STAKING_TYPE_HEARTBEAT: StakingType = 0
+ *
+ */
+export const STAKING_TYPE_HEARTBEAT: StakingType = new arc4.UintN8(0)
 
 /**
  * Soft staking uses incentivized account watching to flag
  * users that drop below their committed balance
  */
-export const STAKING_TYPE_SOFT: StakingType = 1
+export const STAKING_TYPE_SOFT: StakingType = new arc4.UintN8(1)
 
 /**
  * Hard staking uses an escrowed balance
- * 
+ *
  */
-export const STAKING_TYPE_HARD: StakingType = 2
+export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
 
 /**
  * Hard locked staking uses an escrowed balance
  * and locks the balance for a set period of time
- * 
+ *
  */
-export const STAKING_TYPE_LOCK: StakingType = 3
-
-export const arc4STAKING_TYPE_HEARTBEAT = new arc4.UintN64(STAKING_TYPE_HEARTBEAT)
-export const arc4STAKING_TYPE_SOFT = new arc4.UintN64(STAKING_TYPE_SOFT)
-export const arc4STAKING_TYPE_HARD = new arc4.UintN64(STAKING_TYPE_HARD)
-export const arc4STAKING_TYPE_LOCK = new arc4.UintN64(STAKING_TYPE_LOCK)
+export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
 
 export type StakeKey = {
     address: Address
@@ -41,31 +36,31 @@ export type StakeKey = {
 }
 
 export class arc4StakeKey extends arc4.Struct<{
-    address: Address,
-    asset: arc4.UintN64,
-    type: arc4.UintN64,
+    address: Address
+    asset: arc4.UintN64
+    type: StakingType
 }> {}
 
-export type StakeValue = {
+export type Stake = {
     amount: uint64
     lastUpdate: uint64
     expiration: uint64
 }
 
-export class arc4StakeValue extends arc4.Struct<{
-    amount: arc4.UintN64,
-    lastUpdate: arc4.UintN64,
-    expiration: arc4.UintN64,
+export class arc4Stake extends arc4.Struct<{
+    amount: arc4.UintN64
+    lastUpdate: arc4.UintN64
+    expiration: arc4.UintN64
 }> {}
 
-export type EscrowValue = {
+export type Escrow = {
     hard: uint64
     lock: uint64
 }
 
-export class arc4EscrowValue extends arc4.Struct<{
-    hard: arc4.UintN64,
-    lock: arc4.UintN64,
+export class arc4Escrow extends arc4.Struct<{
+    hard: arc4.UintN64
+    lock: arc4.UintN64
 }> {}
 
 export type HeartbeatKey = {
@@ -74,23 +69,27 @@ export type HeartbeatKey = {
 }
 
 export class arc4HeartbeatKey extends arc4.Struct<{
-    address: Address,
-    asset: arc4.UintN64,
+    address: Address
+    asset: arc4.UintN64
 }> {}
 
-export type HeartbeatValues = {
+export type Heartbeat = {
     held: uint64
     hard: uint64
     lock: uint64
     timestamp: uint64
 }
 
-export class arc4HeartbeatValues extends arc4.Struct<{
-    held: arc4.UintN64,
-    hard: arc4.UintN64,
-    lock: arc4.UintN64,
-    timestamp: arc4.UintN64,
+export type Heartbeats = Heartbeat[]
+
+export class arc4Heartbeat extends arc4.Struct<{
+    held: arc4.UintN64
+    hard: arc4.UintN64
+    lock: arc4.UintN64
+    timestamp: arc4.UintN64
 }> {}
+
+export type arc4Heartbeats = arc4.StaticArray<arc4Heartbeat, 4>
 
 export type StakeInfo = {
     asset: uint64
@@ -98,8 +97,8 @@ export type StakeInfo = {
 }
 
 export class arc4StakeInfo extends arc4.Struct<{
-    asset: arc4.UintN64,
-    type: arc4.UintN64,
+    asset: arc4.UintN64
+    type: StakingType
 }> {}
 
 export type AssetCheck = {
@@ -108,6 +107,13 @@ export type AssetCheck = {
 }
 
 export class arc4AssetCheck extends arc4.Struct<{
-    asset: arc4.UintN64,
-    amount: arc4.UintN64,
+    asset: arc4.UintN64
+    amount: arc4.UintN64
 }> {}
+
+export type AssetChecks = DynamicArray<arc4AssetCheck>
+
+export type StakingMBRData = {
+    stakes: uint64
+    heartbeats: uint64
+}

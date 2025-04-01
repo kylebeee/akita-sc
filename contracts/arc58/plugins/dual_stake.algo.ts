@@ -1,13 +1,13 @@
-import { Contract } from '@algorandfoundation/tealscript';
-import { DualStake } from '../../../utils/types/dual_stake';
+import { Contract } from '@algorandfoundation/tealscript'
+import { DualStake } from '../../../utils/types/dual_stake'
 
 export class DualStakePlugin extends Contract {
-    programVersion = 10;
-    
-    appID = GlobalStateKey<AppID>({ key: 'appID' });
+    programVersion = 10
+
+    appID = GlobalStateKey<AppID>({ key: 'appID' })
 
     createApplication(appID: AppID): void {
-        this.appID.value = appID;
+        this.appID.value = appID
     }
 
     registerOnline(
@@ -23,27 +23,20 @@ export class DualStakePlugin extends Contract {
         sendMethodCall<typeof DualStake.prototype.register_online, void>({
             sender: sender.address,
             applicationID: this.appID.value,
-            methodArgs: [
-                selectionKey,
-                votingKey,
-                spKey,
-                firstRound,
-                lastRound,
-                keyDilution
-            ],
+            methodArgs: [selectionKey, votingKey, spKey, firstRound, lastRound, keyDilution],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     registerOffline(sender: AppID, rekeyBack: boolean, address: Address): void {
         sendMethodCall<typeof DualStake.prototype.register_offline, void>({
             sender: sender.address,
             applicationID: this.appID.value,
-            methodArgs: [ address ],
+            methodArgs: [address],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     initStorage(sender: AppID, rekeyBack: boolean): void {
@@ -53,17 +46,17 @@ export class DualStakePlugin extends Contract {
             methodArgs: [],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     withdrawPlatformFees(sender: AppID, rekeyBack: boolean, amt: uint64): void {
         sendMethodCall<typeof DualStake.prototype.withdraw_platform_fees, void>({
             sender: sender.address,
             applicationID: this.appID.value,
-            methodArgs: [ amt ],
+            methodArgs: [amt],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     mint(sender: AppID, rekeyBack: boolean): void {
@@ -73,7 +66,7 @@ export class DualStakePlugin extends Contract {
             methodArgs: [],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     burn(sender: AppID, rekeyBack: boolean): void {
@@ -83,7 +76,7 @@ export class DualStakePlugin extends Contract {
             methodArgs: [],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     nullun(sender: AppID, rekeyBack: boolean): void {
@@ -93,17 +86,17 @@ export class DualStakePlugin extends Contract {
             methodArgs: [],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     createAsset(sender: AppID, rekeyBack: boolean, lstAsaName: bytes, lstUnitName: bytes): void {
         sendMethodCall<typeof DualStake.prototype.create_asset, void>({
             sender: sender.address,
             applicationID: this.appID.value,
-            methodArgs: [ lstAsaName, lstUnitName ],
+            methodArgs: [lstAsaName, lstUnitName],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     configure(
@@ -131,21 +124,21 @@ export class DualStakePlugin extends Contract {
                 platformFeeBps,
                 noderunnerFeeBps,
                 adminAddr,
-                noderunnerAddr
+                noderunnerAddr,
             ],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     changeAdmin1(sender: AppID, rekeyBack: boolean, newAdmin: Address): void {
         sendMethodCall<typeof DualStake.prototype.change_admin_1, void>({
             sender: sender.address,
             applicationID: this.appID.value,
-            methodArgs: [ newAdmin ],
+            methodArgs: [newAdmin],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     changeAdmin2(sender: AppID, rekeyBack: boolean): void {
@@ -155,26 +148,26 @@ export class DualStakePlugin extends Contract {
             methodArgs: [],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     changeNoderunner(sender: AppID, rekeyBack: boolean, newNoderunner: Address): void {
         sendMethodCall<typeof DualStake.prototype.change_noderunner, void>({
             sender: sender.address,
             applicationID: this.appID.value,
-            methodArgs: [ newNoderunner ],
+            methodArgs: [newNoderunner],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     changeFeeAddr(sender: AppID, rekeyBack: boolean, newFeeAddr: Address): void {
         sendMethodCall<typeof DualStake.prototype.change_feeaddr, void>({
             sender: sender.address,
             applicationID: this.appID.value,
-            methodArgs: [ newFeeAddr ],
+            methodArgs: [newFeeAddr],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 }

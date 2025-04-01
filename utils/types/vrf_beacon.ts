@@ -1,7 +1,7 @@
-import { Contract } from "@algorandfoundation/tealscript";
+import { Bytes, bytes, Contract, uint64 } from '@algorandfoundation/algorand-typescript'
 
 export class RandomnessBeacon extends Contract {
-    programVersion = 10;
-
-    get(round: uint64, userData: bytes): bytes { return ''; }
+    get(round: uint64, userData: bytes): bytes {
+        return Bytes('')
+    }
 }

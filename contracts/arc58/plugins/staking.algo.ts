@@ -1,9 +1,16 @@
-import { Contract } from '@algorandfoundation/tealscript';
-import { Staking, STAKING_TYPE_HARD, STAKING_TYPE_HEARTBEAT, STAKING_TYPE_LOCK, STAKING_TYPE_SOFT, StakingType } from '../../staking/staking.algo';
-import { AkitaAppIDsStaking } from '../../../utils/constants';
+import { Contract } from '@algorandfoundation/tealscript'
+import {
+    Staking,
+    STAKING_TYPE_HARD,
+    STAKING_TYPE_HEARTBEAT,
+    STAKING_TYPE_LOCK,
+    STAKING_TYPE_SOFT,
+    StakingType,
+} from '../../staking/staking.algo'
+import { AkitaAppIDsStaking } from '../../../utils/constants'
 
-const lockMBR = 28_900;
-const heartBeatMBR = 44_100;
+const lockMBR = 28_900
+const heartBeatMBR = 44_100
 // const ONE_YEAR = 31_536_000; // 365 days * 24 hours * 60 minutes * 60 seconds
 
 // const errs = {
@@ -15,7 +22,6 @@ const heartBeatMBR = 44_100;
 // }
 
 export class StakingPlugin extends Contract {
-
     stake(
         sender: AppID,
         rekeyBack: boolean,
@@ -25,23 +31,21 @@ export class StakingPlugin extends Contract {
         expiration: uint64,
         isUpdate: boolean
     ): void {
-        const akitaStakingApp = AppID.fromUint64(AkitaAppIDsStaking);
-        const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK;
-        const isAlgo = asset.id === 0;
+        const akitaStakingApp = AppID.fromUint64(AkitaAppIDsStaking)
+        const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
+        const isAlgo = asset.id === 0
 
-        let sendAmount = 0;
+        let sendAmount = 0
         if (!isUpdate) {
             if (isEscrow && isAlgo) {
-                sendAmount = amount + lockMBR;
+                sendAmount = amount + lockMBR
             } else if (type === STAKING_TYPE_HEARTBEAT) {
-                sendAmount = lockMBR + heartBeatMBR;
+                sendAmount = lockMBR + heartBeatMBR
             } else {
                 sendAmount = lockMBR
             }
-        } else {
-            if (isEscrow && isAlgo) {
-                sendAmount = amount;
-            }
+        } else if (isEscrow && isAlgo) {
+            sendAmount = amount
         }
 
         if (isAlgo) {
@@ -56,11 +60,11 @@ export class StakingPlugin extends Contract {
                     type,
                     amount,
                     expiration,
-                    isUpdate
+                    isUpdate,
                 ],
                 rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
                 fee: 0,
-            });
+            })
         } else {
             sendMethodCall<typeof Staking.prototype.stakeAsa, void>({
                 applicationID: akitaStakingApp,
@@ -79,53 +83,38 @@ export class StakingPlugin extends Contract {
                     type,
                     amount,
                     expiration,
-                    isUpdate
+                    isUpdate,
                 ],
                 rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
                 fee: 0,
-            });
+            })
         }
     }
 
-    withdraw(
-        sender: AppID,
-        rekeyBack: boolean,
-        asset: AssetID,
-        type: StakingType
-    ): void {
+    withdraw(sender: AppID, rekeyBack: boolean, asset: AssetID, type: StakingType): void {
         sendMethodCall<typeof Staking.prototype.withdraw, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsStaking),
-            methodArgs: [ asset, type ],
+            methodArgs: [asset, type],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
-    createHeartbeat(
-        sender: AppID,
-        rekeyBack: boolean,
-        address: Address,
-        asset: AssetID
-    ): void {
+    createHeartbeat(sender: AppID, rekeyBack: boolean, address: Address, asset: AssetID): void {
         sendMethodCall<typeof Staking.prototype.createHeartbeat, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsStaking),
-            methodArgs: [ address, asset ],
+            methodArgs: [address, asset],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
-    softCheck(
-        sender: AppID,
-        rekeyBack: boolean,
-        address: Address,
-        asset: AssetID,
-    ): void {
+    softCheck(sender: AppID, rekeyBack: boolean, address: Address, asset: AssetID): void {
         sendMethodCall<typeof Staking.prototype.softCheck, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsStaking),
-            methodArgs: [ address, asset ],
+            methodArgs: [address, asset],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 }

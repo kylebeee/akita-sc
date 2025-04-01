@@ -1,591 +1,776 @@
-import { ContractWithOptInCreatorOnlyAndGate } from '../../utils/base_contracts/gate.algo';
-import { StakeValue, Staking, STAKING_TYPE_HEARTBEAT, STAKING_TYPE_SOFT, StakingType } from "../staking/staking.algo";
-import { Rewards } from "../rewards/rewards.algo";
-import { MetaMerkles, RootKey } from "../meta_merkles/meta_merkles.algo";
-import { RandomnessBeacon } from "../../utils/types/vrf_beacon";
-import { pcg64Init, pcg64Random } from "../../utils/types/lib_pcg/pcg64.algo";
-import { AppList } from "../dao/dao.algo";
-import { MAX_UINT64 } from "../../utils/constants";
+import {
+  Application,
+  arc4,
+  assert,
+  BoxMap,
+  bytes,
+  Global,
+  GlobalState,
+  gtxn,
+  itxn,
+  OnCompleteAction,
+  Txn,
+  uint64,
+} from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Address, Bool, decodeArc4, DynamicArray, methodSelector, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
+import { ContractWithCreatorOnlyOptInAndGate } from '../../utils/base_contracts/gate.algo'
+import { Staking } from '../staking/staking.algo'
+import { Rewards } from '../rewards/rewards.algo'
+import { MetaMerkles } from '../meta_merkles/meta_merkles.algo'
+import {
+  arc4EntryData,
+  arc4EntryKey,
+  arc4Reward,
+  arc4StakeEntry,
+  DistributionTypeEven,
+  DistributionTypeFlat,
+  DistributionTypePercentage,
+  DistributionTypeShuffle,
+  EntryData,
+  POOL_STAKING_TYPE_HEARTBEAT,
+  POOL_STAKING_TYPE_NONE,
+  POOL_STAKING_TYPE_SOFT,
+  PoolStakingType,
+  PoolState,
+  Reward,
+  StakeEntry,
+} from './types'
+import { arc4RootKey, RootKey } from '../meta_merkles/types'
+import { GateArgs } from '../../utils/types/gates'
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../../utils/errors'
+import { arc4StakeInfo, StakingType } from '../staking/types'
+import { bytes32 } from '../../utils/types/base'
+import { MERKLE_TREE_TYPE_ASSET } from '../meta_merkles/constants'
+import {
+  DisbursementPhaseAllocation,
+  DisbursementPhaseFinalization,
+  DisbursementPhaseIdle,
+  DisbursementPhasePreparation,
+  MaxAlgoIterationAmount,
+  MaxIterationAmount,
+  PoolBoxPrefixDisbursements,
+  PoolBoxPrefixEntries,
+  PoolBoxPrefixEntriesByAddress,
+  PoolGlobalStateKeyActiveDisbursementID,
+  PoolGlobalStateKeyAllowLateSignups,
+  PoolGlobalStateKeyCreator,
+  PoolGlobalStateKeyDisbursementCursor,
+  PoolGlobalStateKeyDisbursementPhase,
+  PoolGlobalStateKeyEndingRound,
+  PoolGlobalStateKeyEntryCount,
+  PoolGlobalStateKeyGateID,
+  PoolGlobalStateKeyGateSize,
+  PoolGlobalStateKeyLastRewardRound,
+  PoolGlobalStateKeyMaxEntries,
+  PoolGlobalStateKeyMinimumStakeAmount,
+  PoolGlobalStateKeyQualifiedStake,
+  PoolGlobalStateKeyReward,
+  PoolGlobalStateKeyRewardInterval,
+  PoolGlobalStateKeySalt,
+  PoolGlobalStateKeySignUpRound,
+  PoolGlobalStateKeyStakeKey,
+  PoolGlobalStateKeyStartingRound,
+  PoolGlobalStateKeyStatus,
+  PoolGlobalStateKeyTitle,
+  PoolGlobalStateKeyTotalStaked,
+  PoolGlobalStateKeyType,
+  PoolStatusDisbursing,
+  PoolStatusDraft,
+  PoolStatusFinal,
+} from './constants'
+import { AkitaDAO } from '../dao/dao.algo'
+import { PaymentTxn } from '@algorandfoundation/algorand-typescript/gtxn'
+import { arc4UserAllocation, arc4UserAllocations } from '../rewards/types'
+import { BasePool } from './base.algo'
+import { classes } from 'polytype'
+import { Gate } from '../gates/gate.algo'
 
-const AKITA_DAO_APP_LIST_KEY = 'app_list';
-const AKITA_DAO_REWARDS_DISTRIBUTION_FEE = 'rewards_distribution_fee';
+export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool) {
+  /** the status the pool is in */
+  status = GlobalState<arc4.UintN8>({ key: PoolGlobalStateKeyStatus })
+  /** title of the staking pool */
+  title = GlobalState<string>({ key: PoolGlobalStateKeyTitle })
+  /** the method of staking to be used for the pool */
+  type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+  /** the reward asset for the pool */
+  reward = GlobalState<arc4Reward>({ key: PoolGlobalStateKeyReward })
+  /** the round sign ups for the pool are allowed */
+  signupRound = GlobalState<uint64>({ key: PoolGlobalStateKeySignUpRound })
+  /** whether signups are allowed after the staking pool begins */
+  allowLateSignups = GlobalState<boolean>({ key: PoolGlobalStateKeyAllowLateSignups })
+  /** the round the pool starts at *if applicable* */
+  startingRound = GlobalState<uint64>({ key: PoolGlobalStateKeyStartingRound })
+  /** the round the pool ends at *if applicable* */
+  endingRound = GlobalState<uint64>({ key: PoolGlobalStateKeyEndingRound })
+  /** the interval that rewards should be paid out on */
+  rewardInterval = GlobalState<uint64>({ key: PoolGlobalStateKeyRewardInterval })
+  /** the round the last reward was last paid out on */
+  lastRewardRound = GlobalState<uint64>({ key: PoolGlobalStateKeyLastRewardRound })
+  /** the maximum entries allowed for the pool */
+  maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
+  /** the number of entries in a pool */
+  entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+  /** the total amount staked in the pool */
+  totalStaked = GlobalState<uint64>({ key: PoolGlobalStateKeyTotalStaked })
+  /** the total unique assets staked */
+  // uniqueAssetsStaked = GlobalState<uint64>({ key: PoolGlobalStateKeyUniqueAssetsStaked })
+  /**
+   * the name for the meta merkle asset group to validate staking
+   * stake key can be empty if distribution !== DistributionTypePercentage
+   */
+  stakeKey = GlobalState<arc4RootKey>({ key: PoolGlobalStateKeyStakeKey })
+  /** minimum stake amount */
+  minimumStakeAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyMinimumStakeAmount })
+  /** the gate id of the pool */
+  gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+  /** the size of the gate were using */
+  gateSize = GlobalState<uint64>({ key: PoolGlobalStateKeyGateSize })
+  /** the address of the creator of the staking pool */
+  creator = GlobalState<Address>({ key: PoolGlobalStateKeyCreator })
+  /** marketplace is pool creation side marketplace */
+  // marketplace = GlobalState<Address>({ key: PoolGlobalStateKeyMarketplace })
+  /** salt for randomness */
+  salt = GlobalState<bytes>({ key: PoolGlobalStateKeySalt })
+  /** a sub status of the disbursement phase of the pool */
+  disbursementPhase = GlobalState<UintN8>({ key: PoolGlobalStateKeyDisbursementPhase })
+  /** the id of the currently active disbursement */
+  activeDisbursementID = GlobalState<uint64>({ key: PoolGlobalStateKeyActiveDisbursementID })
+  /** the cursor for the current disbursement */
+  disbursementCursor = GlobalState<uint64>({ key: PoolGlobalStateKeyDisbursementCursor })
+  /** the count of qualified stake during the preparation phase of a disbursement */
+  qualifiedStakers = GlobalState<uint64>({ key: PoolGlobalStateKeyQualifiedStake })
+  /** the total qualified stake for the pool */
+  qualifiedStake = GlobalState<uint64>({ key: PoolGlobalStateKeyQualifiedStake })
 
-const MERKLE_TREE_TYPE_ASSET = 1;
 
-// you create a pool, set gate requirements & 
-// people sign up
-// we call the contract and create reward disbursements based on the schedule 
-export type PoolStatus = uint8
+  /** indexed entries for efficient iteration */
+  entries = BoxMap<uint64, arc4EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+  /** the entries in the pool */
+  entriesByAddress = BoxMap<arc4EntryKey, uint64>({ keyPrefix: PoolBoxPrefixEntriesByAddress })
+  /** the disbursements this pool as created & finalized */
+  disbursements = BoxMap<uint64, StaticBytes<0>>({ keyPrefix: PoolBoxPrefixDisbursements })
 
-export const PoolStatusDraft = 0;
-export const PoolStatusFinal = 1;
+  private newEntryID(): uint64 {
+    const id = this.entryID.value
+    this.entryID.value += 1
+    return id
+  }
 
-export type DistributionType = uint64;
+  private getIterationAmount(txnCount: uint64): uint64 {
+    const difference = this.entryID.value - this.disbursementCursor.value
 
-/**
- * disburse the rewards at the given rate based on the users % of stake in the pool
- * eg. the rate is 1000 and a users stake is 6% of the pool, they get 166.66
- */
-export const DistributionTypePercentage = 0;
-/**
- * disburse the rewards at the given rate using a flat amount
- * eg. each user gets 10 AKTA per day if they qualify
- */
-export const DistributionTypeFlat = 1;
-/**
- * disburse the rewards at the given rate evenly among all participants
- * eg. the rate is 1000 & theres 6 stakers, each gets 166.66
- */
-export const DistributionTypeEven = 2;
-/**
- * disburse the rewards randomly to a single user at the given rate
- * eg. the rate is 1000, one random qualified user gets it all
- */
-export const DistributionTypeShuffle = 3;
+    let max = MaxAlgoIterationAmount / txnCount
 
-export type EntryKey = {
-    address: Address;
-    asset: AssetID;
-}
+    return difference > max ? max : difference
+  }
 
-export type EntryData = EntryKey & { quantity: uint64 }
+  private processPreparationPhase(): void {
+    const iterationAmount = this.getIterationAmount(2 + this.gateSize.value)
+    
+    let count: uint64 = 0
+    let total: uint64 = 0
+    for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
+      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      if (entry.disqualified) {
+        continue
+      }
 
-export type EntryValue = {
-    id: uint64,
-    quantity: uint64
-}
+      // stake type none: 0 - 1 ref
+      // stake type heartbeat: 1 - 1 ref
+      // stake other: 1 - 1 ref
+      const { valid } = this.getStakeValue(id)
+      if (!valid) {
+        continue
+      }
 
-export type Reward = {
-    asset: AssetID;
-    distribution: DistributionType;
-    rate: uint64;
-    quantity: uint64;
-    expiration: uint64;
-    winnerCount: uint64; // shuffle distribution only
-};
+      const passes = this.gate(entry.address, this.gateID.value, entry.gateArgs)
+      if (!passes) {
+        continue
+      }
 
-export type PoolState = {
-    status: PoolStatus;
-    title: string;
-    type: StakingType;
-    reward: Reward;
-    signupRound: uint64;
-    startingRound: uint64;
-    allowLateSignups: boolean;
-    endingRound: uint64;
-    maxEntries: uint64;
-    entryCount: uint64;
-    totalStaked: uint64;
-    uniqueAssetsStaked: uint64;
-    stakeKey: RootKey;
-    minimumStakeAmount: uint64;
-    gateID: uint64;
-    creator: Address;
-}
-
-export class Pool extends ContractWithOptInCreatorOnlyAndGate {
-    programVersion = 11;
-
-    /** the state the pool is in */
-    status = GlobalStateKey<PoolStatus>({ key: 'status' });
-    /** title of the staking pool */
-    title = GlobalStateKey<string>({ key: 'title' });
-    /** the method of staking to be used for the pool */
-    type = GlobalStateKey<StakingType>({ key: 'type' });
-    /** the reward asset for the pool */
-    reward = GlobalStateKey<Reward>({ key: 'reward' });
-    /** the round sign ups for the pool are allowed */
-    signupRound = GlobalStateKey<uint64>({ key: 'signup_round' });
-    /** whether signups are allowed after the staking pool begins */
-    allowLateSignups = GlobalStateKey<boolean>({ key: 'allow_late_signups' });
-    /** the round the pool starts at *if applicable* */
-    startingRound = GlobalStateKey<uint64>({ key: 'starting_round' });
-    /** the round the pool ends at *if applicable* */
-    endingRound = GlobalStateKey<uint64>({ key: 'ending_round' });
-    /** the maximum entries allowed for the pool */
-    maxEntries = GlobalStateKey<uint64>({ key: 'max_entries' });
-    /** the number of entries in a pool */
-    entryCount = GlobalStateKey<uint64>({ key: 'entry_count' });
-    /** the total amount staked in the pool */
-    totalStaked = GlobalStateKey<uint64>({ key: 'total_staked' });
-    /** the total unique assets staked */
-    uniqueAssetsStaked = GlobalStateKey<uint64>({ key: 'unique_assets_staked' });
-    /** 
-     * the name for the meta merkle asset group to validate staking
-     * stake key can be empty if distribution !== DistributionTypePercentage
-    */
-    stakeKey = GlobalStateKey<RootKey>({ key: 'stake_key' });
-    /** minimum stake amount */
-    minimumStakeAmount = GlobalStateKey<uint64>({ key: 'minimum_stake_amount' });
-    /** the gate id of the pool */
-    gateID = GlobalStateKey<uint64>({ key: 'gate_id' });
-    /** the address of the creator of the staking pool */
-    creator = GlobalStateKey<Address>({ key: 'creator' });
-    /** marketplace is pool creation side marketplace */
-    marketplace = GlobalStateKey<Address>({ key: 'marketplace' });
-    /** the akita DAO contract id */
-    akitaDAO = GlobalStateKey<AppID>({ key: 'akita_dao' });
-
-    /** indexed entries for efficient iteration */
-    entries = BoxMap<uint64, EntryData>({ prefix: 'e' });
-    /** the entries in the pool */
-    entriesByAddress = BoxMap<EntryKey, EntryValue>({ prefix: 'a' });
-
-    private newEntryID(): uint64 {
-        const id = this.entryCount.value;
-        this.entryCount.value += 1;
-        return id;
+      count += 1
+      total += entry.quantity
     }
 
-    /** @returns a boolean of whether sign ups are open */
-    @abi.readonly
-    signUpsOpen(): boolean {
-        return (
-            this.status.value === PoolStatusFinal
-            && globals.round > this.signupRound.value
-            && (
-                globals.round < this.startingRound.value
-                || this.startingRound.value === 0
-                || this.allowLateSignups.value
-            )
-        );
+    this.disbursementCursor.value += iterationAmount
+    this.qualifiedStakers.value += count
+    this.qualifiedStake.value += total
+
+    if (this.entryID.value === this.disbursementCursor.value) {
+      this.disbursementPhase.value = DisbursementPhaseAllocation
+      this.disbursementCursor.value = 0
+    }
+  }
+
+  private createPercentageDisbursement(): void {
+    const iterationAmount = this.getIterationAmount()
+    const reward = decodeArc4<Reward>(this.reward.value.bytes)
+
+    for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
+      const entry = decodeArc4<EntryData>(this.entries(i).value.bytes)
+
+      if (entry.disqualified) {
+        continue
+      }
+
+      const userShare = entry.quantity / this.qualifiedStake.value
+
+
+
+
+
+    }
+  }
+
+  private createFlatDisbursement(asset: uint64, amount: uint64): void {
+    const iterationAmount = this.getIterationAmount()
+
+    for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
+      const entry = decodeArc4<EntryData>(this.entries(i).value.bytes)
+
+      if (entry.disqualified) {
+        continue
+      }
+
+      const passes = this.gate(entry.address, this.gateID.value, entry.gateArgs)
+      if (!passes) {
+        continue
+      }
+
+      const allocations = new DynamicArray(
+        new arc4UserAllocation({
+          address: entry.address,
+          amount: new UintN64(amount)
+        }),
+      )
+
+      this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations)
+      this.disbursementCursor.value += 1
+    }
+  }
+
+  private createEvenDisbursement(): void {
+    const iterationAmount = this.getIterationAmount()
+  }
+
+  private createShuffleDisbursement(): void {
+    const iterationAmount = this.getIterationAmount()
+  }
+
+  private checkByID(id: uint64): { valid: boolean, balance: uint64 } {
+    assert(
+      this.type.value !== POOL_STAKING_TYPE_NONE ||
+      this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
+      'check is not relevant for this kind of pool'
+    )
+
+    const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+
+    if (entry.disqualified) {
+      return { valid: false, balance: 0 }
     }
 
-    /** @returns a boolean of whether the pool is live */
-    @abi.readonly
-    isLive(): boolean {
-        return (
-            this.status.value === PoolStatusFinal
-            && (globals.round >= this.startingRound.value || this.startingRound.value === 0)
-            && (globals.round <= this.endingRound.value || this.endingRound.value === 0)
-        )
+    if (this.type.value === POOL_STAKING_TYPE_SOFT) {
+      const check = abiCall(Staking.prototype.softCheck, {
+        appId: super.getAppList().staking,
+        args: [entry.address, entry.asset],
+        fee: 0,
+      }).returnValue
+
+      if (check.balance >= entry.quantity) {
+        return { valid: true, balance: check.balance }
+      }
+    } else {
+      const info = abiCall(Staking.prototype.getInfo, {
+        appId: super.getAppList().staking,
+        args: [
+          entry.address,
+          new arc4StakeInfo({
+            asset: new UintN64(entry.asset),
+            type: this.stakingType(),
+          }),
+        ],
+        fee: 0,
+      }).returnValue
+
+      if (info.amount >= entry.quantity) {
+        return { valid: true, balance: info.amount }
+      }
     }
 
-    createApplication(
-        title: string,
-        type: StakingType,
-        reward: Reward,
-        creator: Address,
-        marketplace: Address,
-        stakeKey: RootKey,
-        minimumStakeAmount: uint64,
-        gateID: uint64,
-        maxEntries: uint64,
-        akitaDAO: AppID
-    ) {
-        this.status.value = PoolStatusDraft;
-        this.title.value = title;
-        this.type.value = type;
-        this.reward.value = reward;
-        this.creator.value = creator;
-        this.marketplace.value = marketplace;
-        assert(
-            stakeKey.address !== globals.zeroAddress
-            || reward.distribution !== DistributionTypePercentage,
-        );
-        this.stakeKey.value = stakeKey;
-        this.minimumStakeAmount.value = minimumStakeAmount;
-        this.gateID.value = gateID;
-        this.maxEntries.value = maxEntries;
-        this.akitaDAO.value = akitaDAO;
+    this.entries(id).value.disqualified = new Bool(true)
+    return { valid: false, balance: 0 }
+  }
+
+  private getLatestWindowStart(): uint64 {
+    return Global.round - ((Global.round - this.startingRound.value) % this.rewardInterval.value)
+  }
+
+  private validWindow(): boolean {
+    const latestWindowStart = this.getLatestWindowStart()
+    return latestWindowStart !== Global.round && this.lastRewardRound.value < latestWindowStart
+  }
+
+  // private distributeShuffle(): void {
+
+  //   const reward = decodeArc4<Reward>(this.reward.value.bytes)
+
+  //   let winnerCount: uint64 = 1
+  //   if (reward.winnerCount > 0) {
+  //     winnerCount = reward.winnerCount
+  //   }
+
+  //   const seed = abiCall(RandomnessBeacon.prototype.get, {
+  //     appId: super.getAppList().vrfBeacon,
+  //     args: [roundToUse, this.salt.value],
+  //     fee: 0,
+  //   }).returnValue
+
+  //   if (seed.length === 0) {
+  //     this.vrfGetFailureCount.value += 1
+  //     return
+  //   }
+
+  //   // Initialize PCG randomness with the seed
+  //   const rngState = pcg64Init(seed.slice(0, 16))
+
+  //   // Calculate reward amount per winner
+  //   const winnerRewardAmount = reward.quantity / winnerCount
+
+  //   // make upper bounds inclusive if we can
+  //   let upperBound = this.weightedBidTotal.value
+  //   if (upperBound < MAX_UINT64) {
+  //     upperBound = upperBound += 1
+  //   }
+
+  //   const rngResult = pcg64Random(rngState, 1, upperBound, reward.winnerCount)
+  //   // this.winningTicket.value = rngResult[1][0];
+  // }
+
+  private stakingType(): StakingType {
+    assert(this.type.value !== POOL_STAKING_TYPE_NONE, 'pool staking type is not set')
+    return new UintN8(this.type.value.native - 1)
+  }
+
+  private getStakeValue(id: uint64): { valid: boolean, balance: uint64 } {
+    if (this.type.value === POOL_STAKING_TYPE_NONE) {
+      return { valid: true, balance: 0 }
+    } else if (this.type.value === POOL_STAKING_TYPE_HEARTBEAT) {
+      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+
+      const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
+        appId: super.getAppList().staking,
+        args: [entry.address, entry.asset, true],
+        fee: 0,
+      }).returnValue
+
+      return { valid: true, balance: avg }
     }
 
-    finalize(signupRound: uint64, startingRound: uint64, endingRound: uint64) {
-        assert(this.txn.sender === this.creator.value, 'only the creator can finalize the pool');
-        assert(this.status.value === PoolStatusDraft, 'the pool must be in draft state to finalize');
-        assert(
-            signupRound > globals.round
-            || signupRound === 0 && this.allowLateSignups.value,
-            'the signup round must be in the future'
-        );
-        assert(
-            startingRound === 0 || startingRound > globals.round,
-            'the starting round must be in the future'
-        );
-        assert(
-            endingRound === 0
-            || (
-                startingRound > globals.round
-                && endingRound > (startingRound + 10)
-            ),
-            'the ending round must be after the starting round + 10'
-        );
+    return this.checkByID(id)
+  }
 
-        this.signupRound.value = signupRound;
-        this.startingRound.value = startingRound;
-        this.endingRound.value = endingRound;
-        this.status.value = PoolStatusFinal;
-    }
+  private createRewards(title: string, timeToUnlock: uint64, expiration: uint64): uint64 {
 
-    enter(payment: PayTxn, asset: AssetID, quantity: uint64, proof: bytes32[], args: bytes[]): void {
-        // Verify the pool is live
-        assert(this.isLive(), 'the pool is not live');
-        assert(this.gate(this.txn.sender, this.gateID.value, args), 'user does not meet gate requirements');
-        assert(this.entryCount.value < this.maxEntries.value || this.maxEntries.value === 0, 'pool has reached maximum entries');
+    const rewardsApp = Application(super.getAppList().rewards)
 
-        // Verify payment for box storage (increased for additional box)
-        verifyPayTxn(payment, {
-            receiver: this.app.address,
-            amount: 5200, // MBR for two box storage entries
-        });
+    const mbrPayment = itxn.payment({
+      receiver: rewardsApp.address,
+      amount: 35_300 + (400 * title.length),
+      fee: 0,
+    })
 
-        assert(quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount');
+    const feePayment = itxn.payment({
+      receiver: this.akitaDAO.value.address,
+      amount: super.getStakingFees().rewardsFee,
+      fee: 0,
+    })
 
-        // check their actual balance if the assets aren't escrowed
-        if (
-            this.type.value === STAKING_TYPE_HEARTBEAT
-            || this.type.value === STAKING_TYPE_SOFT
-        ) {
-            const balance = this.txn.sender.assetBalance(asset);
-            assert(balance >= quantity, 'user does not have min balance')
-        }
+    return abiCall(Rewards.prototype.createDisbursement, {
+      appId: rewardsApp,
+      args: [
+        mbrPayment,
+        feePayment,
+        itxn.applicationCall({
+          appId: this.akitaDAO.value,
+          onCompletion: OnCompleteAction.NoOp,
+          appArgs: [
+            methodSelector(AkitaDAO.prototype.receivePayment),
+            feePayment
+          ],
+          fee: 0
+        }),
+        title,
+        timeToUnlock,
+        expiration,
+        '',
+      ],
+      fee: 0,
+    }).returnValue
+  }
 
-        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
+  private createRewardAllocations(
+    disbursementID: uint64,
+    asset: uint64,
+    allocations: arc4UserAllocations
+  ): void {
 
-        const stakeInfo = sendMethodCall<typeof Staking.prototype.getInfo, StakeValue>({
-            applicationID: akitaApps.staking,
-            methodArgs: [
-                this.txn.sender,
-                {
-                    asset: asset,
-                    type: this.type.value
-                }
-            ],
-            fee: 0
-        });
+    const rewardsApp = Application(super.getAppList().rewards)
+    const mbrAmount = this.calculateAllocationMBR(allocations)
+    const paymentAmount = this.sumAllocations(allocations)
 
-        assert(stakeInfo.amount >= quantity, 'user does not have enough staked');
-
-        const verified = sendMethodCall<typeof MetaMerkles.prototype.verify, boolean>({
-            applicationID: akitaApps.metaMerkles,
-            methodArgs: [
-                this.stakeKey.value.address,
-                this.stakeKey.value.name,
-                sha256(sha256(itob(asset))),
-                proof,
-                MERKLE_TREE_TYPE_ASSET
-            ],
+    if (asset === 0) {
+      // ALGO allocations
+      abiCall(Rewards.prototype.createUserAllocations, {
+        appId: rewardsApp,
+        args: [
+          itxn.payment({
+            receiver: rewardsApp.address,
+            amount: mbrAmount + paymentAmount,
             fee: 0,
-        });
-
-        assert(verified, 'failed to verify stake requirements');
-
-        const entryID = this.newEntryID();
-        this.entries(entryID).value = {
-            address: this.txn.sender,
-            asset: asset,
-            quantity: quantity,
-        };
-
-        const aKey: EntryKey = { address: this.txn.sender, asset: asset };
-        this.entriesByAddress(aKey).value = {
-            id: entryID,
-            quantity: quantity,
-        };
-    }
-
-    distributeRewards(): void {
-        assert(this.txn.sender === this.creator.value, 'only the creator can distribute rewards');
-        assert(this.isLive(), 'the pool is not live');
-        // assert distribution window is open & not already active
-
-        const distribution = this.reward.value.distribution;
-
-        if (distribution === DistributionTypePercentage) {
-            this.distributeByStakePercentage();
-        } else if (distribution === DistributionTypeFlat) {
-            this.distributeFlat();
-        } else if (distribution === DistributionTypeEven) {
-            this.distributeEven();
-        } else if (distribution === DistributionTypeShuffle) {
-            this.distributeShuffle();
-        } else {
-            assert(false, 'unknown reward rate type');
-        }
-    }
-
-    private distributeByStakePercentage(): void {
-        
-    }
-
-    private distributeFlat(): void {
-
-    }
-
-    private distributeEven(): void {
-
-    }
-
-    private distributeShuffle(): void {
-        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
-
-        const disbursementID = this.createDisbursement(
-            `${this.title.value} - Random Winner Reward`,
-            globals.latestTimestamp,
-            globals.latestTimestamp + this.reward.value.expiration
-        );
-
-        let winnerCount = 1;
-        if (this.reward.value.winnerCount > 0) {
-            winnerCount = this.reward.value.winnerCount;
-        }
-
-        const seed = sendMethodCall<typeof RandomnessBeacon.prototype.get, bytes>({
-            applicationID: akitaApps.vrfBeacon,
-            methodArgs: [roundToUse, this.txn.txID],
+          }),
+          disbursementID,
+          allocations,
+        ],
+      })
+    } else {
+      // ASA allocations
+      abiCall(Rewards.prototype.createAsaUserAllocations, {
+        appId: rewardsApp,
+        args: [
+          itxn.payment({
+            receiver: rewardsApp.address,
+            amount: mbrAmount,
             fee: 0,
-        });
-
-        if (seed.length === 0) {
-            this.vrfGetFailureCount.value += 1;
-            return;
-        }
-
-        // Initialize PCG randomness with the seed
-        const rngState = pcg64Init(substring3(seed, 0, 16) as bytes<16>);
-
-        // Calculate reward amount per winner
-        const winnerRewardAmount = this.reward.value.quantity / winnerCount;
-
-        // make upper bounds inclusive if we can
-        let upperBound = this.weightedBidTotal.value;
-        if (upperBound < MAX_UINT64) {
-            upperBound = upperBound += 1;
-        }
-
-        const rngResult = pcg64Random(rngState, 1, upperBound, this.reward.value.winnerCount);
-        // this.winningTicket.value = rngResult[1][0];
-    }
-
-    private getStakeValue(address: Address, asset: AssetID): uint64 {
-        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
-
-        if (this.type.value === STAKING_TYPE_HEARTBEAT) {
-            return sendMethodCall<typeof Staking.prototype.getHeartbeatAverage, uint64>({
-                applicationID: akitaApps.staking,
-                methodArgs: [address, asset],
-                fee: 0,
-            });
-        }
-
-        const stakeInfo = sendMethodCall<typeof Staking.prototype.getInfo, StakeValue>({
-            applicationID: akitaApps.staking,
-            methodArgs: [address, { asset: asset, type: this.type.value }],
+          }),
+          itxn.assetTransfer({
+            assetReceiver: rewardsApp.address,
+            xferAsset: asset,
+            assetAmount: paymentAmount,
             fee: 0,
-        });
+          }),
+          disbursementID,
+          allocations,
+        ],
+      })
+    }
+  }
 
-        return stakeInfo.amount;
+  private finalizeRewards(disbursementID: uint64): void {
+    const rewardsApp = Application(super.getAppList().rewards)
+
+    abiCall(Rewards.prototype.finalizeDisbursement, {
+      appId: rewardsApp,
+      args: [disbursementID],
+      fee: 0,
+    })
+  }
+
+  private calculateAllocationMBR(allocations: arc4UserAllocations): uint64 {
+    return 24_900 * allocations.length
+  }
+
+  private sumAllocations(allocations: arc4UserAllocations): uint64 {
+    let sum = 0
+    for (let i = 0; i < allocations.length; i++) {
+      sum += allocations[i].amount.native
+    }
+    return sum
+  }
+
+  // @ts-ignore
+  @abimethod({ onCreate: 'require' })
+  createApplication(
+    title: string,
+    type: StakingType,
+    reward: arc4Reward,
+    creator: Address,
+    marketplace: Address,
+    stakeKey: arc4RootKey,
+    minimumStakeAmount: uint64,
+    gateID: uint64,
+    maxEntries: uint64,
+    akitaDAO: uint64
+  ): void {
+    this.status.value = PoolStatusDraft
+    this.title.value = title
+    this.type.value = type
+    this.reward.value = reward
+    this.creator.value = creator
+    this.marketplace.value = marketplace
+
+    // stake key is optional if the distribution type is not percentage based
+    // we use this to qualify stakes for the pool but in some cases users may
+    // want to distribute rewards on something else like subscription status
+    // or impact score. In these cases the gate is the only requirement
+    // and the stake key is not needed
+    assert(
+      stakeKey.address.native !== Global.zeroAddress ||
+      reward.distribution !== DistributionTypePercentage,
+      'stake key is not set'
+    )
+
+    this.stakeKey.value = stakeKey
+    this.minimumStakeAmount.value = minimumStakeAmount
+    this.gateID.value = gateID
+    this.maxEntries.value = maxEntries
+    this.akitaDAO.value = Application(akitaDAO)
+    this.salt.value = Txn.txId
+    this.disbursementPhase.value = DisbursementPhaseIdle
+    this.activeDisbursementID.value = 0
+    this.disbursementCursor.value = 0
+    this.qualifiedStakers.value = 0
+  }
+
+  init() {
+    assert(Global.callerApplicationAddress === Global.creatorAddress, 'only the factory can init the pool')
+
+    if (this.gateID.value > 0) {
+      this.gateSize.value = abiCall(Gate.prototype.size, {
+        appId: super.getAppList().gate,
+        args: [this.gateID.value],
+        fee: 0,
+      }).returnValue
+    }
+  }
+
+  // @ts-ignore
+  @abimethod({ allowActions: 'DeleteApplication' })
+  deleteApplication(): void {
+    assert(Txn.sender === this.creator.value.native, 'only the creator can delete the pool')
+    assert(this.status.value === PoolStatusDraft || Global.round > this.endingRound.value, 'the pool must be in draft or ended')
+  }
+
+  finalize(signupRound: uint64, startingRound: uint64, endingRound: uint64) {
+    assert(Txn.sender === this.creator.value.native, 'only the creator can finalize the pool')
+    assert(this.status.value === PoolStatusDraft, 'the pool must be in draft state to finalize')
+    assert(
+      signupRound > Global.round || (signupRound === 0 && this.allowLateSignups.value),
+      'the signup round must be zero and late sign ups allowed or in the future'
+    )
+    // if startingRound is zero then signUpRound must also be zero and allowLateSignups must be true
+    assert(
+      startingRound === 0 ||
+      startingRound > Global.round,
+      'the starting round must be zero or in the future'
+    )
+
+    if (startingRound === 0) {
+      assert(signupRound === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
+      startingRound = Global.round
     }
 
-    private createDisbursement(title: string, timeToUnlock: uint64, expiration: uint64): uint64 {
-        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
-        const rewardsAppID = akitaApps.rewards;
+    assert(
+      endingRound === 0 || endingRound > (startingRound + 10),
+      'the ending round must be zero or after the starting round + 10'
+    )
 
-        const rewardsFee = this.akitaDAO.value.globalState(AKITA_DAO_REWARDS_DISTRIBUTION_FEE) as uint64;
+    this.signupRound.value = signupRound
+    this.startingRound.value = startingRound
+    this.endingRound.value = endingRound
+    this.status.value = PoolStatusFinal
+  }
 
-        return sendMethodCall<typeof Rewards.prototype.createDisbursement, uint64>({
-            applicationID: rewardsAppID,
-            methodArgs: [
-                {
-                    receiver: rewardsAppID.address,
-                    amount: 1_000_000,
-                    fee: 0,
-                },
-                {
-                    receiver: this.akitaDAO.value.address,
-                    amount: rewardsFee,
-                    fee: 0,
-                },
-                title,
-                timeToUnlock,
-                expiration,
-                `Pool ID: ${this.app.id}`
-            ],
-            fee: 0,
-        });
+  enter(payment: PaymentTxn, entries: DynamicArray<arc4StakeEntry>, args: GateArgs): void {
+    // Verify the pool is live
+    assert(this.isLive(), 'the pool is not live')
+    assert(
+      this.gate(new Address(Txn.sender), this.gateID.value, args),
+      'user does not meet gate requirements'
+    )
+    assert(
+      (this.entryID.value + 1) < this.maxEntries.value ||
+      this.maxEntries.value === 0,
+      'pool has reached maximum entries'
+    )
+    // Verify payment for box storage (increased for additional box)
+    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+
+    const costs = this.mbr()
+    const entryMBR = costs.entries + costs.entriesByAddress
+
+    assert(payment.amount === (entryMBR * entries.length), ERR_INVALID_PAYMENT_AMOUNT)
+
+    for (let i: uint64 = 0; i < entries.length; i++) {
+      const newEntry = decodeArc4<StakeEntry>(entries[i].bytes)
+
+      assert(newEntry.quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
+
+      // check their actual balance if the assets aren't escrowed
+      if (
+        this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
+        this.type.value === POOL_STAKING_TYPE_SOFT
+      ) {
+        const [balance, optedIn] = AssetHolding.assetBalance(Txn.sender, newEntry.asset)
+        assert(optedIn && balance >= entries[i].quantity.native, 'user does not have min balance')
+      }
+
+      const stakeInfo = abiCall(Staking.prototype.getInfo, {
+        appId: super.getAppList().staking,
+        args: [
+          new Address(Txn.sender),
+          new arc4StakeInfo({
+            asset: new UintN64(newEntry.asset),
+            type: this.stakingType(),
+          }),
+        ],
+        fee: 0,
+      }).returnValue
+
+      assert(stakeInfo.amount >= newEntry.quantity, 'user does not have enough staked')
+
+      const verified = abiCall(MetaMerkles.prototype.verify, {
+        appId: super.getAppList().metaMerkles,
+        args: [
+          this.stakeKey.value.address,
+          this.stakeKey.value.name,
+          bytes32(sha256(sha256(itob(newEntry.asset)))),
+          newEntry.proof,
+          MERKLE_TREE_TYPE_ASSET,
+        ],
+        fee: 0,
+      }).returnValue
+
+      assert(verified, 'failed to verify stake requirements')
+
+      const entryID = this.newEntryID()
+      this.entries(entryID).value = new arc4EntryData({
+        address: new Address(Txn.sender),
+        asset: new UintN64(newEntry.asset),
+        quantity: new UintN64(newEntry.quantity),
+        gateArgs: args,
+        disqualified: new Bool(false)
+      })
+
+      const aKey = new arc4EntryKey({
+        address: new Address(Txn.sender),
+        asset: new UintN64(newEntry.asset),
+      })
+
+      this.entriesByAddress(aKey).value = entryID
     }
+  }
 
-    private createAllocations(
-        disbursementID: uint64,
-        asset: AssetID,
-        allocations: { address: Address, amount: uint64 }[]
-    ): void {
-        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
-        const rewardsAppID = akitaApps.rewards;
+  withdraw(): void {
 
-        if (asset.id === 0) {
-            // ALGO allocations
-            sendMethodCall<typeof Rewards.prototype.createUserAllocations, void>({
-                applicationID: rewardsAppID,
-                methodArgs: [
-                    {
-                        receiver: rewardsAppID.address,
-                        amount: this.calculateAllocationMBR(allocations),
-                        fee: 0,
-                    },
-                    disbursementID,
-                    allocations
-                ]
-            });
-        } else {
-            // ASA allocations
-            sendMethodCall<typeof Rewards.prototype.createAsaUserAllocations, void>({
-                applicationID: rewardsAppID,
-                methodArgs: [
-                    {
-                        receiver: rewardsAppID.address,
-                        amount: this.calculateAllocationMBR(allocations),
-                        fee: 0,
-                    },
-                    {
-                        assetReceiver: rewardsAppID.address,
-                        xferAsset: asset,
-                        assetAmount: this.sumAllocations(allocations),
-                        fee: 0,
-                    },
-                    disbursementID,
-                    asset,
-                    allocations
-                ]
-            });
-        }
+  }
+
+  startDisbursement(): void {
+    assert(this.isLive(), 'the pool is not live')
+    assert(this.validWindow(), 'distribution window is not open')
+    assert(this.disbursementPhase.value === DisbursementPhaseIdle, 'distribution already in progress')
+
+    const disbursementID = this.createRewards(
+      `${this.title.value} - Rewards`,
+      Global.latestTimestamp,
+      Global.latestTimestamp + this.reward.value.expiration.native
+    )
+
+    this.status.value = PoolStatusDisbursing
+    this.activeDisbursementID.value = disbursementID
+    this.lastRewardRound.value = Global.round
+    this.disbursementCursor.value = 0
+    this.qualifiedStakers.value = 0
+    this.qualifiedStake.value = 0
+
+    // Set initial phase based on distribution type
+    if (this.reward.value.distribution !== DistributionTypeFlat) {
+      this.disbursementPhase.value = DisbursementPhasePreparation // Need total calculation first
+    } else {
+      this.disbursementPhase.value = DisbursementPhaseAllocation // Can go straight to allocation
     }
+  }
 
-    private finalizeDisbursement(disbursementID: uint64): void {
-        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
-        const rewardsAppID = akitaApps.rewards;
+  disburseRewards(): void {
+    assert(this.status.value === PoolStatusDisbursing, 'pool is not in disbursement phase')
+    assert(
+      this.disbursementPhase.value === DisbursementPhasePreparation ||
+      this.disbursementPhase.value === DisbursementPhaseAllocation,
+      'not ready to disburse'
+    )
 
-        sendMethodCall<typeof Rewards.prototype.finalizeDisbursement, void>({
-            applicationID: rewardsAppID,
-            methodArgs: [disbursementID],
-            fee: 0,
-        });
+    const reward = decodeArc4<Reward>(this.reward.value.bytes)
+
+    if (this.disbursementPhase.value === DisbursementPhasePreparation) {
+      this.processPreparationPhase()
+    } else {
+      if (reward.distribution === DistributionTypePercentage) {
+        this.createPercentageDisbursement()
+      } else if (reward.distribution === DistributionTypeFlat) {
+        this.createFlatDisbursement(reward.asset, reward.rate)
+      } else if (reward.distribution === DistributionTypeEven) {
+        this.createEvenDisbursement()
+      } else if (reward.distribution === DistributionTypeShuffle) {
+        this.createShuffleDisbursement()
+      } else {
+        assert(false, 'unknown reward rate type')
+      }
     }
+  }
 
-    private calculateAllocationMBR(allocations: { address: Address, amount: uint64 }[]): uint64 {
-        return 24_900 * allocations.length; // 24,900 microAlgos per allocation
+  finalizeDistribution(): void {
+    assert(this.disbursementPhase.value === DisbursementPhaseFinalization, 'not ready to finalize')
+
+    this.finalizeRewards(this.activeDisbursementID.value)
+
+    this.disbursements(this.activeDisbursementID.value).value = new StaticBytes<0>()
+
+    this.activeDisbursementID.value = 0
+    this.disbursementPhase.value = DisbursementPhaseIdle
+    this.disbursementCursor.value = 0
+    this.qualifiedStakers.value = 0
+    this.qualifiedStake.value = 0
+    this.status.value = PoolStatusFinal
+  }
+
+  check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
+    const key = new arc4EntryKey({ address, asset: new UintN64(asset) })
+    const id = this.entriesByAddress(key).value
+    return this.checkByID(id)
+  }
+
+  /** @returns a boolean of whether sign ups are open */
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  signUpsOpen(): boolean {
+    return (
+      this.status.value !== PoolStatusDraft &&
+      Global.round > this.signupRound.value &&
+      (Global.round < this.startingRound.value || this.allowLateSignups.value)
+    )
+  }
+
+  /** @returns a boolean of whether the pool is live */
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  isLive(): boolean {
+    return (
+      this.status.value !== PoolStatusDraft &&
+      (Global.round >= this.startingRound.value) &&
+      (Global.round <= this.endingRound.value || this.endingRound.value === 0)
+    )
+  }
+
+  // @ts-ignore
+  @abimethod({ readonly: true })
+  getState(): PoolState {
+    return {
+      status: this.status.value,
+      title: this.title.value,
+      type: this.type.value,
+      reward: decodeArc4<Reward>(this.reward.value.bytes),
+      signupRound: this.signupRound.value,
+      allowLateSignups: this.allowLateSignups.value,
+      startingRound: this.startingRound.value,
+      endingRound: this.endingRound.value,
+      maxEntries: this.maxEntries.value,
+      entryCount: (this.entryID.value + 1),
+      totalStaked: this.totalStaked.value,
+      stakeKey: decodeArc4<RootKey>(this.stakeKey.value.bytes),
+      minimumStakeAmount: this.minimumStakeAmount.value,
+      gateID: this.gateID.value,
+      creator: this.creator.value,
     }
-
-    private sumAllocations(allocations: { address: Address, amount: uint64 }[]): uint64 {
-        let sum = 0;
-        for (let i = 0; i < allocations.length; i++) {
-            sum += allocations[i].amount;
-        }
-        return sum;
-    }
-
-    @abi.readonly
-    getState(): PoolState {
-        return {
-            status: this.status.value,
-            title: this.title.value,
-            type: this.type.value,
-            reward: this.reward.value,
-            signupRound: this.signupRound.value,
-            allowLateSignups: this.allowLateSignups.value,
-            startingRound: this.startingRound.value,
-            endingRound: this.endingRound.value,
-            maxEntries: this.maxEntries.value,
-            entryCount: this.entryCount.value,
-            totalStaked: this.totalStaked.value,
-            uniqueAssetsStaked: this.uniqueAssetsStaked.value,
-            stakeKey: this.stakeKey.value,
-            minimumStakeAmount: this.minimumStakeAmount.value,
-            gateID: this.gateID.value,
-            creator: this.creator.value,
-        };
-    }
-
-    // Start a distribution process
-    startDistribution(): void {
-        assert(this.txn.sender === this.creator.value, 'only the creator can distribute rewards');
-        assert(this.isLive(), 'the pool is not live');
-
-        // Create a disbursement in rewards contract
-        const disbursementID = this.createDisbursement(
-            `${this.title.value} - Reward Distribution`,
-            globals.latestTimestamp,
-            globals.latestTimestamp + this.reward.value.expiration
-        );
-    }
-
-    // Helper method for allocating rewards by percentage of stake
-    private allocateByPercentage(startCursor: uint64, endCursor: uint64, asset: AssetID, totalRewardQuantity: uint64): void {
-
-    }
-
-    // Helper method for allocating flat rewards
-    private allocateFlat(startCursor: uint64, endCursor: uint64, asset: AssetID, flatRate: uint64): void {
-
-    }
-
-    // Helper method for allocating even rewards
-    private allocateEven(startCursor: uint64, endCursor: uint64, asset: AssetID, evenAmount: uint64): void {
-
-    }
-
-    // Helper method for allocating random/shuffle rewards
-    private allocateShuffle(asset: AssetID, quantity: uint64): void {
-        const akitaApps = this.akitaDAO.value.globalState(AKITA_DAO_APP_LIST_KEY) as AppList;
-
-        let qualifiedCount = 0;
-        for (let i = 0; i < this.entryCount.value; i++) {
-            const address = this.entries(i).value;
-            const stakeValue = this.getStakeValue(address, asset);
-
-            if (stakeValue > 0) {
-                qualifiedCount++;
-            }
-        }
-
-        if (qualifiedCount === 0) {
-            return; // No qualified participants
-        }
-
-        // Get random value from VRF beacon
-        const seed = sendMethodCall<typeof RandomnessBeacon.prototype.get, bytes>({
-            applicationID: akitaApps.vrfBeacon,
-            methodArgs: [globals.round - 1, this.txn.txID], // Using previous round for determinism
-            fee: 0,
-        });
-
-        if (seed.length === 0) {
-            return; // Failed to get random seed
-        }
-
-        // Convert seed to random index
-        const randomValue = btoi(extract(seed, 0, 8));
-        const randomIndex = randomValue % qualifiedCount;
-
-        // Find the address at this random index
-        let currentQualifiedIdx = 0;
-        let selectedAddress: Address | null = null;
-
-        for (let i = 0; i < this.entryCount.value; i++) {
-            const address = this.entries(i).value;
-            const stakeValue = this.getStakeValue(address, asset);
-
-            if (stakeValue > 0) {
-                if (currentQualifiedIdx === randomIndex) {
-                    selectedAddress = address;
-                    break;
-                }
-                currentQualifiedIdx++;
-            }
-        }
-
-        if (selectedAddress !== null) {
-            // Create allocation for the winner
-            const allocations = [{
-                address: selectedAddress,
-                amount: quantity
-            }];
-
-            this.createAllocations(
-                this.activeDisbursementID.value,
-                asset,
-                allocations
-            );
-        }
-    }
+  }
 }

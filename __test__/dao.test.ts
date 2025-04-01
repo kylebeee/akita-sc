@@ -1,47 +1,43 @@
-import * as algokit from '@algorandfoundation/algokit-utils';
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import { AkitaDaoClient, AkitaDaoFactory } from '../clients/AkitaDAOClient';
-import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk';
+import * as algokit from '@algorandfoundation/algokit-utils'
+import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
+import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
+import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
+import { AkitaDaoClient, AkitaDaoFactory } from '../clients/AkitaDAOClient'
 
-algokit.Config.configure({ populateAppCallResources: true });
+algokit.Config.configure({ populateAppCallResources: true })
 
-const fixture = algorandFixture();
+const fixture = algorandFixture()
 
 describe('DAO Tests', () => {
     /** Alice's externally owned account (ie. a keypair account she has in Defly) */
-    let aliceEOA: algosdk.Account;
+    let aliceEOA: algosdk.Account
     /** The suggested params for transactions */
-    let suggestedParams: algosdk.SuggestedParams;
+    let suggestedParams: algosdk.SuggestedParams
     /** The client for the DAO */
-    let daoClient: AkitaDaoClient;
+    let daoClient: AkitaDaoClient
 
-    beforeEach(fixture.beforeEach);
+    beforeEach(fixture.beforeEach)
 
     beforeAll(async () => {
-        await fixture.beforeEach();
-        const { algorand, algod } = fixture.context;
-        const dispenser = await algorand.account.dispenserFromEnvironment();
-        suggestedParams = await algorand.getSuggestedParams();
-        aliceEOA = await fixture.context.generateAccount({ initialFunds: algokit.microAlgos(100_000_000) });
-    
-        await algorand.account.ensureFunded(
-          aliceEOA.addr,
-          dispenser,
-          (100).algo(),
-        );
+        await fixture.beforeEach()
+        const { algorand, algod } = fixture.context
+        const dispenser = await algorand.account.dispenserFromEnvironment()
+        suggestedParams = await algorand.getSuggestedParams()
+        aliceEOA = await fixture.context.generateAccount({ initialFunds: algokit.microAlgos(100_000_000) })
+
+        await algorand.account.ensureFunded(aliceEOA.addr, dispenser, (100).algo())
 
         const minter = new AkitaDaoFactory({
             defaultSender: aliceEOA.addr,
             defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
-            algorand
-        });
+            algorand,
+        })
 
-        const results = await minter.send.create.createApplication();
-        daoClient = results.appClient;
+        const results = await minter.send.create.createApplication()
+        daoClient = results.appClient
 
-        console.log('DAO Address:', daoClient.appAddress);
-        console.log('current version: ', await daoClient.state.global.version());
+        console.log('DAO Address:', daoClient.appAddress)
+        console.log('current version: ', await daoClient.state.global.version())
 
         await daoClient.send.init({
             args: {
@@ -69,11 +65,11 @@ describe('DAO Tests', () => {
                 minimumProposalThreshold: 10,
                 minimumVoteThreshold: 10,
                 revocationAddress: aliceEOA.addr,
-            }
-        });
-    });
+            },
+        })
+    })
 
     test('txnHash check', async () => {
-        expect(null).toBe(null);
-    });
-});
+        expect(null).toBe(null)
+    })
+})

@@ -1,7 +1,7 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Operator } from "../../types";
-import { StakingType } from "../../../staking/types";
-import { Address } from "@algorandfoundation/algorand-typescript/arc4";
+import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { Operator } from '../../types'
+import { StakingType } from '../../../staking/types'
 
 export class arc4StakingType extends arc4.Struct<{
     asset: arc4.UintN64
@@ -17,10 +17,10 @@ export type StakingAmountRegistryInfo = {
 }
 
 export class arc4StakingAmountRegistryInfo extends arc4.Struct<{
-    op: arc4.UintN64
+    op: arc4.UintN8
     asset: arc4.UintN64
     amount: arc4.UintN64
-    type: arc4.UintN64
+    type: arc4.UintN8
     includeStaked: arc4.Bool
 }> {}
 
@@ -34,7 +34,6 @@ export class arc4StakingAmountGateCheckParams extends arc4.Struct<{
     registryID: arc4.UintN64
 }> {}
 
-
 // export const RegistryInfoParamsLength = len<Operator>() + len<AssetID>() + len<uint64>();
 export type RegistryInfo = {
     op: Operator
@@ -43,7 +42,7 @@ export type RegistryInfo = {
 }
 
 export class arc4StakingPowerRegistryInfo extends arc4.Struct<{
-    op: arc4.UintN64
+    op: arc4.UintN8
     asset: arc4.UintN64
     power: arc4.UintN64
 }> {}

@@ -1,15 +1,21 @@
-import { arc4, assert, BoxMap, bytes, GlobalState, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AkitaBaseContract } from "../../../../utils/base_contracts/base.algo";
-import { arc4FollowerCountGateCheckParams, arc4FollowerCountRegistryInfo } from "./types";
-import { GateGlobalStateKeyRegistryCursor } from "../../constants";
-import { Operator } from "../../types";
-import { Address, decodeArc4, interpretAsArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
-import { AkitaSocialPlugin, MetaValue } from "../../../arc58/plugins/social/social.algo";
-import { Equal, GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo, NotEqual } from "../../../../utils/operators";
-import { ERR_INVALID_ARG_COUNT } from "../../errors";
+import { assert, BoxMap, bytes, GlobalState, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, Address, interpretAsArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { AkitaBaseContract } from '../../../../utils/base_contracts/base.algo'
+import { arc4FollowerCountGateCheckParams, arc4FollowerCountRegistryInfo } from './types'
+import { GateGlobalStateKeyRegistryCursor } from '../../constants'
+import { Operator } from '../../types'
+import { AkitaSocialPlugin } from '../../../arc58/plugins/social/social.algo'
+import {
+    Equal,
+    GreaterThan,
+    GreaterThanOrEqualTo,
+    LessThan,
+    LessThanOrEqualTo,
+    NotEqual,
+} from '../../../../utils/operators'
+import { ERR_INVALID_ARG_COUNT } from '../../errors'
 
 export class FollowerCountGate extends AkitaBaseContract {
-
     registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
 
     registry = BoxMap<uint64, arc4FollowerCountRegistryInfo>({ keyPrefix: '' })
@@ -21,35 +27,31 @@ export class FollowerCountGate extends AkitaBaseContract {
     }
 
     private followerCountGate(user: Address, op: Operator, value: uint64): boolean {
-
-        // TODO: replace with itxn.abiCall when available
-        const getMetaTxn = itxn
-            .applicationCall({
-                appId: super.getAppList().social,
-                appArgs: [
-                    methodSelector(AkitaSocialPlugin.prototype.getMeta),
-                    user
-                ]
-            })
-            .submit()
-
-        const meta = decodeArc4<MetaValue>(getMetaTxn.lastLog)
+        const meta = abiCall(AkitaSocialPlugin.prototype.getMeta, {
+            appId: super.getAppList().social,
+            args: [user],
+        }).returnValue
 
         if (op === Equal) {
-            return meta.followerCount === value;
-        } else if (op === NotEqual) {
-            return meta.followerCount !== value;
-        } else if (op === LessThan) {
-            return meta.followerCount < value;
-        } else if (op === LessThanOrEqualTo) {
-            return meta.followerCount <= value;
-        } else if (op === GreaterThan) {
-            return meta.followerCount > value;
-        } else if (op === GreaterThanOrEqualTo) {
-            return meta.followerCount >= value;
+            return meta.followerCount === value
+        }
+        if (op === NotEqual) {
+            return meta.followerCount !== value
+        }
+        if (op === LessThan) {
+            return meta.followerCount < value
+        }
+        if (op === LessThanOrEqualTo) {
+            return meta.followerCount <= value
+        }
+        if (op === GreaterThan) {
+            return meta.followerCount > value
+        }
+        if (op === GreaterThanOrEqualTo) {
+            return meta.followerCount >= value
         }
 
-        return false;
+        return false
     }
 
     register(args: bytes): uint64 {
@@ -61,9 +63,9 @@ export class FollowerCountGate extends AkitaBaseContract {
     }
 
     check(args: bytes): boolean {
-        assert(args.length === arc4FollowerCountGateCheckParams.length, ERR_INVALID_ARG_COUNT);
-        const params = interpretAsArc4<arc4FollowerCountGateCheckParams>(args);
-        const info = this.registry(params.registryID.native).value;
-        return this.followerCountGate(params.user, info.op.native, info.value.native);
+        assert(args.length === arc4FollowerCountGateCheckParams.length, ERR_INVALID_ARG_COUNT)
+        const params = interpretAsArc4<arc4FollowerCountGateCheckParams>(args)
+        const info = this.registry(params.registryID.native).value
+        return this.followerCountGate(params.user, info.op.native, info.value.native)
     }
 }

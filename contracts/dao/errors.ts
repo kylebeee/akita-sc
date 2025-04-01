@@ -1,4 +1,3 @@
-
 export const ERR_PLUGIN_DOES_NOT_EXIST = 'Plugin does not exist'
 export const ERR_PLUGIN_EXPIRED = 'Plugin has expired'
 export const ERR_PLUGIN_ON_COOLDOWN = 'Plugin is on cooldown'
@@ -18,7 +17,8 @@ export const ERR_DISBURSEMENT_LOCKED = 'Disbursement is still locked'
 export const ERR_DISBURSEMENT_FULLY_DISTRIBUTED = 'Disbursement is fully distributed'
 export const ERR_ALLOCATION_DOES_NOT_EXIST = 'Allocation does not exist'
 export const ERR_UNKNOWN_DISBURSEMENT_TYPE = 'Unknown disbursement type'
-export const ERR_TIME_NOT_FAR_ENOUGH_IN_THE_FUTURE = 'Time is not far enough in the future, must be at least 60 seconds from now'
+export const ERR_TIME_NOT_FAR_ENOUGH_IN_THE_FUTURE =
+    'Time is not far enough in the future, must be at least 60 seconds from now'
 export const ERR_TOKEN_ALLOCATION_BOX_DOES_NOT_EXIST = 'Token allocation box does not exist'
 export const ERR_TOKEN_ALLOCATION_BOX_ALREADY_EXISTS = 'Token allocation box already exists'
 export const ERR_INSUFFICIENT_AKITA = 'Insufficient Akita'

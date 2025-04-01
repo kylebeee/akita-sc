@@ -1,4 +1,4 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript"
+import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
 
 export type AssetInfo = {
     asset: uint64

@@ -1,6 +1,6 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Operator } from "../../types";
-import { Address } from "@algorandfoundation/algorand-typescript/arc4";
+import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { Operator } from '../../types'
 
 // export const RegistryInfoLength = len<Address>() + len<uint64>();
 export type SubscriptionRegistryInfo = {

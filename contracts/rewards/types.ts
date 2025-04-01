@@ -1,5 +1,5 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address } from "@algorandfoundation/algorand-typescript/arc4";
+import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type DisbursementDetails = {
     /** the creator of the disbursement */
@@ -32,7 +32,7 @@ export class arc4DisbursementDetails extends arc4.Struct<{
     allocations: arc4.UintN64
     distributed: arc4.UintN64
     note: arc4.Str
-}> { }
+}> {}
 
 export type UserAllocationsKey = {
     /** the address of the account */
@@ -47,7 +47,7 @@ export class arc4UserAllocationsKey extends arc4.Struct<{
     address: Address
     disbursementID: arc4.UintN64
     asset: arc4.UintN64
-}> { }
+}> {}
 
 export type UserAlloction = {
     /** the address of the account */
@@ -59,7 +59,9 @@ export type UserAlloction = {
 export class arc4UserAllocation extends arc4.Struct<{
     address: Address
     amount: arc4.UintN64
-}> { }
+}> {}
+
+export type arc4UserAllocations = arc4.DynamicArray<arc4UserAllocation>
 
 export type AllocationReclaimDetails = {
     /** the address of the account */
@@ -71,7 +73,9 @@ export type AllocationReclaimDetails = {
 export class arc4AllocationReclaimDetails extends arc4.Struct<{
     address: Address
     asset: arc4.UintN64
-}> { }
+}> {}
+
+export type arc4Reclaims = arc4.DynamicArray<arc4AllocationReclaimDetails>
 
 export type ClaimDetails = {
     /** the id of reward distribution */
@@ -83,4 +87,11 @@ export type ClaimDetails = {
 export class arc4ClaimDetails extends arc4.Struct<{
     id: arc4.UintN64
     asset: arc4.UintN64
-}> { }
+}> {}
+
+export type arc4Claims = arc4.DynamicArray<arc4ClaimDetails>
+
+export type RewardsMBRData = {
+    disbursements: uint64
+    userAllocations: uint64
+}

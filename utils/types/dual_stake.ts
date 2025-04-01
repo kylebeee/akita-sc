@@ -1,18 +1,17 @@
-import { Contract } from "@algorandfoundation/tealscript";
+import { Contract } from '@algorandfoundation/tealscript'
 
 export class DualStake extends Contract {
-
-    /** 
+    /**
      * Fee admin method to send keyreg online for an escrow account
-     * 
+     *
      * @param selection_key
      * @param voting_key
      * @param sp_key
      * @param first_round
      * @param last_round
      * @param key_dilution
-     * 
-    */
+     *
+     */
     register_online(
         selection_key: bytes,
         voting_key: bytes,
@@ -22,31 +21,31 @@ export class DualStake extends Contract {
         key_dilution: uint64
     ): void {}
 
-    /** 
+    /**
      * Fee admin method to send keyreg offline for an escrow account
-     * 
+     *
      * @param address
-     * 
-    */
+     *
+     */
     register_offline(address: Address): void {}
 
     /**
      * Admin method to init storage. this will be needed as I am reusing an existing app
-     * 
-    */
+     *
+     */
     init_storage(): void {}
 
-    /** 
-     * 
+    /**
+     *
      * @param amt
-     * 
-    */
+     *
+     */
     withdraw_platform_fees(amt: uint64): void {}
 
     /**
      * Public method. Mint dualSTAKE lst
      * previous transaction in group must be payment in ALGO if rate != 0, 2 txns before must be payment in ASA if must_swap, swap send dualSTAKE to caller
-     * 
+     *
      */
     mint(): void {}
 
@@ -54,7 +53,7 @@ export class DualStake extends Contract {
 
     /**
      * Public empty method for opcode budget increase
-     * 
+     *
      */
     nullun(): void {}
 

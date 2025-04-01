@@ -1,12 +1,12 @@
-import { arc4, Contract, Global, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
-
+import { Contract, Global, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type arc59GetSendAssetInfoResponse = {
-    itxns: uint64;
-    mbr: uint64;
-    routerOptedIn: boolean;
-    receiverOptedIn: boolean;
-    receiverAlgoNeededForClaim: uint64;
+    itxns: uint64
+    mbr: uint64
+    routerOptedIn: boolean
+    receiverOptedIn: boolean
+    receiverAlgoNeededForClaim: uint64
 }
 
 export class AssetInbox extends Contract {
@@ -26,4 +26,3 @@ export class AssetInbox extends Contract {
         return new Address(Global.zeroAddress)
     }
 }
-

@@ -1,2 +1,0 @@
-export const MERKLE_TREE_TYPE_ASSET = 1
-export const MERKLE_TREE_TYPE_ADDRESS = 2

@@ -1,4 +1,4 @@
-import { uint64 } from "@algorandfoundation/algorand-typescript"
+import { uint64 } from '@algorandfoundation/algorand-typescript'
 
 export const appCreatorsMBR: uint64 = 18_500
 
@@ -27,11 +27,11 @@ export const RaffleBoxPrefixEntries = 'e'
 export const RaffleBoxPrefixWeights = 'w'
 export const RaffleBoxPrefixEntriesByAddress = 'a'
 
-const entriesByAddressMBR: uint64 = 18_900
-const entryMBR: uint64 = 18_900
+// const entriesByAddressMBR: uint64 = 18_900
+// const entryMBR: uint64 = 18_900
 
-export const weightsListMBR: uint64 = 13_113_300
-export const entryTotalMBR: uint64 = entryMBR + entriesByAddressMBR
+// export const weightsListMBR: uint64 = 13_113_300
+// export const entryTotalMBR: uint64 = entryMBR + entriesByAddressMBR
 
 export const BoxWeightTotalsSize: uint64 = 15
 // 4096*8 bytes = 32KB

@@ -1,61 +1,54 @@
-import { GlobalStateKeyAkitaDAO, GlobalStateKeyChildContractVersion, GlobalStateKeyRevocationApp } from "../constants";
-import { AbstractedAccount } from "./abstracted_account.algo";
-import { Application, arc4, assert, Contract, Global, GlobalState, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from "./errors";
-import { ERR_NOT_AKITA_DAO } from "../errors";
-import { AkitaBaseContract } from "../../utils/base_contracts/base.algo";
+import {
+    assert,
+    Global,
+    GlobalState,
+    gtxn,
+    Txn,
+    uint64,
+} from '@algorandfoundation/algorand-typescript'
+import { GlobalStateKeyRevocationApp } from '../constants'
+import { AbstractedAccount } from './abstracted_account.algo'
+import { ERR_NOT_AKITA_DAO } from '../errors'
+import { Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../../utils/errors'
+import { FactoryContract } from '../../utils/base_contracts/factory.algo'
 
-export class AbstractedAccountFactory extends AkitaBaseContract {
-    /** The App ID of the Akita DAO contract */
-    akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    /** the version of the child contract */
-    childContractVersion = GlobalState<string>({ key: GlobalStateKeyChildContractVersion })
+export class AbstractedAccountFactory extends FactoryContract {
     /** the default app thats allowed to revoke plugins */
-    revocationApp = GlobalState<Application>({ key: GlobalStateKeyRevocationApp })
+    revocationApp = GlobalState<uint64>({ key: GlobalStateKeyRevocationApp })
 
     createApplication(version: string, revocationApp: uint64): void {
         this.childContractVersion.value = version
-        this.revocationApp.value = Application(revocationApp)
+        this.revocationApp.value = revocationApp
     }
 
     updateRevocationApp(app: uint64): void {
         assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-        this.revocationApp.value = Application(app)
+        this.revocationApp.value = app
     }
 
-    mint(payment: gtxn.PaymentTxn, admin: Address, nickname: string): uint64 {
+    mint(payment: gtxn.PaymentTxn, controlledAccount: Address, admin: Address, nickname: string): uint64 {
+        const abstractedAccount = compileArc4(AbstractedAccount)
+        
         assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-        const childMBR = 300_000 + (28_500 * AbstractedAccount.schema.global.numUint) + (50_000 * AbstractedAccount.schema.global.numByteSlice)
+        
+        const childMBR: uint64 =
+            300_000 +
+            (28_500 * abstractedAccount.globalUints) +
+            (50_000 * abstractedAccount.globalBytes)
+
         assert(payment.amount === childMBR, ERR_INVALID_PAYMENT_AMOUNT)
 
-        const compiled = compileArc4(AbstractedAccount)
-
-        return compiled.call.create({
+        return abstractedAccount.call.createApplication({
             args: [
                 this.childContractVersion.value,
+                controlledAccount,
                 admin,
                 this.revocationApp.value,
-                nickname,
+                nickname
             ],
             extraProgramPages: 3,
             fee: 0,
-        }).itxn.createdApp
-
-        // sendMethodCall<typeof AbstractedAccount.prototype.createApplication>({
-        //     methodArgs: [
-        //         this.childContractVersion.value,
-        //         admin,
-        //         this.revocationAppID.value,
-        //         nickname,
-        //     ],
-        //     approvalProgram: AbstractedAccount.approvalProgram(),
-        //     clearStateProgram: AbstractedAccount.clearProgram(),
-        //     globalNumUint: AbstractedAccount.schema.global.numUint,
-        //     globalNumByteSlice: AbstractedAccount.schema.global.numByteSlice,
-        //     extraProgramPages: 3,
-        //     fee: 0,
-        // });
-
-        // return this.itxn.createdApplicationID;
+        }).itxn.createdApp.id
     }
 }

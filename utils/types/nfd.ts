@@ -1,30 +1,34 @@
-import { Contract } from "@algorandfoundation/tealscript";
+import { arc4, Bytes, bytes, Contract, Global, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export interface PayoutInfo {
-    amountToSeller: uint64;
-    commissionAddress: Address;
-    amountToCommission: uint64;
-    segmentRootOwner: Address;
-    amountToSegmentRoot: uint64;
+    amountToSeller: uint64
+    commissionAddress: Address
+    amountToCommission: uint64
+    segmentRootOwner: Address
+    amountToSegmentRoot: uint64
 }
 
 export class NFD extends Contract {
-
     updateApplication(versionNum: string): void {}
 
     gas(): void {}
 
     mintAsa(nfdName: string, url: string): void {}
 
-    deleteFields(fieldNames: bytes[]): void {}
+    deleteFields(fieldNames: arc4.DynamicArray<arc4.UintN64>): void {}
 
     updateSegmentCount(childNfdName: string, childNfdAppID: uint64): void {}
 
-    getFieldUpdateCost(fieldAndVals: bytes[]): uint64 { return 0; }
+    getFieldUpdateCost(fieldAndVals: arc4.DynamicArray<arc4.UintN64>): uint64 {
+        return 0
+    }
 
-    updateFields(fieldAndVals: bytes[]): void {}
+    updateFields(fieldAndVals: arc4.DynamicArray<arc4.UintN64>): void {}
 
-    readField(fieldName: bytes): bytes { return ''; }
+    readField(fieldName: bytes): bytes {
+        return Bytes('')
+    }
 
     offerForSale(sellAmount: uint64, reservedFor: Address): void {}
 
@@ -35,18 +39,22 @@ export class NFD extends Contract {
     mintPayout(oneYearPrice: uint64, segmentPlatformCostInAlgo: uint64): PayoutInfo {
         return {
             amountToSeller: 0,
-            commissionAddress: Address.zeroAddress,
+            commissionAddress: new Address(Global.zeroAddress),
             amountToCommission: 0,
-            segmentRootOwner: Address.zeroAddress,
+            segmentRootOwner: new Address(Global.zeroAddress),
             amountToSegmentRoot: 0,
         }
     }
 
-    purchase(payment: PayTxn): void {}
+    purchase(payment: gtxn.PaymentTxn): void {}
 
-    isAddressInField(fieldName: string, address: Address): boolean { return false; }
+    isAddressInField(fieldName: string, address: Address): boolean {
+        return false
+    }
 
-    getRenewPrice(): uint64 { return 0; }
+    getRenewPrice(): uint64 {
+        return 0
+    }
 
     updateHash(hash: bytes): void {}
 
@@ -60,8 +68,7 @@ export class NFD extends Contract {
 
     vaultSend(amount: uint64, receiver: Address, note: string, asset: uint64, otherAssets: uint64[]): void {}
 
-    renew(payment: PayTxn): void {}
+    renew(payment: gtxn.PaymentTxn): void {}
 
     setPrimaryAddress(fieldName: string, address: Address): void {}
 }
-

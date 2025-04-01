@@ -1,4 +1,3 @@
-
 export const MARKETPLACE_NOT_OPTED_INTO_TICKET_ASSET = 'factory not opted into ticket asset'
 export const APP_CREATOR_NOT_FOUND = 'App creator not found'
 export const ERR_INVALID_ENDING_ROUND = 'Ending round must be in the future'

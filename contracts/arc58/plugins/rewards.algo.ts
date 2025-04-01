@@ -1,11 +1,11 @@
-import { Contract } from '@algorandfoundation/tealscript';
-import { Rewards, UserAlloction } from '../../rewards/rewards.algo';
-import { AkitaAppIDsDAO, AkitaAppIDsRewards } from '../../../utils/constants';
+import { Contract } from '@algorandfoundation/tealscript'
+import { Rewards, UserAlloction } from '../../rewards/rewards.algo'
+import { AkitaAppIDsDAO, AkitaAppIDsRewards } from '../../../utils/constants'
 
-const AKITA_DAO_REWARDS_DISTRIBUTION_FEE_KEY = 'rewards_distribution_fee';
+const AKITA_DAO_REWARDS_DISTRIBUTION_FEE_KEY = 'rewards_distribution_fee'
 
 export class RewardsPlugin extends Contract {
-    programVersion = 10;
+    programVersion = 10
 
     createDisbursement(
         sender: AppID,
@@ -13,13 +13,12 @@ export class RewardsPlugin extends Contract {
         title: string,
         timeToUnlock: uint64,
         expiration: uint64,
-        note: string,
+        note: string
     ): uint64 {
-
-        const mbrAmount = 2_500 + (400 * (65 + len(title) + len(note)));
-        const rewardApp = AppID.fromUint64(AkitaAppIDsRewards);
-        const akitaDAO = AppID.fromUint64(AkitaAppIDsDAO);
-        const akitaFee = akitaDAO.globalState(AKITA_DAO_REWARDS_DISTRIBUTION_FEE_KEY) as uint64;
+        const mbrAmount = 2_500 + 400 * (65 + len(title) + len(note))
+        const rewardApp = AppID.fromUint64(AkitaAppIDsRewards)
+        const akitaDAO = AppID.fromUint64(AkitaAppIDsDAO)
+        const akitaFee = akitaDAO.globalState(AKITA_DAO_REWARDS_DISTRIBUTION_FEE_KEY) as uint64
 
         return sendMethodCall<typeof Rewards.prototype.createDisbursement, uint64>({
             applicationID: rewardApp,
@@ -41,7 +40,7 @@ export class RewardsPlugin extends Contract {
             ],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     editDisbursement(
@@ -51,20 +50,14 @@ export class RewardsPlugin extends Contract {
         title: string,
         timeToUnlock: uint64,
         expiration: uint64,
-        note: string,
+        note: string
     ): void {
         sendMethodCall<typeof Rewards.prototype.editDisbursement, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsRewards),
-            methodArgs: [
-                id,
-                title,
-                timeToUnlock,
-                expiration,
-                note,
-            ],
+            methodArgs: [id, title, timeToUnlock, expiration, note],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     createUserAllocations(
@@ -72,9 +65,9 @@ export class RewardsPlugin extends Contract {
         rekeyBack: boolean,
         id: uint64,
         allocations: UserAlloction[],
-        sum: uint64,
+        sum: uint64
     ): void {
-        const mbrAmount = (24_900 * allocations.length);
+        const mbrAmount = 24_900 * allocations.length
         sendMethodCall<typeof Rewards.prototype.createUserAllocations, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsRewards),
             methodArgs: [
@@ -88,22 +81,22 @@ export class RewardsPlugin extends Contract {
             ],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
-    
+
     createAsaUserAllocations(
         sender: AppID,
         rekeyBack: boolean,
         id: uint64,
         assetID: AssetID,
         allocations: UserAlloction[],
-        sum: uint64,
+        sum: uint64
     ): void {
-        let mbrAmount = (24_900 * allocations.length);
+        let mbrAmount = 24_900 * allocations.length
         if (AppID.fromUint64(AkitaAppIDsRewards).address.isOptedInToAsset(assetID)) {
-            mbrAmount += globals.assetOptInMinBalance;
+            mbrAmount += globals.assetOptInMinBalance
         }
-        
+
         sendMethodCall<typeof Rewards.prototype.createAsaUserAllocations, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsRewards),
             methodArgs: [
@@ -125,46 +118,33 @@ export class RewardsPlugin extends Contract {
             ],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
-    finalizeDisbursement(
-        sender: AppID,
-        rekeyBack: boolean,
-        id: uint64,
-    ): void {
+    finalizeDisbursement(sender: AppID, rekeyBack: boolean, id: uint64): void {
         sendMethodCall<typeof Rewards.prototype.finalizeDisbursement, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsRewards),
-            methodArgs: [ id ],
+            methodArgs: [id],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
-    claimRewards(
-        sender: AppID,
-        rekeyBack: boolean,
-        ids: uint64[],
-    ): void {
+    claimRewards(sender: AppID, rekeyBack: boolean, ids: uint64[]): void {
         sendMethodCall<typeof Rewards.prototype.claimRewards, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsRewards),
-            methodArgs: [ ids ],
+            methodArgs: [ids],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
-    reclaimRewards(
-        sender: AppID,
-        rekeyBack: boolean,
-        id: uint64,
-        allocations: UserAlloction[],
-    ): void {
+    reclaimRewards(sender: AppID, rekeyBack: boolean, id: uint64, allocations: UserAlloction[]): void {
         sendMethodCall<typeof Rewards.prototype.reclaimRewards, void>({
             applicationID: AppID.fromUint64(AkitaAppIDsRewards),
-            methodArgs: [ id, allocations],
+            methodArgs: [id, allocations],
             rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
             fee: 0,
-        });
+        })
     }
 }

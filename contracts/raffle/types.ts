@@ -1,6 +1,7 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript"
-import { ChunkSize } from "./constants"
-import { Address } from "@algorandfoundation/algorand-typescript/arc4"
+import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { ChunkSize } from './constants'
+import { ServiceFactoryContractMBRData } from '../../utils/base_contracts/factory.algo'
 
 export type WeightLocation = uint64
 
@@ -18,7 +19,7 @@ export class arc4EntryInfo extends arc4.Struct<{
 
 export type arc4WeightsList = arc4.StaticArray<arc4.UintN64, typeof ChunkSize>
 
-export type FindWinnerCursors = { index: uint64, amountIndex: uint64 }
+export type FindWinnerCursors = { index: uint64; amountIndex: uint64 }
 
 export class arc4FindWinnerCursor extends arc4.Struct<{
     index: arc4.UintN64
@@ -62,3 +63,11 @@ export class arc4RaffleState extends arc4.Struct<{
     entryID: arc4.UintN64
     refundMBRCursor: arc4.UintN64
 }> {}
+
+export type RaffleMBRData = {
+    entries: uint64
+    weights: uint64
+    entriesByAddress: uint64
+}
+
+export type ExtendedRaffleMBRData = RaffleMBRData & ServiceFactoryContractMBRData

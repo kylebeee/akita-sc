@@ -1,17 +1,16 @@
-import { Contract } from '@algorandfoundation/tealscript';
-import { appCreatorsMBR, RaffleFactory } from '../../raffle/raffle_factory.algo';
-import { entryTotalMBR, Raffle, weightsListMBR } from '../../raffle/raffle.algo';
-import { AKITA_RAFFLE_TICKET_ASSET_KEY } from '../../raffle/contants';
+import { Contract } from '@algorandfoundation/tealscript'
+import { appCreatorsMBR, RaffleFactory } from '../../raffle/raffle_factory.algo'
+import { entryTotalMBR, Raffle, weightsListMBR } from '../../raffle/raffle.algo'
+import { AKITA_RAFFLE_TICKET_ASSET_KEY } from '../../raffle/contants'
 
 const errs = {
     NOT_ENOUGH_ASSET: 'not enough asset',
-    CREATOR_NOT_RAFFLE_FACTORY: 'Creator is not the raffle factory'
+    CREATOR_NOT_RAFFLE_FACTORY: 'Creator is not the raffle factory',
 }
 
 export class RafflePlugin extends Contract {
-
     /** the app id of the raffle factory contract */
-    factoryAppID = TemplateVar<AppID>();
+    factoryAppID = TemplateVar<AppID>()
 
     new(
         sender: AppID,
@@ -24,11 +23,11 @@ export class RafflePlugin extends Contract {
         minTickets: uint64,
         maxTickets: uint64,
         gateID: uint64,
-        weightListLength: uint64,
+        weightListLength: uint64
     ): AppID {
-        assert(sender.address.assetBalance(prize) >= prizeAmount, errs.NOT_ENOUGH_ASSET);
+        assert(sender.address.assetBalance(prize) >= prizeAmount, errs.NOT_ENOUGH_ASSET)
 
-        const needsToOptIntoPrize = !this.factoryAppID.address.isOptedInToAsset(prize);
+        const needsToOptIntoPrize = !this.factoryAppID.address.isOptedInToAsset(prize)
 
         if (needsToOptIntoPrize) {
             this.pendingGroup.addMethodCall<typeof RaffleFactory.prototype.optin, void>({
@@ -41,32 +40,31 @@ export class RafflePlugin extends Contract {
                         amount: globals.assetOptInMinBalance,
                         fee: 0,
                     },
-                    prize
+                    prize,
                 ],
                 fee: 0,
-                isFirstTxn: true
-            });
+                isFirstTxn: true,
+            })
         }
 
-        let optinMBR = 0;
-        const prizeAssetIsAlgo = prize.id === 0;
+        let optinMBR = 0
+        const prizeAssetIsAlgo = prize.id === 0
         if (prizeAssetIsAlgo) {
-            optinMBR = globals.assetOptInMinBalance;
+            optinMBR = globals.assetOptInMinBalance
         }
 
-        const ticketAssetIsAlgo = ticketAsset.id === 0;
+        const ticketAssetIsAlgo = ticketAsset.id === 0
         if (ticketAssetIsAlgo) {
-            optinMBR += globals.assetOptInMinBalance;
+            optinMBR += globals.assetOptInMinBalance
         }
 
-        let mbrAmount = (
-            100_000 // requires 3 extra pages
-            + (28_500 * Raffle.schema.global.numUint)
-            + (50_000 * Raffle.schema.global.numByteSlice)
-            + optinMBR
-            + (weightListLength * weightsListMBR)
-            + appCreatorsMBR
-        );
+        const mbrAmount =
+            100_000 + // requires 3 extra pages
+            28_500 * Raffle.schema.global.numUint +
+            50_000 * Raffle.schema.global.numByteSlice +
+            optinMBR +
+            weightListLength * weightsListMBR +
+            appCreatorsMBR
 
         this.pendingGroup.addMethodCall<typeof RaffleFactory.prototype.new, AppID>({
             sender: sender.address,
@@ -76,7 +74,7 @@ export class RafflePlugin extends Contract {
                     sender: sender.address,
                     receiver: this.factoryAppID.address,
                     amount: mbrAmount,
-                    fee: 0
+                    fee: 0,
                 },
                 {
                     sender: sender.address,
@@ -95,17 +93,17 @@ export class RafflePlugin extends Contract {
             ],
             rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
             fee: 0,
-        });
+        })
 
-        this.pendingGroup.submit();
-        
-        return this.itxn.createdApplicationID;
+        this.pendingGroup.submit()
+
+        return this.itxn.createdApplicationID
     }
 
     enter(sender: AppID, rekeyBack: boolean, raffleAppID: AppID, amount: uint64, args: bytes[]): void {
-        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY);
+        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY)
 
-        const ticketAsset = raffleAppID.globalState(AKITA_RAFFLE_TICKET_ASSET_KEY) as AssetID;
+        const ticketAsset = raffleAppID.globalState(AKITA_RAFFLE_TICKET_ASSET_KEY) as AssetID
 
         if (ticketAsset.id === 0) {
             sendMethodCall<typeof Raffle.prototype.enter, void>({
@@ -121,8 +119,8 @@ export class RafflePlugin extends Contract {
                     args,
                 ],
                 rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
-                fee: 0
-            });
+                fee: 0,
+            })
         } else {
             sendMethodCall<typeof Raffle.prototype.enterAsa, void>({
                 sender: sender.address,
@@ -144,15 +142,15 @@ export class RafflePlugin extends Contract {
                     args,
                 ],
                 rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
-                fee: 0
-            });
+                fee: 0,
+            })
         }
     }
 
     add(sender: AppID, rekeyBack: boolean, raffleAppID: AppID, amount: uint64, args: bytes[]): void {
-        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY);
+        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY)
 
-        const ticketAsset = raffleAppID.globalState(AKITA_RAFFLE_TICKET_ASSET_KEY) as AssetID;
+        const ticketAsset = raffleAppID.globalState(AKITA_RAFFLE_TICKET_ASSET_KEY) as AssetID
 
         if (ticketAsset.id === 0) {
             sendMethodCall<typeof Raffle.prototype.add>({
@@ -165,11 +163,11 @@ export class RafflePlugin extends Contract {
                         amount: amount,
                         fee: 0,
                     },
-                    args
+                    args,
                 ],
                 rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
                 fee: 0,
-            });
+            })
         } else {
             sendMethodCall<typeof Raffle.prototype.addAsa>({
                 sender: sender.address,
@@ -182,55 +180,55 @@ export class RafflePlugin extends Contract {
                         xferAsset: ticketAsset,
                         fee: 0,
                     },
-                    args
+                    args,
                 ],
                 rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
                 fee: 0,
-            });
+            })
         }
     }
 
     raffle(sender: AppID, rekeyBack: boolean, raffleAppID: AppID): void {
-        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY);
+        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY)
 
         sendMethodCall<typeof Raffle.prototype.raffle>({
             sender: sender.address,
             applicationID: raffleAppID,
             rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     findWinner(sender: AppID, rekeyBack: boolean, raffleAppID: AppID): void {
-        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY);
+        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY)
 
         sendMethodCall<typeof Raffle.prototype.findWinner>({
             sender: sender.address,
             applicationID: raffleAppID,
             rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     claimRafflePrize(sender: AppID, rekeyBack: boolean, raffleAppID: AppID): void {
-        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY);
+        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY)
 
         sendMethodCall<typeof Raffle.prototype.claimRafflePrize>({
             sender: sender.address,
             applicationID: raffleAppID,
             rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
             fee: 0,
-        });
+        })
     }
 
     deleteRaffleApplication(sender: AppID, rekeyBack: boolean, raffleAppID: AppID): void {
-        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY);
-        
+        assert(raffleAppID.creator === this.factoryAppID.address, errs.CREATOR_NOT_RAFFLE_FACTORY)
+
         sendMethodCall<typeof Raffle.prototype.deleteApplication>({
             sender: sender.address,
             applicationID: raffleAppID,
             rekeyTo: rekeyBack ? sender.address : globals.zeroAddress,
             fee: 0,
-        });
+        })
     }
 }

@@ -1,4 +1,4 @@
-import { uint64 } from "@algorandfoundation/algorand-typescript";
+import { uint64 } from '@algorandfoundation/algorand-typescript'
 
 export const PollGlobalStateKeyType = 'type'
 export const PollGlobalStateKeyGateID = 'gate_id'

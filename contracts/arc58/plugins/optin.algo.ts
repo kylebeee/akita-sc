@@ -1,32 +1,33 @@
-import { Account, Application, Asset, Bytes, Contract, Global, assert, gtxn, op, itxn, abimethod, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AbstractAccountGlobalStateKeysControlledAddress } from "../constants";
+import {
+    Application,
+    Asset,
+    Global,
+    assert,
+    itxn,
+    abimethod,
+    uint64,
+    gtxn,
+} from '@algorandfoundation/algorand-typescript'
+import { Plugin } from '../../../utils/base_contracts/plugin.algo'
 
-export class OptInPlugin extends Contract {
+export class OptInPlugin extends Plugin {
+    // @ts-ignore
+    @abimethod({ onCreate: 'require' })
+    createApplication(): void {}
 
-  // @ts-ignore
-  @abimethod({ onCreate: 'require' })
-  createApplication(): void {}
+    optInToAsset(sender: uint64, rekeyBack: boolean, asset: uint64, mbrPayment: gtxn.PaymentTxn): void {
+        const controlledAccount = this.getControlledAccount(Application(sender))
 
-  private getControlledAccount(app: Application): Account {
-    const [controlledAccountBytes] = op.AppGlobal.getExBytes(app, Bytes(AbstractAccountGlobalStateKeysControlledAddress))
-    return Account(Bytes(controlledAccountBytes))
-  }
+        assert(!controlledAccount.isOptedIn(Asset(asset)), 'asset already opted in')
+        assert(mbrPayment.amount >= Global.assetOptInMinBalance, 'asset mismatch')
 
-  optInToAsset(sender: uint64, rekeyBack: boolean, asset: uint64, mbrPayment: gtxn.PaymentTxn): void {
-    const controlledAccount = this.getControlledAccount(Application(sender));
-
-    assert(!controlledAccount.isOptedIn(Asset(asset)), 'asset already opted in');
-    assert(mbrPayment.amount >= Global.assetOptInMinBalance, 'asset mismatch');
-
-    itxn
-      .assetTransfer({
-        sender: controlledAccount,
-        assetReceiver: controlledAccount,
-        assetAmount: 0,
-        xferAsset: asset,
-        rekeyTo: rekeyBack ? Application(sender).address : Global.zeroAddress,
-        fee: 0,
-      })
-      .submit();
-  }
+        itxn.assetTransfer({
+            sender: controlledAccount,
+            assetReceiver: controlledAccount,
+            assetAmount: 0,
+            xferAsset: asset,
+            rekeyTo: rekeyBack ? Application(sender).address : Global.zeroAddress,
+            fee: 0,
+        }).submit()
+    }
 }

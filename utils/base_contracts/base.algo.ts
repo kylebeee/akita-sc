@@ -1,48 +1,74 @@
-import { Application, assert, Bytes, GlobalState, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from "../../contracts/constants"
-import { AppList, NFTFees, SocialFees, StakingFees, SubscriptionFees } from "../../contracts/dao/types"
-import { abimethod, Contract, decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4"
-import { AkitaDAOGlobalStateKeysAppList, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees } from "../../contracts/dao/constants"
-import { ERR_NOT_AKITA_DAO } from "../../contracts/errors"
+import { Application, assert, Bytes, GlobalState, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abimethod, Contract, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../../contracts/constants'
+import { AppList, NFTFees, SocialFees, StakingFees, SubscriptionFees } from '../../contracts/dao/types'
+import {
+    AkitaDAOGlobalStateKeysAppList,
+    AkitaDAOGlobalStateKeysNFTFees,
+    AkitaDAOGlobalStateKeysSocialFees,
+    AkitaDAOGlobalStateKeysStakingFees,
+    AkitaDAOGlobalStateKeysSubscriptionFees,
+} from '../../contracts/dao/constants'
+import { ERR_NOT_AKITA_DAO } from '../../contracts/errors'
+import { DIVISOR, IMPACT_DIVISOR } from '../constants'
 
 export class AkitaBaseContract extends Contract {
-  version = GlobalState<string>({ key: GlobalStateKeyVersion })
-  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    version = GlobalState<string>({ key: GlobalStateKeyVersion })
 
-  // @ts-ignore
-  @abimethod({ allowActions: ['UpdateApplication'] })
-  updateApplication(newVersion: string): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.version.value = newVersion
-  }
+    akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
 
-  updateAkitaDAO(app: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAO.value = Application(app)
-  }
+    // @ts-ignore
+    @abimethod({ allowActions: ['UpdateApplication'] })
+    updateApplication(newVersion: string): void {
+        assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+        this.version.value = newVersion
+    }
 
-  protected getAppList(): AppList {
-    const [appListBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysAppList))
-    return decodeArc4<AppList>(appListBytes)
-  }
+    updateAkitaDAO(app: uint64): void {
+        assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+        this.akitaDAO.value = Application(app)
+    }
 
-  protected getSocialFees(): SocialFees {
-    const [socialFeesBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysSocialFees))
-    return decodeArc4<SocialFees>(socialFeesBytes)
-  }
+    protected getAppList(): AppList {
+        const [appListBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysAppList))
+        return decodeArc4<AppList>(appListBytes)
+    }
 
-  protected getStakingFees(): StakingFees {
-    const [stakingFeesBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysStakingFees))
-    return decodeArc4<StakingFees>(stakingFeesBytes)
-  }
+    protected getSocialFees(): SocialFees {
+        const [socialFeesBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysSocialFees))
+        return decodeArc4<SocialFees>(socialFeesBytes)
+    }
 
-  protected getSubscriptionFees(): SubscriptionFees {
-    const [subscriptionFeesBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysSubscriptionFees))
-    return decodeArc4<SubscriptionFees>(subscriptionFeesBytes)
-  }
+    protected getStakingFees(): StakingFees {
+        const [stakingFeesBytes] = op.AppGlobal.getExBytes(
+            this.akitaDAO.value,
+            Bytes(AkitaDAOGlobalStateKeysStakingFees)
+        )
+        return decodeArc4<StakingFees>(stakingFeesBytes)
+    }
 
-  protected getNFTFees(): NFTFees {
-    const [nftFeesBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysNFTFees))
-    return decodeArc4<NFTFees>(nftFeesBytes)
-  }
+    protected getSubscriptionFees(): SubscriptionFees {
+        const [subscriptionFeesBytes] = op.AppGlobal.getExBytes(
+            this.akitaDAO.value,
+            Bytes(AkitaDAOGlobalStateKeysSubscriptionFees)
+        )
+        return decodeArc4<SubscriptionFees>(subscriptionFeesBytes)
+    }
+
+    protected getNFTFees(): NFTFees {
+        const [nftFeesBytes] = op.AppGlobal.getExBytes(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysNFTFees))
+        return decodeArc4<NFTFees>(nftFeesBytes)
+    }
+
+    protected calcPercent(a: uint64, b: uint64): uint64 {
+        assert(b < 100_000, 'Invalid percentage')
+        return op.divw(...op.mulw(a, b), DIVISOR)
+    }
+
+    protected akitaTaxRate(impact: uint64): uint64 {
+        const { impactTaxMax, impactTaxMin } = this.getSocialFees()
+        const difference: uint64 = impactTaxMax - impactTaxMin
+        const minImpact: uint64 = (impact > 1) ? impact - 1 : 1
+        return impactTaxMax - ((difference * minImpact) / IMPACT_DIVISOR)
+    }
 }

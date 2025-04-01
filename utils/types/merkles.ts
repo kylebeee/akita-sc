@@ -1,4 +1,4 @@
-import { arc4 } from "@algorandfoundation/algorand-typescript";
+import { arc4 } from '@algorandfoundation/algorand-typescript'
 
 export type Leaf = arc4.StaticBytes<32>
 

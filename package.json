@@ -5,7 +5,7 @@
   "scripts": {
     "generate-client": "algokit generate client artifacts/ --language typescript  --output clients/{contract_name}Client.ts",
     "compile-actions": "tealscript contracts/actions/*.algo.ts artifacts/actions",
-    "compile-arc58": "puya-ts build contracts/arc58/abstracted_account.algo.ts --out-dir ./../../artifacts/arc58",
+    "compile-arc58": "puya-ts build contracts/arc58/abstracted_account.algo.ts --out-dir ./../../artifacts/arc58 && puya-ts build contracts/arc58/abstracted_account_factory.algo.ts --out-dir ./../../artifacts/arc58",
     "compile-arc58-optin": "puya-ts build contracts/arc58/plugins/optin.algo.ts --out-dir ./../../artifacts/arc58/plugins",
     "compile-arc58-plugins": "tealscript contracts/arc58/plugins/*.algo.ts artifacts/arc58/plugins",
     "compile-arc58-social": "tealscript contracts/arc58/plugins/social/*.algo.ts artifacts/arc58/plugins",
@@ -29,12 +29,14 @@
     "build": "npm run compile-contract && npm run generate-client",
     "test": "jest --verbose",
     "lint": "eslint . --ext .ts",
-    "fix": "eslint . --ext .ts --fix"
+    "fix": "eslint . --ext .ts --fix",
+    "prettier": "pnpx prettier --check .",
+    "prettier:fix": "pnpx prettier --write ."
   },
   "dependencies": {
     "@algorandfoundation/algokit-utils": "^7.0.1",
-    "@algorandfoundation/algorand-typescript": "^1.0.0-beta.25",
-    "@algorandfoundation/puya-ts": "^1.0.0-beta.45",
+    "@algorandfoundation/algorand-typescript": "^1.0.0-beta.33",
+    "@algorandfoundation/puya-ts": "^1.0.0-beta.64",
     "@joe-p/merkle-tree": "github:joe-p/merkle-tree",
     "algosdk": "^2.9.0"
   },
@@ -44,14 +46,14 @@
     "@joe-p/algokit-generate-component": "^0.2.1",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint": "8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prettier": "^5.0.1",
     "jest": "^29.5.0",
-    "prettier": "^3.0.3",
+    "prettier": "3.3.3",
     "ts-jest": "^29.1.0",
     "typescript": "5.0.2"
   }
