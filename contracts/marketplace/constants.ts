@@ -1,4 +1,13 @@
+export const AKITA_LISTING_AKITA_DAO_APP_ID_KEY = 'akita_dao_app_id'
+export const AKITA_LISTING_ASSET_KEY = 'asset'
 export const AKITA_LISTING_PRICE_KEY = 'price'
 export const AKITA_LISTING_PAYMENT_ASSET_KEY = 'payment_asset'
 export const AKITA_LISTING_SELLER_KEY = 'seller'
+export const AKITA_LISTING_MARKETPLACE_KEY = 'marketplace'
+export const AKITA_LISTING_CREATOR_ROYALTY_KEY = 'creator_royalty'
+export const AKITA_LISTING_MARKETPLACE_ROYALTY_KEY = 'marketplace_royalty'
+export const AKITA_LISTING_EXPIRATION_ROUND_KEY = 'expiration_round'
+export const AKITA_LISTING_RESERVED_FOR_KEY = 'reserved_for'
+export const AKITA_LISTING_GATE_ID_KEY = 'gate_id'
+
 export const AkitaMarketplaceGlobalStateKeysChildContractVersion = 'child_contract_version'
