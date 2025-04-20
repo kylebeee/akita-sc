@@ -144,7 +144,6 @@ export class ContractWithArc58Send extends Contract {
             appId: optinPlugin,
             onCompletion: OnCompleteAction.NoOp,
             appArgs: [
-                // methodSelector('optInToAsset(uint64,boolean,uint64,pay)void'),
                 methodSelector(OptInPlugin.prototype.optInToAsset),
                 recipientAppID,
                 true,

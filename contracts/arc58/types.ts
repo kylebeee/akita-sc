@@ -37,6 +37,7 @@ export class arc4PluginInfo extends arc4.Struct<{
 export type MethodRestriction = {
     selector: StaticBytes<4>
     cooldown: uint64
+    lastCalled: uint64
 }
 
 export class arc4MethodRestriction extends arc4.Struct<{
@@ -44,6 +45,8 @@ export class arc4MethodRestriction extends arc4.Struct<{
     selector: arc4.StaticBytes<4>
     /** The number of rounds that must pass before the method can be called again */
     cooldown: arc4.UintN64
+    /** The last round the method was called */
+    lastCalled: arc4.UintN64
 }> { }
 
 export type MethodInfo = {
