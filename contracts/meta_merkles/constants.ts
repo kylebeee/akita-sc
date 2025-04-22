@@ -1,6 +1,7 @@
 import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
 import { SchemaPart } from './types'
-import { uint8 } from '../../utils/types/base'
+
+import { UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 
 export const MetaMerklesGlobalStateKeyTypesID = 'types_id'
 
@@ -14,23 +15,23 @@ export const maxDataLength: uint64 = 1024
 export const reservedDataKeyPrefix = new arc4.Str('l.')
 export const treeTypeKey = new arc4.Str('l.type')
 
-export const SchemaPartUint8: SchemaPart = uint8(0)
-export const SchemaPartUint16: SchemaPart = uint8(1)
-export const SchemaPartUint32: SchemaPart = uint8(2)
-export const SchemaPartUint64: SchemaPart = uint8(3)
-export const SchemaPartUint128: SchemaPart = uint8(4)
-export const SchemaPartUint256: SchemaPart = uint8(5)
-export const SchemaPartUint512: SchemaPart = uint8(6)
-export const SchemaPartBytes4: SchemaPart = uint8(7)
-export const SchemaPartBytes8: SchemaPart = uint8(8)
-export const SchemaPartBytes16: SchemaPart = uint8(9)
-export const SchemaPartBytes32: SchemaPart = uint8(10)
-export const SchemaPartBytes64: SchemaPart = uint8(11)
-export const SchemaPartBytes128: SchemaPart = uint8(12)
-export const SchemaPartBytes256: SchemaPart = uint8(13)
-export const SchemaPartBytes512: SchemaPart = uint8(14)
-export const SchemaPartString: SchemaPart = uint8(15)
-export const SchemaPartAddress: SchemaPart = uint8(16)
+export const SchemaPartUint8: SchemaPart = new UintN8(0)
+export const SchemaPartUint16: SchemaPart = new UintN8(1)
+export const SchemaPartUint32: SchemaPart = new UintN8(2)
+export const SchemaPartUint64: SchemaPart = new UintN8(3)
+export const SchemaPartUint128: SchemaPart = new UintN8(4)
+export const SchemaPartUint256: SchemaPart = new UintN8(5)
+export const SchemaPartUint512: SchemaPart = new UintN8(6)
+export const SchemaPartBytes4: SchemaPart = new UintN8(7)
+export const SchemaPartBytes8: SchemaPart = new UintN8(8)
+export const SchemaPartBytes16: SchemaPart = new UintN8(9)
+export const SchemaPartBytes32: SchemaPart = new UintN8(10)
+export const SchemaPartBytes64: SchemaPart = new UintN8(11)
+export const SchemaPartBytes128: SchemaPart = new UintN8(12)
+export const SchemaPartBytes256: SchemaPart = new UintN8(13)
+export const SchemaPartBytes512: SchemaPart = new UintN8(14)
+export const SchemaPartString: SchemaPart = new UintN8(15)
+export const SchemaPartAddress: SchemaPart = new UintN8(16)
 
 export const SchemaPartUint8String: string = 'uint8'
 export const SchemaPartUint16String: string = 'uint16'

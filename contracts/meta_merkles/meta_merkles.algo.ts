@@ -3,6 +3,7 @@ import {
   assert,
   BigUint,
   BoxMap,
+  Bytes,
   Contract,
   ensureBudget,
   Global,
@@ -12,7 +13,7 @@ import {
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { btoi, itob, sha256, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { EMPTY_BYTES_16, EMPTY_BYTES_32 } from '../../utils/constants'
 import { arc4DataKey, arc4RootKey, arc4TypesValue, MetaMerklesMBRData, SchemaList } from './types'
 import {
@@ -97,9 +98,9 @@ export class MetaMerkles extends Contract {
     dataValue: string
   ): MetaMerklesMBRData {
     return {
-      types: 6_100 + (400 * typeDescription.length + schema.length),
-      roots: 28_500 + (400 * rootName.length),
-      data: 9_300 + (400 * (rootName.length + dataKey.length + dataValue.length)),
+      types: 6_100 + (400 * Bytes(typeDescription).length + Bytes(schema).length),
+      roots: 28_500 + (400 * Bytes(rootName).length),
+      data: 9_300 + (400 * (Bytes(rootName).length + Bytes(dataKey).length + Bytes(dataValue).length)),
     }
   }
 
@@ -275,7 +276,7 @@ export class MetaMerkles extends Contract {
     ensureBudget(proof.length * 50)
 
     let hash = leaf
-    for (let i = 0; i < proof.length; i += 1) {
+    for (let i: uint64 = 0; i < proof.length; i += 1) {
       hash = this.hash(proof[i], hash)
     }
 
@@ -361,7 +362,7 @@ export class MetaMerkles extends Contract {
     assert(description.bytes.length <= 800, ERR_DATA_TOO_LONG)
 
     let schema: string = ''
-    for (let i = 0; i < schemaList.length; i += 1) {
+    for (let i: uint64 = 0; i < schemaList.length; i += 1) {
       switch (schemaList[i]) {
         case SchemaPartUint8:
           schema += SchemaPartUint8String

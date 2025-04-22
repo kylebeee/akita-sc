@@ -4,8 +4,10 @@ import {
   Application,
   arc4,
   assert,
+  assertMatch,
   Asset,
   BoxMap,
+  bytes,
   ensureBudget,
   Global,
   GlobalState,
@@ -15,7 +17,7 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { Address, methodSelector, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, Address, methodSelector, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { pcg64Init, pcg64Random } from '../../utils/types/lib_pcg/pcg64.algo'
 import { RandomnessBeacon } from '../../utils/types/vrf_beacon'
 import { MAX_UINT64 } from '../../utils/constants'
@@ -74,8 +76,10 @@ import {
 } from './errors'
 import {
   ERR_INVALID_ASSET_RECEIVER,
+  ERR_INVALID_PAYMENT,
   ERR_INVALID_PAYMENT_AMOUNT,
   ERR_INVALID_PAYMENT_RECEIVER,
+  ERR_INVALID_TRANSFER,
 } from '../../utils/errors'
 import { GateArgs } from '../../utils/types/gates'
 import { PrizeBox } from '../prize_box/prize_box.algo'
@@ -148,7 +152,7 @@ export class Raffle extends classes(ContractWithCreatorOnlyOptInAndArc59AndArc58
   refundMBRCursor = GlobalState<uint64>({ key: RaffleGlobalStateKeyRefundMBRCursor })
 
   /** the transaction id of the create application call for salting our VRF call */
-  salt = GlobalState<uint64>({ key: RaffleGlobalStateKeySalt })
+  salt = GlobalState<bytes>({ key: RaffleGlobalStateKeySalt })
 
   /** The entries for the raffle */
   entries = BoxMap<uint64, Address>({ keyPrefix: RaffleBoxPrefixEntries })
@@ -161,7 +165,7 @@ export class Raffle extends classes(ContractWithCreatorOnlyOptInAndArc59AndArc58
     let startingIndex = this.findWinnerCursors.value.index.native
     let currentRangeStart = this.findWinnerCursors.value.amountIndex.native
 
-    for (let i = 0; i < this.weightsBoxCount.value; i += 1) {
+    for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
       const boxStake = this.weightTotals.value[i].native
       if (this.winningTicket.value < currentRangeStart + boxStake) {
         return [startingIndex, currentRangeStart]
@@ -230,7 +234,7 @@ export class Raffle extends classes(ContractWithCreatorOnlyOptInAndArc59AndArc58
     assert(payment.amount === weightListLength * costs.weights, ERR_INVALID_PAYMENT_AMOUNT)
 
     this.weightsBoxCount.value = weightListLength
-    for (let i = 0; i < weightListLength; i += 1) {
+    for (let i: uint64 = 0; i < weightListLength; i += 1) {
       this.weights(i).value = new arc4.StaticArray<arc4.UintN64, typeof ChunkSize>()
     }
   }
@@ -311,8 +315,16 @@ export class Raffle extends classes(ContractWithCreatorOnlyOptInAndArc59AndArc58
     const loc = this.entriesByAddress(arc4Sender).value.native
     const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
 
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-    assert(payment.amount <= this.maxTickets.value - amount.native)
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: {
+          lessThanEq: (this.maxTickets.value - amount.native)
+        }
+      },
+      ERR_INVALID_PAYMENT
+    )
 
     const newWeights = new UintN64(
       this.weights(loc / ChunkSize).value[loc % ChunkSize].native + payment.amount
@@ -333,9 +345,17 @@ export class Raffle extends classes(ContractWithCreatorOnlyOptInAndArc59AndArc58
     const loc = this.entriesByAddress(arc4Sender).value.native
     const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
 
-    assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_RECEIVER)
-    assert(assetXfer.xferAsset.id === this.ticketAsset.value, ERR_INVALID_ASSET)
-    assert(assetXfer.assetAmount <= this.maxTickets.value - amount.native, ERR_INVALID_PAYMENT_AMOUNT)
+    assertMatch(
+      assetXfer,
+      {
+        assetReceiver: Global.currentApplicationAddress,
+        xferAsset: Asset(this.ticketAsset.value),
+        assetAmount: {
+          lessThanEq: (this.maxTickets.value - amount.native)
+        }
+      },
+      ERR_INVALID_TRANSFER
+    )
 
     const newWeights = new UintN64(
       this.weights(loc / ChunkSize).value[loc % ChunkSize].native + assetXfer.assetAmount
@@ -351,15 +371,11 @@ export class Raffle extends classes(ContractWithCreatorOnlyOptInAndArc59AndArc58
     assert(Global.round >= roundToUse + 8, ERR_NOT_ENOUGH_TIME)
     assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
 
-    // TODO: switch to arc4.abiCall when available
-    const seed = itxn
-      .applicationCall({
-        appId: super.getAppList().vrfBeacon,
-        onCompletion: OnCompleteAction.NoOp,
-        appArgs: [methodSelector(RandomnessBeacon.prototype.get), roundToUse, this.salt.value],
-        fee: 0,
-      })
-      .submit().lastLog
+    const seed = abiCall(RandomnessBeacon.prototype.get, {
+      appId: super.getAppList().vrfBeacon,
+      args: [roundToUse, this.salt.value],
+      fee: 0,
+    }).returnValue
 
     if (seed.length === 0) {
       this.vrfGetFailureCount.value += 1
@@ -446,12 +462,12 @@ export class Raffle extends classes(ContractWithCreatorOnlyOptInAndArc59AndArc58
     assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
     assert(!this.prizeClaimed.value, ERR_PRIZE_ALREADY_CLAIMED)
 
-    itxn.applicationCall({
+    abiCall(PrizeBox.prototype.transfer, {
       appId: this.prize.value,
       onCompletion: OnCompleteAction.NoOp,
-      appArgs: [methodSelector(PrizeBox.prototype.transfer), this.winner.value],
+      args: [new Address(this.winner.value)],
       fee: 0,
-    }).submit()
+    })
 
     if (this.ticketAsset.value === 0) {
       itxn.payment({

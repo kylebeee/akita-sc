@@ -3,6 +3,7 @@ import {
   arc4,
   assert,
   BoxMap,
+  Bytes,
   bytes,
   Global,
   GlobalState,
@@ -10,9 +11,10 @@ import {
   itxn,
   OnCompleteAction,
   Txn,
+  Uint64,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Bool, decodeArc4, DynamicArray, methodSelector, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, Bool, decodeArc4, DynamicArray, methodSelector, StaticBytes, Str, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
 import { ContractWithCreatorOnlyOptInAndGate } from '../../utils/base_contracts/gate.algo'
 import { Staking } from '../staking/staking.algo'
@@ -21,6 +23,7 @@ import { MetaMerkles } from '../meta_merkles/meta_merkles.algo'
 import {
   arc4EntryData,
   arc4EntryKey,
+  arc4RaffleCursor,
   arc4Reward,
   arc4StakeEntry,
   DistributionTypeEven,
@@ -33,6 +36,7 @@ import {
   POOL_STAKING_TYPE_SOFT,
   PoolStakingType,
   PoolState,
+  RaffleCursor,
   Reward,
   StakeEntry,
 } from './types'
@@ -40,51 +44,61 @@ import { arc4RootKey, RootKey } from '../meta_merkles/types'
 import { GateArgs } from '../../utils/types/gates'
 import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../../utils/errors'
 import { arc4StakeInfo, StakingType } from '../staking/types'
-import { bytes32 } from '../../utils/types/base'
-import { MERKLE_TREE_TYPE_ASSET } from '../meta_merkles/constants'
+import { bytes32, str } from '../../utils/types/base'
 import {
   DisbursementPhaseAllocation,
   DisbursementPhaseFinalization,
   DisbursementPhaseIdle,
   DisbursementPhasePreparation,
-  MaxAlgoIterationAmount,
-  MaxIterationAmount,
+  MaxGlobalStateUint64Array,
   PoolBoxPrefixDisbursements,
   PoolBoxPrefixEntries,
   PoolBoxPrefixEntriesByAddress,
   PoolGlobalStateKeyActiveDisbursementID,
+  PoolGlobalStateKeyActiveDisbursementWindow,
   PoolGlobalStateKeyAllowLateSignups,
   PoolGlobalStateKeyCreator,
   PoolGlobalStateKeyDisbursementCursor,
   PoolGlobalStateKeyDisbursementPhase,
-  PoolGlobalStateKeyEndingRound,
+  PoolGlobalStateKeyEndTimestamp,
   PoolGlobalStateKeyEntryCount,
   PoolGlobalStateKeyGateID,
   PoolGlobalStateKeyGateSize,
-  PoolGlobalStateKeyLastRewardRound,
+  PoolGlobalStateKeyLastDisbursementTimestamp,
+  PoolGlobalStateKeyMarketplace,
   PoolGlobalStateKeyMaxEntries,
   PoolGlobalStateKeyMinimumStakeAmount,
   PoolGlobalStateKeyQualifiedStake,
+  PoolGlobalStateKeyRaffleCursor,
   PoolGlobalStateKeyReward,
   PoolGlobalStateKeyRewardInterval,
   PoolGlobalStateKeySalt,
-  PoolGlobalStateKeySignUpRound,
+  PoolGlobalStateKeySignupTimestamp,
   PoolGlobalStateKeyStakeKey,
-  PoolGlobalStateKeyStartingRound,
+  PoolGlobalStateKeyStartTimestamp,
   PoolGlobalStateKeyStatus,
   PoolGlobalStateKeyTitle,
   PoolGlobalStateKeyTotalStaked,
   PoolGlobalStateKeyType,
+  PoolGlobalStateKeyVRFFailureCount,
+  PoolGlobalStateKeyWinningTickets,
   PoolStatusDisbursing,
   PoolStatusDraft,
   PoolStatusFinal,
 } from './constants'
+import { ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION, ERR_INVALID_DISBURSEMENT_PHASE, ERR_INVALID_POOL_TYPE_FOR_CHECK, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE, ERR_NOT_ENOUGH_FUNDS, ERR_NOT_READY_TO_DISBURSE, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT, ERR_RATE_MUST_BE_GREATER_THAN_ZERO, ERR_STAKE_KEY_REQUIRED, ERR_WINNING_TICKETS_ALREADY_EXIST } from './errors'
 import { AkitaDAO } from '../dao/dao.algo'
-import { PaymentTxn } from '@algorandfoundation/algorand-typescript/gtxn'
 import { arc4UserAllocation, arc4UserAllocations } from '../rewards/types'
 import { BasePool } from './base.algo'
 import { classes } from 'polytype'
 import { Gate } from '../gates/gate.algo'
+import { RandomnessBeacon } from '../../utils/types/vrf_beacon'
+import { pcg64Init, pcg64Random } from '../../utils/types/lib_pcg/pcg64.algo'
+// import { MERKLE_TREE_TYPE_ASSET } from '../meta_merkles/constants'
+import { MAX_UINT64 } from '../../utils/constants'
+
+const MERKLE_TREE_TYPE_ASSET: uint64 = 1
+// const MAX_UINT64: uint64 = Uint64('18446744073709551615')
 
 export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool) {
   /** the status the pool is in */
@@ -95,18 +109,18 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
   /** the reward asset for the pool */
   reward = GlobalState<arc4Reward>({ key: PoolGlobalStateKeyReward })
-  /** the round sign ups for the pool are allowed */
-  signupRound = GlobalState<uint64>({ key: PoolGlobalStateKeySignUpRound })
+  /** the timestamp when sign ups for the pool are allowed */
+  signupTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeySignupTimestamp })
   /** whether signups are allowed after the staking pool begins */
   allowLateSignups = GlobalState<boolean>({ key: PoolGlobalStateKeyAllowLateSignups })
-  /** the round the pool starts at *if applicable* */
-  startingRound = GlobalState<uint64>({ key: PoolGlobalStateKeyStartingRound })
-  /** the round the pool ends at *if applicable* */
-  endingRound = GlobalState<uint64>({ key: PoolGlobalStateKeyEndingRound })
-  /** the interval that rewards should be paid out on */
+  /** the timestamp when the pool starts */
+  startTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyStartTimestamp })
+  /** the timestamp when the pool ends */
+  endTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyEndTimestamp })
+  /** the interval that rewards should be paid out on in seconds */
   rewardInterval = GlobalState<uint64>({ key: PoolGlobalStateKeyRewardInterval })
   /** the round the last reward was last paid out on */
-  lastRewardRound = GlobalState<uint64>({ key: PoolGlobalStateKeyLastRewardRound })
+  lastDisbursementTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyLastDisbursementTimestamp })
   /** the maximum entries allowed for the pool */
   maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
   /** the number of entries in a pool */
@@ -129,20 +143,27 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   /** the address of the creator of the staking pool */
   creator = GlobalState<Address>({ key: PoolGlobalStateKeyCreator })
   /** marketplace is pool creation side marketplace */
-  // marketplace = GlobalState<Address>({ key: PoolGlobalStateKeyMarketplace })
+  marketplace = GlobalState<Address>({ key: PoolGlobalStateKeyMarketplace })
   /** salt for randomness */
   salt = GlobalState<bytes>({ key: PoolGlobalStateKeySalt })
   /** a sub status of the disbursement phase of the pool */
   disbursementPhase = GlobalState<UintN8>({ key: PoolGlobalStateKeyDisbursementPhase })
   /** the id of the currently active disbursement */
   activeDisbursementID = GlobalState<uint64>({ key: PoolGlobalStateKeyActiveDisbursementID })
+  /** the unix timestamp signifying the start of the current disbursement */
+  activeDisbursementWindow = GlobalState<uint64>({ key: PoolGlobalStateKeyActiveDisbursementWindow })
   /** the cursor for the current disbursement */
   disbursementCursor = GlobalState<uint64>({ key: PoolGlobalStateKeyDisbursementCursor })
   /** the count of qualified stake during the preparation phase of a disbursement */
   qualifiedStakers = GlobalState<uint64>({ key: PoolGlobalStateKeyQualifiedStake })
   /** the total qualified stake for the pool */
   qualifiedStake = GlobalState<uint64>({ key: PoolGlobalStateKeyQualifiedStake })
-
+  /** the winning numbers for a raffle disbursement pool */
+  winningTickets = GlobalState<DynamicArray<UintN64>>({ key: PoolGlobalStateKeyWinningTickets })
+  /** winning ticket cursor for tracking the current position in winning tickets */
+  raffleCursor = GlobalState<arc4RaffleCursor>({ key: PoolGlobalStateKeyRaffleCursor })
+  /** counter for how many times we've failed to get rng from the beacon */
+  vrfGetFailureCount = GlobalState<uint64>({ key: PoolGlobalStateKeyVRFFailureCount })
 
   /** indexed entries for efficient iteration */
   entries = BoxMap<uint64, arc4EntryData>({ keyPrefix: PoolBoxPrefixEntries })
@@ -157,28 +178,20 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     return id
   }
 
-  private getIterationAmount(txnCount: uint64): uint64 {
-    const difference = this.entryID.value - this.disbursementCursor.value
-
-    let max = MaxAlgoIterationAmount / txnCount
-
-    return difference > max ? max : difference
-  }
-
-  private processPreparationPhase(): void {
-    const iterationAmount = this.getIterationAmount(2 + this.gateSize.value)
-    
+  private processPreparationPhase(iterationAmount: uint64): void {
     let count: uint64 = 0
     let total: uint64 = 0
+
+    if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
+      iterationAmount = this.entryID.value - this.disbursementCursor.value
+    }
+    
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
       const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
       if (entry.disqualified) {
         continue
       }
 
-      // stake type none: 0 - 1 ref
-      // stake type heartbeat: 1 - 1 ref
-      // stake other: 1 - 1 ref
       const { valid } = this.getStakeValue(id)
       if (!valid) {
         continue
@@ -203,66 +216,201 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     }
   }
 
-  private createPercentageDisbursement(): void {
-    const iterationAmount = this.getIterationAmount()
-    const reward = decodeArc4<Reward>(this.reward.value.bytes)
-
-    for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
-      const entry = decodeArc4<EntryData>(this.entries(i).value.bytes)
-
-      if (entry.disqualified) {
-        continue
-      }
-
-      const userShare = entry.quantity / this.qualifiedStake.value
-
-
-
-
-
+  private createPercentageDisbursement(iterationAmount: uint64, asset: uint64): void {
+    
+    if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
+      iterationAmount = this.entryID.value - this.disbursementCursor.value
     }
-  }
 
-  private createFlatDisbursement(asset: uint64, amount: uint64): void {
-    const iterationAmount = this.getIterationAmount()
+    const reward = decodeArc4<Reward>(this.reward.value.bytes)
+    const allocations = new DynamicArray<arc4UserAllocation>()
+    let sum: uint64 = 0
 
-    for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
-      const entry = decodeArc4<EntryData>(this.entries(i).value.bytes)
-
+    for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
+      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
       if (entry.disqualified) {
         continue
       }
 
-      const passes = this.gate(entry.address, this.gateID.value, entry.gateArgs)
-      if (!passes) {
-        continue
-      }
+      const amount = this.calcPercent(reward.rate, this.percentageOf(entry.quantity, this.qualifiedStake.value))
 
-      const allocations = new DynamicArray(
+      allocations.push(
         new arc4UserAllocation({
           address: entry.address,
           amount: new UintN64(amount)
         }),
       )
+      sum += amount
+    }
 
-      this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations)
-      this.disbursementCursor.value += 1
+    this.disbursementCursor.value += iterationAmount
+    this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
+
+    if (this.entryID.value === this.disbursementCursor.value) {
+      this.disbursementPhase.value = DisbursementPhaseFinalization
+      this.disbursementCursor.value = 0
     }
   }
 
-  private createEvenDisbursement(): void {
-    const iterationAmount = this.getIterationAmount()
+  private createFlatDisbursement(iterationAmount: uint64, asset: uint64, amount: uint64): void {
+    const total: uint64 = this.qualifiedStakers.value * amount
+    const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
+
+    assert(balance >= total, ERR_NOT_ENOUGH_FUNDS)
+
+    if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
+      iterationAmount = this.entryID.value - this.disbursementCursor.value
+    }
+
+    const allocations = new DynamicArray<arc4UserAllocation>()
+    let sum: uint64 = 0
+
+    for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
+      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      if (entry.disqualified) {
+        continue
+      }
+
+      allocations.push(
+        new arc4UserAllocation({
+          address: entry.address,
+          amount: new UintN64(amount)
+        }),
+      )
+      sum += amount
+    }
+
+    this.disbursementCursor.value += iterationAmount
+    this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
+
+    if (this.entryID.value === this.disbursementCursor.value) {
+      this.disbursementPhase.value = DisbursementPhaseFinalization
+      this.disbursementCursor.value = 0
+    }
   }
 
-  private createShuffleDisbursement(): void {
-    const iterationAmount = this.getIterationAmount()
+  private createEvenDisbursement(iterationAmount: uint64, asset: uint64, sum: uint64): void {
+    const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
+    assert(balance >= sum, ERR_NOT_ENOUGH_FUNDS)
+
+    if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
+      iterationAmount = this.entryID.value - this.disbursementCursor.value
+    }
+
+    const amount: uint64 = sum / this.qualifiedStakers.value
+    const allocations = new DynamicArray<arc4UserAllocation>()
+    for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
+      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      if (entry.disqualified) {
+        continue
+      }
+
+      allocations.push(
+        new arc4UserAllocation({
+          address: entry.address,
+          amount: new UintN64(amount)
+        }),
+      )
+    }
+
+    this.disbursementCursor.value += iterationAmount
+    this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
+
+    if (this.entryID.value === this.disbursementCursor.value) {
+      this.disbursementPhase.value = DisbursementPhaseFinalization
+      this.disbursementCursor.value = 0
+    }
+  }
+
+  private resetRaffleState(): void {
+    const zero = new UintN64(0)
+    this.raffleCursor.value = new arc4RaffleCursor({ ticket: zero, stake: zero, disbursed: zero })
+    this.winningTickets.value = new DynamicArray<UintN64>()
+  }
+
+  private createShuffleDisbursement(iterationAmount: uint64, asset: uint64, sum: uint64): void {
+    const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
+    assert(balance >= sum, ERR_NOT_ENOUGH_FUNDS)
+
+    if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
+      iterationAmount = this.entryID.value - this.disbursementCursor.value
+    }
+
+    const reward = decodeArc4<Reward>(this.reward.value.bytes)
+
+    let amount = reward.rate
+    if (reward.winnerCount > 0) {
+      amount = reward.rate / reward.winnerCount
+    }
+
+    const tickets = decodeArc4<uint64[]>(this.winningTickets.value.bytes)
+    let { stake, ticket, disbursed } = decodeArc4<RaffleCursor>(this.raffleCursor.value.bytes)
+    let currentTicket = tickets[ticket]
+    let currentRangeStart = stake
+    let currentRangeEnd: uint64 = 0
+
+    const allocations = new DynamicArray<arc4UserAllocation>()
+    for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
+      const entry = decodeArc4<EntryData>(this.entries(i).value.bytes)
+
+      currentRangeEnd = currentRangeStart + entry.quantity
+      if (currentTicket >= currentRangeStart && currentTicket <= currentRangeEnd) {
+        if (!entry.disqualified) {
+          allocations.push(
+            new arc4UserAllocation({
+              address: entry.address,
+              amount: new UintN64(amount)
+            }),
+          )
+          disbursed++
+        }
+
+        if (ticket === tickets.length - 1) {
+          // we didnt find enough winners, reset raffle
+          if (reward.winnerCount !== disbursed) {
+            this.disbursementCursor.value = 0
+            this.raffleCursor.value = new arc4RaffleCursor({
+              ticket: new UintN64(0),
+              stake: new UintN64(0),
+              disbursed: new UintN64(disbursed),
+            })
+            this.winningTickets.value = new DynamicArray<UintN64>()
+            this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
+            return
+          }
+          break
+        }
+
+        iterationAmount -= i
+        ticket++
+        currentTicket = tickets[ticket]
+        this.disbursementCursor.value = 0
+        i = 0
+        stake = 0
+        currentRangeEnd = 0
+      }
+      currentRangeStart = currentRangeEnd + 1
+    }
+
+    this.disbursementCursor.value += iterationAmount
+    this.raffleCursor.value = new arc4RaffleCursor({
+      ticket: new UintN64(ticket),
+      stake: new UintN64(stake),
+      disbursed: new UintN64(disbursed),
+    })
+    this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
+
+    if (reward.winnerCount === disbursed) {
+      this.disbursementPhase.value = DisbursementPhaseFinalization
+      this.disbursementCursor.value = 0
+      this.resetRaffleState()
+    }
   }
 
   private checkByID(id: uint64): { valid: boolean, balance: uint64 } {
     assert(
-      this.type.value !== POOL_STAKING_TYPE_NONE ||
-      this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
-      'check is not relevant for this kind of pool'
+      this.type.value !== POOL_STAKING_TYPE_NONE || this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
+      ERR_INVALID_POOL_TYPE_FOR_CHECK
     )
 
     const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
@@ -304,49 +452,13 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   }
 
   private getLatestWindowStart(): uint64 {
-    return Global.round - ((Global.round - this.startingRound.value) % this.rewardInterval.value)
+    return Global.latestTimestamp - ((Global.latestTimestamp - this.startTimestamp.value) % this.rewardInterval.value)
   }
 
   private validWindow(): boolean {
     const latestWindowStart = this.getLatestWindowStart()
-    return latestWindowStart !== Global.round && this.lastRewardRound.value < latestWindowStart
+    return latestWindowStart !== Global.latestTimestamp && this.lastDisbursementTimestamp.value < latestWindowStart
   }
-
-  // private distributeShuffle(): void {
-
-  //   const reward = decodeArc4<Reward>(this.reward.value.bytes)
-
-  //   let winnerCount: uint64 = 1
-  //   if (reward.winnerCount > 0) {
-  //     winnerCount = reward.winnerCount
-  //   }
-
-  //   const seed = abiCall(RandomnessBeacon.prototype.get, {
-  //     appId: super.getAppList().vrfBeacon,
-  //     args: [roundToUse, this.salt.value],
-  //     fee: 0,
-  //   }).returnValue
-
-  //   if (seed.length === 0) {
-  //     this.vrfGetFailureCount.value += 1
-  //     return
-  //   }
-
-  //   // Initialize PCG randomness with the seed
-  //   const rngState = pcg64Init(seed.slice(0, 16))
-
-  //   // Calculate reward amount per winner
-  //   const winnerRewardAmount = reward.quantity / winnerCount
-
-  //   // make upper bounds inclusive if we can
-  //   let upperBound = this.weightedBidTotal.value
-  //   if (upperBound < MAX_UINT64) {
-  //     upperBound = upperBound += 1
-  //   }
-
-  //   const rngResult = pcg64Random(rngState, 1, upperBound, reward.winnerCount)
-  //   // this.winningTicket.value = rngResult[1][0];
-  // }
 
   private stakingType(): StakingType {
     assert(this.type.value !== POOL_STAKING_TYPE_NONE, 'pool staking type is not set')
@@ -377,7 +489,7 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
 
     const mbrPayment = itxn.payment({
       receiver: rewardsApp.address,
-      amount: 35_300 + (400 * title.length),
+      amount: 35_300 + (400 * Bytes(title).length),
       fee: 0,
     })
 
@@ -413,12 +525,12 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   private createRewardAllocations(
     disbursementID: uint64,
     asset: uint64,
-    allocations: arc4UserAllocations
+    allocations: arc4UserAllocations,
+    sum: uint64
   ): void {
 
     const rewardsApp = Application(super.getAppList().rewards)
     const mbrAmount = this.calculateAllocationMBR(allocations)
-    const paymentAmount = this.sumAllocations(allocations)
 
     if (asset === 0) {
       // ALGO allocations
@@ -427,7 +539,7 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
         args: [
           itxn.payment({
             receiver: rewardsApp.address,
-            amount: mbrAmount + paymentAmount,
+            amount: mbrAmount + sum,
             fee: 0,
           }),
           disbursementID,
@@ -447,7 +559,7 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
           itxn.assetTransfer({
             assetReceiver: rewardsApp.address,
             xferAsset: asset,
-            assetAmount: paymentAmount,
+            assetAmount: sum,
             fee: 0,
           }),
           disbursementID,
@@ -471,14 +583,6 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     return 24_900 * allocations.length
   }
 
-  private sumAllocations(allocations: arc4UserAllocations): uint64 {
-    let sum = 0
-    for (let i = 0; i < allocations.length; i++) {
-      sum += allocations[i].amount.native
-    }
-    return sum
-  }
-
   // @ts-ignore
   @abimethod({ onCreate: 'require' })
   createApplication(
@@ -497,6 +601,8 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     this.title.value = title
     this.type.value = type
     this.reward.value = reward
+    const decodedReward = decodeArc4<Reward>(reward.bytes)
+    assert(decodedReward.rate > 0, ERR_RATE_MUST_BE_GREATER_THAN_ZERO)
     this.creator.value = creator
     this.marketplace.value = marketplace
 
@@ -508,8 +614,19 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     assert(
       stakeKey.address.native !== Global.zeroAddress ||
       reward.distribution !== DistributionTypePercentage,
-      'stake key is not set'
+      ERR_STAKE_KEY_REQUIRED
     )
+
+    if (reward.distribution === DistributionTypeShuffle) {
+      assert(decodedReward.rate > decodedReward.winnerCount, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT)
+    }
+
+    if (reward.distribution === DistributionTypeEven) {
+      assert(maxEntries < decodedReward.rate, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE)
+      if (maxEntries === 0) {
+        maxEntries = decodedReward.rate
+      }
+    }
 
     this.stakeKey.value = stakeKey
     this.minimumStakeAmount.value = minimumStakeAmount
@@ -519,8 +636,12 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     this.salt.value = Txn.txId
     this.disbursementPhase.value = DisbursementPhaseIdle
     this.activeDisbursementID.value = 0
+    this.activeDisbursementWindow.value = 0
     this.disbursementCursor.value = 0
     this.qualifiedStakers.value = 0
+    this.qualifiedStake.value = 0
+    this.winningTickets.value = new DynamicArray<UintN64>()
+    this.vrfGetFailureCount.value = 0
   }
 
   init() {
@@ -539,40 +660,40 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   @abimethod({ allowActions: 'DeleteApplication' })
   deleteApplication(): void {
     assert(Txn.sender === this.creator.value.native, 'only the creator can delete the pool')
-    assert(this.status.value === PoolStatusDraft || Global.round > this.endingRound.value, 'the pool must be in draft or ended')
+    assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
   }
 
-  finalize(signupRound: uint64, startingRound: uint64, endingRound: uint64) {
+  finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
     assert(Txn.sender === this.creator.value.native, 'only the creator can finalize the pool')
     assert(this.status.value === PoolStatusDraft, 'the pool must be in draft state to finalize')
     assert(
-      signupRound > Global.round || (signupRound === 0 && this.allowLateSignups.value),
+      signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
       'the signup round must be zero and late sign ups allowed or in the future'
     )
-    // if startingRound is zero then signUpRound must also be zero and allowLateSignups must be true
+    // if start is zero then signup must also be zero and allowLateSignups must be true
     assert(
-      startingRound === 0 ||
-      startingRound > Global.round,
+      startTimestamp === 0 ||
+      startTimestamp > Global.latestTimestamp,
       'the starting round must be zero or in the future'
     )
 
-    if (startingRound === 0) {
-      assert(signupRound === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
-      startingRound = Global.round
+    if (startTimestamp === 0) {
+      assert(signupTimestamp === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
+      startTimestamp = Global.latestTimestamp
     }
 
     assert(
-      endingRound === 0 || endingRound > (startingRound + 10),
+      endTimestamp === 0 || endTimestamp > (startTimestamp + 10),
       'the ending round must be zero or after the starting round + 10'
     )
 
-    this.signupRound.value = signupRound
-    this.startingRound.value = startingRound
-    this.endingRound.value = endingRound
+    this.signupTimestamp.value = signupTimestamp
+    this.startTimestamp.value = startTimestamp
+    this.endTimestamp.value = endTimestamp
     this.status.value = PoolStatusFinal
   }
 
-  enter(payment: PaymentTxn, entries: DynamicArray<arc4StakeEntry>, args: GateArgs): void {
+  enter(payment: gtxn.PaymentTxn, entries: DynamicArray<arc4StakeEntry>, args: GateArgs): void {
     // Verify the pool is live
     assert(this.isLive(), 'the pool is not live')
     assert(
@@ -588,7 +709,7 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
 
     const costs = this.mbr()
-    const entryMBR = costs.entries + costs.entriesByAddress
+    const entryMBR: uint64 = costs.entries + costs.entriesByAddress
 
     assert(payment.amount === (entryMBR * entries.length), ERR_INVALID_PAYMENT_AMOUNT)
 
@@ -620,11 +741,12 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
 
       assert(stakeInfo.amount >= newEntry.quantity, 'user does not have enough staked')
 
+      const { address, name } = decodeArc4<RootKey>(this.stakeKey.value.bytes)
       const verified = abiCall(MetaMerkles.prototype.verify, {
         appId: super.getAppList().metaMerkles,
         args: [
-          this.stakeKey.value.address,
-          this.stakeKey.value.name,
+          address,
+          str(name),
           bytes32(sha256(sha256(itob(newEntry.asset)))),
           newEntry.proof,
           MERKLE_TREE_TYPE_ASSET,
@@ -652,9 +774,7 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
     }
   }
 
-  withdraw(): void {
-
-  }
+  withdraw(): void { }
 
   startDisbursement(): void {
     assert(this.isLive(), 'the pool is not live')
@@ -669,40 +789,74 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
 
     this.status.value = PoolStatusDisbursing
     this.activeDisbursementID.value = disbursementID
-    this.lastRewardRound.value = Global.round
+    this.activeDisbursementWindow.value = this.getLatestWindowStart()
+    this.lastDisbursementTimestamp.value = Global.latestTimestamp
     this.disbursementCursor.value = 0
     this.qualifiedStakers.value = 0
     this.qualifiedStake.value = 0
-
-    // Set initial phase based on distribution type
-    if (this.reward.value.distribution !== DistributionTypeFlat) {
-      this.disbursementPhase.value = DisbursementPhasePreparation // Need total calculation first
-    } else {
-      this.disbursementPhase.value = DisbursementPhaseAllocation // Can go straight to allocation
-    }
+    this.disbursementPhase.value = DisbursementPhasePreparation
   }
 
-  disburseRewards(): void {
+  raffle(): void {
+    assert(this.disbursementPhase.value === DisbursementPhaseAllocation, ERR_INVALID_DISBURSEMENT_PHASE)
+    assert(this.winningTickets.value.length === 0, ERR_WINNING_TICKETS_ALREADY_EXIST)
+
+    const roundToUse: uint64 = this.activeDisbursementWindow.value + 1 + (4 * this.vrfGetFailureCount.value)
+
+    // we cannot use the global state key directly because we import its name from a different file
+    // TODO: use it directly once this bug is fixed
+    const salt = this.salt.value
+
+    const seed = abiCall(RandomnessBeacon.prototype.get, {
+      appId: super.getAppList().vrfBeacon,
+      args: [roundToUse, salt],
+      fee: 0
+    }).returnValue
+
+    if (seed.length === 0) {
+      this.vrfGetFailureCount.value += 1
+      return
+    }
+
+    // Initialize PCG randomness with the seed
+    const rngState = pcg64Init(seed.slice(0, 16))
+
+    // make upper bounds inclusive if we can
+    let upperBound = this.qualifiedStake.value
+    if (upperBound < MAX_UINT64) {
+      upperBound += 1
+    }
+
+    const rngResult = pcg64Random(rngState, 1, upperBound, MaxGlobalStateUint64Array)
+    this.winningTickets.value = rngResult[1]
+    this.vrfGetFailureCount.value = 0
+  }
+
+  disburseRewards(iterationAmount: uint64): void {
     assert(this.status.value === PoolStatusDisbursing, 'pool is not in disbursement phase')
     assert(
       this.disbursementPhase.value === DisbursementPhasePreparation ||
       this.disbursementPhase.value === DisbursementPhaseAllocation,
-      'not ready to disburse'
+      ERR_NOT_READY_TO_DISBURSE
     )
 
     const reward = decodeArc4<Reward>(this.reward.value.bytes)
 
     if (this.disbursementPhase.value === DisbursementPhasePreparation) {
-      this.processPreparationPhase()
+      this.processPreparationPhase(iterationAmount)
     } else {
       if (reward.distribution === DistributionTypePercentage) {
-        this.createPercentageDisbursement()
+        this.createPercentageDisbursement(iterationAmount, reward.asset)
       } else if (reward.distribution === DistributionTypeFlat) {
-        this.createFlatDisbursement(reward.asset, reward.rate)
+        this.createFlatDisbursement(iterationAmount, reward.asset, reward.rate)
       } else if (reward.distribution === DistributionTypeEven) {
-        this.createEvenDisbursement()
+        this.createEvenDisbursement(iterationAmount, reward.asset, reward.rate)
       } else if (reward.distribution === DistributionTypeShuffle) {
-        this.createShuffleDisbursement()
+        if (this.winningTickets.value.length === 0) {
+          this.raffle()
+        } else {
+          this.createShuffleDisbursement(iterationAmount, reward.asset, reward.rate)
+        }
       } else {
         assert(false, 'unknown reward rate type')
       }
@@ -710,7 +864,7 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   }
 
   finalizeDistribution(): void {
-    assert(this.disbursementPhase.value === DisbursementPhaseFinalization, 'not ready to finalize')
+    assert(this.disbursementPhase.value === DisbursementPhaseFinalization, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION)
 
     this.finalizeRewards(this.activeDisbursementID.value)
 
@@ -736,8 +890,8 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   signUpsOpen(): boolean {
     return (
       this.status.value !== PoolStatusDraft &&
-      Global.round > this.signupRound.value &&
-      (Global.round < this.startingRound.value || this.allowLateSignups.value)
+      Global.latestTimestamp > this.signupTimestamp.value &&
+      (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
     )
   }
 
@@ -747,8 +901,8 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
   isLive(): boolean {
     return (
       this.status.value !== PoolStatusDraft &&
-      (Global.round >= this.startingRound.value) &&
-      (Global.round <= this.endingRound.value || this.endingRound.value === 0)
+      (Global.latestTimestamp >= this.startTimestamp.value) &&
+      (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
     )
   }
 
@@ -760,10 +914,10 @@ export class Pool extends classes(ContractWithCreatorOnlyOptInAndGate, BasePool)
       title: this.title.value,
       type: this.type.value,
       reward: decodeArc4<Reward>(this.reward.value.bytes),
-      signupRound: this.signupRound.value,
+      signupTimestamp: this.signupTimestamp.value,
       allowLateSignups: this.allowLateSignups.value,
-      startingRound: this.startingRound.value,
-      endingRound: this.endingRound.value,
+      startTimestamp: this.startTimestamp.value,
+      endTimestamp: this.endTimestamp.value,
       maxEntries: this.maxEntries.value,
       entryCount: (this.entryID.value + 1),
       totalStaked: this.totalStaked.value,

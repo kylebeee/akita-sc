@@ -1,8 +1,9 @@
 import {
     arc4,
     assert,
-    Asset,
+    assertMatch,
     BoxMap,
+    Bytes,
     Global,
     GlobalState,
     gtxn,
@@ -12,19 +13,17 @@ import {
     uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
-import { Address, Bool, methodSelector, Str, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Address, Bool, decodeArc4, methodSelector, Str, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { arc4Zero } from '../../utils/constants'
 import { ContractWithOptIn } from '../../utils/base_contracts/optin.algo'
 import { AkitaBaseContract } from '../../utils/base_contracts/base.algo'
 import {
-    arc4AllocationReclaimDetails,
-    arc4ClaimDetails,
     arc4Claims,
     arc4DisbursementDetails,
     arc4Reclaims,
-    arc4UserAllocation,
     arc4UserAllocations,
     arc4UserAllocationsKey,
+    DisbursementDetails,
     RewardsMBRData,
 } from './types'
 import {
@@ -40,7 +39,6 @@ import {
     ERR_INVALID_DISBURSEMENT_EXPIRATION_TIME,
     ERR_INVALID_DISBURSEMENT_UNLOCK_TIME,
     ERR_INVALID_MBR_AMOUNT,
-    ERR_INVALID_SUM,
     ERR_YOU_ARE_NOT_THE_CREATOR,
 } from './errors'
 import {
@@ -48,8 +46,9 @@ import {
     ERR_INVALID_APP_ID,
     ERR_INVALID_NUMBER_OF_APP_ARGS,
     ERR_INVALID_ON_COMPLETE,
-    ERR_INVALID_PAYMENT_AMOUNT,
+    ERR_INVALID_PAYMENT,
     ERR_INVALID_PAYMENT_RECEIVER,
+    ERR_INVALID_TRANSFER,
 } from '../../utils/errors'
 import { AkitaDAO } from '../dao/dao.algo'
 import {
@@ -58,7 +57,7 @@ import {
     RewardsBoxPrefixUserAllocations,
     RewardsGlobalStateKeyDisbursementID,
 } from './constants'
-import { ApplicationTxn, AssetTransferTxn, PaymentTxn } from '@algorandfoundation/algorand-typescript/gtxn'
+import { len } from '@algorandfoundation/algorand-typescript/op'
 
 export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
     /** the disbursement */
@@ -76,12 +75,12 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
      * the key is the address of the qualified account with the uint64 id of the disbursement
      * the value is the asset and amount they are owed
      */
-    userAllocations = BoxMap<arc4UserAllocationsKey, arc4.UintN64>({ keyPrefix: RewardsBoxPrefixUserAllocations })
+    userAllocations = BoxMap<arc4UserAllocationsKey, uint64>({ keyPrefix: RewardsBoxPrefixUserAllocations })
 
-    
+
     mbr(title: string, note: string): RewardsMBRData {
         return {
-            disbursements: 35_300 + (400 * (title.length + note.length)),
+            disbursements: 35_300 + (400 * (Bytes(title).length + Bytes(note).length)),
             userAllocations: 25_300
         }
     }
@@ -93,9 +92,9 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
     }
 
     createDisbursement(
-        mbrPayment: PaymentTxn,
-        feePayment: PaymentTxn,
-        akitaDAOReceivePayment: ApplicationTxn,
+        mbrPayment: gtxn.PaymentTxn,
+        feePayment: gtxn.PaymentTxn,
+        akitaDAOReceivePayment: gtxn.ApplicationCallTxn,
         title: string,
         timeToUnlock: uint64,
         expiration: uint64,
@@ -117,7 +116,7 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
 
         assert(akitaDAOReceivePayment.appId === this.akitaDAO.value, ERR_INVALID_APP_ID)
         assert(akitaDAOReceivePayment.onCompletion === OnCompleteAction.NoOp, ERR_INVALID_ON_COMPLETE)
-        assert(akitaDAOReceivePayment.appArgs.length > 1, ERR_INVALID_NUMBER_OF_APP_ARGS)
+        assert(akitaDAOReceivePayment.numAppArgs > 1, ERR_INVALID_NUMBER_OF_APP_ARGS)
         assert(
             akitaDAOReceivePayment.appArgs(0) === methodSelector(AkitaDAO.prototype.receivePayment),
             ERR_INVALID_ABI_METHOD
@@ -161,13 +160,13 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
     }
 
     createUserAllocations(
-        payment: PaymentTxn,
+        payment: gtxn.PaymentTxn,
         id: uint64,
         allocations: arc4UserAllocations
     ): void {
         assert(this.disbursements(id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
 
-        const disbursement = this.disbursements(id).value
+        const disbursement = decodeArc4<DisbursementDetails>(this.disbursements(id).value.bytes)
         assert(!disbursement.finalized, ERR_DISBURSEMENT_ALREADY_FINAL)
 
         let sum: uint64 = 0
@@ -179,7 +178,7 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
             })
             assert(!this.userAllocations(userAllocationsKey).exists, ERR_ALLOCATION_ALREADY_EXISTS)
 
-            this.userAllocations(userAllocationsKey).value = allocations[i].amount
+            this.userAllocations(userAllocationsKey).value = allocations[i].amount.native
 
             const newAllocAmount = new UintN64(this.disbursements(id).value.allocations.native + 1)
             this.disbursements(id).value.allocations = newAllocAmount
@@ -191,22 +190,28 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
         }
 
         // each user allocation box raises the MBR by 24,900 microAlgo
-        const costs = this.mbr(disbursement.title.native, disbursement.note.native)
-        const mbrAmount = costs.userAllocations * allocations.length
+        const costs = this.mbr(disbursement.title, disbursement.note)
+        const mbrAmount: uint64 = costs.userAllocations * allocations.length
 
-        assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-        assert(payment.amount === mbrAmount + sum, ERR_INVALID_PAYMENT_AMOUNT)
+        assertMatch(
+            payment,
+            {
+                receiver: Global.currentApplicationAddress,
+                amount: mbrAmount + sum,
+            },
+            ERR_INVALID_PAYMENT
+        )
     }
 
     createAsaUserAllocations(
-        mbrPayment: PaymentTxn,
-        assetXfer: AssetTransferTxn,
+        mbrPayment: gtxn.PaymentTxn,
+        assetXfer: gtxn.AssetTransferTxn,
         id: uint64,
         allocations: arc4UserAllocations
     ): void {
         assert(this.disbursements(id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
 
-        const disbursement = this.disbursements(id).value
+        const disbursement = decodeArc4<DisbursementDetails>(this.disbursements(id).value.bytes)
         assert(!disbursement.finalized, ERR_DISBURSEMENT_ALREADY_FINAL)
 
         let matchSum: uint64 = 0
@@ -218,7 +223,7 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
             })
             assert(!this.userAllocations(userAllocationsKey).exists, ERR_ALLOCATION_ALREADY_EXISTS)
 
-            this.userAllocations(userAllocationsKey).value = allocations[i].amount
+            this.userAllocations(userAllocationsKey).value = allocations[i].amount.native
 
             const newAllocAmount = new UintN64(this.disbursements(id).value.allocations.native + 1)
             this.disbursements(id).value.allocations = newAllocAmount
@@ -230,32 +235,44 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
         }
 
         // each user allocation box raises the MBR by 24,900 microAlgo
-        const costs = this.mbr(disbursement.title.native, disbursement.note.native)
-        const mbrAmount = costs.userAllocations * allocations.length
+        const costs = this.mbr(disbursement.title, disbursement.note)
+        const mbrAmount: uint64 = costs.userAllocations * allocations.length
 
-        assert(mbrPayment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-        assert(mbrPayment.amount === mbrAmount, ERR_INVALID_MBR_AMOUNT)
+        assertMatch(
+            mbrPayment,
+            {
+                receiver: Global.currentApplicationAddress,
+                amount: mbrAmount,
+            },
+            ERR_INVALID_PAYMENT
+        )
 
-        assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-        assert(assetXfer.assetAmount === matchSum, ERR_INVALID_SUM)
+        assertMatch(
+            assetXfer,
+            {
+                assetReceiver: Global.currentApplicationAddress,
+                assetAmount: matchSum,
+            },
+            ERR_INVALID_TRANSFER
+        )
     }
 
     finalizeDisbursement(id: uint64): void {
         assert(this.disbursements(id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
 
-        const disbursement = this.disbursements(id).value
+        const disbursement = decodeArc4<DisbursementDetails>(this.disbursements(id).value.bytes)
         assert(Txn.sender === disbursement.creator.native, ERR_YOU_ARE_NOT_THE_CREATOR)
         assert(!disbursement.finalized, ERR_DISBURSEMENT_ALREADY_FINAL)
         assert(
-            disbursement.timeToUnlock.native >= Global.latestTimestamp || disbursement.timeToUnlock.native === 0,
+            disbursement.timeToUnlock >= Global.latestTimestamp || disbursement.timeToUnlock === 0,
             ERR_INVALID_DISBURSEMENT_UNLOCK_TIME
         )
         assert(
-            disbursement.expiration.native >= Global.latestTimestamp + 60 || disbursement.expiration.native === 0,
+            disbursement.expiration >= Global.latestTimestamp + 60 || disbursement.expiration === 0,
             ERR_INVALID_DISBURSEMENT_EXPIRATION_TIME
         )
-        assert(disbursement.amount.native > 0, ERR_DISBURSEMENTS_CANNOT_BE_EMPTY)
-        assert(disbursement.allocations.native > 0, ERR_DISBURSEMENTS_MUST_HAVE_ALLOCATIONS)
+        assert(disbursement.amount > 0, ERR_DISBURSEMENTS_CANNOT_BE_EMPTY)
+        assert(disbursement.allocations > 0, ERR_DISBURSEMENTS_MUST_HAVE_ALLOCATIONS)
 
         this.disbursements(id).value.finalized = new Bool(true)
     }
@@ -264,10 +281,10 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
         for (let i: uint64 = 0; i < rewards.length; i += 1) {
             assert(this.disbursements(rewards[i].id.native).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
 
-            const disbursement = this.disbursements(rewards[i].id.native).value
-            assert(disbursement.timeToUnlock.native <= Global.latestTimestamp - 60, ERR_DISBURSEMENT_LOCKED)
-            assert(disbursement.expiration.native >= Global.latestTimestamp, ERR_DISBURSEMENT_LOCKED)
-            assert(disbursement.amount.native > disbursement.distributed.native, ERR_DISBURSEMENT_FULLY_DISTRIBUTED)
+            const disbursement = decodeArc4<DisbursementDetails>(this.disbursements(rewards[i].id.native).value.bytes)
+            assert(disbursement.timeToUnlock <= Global.latestTimestamp - 60, ERR_DISBURSEMENT_LOCKED)
+            assert(disbursement.expiration >= Global.latestTimestamp, ERR_DISBURSEMENT_LOCKED)
+            assert(disbursement.amount > disbursement.distributed, ERR_DISBURSEMENT_FULLY_DISTRIBUTED)
 
             const userAllocationsKey = new arc4UserAllocationsKey({
                 disbursementID: rewards[i].id,
@@ -277,9 +294,9 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
             assert(this.userAllocations(userAllocationsKey).exists, ERR_ALLOCATION_DOES_NOT_EXIST)
             const userAllocation = this.userAllocations(userAllocationsKey).value
 
-            const newAllocAmount = new UintN64(disbursement.allocations.native - 1)
+            const newAllocAmount = new UintN64(disbursement.allocations - 1)
             this.disbursements(rewards[i].id.native).value.allocations = newAllocAmount
-            const newAmount = new UintN64(disbursement.amount.native - userAllocation.native)
+            const newAmount = new UintN64(disbursement.amount - userAllocation)
             this.disbursements(rewards[i].id.native).value.distributed = newAmount
             this.userAllocations(userAllocationsKey).delete()
 
@@ -294,19 +311,19 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
             if (!isAlgo) {
                 const assetXfer = itxn.assetTransfer({
                     assetReceiver: Txn.sender,
-                    assetAmount: userAllocation.native,
+                    assetAmount: userAllocation,
                     xferAsset: rewards[i].asset.native,
                     fee: 0,
-                    note: disbursement.note.native,
+                    note: disbursement.note,
                 })
 
                 itxn.submitGroup(creatorMBRRefund, assetXfer)
             } else {
                 const payment = itxn.payment({
                     receiver: Txn.sender,
-                    amount: userAllocation.native,
+                    amount: userAllocation,
                     fee: 0,
-                    note: disbursement.note.native,
+                    note: disbursement.note,
                 })
 
                 itxn.submitGroup(creatorMBRRefund, payment)
@@ -316,11 +333,11 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
 
     reclaimRewards(id: uint64, reclaims: arc4Reclaims): void {
         assert(this.disbursements(id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
-        const disbursement = this.disbursements(id).value
+        const disbursement = decodeArc4<DisbursementDetails>(this.disbursements(id).value.bytes) 
 
         assert(disbursement.creator.native === Txn.sender, ERR_YOU_ARE_NOT_THE_CREATOR)
         assert(disbursement.finalized, ERR_DISBURSEMENT_ALREADY_FINAL)
-        assert(disbursement.expiration.native <= Global.latestTimestamp, ERR_DISBURSEMENT_NOT_EXPIRED)
+        assert(disbursement.expiration <= Global.latestTimestamp, ERR_DISBURSEMENT_NOT_EXPIRED)
 
         for (let i: uint64 = 0; i < reclaims.length; i += 1) {
             const userAllocationsKey = new arc4UserAllocationsKey({
@@ -331,8 +348,8 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
             assert(this.userAllocations(userAllocationsKey).exists, ERR_ALLOCATION_DOES_NOT_EXIST)
 
             const userAllocation = this.userAllocations(userAllocationsKey).value
-            this.disbursements(id).value.amount = userAllocation
-            const newAllocAmount = new UintN64(disbursement.allocations.native - 1)
+            this.disbursements(id).value.amount = new UintN64(userAllocation)
+            const newAllocAmount = new UintN64(disbursement.allocations - 1)
             this.disbursements(id).value.allocations = newAllocAmount
             this.userAllocations(userAllocationsKey).delete()
 
@@ -341,7 +358,7 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
             if (!isAlgo) {
                 const xfer = itxn.assetTransfer({
                     assetReceiver: disbursement.creator.native,
-                    assetAmount: userAllocation.native,
+                    assetAmount: userAllocation,
                     xferAsset: reclaims[i].asset.native,
                     fee: 0,
                 })
@@ -356,7 +373,7 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
             } else {
                 itxn.payment({
                     receiver: disbursement.creator.native,
-                    amount: userAllocation.native + allocationMBR,
+                    amount: userAllocation + allocationMBR,
                     fee: 0,
                 }).submit()
             }

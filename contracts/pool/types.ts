@@ -58,7 +58,9 @@ export class arc4StakeEntry extends arc4.Struct<{
     proof: Proof
 }> {}
 
-export type EntryData = EntryKey & {
+export type EntryData = {
+    address: Address
+    asset: uint64
     quantity: uint64,
     gateArgs: GateArgs
     disqualified: boolean
@@ -81,7 +83,6 @@ export type Reward = {
     asset: uint64
     distribution: DistributionType
     rate: uint64
-    quantity: uint64
     expiration: uint64
     winnerCount: uint64 // shuffle distribution only
 }
@@ -90,7 +91,6 @@ export class arc4Reward extends arc4.Struct<{
     asset: arc4.UintN64
     distribution: DistributionType
     rate: arc4.UintN64
-    quantity: arc4.UintN64
     expiration: arc4.UintN64
     winnerCount: arc4.UintN64
 }> {}
@@ -100,10 +100,10 @@ export type PoolState = {
     title: string
     type: StakingType
     reward: Reward
-    signupRound: uint64
-    startingRound: uint64
+    signupTimestamp: uint64
+    startTimestamp: uint64
     allowLateSignups: boolean
-    endingRound: uint64
+    endTimestamp: uint64
     maxEntries: uint64
     entryCount: uint64
     totalStaked: uint64
@@ -136,4 +136,16 @@ export type PoolMBRData = {
     entries: uint64
     entriesByAddress: uint64
     disbursements: uint64
+}
+
+export class arc4RaffleCursor extends arc4.Struct<{
+    ticket: arc4.UintN64
+    stake: arc4.UintN64
+    disbursed: arc4.UintN64
+}> {}
+
+export type RaffleCursor = {
+    ticket: uint64
+    stake: uint64
+    disbursed: uint64
 }

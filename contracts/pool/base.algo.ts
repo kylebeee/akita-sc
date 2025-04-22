@@ -1,4 +1,4 @@
-import { Contract } from "@algorandfoundation/algorand-typescript";
+import { Contract, abimethod } from "@algorandfoundation/algorand-typescript";
 import { PoolMBRData } from "./types";
 
 export class BasePool extends Contract {

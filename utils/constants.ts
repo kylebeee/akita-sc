@@ -3,7 +3,7 @@ import { UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 
 export const arc4Zero = new UintN64(0)
 
-export const DIVISOR: uint64 = 10_000
+export const DIVISOR: uint64 = 100_000
 export const IMPACT_DIVISOR: uint64 = 1_000
 
 export const MAX_UINT64: uint64 = Uint64('18446744073709551615')
