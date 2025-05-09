@@ -1,0 +1,438 @@
+import { abimethod, Application, assert, Asset, Bytes, itxn, op, TemplateVar, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Plugin } from "../../../utils/base-contracts/plugin"
+import { classes } from "polytype"
+import { Proof } from "../../../utils/types/merkles"
+import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4"
+import { ERR_AUCTION_PRIZE_CANNOT_BE_ALGO, ERR_CREATOR_NOT_AUCTION_FACTORY, ERR_NOT_ENOUGH_ASSET } from "./errors"
+import { AssetHolding, btoi, Global } from "@algorandfoundation/algorand-typescript/op"
+import { AuctionFactory } from "../../../auction/factory.algo"
+import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
+import { BaseAuction } from "../../../auction/base"
+import { ServiceFactoryContract } from "../../../utils/base-contracts/factory"
+import { Auction } from "../../../auction/contract.algo"
+import { AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee } from "../../../auction/constants"
+import { GateArgs } from "../../../utils/types/gates"
+
+const auction = compileArc4(Auction)
+
+const factoryApp = TemplateVar<Application>('FACTORY_APP')
+
+export class AuctionPlugin extends classes(
+  Plugin,
+  BaseAuction,
+  ServiceFactoryContract
+) {
+
+  @abimethod({ onCreate: 'require' })
+  createApplication(version: string): void {
+    this.version.value = version
+  }
+
+  new(
+    walletID: uint64,
+    rekeyBack: boolean,
+    prizeID: uint64,
+    prizeAmount: uint64,
+    name: string,
+    proof: Proof,
+    bidAssetID: uint64,
+    bidFee: uint64,
+    startingBid: uint64,
+    bidMinimumIncrease: uint64,
+    startTimestamp: uint64,
+    endtimestamp: uint64,
+    gateID: uint64,
+    marketplace: Address,
+    weightsListCount: uint64,
+  ): Application {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(prizeID !== 0, ERR_AUCTION_PRIZE_CANNOT_BE_ALGO)
+    const senderPrizeBalance = AssetHolding.assetBalance(sender, prizeID)[0]
+    assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
+
+    if (!factoryApp.address.isOptedIn(Asset(prizeID))) {
+      abiCall(
+        AuctionFactory.prototype.optin,
+        {
+          sender,
+          appId: factoryApp,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: factoryApp.address,
+              amount: Global.assetOptInMinBalance,
+              fee: 0,
+            }),
+            prizeID,
+          ],
+          fee: 0,
+        }
+      )
+    }
+
+    if (!factoryApp.address.isOptedIn(Asset(bidAssetID))) {
+      abiCall(
+        AuctionFactory.prototype.optin,
+        {
+          sender,
+          appId: factoryApp,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: factoryApp.address,
+              amount: Global.assetOptInMinBalance,
+              fee: 0,
+            }),
+            bidAssetID,
+          ],
+          fee: 0,
+        }
+      )
+    }
+
+    const isAlgoBid = bidAssetID === 0
+    const optinMBR = isAlgoBid
+      ? Global.assetOptInMinBalance
+      : Global.assetOptInMinBalance * 2
+
+    const fcosts = this.fmbr()
+    const costs = this.mbr()
+
+    const childContractMBR = (
+      MAX_PROGRAM_PAGES +
+      (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
+      (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
+      AccountMinimumBalance +
+      optinMBR +
+      (weightsListCount * costs.weights) +
+      fcosts.appCreators
+    )
+
+    const mbrTxn = itxn.payment({
+      sender,
+      receiver: factoryApp.address,
+      amount: childContractMBR,
+      fee: 0,
+    })
+
+    const prizeTxn = itxn.assetTransfer({
+      sender,
+      assetReceiver: factoryApp.address,
+      assetAmount: prizeAmount,
+      xferAsset: Asset(prizeID),
+      fee: 0,
+    })
+
+    const newAuction = abiCall(
+      AuctionFactory.prototype.newAuction,
+      {
+        sender,
+        appId: factoryApp,
+        args: [
+          mbrTxn,
+          prizeTxn,
+          name,
+          proof,
+          bidAssetID,
+          bidFee,
+          startingBid,
+          bidMinimumIncrease,
+          startTimestamp,
+          endtimestamp,
+          gateID,
+          marketplace,
+          weightsListCount
+        ],
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0
+      }
+    ).returnValue
+
+    return Application(newAuction)
+  }
+
+  clearWeightsBoxes(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64,
+    iterationAmount: uint64
+  ): void {
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    abiCall(
+      Auction.prototype.clearWeightsBoxes,
+      {
+        sender,
+        appId: factoryApp,
+        args: [iterationAmount],
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  deleteAuctionApp(
+    walletID: uint64,
+    rekeyBack: boolean,
+    creator: Address,
+    auctionAppID: uint64
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    abiCall(
+      AuctionFactory.prototype.deleteAuctionApp,
+      {
+        sender,
+        appId: factoryApp,
+        args: [auctionAppID],
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  bid(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64,
+    amount: uint64,
+    args: GateArgs,
+    marketplace: Address
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    const { bids, bidsByAddress, locations } = this.mbr()
+    let mbr = bids
+    const bidFee = btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidFee))[0])
+    if (bidFee > 0) {
+      const hasBid = abiCall(
+        Auction.prototype.hasBid,
+        {
+          sender,
+          appId: auctionAppID,
+          args: [new Address(sender)],
+          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          fee: 0,
+        }
+      ).returnValue
+
+      if (!hasBid) {
+        mbr += (bidsByAddress + locations)
+      }
+    }
+
+    const bidAsset = Asset(btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidAsset))[0]))
+    if (bidAsset.id === 0) {
+      abiCall(
+        Auction.prototype.bid,
+        {
+          sender,
+          appId: auctionAppID,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: Application(auctionAppID).address,
+              amount: amount + mbr,
+              fee: 0,
+            }),
+            args,
+            marketplace,
+          ],
+          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          fee: 0,
+        }
+      )
+    } else {
+      const mbrTxn = itxn.payment({
+        sender,
+        receiver: Application(auctionAppID).address,
+        amount: mbr,
+        fee: 0,
+      })
+
+      const xferTxn = itxn.assetTransfer({
+        sender,
+        assetReceiver: Application(auctionAppID).address,
+        assetAmount: amount,
+        xferAsset: bidAsset,
+        fee: 0,
+      })
+
+      abiCall(
+        Auction.prototype.bidAsa,
+        {
+          sender,
+          appId: auctionAppID,
+          args: [
+            mbrTxn,
+            xferTxn,
+            args,
+            marketplace,
+          ],
+          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          fee: 0,
+        }
+      )
+    }
+  }
+
+  refundBid(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64,
+    id: uint64
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    abiCall(
+      Auction.prototype.refundBid,
+      {
+        sender,
+        appId: auctionAppID,
+        args: [id],
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  claimPrize(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    abiCall(
+      Auction.prototype.claimPrize,
+      {
+        sender,
+        appId: auctionAppID,
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  claimRafflePrize(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    abiCall(
+      Auction.prototype.claimRafflePrize,
+      {
+        sender,
+        appId: auctionAppID,
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  raffle(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64
+  ): void {
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    abiCall(
+      Auction.prototype.raffle,
+      {
+        sender,
+        appId: auctionAppID,
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  findWinner(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64,
+    iterationAmount: uint64
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    abiCall(
+      Auction.prototype.findWinner,
+      {
+        sender,
+        appId: auctionAppID,
+        args: [iterationAmount],
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  deleteApplication(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    abiCall(
+      Auction.prototype.deleteApplication,
+      {
+        sender,
+        appId: auctionAppID,
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+
+  cancel(
+    walletID: uint64,
+    rekeyBack: boolean,
+    auctionAppID: uint64
+  ): void {
+    const wallet = Application(walletID)
+    const sender = this.getSpendingAccount(wallet)
+
+    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+
+    abiCall(
+      Auction.prototype.cancel,
+      {
+        sender,
+        appId: auctionAppID,
+        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
+}

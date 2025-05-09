@@ -1,0 +1,1 @@
+export const ERR_NOT_AN_NFD = 'Not a valid NFD app id'

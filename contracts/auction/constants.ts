@@ -1,1 +1,0 @@
-export const AKITA_AUCTION_BID_ASSET_KEY: string = 'bid_asset'

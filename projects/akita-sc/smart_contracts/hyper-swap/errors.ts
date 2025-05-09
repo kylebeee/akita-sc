@@ -1,0 +1,5 @@
+export const ERR_OFFER_NAME_TOO_LONG = 'offers name is longer than 12 characters'
+export const ERR_BAD_ROOTS = 'root and participantsRoot cannot be the same'
+export const ERR_NOT_A_PARTICIPANT = 'not a participant in this swap'
+export const ERR_CANT_VERIFY_LEAF = 'cannot verify leaf'
+export const ERR_OFFER_EXPIRED = 'offer has expired'

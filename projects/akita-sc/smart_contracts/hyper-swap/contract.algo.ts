@@ -1,0 +1,573 @@
+import { MetaMerkles } from '../meta-merkles/contract.algo'
+import { Application, assert, assertMatch, Asset, BoxMap, Bytes, Global, GlobalState, gtxn, itxn, TemplateVar, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { classes } from 'polytype'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { ContractWithArc59Send, ContractWithOptIn } from '../utils/base-contracts/optin'
+import { arc4HashKey, arc4OfferValue, arc4ParticipantKey, HyperSwapMBRData, OfferValue } from './types'
+import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
+import { abiCall, Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_BAD_ROOTS, ERR_CANT_VERIFY_LEAF, ERR_NOT_A_PARTICIPANT, ERR_OFFER_EXPIRED } from './errors'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { bytes32, str } from '../utils/types/base'
+import { MerkleTreeTypeTrade } from '../meta-merkles/constants'
+import { Proof } from '../utils/types/merkles'
+import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
+import { arc4RefundValue, RefundValue } from '../utils/types/mbr'
+import { BaseHyperSwap } from './base'
+import { AssetInbox } from '../utils/types/asset-inbox'
+
+const spendingAccountFactoryApp = TemplateVar<Application>('spendingAccountFactoryApp')
+
+export class HyperSwap extends classes(
+  BaseHyperSwap,
+  AkitaBaseContract,
+  ContractWithOptIn,
+  ContractWithArc59Send,
+) {
+
+  /** global counter for offers */
+  offerCursor = GlobalState<uint64>({ key: HyperSwapGlobalStateKeyOfferCursor })
+
+  /** map of hyper swap offers */
+  offers = BoxMap<uint64, arc4OfferValue>({ keyPrefix: HyperSwapBoxPrefixOffers })
+  /** map of the participants in each swap */
+  participants = BoxMap<arc4ParticipantKey, arc4RefundValue>({ keyPrefix: HyperSwapBoxPrefixParticipants })
+  /** map of merkle tree hashes during escrow & disbursal phases */
+  hashes = BoxMap<arc4HashKey, arc4RefundValue>({ keyPrefix: HyperSwapBoxPrefixHashes })
+
+  private newOfferID(): uint64 {
+    const id = this.offerCursor.value
+    this.offerCursor.value += 1
+    return id
+  }
+
+  /**
+   * Creates a merkle tree based atomic payment/xfer group
+   *
+   * @param root the merkle tree root of trades consisting of from address, recipient address, asset id & amount
+   * @param leaves the number of leaves in the tree
+   * @param participantsRoot the merkle tree root of participating addresses
+   * @param participantLeaves the number of leaves in the participant tree
+   * @param expiration the unix timestamp that the offer auto-expires at if it has not been accepted by all participants
+   * @param marketplace the address of the marketplace to pay the fee to
+   * @param marketFee the fee to pay the marketplace for facilitating the offer
+   */
+  offer(
+    payment: gtxn.PaymentTxn,
+    root: StaticBytes<32>,
+    leaves: uint64,
+    participantsRoot: StaticBytes<32>,
+    participantsLeaves: uint64,
+    expiration: uint64
+  ) {
+    assert(root !== participantsRoot, ERR_BAD_ROOTS)
+    
+    const origin = this.origin()
+    const costs = this.mbr()
+    const metaMerklesCost: uint64 = costs.mm.root + costs.mm.data
+    const hyperSwapOfferMBRAmount: uint64 = costs.offers + costs.participants + (metaMerklesCost * 2)
+    const payor = new Address(payment.sender)
+
+    const offerFee = this.getOfferFee(origin)
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: hyperSwapOfferMBRAmount + offerFee
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    itxn
+      .payment({
+        receiver: this.akitaDAO.value.address,
+        amount: offerFee,
+        fee: 0,
+      })
+      .submit()
+
+    const metaMerklesAppID = super.getAkitaAppList().metaMerkles
+
+    abiCall(
+      MetaMerkles.prototype.addRoot,
+      {
+        appId: metaMerklesAppID,
+        args: [
+          itxn.payment({
+            receiver: Application(metaMerklesAppID).address,
+            amount: metaMerklesCost,
+            fee: 0,
+          }),
+          str(String(root.native)),
+          root,
+          MerkleTreeTypeTrade
+        ],
+        fee: 0
+      }
+    )
+
+    // add the participants root to the meta merkle contract
+    abiCall(
+      MetaMerkles.prototype.addRoot,
+      {
+        appId: metaMerklesAppID,
+        args: [
+          itxn.payment({
+            receiver: Application(metaMerklesAppID).address,
+            amount: metaMerklesCost,
+            fee: 0,
+          }),
+          str(String(participantsRoot.native)),
+          participantsRoot,
+          MerkleTreeTypeTrade
+        ],
+        fee: 0
+      }
+    )
+
+    const id = this.newOfferID()
+
+    // automatically set our sender as the first accepted participant
+    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
+    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(hyperSwapOfferMBRAmount) })
+    this.participants(senderParticipantKey).value = refundValue
+
+    // create the offering box & default state
+    this.offers(id).value = new arc4OfferValue({
+      state: STATE_OFFERED,
+      root,
+      leaves: new UintN64(leaves),
+      escrowed: new UintN64(0),
+      participantsRoot,
+      participantsLeaves: new UintN64(participantsLeaves),
+      acceptances: new UintN64(1),
+      expiration: new UintN64(expiration),
+    })
+  }
+
+  /**
+   * Accepts an offer
+   *
+   * @param mbrPayment the payment to cover the MBR
+   * @param id the id of the offer being accepted
+   * @param proof the bytes32 array proof of inclusion in the participants list
+   */
+  accept(mbrPayment: gtxn.PaymentTxn, id: uint64, proof: Proof) {
+    // ensure the offer exists
+    assert(this.offers(id).exists)
+    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    // ensure we are still in the collecting acceptances stage
+    assert(offer.state === STATE_OFFERED)
+    assert(offer.expiration > Global.latestTimestamp, ERR_OFFER_EXPIRED)
+    // ensure they are a participant
+    const isParticipant = abiCall(
+      MetaMerkles.prototype.verify,
+      {
+        appId: super.getAkitaAppList().metaMerkles,
+        args: [
+          new Address(Global.currentApplicationAddress),
+          String(offer.participantsRoot),
+          bytes32(sha256(sha256(Txn.sender.bytes))),
+          proof,
+          MerkleTreeTypeTrade
+        ],
+        fee: 0
+      }
+    ).returnValue
+
+    assert(isParticipant, ERR_NOT_A_PARTICIPANT)
+
+    // ensure they haven't already accepted
+    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
+    assert(!this.participants(senderParticipantKey).exists)
+    // increment the acceptance count
+    this.offers(id).value.acceptances = new UintN64(offer.acceptances + 1)
+
+    const costs = this.mbr()
+
+    assertMatch(
+      mbrPayment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: costs.participants
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    // flag this participant as accepted
+    const payor = new Address(mbrPayment.sender)
+    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(costs.participants) })
+    this.participants(senderParticipantKey).value = refundValue
+    // if we collected all needed acceptances switch to the gathering state
+    if (offer.participantsLeaves === offer.acceptances + 1) {
+      this.offers(id).value.state = STATE_ESCROWING
+    }
+  }
+
+  /**
+   * Escrows the assets in the trade for a given leaf in the tree
+   *
+   *
+   * @param id the id of the offer
+   * @param receiver the recipient in the offer leaf
+   * @param asset the asset in the offer leaf
+   * @param amount the amount in the offer leaf
+   * @param proof the proof to verify the details are part of the tree
+   */
+  escrow(payment: gtxn.PaymentTxn, id: uint64, receiver: Address, amount: uint64, proof: Proof) {
+    // ensure this contract currently controls the sender
+    // assert(this.controls(sender.address));
+    // ensure the offer exists
+    assert(this.offers(id).exists)
+    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    // ensure we are still in the collecting acceptances stage
+    assert(offer.state === STATE_ESCROWING)
+    // ensure they are a participant
+    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
+    assert(this.participants(senderParticipantKey).exists)
+    // ensure this leaf has not already been escrowed
+    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(0)}${itob(amount)}`)))
+    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    assert(!this.hashes(hashKey).exists)
+    // verify the leaf
+    const verified = abiCall(
+      MetaMerkles.prototype.verify,
+      {
+        appId: super.getAkitaAppList().metaMerkles,
+        args: [
+          new Address(Global.currentApplicationAddress),
+          String(offer.root),
+          hash,
+          proof,
+          MerkleTreeTypeTrade
+        ],
+        fee: 0
+      }
+    ).returnValue
+
+    assert(verified, ERR_CANT_VERIFY_LEAF)
+
+    const costs = this.mbr()
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: amount + costs.hashes
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    // add the leaf to the our escrowed list
+    const payor = new Address(payment.sender)
+    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(costs.hashes) })
+    this.hashes(hashKey).value = refundValue
+    // increment our escrow count
+    this.offers(id).value.escrowed = new UintN64(offer.escrowed + 1)
+    // if we collected all needed assets switch to the disbursement state
+    if (offer.leaves === offer.escrowed + 1) {
+      this.offers(id).value.state = STATE_DISBURSING
+    }
+  }
+
+  /**
+   * Escrows the assets in the trade for a given leaf in the tree
+   * @param mbrPayment the payment to cover the MBR
+   * @param assetXfer the asset transfer to escrow the asa
+   * @param id the id of the offer
+   * @param receiver the recipient in the offer leaf
+   * @param asset the asset in the offer leaf
+   * @param amount the amount in the offer leaf
+   * @param proof the proof to verify the details are part of the tree
+   */
+  escrowAsa(
+    mbrPayment: gtxn.PaymentTxn,
+    assetXfer: gtxn.AssetTransferTxn,
+    id: uint64,
+    receiver: Address,
+    asset: uint64,
+    amount: uint64,
+    proof: Proof
+  ) {
+    // ensure the offer exists
+    assert(this.offers(id).exists)
+    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    // ensure we are still in the collecting acceptances stage
+    assert(offer.state === STATE_ESCROWING)
+    // ensure they are a participant
+    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
+    assert(this.participants(senderParticipantKey).exists)
+    // ensure this leaf has not already been escrowed
+    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`)))
+    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    assert(!this.hashes(hashKey).exists)
+    // verify the leaf
+    const verified = abiCall(
+      MetaMerkles.prototype.verify,
+      {
+        appId: super.getAkitaAppList().metaMerkles,
+        args: [
+          new Address(Global.currentApplicationAddress),
+          String(offer.root),
+          hash,
+          proof,
+          MerkleTreeTypeTrade
+        ],
+        fee: 0
+      }
+    ).returnValue
+
+    assert(verified, ERR_CANT_VERIFY_LEAF)
+
+    // track the mbr the app / receiver need
+    const costs = this.mbr()
+    let mbrAmount = costs.hashes
+
+    // take the worst case possible amount incase we fallback to arc59
+    if (!receiver.native.isOptedIn(Asset(asset))) {
+      const assetInbox = super.getOtherAppList().assetInbox
+      const canCallData = abiCall(
+        AssetInbox.prototype.arc59_getSendAssetInfo,
+        {
+          appId: assetInbox,
+          args: [receiver, asset],
+          fee: 0,
+        }
+      ).returnValue
+
+      const mbr = canCallData.mbr
+      const receiverAlgoNeededForClaim = canCallData.receiverAlgoNeededForClaim
+
+      if (mbr || receiverAlgoNeededForClaim) {
+        mbrAmount += canCallData.mbr + canCallData.receiverAlgoNeededForClaim
+      }
+    }
+
+    assertMatch(
+      mbrPayment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: mbrAmount
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    assertMatch(
+      assetXfer,
+      {
+        assetReceiver: Global.currentApplicationAddress,
+        xferAsset: Asset(asset),
+        assetAmount: amount
+      },
+      ERR_INVALID_TRANSFER
+    )
+
+    // add the leaf to the our escrowed list
+    const payor = new Address(mbrPayment.sender)
+    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(mbrAmount) })
+    this.hashes(hashKey).value = refundValue
+    // increment our escrow count
+    const newEscrowed = offer.escrowed + 1
+    this.offers(id).value.escrowed = new UintN64(newEscrowed)
+    // if we collected all needed assets switch to the disbursement state
+    if (offer.leaves === newEscrowed) {
+      this.offers(id).value.state = STATE_DISBURSING
+    }
+  }
+
+  /**
+   * Disburses assets for a leaf in the tree, ensuring ordered processing
+   *
+   *
+   * @param id the id of the offer
+   * @param receiver the recipient abstracted account app id for the address in the leaf
+   * @param asset the asset being transferred
+   * @param amount the amount being transferred
+   */
+  disburse(id: uint64, receiver: Address, asset: uint64, amount: uint64) {
+    // ensure the offer exists
+    assert(this.offers(id).exists)
+    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    // ensure we are still in the collecting acceptances stage
+    assert(offer.state === STATE_DISBURSING)
+
+    // ensure this leaf is escrowed
+    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`)))
+    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    assert(this.hashes(hashKey).exists)
+
+    let { payor, amount: refundAmount } = decodeArc4<RefundValue>(this.hashes(hashKey).value.bytes)
+    this.hashes(hashKey).delete()
+
+    // process the transfer
+    if (asset === 0) {
+      itxn.payment({
+        amount: amount,
+        receiver: receiver.native,
+        fee: 0,
+      }).submit()
+
+      // refund the account that covered the MBR
+      itxn
+        .payment({
+          amount: refundAmount,
+          receiver: payor.native,
+          fee: 0,
+        })
+        .submit()
+    } else if (!AssetHolding.assetBalance(receiver.native, asset)[1]) {
+      this.arc59OptInAndSend(receiver, asset, amount, false)
+      // refund the account that covered the MBR
+      itxn
+        .payment({
+          amount: refundAmount,
+          receiver: payor.native,
+          fee: 0,
+        })
+        .submit()
+
+    } else {
+      itxn
+        .assetTransfer({
+          xferAsset: asset,
+          assetAmount: amount,
+          assetReceiver: receiver.native,
+          fee: 0,
+        })
+        .submit()
+
+      // refund the account that covered the MBR
+      itxn
+        .payment({
+          amount: refundAmount,
+          receiver: payor.native,
+          fee: 0,
+        })
+        .submit()
+    }
+
+
+
+    const newEscrowed = offer.escrowed - 1
+    this.offers(id).value.escrowed = new UintN64(newEscrowed)
+
+    // if we disbursed all needed assets switch to the completed state
+    if (newEscrowed === 0) {
+      this.offers(id).value.state = STATE_COMPLETED
+    }
+  }
+
+  /**
+   * @param id the id of the offer being cancelled
+   * @param proof a proof of inclusion in the participants list
+   */
+  cancel(id: uint64, proof: Proof) {
+    // ensure the offer exists
+    assert(this.offers(id).exists)
+    const offer = this.offers(id).value
+    // ensure we're in a cancellable state
+    assert(offer.state === STATE_OFFERED || offer.state === STATE_ESCROWING)
+    // ensure they are a participant
+    const isParticipant = abiCall(
+      MetaMerkles.prototype.verify,
+      {
+        appId: super.getAkitaAppList().metaMerkles,
+        args: [
+          new Address(Global.currentApplicationAddress),
+          String(offer.participantsRoot),
+          bytes32(sha256(sha256(Txn.sender.bytes))),
+          proof,
+          MerkleTreeTypeTrade
+        ],
+        fee: 0
+      }
+    ).returnValue
+
+    assert(isParticipant, ERR_NOT_A_PARTICIPANT)
+    // set the state to cancelled
+    this.offers(id).value.state = STATE_CANCELLED
+  }
+
+  /**
+   * Withdraws your assets from a cancelled swap if they're escrowed
+   *
+   *
+   * @param id the id of the cancelled offer
+   * @param receiver the receiver of the leaf's swap
+   * @param asset the asset of the leaf's swap
+   * @param amount the amount of the leaf's swap
+   * @param proof the proof that the leaf is in the tree
+   * @param rekeyBack whether the abstracted account should be rekeyed back at the end
+   */
+  withdraw(id: uint64, receiver: Address, asset: uint64, amount: uint64, proof: Proof) {
+    // ensure the offer exists
+    assert(this.offers(id).exists)
+    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    // ensure the offer is cancelled
+    assert(offer.state === STATE_CANCELLED)
+    // ensure the escrow count isn't zero
+    assert(offer.escrowed > 0)
+    // ensure this leaf is still escrowed
+    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`)))
+    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    assert(this.hashes(hashKey).exists)
+    // verify the leaf
+    const verified = abiCall(
+      MetaMerkles.prototype.verify,
+      {
+        appId: super.getAkitaAppList().metaMerkles,
+        args: [
+          new Address(Global.currentApplicationAddress),
+          String(offer.root),
+          hash,
+          proof,
+          MerkleTreeTypeTrade
+        ],
+        fee: 0
+      }
+    ).returnValue
+
+    assert(verified, ERR_CANT_VERIFY_LEAF)
+
+    let { payor, amount: refundAmount } = decodeArc4<RefundValue>(this.hashes(hashKey).value.bytes)
+    this.hashes(hashKey).delete()
+
+    if (asset === 0) {
+      itxn
+        .payment({
+          amount: amount,
+          receiver: Txn.sender,
+          fee: 0,
+        })
+        .submit()
+    } else {
+      itxn
+        .assetTransfer({
+          xferAsset: asset,
+          assetAmount: amount,
+          assetReceiver: Txn.sender,
+          fee: 0,
+        })
+        .submit()
+    }
+
+    itxn
+      .payment({
+        amount: refundAmount,
+        receiver: payor.native,
+        fee: 0,
+      })
+      .submit()
+
+    // decrement our escrow count
+    const newEscrowed = offer.escrowed - 1
+    this.offers(id).value.escrowed = new UintN64(newEscrowed)
+    // mark the cancelled offer as done if theres no more escrowed assets
+    if (newEscrowed === 0) {
+      this.offers(id).value.state = STATE_CANCEL_COMPLETED
+    }
+  }
+
+  // TODO: clean up methods for deleting boxes
+}
