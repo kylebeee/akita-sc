@@ -22,10 +22,8 @@ import { abiCall, Address, UintN64 } from '@algorandfoundation/algorand-typescri
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { AccountMinimumBalance, MAX_UINT64 } from '../utils/constants'
-import { ContractWithGate } from '../utils/base-contracts/gate'
-import { arc4FindWinnerCursor, arc4WeightLocation, arc4WeightsList, RaffleMBRData, RaffleState } from './types'
+import { arc4FindWinnerCursor, arc4WeightLocation, arc4WeightsList, RaffleState } from './types'
 import {
-  BoxWeightTotalsSize,
   ChunkSize,
   RaffleBoxPrefixEntries,
   RaffleBoxPrefixEntriesByAddress,
@@ -87,15 +85,18 @@ import { GateArgs } from '../utils/types/gates'
 import { PrizeBox } from '../prize-box/contract.algo'
 import { classes } from 'polytype'
 import { BaseRaffle } from './base'
-import { ContractWithArc58Send, ContractWithArc59Send, ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import { arc59OptInAndSend, gateCheck, getOtherAppList } from '../utils/functions'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
 export class Raffle extends classes(
   BaseRaffle,
-  ContractWithCreatorOnlyOptIn,
-  ContractWithArc58Send,
-  ContractWithArc59Send,
-  ContractWithGate
+  AkitaBaseContract,
+  ContractWithCreatorOnlyOptIn
 ) {
+
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   /** The asset required to enter the raffle */
   ticketAsset = GlobalState<Asset>({ key: RaffleGlobalStateKeyTicketAsset })
   /** The start round of the raffle as a unix timestamp */
@@ -137,7 +138,7 @@ export class Raffle extends classes(
   /** the number of boxes allocated to tracking weights */
   weightsBoxCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyWeightsBoxCount })
   /** totals for each box of weights for our skip list */
-  weightTotals = GlobalState<arc4.StaticArray<arc4.UintN64, typeof BoxWeightTotalsSize>>({
+  weightTotals = GlobalState<arc4.StaticArray<arc4.UintN64, 15>>({
     key: RaffleGlobalStateKeyWeightTotals,
   })
   /**
@@ -151,12 +152,16 @@ export class Raffle extends classes(
   /** the transaction id of the create application call for salting our VRF call */
   salt = GlobalState<bytes>({ key: RaffleGlobalStateKeySalt })
 
+  // BOXES ----------------------------------------------------------------------------------------
+
   /** The entries for the raffle */
   entries = BoxMap<uint64, Account>({ keyPrefix: RaffleBoxPrefixEntries })
   /** weights set for bidders */
   weights = BoxMap<uint64, arc4WeightsList>({ keyPrefix: RaffleBoxPrefixWeights })
   /** The address map of entries for the raffle */
   entriesByAddress = BoxMap<Account, arc4WeightLocation>({ keyPrefix: RaffleBoxPrefixEntriesByAddress })
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private getWinnerWeightBoxInfo(): [uint64, uint64] {
     let startingIndex = this.findWinnerCursors.value.index.native
@@ -175,14 +180,7 @@ export class Raffle extends classes(
     return [startingIndex, currentRangeStart]
   }
 
-  /** @returns a boolean of whether the auction is live */
-  @abimethod({ readonly: true })
-  isLive(): boolean {
-    return (
-      Global.latestTimestamp <= this.startTimestamp.value &&
-      Global.latestTimestamp >= this.endTimestamp.value
-    )
-  }
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
   createApplication(
@@ -220,7 +218,7 @@ export class Raffle extends classes(
     this.akitaDAO.value = Application(akitaDAO)
     this.entryID.value = 0
     this.weightsBoxCount.value = 0
-    this.weightTotals.value = new arc4.StaticArray<arc4.UintN64, typeof BoxWeightTotalsSize>()
+    this.weightTotals.value = new arc4.StaticArray<arc4.UintN64, 15>()
     this.refundMBRCursor.value = 0
   }
 
@@ -230,11 +228,11 @@ export class Raffle extends classes(
     assert(weightListLength < 16, ERR_MUST_ALLOCATE_AT_MOST_FIFTEEN_HIGHEST_BIDS_CHUNKS)
 
     const isAlgoBid = this.ticketAsset.value.id === 0
-    const optinMBR = isAlgoBid
+    const optinMBR: uint64 = isAlgoBid
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const childAppMBR = AccountMinimumBalance + optinMBR + (weightListLength * this.mbr().weights)
+    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightListLength * this.mbr().weights)
 
     assertMatch(
       payment,
@@ -247,20 +245,84 @@ export class Raffle extends classes(
 
     this.weightsBoxCount.value = weightListLength
     for (let i: uint64 = 0; i < weightListLength; i += 1) {
-      this.weights(i).value = new arc4.StaticArray<arc4.UintN64, typeof ChunkSize>()
+      this.weights(i).value = new arc4.StaticArray<arc4.UintN64, 4096>()
     }
   }
+
+  refundMBR(iterationAmount: uint64): void {
+    const totalCap: uint64 = this.entryCount.value - 1
+    /** make sure we've already found the winner of the raffle */
+    assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    /** make sure we haven't already refunded all MBR */
+    assert(totalCap !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+
+    const startingIndex = this.refundMBRCursor.value
+    const remainder: uint64 = totalCap - this.refundMBRCursor.value
+    iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
+
+    const costs = this.mbr()
+    const entryTotalMBR: uint64 = costs.entries + costs.entriesByAddress
+
+    const opUpIterationAmount: uint64 = iterationAmount * 100
+    ensureBudget(opUpIterationAmount)
+
+    for (let i = startingIndex; i < iterationAmount; i += 1) {
+      const entry = this.entries(i).value
+      this.entries(i).delete()
+      this.entriesByAddress(entry).delete()
+      itxn
+        .payment({
+          amount: entryTotalMBR,
+          receiver: entry,
+        })
+        .submit()
+    }
+
+    this.refundMBRCursor.value += iterationAmount
+  }
+
+  clearWeightsBoxes(): uint64 {
+    assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
+
+    for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+      const ri: uint64 = (this.weightsBoxCount.value - 1) - i
+      this.weights(ri).delete()
+    }
+
+    const returnAmount: uint64 = this.weightsBoxCount.value * this.mbr().weights
+
+    itxn
+      .payment({
+        receiver: Global.creatorAddress,
+        amount: returnAmount,
+        fee: 0,
+      })
+      .submit()
+
+    this.weightsBoxCount.value = 0
+    return returnAmount
+  }
+
+  @abimethod({ allowActions: 'DeleteApplication' })
+  deleteApplication(): void {
+    assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
+    assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
+    assert(this.entryCount.value - 1 !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+    assert(this.weightsBoxCount.value === 0, ERR_STILL_HAS_WEIGHTS_BOXES)
+  }
+
+  // RAFFLE METHODS -------------------------------------------------------------------------------
 
   enter(payment: gtxn.PaymentTxn, args: GateArgs): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id === 0, ERR_TICKET_ASSET_NOT_ALGO)
-    assert(this.gate(new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
     assert(!this.entriesByAddress(Txn.sender).exists, ERR_ALREADY_ENTERED)
 
     assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
 
     const costs = this.mbr()
-    const mbr = costs.entries + costs.entriesByAddress
+    const mbr: uint64 = costs.entries + costs.entriesByAddress
 
     assertMatch(
       payment,
@@ -292,11 +354,11 @@ export class Raffle extends classes(
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id !== 0, ERR_TICKET_ASSET_ALGO)
     const arc4Sender = new Address(Txn.sender)
-    assert(this.gate(arc4Sender, this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, arc4Sender, this.gateID.value, args), ERR_FAILED_GATE)
     assert(!this.entriesByAddress(Txn.sender).exists, ERR_ALREADY_ENTERED)
 
     const costs = this.mbr()
-    const entryTotalMBR = costs.entries + costs.entriesByAddress
+    const entryTotalMBR: uint64 = costs.entries + costs.entriesByAddress
 
     assertMatch(
       payment,
@@ -336,7 +398,7 @@ export class Raffle extends classes(
   add(payment: gtxn.PaymentTxn, args: GateArgs): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id === 0, ERR_TICKET_ASSET_NOT_ALGO)
-    assert(this.gate(new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
     assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
 
     const loc = this.entriesByAddress(Txn.sender).value.native
@@ -365,7 +427,7 @@ export class Raffle extends classes(
   addAsa(assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id !== 0, ERR_TICKET_ASSET_ALGO)
-    assert(this.gate(new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
     assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
 
     const loc = this.entriesByAddress(Txn.sender).value.native
@@ -393,14 +455,14 @@ export class Raffle extends classes(
   }
 
   raffle(): void {
-    const roundToUse = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
+    const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
     assert(Global.round >= roundToUse + 8, ERR_NOT_ENOUGH_TIME)
     assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
 
     const seed = abiCall(
       RandomnessBeacon.prototype.get,
       {
-        appId: super.getOtherAppList().vrfBeacon,
+        appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
         args: [roundToUse, this.salt.value],
         fee: 0,
       }
@@ -435,12 +497,12 @@ export class Raffle extends classes(
     let currentRangeStart = winningBoxInfo[1]
     let currentRangeEnd: uint64 = 0
 
-    const remainder = this.entryCount.value - startingIndex
+    const remainder: uint64 = this.entryCount.value - startingIndex
     iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
 
     const weight = this.weights(startingIndex / ChunkSize).value
 
-    const opUpIterationAmount = iterationAmount * 40
+    const opUpIterationAmount: uint64 = iterationAmount * 40
     ensureBudget(opUpIterationAmount)
 
     for (let i: uint64 = 0; i < iterationAmount; i += 1) {
@@ -454,38 +516,6 @@ export class Raffle extends classes(
     const newIterationAmount = new UintN64(this.findWinnerCursors.value.index.native + iterationAmount)
     this.findWinnerCursors.value.index = newIterationAmount
     this.findWinnerCursors.value.amountIndex = new UintN64(currentRangeStart)
-  }
-
-  refundMBR(iterationAmount: uint64): void {
-    const totalCap = this.entryCount.value - 1
-    /** make sure we've already found the winner of the raffle */
-    assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
-    /** make sure we haven't already refunded all MBR */
-    assert(totalCap !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
-
-    const startingIndex = this.refundMBRCursor.value
-    const remainder = totalCap - this.refundMBRCursor.value
-    iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
-
-    const costs = this.mbr()
-    const entryTotalMBR = costs.entries + costs.entriesByAddress
-
-    const opUpIterationAmount = iterationAmount * 100
-    ensureBudget(opUpIterationAmount)
-
-    for (let i = startingIndex; i < iterationAmount; i += 1) {
-      const entry = this.entries(i).value
-      this.entries(i).delete()
-      this.entriesByAddress(entry).delete()
-      itxn
-        .payment({
-          amount: entryTotalMBR,
-          receiver: entry,
-        })
-        .submit()
-    }
-
-    this.refundMBRCursor.value += iterationAmount
   }
 
   claimRafflePrize(): void {
@@ -514,7 +544,8 @@ export class Raffle extends classes(
           })
           .submit()
       } else {
-        this.arc59OptInAndSend(
+        arc59OptInAndSend(
+          this.akitaDAO.value,
           new Address(this.winner.value),
           this.prize.value,
           prizeAmount,
@@ -542,7 +573,8 @@ export class Raffle extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(
+        this.akitaDAO.value,
         new Address(this.seller.value),
         this.ticketAsset.value.id,
         this.ticketCount.value,
@@ -553,34 +585,15 @@ export class Raffle extends classes(
     this.prizeClaimed.value = true
   }
 
-  clearWeightsBoxes(): uint64 {
-    assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
+  // READ ONLY METHODS ----------------------------------------------------------------------------
 
-    for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
-      const ri = (this.weightsBoxCount.value - 1) - i
-      this.weights(ri).delete()
-    }
-
-    const returnAmount = this.weightsBoxCount.value * this.mbr().weights
-
-    itxn
-      .payment({
-        receiver: Global.creatorAddress,
-        amount: returnAmount,
-        fee: 0,
-      })
-      .submit()
-
-    this.weightsBoxCount.value = 0
-    return returnAmount
-  }
-
-  @abimethod({ allowActions: 'DeleteApplication' })
-  deleteApplication(): void {
-    assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
-    assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
-    assert(this.entryCount.value - 1 !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
-    assert(this.weightsBoxCount.value === 0, ERR_STILL_HAS_WEIGHTS_BOXES)
+  /** @returns a boolean of whether the auction is live */
+  @abimethod({ readonly: true })
+  isLive(): boolean {
+    return (
+      Global.latestTimestamp <= this.startTimestamp.value &&
+      Global.latestTimestamp >= this.endTimestamp.value
+    )
   }
 
   getState(): RaffleState {

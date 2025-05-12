@@ -1,0 +1,1 @@
+export const RafflePluginGlobalStateKeyFactory = 'raffle_factory'

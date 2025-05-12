@@ -2,30 +2,38 @@
 import { classes } from 'polytype'
 import { arc4AppCreatorValue, ServiceFactoryContract } from '../utils/base-contracts/factory'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { assert, assertMatch, Bytes, Global, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, assertMatch, Global, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Proof } from '../utils/types/merkles'
-import { abiCall, abimethod, Address, compileArc4, Str, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ERR_APP_CREATOR_NOT_FOUND, ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START } from './errors'
-import { Auction } from './contract.algo'
+import { abimethod, Address, compileArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START } from './errors'
 import { BaseAuction } from './base'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
 import { Txn } from '@algorandfoundation/algorand-typescript/op'
-import { Royalties } from '../utils/base-contracts/royalties'
-
-const auction = compileArc4(Auction)
+import { Auction } from './contract.algo'
+import { fmbr, royalties } from '../utils/functions'
 
 export class AuctionFactory extends classes(
   BaseAuction,
   ServiceFactoryContract,
-  Royalties,
   ContractWithOptIn,
 ) {
 
+  // PRIVATE METHODS ------------------------------------------------------------------------------
+
+  private createChildApp(): void {}
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string): void {
-    this.childContractVersion.value = version
+  createApplication(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+    this.version.value = version
+    this.childContractVersion.value = childVersion
+    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAOEscrow.value = Application(escrow)
   }
+
+  // AUCTION FACTORY METHODS ----------------------------------------------------------------------
 
   newAuction(
     payment: gtxn.PaymentTxn,
@@ -46,15 +54,17 @@ export class AuctionFactory extends classes(
     assert(endTimestamp > startTimestamp + 300, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START)
 
     const isAlgoBid = bidAssetID === 0
-    const optinMBR = isAlgoBid
+    const optinMBR: uint64 = isAlgoBid
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const fcosts = this.fmbr()
+    const fcosts = fmbr()
     const costs = this.mbr()
 
-    const childAppMBR = AccountMinimumBalance + optinMBR + (weightsListCount * costs.weights)
-    const totalMBR = (
+    const auction = compileArc4(Auction)
+
+    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightsListCount * costs.weights)
+    const totalMBR: uint64 = (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
@@ -82,7 +92,7 @@ export class AuctionFactory extends classes(
       ERR_INVALID_TRANSFER
     )
 
-    const creatorRoyalty = this.royalties(false, assetXfer.xferAsset, name, proof)
+    const creatorRoyalty = royalties(this.akitaDAO.value, assetXfer.xferAsset, name, proof)
 
     const auctionApp = auction.call
       .createApplication({
@@ -99,7 +109,9 @@ export class AuctionFactory extends classes(
           creatorRoyalty,
           gateID,
           marketplace,
+          this.childContractVersion.value,
           this.akitaDAO.value.id,
+          this.akitaDAOEscrow.value.id,
         ],
         fee: 0,
       })
@@ -188,6 +200,8 @@ export class AuctionFactory extends classes(
 
   deleteAuctionApp(auctionAppID: uint64): void {
     
+    const auction = compileArc4(Auction)
+
     auction.call.deleteApplication({ appId: auctionAppID, fee: 0 })
 
     const { amount, creatorAddress } = this.getAppCreator(auctionAppID)

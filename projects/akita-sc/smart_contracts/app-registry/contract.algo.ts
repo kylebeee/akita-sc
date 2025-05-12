@@ -104,22 +104,26 @@ export class AppRegistry extends Contract {
 
   @abimethod({ readonly: true })
   getList(addresses: Address[]): uint64[] {
-    const apps: uint64[] = []
+    let apps: uint64[] = []
+    const zero: uint64 = 0
     for (const address of addresses) {
       if (!this.apps(addrBytes4(address)).exists) {
-        apps.push(0)
+        apps = [...apps, zero]
         continue
       }
 
       const appList = this.apps(addrBytes4(address)).value
-      apps.push(this.findMatch(address, appList))
+      apps = [
+        ...apps,
+        this.findMatch(address, appList)
+      ]
     }
     return apps
   }
 
   @abimethod({ readonly: true })
   mustGetList(addresses: Address[]): uint64[] {
-    const apps: uint64[] = []
+    let apps: uint64[] = []
     for (const address of addresses) {
       if (!this.apps(addrBytes4(address)).exists) {
         assert(false, ERR_APP_NOT_REGISTERED)
@@ -129,7 +133,10 @@ export class AppRegistry extends Contract {
       const matchingAppID = this.findMatch(address, appList)
 
       assert(matchingAppID !== 0, ERR_APP_NOT_REGISTERED)
-      apps.push(matchingAppID)
+      apps = [
+        ...apps,
+        matchingAppID
+      ]
     }
     return apps
   }

@@ -23,3 +23,6 @@ export const ERR_TOKEN_ALLOCATION_BOX_DOES_NOT_EXIST = 'Token allocation box doe
 export const ERR_TOKEN_ALLOCATION_BOX_ALREADY_EXISTS = 'Token allocation box already exists'
 export const ERR_INSUFFICIENT_AKITA = 'Insufficient Akita'
 export const ERR_INVALID_RECEIVE_PAYMENT = 'Invalid receive payment'
+export const ERR_ESCROW_DOES_NOT_EXIST = 'Escrow does not exist'
+export const ERR_INCORRECT_SENDER = 'Incorrect sender'
+export const ERR_ESCROW_NOT_ALLOWED_TO_OPTIN = 'Escrow is not allowed to opt-in'

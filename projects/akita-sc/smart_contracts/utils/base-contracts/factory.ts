@@ -1,57 +1,70 @@
 import {
-    Account,
-    Application,
-    arc4,
-    assert,
-    BoxMap,
-    Bytes,
-    GlobalState,
-    op,
-    uint64,
+  Application,
+  arc4,
+  assert,
+  BoxMap,
+  GlobalState,
+  Txn,
+  uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { Address, decodeArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from './base'
-import { PrizeBoxGlobalStateKeyOwner } from '../../prize-box/constants'
-import { ERR_NOT_A_PRIZE_BOX } from '../errors'
+import { abimethod, Address, Contract, decodeArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
+import { ERR_NOT_AKITA_DAO } from '../../errors'
 
 export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
 export const BaseFactoryBoxPrefixAppCreators = 'c'
 
 export type AppCreatorValue = {
-    creatorAddress: Address
-    amount: uint64
+  creatorAddress: Address
+  amount: uint64
 }
 
 export class arc4AppCreatorValue extends arc4.Struct<{
-    creatorAddress: Address
-    amount: UintN64
-}> {}
+  creatorAddress: Address
+  amount: UintN64
+}> { }
 
-export type ServiceFactoryContractMBRData = {
-    appCreators: uint64
-}
+export class FactoryContract extends Contract {
 
-export class FactoryContract extends AkitaBaseContract {
-    /** the version of the child contract */
-    childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
+  /** the current version of the contract */
+  version = GlobalState<string>({ key: GlobalStateKeyVersion })
+  /** the app ID of the Akita DAO */
+  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+  /** the app ID for the akita DAO escrow to use */
+  akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+  /** the current version of the child contract */
+  childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
 }
 
 export class ServiceFactoryContract extends FactoryContract {
-    appCreators = BoxMap<uint64, arc4AppCreatorValue>({ keyPrefix: BaseFactoryBoxPrefixAppCreators })
 
-    protected getAppCreator(appID: uint64): AppCreatorValue {
-        return decodeArc4<AppCreatorValue>(this.appCreators(appID).value.bytes)
-    }
+  // BOXES ----------------------------------------------------------------------------------------
 
-    protected fmbr(): ServiceFactoryContractMBRData {
-        return {
-            appCreators: 21_700
-        }
-    }
+  appCreators = BoxMap<uint64, arc4AppCreatorValue>({ keyPrefix: BaseFactoryBoxPrefixAppCreators })
 
-    protected getPrizeBoxOwner(prizeBox: Application): Account {
-        assert(prizeBox.creator === Application(super.getAkitaAppList().prizeBox).address, ERR_NOT_A_PRIZE_BOX)
-        const [ownerBytes] = op.AppGlobal.getExBytes(prizeBox, Bytes(PrizeBoxGlobalStateKeyOwner))
-        return new Address(ownerBytes).native
-    }
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  @abimethod({ allowActions: ['UpdateApplication'] })
+  updateApplication(newVersion: string, newChildVersion: string): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.version.value = newVersion
+    this.childContractVersion.value = newChildVersion
+  }
+
+  // FACTORY METHODS ------------------------------------------------------------------------------
+
+  updateAkitaDAO(app: uint64): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.akitaDAO.value = Application(app)
+  }
+
+  // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  @abimethod({ readonly: true })
+  getAppCreator(appID: uint64): AppCreatorValue {
+    assert(this.appCreators(appID).exists)
+    return decodeArc4<AppCreatorValue>(this.appCreators(appID).value.bytes)
+  }
 }

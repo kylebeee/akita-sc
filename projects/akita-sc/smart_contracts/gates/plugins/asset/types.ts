@@ -1,5 +1,6 @@
 import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Operator } from '../../types'
+import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type RegistryInfo = {
     op: Operator

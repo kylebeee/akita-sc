@@ -1,173 +1,96 @@
-import { Contract, GlobalState } from '@algorandfoundation/algorand-typescript'
-import { DualStake } from '../../../utils/types/dual_stake'
+import { abimethod, Application, assert, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abiCall, Contract, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
+import { DualStake } from '../../../utils/types/dual-stake';
+import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn';
+import { ERR_NOT_A_DUALSTAKE_APP, ERR_NOT_ENOUGH_OF_ASA } from './errors';
+import { DualStakeGlobalStateKeyAsaID, DualStakeGlobalStateKeyRatePrecision, DualStakePluginGlobalStateKey } from './constants';
+import { getSpendingAccount, rekeyAddress } from '../../../utils/functions';
 
 export class DualStakePlugin extends Contract {
-    programVersion = 10
 
-    appID = GlobalState<AppID>({ key: 'appID' })
+  // GLOBAL STATE ---------------------------------------------------------------------------------
 
-    createApplication(appID: AppID): void {
-        this.appID.value = appID
+  registry = GlobalState<Application>({ key: DualStakePluginGlobalStateKey })
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  @abimethod({ onCreate: 'require' })
+  createApplication(registry: uint64): void {
+    this.registry.value = Application(registry)
+  }
+
+  // DUAL STAKE PLUGIN METHODS --------------------------------------------------------------------
+
+  mint(walletID: uint64, rekeyBack: boolean, dsAppID: uint64, amount: uint64): void {
+    const wallet = Application(walletID)
+    const sender = getSpendingAccount(wallet)
+
+    const dsApp = Application(dsAppID)
+
+    assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
+
+    const paymentTxn = itxn.payment({
+      sender,
+      receiver: dsApp.address,
+      amount: amount,
+      fee: 0,
+    })
+
+    const mintTxn = itxn.applicationCall({
+      sender,
+      appId: dsAppID,
+      appArgs: [methodSelector(DualStake.prototype.mint)],
+      fee: 0,
+    })
+
+    const rate = abiCall(
+      DualStake.prototype.get_rate,
+      { sender, fee: 0 }
+    ).returnValue
+
+    if (rate > 0) {
+      const asaID = op.AppGlobal.getExUint64(dsAppID, Bytes(DualStakeGlobalStateKeyAsaID))[0]
+      const precision = op.AppGlobal.getExUint64(dsAppID, Bytes(DualStakeGlobalStateKeyRatePrecision))[0]
+      const asaAmount = op.divw(...op.mulw(amount, rate), precision)
+
+      const [holdings, isOptedIn] = op.AssetHolding.assetBalance(sender, asaID)
+      assert(isOptedIn && holdings >= asaAmount, ERR_NOT_ENOUGH_OF_ASA)
+
+      const asaTxn = itxn.assetTransfer({
+        sender,
+        assetReceiver: dsApp.address,
+        assetAmount: asaAmount,
+        xferAsset: asaID,
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      })
+
+      submitGroup(paymentTxn, mintTxn, asaTxn)
+      return
     }
 
-    registerOnline(
-        sender: AppID,
-        rekeyBack: boolean,
-        selectionKey: bytes,
-        votingKey: bytes,
-        spKey: bytes,
-        firstRound: uint64,
-        lastRound: uint64,
-        keyDilution: uint64
-    ): void {
-        sendMethodCall<typeof DualStake.prototype.register_online, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [selectionKey, votingKey, spKey, firstRound, lastRound, keyDilution],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
+    // if the rate is 0 we can skip the asset transfer
+    // which means we need to set the rekeyTo on the mint txn
+    mintTxn.set({ rekeyTo: rekeyAddress(rekeyBack, wallet) })
+    submitGroup(paymentTxn, mintTxn)
+  }
 
-    registerOffline(sender: AppID, rekeyBack: boolean, address: Address): void {
-        sendMethodCall<typeof DualStake.prototype.register_offline, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [address],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
+  redeem(walletID: uint64, rekeyBack: boolean, dsAppID: uint64): void {
+    const wallet = Application(walletID)
+    const sender = getSpendingAccount(wallet)
 
-    initStorage(sender: AppID, rekeyBack: boolean): void {
-        sendMethodCall<typeof DualStake.prototype.init_storage, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
+    const dsApp = Application(dsAppID)
 
-    withdrawPlatformFees(sender: AppID, rekeyBack: boolean, amt: uint64): void {
-        sendMethodCall<typeof DualStake.prototype.withdraw_platform_fees, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [amt],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
+    assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
 
-    mint(sender: AppID, rekeyBack: boolean): void {
-        sendMethodCall<typeof DualStake.prototype.mint, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    burn(sender: AppID, rekeyBack: boolean): void {
-        sendMethodCall<typeof DualStake.prototype.burn, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    nullun(sender: AppID, rekeyBack: boolean): void {
-        sendMethodCall<typeof DualStake.prototype.nullun, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    createAsset(sender: AppID, rekeyBack: boolean, lstAsaName: bytes, lstUnitName: bytes): void {
-        sendMethodCall<typeof DualStake.prototype.create_asset, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [lstAsaName, lstUnitName],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    configure(
-        sender: AppID,
-        rekeyBack: boolean,
-        lstAsaName: bytes,
-        lstUnitName: bytes,
-        asaID: uint64,
-        lpType: bytes,
-        lpID: bytes,
-        platformFeeBps: uint64,
-        noderunnerFeeBps: uint64,
-        adminAddr: Address,
-        noderunnerAddr: Address
-    ): void {
-        sendMethodCall<typeof DualStake.prototype.configure, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [
-                lstAsaName,
-                lstUnitName,
-                asaID,
-                lpType,
-                lpID,
-                platformFeeBps,
-                noderunnerFeeBps,
-                adminAddr,
-                noderunnerAddr,
-            ],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    changeAdmin1(sender: AppID, rekeyBack: boolean, newAdmin: Address): void {
-        sendMethodCall<typeof DualStake.prototype.change_admin_1, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [newAdmin],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    changeAdmin2(sender: AppID, rekeyBack: boolean): void {
-        sendMethodCall<typeof DualStake.prototype.change_admin_2, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    changeNoderunner(sender: AppID, rekeyBack: boolean, newNoderunner: Address): void {
-        sendMethodCall<typeof DualStake.prototype.change_noderunner, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [newNoderunner],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
-
-    changeFeeAddr(sender: AppID, rekeyBack: boolean, newFeeAddr: Address): void {
-        sendMethodCall<typeof DualStake.prototype.change_feeaddr, void>({
-            sender: sender.address,
-            applicationID: this.appID.value,
-            methodArgs: [newFeeAddr],
-            rekeyTo: rekeyBack ? sender.address : Address.zeroAddress,
-            fee: 0,
-        })
-    }
+    abiCall(
+      DualStake.prototype.redeem,
+      {
+        sender,
+        appId: dsAppID,
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+        fee: 0,
+      }
+    )
+  }
 }

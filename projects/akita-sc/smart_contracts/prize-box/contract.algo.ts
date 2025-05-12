@@ -10,32 +10,41 @@ import {
   uint64,
   assertMatch,
   gtxn,
-  BoxMap,
 } from '@algorandfoundation/algorand-typescript'
 import { AssetHolding } from '@algorandfoundation/algorand-typescript/op'
 import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_INVALID_ASSET, ERR_NOT_EMPTY, ERR_NOT_OWNER } from './errors'
-import { AssetInfo } from './types'
-import { PrizeBoxGlobalStateKeyHeldCount, PrizeBoxGlobalStateKeyOptinCount, PrizeBoxGlobalStateKeyOwner, PrizeBoxGlobalStateKeyRoyaltyAverage } from './constants'
+import { PrizeBoxGlobalStateKeyOptinCount, PrizeBoxGlobalStateKeyOwner } from './constants'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
+import { AssetInfo } from '../utils/types/asset'
 
 export class PrizeBox extends Contract {
+  
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   /** the owner of the box of prizes */
   owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
   /** the current count of prizes opted in */
   optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
-  /** the amount of assets actually held by the contract */
-  heldCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyHeldCount })
-  /** the average of all royalties set for the assets held */
-  royaltyAverage = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyRoyaltyAverage })
 
-  weights = BoxMap<uint64, uint64>({ keyPrefix: 'w' })
-
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+  
   @abimethod({ onCreate: 'require' })
   createApplication(owner: Address): void {
     this.owner.value = owner.native
     this.optinCount.value = 0
   }
+
+  @abimethod({ allowActions: 'DeleteApplication' })
+  deleteApplication(): void {
+    assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
+    assert(this.optinCount.value === 0, ERR_NOT_EMPTY)
+    itxn
+      .payment({ closeRemainderTo: this.owner.value })
+      .submit()
+  }
+
+  // PRIZE BOX METHODS ----------------------------------------------------------------------------
 
   /**
    * optin tells the contract to opt into an asa
@@ -113,14 +122,5 @@ export class PrizeBox extends Contract {
           .submit()
       }
     }
-  }
-
-  @abimethod({ allowActions: 'DeleteApplication' })
-  deleteApplication(): void {
-    assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
-    assert(this.optinCount.value === 0, ERR_NOT_EMPTY)
-    itxn
-      .payment({ closeRemainderTo: this.owner.value })
-      .submit()
   }
 }

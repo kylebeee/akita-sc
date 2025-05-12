@@ -1,4 +1,7 @@
-import { Bytes, uint64 } from "@algorandfoundation/algorand-typescript"
+import { uint64 } from "@algorandfoundation/algorand-typescript"
+
+export const ImpactBoxPrefixMeta = 'm'
+export const ImpactBoxPrefixSubscriptionStateModifier = 's'
 
 export const NFDGlobalStateKeysName = 'i.name'
 export const NFDGlobalStateKeysParentAppID = 'i.parentAppID'

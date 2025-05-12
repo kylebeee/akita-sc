@@ -21,6 +21,14 @@ export const AkitaDAOGlobalStateKeysDisbursementCursor = 'disbursement_cursor'
 
 export const AkitaDAOBoxPrefixProposals = 'p'
 export const AkitaDAOBoxPrefixExecutions = 'e'
+export const AkitDAOBoxPrefixEscrows = 'r'
+
+export const AkitaDAOEscrowAccountSocial = 'social'
+export const AkitaDAOEscrowAccountStakingPools = 'staking'
+export const AkitaDAOEscrowAccountSubscriptions = 'subscriptions'
+export const AkitaDAOEscrowAccountMarketplace = 'marketplace'
+export const AkitaDAOEscrowAccountAuctions = 'auctions'
+export const AkitaDAOEscrowAccountRaffles = 'raffles'
 
 export const STATUS_INIT: uint64 = 0
 // const STATUS_LOADING_REWARDS = 1;

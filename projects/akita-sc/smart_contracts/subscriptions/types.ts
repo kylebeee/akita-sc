@@ -3,16 +3,12 @@ import { Address, StaticBytes } from '@algorandfoundation/algorand-typescript/ar
 
 export type SubscriptionID = uint64
 
-export type arc4SubscriptionID = arc4.UintN64
-
 export class arc4ServicesKey extends arc4.Struct<{
     address: Address
-    id: arc4SubscriptionID
+    id: arc4.UintN64
 }> {}
 
 export type ServiceID = uint64
-
-export type arc4ServiceID = arc4.UintN64
 
 export type ServiceStatus = arc4.UintN8
 
@@ -52,7 +48,7 @@ export class arc4BlockListKey extends arc4.Struct<{
 
 export class arc4SubscriptionKey extends arc4.Struct<{
     address: Address
-    id: arc4SubscriptionID
+    id: arc4.UintN64
 }> {}
 
 export type SubscriptionInfo = {
@@ -70,7 +66,7 @@ export type SubscriptionInfo = {
 
 export class arc4SubscriptionInfo extends arc4.Struct<{
     recipient: Address
-    serviceID: arc4ServiceID
+    serviceID: arc4.UintN64
     startDate: arc4.UintN64
     amount: arc4.UintN64
     interval: arc4.UintN64
@@ -83,7 +79,7 @@ export class arc4SubscriptionInfo extends arc4.Struct<{
 
 export class arc4PassesKey extends arc4.Struct<{
     address: Address
-    id: arc4SubscriptionID
+    id: arc4.UintN64
 }> {}
 
 export type SubscriptionInfoWithPasses = {
@@ -102,7 +98,7 @@ export type SubscriptionInfoWithPasses = {
 
 export class arc4SubscriptionInfoWithPasses extends arc4.Struct<{
     recipient: Address
-    serviceID: arc4SubscriptionID
+    serviceID: arc4.UintN64
     startDate: arc4.UintN64
     amount: arc4.UintN64
     interval: arc4.UintN64

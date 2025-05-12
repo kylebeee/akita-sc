@@ -12,16 +12,14 @@ import {
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abiCall, Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   Addresses,
   Amounts,
   arc4BlockListKey,
   arc4PassesKey,
-  arc4ServiceID,
   arc4ServicesKey,
   arc4Service,
-  arc4SubscriptionID,
   arc4SubscriptionInfo,
   arc4SubscriptionKey,
   ServiceID,
@@ -32,7 +30,6 @@ import {
   SubscriptionID,
   SubscriptionInfo,
   SubscriptionInfoWithPasses,
-  SubscriptionsMBRData,
 } from './types'
 import {
   SubscriptionsBoxPrefixBlocks,
@@ -42,7 +39,6 @@ import {
   SubscriptionsBoxPrefixSubscriptions,
   SubscriptionsBoxPrefixSubscriptionsList,
 } from './constants'
-import { arc4AssetAndAmount } from '../utils/types/optin'
 import {
   ERR_ASA_MISMATCH,
   ERR_BAD_WINDOW,
@@ -64,29 +60,32 @@ import {
   ERR_USER_ALREADY_BLOCKED,
   ERR_USER_NOT_BLOCKED,
 } from './errors'
-import { AkitaDAO } from '../dao/dao.algo'
+import { AkitaDAO } from '../dao/contract.algo'
 import { arc4Zero } from '../utils/constants'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { GateArgs } from '../utils/types/gates'
-import { bytes16, bytes31, CID } from '../utils/types/base'
+import { bytes16, CID } from '../utils/types/base'
+import { BaseSubscriptions } from './base'
+import { calcPercent, gateCheck, getSubscriptionFees } from '../utils/functions'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { classes } from 'polytype'
-import { ContractWithArc58Send, ContractWithArc59Send, ContractWithOptIn } from '../utils/base-contracts/optin'
-import { ContractWithGate } from '../utils/base-contracts/gate'
-
+import { AkitaDAOEscrowAccountSubscriptions } from '../dao/constants'
+import { AkitaBaseEscrow } from '../utils/base-contracts/base'
 
 export class Subscriptions extends classes(
-  ContractWithOptIn,
-  ContractWithArc58Send,
-  ContractWithArc59Send,
-  ContractWithGate
+  BaseSubscriptions,
+  AkitaBaseEscrow,
+  ContractWithOptIn
 ) {
+
+  // BOXES ----------------------------------------------------------------------------------------
 
   subscriptions = BoxMap<arc4SubscriptionKey, arc4SubscriptionInfo>({
     keyPrefix: SubscriptionsBoxPrefixSubscriptions,
   })
 
   /** A counter for each addresses subscription id */
-  subscriptionslist = BoxMap<Account, arc4SubscriptionID>({ keyPrefix: SubscriptionsBoxPrefixSubscriptionsList })
+  subscriptionslist = BoxMap<Account, uint64>({ keyPrefix: SubscriptionsBoxPrefixSubscriptionsList })
 
   /**
    * services is a map of services a specific merchant has
@@ -96,7 +95,7 @@ export class Subscriptions extends classes(
    */
   services = BoxMap<arc4ServicesKey, arc4Service>({ keyPrefix: SubscriptionsBoxPrefixServices })
 
-  serviceslist = BoxMap<Account, arc4ServiceID>({ keyPrefix: SubscriptionsBoxPrefixServicesList })
+  serviceslist = BoxMap<Account, uint64>({ keyPrefix: SubscriptionsBoxPrefixServicesList })
 
   /**
    * blocks allow merchants to specify which addresses cannot subscribe
@@ -108,16 +107,7 @@ export class Subscriptions extends classes(
 
   passes = BoxMap<arc4PassesKey, arc4.DynamicArray<Address>>({ keyPrefix: SubscriptionsBoxPrefixPasses })
 
-  private mbr(passes: uint64): SubscriptionsMBRData {
-    return {
-      subscriptions: 54_100,
-      subscriptionslist: 18_900,
-      services: 49_700,
-      serviceslist: 18_900,
-      blocks: 28_100,
-      passes: 18_900 + (400 * (32 * passes)),
-    }
-  }
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private getLatestWindowStart(startDate: uint64, interval: uint64): uint64 {
     return Global.latestTimestamp - ((Global.latestTimestamp - startDate) % interval)
@@ -145,14 +135,14 @@ export class Subscriptions extends classes(
   }
 
   private getAmounts(amount: uint64): Amounts {
-    const fees = super.getSubscriptionFees()
+    const fees = getSubscriptionFees(this.akitaDAO.value)
 
-    let akitaFee = this.calcPercent(amount, fees.paymentPercentage)
+    let akitaFee = calcPercent(amount, fees.paymentPercentage)
     if (akitaFee === 0 && amount > 0) {
       akitaFee = 1
     }
 
-    let triggerFee = this.calcPercent(amount, fees.triggerPercentage)
+    let triggerFee = calcPercent(amount, fees.triggerPercentage)
     if (triggerFee === 0 && amount > 0) {
       triggerFee = 1
     }
@@ -166,70 +156,27 @@ export class Subscriptions extends classes(
     }
   }
 
-  private optInAkitaDAO(asset: Asset): void {
-    super.arc58OptInAndSend(
-      this.akitaDAO.value.id,
-      {
-        asset,
-        amount: 0,
-      }
-    )
-  }
-
   private newServiceID(address: Address): ServiceID {
-    const id: uint64 = this.serviceslist(address.native).exists ? this.serviceslist(address.native).value.native : 0
-    this.serviceslist(address.native).value = new UintN64(id + 1)
+    const id: uint64 = this.serviceslist(address.native).exists
+      ? this.serviceslist(address.native).value
+      : 0
+    this.serviceslist(address.native).value = id + 1
     return id
   }
 
   private newSubscriptionID(address: Address): SubscriptionID {
-    const id: uint64 = this.subscriptionslist(address.native).exists ? this.subscriptionslist(address.native).value.native : 0
-    this.subscriptionslist(address.native).value = new UintN64(id + 1)
+    const id: uint64 = this.subscriptionslist(address.native).exists
+      ? this.subscriptionslist(address.native).value
+      : 0
+    this.subscriptionslist(address.native).value = id + 1
     return id
   }
 
-  /**
-   * isBlocked checks if an address is blocked for a merchant
-   * @param merchant The merchant address to be checked
-   * @param address The address to be checked
-   */
-  @abimethod({ readonly: true })
-  isBlocked(address: Address, blocked: Address): boolean {
-    return this.blocks(new arc4BlockListKey({ address: bytes16(address.bytes), blocked: bytes16(blocked.bytes) })).exists
-  }
-
-  /**
-   * serviceIsActive checks if an service is shutdown
-   */
-  @abimethod({ readonly: true })
-  isShutdown(address: Address, id: uint64): boolean {
-    return this.services(new arc4ServicesKey({ address, id: new UintN64(id) })).value.status === ServiceStatusShutdown
-  }
-
-  @abimethod({ readonly: true })
-  getSubsriptionInfo(address: Address, id: uint64): SubscriptionInfoWithPasses {
-    const key = new arc4SubscriptionKey({ address, id: new UintN64(id) })
-
-    assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
-
-    const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(key).value.bytes)
-
-    const passesKey = new arc4PassesKey({ address, id: new UintN64(id) })
-    let passes = new arc4.DynamicArray<Address>()
-    if (this.passes(passesKey).exists) {
-      passes = this.passes(passesKey).value.copy()
-    }
-
-    return {
-      ...sub,
-      passes: passes.copy(),
-    }
-  }
-
-  @abimethod({ readonly: true })
-  isFirstSubscription(address: Address): boolean {
-    return !this.subscriptionslist(address.native).exists
-  }
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+  
+  // TODO: create application
+  
+  // SUBSCRIPTION METHODS -------------------------------------------------------------------------
 
   /**
    * newService creates a new service for a merchant
@@ -250,7 +197,7 @@ export class Subscriptions extends classes(
     passes: uint64,
     gate: uint64,
     cid: CID
-  ): ServiceID {
+  ): uint64 {
     const address = new Address(Txn.sender)
     const id = this.newServiceID(address)
     const boxKey = new arc4ServicesKey({ address, id: new UintN64(id) })
@@ -262,15 +209,21 @@ export class Subscriptions extends classes(
     // family passes have a max of 5
     assert(passes <= 5, ERR_MAX_PASSES_IS_FIVE)
 
-    const fee = super.getSubscriptionFees().serviceCreationFee
+    const fee = getSubscriptionFees(this.akitaDAO.value).serviceCreationFee
 
     let requiredAmount = fee
     if (asset !== 0) {
       requiredAmount += Global.assetOptInMinBalance
     }
 
-    assert(payment.amount === requiredAmount, ERR_INVALID_PAYMENT_AMOUNT)
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: requiredAmount,
+      },
+      ERR_INVALID_PAYMENT
+    )
 
     this.services(boxKey).value = new arc4Service({
       status: ServiceStatusPaused,
@@ -348,8 +301,14 @@ export class Subscriptions extends classes(
     assert(!this.blocks(boxKey).exists, ERR_USER_ALREADY_BLOCKED)
     // ensure the payment is correct
     const costs = this.mbr(0)
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-    assert(payment.amount === costs.blocks, ERR_INVALID_PAYMENT_AMOUNT)
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: costs.blocks,
+      },
+      ERR_INVALID_PAYMENT
+    )
 
     this.blocks(boxKey).create()
   }
@@ -407,7 +366,7 @@ export class Subscriptions extends classes(
       // ensure its an algo subscription
       assert(service.asset === 0, ERR_ASA_MISMATCH)
       // ensure the gate check passes
-      assert(this.gate(arc4Sender, service.gate, args), ERR_FAILED_GATE)
+      assert(gateCheck(this.akitaDAO.value, arc4Sender, service.gate, args), ERR_FAILED_GATE)
       // overwrite the details for the subscription
       amount = service.amount
       interval = service.interval
@@ -420,26 +379,35 @@ export class Subscriptions extends classes(
     const amounts = this.getAmounts(amount)
 
     const costs = this.mbr(0)
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-    assert(payment.amount >= (amount + costs.subscriptions + costs.subscriptionslist), ERR_INVALID_PAYMENT_RECEIVER)
+    let mbrAmount = costs.subscriptions
+    if (subscriptionID === 1) {
+      mbrAmount += costs.subscriptionslist
+    }
 
-    abiCall(AkitaDAO.prototype.receivePayment, {
-      appId: this.akitaDAO.value.id,
-      args: [
-        itxn.payment({
-          receiver: this.akitaDAO.value.address,
-          amount: amounts.akitaFee + amounts.triggerFee,
-          fee: 0,
-        }),
-      ],
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: amount + mbrAmount,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    itxn
+    .payment({
+      receiver: this.akitaDAO.value.address,
+      amount: amounts.akitaFee + amounts.triggerFee,
       fee: 0,
     })
+    .submit()
 
-    itxn.payment({
+    itxn
+    .payment({
       receiver: recipient.native,
       amount: amounts.leftOver,
       fee: 0,
-    }).submit()
+    })
+    .submit()
 
     // amounts.leftOver is the send amount after fees
     // payment.amount should be allowed to be over if
@@ -495,7 +463,7 @@ export class Subscriptions extends classes(
       // ensure its an algo subscription
       assert(service.asset === assetXfer.xferAsset.id, ERR_ASA_MISMATCH)
       // ensure the gate check passes
-      assert(this.gate(arc4Sender, service.gate, args), ERR_FAILED_GATE)
+      assert(gateCheck(this.akitaDAO.value, arc4Sender, service.gate, args), ERR_FAILED_GATE)
       // overwrite the details for the subscription
       amount = service.amount
       interval = service.interval
@@ -506,11 +474,18 @@ export class Subscriptions extends classes(
     const subscriptionKey = new arc4SubscriptionKey({ address: arc4Sender, id: new UintN64(subscriptionID) })
 
     const costs = this.mbr(0)
-    let algoMBRFee: uint64 = costs.subscriptions + costs.subscriptionslist
+    let mbrAmount = costs.subscriptions
+    if (subscriptionID === 1) {
+      mbrAmount += costs.subscriptionslist
+    }
 
     if (!this.akitaDAO.value.address.isOptedIn(assetXfer.xferAsset)) {
-      this.optInAkitaDAO(assetXfer.xferAsset)
-      algoMBRFee += Global.assetOptInMinBalance
+      this.optAkitaEscrowInAndSend(
+        AkitaDAOEscrowAccountSubscriptions,
+        assetXfer.xferAsset,
+        0
+      )
+      mbrAmount += Global.assetOptInMinBalance
     }
 
     const amounts = this.getAmounts(amount)
@@ -520,7 +495,7 @@ export class Subscriptions extends classes(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: algoMBRFee,
+        amount: mbrAmount,
       },
       ERR_INVALID_PAYMENT
     )
@@ -530,16 +505,14 @@ export class Subscriptions extends classes(
       assetXfer,
       {
         assetReceiver: Global.currentApplicationAddress,
-        assetAmount: {
-          greaterThanEq: amount
-        }
+        assetAmount: amount,
       },
       ERR_INVALID_TRANSFER
     )
 
     itxn
       .assetTransfer({
-        assetReceiver: this.akitaDAO.value.address,
+        assetReceiver: this.akitaDAOEscrow.value.address,
         xferAsset: assetXfer.xferAsset,
         assetAmount: amounts.akitaFee + amounts.triggerFee,
         fee: 0,
@@ -663,24 +636,18 @@ export class Subscriptions extends classes(
     // ensure the user has enough funds in escrow
     assert(sub.escrowed >= sub.amount, ERR_NOT_ENOUGH_FUNDS)
 
-    assert(this.gate(address, sub.gate, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, address, sub.gate, args), ERR_FAILED_GATE)
 
     const isAsa = sub.asset !== 0
     const amounts = this.getAmounts(sub.amount)
 
     if (isAsa) {
-      abiCall(AkitaDAO.prototype.receiveAsaPayment, {
-        appId: this.akitaDAO.value.id,
-        args: [
-          itxn.assetTransfer({
-            assetReceiver: this.akitaDAO.value.address,
-            xferAsset: sub.asset,
-            assetAmount: amounts.akitaFee,
-            fee: 0,
-          }),
-        ],
+      itxn.assetTransfer({
+        assetReceiver: this.akitaDAOEscrow.value.address,
+        xferAsset: sub.asset,
+        assetAmount: amounts.akitaFee,
         fee: 0,
-      })
+      }).submit()
 
       itxn.assetTransfer({
         assetReceiver: Txn.sender,
@@ -697,17 +664,11 @@ export class Subscriptions extends classes(
       }).submit()
     } else {
       // mbr payment for subscriptions & subscriptionslist boxes
-      abiCall(AkitaDAO.prototype.receivePayment, {
-        appId: this.akitaDAO.value.id,
-        args: [
-          itxn.payment({
-            receiver: this.akitaDAO.value.address,
-            amount: amounts.akitaFee,
-            fee: 0,
-          }),
-        ],
+      itxn.payment({
+        receiver: this.akitaDAO.value.address,
+        amount: amounts.akitaFee,
         fee: 0,
-      })
+      }).submit()
 
       itxn.payment({
         receiver: Txn.sender,
@@ -752,14 +713,62 @@ export class Subscriptions extends classes(
     assert(service.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
     assert(service.passes >= addresses.length, ERR_PASS_COUNT_OVERFLOW)
 
-    const address = bytes31(sub.recipient.bytes.slice(0, 31))
     for (let i: uint64 = 0; i < addresses.length; i += 1) {
+      const blockKey = new arc4BlockListKey({
+        address: bytes16(sub.recipient.bytes),
+        blocked: bytes16(addresses[i].bytes)
+      })
       assert(
-        !this.blocks(new arc4BlockListKey({ address: bytes16(sub.recipient.bytes), blocked: bytes16(addresses[i].bytes) })).exists,
+        !this.blocks(blockKey).exists,
         ERR_BLOCKED
       )
     }
 
     this.passes(new arc4PassesKey({ address: arc4Sender, id: new UintN64(id) })).value = addresses
+  }
+
+    // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  /**
+   * isBlocked checks if an address is blocked for a merchant
+   * @param merchant The merchant address to be checked
+   * @param address The address to be checked
+   */
+  @abimethod({ readonly: true })
+  isBlocked(address: Address, blocked: Address): boolean {
+    return this.blocks(new arc4BlockListKey({ address: bytes16(address.bytes), blocked: bytes16(blocked.bytes) })).exists
+  }
+
+  /**
+   * serviceIsActive checks if an service is shutdown
+   */
+  @abimethod({ readonly: true })
+  isShutdown(address: Address, id: uint64): boolean {
+    return this.services(new arc4ServicesKey({ address, id: new UintN64(id) })).value.status === ServiceStatusShutdown
+  }
+
+  @abimethod({ readonly: true })
+  getSubsriptionInfo(address: Address, id: uint64): SubscriptionInfoWithPasses {
+    const key = new arc4SubscriptionKey({ address, id: new UintN64(id) })
+
+    assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
+
+    const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(key).value.bytes)
+
+    const passesKey = new arc4PassesKey({ address, id: new UintN64(id) })
+    let passes = new arc4.DynamicArray<Address>()
+    if (this.passes(passesKey).exists) {
+      passes = this.passes(passesKey).value.copy()
+    }
+
+    return {
+      ...sub,
+      passes: passes.copy(),
+    }
+  }
+
+  @abimethod({ readonly: true })
+  isFirstSubscription(address: Address): boolean {
+    return !this.subscriptionslist(address.native).exists
   }
 }

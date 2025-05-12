@@ -14,9 +14,9 @@ import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { FactoryContract } from '../utils/base-contracts/factory'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 
-const prizeBox = compileArc4(PrizeBox)
-
 export class PrizeBoxFactory extends FactoryContract {
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
   createApplication(version: string): void {
@@ -28,7 +28,12 @@ export class PrizeBoxFactory extends FactoryContract {
     assert(Txn.sender === Global.creatorAddress, 'Only the creator can update the application')
   }
 
+  // PRIZE BOX FACTORY METHODS --------------------------------------------------------------------
+
   mint(payment: gtxn.PaymentTxn, owner: Address): uint64 {
+
+    const prizeBox = compileArc4(PrizeBox)
+
     assertMatch(
       payment,
       {
@@ -61,4 +66,8 @@ export class PrizeBoxFactory extends FactoryContract {
 
     return prizeBoxApp.id
   }
+
+  // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  // TODO: create readonly methods
 }

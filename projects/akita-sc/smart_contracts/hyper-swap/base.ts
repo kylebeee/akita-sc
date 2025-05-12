@@ -1,8 +1,7 @@
-import { Account, Contract, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Contract } from "@algorandfoundation/algorand-typescript";
 import { HyperSwapMBRData } from "./types";
-import { AkitaBaseContract } from "../utils/base-contracts/base";
 
-export class BaseHyperSwap extends AkitaBaseContract {
+export class BaseHyperSwap extends Contract {
   protected mbr(): HyperSwapMBRData {
     return {
       offers: 50_900,
@@ -13,11 +12,5 @@ export class BaseHyperSwap extends AkitaBaseContract {
         data: 27_300,
       }
     }
-  }
-
-  protected getOfferFee(address: Account): uint64 {
-    const impact = this.getUserImpact(address)
-    const { HyperSwapImpactTaxMin, HyperSwapImpactTaxMax } = this.getSwapFees()
-    return this.impactRange(impact, HyperSwapImpactTaxMin, HyperSwapImpactTaxMax)
   }
 } 

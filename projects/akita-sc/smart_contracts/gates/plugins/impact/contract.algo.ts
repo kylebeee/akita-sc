@@ -1,10 +1,10 @@
-import { assert, BoxMap, bytes, GlobalState, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
+import { Application, assert, BoxMap, bytes, GlobalState, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { arc4ImpactGateCheckParams, arc4ImpactRegistryInfo, ImpactRegistryInfo } from './types'
 import { GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { Operator } from '../../types'
-import { AkitaSocialImpact } from '../../../arc58/plugins/impact/contract.algo'
+import { AkitaSocialImpact } from '../../../impact/contract.algo'
 import {
   Equal,
   GreaterThan,
@@ -15,11 +15,19 @@ import {
 } from '../../../utils/operators'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
+import { getPluginAppList } from '../../../utils/functions'
 
 export class ImpactGate extends AkitaBaseContract {
+
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
 
+  // BOXES ----------------------------------------------------------------------------------------
+
   registry = BoxMap<uint64, arc4ImpactRegistryInfo>({ keyPrefix: '' })
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private newRegistryID(): uint64 {
     const id = this.registryCursor.value
@@ -31,7 +39,7 @@ export class ImpactGate extends AkitaBaseContract {
 
     const encodedImpact = itxn
       .applicationCall({
-        appId: super.getPluginAppList().impact,
+        appId: getPluginAppList(this.akitaDAO.value).impact,
         appArgs: [
           methodSelector(AkitaSocialImpact.prototype.getUserImpact),
           user
@@ -65,8 +73,19 @@ export class ImpactGate extends AkitaBaseContract {
     return false
   }
 
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+  
+  @abimethod({ onCreate: 'require' })
+  createApplication(version: string, akitaDAO: uint64): void {
+    this.version.value = version
+    this.akitaDAO.value = Application(akitaDAO)
+    this.registryCursor.value = 0
+  }
+
+  // IMPACT GATE METHODS --------------------------------------------------------------------------
+
   register(args: bytes): uint64 {
-    assert(args.length === arc4ImpactRegistryInfo.length, ERR_INVALID_ARG_COUNT)
+    assert(args.length === 16, ERR_INVALID_ARG_COUNT)
     const params = interpretAsArc4<arc4ImpactRegistryInfo>(args)
     const id = this.newRegistryID()
     this.registry(id).value = params
@@ -74,7 +93,7 @@ export class ImpactGate extends AkitaBaseContract {
   }
 
   check(args: bytes): boolean {
-    assert(args.length === arc4ImpactGateCheckParams.length, ERR_INVALID_ARG_COUNT)
+    assert(args.length === 40, ERR_INVALID_ARG_COUNT)
     const params = interpretAsArc4<arc4ImpactGateCheckParams>(args)
     const info = decodeArc4<ImpactRegistryInfo>(this.registry(params.registryID.native).value.bytes)
     return this.impactGate(params.user, info.op, info.value)

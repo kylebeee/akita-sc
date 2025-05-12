@@ -1,0 +1,1 @@
+export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'

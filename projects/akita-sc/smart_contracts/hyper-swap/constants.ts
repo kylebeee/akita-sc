@@ -1,15 +1,17 @@
+import { uint64 } from "@algorandfoundation/algorand-typescript"
 import { UintN8 } from "@algorandfoundation/algorand-typescript/arc4"
 
 export const HyperSwapGlobalStateKeyOfferCursor = 'offer_cursor'
+export const HyperSwapGlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
 
 export const HyperSwapBoxPrefixOffers = 'o'
 export const HyperSwapBoxPrefixParticipants = 'p'
 export const HyperSwapBoxPrefixHashes = 'h'
 
 
-export const META_MERKLE_ADDRESS_SCHEMA = 1
-export const META_MERKLE_TRADE_SCHEMA = 4
-export const META_MERKLE_TRADE_TYPE = 3
+export const META_MERKLE_ADDRESS_SCHEMA: uint64 = 1
+export const META_MERKLE_TRADE_SCHEMA: uint64 = 4
+export const META_MERKLE_TRADE_TYPE: uint64 = 3
 
 export const STATE_OFFERED = new UintN8(0) // an offer has been made and is pending acceptance by the other parties
 export const STATE_ESCROWING = new UintN8(1) // the offer is accepted by both parties and the contract is collecting the assets

@@ -12,13 +12,16 @@ import {
   Contract,
   abimethod,
   gtxn,
+  assertMatch,
+  Application,
 } from '@algorandfoundation/algorand-typescript'
-import { AssetHolding } from '@algorandfoundation/algorand-typescript/op'
-import { Address, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { AssetHolding, Txn } from '@algorandfoundation/algorand-typescript/op'
+import { Address, decodeArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   AkitaDAOState,
   arc4AkitaAppList,
   arc4AkitaAssets,
+  arc4EscrowInfo,
   arc4ExecutionInfo,
   arc4Fees,
   arc4NFTFees,
@@ -30,10 +33,11 @@ import {
   arc4StakingFees,
   arc4SubscriptionFees,
   arc4SwapFees,
+  EscrowInfo,
   ExecutionKey,
 } from './types'
 
-import { ERR_ALREADY_INITIALIZED, ERR_INVALID_RECEIVE_PAYMENT, ERR_VERSION_CANNOT_BE_EMPTY } from './errors'
+import { ERR_ALREADY_INITIALIZED, ERR_ESCROW_DOES_NOT_EXIST, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN, ERR_INCORRECT_SENDER, ERR_INVALID_RECEIVE_PAYMENT, ERR_VERSION_CANNOT_BE_EMPTY } from './errors'
 import {
   AkitaDAOBoxPrefixExecutions,
   AkitaDAOBoxPrefixProposals,
@@ -55,9 +59,11 @@ import {
   AkitaDAOGlobalStateKeysStatus,
   AkitaDAOGlobalStateKeysSubscriptionFees,
   AkitaDAOGlobalStateKeysSwapFees,
+  AkitDAOBoxPrefixEscrows,
   STATUS_INIT,
 } from './constants'
 import { GlobalStateKeyVersion } from '../constants'
+import { ERR_INVALID_PAYMENT } from '../utils/errors'
 
 /**
  * The Akita DAO contract has several responsibilities:
@@ -75,6 +81,9 @@ import { GlobalStateKeyVersion } from '../constants'
  */
 
 export class AkitaDAO extends Contract {
+
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   /** state of the DAO */
   status = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysStatus })
   /** the version number of the DAO */
@@ -117,10 +126,16 @@ export class AkitaDAO extends Contract {
   /** the daily disbursement cursor */
   disbursementCursor = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysDisbursementCursor })
 
+  // BOXES ----------------------------------------------------------------------------------------
+
   /** voting state of a proposal */
   proposals = BoxMap<uint64, arc4ProposalDetails>({ keyPrefix: AkitaDAOBoxPrefixProposals })
   /** Group hashes that the DAO has approved to be submitted */
   executions = BoxMap<ExecutionKey, arc4ExecutionInfo>({ keyPrefix: AkitaDAOBoxPrefixExecutions })
+  /** named escrow accounts the DAO uses */
+  escrows = BoxMap<string, arc4EscrowInfo>({ keyPrefix: AkitDAOBoxPrefixEscrows })
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private newProposalID(): uint64 {
     const id = this.proposalID.value
@@ -128,6 +143,9 @@ export class AkitaDAO extends Contract {
     return id
   }
 
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  @abimethod({ onCreate: 'require' })
   createApplication(): void {
     // TODO: Add the optin plugin immediately
   }
@@ -213,6 +231,8 @@ export class AkitaDAO extends Contract {
     this.proposalID.value = 0
   }
 
+  // AKITA DAO METHODS ----------------------------------------------------------------------------
+
   newProposal(proposalType: uint64): void {
     const id = this.newProposalID()
   }
@@ -235,15 +255,42 @@ export class AkitaDAO extends Contract {
     // distribute to stakers
   }
 
-  receivePayment(payment: gtxn.PaymentTxn): void {
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_RECEIVE_PAYMENT)
-    // TODO: track the payment in some way
+  /**
+   * optin tells the contract to opt into an asa
+   * @param payment The payment transaction
+   * @param asset The asset to be opted into
+   */
+  optinEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void {
+
+    assert(this.escrows(name).exists, ERR_ESCROW_DOES_NOT_EXIST)
+
+    const escrow = decodeArc4<EscrowInfo>(this.escrows(name).value.bytes)
+    const escrowAccount = Application(escrow.escrow).address
+
+    assert(escrow.account.native === Txn.sender, ERR_INCORRECT_SENDER)
+    assert(escrow.optinAllowed === true, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN)
+
+    assertMatch(
+      payment,
+      {
+        receiver: escrowAccount,
+        amount: Global.assetOptInMinBalance,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    itxn.assetTransfer({
+      sender: escrowAccount,
+      assetReceiver: Global.currentApplicationAddress,
+      assetAmount: 0,
+      xferAsset: asset,
+      fee: 0,
+    }).submit()
   }
 
-  receiveAsaPayment(xfer: gtxn.AssetTransferTxn): void {
-    assert(xfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_RECEIVE_PAYMENT)
-  }
+  // READ ONLY METHODS ----------------------------------------------------------------------------
 
+  @abimethod({ readonly: true })
   getState(): AkitaDAOState {
     return {
       status: new UintN64(this.status.value),

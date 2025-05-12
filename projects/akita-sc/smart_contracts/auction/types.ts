@@ -28,7 +28,7 @@ export class arc4FindWinnerCursors extends arc4.Struct<{
     currentRangeStart: UintN64
 }> {}
 
-export type WeightsList = StaticArray<UintN64, typeof ChunkSize>
+export type WeightsList = StaticArray<UintN64, 4096>
 
 export type AuctionMBRData = {
     bids: uint64

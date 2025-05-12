@@ -1,26 +1,23 @@
-
-import { SubContractWithGate } from '../../../utils/base-contracts/gate'
-import { OptInPlugin } from '../optin.algo'
 import { AssetInbox } from '../../../utils/types/asset-inbox'
-import { AkitaSocialImpact } from '../impact/contract.algo'
+import { AkitaSocialImpact } from '../../../impact/contract.algo'
 import { Account, Application, assert, Asset, BoxMap, Bytes, bytes, Global, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, Bool, decodeArc4, DynamicArray, DynamicBytes, methodSelector, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaSocialMBRData, arc4Action, arc4BlockListKey, arc4FollowsKey, arc4MetaValue, arc4PostValue, arc4ReactionListKey, arc4ReactionsKey, arc4VoteListKey, arc4VoteListValue, arc4VotesValue, MetaValue, PostValue, VoteListValue, VotesValue } from './types'
 import { bytes16, bytes32, bytes4, CID, paddedBytes32 } from '../../../utils/types/base'
 import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS } from './constants'
 import { AbstractedAccount } from '../../account/contract.algo'
-import { classes } from 'polytype'
-import { Plugin } from '../../../utils/base-contracts/plugin'
 import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn'
 import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_DAO, ERR_NOT_YOUR_POST_TO_EDIT, ERR_PLUGIN_NOT_AUTH_ADDR, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
 import { GateArgs } from '../../../utils/types/gates'
 import { AssetHolding, itob } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_FAILED_GATE } from '../../../utils/errors'
+import { OptInPlugin } from '../optin/contract.algo'
+import { akitaSocialFee, gateCheck, getAccounts, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, getSpendingAccount, impactRange, rekeyAddress } from '../../../utils/functions'
+import { AkitaBaseEscrow } from '../../../utils/base-contracts/base'
 
-export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
-  // -------------------------------------------------------------
-  // box maps ----------------------------------------------------
-  // -------------------------------------------------------------
+export class AkitaSocialPlugin extends AkitaBaseEscrow {
+
+  // BOXES ----------------------------------------------------------------------------------------
 
   /** Who follows who */
   follows = BoxMap<arc4FollowsKey, Account>({ keyPrefix: AkitaSocialBoxPrefixFollows })
@@ -45,9 +42,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
   /** Actions usable on an akita post */
   actions = BoxMap<uint64, arc4Action>({ keyPrefix: AkitaSocialBoxPrefixActions })
 
-  // -------------------------------------------------------------
-  // misc private methods ----------------------------------------
-  // -------------------------------------------------------------
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private mbr(ref: bytes): AkitaSocialMBRData {
     return {
@@ -70,27 +65,28 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
   }
 
   private rekeyBack(wallet: Application) {
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     itxn
       .payment({
         sender,
         amount: 0,
         receiver: sender,
-        rekeyTo: this.rekeyAddress(true, wallet),
+        rekeyTo: rekeyAddress(true, wallet),
         fee: 0,
       })
       .submit()
   }
 
   private isCreator(creator: Address, wallet: Application): boolean {
-    const origin = this.getOriginAccount(wallet)
+    const origin = getOriginAccount(wallet)
     return creator.native === origin
     // assert(post.creator.native === origin, ERR_NOT_YOUR_POST_TO_EDIT)
     // assert(post.ref.length > 36, ERR_NOT_A_REPLY)
     // assert(post.ref.length !== 101, ERR_IS_ALREADY_AMENDED)
   }
 
+  // TODO: use these and actually ensure it works properly
   private isReply(ref: bytes): boolean {
     return ref.length > 36
   }
@@ -111,14 +107,10 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     return this.blocks(blocksKey).exists
   }
 
-  // -------------------------------------------------------------
-  // impact private methods --------------------------------------
-  // -------------------------------------------------------------
-
   private getSocialImpactScore(account: Account): uint64 {
     // - Social Activity | up to 250
     const meta = decodeArc4<MetaValue>(this.meta(account).value.bytes)
-    let socialImpact = 0
+    let socialImpact: uint64 = 0
 
     if (meta.streak >= 60) {
       socialImpact += 100
@@ -129,7 +121,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
     // longevity
     // if the account is older than 2 years give them 75
-    const accountAge = Global.latestTimestamp - meta.startDate
+    const accountAge: uint64 = Global.latestTimestamp - meta.startDate
 
     if (accountAge >= TWO_YEARS) {
       socialImpact += 75
@@ -142,7 +134,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     if (this.votes(bytes32(account.bytes)).exists) {
       const score = decodeArc4<VotesValue>(this.votes(bytes32(account.bytes)).value.bytes)
 
-      let impact = (score.voteCount * 75) / 100_000
+      let impact: uint64 = (score.voteCount * 75) / 100_000
       if (impact > 75) {
         impact = 75
       }
@@ -167,7 +159,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     const impact = abiCall(
       AkitaSocialImpact.prototype.getUserImpactWithoutSocial,
       {
-        appId: this.getPluginAppList().impact,
+        appId: getPluginAppList(this.akitaDAO.value).impact,
         args: [new Address(account)],
         fee: 0,
       }
@@ -176,10 +168,6 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     return impact + this.getSocialImpactScore(account)
   }
 
-  // -------------------------------------------------------------
-  // payment private methods -------------------------------------
-  // -------------------------------------------------------------
-
   private canCallArc58OptIn(sender: Account, appId: Application): boolean {
     return abiCall(
       AbstractedAccount.prototype.arc58_canCall,
@@ -187,7 +175,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         sender,
         appId,
         args: [
-          super.getPluginAppList().optin,
+          getPluginAppList(this.akitaDAO.value).optin,
           new Address(sender),
           bytes4(methodSelector(OptInPlugin.prototype.optInToAsset))
         ],
@@ -203,9 +191,9 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     mbrAmount: uint64,
     tax: uint64
   ): void {
-    const akta = super.getAkitaAssets().akta
-    const sender = this.getSpendingAccount(wallet)
-    const recipientOrigin = this.getOriginAccount(recipientWallet)
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const sender = getSpendingAccount(wallet)
+    const recipientOrigin = getOriginAccount(recipientWallet)
 
     const mbrTxn = itxn.payment({
       sender,
@@ -219,8 +207,8 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
       appId: recipientWallet,
       appArgs: [
         methodSelector(AbstractedAccount.prototype.arc58_rekeyToPlugin),
-        super.getPluginAppList().optin,
-        []
+        getPluginAppList(this.akitaDAO.value).optin,
+        new DynamicArray<UintN64>()
       ],
       fee: 0,
     })
@@ -234,7 +222,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
     const optinTxn = itxn.applicationCall({
       sender,
-      appId: super.getPluginAppList().optin,
+      appId: getPluginAppList(this.akitaDAO.value).optin,
       appArgs: [
         methodSelector(OptInPlugin.prototype.optInToAsset),
         recipientWallet,
@@ -255,20 +243,20 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
     const taxTxn = itxn.assetTransfer({
       sender,
-      assetReceiver: this.akitaDAO.value.address,
+      assetReceiver: this.akitaDAOEscrow.value.address,
       assetAmount: tax,
       xferAsset: akta,
       fee: 0,
     })
 
-    const { reactFee } = super.getSocialFees()
+    const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     const xferTxn = itxn.assetTransfer({
       sender,
       assetReceiver: recipientOrigin,
       assetAmount: reactFee - tax,
       xferAsset: akta,
-      rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
       fee: 0,
     })
 
@@ -282,11 +270,11 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     mbrAmount: uint64,
     tax: uint64
   ): void {
-    const assetInbox = super.getOtherAppList().assetInbox
+    const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
     const inboxAddress = Application(assetInbox).address
-    const akta = super.getAkitaAssets().akta
-    const sender = this.getSpendingAccount(wallet)
-    const recipientOrigin = this.getOriginAccount(recipientWallet)
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const sender = getSpendingAccount(wallet)
+    const recipientOrigin = getOriginAccount(recipientWallet)
 
     itxn
       .payment({
@@ -304,7 +292,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         appId: assetInbox,
         args: [
           new Address(recipientOrigin),
-          akta.id,
+          akta,
         ],
         fee: 0,
       }
@@ -329,7 +317,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
       abiCall(AssetInbox.prototype.arc59_optRouterIn, {
         sender,
         appId: assetInbox,
-        args: [akta.id],
+        args: [akta],
         fee: 0,
       })
     }
@@ -337,14 +325,14 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     itxn
       .assetTransfer({
         sender,
-        assetReceiver: this.akitaDAO.value.address,
+        assetReceiver: this.akitaDAOEscrow.value.address,
         assetAmount: tax,
         xferAsset: akta,
         fee: 0,
       })
       .submit()
 
-    const { reactFee } = super.getSocialFees()
+    const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     abiCall(
       AssetInbox.prototype.arc59_sendAsset,
@@ -362,16 +350,16 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
           new Address(recipientOrigin),
           receiverAlgoNeededForClaim
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
   }
 
   private sendReactionPayments(wallet: Application, rekeyBack: boolean, recipientAccount: Account, mbrAmount: uint64, tax: uint64): void {
-    const akta = super.getAkitaAssets().akta
-    const sender = this.getSpendingAccount(wallet)
-    const { reactFee } = super.getSocialFees()
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const sender = getSpendingAccount(wallet)
+    const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     const mbrPayment = itxn.payment({
       sender,
@@ -382,7 +370,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
     const taxTxn = itxn.assetTransfer({
       sender,
-      assetReceiver: this.akitaDAO.value.address,
+      assetReceiver: this.akitaDAOEscrow.value.address,
       assetAmount: tax,
       xferAsset: akta,
       fee: 0,
@@ -393,16 +381,12 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
       assetReceiver: recipientAccount,
       assetAmount: reactFee - tax,
       xferAsset: akta,
-      rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
       fee: 0,
     })
 
     submitGroup(mbrPayment, taxTxn, xferTxn)
   }
-
-  // -------------------------------------------------------------
-  // content private methods -------------------------------------
-  // -------------------------------------------------------------
 
   private voteListKey(account: Account, ref: StaticBytes<32>): arc4VoteListKey {
     return new arc4VoteListKey({
@@ -445,8 +429,8 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     const encodedMeta = this.meta(account).value.copy()
     const meta = decodeArc4<MetaValue>(encodedMeta.bytes)
 
-    const thisWindowStart = Global.latestTimestamp - ((Global.latestTimestamp - meta.startDate) % ONE_DAY)
-    const lastWindowStart = thisWindowStart - ONE_DAY
+    const thisWindowStart: uint64 = Global.latestTimestamp - ((Global.latestTimestamp - meta.startDate) % ONE_DAY)
+    const lastWindowStart: uint64 = thisWindowStart - ONE_DAY
 
     // if they haven't interacted in up to the last 48 hours (depending on the current window)
     // reset their streak
@@ -485,11 +469,11 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     // or vice versa
     const flip = impact > voteCount && differingDirections
     if (flip) {
-      const newCount = impact - voteCount
+      const newCount: uint64 = impact - voteCount
       return { newCount, isNegative: !isNegative }
     }
 
-    const newCount = differingDirections ? voteCount - impact : voteCount + impact
+    const newCount: uint64 = differingDirections ? voteCount - impact : voteCount + impact
     return { newCount, isNegative }
   }
 
@@ -510,8 +494,8 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
   }
 
   private createPost(wallet: Application, rekeyBack: boolean, cid: CID, gateID: uint64, isAmendment: boolean): void {
-    const origin = this.getOriginAccount(wallet)
-    const sender = this.getSpendingAccount(wallet)
+    const origin = getOriginAccount(wallet)
+    const sender = getSpendingAccount(wallet)
     assert(!this.isBanned(origin), ERR_BANNED)
 
     // update streak before we measure impact
@@ -519,8 +503,8 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     this.updateStreak(origin)
 
     const impact = this.getUserImpact(origin)
-    const akta = super.getAkitaAssets().akta
-    const { postFee } = super.getSocialFees()
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const { postFee } = getSocialFees(this.akitaDAO.value)
     const { posts, votes, votelist } = this.mbr(cid.bytes)
 
     const mbrTxn = itxn.payment({
@@ -532,10 +516,10 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
     const taxTxn = itxn.assetTransfer({
       sender,
-      assetReceiver: this.akitaDAO.value.address,
+      assetReceiver: this.akitaDAOEscrow.value.address,
       assetAmount: postFee,
       xferAsset: akta,
-      rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
       fee: 0,
     })
 
@@ -565,8 +549,8 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     args: GateArgs,
     isAmendment: boolean
   ): void {
-    const origin = this.getOriginAccount(wallet)
-    const sender = this.getSpendingAccount(wallet)
+    const origin = getOriginAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
@@ -574,7 +558,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     assert(!this.isBlocked(post.creator.native, origin), ERR_BLOCKED)
 
     if (post.gateID !== 0) {
-      assert(this.gate(new Address(origin), post.gateID, args), ERR_FAILED_GATE)
+      assert(gateCheck(this.akitaDAO.value, new Address(origin), post.gateID, args), ERR_FAILED_GATE)
     }
 
     // update streak before we measure impact
@@ -584,12 +568,12 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     const replyRef = ref.bytes.concat(cid.bytes)
     const creatorMeta = decodeArc4<MetaValue>(this.meta(post.creator.native).value.bytes)
     const postCreatorImpact = this.getUserImpact(post.creator.native)
-    const tax = super.akitaSocialFee(postCreatorImpact)
-    const akta = super.getAkitaAssets().akta
+    const tax = akitaSocialFee(this.akitaDAO.value, postCreatorImpact)
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
     const { posts, votes, votelist } = this.mbr(replyRef)
-    const mbrAmount = posts + votes + votelist
+    const mbrAmount: uint64 = posts + votes + votelist
 
-    if (!post.creator.native.isOptedIn(akta)) {
+    if (!post.creator.native.isOptedIn(Asset(akta))) {
       // calls a transaction
       const canCallArc58OptIn = this.canCallArc58OptIn(sender, Application(creatorMeta.walletID))
       if (canCallArc58OptIn) {
@@ -601,7 +585,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
       }
     } else {
       // calls 2 transactions
-      const creatorOrigin = this.getOriginAccount(Application(creatorMeta.walletID))
+      const creatorOrigin = getOriginAccount(Application(creatorMeta.walletID))
       this.sendReactionPayments(wallet, rekeyBack, creatorOrigin, mbrAmount, tax)
     }
 
@@ -623,7 +607,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
   }
 
   private createVote(wallet: Application, rekeyBack: boolean, ref: StaticBytes<32>, isUp: boolean): void {
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
 
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
@@ -636,23 +620,23 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     assert(origin !== post.creator.native, ERR_NO_SELF_VOTE)
 
     const senderIsAutomated = this.meta(origin).value.automated
-    assert(!senderIsAutomated, ERR_AUTOMATED_ACCOUNT)
+    assert(!senderIsAutomated.native, ERR_AUTOMATED_ACCOUNT)
 
-    const akta = super.getAkitaAssets().akta
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
 
     // update streak before we measure impact
     // this way we guarantee the box exists
     this.updateStreak(origin)
-    const { reactFee, impactTaxMin, impactTaxMax } = this.getSocialFees()
+    const { reactFee, impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
     const { votelist: mbrAmount } = this.mbr(ref.bytes)
 
     if (isUp) {
       const creatorMeta = decodeArc4<MetaValue>(this.meta(post.creator.native).value.bytes)
       // calls a transaction
       const recipientImpact = this.getUserImpact(post.creator.native)
-      const tax = this.impactRange(recipientImpact, impactTaxMin, impactTaxMax)
+      const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
 
-      if (!post.creator.native.isOptedIn(akta)) {
+      if (!post.creator.native.isOptedIn(Asset(akta))) {
         // calls a transaction
         const canCallArc58OptIn = this.canCallArc58OptIn(sender, Application(creatorMeta.walletID))
         if (canCallArc58OptIn) {
@@ -664,7 +648,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         }
       } else {
         // calls 2 transactions
-        const creatorOrigin = this.getOriginAccount(Application(creatorMeta.walletID))
+        const creatorOrigin = getOriginAccount(Application(creatorMeta.walletID))
         this.sendReactionPayments(wallet, rekeyBack, creatorOrigin, mbrAmount, tax)
       }
     } else {
@@ -677,10 +661,10 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
       const taxTxn = itxn.assetTransfer({
         sender,
-        assetReceiver: this.akitaDAO.value.address,
+        assetReceiver: this.akitaDAOEscrow.value.address,
         assetAmount: reactFee,
         xferAsset: akta,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       })
 
@@ -694,7 +678,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
   }
 
   private createReaction(wallet: Application, rekeyBack: boolean, ref: StaticBytes<32>, NFT: uint64, args: GateArgs): void {
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const post = decodeArc4<PostValue>(this.posts(ref).value.bytes)
@@ -703,7 +687,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     assert(senderHasNFT, ERR_USER_DOES_NOT_OWN_NFT)
 
     if (post.gateID !== 0) {
-      assert(this.gate(new Address(origin), post.gateID, args), ERR_FAILED_GATE)
+      assert(gateCheck(this.akitaDAO.value, new Address(origin), post.gateID, args), ERR_FAILED_GATE)
     }
 
     const reactionListKey = this.reactionListKey(origin, ref, NFT)
@@ -715,17 +699,17 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
     const creatorMeta = decodeArc4<MetaValue>(this.meta(post.creator.native).value.bytes)
     const recipientImpact = this.getUserImpact(post.creator.native)
-    const { impactTaxMin, impactTaxMax } = this.getSocialFees()
-    const tax = this.impactRange(recipientImpact, impactTaxMin, impactTaxMax)
-    const akta = super.getAkitaAssets().akta
+    const { impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
+    const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
     const { reactions, reactionlist } = this.mbr(ref.bytes)
 
     const reactionKey = new arc4ReactionsKey({ ref, NFT: new UintN64(NFT) })
     const reactionExists = this.reactions(reactionKey).exists
 
-    const mbrAmount = reactionExists ? reactionlist : reactions + reactionlist
+    const mbrAmount: uint64 = reactionExists ? reactionlist : reactions + reactionlist
 
-    if (!post.creator.native.isOptedIn(akta)) {
+    if (!post.creator.native.isOptedIn(Asset(akta))) {
       const canCallArc58OptIn = this.canCallArc58OptIn(sender, Application(creatorMeta.walletID))
       if (canCallArc58OptIn) {
         this.arc58OptInAndSendReactionPayments(wallet, rekeyBack, Application(creatorMeta.walletID), mbrAmount, tax)
@@ -733,7 +717,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         this.arc59OptInAndSendReactionPayments(wallet, rekeyBack, Application(creatorMeta.walletID), mbrAmount, tax)
       }
     } else {
-      const creatorOrigin = this.getOriginAccount(Application(creatorMeta.walletID))
+      const creatorOrigin = getOriginAccount(Application(creatorMeta.walletID))
       this.sendReactionPayments(wallet, rekeyBack, creatorOrigin, mbrAmount, tax)
     }
 
@@ -746,18 +730,16 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     this.reactionlist(reactionListKey).create()
   }
 
-  // -------------------------------------------------------------
-  // lifecycle methods ---------------------------------------------
-  // -------------------------------------------------------------
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string): void {
+  createApplication(version: string, akitaDAO: uint64, escrow: uint64): void {
     this.version.value = version
+    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAOEscrow.value = Application(escrow)
   }
 
-  // -------------------------------------------------------------
-  // content methods ---------------------------------------------
-  // -------------------------------------------------------------
+  // AKITA SOCIAL PLUGIN METHODS ------------------------------------------------------------------
 
   post(walletID: uint64, rekeyBack: boolean, cid: CID, gateID: uint64): void {
     this.createPost(Application(walletID), rekeyBack, cid, gateID, false)
@@ -772,7 +754,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     assert(post.ref.length !== 68, ERR_IS_A_REPLY)
     assert(post.ref.length !== 69, ERR_IS_ALREADY_AMENDED)
 
-    this.posts(amendment).value.ref = new DynamicBytes(post.ref + 'a' + Txn.txId)
+    this.posts(amendment).value.ref = new DynamicBytes(post.ref.bytes.concat(Bytes('a').concat(Txn.txId)))
     this.createPost(Application(walletID), rekeyBack, cid, gateID, true)
   }
 
@@ -792,9 +774,9 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     const wallet = Application(walletID)
     if (this.meta(ref.native).exists) {
       const meta = decodeArc4<MetaValue>(this.meta(ref.native).value.bytes)
-      const origin = this.getOriginAccount(wallet)
+      const origin = getOriginAccount(wallet)
       if (meta.addressGateID !== 0) {
-        assert(this.gate(new Address(origin), meta.addressGateID, args), ERR_FAILED_GATE)
+        assert(gateCheck(this.akitaDAO.value, new Address(origin), meta.addressGateID, args), ERR_FAILED_GATE)
       }
     }
 
@@ -822,12 +804,12 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     const wallet = Application(walletID)
     assert(this.posts(amendment).exists, ERR_REPLY_NOT_FOUND)
     const post = decodeArc4<PostValue>(this.posts(amendment).value.bytes)
-    const origin = this.getOriginAccount(wallet)
+    const origin = getOriginAccount(wallet)
     assert(post.creator.native === origin, ERR_NOT_YOUR_POST_TO_EDIT)
     assert(post.ref.length > 36, ERR_NOT_A_REPLY)
     assert(post.ref.length !== 101, ERR_IS_ALREADY_AMENDED)
 
-    this.posts(amendment).value.ref = new DynamicBytes(post.ref + 'a' + Txn.txId)
+    this.posts(amendment).value.ref = new DynamicBytes(post.ref.bytes.concat(Bytes('a').concat(Txn.txId)))
     const ref = bytes32(post.ref.bytes.slice(0, 32))
     this.createReply(wallet, rekeyBack, cid, ref, gateID, args, true)
   }
@@ -859,7 +841,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
   }
 
   editVote(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>, flip: boolean): void {
-    const senderAccount = this.getOriginAccount(Application(walletID))
+    const senderAccount = getOriginAccount(Application(walletID))
     const voteListKey = this.voteListKey(senderAccount, ref)
     assert(this.votelist(voteListKey).exists, ERR_HAVENT_VOTED)
 
@@ -893,10 +875,10 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     const wallet = Application(walletID)
     if (this.meta(ref.native).exists) {
       const meta = decodeArc4<MetaValue>(this.meta(ref.native).value.bytes)
-      const senderAccount = this.getOriginAccount(wallet)
+      const senderAccount = getOriginAccount(wallet)
 
       if (meta.addressGateID !== 0) {
-        assert(this.gate(new Address(senderAccount), meta.addressGateID, args), ERR_FAILED_GATE)
+        assert(gateCheck(this.akitaDAO.value, new Address(senderAccount), meta.addressGateID, args), ERR_FAILED_GATE)
       }
     }
 
@@ -915,7 +897,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   deleteReaction(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>, NFT: uint64): void {
     const wallet = Application(walletID)
-    const origin = this.getOriginAccount(wallet)
+    const origin = getOriginAccount(wallet)
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
@@ -942,25 +924,21 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     }
   }
 
-  // -------------------------------------------------------------
-  // user methods ------------------------------------------------
-  // -------------------------------------------------------------
-
   follow(walletID: uint64, rekeyBack: boolean, address: Address, args: GateArgs): void {
     const wallet = Application(walletID)
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(!this.isBlocked(address.native, origin), ERR_BLOCKED)
 
     const senderIsAutomated = this.meta(origin).value.automated
-    assert(!senderIsAutomated, ERR_AUTOMATED_ACCOUNT)
+    assert(!senderIsAutomated.native, ERR_AUTOMATED_ACCOUNT)
 
     const encodedMeta = this.meta(address.native).value.copy()
     const meta = decodeArc4<MetaValue>(encodedMeta.bytes)
 
     if (meta.followGateID !== 0) {
-      assert(this.gate(new Address(origin), meta.followGateID, args), ERR_FAILED_GATE)
+      assert(gateCheck(this.akitaDAO.value, new Address(origin), meta.followGateID, args), ERR_FAILED_GATE)
     }
 
     const followerIndex = meta.followerIndex
@@ -981,7 +959,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         sender,
         receiver: Global.currentApplicationAddress,
         amount: this.mbr(Bytes('')).follows,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       })
       .submit()
@@ -989,7 +967,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   unfollow(walletID: uint64, rekeyBack: boolean, address: Address, followerIndex: uint64): void {
     const wallet = Application(walletID)
-    const origin = this.getOriginAccount(wallet)
+    const origin = getOriginAccount(wallet)
 
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.isBanned(origin), ERR_BANNED)
@@ -1021,7 +999,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
   // instead, blocking supersedes following
   block(walletID: uint64, rekeyBack: boolean, address: Address): void {
     const wallet = Application(walletID)
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.isBanned(origin), ERR_BANNED)
 
@@ -1036,7 +1014,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         sender,
         receiver: Global.currentApplicationAddress,
         amount: this.mbr(Bytes('')).blocks,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       })
       .submit()
@@ -1044,7 +1022,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   unblock(walletID: uint64, rekeyBack: boolean, address: Address): void {
     const wallet = Application(walletID)
-    const origin = this.getOriginAccount(wallet)
+    const origin = getOriginAccount(wallet)
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.isBanned(origin), ERR_BANNED)
 
@@ -1067,13 +1045,9 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     }
   }
 
-  // -------------------------------------------------------------
-  // moderator methods -------------------------------------------
-  // -------------------------------------------------------------
-
   addModerator(walletID: uint64, rekeyBack: boolean, address: Address): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(wallet === this.akitaDAO.value, ERR_NOT_DAO)
     assert(!this.moderators(address.native).exists, ERR_ALREADY_A_MODERATOR)
@@ -1085,7 +1059,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         sender,
         receiver: Global.currentApplicationAddress,
         amount: this.mbr(Bytes('')).moderators,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       })
       .submit()
@@ -1093,7 +1067,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   removeModerator(walletID: uint64, rekeyBack: boolean, address: Address): void {
     const wallet = Application(walletID)
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(wallet === this.akitaDAO.value, ERR_NOT_DAO)
     assert(this.moderators(address.native).exists, ERR_NOT_A_MODERATOR)
@@ -1115,7 +1089,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   ban(walletID: uint64, rekeyBack: boolean, address: Address, expiration: uint64): void {
     const wallet = Application(walletID)
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
     assert(!this.banned(address.native).exists, ERR_ALREADY_BANNED)
@@ -1126,7 +1100,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         sender,
         receiver: Global.currentApplicationAddress,
         amount: this.mbr(Bytes('')).banned,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       })
       .submit()
@@ -1134,12 +1108,12 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   flagPost(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>): void {
     const wallet = Application(walletID)
-    const origin = this.getOriginAccount(wallet)
+    const origin = getOriginAccount(wallet)
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const post = this.posts(ref).value
-    assert(!post.againstContentPolicy, ERR_ALREADY_FLAGGED)
+    assert(!post.againstContentPolicy.native, ERR_ALREADY_FLAGGED)
 
     this.posts(ref).value.againstContentPolicy = new Bool(true)
 
@@ -1150,7 +1124,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   unban(walletID: uint64, rekeyBack: boolean, address: Address): void {
     const wallet = Application(walletID)
-    const origin = this.getOriginAccount(wallet)
+    const origin = getOriginAccount(wallet)
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
     this.banned(address.native).delete()
@@ -1170,7 +1144,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   addAction(walletID: uint64, rekeyBack: boolean, actionAppID: uint64, content: CID) {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(wallet === this.akitaDAO.value, ERR_NOT_DAO)
     assert(!this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
@@ -1182,7 +1156,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         sender,
         receiver: Global.currentApplicationAddress,
         amount: this.mbr(Bytes('')).actions,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       })
       .submit()
@@ -1190,7 +1164,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
 
   removeAction(walletID: uint64, rekeyBack: boolean, actionAppID: uint64) {
     const wallet = Application(walletID)
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(wallet === this.akitaDAO.value, ERR_NOT_DAO)
     assert(this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
@@ -1210,10 +1184,6 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     }
   }
 
-  // -------------------------------------------------------------
-  // meta methods ------------------------------------------------
-  // -------------------------------------------------------------
-
   initMeta(
     walletID: uint64,
     rekeyBack: boolean,
@@ -1223,7 +1193,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     akitaNFT: uint64
   ): uint64 {
     const wallet = Application(walletID)
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
 
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.meta(origin).exists, ERR_META_ALREADY_EXISTS)
@@ -1246,7 +1216,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
         AkitaSocialImpact.prototype.cacheMeta,
         {
           sender,
-          appId: super.getPluginAppList().impact,
+          appId: getPluginAppList(this.akitaDAO.value).impact,
           args: [0, 0, 0],
           fee: 0,
         }
@@ -1271,7 +1241,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
       AkitaSocialImpact.prototype.cacheMeta,
       {
         sender,
-        appId: super.getPluginAppList().impact,
+        appId: getPluginAppList(this.akitaDAO.value).impact,
         args: [subscriptionIndex, NFD, akitaNFT],
         fee: 0,
       }
@@ -1284,9 +1254,7 @@ export class AkitaSocialPlugin extends classes(Plugin, SubContractWithGate) {
     return impact + this.getSocialImpactScore(origin)
   }
 
-  // -------------------------------------------------------------
-  // read methods ------------------------------------------------
-  // -------------------------------------------------------------
+  // READ ONLY METHODS ----------------------------------------------------------------------------
 
   @abimethod({ readonly: true })
   getUserSocialImpact(user: Address): uint64 {

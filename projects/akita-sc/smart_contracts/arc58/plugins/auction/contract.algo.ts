@@ -1,5 +1,4 @@
-import { abimethod, Application, assert, Asset, Bytes, itxn, op, TemplateVar, uint64 } from "@algorandfoundation/algorand-typescript"
-import { Plugin } from "../../../utils/base-contracts/plugin"
+import { abimethod, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
 import { classes } from "polytype"
 import { Proof } from "../../../utils/types/merkles"
 import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4"
@@ -8,25 +7,29 @@ import { AssetHolding, btoi, Global } from "@algorandfoundation/algorand-typescr
 import { AuctionFactory } from "../../../auction/factory.algo"
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
 import { BaseAuction } from "../../../auction/base"
-import { ServiceFactoryContract } from "../../../utils/base-contracts/factory"
 import { Auction } from "../../../auction/contract.algo"
 import { AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee } from "../../../auction/constants"
 import { GateArgs } from "../../../utils/types/gates"
+import { AuctionPluginGlobalStateKeyFactory } from "./constants"
+import { fmbr, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { AkitaBaseContract } from "../../../utils/base-contracts/base"
 
-const auction = compileArc4(Auction)
+export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
 
-const factoryApp = TemplateVar<Application>('FACTORY_APP')
+  // GLOBAL STATE ---------------------------------------------------------------------------------
 
-export class AuctionPlugin extends classes(
-  Plugin,
-  BaseAuction,
-  ServiceFactoryContract
-) {
+  factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string): void {
+  createApplication(version: string, factory: uint64, akitaDAO: uint64): void {
     this.version.value = version
+    this.factory.value = Application(factory)
+    this.akitaDAO.value = Application(akitaDAO)
   }
+
+  // AUCTION PLUGIN METHODS -----------------------------------------------------------------------
 
   new(
     walletID: uint64,
@@ -44,24 +47,24 @@ export class AuctionPlugin extends classes(
     gateID: uint64,
     marketplace: Address,
     weightsListCount: uint64,
-  ): Application {
+  ): uint64 {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(prizeID !== 0, ERR_AUCTION_PRIZE_CANNOT_BE_ALGO)
     const senderPrizeBalance = AssetHolding.assetBalance(sender, prizeID)[0]
     assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
 
-    if (!factoryApp.address.isOptedIn(Asset(prizeID))) {
+    if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
       abiCall(
         AuctionFactory.prototype.optin,
         {
           sender,
-          appId: factoryApp,
+          appId: this.factory.value,
           args: [
             itxn.payment({
               sender,
-              receiver: factoryApp.address,
+              receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
               fee: 0,
             }),
@@ -72,16 +75,16 @@ export class AuctionPlugin extends classes(
       )
     }
 
-    if (!factoryApp.address.isOptedIn(Asset(bidAssetID))) {
+    if (!this.factory.value.address.isOptedIn(Asset(bidAssetID))) {
       abiCall(
         AuctionFactory.prototype.optin,
         {
           sender,
-          appId: factoryApp,
+          appId: this.factory.value,
           args: [
             itxn.payment({
               sender,
-              receiver: factoryApp.address,
+              receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
               fee: 0,
             }),
@@ -93,14 +96,16 @@ export class AuctionPlugin extends classes(
     }
 
     const isAlgoBid = bidAssetID === 0
-    const optinMBR = isAlgoBid
+    const optinMBR: uint64 = isAlgoBid
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const fcosts = this.fmbr()
+    const fcosts = fmbr()
     const costs = this.mbr()
 
-    const childContractMBR = (
+    const auction = compileArc4(Auction)
+
+    const childContractMBR: uint64 = (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
@@ -112,14 +117,14 @@ export class AuctionPlugin extends classes(
 
     const mbrTxn = itxn.payment({
       sender,
-      receiver: factoryApp.address,
+      receiver: this.factory.value.address,
       amount: childContractMBR,
       fee: 0,
     })
 
     const prizeTxn = itxn.assetTransfer({
       sender,
-      assetReceiver: factoryApp.address,
+      assetReceiver: this.factory.value.address,
       assetAmount: prizeAmount,
       xferAsset: Asset(prizeID),
       fee: 0,
@@ -129,7 +134,7 @@ export class AuctionPlugin extends classes(
       AuctionFactory.prototype.newAuction,
       {
         sender,
-        appId: factoryApp,
+        appId: this.factory.value,
         args: [
           mbrTxn,
           prizeTxn,
@@ -145,12 +150,12 @@ export class AuctionPlugin extends classes(
           marketplace,
           weightsListCount
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0
       }
     ).returnValue
 
-    return Application(newAuction)
+    return newAuction
   }
 
   clearWeightsBoxes(
@@ -159,17 +164,17 @@ export class AuctionPlugin extends classes(
     auctionAppID: uint64,
     iterationAmount: uint64
   ): void {
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     abiCall(
       Auction.prototype.clearWeightsBoxes,
       {
         sender,
-        appId: factoryApp,
+        appId: this.factory.value,
         args: [iterationAmount],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -182,17 +187,17 @@ export class AuctionPlugin extends classes(
     auctionAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     abiCall(
       AuctionFactory.prototype.deleteAuctionApp,
       {
         sender,
-        appId: factoryApp,
+        appId: this.factory.value,
         args: [auctionAppID],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -207,9 +212,9 @@ export class AuctionPlugin extends classes(
     marketplace: Address
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     const { bids, bidsByAddress, locations } = this.mbr()
     let mbr = bids
@@ -221,7 +226,7 @@ export class AuctionPlugin extends classes(
           sender,
           appId: auctionAppID,
           args: [new Address(sender)],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       ).returnValue
@@ -248,7 +253,7 @@ export class AuctionPlugin extends classes(
             args,
             marketplace,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -279,7 +284,7 @@ export class AuctionPlugin extends classes(
             args,
             marketplace,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -293,9 +298,9 @@ export class AuctionPlugin extends classes(
     id: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     abiCall(
       Auction.prototype.refundBid,
@@ -303,7 +308,7 @@ export class AuctionPlugin extends classes(
         sender,
         appId: auctionAppID,
         args: [id],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -315,16 +320,16 @@ export class AuctionPlugin extends classes(
     auctionAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     abiCall(
       Auction.prototype.claimPrize,
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -336,16 +341,16 @@ export class AuctionPlugin extends classes(
     auctionAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     abiCall(
       Auction.prototype.claimRafflePrize,
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -356,16 +361,16 @@ export class AuctionPlugin extends classes(
     rekeyBack: boolean,
     auctionAppID: uint64
   ): void {
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     abiCall(
       Auction.prototype.raffle,
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -378,9 +383,9 @@ export class AuctionPlugin extends classes(
     iterationAmount: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     abiCall(
       Auction.prototype.findWinner,
@@ -388,7 +393,7 @@ export class AuctionPlugin extends classes(
         sender,
         appId: auctionAppID,
         args: [iterationAmount],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -400,16 +405,16 @@ export class AuctionPlugin extends classes(
     auctionAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     abiCall(
       Auction.prototype.deleteApplication,
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -421,16 +426,16 @@ export class AuctionPlugin extends classes(
     auctionAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === factoryApp.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     abiCall(
       Auction.prototype.cancel,
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )

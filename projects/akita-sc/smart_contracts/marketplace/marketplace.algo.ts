@@ -1,31 +1,38 @@
-import { abiCall, abimethod, Address, compileArc4, decodeArc4, StaticArray } from '@algorandfoundation/algorand-typescript/arc4'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { abiCall, abimethod, Address, compileArc4, StaticArray } from '@algorandfoundation/algorand-typescript/arc4'
 import { Proof } from '../utils/types/merkles'
 import { Listing } from './listing.algo'
-import { Application, assert, assertMatch, BoxMap, Global, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, assertMatch, BoxMap, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 import { ServiceFactoryContract } from '../utils/base-contracts/factory'
-import { Royalties } from '../utils/base-contracts/royalties'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { arc4FloorData } from './types'
 import { ERR_NOT_A_LISTING, ERR_PRICE_TOO_LOW } from './errors'
 import { GateArgs } from '../utils/types/gates'
-
-const listing = compileArc4(Listing)
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { fmbr, royalties } from '../utils/functions'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
 export class Marketplace extends classes(
   ServiceFactoryContract,
-  Royalties,
-  ContractWithOptIn,
+  ContractWithOptIn
 ) {
+
+  // BOXES ----------------------------------------------------------------------------------------
 
   floors = BoxMap<string, StaticArray<arc4FloorData, 10>>({ keyPrefix: '' })
 
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string): void {
-    this.childContractVersion.value = version
+  createApplication(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+    this.version.value = version
+    this.childContractVersion.value = childVersion
+    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAOEscrow.value = Application(escrow)
   }
+
+  // MARKETPLACE METHODS --------------------------------------------------------------------------
 
   list(
     payment: gtxn.PaymentTxn,
@@ -43,14 +50,16 @@ export class Marketplace extends classes(
     assert(price >= 4, ERR_PRICE_TOO_LOW)
 
     const isAlgoPayment = paymentAsset === 0
-    const optinMBR = isAlgoPayment
+    const optinMBR: uint64 = isAlgoPayment
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const fcosts = this.fmbr()
+    const fcosts = fmbr()
 
-    const childAppMBR = AccountMinimumBalance + optinMBR
+    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
 
+    const listing = compileArc4(Listing)
+    
     // ensure they paid enough to cover the contract mint + mbr costs
     assertMatch(
       payment,
@@ -77,7 +86,7 @@ export class Marketplace extends classes(
       ERR_INVALID_PAYMENT
     )
 
-    const creatorRoyalty = this.royalties(false, assetXfer.xferAsset, name, proof)
+    const creatorRoyalty = royalties(this.akitaDAO.value, assetXfer.xferAsset, name, proof)
 
     // mint listing contract
     const listingApp = listing.call
@@ -93,6 +102,7 @@ export class Marketplace extends classes(
           creatorRoyalty,
           gateID,
           marketplace,
+          this.childContractVersion.value,
           this.akitaDAO.value.id,
         ],
         fee: 0,
@@ -267,4 +277,8 @@ export class Marketplace extends classes(
       })
       .submit()
   }
+
+  // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  // TODO: add readonly list methods
 }

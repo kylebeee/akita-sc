@@ -2,7 +2,6 @@ import {
   assert,
   assertMatch,
   BoxMap,
-  Bytes,
   Global,
   GlobalState,
   gtxn,
@@ -11,10 +10,8 @@ import {
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
-import { abiCall, Address, Bool, decodeArc4, Str, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Address, Bool, decodeArc4, Str, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { arc4Zero } from '../utils/constants'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
 import {
   arc4Claims,
   arc4DisbursementDetails,
@@ -22,7 +19,6 @@ import {
   arc4UserAllocations,
   arc4UserAllocationsKey,
   DisbursementDetails,
-  RewardsMBRData,
 } from './types'
 import {
   ERR_ALLOCATION_ALREADY_EXISTS,
@@ -42,17 +38,25 @@ import {
   ERR_INVALID_PAYMENT,
   ERR_INVALID_TRANSFER,
 } from '../utils/errors'
-import { AkitaDAO } from '../dao/dao.algo'
 import {
   allocationMBR,
   RewardsBoxPrefixDisbursements,
   RewardsBoxPrefixUserAllocations,
   RewardsGlobalStateKeyDisbursementID,
 } from './constants'
+import { BaseRewards } from './base'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { getStakingFees } from '../utils/functions'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
-export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
-  /** the disbursement */
+export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWithOptIn) {
+
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
+  /** the disbursement id cursor */
   disbursementID = GlobalState<uint64>({ key: RewardsGlobalStateKeyDisbursementID })
+
+  // BOXES ----------------------------------------------------------------------------------------
 
   /** the disbursement map of the bones token
    *
@@ -68,18 +72,19 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
    */
   userAllocations = BoxMap<arc4UserAllocationsKey, uint64>({ keyPrefix: RewardsBoxPrefixUserAllocations })
 
-  private mbr(title: string, note: string): RewardsMBRData {
-    return {
-      disbursements: 35_300 + (400 * (Bytes(title).length + Bytes(note).length)),
-      userAllocations: 25_300
-    }
-  }
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private newDisbursementID(): uint64 {
     const id = this.disbursementID.value
     this.disbursementID.value += 1
     return id
   }
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  // TODO: create application method
+
+  // REWARDS METHODS ------------------------------------------------------------------------------
 
   createDisbursement(
     mbrPayment: gtxn.PaymentTxn,
@@ -93,7 +98,8 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
 
     const costs = this.mbr(title, note)
     const mbrAmount = costs.disbursements
-    const rewardsFee = this.getStakingFees().rewardsFee
+    // TODO: clean this up and fix it
+    const rewardsFee = getStakingFees(this.akitaDAO.value).rewardsFee
 
     assertMatch(
       mbrPayment,
@@ -104,15 +110,9 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
       ERR_INVALID_PAYMENT
     )
 
-    abiCall(AkitaDAO.prototype.receivePayment, {
-      appId: this.akitaDAO.value,
-      args: [
-        itxn.payment({
-          receiver: this.akitaDAO.value.address,
-          amount: rewardsFee,
-          fee: 0,
-        })
-      ],
+    itxn.payment({
+      receiver: this.akitaDAO.value.address,
+      amount: rewardsFee,
       fee: 0,
     })
 
@@ -373,4 +373,6 @@ export class Rewards extends classes(AkitaBaseContract, ContractWithOptIn) {
       }
     }
   }
+
+  // READ ONLY METHODS ----------------------------------------------------------------------------
 }

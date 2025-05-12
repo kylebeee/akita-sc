@@ -1,6 +1,5 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, ensureBudget, Global, GlobalState, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Bool, decodeArc4, StaticArray, UintN128, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ContractWithGate } from '../utils/base-contracts/gate'
+import { abiCall, abimethod, Address, Bool, decodeArc4, interpretAsArc4, StaticArray, StaticBytes, UintN128, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { arc4BidInfo, arc4FindWinnerCursors, BidInfo, FindWinnerCursors, WeightLocation, WeightsList } from './types'
 import { AuctionBoxPrefixBids, AuctionBoxPrefixBidsByAddress, AuctionBoxPrefixLocations, AuctionBoxPrefixWeights, AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyBidID, AuctionGlobalStateKeyBidMinimumIncrease, AuctionGlobalStateKeyBidTotal, AuctionGlobalStateKeyCreatorRoyalty, AuctionGlobalStateKeyEndTimestamp, AuctionGlobalStateKeyFindWInnerCursors, AuctionGlobalStateKeyGateID, AuctionGlobalStateKeyHighestBid, AuctionGlobalStateKeyIsPrizeBox, AuctionGlobalStateKeyMarketplace, AuctionGlobalStateKeyMarketplaceRoyalties, AuctionGlobalStateKeyPrize, AuctionGlobalStateKeyPrizeClaimed, AuctionGlobalStateKeyRaffleAmount, AuctionGlobalStateKeyRafflePrizeClaimed, AuctionGlobalStateKeyRaffleWinner, AuctionGlobalStateKeyRefundCount, AuctionGlobalStateKeyRefundMBRCursor, AuctionGlobalStateKeySalt, AuctionGlobalStateKeySeller, AuctionGlobalStateKeyStartingBid, AuctionGlobalStateKeyStartTimestamp, AuctionGlobalStateKeyUniqueAddressCount, AuctionGlobalStateKeyVRFFailureCount, AuctionGlobalStateKeyWeightedBidTotal, AuctionGlobalStateKeyWeightsBoxCount, AuctionGlobalStateKeyWeightTotals, AuctionGlobalStateKeyWinningTicket, ChunkSize, MaxRefundIterationsPerGroup, SNIPE_EXTENSION, SNIPE_RANGE } from './constants'
 import { ERR_ALL_REFUNDS_COMPLETE, ERR_AUCTION_HAS_NOT_ENDED, ERR_AUCTION_NOT_LIVE, ERR_BID_ALREADY_REFUNDED, ERR_BID_NOT_FOUND, ERR_CANNOT_REFUND_MOST_RECENT_BID, ERR_MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS, ERR_MUST_BE_CALLED_FROM_FACTORY, ERR_NOT_ALL_REFUNDS_COMPLETE, ERR_NOT_APPLICABLE_TO_THIS_AUCTION, ERR_NOT_ENOUGH_TIME, ERR_PRIZE_ALREADY_CLAIMED, ERR_PRIZE_NOT_CLAIMED, ERR_RAFFLE_ALREADY_PRIZE_CLAIMED, ERR_RAFFLE_NOT_PRIZE_CLAIMED, ERR_RAFFLE_WINNER_HAS_NOT_CLAIMED, ERR_STILL_HAS_HIGHEST_BIDS_BOXES, ERR_TOO_MANY_PARTICIPANTS, ERR_WINNER_ALREADY_DRAWN, ERR_WINNER_ALREADY_FOUND, ERR_WINNER_NOT_FOUND, ERR_WINNING_NUMBER_NOT_FOUND } from './errors'
@@ -12,17 +11,17 @@ import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { AccountMinimumBalance, MAX_UINT64 } from '../utils/constants'
 import { classes } from 'polytype'
 import { BaseAuction } from './base'
-import { ContractWithArc58Send, ContractWithArc59Send, ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { GateArgs } from '../utils/types/gates'
 import { PrizeBox } from '../prize-box/contract.algo'
-
+import { AkitaBaseEscrow } from '../utils/base-contracts/base'
+import { arc58OptInAndSend, arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, impactRange } from '../utils/functions'
+import { AkitaDAOEscrowAccountAuctions } from '../dao/constants'
 
 export class Auction extends classes(
   BaseAuction,
-  ContractWithCreatorOnlyOptIn,
-  ContractWithArc58Send,
-  ContractWithArc59Send,
-  ContractWithGate
+  AkitaBaseEscrow,
+  ContractWithCreatorOnlyOptIn
 ) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
@@ -150,7 +149,7 @@ export class Auction extends classes(
       if (this.bidsByAddress(Txn.sender).exists) {
         const loc = this.bidsByAddress(Txn.sender).value
         const lastBid = this.weights(loc / ChunkSize).value[loc % ChunkSize].native
-        const difference = bidAmount - lastBid
+        const difference: uint64 = bidAmount - lastBid
         const lastWeightedTotal = this.weightTotals.value[loc / ChunkSize].native
 
         this.weightedBidTotal.value += difference
@@ -172,7 +171,7 @@ export class Auction extends classes(
   }
 
   private getBidFee(amount: uint64): uint64 {
-    const fee = this.calcPercent(amount, this.bidFee.value)
+    const fee = calcPercent(amount, this.bidFee.value)
     if (fee === 0 && this.bidFee.value > 0 && amount > 0) {
       return 1
     }
@@ -180,29 +179,26 @@ export class Auction extends classes(
   }
 
   private getAmounts(amount: uint64): RoyaltyAmounts {
-    let creatorAmount = this.calcPercent(amount, this.creatorRoyalty.value)
+    let creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
     if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
       creatorAmount = 1
     }
 
-    const {
-      auctionSalePercentageMinimum: min,
-      auctionSalePercentageMaximum: max,
-    } = this.getNFTFees()
-    const impact = this.getUserImpact(this.seller.value)
-    const akitaTaxRate = this.impactRange(impact, min, max)
+    const { auctionSalePercentageMinimum: min, auctionSalePercentageMaximum: max } = getNFTFees(this.akitaDAO.value)
+    const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
+    const akitaTaxRate = impactRange(impact, min, max)
 
-    let akitaAmount = this.calcPercent(amount, akitaTaxRate)
+    let akitaAmount = calcPercent(amount, akitaTaxRate)
     if (akitaAmount === 0 && amount > 0) {
       akitaAmount = 1
     }
 
-    let marketplaceAmount = this.calcPercent(amount, this.marketplaceRoyalties.value)
+    let marketplaceAmount = calcPercent(amount, this.marketplaceRoyalties.value)
     if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
       marketplaceAmount = 1
     }
 
-    const sellerAmount = amount - (creatorAmount + akitaAmount + (2 * marketplaceAmount))
+    const sellerAmount: uint64 = amount - (creatorAmount + akitaAmount + (2 * marketplaceAmount))
 
     return {
       creator: creatorAmount,
@@ -222,25 +218,27 @@ export class Auction extends classes(
           fee: 0,
         }
       )
-    } else {
-      const prizeAmount = op.AssetHolding.assetBalance(Global.currentApplicationAddress, this.prize.value)[0]
+      return
+    }
 
-      if (buyer.isOptedIn(Asset(this.prize.value))) {
-        itxn
-          .assetTransfer({
-            assetCloseTo: buyer,
-            xferAsset: this.prize.value,
-            fee: 0,
-          })
-          .submit()
-      } else {
-        this.arc59OptInAndSend(
-          new Address(buyer),
-          this.prize.value,
-          prizeAmount,
-          true
-        )
-      }
+    const prizeAmount = op.AssetHolding.assetBalance(Global.currentApplicationAddress, this.prize.value)[0]
+
+    if (buyer.isOptedIn(Asset(this.prize.value))) {
+      itxn
+        .assetTransfer({
+          assetCloseTo: buyer,
+          xferAsset: this.prize.value,
+          fee: 0,
+        })
+        .submit()
+    } else {
+      arc59OptInAndSend(
+        this.akitaDAO.value, 
+        new Address(buyer),
+        this.prize.value,
+        prizeAmount,
+        true
+      )
     }
   }
 
@@ -248,14 +246,12 @@ export class Auction extends classes(
     // get the royalty payment amounts
     const { creator, akita, marketplace, seller } = this.getAmounts(amount)
 
-    if (!this.isPrizeBox.value) {
-      // pay the creator
-      const creatorTxn = itxn.payment({
-        receiver: Asset(this.prize.value).creator,
-        amount: creator,
-        fee: 0,
-      })
-    }
+    // pay the creator
+    const creatorTxn = itxn.payment({
+      receiver: Asset(this.prize.value).creator,
+      amount: creator,
+      fee: 0,
+    })
 
     const akitaTxn = itxn.payment({
       receiver: this.akitaDAO.value.address,
@@ -284,6 +280,12 @@ export class Auction extends classes(
       fee: 0,
     })
 
+    if (!this.isPrizeBox.value) {
+      akitaTxn.set({ amount: (akita + creator) })
+      submitGroup(akitaTxn, listingMarketplaceTxn, buySideMarketplaceTxn, sellerTxn)
+      return
+    }
+
     submitGroup(creatorTxn, akitaTxn, listingMarketplaceTxn, buySideMarketplaceTxn, sellerTxn)
   }
 
@@ -292,18 +294,18 @@ export class Auction extends classes(
     const { creator, akita, marketplace, seller } = this.getAmounts(amount)
 
     // pay the creator
-    if (this.prize.value.creator.isOptedIn(this.bidAsset.value)) {
+    if (!this.isPrizeBox.value && Asset(this.prize.value).creator.isOptedIn(this.bidAsset.value)) {
       itxn
         .assetTransfer({
-          assetReceiver: this.prize.value.creator,
+          assetReceiver: Asset(this.prize.value).creator,
           assetAmount: creator,
           xferAsset: this.bidAsset.value,
           fee: 0,
         })
         .submit()
-    } else {
-      this.arc59OptInAndSend(
-        new Address(this.prize.value.creator),
+    } else if (!this.isPrizeBox.value) {
+      arc59OptInAndSend(this.akitaDAO.value, 
+        new Address(Asset(this.prize.value).creator),
         this.bidAsset.value.id,
         creator,
         false
@@ -311,22 +313,20 @@ export class Auction extends classes(
     }
 
     // pay akita
-    if (this.akitaDAO.value.address.isOptedIn(this.bidAsset.value)) {
+    if (this.akitaDAOEscrow.value.address.isOptedIn(this.bidAsset.value)) {
       itxn
         .assetTransfer({
           assetReceiver: this.akitaDAO.value.address,
-          assetAmount: akita,
+          assetAmount: !this.isPrizeBox.value ? akita : (akita + creator),
           xferAsset: this.bidAsset.value,
           fee: 0,
         })
         .submit()
     } else {
-      this.arc58OptInAndSend(
-        this.akitaDAO.value.id,
-        {
-          asset: this.bidAsset.value,
-          amount: akita,
-        }
+      this.optAkitaEscrowInAndSend(
+        AkitaDAOEscrowAccountAuctions,
+        this.bidAsset.value,
+        !this.isPrizeBox.value ? akita : (akita + creator)
       )
     }
 
@@ -341,7 +341,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(this.akitaDAO.value, 
         new Address(this.marketplace.value),
         this.bidAsset.value.id,
         marketplace,
@@ -360,7 +360,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(this.akitaDAO.value, 
         new Address(buySideMarketplace),
         this.bidAsset.value.id,
         marketplace,
@@ -379,7 +379,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(this.akitaDAO.value, 
         new Address(this.seller.value),
         this.bidAsset.value.id,
         seller,
@@ -391,7 +391,7 @@ export class Auction extends classes(
   private getWinnerWeightBoxInfo(): [uint64, uint64] {
     let { startingIndex, currentRangeStart } = decodeArc4<FindWinnerCursors>(this.findWinnerCursors.value.bytes)
 
-    for (let i = 0; i < this.weightsBoxCount.value; i += 1) {
+    for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
       const boxStake = this.weightTotals.value[i].native
       if (this.winningTicket.value < currentRangeStart + boxStake) {
         return [startingIndex, currentRangeStart]
@@ -406,6 +406,7 @@ export class Auction extends classes(
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
+  @abimethod({ onCreate: 'require' })
   createApplication(
     prize: uint64,
     isPrizeBox: boolean,
@@ -419,10 +420,12 @@ export class Auction extends classes(
     creatorRoyalty: uint64,
     gateID: uint64,
     marketplace: Address,
-    akitaDAO: uint64
+    version: string,
+    akitaDAO: uint64,
+    escrow: uint64
   ) {
     assert(Global.callerApplicationId !== 0, ERR_MUST_BE_CALLED_FROM_FACTORY)
-    
+
     this.prize.value = prize
     this.isPrizeBox.value = isPrizeBox
     this.prizeClaimed.value = false
@@ -438,7 +441,9 @@ export class Auction extends classes(
     this.gateID.value = gateID
     this.marketplace.value = marketplace.native
     assert(Application(akitaDAO).approvalProgram.length > 0, ERR_INVALID_APP)
+    this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAOEscrow.value = Application(escrow)
 
     // internal variables
     this.vrfFailureCount.value = 0
@@ -455,7 +460,7 @@ export class Auction extends classes(
     this.winningTicket.value = 0
     this.raffleWinner.value = Global.zeroAddress
     this.salt.value = Txn.txId
-    this.marketplaceRoyalties.value = this.getNFTFees().auctionComposablePercentage
+    this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).auctionComposablePercentage
   }
 
   init(payment: gtxn.PaymentTxn, weightListLength: uint64) {
@@ -464,11 +469,11 @@ export class Auction extends classes(
     assert(weightListLength >= 3, ERR_MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS)
 
     const isAlgoBid = this.bidAsset.value.id === 0
-    const optinMBR = isAlgoBid
+    const optinMBR: uint64 = isAlgoBid
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const childAppMBR = AccountMinimumBalance + optinMBR + (weightListLength * this.mbr().weights)
+    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightListLength * this.mbr().weights)
 
     assertMatch(
       payment,
@@ -525,7 +530,7 @@ export class Auction extends classes(
 
   bid(payment: gtxn.PaymentTxn, args: GateArgs, marketplace: Address): void {
     assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
-    assert(this.gate(new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
 
     const id = this.newBidID()
 
@@ -563,7 +568,7 @@ export class Auction extends classes(
 
   bidAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, args: GateArgs, marketplace: Address): void {
     assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
-    assert(this.gate(new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
 
     const id = this.newBidID()
 
@@ -625,7 +630,7 @@ export class Auction extends classes(
 
     const bidFee = this.getBidFee(bid.amount)
 
-    const returnAmount = bid.amount - bidFee
+    const returnAmount: uint64 = bid.amount - bidFee
 
     if (this.bidAsset.value.id === 0) {
       // return the bidders funds
@@ -647,14 +652,14 @@ export class Auction extends classes(
   }
 
   raffle(): void {
-    const roundToUse = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
+    const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
     assert(Global.round >= roundToUse + 8, ERR_NOT_ENOUGH_TIME)
     assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
 
     const seed = abiCall(
       RandomnessBeacon.prototype.get,
       {
-        appId: super.getOtherAppList().vrfBeacon,
+        appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
         args: [roundToUse, this.salt.value],
         fee: 0,
       }
@@ -688,13 +693,13 @@ export class Auction extends classes(
 
     const startingIndex = winningBoxInfo[0]
     let currentRangeStart = winningBoxInfo[1]
-    let currentRangeEnd = 0
+    let currentRangeEnd: uint64 = 0
 
     /**
      * minus 2 because the auction winner is not participating in the raffle
      * and to account for index 0 being the starting bid
      */
-    const remainder = (this.uniqueAddressCount.value - 2) - startingIndex
+    const remainder: uint64 = (this.uniqueAddressCount.value - 2) - startingIndex
     iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
 
     const weight = this.weights(startingIndex / ChunkSize).value
@@ -730,13 +735,13 @@ export class Auction extends classes(
     assert(this.bidID.value !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
 
     const startingIndex = this.refundMBRCursor.value
-    const remainder = this.bidID.value - this.refundMBRCursor.value
+    const remainder: uint64 = this.bidID.value - this.refundMBRCursor.value
     iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
 
     ensureBudget((iterationAmount * 60))
 
     const { bids, bidsByAddress, locations } = this.mbr()
-    const totalMBR = bids + bidsByAddress + locations
+    const totalMBR: uint64 = bids + bidsByAddress + locations
 
     for (let i = startingIndex; i < iterationAmount; i += 1) {
 
@@ -809,7 +814,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(this.akitaDAO.value, 
         new Address(this.raffleWinner.value),
         this.bidAsset.value.id,
         this.raffleAmount.value,
@@ -828,13 +833,13 @@ export class Auction extends classes(
     ensureBudget((iterationAmount * 30))
 
     for (let i: uint64 = 0; i < iterationAmount; i += 1) {
-      const ri = (this.weightsBoxCount.value - 1) - i
+      const ri: uint64 = (this.weightsBoxCount.value - 1) - i
       this.weights(ri).delete()
     }
 
     this.weightsBoxCount.value -= iterationAmount
 
-    const returnAmount = iterationAmount * this.mbr().weights
+    const returnAmount: uint64 = iterationAmount * this.mbr().weights
 
     itxn
       .payment({

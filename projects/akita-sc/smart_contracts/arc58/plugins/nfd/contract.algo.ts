@@ -1,16 +1,20 @@
-import { Application, assert, bytes, Bytes, Global, GlobalState, itxn, op, TemplateVar, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, bytes, Bytes, GlobalState, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
 import { NFD } from '../../../utils/types/nfd'
-import { abiCall, Address, DynamicArray, DynamicBytes } from '@algorandfoundation/algorand-typescript/arc4'
-import { Plugin } from '../../../utils/base-contracts/plugin'
-import { NFDGlobalStateKeysName } from '../impact/constants'
+import { abiCall, abimethod, Address, Contract, DynamicArray, DynamicBytes } from '@algorandfoundation/algorand-typescript/arc4'
+import { NFDGlobalStateKeysName } from '../../../impact/constants'
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_NOT_AN_NFD } from './errors'
-import { NFDGlobalStateKeySaleAmountKey } from './constants'
+import { NFDGlobalStateKeySaleAmountKey, NFDPluginGlobalStateKeyRegistry } from './constants'
+import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 
-const nfdRegistry = TemplateVar<Application>('nfdRegistry')
+export class NFDPlugin extends Contract {
 
-export class NFDPlugin extends Plugin {
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
+  registry = GlobalState<Application>({ key: NFDPluginGlobalStateKeyRegistry })
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private isNFD(NFDApp: Application): boolean {
     const [nfdNameBytes] = op.AppGlobal.getExBytes(NFDApp, Bytes(NFDGlobalStateKeysName))
@@ -18,12 +22,21 @@ export class NFDPlugin extends Plugin {
     return abiCall(
       NFDRegistry.prototype.isValidNfdAppId,
       {
-        appId: nfdRegistry,
+        appId: this.registry.value,
         args: [String(nfdNameBytes), NFDApp.id],
         fee: 0,
       }
     ).returnValue
   }
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  @abimethod({ onCreate: 'require' })
+  createApplication(registry: uint64) {
+    this.registry.value = Application(registry)
+  }
+
+  // X METHODS ------------------------------------------------------------------------------
 
   deleteFields(
     walletID: uint64,
@@ -32,7 +45,7 @@ export class NFDPlugin extends Plugin {
     fieldNames: DynamicArray<DynamicBytes>
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -42,7 +55,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [fieldNames],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       },
     )
@@ -55,7 +68,7 @@ export class NFDPlugin extends Plugin {
     fieldAndVals: DynamicArray<DynamicBytes>
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -65,7 +78,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [fieldAndVals],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -79,7 +92,7 @@ export class NFDPlugin extends Plugin {
     reservedFor: Address
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -89,7 +102,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [sellAmount, reservedFor],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -101,7 +114,7 @@ export class NFDPlugin extends Plugin {
     nfdAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -111,7 +124,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -125,7 +138,7 @@ export class NFDPlugin extends Plugin {
     note: string
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -135,7 +148,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [offer, note],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -147,7 +160,7 @@ export class NFDPlugin extends Plugin {
     nfdAppID: uint64,
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -167,7 +180,7 @@ export class NFDPlugin extends Plugin {
             fee: 0,
           }),
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -180,7 +193,7 @@ export class NFDPlugin extends Plugin {
     hash: bytes
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -190,7 +203,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [hash],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -203,7 +216,7 @@ export class NFDPlugin extends Plugin {
     lock: boolean
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -213,7 +226,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [lock],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -227,7 +240,7 @@ export class NFDPlugin extends Plugin {
     usdPrice: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -237,7 +250,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [lock, usdPrice],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -250,7 +263,7 @@ export class NFDPlugin extends Plugin {
     lock: boolean
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -260,7 +273,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [lock],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -273,7 +286,7 @@ export class NFDPlugin extends Plugin {
     assets: uint64[]
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -283,7 +296,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [assets],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -300,7 +313,7 @@ export class NFDPlugin extends Plugin {
     otherAssets: uint64[]
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -310,7 +323,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [amount, receiver, note, asset, otherAssets],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -323,7 +336,7 @@ export class NFDPlugin extends Plugin {
     years: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -350,7 +363,7 @@ export class NFDPlugin extends Plugin {
             fee: 0,
           })
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -364,7 +377,7 @@ export class NFDPlugin extends Plugin {
     address: Address
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(this.isNFD(Application(nfdAppID)), ERR_NOT_AN_NFD)
 
@@ -374,7 +387,7 @@ export class NFDPlugin extends Plugin {
         sender,
         appId: nfdAppID,
         args: [fieldName, address],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )

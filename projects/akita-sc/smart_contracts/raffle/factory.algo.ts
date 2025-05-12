@@ -11,17 +11,22 @@ import {
 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 import { abiCall, Address, compileArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { arc4AppCreatorValue, ServiceFactoryContract } from '../utils/base-contracts/factory'
 import { Raffle } from './contract.algo'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
 import { PrizeBox } from '../prize-box/contract.algo'
 import { BaseRaffle } from './base'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
+import { fmbr, getPrizeBoxOwner } from '../utils/functions'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
 
-const raffle = compileArc4(Raffle)
+export class RaffleFactory extends classes(
+  BaseRaffle,
+  ServiceFactoryContract,
+  ContractWithOptIn
+) {
 
-export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithOptIn, BaseRaffle) {
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private createChildApp(
     isPrizeBox: boolean,
@@ -36,16 +41,20 @@ export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithO
     marketplace: Address,
     weightsListCount: uint64
   ): Application {
+
     const isAlgoTicket = ticketAsset === 0
-    const optinMBR = isAlgoTicket
+    const optinMBR: uint64 = isAlgoTicket
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const fcosts = this.fmbr()
+    const fcosts = fmbr()
     const costs = this.mbr()
 
-    const childAppMBR = AccountMinimumBalance + optinMBR + (weightsListCount * costs.weights)
-    const totalMBR = (
+    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightsListCount * costs.weights)
+
+    const raffle = compileArc4(Raffle)
+
+    const totalMBR: uint64 = (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
@@ -118,10 +127,17 @@ export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithO
     return raffleApp
   }
 
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+  
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string): void {
-    this.childContractVersion.value = version
+  createApplication(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+    this.version.value = version
+    this.childContractVersion.value = childVersion
+    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAOEscrow.value = Application(escrow)
   }
+
+  // RAFFLE FACTORY METHODS -----------------------------------------------------------------------
 
   newRaffle(
     payment: gtxn.PaymentTxn,
@@ -159,6 +175,8 @@ export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithO
       marketplace,
       weightsListCount
     )
+
+    const raffle = compileArc4(Raffle)
 
     // optin child contract to asset (we can use the AuctionBase)
     raffle.call.optin({
@@ -200,7 +218,7 @@ export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithO
     weightsListCount: uint64
   ): uint64 {
 
-    assert(super.getPrizeBoxOwner(Application(prizeBoxID)) === Global.currentApplicationAddress, ERR_NOT_PRIZE_BOX_OWNER)
+    assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === Global.currentApplicationAddress, ERR_NOT_PRIZE_BOX_OWNER)
 
     const raffleApp = this.createChildApp(
       true,
@@ -227,6 +245,8 @@ export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithO
 
   deleteRaffle(raffleAppID: uint64): void {
 
+    const raffle = compileArc4(Raffle)
+
     raffle.call.deleteApplication({ appId: raffleAppID, fee: 0 })
 
     const { amount, creatorAddress } = this.getAppCreator(raffleAppID)
@@ -240,4 +260,8 @@ export class RaffleFactory extends classes(ServiceFactoryContract, ContractWithO
       })
       .submit()
   }
+
+  // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  // TODO: implement readonly listing methods
 }

@@ -1,6 +1,3 @@
-import { classes } from 'polytype'
-import { ContractWithArc58Send, ContractWithArc59Send, ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
-import { ContractWithGate } from '../utils/base-contracts/gate'
 import { Account, Application, assert, assertMatch, Asset, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { ListingGlobalStateKeyCreatorRoyalty, ListingGlobalStateKeyExpiration, ListingGlobalStateKeyGateID, ListingGlobalStateKeyIsPrizeBox, ListingGlobalStateKeyMarketplace, ListingGlobalStateKeyMarketplaceRoyalties, ListingGlobalStateKeyPaymentAsset, ListingGlobalStateKeyPrice, ListingGlobalStateKeyPrize, ListingGlobalStateKeyReservedFor, ListingGlobalStateKeySeller } from './constants'
@@ -9,13 +6,12 @@ import { PrizeBox } from '../prize-box/contract.algo'
 import { ERR_INVALID_EXPIRATION, ERR_LISTING_EXPIRED, ERR_MUST_BE_CALLED_FROM_FACTORY, ERR_MUST_BE_SELLER, ERR_ONLY_SELLER_CAN_DELIST, ERR_PAYMENT_ASSET_MUST_BE_ALGO, ERR_PAYMENT_ASSET_MUST_NOT_BE_ALGO, ERR_RESERVED_FOR_DIFFERENT_ADDRESS } from './errors'
 import { GateArgs } from '../utils/types/gates'
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getUserImpact, impactRange } from '../utils/functions'
+import { classes } from 'polytype'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
-export class Listing extends classes(
-  ContractWithCreatorOnlyOptIn,
-  ContractWithArc58Send,
-  ContractWithArc59Send,
-  ContractWithGate
-) {
+export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -51,12 +47,10 @@ export class Listing extends classes(
   /** the amount the marketplaces will get for the sale */
   marketplaceRoyalties = GlobalState<uint64>({ key: ListingGlobalStateKeyMarketplaceRoyalties })
 
-
-
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private getAmounts(amount: uint64): RoyaltyAmounts {
-    let creatorAmount = this.calcPercent(amount, this.creatorRoyalty.value)
+    let creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
     if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
       creatorAmount = 1
     }
@@ -64,21 +58,21 @@ export class Listing extends classes(
     const {
       marketplaceSalePercentageMinimum: min,
       marketplaceSalePercentageMaximum: max,
-    } = this.getNFTFees()
-    const impact = this.getUserImpact(this.seller.value)
-    const akitaTaxRate = this.impactRange(impact, min, max)
+    } = getNFTFees(this.akitaDAO.value)
+    const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
+    const akitaTaxRate = impactRange(impact, min, max)
 
-    let akitaAmount = this.calcPercent(amount, akitaTaxRate)
+    let akitaAmount = calcPercent(amount, akitaTaxRate)
     if (akitaAmount === 0 && amount > 0) {
       akitaAmount = 1
     }
 
-    let marketplaceAmount = this.calcPercent(amount, this.marketplaceRoyalties.value)
+    let marketplaceAmount = calcPercent(amount, this.marketplaceRoyalties.value)
     if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
       marketplaceAmount = 1
     }
 
-    const sellerAmount = amount - (creatorAmount + akitaAmount + (2 * marketplaceAmount))
+    const sellerAmount: uint64 = amount - (creatorAmount + akitaAmount + (2 * marketplaceAmount))
 
     return {
       creator: creatorAmount,
@@ -111,7 +105,8 @@ export class Listing extends classes(
         fee: 0,
       })
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(
+        this.akitaDAO.value,
         new Address(buyer),
         prizeAsset.id,
         prizeAsset.balance(Global.currentApplicationAddress),
@@ -150,7 +145,7 @@ export class Listing extends classes(
     const sellerPay = itxn.payment({
       amount: amounts.seller,
       fee: 0,
-      note: assetPrize.name + ' Sold',
+      note: String(assetPrize.name) + ' Sold',
     })
 
     itxn.submitGroup(creatorPay, marketplacePay, buyingMarketplacePay, sellerPay)
@@ -172,7 +167,8 @@ export class Listing extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(
+        this.akitaDAO.value,
         new Address(assetPrize.creator),
         this.paymentAsset.value.id,
         amounts.creator,
@@ -191,7 +187,8 @@ export class Listing extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(
+        this.akitaDAO.value,
         new Address(this.marketplace.value),
         this.paymentAsset.value.id,
         amounts.marketplace,
@@ -210,7 +207,8 @@ export class Listing extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(
+        this.akitaDAO.value,
         marketplace,
         this.paymentAsset.value.id,
         amounts.marketplace,
@@ -228,7 +226,8 @@ export class Listing extends classes(
         })
         .submit()
     } else {
-      this.arc59OptInAndSend(
+      arc59OptInAndSend(
+        this.akitaDAO.value,
         new Address(this.seller.value),
         this.paymentAsset.value.id,
         amounts.seller,
@@ -239,20 +238,7 @@ export class Listing extends classes(
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
-  /**
-   * create the listing application
-   * @param {AppID} akitaDaoAppID the app ID of the Akita DAO
-   * @param {uint64} asset the asa ID that is to be sold
-   * @param {Address} seller the wallet of the account selling the asset
-   * @param {uint64} price the price the asset should be sold for
-   * @param {uint64} paymentAsset the asset to use for payment
-   * @param {uint64} creatorRoyalty the royalty % for the asset creator
-   * @param {uint64} marketplace the wallet that the listing fee should go to
-   * @param {uint64} expirationRound the round the listing expires on
-   * @param {Address} reservedFor the address thats allowed to purchase
-   * @param {uint64} gateID the gate ID to use to check if the user is qualified to buy
-   * @throws {Error} - if the caller is not the factory
-   */
+  /** create the listing application */
   createApplication(
     prize: uint64,
     isPrizeBox: boolean,
@@ -264,6 +250,7 @@ export class Listing extends classes(
     creatorRoyalty: uint64,
     gateID: uint64,
     marketplace: Address,
+    version: string,
     akitaDAO: uint64
   ): void {
     assert(Global.callerApplicationId !== 0, ERR_MUST_BE_CALLED_FROM_FACTORY)
@@ -279,10 +266,11 @@ export class Listing extends classes(
     this.creatorRoyalty.value = creatorRoyalty
     this.gateID.value = gateID
     this.marketplace.value = marketplace.native
+    this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
 
     // internal variables
-    this.marketplaceRoyalties.value = this.getNFTFees().marketplaceComposablePercentage
+    this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).marketplaceComposablePercentage
   }
 
   /**
@@ -306,7 +294,7 @@ export class Listing extends classes(
     assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
     assert(this.paymentAsset.value.id === 0, ERR_PAYMENT_ASSET_MUST_BE_ALGO)
     assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
-    assert(this.gate(buyer, this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, buyer, this.gateID.value, args), ERR_FAILED_GATE)
 
     if (this.reservedFor.value.native !== Global.zeroAddress) {
       assert(buyer === this.reservedFor.value, ERR_RESERVED_FOR_DIFFERENT_ADDRESS)
@@ -344,7 +332,7 @@ export class Listing extends classes(
     assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
     assert(this.paymentAsset.value.id !== 0, ERR_PAYMENT_ASSET_MUST_NOT_BE_ALGO)
     assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
-    assert(this.gate(buyer, this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(this.akitaDAO.value, buyer, this.gateID.value, args), ERR_FAILED_GATE)
 
     if (this.reservedFor.value.native !== Global.zeroAddress) {
       assert(buyer === this.reservedFor.value, ERR_RESERVED_FOR_DIFFERENT_ADDRESS)

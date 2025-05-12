@@ -1,7 +1,5 @@
-import { Application, assert, Asset, Global, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Account, Application, assert, Asset, Global, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
 import { ServiceFactoryContract } from "../../../utils/base-contracts/factory"
-import { ContractWithArc58Send } from "../../../utils/base-contracts/optin"
-import { Plugin } from "../../../utils/base-contracts/plugin"
 import { classes } from 'polytype'
 import { AbstractedAccount } from "../../account/contract.algo"
 import { abiCall, Address, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4"
@@ -9,13 +7,11 @@ import { BaseHyperSwap } from "../../../hyper-swap/base"
 import { HyperSwap } from "../../../hyper-swap/contract.algo"
 import { Proof } from "../../../utils/types/merkles"
 import { AssetInbox } from "../../../utils/types/asset-inbox"
+import { arc58OptInAndSend, getAccounts, getAkitaAppList, getOtherAppList, getPluginAppList, getSpendingAccount, getSwapFees, getUserImpact, impactRange, rekeyAddress } from "../../../utils/functions"
 
-export class HyperSwapPlugin extends classes(
-  BaseHyperSwap,
-  Plugin,
-  ServiceFactoryContract,
-  ContractWithArc58Send
-) {
+export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContract) {
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private canCallArc58OptIn(walletAppID: Application): boolean {
     return abiCall(
@@ -23,7 +19,7 @@ export class HyperSwapPlugin extends classes(
       {
         appId: walletAppID,
         args: [
-          super.getPluginAppList().optin,
+          getPluginAppList(this.akitaDAO.value).optin,
           new Address(Global.currentApplicationAddress),
           new StaticBytes<4>(op.bzero(4))
         ],
@@ -31,6 +27,14 @@ export class HyperSwapPlugin extends classes(
       }
     ).returnValue
   }
+
+  private getOfferFee(address: Account): uint64 {
+    const impact = getUserImpact(this.akitaDAO.value, address)
+    const { HyperSwapImpactTaxMin, HyperSwapImpactTaxMax } = getSwapFees(this.akitaDAO.value)
+    return impactRange(impact, HyperSwapImpactTaxMin, HyperSwapImpactTaxMax)
+  }
+
+  // HYPER SWAP PLUGIN METHODS --------------------------------------------------------------------
 
   offer(
     walletID: uint64,
@@ -42,13 +46,13 @@ export class HyperSwapPlugin extends classes(
     expiration: uint64
   ) {
     const wallet = Application(walletID)
-    const { origin, sender } = this.getAccounts(wallet)
+    const { origin, sender } = getAccounts(wallet)
 
     const costs = this.mbr()
     const metaMerklesCost: uint64 = costs.mm.root + costs.mm.data
     const hyperSwapOfferMBRAmount: uint64 = costs.offers + costs.participants + (metaMerklesCost * 2)
     const offerFee = this.getOfferFee(origin)
-    const hyperSwapApp = Application(super.getAkitaAppList().hyperSwap)
+    const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
 
     abiCall(
       HyperSwap.prototype.offer,
@@ -68,7 +72,7 @@ export class HyperSwapPlugin extends classes(
           participantLeaves,
           expiration,
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -81,9 +85,9 @@ export class HyperSwapPlugin extends classes(
     proof: Proof
   ) {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    const hyperSwapApp = Application(super.getAkitaAppList().hyperSwap)
+    const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
 
     abiCall(
       HyperSwap.prototype.accept,
@@ -100,7 +104,7 @@ export class HyperSwapPlugin extends classes(
           id,
           proof,
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0
       }
     )
@@ -115,9 +119,9 @@ export class HyperSwapPlugin extends classes(
     proof: Proof
   ) {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    const hyperSwapApp = Application(super.getAkitaAppList().hyperSwap)
+    const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
 
     abiCall(
       HyperSwap.prototype.escrow,
@@ -136,7 +140,7 @@ export class HyperSwapPlugin extends classes(
           amount,
           proof,
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -152,12 +156,12 @@ export class HyperSwapPlugin extends classes(
     proof: Proof
   ) {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     let mbrAmount = this.mbr().hashes
 
     if (!receiver.native.isOptedIn(Asset(asset))) {
-      const assetInbox = super.getOtherAppList().assetInbox
+      const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
       const canCallData = abiCall(
         AssetInbox.prototype.arc59_getSendAssetInfo,
         {
@@ -175,7 +179,7 @@ export class HyperSwapPlugin extends classes(
       }
     }
 
-    const hyperSwapApp = Application(super.getAkitaAppList().hyperSwap)
+    const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
 
     if (!hyperSwapApp.address.isOptedIn(Asset(asset))) {
       mbrAmount += Global.assetOptInMinBalance
@@ -206,7 +210,7 @@ export class HyperSwapPlugin extends classes(
           amount,
           proof,
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -222,7 +226,7 @@ export class HyperSwapPlugin extends classes(
     amount: uint64
   ) {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     // if we can and need to opt the receiver in ahead of time
     if (receiverAppID !== 0) {
@@ -231,7 +235,8 @@ export class HyperSwapPlugin extends classes(
       if (!receiverApp.address.isOptedIn(Asset(asset))) {
         const canCallArc58OptIn = this.canCallArc58OptIn(receiverApp)
         if (canCallArc58OptIn) {
-          this.arc58OptInAndSend(
+          arc58OptInAndSend(
+            this.akitaDAO.value,
             receiverAppID,
             { asset: Asset(asset), amount: 0 }
           )
@@ -243,14 +248,14 @@ export class HyperSwapPlugin extends classes(
       HyperSwap.prototype.disburse,
       {
         sender,
-        appId: Application(super.getAkitaAppList().hyperSwap),
+        appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
         args: [
           id,
           receiver,
           asset,
           amount,
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -263,15 +268,15 @@ export class HyperSwapPlugin extends classes(
     proof: Proof
   ) {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     abiCall(
       HyperSwap.prototype.cancel,
       {
         sender,
-        appId: Application(super.getAkitaAppList().hyperSwap),
+        appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
         args: [id, proof],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )

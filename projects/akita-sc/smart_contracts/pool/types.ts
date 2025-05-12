@@ -2,8 +2,8 @@ import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Address, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { StakingType } from '../staking/types'
 import { arc4RootKey, RootKey } from '../meta-merkles/types'
-import { GateArgs } from '../../utils/types/gates'
-import { Proof } from '../../utils/types/merkles'
+import { Proof } from '../utils/types/merkles'
+import { GateArgs } from '../utils/types/gates'
 
 export type DistributionType = UintN8
 

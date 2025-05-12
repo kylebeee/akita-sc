@@ -1,27 +1,33 @@
 import { Marketplace } from '../../../marketplace/marketplace.algo'
 import { Listing } from '../../../marketplace/listing.algo'
-import { classes } from 'polytype'
-import { Plugin } from '../../../utils/base-contracts/plugin'
-import { ServiceFactoryContract } from '../../../utils/base-contracts/factory'
-import { ContractWithArc58Send } from '../../../utils/base-contracts/optin'
-import { Application, assert, Asset, Bytes, itxn, op, TemplateVar, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Proof } from '../../../utils/types/merkles'
 import { ERR_LISTING_CREATOR_NOT_MARKETPLACE, ERR_NOT_ENOUGH_ASSET } from './errors'
 import { AssetHolding, Global } from '@algorandfoundation/algorand-typescript/op'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../../../utils/constants'
 import { ListingGlobalStateKeyPaymentAsset, ListingGlobalStateKeyPrice } from '../../../marketplace/constants'
 import { GateArgs } from '../../../utils/types/gates'
+import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import { MarketplacePluginGlobalStateKeyFactory } from './constants'
 
-const listing = compileArc4(Listing)
+export class MarketplacePlugin extends AkitaBaseContract {
 
-const factoryApp = TemplateVar<Application>('FACTORY_APP')
+  // GLOBAL STATE ---------------------------------------------------------------------------------
 
-export class MarketplacePlugin extends classes(
-  Plugin,
-  ServiceFactoryContract,
-  ContractWithArc58Send
-) {
+  factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  @abimethod({ onCreate: 'require' })
+  createApplication(version: string, factory: uint64, akitaDAO: uint64): void {
+    this.version.value = version
+    this.factory.value = Application(factory)
+    this.akitaDAO.value = Application(akitaDAO)
+  }
+
+  // MARKETPLACE PLUGIN METHODS -------------------------------------------------------------------
 
   list(
     walletID: uint64,
@@ -38,20 +44,20 @@ export class MarketplacePlugin extends classes(
     proof: Proof,
   ): uint64 {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
     assert(AssetHolding.assetBalance(sender, asset)[0] >= assetAmount, ERR_NOT_ENOUGH_ASSET)
 
-    if (!factoryApp.address.isOptedIn(Asset(asset))) {
+    if (!this.factory.value.address.isOptedIn(Asset(asset))) {
       abiCall(
         Marketplace.prototype.optin,
         {
           sender,
-          appId: factoryApp,
+          appId: this.factory.value,
           args: [
             itxn.payment({
               sender,
-              receiver: factoryApp.address,
+              receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
               fee: 0,
             }),
@@ -62,16 +68,16 @@ export class MarketplacePlugin extends classes(
       )
     }
 
-    if (!factoryApp.address.isOptedIn(Asset(paymentAsset))) {
+    if (!this.factory.value.address.isOptedIn(Asset(paymentAsset))) {
       abiCall(
         Marketplace.prototype.optin,
         {
           sender,
-          appId: factoryApp,
+          appId: this.factory.value,
           args: [
             itxn.payment({
               sender,
-              receiver: factoryApp.address,
+              receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
               fee: 0,
             }),
@@ -83,6 +89,8 @@ export class MarketplacePlugin extends classes(
     }
 
     const optinMBR = paymentAsset === 0 ? Global.assetOptInMinBalance : Global.assetOptInMinBalance * 2
+
+    const listing = compileArc4(Listing)
 
     const childContractMBR = (
       MIN_PROGRAM_PAGES +
@@ -96,17 +104,17 @@ export class MarketplacePlugin extends classes(
       Marketplace.prototype.list,
       {
         sender,
-        appId: factoryApp,
+        appId: this.factory.value,
         args: [
           itxn.payment({
             sender,
-            receiver: factoryApp.address,
+            receiver: this.factory.value.address,
             amount: childContractMBR,
             fee: 0,
           }),
           itxn.assetTransfer({
             sender,
-            assetReceiver: factoryApp.address,
+            assetReceiver: this.factory.value.address,
             assetAmount: assetAmount,
             xferAsset: asset,
             fee: 0,
@@ -120,7 +128,7 @@ export class MarketplacePlugin extends classes(
           name,
           proof,
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     ).returnValue
@@ -134,9 +142,9 @@ export class MarketplacePlugin extends classes(
     args: GateArgs
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(listingID).creator === factoryApp.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
+    assert(Application(listingID).creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
 
     const price = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyPrice))[0]
     const paymentAsset = Asset(op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyPaymentAsset))[0])
@@ -146,11 +154,11 @@ export class MarketplacePlugin extends classes(
         Marketplace.prototype.purchase,
         {
           sender,
-          appId: factoryApp,
+          appId: this.factory.value,
           args: [
             itxn.payment({
               sender,
-              receiver: factoryApp.address,
+              receiver: this.factory.value.address,
               amount: price,
               fee: 0,
             }),
@@ -158,7 +166,7 @@ export class MarketplacePlugin extends classes(
             marketplace,
             args,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -167,11 +175,11 @@ export class MarketplacePlugin extends classes(
         Marketplace.prototype.purchaseAsa,
         {
           sender,
-          appId: factoryApp,
+          appId: this.factory.value,
           args: [
             itxn.assetTransfer({
               sender,
-              assetReceiver: factoryApp.address,
+              assetReceiver: this.factory.value.address,
               assetAmount: price,
               xferAsset: paymentAsset,
               fee: 0,
@@ -180,7 +188,7 @@ export class MarketplacePlugin extends classes(
             marketplace,
             args,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -194,9 +202,9 @@ export class MarketplacePlugin extends classes(
     price: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(listingID).creator === factoryApp.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
+    assert(Application(listingID).creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
 
     abiCall(
       Listing.prototype.changePrice,
@@ -204,7 +212,7 @@ export class MarketplacePlugin extends classes(
         sender,
         appId: listingID,
         args: [price],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -216,16 +224,16 @@ export class MarketplacePlugin extends classes(
     listingID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(listingID).creator === factoryApp.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
+    assert(Application(listingID).creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
 
     abiCall(
       Listing.prototype.delist,
       {
         appId: listingID,
         args: [new Address(sender)],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )

@@ -14,7 +14,6 @@ import {
 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, Bool, decodeArc4, DynamicArray, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { ContractWithGate } from '../utils/base-contracts/gate'
 import { Staking } from '../staking/contract.algo'
 import { Rewards } from '../rewards/contract.algo'
 import { MetaMerkles } from '../meta-merkles/contract.algo'
@@ -91,17 +90,21 @@ import { classes } from 'polytype'
 import { Gate } from '../gates/contract.algo'
 import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
-// import { MERKLE_TREE_TYPE_ASSET } from '../meta_merkles/constants'
 import { MAX_UINT64 } from '../utils/constants'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import { calcPercent, gateCheck, getAkitaAppList, getOtherAppList, getStakingFees, percentageOf } from '../utils/functions'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
 const MERKLE_TREE_TYPE_ASSET: uint64 = 1
 
 export class Pool extends classes(
   BasePool,
-  ContractWithCreatorOnlyOptIn,
-  ContractWithGate
+  AkitaBaseContract,
+  ContractWithCreatorOnlyOptIn
 ) {
+
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   /** the status the pool is in */
   status = GlobalState<arc4.UintN8>({ key: PoolGlobalStateKeyStatus })
   /** title of the staking pool */
@@ -166,12 +169,16 @@ export class Pool extends classes(
   /** counter for how many times we've failed to get rng from the beacon */
   vrfGetFailureCount = GlobalState<uint64>({ key: PoolGlobalStateKeyVRFFailureCount })
 
+  // BOXES ----------------------------------------------------------------------------------------
+
   /** indexed entries for efficient iteration */
   entries = BoxMap<uint64, arc4EntryData>({ keyPrefix: PoolBoxPrefixEntries })
   /** the entries in the pool */
   entriesByAddress = BoxMap<arc4EntryKey, uint64>({ keyPrefix: PoolBoxPrefixEntriesByAddress })
   /** the disbursements this pool as created & finalized */
   disbursements = BoxMap<uint64, StaticBytes<0>>({ keyPrefix: PoolBoxPrefixDisbursements })
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private newEntryID(): uint64 {
     const id = this.entryID.value
@@ -186,7 +193,7 @@ export class Pool extends classes(
     if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
       iterationAmount = this.entryID.value - this.disbursementCursor.value
     }
-    
+
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
       const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
       if (entry.disqualified) {
@@ -198,7 +205,7 @@ export class Pool extends classes(
         continue
       }
 
-      const passes = this.gate(entry.address, this.gateID.value, entry.gateArgs)
+      const passes = gateCheck(this.akitaDAO.value, entry.address, this.gateID.value, entry.gateArgs)
       if (!passes) {
         continue
       }
@@ -218,7 +225,7 @@ export class Pool extends classes(
   }
 
   private createPercentageDisbursement(iterationAmount: uint64, asset: uint64): void {
-    
+
     if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
       iterationAmount = this.entryID.value - this.disbursementCursor.value
     }
@@ -233,7 +240,7 @@ export class Pool extends classes(
         continue
       }
 
-      const amount = this.calcPercent(reward.rate, this.percentageOf(entry.quantity, this.qualifiedStake.value))
+      const amount = calcPercent(reward.rate, percentageOf(entry.quantity, this.qualifiedStake.value))
 
       allocations.push(
         new arc4UserAllocation({
@@ -422,7 +429,7 @@ export class Pool extends classes(
 
     if (this.type.value === POOL_STAKING_TYPE_SOFT) {
       const check = abiCall(Staking.prototype.softCheck, {
-        appId: super.getAkitaAppList().staking,
+        appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [entry.address, entry.asset],
         fee: 0,
       }).returnValue
@@ -432,7 +439,7 @@ export class Pool extends classes(
       }
     } else {
       const info = abiCall(Staking.prototype.getInfo, {
-        appId: super.getAkitaAppList().staking,
+        appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [
           entry.address,
           new arc4StakeInfo({
@@ -473,7 +480,7 @@ export class Pool extends classes(
       const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
 
       const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
-        appId: super.getAkitaAppList().staking,
+        appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [entry.address, entry.asset, true],
         fee: 0,
       }).returnValue
@@ -486,12 +493,12 @@ export class Pool extends classes(
 
   private createRewards(title: string, timeToUnlock: uint64, expiration: uint64): uint64 {
 
-    const rewardsApp = Application(super.getAkitaAppList().rewards)
-    const rewardMBR = 35_300 + (400 * Bytes(title).length)
+    const rewardsApp = Application(getAkitaAppList(this.akitaDAO.value).rewards)
+    const rewardMBR: uint64 = 35_300 + (400 * Bytes(title).length)
 
     const mbrPayment = itxn.payment({
       receiver: rewardsApp.address,
-      amount: rewardMBR + super.getStakingFees().rewardsFee,
+      amount: rewardMBR + getStakingFees(this.akitaDAO.value).rewardsFee,
       fee: 0,
     })
 
@@ -515,7 +522,7 @@ export class Pool extends classes(
     sum: uint64
   ): void {
 
-    const rewardsApp = Application(super.getAkitaAppList().rewards)
+    const rewardsApp = Application(getAkitaAppList(this.akitaDAO.value).rewards)
     const mbrAmount = this.calculateAllocationMBR(allocations)
 
     if (asset === 0) {
@@ -556,7 +563,7 @@ export class Pool extends classes(
   }
 
   private finalizeRewards(disbursementID: uint64): void {
-    const rewardsApp = Application(super.getAkitaAppList().rewards)
+    const rewardsApp = Application(getAkitaAppList(this.akitaDAO.value).rewards)
 
     abiCall(Rewards.prototype.finalizeDisbursement, {
       appId: rewardsApp,
@@ -568,6 +575,8 @@ export class Pool extends classes(
   private calculateAllocationMBR(allocations: arc4UserAllocations): uint64 {
     return 24_900 * allocations.length
   }
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
   createApplication(
@@ -634,7 +643,7 @@ export class Pool extends classes(
 
     if (this.gateID.value > 0) {
       this.gateSize.value = abiCall(Gate.prototype.size, {
-        appId: super.getAkitaAppList().gate,
+        appId: getAkitaAppList(this.akitaDAO.value).gate,
         args: [this.gateID.value],
         fee: 0,
       }).returnValue
@@ -642,10 +651,13 @@ export class Pool extends classes(
   }
 
   @abimethod({ allowActions: 'DeleteApplication' })
-  deleteApplication(): void {
-    assert(Txn.sender === this.creator.value.native, 'only the creator can delete the pool')
+  deleteApplication(caller: Address): void {
+    assert(Txn.sender === Global.creatorAddress, 'call must come from factory')
+    assert(caller.native === this.creator.value.native, 'only the creator can delete the pool')
     assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
   }
+
+  // POOL METHODS ---------------------------------------------------------------------------------
 
   finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
     assert(Txn.sender === this.creator.value.native, 'only the creator can finalize the pool')
@@ -681,7 +693,7 @@ export class Pool extends classes(
     // Verify the pool is live
     assert(this.isLive(), 'the pool is not live')
     assert(
-      this.gate(new Address(Txn.sender), this.gateID.value, args),
+      gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args),
       'user does not meet gate requirements'
     )
     assert(
@@ -712,7 +724,7 @@ export class Pool extends classes(
       }
 
       const stakeInfo = abiCall(Staking.prototype.getInfo, {
-        appId: super.getAkitaAppList().staking,
+        appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [
           new Address(Txn.sender),
           new arc4StakeInfo({
@@ -727,7 +739,7 @@ export class Pool extends classes(
 
       const { address, name } = decodeArc4<RootKey>(this.stakeKey.value.bytes)
       const verified = abiCall(MetaMerkles.prototype.verify, {
-        appId: super.getAkitaAppList().metaMerkles,
+        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
         args: [
           address,
           name,
@@ -758,6 +770,7 @@ export class Pool extends classes(
     }
   }
 
+  // TODO: implement withdraw?
   withdraw(): void { }
 
   startDisbursement(): void {
@@ -787,11 +800,14 @@ export class Pool extends classes(
 
     const roundToUse: uint64 = this.activeDisbursementWindow.value + 1 + (4 * this.vrfGetFailureCount.value)
 
-    const seed = abiCall(RandomnessBeacon.prototype.get, {
-      appId: super.getOtherAppList().vrfBeacon,
-      args: [roundToUse, this.salt.value],
-      fee: 0
-    }).returnValue
+    const seed = abiCall(
+      RandomnessBeacon.prototype.get,
+      {
+        appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
+        args: [roundToUse, this.salt.value],
+        fee: 0
+      }
+    ).returnValue
 
     if (seed.length === 0) {
       this.vrfGetFailureCount.value += 1
@@ -863,6 +879,8 @@ export class Pool extends classes(
     const id = this.entriesByAddress(key).value
     return this.checkByID(id)
   }
+
+  // READ ONLY METHODS ----------------------------------------------------------------------------
 
   /** @returns a boolean of whether sign ups are open */
   @abimethod({ readonly: true })

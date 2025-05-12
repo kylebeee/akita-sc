@@ -79,17 +79,25 @@ import { Leaf, Proof } from '../utils/types/merkles'
 
 export class MetaMerkles extends Contract {
 
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   // 0: Unspecified
   // 1: Collection
   // 2: Trait
   // 3: Trade
   typesID = GlobalState<uint64>({ key: MetaMerklesGlobalStateKeyTypesID })
+
+  // BOXES ----------------------------------------------------------------------------------------
+
   /** the types (intents) of merkle trees that exist */
   types = BoxMap<uint64, arc4TypesValue>({ keyPrefix: MetaMerklesBoxPrefixTypes })
   /** the merkle roots we want to attach data to */
   roots = BoxMap<arc4RootKey, StaticBytes<32>>({ keyPrefix: MetaMerklesBoxPrefixRoots })
   /** rootData is the box map for managing the data associated with a group */
   data = BoxMap<arc4DataKey, string>({ keyPrefix: MetaMerklesBoxPrefixData })
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
+
   /** the type of merkle tree we want to attach data to */
   private mbr(
     typeDescription: string,
@@ -111,11 +119,19 @@ export class MetaMerkles extends Contract {
     return id
   }
 
-  @abimethod({ readonly: true })
-  rootCosts(name: arc4.Str): uint64 {
-    const costs = this.mbr('', '', name.native, treeTypeKey.native, String(itob(0)))
-    return costs.roots + costs.data
+  private hash(a: Leaf, b: Leaf): Leaf {
+    if (BigUint(a.native) > BigUint(b.native)) {
+      return bytes32(sha256(b.native.concat(a.native)))
+    }
+    return bytes32(sha256(a.native.concat(b.native)))
   }
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  
+
+
+  // META MERKLE METHODS --------------------------------------------------------------------------
 
   /**
    * Creates two boxes and adds a merkle root
@@ -435,10 +451,11 @@ export class MetaMerkles extends Contract {
     })
   }
 
-  private hash(a: Leaf, b: Leaf): Leaf {
-    if (BigUint(a.native) > BigUint(b.native)) {
-      return bytes32(sha256(b.native.concat(a.native)))
-    }
-    return bytes32(sha256(a.native.concat(b.native)))
+  // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  @abimethod({ readonly: true })
+  rootCosts(name: arc4.Str): uint64 {
+    const costs = this.mbr('', '', name.native, treeTypeKey.native, String(itob(0)))
+    return costs.roots + costs.data
   }
 }

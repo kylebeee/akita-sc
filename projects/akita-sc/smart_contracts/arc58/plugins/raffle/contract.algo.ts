@@ -1,5 +1,4 @@
-import { abimethod, Application, assert, Asset, Bytes, itxn, op, TemplateVar, uint64 } from "@algorandfoundation/algorand-typescript"
-import { Plugin } from "../../../utils/base-contracts/plugin"
+import { abimethod, Application, assert, Asset, Bytes, GlobalState, itxn, op, TemplateVar, uint64 } from "@algorandfoundation/algorand-typescript"
 import { classes } from "polytype"
 
 import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4"
@@ -17,21 +16,24 @@ import { GateArgs } from "../../../utils/types/gates"
 import { RaffleGlobalStateKeyTicketAsset } from "../../../raffle/constants"
 import { ERR_NOT_PRIZE_BOX_OWNER } from "../../../utils/errors"
 import { PrizeBox } from "../../../prize-box/contract.algo"
+import { RafflePluginGlobalStateKeyFactory } from "./constants"
+import { fmbr, getPrizeBoxOwner, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 
-const raffle = compileArc4(Raffle)
+export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
 
-const factoryApp = TemplateVar<Application>('FACTORY_APP')
+  // GLOBAL STATE ---------------------------------------------------------------------------------
 
-export class RafflePlugin extends classes(
-  Plugin,
-  BaseRaffle,
-  ServiceFactoryContract
-) {
+  factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string): void {
+  createApplication(version: string, factory: uint64): void {
     this.version.value = version
+    this.factory.value = Application(factory)
   }
+
+  // RAFFLE PLUGIN METHODS ------------------------------------------------------------------------
 
   newRaffle(
     walletID: uint64,
@@ -46,22 +48,22 @@ export class RafflePlugin extends classes(
     gateID: uint64,
     marketplace: Address,
     weightsListCount: uint64,
-  ): Application {
+  ): uint64 {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
     const senderPrizeBalance = AssetHolding.assetBalance(sender, prizeID)[0]
     assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
 
-    if (!factoryApp.address.isOptedIn(Asset(prizeID))) {
+    if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
       abiCall(
         RaffleFactory.prototype.optin,
         {
           sender,
-          appId: factoryApp,
+          appId: this.factory.value,
           args: [
             itxn.payment({
               sender,
-              receiver: factoryApp.address,
+              receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
               fee: 0,
             }),
@@ -72,7 +74,7 @@ export class RafflePlugin extends classes(
       )
     }
 
-    let optinMBR = 0
+    let optinMBR: uint64 = 0
     const prizeAssetIsAlgo = prizeID === 0
     if (prizeAssetIsAlgo) {
       optinMBR = Global.assetOptInMinBalance
@@ -83,10 +85,12 @@ export class RafflePlugin extends classes(
       optinMBR += Global.assetOptInMinBalance
     }
 
-    const fcosts = this.fmbr()
+    const fcosts = fmbr()
     const costs = this.mbr()
 
-    const childContractMBR = (
+    const raffle = compileArc4(Raffle)
+
+    const childContractMBR: uint64 = (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
@@ -98,14 +102,14 @@ export class RafflePlugin extends classes(
 
     const mbrTxn = itxn.payment({
       sender,
-      receiver: factoryApp.address,
+      receiver: this.factory.value.address,
       amount: childContractMBR,
       fee: 0,
     })
 
     const prizeTxn = itxn.assetTransfer({
       sender,
-      assetReceiver: factoryApp.address,
+      assetReceiver: this.factory.value.address,
       assetAmount: prizeAmount,
       xferAsset: prizeID,
       fee: 0,
@@ -115,7 +119,7 @@ export class RafflePlugin extends classes(
       RaffleFactory.prototype.newRaffle,
       {
         sender,
-        appId: factoryApp,
+        appId: this.factory.value,
         args: [
           mbrTxn,
           prizeTxn,
@@ -128,12 +132,12 @@ export class RafflePlugin extends classes(
           marketplace,
           weightsListCount
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     ).returnValue
 
-    return Application(raffleApp)
+    return raffleApp
   }
 
   newPrizeBoxRaffle(
@@ -148,32 +152,34 @@ export class RafflePlugin extends classes(
     gateID: uint64,
     marketplace: Address,
     weightsListCount: uint64,
-  ): Application {
+  ): uint64 {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(super.getPrizeBoxOwner(Application(prizeBoxID)) === sender, ERR_NOT_PRIZE_BOX_OWNER)
+    assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === sender, ERR_NOT_PRIZE_BOX_OWNER)
 
     abiCall(
       PrizeBox.prototype.transfer,
       {
         sender,
         appId: prizeBoxID,
-        args: [new Address(factoryApp.address)],
+        args: [new Address(this.factory.value.address)],
         fee: 0,
       }
     )
 
-    let optinMBR = 0
+    let optinMBR: uint64 = 0
     const ticketAssetIsAlgo = ticketAssetID === 0
     if (ticketAssetIsAlgo) {
       optinMBR += Global.assetOptInMinBalance
     }
 
-    const fcosts = this.fmbr()
+    const fcosts = fmbr()
     const costs = this.mbr()
 
-    const childContractMBR = (
+    const raffle = compileArc4(Raffle)
+
+    const childContractMBR: uint64 = (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
@@ -185,7 +191,7 @@ export class RafflePlugin extends classes(
 
     const mbrTxn = itxn.payment({
       sender,
-      receiver: factoryApp.address,
+      receiver: this.factory.value.address,
       amount: childContractMBR,
       fee: 0,
     })
@@ -194,7 +200,7 @@ export class RafflePlugin extends classes(
       RaffleFactory.prototype.newPrizeBoxRaffle,
       {
         sender,
-        appId: factoryApp,
+        appId: this.factory.value,
         args: [
           mbrTxn,
           prizeBoxID,
@@ -207,12 +213,12 @@ export class RafflePlugin extends classes(
           marketplace,
           weightsListCount
         ],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     ).returnValue
 
-    return Application(raffleApp)
+    return raffleApp
   }
 
   enter(
@@ -223,12 +229,12 @@ export class RafflePlugin extends classes(
     args: GateArgs
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === factoryApp.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
     const { entries, entriesByAddress } = this.mbr()
-    const mbr = entries + entriesByAddress
+    const mbr: uint64 = entries + entriesByAddress
 
     const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(raffleAppID, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
     if (ticketAsset.id === 0) {
@@ -246,7 +252,7 @@ export class RafflePlugin extends classes(
             }),
             args,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -272,7 +278,7 @@ export class RafflePlugin extends classes(
             }),
             args,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -287,9 +293,9 @@ export class RafflePlugin extends classes(
     args: GateArgs
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === factoryApp.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
     const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(raffleAppID, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
     if (ticketAsset.id === 0) {
@@ -307,7 +313,7 @@ export class RafflePlugin extends classes(
             }),
             args,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -327,7 +333,7 @@ export class RafflePlugin extends classes(
             }),
             args,
           ],
-          rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
           fee: 0,
         }
       )
@@ -340,16 +346,16 @@ export class RafflePlugin extends classes(
     raffleAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === factoryApp.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
     abiCall(
       Raffle.prototype.raffle,
       {
         sender,
         appId: raffleAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -362,9 +368,9 @@ export class RafflePlugin extends classes(
     iterationAmount: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === factoryApp.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
     abiCall(
       Raffle.prototype.findWinner,
@@ -372,7 +378,7 @@ export class RafflePlugin extends classes(
         sender,
         appId: raffleAppID,
         args: [iterationAmount],
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -384,16 +390,16 @@ export class RafflePlugin extends classes(
     raffleAppID: uint64,
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === factoryApp.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
     abiCall(
       Raffle.prototype.claimRafflePrize,
       {
         sender,
         appId: raffleAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
@@ -405,16 +411,16 @@ export class RafflePlugin extends classes(
     raffleAppID: uint64
   ): void {
     const wallet = Application(walletID)
-    const sender = this.getSpendingAccount(wallet)
+    const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === factoryApp.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
     abiCall(
       Raffle.prototype.deleteApplication,
       {
         sender,
         appId: raffleAppID,
-        rekeyTo: this.rekeyAddress(rekeyBack, wallet),
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee: 0,
       }
     )
