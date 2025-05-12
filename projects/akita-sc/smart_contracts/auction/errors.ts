@@ -2,6 +2,7 @@ export const ERR_BIDS_MUST_ALWAYS_INCREASE = 'bids must always increase'
 export const ERR_MARKETPLACE_NOT_OPTED_INTO_PAYMENT_ASSET = 'Marketplace must be opted into payment asset'
 export const ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START = 'ending round must be at least 100 rounds after starting'
 export const ERR_APP_CREATOR_NOT_FOUND = 'App creator not found'
+export const ERR_NOT_AN_AUCTION = 'not an auction'
 
 export const ERR_MUST_BE_CALLED_FROM_FACTORY = 'must be called from the factory'
 export const ERR_NOT_APPLICABLE_TO_THIS_AUCTION = 'not applicable to this auction'

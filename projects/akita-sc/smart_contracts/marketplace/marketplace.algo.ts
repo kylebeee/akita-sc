@@ -1,7 +1,7 @@
 import { abiCall, abimethod, Address, compileArc4, StaticArray } from '@algorandfoundation/algorand-typescript/arc4'
 import { Proof } from '../utils/types/merkles'
 import { Listing } from './listing.algo'
-import { Application, assert, assertMatch, BoxMap, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, assertMatch, BoxMap, Global, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 import { ServiceFactoryContract } from '../utils/base-contracts/factory'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
@@ -11,12 +11,8 @@ import { ERR_NOT_A_LISTING, ERR_PRICE_TOO_LOW } from './errors'
 import { GateArgs } from '../utils/types/gates'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { fmbr, royalties } from '../utils/functions'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
 
-export class Marketplace extends classes(
-  ServiceFactoryContract,
-  ContractWithOptIn
-) {
+export class Marketplace extends classes(ServiceFactoryContract, ContractWithOptIn) {
 
   // BOXES ----------------------------------------------------------------------------------------
 

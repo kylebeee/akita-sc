@@ -1,5 +1,4 @@
 import {
-  Application,
   assert,
   assertMatch,
   Contract,
@@ -12,6 +11,9 @@ import {
 import { ERR_INVALID_PAYMENT } from '../errors'
 
 export class ContractWithOptIn extends Contract {
+
+  // CONTRACT W/ OPTIN METHODS --------------------------------------------------------------------
+
   /**
    * optin tells the contract to opt into an asa
    * @param payment The payment transaction
@@ -38,6 +40,9 @@ export class ContractWithOptIn extends Contract {
 }
 
 export class ContractWithCreatorOnlyOptIn extends Contract {
+
+  // CONTRACT W/ CREATOR ONLY OPTIN METHODS -------------------------------------------------------
+
   /**
    * optin tells the contract to opt into an asa
    * @param payment The payment transaction

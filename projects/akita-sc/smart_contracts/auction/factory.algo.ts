@@ -2,16 +2,18 @@
 import { classes } from 'polytype'
 import { arc4AppCreatorValue, ServiceFactoryContract } from '../utils/base-contracts/factory'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { Application, assert, assertMatch, Global, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, assert, assertMatch, Asset, Bytes, Global, gtxn, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Proof } from '../utils/types/merkles'
-import { abimethod, Address, compileArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START } from './errors'
+import { abiCall, abimethod, Address, compileArc4, DynamicArray, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_APP_CREATOR_NOT_FOUND, ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START, ERR_NOT_AN_AUCTION } from './errors'
 import { BaseAuction } from './base'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
 import { Txn } from '@algorandfoundation/algorand-typescript/op'
 import { Auction } from './contract.algo'
-import { fmbr, royalties } from '../utils/functions'
+import { fmbr, getPrizeBoxOwner, royalties } from '../utils/functions'
+import { PrizeBox } from '../prize-box/contract.algo'
+import { AuctionGlobalStateKeyBidAsset } from './constants'
 
 export class AuctionFactory extends classes(
   BaseAuction,
@@ -21,7 +23,7 @@ export class AuctionFactory extends classes(
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
-  private createChildApp(): void {}
+  private createChildApp(): void { }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
@@ -54,9 +56,7 @@ export class AuctionFactory extends classes(
     assert(endTimestamp > startTimestamp + 300, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START)
 
     const isAlgoBid = bidAssetID === 0
-    const optinMBR: uint64 = isAlgoBid
-      ? Global.assetOptInMinBalance
-      : Global.assetOptInMinBalance * 2
+    const optinMBR: uint64 = Global.assetOptInMinBalance * (isAlgoBid ? 1 : 2)
 
     const fcosts = fmbr()
     const costs = this.mbr()
@@ -123,19 +123,6 @@ export class AuctionFactory extends classes(
       amount: new UintN64(totalMBR),
     })
 
-    auction.call.init({
-      appId: auctionApp,
-      args: [
-        itxn.payment({
-          receiver: auctionApp.address,
-          amount: childAppMBR,
-          fee: 0,
-        }),
-        weightsListCount,
-      ],
-      fee: 0,
-    })
-
     // optin child contract to asset (we can use the AuctionBase)
     auction.call.optin({
       appId: auctionApp,
@@ -181,9 +168,7 @@ export class AuctionFactory extends classes(
 
   newPrizeBoxAuction(
     payment: gtxn.PaymentTxn,
-    prizeID: uint64,
-    name: string,
-    proof: Proof,
+    prizeBoxID: uint64,
     bidAssetID: uint64,
     bidFee: uint64,
     startingBid: uint64,
@@ -192,14 +177,139 @@ export class AuctionFactory extends classes(
     endTimestamp: uint64,
     gateID: uint64,
     marketplace: Address,
-    weightsListCount: uint64
   ): uint64 {
-    // TODO: implement this
-    return 0
+    assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === Global.currentApplicationAddress, ERR_NOT_PRIZE_BOX_OWNER)
+    assert(bidMinimumIncrease > 0, ERR_BIDS_MUST_ALWAYS_INCREASE)
+    assert(endTimestamp > startTimestamp + 300, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START)
+
+    const isAlgoBid = bidAssetID === 0
+    const optinMBR: uint64 = isAlgoBid ? 0 : Global.assetOptInMinBalance
+
+    const fcosts = fmbr()
+
+    const auction = compileArc4(Auction)
+    
+    const totalMBR: uint64 = (
+      MAX_PROGRAM_PAGES +
+      (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
+      (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
+      optinMBR +
+      fcosts.appCreators
+    )
+
+    // ensure they paid enough to cover the contract mint + mbr costs
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: totalMBR,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    const creatorRoyalty = royalties(this.akitaDAO.value, Asset(0), '', new DynamicArray<StaticBytes<32>>())
+
+    const auctionApp = auction.call
+      .createApplication({
+        args: [
+          prizeBoxID,
+          true,
+          bidAssetID,
+          bidFee,
+          startingBid,
+          bidMinimumIncrease,
+          startTimestamp,
+          endTimestamp,
+          new Address(Txn.sender),
+          creatorRoyalty,
+          gateID,
+          marketplace,
+          this.childContractVersion.value,
+          this.akitaDAO.value.id,
+          this.akitaDAOEscrow.value.id,
+        ],
+        fee: 0,
+      })
+      .itxn
+      .createdApp
+
+    this.appCreators(auctionApp.id).value = new arc4AppCreatorValue({
+      creatorAddress: new Address(payment.sender),
+      amount: new UintN64(totalMBR),
+    })
+
+    abiCall(
+      PrizeBox.prototype.transfer,
+      {
+        appId: prizeBoxID,
+        args: [new Address(auctionApp.address)],
+        fee: 0,
+      }
+    )
+
+    const accountActivation = itxn.payment({
+      receiver: auctionApp.address,
+      amount: optinMBR,
+      fee: 0,
+    })
+
+    if (!isAlgoBid) {
+      // optin child contract to bidding asset
+      auction.call.optin({
+        appId: auctionApp,
+        args: [
+          accountActivation,
+          bidAssetID,
+        ],
+        fee: 0,
+      })
+    } else {
+      accountActivation.submit()
+    }
+
+    return auctionApp.id
+  }
+
+  initAuctionApp(payment: gtxn.PaymentTxn, auctionAppID: uint64, weightsListCount: uint64): void {
+    assert(Application(auctionAppID).creator === Global.currentApplicationAddress, ERR_NOT_AN_AUCTION)
+    assert(this.appCreators(auctionAppID).exists, ERR_APP_CREATOR_NOT_FOUND)
+
+    const costs = this.mbr()
+    const childAppMBR: uint64 = (weightsListCount * costs.weights)
+
+    assertMatch(
+      payment,
+      {
+        sender: this.appCreators(auctionAppID).value.creatorAddress.native,
+        receiver: Global.currentApplicationAddress,
+        amount: childAppMBR,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    const auction = compileArc4(Auction)
+
+    auction.call.init({
+      appId: auctionAppID,
+      args: [
+        itxn.payment({
+          receiver: Application(auctionAppID).address,
+          amount: childAppMBR,
+          fee: 0,
+        }),
+        weightsListCount,
+      ],
+      fee: 0,
+    })
+
+    const previousAmt = this.appCreators(auctionAppID).value.amount.native
+    this.appCreators(auctionAppID).value.amount = new UintN64(previousAmt + childAppMBR)
   }
 
   deleteAuctionApp(auctionAppID: uint64): void {
-    
+    assert(Application(auctionAppID).creator === Global.currentApplicationAddress, ERR_NOT_AN_AUCTION)
+
+
     const auction = compileArc4(Auction)
 
     auction.call.deleteApplication({ appId: auctionAppID, fee: 0 })

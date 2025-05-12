@@ -1,6 +1,6 @@
 import { Application, Asset, Global, itxn, uint64 } from "@algorandfoundation/algorand-typescript"
 import { classes } from 'polytype'
-import { BaseSubscriptions } from "../../../subscriptions/base"
+import { BaseSubscriptions } from "../../../subscriptions/base.algo"
 import { CID } from "../../../utils/types/base"
 import { Addresses } from "../../../subscriptions/types"
 import { abiCall, abimethod, Address } from "@algorandfoundation/algorand-typescript/arc4"

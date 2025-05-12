@@ -6,16 +6,23 @@ import { ERR_NOT_AKITA_DAO } from '../../errors'
 import { AkitaDAO } from '../../dao/contract.algo'
 
 export class AkitaBaseContract extends Contract {
+
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   /** the current version of the contract */
   version = GlobalState<string>({ key: GlobalStateKeyVersion })
   /** the app ID of the Akita DAO */
   akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ allowActions: ['UpdateApplication'] })
   updateApplication(newVersion: string): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     this.version.value = newVersion
   }
+
+  // AKITA BASE CONTRACT METHODS ------------------------------------------------------------------
 
   updateAkitaDAO(app: uint64): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
@@ -25,6 +32,8 @@ export class AkitaBaseContract extends Contract {
 
 export class AkitaBaseEscrow extends Contract {
 
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
   /** the current version of the contract */
   version = GlobalState<string>({ key: GlobalStateKeyVersion })
   /** the app ID of the Akita DAO */
@@ -32,21 +41,7 @@ export class AkitaBaseEscrow extends Contract {
   /** the escrow account to use when making payments to the Akita DAO */
   akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
 
-  @abimethod({ allowActions: ['UpdateApplication'] })
-  updateApplication(newVersion: string): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.version.value = newVersion
-  }
-
-  updateAkitaDAO(app: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAO.value = Application(app)
-  }
-
-  updateAkitaDAOEscrow(app: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAOEscrow.value = Application(app)
-  }
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
   protected optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
     abiCall(
@@ -76,5 +71,25 @@ export class AkitaBaseEscrow extends Contract {
         })
         .submit()
     }
+  }
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  @abimethod({ allowActions: ['UpdateApplication'] })
+  updateApplication(newVersion: string): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.version.value = newVersion
+  }
+
+  // AKITA BASE ESCROW METHODS --------------------------------------------------------------------
+
+  updateAkitaDAO(app: uint64): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.akitaDAO.value = Application(app)
+  }
+
+  updateAkitaDAOEscrow(app: uint64): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.akitaDAOEscrow.value = Application(app)
   }
 }
