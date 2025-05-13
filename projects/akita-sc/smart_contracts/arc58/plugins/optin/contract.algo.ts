@@ -2,6 +2,7 @@ import { Application, Asset, Global, gtxn, itxn, abimethod, assertMatch, uint64,
 import { ERR_INVALID_PAYMENT } from "../../../utils/errors";
 import { ERR_ALREADY_OPTED_IN } from "./errors";
 import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
+import { fee } from "../../../utils/constants";
 
 export class OptInPlugin extends Contract {
 
@@ -27,7 +28,7 @@ export class OptInPlugin extends Contract {
         assetAmount: 0,
         xferAsset: Asset(asset),
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       })
       .submit();
   }

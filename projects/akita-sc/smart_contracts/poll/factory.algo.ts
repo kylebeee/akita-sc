@@ -5,6 +5,7 @@ import { Poll } from './contract.algo'
 import { PollType } from './types'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
+import { fee } from '../utils/constants'
 
 export class PollFactory extends FactoryContract {
   mint(
@@ -44,7 +45,7 @@ export class PollFactory extends FactoryContract {
           options,
           gateID
         ],
-        fee: 0,
+        fee,
       })
       .itxn
       .createdApp

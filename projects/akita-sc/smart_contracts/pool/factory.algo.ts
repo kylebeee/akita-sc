@@ -10,6 +10,7 @@ import { arc4RootKey } from "../meta-merkles/types";
 import { Pool } from "./contract.algo";
 import { fmbr } from "../utils/functions";
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
+import { fee } from "../utils/constants";
 
 export class PoolFactory extends classes(
   BasePool,
@@ -81,7 +82,7 @@ export class PoolFactory extends classes(
           maxEntries,
           this.akitaDAO.value.id,
         ],
-        fee: 0,
+        fee,
       })
       .itxn
       .createdApp

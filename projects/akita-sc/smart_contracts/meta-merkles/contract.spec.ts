@@ -6,6 +6,8 @@ import { StandardMerkleTree } from '@joe-p/merkle-tree'
 
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
 import { HexString } from '@joe-p/merkle-tree/dist/bytes'
+import { MetaMerklesClient, MetaMerklesFactory } from '../artifacts/meta-merkles/MetaMerklesClient'
+import { SchemaPartUint64 } from './constants'
 // import { MetaMerklesClient, MetaMerklesFactory } from '../clients/MetaMerklesClient'
 // import { MAX_ROOT_BOX_MBR, MAX_SCHEMA_BOX_MBR, MAX_TYPE_BOX_MBR } from '../contracts/meta_merkles/meta_merkles.algo'
 
@@ -42,13 +44,61 @@ describe.skip('MetaMerkles', () => {
             algorand,
         })
 
-        const results = await minter.send.create.createApplication()
+        const results = await minter.send.create.bare()
 
         metaMerklesClient = results.appClient
 
-        metaMerklesAppAddress = metaMerklesClient.appAddress
+        metaMerklesAppAddress = metaMerklesClient.appAddress.toString()
 
-        await metaMerklesClient.send.addSchema({
+        // await metaMerklesClient.send.addSchema({
+        //     args: {
+        //         payment: await algorand.createTransaction.payment({
+        //             sender: bobsAccount.addr,
+        //             signer: makeBasicAccountTransactionSigner(bobsAccount),
+        //             receiver: metaMerklesAppAddress,
+        //             amount: (100).algo(),
+        //         }),
+        //         desc: 'Unspecified',
+        //     },
+        // })
+
+        // await metaMerklesClient.send.addSchema({
+        //     args: {
+        //         payment: await algorand.createTransaction.payment({
+        //             sender: bobsAccount.addr,
+        //             signer: makeBasicAccountTransactionSigner(bobsAccount),
+        //             receiver: metaMerklesAppAddress,
+        //             amount: (100).algo(),
+        //         }),
+        //         desc: 'String',
+        //     },
+        // })
+
+        // await metaMerklesClient.send.addSchema({
+        //     args: {
+        //         payment: await algorand.createTransaction.payment({
+        //             sender: bobsAccount.addr,
+        //             signer: makeBasicAccountTransactionSigner(bobsAccount),
+        //             receiver: metaMerklesAppAddress,
+        //             amount: (100).algo(),
+        //         }),
+        //         desc: 'Uint64',
+        //     },
+        // })
+
+        // await metaMerklesClient.send.addSchema({
+        //     args: {
+        //         payment: await algorand.createTransaction.payment({
+        //             sender: bobsAccount.addr,
+        //             signer: makeBasicAccountTransactionSigner(bobsAccount),
+        //             receiver: metaMerklesAppAddress,
+        //             amount: (100).algo(),
+        //         }),
+        //         desc: 'DoubleUint64',
+        //     },
+        // })
+
+        await metaMerklesClient.send.addType({
             args: {
                 payment: await algorand.createTransaction.payment({
                     sender: bobsAccount.addr,
@@ -56,43 +106,8 @@ describe.skip('MetaMerkles', () => {
                     receiver: metaMerklesAppAddress,
                     amount: (100).algo(),
                 }),
-                desc: 'Unspecified',
-            },
-        })
-
-        await metaMerklesClient.send.addSchema({
-            args: {
-                payment: await algorand.createTransaction.payment({
-                    sender: bobsAccount.addr,
-                    signer: makeBasicAccountTransactionSigner(bobsAccount),
-                    receiver: metaMerklesAppAddress,
-                    amount: (100).algo(),
-                }),
-                desc: 'String',
-            },
-        })
-
-        await metaMerklesClient.send.addSchema({
-            args: {
-                payment: await algorand.createTransaction.payment({
-                    sender: bobsAccount.addr,
-                    signer: makeBasicAccountTransactionSigner(bobsAccount),
-                    receiver: metaMerklesAppAddress,
-                    amount: (100).algo(),
-                }),
-                desc: 'Uint64',
-            },
-        })
-
-        await metaMerklesClient.send.addSchema({
-            args: {
-                payment: await algorand.createTransaction.payment({
-                    sender: bobsAccount.addr,
-                    signer: makeBasicAccountTransactionSigner(bobsAccount),
-                    receiver: metaMerklesAppAddress,
-                    amount: (100).algo(),
-                }),
-                desc: 'DoubleUint64',
+                description: 'Unspecified',
+                schemaList: []
             },
         })
 
@@ -104,7 +119,8 @@ describe.skip('MetaMerkles', () => {
                     receiver: metaMerklesAppAddress,
                     amount: (100).algo(),
                 }),
-                desc: 'Unspecified',
+                description: 'Collection',
+                schemaList: [3],
             },
         })
 
@@ -116,7 +132,8 @@ describe.skip('MetaMerkles', () => {
                     receiver: metaMerklesAppAddress,
                     amount: (100).algo(),
                 }),
-                desc: 'Collection',
+                description: 'Trait',
+                schemaList: [3],
             },
         })
 
@@ -128,19 +145,8 @@ describe.skip('MetaMerkles', () => {
                     receiver: metaMerklesAppAddress,
                     amount: (100).algo(),
                 }),
-                desc: 'Trait',
-            },
-        })
-
-        await metaMerklesClient.send.addType({
-            args: {
-                payment: await algorand.createTransaction.payment({
-                    sender: bobsAccount.addr,
-                    signer: makeBasicAccountTransactionSigner(bobsAccount),
-                    receiver: metaMerklesAppAddress,
-                    amount: (100).algo(),
-                }),
-                desc: 'Trade',
+                description: 'Trade',
+                schemaList: [16,16,3,3],
             },
         })
     })
@@ -166,7 +172,6 @@ describe.skip('MetaMerkles', () => {
                     }),
                     name: 'meh',
                     root: Buffer.from(tree.root.slice(2), 'hex'),
-                    schema: 2,
                     type: 1,
                 },
             })
@@ -208,12 +213,12 @@ describe.skip('MetaMerkles', () => {
             const response = await metaMerklesClient.send.verifiedRead({
                 sender: bobsAccount.addr,
                 args: {
-                    address: bobsAccount.addr,
+                    address: bobsAccount.addr.toString(),
                     name: 'meh',
                     leaf,
                     proof,
                     key: 'royalty',
-                    type: 1,
+                    type: 2,
                 },
                 extraFee: fee,
             })

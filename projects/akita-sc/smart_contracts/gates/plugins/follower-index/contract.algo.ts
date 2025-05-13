@@ -15,6 +15,7 @@ import {
 import { AkitaSocialPlugin } from '../../../arc58/plugins/social/contract.algo'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getPluginAppList } from '../../../utils/functions'
+import { fee } from '../../../utils/constants'
 
 export class FollowerIndexGate extends AkitaBaseContract {
 
@@ -39,7 +40,7 @@ export class FollowerIndexGate extends AkitaBaseContract {
       .applicationCall({
         appId: getPluginAppList(this.akitaDAO.value).social,
         appArgs: [methodSelector(AkitaSocialPlugin.prototype.isFollower), user, index, follower],
-        fee: 0,
+        fee,
       })
       .submit()
 

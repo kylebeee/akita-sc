@@ -10,6 +10,7 @@ import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getUserImpact, impactRange } from '../utils/functions'
 import { classes } from 'polytype'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { fee } from '../utils/constants'
 
 export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
 
@@ -89,7 +90,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
         {
           appId: this.prize.value,
           args: [new Address(buyer)],
-          fee: 0,
+          fee,
         }
       )
       return
@@ -102,8 +103,8 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
       itxn.assetTransfer({
         assetCloseTo: buyer,
         xferAsset: prizeAsset,
-        fee: 0,
-      })
+        fee,
+      }).submit()
     } else {
       arc59OptInAndSend(
         this.akitaDAO.value,
@@ -124,27 +125,27 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     const creatorPay = itxn.payment({
       amount: amounts.creator,
       receiver: assetPrize.creator,
-      fee: 0,
+      fee,
     })
 
     // pay listing marketplace
     const marketplacePay = itxn.payment({
       amount: amounts.marketplace,
       receiver: this.marketplace.value,
-      fee: 0,
+      fee,
     })
 
     // pay buying marketplace
     const buyingMarketplacePay = itxn.payment({
       amount: amounts.marketplace,
       receiver: marketplace.native,
-      fee: 0,
+      fee,
     })
 
     // pay the seller
     const sellerPay = itxn.payment({
       amount: amounts.seller,
-      fee: 0,
+      fee,
       note: String(assetPrize.name) + ' Sold',
     })
 
@@ -163,7 +164,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
           assetReceiver: assetPrize.creator,
           assetAmount: amounts.creator,
           xferAsset: this.paymentAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -183,7 +184,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
           assetReceiver: this.marketplace.value,
           assetAmount: amounts.marketplace,
           xferAsset: this.paymentAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -203,7 +204,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
           assetReceiver: marketplace.native,
           assetAmount: amounts.marketplace,
           xferAsset: this.paymentAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -222,7 +223,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
         .assetTransfer({
           assetCloseTo: this.seller.value,
           xferAsset: this.paymentAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -361,12 +362,12 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     const assetTransfer = itxn.assetTransfer({
       assetCloseTo: this.seller.value,
       xferAsset: this.prize.value,
-      fee: 0,
+      fee,
     })
 
     const payment = itxn.payment({
       closeRemainderTo: this.seller.value,
-      fee: 0,
+      fee,
     })
 
     if (!(this.paymentAsset.value.id === 0)) {
@@ -374,7 +375,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
       const paymentAssetTransfer = itxn.assetTransfer({
         assetCloseTo: this.seller.value,
         xferAsset: this.paymentAsset.value,
-        fee: 0,
+        fee,
       })
 
       if (this.isPrizeBox.value) {
@@ -383,7 +384,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
           {
             appId: this.prize.value,
             args: [new Address(this.seller.value)],
-            fee: 0,
+            fee,
           }
         )
         itxn.submitGroup(paymentAssetTransfer, payment)
@@ -397,7 +398,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
           {
             appId: this.prize.value,
             args: [new Address(this.seller.value)],
-            fee: 0,
+            fee,
           }
         )
         payment.submit()

@@ -46,8 +46,9 @@ import {
 } from './constants'
 import { BaseRewards } from './base'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { getStakingFees } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { fee } from '../utils/constants'
+
 
 export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWithOptIn) {
 
@@ -98,23 +99,15 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
 
     const costs = this.mbr(title, note)
     const mbrAmount = costs.disbursements
-    // TODO: clean this up and fix it
-    const rewardsFee = getStakingFees(this.akitaDAO.value).rewardsFee
 
     assertMatch(
       mbrPayment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: mbrAmount + rewardsFee,
+        amount: mbrAmount,
       },
       ERR_INVALID_PAYMENT
     )
-
-    itxn.payment({
-      receiver: this.akitaDAO.value.address,
-      amount: rewardsFee,
-      fee: 0,
-    })
 
     this.disbursements(id).value = new arc4DisbursementDetails({
       creator: new Address(Txn.sender),
@@ -297,7 +290,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
       const creatorMBRRefund = itxn.payment({
         receiver: disbursement.creator.native,
         amount: 24_900,
-        fee: 0,
+        fee,
       })
 
       const isAlgo = rewards[i].asset.native === 0
@@ -307,7 +300,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
           assetReceiver: Txn.sender,
           assetAmount: userAllocation,
           xferAsset: rewards[i].asset.native,
-          fee: 0,
+          fee,
           note: disbursement.note,
         })
 
@@ -316,7 +309,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
         const payment = itxn.payment({
           receiver: Txn.sender,
           amount: userAllocation,
-          fee: 0,
+          fee,
           note: disbursement.note,
         })
 
@@ -354,13 +347,13 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
           assetReceiver: disbursement.creator.native,
           assetAmount: userAllocation,
           xferAsset: reclaims[i].asset.native,
-          fee: 0,
+          fee,
         })
 
         const mbrRefund = itxn.payment({
           receiver: disbursement.creator.native,
           amount: allocationMBR,
-          fee: 0,
+          fee,
         })
 
         itxn.submitGroup(xfer, mbrRefund)
@@ -368,7 +361,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
         itxn.payment({
           receiver: disbursement.creator.native,
           amount: userAllocation + allocationMBR,
-          fee: 0,
+          fee,
         }).submit()
       }
     }

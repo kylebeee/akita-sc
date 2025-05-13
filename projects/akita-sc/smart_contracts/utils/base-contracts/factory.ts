@@ -1,4 +1,5 @@
 import {
+  Account,
   Application,
   arc4,
   assert,
@@ -7,7 +8,7 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, Contract, decodeArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abimethod, Address, Contract, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
 
@@ -15,12 +16,12 @@ export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_ver
 export const BaseFactoryBoxPrefixAppCreators = 'c'
 
 export type AppCreatorValue = {
-  creatorAddress: Address
+  creator: Account
   amount: uint64
 }
 
 export class arc4AppCreatorValue extends arc4.Struct<{
-  creatorAddress: Address
+  creator: Address
   amount: UintN64
 }> { }
 
@@ -42,7 +43,7 @@ export class ServiceFactoryContract extends FactoryContract {
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  appCreators = BoxMap<uint64, arc4AppCreatorValue>({ keyPrefix: BaseFactoryBoxPrefixAppCreators })
+  appCreators = BoxMap<uint64, AppCreatorValue>({ keyPrefix: BaseFactoryBoxPrefixAppCreators })
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
@@ -58,13 +59,5 @@ export class ServiceFactoryContract extends FactoryContract {
   updateAkitaDAO(app: uint64): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     this.akitaDAO.value = Application(app)
-  }
-
-  // READ ONLY METHODS ----------------------------------------------------------------------------
-
-  @abimethod({ readonly: true })
-  getAppCreator(appID: uint64): AppCreatorValue {
-    assert(this.appCreators(appID).exists)
-    return decodeArc4<AppCreatorValue>(this.appCreators(appID).value.bytes)
   }
 }

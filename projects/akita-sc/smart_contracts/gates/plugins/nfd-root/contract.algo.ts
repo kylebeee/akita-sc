@@ -8,6 +8,7 @@ import { NFD_NAME_KEY, NFD_PARENT_APP_KEY, NFD_VERIFIED_ADDRESSES_PROPERTY_NAME 
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { NFD } from '../../../utils/types/nfd'
 import { getOtherAppList } from '../../../utils/functions'
+import { fee } from '../../../utils/constants'
 
 export class NFDGate extends AkitaBaseContract {
 
@@ -38,7 +39,7 @@ export class NFDGate extends AkitaBaseContract {
     const verified = abiCall(NFDRegistry.prototype.isValidNfdAppId, {
       appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
       args: [String(nfdName), appID],
-      fee: 0,
+      fee,
     }).returnValue
 
     if (!verified) {
@@ -48,7 +49,7 @@ export class NFDGate extends AkitaBaseContract {
     const caAlgoData = abiCall(NFD.prototype.readField, {
       appId: appID,
       args: [Bytes(NFD_VERIFIED_ADDRESSES_PROPERTY_NAME)],
-      fee: 0,
+      fee,
     }).returnValue
 
     let exists: boolean = false

@@ -76,6 +76,7 @@ import {
 import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
 import { bytes16, bytes32, str } from '../utils/types/base'
 import { Leaf, Proof } from '../utils/types/merkles'
+import { fee } from '../utils/constants'
 
 export class MetaMerkles extends Contract {
 
@@ -195,7 +196,7 @@ export class MetaMerkles extends Contract {
     itxn.payment({
       receiver: Txn.sender,
       amount: this.rootCosts(name),
-      fee: 0,
+      fee,
     }).submit()
   }
 
@@ -263,7 +264,7 @@ export class MetaMerkles extends Contract {
       .payment({
         receiver: Txn.sender,
         amount: costs.data,
-        fee: 0,
+        fee,
       })
       .submit()
   }

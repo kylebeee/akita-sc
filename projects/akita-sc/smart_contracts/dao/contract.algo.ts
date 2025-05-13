@@ -64,6 +64,7 @@ import {
 } from './constants'
 import { GlobalStateKeyVersion } from '../constants'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
+import { fee } from '../utils/constants'
 
 /**
  * The Akita DAO contract has several responsibilities:
@@ -104,10 +105,10 @@ export class AkitaDAO extends Contract {
   stakingFees = GlobalState<arc4StakingFees>({ key: AkitaDAOGlobalStateKeysStakingFees })
   /** fees associated with subscriptions */
   subscriptionFees = GlobalState<arc4SubscriptionFees>({ key: AkitaDAOGlobalStateKeysSubscriptionFees })
-  /** fees associated with swaps */
-  swapFees = GlobalState<arc4SwapFees>({ key: AkitaDAOGlobalStateKeysSwapFees })
   /** fees associated with NFT sales */
   nftFees = GlobalState<arc4NFTFees>({ key: AkitaDAOGlobalStateKeysNFTFees })
+  /** fees associated with swaps */
+  swapFees = GlobalState<arc4SwapFees>({ key: AkitaDAOGlobalStateKeysSwapFees })
   /**
    * The percentage of total rewards allocated to krby expressed in the hundreds
    * eg. 3% is 300, 12.75% is 1275
@@ -133,7 +134,7 @@ export class AkitaDAO extends Contract {
   /** Group hashes that the DAO has approved to be submitted */
   executions = BoxMap<ExecutionKey, arc4ExecutionInfo>({ keyPrefix: AkitaDAOBoxPrefixExecutions })
   /** named escrow accounts the DAO uses */
-  escrows = BoxMap<string, arc4EscrowInfo>({ keyPrefix: AkitDAOBoxPrefixEscrows })
+  escrows = BoxMap<string, EscrowInfo>({ keyPrefix: AkitDAOBoxPrefixEscrows })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -195,8 +196,9 @@ export class AkitaDAO extends Contract {
     })
 
     this.stakingFees.value = new arc4StakingFees({
-      rewardsFee: fees.rewardsFee,
-      poolCreationFee: fees.poolCreationFee,
+      creationFee: fees.poolCreationFee,
+      impactTaxMin: fees.poolImpactTaxMin,
+      impactTaxMax: fees.poolImpactTaxMax
     })
 
     this.subscriptionFees.value = new arc4SubscriptionFees({
@@ -206,14 +208,25 @@ export class AkitaDAO extends Contract {
     })
 
     this.nftFees.value = new arc4NFTFees({
-      omnigemSaleFee: fees.omnigemSaleFee,
       marketplaceSalePercentageMinimum: fees.marketplaceSalePercentageMinimum,
       marketplaceSalePercentageMaximum: fees.marketplaceSalePercentageMaximum,
       marketplaceComposablePercentage: fees.marketplaceComposablePercentage,
-      shuffleSalePercentage: fees.shuffleSalePercentage,
-      auctionSalePercentageMinimum: fees.auctionSalePercentageMinimum,
-      auctionSalePercentageMaximum: fees.auctionSalePercentageMaximum,
+      marketplaceRoyaltyDefaultPercentage: fees.marketplaceRoyaltyDefaultPercentage,
+      omnigemSaleFee: fees.omnigemSaleFee,
+      auctionCreationFee: fees.auctionCreationFee,
+      auctionSaleImpactTaxMin: fees.auctionSaleImpactTaxMin,
+      auctionSaleImpactTaxMax: fees.auctionSaleImpactTaxMax,
       auctionComposablePercentage: fees.auctionComposablePercentage,
+      auctionRafflePercentage: fees.auctionRafflePercentage,
+      raffleCreationFee: fees.raffleCreationFee,
+      raffleSaleImpactTaxMin: fees.raffleSaleImpactTaxMin,
+      raffleSaleImpactTaxMax: fees.raffleSaleImpactTaxMax,
+      raffleComposablePercentage: fees.raffleComposablePercentage,
+    })
+
+    this.swapFees.value = new arc4SwapFees({
+      impactTaxMin: fees.swapFeeImpactTaxMin,
+      impactTaxMax: fees.swapFeeImpactTaxMax,
     })
 
     this.krbyPercentage.value = fees.krbyPercentage.native
@@ -264,7 +277,7 @@ export class AkitaDAO extends Contract {
 
     assert(this.escrows(name).exists, ERR_ESCROW_DOES_NOT_EXIST)
 
-    const escrow = decodeArc4<EscrowInfo>(this.escrows(name).value.bytes)
+    const escrow = this.escrows(name).value
     const escrowAccount = Application(escrow.escrow).address
 
     assert(escrow.account.native === Txn.sender, ERR_INCORRECT_SENDER)
@@ -284,7 +297,7 @@ export class AkitaDAO extends Contract {
       assetReceiver: Global.currentApplicationAddress,
       assetAmount: 0,
       xferAsset: asset,
-      fee: 0,
+      fee,
     }).submit()
   }
 
@@ -297,16 +310,16 @@ export class AkitaDAO extends Contract {
       version: new arc4.Str(this.version.value),
       contentPolicy: new arc4.StaticBytes<36>(this.contentPolicy.value),
       minimumRewardsImpact: new UintN64(this.minimumRewardsImpact.value),
-      akitaAppList: this.akitaAppList.value,
-      otherAppList: this.otherAppList.value,
-      socialFees: this.socialFees.value,
-      stakingFees: this.stakingFees.value,
-      subscriptionFees: this.subscriptionFees.value,
-      nftFees: this.nftFees.value,
+      akitaAppList: this.akitaAppList.value.copy(),
+      otherAppList: this.otherAppList.value.copy(),
+      socialFees: this.socialFees.value.copy(),
+      stakingFees: this.stakingFees.value.copy(),
+      subscriptionFees: this.subscriptionFees.value.copy(),
+      nftFees: this.nftFees.value.copy(),
       krbyPercentage: new UintN64(this.krbyPercentage.value),
       moderatorPercentage: new UintN64(this.moderatorPercentage.value),
-      proposalSettings: this.proposalSettings.value,
-      akitaAssets: this.akitaAssets.value,
+      proposalSettings: this.proposalSettings.value.copy(),
+      akitaAssets: this.akitaAssets.value.copy(),
       revocationAddress: new Address(this.revocationAddress.value),
     }
   }

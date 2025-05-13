@@ -1,0 +1,5281 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 225 6 400 36500 55400 38500
+    bytecblock "controlled_address" 0x00 "p" "spending_address" "last_user_interaction" "last_change" "admin" "spending_account_factory_app" 0x151f7c75 0x01 0x002d 0x0000000000000000 "d" "revocation_app" 0x0001 "a" "n" 0x0000 0x0f885493 "version" "nickname" 0x47c79d5f 0x8a39e79f
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txn NumAppArgs
+    bz main_after_if_else@29
+    pushbytess 0x995e811a 0x1747405b 0xe500dfb6 0x9f91cccd 0x17d8bcb4 0x385658ab 0x5ef0b415 0xd24b7556 0x5fa449c6 // method "createApplication(string,address,address,uint64,uint64,string)void", method "updateApplication(string)void", method "changeRevocationApp(uint64)void", method "setNickname(string)void", method "setAvatar(uint64)void", method "setBanner(uint64)void", method "setBio(string)void", method "arc58_changeAdmin(address)void", method "arc58_pluginChangeAdmin(uint64,address,address)void"
+    bytec 18 // method "arc58_verifyAuthAddr()void"
+    pushbytess 0xc95a5d3d 0x682fdbf8 0xde300fe9 0xbe39d3c8 0x9ac5b48d 0x57a51d88 0x4d372355 0x0e1c77d2 0xe350b9d4 0x5f08dfc7 0x3f66056f 0x13bc44e4 0x124c0a7f // method "arc58_rekeyTo(address,bool)void", method "arc58_canCall(uint64,bool,address,byte[4])bool", method "arc58_rekeyToPlugin(uint64,bool,uint64[],(uint64,uint64)[])void", method "arc58_rekeyToNamedPlugin(string,bool,uint64[],(uint64,uint64)[])void", method "arc58_addPlugin(uint64,address,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool)void", method "assignDomain(address,string)void", method "arc58_removePlugin(uint64,address)void", method "arc58_addNamedPlugin(string,uint64,address,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool)void", method "arc58_removeNamedPlugin(string)void", method "arc58_addAllowance(uint64,address,uint64,uint8,uint64,uint64,uint64)void", method "arc58_removeAllowance(uint64,address,uint64)void", method "arc58_getAdmin()address", method "balance(uint64[])uint64[]"
+    txna ApplicationArgs 0
+    match main_createApplication_route@3 main_updateApplication_route@4 main_changeRevocationApp_route@5 main_setNickname_route@6 main_setAvatar_route@7 main_setBanner_route@8 main_setBio_route@9 main_arc58_changeAdmin_route@10 main_arc58_pluginChangeAdmin_route@11 main_arc58_verifyAuthAddr_route@12 main_arc58_rekeyTo_route@13 main_arc58_canCall_route@14 main_arc58_rekeyToPlugin_route@15 main_arc58_rekeyToNamedPlugin_route@16 main_arc58_addPlugin_route@17 main_assignDomain_route@18 main_arc58_removePlugin_route@19 main_arc58_addNamedPlugin_route@20 main_arc58_removeNamedPlugin_route@21 main_arc58_addAllowance_route@22 main_arc58_removeAllowance_route@23 main_arc58_getAdmin_route@24 main_balance_route@25
+
+main_after_if_else@29:
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    intc_0 // 0
+    return
+
+main_balance_route@25:
+    // smart_contracts/arc58/account/contract.algo.ts:1152
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    // smart_contracts/arc58/account/contract.algo.ts:1152
+    // @abimethod({ readonly: true })
+    callsub balance
+    bytec 8 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_arc58_getAdmin_route@24:
+    // smart_contracts/arc58/account/contract.algo.ts:1146
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub arc58_getAdmin
+    bytec 8 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_arc58_removeAllowance_route@23:
+    // smart_contracts/arc58/account/contract.algo.ts:1114
+    // arc58_removeAllowance(plugin: uint64, caller: Address, asset: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    btoi
+    // smart_contracts/arc58/account/contract.algo.ts:1114
+    // arc58_removeAllowance(plugin: uint64, caller: Address, asset: uint64): void {
+    callsub arc58_removeAllowance
+    intc_1 // 1
+    return
+
+main_arc58_addAllowance_route@22:
+    // smart_contracts/arc58/account/contract.algo.ts:1072-1080
+    // arc58_addAllowance(
+    //   plugin: uint64,
+    //   caller: Address,
+    //   asset: uint64,
+    //   type: SpendAllowanceType,
+    //   allowed: uint64,
+    //   max: uint64,
+    //   interval: uint64,
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    btoi
+    txna ApplicationArgs 4
+    txna ApplicationArgs 5
+    btoi
+    txna ApplicationArgs 6
+    btoi
+    txna ApplicationArgs 7
+    btoi
+    // smart_contracts/arc58/account/contract.algo.ts:1072-1080
+    // arc58_addAllowance(
+    //   plugin: uint64,
+    //   caller: Address,
+    //   asset: uint64,
+    //   type: SpendAllowanceType,
+    //   allowed: uint64,
+    //   max: uint64,
+    //   interval: uint64,
+    // ): void {
+    callsub arc58_addAllowance
+    intc_1 // 1
+    return
+
+main_arc58_removeNamedPlugin_route@21:
+    // smart_contracts/arc58/account/contract.algo.ts:1035
+    // arc58_removeNamedPlugin(name: string): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:1035
+    // arc58_removeNamedPlugin(name: string): void {
+    callsub arc58_removeNamedPlugin
+    intc_1 // 1
+    return
+
+main_arc58_addNamedPlugin_route@20:
+    // smart_contracts/arc58/account/contract.algo.ts:950-961
+    // arc58_addNamedPlugin(
+    //   name: string,
+    //   app: uint64,
+    //   allowedCaller: Address,
+    //   admin: boolean,
+    //   delegationType: UintN8,
+    //   lastValid: uint64,
+    //   cooldown: uint64,
+    //   methods: MethodRestriction[],
+    //   useAllowance: boolean,
+    //   useRounds: boolean,
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 5
+    txna ApplicationArgs 6
+    btoi
+    txna ApplicationArgs 7
+    btoi
+    txna ApplicationArgs 8
+    txna ApplicationArgs 9
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 10
+    intc_0 // 0
+    getbit
+    // smart_contracts/arc58/account/contract.algo.ts:950-961
+    // arc58_addNamedPlugin(
+    //   name: string,
+    //   app: uint64,
+    //   allowedCaller: Address,
+    //   admin: boolean,
+    //   delegationType: UintN8,
+    //   lastValid: uint64,
+    //   cooldown: uint64,
+    //   methods: MethodRestriction[],
+    //   useAllowance: boolean,
+    //   useRounds: boolean,
+    // ): void {
+    callsub arc58_addNamedPlugin
+    intc_1 // 1
+    return
+
+main_arc58_removePlugin_route@19:
+    // smart_contracts/arc58/account/contract.algo.ts:900
+    // arc58_removePlugin(app: uint64, allowedCaller: Address): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    // smart_contracts/arc58/account/contract.algo.ts:900
+    // arc58_removePlugin(app: uint64, allowedCaller: Address): void {
+    callsub arc58_removePlugin
+    intc_1 // 1
+    return
+
+main_assignDomain_route@18:
+    // smart_contracts/arc58/account/contract.algo.ts:887
+    // assignDomain(caller: Address, domain: string): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:887
+    // assignDomain(caller: Address, domain: string): void {
+    callsub assignDomain
+    intc_1 // 1
+    return
+
+main_arc58_addPlugin_route@17:
+    // smart_contracts/arc58/account/contract.algo.ts:799-809
+    // arc58_addPlugin(
+    //   app: uint64,
+    //   allowedCaller: Address,
+    //   admin: boolean,
+    //   delegationType: UintN8,
+    //   lastValid: uint64,
+    //   cooldown: uint64,
+    //   methods: MethodRestriction[],
+    //   useAllowance: boolean,
+    //   useRounds: boolean,
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 4
+    txna ApplicationArgs 5
+    btoi
+    txna ApplicationArgs 6
+    btoi
+    txna ApplicationArgs 7
+    txna ApplicationArgs 8
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 9
+    intc_0 // 0
+    getbit
+    // smart_contracts/arc58/account/contract.algo.ts:799-809
+    // arc58_addPlugin(
+    //   app: uint64,
+    //   allowedCaller: Address,
+    //   admin: boolean,
+    //   delegationType: UintN8,
+    //   lastValid: uint64,
+    //   cooldown: uint64,
+    //   methods: MethodRestriction[],
+    //   useAllowance: boolean,
+    //   useRounds: boolean,
+    // ): void {
+    callsub arc58_addPlugin
+    intc_1 // 1
+    return
+
+main_arc58_rekeyToNamedPlugin_route@16:
+    // smart_contracts/arc58/account/contract.algo.ts:777
+    // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    // smart_contracts/arc58/account/contract.algo.ts:777
+    // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
+    callsub arc58_rekeyToNamedPlugin
+    intc_1 // 1
+    return
+
+main_arc58_rekeyToPlugin_route@15:
+    // smart_contracts/arc58/account/contract.algo.ts:716-721
+    // arc58_rekeyToPlugin(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   methodOffsets: uint64[],
+    //   fundsRequest: FundsRequest[]
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    // smart_contracts/arc58/account/contract.algo.ts:716-721
+    // arc58_rekeyToPlugin(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   methodOffsets: uint64[],
+    //   fundsRequest: FundsRequest[]
+    // ): void {
+    callsub arc58_rekeyToPlugin
+    intc_1 // 1
+    return
+
+main_arc58_canCall_route@14:
+    // smart_contracts/arc58/account/contract.algo.ts:694
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    // smart_contracts/arc58/account/contract.algo.ts:694
+    // @abimethod({ readonly: true })
+    callsub arc58_canCall
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec 8 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_arc58_rekeyTo_route@13:
+    // smart_contracts/arc58/account/contract.algo.ts:668
+    // arc58_rekeyTo(address: Address, flash: boolean): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    // smart_contracts/arc58/account/contract.algo.ts:668
+    // arc58_rekeyTo(address: Address, flash: boolean): void {
+    callsub arc58_rekeyTo
+    intc_1 // 1
+    return
+
+main_arc58_verifyAuthAddr_route@12:
+    // smart_contracts/arc58/account/contract.algo.ts:657
+    // arc58_verifyAuthAddr(): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub arc58_verifyAuthAddr
+    intc_1 // 1
+    return
+
+main_arc58_pluginChangeAdmin_route@11:
+    // smart_contracts/arc58/account/contract.algo.ts:633
+    // arc58_pluginChangeAdmin(plugin: uint64, allowedCaller: Address, newAdmin: Address): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    // smart_contracts/arc58/account/contract.algo.ts:633
+    // arc58_pluginChangeAdmin(plugin: uint64, allowedCaller: Address, newAdmin: Address): void {
+    callsub arc58_pluginChangeAdmin
+    intc_1 // 1
+    return
+
+main_arc58_changeAdmin_route@10:
+    // smart_contracts/arc58/account/contract.algo.ts:618
+    // arc58_changeAdmin(newAdmin: Address): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    // smart_contracts/arc58/account/contract.algo.ts:618
+    // arc58_changeAdmin(newAdmin: Address): void {
+    callsub arc58_changeAdmin
+    intc_1 // 1
+    return
+
+main_setBio_route@9:
+    // smart_contracts/arc58/account/contract.algo.ts:608
+    // setBio(bio: string): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:608
+    // setBio(bio: string): void {
+    callsub setBio
+    intc_1 // 1
+    return
+
+main_setBanner_route@8:
+    // smart_contracts/arc58/account/contract.algo.ts:596
+    // setBanner(banner: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/arc58/account/contract.algo.ts:596
+    // setBanner(banner: uint64): void {
+    callsub setBanner
+    intc_1 // 1
+    return
+
+main_setAvatar_route@7:
+    // smart_contracts/arc58/account/contract.algo.ts:584
+    // setAvatar(avatar: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/arc58/account/contract.algo.ts:584
+    // setAvatar(avatar: uint64): void {
+    callsub setAvatar
+    intc_1 // 1
+    return
+
+main_setNickname_route@6:
+    // smart_contracts/arc58/account/contract.algo.ts:574
+    // setNickname(nickname: string): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:574
+    // setNickname(nickname: string): void {
+    callsub setNickname
+    intc_1 // 1
+    return
+
+main_changeRevocationApp_route@5:
+    // smart_contracts/arc58/account/contract.algo.ts:564
+    // changeRevocationApp(newRevocationApp: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/arc58/account/contract.algo.ts:564
+    // changeRevocationApp(newRevocationApp: uint64): void {
+    callsub changeRevocationApp
+    intc_1 // 1
+    return
+
+main_updateApplication_route@4:
+    // smart_contracts/arc58/account/contract.algo.ts:551
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:551
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub updateApplication
+    intc_1 // 1
+    return
+
+main_createApplication_route@3:
+    // smart_contracts/arc58/account/contract.algo.ts:525
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/arc58/account/contract.algo.ts:72
+    // export class AbstractedAccount extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    btoi
+    txna ApplicationArgs 5
+    btoi
+    txna ApplicationArgs 6
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:525
+    // @abimethod({ onCreate: 'require' })
+    callsub createApplication
+    intc_1 // 1
+    return
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.isAdmin() -> uint64:
+isAdmin:
+    // smart_contracts/arc58/account/contract.algo.ts:145
+    // Txn.sender === this.admin.value ||
+    txn Sender
+    // smart_contracts/arc58/account/constants.ts:1
+    // export const AbstractAccountGlobalStateKeysAdmin = 'admin'
+    intc_0 // 0
+    bytec 6 // "admin"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:145
+    // Txn.sender === this.admin.value ||
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:145-146
+    // Txn.sender === this.admin.value ||
+    // (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    bnz isAdmin_bool_true@3
+    // smart_contracts/arc58/account/constants.ts:16
+    // export const AbstractAccountBoxPrefixDomainKeys = 'd'
+    bytec 12 // "d"
+    // smart_contracts/arc58/account/contract.algo.ts:146
+    // (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    txn Sender
+    // smart_contracts/arc58/account/constants.ts:16
+    // export const AbstractAccountBoxPrefixDomainKeys = 'd'
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:146
+    // (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    box_len
+    bury 1
+    bz isAdmin_bool_false@4
+    // smart_contracts/arc58/account/constants.ts:16
+    // export const AbstractAccountBoxPrefixDomainKeys = 'd'
+    bytec 12 // "d"
+    // smart_contracts/arc58/account/contract.algo.ts:146
+    // (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    txn Sender
+    // smart_contracts/arc58/account/constants.ts:16
+    // export const AbstractAccountBoxPrefixDomainKeys = 'd'
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:146
+    // (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    box_get
+    assert // Box must have value
+    // smart_contracts/utils/constants.ts:26
+    // export const AkitaDomain: string = 'akita.community'
+    pushbytes "akita.community"
+    // smart_contracts/arc58/account/contract.algo.ts:146
+    // (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    ==
+    bz isAdmin_bool_false@4
+
+isAdmin_bool_true@3:
+    intc_1 // 1
+    // smart_contracts/arc58/account/contract.algo.ts:144-147
+    // return (
+    //   Txn.sender === this.admin.value ||
+    //   (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    // )
+    retsub
+
+isAdmin_bool_false@4:
+    intc_0 // 0
+    // smart_contracts/arc58/account/contract.algo.ts:144-147
+    // return (
+    //   Txn.sender === this.admin.value ||
+    //   (this.domainKeys(Txn.sender).exists && this.domainKeys(Txn.sender).value === AkitaDomain)
+    // )
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.canRevoke() -> uint64:
+canRevoke:
+    // smart_contracts/arc58/account/contract.algo.ts:152
+    // return Txn.sender === this.revocationApp.value.address
+    txn Sender
+    // smart_contracts/constants.ts:5
+    // export const GlobalStateKeyRevocationApp = 'revocation_app'
+    intc_0 // 0
+    bytec 13 // "revocation_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:152
+    // return Txn.sender === this.revocationApp.value.address
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.pluginCallAllowed(application: uint64, allowedCaller: bytes, method: bytes) -> uint64:
+pluginCallAllowed:
+    // smart_contracts/arc58/account/contract.algo.ts:155
+    // private pluginCallAllowed(application: uint64, allowedCaller: Account, method: StaticBytes<4>): boolean {
+    proto 3 1
+    intc_0 // 0
+    pushbytes ""
+    dupn 5
+    // smart_contracts/arc58/account/contract.algo.ts:156
+    // const key: PluginKey = { application, allowedCaller }
+    frame_dig -3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:158
+    // if (!this.plugins(key).exists) {
+    frame_dig -2
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    swap
+    concat
+    dup
+    // smart_contracts/arc58/account/contract.algo.ts:158
+    // if (!this.plugins(key).exists) {
+    box_len
+    bury 1
+    bnz pluginCallAllowed_after_if_else@2
+    // smart_contracts/arc58/account/contract.algo.ts:159
+    // return false;
+    intc_0 // 0
+    frame_bury 0
+    retsub
+
+pluginCallAllowed_after_if_else@2:
+    // smart_contracts/arc58/account/contract.algo.ts:162
+    // const methods = this.plugins(key).value.methods.copy()
+    frame_dig 7
+    box_get
+    assert // Box must have value
+    dup
+    pushint 26 // 26
+    extract_uint16
+    dig 1
+    len
+    substring3
+    dup
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:163
+    // let methodAllowed = methods.length > 0 ? false : true;
+    intc_0 // 0
+    extract_uint16
+    dup
+    frame_bury 6
+    !
+    frame_bury 3
+    // smart_contracts/arc58/account/contract.algo.ts:164
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    intc_0 // 0
+    frame_bury 2
+
+pluginCallAllowed_while_top@3:
+    // smart_contracts/arc58/account/contract.algo.ts:164
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    frame_dig 2
+    frame_dig 6
+    <
+    bz pluginCallAllowed_block@8
+    // smart_contracts/arc58/account/contract.algo.ts:165
+    // if (methods[i].selector === method) {
+    frame_dig 0
+    extract 2 0
+    frame_dig 2
+    pushint 20 // 20
+    *
+    pushint 20 // 20
+    extract3 // on error: Index access is out of bounds
+    extract 0 4 // on error: Index access is out of bounds
+    frame_dig -1
+    ==
+    bz pluginCallAllowed_after_if_else@6
+    // smart_contracts/arc58/account/contract.algo.ts:166
+    // methodAllowed = true;
+    intc_1 // 1
+    frame_bury 3
+
+pluginCallAllowed_block@8:
+    // smart_contracts/arc58/account/contract.algo.ts:171
+    // const p = decodeArc4<PluginInfo>(this.plugins(key).value.bytes)
+    frame_dig 7
+    box_get
+    assert // Box must have value
+    dup
+    pushint 18 // 18
+    extract_uint64
+    frame_bury 4
+    dup
+    intc_2 // 225
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    swap
+    pushint 29 // 29
+    extract_uint64
+    frame_bury 5
+    // smart_contracts/arc58/account/contract.algo.ts:172
+    // const epochRef = p.useRounds ? Global.round : Global.latestTimestamp;
+    bz pluginCallAllowed_ternary_false@10
+    global Round
+    frame_bury 1
+
+pluginCallAllowed_ternary_merge@11:
+    // smart_contracts/arc58/account/contract.algo.ts:175
+    // p.lastCalled >= epochRef &&
+    frame_dig 5
+    frame_dig 1
+    >=
+    // smart_contracts/arc58/account/contract.algo.ts:175-176
+    // p.lastCalled >= epochRef &&
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    bz pluginCallAllowed_bool_false@14
+    // smart_contracts/arc58/account/contract.algo.ts:176
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    frame_dig 1
+    frame_dig 5
+    -
+    frame_dig 4
+    >=
+    // smart_contracts/arc58/account/contract.algo.ts:175-176
+    // p.lastCalled >= epochRef &&
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    bz pluginCallAllowed_bool_false@14
+    intc_1 // 1
+
+pluginCallAllowed_bool_merge@15:
+    // smart_contracts/arc58/account/contract.algo.ts:175-177
+    // p.lastCalled >= epochRef &&
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    // methodAllowed
+    frame_dig 3
+    &&
+    // smart_contracts/arc58/account/contract.algo.ts:174-178
+    // return (
+    //   p.lastCalled >= epochRef &&
+    //   (epochRef - p.lastCalled) >= p.cooldown &&
+    //   methodAllowed
+    // )
+    frame_bury 0
+    retsub
+
+pluginCallAllowed_bool_false@14:
+    intc_0 // 0
+    b pluginCallAllowed_bool_merge@15
+
+pluginCallAllowed_ternary_false@10:
+    // smart_contracts/arc58/account/contract.algo.ts:172
+    // const epochRef = p.useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    frame_bury 1
+    b pluginCallAllowed_ternary_merge@11
+
+pluginCallAllowed_after_if_else@6:
+    // smart_contracts/arc58/account/contract.algo.ts:164
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    frame_dig 2
+    intc_1 // 1
+    +
+    frame_bury 2
+    b pluginCallAllowed_while_top@3
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.txnRekeysBack(txn: uint64) -> uint64:
+txnRekeysBack:
+    // smart_contracts/arc58/account/contract.algo.ts:181
+    // private txnRekeysBack(txn: gtxn.Transaction): boolean {
+    proto 1 1
+    // smart_contracts/arc58/account/contract.algo.ts:184
+    // txn.sender === this.controlledAddress.value &&
+    frame_dig -1
+    gtxns Sender
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:184
+    // txn.sender === this.controlledAddress.value &&
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:184-185
+    // txn.sender === this.controlledAddress.value &&
+    // txn.rekeyTo === Global.currentApplicationAddress
+    bz txnRekeysBack_after_if_else@3
+    // smart_contracts/arc58/account/contract.algo.ts:185
+    // txn.rekeyTo === Global.currentApplicationAddress
+    frame_dig -1
+    gtxns RekeyTo
+    global CurrentApplicationAddress
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:184-185
+    // txn.sender === this.controlledAddress.value &&
+    // txn.rekeyTo === Global.currentApplicationAddress
+    bz txnRekeysBack_after_if_else@3
+    // smart_contracts/arc58/account/contract.algo.ts:187
+    // return true;
+    intc_1 // 1
+    retsub
+
+txnRekeysBack_after_if_else@3:
+    // smart_contracts/arc58/account/contract.algo.ts:191
+    // txn.type === TransactionType.ApplicationCall
+    frame_dig -1
+    gtxns TypeEnum
+    intc_3 // 6
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:191-192
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz txnRekeysBack_bool_false@9
+    // smart_contracts/arc58/account/contract.algo.ts:192
+    // && txn.appId === Global.currentApplicationId
+    frame_dig -1
+    gtxns ApplicationID
+    global CurrentApplicationID
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:191-192
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz txnRekeysBack_bool_false@9
+    // smart_contracts/arc58/account/contract.algo.ts:193
+    // && txn.numAppArgs === 1
+    frame_dig -1
+    gtxns NumAppArgs
+    intc_1 // 1
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:191-193
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 1
+    bz txnRekeysBack_bool_false@9
+    // smart_contracts/arc58/account/contract.algo.ts:194
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    frame_dig -1
+    gtxns OnCompletion
+    // smart_contracts/arc58/account/contract.algo.ts:191-194
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 1
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    bnz txnRekeysBack_bool_false@9
+    // smart_contracts/arc58/account/contract.algo.ts:195
+    // && txn.appArgs(0) === methodSelector('arc58_verifyAuthAddr()void')
+    frame_dig -1
+    intc_0 // 0
+    gtxnsas ApplicationArgs
+    bytec 18 // method "arc58_verifyAuthAddr()void"
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:191-195
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 1
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    // && txn.appArgs(0) === methodSelector('arc58_verifyAuthAddr()void')
+    bz txnRekeysBack_bool_false@9
+    intc_1 // 1
+    // smart_contracts/arc58/account/contract.algo.ts:190-196
+    // return (
+    //   txn.type === TransactionType.ApplicationCall
+    //   && txn.appId === Global.currentApplicationId
+    //   && txn.numAppArgs === 1
+    //   && txn.onCompletion === OnCompleteAction.NoOp
+    //   && txn.appArgs(0) === methodSelector('arc58_verifyAuthAddr()void')
+    // )
+    retsub
+
+txnRekeysBack_bool_false@9:
+    intc_0 // 0
+    // smart_contracts/arc58/account/contract.algo.ts:190-196
+    // return (
+    //   txn.type === TransactionType.ApplicationCall
+    //   && txn.appId === Global.currentApplicationId
+    //   && txn.numAppArgs === 1
+    //   && txn.onCompletion === OnCompleteAction.NoOp
+    //   && txn.appArgs(0) === methodSelector('arc58_verifyAuthAddr()void')
+    // )
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.pluginCheck(key.application: uint64, key.allowedCaller: bytes) -> uint64, uint64, uint64, uint64, uint64, uint64:
+pluginCheck:
+    // smart_contracts/arc58/account/contract.algo.ts:213
+    // private pluginCheck(key: PluginKey): PluginValidation {
+    proto 2 6
+    intc_0 // 0
+    pushbytes ""
+    dupn 6
+    frame_dig -2
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:215
+    // const exists = this.plugins(key).exists;
+    frame_dig -1
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    swap
+    concat
+    dup
+    // smart_contracts/arc58/account/contract.algo.ts:215
+    // const exists = this.plugins(key).exists;
+    box_len
+    dup
+    uncover 2
+    pop
+    // smart_contracts/arc58/account/contract.algo.ts:216
+    // if (!exists) {
+    bnz pluginCheck_after_if_else@2
+    // smart_contracts/arc58/account/contract.algo.ts:218
+    // exists: false,
+    intc_0 // 0
+    // smart_contracts/arc58/account/contract.algo.ts:219
+    // expired: true,
+    intc_1 // 1
+    // smart_contracts/arc58/account/contract.algo.ts:220-221
+    // hasCooldown: true,
+    // onCooldown: true,
+    dupn 2
+    // smart_contracts/arc58/account/contract.algo.ts:222
+    // hasMethodRestrictions: false,
+    intc_0 // 0
+    // smart_contracts/arc58/account/contract.algo.ts:223
+    // valid: false
+    dup
+    // smart_contracts/arc58/account/contract.algo.ts:217-224
+    // return {
+    //   exists: false,
+    //   expired: true,
+    //   hasCooldown: true,
+    //   onCooldown: true,
+    //   hasMethodRestrictions: false,
+    //   valid: false
+    // }
+    frame_bury 5
+    frame_bury 4
+    frame_bury 3
+    frame_bury 2
+    frame_bury 1
+    frame_bury 0
+    retsub
+
+pluginCheck_after_if_else@2:
+    // smart_contracts/arc58/account/contract.algo.ts:227
+    // const pluginInfo = decodeArc4<PluginInfo>(this.plugins(key).value.bytes)
+    frame_dig 8
+    box_get
+    assert // Box must have value
+    dup
+    pushint 10 // 10
+    extract_uint64
+    frame_bury 7
+    dup
+    pushint 18 // 18
+    extract_uint64
+    frame_bury 5
+    dup
+    pushint 26 // 26
+    extract_uint16
+    dig 1
+    len
+    dig 2
+    cover 2
+    substring3
+    frame_bury 0
+    dup
+    intc_2 // 225
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    swap
+    pushint 29 // 29
+    extract_uint64
+    frame_bury 6
+    // smart_contracts/arc58/account/contract.algo.ts:228
+    // const epochRef = pluginInfo.useRounds ? Global.round : Global.latestTimestamp;
+    bz pluginCheck_ternary_false@4
+    global Round
+
+pluginCheck_ternary_merge@5:
+    // smart_contracts/arc58/account/contract.algo.ts:230
+    // const expired = epochRef > pluginInfo.lastValid;
+    dup
+    frame_dig 7
+    >
+    frame_bury 1
+    // smart_contracts/arc58/account/contract.algo.ts:231
+    // const hasCooldown = pluginInfo.cooldown > 0;
+    frame_dig 5
+    dup
+    cover 2
+    intc_0 // 0
+    >
+    frame_bury 2
+    // smart_contracts/arc58/account/contract.algo.ts:232
+    // const onCooldown = (epochRef - pluginInfo.lastCalled) < pluginInfo.cooldown;
+    frame_dig 6
+    -
+    >
+    frame_bury 4
+    // smart_contracts/arc58/account/contract.algo.ts:233
+    // const hasMethodRestrictions = pluginInfo.methods.length > 0;
+    frame_dig 0
+    intc_0 // 0
+    extract_uint16
+    intc_0 // 0
+    >
+    frame_bury 3
+    // smart_contracts/arc58/account/contract.algo.ts:235
+    // const valid = exists && !expired && !onCooldown;
+    frame_dig 9
+    bz pluginCheck_bool_false@9
+    frame_dig 1
+    bnz pluginCheck_bool_false@9
+    frame_dig 4
+    bnz pluginCheck_bool_false@9
+    intc_1 // 1
+
+pluginCheck_bool_merge@10:
+    // smart_contracts/arc58/account/contract.algo.ts:237-244
+    // return {
+    //   exists,
+    //   expired,
+    //   hasCooldown,
+    //   onCooldown,
+    //   hasMethodRestrictions,
+    //   valid
+    // }
+    frame_dig 9
+    frame_dig 1
+    frame_dig 2
+    frame_dig 4
+    frame_dig 3
+    uncover 5
+    frame_bury 5
+    frame_bury 4
+    frame_bury 3
+    frame_bury 2
+    frame_bury 1
+    frame_bury 0
+    retsub
+
+pluginCheck_bool_false@9:
+    intc_0 // 0
+    b pluginCheck_bool_merge@10
+
+pluginCheck_ternary_false@4:
+    // smart_contracts/arc58/account/contract.algo.ts:228
+    // const epochRef = pluginInfo.useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    b pluginCheck_ternary_merge@5
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.createApplication(version: bytes, controlledAddress: bytes, admin: bytes, spendingAccountFactoryApp: uint64, revocationApp: uint64, nickname: bytes) -> void:
+createApplication:
+    // smart_contracts/arc58/account/contract.algo.ts:525-533
+    // @abimethod({ onCreate: 'require' })
+    // createApplication(
+    //   version: string,
+    //   controlledAddress: Address,
+    //   admin: Address,
+    //   spendingAccountFactoryApp: uint64,
+    //   revocationApp: uint64,
+    //   nickname: string
+    // ) {
+    proto 6 0
+    // smart_contracts/arc58/account/contract.algo.ts:534
+    // assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
+    global CallerApplicationID
+    assert // This contract must be deployed from a factory
+    // smart_contracts/arc58/account/contract.algo.ts:535
+    // assert(admin !== controlledAddress)
+    frame_dig -4
+    frame_dig -5
+    !=
+    assert
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    bytec 19 // "version"
+    // smart_contracts/arc58/account/contract.algo.ts:537
+    // this.version.value = version
+    frame_dig -6
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:1
+    // export const AbstractAccountGlobalStateKeysAdmin = 'admin'
+    bytec 6 // "admin"
+    // smart_contracts/arc58/account/contract.algo.ts:538
+    // this.admin.value = admin.native
+    frame_dig -4
+    app_global_put
+    // smart_contracts/arc58/account/contract.algo.ts:540
+    // controlledAddress.native === Global.zeroAddress
+    frame_dig -5
+    global ZeroAddress
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:540-542
+    // controlledAddress.native === Global.zeroAddress
+    //   ? Global.currentApplicationAddress
+    //   : controlledAddress.native
+    bz createApplication_ternary_false@2
+    // smart_contracts/arc58/account/contract.algo.ts:541
+    // ? Global.currentApplicationAddress
+    global CurrentApplicationAddress
+
+createApplication_ternary_merge@3:
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    bytec_0 // "controlled_address"
+    // smart_contracts/arc58/account/contract.algo.ts:539-542
+    // this.controlledAddress.value =
+    //   controlledAddress.native === Global.zeroAddress
+    //     ? Global.currentApplicationAddress
+    //     : controlledAddress.native
+    swap
+    app_global_put
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    bytec 7 // "spending_account_factory_app"
+    // smart_contracts/arc58/account/contract.algo.ts:543
+    // this.spendingAccountFactoryApp.value = Application(spendingAccountFactoryApp)
+    frame_dig -3
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    bytec_3 // "spending_address"
+    // smart_contracts/arc58/account/contract.algo.ts:544
+    // this.spendingAddress.value = Global.zeroAddress;
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/constants.ts:5
+    // export const GlobalStateKeyRevocationApp = 'revocation_app'
+    bytec 13 // "revocation_app"
+    // smart_contracts/arc58/account/contract.algo.ts:545
+    // this.revocationApp.value = Application(revocationApp)
+    frame_dig -2
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:3
+    // export const AbstractAccountGlobalStateKeysNickname = 'nickname'
+    bytec 20 // "nickname"
+    // smart_contracts/arc58/account/contract.algo.ts:546
+    // this.nickname.value = nickname
+    frame_dig -1
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:11
+    // export const AbstractAccountGlobalStateKeysFactoryApp = 'factory_app'
+    pushbytes "factory_app"
+    // smart_contracts/arc58/account/contract.algo.ts:547
+    // this.factoryApp.value = Application(Global.callerApplicationId)
+    global CallerApplicationID
+    app_global_put
+    retsub
+
+createApplication_ternary_false@2:
+    frame_dig -5
+    b createApplication_ternary_merge@3
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.updateApplication(version: bytes) -> void:
+updateApplication:
+    // smart_contracts/arc58/account/contract.algo.ts:551-552
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // updateApplication(version: string): void {
+    proto 1 0
+    // smart_contracts/arc58/account/contract.algo.ts:553
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_UPDATE)
+    callsub isAdmin
+    assert // Only an admin can update the application
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    bytec 19 // "version"
+    // smart_contracts/arc58/account/contract.algo.ts:554
+    // this.version.value = version
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.changeRevocationApp(newRevocationApp: uint64) -> void:
+changeRevocationApp:
+    // smart_contracts/arc58/account/contract.algo.ts:564
+    // changeRevocationApp(newRevocationApp: uint64): void {
+    proto 1 0
+    // smart_contracts/arc58/account/contract.algo.ts:565
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE)
+    callsub isAdmin
+    assert // Only an admin can change the revocation app
+    // smart_contracts/constants.ts:5
+    // export const GlobalStateKeyRevocationApp = 'revocation_app'
+    bytec 13 // "revocation_app"
+    // smart_contracts/arc58/account/contract.algo.ts:566
+    // this.revocationApp.value = Application(newRevocationApp)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.setNickname(nickname: bytes) -> void:
+setNickname:
+    // smart_contracts/arc58/account/contract.algo.ts:574
+    // setNickname(nickname: string): void {
+    proto 1 0
+    // smart_contracts/arc58/account/contract.algo.ts:575
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    callsub isAdmin
+    assert // Only an admin can change the nickname
+    // smart_contracts/arc58/account/constants.ts:3
+    // export const AbstractAccountGlobalStateKeysNickname = 'nickname'
+    bytec 20 // "nickname"
+    // smart_contracts/arc58/account/contract.algo.ts:576
+    // this.nickname.value = nickname
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.setAvatar(avatar: uint64) -> void:
+setAvatar:
+    // smart_contracts/arc58/account/contract.algo.ts:584
+    // setAvatar(avatar: uint64): void {
+    proto 1 0
+    // smart_contracts/arc58/account/contract.algo.ts:585
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    callsub isAdmin
+    assert // Only an admin can change the nickname
+    // smart_contracts/arc58/account/contract.algo.ts:586
+    // const amount = this.balance([avatar])
+    frame_dig -1
+    itob
+    bytec 14 // 0x0001
+    swap
+    concat
+    callsub balance
+    pushint 2 // 2
+    // smart_contracts/arc58/account/contract.algo.ts:587
+    // assert(amount[0] > 0, ERR_DOES_NOT_HOLD_ASSET)
+    extract_uint64
+    assert // The account does not hold the asset
+    // smart_contracts/arc58/account/constants.ts:4
+    // export const AbstractAccountGlobalStateKeysAvatar = 'avatar'
+    pushbytes "avatar"
+    // smart_contracts/arc58/account/contract.algo.ts:588
+    // this.avatar.value = Asset(avatar)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.setBanner(banner: uint64) -> void:
+setBanner:
+    // smart_contracts/arc58/account/contract.algo.ts:596
+    // setBanner(banner: uint64): void {
+    proto 1 0
+    // smart_contracts/arc58/account/contract.algo.ts:597
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    callsub isAdmin
+    assert // Only an admin can change the nickname
+    // smart_contracts/arc58/account/contract.algo.ts:598
+    // const amount = this.balance([banner])
+    frame_dig -1
+    itob
+    bytec 14 // 0x0001
+    swap
+    concat
+    callsub balance
+    pushint 2 // 2
+    // smart_contracts/arc58/account/contract.algo.ts:599
+    // assert(amount[0] > 0, ERR_DOES_NOT_HOLD_ASSET)
+    extract_uint64
+    assert // The account does not hold the asset
+    // smart_contracts/arc58/account/constants.ts:5
+    // export const AbstractAccountGlobalStateKeysBanner = 'banner'
+    pushbytes "banner"
+    // smart_contracts/arc58/account/contract.algo.ts:600
+    // this.banner.value = Asset(banner)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.setBio(bio: bytes) -> void:
+setBio:
+    // smart_contracts/arc58/account/contract.algo.ts:608
+    // setBio(bio: string): void {
+    proto 1 0
+    // smart_contracts/arc58/account/contract.algo.ts:609
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME)
+    callsub isAdmin
+    assert // Only an admin can change the nickname
+    // smart_contracts/arc58/account/constants.ts:6
+    // export const AbstractAccountGlobalStateKeysBio = 'bio'
+    pushbytes "bio"
+    // smart_contracts/arc58/account/contract.algo.ts:610
+    // this.bio.value = bio
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_changeAdmin(newAdmin: bytes) -> void:
+arc58_changeAdmin:
+    // smart_contracts/arc58/account/contract.algo.ts:618
+    // arc58_changeAdmin(newAdmin: Address): void {
+    proto 1 0
+    // smart_contracts/arc58/account/contract.algo.ts:619
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_ADMIN);
+    callsub isAdmin
+    assert // Only an admin can change the admin account
+    // smart_contracts/arc58/account/constants.ts:1
+    // export const AbstractAccountGlobalStateKeysAdmin = 'admin'
+    bytec 6 // "admin"
+    // smart_contracts/arc58/account/contract.algo.ts:620
+    // this.admin.value = newAdmin.native;
+    frame_dig -1
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_pluginChangeAdmin(plugin: uint64, allowedCaller: bytes, newAdmin: bytes) -> void:
+arc58_pluginChangeAdmin:
+    // smart_contracts/arc58/account/contract.algo.ts:633
+    // arc58_pluginChangeAdmin(plugin: uint64, allowedCaller: Address, newAdmin: Address): void {
+    proto 3 0
+    // smart_contracts/arc58/account/contract.algo.ts:634
+    // assert(Txn.sender === Application(plugin).address, ERR_SENDER_MUST_BE_ADMIN_PLUGIN);
+    txn Sender
+    frame_dig -3
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // sender must be admin plugin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:636
+    // this.controlledAddress.value.authAddress === Application(plugin).address,
+    acct_params_get AcctAuthAddr
+    assert // account funded
+    frame_dig -3
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:635-638
+    // assert(
+    //   this.controlledAddress.value.authAddress === Application(plugin).address,
+    //   'This plugin is not in control of the account'
+    // );
+    assert // This plugin is not in control of the account
+    // smart_contracts/arc58/account/contract.algo.ts:640
+    // const key = { application: plugin, allowedCaller: allowedCaller.native };
+    frame_dig -3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:643
+    // this.plugins(key).exists && this.plugins(key).value.admin.native,
+    frame_dig -2
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    swap
+    concat
+    dup
+    // smart_contracts/arc58/account/contract.algo.ts:643
+    // this.plugins(key).exists && this.plugins(key).value.admin.native,
+    box_len
+    bury 1
+    bz arc58_pluginChangeAdmin_bool_false@3
+    frame_dig 0
+    box_get
+    assert // Box must have value
+    intc_0 // 0
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    bz arc58_pluginChangeAdmin_bool_false@3
+    intc_1 // 1
+
+arc58_pluginChangeAdmin_bool_merge@4:
+    // smart_contracts/arc58/account/contract.algo.ts:642-645
+    // assert(
+    //   this.plugins(key).exists && this.plugins(key).value.admin.native,
+    //   'This plugin does not have admin privileges'
+    // );
+    assert // This plugin does not have admin privileges
+    // smart_contracts/arc58/account/constants.ts:1
+    // export const AbstractAccountGlobalStateKeysAdmin = 'admin'
+    bytec 6 // "admin"
+    // smart_contracts/arc58/account/contract.algo.ts:647
+    // this.admin.value = newAdmin.native;
+    frame_dig -1
+    app_global_put
+    // smart_contracts/arc58/account/contract.algo.ts:648
+    // if (this.plugins(key).value.delegationType === DelegationTypeSelf) {
+    frame_dig 0
+    box_get
+    assert // Box must have value
+    extract 1 1 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/types.ts:35
+    // export const DelegationTypeSelf = new UintN8(1)
+    bytec 9 // 0x01
+    // smart_contracts/arc58/account/contract.algo.ts:648
+    // if (this.plugins(key).value.delegationType === DelegationTypeSelf) {
+    ==
+    bz arc58_pluginChangeAdmin_after_if_else@6
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+
+arc58_pluginChangeAdmin_after_if_else@6:
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+arc58_pluginChangeAdmin_bool_false@3:
+    intc_0 // 0
+    b arc58_pluginChangeAdmin_bool_merge@4
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_verifyAuthAddr() -> void:
+arc58_verifyAuthAddr:
+    // smart_contracts/arc58/account/contract.algo.ts:657
+    // arc58_verifyAuthAddr(): void {
+    proto 0 0
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:658
+    // assert(this.spendingAddress.value.authAddress === this.getAuthAddr());
+    acct_params_get AcctAuthAddr
+    assert // account funded
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:506
+    // return this.spendingAddress.value === this.controlledAddress.value
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:506-510
+    // return this.spendingAddress.value === this.controlledAddress.value
+    //   ? this.controlledAddress.value === Global.currentApplicationAddress
+    //     ? Global.zeroAddress // contract controls itself
+    //     : Global.currentApplicationAddress // contract controls a different account
+    //   : Global.zeroAddress; // is a spending account
+    bz arc58_verifyAuthAddr_ternary_false@6
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:507
+    // ? this.controlledAddress.value === Global.currentApplicationAddress
+    global CurrentApplicationAddress
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:507-509
+    // ? this.controlledAddress.value === Global.currentApplicationAddress
+    //   ? Global.zeroAddress // contract controls itself
+    //   : Global.currentApplicationAddress // contract controls a different account
+    bz arc58_verifyAuthAddr_ternary_false@4
+    // smart_contracts/arc58/account/contract.algo.ts:508
+    // ? Global.zeroAddress // contract controls itself
+    global ZeroAddress
+
+arc58_verifyAuthAddr_ternary_merge@7:
+    // smart_contracts/arc58/account/contract.algo.ts:658
+    // assert(this.spendingAddress.value.authAddress === this.getAuthAddr());
+    frame_dig 0
+    ==
+    assert
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    bytec_3 // "spending_address"
+    // smart_contracts/arc58/account/contract.algo.ts:659
+    // this.spendingAddress.value = Global.zeroAddress
+    global ZeroAddress
+    app_global_put
+    retsub
+
+arc58_verifyAuthAddr_ternary_false@4:
+    // smart_contracts/arc58/account/contract.algo.ts:509
+    // : Global.currentApplicationAddress // contract controls a different account
+    global CurrentApplicationAddress
+    b arc58_verifyAuthAddr_ternary_merge@7
+
+arc58_verifyAuthAddr_ternary_false@6:
+    // smart_contracts/arc58/account/contract.algo.ts:510
+    // : Global.zeroAddress; // is a spending account
+    global ZeroAddress
+    b arc58_verifyAuthAddr_ternary_merge@7
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyTo(address: bytes, flash: uint64) -> void:
+arc58_rekeyTo:
+    // smart_contracts/arc58/account/contract.algo.ts:668
+    // arc58_rekeyTo(address: Address, flash: boolean): void {
+    proto 2 0
+    pushbytes ""
+    dup
+    // smart_contracts/arc58/account/contract.algo.ts:669
+    // assert(this.isAdmin(), ERR_ADMIN_ONLY);
+    callsub isAdmin
+    assert // admin only
+    // smart_contracts/arc58/account/contract.algo.ts:671-679
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: address.native,
+    //     rekeyTo: address.native,
+    //     note: 'rekeying abstracted account',
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:676
+    // note: 'rekeying abstracted account',
+    pushbytes "rekeying abstracted account"
+    itxn_field Note
+    frame_dig -2
+    itxn_field RekeyTo
+    frame_dig -2
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:671-678
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: address.native,
+    //     rekeyTo: address.native,
+    //     note: 'rekeying abstracted account',
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:671-679
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: address.native,
+    //     rekeyTo: address.native,
+    //     note: 'rekeying abstracted account',
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/arc58/account/contract.algo.ts:681
+    // if (flash) this.assertRekeysBack();
+    frame_dig -1
+    bz arc58_rekeyTo_after_if_else@3
+    // smart_contracts/arc58/account/contract.algo.ts:200
+    // let rekeysBack = false;
+    intc_0 // 0
+    frame_bury 1
+    // smart_contracts/arc58/account/contract.algo.ts:201
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    txn GroupIndex
+    intc_1 // 1
+    +
+    frame_bury 0
+
+arc58_rekeyTo_while_top@5:
+    // smart_contracts/arc58/account/contract.algo.ts:201
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    frame_dig 0
+    global GroupSize
+    <
+    bz arc58_rekeyTo_block@10
+    // smart_contracts/arc58/account/contract.algo.ts:204
+    // if (this.txnRekeysBack(txn)) {
+    frame_dig 0
+    callsub txnRekeysBack
+    bz arc58_rekeyTo_after_if_else@8
+    // smart_contracts/arc58/account/contract.algo.ts:205
+    // rekeysBack = true;
+    intc_1 // 1
+    frame_bury 1
+
+arc58_rekeyTo_block@10:
+    // smart_contracts/arc58/account/contract.algo.ts:210
+    // assert(rekeysBack, ERR_MISSING_REKEY_BACK);
+    frame_dig 1
+    assert // missing rekey back
+
+arc58_rekeyTo_after_if_else@3:
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+arc58_rekeyTo_after_if_else@8:
+    // smart_contracts/arc58/account/contract.algo.ts:201
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    frame_dig 0
+    intc_1 // 1
+    +
+    frame_bury 0
+    b arc58_rekeyTo_while_top@5
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_canCall(plugin: uint64, global: uint64, address: bytes, method: bytes) -> uint64:
+arc58_canCall:
+    // smart_contracts/arc58/account/contract.algo.ts:694-700
+    // @abimethod({ readonly: true })
+    // arc58_canCall(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   address: Address,
+    //   method: StaticBytes<4>
+    // ): boolean {
+    proto 4 1
+    // smart_contracts/arc58/account/contract.algo.ts:701
+    // if (global) {
+    frame_dig -3
+    bz arc58_canCall_after_if_else@2
+    // smart_contracts/arc58/account/contract.algo.ts:702
+    // this.pluginCallAllowed(plugin, Global.zeroAddress, method);
+    frame_dig -4
+    global ZeroAddress
+    frame_dig -1
+    callsub pluginCallAllowed
+    pop
+
+arc58_canCall_after_if_else@2:
+    // smart_contracts/arc58/account/contract.algo.ts:704
+    // return this.pluginCallAllowed(plugin, address.native, method);
+    frame_dig -4
+    frame_dig -2
+    frame_dig -1
+    callsub pluginCallAllowed
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToPlugin(plugin: uint64, global: uint64, methodOffsets: bytes, fundsRequest: bytes) -> void:
+arc58_rekeyToPlugin:
+    // smart_contracts/arc58/account/contract.algo.ts:716-721
+    // arc58_rekeyToPlugin(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   methodOffsets: uint64[],
+    //   fundsRequest: FundsRequest[]
+    // ): void {
+    proto 4 0
+    intc_0 // 0
+    dupn 7
+    pushbytes ""
+    dupn 24
+    // smart_contracts/arc58/account/contract.algo.ts:726-728
+    // allowedCaller: global
+    //   ? Global.zeroAddress
+    //   : Txn.sender
+    frame_dig -3
+    bz arc58_rekeyToPlugin_ternary_false@2
+    // smart_contracts/arc58/account/contract.algo.ts:727
+    // ? Global.zeroAddress
+    global ZeroAddress
+    frame_bury 4
+
+arc58_rekeyToPlugin_ternary_merge@3:
+    // smart_contracts/arc58/account/contract.algo.ts:724
+    // const key = {
+    frame_dig -4
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:731
+    // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    frame_dig 4
+    concat
+    dup
+    frame_bury 3
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    swap
+    concat
+    dup
+    frame_bury 1
+    // smart_contracts/arc58/account/contract.algo.ts:731
+    // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    dup
+    box_len
+    bury 1
+    assert // Plugin does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:291
+    // const epochRef = this.plugins(key).value.useRounds.native
+    box_get
+    assert // Box must have value
+    intc_2 // 225
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    // smart_contracts/arc58/account/contract.algo.ts:291-293
+    // const epochRef = this.plugins(key).value.useRounds.native
+    //   ? Global.round
+    //   : Global.latestTimestamp;
+    bz arc58_rekeyToPlugin_ternary_false@36
+    // smart_contracts/arc58/account/contract.algo.ts:292
+    // ? Global.round
+    global Round
+    frame_bury 12
+
+arc58_rekeyToPlugin_ternary_merge@37:
+    // smart_contracts/arc58/account/contract.algo.ts:295
+    // const initialCheck = this.pluginCheck(key);
+    frame_dig -4
+    frame_dig 4
+    callsub pluginCheck
+    popn 2
+    cover 3
+    frame_bury 15
+    swap
+    // smart_contracts/arc58/account/contract.algo.ts:297
+    // assert(initialCheck.exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    assert // Plugin does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:298
+    // assert(!initialCheck.expired, ERR_PLUGIN_EXPIRED);
+    !
+    assert // plugin expired
+    // smart_contracts/arc58/account/contract.algo.ts:299
+    // assert(!initialCheck.onCooldown, ERR_PLUGIN_ON_COOLDOWN);
+    !
+    assert // plugin on cooldown
+    // smart_contracts/arc58/account/contract.algo.ts:301
+    // let rekeysBack = false;
+    intc_0 // 0
+    frame_bury 28
+    // smart_contracts/arc58/account/contract.algo.ts:302
+    // let methodIndex: uint64 = 0;
+    intc_0 // 0
+    frame_bury 22
+    // smart_contracts/arc58/account/contract.algo.ts:304
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    txn GroupIndex
+    intc_1 // 1
+    +
+    frame_bury 14
+
+arc58_rekeyToPlugin_while_top@38:
+    // smart_contracts/arc58/account/contract.algo.ts:304
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    frame_dig 14
+    global GroupSize
+    <
+    bz arc58_rekeyToPlugin_block@70
+    // smart_contracts/arc58/account/contract.algo.ts:307
+    // if (this.txnRekeysBack(txn)) {
+    frame_dig 14
+    callsub txnRekeysBack
+    bz arc58_rekeyToPlugin_after_if_else@41
+    // smart_contracts/arc58/account/contract.algo.ts:308
+    // rekeysBack = true;
+    intc_1 // 1
+    frame_bury 28
+
+arc58_rekeyToPlugin_block@70:
+    // smart_contracts/arc58/account/contract.algo.ts:338
+    // assert(rekeysBack, ERR_MISSING_REKEY_BACK);
+    frame_dig 28
+    assert // missing rekey back
+    // smart_contracts/arc58/account/contract.algo.ts:735
+    // if (this.plugins(key).value.spendingApp.native !== 0) {
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    pushint 2 // 2
+    extract_uint64
+    bz arc58_rekeyToPlugin_else_body@6
+    // smart_contracts/arc58/account/contract.algo.ts:736
+    // const spendingApp = Application(this.plugins(key).value.spendingApp.native)
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    pushint 2 // 2
+    extract_uint64
+    dup
+    frame_bury 29
+    // smart_contracts/arc58/account/contract.algo.ts:737
+    // this.spendingAddress.value = spendingApp.address;
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    bytec_3 // "spending_address"
+    // smart_contracts/arc58/account/contract.algo.ts:737
+    // this.spendingAddress.value = spendingApp.address;
+    swap
+    app_global_put
+    // smart_contracts/arc58/account/contract.algo.ts:394
+    // for (let i: uint64 = 0; i < fundsRequests.length; i += 1) {
+    intc_0 // 0
+    frame_bury 14
+
+arc58_rekeyToPlugin_while_top@12:
+    // smart_contracts/arc58/account/contract.algo.ts:394
+    // for (let i: uint64 = 0; i < fundsRequests.length; i += 1) {
+    frame_dig -1
+    intc_0 // 0
+    extract_uint16
+    frame_dig 14
+    >
+    bz arc58_rekeyToPlugin_after_while@32
+    // smart_contracts/arc58/account/contract.algo.ts:396
+    // const pluginInfo = decodeArc4<PluginInfo>(this.plugins(key).value.bytes)
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    dup
+    intc_2 // 225
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    dup
+    cover 2
+    frame_bury 27
+    pushint 37 // 37
+    extract_uint64
+    frame_bury 26
+    // smart_contracts/arc58/account/contract.algo.ts:401
+    // asset: fundsRequests[i].asset
+    frame_dig -1
+    extract 2 0
+    frame_dig 14
+    pushint 16 // 16
+    *
+    pushint 16 // 16
+    extract3 // on error: Index access is out of bounds
+    dup
+    intc_0 // 0
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 8
+    // smart_contracts/arc58/account/contract.algo.ts:408
+    // fundsRequests[i]
+    pushint 8 // 8
+    extract_uint64
+    frame_bury 13
+    // smart_contracts/arc58/account/contract.algo.ts:437
+    // key: AllowanceKey,
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:440
+    // assert(this.allowances(key).exists, 'Allowance does not exist');
+    frame_dig 3
+    swap
+    concat
+    // smart_contracts/arc58/account/constants.ts:15
+    // export const AbstractAccountBoxPrefixAllowances = 'a'
+    bytec 15 // "a"
+    swap
+    concat
+    dup
+    frame_bury 2
+    // smart_contracts/arc58/account/contract.algo.ts:440
+    // assert(this.allowances(key).exists, 'Allowance does not exist');
+    dup
+    box_len
+    bury 1
+    assert // Allowance does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:441
+    // const { type, spent, allowed, last, max, interval } = this.allowances(key).value
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    frame_bury 7
+    dup
+    intc_1 // 1
+    extract_uint64
+    frame_bury 21
+    dup
+    pushint 9 // 9
+    extract_uint64
+    frame_bury 9
+    dup
+    pushint 17 // 17
+    extract_uint64
+    frame_bury 30
+    dup
+    pushint 25 // 25
+    extract_uint64
+    frame_bury 16
+    pushint 33 // 33
+    extract_uint64
+    frame_bury 18
+    // smart_contracts/arc58/account/contract.algo.ts:442-444
+    // const newLast = useRounds
+    //   ? Global.round
+    //   : Global.latestTimestamp
+    bz arc58_rekeyToPlugin_ternary_false@15
+    // smart_contracts/arc58/account/contract.algo.ts:443
+    // ? Global.round
+    global Round
+    frame_bury 23
+
+arc58_rekeyToPlugin_ternary_merge@16:
+    // smart_contracts/arc58/account/contract.algo.ts:446
+    // if (type === SpendAllowanceTypeFlat) {
+    frame_dig 7
+    // smart_contracts/arc58/account/types.ts:12
+    // export const SpendAllowanceTypeFlat: SpendAllowanceType = new UintN8(1)
+    bytec 9 // 0x01
+    // smart_contracts/arc58/account/contract.algo.ts:446
+    // if (type === SpendAllowanceTypeFlat) {
+    ==
+    bz arc58_rekeyToPlugin_else_body@18
+    // smart_contracts/arc58/account/contract.algo.ts:447
+    // const leftover: uint64 = allowed - spent;
+    frame_dig 9
+    frame_dig 30
+    dup
+    cover 2
+    -
+    // smart_contracts/arc58/account/contract.algo.ts:449
+    // assert(leftover >= fundRequest.amount, 'Allowance exceeded');
+    frame_dig 13
+    dup
+    cover 2
+    >=
+    assert // Allowance exceeded
+    // smart_contracts/arc58/account/contract.algo.ts:453
+    // spent: (spent + fundRequest.amount)
+    +
+    // smart_contracts/arc58/account/contract.algo.ts:452
+    // ...this.allowances(key).value,
+    frame_dig 2
+    dup
+    box_get
+    assert // Box must have value
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    box_get
+    assert // Box must have value
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    box_get
+    assert // Box must have value
+    pushint 9 // 9
+    extract_uint64
+    dig 3
+    box_get
+    assert // Box must have value
+    pushint 25 // 25
+    extract_uint64
+    dig 4
+    box_get
+    assert // Box must have value
+    pushint 33 // 33
+    extract_uint64
+    uncover 3
+    itob
+    uncover 3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:453
+    // spent: (spent + fundRequest.amount)
+    uncover 6
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:452
+    // ...this.allowances(key).value,
+    uncover 4
+    itob
+    uncover 4
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:451
+    // this.allowances(key).value = {
+    uncover 5
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:451-454
+    // this.allowances(key).value = {
+    //   ...this.allowances(key).value,
+    //   spent: (spent + fundRequest.amount)
+    // }
+    box_put
+
+arc58_rekeyToPlugin_after_if_else@28:
+    // smart_contracts/arc58/account/contract.algo.ts:411
+    // if (fundsRequests[i].asset !== 0) {
+    frame_dig 8
+    bz arc58_rekeyToPlugin_else_body@30
+    // smart_contracts/arc58/account/contract.algo.ts:412-420
+    // itxn
+    //   .assetTransfer({
+    //     sender: this.controlledAddress.value,
+    //     assetReceiver: this.spendingAddress.value,
+    //     assetAmount: fundsRequests[i].amount,
+    //     xferAsset: fundsRequests[i].asset,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    frame_dig 8
+    itxn_field XferAsset
+    frame_dig 13
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:412-419
+    // itxn
+    //   .assetTransfer({
+    //     sender: this.controlledAddress.value,
+    //     assetReceiver: this.spendingAddress.value,
+    //     assetAmount: fundsRequests[i].amount,
+    //     xferAsset: fundsRequests[i].asset,
+    //     fee,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:412-420
+    // itxn
+    //   .assetTransfer({
+    //     sender: this.controlledAddress.value,
+    //     assetReceiver: this.spendingAddress.value,
+    //     assetAmount: fundsRequests[i].amount,
+    //     xferAsset: fundsRequests[i].asset,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_submit
+
+arc58_rekeyToPlugin_after_if_else@31:
+    // smart_contracts/arc58/account/contract.algo.ts:394
+    // for (let i: uint64 = 0; i < fundsRequests.length; i += 1) {
+    frame_dig 14
+    intc_1 // 1
+    +
+    frame_bury 14
+    b arc58_rekeyToPlugin_while_top@12
+
+arc58_rekeyToPlugin_else_body@30:
+    // smart_contracts/arc58/account/contract.algo.ts:422-429
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     amount: fundsRequests[i].amount,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    frame_dig 13
+    itxn_field Amount
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:422-428
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     amount: fundsRequests[i].amount,
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:422-429
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     amount: fundsRequests[i].amount,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_submit
+    b arc58_rekeyToPlugin_after_if_else@31
+
+arc58_rekeyToPlugin_else_body@18:
+    // smart_contracts/arc58/account/contract.algo.ts:455
+    // } else if (type === SpendAllowanceTypeWindow) {
+    frame_dig 7
+    // smart_contracts/arc58/account/types.ts:13
+    // export const SpendAllowanceTypeWindow: SpendAllowanceType = new UintN8(2)
+    pushbytes 0x02
+    // smart_contracts/arc58/account/contract.algo.ts:455
+    // } else if (type === SpendAllowanceTypeWindow) {
+    ==
+    bz arc58_rekeyToPlugin_else_body@23
+    // smart_contracts/arc58/account/contract.algo.ts:495
+    // if (useRounds) {
+    frame_dig 27
+    bz arc58_rekeyToPlugin_after_if_else@73
+    // smart_contracts/arc58/account/contract.algo.ts:496
+    // return Global.round - ((Global.round - start) % interval)
+    global Round
+    dup
+    frame_dig 26
+    -
+    frame_dig 16
+    %
+    -
+
+arc58_rekeyToPlugin_after_inlined_smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.getLatestWindowStart@74:
+    // smart_contracts/arc58/account/contract.algo.ts:458
+    // if (currentWindowStart > last) {
+    frame_dig 18
+    >
+    bz arc58_rekeyToPlugin_else_body@21
+    // smart_contracts/arc58/account/contract.algo.ts:459
+    // assert(allowed >= fundRequest.amount, 'Allowance exceeded');
+    frame_dig 9
+    frame_dig 13
+    >=
+    assert // Allowance exceeded
+
+arc58_rekeyToPlugin_after_if_else@22:
+    // smart_contracts/arc58/account/contract.algo.ts:468
+    // spent: (spent + fundRequest.amount),
+    frame_dig 30
+    frame_dig 13
+    +
+    // smart_contracts/arc58/account/contract.algo.ts:467
+    // ...this.allowances(key).value,
+    frame_dig 2
+    dup
+    box_get
+    assert // Box must have value
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    box_get
+    assert // Box must have value
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    box_get
+    assert // Box must have value
+    pushint 9 // 9
+    extract_uint64
+    dig 3
+    box_get
+    assert // Box must have value
+    pushint 25 // 25
+    extract_uint64
+    uncover 2
+    itob
+    uncover 2
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:468
+    // spent: (spent + fundRequest.amount),
+    uncover 5
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:467
+    // ...this.allowances(key).value,
+    uncover 3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:469
+    // last: newLast
+    frame_dig 23
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:466
+    // this.allowances(key).value = {
+    uncover 5
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:466-470
+    // this.allowances(key).value = {
+    //   ...this.allowances(key).value,
+    //   spent: (spent + fundRequest.amount),
+    //   last: newLast
+    // }
+    box_put
+    b arc58_rekeyToPlugin_after_if_else@28
+
+arc58_rekeyToPlugin_else_body@21:
+    // smart_contracts/arc58/account/contract.algo.ts:462
+    // const leftover: uint64 = allowed - spent;
+    frame_dig 9
+    frame_dig 30
+    -
+    // smart_contracts/arc58/account/contract.algo.ts:463
+    // assert(leftover >= fundRequest.amount, 'Allowance exceeded');
+    frame_dig 13
+    >=
+    assert // Allowance exceeded
+    b arc58_rekeyToPlugin_after_if_else@22
+
+arc58_rekeyToPlugin_after_if_else@73:
+    // smart_contracts/arc58/account/contract.algo.ts:498
+    // return Global.latestTimestamp - ((Global.latestTimestamp - start) % interval)
+    global LatestTimestamp
+    dup
+    frame_dig 26
+    -
+    frame_dig 16
+    %
+    -
+    // smart_contracts/arc58/account/contract.algo.ts:456
+    // const currentWindowStart = this.getLatestWindowStart(useRounds, start, interval)
+    b arc58_rekeyToPlugin_after_inlined_smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.getLatestWindowStart@74
+
+arc58_rekeyToPlugin_else_body@23:
+    // smart_contracts/arc58/account/contract.algo.ts:472
+    // } else if (type === SpendAllowanceTypeDrip) {
+    frame_dig 7
+    // smart_contracts/arc58/account/types.ts:14
+    // export const SpendAllowanceTypeDrip: SpendAllowanceType = new UintN8(3)
+    pushbytes 0x03
+    // smart_contracts/arc58/account/contract.algo.ts:472
+    // } else if (type === SpendAllowanceTypeDrip) {
+    ==
+    bz arc58_rekeyToPlugin_after_if_else@28
+    // smart_contracts/arc58/account/contract.algo.ts:473
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    frame_dig 27
+    bz arc58_rekeyToPlugin_ternary_false@26
+    global Round
+    frame_bury 12
+
+arc58_rekeyToPlugin_ternary_merge@27:
+    // smart_contracts/arc58/account/contract.algo.ts:479
+    // const passed: uint64 = epochRef - last
+    frame_dig 12
+    frame_dig 18
+    -
+    // smart_contracts/arc58/account/contract.algo.ts:480
+    // const accrued: uint64 = lastLeftover + ((passed / interval) * accrualRate)
+    frame_dig 16
+    /
+    frame_dig 9
+    *
+    frame_dig 30
+    +
+    // smart_contracts/arc58/account/contract.algo.ts:482
+    // const available: uint64 = accrued > max ? max : accrued
+    dup
+    frame_dig 21
+    dup
+    cover 3
+    >
+    swap
+    cover 2
+    select
+    // smart_contracts/arc58/account/contract.algo.ts:484
+    // assert(available >= amount, 'Allowance exceeded');
+    dup
+    frame_dig 13
+    dup
+    cover 3
+    >=
+    assert // Allowance exceeded
+    // smart_contracts/arc58/account/contract.algo.ts:488
+    // spent: (available - amount),
+    swap
+    -
+    // smart_contracts/arc58/account/contract.algo.ts:487
+    // ...this.allowances(key).value,
+    frame_dig 2
+    dup
+    box_get
+    assert // Box must have value
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    box_get
+    assert // Box must have value
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    box_get
+    assert // Box must have value
+    pushint 9 // 9
+    extract_uint64
+    dig 3
+    box_get
+    assert // Box must have value
+    pushint 25 // 25
+    extract_uint64
+    uncover 2
+    itob
+    uncover 2
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:488
+    // spent: (available - amount),
+    uncover 5
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:487
+    // ...this.allowances(key).value,
+    uncover 3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:489
+    // last: newLast
+    frame_dig 23
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:486
+    // this.allowances(key).value = {
+    uncover 5
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:486-490
+    // this.allowances(key).value = {
+    //   ...this.allowances(key).value,
+    //   spent: (available - amount),
+    //   last: newLast
+    // }
+    box_put
+    b arc58_rekeyToPlugin_after_if_else@28
+
+arc58_rekeyToPlugin_ternary_false@26:
+    // smart_contracts/arc58/account/contract.algo.ts:473
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    frame_bury 12
+    b arc58_rekeyToPlugin_ternary_merge@27
+
+arc58_rekeyToPlugin_ternary_false@15:
+    // smart_contracts/arc58/account/contract.algo.ts:444
+    // : Global.latestTimestamp
+    global LatestTimestamp
+    frame_bury 23
+    b arc58_rekeyToPlugin_ternary_merge@16
+
+arc58_rekeyToPlugin_after_while@32:
+    // smart_contracts/arc58/account/contract.algo.ts:740-747
+    // abiCall(
+    //   SpendingAccountContract.prototype.rekey,
+    //   {
+    //     appId: spendingApp,
+    //     args: [new Address(pluginApp.address)],
+    //     fee,
+    //   }
+    // )
+    itxn_begin
+    // smart_contracts/arc58/account/contract.algo.ts:744
+    // args: [new Address(pluginApp.address)],
+    frame_dig -4
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/arc58/account/contract.algo.ts:740-747
+    // abiCall(
+    //   SpendingAccountContract.prototype.rekey,
+    //   {
+    //     appId: spendingApp,
+    //     args: [new Address(pluginApp.address)],
+    //     fee,
+    //   }
+    // )
+    pushbytes 0x65a97bcc // method "rekey(address)void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig 29
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:740-747
+    // abiCall(
+    //   SpendingAccountContract.prototype.rekey,
+    //   {
+    //     appId: spendingApp,
+    //     args: [new Address(pluginApp.address)],
+    //     fee,
+    //   }
+    // )
+    itxn_submit
+
+arc58_rekeyToPlugin_after_if_else@8:
+    // smart_contracts/arc58/account/contract.algo.ts:762
+    // if (this.plugins(key).value.delegationType === DelegationTypeSelf) {
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    extract 1 1 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/types.ts:35
+    // export const DelegationTypeSelf = new UintN8(1)
+    bytec 9 // 0x01
+    // smart_contracts/arc58/account/contract.algo.ts:762
+    // if (this.plugins(key).value.delegationType === DelegationTypeSelf) {
+    ==
+    bz arc58_rekeyToPlugin_after_if_else@10
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+
+arc58_rekeyToPlugin_after_if_else@10:
+    retsub
+
+arc58_rekeyToPlugin_else_body@6:
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    bytec_3 // "spending_address"
+    // smart_contracts/arc58/account/contract.algo.ts:749
+    // this.spendingAddress.value = this.controlledAddress.value;
+    swap
+    app_global_put
+    // smart_contracts/arc58/account/contract.algo.ts:751-759
+    // itxn
+    //   .payment({
+    //     sender: this.spendingAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     rekeyTo: pluginApp.address,
+    //     note: 'rekeying to plugin app',
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:755
+    // rekeyTo: pluginApp.address,
+    frame_dig -4
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/arc58/account/contract.algo.ts:756
+    // note: 'rekeying to plugin app',
+    pushbytes "rekeying to plugin app"
+    itxn_field Note
+    itxn_field RekeyTo
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:751-758
+    // itxn
+    //   .payment({
+    //     sender: this.spendingAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     rekeyTo: pluginApp.address,
+    //     note: 'rekeying to plugin app',
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:751-759
+    // itxn
+    //   .payment({
+    //     sender: this.spendingAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     rekeyTo: pluginApp.address,
+    //     note: 'rekeying to plugin app',
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_submit
+    b arc58_rekeyToPlugin_after_if_else@8
+
+arc58_rekeyToPlugin_after_if_else@41:
+    // smart_contracts/arc58/account/contract.algo.ts:312
+    // if (txn.type !== TransactionType.ApplicationCall) {
+    frame_dig 14
+    gtxns TypeEnum
+    intc_3 // 6
+    !=
+    bnz arc58_rekeyToPlugin_block@68
+    // smart_contracts/arc58/account/contract.algo.ts:316
+    // assert(txn.appId.id === key.application, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY);
+    frame_dig 14
+    dup
+    gtxns ApplicationID
+    frame_dig -4
+    ==
+    assert // cannot call other apps during rekey
+    // smart_contracts/arc58/account/contract.algo.ts:317
+    // assert(txn.onCompletion === OnCompleteAction.NoOp, ERR_INVALID_ONCOMPLETE);
+    dup
+    gtxns OnCompletion
+    !
+    assert // invalid oncomplete must be no op
+    // smart_contracts/arc58/account/contract.algo.ts:320
+    // assert(txn.numAppArgs > 1, ERR_INVALID_SENDER_ARG);
+    dup
+    gtxns NumAppArgs
+    intc_1 // 1
+    >
+    assert // invalid sender must be this app id
+    // smart_contracts/arc58/account/contract.algo.ts:321
+    // assert(Application(btoi(txn.appArgs(1))) === Global.currentApplicationId, ERR_INVALID_SENDER_VALUE);
+    intc_1 // 1
+    gtxnsas ApplicationArgs
+    btoi
+    global CurrentApplicationID
+    ==
+    assert // invalid sender app id
+    // smart_contracts/arc58/account/contract.algo.ts:254
+    // const check = this.pluginCheck(key);
+    frame_dig -4
+    frame_dig 4
+    callsub pluginCheck
+    dup
+    cover 6
+    frame_bury 11
+    frame_bury 10
+    popn 4
+    // smart_contracts/arc58/account/contract.algo.ts:256
+    // if (!check.valid) {
+    bnz arc58_rekeyToPlugin_after_if_else@45
+    // smart_contracts/arc58/account/contract.algo.ts:261
+    // methodOnCooldown: true
+    intc_1 // 1
+
+arc58_rekeyToPlugin_after_inlined_smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.fullPluginCheck@65:
+    // smart_contracts/arc58/account/contract.algo.ts:325
+    // assert(!check.methodOnCooldown, ERR_METHOD_ON_COOLDOWN);
+    !
+    assert // method on cooldown
+    // smart_contracts/arc58/account/contract.algo.ts:326
+    // assert(check.valid, ERR_INVALID_PLUGIN_CALL);
+    frame_dig 11
+    assert // invalid plugin call
+    // smart_contracts/arc58/account/contract.algo.ts:328
+    // if (initialCheck.hasCooldown) {
+    frame_dig 15
+    bz arc58_rekeyToPlugin_after_if_else@67
+    // smart_contracts/arc58/account/contract.algo.ts:331
+    // lastCalled: new UintN64(epochRef)
+    frame_dig 12
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    frame_dig 1
+    dup
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    intc_0 // 0
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 1
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    extract 1 1 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 2
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    extract 2 8 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 3
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    extract 10 8 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 4
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    extract 18 8 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 5
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    dup
+    pushint 26 // 26
+    extract_uint16
+    dig 1
+    len
+    substring3
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 6
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    pushint 224 // 224
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 7
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    intc_2 // 225
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:330
+    // ...this.plugins(key).value.copy(),
+    dig 8
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:329-332
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    extract 37 8 // on error: Index access is out of bounds
+    uncover 8
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    bytec 10 // 0x002d
+    concat
+    uncover 3
+    concat
+    uncover 2
+    intc_0 // 0
+    getbit
+    intc_2 // 225
+    swap
+    setbit
+    uncover 4
+    concat
+    swap
+    concat
+    swap
+    concat
+    dig 1
+    box_del
+    pop
+    box_put
+
+arc58_rekeyToPlugin_after_if_else@67:
+    // smart_contracts/arc58/account/contract.algo.ts:335
+    // methodIndex += 1;
+    frame_dig 22
+    intc_1 // 1
+    +
+    frame_bury 22
+
+arc58_rekeyToPlugin_block@68:
+    // smart_contracts/arc58/account/contract.algo.ts:304
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    frame_dig 14
+    intc_1 // 1
+    +
+    frame_bury 14
+    b arc58_rekeyToPlugin_while_top@38
+
+arc58_rekeyToPlugin_after_if_else@45:
+    // smart_contracts/arc58/account/contract.algo.ts:266
+    // methodAllowed: !check.hasMethodRestrictions,
+    frame_dig 10
+    dup
+    !
+    frame_bury 19
+    // smart_contracts/arc58/account/contract.algo.ts:268
+    // methodOnCooldown: false
+    intc_0 // 0
+    // smart_contracts/arc58/account/contract.algo.ts:265-269
+    // let mCheck: MethodValidation = {
+    //   methodAllowed: !check.hasMethodRestrictions,
+    //   methodHasCooldown: false,
+    //   methodOnCooldown: false
+    // }
+    frame_bury 20
+    // smart_contracts/arc58/account/contract.algo.ts:271
+    // if (check.hasMethodRestrictions) {
+    bz arc58_rekeyToPlugin_after_if_else@60
+    // smart_contracts/arc58/account/contract.algo.ts:272
+    // assert(methodIndex < methodOffsets.length, ERR_MALFORMED_OFFSETS);
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16
+    frame_dig 22
+    dup
+    uncover 2
+    <
+    assert // malformed method offsets
+    // smart_contracts/arc58/account/contract.algo.ts:273
+    // mCheck = this.methodCheck(key, txn, methodOffsets[methodIndex]);
+    frame_dig -2
+    extract 2 0
+    swap
+    pushint 8 // 8
+    *
+    extract_uint64
+    dup
+    frame_bury 24
+    // smart_contracts/arc58/account/contract.algo.ts:351
+    // assert(len(txn.appArgs(0)) === 4, ERR_INVALID_METHOD_SIGNATURE_LENGTH);
+    frame_dig 14
+    intc_0 // 0
+    gtxnsas ApplicationArgs
+    frame_bury 6
+    // smart_contracts/arc58/account/contract.algo.ts:354
+    // const methods = this.plugins(key).value.methods.copy()
+    frame_dig 1
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    dup
+    pushint 26 // 26
+    extract_uint16
+    dig 1
+    len
+    substring3
+    dup
+    frame_bury 5
+    // smart_contracts/arc58/account/contract.algo.ts:355
+    // const allowedMethod = methods[offset].copy()
+    extract 2 0
+    swap
+    pushint 20 // 20
+    *
+    dup
+    frame_bury 17
+    pushint 20 // 20
+    extract3 // on error: Index access is out of bounds
+    dup
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:357
+    // const hasCooldown = allowedMethod.cooldown.native > 0
+    pushint 4 // 4
+    extract_uint64
+    frame_bury 31
+    // smart_contracts/arc58/account/contract.algo.ts:359
+    // const useRounds = this.plugins(key).value.useRounds.native
+    box_get
+    assert // Box must have value
+    intc_2 // 225
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    dup
+    frame_bury 32
+    // smart_contracts/arc58/account/contract.algo.ts:361
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    bz arc58_rekeyToPlugin_ternary_false@48
+    global Round
+
+arc58_rekeyToPlugin_ternary_merge@49:
+    // smart_contracts/arc58/account/contract.algo.ts:362
+    // const onCooldown = (epochRef - methods[offset].lastCalled.native) < methods[offset].cooldown.native;
+    frame_dig 0
+    dup
+    pushint 12 // 12
+    extract_uint64
+    uncover 2
+    swap
+    -
+    frame_dig 31
+    <
+    frame_bury 25
+    // smart_contracts/arc58/account/contract.algo.ts:364
+    // if (methods[offset].selector === selectorArg && (!hasCooldown || !onCooldown)) {
+    extract 0 4 // on error: Index access is out of bounds
+    frame_dig 6
+    ==
+    bz arc58_rekeyToPlugin_after_if_else@58
+    frame_dig 31
+    bz arc58_rekeyToPlugin_if_body@52
+    frame_dig 25
+    bnz arc58_rekeyToPlugin_after_if_else@58
+
+arc58_rekeyToPlugin_if_body@52:
+    // smart_contracts/arc58/account/contract.algo.ts:366
+    // if (hasCooldown) {
+    frame_dig 31
+    bz arc58_rekeyToPlugin_after_if_else@57
+    // smart_contracts/arc58/account/contract.algo.ts:367-369
+    // const lastCalled = useRounds
+    //   ? Global.round
+    //   : Global.latestTimestamp
+    frame_dig 32
+    bz arc58_rekeyToPlugin_ternary_false@55
+    // smart_contracts/arc58/account/contract.algo.ts:368
+    // ? Global.round
+    global Round
+
+arc58_rekeyToPlugin_ternary_merge@56:
+    // smart_contracts/arc58/account/contract.algo.ts:371
+    // methods[offset].lastCalled = new UintN64(lastCalled);
+    itob
+    frame_dig 0
+    swap
+    replace2 12
+    frame_dig 5
+    dup
+    intc_0 // 0
+    extract_uint16
+    frame_dig 24
+    >
+    assert // Index access is out of bounds
+    frame_dig 17
+    pushint 2 // 2
+    +
+    uncover 2
+    replace3
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    frame_dig 1
+    dup
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    intc_0 // 0
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 1
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    extract 1 1 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 2
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    extract 2 8 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 3
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    extract 10 8 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 4
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    extract 18 8 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 5
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    pushint 224 // 224
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 6
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    intc_2 // 225
+    getbit
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 7
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    extract 29 8 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:374
+    // ...this.plugins(key).value,
+    dig 8
+    box_get
+    assert // Box must have value
+    // smart_contracts/arc58/account/contract.algo.ts:373-376
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    extract 37 8 // on error: Index access is out of bounds
+    uncover 8
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    bytec 10 // 0x002d
+    concat
+    uncover 4
+    concat
+    uncover 3
+    intc_0 // 0
+    getbit
+    intc_2 // 225
+    swap
+    setbit
+    uncover 2
+    concat
+    swap
+    concat
+    uncover 2
+    concat
+    dig 1
+    box_del
+    pop
+    box_put
+
+arc58_rekeyToPlugin_after_if_else@57:
+    // smart_contracts/arc58/account/contract.algo.ts:380
+    // methodAllowed: true,
+    intc_1 // 1
+    frame_dig 25
+    frame_bury 20
+    frame_bury 19
+
+arc58_rekeyToPlugin_after_if_else@60:
+    // smart_contracts/arc58/account/contract.algo.ts:279
+    // valid: check.valid && mCheck.methodAllowed
+    frame_dig 11
+    bz arc58_rekeyToPlugin_bool_false@63
+    frame_dig 19
+    bz arc58_rekeyToPlugin_bool_false@63
+    intc_1 // 1
+
+arc58_rekeyToPlugin_bool_merge@64:
+    frame_bury 11
+    frame_dig 20
+    // smart_contracts/arc58/account/contract.algo.ts:323
+    // const check = this.fullPluginCheck(key, txn, methodOffsets, methodIndex);
+    b arc58_rekeyToPlugin_after_inlined_smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.fullPluginCheck@65
+
+arc58_rekeyToPlugin_bool_false@63:
+    intc_0 // 0
+    b arc58_rekeyToPlugin_bool_merge@64
+
+arc58_rekeyToPlugin_ternary_false@55:
+    // smart_contracts/arc58/account/contract.algo.ts:369
+    // : Global.latestTimestamp
+    global LatestTimestamp
+    b arc58_rekeyToPlugin_ternary_merge@56
+
+arc58_rekeyToPlugin_after_if_else@58:
+    // smart_contracts/arc58/account/contract.algo.ts:387
+    // methodAllowed: false,
+    intc_0 // 0
+    // smart_contracts/arc58/account/contract.algo.ts:389
+    // methodOnCooldown: true
+    intc_1 // 1
+    frame_bury 20
+    frame_bury 19
+    // smart_contracts/arc58/account/contract.algo.ts:273
+    // mCheck = this.methodCheck(key, txn, methodOffsets[methodIndex]);
+    b arc58_rekeyToPlugin_after_if_else@60
+
+arc58_rekeyToPlugin_ternary_false@48:
+    // smart_contracts/arc58/account/contract.algo.ts:361
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    b arc58_rekeyToPlugin_ternary_merge@49
+
+arc58_rekeyToPlugin_ternary_false@36:
+    // smart_contracts/arc58/account/contract.algo.ts:293
+    // : Global.latestTimestamp;
+    global LatestTimestamp
+    frame_bury 12
+    b arc58_rekeyToPlugin_ternary_merge@37
+
+arc58_rekeyToPlugin_ternary_false@2:
+    // smart_contracts/arc58/account/contract.algo.ts:728
+    // : Txn.sender
+    txn Sender
+    frame_bury 4
+    b arc58_rekeyToPlugin_ternary_merge@3
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_rekeyToNamedPlugin(name: bytes, global: uint64, methodOffsets: bytes, fundsRequest: bytes) -> void:
+arc58_rekeyToNamedPlugin:
+    // smart_contracts/arc58/account/contract.algo.ts:777
+    // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
+    proto 4 0
+    // smart_contracts/arc58/account/constants.ts:14
+    // export const AbstractAccountBoxPrefixNamedPlugins = 'n'
+    bytec 16 // "n"
+    frame_dig -4
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:779
+    // this.namedPlugins(name).value.application,
+    box_get
+    assert // Box must have value
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/arc58/account/contract.algo.ts:778-783
+    // this.arc58_rekeyToPlugin(
+    //   this.namedPlugins(name).value.application,
+    //   global,
+    //   methodOffsets,
+    //   fundsRequest
+    // );
+    frame_dig -3
+    frame_dig -2
+    frame_dig -1
+    callsub arc58_rekeyToPlugin
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_addPlugin(app: uint64, allowedCaller: bytes, admin: uint64, delegationType: bytes, lastValid: uint64, cooldown: uint64, methods: bytes, useAllowance: uint64, useRounds: uint64) -> void:
+arc58_addPlugin:
+    // smart_contracts/arc58/account/contract.algo.ts:799-809
+    // arc58_addPlugin(
+    //   app: uint64,
+    //   allowedCaller: Address,
+    //   admin: boolean,
+    //   delegationType: UintN8,
+    //   lastValid: uint64,
+    //   cooldown: uint64,
+    //   methods: MethodRestriction[],
+    //   useAllowance: boolean,
+    //   useRounds: boolean,
+    // ): void {
+    proto 9 0
+    intc_0 // 0
+    pushbytes ""
+    dupn 3
+    // smart_contracts/arc58/account/contract.algo.ts:810
+    // assert(this.isAdmin(), ERR_ADMIN_ONLY);
+    callsub isAdmin
+    assert // admin only
+    // smart_contracts/arc58/account/contract.algo.ts:812
+    // delegationType === DelegationTypeSelf &&
+    frame_dig -6
+    // smart_contracts/arc58/account/types.ts:35
+    // export const DelegationTypeSelf = new UintN8(1)
+    bytec 9 // 0x01
+    // smart_contracts/arc58/account/contract.algo.ts:812
+    // delegationType === DelegationTypeSelf &&
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:812-813
+    // delegationType === DelegationTypeSelf &&
+    // allowedCaller.native === Global.zeroAddress
+    bz arc58_addPlugin_bool_false@3
+    // smart_contracts/arc58/account/contract.algo.ts:813
+    // allowedCaller.native === Global.zeroAddress
+    frame_dig -8
+    global ZeroAddress
+    ==
+    // smart_contracts/arc58/account/contract.algo.ts:812-813
+    // delegationType === DelegationTypeSelf &&
+    // allowedCaller.native === Global.zeroAddress
+    bz arc58_addPlugin_bool_false@3
+    intc_1 // 1
+
+arc58_addPlugin_bool_merge@4:
+    // smart_contracts/arc58/account/contract.algo.ts:815
+    // assert(!badDelegationCombo, ERR_ZERO_ADDRESS_DELEGATION_TYPE)
+    !
+    assert // delegation type must not be self for global plugins
+    // smart_contracts/arc58/account/contract.algo.ts:818
+    // const methodInfos = new DynamicArray<arc4MethodInfo>()
+    bytec 17 // 0x0000
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:819
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    intc_0 // 0
+    frame_bury 2
+
+arc58_addPlugin_while_top@5:
+    // smart_contracts/arc58/account/contract.algo.ts:819
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    frame_dig -3
+    intc_0 // 0
+    extract_uint16
+    dup
+    frame_bury 4
+    frame_dig 2
+    >
+    bz arc58_addPlugin_after_while@7
+    // smart_contracts/arc58/account/contract.algo.ts:820-826
+    // methodInfos.push(
+    //   new arc4MethodInfo({
+    //     selector: methods[i].selector,
+    //     cooldown: new UintN64(methods[i].cooldown),
+    //     lastCalled: new UintN64(),
+    //   })
+    // )
+    frame_dig 0
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:822
+    // selector: methods[i].selector,
+    frame_dig -3
+    extract 2 0
+    frame_dig 2
+    dup
+    cover 3
+    pushint 12 // 12
+    *
+    pushint 12 // 12
+    extract3 // on error: Index access is out of bounds
+    dup
+    extract 0 4 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:823
+    // cooldown: new UintN64(methods[i].cooldown),
+    swap
+    pushint 4 // 4
+    extract_uint64
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:821-825
+    // new arc4MethodInfo({
+    //   selector: methods[i].selector,
+    //   cooldown: new UintN64(methods[i].cooldown),
+    //   lastCalled: new UintN64(),
+    // })
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:824
+    // lastCalled: new UintN64(),
+    bytec 11 // 0x0000000000000000
+    // smart_contracts/arc58/account/contract.algo.ts:821-825
+    // new arc4MethodInfo({
+    //   selector: methods[i].selector,
+    //   cooldown: new UintN64(methods[i].cooldown),
+    //   lastCalled: new UintN64(),
+    // })
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:820-826
+    // methodInfos.push(
+    //   new arc4MethodInfo({
+    //     selector: methods[i].selector,
+    //     cooldown: new UintN64(methods[i].cooldown),
+    //     lastCalled: new UintN64(),
+    //   })
+    // )
+    concat
+    dup
+    len
+    pushint 20 // 20
+    /
+    itob
+    extract 6 2
+    swap
+    concat
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:819
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    intc_1 // 1
+    +
+    frame_bury 2
+    b arc58_addPlugin_while_top@5
+
+arc58_addPlugin_after_while@7:
+    // smart_contracts/arc58/account/contract.algo.ts:829
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    frame_dig -1
+    bz arc58_addPlugin_ternary_false@9
+    global Round
+    frame_bury 1
+
+arc58_addPlugin_ternary_merge@10:
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:831
+    // if (this.controlledAddress.value !== Global.currentApplicationAddress) {
+    global CurrentApplicationAddress
+    !=
+    bz arc58_addPlugin_after_if_else@13
+    // smart_contracts/arc58/account/contract.algo.ts:832-839
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 36_500 + (400 * (13 * methods.length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:835
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/arc58/account/contract.algo.ts:836
+    // amount: 36_500 + (400 * (13 * methods.length)),
+    pushint 13 // 13
+    frame_dig 4
+    *
+    intc 4 // 400
+    *
+    intc 5 // 36500
+    +
+    itxn_field Amount
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:832-838
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 36_500 + (400 * (13 * methods.length)),
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:832-839
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 36_500 + (400 * (13 * methods.length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+
+arc58_addPlugin_after_if_else@13:
+    // smart_contracts/arc58/account/contract.algo.ts:842
+    // let spendingApp: uint64 = 0
+    intc_0 // 0
+    frame_bury 3
+    // smart_contracts/arc58/account/contract.algo.ts:843
+    // if (useAllowance) {
+    frame_dig -2
+    bz arc58_addPlugin_after_if_else@17
+    // smart_contracts/arc58/account/contract.algo.ts:845-860
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     sender: this.controlledAddress.value,
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         amount: 269_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       app,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    intc_0 // 0
+    bytec 7 // "spending_account_factory_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:853
+    // receiver: this.spendingAccountFactoryApp.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    itxn_field Receiver
+    // smart_contracts/arc58/account/contract.algo.ts:852
+    // amount: 269_500,
+    pushint 269500 // 269500
+    itxn_field Amount
+    // smart_contracts/arc58/account/contract.algo.ts:851-855
+    // itxn.payment({
+    //   amount: 269_500,
+    //   receiver: this.spendingAccountFactoryApp.value.address,
+    //   fee,
+    // }),
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:845-860
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     sender: this.controlledAddress.value,
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         amount: 269_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       app,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_next
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    intc_0 // 0
+    bytec 7 // "spending_account_factory_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:856
+    // app,
+    frame_dig -9
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:845-860
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     sender: this.controlledAddress.value,
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         amount: 269_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       app,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    bytec 21 // method "create(pay,uint64)uint64"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    itxn_field Sender
+    intc_3 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:845-860
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     sender: this.controlledAddress.value,
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         amount: 269_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       app,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_submit
+    gitxn 1 LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec 8 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    frame_bury 3
+
+arc58_addPlugin_after_if_else@17:
+    // smart_contracts/arc58/account/contract.algo.ts:865
+    // admin: new Bool(admin),
+    bytec_1 // 0x00
+    intc_0 // 0
+    frame_dig -7
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:867
+    // spendingApp: new UintN64(spendingApp),
+    frame_dig 3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:868
+    // lastValid: new UintN64(lastValid),
+    frame_dig -5
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:869
+    // cooldown: new UintN64(cooldown),
+    frame_dig -4
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:871
+    // useAllowance: new Bool(useAllowance),
+    bytec_1 // 0x00
+    intc_0 // 0
+    frame_dig -2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:872
+    // useRounds: new Bool(useRounds),
+    bytec_1 // 0x00
+    intc_0 // 0
+    frame_dig -1
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:874
+    // start: new UintN64(epochRef),
+    frame_dig 1
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:864-875
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   admin: new Bool(admin),
+    //   delegationType,
+    //   spendingApp: new UintN64(spendingApp),
+    //   lastValid: new UintN64(lastValid),
+    //   cooldown: new UintN64(cooldown),
+    //   methods: methodInfos.copy(),
+    //   useAllowance: new Bool(useAllowance),
+    //   useRounds: new Bool(useRounds),
+    //   lastCalled: new UintN64(0),
+    //   start: new UintN64(epochRef),
+    // });
+    uncover 6
+    frame_dig -6
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    bytec 10 // 0x002d
+    concat
+    uncover 3
+    concat
+    uncover 2
+    intc_0 // 0
+    getbit
+    intc_2 // 225
+    swap
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:873
+    // lastCalled: new UintN64(0),
+    bytec 11 // 0x0000000000000000
+    // smart_contracts/arc58/account/contract.algo.ts:864-875
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   admin: new Bool(admin),
+    //   delegationType,
+    //   spendingApp: new UintN64(spendingApp),
+    //   lastValid: new UintN64(lastValid),
+    //   cooldown: new UintN64(cooldown),
+    //   methods: methodInfos.copy(),
+    //   useAllowance: new Bool(useAllowance),
+    //   useRounds: new Bool(useRounds),
+    //   lastCalled: new UintN64(0),
+    //   start: new UintN64(epochRef),
+    // });
+    concat
+    swap
+    concat
+    frame_dig 0
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:816
+    // const key: PluginKey = { application: app, allowedCaller: allowedCaller.native }
+    frame_dig -9
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:864
+    // this.plugins(key).value = new arc4PluginInfo({
+    frame_dig -8
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:864-875
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   admin: new Bool(admin),
+    //   delegationType,
+    //   spendingApp: new UintN64(spendingApp),
+    //   lastValid: new UintN64(lastValid),
+    //   cooldown: new UintN64(cooldown),
+    //   methods: methodInfos.copy(),
+    //   useAllowance: new Bool(useAllowance),
+    //   useRounds: new Bool(useRounds),
+    //   lastCalled: new UintN64(0),
+    //   start: new UintN64(epochRef),
+    // });
+    dup
+    box_del
+    pop
+    swap
+    box_put
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+arc58_addPlugin_ternary_false@9:
+    // smart_contracts/arc58/account/contract.algo.ts:829
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    frame_bury 1
+    b arc58_addPlugin_ternary_merge@10
+
+arc58_addPlugin_bool_false@3:
+    intc_0 // 0
+    b arc58_addPlugin_bool_merge@4
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.assignDomain(caller: bytes, domain: bytes) -> void:
+assignDomain:
+    // smart_contracts/arc58/account/contract.algo.ts:887
+    // assignDomain(caller: Address, domain: string): void {
+    proto 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:888
+    // assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_ADD_PLUGIN)
+    callsub isAdmin
+    assert // Only an admin can add a plugin
+    // smart_contracts/arc58/account/constants.ts:16
+    // export const AbstractAccountBoxPrefixDomainKeys = 'd'
+    bytec 12 // "d"
+    frame_dig -2
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:889
+    // this.domainKeys(caller.native).value = domain
+    dup
+    box_del
+    pop
+    frame_dig -1
+    box_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_removePlugin(app: uint64, allowedCaller: bytes) -> void:
+arc58_removePlugin:
+    // smart_contracts/arc58/account/contract.algo.ts:900
+    // arc58_removePlugin(app: uint64, allowedCaller: Address): void {
+    proto 2 0
+    intc_0 // 0
+    pushbytes ""
+    // smart_contracts/arc58/account/contract.algo.ts:901
+    // assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
+    callsub isAdmin
+    bnz arc58_removePlugin_bool_true@2
+    callsub canRevoke
+    bz arc58_removePlugin_bool_false@3
+
+arc58_removePlugin_bool_true@2:
+    intc_1 // 1
+
+arc58_removePlugin_bool_merge@4:
+    // smart_contracts/arc58/account/contract.algo.ts:901
+    // assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
+    assert // Only an admin or revocation app can remove plugins
+    // smart_contracts/arc58/account/contract.algo.ts:903
+    // const key: PluginKey = { application: app, allowedCaller: allowedCaller.native };
+    frame_dig -2
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:904
+    // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    frame_dig -1
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:904
+    // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    dup
+    box_len
+    bury 1
+    assert // Plugin does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:906
+    // const spendingApp = this.plugins(key).value.spendingApp.native
+    dup
+    box_get
+    assert // Box must have value
+    pushint 2 // 2
+    extract_uint64
+    frame_bury 1
+    // smart_contracts/arc58/account/contract.algo.ts:907
+    // const methods = this.plugins(key).value.methods.copy()
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 26 // 26
+    extract_uint16
+    dig 1
+    len
+    substring3
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:909
+    // this.plugins(key).delete();
+    box_del
+    pop
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:911
+    // if (this.controlledAddress.value !== Global.currentApplicationAddress) {
+    global CurrentApplicationAddress
+    !=
+    bz arc58_removePlugin_after_if_else@7
+    // smart_contracts/arc58/account/contract.algo.ts:912-918
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 36_500 + (400 * (13 * methods.length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:915
+    // amount: 36_500 + (400 * (13 * methods.length)),
+    frame_dig 0
+    intc_0 // 0
+    extract_uint16
+    pushint 13 // 13
+    *
+    intc 4 // 400
+    *
+    intc 5 // 36500
+    +
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/arc58/account/contract.algo.ts:912-917
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 36_500 + (400 * (13 * methods.length)),
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:912-918
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 36_500 + (400 * (13 * methods.length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+
+arc58_removePlugin_after_if_else@7:
+    // smart_contracts/arc58/account/contract.algo.ts:921
+    // if (spendingApp !== 0) {
+    frame_dig 1
+    bz arc58_removePlugin_after_if_else@10
+    // smart_contracts/arc58/account/contract.algo.ts:922-929
+    // abiCall(
+    //   SpendingAccountFactory.prototype.delete,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [spendingApp],
+    //     fee,
+    //   }
+    // )
+    itxn_begin
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    intc_0 // 0
+    bytec 7 // "spending_account_factory_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:926
+    // args: [spendingApp],
+    frame_dig 1
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:922-929
+    // abiCall(
+    //   SpendingAccountFactory.prototype.delete,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [spendingApp],
+    //     fee,
+    //   }
+    // )
+    bytec 22 // method "delete(uint64)void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:922-929
+    // abiCall(
+    //   SpendingAccountFactory.prototype.delete,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [spendingApp],
+    //     fee,
+    //   }
+    // )
+    itxn_submit
+
+arc58_removePlugin_after_if_else@10:
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+arc58_removePlugin_bool_false@3:
+    intc_0 // 0
+    b arc58_removePlugin_bool_merge@4
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_addNamedPlugin(name: bytes, app: uint64, allowedCaller: bytes, admin: uint64, delegationType: bytes, lastValid: uint64, cooldown: uint64, methods: bytes, useAllowance: uint64, useRounds: uint64) -> void:
+arc58_addNamedPlugin:
+    // smart_contracts/arc58/account/contract.algo.ts:950-961
+    // arc58_addNamedPlugin(
+    //   name: string,
+    //   app: uint64,
+    //   allowedCaller: Address,
+    //   admin: boolean,
+    //   delegationType: UintN8,
+    //   lastValid: uint64,
+    //   cooldown: uint64,
+    //   methods: MethodRestriction[],
+    //   useAllowance: boolean,
+    //   useRounds: boolean,
+    // ): void {
+    proto 10 0
+    pushbytes ""
+    dup
+    // smart_contracts/arc58/account/contract.algo.ts:962
+    // assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
+    txn Sender
+    // smart_contracts/arc58/account/constants.ts:1
+    // export const AbstractAccountGlobalStateKeysAdmin = 'admin'
+    intc_0 // 0
+    bytec 6 // "admin"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:962
+    // assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
+    ==
+    assert // admin only
+    // smart_contracts/arc58/account/constants.ts:14
+    // export const AbstractAccountBoxPrefixNamedPlugins = 'n'
+    bytec 16 // "n"
+    frame_dig -10
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:963
+    // assert(!this.namedPlugins(name).exists);
+    dup
+    box_len
+    bury 1
+    !
+    assert
+    // smart_contracts/arc58/account/contract.algo.ts:965
+    // const key: PluginKey = { application: app, allowedCaller: allowedCaller.native };
+    frame_dig -9
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:966
+    // this.namedPlugins(name).value = key
+    frame_dig -8
+    concat
+    dup
+    cover 2
+    box_put
+    // smart_contracts/arc58/account/contract.algo.ts:968
+    // const methodInfos = new DynamicArray<arc4MethodInfo>()
+    bytec 17 // 0x0000
+    // smart_contracts/arc58/account/contract.algo.ts:969
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    intc_0 // 0
+
+arc58_addNamedPlugin_while_top@1:
+    // smart_contracts/arc58/account/contract.algo.ts:969
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    frame_dig -3
+    intc_0 // 0
+    extract_uint16
+    dup
+    frame_bury 1
+    frame_dig 4
+    >
+    bz arc58_addNamedPlugin_after_while@3
+    // smart_contracts/arc58/account/contract.algo.ts:970-976
+    // methodInfos.push(
+    //   new arc4MethodInfo({
+    //     selector: methods[i].selector,
+    //     cooldown: new UintN64(methods[i].cooldown),
+    //     lastCalled: new UintN64(),
+    //   })
+    // )
+    frame_dig 3
+    extract 2 0
+    // smart_contracts/arc58/account/contract.algo.ts:972
+    // selector: methods[i].selector,
+    frame_dig -3
+    extract 2 0
+    frame_dig 4
+    dup
+    cover 3
+    pushint 12 // 12
+    *
+    pushint 12 // 12
+    extract3 // on error: Index access is out of bounds
+    dup
+    extract 0 4 // on error: Index access is out of bounds
+    // smart_contracts/arc58/account/contract.algo.ts:973
+    // cooldown: new UintN64(methods[i].cooldown),
+    swap
+    pushint 4 // 4
+    extract_uint64
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:971-975
+    // new arc4MethodInfo({
+    //   selector: methods[i].selector,
+    //   cooldown: new UintN64(methods[i].cooldown),
+    //   lastCalled: new UintN64(),
+    // })
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:974
+    // lastCalled: new UintN64(),
+    bytec 11 // 0x0000000000000000
+    // smart_contracts/arc58/account/contract.algo.ts:971-975
+    // new arc4MethodInfo({
+    //   selector: methods[i].selector,
+    //   cooldown: new UintN64(methods[i].cooldown),
+    //   lastCalled: new UintN64(),
+    // })
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:970-976
+    // methodInfos.push(
+    //   new arc4MethodInfo({
+    //     selector: methods[i].selector,
+    //     cooldown: new UintN64(methods[i].cooldown),
+    //     lastCalled: new UintN64(),
+    //   })
+    // )
+    concat
+    dup
+    len
+    pushint 20 // 20
+    /
+    itob
+    extract 6 2
+    swap
+    concat
+    frame_bury 3
+    // smart_contracts/arc58/account/contract.algo.ts:969
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    intc_1 // 1
+    +
+    frame_bury 4
+    b arc58_addNamedPlugin_while_top@1
+
+arc58_addNamedPlugin_after_while@3:
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:979
+    // if (this.controlledAddress.value !== Global.currentApplicationAddress) {
+    global CurrentApplicationAddress
+    !=
+    bz arc58_addNamedPlugin_after_if_else@6
+    // smart_contracts/arc58/account/contract.algo.ts:980-987
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:983
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/arc58/account/contract.algo.ts:984
+    // amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    pushint 13 // 13
+    frame_dig 1
+    *
+    frame_dig -10
+    len
+    +
+    intc 4 // 400
+    *
+    intc 6 // 55400
+    +
+    itxn_field Amount
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:980-986
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:980-987
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+
+arc58_addNamedPlugin_after_if_else@6:
+    // smart_contracts/arc58/account/contract.algo.ts:990
+    // let spendingApp: uint64 = 0
+    intc_0 // 0
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:991
+    // if (useAllowance) {
+    frame_dig -2
+    bz arc58_addNamedPlugin_after_if_else@10
+    // smart_contracts/arc58/account/contract.algo.ts:993-1008
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         sender: this.controlledAddress.value,
+    //         amount: 12_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       0,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    intc_0 // 0
+    bytec 7 // "spending_account_factory_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1001
+    // receiver: this.spendingAccountFactoryApp.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    itxn_field Receiver
+    // smart_contracts/arc58/account/contract.algo.ts:1000
+    // amount: 12_500,
+    pushint 12500 // 12500
+    itxn_field Amount
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:998-1003
+    // itxn.payment({
+    //   sender: this.controlledAddress.value,
+    //   amount: 12_500,
+    //   receiver: this.spendingAccountFactoryApp.value.address,
+    //   fee,
+    // }),
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:993-1008
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         sender: this.controlledAddress.value,
+    //         amount: 12_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       0,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_next
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    intc_0 // 0
+    bytec 7 // "spending_account_factory_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1004
+    // 0,
+    intc_0 // 0
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:993-1008
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         sender: this.controlledAddress.value,
+    //         amount: 12_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       0,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    bytec 21 // method "create(pay,uint64)uint64"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:993-1008
+    // abiCall(
+    //   SpendingAccountFactory.prototype.create,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [
+    //       itxn.payment({
+    //         sender: this.controlledAddress.value,
+    //         amount: 12_500,
+    //         receiver: this.spendingAccountFactoryApp.value.address,
+    //         fee,
+    //       }),
+    //       0,
+    //     ],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_submit
+    gitxn 1 LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec 8 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    frame_bury 0
+
+arc58_addNamedPlugin_after_if_else@10:
+    // smart_contracts/arc58/account/contract.algo.ts:1011
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    frame_dig -1
+    bz arc58_addNamedPlugin_ternary_false@12
+    global Round
+
+arc58_addNamedPlugin_ternary_merge@13:
+    // smart_contracts/arc58/account/contract.algo.ts:1014
+    // admin: new Bool(admin),
+    bytec_1 // 0x00
+    intc_0 // 0
+    frame_dig -7
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:1016
+    // spendingApp: new UintN64(spendingApp),
+    frame_dig 0
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1017
+    // lastValid: new UintN64(lastValid),
+    frame_dig -5
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1018
+    // cooldown: new UintN64(cooldown),
+    frame_dig -4
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1020
+    // useAllowance: new Bool(useAllowance),
+    bytec_1 // 0x00
+    intc_0 // 0
+    frame_dig -2
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:1021
+    // useRounds: new Bool(useRounds),
+    bytec_1 // 0x00
+    intc_0 // 0
+    frame_dig -1
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:1023
+    // start: new UintN64(epochRef),
+    uncover 6
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1013-1024
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   admin: new Bool(admin),
+    //   delegationType,
+    //   spendingApp: new UintN64(spendingApp),
+    //   lastValid: new UintN64(lastValid),
+    //   cooldown: new UintN64(cooldown),
+    //   methods: methodInfos.copy(),
+    //   useAllowance: new Bool(useAllowance),
+    //   useRounds: new Bool(useRounds),
+    //   lastCalled: new UintN64(0),
+    //   start: new UintN64(epochRef),
+    // });
+    uncover 6
+    frame_dig -6
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    bytec 10 // 0x002d
+    concat
+    uncover 3
+    concat
+    uncover 2
+    intc_0 // 0
+    getbit
+    intc_2 // 225
+    swap
+    setbit
+    // smart_contracts/arc58/account/contract.algo.ts:1022
+    // lastCalled: new UintN64(0),
+    bytec 11 // 0x0000000000000000
+    // smart_contracts/arc58/account/contract.algo.ts:1013-1024
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   admin: new Bool(admin),
+    //   delegationType,
+    //   spendingApp: new UintN64(spendingApp),
+    //   lastValid: new UintN64(lastValid),
+    //   cooldown: new UintN64(cooldown),
+    //   methods: methodInfos.copy(),
+    //   useAllowance: new Bool(useAllowance),
+    //   useRounds: new Bool(useRounds),
+    //   lastCalled: new UintN64(0),
+    //   start: new UintN64(epochRef),
+    // });
+    concat
+    swap
+    concat
+    frame_dig 3
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    frame_dig 2
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:1013-1024
+    // this.plugins(key).value = new arc4PluginInfo({
+    //   admin: new Bool(admin),
+    //   delegationType,
+    //   spendingApp: new UintN64(spendingApp),
+    //   lastValid: new UintN64(lastValid),
+    //   cooldown: new UintN64(cooldown),
+    //   methods: methodInfos.copy(),
+    //   useAllowance: new Bool(useAllowance),
+    //   useRounds: new Bool(useRounds),
+    //   lastCalled: new UintN64(0),
+    //   start: new UintN64(epochRef),
+    // });
+    dup
+    box_del
+    pop
+    swap
+    box_put
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+arc58_addNamedPlugin_ternary_false@12:
+    // smart_contracts/arc58/account/contract.algo.ts:1011
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    b arc58_addNamedPlugin_ternary_merge@13
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_removeNamedPlugin(name: bytes) -> void:
+arc58_removeNamedPlugin:
+    // smart_contracts/arc58/account/contract.algo.ts:1035
+    // arc58_removeNamedPlugin(name: string): void {
+    proto 1 0
+    intc_0 // 0
+    pushbytes ""
+    // smart_contracts/arc58/account/contract.algo.ts:1036
+    // assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
+    callsub isAdmin
+    bnz arc58_removeNamedPlugin_bool_true@2
+    callsub canRevoke
+    bz arc58_removeNamedPlugin_bool_false@3
+
+arc58_removeNamedPlugin_bool_true@2:
+    intc_1 // 1
+
+arc58_removeNamedPlugin_bool_merge@4:
+    // smart_contracts/arc58/account/contract.algo.ts:1036
+    // assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
+    assert // Only an admin or revocation app can remove plugins
+    // smart_contracts/arc58/account/constants.ts:14
+    // export const AbstractAccountBoxPrefixNamedPlugins = 'n'
+    bytec 16 // "n"
+    frame_dig -1
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:1037
+    // assert(this.namedPlugins(name).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    dup
+    box_len
+    bury 1
+    assert // Plugin does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:1038
+    // const app = this.namedPlugins(name).value
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    intc_0 // 0
+    extract_uint64
+    swap
+    extract 8 32 // on error: Index access is out of bounds
+    swap
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1039
+    // assert(this.plugins(app).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    swap
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:1039
+    // assert(this.plugins(app).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    dup
+    box_len
+    bury 1
+    assert // Plugin does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:1041
+    // const spendingApp = this.plugins(app).value.spendingApp.native
+    dup
+    box_get
+    assert // Box must have value
+    pushint 2 // 2
+    extract_uint64
+    frame_bury 1
+    // smart_contracts/arc58/account/contract.algo.ts:1042
+    // const methods = this.plugins(app).value.methods.copy()
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 26 // 26
+    extract_uint16
+    dig 1
+    len
+    substring3
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:1044
+    // this.namedPlugins(name).delete();
+    swap
+    box_del
+    pop
+    // smart_contracts/arc58/account/contract.algo.ts:1045
+    // this.plugins(app).delete();
+    box_del
+    pop
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1047
+    // if (this.controlledAddress.value !== Global.currentApplicationAddress) {
+    global CurrentApplicationAddress
+    !=
+    bz arc58_removeNamedPlugin_after_if_else@7
+    // smart_contracts/arc58/account/contract.algo.ts:1048-1054
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1051
+    // amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    frame_dig 0
+    intc_0 // 0
+    extract_uint16
+    pushint 13 // 13
+    *
+    frame_dig -1
+    len
+    +
+    intc 4 // 400
+    *
+    intc 6 // 55400
+    +
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/arc58/account/contract.algo.ts:1048-1053
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:1048-1054
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 55_400 + (400 * ((13 * methods.length) + Bytes(name).length)),
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+
+arc58_removeNamedPlugin_after_if_else@7:
+    // smart_contracts/arc58/account/contract.algo.ts:1057
+    // if (spendingApp !== 0) {
+    frame_dig 1
+    bz arc58_removeNamedPlugin_after_if_else@10
+    // smart_contracts/arc58/account/contract.algo.ts:1058-1065
+    // abiCall(
+    //   SpendingAccountFactory.prototype.delete,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [spendingApp],
+    //     fee,
+    //   }
+    // )
+    itxn_begin
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    intc_0 // 0
+    bytec 7 // "spending_account_factory_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1062
+    // args: [spendingApp],
+    frame_dig 1
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1058-1065
+    // abiCall(
+    //   SpendingAccountFactory.prototype.delete,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [spendingApp],
+    //     fee,
+    //   }
+    // )
+    bytec 22 // method "delete(uint64)void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:1058-1065
+    // abiCall(
+    //   SpendingAccountFactory.prototype.delete,
+    //   {
+    //     appId: this.spendingAccountFactoryApp.value,
+    //     args: [spendingApp],
+    //     fee,
+    //   }
+    // )
+    itxn_submit
+
+arc58_removeNamedPlugin_after_if_else@10:
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+arc58_removeNamedPlugin_bool_false@3:
+    intc_0 // 0
+    b arc58_removeNamedPlugin_bool_merge@4
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_addAllowance(plugin: uint64, caller: bytes, asset: uint64, type: bytes, allowed: uint64, max: uint64, interval: uint64) -> void:
+arc58_addAllowance:
+    // smart_contracts/arc58/account/contract.algo.ts:1072-1080
+    // arc58_addAllowance(
+    //   plugin: uint64,
+    //   caller: Address,
+    //   asset: uint64,
+    //   type: SpendAllowanceType,
+    //   allowed: uint64,
+    //   max: uint64,
+    //   interval: uint64,
+    // ): void {
+    proto 7 0
+    // smart_contracts/arc58/account/contract.algo.ts:1081
+    // assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
+    txn Sender
+    // smart_contracts/arc58/account/constants.ts:1
+    // export const AbstractAccountGlobalStateKeysAdmin = 'admin'
+    intc_0 // 0
+    bytec 6 // "admin"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1081
+    // assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
+    ==
+    assert // admin only
+    // smart_contracts/arc58/account/contract.algo.ts:1083
+    // const pkey: PluginKey = { application: plugin, allowedCaller: caller.native };
+    frame_dig -7
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1087
+    // assert(this.plugins(pkey).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    frame_dig -6
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    dig 1
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:1087
+    // assert(this.plugins(pkey).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    box_len
+    bury 1
+    assert // Plugin does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:1085
+    // const key: AllowanceKey = { ...pkey, asset }
+    frame_dig -5
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1088
+    // assert(!this.allowances(key).exists, ERR_ALLOWANCE_ALREADY_EXISTS);
+    concat
+    // smart_contracts/arc58/account/constants.ts:15
+    // export const AbstractAccountBoxPrefixAllowances = 'a'
+    bytec 15 // "a"
+    swap
+    concat
+    dup
+    // smart_contracts/arc58/account/contract.algo.ts:1088
+    // assert(!this.allowances(key).exists, ERR_ALLOWANCE_ALREADY_EXISTS);
+    box_len
+    bury 1
+    !
+    assert // allowance already exists
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1090
+    // if (this.controlledAddress.value !== Global.currentApplicationAddress) {
+    global CurrentApplicationAddress
+    !=
+    bz arc58_addAllowance_after_if_else@3
+    // smart_contracts/arc58/account/contract.algo.ts:1091-1098
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 38_500,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1094
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/arc58/account/contract.algo.ts:1095
+    // amount: 38_500,
+    intc 7 // 38500
+    itxn_field Amount
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/account/contract.algo.ts:1091-1097
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 38_500,
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:1091-1098
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 38_500,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+
+arc58_addAllowance_after_if_else@3:
+    // smart_contracts/arc58/account/contract.algo.ts:1106
+    // max,
+    frame_dig -2
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1104
+    // allowed,
+    frame_dig -3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1103
+    // spent: 0,
+    intc_0 // 0
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1107
+    // interval,
+    frame_dig -1
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1101
+    // this.allowances(key).value = {
+    frame_dig -4
+    uncover 4
+    concat
+    uncover 3
+    concat
+    dig 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:1101-1108
+    // this.allowances(key).value = {
+    //   type,
+    //   spent: 0,
+    //   allowed,
+    //   last: 0,
+    //   max,
+    //   interval,
+    // }
+    frame_dig 0
+    swap
+    box_put
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_removeAllowance(plugin: uint64, caller: bytes, asset: uint64) -> void:
+arc58_removeAllowance:
+    // smart_contracts/arc58/account/contract.algo.ts:1114
+    // arc58_removeAllowance(plugin: uint64, caller: Address, asset: uint64): void {
+    proto 3 0
+    // smart_contracts/arc58/account/contract.algo.ts:1115
+    // assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_METHOD_RESTRICTION);
+    callsub isAdmin
+    bnz arc58_removeAllowance_bool_true@2
+    callsub canRevoke
+    bz arc58_removeAllowance_bool_false@3
+
+arc58_removeAllowance_bool_true@2:
+    intc_1 // 1
+
+arc58_removeAllowance_bool_merge@4:
+    // smart_contracts/arc58/account/contract.algo.ts:1115
+    // assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_METHOD_RESTRICTION);
+    assert // Only an admin or revocation app can remove method restrictions
+    // smart_contracts/arc58/account/contract.algo.ts:1117
+    // const pkey: PluginKey = { application: plugin, allowedCaller: caller.native };
+    frame_dig -3
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1121
+    // assert(this.plugins(pkey).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    frame_dig -2
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec_2 // "p"
+    dig 1
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:1121
+    // assert(this.plugins(pkey).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    box_len
+    bury 1
+    assert // Plugin does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:1119
+    // const key = { ...pkey, asset };
+    frame_dig -1
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1122
+    // assert(this.allowances(key).exists, ERR_ALLOWANCE_DOES_NOT_EXIST);
+    concat
+    // smart_contracts/arc58/account/constants.ts:15
+    // export const AbstractAccountBoxPrefixAllowances = 'a'
+    bytec 15 // "a"
+    swap
+    concat
+    // smart_contracts/arc58/account/contract.algo.ts:1122
+    // assert(this.allowances(key).exists, ERR_ALLOWANCE_DOES_NOT_EXIST);
+    dup
+    box_len
+    bury 1
+    assert // allowance does not exist
+    // smart_contracts/arc58/account/contract.algo.ts:1124
+    // this.allowances(key).delete();
+    box_del
+    pop
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1126
+    // if (this.controlledAddress.value !== Global.currentApplicationAddress) {
+    global CurrentApplicationAddress
+    !=
+    bz arc58_removeAllowance_after_if_else@7
+    // smart_contracts/arc58/account/contract.algo.ts:1127-1133
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 38_500,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1130
+    // amount: 38_500,
+    intc 7 // 38500
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/arc58/account/contract.algo.ts:1127-1132
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 38_500,
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:1127-1133
+    // itxn
+    //   .payment({
+    //     receiver: this.controlledAddress.value,
+    //     amount: 38_500,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+
+arc58_removeAllowance_after_if_else@7:
+    // smart_contracts/arc58/account/constants.ts:7
+    // export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
+    bytec 4 // "last_user_interaction"
+    // smart_contracts/arc58/account/contract.algo.ts:135
+    // this.lastUserInteraction.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    // smart_contracts/arc58/account/constants.ts:8
+    // export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
+    bytec 5 // "last_change"
+    // smart_contracts/arc58/account/contract.algo.ts:139
+    // this.lastChange.value = Global.latestTimestamp
+    global LatestTimestamp
+    app_global_put
+    retsub
+
+arc58_removeAllowance_bool_false@3:
+    intc_0 // 0
+    b arc58_removeAllowance_bool_merge@4
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.arc58_getAdmin() -> bytes:
+arc58_getAdmin:
+    // smart_contracts/arc58/account/constants.ts:1
+    // export const AbstractAccountGlobalStateKeysAdmin = 'admin'
+    intc_0 // 0
+    bytec 6 // "admin"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1148
+    // return new Address(this.admin.value)
+    retsub
+
+
+// smart_contracts/arc58/account/contract.algo.ts::AbstractedAccount.balance(assets: bytes) -> bytes:
+balance:
+    // smart_contracts/arc58/account/contract.algo.ts:1152-1153
+    // @abimethod({ readonly: true })
+    // balance(assets: uint64[]): uint64[] {
+    proto 1 1
+    pushbytes ""
+    dupn 2
+    // smart_contracts/arc58/account/contract.algo.ts:1154
+    // let amounts: uint64[] = []
+    bytec 17 // 0x0000
+    // smart_contracts/arc58/account/contract.algo.ts:1155
+    // for (let i: uint64 = 0; i < assets.length; i += 1) {
+    intc_0 // 0
+
+balance_while_top@1:
+    // smart_contracts/arc58/account/contract.algo.ts:1155
+    // for (let i: uint64 = 0; i < assets.length; i += 1) {
+    frame_dig -1
+    intc_0 // 0
+    extract_uint16
+    frame_dig 4
+    >
+    bz balance_after_while@9
+    // smart_contracts/arc58/account/contract.algo.ts:1156
+    // let amount: uint64 = 0
+    intc_0 // 0
+    frame_bury 0
+    // smart_contracts/arc58/account/contract.algo.ts:1157
+    // const asset = Asset(assets[i])
+    frame_dig -1
+    extract 2 0
+    frame_dig 4
+    pushint 8 // 8
+    *
+    extract_uint64
+    dup
+    frame_bury 1
+    // smart_contracts/arc58/account/contract.algo.ts:1159
+    // if (asset.id === 0) {
+    bnz balance_else_body@4
+    // smart_contracts/arc58/account/contract.algo.ts:1160
+    // amount = Global.currentApplicationAddress.balance
+    global CurrentApplicationAddress
+    acct_params_get AcctBalance
+    swap
+    frame_bury 0
+    assert // account funded
+
+balance_after_if_else@7:
+    // smart_contracts/arc58/account/contract.algo.ts:1168-1175
+    // const escrowInfo = abiCall(Staking.prototype.getEscrowInfo, {
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [
+    //     new Address(this.controlledAddress.value),
+    //     new UintN64(asset.id)
+    //   ],
+    //   fee
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    pushbytes "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:6
+    // export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
+    pushbytes "akita_al"
+    // smart_contracts/utils/functions.ts:23
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:24
+    // return decodeArc4<AkitaAppList>(appListBytes)
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_0 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/contract.algo.ts:1172
+    // new UintN64(asset.id)
+    frame_dig 1
+    itob
+    // smart_contracts/arc58/account/contract.algo.ts:1168-1175
+    // const escrowInfo = abiCall(Staking.prototype.getEscrowInfo, {
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [
+    //     new Address(this.controlledAddress.value),
+    //     new UintN64(asset.id)
+    //   ],
+    //   fee
+    // }).returnValue
+    pushbytes 0x4c88eace // method "getEscrowInfo(address,uint64)(uint64,uint64)"
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/account/contract.algo.ts:1168-1175
+    // const escrowInfo = abiCall(Staking.prototype.getEscrowInfo, {
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [
+    //     new Address(this.controlledAddress.value),
+    //     new UintN64(asset.id)
+    //   ],
+    //   fee
+    // }).returnValue
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec 8 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    pushint 4 // 4
+    extract_uint64
+    swap
+    pushint 12 // 12
+    extract_uint64
+    // smart_contracts/arc58/account/contract.algo.ts:1177
+    // amounts = [...amounts, (amount + escrowInfo.hard + escrowInfo.lock)]
+    frame_dig 3
+    extract 2 0
+    frame_dig 0
+    uncover 3
+    +
+    uncover 2
+    +
+    itob
+    bytec 14 // 0x0001
+    swap
+    concat
+    extract 2 0
+    concat
+    dup
+    len
+    pushint 8 // 8
+    /
+    itob
+    extract 6 2
+    swap
+    concat
+    frame_bury 3
+    // smart_contracts/arc58/account/contract.algo.ts:1155
+    // for (let i: uint64 = 0; i < assets.length; i += 1) {
+    frame_dig 4
+    intc_1 // 1
+    +
+    frame_bury 4
+    b balance_while_top@1
+
+balance_else_body@4:
+    // smart_contracts/arc58/account/contract.algo.ts:1162
+    // const [holdingAmount, optedIn] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
+    global CurrentApplicationAddress
+    frame_dig 1
+    asset_holding_get AssetBalance
+    swap
+    frame_bury 2
+    // smart_contracts/arc58/account/contract.algo.ts:1163
+    // if (optedIn) {
+    bz balance_after_if_else@7
+    frame_dig 2
+    frame_bury 0
+    b balance_after_if_else@7
+
+balance_after_while@9:
+    // smart_contracts/arc58/account/contract.algo.ts:1180
+    // return amounts
+    frame_dig 3
+    frame_bury 0
+    retsub

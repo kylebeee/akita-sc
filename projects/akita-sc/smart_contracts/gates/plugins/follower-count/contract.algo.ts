@@ -16,6 +16,7 @@ import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { MetaValue } from '../../../arc58/plugins/social/types'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { getPluginAppList } from '../../../utils/functions'
+import { fee } from '../../../utils/constants'
 
 export class FollowerCountGate extends AkitaBaseContract {
 
@@ -44,7 +45,7 @@ export class FollowerCountGate extends AkitaBaseContract {
           methodSelector(AkitaSocialPlugin.prototype.getMeta),
           user
         ],
-        fee: 0,
+        fee,
       })
       .submit()
       .lastLog

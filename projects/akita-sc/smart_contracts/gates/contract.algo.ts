@@ -1,6 +1,7 @@
 import {
   arc4,
   assert,
+  assertMatch,
   BoxMap,
   bytes,
   ensureBudget,
@@ -12,13 +13,16 @@ import {
 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GateBoxPrefixAppRegistry, GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
-import { AND, arc4GateFilter, arc4GateFilterEntry, GateMBRData, OR } from './types'
+import { AND, arc4GateFilter, arc4GateFilterEntry, OR } from './types'
 import { GateArgs } from '../utils/types/gates'
-import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
+import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { MockGate } from './mock-gate'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { classes } from 'polytype'
+import { BaseGate } from './base'
+import { fee } from '../utils/constants'
 
-export class Gate extends AkitaBaseContract {
+export class Gate extends classes(BaseGate, AkitaBaseContract) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -33,13 +37,6 @@ export class Gate extends AkitaBaseContract {
   })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
-
-  private mbr(length: uint64): GateMBRData {
-    return {
-      appRegistry: 6_100,
-      gateRegistry: 6_100 + (400 * (32 * length)),
-    }
-  }
 
   private newGateID(): uint64 {
     const id = this.gateCursor.value
@@ -94,7 +91,7 @@ export class Gate extends AkitaBaseContract {
     return abiCall(MockGate.prototype.check, {
       appId: filter.app.native,
       args: [argsWithCaller],
-      fee: 0,
+      fee,
     }).returnValue
   }
 
@@ -120,9 +117,16 @@ export class Gate extends AkitaBaseContract {
 
   register(payment: gtxn.PaymentTxn, filters: arc4.DynamicArray<arc4GateFilter>, args: GateArgs): arc4.UintN64 {
 
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     const costs = this.mbr(filters.length)
-    assert(payment.amount === costs.gateRegistry, ERR_INVALID_PAYMENT_AMOUNT)
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: costs.gateRegistry,
+      },
+      ERR_INVALID_PAYMENT
+    )
 
     const entries = new arc4.DynamicArray<arc4GateFilterEntry>()
     let lastFilterLayer: uint64 = 0
@@ -156,6 +160,9 @@ export class Gate extends AkitaBaseContract {
     return this.evaluate(caller, filters, 0, filters.length - 1, args)
   }
 
+  // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  @abimethod({ readonly: true })
   size(gateID: uint64): uint64 {
     assert(this.gateRegistry(gateID).exists)
     return this.gateRegistry(gateID).value.length

@@ -5,6 +5,7 @@ import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn';
 import { ERR_NOT_A_DUALSTAKE_APP, ERR_NOT_ENOUGH_OF_ASA } from './errors';
 import { DualStakeGlobalStateKeyAsaID, DualStakeGlobalStateKeyRatePrecision, DualStakePluginGlobalStateKey } from './constants';
 import { getSpendingAccount, rekeyAddress } from '../../../utils/functions';
+import { fee } from "../../../utils/constants";
 
 export class DualStakePlugin extends Contract {
 
@@ -33,19 +34,19 @@ export class DualStakePlugin extends Contract {
       sender,
       receiver: dsApp.address,
       amount: amount,
-      fee: 0,
+      fee,
     })
 
     const mintTxn = itxn.applicationCall({
       sender,
       appId: dsAppID,
       appArgs: [methodSelector(DualStake.prototype.mint)],
-      fee: 0,
+      fee,
     })
 
     const rate = abiCall(
       DualStake.prototype.get_rate,
-      { sender, fee: 0 }
+      { sender, fee }
     ).returnValue
 
     if (rate > 0) {
@@ -62,7 +63,7 @@ export class DualStakePlugin extends Contract {
         assetAmount: asaAmount,
         xferAsset: asaID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       })
 
       submitGroup(paymentTxn, mintTxn, asaTxn)
@@ -89,7 +90,7 @@ export class DualStakePlugin extends Contract {
         sender,
         appId: dsAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }

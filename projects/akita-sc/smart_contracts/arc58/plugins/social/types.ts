@@ -1,9 +1,9 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Account, arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript"
 import { Address, DynamicBytes, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4"
 import { CID } from "../../../utils/types/base"
 
 export type FollowsKey = {
-    user: Address
+    user: Account
     index: uint64
 }
 
@@ -24,7 +24,7 @@ export class arc4BlockListKey extends arc4.Struct<{
 
 export type PostValue = {
     // the creator of the post & recipient of payments
-    creator: Address
+    creator: Account
     // the unix time that the post was created
     timestamp: uint64
     // who's allowed to reply / react using gates
@@ -33,11 +33,13 @@ export type PostValue = {
     againstContentPolicy: boolean
     // whether this post is itself an amendment to another post
     isAmendment: boolean
-    // a dynamic field encompassing:
-    // the 32 byte reference
-    // a 36 byte cid
-    // a 33 byte amendment reference: 'a' + 32 byte txn id
-    ref: DynamicBytes
+    // a dynamic field encompassing: CID, txID reference & amendment data
+    ref: bytes
+    // 32 = an empty post (no content)(for votes & reactions to non post/comments)
+    // 36 = a post
+    // 69 = an amended post
+    // 68 = a comment
+    // 101 = an amended comment
 }
 
 export class arc4PostValue extends arc4.Struct<{

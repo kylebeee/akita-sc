@@ -73,6 +73,7 @@ import { AkitaDAOEscrowAccountSubscriptions, AkitaDAOGlobalStateKeysAkitaAppList
 import { AkitaBaseEscrow } from '../utils/base-contracts/base'
 import { Gate } from '../gates/contract.algo'
 import { AkitaAppList, SubscriptionFees } from '../dao/types'
+import { fee } from '../utils/constants'
 
 function calcPercent(a: uint64, p: uint64): uint64 {
   assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
@@ -92,7 +93,7 @@ function gateCheck(akitaDAO: Application, caller: Address, id: uint64, args: Gat
   return abiCall(Gate.prototype.check, {
     appId: getAkitaAppList(akitaDAO).gate,
     args: [caller, id, args],
-    fee: 0,
+    fee,
   }).returnValue
 }
 
@@ -359,7 +360,7 @@ export class Subscriptions extends classes(
     itxn.payment({
       receiver: Txn.sender,
       amount: costs.blocks,
-      fee: 0,
+      fee,
     }).submit()
   }
 
@@ -426,7 +427,7 @@ export class Subscriptions extends classes(
     .payment({
       receiver: this.akitaDAO.value.address,
       amount: amounts.akitaFee + amounts.triggerFee,
-      fee: 0,
+      fee,
     })
     .submit()
 
@@ -434,7 +435,7 @@ export class Subscriptions extends classes(
     .payment({
       receiver: recipient.native,
       amount: amounts.leftOver,
-      fee: 0,
+      fee,
     })
     .submit()
 
@@ -544,7 +545,7 @@ export class Subscriptions extends classes(
         assetReceiver: this.akitaDAOEscrow.value.address,
         xferAsset: assetXfer.xferAsset,
         assetAmount: amounts.akitaFee + amounts.triggerFee,
-        fee: 0,
+        fee,
       })
       .submit()
 
@@ -553,7 +554,7 @@ export class Subscriptions extends classes(
         assetReceiver: recipient.native,
         xferAsset: assetXfer.xferAsset,
         assetAmount: amounts.leftOver,
-        fee: 0,
+        fee,
       })
       .submit()
 
@@ -624,13 +625,13 @@ export class Subscriptions extends classes(
         assetReceiver: Txn.sender,
         xferAsset: sub.asset,
         assetAmount: amount,
-        fee: 0,
+        fee,
       }).submit()
     } else {
       itxn.payment({
         receiver: Txn.sender,
         amount: amount,
-        fee: 0,
+        fee,
       }).submit()
     }
 
@@ -675,40 +676,40 @@ export class Subscriptions extends classes(
         assetReceiver: this.akitaDAOEscrow.value.address,
         xferAsset: sub.asset,
         assetAmount: amounts.akitaFee,
-        fee: 0,
+        fee,
       }).submit()
 
       itxn.assetTransfer({
         assetReceiver: Txn.sender,
         xferAsset: sub.asset,
         assetAmount: amounts.triggerFee,
-        fee: 0,
+        fee,
       }).submit()
 
       itxn.assetTransfer({
         assetReceiver: sub.recipient.native,
         xferAsset: sub.asset,
         assetAmount: amounts.leftOver,
-        fee: 0,
+        fee,
       }).submit()
     } else {
       // mbr payment for subscriptions & subscriptionslist boxes
       itxn.payment({
         receiver: this.akitaDAO.value.address,
         amount: amounts.akitaFee,
-        fee: 0,
+        fee,
       }).submit()
 
       itxn.payment({
         receiver: Txn.sender,
         amount: amounts.triggerFee,
-        fee: 0,
+        fee,
       }).submit()
 
       itxn.payment({
         receiver: sub.recipient.native,
         amount: amounts.leftOver,
-        fee: 0,
+        fee,
       }).submit()
     }
 

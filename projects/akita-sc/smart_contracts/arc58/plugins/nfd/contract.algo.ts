@@ -7,6 +7,7 @@ import { ERR_NOT_AN_NFD } from './errors'
 import { NFDGlobalStateKeySaleAmountKey, NFDPluginGlobalStateKeyRegistry } from './constants'
 import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 import { NFDGlobalStateKeysName } from '../social/constants'
+import { fee } from '../../../utils/constants'
 
 export class NFDPlugin extends Contract {
 
@@ -24,7 +25,7 @@ export class NFDPlugin extends Contract {
       {
         appId: this.registry.value,
         args: [String(nfdNameBytes), NFDApp.id],
-        fee: 0,
+        fee,
       }
     ).returnValue
   }
@@ -56,7 +57,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [fieldNames],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       },
     )
   }
@@ -79,7 +80,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [fieldAndVals],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -103,7 +104,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [sellAmount, reservedFor],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -125,7 +126,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -149,7 +150,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [offer, note],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -177,11 +178,11 @@ export class NFDPlugin extends Contract {
             sender,
             receiver: Application(nfdAppID).address,
             amount: btoi(saleAmountBytes),
-            fee: 0,
+            fee,
           }),
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -204,7 +205,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [hash],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -227,7 +228,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [lock],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -251,7 +252,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [lock, usdPrice],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -274,7 +275,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [lock],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -297,7 +298,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [assets],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -324,7 +325,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [amount, receiver, note, asset, otherAssets],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -346,7 +347,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [],
-        fee: 0,
+        fee,
       }
     ).returnValue
 
@@ -360,11 +361,11 @@ export class NFDPlugin extends Contract {
             sender,
             receiver: Application(nfdAppID).address,
             amount: (price * years),
-            fee: 0,
+            fee,
           })
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -388,7 +389,7 @@ export class NFDPlugin extends Contract {
         appId: nfdAppID,
         args: [fieldName, address],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }

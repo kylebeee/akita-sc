@@ -1,9 +1,9 @@
 import { MetaMerkles } from '../meta-merkles/contract.algo'
-import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, assertMatch, Asset, BoxMap, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 
 import { arc4HashKey, arc4OfferValue, arc4ParticipantKey, OfferValue } from './types'
-import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, HyperSwapGlobalStateKeySpendingAccountFactoryApp, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
+import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
 import { abiCall, Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_BAD_ROOTS, ERR_CANT_VERIFY_LEAF, ERR_NOT_A_PARTICIPANT, ERR_OFFER_EXPIRED } from './errors'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
@@ -17,6 +17,8 @@ import { AssetInbox } from '../utils/types/asset-inbox'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { arc59OptInAndSend, getAkitaAppList, getOtherAppList, getSwapFees, getUserImpact, impactRange, origin } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { fee } from '../utils/constants'
+import { GlobalStateKeySpendingAccountFactoryApp } from '../constants'
 
 export class HyperSwap extends classes(
   BaseHyperSwap,
@@ -29,7 +31,7 @@ export class HyperSwap extends classes(
   /** global counter for offers */
   offerCursor = GlobalState<uint64>({ key: HyperSwapGlobalStateKeyOfferCursor })
   /** ths factory app for spending accounts */
-  spendingAccountFactory = GlobalState<Application>({ key: 'spending_account_factory_app' })
+  spendingAccountFactory = GlobalState<Application>({ key: GlobalStateKeySpendingAccountFactoryApp })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -46,12 +48,6 @@ export class HyperSwap extends classes(
     const id = this.offerCursor.value
     this.offerCursor.value += 1
     return id
-  }
-
-  private getOfferFee(address: Account): uint64 {
-    const impact = getUserImpact(this.akitaDAO.value, address)
-    const { HyperSwapImpactTaxMin, HyperSwapImpactTaxMax } = getSwapFees(this.akitaDAO.value)
-    return impactRange(impact, HyperSwapImpactTaxMin, HyperSwapImpactTaxMax)
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -87,24 +83,14 @@ export class HyperSwap extends classes(
     const hyperSwapOfferMBRAmount: uint64 = costs.offers + costs.participants + (metaMerklesCost * 2)
     const payor = new Address(payment.sender)
 
-    const offerFee = this.getOfferFee(orig)
-
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: hyperSwapOfferMBRAmount + offerFee
+        amount: hyperSwapOfferMBRAmount
       },
       ERR_INVALID_PAYMENT
     )
-
-    itxn
-      .payment({
-        receiver: this.akitaDAO.value.address,
-        amount: offerFee,
-        fee: 0,
-      })
-      .submit()
 
     const metaMerklesAppID = getAkitaAppList(this.akitaDAO.value).metaMerkles
 
@@ -116,13 +102,13 @@ export class HyperSwap extends classes(
           itxn.payment({
             receiver: Application(metaMerklesAppID).address,
             amount: metaMerklesCost,
-            fee: 0,
+            fee,
           }),
           str(String(root.native)),
           root,
           MerkleTreeTypeTrade
         ],
-        fee: 0
+        fee
       }
     )
 
@@ -135,13 +121,13 @@ export class HyperSwap extends classes(
           itxn.payment({
             receiver: Application(metaMerklesAppID).address,
             amount: metaMerklesCost,
-            fee: 0,
+            fee,
           }),
           str(String(participantsRoot.native)),
           participantsRoot,
           MerkleTreeTypeTrade
         ],
-        fee: 0
+        fee
       }
     )
 
@@ -191,7 +177,7 @@ export class HyperSwap extends classes(
           proof,
           MerkleTreeTypeTrade
         ],
-        fee: 0
+        fee
       }
     ).returnValue
 
@@ -261,7 +247,7 @@ export class HyperSwap extends classes(
           proof,
           MerkleTreeTypeTrade
         ],
-        fee: 0
+        fee
       }
     ).returnValue
 
@@ -333,7 +319,7 @@ export class HyperSwap extends classes(
           proof,
           MerkleTreeTypeTrade
         ],
-        fee: 0
+        fee
       }
     ).returnValue
 
@@ -351,7 +337,7 @@ export class HyperSwap extends classes(
         {
           appId: assetInbox,
           args: [receiver, asset],
-          fee: 0,
+          fee,
         }
       ).returnValue
 
@@ -424,7 +410,7 @@ export class HyperSwap extends classes(
       itxn.payment({
         amount: amount,
         receiver: receiver.native,
-        fee: 0,
+        fee,
       }).submit()
 
       // refund the account that covered the MBR
@@ -432,7 +418,7 @@ export class HyperSwap extends classes(
         .payment({
           amount: refundAmount,
           receiver: payor.native,
-          fee: 0,
+          fee,
         })
         .submit()
     } else if (!AssetHolding.assetBalance(receiver.native, asset)[1]) {
@@ -442,7 +428,7 @@ export class HyperSwap extends classes(
         .payment({
           amount: refundAmount,
           receiver: payor.native,
-          fee: 0,
+          fee,
         })
         .submit()
 
@@ -452,7 +438,7 @@ export class HyperSwap extends classes(
           xferAsset: asset,
           assetAmount: amount,
           assetReceiver: receiver.native,
-          fee: 0,
+          fee,
         })
         .submit()
 
@@ -461,7 +447,7 @@ export class HyperSwap extends classes(
         .payment({
           amount: refundAmount,
           receiver: payor.native,
-          fee: 0,
+          fee,
         })
         .submit()
     }
@@ -499,7 +485,7 @@ export class HyperSwap extends classes(
           proof,
           MerkleTreeTypeTrade
         ],
-        fee: 0
+        fee
       }
     ).returnValue
 
@@ -543,7 +529,7 @@ export class HyperSwap extends classes(
           proof,
           MerkleTreeTypeTrade
         ],
-        fee: 0
+        fee
       }
     ).returnValue
 
@@ -557,7 +543,7 @@ export class HyperSwap extends classes(
         .payment({
           amount: amount,
           receiver: Txn.sender,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -566,7 +552,7 @@ export class HyperSwap extends classes(
           xferAsset: asset,
           assetAmount: amount,
           assetReceiver: Txn.sender,
-          fee: 0,
+          fee,
         })
         .submit()
     }
@@ -575,7 +561,7 @@ export class HyperSwap extends classes(
       .payment({
         amount: refundAmount,
         receiver: payor.native,
-        fee: 0,
+        fee,
       })
       .submit()
 

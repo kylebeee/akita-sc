@@ -1,6 +1,8 @@
 import { biguint, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
 import { UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 
+export const fee: uint64 = 0
+
 export const MIN_PROGRAM_PAGES: uint64 = 100_000
 export const MAX_PROGRAM_PAGES: uint64 = 400_000
 export const GLOBAL_STATE_KEY_UINT_COST: uint64 = 28_500

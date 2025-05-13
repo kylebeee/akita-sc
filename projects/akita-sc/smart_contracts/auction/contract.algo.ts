@@ -15,8 +15,9 @@ import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { GateArgs } from '../utils/types/gates'
 import { PrizeBox } from '../prize-box/contract.algo'
 import { AkitaBaseEscrow } from '../utils/base-contracts/base'
-import { arc58OptInAndSend, arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, impactRange } from '../utils/functions'
+import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, impactRange } from '../utils/functions'
 import { AkitaDAOEscrowAccountAuctions } from '../dao/constants'
+import { fee } from '../utils/constants'
 
 export class Auction extends classes(
   BaseAuction,
@@ -215,7 +216,7 @@ export class Auction extends classes(
         {
           appId: this.prize.value,
           args: [new Address(buyer)],
-          fee: 0,
+          fee,
         }
       )
       return
@@ -228,7 +229,7 @@ export class Auction extends classes(
         .assetTransfer({
           assetCloseTo: buyer,
           xferAsset: this.prize.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -250,34 +251,34 @@ export class Auction extends classes(
     const creatorTxn = itxn.payment({
       receiver: Asset(this.prize.value).creator,
       amount: creator,
-      fee: 0,
+      fee,
     })
 
     const akitaTxn = itxn.payment({
       receiver: this.akitaDAO.value.address,
       amount: akita,
-      fee: 0,
+      fee,
     })
 
     // pay listing marketplace
     const listingMarketplaceTxn = itxn.payment({
       receiver: this.marketplace.value,
       amount: marketplace,
-      fee: 0,
+      fee,
     })
 
     // pay buying marketplace
     const buySideMarketplaceTxn = itxn.payment({
       receiver: buySideMarketplace,
       amount: marketplace,
-      fee: 0,
+      fee,
     })
 
     // pay seller
     const sellerTxn = itxn.payment({
       receiver: this.seller.value,
       amount: seller,
-      fee: 0,
+      fee,
     })
 
     if (!this.isPrizeBox.value) {
@@ -300,7 +301,7 @@ export class Auction extends classes(
           assetReceiver: Asset(this.prize.value).creator,
           assetAmount: creator,
           xferAsset: this.bidAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else if (!this.isPrizeBox.value) {
@@ -319,7 +320,7 @@ export class Auction extends classes(
           assetReceiver: this.akitaDAO.value.address,
           assetAmount: !this.isPrizeBox.value ? akita : (akita + creator),
           xferAsset: this.bidAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -337,7 +338,7 @@ export class Auction extends classes(
           assetReceiver: this.marketplace.value,
           assetAmount: marketplace,
           xferAsset: this.bidAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -356,7 +357,7 @@ export class Auction extends classes(
           assetReceiver: buySideMarketplace,
           assetAmount: marketplace,
           xferAsset: this.bidAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -375,7 +376,7 @@ export class Auction extends classes(
           assetReceiver: this.seller.value,
           assetAmount: seller,
           xferAsset: this.bidAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -514,7 +515,7 @@ export class Auction extends classes(
     const closePrizeTxn = itxn.assetTransfer({
       assetCloseTo: this.seller.value,
       xferAsset: this.prize.value,
-      fee: 0,
+      fee,
     })
 
     const closeMBRTxn = itxn.payment({
@@ -637,15 +638,15 @@ export class Auction extends classes(
       itxn.payment({
         amount: returnAmount,
         receiver: bid.address.native,
-        fee: 0,
-      })
+        fee,
+      }).submit()
     } else {
       itxn.assetTransfer({
         assetAmount: returnAmount,
         assetReceiver: bid.address.native,
         xferAsset: this.bidAsset.value,
-        fee: 0,
-      })
+        fee,
+      }).submit()
     }
     // increment our refund counter
     this.refundCount.value += 1
@@ -661,7 +662,7 @@ export class Auction extends classes(
       {
         appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
         args: [roundToUse, this.salt.value],
-        fee: 0,
+        fee,
       }
     ).returnValue
 
@@ -765,7 +766,7 @@ export class Auction extends classes(
         .payment({
           receiver: bidAccount,
           amount: refundAmount,
-          fee: 0,
+          fee,
         })
         .submit()
     }
@@ -801,7 +802,7 @@ export class Auction extends classes(
         .payment({
           receiver: this.raffleWinner.value,
           amount: this.raffleAmount.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else if (this.raffleWinner.value.isOptedIn(this.bidAsset.value)) {
@@ -810,7 +811,7 @@ export class Auction extends classes(
           assetReceiver: this.raffleWinner.value,
           assetAmount: this.raffleAmount.value,
           xferAsset: this.bidAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {
@@ -845,7 +846,7 @@ export class Auction extends classes(
       .payment({
         receiver: Global.creatorAddress,
         amount: returnAmount,
-        fee: 0,
+        fee,
       })
       .submit()
 

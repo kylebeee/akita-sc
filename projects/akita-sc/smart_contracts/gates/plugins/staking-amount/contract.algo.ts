@@ -17,6 +17,7 @@ import { Staking } from '../../../staking/contract.algo'
 import { ERR_INVALID_ARG_COUNT } from './errors'
 import { ERR_BAD_OPERATION } from '../staking-power/errors'
 import { getAkitaAppList } from '../../../utils/functions'
+import { fee } from '../../../utils/constants'
 
 export class StakingAmountGate extends AkitaBaseContract {
 
@@ -50,7 +51,7 @@ export class StakingAmountGate extends AkitaBaseContract {
       staked = abiCall(Staking.prototype.getHeartbeatAverage, {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [user, asset, includeStaked],
-        fee: 0,
+        fee,
       }).returnValue
     } else {
       const info = abiCall(Staking.prototype.mustGetInfo, {
@@ -62,7 +63,7 @@ export class StakingAmountGate extends AkitaBaseContract {
             type,
           }),
         ],
-        fee: 0,
+        fee,
       }).returnValue
 
       staked = info.amount

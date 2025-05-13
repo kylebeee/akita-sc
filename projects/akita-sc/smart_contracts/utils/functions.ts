@@ -60,7 +60,7 @@ export function getNFTFees(akitaDAO: Application): NFTFees {
 }
 
 export function getAkitaAssets(akitaDAO: Application): AkitaAssets {
-  const [akitaAssetsBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAssets))
+  const akitaAssetsBytes = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAssets))[0]
   return decodeArc4<AkitaAssets>(akitaAssetsBytes)
 }
 

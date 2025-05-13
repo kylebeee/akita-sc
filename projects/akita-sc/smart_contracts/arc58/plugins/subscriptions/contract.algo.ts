@@ -8,6 +8,7 @@ import { Subscriptions } from "../../../subscriptions/contract.algo"
 import { GateArgs } from "../../../utils/types/gates"
 import { getAkitaAppList, getSpendingAccount, getSubscriptionFees, rekeyAddress } from "../../../utils/functions"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
+import { fee } from "../../../utils/constants"
 
 export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseContract) {
 
@@ -41,12 +42,12 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
             sender,
             receiver: subscriptionsApp.address,
             amount: Global.assetOptInMinBalance,
-            fee: 0,
+            fee,
           }),
           asset,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -78,7 +79,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
             sender,
             receiver: subscriptionsApp.address,
             amount: fee,
-            fee: 0,
+            fee,
           }),
           interval,
           asset,
@@ -88,7 +89,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
           cid,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     ).returnValue
   }
@@ -110,7 +111,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [index],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -132,7 +133,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [index],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -154,7 +155,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [index],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -179,12 +180,12 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
             sender,
             receiver: subscriptionsApp.address,
             amount: this.mbr(0).blocks,
-            fee: 0,
+            fee,
           }),
           address,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -206,7 +207,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [address],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -235,7 +236,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [new Address(sender)],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     ).returnValue
 
@@ -253,7 +254,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
             sender,
             receiver: subscriptionsApp.address,
             amount: amount + mbrAmount,
-            fee: 0,
+            fee,
           }),
           recipient,
           amount,
@@ -262,7 +263,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
           args,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -292,7 +293,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [new Address(sender)],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     ).returnValue
 
@@ -314,14 +315,14 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
             sender,
             receiver: subscriptionsApp.address,
             amount: mbrAmount + amount,
-            fee: 0,
+            fee,
           }),
           itxn.assetTransfer({
             sender,
             assetReceiver: subscriptionsApp.address,
             xferAsset: asset,
             assetAmount: amount,
-            fee: 0,
+            fee,
           }),
           recipient,
           amount,
@@ -330,7 +331,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
           args,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -354,7 +355,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [address, index, args],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -377,7 +378,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [address, index],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -399,7 +400,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         appId: subscriptionsApp,
         args: [index, addresses],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }

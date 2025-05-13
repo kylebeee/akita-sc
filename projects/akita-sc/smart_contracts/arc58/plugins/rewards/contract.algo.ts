@@ -5,7 +5,8 @@ import { abiCall } from '@algorandfoundation/algorand-typescript/arc4'
 import { Rewards } from '../../../rewards/contract.algo'
 import { arc4Claims, arc4Reclaims, arc4UserAllocations } from '../../../rewards/types'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { getAkitaAppList, getSpendingAccount, getStakingFees, rekeyAddress } from '../../../utils/functions'
+import { getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { fee } from '../../../utils/constants'
 
 export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
 
@@ -22,7 +23,6 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
 
     const { disbursements: mbrAmount } = this.mbr(title, note)
     const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
-    const rewardsFee = getStakingFees(this.akitaDAO.value).rewardsFee
 
     return abiCall(
       Rewards.prototype.createDisbursement,
@@ -32,9 +32,9 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         args: [
           itxn.payment({
             sender,
-            amount: mbrAmount + rewardsFee,
+            amount: mbrAmount,
             receiver: Application(rewardsID).address,
-            fee: 0,
+            fee,
           }),
           title,
           timeToUnlock,
@@ -42,7 +42,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
           note,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     ).returnValue
   }
@@ -66,7 +66,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [id, title, timeToUnlock, expiration, note],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -94,13 +94,13 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
             sender,
             amount: mbrAmount + sum,
             receiver: Application(rewardsID).address,
-            fee: 0,
+            fee,
           }),
           id,
           allocations,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -133,20 +133,20 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
             sender,
             amount: mbrAmount,
             receiver: rewardsApp.address,
-            fee: 0,
+            fee,
           }),
           itxn.assetTransfer({
             sender,
             assetReceiver: rewardsApp.address,
             assetAmount: sum,
             xferAsset: assetID,
-            fee: 0,
+            fee,
           }),
           id,
           allocations
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -166,7 +166,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [id],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -186,7 +186,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [rewards],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -207,7 +207,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [id, reclaims],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }

@@ -18,6 +18,7 @@ import { ERR_NOT_PRIZE_BOX_OWNER } from "../../../utils/errors"
 import { PrizeBox } from "../../../prize-box/contract.algo"
 import { RafflePluginGlobalStateKeyFactory } from "./constants"
 import { fmbr, getPrizeBoxOwner, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { fee } from "../../../utils/constants"
 
 export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
 
@@ -47,7 +48,6 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
     maxTickets: uint64,
     gateID: uint64,
     marketplace: Address,
-    weightsListCount: uint64,
   ): uint64 {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -65,11 +65,11 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
               sender,
               receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
-              fee: 0,
+              fee,
             }),
             prizeID,
           ],
-          fee: 0,
+          fee,
         }
       )
     }
@@ -96,7 +96,6 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
       AccountMinimumBalance +
       optinMBR +
-      (weightsListCount * costs.weights) +
       fcosts.appCreators
     )
 
@@ -104,7 +103,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       sender,
       receiver: this.factory.value.address,
       amount: childContractMBR,
-      fee: 0,
+      fee,
     })
 
     const prizeTxn = itxn.assetTransfer({
@@ -112,7 +111,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       assetReceiver: this.factory.value.address,
       assetAmount: prizeAmount,
       xferAsset: prizeID,
-      fee: 0,
+      fee,
     })
 
     const raffleApp = abiCall(
@@ -130,10 +129,9 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
           maxTickets,
           gateID,
           marketplace,
-          weightsListCount
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     ).returnValue
 
@@ -151,7 +149,6 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
     maxTickets: uint64,
     gateID: uint64,
     marketplace: Address,
-    weightsListCount: uint64,
   ): uint64 {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -164,7 +161,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
         sender,
         appId: prizeBoxID,
         args: [new Address(this.factory.value.address)],
-        fee: 0,
+        fee,
       }
     )
 
@@ -175,7 +172,6 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
     }
 
     const fcosts = fmbr()
-    const costs = this.mbr()
 
     const raffle = compileArc4(Raffle)
 
@@ -185,7 +181,6 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
       AccountMinimumBalance +
       optinMBR +
-      (weightsListCount * costs.weights) +
       fcosts.appCreators
     )
 
@@ -193,7 +188,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       sender,
       receiver: this.factory.value.address,
       amount: childContractMBR,
-      fee: 0,
+      fee,
     })
 
     const raffleApp = abiCall(
@@ -211,10 +206,9 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
           maxTickets,
           gateID,
           marketplace,
-          weightsListCount
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     ).returnValue
 
@@ -248,12 +242,12 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
               sender,
               receiver: Application(raffleAppID).address,
               amount: amount + mbr,
-              fee: 0,
+              fee,
             }),
             args,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
+          fee,
         }
       )
     } else {
@@ -267,19 +261,19 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
               sender,
               receiver: Application(raffleAppID).address,
               amount: mbr,
-              fee: 0,
+              fee,
             }),
             itxn.assetTransfer({
               sender,
               assetReceiver: Application(raffleAppID).address,
               assetAmount: amount,
               xferAsset: ticketAsset,
-              fee: 0,
+              fee,
             }),
             args,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
+          fee,
         }
       )
     }
@@ -309,12 +303,12 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
               sender,
               receiver: Application(raffleAppID).address,
               amount: amount,
-              fee: 0,
+              fee,
             }),
             args,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
+          fee,
         }
       )
     } else {
@@ -329,12 +323,12 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
               assetReceiver: Application(raffleAppID).address,
               assetAmount: amount,
               xferAsset: ticketAsset,
-              fee: 0,
+              fee,
             }),
             args,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
+          fee,
         }
       )
     }
@@ -356,7 +350,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
         sender,
         appId: raffleAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -379,7 +373,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
         appId: raffleAppID,
         args: [iterationAmount],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -400,7 +394,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
         sender,
         appId: raffleAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -421,7 +415,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
         sender,
         appId: raffleAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }

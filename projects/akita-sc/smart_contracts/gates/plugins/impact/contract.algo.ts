@@ -16,6 +16,7 @@ import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { getPluginAppList } from '../../../utils/functions'
 import { AkitaSocialImpact } from '../../../arc58/plugins/social/contract.algo'
+import { fee } from '../../../utils/constants'
 
 export class ImpactGate extends AkitaBaseContract {
 
@@ -44,7 +45,7 @@ export class ImpactGate extends AkitaBaseContract {
           methodSelector(AkitaSocialImpact.prototype.getUserImpact),
           user
         ],
-        fee: 0,
+        fee,
       })
       .submit()
       .lastLog

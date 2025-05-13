@@ -1,0 +1,285 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 1 0
+    // smart_contracts/prize-box/factory.algo.ts:18
+    // export class PrizeBoxFactory extends FactoryContract {
+    txn NumAppArgs
+    bz main_after_if_else@9
+    pushbytess 0x115756db 0x46f76533 0x3decb140 // method "createApplication(string)void", method "updateApplication()void", method "mint(pay,address)uint64"
+    txna ApplicationArgs 0
+    match main_createApplication_route@3 main_updateApplication_route@4 main_mint_route@5
+
+main_after_if_else@9:
+    // smart_contracts/prize-box/factory.algo.ts:18
+    // export class PrizeBoxFactory extends FactoryContract {
+    intc_1 // 0
+    return
+
+main_mint_route@5:
+    // smart_contracts/prize-box/factory.algo.ts:34
+    // mint(payment: gtxn.PaymentTxn, owner: Address): uint64 {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/prize-box/factory.algo.ts:18
+    // export class PrizeBoxFactory extends FactoryContract {
+    txn GroupIndex
+    intc_0 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_0 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    // smart_contracts/prize-box/factory.algo.ts:34
+    // mint(payment: gtxn.PaymentTxn, owner: Address): uint64 {
+    callsub mint
+    itob
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+main_updateApplication_route@4:
+    // smart_contracts/prize-box/factory.algo.ts:27
+    // @abimethod({ allowActions: 'UpdateApplication' })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub updateApplication
+    intc_0 // 1
+    return
+
+main_createApplication_route@3:
+    // smart_contracts/prize-box/factory.algo.ts:22
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/prize-box/factory.algo.ts:18
+    // export class PrizeBoxFactory extends FactoryContract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/prize-box/factory.algo.ts:22
+    // @abimethod({ onCreate: 'require' })
+    callsub createApplication
+    intc_0 // 1
+    return
+
+
+// smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.createApplication(version: bytes) -> void:
+createApplication:
+    // smart_contracts/prize-box/factory.algo.ts:22-23
+    // @abimethod({ onCreate: 'require' })
+    // createApplication(version: string): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/factory.ts:15
+    // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
+    pushbytes "child_contract_version"
+    // smart_contracts/prize-box/factory.algo.ts:24
+    // this.childContractVersion.value = version
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.updateApplication() -> void:
+updateApplication:
+    // smart_contracts/prize-box/factory.algo.ts:29
+    // assert(Txn.sender === Global.creatorAddress, 'Only the creator can update the application')
+    txn Sender
+    global CreatorAddress
+    ==
+    assert // Only the creator can update the application
+    retsub
+
+
+// smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.mint(payment: uint64, owner: bytes) -> uint64:
+mint:
+    // smart_contracts/prize-box/factory.algo.ts:34
+    // mint(payment: gtxn.PaymentTxn, owner: Address): uint64 {
+    proto 2 1
+    // smart_contracts/prize-box/factory.algo.ts:38-50
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: (
+    //       MIN_PROGRAM_PAGES +
+    //       (GLOBAL_STATE_KEY_UINT_COST * prizeBox.globalUints) +
+    //       (GLOBAL_STATE_KEY_BYTES_COST * prizeBox.globalBytes) +
+    //       AccountMinimumBalance
+    //     ),
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/prize-box/factory.algo.ts:41
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/prize-box/factory.algo.ts:38-50
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: (
+    //       MIN_PROGRAM_PAGES +
+    //       (GLOBAL_STATE_KEY_UINT_COST * prizeBox.globalUints) +
+    //       (GLOBAL_STATE_KEY_BYTES_COST * prizeBox.globalBytes) +
+    //       AccountMinimumBalance
+    //     ),
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz mint_bool_false@3
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/prize-box/factory.algo.ts:43-46
+    // MIN_PROGRAM_PAGES +
+    // (GLOBAL_STATE_KEY_UINT_COST * prizeBox.globalUints) +
+    // (GLOBAL_STATE_KEY_BYTES_COST * prizeBox.globalBytes) +
+    // AccountMinimumBalance
+    pushint 278500 // 278500
+    // smart_contracts/prize-box/factory.algo.ts:38-50
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: (
+    //       MIN_PROGRAM_PAGES +
+    //       (GLOBAL_STATE_KEY_UINT_COST * prizeBox.globalUints) +
+    //       (GLOBAL_STATE_KEY_BYTES_COST * prizeBox.globalBytes) +
+    //       AccountMinimumBalance
+    //     ),
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz mint_bool_false@3
+    intc_0 // 1
+
+mint_bool_merge@4:
+    // smart_contracts/prize-box/factory.algo.ts:38-50
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: (
+    //       MIN_PROGRAM_PAGES +
+    //       (GLOBAL_STATE_KEY_UINT_COST * prizeBox.globalUints) +
+    //       (GLOBAL_STATE_KEY_BYTES_COST * prizeBox.globalBytes) +
+    //       AccountMinimumBalance
+    //     ),
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/prize-box/factory.algo.ts:52-56
+    // const prizeBoxApp = prizeBox.call
+    //   .createApplication({
+    //     args: [owner],
+    //     fee,
+    //   })
+    itxn_begin
+    pushbytes 0xd324bea4 // method "createApplication(address)void"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    // smart_contracts/prize-box/factory.algo.ts:36
+    // const prizeBox = compileArc4(PrizeBox)
+    intc_0 // 1
+    itxn_field GlobalNumByteSlice
+    intc_0 // 1
+    itxn_field GlobalNumUint
+    pushbytes base64(CoEBQw==)
+    itxn_field ClearStateProgramPages
+    pushbytes base64(CiAEAAEEECYCBW93bmVyC29wdGluX2NvdW50MRtBACqCBQTTJL6kBCSHwywEPqEYMgSt+SrkBEQgD702GgCOBQBIADoAIAARAAIiQzEZFEQxGEQ2GgGIAMMjQzEZFEQxGEQ2GgGIAKQjQzEZFEQxGEQxFiMJSTgQIxJENhoBF4gASCNDMRmBBRJEMRhEiAAdI0MxGRREMRgURDYaAYgAAiNDigEAKIv/ZykiZ4kxACIoZUQSRCIpZUQURLEiKGVEsgkjshAisgGziYoCADEAIihlRBJEi/44BzIKEkEAKYv+OAgyEBJBAB8jRLEyCov/shEishKyFCSyECKyAbMiKWVEIwgpTGeJIkL/3ooBADEAIihlRBJEKIv/Z4mKAQCAADEAIihlRBJEIov/IlmLAQ1BAH+L/1cCAIsBJQslWEkiW0mMAEEAVTIKiwBwAERMgQhbSU4CEkEALCIpZUQjCSlMZ7EiKGVEIihlRLIVshSyEosAshEkshAisgGziwEjCIwBQv+ksSIoZUSyFLISiwCyESSyECKyAbNC/+CxgQhbIihlRLIHsggjshAisgGzQv/KiQ==)
+    itxn_field ApprovalProgramPages
+    // smart_contracts/prize-box/factory.algo.ts:52-56
+    // const prizeBoxApp = prizeBox.call
+    //   .createApplication({
+    //     args: [owner],
+    //     fee,
+    //   })
+    intc_1 // 0
+    itxn_field OnCompletion
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_1 // 0
+    itxn_field Fee
+    // smart_contracts/prize-box/factory.algo.ts:52-56
+    // const prizeBoxApp = prizeBox.call
+    //   .createApplication({
+    //     args: [owner],
+    //     fee,
+    //   })
+    itxn_submit
+    // smart_contracts/prize-box/factory.algo.ts:58
+    // .createdApp
+    gitxn 0 CreatedApplicationID
+    // smart_contracts/prize-box/factory.algo.ts:60-66
+    // itxn
+    //   .payment({
+    //     receiver: prizeBoxApp.address,
+    //     amount: AccountMinimumBalance,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/prize-box/factory.algo.ts:62
+    // receiver: prizeBoxApp.address,
+    dup
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/utils/constants.ts:11
+    // export const AccountMinimumBalance: uint64 = 100_000
+    pushint 100000 // 100000
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/prize-box/factory.algo.ts:60-65
+    // itxn
+    //   .payment({
+    //     receiver: prizeBoxApp.address,
+    //     amount: AccountMinimumBalance,
+    //     fee,
+    //   })
+    intc_0 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_1 // 0
+    itxn_field Fee
+    // smart_contracts/prize-box/factory.algo.ts:60-66
+    // itxn
+    //   .payment({
+    //     receiver: prizeBoxApp.address,
+    //     amount: AccountMinimumBalance,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/prize-box/factory.algo.ts:68
+    // return prizeBoxApp.id
+    retsub
+
+mint_bool_false@3:
+    intc_1 // 0
+    b mint_bool_merge@4

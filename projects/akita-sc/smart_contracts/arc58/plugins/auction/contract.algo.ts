@@ -13,6 +13,7 @@ import { GateArgs } from "../../../utils/types/gates"
 import { AuctionPluginGlobalStateKeyFactory } from "./constants"
 import { fmbr, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
+import { fee } from "../../../utils/constants"
 
 export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
 
@@ -66,11 +67,11 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
               sender,
               receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
-              fee: 0,
+              fee,
             }),
             prizeID,
           ],
-          fee: 0,
+          fee,
         }
       )
     }
@@ -86,11 +87,11 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
               sender,
               receiver: this.factory.value.address,
               amount: Global.assetOptInMinBalance,
-              fee: 0,
+              fee,
             }),
             bidAssetID,
           ],
-          fee: 0,
+          fee,
         }
       )
     }
@@ -119,7 +120,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       sender,
       receiver: this.factory.value.address,
       amount: childContractMBR,
-      fee: 0,
+      fee,
     })
 
     const prizeTxn = itxn.assetTransfer({
@@ -127,7 +128,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       assetReceiver: this.factory.value.address,
       assetAmount: prizeAmount,
       xferAsset: Asset(prizeID),
-      fee: 0,
+      fee,
     })
 
     const newAuction = abiCall(
@@ -151,7 +152,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
           weightsListCount
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0
+        fee
       }
     ).returnValue
 
@@ -175,7 +176,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         appId: this.factory.value,
         args: [iterationAmount],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -198,7 +199,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         appId: this.factory.value,
         args: [auctionAppID],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -227,7 +228,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
           appId: auctionAppID,
           args: [new Address(sender)],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
+          fee,
         }
       ).returnValue
 
@@ -248,13 +249,13 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
               sender,
               receiver: Application(auctionAppID).address,
               amount: amount + mbr,
-              fee: 0,
+              fee,
             }),
             args,
             marketplace,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
+          fee,
         }
       )
     } else {
@@ -262,7 +263,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         receiver: Application(auctionAppID).address,
         amount: mbr,
-        fee: 0,
+        fee,
       })
 
       const xferTxn = itxn.assetTransfer({
@@ -270,7 +271,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         assetReceiver: Application(auctionAppID).address,
         assetAmount: amount,
         xferAsset: bidAsset,
-        fee: 0,
+        fee,
       })
 
       abiCall(
@@ -285,7 +286,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
             marketplace,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
+          fee,
         }
       )
     }
@@ -309,7 +310,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         appId: auctionAppID,
         args: [id],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -330,7 +331,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: auctionAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -351,7 +352,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: auctionAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -371,7 +372,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: auctionAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -394,7 +395,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         appId: auctionAppID,
         args: [iterationAmount],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -415,7 +416,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: auctionAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }
@@ -436,7 +437,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: auctionAppID,
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee: 0,
+        fee,
       }
     )
   }

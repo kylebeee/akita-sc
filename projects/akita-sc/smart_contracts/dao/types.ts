@@ -50,7 +50,7 @@ export class arc4EscrowInfo extends arc4.Struct<{
   escrow: UintN64,
   account: Address,
   optinAllowed: arc4.Bool,
-}> {}
+}> { }
 
 // distribute Bones for DAU
 // distribute Bones for Bones Stakers
@@ -181,15 +181,18 @@ export class arc4SocialFees extends arc4.Struct<{
 }> { }
 
 export type StakingFees = {
-  /** the cost to create a rewards distribution  */
-  rewardsFee: uint64
   /** the cost to create a staking pool */
-  poolCreationFee: uint64
+  creationFee: uint64
+  /** the min tax to take on each users rewards based on impact */
+  impactTaxMin: uint64
+  /** the max tax to take on each users rewards based on impact */
+  impactTaxMax: uint64
 }
 
 export class arc4StakingFees extends arc4.Struct<{
-  rewardsFee: arc4.UintN64
-  poolCreationFee: arc4.UintN64
+  creationFee: arc4.UintN64
+  impactTaxMin: arc4.UintN64
+  impactTaxMax: arc4.UintN64
 }> { }
 
 export type SubscriptionFees = {
@@ -208,13 +211,13 @@ export class arc4SubscriptionFees extends arc4.Struct<{
 }> { }
 
 export type SwapFees = {
-  HyperSwapImpactTaxMin: uint64
-  HyperSwapImpactTaxMax: uint64
+  impactTaxMin: uint64
+  impactTaxMax: uint64
 }
 
 export class arc4SwapFees extends arc4.Struct<{
-  HyperSwapImpactTaxMin: arc4.UintN64
-  HyperSwapImpactTaxMax: arc4.UintN64
+  impactTaxMin: arc4.UintN64
+  impactTaxMax: arc4.UintN64
 }> { }
 
 export type NFTFees = {
@@ -229,14 +232,20 @@ export type NFTFees = {
 }
 
 export class arc4NFTFees extends arc4.Struct<{
-  omnigemSaleFee: arc4.UintN64
   marketplaceSalePercentageMinimum: arc4.UintN64
   marketplaceSalePercentageMaximum: arc4.UintN64
   marketplaceComposablePercentage: arc4.UintN64
-  shuffleSalePercentage: arc4.UintN64
-  auctionSalePercentageMinimum: arc4.UintN64
-  auctionSalePercentageMaximum: arc4.UintN64
+  marketplaceRoyaltyDefaultPercentage: arc4.UintN64
+  omnigemSaleFee: arc4.UintN64
+  auctionCreationFee: arc4.UintN64
+  auctionSaleImpactTaxMin: arc4.UintN64
+  auctionSaleImpactTaxMax: arc4.UintN64
   auctionComposablePercentage: arc4.UintN64
+  auctionRafflePercentage: arc4.UintN64
+  raffleCreationFee: arc4.UintN64
+  raffleSaleImpactTaxMin: arc4.UintN64
+  raffleSaleImpactTaxMax: arc4.UintN64
+  raffleComposablePercentage: arc4.UintN64
 }> { }
 
 export type arc4Fees = {
@@ -244,21 +253,37 @@ export type arc4Fees = {
   reactFee: arc4.UintN64
   impactTaxMin: arc4.UintN64
   impactTaxMax: arc4.UintN64
-  rewardsFee: arc4.UintN64
+
   poolCreationFee: arc4.UintN64
+  poolImpactTaxMin: arc4.UintN64
+  poolImpactTaxMax: arc4.UintN64
+
   subscriptionServiceCreationFee: arc4.UintN64
   subscriptionPaymentPercentage: arc4.UintN64
   subscriptionTriggerPercentage: arc4.UintN64
-  HyperSwapImpactTaxMin: arc4.UintN64
-  HyperSwapImpactTaxMax: arc4.UintN64
-  omnigemSaleFee: arc4.UintN64
+
   marketplaceSalePercentageMinimum: arc4.UintN64
   marketplaceSalePercentageMaximum: arc4.UintN64
   marketplaceComposablePercentage: arc4.UintN64
-  shuffleSalePercentage: arc4.UintN64
-  auctionSalePercentageMinimum: arc4.UintN64
-  auctionSalePercentageMaximum: arc4.UintN64
+  marketplaceRoyaltyDefaultPercentage: arc4.UintN64
+  omnigemSaleFee: arc4.UintN64
+
+  auctionCreationFee: arc4.UintN64
+  auctionSaleImpactTaxMin: arc4.UintN64
+  auctionSaleImpactTaxMax: arc4.UintN64
   auctionComposablePercentage: arc4.UintN64
+  auctionRafflePercentage: arc4.UintN64
+
+  raffleCreationFee: arc4.UintN64
+  raffleSaleImpactTaxMin: arc4.UintN64
+  raffleSaleImpactTaxMax: arc4.UintN64
+  raffleComposablePercentage: arc4.UintN64
+
+  swapFeeImpactTaxMin: arc4.UintN64
+  swapFeeImpactTaxMax: arc4.UintN64
+  swapComposablePercentage: arc4.UintN64
+  swapLiquidityPercentage: arc4.UintN64
+
   krbyPercentage: arc4.UintN64
   moderatorPercentage: arc4.UintN64
 }

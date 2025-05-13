@@ -22,7 +22,6 @@ import {
   arc4EntryKey,
   arc4RaffleCursor,
   arc4Reward,
-  arc4StakeEntry,
   DistributionTypeEven,
   DistributionTypeFlat,
   DistributionTypePercentage,
@@ -94,6 +93,7 @@ import { MAX_UINT64 } from '../utils/constants'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { calcPercent, gateCheck, getAkitaAppList, getOtherAppList, getStakingFees, percentageOf } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { fee } from '../utils/constants'
 
 const MERKLE_TREE_TYPE_ASSET: uint64 = 1
 
@@ -431,7 +431,7 @@ export class Pool extends classes(
       const check = abiCall(Staking.prototype.softCheck, {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [entry.address, entry.asset],
-        fee: 0,
+        fee,
       }).returnValue
 
       if (check.balance >= entry.quantity) {
@@ -447,7 +447,7 @@ export class Pool extends classes(
             type: this.stakingType(),
           }),
         ],
-        fee: 0,
+        fee,
       }).returnValue
 
       if (info.amount >= entry.quantity) {
@@ -482,7 +482,7 @@ export class Pool extends classes(
       const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [entry.address, entry.asset, true],
-        fee: 0,
+        fee,
       }).returnValue
 
       return { valid: true, balance: avg }
@@ -498,8 +498,8 @@ export class Pool extends classes(
 
     const mbrPayment = itxn.payment({
       receiver: rewardsApp.address,
-      amount: rewardMBR + getStakingFees(this.akitaDAO.value).rewardsFee,
-      fee: 0,
+      amount: rewardMBR,
+      fee,
     })
 
     return abiCall(Rewards.prototype.createDisbursement, {
@@ -511,7 +511,7 @@ export class Pool extends classes(
         expiration,
         '',
       ],
-      fee: 0,
+      fee,
     }).returnValue
   }
 
@@ -533,7 +533,7 @@ export class Pool extends classes(
           itxn.payment({
             receiver: rewardsApp.address,
             amount: mbrAmount + sum,
-            fee: 0,
+            fee,
           }),
           disbursementID,
           allocations,
@@ -547,13 +547,13 @@ export class Pool extends classes(
           itxn.payment({
             receiver: rewardsApp.address,
             amount: mbrAmount,
-            fee: 0,
+            fee,
           }),
           itxn.assetTransfer({
             assetReceiver: rewardsApp.address,
             xferAsset: asset,
             assetAmount: sum,
-            fee: 0,
+            fee,
           }),
           disbursementID,
           allocations,
@@ -568,7 +568,7 @@ export class Pool extends classes(
     abiCall(Rewards.prototype.finalizeDisbursement, {
       appId: rewardsApp,
       args: [disbursementID],
-      fee: 0,
+      fee,
     })
   }
 
@@ -645,7 +645,7 @@ export class Pool extends classes(
       this.gateSize.value = abiCall(Gate.prototype.size, {
         appId: getAkitaAppList(this.akitaDAO.value).gate,
         args: [this.gateID.value],
-        fee: 0,
+        fee,
       }).returnValue
     }
   }
@@ -689,7 +689,7 @@ export class Pool extends classes(
     this.status.value = PoolStatusFinal
   }
 
-  enter(payment: gtxn.PaymentTxn, entries: DynamicArray<arc4StakeEntry>, args: GateArgs): void {
+  enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
     // Verify the pool is live
     assert(this.isLive(), 'the pool is not live')
     assert(
@@ -710,17 +710,15 @@ export class Pool extends classes(
     assert(payment.amount === (entryMBR * entries.length), ERR_INVALID_PAYMENT_AMOUNT)
 
     for (let i: uint64 = 0; i < entries.length; i++) {
-      const newEntry = decodeArc4<StakeEntry>(entries[i].bytes)
-
-      assert(newEntry.quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
+      assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
 
       // check their actual balance if the assets aren't escrowed
       if (
         this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
         this.type.value === POOL_STAKING_TYPE_SOFT
       ) {
-        const [balance, optedIn] = AssetHolding.assetBalance(Txn.sender, newEntry.asset)
-        assert(optedIn && balance >= entries[i].quantity.native, 'user does not have min balance')
+        const [balance, optedIn] = AssetHolding.assetBalance(Txn.sender, entries[i].asset)
+        assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
       }
 
       const stakeInfo = abiCall(Staking.prototype.getInfo, {
@@ -728,14 +726,14 @@ export class Pool extends classes(
         args: [
           new Address(Txn.sender),
           new arc4StakeInfo({
-            asset: new UintN64(newEntry.asset),
+            asset: new UintN64(entries[i].asset),
             type: this.stakingType(),
           }),
         ],
-        fee: 0,
+        fee,
       }).returnValue
 
-      assert(stakeInfo.amount >= newEntry.quantity, 'user does not have enough staked')
+      assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
 
       const { address, name } = decodeArc4<RootKey>(this.stakeKey.value.bytes)
       const verified = abiCall(MetaMerkles.prototype.verify, {
@@ -743,11 +741,11 @@ export class Pool extends classes(
         args: [
           address,
           name,
-          bytes32(sha256(sha256(itob(newEntry.asset)))),
-          newEntry.proof,
+          bytes32(sha256(sha256(itob(entries[i].asset)))),
+          entries[i].proof,
           MERKLE_TREE_TYPE_ASSET,
         ],
-        fee: 0,
+        fee,
       }).returnValue
 
       assert(verified, 'failed to verify stake requirements')
@@ -755,15 +753,15 @@ export class Pool extends classes(
       const entryID = this.newEntryID()
       this.entries(entryID).value = new arc4EntryData({
         address: new Address(Txn.sender),
-        asset: new UintN64(newEntry.asset),
-        quantity: new UintN64(newEntry.quantity),
+        asset: new UintN64(entries[i].asset),
+        quantity: new UintN64(entries[i].quantity),
         gateArgs: args.copy(),
         disqualified: new Bool(false)
       })
 
       const aKey = new arc4EntryKey({
         address: new Address(Txn.sender),
-        asset: new UintN64(newEntry.asset),
+        asset: new UintN64(entries[i].asset),
       })
 
       this.entriesByAddress(aKey).value = entryID
@@ -805,7 +803,7 @@ export class Pool extends classes(
       {
         appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
         args: [roundToUse, this.salt.value],
-        fee: 0
+        fee
       }
     ).returnValue
 

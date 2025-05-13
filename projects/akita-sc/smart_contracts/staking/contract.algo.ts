@@ -63,6 +63,7 @@ import { uint64Array } from '../utils/types/base'
 import { BaseStaking } from './base'
 import { classes } from 'polytype'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { fee } from '../utils/constants'
 
 export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
@@ -383,14 +384,14 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
       itxn.payment({
         receiver: Txn.sender,
         amount: currentStake.amount.native,
-        fee: 0,
+        fee,
       }).submit()
     } else {
       itxn.assetTransfer({
         assetReceiver: Txn.sender,
         assetAmount: currentStake.amount.native,
         xferAsset: asset,
-        fee: 0,
+        fee,
       }).submit()
     }
     this.stakes(sk).delete()

@@ -88,6 +88,7 @@ import { BaseRaffle } from './base'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { arc59OptInAndSend, gateCheck, getOtherAppList } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { fee } from '../utils/constants'
 
 export class Raffle extends classes(
   BaseRaffle,
@@ -295,7 +296,7 @@ export class Raffle extends classes(
       .payment({
         receiver: Global.creatorAddress,
         amount: returnAmount,
-        fee: 0,
+        fee,
       })
       .submit()
 
@@ -464,7 +465,7 @@ export class Raffle extends classes(
       {
         appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
         args: [roundToUse, this.salt.value],
-        fee: 0,
+        fee,
       }
     ).returnValue
 
@@ -529,7 +530,7 @@ export class Raffle extends classes(
           appId: this.prize.value,
           onCompletion: OnCompleteAction.NoOp,
           args: [new Address(this.winner.value)],
-          fee: 0,
+          fee,
         }
       )
     } else {
@@ -540,7 +541,7 @@ export class Raffle extends classes(
           .assetTransfer({
             assetCloseTo: this.winner.value,
             xferAsset: this.prize.value,
-            fee: 0,
+            fee,
           })
           .submit()
       } else {
@@ -559,7 +560,7 @@ export class Raffle extends classes(
         .payment({
           receiver: this.seller.value,
           amount: this.ticketCount.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else if (this.seller.value.isOptedIn(this.ticketAsset.value)) {
@@ -569,7 +570,7 @@ export class Raffle extends classes(
           assetCloseTo: this.seller.value,
           assetAmount: this.ticketCount.value,
           xferAsset: this.ticketAsset.value,
-          fee: 0,
+          fee,
         })
         .submit()
     } else {

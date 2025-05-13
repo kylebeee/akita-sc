@@ -11,6 +11,7 @@ import { ERR_NOT_A_LISTING, ERR_PRICE_TOO_LOW } from './errors'
 import { GateArgs } from '../utils/types/gates'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { fmbr, royalties } from '../utils/functions'
+import { fee } from '../utils/constants'
 
 export class Marketplace extends classes(ServiceFactoryContract, ContractWithOptIn) {
 
@@ -101,7 +102,7 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
           this.childContractVersion.value,
           this.akitaDAO.value.id,
         ],
-        fee: 0,
+        fee,
       })
       .itxn
       .createdApp
@@ -113,11 +114,11 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
         itxn.payment({
           receiver: listingApp.address,
           amount: Global.assetOptInMinBalance,
-          fee: 0,
+          fee,
         }),
         assetXfer.xferAsset.id,
       ],
-      fee: 0,
+      fee,
     })
 
     // xfer asset to child
@@ -126,7 +127,7 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
         assetReceiver: listingApp.address,
         assetAmount: assetXfer.assetAmount,
         xferAsset: assetXfer.xferAsset,
-        fee: 0,
+        fee,
       })
       .submit()
 
@@ -138,11 +139,11 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
           itxn.payment({
             receiver: listingApp.address,
             amount: optinMBR,
-            fee: 0,
+            fee,
           }),
           paymentAsset,
         ],
-        fee: 0,
+        fee,
       })
     }
 
@@ -165,11 +166,11 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
 
   purchase(
     payment: gtxn.PaymentTxn,
-    listingAppID: uint64,
+    listingID: uint64,
     marketplace: Address,
     args: GateArgs
   ): void {
-    assert(Application(listingAppID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
     assertMatch(
       payment,
       { receiver: Global.currentApplicationAddress },
@@ -179,39 +180,39 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
     abiCall(
       Listing.prototype.purchase,
       {
-        appId: listingAppID,
+        appId: listingID,
         args: [
           itxn.payment({
-            receiver: Application(listingAppID).address,
+            receiver: Application(listingID).address,
             amount: payment.amount,
-            fee: 0,
+            fee,
           }),
           new Address(Txn.sender),
           marketplace,
           args,
         ],
-        fee: 0,
+        fee,
       }
     )
 
-    const { amount, creatorAddress } = this.getAppCreator(listingAppID)
+    const { amount, creator } = this.appCreators(listingID).value
 
     itxn
       .payment({
         amount,
-        receiver: creatorAddress.native,
-        fee: 0,
+        receiver: creator,
+        fee,
       })
       .submit()
   }
 
   purchaseAsa(
     assetXfer: gtxn.AssetTransferTxn,
-    listingAppID: uint64,
+    listingID: uint64,
     marketplace: Address,
     args: GateArgs
   ): void {
-    assert(Application(listingAppID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
     assertMatch(
       assetXfer,
       {
@@ -224,52 +225,52 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
     abiCall(
       Listing.prototype.purchaseAsa,
       {
-        appId: listingAppID,
+        appId: listingID,
         args: [
           itxn.assetTransfer({
-            assetReceiver: Application(listingAppID).address,
+            assetReceiver: Application(listingID).address,
             assetAmount: assetXfer.assetAmount,
             xferAsset: assetXfer.xferAsset,
-            fee: 0,
+            fee,
           }),
           new Address(Txn.sender),
           marketplace,
           args,
         ],
-        fee: 0,
+        fee,
       }
     )
 
-    const { amount, creatorAddress } = this.getAppCreator(listingAppID)
+    const { amount, creator } = this.appCreators(listingID).value
 
     itxn
       .payment({
         amount,
-        receiver: creatorAddress.native,
-        fee: 0,
+        receiver: creator,
+        fee,
       })
       .submit()
   }
 
-  delist(listingAppID: uint64): void {
-    assert(Application(listingAppID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+  delist(listingID: uint64): void {
+    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
 
     abiCall(
       Listing.prototype.delist,
       {
-        appId: listingAppID,
+        appId: listingID,
         args: [new Address(Txn.sender)],
-        fee: 0,
+        fee,
       }
     )
 
-    const { amount, creatorAddress } = this.getAppCreator(listingAppID)
+    const { amount, creator } = this.appCreators(listingID).value
 
     itxn
       .payment({
         amount,
-        receiver: creatorAddress.native,
-        fee: 0,
+        receiver: creator,
+        fee,
       })
       .submit()
   }

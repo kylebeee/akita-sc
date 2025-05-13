@@ -13,6 +13,7 @@ import { PrizeBox } from './contract.algo'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { FactoryContract } from '../utils/base-contracts/factory'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
+import { fee } from '../utils/constants'
 
 export class PrizeBoxFactory extends FactoryContract {
 
@@ -51,7 +52,7 @@ export class PrizeBoxFactory extends FactoryContract {
     const prizeBoxApp = prizeBox.call
       .createApplication({
         args: [owner],
-        fee: 0,
+        fee,
       })
       .itxn
       .createdApp
@@ -60,7 +61,7 @@ export class PrizeBoxFactory extends FactoryContract {
       .payment({
         receiver: prizeBoxApp.address,
         amount: AccountMinimumBalance,
-        fee: 0,
+        fee,
       })
       .submit()
 
