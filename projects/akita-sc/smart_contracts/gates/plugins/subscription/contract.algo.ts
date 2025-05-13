@@ -26,7 +26,7 @@ export class SubscriptionGate extends AkitaBaseContract {
   }
 
   private subscriptionGate(address: Address, merchant: Address, id: uint64): boolean {
-    const info = abiCall(Subscriptions.prototype.getSubsriptionInfo, {
+    const info = abiCall(Subscriptions.prototype.getSubscriptionInfo, {
       appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
       args: [address, id],
     }).returnValue

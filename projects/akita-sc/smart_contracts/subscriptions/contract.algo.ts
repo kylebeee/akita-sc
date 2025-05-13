@@ -63,7 +63,7 @@ import { arc4Zero } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { GateArgs } from '../utils/types/gates'
 import { bytes16, CID } from '../utils/types/base'
-import { BaseSubscriptions } from './base.algo'
+import { BaseSubscriptions } from './base'
 import { calcPercent, gateCheck, getSubscriptionFees } from '../utils/functions'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { classes } from 'polytype'
@@ -746,7 +746,7 @@ export class Subscriptions extends classes(
   }
 
   @abimethod({ readonly: true })
-  getSubsriptionInfo(address: Address, id: uint64): SubscriptionInfoWithPasses {
+  getSubscriptionInfo(address: Address, id: uint64): SubscriptionInfoWithPasses {
     const key = new arc4SubscriptionKey({ address, id: new UintN64(id) })
 
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)

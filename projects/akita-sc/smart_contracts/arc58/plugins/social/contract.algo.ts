@@ -3,8 +3,7 @@ import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes,
 import { abiCall, abimethod, Address, Bool, decodeArc4, DynamicArray, DynamicBytes, methodSelector, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaSocialMBRData, arc4Action, arc4BlockListKey, arc4FollowsKey, arc4MetaValue, arc4PostValue, arc4ReactionListKey, arc4ReactionsKey, arc4VoteListKey, arc4VoteListValue, arc4VotesValue, MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, arc4ImpactMetaValue, ImpactMetaValue } from './types'
 import { bytes16, bytes32, bytes4, CID, paddedBytes32 } from '../../../utils/types/base'
-import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS } from './constants'
-import { ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA } from './constants'
+import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA } from './constants'
 import { AbstractedAccount } from '../../account/contract.algo'
 import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn'
 import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_NFD, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NFD_CHANGED, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_A_SUBSCRIPTION, ERR_NOT_AN_AKITA_NFT, ERR_NOT_AN_NFD, ERR_NOT_DAO, ERR_NOT_YOUR_POST_TO_EDIT, ERR_PLUGIN_NOT_AUTH_ADDR, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFD, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
@@ -14,12 +13,13 @@ import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { OptInPlugin } from '../optin/contract.algo'
 import { akitaSocialFee, gateCheck, getAccounts, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, getSpendingAccount, impactRange, rekeyAddress } from '../../../utils/functions'
 import { AkitaBaseEscrow, AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { Subscriptions } from '../../../subscriptions/contract.algo'
+
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { NFD } from '../../../utils/types/nfd'
 import { AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress } from '../../../utils/constants'
 import { Staking } from '../../../staking/contract.algo'
 import { arc4StakeInfo, STAKING_TYPE_SOFT } from '../../../staking/types'
+import { Subscriptions } from '../../../subscriptions/contract.algo'
 
 export class AkitaSocialPlugin extends AkitaBaseEscrow {
 
@@ -1310,7 +1310,7 @@ export class AkitaSocialImpact extends AkitaBaseContract {
 
   private isSubscribed(account: Account, index: uint64): { active: boolean; serviceID: uint64; streak: uint64 } {
     const info = abiCall(
-      Subscriptions.prototype.getSubsriptionInfo,
+      Subscriptions.prototype.getSubscriptionInfo,
       {
         appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
         args: [new Address(account), index],

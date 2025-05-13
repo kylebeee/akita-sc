@@ -44,7 +44,7 @@ export class SubscriptionStreakGate extends AkitaBaseContract {
     const infoTxn = itxn
       .applicationCall({
         appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-        appArgs: [methodSelector(Subscriptions.prototype.getSubsriptionInfo), address, id],
+        appArgs: [methodSelector(Subscriptions.prototype.getSubscriptionInfo), address, id],
       })
       .submit()
 
