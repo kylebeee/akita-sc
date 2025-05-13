@@ -1,17 +1,20 @@
 import {
   abimethod,
   Account,
+  Application,
   arc4,
   assert,
   assertMatch,
   BoxMap,
+  Bytes,
   Global,
   gtxn,
   itxn,
+  op,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { Txn } from '@algorandfoundation/algorand-typescript/op'
-import { Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   Addresses,
   Amounts,
@@ -59,16 +62,44 @@ import {
   ERR_USER_ALREADY_BLOCKED,
   ERR_USER_NOT_BLOCKED,
 } from './errors'
-import { arc4Zero } from '../utils/constants'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { arc4Zero, DIVISOR } from '../utils/constants'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_PERCENTAGE, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { GateArgs } from '../utils/types/gates'
 import { bytes16, CID } from '../utils/types/base'
 import { BaseSubscriptions } from './base'
-import { calcPercent, gateCheck, getSubscriptionFees } from '../utils/functions'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { classes } from 'polytype'
-import { AkitaDAOEscrowAccountSubscriptions } from '../dao/constants'
+import { AkitaDAOEscrowAccountSubscriptions, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysSubscriptionFees } from '../dao/constants'
 import { AkitaBaseEscrow } from '../utils/base-contracts/base'
+import { Gate } from '../gates/contract.algo'
+import { AkitaAppList, SubscriptionFees } from '../dao/types'
+
+function calcPercent(a: uint64, p: uint64): uint64 {
+  assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+  return op.divw(...op.mulw(a, p), DIVISOR)
+}
+
+function getAkitaAppList(akitaDAO: Application): AkitaAppList {
+  const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+  return decodeArc4<AkitaAppList>(appListBytes)
+}
+
+function gateCheck(akitaDAO: Application, caller: Address, id: uint64, args: GateArgs): boolean {
+  if (id === 0) {
+    return true
+  }
+
+  return abiCall(Gate.prototype.check, {
+    appId: getAkitaAppList(akitaDAO).gate,
+    args: [caller, id, args],
+    fee: 0,
+  }).returnValue
+}
+
+function getSubscriptionFees(akitaDAO: Application): SubscriptionFees {
+  const [subscriptionFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysSubscriptionFees))
+  return decodeArc4<SubscriptionFees>(subscriptionFeesBytes)
+}
 
 export class Subscriptions extends classes(
   BaseSubscriptions,
@@ -722,7 +753,7 @@ export class Subscriptions extends classes(
       )
     }
 
-    this.passes(new arc4PassesKey({ address: arc4Sender, id: new UintN64(id) })).value = addresses
+    this.passes(new arc4PassesKey({ address: arc4Sender, id: new UintN64(id) })).value = addresses.copy()
   }
 
     // READ ONLY METHODS ----------------------------------------------------------------------------

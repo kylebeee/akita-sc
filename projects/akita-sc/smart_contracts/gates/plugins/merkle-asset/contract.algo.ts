@@ -45,9 +45,9 @@ export class MerkleAssetGate extends AkitaBaseContract {
     // so we need to check that the length of the arguments is at least the length of the static part
     // of the struct plus 1 byte (the smallest length of a string)
     assert(args.length >= 33, ERR_INVALID_ARG_COUNT)
-    const params = interpretAsArc4<arc4MerkleAssetRegistryInfo>(args)
+    const params = interpretAsArc4<arc4MerkleAssetRegistryInfo>(args).copy()
     const id = this.newRegistryID()
-    this.registry(id).value = params
+    this.registry(id).value = params.copy()
     return id
   }
 

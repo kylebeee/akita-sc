@@ -86,7 +86,7 @@ export class FollowerIndexGate extends AkitaBaseContract {
     assert(args.length === 48, ERR_INVALID_ARG_COUNT)
     const params = interpretAsArc4<arc4FollowerIndexRegistryInfo>(args)
     const id = this.newRegistryID()
-    this.registry(id).value = params
+    this.registry(id).value = params.copy()
     return id
   }
 

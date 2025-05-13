@@ -205,7 +205,7 @@ export class Pool extends classes(
         continue
       }
 
-      const passes = gateCheck(this.akitaDAO.value, entry.address, this.gateID.value, entry.gateArgs)
+      const passes = gateCheck(this.akitaDAO.value, entry.address, this.gateID.value, entry.gateArgs.copy())
       if (!passes) {
         continue
       }
@@ -594,7 +594,7 @@ export class Pool extends classes(
     this.status.value = PoolStatusDraft
     this.title.value = title
     this.type.value = type
-    this.reward.value = reward
+    this.reward.value = reward.copy()
     const decodedReward = decodeArc4<Reward>(reward.bytes)
     assert(decodedReward.rate > 0, ERR_RATE_MUST_BE_GREATER_THAN_ZERO)
     this.creator.value = creator
@@ -622,7 +622,7 @@ export class Pool extends classes(
       }
     }
 
-    this.stakeKey.value = stakeKey
+    this.stakeKey.value = stakeKey.copy()
     this.minimumStakeAmount.value = minimumStakeAmount
     this.gateID.value = gateID
     this.maxEntries.value = maxEntries
@@ -757,7 +757,7 @@ export class Pool extends classes(
         address: new Address(Txn.sender),
         asset: new UintN64(newEntry.asset),
         quantity: new UintN64(newEntry.quantity),
-        gateArgs: args,
+        gateArgs: args.copy(),
         disqualified: new Bool(false)
       })
 
@@ -824,7 +824,7 @@ export class Pool extends classes(
     }
 
     const rngResult = pcg64Random(rngState, 1, upperBound, MaxGlobalStateUint64Array)
-    this.winningTickets.value = rngResult[1]
+    this.winningTickets.value = rngResult[1].copy()
     this.vrfGetFailureCount.value = 0
   }
 

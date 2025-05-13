@@ -56,13 +56,13 @@ export class Gate extends AkitaBaseContract {
   ): boolean {
     if (start > end) return true
 
-    let result = this.evaluateFilter(caller, filters[start], args[start].native)
+    let result = this.evaluateFilter(caller, filters[start].copy(), args[start].native)
 
     ensureBudget(100 * (end - start))
 
     for (let i = start; i < end; i += 1) {
       const currentOperator = filters[i].logicalOperator
-      const nextResult = this.evaluateFilter(caller, filters[i + 1], args[i + 1].native)
+      const nextResult = this.evaluateFilter(caller, filters[i + 1].copy(), args[i + 1].native)
 
       if (currentOperator === AND) {
         result = result && nextResult
@@ -137,24 +137,22 @@ export class Gate extends AkitaBaseContract {
         args: [args[i].native],
       }).returnValue
 
-      const entry = new arc4GateFilterEntry({
+      entries.push(new arc4GateFilterEntry({
         layer: filters[i].layer,
         app: filters[i].app,
         registryEntry: new UintN64(registryEntry),
         logicalOperator: filters[i].logicalOperator,
-      })
-
-      entries.push(entry)
+      }))
     }
 
     const id = this.newGateID()
-    this.gateRegistry(id).value = entries
+    this.gateRegistry(id).value = entries.copy()
     return new UintN64(id)
   }
 
   check(caller: Address, gateID: uint64, args: GateArgs): boolean {
     assert(this.gateRegistry(gateID).exists)
-    const filters = this.gateRegistry(gateID).value
+    const filters = this.gateRegistry(gateID).value.copy()
     return this.evaluate(caller, filters, 0, filters.length - 1, args)
   }
 

@@ -702,7 +702,7 @@ export class Auction extends classes(
     const remainder: uint64 = (this.uniqueAddressCount.value - 2) - startingIndex
     iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
 
-    const weight = this.weights(startingIndex / ChunkSize).value
+    const weight = this.weights(startingIndex / ChunkSize).value.copy()
 
     ensureBudget((iterationAmount * 60))
 

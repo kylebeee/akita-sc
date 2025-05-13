@@ -541,7 +541,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       isAmendment: new Bool(isAmendment),
     })
 
-    this.posts(postID).value = post
+    this.posts(postID).value = post.copy()
     this.updateVotes(postID, true, impact)
     this.createVoteList(postID, true, origin, impact)
   }
@@ -605,7 +605,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       isAmendment: new Bool(isAmendment),
     })
 
-    this.posts(replyPostID).value = replyPost
+    this.posts(replyPostID).value = replyPost.copy()
 
     const senderImpact = this.getUserImpact(origin)
     this.updateVotes(replyPostID, true, senderImpact)
@@ -754,7 +754,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
   editPost(walletID: uint64, rekeyBack: boolean, cid: CID, gateID: uint64, amendment: StaticBytes<32>): void {
     const wallet = Application(walletID)
     assert(this.posts(amendment).exists, ERR_POST_NOT_FOUND)
-    const post = this.posts(amendment).value
+    const post = this.posts(amendment).value.copy()
     assert(this.isCreator(post.creator, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
 
     assert(post.ref.length !== 68, ERR_IS_A_REPLY)
@@ -1118,7 +1118,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     assert(this.controls(origin), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
-    const post = this.posts(ref).value
+    const post = this.posts(ref).value.copy()
     assert(!post.againstContentPolicy.native, ERR_ALREADY_FLAGGED)
 
     this.posts(ref).value.againstContentPolicy = new Bool(true)

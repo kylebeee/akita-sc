@@ -88,7 +88,7 @@ export class FollowerCountGate extends AkitaBaseContract {
     assert(args.length === 16, ERR_INVALID_ARG_COUNT)
     const params = interpretAsArc4<arc4FollowerCountRegistryInfo>(args)
     const id = this.newRegistryID()
-    this.registry(id).value = params
+    this.registry(id).value = params.copy()
     return id
   }
 

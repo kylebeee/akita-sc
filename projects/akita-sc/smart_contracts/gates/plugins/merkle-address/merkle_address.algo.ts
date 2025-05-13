@@ -46,7 +46,7 @@ export class MerkleAddressGate extends AkitaBaseContract {
     assert(args.length >= 33, ERR_INVALID_ARG_COUNT)
     const params = interpretAsArc4<arc4MerkleAddressRegistryInfo>(args)
     const id = this.newRegistryID()
-    this.registry(id).value = params
+    this.registry(id).value = params.copy()
     return id
   }
 

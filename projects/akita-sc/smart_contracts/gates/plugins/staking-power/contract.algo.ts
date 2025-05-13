@@ -96,14 +96,14 @@ export class StakingPowerGate extends AkitaBaseContract {
 
     assert(params.op.native <= 6, ERR_BAD_OPERATION)
     const id = this.newRegistryID()
-    this.registry(id).value = params
+    this.registry(id).value = params.copy()
     return id
   }
 
   check(args: bytes): boolean {
     assert(args.length >= 40, ERR_INVALID_ARG_COUNT)
     const params = interpretAsArc4<arc4StakingPowerGateCheckParams>(args)
-    const info = this.registry(params.registryID.native).value
+    const info = this.registry(params.registryID.native).value.copy()
     return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
   }
 }

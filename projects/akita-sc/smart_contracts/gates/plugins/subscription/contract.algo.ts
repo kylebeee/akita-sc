@@ -59,7 +59,7 @@ export class SubscriptionGate extends AkitaBaseContract {
     assert(args.length === 40, ERR_INVALID_ARG_COUNT)
     const params = interpretAsArc4<arc4SubscriptionRegistryInfo>(args)
     const id = this.newRegistryID()
-    this.registry(id).value = params
+    this.registry(id).value = params.copy()
     return id
   }
 

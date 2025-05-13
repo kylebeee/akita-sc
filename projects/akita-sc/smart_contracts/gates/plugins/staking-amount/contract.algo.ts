@@ -107,7 +107,7 @@ export class StakingAmountGate extends AkitaBaseContract {
     // dont include the list operators includes & not includes
     assert(params.op.native <= 6, ERR_BAD_OPERATION)
     const id = this.newRegistryID()
-    this.registry(id).value = params
+    this.registry(id).value = params.copy()
     return id
   }
 

@@ -150,7 +150,7 @@ export class HyperSwap extends classes(
     // automatically set our sender as the first accepted participant
     const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
     const refundValue = new arc4RefundValue({ payor, amount: new UintN64(hyperSwapOfferMBRAmount) })
-    this.participants(senderParticipantKey).value = refundValue
+    this.participants(senderParticipantKey).value = refundValue.copy()
 
     // create the offering box & default state
     this.offers(id).value = new arc4OfferValue({
@@ -217,7 +217,7 @@ export class HyperSwap extends classes(
     // flag this participant as accepted
     const payor = new Address(mbrPayment.sender)
     const refundValue = new arc4RefundValue({ payor, amount: new UintN64(costs.participants) })
-    this.participants(senderParticipantKey).value = refundValue
+    this.participants(senderParticipantKey).value = refundValue.copy()
     // if we collected all needed acceptances switch to the gathering state
     if (offer.participantsLeaves === offer.acceptances + 1) {
       this.offers(id).value.state = STATE_ESCROWING
@@ -281,7 +281,7 @@ export class HyperSwap extends classes(
     // add the leaf to the our escrowed list
     const payor = new Address(payment.sender)
     const refundValue = new arc4RefundValue({ payor, amount: new UintN64(costs.hashes) })
-    this.hashes(hashKey).value = refundValue
+    this.hashes(hashKey).value = refundValue.copy()
     // increment our escrow count
     this.offers(id).value.escrowed = new UintN64(offer.escrowed + 1)
     // if we collected all needed assets switch to the disbursement state
@@ -385,7 +385,7 @@ export class HyperSwap extends classes(
     // add the leaf to the our escrowed list
     const payor = new Address(mbrPayment.sender)
     const refundValue = new arc4RefundValue({ payor, amount: new UintN64(mbrAmount) })
-    this.hashes(hashKey).value = refundValue
+    this.hashes(hashKey).value = refundValue.copy()
     // increment our escrow count
     const newEscrowed: uint64 = offer.escrowed + 1
     this.offers(id).value.escrowed = new UintN64(newEscrowed)
@@ -484,7 +484,7 @@ export class HyperSwap extends classes(
   cancel(id: uint64, proof: Proof) {
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const offer = this.offers(id).value
+    const offer = this.offers(id).value.copy()
     // ensure we're in a cancellable state
     assert(offer.state === STATE_OFFERED || offer.state === STATE_ESCROWING)
     // ensure they are a participant

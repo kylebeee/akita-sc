@@ -500,7 +500,7 @@ export class Raffle extends classes(
     const remainder: uint64 = this.entryCount.value - startingIndex
     iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
 
-    const weight = this.weights(startingIndex / ChunkSize).value
+    const weight = this.weights(startingIndex / ChunkSize).value.copy()
 
     const opUpIterationAmount: uint64 = iterationAmount * 40
     ensureBudget(opUpIterationAmount)
