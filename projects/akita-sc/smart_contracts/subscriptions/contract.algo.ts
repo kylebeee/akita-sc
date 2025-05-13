@@ -4,7 +4,6 @@ import {
   arc4,
   assert,
   assertMatch,
-  Asset,
   BoxMap,
   Global,
   gtxn,
@@ -60,7 +59,6 @@ import {
   ERR_USER_ALREADY_BLOCKED,
   ERR_USER_NOT_BLOCKED,
 } from './errors'
-import { AkitaDAO } from '../dao/contract.algo'
 import { arc4Zero } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { GateArgs } from '../utils/types/gates'

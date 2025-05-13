@@ -4,7 +4,6 @@ import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { arc4ImpactGateCheckParams, arc4ImpactRegistryInfo, ImpactRegistryInfo } from './types'
 import { GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { Operator } from '../../types'
-import { AkitaSocialImpact } from '../../../impact/contract.algo'
 import {
   Equal,
   GreaterThan,
@@ -16,6 +15,7 @@ import {
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { getPluginAppList } from '../../../utils/functions'
+import { AkitaSocialImpact } from '../../../arc58/plugins/social/contract.algo'
 
 export class ImpactGate extends AkitaBaseContract {
 

@@ -1,12 +1,12 @@
 import { Application, assert, bytes, Bytes, GlobalState, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
 import { NFD } from '../../../utils/types/nfd'
 import { abiCall, abimethod, Address, Contract, DynamicArray, DynamicBytes } from '@algorandfoundation/algorand-typescript/arc4'
-import { NFDGlobalStateKeysName } from '../../../impact/constants'
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_NOT_AN_NFD } from './errors'
 import { NFDGlobalStateKeySaleAmountKey, NFDPluginGlobalStateKeyRegistry } from './constants'
 import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { NFDGlobalStateKeysName } from '../social/constants'
 
 export class NFDPlugin extends Contract {
 

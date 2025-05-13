@@ -4,7 +4,6 @@ import { abiCall, Address, decodeArc4, DynamicArray, methodSelector, UintN64 } f
 import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees } from "../dao/constants"
 import { ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
 import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR } from "./constants"
-import { AkitaSocialImpact } from "../impact/contract.algo"
 import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 import { SpendingAccountFactory } from "./types/spend-accounts"
 import { Gate } from "../gates/contract.algo"
@@ -18,6 +17,7 @@ import { Proof } from "./types/merkles"
 import { MetaMerkles } from "../meta-merkles/contract.algo"
 import { bytes32 } from "./types/base"
 import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
+import { AkitaSocialImpact } from "../arc58/plugins/social/contract.algo"
 
 export function getAkitaAppList(akitaDAO: Application): AkitaAppList {
   const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
