@@ -27,7 +27,7 @@ function getPCFromThrow(error: string): number {
 }
 
 function getErrorStringFromPC(pc: number): string {
-  const puyaMapJSON = fs.readFileSync("contracts/artifacts/AbstractedAccount.approval.puya.map", "utf-8");
+  const puyaMapJSON = fs.readFileSync("smart_contracts/artifacts/arc58/account/AbstractedAccount.approval.puya.map", "utf-8");
   const puyaMap = JSON.parse(puyaMapJSON)
   if (!('pc_events' in puyaMap)) {
     throw new Error('pc_events not found')
@@ -154,7 +154,7 @@ describe('ARC58 Plugin Permissions', () => {
       algorand,
     })
 
-    const results = await minterFactory.send.create.createApplication({
+    const results = await minterFactory.send.create.create({
       args: {
         akitaDao: 0,
         version: '1',
@@ -164,6 +164,8 @@ describe('ARC58 Plugin Permissions', () => {
       },
     })
 
+    await results.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
+    
     abstractedAccountFactoryClient = results.appClient
 
     const mintPayment = makePaymentTxnWithSuggestedParamsFromObject({

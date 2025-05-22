@@ -5,17 +5,9 @@ import { itob, sha512_256 } from "@algorandfoundation/algorand-typescript/op";
 const ERR_APP_NOT_REGISTERED = 'App not registered'
 const ERR_INVALID_PAYMENT = 'Invalid payment'
 
-function bytes4(value: bytes) {
-  return new StaticBytes<4>(value.slice(0, 4))
-}
-
-function addrBytes4(value: Address) {
-  return bytes4(value.bytes)
-}
-
 export class AppRegistry extends Contract {
 
-  apps = BoxMap<StaticBytes<4>, uint64[]>({ keyPrefix: '' })
+  apps = BoxMap<bytes<4>, uint64[]>({ keyPrefix: '' })
 
   private findMatch(address: Address, apps: uint64[]): uint64 {
     for (let i: uint64 = 0; i < apps.length; i++) {
@@ -35,7 +27,7 @@ export class AppRegistry extends Contract {
     payment: gtxn.PaymentTxn,
     app: uint64,
   ): void {
-    const key = bytes4(Application(app).address.bytes)
+    const key = Application(app).address.bytes.slice(0, 4).toFixed({ length: 4 })
     if (!this.apps(key).exists) {
       assertMatch(
         payment,
@@ -66,11 +58,13 @@ export class AppRegistry extends Contract {
 
   @abimethod({ readonly: true })
   exists(address: Address): boolean {
-    if (!this.apps(addrBytes4(address)).exists) {
+    const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
+
+    if (!this.apps(addr4).exists) {
       return false
     }
 
-    const apps = this.apps(addrBytes4(address)).value
+    const apps = this.apps(addr4).value
     const matchingAppID = this.findMatch(address, apps)
 
     return matchingAppID !== 0
@@ -78,11 +72,13 @@ export class AppRegistry extends Contract {
 
   @abimethod({ readonly: true })
   get(address: Address): uint64 {
-    if (!this.apps(addrBytes4(address)).exists) {
+    const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
+
+    if (!this.apps(addr4).exists) {
       return 0
     }
 
-    const apps = this.apps(addrBytes4(address)).value
+    const apps = this.apps(addr4).value
     const matchingAppID = this.findMatch(address, apps)
 
     return matchingAppID
@@ -90,11 +86,13 @@ export class AppRegistry extends Contract {
 
   @abimethod({ readonly: true })
   mustGet(address: Address): uint64 {
-    if (!this.apps(addrBytes4(address)).exists) {
+    const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
+
+    if (!this.apps(addr4).exists) {
       return 0
     }
 
-    const apps = this.apps(addrBytes4(address)).value
+    const apps = this.apps(addr4).value
     const matchingAppID = this.findMatch(address, apps)
 
     assert(matchingAppID !== 0, ERR_APP_NOT_REGISTERED)
@@ -107,12 +105,14 @@ export class AppRegistry extends Contract {
     let apps: uint64[] = []
     const zero: uint64 = 0
     for (const address of addresses) {
-      if (!this.apps(addrBytes4(address)).exists) {
+      const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
+
+      if (!this.apps(addr4).exists) {
         apps = [...apps, zero]
         continue
       }
 
-      const appList = this.apps(addrBytes4(address)).value
+      const appList = this.apps(addr4).value
       apps = [
         ...apps,
         this.findMatch(address, appList)
@@ -125,11 +125,13 @@ export class AppRegistry extends Contract {
   mustGetList(addresses: Address[]): uint64[] {
     let apps: uint64[] = []
     for (const address of addresses) {
-      if (!this.apps(addrBytes4(address)).exists) {
+      const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
+
+      if (!this.apps(addr4).exists) {
         assert(false, ERR_APP_NOT_REGISTERED)
       }
 
-      const appList = this.apps(addrBytes4(address)).value
+      const appList = this.apps(addr4).value
       const matchingAppID = this.findMatch(address, appList)
 
       assert(matchingAppID !== 0, ERR_APP_NOT_REGISTERED)

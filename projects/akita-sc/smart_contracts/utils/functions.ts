@@ -1,23 +1,25 @@
-import { Account, Application, assert, Asset, Bytes, Global, itxn, OnCompleteAction, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Account, Application, assert, Asset, Bytes, Global, itxn, itxnCompose, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
 import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees } from "../dao/types"
-import { abiCall, Address, decodeArc4, DynamicArray, methodSelector, UintN64 } from "@algorandfoundation/algorand-typescript/arc4"
+import { abiCall, Address, decodeArc4, UintN64 } from "@algorandfoundation/algorand-typescript/arc4"
 import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees } from "../dao/constants"
-import { ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
-import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR } from "./constants"
+import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
+import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, fee, IMPACT_DIVISOR } from "./constants"
 import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 import { SpendingAccountFactory } from "./types/spend-accounts"
 import { Gate } from "../gates/contract.algo"
 import { GateArgs } from "./types/gates"
 import { AssetInbox } from "./types/asset-inbox"
-import { AssetAndAmount } from "./types/optin"
 import { AbstractedAccount } from "../arc58/account/contract.algo"
 import { btoi, itob, sha256 } from "@algorandfoundation/algorand-typescript/op"
 import { OptInPlugin } from "../arc58/plugins/optin/contract.algo"
 import { Proof } from "./types/merkles"
 import { MetaMerkles } from "../meta-merkles/contract.algo"
-import { bytes32 } from "./types/base"
 import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
 import { AkitaSocialImpact } from "../arc58/plugins/social/contract.algo"
+import { Staking } from "../staking/contract.algo"
+import { arc4StakeInfo, STAKING_TYPE_LOCK } from "../staking/types"
+import { ONE_YEAR_IN_DAYS } from "../gates/plugins/staking-power/constants"
+import { ONE_DAY } from "../arc58/plugins/social/constants"
 
 export function getAkitaAppList(akitaDAO: Application): AkitaAppList {
   const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
@@ -115,7 +117,7 @@ export function walletID(spendingAccountFactory: uint64): uint64 {
   ).returnValue
 }
 
-export function origin(spendingAccountFactory: uint64): Account {
+export function getOrigin(spendingAccountFactory: uint64): Account {
   const wallet = walletID(spendingAccountFactory)
 
   if (wallet === 0) {
@@ -225,59 +227,57 @@ export function arc59OptInAndSend(akitaDAO: Application, recipient: Address, ass
   })
 }
 
-export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint64, optin: AssetAndAmount): void {
+export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint64, assets: uint64[], amounts: uint64[]): void {
+  assert(assets.length === amounts.length, ERR_ASSETS_AND_AMOUNTS_MISMATCH)
   const optinPlugin = getPluginAppList(akitaDAO).optin
   const origin = getOriginAccount(Application(recipientWalletID))
 
-  const rekeyTxn = itxn.applicationCall({
-    appId: recipientWalletID,
-    onCompletion: OnCompleteAction.NoOp,
-    appArgs: [
-      methodSelector(AbstractedAccount.prototype.arc58_rekeyToPlugin),
-      itob(optinPlugin),
-      new DynamicArray<UintN64>(),
-    ],
-    fee: 0,
-  })
+  itxnCompose.begin(
+    AbstractedAccount.prototype.arc58_rekeyToPlugin,
+    {
+      appId: recipientWalletID,
+      args: [optinPlugin, true, [], []],
+      fee,
+    }
+  )
 
-  const optinPayment = itxn.payment({
-    receiver: origin,
-    amount: Global.assetOptInMinBalance,
-    fee: 0,
-  })
+  itxnCompose.next(
+    OptInPlugin.prototype.optInToAsset,
+    {
+      appId: optinPlugin,
+      args: [
+        recipientWalletID,
+        true,
+        assets,
+        itxn.payment({
+          receiver: origin,
+          amount: Global.assetOptInMinBalance * assets.length,
+          fee,
+        })
+      ],
+      fee,
+    }
+  )
 
-  const optinTxn = itxn.applicationCall({
-    appId: optinPlugin,
-    onCompletion: OnCompleteAction.NoOp,
-    appArgs: [
-      methodSelector(OptInPlugin.prototype.optInToAsset),
-      recipientWalletID,
-      true,
-      optin.asset,
-    ],
-    fee: 0,
-  })
-
-  const rekeyBackTxn = itxn.applicationCall({
-    appId: recipientWalletID,
-    onCompletion: OnCompleteAction.NoOp,
-    appArgs: [methodSelector(AbstractedAccount.prototype.arc58_verifyAuthAddr)],
-    fee: 0,
-  })
-
-  if (optin.amount > 0) {
-    const xferTxn = itxn.assetTransfer({
-      assetAmount: optin.amount,
-      assetReceiver: origin,
-      xferAsset: optin.asset,
-      fee: 0,
-    })
-
-    itxn.submitGroup(rekeyTxn, optinTxn, xferTxn, rekeyBackTxn)
-    return
+  for (let i: uint64 = 0; i < amounts.length; i++) {
+    if (amounts[i] > 0) {
+      itxnCompose.next(
+        itxn.assetTransfer({
+          assetAmount: amounts[i],
+          assetReceiver: origin,
+          xferAsset: assets[i],
+          fee,
+        })
+      )
+    }
   }
 
-  itxn.submitGroup(rekeyTxn, optinPayment, optinTxn, rekeyBackTxn)
+  itxnCompose.next(
+    AbstractedAccount.prototype.arc58_verifyAuthAddr,
+    { appId: recipientWalletID, fee }
+  )
+
+  itxnCompose.submit()
 }
 
 export function royalties(akitaDAO: Application, asset: Asset, name: string, proof: Proof): uint64 {
@@ -295,7 +295,7 @@ export function royalties(akitaDAO: Application, asset: Asset, name: string, pro
       args: [
         new Address(asset.creator),
         name,
-        bytes32(sha256(sha256(itob(asset.id)))),
+        sha256(sha256(itob(asset.id))),
         proof,
         1,
         'royalty',
@@ -329,4 +329,20 @@ export function fmbr(): ServiceFactoryContractMBRData {
   return {
     appCreators: 21_700
   }
+}
+
+export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64): uint64 {
+  const info = abiCall(Staking.prototype.getInfo, {
+    appId: stakingApp,
+    args: [
+      user,
+      new arc4StakeInfo({
+        asset: new UintN64(asset),
+        type: STAKING_TYPE_LOCK,
+      }),
+    ],
+  }).returnValue
+
+  const remainingDays: uint64 = (info.expiration - Global.latestTimestamp) / ONE_DAY
+  return (info.amount / ONE_YEAR_IN_DAYS) * remainingDays
 }

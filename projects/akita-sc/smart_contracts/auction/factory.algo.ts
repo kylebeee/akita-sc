@@ -28,7 +28,7 @@ export class AuctionFactory extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
     this.version.value = version
     this.childContractVersion.value = childVersion
     this.akitaDAO.value = Application(akitaDAO)
@@ -95,7 +95,7 @@ export class AuctionFactory extends classes(
     const creatorRoyalty = royalties(this.akitaDAO.value, assetXfer.xferAsset, name, proof)
 
     const auctionApp = auction.call
-      .createApplication({
+      .create({
         args: [
           assetXfer.xferAsset.id,
           false,
@@ -204,10 +204,10 @@ export class AuctionFactory extends classes(
       ERR_INVALID_PAYMENT
     )
 
-    const creatorRoyalty = royalties(this.akitaDAO.value, Asset(0), '', new DynamicArray<StaticBytes<32>>())
+    const creatorRoyalty = royalties(this.akitaDAO.value, Asset(0), '', [])
 
     const auctionApp = auction.call
-      .createApplication({
+      .create({
         args: [
           prizeBoxID,
           true,

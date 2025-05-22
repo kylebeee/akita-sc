@@ -1,5 +1,5 @@
 import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Address, DynamicArray, DynamicBytes, StaticBytes, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { StakingType } from '../staking/types'
 import { arc4RootKey, RootKey } from '../meta-merkles/types'
 import { Proof } from '../utils/types/merkles'
@@ -55,7 +55,7 @@ export type StakeEntry = {
 export class arc4StakeEntry extends arc4.Struct<{
     asset: arc4.UintN64
     quantity: arc4.UintN64
-    proof: Proof
+    proof: DynamicArray<StaticBytes<32>>
 }> {}
 
 export type EntryData = {
@@ -70,7 +70,7 @@ export class arc4EntryData extends arc4.Struct<{
     address: Address
     asset: arc4.UintN64
     quantity: arc4.UintN64
-    gateArgs: GateArgs
+    gateArgs: DynamicArray<DynamicBytes>
     disqualified: arc4.Bool
 }> {}
 

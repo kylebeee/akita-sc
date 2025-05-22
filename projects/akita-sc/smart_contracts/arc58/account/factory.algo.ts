@@ -30,7 +30,7 @@ export class AbstractedAccountFactory extends FactoryContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(akitaDAO: uint64, version: string, childVersion: string, spendingAccountFactoryApp: uint64, revocationApp: uint64): void {
+  create(akitaDAO: uint64, version: string, childVersion: string, spendingAccountFactoryApp: uint64, revocationApp: uint64): void {
     this.akitaDAO.value = Application(akitaDAO)
     this.version.value = version
     this.childContractVersion.value = childVersion
@@ -51,8 +51,8 @@ export class AbstractedAccountFactory extends FactoryContract {
 
     const childMBR: uint64 = (
       MAX_PROGRAM_PAGES +
-      (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) +
-      (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) +
+      (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+      (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
       AccountMinimumBalance
     )
 
@@ -66,7 +66,7 @@ export class AbstractedAccountFactory extends FactoryContract {
     )
 
     const walletID = abstractedAccount.call
-      .createApplication({
+      .create({
         args: [
           this.childContractVersion.value,
           controlledAccount,

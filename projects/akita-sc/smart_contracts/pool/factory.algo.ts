@@ -23,7 +23,7 @@ export class PoolFactory extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
     this.version.value = version
     this.childContractVersion.value = childVersion
     this.akitaDAO.value = Application(akitaDAO)
@@ -69,7 +69,7 @@ export class PoolFactory extends classes(
     )
 
     const newPoolApp = pool.call
-      .createApplication({
+      .create({
         args: [
           title,
           type,

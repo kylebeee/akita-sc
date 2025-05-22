@@ -36,13 +36,13 @@ export const PoolBoxPrefixEntriesByAddress = 'a'
 export const PoolBoxPrefixDisbursements = 'd'
 
 export const PoolStatusDraft = new UintN8(0)
-export const PoolStatusFinal = new UintN8(1)
-export const PoolStatusDisbursing = new UintN8(2)
+export const PoolStatusFinal = new UintN8(10)
+export const PoolStatusDisbursing = new UintN8(20)
 
 export const DisbursementPhaseIdle = new UintN8(0)
-export const DisbursementPhasePreparation = new UintN8(1)
-export const DisbursementPhaseAllocation = new UintN8(2)
-export const DisbursementPhaseFinalization = new UintN8(3)
+export const DisbursementPhasePreparation = new UintN8(10)
+export const DisbursementPhaseAllocation = new UintN8(20)
+export const DisbursementPhaseFinalization = new UintN8(30)
 
 
 export const MaxAlgoIterationAmount: uint64 = 128

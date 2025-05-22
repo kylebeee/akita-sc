@@ -22,7 +22,7 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
     this.version.value = version
     this.childContractVersion.value = childVersion
     this.akitaDAO.value = Application(akitaDAO)
@@ -87,7 +87,7 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
 
     // mint listing contract
     const listingApp = listing.call
-      .createApplication({
+      .create({
         args: [
           assetXfer.xferAsset.id,
           false,

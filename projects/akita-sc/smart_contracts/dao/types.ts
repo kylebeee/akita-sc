@@ -1,26 +1,122 @@
-import { arc4, Asset, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address, Bool, DynamicArray, DynamicBytes, StaticBytes, Str, Struct, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { arc4MethodInfo, MethodRestriction, SpendAllowanceType } from '../arc58/account/types';
+import { CID } from '../utils/types/base';
+
+export class arc4DAOPluginInfo extends Struct<{
+  /** the type of delegation the plugin is using */
+  delegationType: UintN8;
+  /** the spending account to use for the plugin */
+  spendingApp: UintN64;
+  /** The last round or unix time at which this plugin can be called */
+  lastValid: UintN64;
+  /** The number of rounds or seconds that must pass before the plugin can be called again */
+  cooldown: UintN64;
+  /** The methods that are allowed to be called for the plugin by the address */
+  methods: DynamicArray<arc4MethodInfo>;
+  /** Whether the plugin has allowance restrictions */
+  useAllowance: Bool;
+  /** Whether to use unix timestamps or round for lastValid and cooldown */
+  useRounds: Bool;
+  /** The last round or unix time the plugin was called */
+  lastCalled: UintN64;
+  /** The round or unix time the plugin was installed */
+  start: UintN64;
+  /** whether to require the group ID of the submitted group to match */
+  useExecutionKey: Bool;
+}> { }
+
+export type ProposalStatus = UintN8
+
+export type ProposalAction = UintN8
+
+export type ProposalUpgradeApp = {
+  app: uint64
+  executionKey: ExecutionKey
+}
+
+export type ProposalAddPlugin = {
+  app: uint64,
+  allowedCaller: Address,
+  delegationType: UintN8,
+  lastValid: uint64,
+  cooldown: uint64,
+  methods: MethodRestriction[],
+  useAllowance: boolean,
+  useRounds: boolean,
+  useExecutionKey: boolean,
+}
+
+export type ProposalAddNamedPlugin = {
+  name: string,
+  app: uint64,
+  allowedCaller: Address,
+  delegationType: UintN8,
+  lastValid: uint64,
+  cooldown: uint64,
+  methods: MethodRestriction[],
+  useAllowance: boolean,
+  useRounds: boolean,
+  useExecutionKey: boolean,
+}
+
+export type ProposalExecutePlugin = {
+  app: uint64
+  txns: bytes[][]
+}
+
+export type ProposalExecuteNamedPlugin = {
+  name: string
+  txns: bytes[][]
+}
+
+export type ProposalRemovePlugin = {
+  app: uint64
+}
+
+export type ProposalRemoveNamedPlugin = {
+  name: string
+}
+
+export type ProposalAddAllowance = {
+  plugin: uint64,
+  caller: Address,
+  asset: uint64,
+  type: SpendAllowanceType,
+  allowed: uint64,
+  max: uint64,
+  interval: uint64,
+}
+
+export type ProposalRemoveAllowance = {
+  plugin: uint64,
+  caller: Address,
+  asset: uint64,
+}
+
+export type ProposalUpdateField = {
+  field: string
+  value: string
+}
 
 export type ProposalDetails = {
-  status: uint64
-  action: uint64
-  cid: bytes
+  status: ProposalStatus
+  action: ProposalAction
+  cid: CID
   created: uint64
   votes: uint64
-  plugin: uint64
-  executionKey: ExecutionKey
   creator: Address
+  data: bytes
 }
 
 export class arc4ProposalDetails extends arc4.Struct<{
-  status: arc4.UintN64
-  action: arc4.UintN64
-  cid: arc4.StaticBytes<36>
+  status: ProposalStatus
+  action: ProposalAction
+  cid: StaticBytes<36>
   created: arc4.UintN64
   votes: arc4.UintN64
-  plugin: arc4.UintN64
-  executionKey: ExecutionKey
   creator: Address
+  data: DynamicBytes
 }> { }
 
 export type ExecutionKey = arc4.StaticBytes<32>
@@ -58,20 +154,20 @@ export class arc4EscrowInfo extends arc4.Struct<{
 // distribute AKTA & other tokens for Bones Stakers
 
 export type AkitaDAOState = {
-  status: arc4.UintN64
-  version: arc4.Str
+  status: uint64
+  version: string
   contentPolicy: arc4.StaticBytes<36>
-  minimumRewardsImpact: arc4.UintN64
-  akitaAppList: arc4AkitaAppList
-  otherAppList: arc4OtherAppList
-  socialFees: arc4SocialFees
-  stakingFees: arc4StakingFees
-  subscriptionFees: arc4SubscriptionFees
-  nftFees: arc4NFTFees
-  krbyPercentage: arc4.UintN64
-  moderatorPercentage: arc4.UintN64
-  akitaAssets: arc4AkitaAssets
-  proposalSettings: arc4ProposalSettings
+  minimumRewardsImpact: uint64
+  akitaAppList: AkitaAppList
+  otherAppList: OtherAppList
+  socialFees: SocialFees
+  stakingFees: StakingFees
+  subscriptionFees: SubscriptionFees
+  nftFees: NFTFees
+  krbyPercentage: uint64
+  moderatorPercentage: uint64
+  akitaAssets: AkitaAssets
+  proposalSettings: ProposalSettings
   revocationAddress: Address
 }
 
@@ -221,21 +317,29 @@ export class arc4SwapFees extends arc4.Struct<{
 }> { }
 
 export type NFTFees = {
-  omnigemSaleFee: uint64 // omnigem sale fee
-  marketplaceSalePercentageMinimum: uint64 // the minimum percentage to take on an NFT sale based on user impact
-  marketplaceSalePercentageMaximum: uint64 // the maximum percentage to take on an NFT sale based on user impact
+  marketplaceSalePercentageMin: uint64 // the minimum percentage to take on an NFT sale based on user impact
+  marketplaceSalePercentageMax: uint64 // the maximum percentage to take on an NFT sale based on user impact
   marketplaceComposablePercentage: uint64 // the percentage each side of the composable marketplace takes on an NFT sale
+  marketplaceRoyaltyDefaultPercentage: uint64
   shuffleSalePercentage: uint64 // the nft shuffle sale % fee
-  auctionSalePercentageMinimum: uint64 // the minimum percentage to take on an NFT auction based on user impact
-  auctionSalePercentageMaximum: uint64 // the maximum percentage to take on an NFT auction based on user impact
+  omnigemSaleFee: uint64 // omnigem sale fee
+  auctionCreationFee: uint64
+  auctionSaleImpactTaxMin: uint64 // the minimum percentage to take on an NFT auction based on user impact
+  auctionSaleImpactTaxMax: uint64 // the maximum percentage to take on an NFT auction based on user impact
   auctionComposablePercentage: uint64 // the percentage each side of the composable auction takes on an NFT sale
+  auctionRafflePercentage: uint64
+  raffleCreationFee: uint64
+  raffleSaleImpactTaxMin: uint64
+  raffleSaleImpactTaxMax: uint64
+  raffleComposablePercentage: uint64
 }
 
 export class arc4NFTFees extends arc4.Struct<{
-  marketplaceSalePercentageMinimum: arc4.UintN64
-  marketplaceSalePercentageMaximum: arc4.UintN64
+  marketplaceSalePercentageMin: arc4.UintN64
+  marketplaceSalePercentageMax: arc4.UintN64
   marketplaceComposablePercentage: arc4.UintN64
   marketplaceRoyaltyDefaultPercentage: arc4.UintN64
+  shuffleSalePercentage: arc4.UintN64
   omnigemSaleFee: arc4.UintN64
   auctionCreationFee: arc4.UintN64
   auctionSaleImpactTaxMin: arc4.UintN64
@@ -248,7 +352,50 @@ export class arc4NFTFees extends arc4.Struct<{
   raffleComposablePercentage: arc4.UintN64
 }> { }
 
-export type arc4Fees = {
+export type Fees = {
+  postFee: uint64
+  reactFee: uint64
+  impactTaxMin: uint64
+  impactTaxMax: uint64
+
+  poolCreationFee: uint64
+  poolImpactTaxMin: uint64
+  poolImpactTaxMax: uint64
+
+  subscriptionServiceCreationFee: uint64
+  subscriptionPaymentPercentage: uint64
+  subscriptionTriggerPercentage: uint64
+
+  marketplaceSalePercentageMin: uint64
+  marketplaceSalePercentageMax: uint64
+  marketplaceComposablePercentage: uint64
+  marketplaceRoyaltyDefaultPercentage: uint64
+
+  shuffleSalePercentage: uint64
+  omnigemSaleFee: uint64
+
+  auctionCreationFee: uint64
+  auctionSaleImpactTaxMin: uint64
+  auctionSaleImpactTaxMax: uint64
+  auctionComposablePercentage: uint64
+  auctionRafflePercentage: uint64
+
+  raffleCreationFee: uint64
+  raffleSaleImpactTaxMin: uint64
+  raffleSaleImpactTaxMax: uint64
+  raffleComposablePercentage: uint64
+
+  swapFeeImpactTaxMin: uint64
+  swapFeeImpactTaxMax: uint64
+  swapComposablePercentage: uint64
+  swapLiquidityPercentage: uint64
+
+  krbyPercentage: uint64
+  moderatorPercentage: uint64
+}
+
+
+export class arc4Fees extends Struct<{
   postFee: arc4.UintN64
   reactFee: arc4.UintN64
   impactTaxMin: arc4.UintN64
@@ -262,10 +409,12 @@ export type arc4Fees = {
   subscriptionPaymentPercentage: arc4.UintN64
   subscriptionTriggerPercentage: arc4.UintN64
 
-  marketplaceSalePercentageMinimum: arc4.UintN64
-  marketplaceSalePercentageMaximum: arc4.UintN64
+  marketplaceSalePercentageMin: arc4.UintN64
+  marketplaceSalePercentageMax: arc4.UintN64
   marketplaceComposablePercentage: arc4.UintN64
   marketplaceRoyaltyDefaultPercentage: arc4.UintN64
+
+  shuffleSalePercentage: arc4.UintN64
   omnigemSaleFee: arc4.UintN64
 
   auctionCreationFee: arc4.UintN64
@@ -286,7 +435,7 @@ export type arc4Fees = {
 
   krbyPercentage: arc4.UintN64
   moderatorPercentage: arc4.UintN64
-}
+}> { }
 
 export type AkitaAssets = {
   /** the Akita token asset id */

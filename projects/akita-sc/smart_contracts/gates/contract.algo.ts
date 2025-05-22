@@ -1,4 +1,5 @@
 import {
+  Application,
   arc4,
   assert,
   assertMatch,
@@ -9,28 +10,34 @@ import {
   GlobalState,
   gtxn,
   OnCompleteAction,
+  Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GateBoxPrefixAppRegistry, GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
 import { AND, arc4GateFilter, arc4GateFilterEntry, OR } from './types'
 import { GateArgs } from '../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { MockGate } from './mock-gate'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
-import { classes } from 'polytype'
 import { BaseGate } from './base'
 import { fee } from '../utils/constants'
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../constants'
+import { ERR_NOT_AKITA_DAO } from '../errors'
 
-export class Gate extends classes(BaseGate, AkitaBaseContract) {
+export class Gate extends BaseGate {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
+  /** the current version of the contract */
+  version = GlobalState<string>({ key: GlobalStateKeyVersion })
+  /** the app ID of the Akita DAO */
+  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+  /** the id cursor for gates */
   gateCursor = GlobalState<uint64>({ key: GateGlobalStateKeyCursor })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  appRegistry = BoxMap<uint64, StaticBytes<0>>({ keyPrefix: GateBoxPrefixAppRegistry })
+  appRegistry = BoxMap<uint64, bytes<0>>({ keyPrefix: GateBoxPrefixAppRegistry })
 
   gateRegistry = BoxMap<uint64, arc4.DynamicArray<arc4GateFilterEntry>>({
     keyPrefix: GateBoxPrefixGateRegistry,
@@ -53,13 +60,13 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
   ): boolean {
     if (start > end) return true
 
-    let result = this.evaluateFilter(caller, filters[start].copy(), args[start].native)
+    let result = this.evaluateFilter(caller, filters[start].copy(), args[start])
 
     ensureBudget(100 * (end - start))
 
     for (let i = start; i < end; i += 1) {
       const currentOperator = filters[i].logicalOperator
-      const nextResult = this.evaluateFilter(caller, filters[i + 1].copy(), args[i + 1].native)
+      const nextResult = this.evaluateFilter(caller, filters[i + 1].copy(), args[i + 1])
 
       if (currentOperator === AND) {
         result = result && nextResult
@@ -109,11 +116,24 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(): void {
+  create(version: string, akitaDAO: uint64): void {
+    this.version.value = version
+    this.akitaDAO.value = Application(akitaDAO)
     this.gateCursor.value = 0
   }
 
+  @abimethod({ allowActions: ['UpdateApplication'] })
+  update(newVersion: string): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.version.value = newVersion
+  }
+
   // GATE METHODS ---------------------------------------------------------------------------------
+
+  updateAkitaDAO(app: uint64): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.akitaDAO.value = Application(app)
+  }
 
   register(payment: gtxn.PaymentTxn, filters: arc4.DynamicArray<arc4GateFilter>, args: GateArgs): arc4.UintN64 {
 
@@ -138,7 +158,7 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
       const registryEntry = abiCall(MockGate.prototype.register, {
         appId: filters[i].app.native,
         onCompletion: OnCompleteAction.NoOp,
-        args: [args[i].native],
+        args: [args[i]],
       }).returnValue
 
       entries.push(new arc4GateFilterEntry({

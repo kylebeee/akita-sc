@@ -1,12 +1,12 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript"
+import { arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript"
 import { Address, StaticBytes, UintN8 } from "@algorandfoundation/algorand-typescript/arc4"
 
 export type OfferValue = {
     state: UintN8
-    root: StaticBytes<32>
+    root: bytes<32>
     leaves: uint64
     escrowed: uint64
-    participantsRoot: StaticBytes<32>
+    participantsRoot: bytes<32>
     participantsLeaves: uint64
     acceptances: uint64
     expiration: uint64
@@ -47,7 +47,7 @@ export class arc4EscrowKey extends arc4.Struct<{
 
 export type HashKey = {
     id: uint64
-    hash: StaticBytes<32>
+    hash: bytes<32>
 }
 
 export class arc4HashKey extends arc4.Struct<{

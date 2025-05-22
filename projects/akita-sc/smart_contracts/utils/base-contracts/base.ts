@@ -17,7 +17,7 @@ export class AkitaBaseContract extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ allowActions: ['UpdateApplication'] })
-  updateApplication(newVersion: string): void {
+  update(newVersion: string): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     this.version.value = newVersion
   }
@@ -76,7 +76,7 @@ export class AkitaBaseEscrow extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ allowActions: ['UpdateApplication'] })
-  updateApplication(newVersion: string): void {
+  update(newVersion: string): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     this.version.value = newVersion
   }

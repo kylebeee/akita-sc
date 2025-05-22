@@ -1,4 +1,4 @@
-import { Account, Application, assert, assertMatch, BoxMap, Contract, Global, gtxn, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Account, Application, assert, assertMatch, BoxMap, bytes, Contract, Global, gtxn, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { abimethod, Address, compileArc4, DynamicArray, StaticBytes, UintN64 } from "@algorandfoundation/algorand-typescript/arc4";
 import { SpendingAccountContract } from "./contract.algo";
 import { SpendingAccountFactoryBoxPrefixWalletIDsByAccounts } from "./constants";
@@ -10,7 +10,7 @@ export class SpendingAccountFactory extends Contract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  walletIDsByAccounts = BoxMap<StaticBytes<16>, uint64>({ keyPrefix: SpendingAccountFactoryBoxPrefixWalletIDsByAccounts })
+  walletIDsByAccounts = BoxMap<bytes<16>, uint64>({ keyPrefix: SpendingAccountFactoryBoxPrefixWalletIDsByAccounts })
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ export class SpendingAccountFactory extends Contract {
     )
 
     const newSpendAccount = spendingAccount.call
-      .createApplication({
+      .create({
         args: [caller, plugin],
         fee
       })

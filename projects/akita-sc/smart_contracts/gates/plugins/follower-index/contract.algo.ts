@@ -75,7 +75,7 @@ export class FollowerIndexGate extends AkitaBaseContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, akitaDAO: uint64): void {
+  create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
     this.registryCursor.value = 0

@@ -20,12 +20,12 @@ export class PrizeBoxFactory extends FactoryContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string): void {
+  create(version: string): void {
     this.childContractVersion.value = version
   }
 
   @abimethod({ allowActions: 'UpdateApplication' })
-  updateApplication(): void {
+  update(): void {
     assert(Txn.sender === Global.creatorAddress, 'Only the creator can update the application')
   }
 
@@ -50,7 +50,7 @@ export class PrizeBoxFactory extends FactoryContract {
     )
 
     const prizeBoxApp = prizeBox.call
-      .createApplication({
+      .create({
         args: [owner],
         fee,
       })

@@ -1,4 +1,4 @@
-import { Application, assert, Asset, Global, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Application, assert, Asset, bytes, Global, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
 import { ServiceFactoryContract } from "../../../utils/base-contracts/factory"
 import { classes } from 'polytype'
 import { AbstractedAccount } from "../../account/contract.algo"
@@ -23,7 +23,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           getPluginAppList(this.akitaDAO.value).optin,
           true,
           new Address(Global.currentApplicationAddress),
-          new StaticBytes<4>(op.bzero(4))
+          op.bzero(4).toFixed({ length: 4 }),
         ],
         fee,
       }
@@ -35,9 +35,9 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
   offer(
     walletID: uint64,
     rekeyBack: boolean,
-    root: StaticBytes<32>,
+    root: bytes<32>,
     leaves: uint64,
-    participantsRoot: StaticBytes<32>,
+    participantsRoot: bytes<32>,
     participantLeaves: uint64,
     expiration: uint64
   ) {
@@ -230,11 +230,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
       if (!receiverApp.address.isOptedIn(Asset(asset))) {
         const canCallArc58OptIn = this.canCallArc58OptIn(receiverApp)
         if (canCallArc58OptIn) {
-          arc58OptInAndSend(
-            this.akitaDAO.value,
-            receiverAppID,
-            { asset: Asset(asset), amount: 0 }
-          )
+          arc58OptInAndSend(this.akitaDAO.value, receiverAppID, [asset], [0])
         }
       }
     }

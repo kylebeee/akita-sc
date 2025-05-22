@@ -3,10 +3,9 @@ import { abiCall, abimethod, decodeArc4, interpretAsArc4 } from '@algorandfounda
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { arc4MerkleAssetGateCheckParams, arc4MerkleAssetRegistryInfo } from './types'
+import { arc4MerkleAssetGateCheckParams, arc4MerkleAssetRegistryInfo, MerkleAssetGateCheckParams } from './types'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { MetaMerkles } from '../../../meta-merkles/contract.algo'
-import { bytes32, str } from '../../../utils/types/base'
 import { MerkleAssetRegistryInfo } from './types'
 import { MerkleTreeTypeCollection } from '../../../meta-merkles/constants'
 import { getAkitaAppList } from '../../../utils/functions'
@@ -19,7 +18,7 @@ export class MerkleAssetGate extends AkitaBaseContract {
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, arc4MerkleAssetRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, MerkleAssetRegistryInfo>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -32,7 +31,7 @@ export class MerkleAssetGate extends AkitaBaseContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, akitaDAO: uint64): void {
+  create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
     this.registryCursor.value = 0
@@ -45,9 +44,9 @@ export class MerkleAssetGate extends AkitaBaseContract {
     // so we need to check that the length of the arguments is at least the length of the static part
     // of the struct plus 1 byte (the smallest length of a string)
     assert(args.length >= 33, ERR_INVALID_ARG_COUNT)
-    const params = interpretAsArc4<arc4MerkleAssetRegistryInfo>(args).copy()
+    const params = decodeArc4<MerkleAssetRegistryInfo>(args)
     const id = this.newRegistryID()
-    this.registry(id).value = params.copy()
+    this.registry(id).value = params
     return id
   }
 
@@ -56,21 +55,21 @@ export class MerkleAssetGate extends AkitaBaseContract {
     // so we need to check that the length of the arguments is at least the length of the static part
     // of the struct plus 64 bytes (the smallest length of a single proof)
     assert(args.length >= 112, ERR_INVALID_ARG_COUNT)
-    const params = interpretAsArc4<arc4MerkleAssetGateCheckParams>(args)
+    const params = decodeArc4<MerkleAssetGateCheckParams>(args)
 
-    const [holdings, optedIn] = AssetHolding.assetBalance(params.user.native, params.asset.native)
+    const [holdings, optedIn] = AssetHolding.assetBalance(params.user.native, params.asset)
     if (!optedIn || holdings === 0) {
       return false
     }
 
-    const registryInfo = decodeArc4<MerkleAssetRegistryInfo>(this.registry(params.registryID.native).value.bytes)
+    const registryInfo = this.registry(params.registryID).value
 
     return abiCall(MetaMerkles.prototype.verify, {
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
         registryInfo.creator,
         registryInfo.name,
-        bytes32(sha256(sha256(itob(params.asset.native)))),
+        sha256(sha256(itob(params.asset))),
         params.proof,
         MerkleTreeTypeCollection,
       ],

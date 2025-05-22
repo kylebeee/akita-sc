@@ -26,7 +26,7 @@ export class SpendingAccountContract extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(walletID: uint64, plugin: uint64): void {
+  create(walletID: uint64, plugin: uint64): void {
     this.walletID.value = walletID
     this.pluginID.value = plugin
   }

@@ -1,3 +1,3 @@
-import { arc4 } from '@algorandfoundation/algorand-typescript'
+import { bytes } from '@algorandfoundation/algorand-typescript'
 
-export type GateArgs = arc4.DynamicArray<arc4.DynamicBytes>
+export type GateArgs = bytes[]

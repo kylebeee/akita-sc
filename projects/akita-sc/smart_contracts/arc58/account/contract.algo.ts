@@ -12,6 +12,7 @@ import {
   Asset,
   OnCompleteAction,
   Bytes,
+  bytes,
 } from '@algorandfoundation/algorand-typescript'
 import { AssetHolding, btoi, Global, len, Txn } from '@algorandfoundation/algorand-typescript/op'
 import { abiCall, Address, Bool, Contract, decodeArc4, DynamicArray, methodSelector, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
@@ -152,7 +153,7 @@ export class AbstractedAccount extends Contract {
     return Txn.sender === this.revocationApp.value.address
   }
 
-  private pluginCallAllowed(application: uint64, allowedCaller: Account, method: StaticBytes<4>): boolean {
+  private pluginCallAllowed(application: uint64, allowedCaller: Account, method: bytes<4>): boolean {
     const key: PluginKey = { application, allowedCaller }
 
     if (!this.plugins(key).exists) {
@@ -162,7 +163,7 @@ export class AbstractedAccount extends Contract {
     const methods = this.plugins(key).value.methods.copy()
     let methodAllowed = methods.length > 0 ? false : true;
     for (let i: uint64 = 0; i < methods.length; i += 1) {
-      if (methods[i].selector === method) {
+      if (methods[i].selector.native === method) {
         methodAllowed = true;
         break;
       }
@@ -349,7 +350,7 @@ export class AbstractedAccount extends Contract {
   private methodCheck(key: PluginKey, txn: gtxn.ApplicationCallTxn, offset: uint64): MethodValidation {
 
     assert(len(txn.appArgs(0)) === 4, ERR_INVALID_METHOD_SIGNATURE_LENGTH);
-    const selectorArg = new StaticBytes<4>(txn.appArgs(0));
+    const selectorArg = txn.appArgs(0).toFixed({ length: 4 });
 
     const methods = this.plugins(key).value.methods.copy()
     const allowedMethod = methods[offset].copy()
@@ -361,7 +362,7 @@ export class AbstractedAccount extends Contract {
     const epochRef = useRounds ? Global.round : Global.latestTimestamp;
     const onCooldown = (epochRef - methods[offset].lastCalled.native) < methods[offset].cooldown.native;
 
-    if (methods[offset].selector === selectorArg && (!hasCooldown || !onCooldown)) {
+    if (methods[offset].selector.native === selectorArg && (!hasCooldown || !onCooldown)) {
       // update the last called round for the method
       if (hasCooldown) {
         const lastCalled = useRounds
@@ -523,7 +524,7 @@ export class AbstractedAccount extends Contract {
    * @param nickname A user-friendly name for this abstracted account
    */
   @abimethod({ onCreate: 'require' })
-  createApplication(
+  create(
     version: string,
     controlledAddress: Address,
     admin: Address,
@@ -549,7 +550,7 @@ export class AbstractedAccount extends Contract {
 
   /** @param version the version of the wallet */
   @abimethod({ allowActions: ['UpdateApplication'] })
-  updateApplication(version: string): void {
+  update(version: string): void {
     assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_UPDATE)
     this.version.value = version
   }
@@ -696,7 +697,7 @@ export class AbstractedAccount extends Contract {
     plugin: uint64,
     global: boolean,
     address: Address,
-    method: StaticBytes<4>
+    method: bytes<4>
   ): boolean {
     if (global) {
       this.pluginCallAllowed(plugin, Global.zeroAddress, method);

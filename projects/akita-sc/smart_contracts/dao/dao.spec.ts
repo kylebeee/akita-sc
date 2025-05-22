@@ -3,6 +3,7 @@ import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
 import { AkitaDaoClient, AkitaDaoFactory } from '../artifacts/dao/AkitaDAOClient'
+import { DEFAULT_AUCTION_COMPOSABLE_PERCENTAGE, DEFAULT_AUCTION_CREATION_FEE, DEFAULT_AUCTION_RAFFLE_PERCENTAGE, DEFAULT_AUCTION_SALE_IMPACT_MAX, DEFAULT_AUCTION_SALE_IMPACT_TAX_MIN, DEFAULT_IMPACT_TAX_MAX, DEFAULT_IMPACT_TAX_MIN, DEFAULT_KRBY_PERCENTAGE, DEFAULT_MARKETPLACE_COMPOSABLE_PERCENTAGE, DEFAULT_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE, DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM, DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, DEFAULT_MIN_POOL_CREATION_FEE, DEFAULT_MODERATOR_PERCENTAGE, DEFAULT_OMNIGEM_SALE_FEE, DEFAULT_POOL_IMPACT_TAX_MAX, DEFAULT_POOL_IMPACT_TAX_MIN, DEFAULT_POST_FEE, DEFAULT_RAFFLE_COMPOSABLE_PERCENTAGE, DEFAULT_RAFFLE_CREATION_FEE, DEFAULT_RAFFLE_SALE_IMPACT_MAX, DEFAULT_RAFFLE_SALE_IMPACT_TAX_MIN, DEFAULT_REACT_FEE, DEFAULT_SERVICE_CREATION_FEE, DEFAULT_SHUFFLE_SALE_PERCENTAGE, DEFAULT_SUBSCRIPTION_PAYMENT_PERCENTAGE, DEFAULT_SUBSCRIPTION_TRIGGER_PERCENTAGE, DEFAULT_SWAP_COMPOSABLE_PERCENTAGE, DEFAULT_SWAP_FEE_IMPACT_TAX_MAX, DEFAULT_SWAP_FEE_IMPACT_TAX_MIN, DEFAULT_SWAP_LIQUIDITY_PERCENTAGE } from '../utils/defaults'
 
 
 algokit.Config.configure({ populateAppCallResources: true })
@@ -34,49 +35,52 @@ describe('DAO Tests', () => {
       algorand,
     })
 
-    const results = await minter.send.create.createApplication()
+    const results = await minter.send.create.create({ args: { spendingAccountFactoryApp: 0 } })
     daoClient = results.appClient
 
-    console.log('DAO Address:', daoClient.appAddress)
+    daoClient.appClient.fundAppAccount({ amount: (200_000).microAlgos() })
+
+    console.log('DAO Address:', daoClient.appAddress.toString())
     console.log('current version: ', await daoClient.state.global.version())
 
     await daoClient.send.init({
       args: {
         version: '0.0.1',
         akta: 0n,
-        contentPolicy: Buffer.from('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
+        contentPolicy: Buffer.from('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
         minimumRewardsImpact: 400,
         fees: {
-          postFee: 100_000_000n,
-          reactFee: 10_000_000n,
-          impactTaxMin: 1_000n,
-          impactTaxMax: 20_000n,
-          poolCreationFee: 50_000_000n,
-          poolImpactTaxMin: 500n,
-          poolImpactTaxMax: 3_000n,
-          subscriptionServiceCreationFee: 100_000_000n,
-          subscriptionPaymentPercentage: 3_500n,
-          subscriptionTriggerPercentage: 500n,
-          marketplaceSalePercentageMinimum: 500n,
-          marketplaceSalePercentageMaximum: 2_000n,
-          marketplaceComposablePercentage: 500n,
-          marketplaceRoyaltyDefaultPercentage: 5_000n,
-          omnigemSaleFee: 100_000_000n,
-          auctionCreationFee: 10_000_000n,
-          auctionSaleImpactTaxMin: 500n,
-          auctionSaleImpactTaxMax: 2_000n,
-          auctionComposablePercentage: 500n,
-          auctionRafflePercentage: 10_000n,
-          raffleCreationFee: 10_000_000n,
-          raffleSaleImpactTaxMin: 500n,
-          raffleSaleImpactTaxMax: 2_000n,
-          raffleComposablePercentage: 500n,
-          swapFeeImpactTaxMin: 0n,
-          swapFeeImpactTaxMax: 2_000n,
-          swapComposablePercentage: 500n,
-          swapLiquidityPercentage: 2_500n,
-          krbyPercentage: 30_000n,
-          moderatorPercentage: 5_000n,
+          postFee: DEFAULT_POST_FEE,
+          reactFee: DEFAULT_REACT_FEE,
+          impactTaxMin: DEFAULT_IMPACT_TAX_MIN,
+          impactTaxMax: DEFAULT_IMPACT_TAX_MAX,
+          poolCreationFee: DEFAULT_MIN_POOL_CREATION_FEE,
+          poolImpactTaxMin: DEFAULT_POOL_IMPACT_TAX_MIN,
+          poolImpactTaxMax: DEFAULT_POOL_IMPACT_TAX_MAX,
+          subscriptionServiceCreationFee: DEFAULT_SERVICE_CREATION_FEE,
+          subscriptionPaymentPercentage: DEFAULT_SUBSCRIPTION_PAYMENT_PERCENTAGE,
+          subscriptionTriggerPercentage: DEFAULT_SUBSCRIPTION_TRIGGER_PERCENTAGE,
+          marketplaceSalePercentageMin: DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MINIMUM,
+          marketplaceSalePercentageMax: DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
+          marketplaceComposablePercentage: DEFAULT_MARKETPLACE_COMPOSABLE_PERCENTAGE,
+          marketplaceRoyaltyDefaultPercentage: DEFAULT_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
+          shuffleSalePercentage: DEFAULT_SHUFFLE_SALE_PERCENTAGE,
+          omnigemSaleFee: DEFAULT_OMNIGEM_SALE_FEE,
+          auctionCreationFee: DEFAULT_AUCTION_CREATION_FEE,
+          auctionSaleImpactTaxMin: DEFAULT_AUCTION_SALE_IMPACT_TAX_MIN,
+          auctionSaleImpactTaxMax: DEFAULT_AUCTION_SALE_IMPACT_MAX,
+          auctionComposablePercentage: DEFAULT_AUCTION_COMPOSABLE_PERCENTAGE,
+          auctionRafflePercentage: DEFAULT_AUCTION_RAFFLE_PERCENTAGE,
+          raffleCreationFee: DEFAULT_RAFFLE_CREATION_FEE,
+          raffleSaleImpactTaxMin: DEFAULT_RAFFLE_SALE_IMPACT_TAX_MIN,
+          raffleSaleImpactTaxMax: DEFAULT_RAFFLE_SALE_IMPACT_MAX,
+          raffleComposablePercentage: DEFAULT_RAFFLE_COMPOSABLE_PERCENTAGE,
+          swapFeeImpactTaxMin: DEFAULT_SWAP_FEE_IMPACT_TAX_MIN,
+          swapFeeImpactTaxMax: DEFAULT_SWAP_FEE_IMPACT_TAX_MAX,
+          swapComposablePercentage: DEFAULT_SWAP_COMPOSABLE_PERCENTAGE,
+          swapLiquidityPercentage: DEFAULT_SWAP_LIQUIDITY_PERCENTAGE,
+          krbyPercentage: DEFAULT_KRBY_PERCENTAGE,
+          moderatorPercentage: DEFAULT_MODERATOR_PERCENTAGE,
         },
         proposalSettings: {
           minimumProposalThreshold: 10n,
@@ -84,6 +88,7 @@ describe('DAO Tests', () => {
         },
         revocationAddress: aliceEOA.addr.toString(),
       },
+      extraFee: (1_000).microAlgos()
     })
   })
 

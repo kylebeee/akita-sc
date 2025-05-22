@@ -24,5 +24,53 @@ export const ERR_TOKEN_ALLOCATION_BOX_ALREADY_EXISTS = 'Token allocation box alr
 export const ERR_INSUFFICIENT_AKITA = 'Insufficient Akita'
 export const ERR_INVALID_RECEIVE_PAYMENT = 'Invalid receive payment'
 export const ERR_ESCROW_DOES_NOT_EXIST = 'Escrow does not exist'
+export const ERR_PROPOSAL_DOES_NOT_EXIST = 'Proposal does not exist'
+export const ERR_PROPOSAL_NOT_APPROVED = 'Proposal is not approved'
+
+export const ERR_PROPOSAL_NOT_UPGRADE_APP = 'Proposal is not an upgrade app'
+export const ERR_EXECUTION_KEY_MISMATCH = 'Execution key mismatch'
+
 export const ERR_INCORRECT_SENDER = 'Incorrect sender'
 export const ERR_ESCROW_NOT_ALLOWED_TO_OPTIN = 'Escrow is not allowed to opt-in'
+export const ERR_WRONG_METHOD_FOR_EXECUTION_KEY_LOCKED_PLUGIN = 'Wrong method for execution key locked plugin'
+export const ERR_BAD_DAO_DELEGATION_TYPE = 'Bad DAO delegation type'
+
+export const ERR_INVALID_CONTENT_POLICY = 'Invalid content policy'
+export const ERR_INVALID_MINIMUM_REWARDS_IMPACT = 'Invalid minimum rewards impact'
+
+export const ERR_INVALID_POST_FEE = 'Invalid post fee'
+export const ERR_INVALID_REACT_FEE = 'Invalid react fee'
+export const ERR_INVALID_IMPACT_TAX_MIN = 'Invalid impact tax minimum'
+export const ERR_INVALID_IMPACT_TAX_MAX = 'Invalid impact tax maximum'
+
+export const ERR_INVALID_POOL_CREATION_FEE = 'Invalid pool creation fee'
+export const ERR_INVALID_POOL_IMPACT_TAX_MIN = 'Invalid pool impact tax minimum'
+export const ERR_INVALID_POOL_IMPACT_TAX_MAX = 'Invalid pool impact tax maximum'
+
+export const ERR_INVALID_SERVICE_CREATION_FEE = 'Invalid service creation fee'
+export const ERR_INVALID_PAYMENT_PERCENTAGE = 'Invalid payment percentage'
+export const ERR_INVALID_TRIGGER_PERCENTAGE = 'Invalid trigger percentage'
+export const ERR_INVALID_TOTAL_PERCENTAGE_FEES = 'Invalid subscription total percentage fees'
+export const ERR_INVALID_AUCTION_RAFFLE_PERCENTAGE = 'Invalid auction raffle percentage'
+export const ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MIN = 'Invalid raffle sale impact tax minimum'
+export const ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MAX = 'Invalid raffle sale impact tax maximum'
+export const ERR_INVALID_SHUFFLE_SALE_PERCENTAGE = 'Invalid shuffle sale percentage'
+export const ERR_INVALID_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE = 'Invalid marketplace royalty default percentage'
+export const ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MIN = 'Invalid auction sale impact tax minimum'
+export const ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MAX = 'Invalid auction sale impact tax maximum'
+
+export const ERR_INVALID_SWAP_IMPACT_TAX_MAX = 'Invalid swap impact tax maximum'
+
+export const ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MINIMUM = 'Invalid marketplace sale percentage minimum'
+export const ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM = 'Invalid marketplace sale percentage maximum'
+export const ERR_INVALID_MARKETPLACE_COMPOSABLE_PERCENTAGE = 'Invalid marketplace composable percentage'
+
+export const ERR_INVALID_SWAP_IMPACT_TAX_MIN = 'Invalid swap impact tax minimum'
+
+export const ERR_INVALID_KRBY_PERCENTAGE = 'Invalid krby percentage'
+export const ERR_INVALID_MOD_PERCENTAGE = 'Invalid moderator percentage'
+export const ERR_INVALID_PROPOSAL_FEE = 'Invalid proposal fee'
+export const ERR_INVALID_REVOCATION_ADDRESS = 'Invalid revocation address'
+
+export const ERR_INVALID_FIELD = 'Invalid field'
+export const ERR_INVALID_PROPOSAL_STATUS = 'Invalid proposal status'

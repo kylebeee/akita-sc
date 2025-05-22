@@ -23,5 +23,4 @@ export class ReceiveAccount extends Contract {
       .payment({ closeRemainderTo: Global.creatorAddress })
       .submit()
   }
-
 }

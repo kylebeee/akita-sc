@@ -184,7 +184,7 @@ export class Raffle extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(
+  create(
     prize: uint64,
     isPrizeBox: boolean,
     ticketAsset: uint64,

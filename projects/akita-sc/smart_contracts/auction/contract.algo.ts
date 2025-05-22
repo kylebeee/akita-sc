@@ -105,7 +105,7 @@ export class Auction extends classes(
   /** the winning address of the raffle */
   raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
   /** salt for randomness */
-  salt = GlobalState<bytes>({ key: AuctionGlobalStateKeySalt })
+  salt = GlobalState<bytes<32>>({ key: AuctionGlobalStateKeySalt })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ export class Auction extends classes(
       creatorAmount = 1
     }
 
-    const { auctionSalePercentageMinimum: min, auctionSalePercentageMaximum: max } = getNFTFees(this.akitaDAO.value)
+    const { auctionSaleImpactTaxMin: min, auctionSaleImpactTaxMax: max } = getNFTFees(this.akitaDAO.value)
     const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
     const akitaTaxRate = impactRange(impact, min, max)
 
@@ -408,7 +408,7 @@ export class Auction extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(
+  create(
     prize: uint64,
     isPrizeBox: boolean,
     bidAsset: uint64,

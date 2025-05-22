@@ -4,14 +4,15 @@
   "description": "Smart contract deployer",
   "main": "smart_contracts/index.ts",
   "scripts": {
-    "build": "algokit compile ts smart_contracts --output-source-map --out-dir artifacts && algokit generate client smart_contracts/artifacts --output {app_spec_dir}/{contract_name}Client.ts",
+    "build": "algokit compile ts smart_contracts --output-ssa-ir --output-optimization-ir --output-source-map --out-dir artifacts && algokit generate client smart_contracts/artifacts --output {app_spec_dir}/{contract_name}Client.ts",
     "deploy": "ts-node-dev --transpile-only --watch .env -r dotenv/config smart_contracts/index.ts",
     "deploy:ci": "ts-node --transpile-only -r dotenv/config smart_contracts/index.ts",
     "lint": "eslint smart_contracts",
     "lint:fix": "eslint smart_contracts --fix",
     "audit": "better-npm-audit audit",
     "format": "prettier --write .",
-    "test": "vitest run --coverage",
+    "test-vitest": "vitest run --coverage",
+    "test": "npm run build && jest",
     "test:watch": "vitest watch",
     "check-types": "tsc --noEmit"
   },
@@ -20,16 +21,17 @@
     "npm": ">=9.0"
   },
   "dependencies": {
-    "@algorandfoundation/algorand-typescript": "^1.0.0-alpha.59",
+    "@algorandfoundation/algorand-typescript": "^1.0.0-alpha.61",
     "@joe-p/merkle-tree": "github:joe-p/merkle-tree"
   },
   "devDependencies": {
     "@algorandfoundation/algokit-client-generator": "^5.0.0",
     "@algorandfoundation/algokit-utils": "^9.0.0",
     "@algorandfoundation/algokit-utils-debug": "^1.0.4",
-    "@algorandfoundation/algorand-typescript-testing": "^1.0.0-beta.33",
-    "@algorandfoundation/puya-ts": "^1.0.0-alpha.59",
+    "@algorandfoundation/algorand-typescript-testing": "^1.0.0-alpha.26",
+    "@algorandfoundation/puya-ts": "^1.0.0-alpha.61",
     "@eslint/js": "^9.18.0",
+    "@jest/globals": "^29.5.0",
     "@rollup/plugin-typescript": "^12.1.2",
     "@tsconfig/node22": "^22.0.0",
     "@vitest/coverage-v8": "^2.1.8",

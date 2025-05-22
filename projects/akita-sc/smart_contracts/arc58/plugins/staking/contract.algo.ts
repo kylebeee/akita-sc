@@ -13,7 +13,7 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(akitaDAO: uint64, version: string): void {
+  create(akitaDAO: uint64, version: string): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
   }

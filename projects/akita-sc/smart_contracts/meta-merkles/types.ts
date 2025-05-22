@@ -1,4 +1,4 @@
-import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type TypesValue = {
@@ -31,7 +31,7 @@ export class arc4RootKey extends arc4.Struct<{
 }> {}
 
 export type DataKey = {
-    address: arc4.StaticBytes<16>
+    address: bytes<16>
     name: string
     key: string
 }

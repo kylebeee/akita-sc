@@ -24,7 +24,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, factory: uint64, akitaDAO: uint64): void {
+  create(version: string, factory: uint64, akitaDAO: uint64): void {
     this.version.value = version
     this.factory.value = Application(factory)
     this.akitaDAO.value = Application(akitaDAO)

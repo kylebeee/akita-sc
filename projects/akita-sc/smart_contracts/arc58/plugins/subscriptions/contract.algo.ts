@@ -15,7 +15,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(akitaDAO: uint64, version: string): void {
+  create(akitaDAO: uint64, version: string): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
   }
@@ -387,7 +387,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
     walletID: uint64,
     rekeyBack: boolean,
     index: uint64,
-    addresses: Addresses
+    addresses: Address[]
   ): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)

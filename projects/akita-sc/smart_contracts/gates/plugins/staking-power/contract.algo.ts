@@ -22,7 +22,7 @@ import {
 } from '../../../utils/operators'
 import { ERR_BAD_OPERATION, ERR_INVALID_ARG_COUNT } from './errors'
 import { ONE_DAY, ONE_YEAR_IN_DAYS } from './constants'
-import { getAkitaAppList } from '../../../utils/functions'
+import { getAkitaAppList, getStakingPower } from '../../../utils/functions'
 
 export class StakingPowerGate extends AkitaBaseContract {
 
@@ -43,19 +43,11 @@ export class StakingPowerGate extends AkitaBaseContract {
   }
 
   private stakingPowerGate(user: Address, op: UintN8, asset: uint64, power: uint64): boolean {
-    const info = abiCall(Staking.prototype.getInfo, {
-      appId: getAkitaAppList(this.akitaDAO.value).staking,
-      args: [
-        user,
-        new arc4StakeInfo({
-          asset: new UintN64(asset),
-          type: STAKING_TYPE_LOCK,
-        }),
-      ],
-    }).returnValue
-
-    const remainingDays: uint64 = (info.expiration - Global.latestTimestamp) / ONE_DAY
-    const userPower: uint64 = (info.amount / ONE_YEAR_IN_DAYS) * remainingDays
+    const userPower = getStakingPower(
+      getAkitaAppList(this.akitaDAO.value).staking,
+      user,
+      asset
+    )
 
     if (op === Equal) {
       return userPower === power
@@ -82,7 +74,7 @@ export class StakingPowerGate extends AkitaBaseContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, akitaDAO: uint64): void {
+  create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
     this.registryCursor.value = 0

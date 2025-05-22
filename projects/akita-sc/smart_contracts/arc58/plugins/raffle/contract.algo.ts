@@ -29,7 +29,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, factory: uint64): void {
+  create(version: string, factory: uint64): void {
     this.version.value = version
     this.factory.value = Application(factory)
   }

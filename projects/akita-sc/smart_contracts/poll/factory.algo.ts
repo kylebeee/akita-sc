@@ -35,7 +35,7 @@ export class PollFactory extends FactoryContract {
     )
 
     const mint = poll.call
-      .createApplication({
+      .create({
         args: [
           this.akitaDAO.value.id,
           type,

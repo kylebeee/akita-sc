@@ -2,16 +2,16 @@ import { assert, bytes, LogicSig, op, TemplateVar } from "@algorandfoundation/al
 import { decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4"
 import { base64Decode, ed25519verify, Global, sha256, Txn } from "@algorandfoundation/algorand-typescript/op"
 
-const PK = TemplateVar<bytes>('PK')
+const PK = TemplateVar<bytes<32>>('PK')
 
 export class Ed25519Passkey extends LogicSig {
 
     program() {
-        const authData = decodeArc4<bytes>(op.arg(0))
-        const cdOne = decodeArc4<bytes>(op.arg(1))
-        const cdTwo = decodeArc4<bytes>(op.arg(2))
-        const cdThree = decodeArc4<bytes>(op.arg(3))
-        const sig = decodeArc4<bytes>(op.arg(4))
+        const authData = op.arg(0)
+        const cdOne = op.arg(1)
+        const cdTwo = op.arg(2)
+        const cdThree = op.arg(3)
+        const sig = op.arg(4).toFixed({ length: 64 })
 
         const h = sha256(authData.concat(sha256(cdOne.concat(cdTwo).concat(cdThree))))
 

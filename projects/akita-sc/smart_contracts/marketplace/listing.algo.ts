@@ -56,10 +56,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
       creatorAmount = 1
     }
 
-    const {
-      marketplaceSalePercentageMinimum: min,
-      marketplaceSalePercentageMaximum: max,
-    } = getNFTFees(this.akitaDAO.value)
+    const { marketplaceSalePercentageMin: min, marketplaceSalePercentageMax: max } = getNFTFees(this.akitaDAO.value)
     const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
     const akitaTaxRate = impactRange(impact, min, max)
 
@@ -240,7 +237,8 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   /** create the listing application */
-  createApplication(
+  @abimethod({ onCreate: 'require' })
+  create(
     prize: uint64,
     isPrizeBox: boolean,
     price: uint64,

@@ -6,6 +6,7 @@ import {
   assert,
   assertMatch,
   BoxMap,
+  bytes,
   Bytes,
   Global,
   gtxn,
@@ -14,14 +15,9 @@ import {
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abiCall, Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, Address, decodeArc4, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
-  Addresses,
   Amounts,
-  arc4BlockListKey,
-  arc4PassesKey,
-  arc4ServicesKey,
-  arc4Service,
   arc4SubscriptionInfo,
   arc4SubscriptionKey,
   ServiceID,
@@ -32,6 +28,9 @@ import {
   SubscriptionID,
   SubscriptionInfo,
   SubscriptionInfoWithPasses,
+  ServicesKey,
+  BlockListKey,
+  PassesKey,
 } from './types'
 import {
   SubscriptionsBoxPrefixBlocks,
@@ -65,7 +64,7 @@ import {
 import { arc4Zero, DIVISOR } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_PERCENTAGE, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { GateArgs } from '../utils/types/gates'
-import { bytes16, CID } from '../utils/types/base'
+import { CID } from '../utils/types/base'
 import { BaseSubscriptions } from './base'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { classes } from 'polytype'
@@ -123,7 +122,7 @@ export class Subscriptions extends classes(
    * 32 + 8 = 40 bytes
    * 120 bytes total -> (2500 + (400 * 121)) = 0.050500
    */
-  services = BoxMap<arc4ServicesKey, arc4Service>({ keyPrefix: SubscriptionsBoxPrefixServices })
+  services = BoxMap<ServicesKey, Service>({ keyPrefix: SubscriptionsBoxPrefixServices })
 
   serviceslist = BoxMap<Account, uint64>({ keyPrefix: SubscriptionsBoxPrefixServicesList })
 
@@ -133,9 +132,9 @@ export class Subscriptions extends classes(
    * 32 + 32 = 64 bytes
    * 65 bytes total -> (2500 + (400 * 64)) = 0.028500
    */
-  blocks = BoxMap<arc4BlockListKey, StaticBytes<0>>({ keyPrefix: SubscriptionsBoxPrefixBlocks })
+  blocks = BoxMap<BlockListKey, bytes<0>>({ keyPrefix: SubscriptionsBoxPrefixBlocks })
 
-  passes = BoxMap<arc4PassesKey, arc4.DynamicArray<Address>>({ keyPrefix: SubscriptionsBoxPrefixPasses })
+  passes = BoxMap<PassesKey, Address[]>({ keyPrefix: SubscriptionsBoxPrefixPasses })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -230,7 +229,7 @@ export class Subscriptions extends classes(
   ): uint64 {
     const address = new Address(Txn.sender)
     const id = this.newServiceID(address)
-    const boxKey = new arc4ServicesKey({ address, id: new UintN64(id) })
+    const boxKey: ServicesKey = { address, id }
 
     // ensure the amount is enough to take fees on
     assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
@@ -255,15 +254,15 @@ export class Subscriptions extends classes(
       ERR_INVALID_PAYMENT
     )
 
-    this.services(boxKey).value = new arc4Service({
+    this.services(boxKey).value = {
       status: ServiceStatusPaused,
-      interval: new UintN64(interval),
-      asset: new UintN64(asset),
-      amount: new UintN64(amount),
-      passes: new UintN64(passes),
-      gate: new UintN64(gate),
-      cid: cid,
-    })
+      interval,
+      asset,
+      amount,
+      passes,
+      gate,
+      cid,
+    }
 
     return id
   }
@@ -276,7 +275,7 @@ export class Subscriptions extends classes(
    * @param index The index of the box to be used for the subscription
    */
   pauseService(id: ServiceID): void {
-    const boxKey = new arc4ServicesKey({ address: new Address(Txn.sender), id: new UintN64(id) })
+    const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
     // ensure were not using zero as a box index
     // zero is reserved for non-service based subscriptions
     assert(id > 0, ERR_SERVICE_INDEX_MUST_BE_ABOVE_ZERO)
@@ -294,7 +293,7 @@ export class Subscriptions extends classes(
    * @param index The index of the box to be used for the subscription
    */
   activateService(id: ServiceID): void {
-    const boxKey = new arc4ServicesKey({ address: new Address(Txn.sender), id: new UintN64(id) })
+    const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
 
     // ensure the box exists
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -310,7 +309,7 @@ export class Subscriptions extends classes(
    * @param index The index of the box to be used for the subscription
    */
   shutdownService(id: ServiceID): void {
-    const boxKey = new arc4ServicesKey({ address: new Address(Txn.sender), id: new UintN64(id) })
+    const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
     // ensure the box exists
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
     // ensure the service isn't already shutdown
@@ -325,7 +324,11 @@ export class Subscriptions extends classes(
    * @param blocked The address to be blocked
    */
   block(payment: gtxn.PaymentTxn, blocked: Address): void {
-    const boxKey = new arc4BlockListKey({ address: bytes16(Txn.sender.bytes), blocked: bytes16(blocked.bytes) })
+    // const origin = getOrigin(spending)
+    const boxKey: BlockListKey = {
+      address: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+      blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    }
 
     // ensure the address is not already blocked
     assert(!this.blocks(boxKey).exists, ERR_USER_ALREADY_BLOCKED)
@@ -348,7 +351,10 @@ export class Subscriptions extends classes(
    * @param blocked The address to be unblocked
    */
   unblock(blocked: Address): void {
-    const boxKey = new arc4BlockListKey({ address: bytes16(Txn.sender.bytes), blocked: bytes16(blocked.bytes) })
+    const boxKey: BlockListKey = {
+      address: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+      blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    }
 
     // ensure that the address is currently blocked
     assert(this.blocks(boxKey).exists, ERR_USER_NOT_BLOCKED)
@@ -378,7 +384,10 @@ export class Subscriptions extends classes(
     assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
 
     const arc4Sender = new Address(Txn.sender)
-    const blocksKey = new arc4BlockListKey({ address: bytes16(recipient.bytes), blocked: bytes16(Txn.sender.bytes) })
+    const blocksKey: BlockListKey = {
+      address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+      blocked: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+    }
     // ensure they aren't blocked
     assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
     // gate is zero unless the service has a gate
@@ -386,11 +395,11 @@ export class Subscriptions extends classes(
     // index zero is always reserved for donations
     const isDonation = serviceID === 0
     if (!isDonation) {
-      const boxKey = new arc4ServicesKey({ address: recipient, id: new UintN64(serviceID) })
+      const boxKey: ServicesKey = { address: recipient, id: serviceID }
       // ensure the service exists
       assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
       // get the service details
-      const service = decodeArc4<Service>(this.services(boxKey).value.bytes)
+      const service = this.services(boxKey).value
       // ensure the service is active
       assert(service.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
       // ensure its an algo subscription
@@ -475,7 +484,10 @@ export class Subscriptions extends classes(
     assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
 
     const arc4Sender = new Address(Txn.sender)
-    const blocksKey = new arc4BlockListKey({ address: bytes16(recipient.bytes), blocked: bytes16(Txn.sender.bytes) })
+    const blocksKey: BlockListKey = {
+      address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+      blocked: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+    }
     // ensure they aren't blocked
     assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
     // gate is zero unless the service has a gate
@@ -483,11 +495,11 @@ export class Subscriptions extends classes(
     // index zero is always reserved for donations
     const isDonation = serviceID === 0
     if (!isDonation) {
-      const boxKey = new arc4ServicesKey({ address: recipient, id: new UintN64(serviceID) })
+      const boxKey: ServicesKey = { address: recipient, id: serviceID }
       // ensure the service exists
       assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
       // get the service details
-      const service = decodeArc4<Service>(this.services(boxKey).value.bytes)
+      const service = this.services(boxKey).value
       // ensure the service is active
       assert(service.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
       // ensure its an algo subscription
@@ -647,13 +659,16 @@ export class Subscriptions extends classes(
 
     const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(subscriptionsKey).value.bytes)
 
-    const blocksKey = new arc4BlockListKey({ address: bytes16(sub.recipient.bytes), blocked: bytes16(address.bytes) })
+    const blocksKey: BlockListKey = {
+      address: sub.recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+      blocked: address.bytes.slice(0, 16).toFixed({ length: 16 })
+    }
 
     // ensure they are not blocked
     assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
 
     if (sub.serviceID > 0) {
-      const servicesKey = new arc4ServicesKey({ address: sub.recipient, id: new UintN64(sub.serviceID) })
+      const servicesKey: ServicesKey = { address: sub.recipient, id: sub.serviceID }
       // ensure the service isn't shutdown
       assert(this.services(servicesKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
     }
@@ -724,7 +739,7 @@ export class Subscriptions extends classes(
     this.updateStreak(sender, id, 0)
   }
 
-  setPasses(id: SubscriptionID, addresses: Addresses): void {
+  setPasses(id: SubscriptionID, addresses: Address[]): void {
     const arc4Sender = new Address(Txn.sender)
     const subscriptionsKey = new arc4SubscriptionKey({ address: arc4Sender, id: new UintN64(id) })
 
@@ -734,27 +749,24 @@ export class Subscriptions extends classes(
 
     assert(sub.serviceID > 0, ERR_NO_DONATIONS)
 
-    const serviceKey = new arc4ServicesKey({ address: sub.recipient, id: new UintN64(sub.serviceID) })
+    const serviceKey: ServicesKey = { address: sub.recipient, id: sub.serviceID }
 
     assert(this.services(serviceKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
 
-    const service = decodeArc4<Service>(this.services(serviceKey).value.bytes)
+    const service = this.services(serviceKey).value
 
     assert(service.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
     assert(service.passes >= addresses.length, ERR_PASS_COUNT_OVERFLOW)
 
     for (let i: uint64 = 0; i < addresses.length; i += 1) {
-      const blockKey = new arc4BlockListKey({
-        address: bytes16(sub.recipient.bytes),
-        blocked: bytes16(addresses[i].bytes)
-      })
-      assert(
-        !this.blocks(blockKey).exists,
-        ERR_BLOCKED
-      )
+      const blockKey: BlockListKey = {
+        address: sub.recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+        blocked: addresses[i].bytes.slice(0, 16).toFixed({ length: 16 }),
+      }
+      assert(!this.blocks(blockKey).exists, ERR_BLOCKED)
     }
 
-    this.passes(new arc4PassesKey({ address: arc4Sender, id: new UintN64(id) })).value = addresses.copy()
+    this.passes({ address: arc4Sender, id }).value = addresses
   }
 
     // READ ONLY METHODS ----------------------------------------------------------------------------
@@ -766,7 +778,10 @@ export class Subscriptions extends classes(
    */
   @abimethod({ readonly: true })
   isBlocked(address: Address, blocked: Address): boolean {
-    return this.blocks(new arc4BlockListKey({ address: bytes16(address.bytes), blocked: bytes16(blocked.bytes) })).exists
+    return this.blocks({
+      address: address.bytes.slice(0, 16).toFixed({ length: 16 }),
+      blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    }).exists
   }
 
   /**
@@ -774,7 +789,7 @@ export class Subscriptions extends classes(
    */
   @abimethod({ readonly: true })
   isShutdown(address: Address, id: uint64): boolean {
-    return this.services(new arc4ServicesKey({ address, id: new UintN64(id) })).value.status === ServiceStatusShutdown
+    return this.services({ address, id }).value.status === ServiceStatusShutdown
   }
 
   @abimethod({ readonly: true })
@@ -785,16 +800,13 @@ export class Subscriptions extends classes(
 
     const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(key).value.bytes)
 
-    const passesKey = new arc4PassesKey({ address, id: new UintN64(id) })
-    let passes = new arc4.DynamicArray<Address>()
+    const passesKey = { address, id }
+    let passes: Address[] = []
     if (this.passes(passesKey).exists) {
-      passes = this.passes(passesKey).value.copy()
+      passes = [ ...passes, ...this.passes(passesKey).value ]
     }
 
-    return {
-      ...sub,
-      passes: passes.copy(),
-    }
+    return { ...sub, passes }
   }
 
   @abimethod({ readonly: true })

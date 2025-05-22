@@ -31,7 +31,7 @@ export class PrizeBox extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
   
   @abimethod({ onCreate: 'require' })
-  createApplication(owner: Address): void {
+  create(owner: Address): void {
     this.owner.value = owner.native
     this.optinCount.value = 0
   }

@@ -6,30 +6,32 @@ import { fee } from "../../../utils/constants";
 
 export class OptInPlugin extends Contract {
 
-  optInToAsset(walletID: uint64, rekeyBack: boolean, asset: uint64, mbrPayment: gtxn.PaymentTxn): void {
+  optInToAsset(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
-
-    assert(!sender.isOptedIn(Asset(asset)), ERR_ALREADY_OPTED_IN)
 
     assertMatch(
       mbrPayment,
       {
         receiver: sender,
-        amount: Global.assetOptInMinBalance
+        amount: Global.assetOptInMinBalance * assets.length
       },
       ERR_INVALID_PAYMENT
     )
 
-    itxn
-      .assetTransfer({
-        sender,
-        assetReceiver: sender,
-        assetAmount: 0,
-        xferAsset: Asset(asset),
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
-      })
-      .submit();
+    for (let i: uint64 = 0; i < assets.length; i++) {
+      assert(!sender.isOptedIn(Asset(assets[i])), ERR_ALREADY_OPTED_IN)
+
+      itxn
+        .assetTransfer({
+          sender,
+          assetReceiver: sender,
+          assetAmount: 0,
+          xferAsset: Asset(assets[i]),
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
+          fee,
+        })
+        .submit();
+    }
   }
 }

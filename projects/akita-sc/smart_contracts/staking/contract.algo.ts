@@ -61,14 +61,18 @@ import {
 } from '../utils/errors'
 import { uint64Array } from '../utils/types/base'
 import { BaseStaking } from './base'
-import { classes } from 'polytype'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { fee } from '../utils/constants'
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../constants'
+import { ERR_NOT_AKITA_DAO } from '../errors'
 
-export class Staking extends classes(BaseStaking, AkitaBaseContract) {
+export class Staking extends BaseStaking {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
+  /** the current version of the contract */
+  version = GlobalState<string>({ key: GlobalStateKeyVersion })
+  /** the app ID of the Akita DAO */
+  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
   /** The address that is allowed to call the 'beat' method to create heartbeat records */
   heartbeatManagerAddress = GlobalState<Address>({ key: StakingGlobalStateKeyHeartbeatManagerAddress })
 
@@ -85,12 +89,23 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(akitaDAO: uint64, version: string): void {
+  create(akitaDAO: uint64, version: string): void {
     this.akitaDAO.value = Application(akitaDAO)
     this.version.value = version
   }
 
+  @abimethod({ allowActions: ['UpdateApplication'] })
+  update(newVersion: string): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.version.value = newVersion
+  }
+
   // STAKING METHODS ------------------------------------------------------------------------------
+
+  updateAkitaDAO(app: uint64): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.akitaDAO.value = Application(app)
+  }
 
   stake(payment: gtxn.PaymentTxn, type: StakingType, amount: uint64, expiration: uint64): void {
     const inTheFuture = expiration > Global.latestTimestamp

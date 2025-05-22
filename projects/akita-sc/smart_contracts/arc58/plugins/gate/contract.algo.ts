@@ -18,7 +18,7 @@ export class GatePlugin extends BaseGate {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(gateAppID: uint64): void {
+  create(gateAppID: uint64): void {
     this.gateAppID.value = Application(gateAppID)
   }
 

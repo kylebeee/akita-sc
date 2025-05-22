@@ -95,7 +95,7 @@ export class Poll extends AkitaBaseContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(
+  create(
     akitaDAO: uint64,
     type: PollType,
     endTime: uint64,

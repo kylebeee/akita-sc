@@ -72,7 +72,7 @@ export class RaffleFactory extends classes(
     )
 
     const raffleApp = raffle.call
-      .createApplication({
+      .create({
         args: [
           prizeID,
           isPrizeBox,
@@ -114,7 +114,7 @@ export class RaffleFactory extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
     this.version.value = version
     this.childContractVersion.value = childVersion
     this.akitaDAO.value = Application(akitaDAO)

@@ -1,21 +1,20 @@
 import { MetaMerkles } from '../meta-merkles/contract.algo'
-import { Application, assert, assertMatch, Asset, BoxMap, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, assertMatch, Asset, BoxMap, bytes, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 
-import { arc4HashKey, arc4OfferValue, arc4ParticipantKey, OfferValue } from './types'
+import { HashKey, OfferValue, ParticipantKey } from './types'
 import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
-import { abiCall, Address, decodeArc4, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_BAD_ROOTS, ERR_CANT_VERIFY_LEAF, ERR_NOT_A_PARTICIPANT, ERR_OFFER_EXPIRED } from './errors'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { bytes32, str } from '../utils/types/base'
 import { MerkleTreeTypeTrade } from '../meta-merkles/constants'
 import { Proof } from '../utils/types/merkles'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { arc4RefundValue, RefundValue } from '../utils/types/mbr'
+import { RefundValue } from '../utils/types/mbr'
 import { BaseHyperSwap } from './base'
 import { AssetInbox } from '../utils/types/asset-inbox'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { arc59OptInAndSend, getAkitaAppList, getOtherAppList, getSwapFees, getUserImpact, impactRange, origin } from '../utils/functions'
+import { arc59OptInAndSend, getAkitaAppList, getOtherAppList } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { fee } from '../utils/constants'
 import { GlobalStateKeySpendingAccountFactoryApp } from '../constants'
@@ -36,11 +35,11 @@ export class HyperSwap extends classes(
   // BOXES ----------------------------------------------------------------------------------------
 
   /** map of hyper swap offers */
-  offers = BoxMap<uint64, arc4OfferValue>({ keyPrefix: HyperSwapBoxPrefixOffers })
+  offers = BoxMap<uint64, OfferValue>({ keyPrefix: HyperSwapBoxPrefixOffers })
   /** map of the participants in each swap */
-  participants = BoxMap<arc4ParticipantKey, arc4RefundValue>({ keyPrefix: HyperSwapBoxPrefixParticipants })
+  participants = BoxMap<ParticipantKey, RefundValue>({ keyPrefix: HyperSwapBoxPrefixParticipants })
   /** map of merkle tree hashes during escrow & disbursal phases */
-  hashes = BoxMap<arc4HashKey, arc4RefundValue>({ keyPrefix: HyperSwapBoxPrefixHashes })
+  hashes = BoxMap<HashKey, RefundValue>({ keyPrefix: HyperSwapBoxPrefixHashes })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -69,15 +68,15 @@ export class HyperSwap extends classes(
    */
   offer(
     payment: gtxn.PaymentTxn,
-    root: StaticBytes<32>,
+    root: bytes<32>,
     leaves: uint64,
-    participantsRoot: StaticBytes<32>,
+    participantsRoot: bytes<32>,
     participantsLeaves: uint64,
     expiration: uint64
   ) {
     assert(root !== participantsRoot, ERR_BAD_ROOTS)
 
-    const orig = origin(this.spendingAccountFactory.value.id)
+    // const orig = getOrigin(this.spendingAccountFactory.value.id)
     const costs = this.mbr()
     const metaMerklesCost: uint64 = costs.mm.root + costs.mm.data
     const hyperSwapOfferMBRAmount: uint64 = costs.offers + costs.participants + (metaMerklesCost * 2)
@@ -104,7 +103,7 @@ export class HyperSwap extends classes(
             amount: metaMerklesCost,
             fee,
           }),
-          str(String(root.native)),
+          String(root),
           root,
           MerkleTreeTypeTrade
         ],
@@ -123,7 +122,7 @@ export class HyperSwap extends classes(
             amount: metaMerklesCost,
             fee,
           }),
-          str(String(participantsRoot.native)),
+          String(participantsRoot),
           participantsRoot,
           MerkleTreeTypeTrade
         ],
@@ -134,21 +133,19 @@ export class HyperSwap extends classes(
     const id = this.newOfferID()
 
     // automatically set our sender as the first accepted participant
-    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
-    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(hyperSwapOfferMBRAmount) })
-    this.participants(senderParticipantKey).value = refundValue.copy()
+    this.participants({ id, address: new Address(Txn.sender) }).value = { payor, amount: hyperSwapOfferMBRAmount }
 
     // create the offering box & default state
-    this.offers(id).value = new arc4OfferValue({
+    this.offers(id).value = {
       state: STATE_OFFERED,
       root,
-      leaves: new UintN64(leaves),
-      escrowed: new UintN64(0),
+      leaves,
+      escrowed: 0,
       participantsRoot,
-      participantsLeaves: new UintN64(participantsLeaves),
-      acceptances: new UintN64(1),
-      expiration: new UintN64(expiration),
-    })
+      participantsLeaves,
+      acceptances: 1,
+      expiration,
+    }
   }
 
   /**
@@ -161,7 +158,7 @@ export class HyperSwap extends classes(
   accept(mbrPayment: gtxn.PaymentTxn, id: uint64, proof: Proof) {
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    const offer = this.offers(id).value
     // ensure we are still in the collecting acceptances stage
     assert(offer.state === STATE_OFFERED)
     assert(offer.expiration > Global.latestTimestamp, ERR_OFFER_EXPIRED)
@@ -172,8 +169,8 @@ export class HyperSwap extends classes(
         appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
         args: [
           new Address(Global.currentApplicationAddress),
-          String(offer.participantsRoot.bytes),
-          bytes32(sha256(sha256(Txn.sender.bytes))),
+          String(offer.participantsRoot),
+          sha256(sha256(Txn.sender.bytes)),
           proof,
           MerkleTreeTypeTrade
         ],
@@ -184,10 +181,13 @@ export class HyperSwap extends classes(
     assert(isParticipant, ERR_NOT_A_PARTICIPANT)
 
     // ensure they haven't already accepted
-    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
+    const senderParticipantKey = { id, address: new Address(Txn.sender) }
     assert(!this.participants(senderParticipantKey).exists)
     // increment the acceptance count
-    this.offers(id).value.acceptances = new UintN64(offer.acceptances + 1)
+    this.offers(id).value = {
+      ...this.offers(id).value,
+      acceptances: (offer.acceptances + 1)
+    }
 
     const costs = this.mbr()
 
@@ -202,11 +202,14 @@ export class HyperSwap extends classes(
 
     // flag this participant as accepted
     const payor = new Address(mbrPayment.sender)
-    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(costs.participants) })
-    this.participants(senderParticipantKey).value = refundValue.copy()
+    const refundValue = { payor, amount: costs.participants }
+    this.participants(senderParticipantKey).value = refundValue
     // if we collected all needed acceptances switch to the gathering state
     if (offer.participantsLeaves === offer.acceptances + 1) {
-      this.offers(id).value.state = STATE_ESCROWING
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        state: STATE_ESCROWING,
+      }
     }
   }
 
@@ -225,15 +228,15 @@ export class HyperSwap extends classes(
     // assert(this.controls(sender.address));
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    const offer = this.offers(id).value
     // ensure we are still in the collecting acceptances stage
     assert(offer.state === STATE_ESCROWING)
     // ensure they are a participant
-    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
+    const senderParticipantKey = { id, address: new Address(Txn.sender) }
     assert(this.participants(senderParticipantKey).exists)
     // ensure this leaf has not already been escrowed
-    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(0)}${itob(amount)}`)))
-    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(0)}${itob(amount)}`))
+    const hashKey: HashKey = { id, hash }
     assert(!this.hashes(hashKey).exists)
     // verify the leaf
     const verified = abiCall(
@@ -242,7 +245,7 @@ export class HyperSwap extends classes(
         appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
         args: [
           new Address(Global.currentApplicationAddress),
-          String(offer.root.bytes),
+          String(offer.root),
           hash,
           proof,
           MerkleTreeTypeTrade
@@ -266,13 +269,21 @@ export class HyperSwap extends classes(
 
     // add the leaf to the our escrowed list
     const payor = new Address(payment.sender)
-    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(costs.hashes) })
-    this.hashes(hashKey).value = refundValue.copy()
-    // increment our escrow count
-    this.offers(id).value.escrowed = new UintN64(offer.escrowed + 1)
+    this.hashes(hashKey).value = { payor, amount: costs.hashes }
     // if we collected all needed assets switch to the disbursement state
+    // increment our escrow count
     if (offer.leaves === offer.escrowed + 1) {
-      this.offers(id).value.state = STATE_DISBURSING
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        state: STATE_DISBURSING,
+        escrowed: (offer.escrowed + 1)
+      }
+    } else {
+      // increment our escrow count
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        escrowed: (offer.escrowed + 1)
+      }
     }
   }
 
@@ -297,15 +308,15 @@ export class HyperSwap extends classes(
   ) {
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    const offer = this.offers(id).value
     // ensure we are still in the collecting acceptances stage
     assert(offer.state === STATE_ESCROWING)
     // ensure they are a participant
-    const senderParticipantKey = new arc4ParticipantKey({ id: new UintN64(id), address: new Address(Txn.sender) })
+    const senderParticipantKey = { id, address: new Address(Txn.sender) }
     assert(this.participants(senderParticipantKey).exists)
     // ensure this leaf has not already been escrowed
-    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`)))
-    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`))
+    const hashKey: HashKey = { id, hash }
     assert(!this.hashes(hashKey).exists)
     // verify the leaf
     const verified = abiCall(
@@ -314,7 +325,7 @@ export class HyperSwap extends classes(
         appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
         args: [
           new Address(Global.currentApplicationAddress),
-          String(offer.root.bytes),
+          String(offer.root),
           hash,
           proof,
           MerkleTreeTypeTrade
@@ -370,14 +381,22 @@ export class HyperSwap extends classes(
 
     // add the leaf to the our escrowed list
     const payor = new Address(mbrPayment.sender)
-    const refundValue = new arc4RefundValue({ payor, amount: new UintN64(mbrAmount) })
-    this.hashes(hashKey).value = refundValue.copy()
+    const refundValue = { payor, amount: mbrAmount }
+    this.hashes(hashKey).value = refundValue
     // increment our escrow count
     const newEscrowed: uint64 = offer.escrowed + 1
-    this.offers(id).value.escrowed = new UintN64(newEscrowed)
     // if we collected all needed assets switch to the disbursement state
     if (offer.leaves === newEscrowed) {
-      this.offers(id).value.state = STATE_DISBURSING
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        state: STATE_DISBURSING,
+        escrowed: newEscrowed
+      }
+    } else {
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        escrowed: newEscrowed
+      }
     }
   }
 
@@ -393,16 +412,16 @@ export class HyperSwap extends classes(
   disburse(id: uint64, receiver: Address, asset: uint64, amount: uint64) {
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    const offer = this.offers(id).value
     // ensure we are still in the collecting acceptances stage
     assert(offer.state === STATE_DISBURSING)
 
     // ensure this leaf is escrowed
-    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`)))
-    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`))
+    const hashKey: HashKey = { id, hash }
     assert(this.hashes(hashKey).exists)
 
-    let { payor, amount: refundAmount } = decodeArc4<RefundValue>(this.hashes(hashKey).value.bytes)
+    let { payor, amount: refundAmount } = this.hashes(hashKey).value
     this.hashes(hashKey).delete()
 
     // process the transfer
@@ -452,14 +471,19 @@ export class HyperSwap extends classes(
         .submit()
     }
 
-
-
     const newEscrowed: uint64 = offer.escrowed - 1
-    this.offers(id).value.escrowed = new UintN64(newEscrowed)
-
     // if we disbursed all needed assets switch to the completed state
     if (newEscrowed === 0) {
-      this.offers(id).value.state = STATE_COMPLETED
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        state: STATE_COMPLETED,
+        escrowed: newEscrowed
+      }
+    } else {
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        escrowed: newEscrowed
+      }
     }
   }
 
@@ -470,7 +494,7 @@ export class HyperSwap extends classes(
   cancel(id: uint64, proof: Proof) {
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const offer = this.offers(id).value.copy()
+    const offer = this.offers(id).value
     // ensure we're in a cancellable state
     assert(offer.state === STATE_OFFERED || offer.state === STATE_ESCROWING)
     // ensure they are a participant
@@ -480,8 +504,8 @@ export class HyperSwap extends classes(
         appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
         args: [
           new Address(Global.currentApplicationAddress),
-          String(offer.participantsRoot.bytes),
-          bytes32(sha256(sha256(Txn.sender.bytes))),
+          String(offer.participantsRoot),
+          sha256(sha256(Txn.sender.bytes)),
           proof,
           MerkleTreeTypeTrade
         ],
@@ -491,7 +515,10 @@ export class HyperSwap extends classes(
 
     assert(isParticipant, ERR_NOT_A_PARTICIPANT)
     // set the state to cancelled
-    this.offers(id).value.state = STATE_CANCELLED
+    this.offers(id).value = {
+      ...this.offers(id).value,
+      state: STATE_CANCELLED
+    }
   }
 
   /**
@@ -508,14 +535,14 @@ export class HyperSwap extends classes(
   withdraw(id: uint64, receiver: Address, asset: uint64, amount: uint64, proof: Proof) {
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const offer = decodeArc4<OfferValue>(this.offers(id).value.bytes)
+    const offer = this.offers(id).value
     // ensure the offer is cancelled
     assert(offer.state === STATE_CANCELLED)
     // ensure the escrow count isn't zero
     assert(offer.escrowed > 0)
     // ensure this leaf is still escrowed
-    const hash = bytes32(sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`)))
-    const hashKey = new arc4HashKey({ id: new UintN64(id), hash })
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`))
+    const hashKey: HashKey = { id, hash }
     assert(this.hashes(hashKey).exists)
     // verify the leaf
     const verified = abiCall(
@@ -524,7 +551,7 @@ export class HyperSwap extends classes(
         appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
         args: [
           new Address(Global.currentApplicationAddress),
-          String(offer.root.bytes),
+          String(offer.root),
           hash,
           proof,
           MerkleTreeTypeTrade
@@ -535,7 +562,7 @@ export class HyperSwap extends classes(
 
     assert(verified, ERR_CANT_VERIFY_LEAF)
 
-    let { payor, amount: refundAmount } = decodeArc4<RefundValue>(this.hashes(hashKey).value.bytes)
+    let { payor, amount: refundAmount } = this.hashes(hashKey).value
     this.hashes(hashKey).delete()
 
     if (asset === 0) {
@@ -567,10 +594,18 @@ export class HyperSwap extends classes(
 
     // decrement our escrow count
     const newEscrowed: uint64 = offer.escrowed - 1
-    this.offers(id).value.escrowed = new UintN64(newEscrowed)
     // mark the cancelled offer as done if theres no more escrowed assets
     if (newEscrowed === 0) {
-      this.offers(id).value.state = STATE_CANCEL_COMPLETED
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        escrowed: newEscrowed,
+        state: STATE_CANCEL_COMPLETED
+      }
+    } else {
+      this.offers(id).value = {
+        ...this.offers(id).value,
+        escrowed: newEscrowed
+      }
     }
   }
 

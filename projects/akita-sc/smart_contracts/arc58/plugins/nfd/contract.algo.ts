@@ -33,7 +33,7 @@ export class NFDPlugin extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(registry: uint64) {
+  create(registry: uint64) {
     this.registry.value = Application(registry)
   }
 

@@ -7,7 +7,7 @@ import { AbstractedAccountClient } from '../../artifacts/arc58/account/Abstracte
 import { OptInPluginClient, OptInPluginFactory } from '../../artifacts/arc58/plugins/optin/OptInPluginClient';
 import { SpendingAccountFactoryFactory } from '../../artifacts/arc58/spending-account/SpendingAccountFactoryClient';
 
-export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 614_000
+export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 1_028_000
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 algokit.Config.configure({ populateAppCallResources: true });
 const fixture = algorandFixture();
@@ -55,7 +55,7 @@ describe('Abstracted Subscription Program', () => {
       algorand,
     })
 
-    const results = await minterFactory.send.create.createApplication({
+    const results = await minterFactory.send.create.create({
       args: {
         akitaDao: 0,
         version: '1',
@@ -64,6 +64,8 @@ describe('Abstracted Subscription Program', () => {
         revocationApp: 0,
       },
     })
+
+    await results.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
 
     abstractedAccountFactoryClient = results.appClient
 

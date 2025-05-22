@@ -12,7 +12,7 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Bool, decodeArc4, DynamicArray, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, DynamicArray, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
 import { Staking } from '../staking/contract.algo'
 import { Rewards } from '../rewards/contract.algo'
@@ -40,7 +40,6 @@ import { arc4RootKey, RootKey } from '../meta-merkles/types'
 import { GateArgs } from '../utils/types/gates'
 import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
 import { arc4StakeInfo, StakingType } from '../staking/types'
-import { bytes32 } from '../utils/types/base'
 import {
   DisbursementPhaseAllocation,
   DisbursementPhaseFinalization,
@@ -91,7 +90,7 @@ import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { MAX_UINT64 } from '../utils/constants'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
-import { calcPercent, gateCheck, getAkitaAppList, getOtherAppList, getStakingFees, percentageOf } from '../utils/functions'
+import { calcPercent, gateCheck, getAkitaAppList, getOtherAppList, percentageOf } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { fee } from '../utils/constants'
 
@@ -149,7 +148,7 @@ export class Pool extends classes(
   /** marketplace is pool creation side marketplace */
   marketplace = GlobalState<Address>({ key: PoolGlobalStateKeyMarketplace })
   /** salt for randomness */
-  salt = GlobalState<bytes>({ key: PoolGlobalStateKeySalt })
+  salt = GlobalState<bytes<32>>({ key: PoolGlobalStateKeySalt })
   /** a sub status of the disbursement phase of the pool */
   disbursementPhase = GlobalState<UintN8>({ key: PoolGlobalStateKeyDisbursementPhase })
   /** the id of the currently active disbursement */
@@ -172,7 +171,7 @@ export class Pool extends classes(
   // BOXES ----------------------------------------------------------------------------------------
 
   /** indexed entries for efficient iteration */
-  entries = BoxMap<uint64, arc4EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+  entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
   /** the entries in the pool */
   entriesByAddress = BoxMap<arc4EntryKey, uint64>({ keyPrefix: PoolBoxPrefixEntriesByAddress })
   /** the disbursements this pool as created & finalized */
@@ -195,7 +194,7 @@ export class Pool extends classes(
     }
 
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
-      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      const entry = this.entries(id).value
       if (entry.disqualified) {
         continue
       }
@@ -205,7 +204,7 @@ export class Pool extends classes(
         continue
       }
 
-      const passes = gateCheck(this.akitaDAO.value, entry.address, this.gateID.value, entry.gateArgs.copy())
+      const passes = gateCheck(this.akitaDAO.value, entry.address, this.gateID.value, entry.gateArgs)
       if (!passes) {
         continue
       }
@@ -235,7 +234,7 @@ export class Pool extends classes(
     let sum: uint64 = 0
 
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
-      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      const entry = this.entries(id).value
       if (entry.disqualified) {
         continue
       }
@@ -274,7 +273,7 @@ export class Pool extends classes(
     let sum: uint64 = 0
 
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
-      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      const entry = this.entries(id).value
       if (entry.disqualified) {
         continue
       }
@@ -308,7 +307,7 @@ export class Pool extends classes(
     const amount: uint64 = sum / this.qualifiedStakers.value
     const allocations = new DynamicArray<arc4UserAllocation>()
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
-      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      const entry = this.entries(id).value
       if (entry.disqualified) {
         continue
       }
@@ -359,7 +358,7 @@ export class Pool extends classes(
 
     const allocations = new DynamicArray<arc4UserAllocation>()
     for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
-      const entry = decodeArc4<EntryData>(this.entries(i).value.bytes)
+      const entry = this.entries(i).value
 
       currentRangeEnd = currentRangeStart + entry.quantity
       if (currentTicket >= currentRangeStart && currentTicket <= currentRangeEnd) {
@@ -421,7 +420,7 @@ export class Pool extends classes(
       ERR_INVALID_POOL_TYPE_FOR_CHECK
     )
 
-    const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+    const entry = this.entries(id).value
 
     if (entry.disqualified) {
       return { valid: false, balance: 0 }
@@ -455,7 +454,10 @@ export class Pool extends classes(
       }
     }
 
-    this.entries(id).value.disqualified = new Bool(true)
+    this.entries(id).value = {
+      ...this.entries(id).value,
+      disqualified: true
+    }
     return { valid: false, balance: 0 }
   }
 
@@ -477,7 +479,7 @@ export class Pool extends classes(
     if (this.type.value === POOL_STAKING_TYPE_NONE) {
       return { valid: true, balance: 0 }
     } else if (this.type.value === POOL_STAKING_TYPE_HEARTBEAT) {
-      const entry = decodeArc4<EntryData>(this.entries(id).value.bytes)
+      const entry = this.entries(id).value
 
       const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
@@ -579,7 +581,7 @@ export class Pool extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(
+  create(
     title: string,
     type: StakingType,
     reward: arc4Reward,
@@ -741,7 +743,7 @@ export class Pool extends classes(
         args: [
           address,
           name,
-          bytes32(sha256(sha256(itob(entries[i].asset)))),
+          sha256(sha256(itob(entries[i].asset))),
           entries[i].proof,
           MERKLE_TREE_TYPE_ASSET,
         ],
@@ -751,13 +753,13 @@ export class Pool extends classes(
       assert(verified, 'failed to verify stake requirements')
 
       const entryID = this.newEntryID()
-      this.entries(entryID).value = new arc4EntryData({
+      this.entries(entryID).value = {
         address: new Address(Txn.sender),
-        asset: new UintN64(entries[i].asset),
-        quantity: new UintN64(entries[i].quantity),
-        gateArgs: args.copy(),
-        disqualified: new Bool(false)
-      })
+        asset: entries[i].asset,
+        quantity: entries[i].quantity,
+        gateArgs: args,
+        disqualified: false
+      }
 
       const aKey = new arc4EntryKey({
         address: new Address(Txn.sender),

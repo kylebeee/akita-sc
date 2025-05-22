@@ -16,7 +16,7 @@ export class DualStakePlugin extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(registry: uint64): void {
+  create(registry: uint64): void {
     this.registry.value = Application(registry)
   }
 

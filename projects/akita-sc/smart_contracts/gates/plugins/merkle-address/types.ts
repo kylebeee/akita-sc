@@ -1,4 +1,4 @@
-import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type MerkleAddressRegistryInfo = {
@@ -14,7 +14,7 @@ export class arc4MerkleAddressRegistryInfo extends arc4.Struct<{
 export type MerkleAddressGateCheckParams = {
     user: Address
     registryID: uint64
-    proof: arc4.DynamicArray<arc4.StaticBytes<32>>
+    proof: bytes<32>[]
 }
 
 export class arc4MerkleAddressGateCheckParams extends arc4.Struct<{

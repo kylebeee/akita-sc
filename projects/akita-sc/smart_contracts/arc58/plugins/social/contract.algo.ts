@@ -1,18 +1,18 @@
 import { AssetInbox } from '../../../utils/types/asset-inbox'
-import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, Global, gtxn, itxn, op, Txn, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, DynamicArray, DynamicBytes, methodSelector, StaticBytes, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaSocialMBRData, arc4BlockListKey, arc4VoteListKey, MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, arc4ImpactMetaValue, ImpactMetaValue, FollowsKey, BlockListKey, VoteListKey, ReactionsKey, ReactionListKey, Action } from './types'
-import { bytes16, bytes32, bytes4, CID, paddedBytes32 } from '../../../utils/types/base'
+import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, Global, GlobalState, gtxn, itxn, op, Txn, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Address, Contract, decodeArc4, DynamicArray, methodSelector, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { AkitaSocialMBRData, MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, arc4ImpactMetaValue, ImpactMetaValue, FollowsKey, BlockListKey, VoteListKey, ReactionsKey, ReactionListKey, Action } from './types'
+import { CID } from '../../../utils/types/base'
 import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA } from './constants'
 import { AbstractedAccount } from '../../account/contract.algo'
 import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn'
-import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_NFD, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NFD_CHANGED, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_A_SUBSCRIPTION, ERR_NOT_AN_AKITA_NFT, ERR_NOT_AN_NFD, ERR_NOT_DAO, ERR_NOT_YOUR_POST_TO_EDIT, ERR_PLUGIN_NOT_AUTH_ADDR, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFD, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
+import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_NFD, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NFD_CHANGED, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_A_SUBSCRIPTION, ERR_NOT_AKITA_DAO, ERR_NOT_AN_AKITA_NFT, ERR_NOT_AN_NFD, ERR_NOT_DAO, ERR_NOT_YOUR_POST_TO_EDIT, ERR_PLUGIN_NOT_AUTH_ADDR, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFD, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
 import { GateArgs } from '../../../utils/types/gates'
 import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { OptInPlugin } from '../optin/contract.algo'
 import { akitaSocialFee, gateCheck, getAccounts, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, getSpendingAccount, impactRange, rekeyAddress } from '../../../utils/functions'
-import { AkitaBaseEscrow, AkitaBaseContract } from '../../../utils/base-contracts/base'
+import { AkitaBaseEscrow } from '../../../utils/base-contracts/base'
 
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { NFD } from '../../../utils/types/nfd'
@@ -21,6 +21,7 @@ import { Staking } from '../../../staking/contract.algo'
 import { arc4StakeInfo, STAKING_TYPE_SOFT } from '../../../staking/types'
 import { Subscriptions } from '../../../subscriptions/contract.algo'
 import { fee } from '../../../utils/constants'
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../../../constants'
 
 export class AkitaSocialPlugin extends AkitaBaseEscrow {
 
@@ -29,21 +30,21 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
   /** Who follows who */
   follows = BoxMap<FollowsKey, Account>({ keyPrefix: AkitaSocialBoxPrefixFollows })
   /** All the blocks on the network */
-  blocks = BoxMap<BlockListKey, StaticBytes<0>>({ keyPrefix: AkitaSocialBoxPrefixBlocks })
+  blocks = BoxMap<BlockListKey, bytes<0>>({ keyPrefix: AkitaSocialBoxPrefixBlocks })
   /** All the posts on the network */
-  posts = BoxMap<StaticBytes<32>, PostValue>({ keyPrefix: AkitaSocialBoxPrefixPosts })
+  posts = BoxMap<bytes<32>, PostValue>({ keyPrefix: AkitaSocialBoxPrefixPosts })
   /** Counters for each post to track votes */
-  votes = BoxMap<StaticBytes<32>, VotesValue>({ keyPrefix: AkitaSocialBoxPrefixVotes })
+  votes = BoxMap<bytes<32>, VotesValue>({ keyPrefix: AkitaSocialBoxPrefixVotes })
   /** User votes and their impact */
   votelist = BoxMap<VoteListKey, VoteListValue>({ keyPrefix: AkitaSocialBoxPrefixVoteList })
   /** Counters for each post to track reactions */
   reactions = BoxMap<ReactionsKey, uint64>({ keyPrefix: AkitaSocialBoxPrefixReactions })
   /** Who has reacted to what */
-  reactionlist = BoxMap<ReactionListKey, StaticBytes<0>>({ keyPrefix: AkitaSocialBoxPrefixReactionList })
+  reactionlist = BoxMap<ReactionListKey, bytes<0>>({ keyPrefix: AkitaSocialBoxPrefixReactionList })
   /** The meta data for each user */
   meta = BoxMap<Account, MetaValue>({ keyPrefix: AkitaSocialBoxPrefixMeta })
   /** Who is a moderator */
-  moderators = BoxMap<Account, StaticBytes<0>>({ keyPrefix: AkitaSocialBoxPrefixModerators })
+  moderators = BoxMap<Account, bytes<0>>({ keyPrefix: AkitaSocialBoxPrefixModerators })
   /** Who is banned and when they can return */
   banned = BoxMap<Account, uint64>({ keyPrefix: AkitaSocialBoxPrefixBanned })
   /** Actions usable on an akita post */
@@ -102,11 +103,29 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     return this.banned(account).exists && this.banned(account).value > Global.latestTimestamp
   }
 
+  // creates a blocklist key
+  private blk(userAddress: Account, blockedAddress: Account): BlockListKey {
+    const user = userAddress.bytes.slice(0, 16).toFixed({ length: 16 })
+    const blocked = blockedAddress.bytes.slice(0, 16).toFixed({ length: 16 })
+    return { user, blocked }
+  }
+
+  // creates a reactionlist key
+  private rlk(user: Account, ref: bytes<32>, NFT: uint64): ReactionListKey {
+    const userKey = user.bytes.slice(0, 16).toFixed({ length: 16 })
+    const refKey = ref.slice(0, 16).toFixed({ length: 16 })
+    return { user: userKey, ref: refKey, NFT }
+  }
+
+  // creates a votelist key
+  private vlk(account: Account, r: bytes<32>): VoteListKey {
+    const user = account.bytes.slice(0, 16).toFixed({ length: 16 })
+    const ref = r.slice(0, 16).toFixed({ length: 16 })
+    return { user, ref }
+  }
+
   private isBlocked(user: Account, blocked: Account): boolean {
-    const blocksKey = new arc4BlockListKey({
-      user: bytes16(user.bytes),
-      blocked: bytes16(blocked.bytes)
-    })
+    const blocksKey = this.blk(user, blocked)
     return this.blocks(blocksKey).exists
   }
 
@@ -134,8 +153,8 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     }
 
     // Calculate score based on userScore, capped at 100_000
-    if (this.votes(bytes32(account.bytes)).exists) {
-      const score = this.votes(bytes32(account.bytes)).value
+    if (this.votes(account.bytes).exists) {
+      const score = this.votes(account.bytes).value
 
       let impact: uint64 = (score.voteCount * 75) / 100_000
       if (impact > 75) {
@@ -181,7 +200,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
           getPluginAppList(this.akitaDAO.value).optin,
           true,
           new Address(sender),
-          bytes4(methodSelector(OptInPlugin.prototype.optInToAsset))
+          methodSelector(OptInPlugin.prototype.optInToAsset)
         ],
         fee,
       }
@@ -392,17 +411,10 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     submitGroup(mbrPayment, taxTxn, xferTxn)
   }
 
-  private voteListKey(account: Account, ref: StaticBytes<32>): arc4VoteListKey {
-    return new arc4VoteListKey({
-      user: bytes16(account.bytes),
-      ref: bytes16(ref.bytes),
-    })
-  }
-
-  private createEmptyPostIfNecessary(ref: StaticBytes<32>, creator: Account): void {
+  private createEmptyPostIfNecessary(ref: bytes<32>, creator: Account): void {
     if (!this.posts(ref).exists) {
       this.posts(ref).value = {
-        ref: ref.native,
+        ref,
         /**
          * when a user reacts to content other than posts
          * we set the creator to the following:
@@ -451,7 +463,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     // otherwise do nothing, streak can only increment once per window (24 hours)
   }
 
-  private calcVotes(ref: StaticBytes<32>, isUp: boolean, impact: uint64): { newCount: uint64; isNegative: boolean } {
+  private calcVotes(ref: bytes<32>, isUp: boolean, impact: uint64): { newCount: uint64; isNegative: boolean } {
     if (!this.votes(ref).exists) {
       return { newCount: impact, isNegative: false }
     }
@@ -472,13 +484,13 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     return { newCount, isNegative }
   }
 
-  private updateVotes(ref: StaticBytes<32>, isUp: boolean, impact: uint64): void {
+  private updateVotes(ref: bytes<32>, isUp: boolean, impact: uint64): void {
     const { newCount: voteCount, isNegative } = this.calcVotes(ref, isUp, impact)
     this.votes(ref).value = { voteCount, isNegative }
   }
 
-  private createVoteList(ref: StaticBytes<32>, isUp: boolean, account: Account, impact: uint64): void {
-    const voteListKey = this.voteListKey(account, ref)
+  private createVoteList(ref: bytes<32>, isUp: boolean, account: Account, impact: uint64): void {
+    const voteListKey = this.vlk(account, ref)
     this.votelist(voteListKey).value = { impact, isUp }
   }
 
@@ -494,7 +506,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     const impact = this.getUserImpact(origin)
     const akta = getAkitaAssets(this.akitaDAO.value).akta
     const { postFee } = getSocialFees(this.akitaDAO.value)
-    const { posts, votes, votelist } = this.mbr(cid.bytes)
+    const { posts, votes, votelist } = this.mbr(cid)
 
     const mbrTxn = itxn.payment({
       sender,
@@ -514,9 +526,9 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
 
     submitGroup(mbrTxn, taxTxn)
 
-    const postID = bytes32(Txn.txId)
+    const postID = Txn.txId
     this.posts(postID).value = {
-      ref: cid.bytes,
+      ref: cid,
       creator: origin,
       timestamp: Global.latestTimestamp,
       gateID: gateID,
@@ -531,7 +543,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     wallet: Application,
     rekeyBack: boolean,
     cid: CID,
-    ref: StaticBytes<32>,
+    ref: bytes<32>,
     gateID: uint64,
     args: GateArgs,
     isAmendment: boolean
@@ -552,7 +564,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     // this way we guarantee the box exists
     this.updateStreak(origin)
 
-    const replyRef = cid.bytes.concat(ref.bytes)
+    const replyRef = cid.concat(ref)
     const creatorMeta = this.meta(post.creator).value
     const postCreatorImpact = this.getUserImpact(post.creator)
     const tax = akitaSocialFee(this.akitaDAO.value, postCreatorImpact)
@@ -576,7 +588,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       this.sendReactionPayments(wallet, rekeyBack, creatorOrigin, mbrAmount, tax)
     }
 
-    const replyPostID = bytes32(Txn.txId)
+    const replyPostID = Txn.txId
     const replyPost: PostValue = {
       ref: replyRef,
       creator: origin,
@@ -593,7 +605,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     this.createVoteList(replyPostID, true, origin, senderImpact)
   }
 
-  private createVote(wallet: Application, rekeyBack: boolean, ref: StaticBytes<32>, isUp: boolean): void {
+  private createVote(wallet: Application, rekeyBack: boolean, ref: bytes<32>, isUp: boolean): void {
     const { origin, sender } = getAccounts(wallet)
 
     assert(!this.isBanned(origin), ERR_BANNED)
@@ -602,7 +614,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     const post = this.posts(ref).value
     assert(!this.isBlocked(post.creator, origin), ERR_BLOCKED)
 
-    const voteListKey = this.voteListKey(origin, ref)
+    const voteListKey = this.vlk(origin, ref)
     assert(!this.votelist(voteListKey).exists, ERR_ALREADY_VOTED)
     assert(origin !== post.creator, ERR_NO_SELF_VOTE)
 
@@ -615,7 +627,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     // this way we guarantee the box exists
     this.updateStreak(origin)
     const { reactFee, impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
-    const { votelist: mbrAmount } = this.mbr(ref.bytes)
+    const { votelist: mbrAmount } = this.mbr(ref)
 
     if (isUp) {
       const creatorMeta = this.meta(post.creator).value
@@ -664,7 +676,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     this.createVoteList(ref, isUp, origin, senderImpact)
   }
 
-  private createReaction(wallet: Application, rekeyBack: boolean, ref: StaticBytes<32>, NFT: uint64, args: GateArgs): void {
+  private createReaction(wallet: Application, rekeyBack: boolean, ref: bytes<32>, NFT: uint64, args: GateArgs): void {
     const { origin, sender } = getAccounts(wallet)
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
@@ -677,7 +689,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       assert(gateCheck(this.akitaDAO.value, new Address(origin), post.gateID, args), ERR_FAILED_GATE)
     }
 
-    const reactionListKey: ReactionListKey = { user: bytes16(origin.bytes), ref: bytes16(ref.bytes), NFT }
+    const reactionListKey = this.rlk(origin, ref, NFT)
     assert(!this.reactionlist(reactionListKey).exists, ERR_ALREADY_REACTED)
 
     // update streak before we measure impact
@@ -689,7 +701,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     const { impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
     const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
     const akta = getAkitaAssets(this.akitaDAO.value).akta
-    const { reactions, reactionlist } = this.mbr(ref.bytes)
+    const { reactions, reactionlist } = this.mbr(ref)
 
     const reactionKey: ReactionsKey = { ref, NFT }
     const reactionExists = this.reactions(reactionKey).exists
@@ -720,7 +732,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(version: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, akitaDAO: uint64, escrow: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
     this.akitaDAOEscrow.value = Application(escrow)
@@ -732,7 +744,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     this.createPost(Application(walletID), rekeyBack, cid, gateID, false)
   }
 
-  editPost(walletID: uint64, rekeyBack: boolean, cid: CID, gateID: uint64, amendment: StaticBytes<32>): void {
+  editPost(walletID: uint64, rekeyBack: boolean, cid: CID, gateID: uint64, amendment: bytes<32>): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
     assert(this.posts(amendment).exists, ERR_POST_NOT_FOUND)
@@ -758,16 +770,16 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     this.createPost(Application(walletID), rekeyBack, cid, gateID, true)
   }
 
-  replyPost(walletID: uint64, rekeyBack: boolean, cid: CID, ref: StaticBytes<32>, gateID: uint64, args: GateArgs): void {
+  replyPost(walletID: uint64, rekeyBack: boolean, cid: CID, ref: bytes<32>, gateID: uint64, args: GateArgs): void {
     this.createReply(Application(walletID), rekeyBack, cid, ref, gateID, args, false)
   }
 
   replyAsset(walletID: uint64, rekeyBack: boolean, cid: CID, ref: uint64, gateID: uint64): void {
     assert(ref !== 0, ERR_INVALID_ASSET)
     assert(Asset(ref).total > 0, ERR_INVALID_ASSET)
-    const paddedRef = paddedBytes32(itob(ref))
+    const paddedRef = itob(ref).concat(op.bzero(24)).toFixed({ length: 32 })
     this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
-    this.createReply(Application(walletID), rekeyBack, cid, paddedRef, gateID, new DynamicArray<DynamicBytes>(), false)
+    this.createReply(Application(walletID), rekeyBack, cid, paddedRef, gateID, [], false)
   }
 
   replyAddress(walletID: uint64, rekeyBack: boolean, cid: CID, ref: Address, gateID: uint64, args: GateArgs): void {
@@ -780,17 +792,17 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       }
     }
 
-    const r = bytes32(ref.bytes)
+    const r = ref.native.bytes
     this.createEmptyPostIfNecessary(r, ref.native)
-    this.createReply(wallet, rekeyBack, cid, r, gateID, new DynamicArray<DynamicBytes>(), false)
+    this.createReply(wallet, rekeyBack, cid, r, gateID, [], false)
   }
 
   replyApp(walletID: uint64, rekeyBack: boolean, cid: CID, ref: uint64, gateID: uint64): void {
     assert(ref !== 0, ERR_INVALID_APP)
     assert(Application(ref).approvalProgram.length > 0, ERR_INVALID_APP)
-    const paddedRef = paddedBytes32(itob(ref))
+    const paddedRef = itob(ref).concat(op.bzero(24)).toFixed({ length: 32 })
     this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
-    this.createReply(Application(walletID), rekeyBack, cid, paddedRef, gateID, new DynamicArray<DynamicBytes>(), false)
+    this.createReply(Application(walletID), rekeyBack, cid, paddedRef, gateID, [], false)
   }
 
   editReply(
@@ -799,7 +811,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     cid: CID,
     gateID: uint64,
     args: GateArgs,
-    amendment: StaticBytes<32>
+    amendment: bytes<32>
   ): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -823,24 +835,24 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       })
       .submit()
 
-    const originalPostRef = bytes32(post.ref.slice(0, 32))
+    const originalPostRef = post.ref.slice(0, 32).toFixed({ length: 32 })
     this.createReply(wallet, rekeyBack, cid, originalPostRef, gateID, args, true)
   }
 
-  votePost(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>, isUp: boolean): void {
+  votePost(walletID: uint64, rekeyBack: boolean, ref: bytes<32>, isUp: boolean): void {
     this.createVote(Application(walletID), rekeyBack, ref, isUp)
   }
 
   voteAsset(walletID: uint64, rekeyBack: boolean, ref: uint64, isUp: boolean): void {
     assert(ref !== 0, ERR_INVALID_ASSET)
     assert(Asset(ref).total > 0, ERR_INVALID_ASSET)
-    const paddedRef = paddedBytes32(itob(ref))
+    const paddedRef = itob(ref).concat(op.bzero(24)).toFixed({ length: 32 })
     this.createEmptyPostIfNecessary(paddedRef, Asset(ref).creator)
     this.createVote(Application(walletID), rekeyBack, paddedRef, isUp)
   }
 
   voteAddress(walletID: uint64, rekeyBack: boolean, ref: Address, isUp: boolean): void {
-    const r = bytes32(ref.bytes)
+    const r = ref.native.bytes
     this.createEmptyPostIfNecessary(r, ref.native)
     this.createVote(Application(walletID), rekeyBack, r, isUp)
   }
@@ -848,14 +860,14 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
   voteApp(walletID: uint64, rekeyBack: boolean, ref: uint64, isUp: boolean): void {
     assert(ref !== 0, ERR_INVALID_APP)
     assert(Application(ref).approvalProgram.length > 0, ERR_INVALID_APP)
-    const paddedRef = paddedBytes32(itob(ref))
+    const paddedRef = itob(ref).concat(op.bzero(24)).toFixed({ length: 32 })
     this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
     this.createVote(Application(walletID), rekeyBack, paddedRef, isUp)
   }
 
-  editVote(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>, flip: boolean): void {
+  editVote(walletID: uint64, rekeyBack: boolean, ref: bytes<32>, flip: boolean): void {
     const senderAccount = getOriginAccount(Application(walletID))
-    const voteListKey = this.voteListKey(senderAccount, ref)
+    const voteListKey = this.vlk(senderAccount, ref)
     assert(this.votelist(voteListKey).exists, ERR_HAVENT_VOTED)
 
     const { impact, isUp } = this.votelist(voteListKey).value
@@ -872,16 +884,16 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     this.createVote(Application(walletID), rekeyBack, ref, !isUp)
   }
 
-  reactPost(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>, NFT: uint64, args: GateArgs): void {
+  reactPost(walletID: uint64, rekeyBack: boolean, ref: bytes<32>, NFT: uint64, args: GateArgs): void {
     this.createReaction(Application(walletID), rekeyBack, ref, NFT, args)
   }
 
   reactAsset(walletID: uint64, rekeyBack: boolean, ref: uint64, NFT: uint64): void {
     assert(ref !== 0, ERR_INVALID_ASSET)
     assert(Asset(ref).total > 0, ERR_INVALID_ASSET)
-    const paddedRef = paddedBytes32(itob(ref))
+    const paddedRef = itob(ref).concat(op.bzero(24)).toFixed({ length: 32 })
     this.createEmptyPostIfNecessary(paddedRef, Asset(ref).creator)
-    this.createReaction(Application(walletID), rekeyBack, paddedRef, NFT, new DynamicArray<DynamicBytes>())
+    this.createReaction(Application(walletID), rekeyBack, paddedRef, NFT, [])
   }
 
   reactAddress(walletID: uint64, rekeyBack: boolean, ref: Address, NFT: uint64, args: GateArgs): void {
@@ -895,20 +907,20 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       }
     }
 
-    const r = bytes32(ref.bytes)
+    const r = ref.native.bytes
     this.createEmptyPostIfNecessary(r, ref.native)
-    this.createReaction(wallet, rekeyBack, r, NFT, new DynamicArray<DynamicBytes>())
+    this.createReaction(wallet, rekeyBack, r, NFT, [])
   }
 
   reactApp(walletID: uint64, rekeyBack: boolean, ref: uint64, NFT: uint64): void {
     assert(ref !== 0, ERR_INVALID_APP)
     assert(Application(ref).approvalProgram.length > 0, ERR_INVALID_APP)
-    const paddedRef = paddedBytes32(itob(ref))
+    const paddedRef = itob(ref).concat(op.bzero(24)).toFixed({ length: 32 })
     this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
-    this.createReaction(Application(walletID), rekeyBack, paddedRef, NFT, new DynamicArray<DynamicBytes>())
+    this.createReaction(Application(walletID), rekeyBack, paddedRef, NFT, [])
   }
 
-  deleteReaction(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>, NFT: uint64): void {
+  deleteReaction(walletID: uint64, rekeyBack: boolean, ref: bytes<32>, NFT: uint64): void {
     const wallet = Application(walletID)
     const { origin, sender } = getAccounts(wallet)
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
@@ -917,7 +929,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     const post = this.posts(ref).value
     assert(!this.isBlocked(post.creator, origin), ERR_BLOCKED)
 
-    const reactionListKey: ReactionListKey = { user: bytes16(origin.bytes), ref: bytes16(ref.bytes), NFT }
+    const reactionListKey = this.rlk(origin, ref, NFT)
     assert(this.reactionlist(reactionListKey).exists, ERR_ALREADY_REACTED)
 
     this.reactions({ ref, NFT }).value -= 1
@@ -1012,10 +1024,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.isBanned(origin), ERR_BANNED)
 
-    const blocksKey = new arc4BlockListKey({
-      user: bytes16(origin.bytes),
-      blocked: bytes16(address.bytes),
-    })
+    const blocksKey = this.blk(origin, address.native)
     this.blocks(blocksKey).create()
 
     itxn
@@ -1035,10 +1044,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
     assert(!this.isBanned(origin), ERR_BANNED)
 
-    const blocksKey: BlockListKey = {
-      user: bytes16(origin.bytes),
-      blocked: bytes16(address.bytes),
-    }
+    const blocksKey = this.blk(origin, address.native)
     this.blocks(blocksKey).delete()
 
     itxn
@@ -1115,7 +1121,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
       .submit()
   }
 
-  flagPost(walletID: uint64, rekeyBack: boolean, ref: StaticBytes<32>): void {
+  flagPost(walletID: uint64, rekeyBack: boolean, ref: bytes<32>): void {
     const wallet = Application(walletID)
     const { origin, sender } = getAccounts(wallet)
     assert(this.controls(sender), ERR_PLUGIN_NOT_AUTH_ADDR)
@@ -1288,7 +1294,14 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
 }
 
 
-export class AkitaSocialImpact extends AkitaBaseContract {
+export class AkitaSocialImpact extends Contract {
+
+  // GLOBAL STATE ---------------------------------------------------------------------------------
+
+  /** the current version of the contract */
+  version = GlobalState<string>({ key: GlobalStateKeyVersion })
+  /** the app ID of the Akita DAO */
+  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
 
   // BOXES ----------------------------------------------------------------------------------------    
 
@@ -1572,12 +1585,23 @@ export class AkitaSocialImpact extends AkitaBaseContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  createApplication(akitaDAO: uint64, version: string): void {
+  create(akitaDAO: uint64, version: string): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
   }
 
+  @abimethod({ allowActions: ['UpdateApplication'] })
+  update(newVersion: string): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.version.value = newVersion
+  }
+
   // IMPACT METHODS -------------------------------------------------------------------------------
+
+  updateAkitaDAO(app: uint64): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.akitaDAO.value = Application(app)
+  }
 
   cacheMeta(subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64): uint64 {
     if (subscriptionIndex !== 0) {

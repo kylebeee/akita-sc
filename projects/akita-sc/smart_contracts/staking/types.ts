@@ -30,90 +30,90 @@ export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
 export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
 
 export type StakeKey = {
-    address: Address
-    asset: uint64
-    type: StakingType
+  address: Address
+  asset: uint64
+  type: StakingType
 }
 
 export class arc4StakeKey extends arc4.Struct<{
-    address: Address
-    asset: arc4.UintN64
-    type: StakingType
-}> {}
+  address: Address
+  asset: arc4.UintN64
+  type: StakingType
+}> { }
 
 export type Stake = {
-    amount: uint64
-    lastUpdate: uint64
-    expiration: uint64
+  amount: uint64
+  lastUpdate: uint64
+  expiration: uint64
 }
 
 export class arc4Stake extends arc4.Struct<{
-    amount: arc4.UintN64
-    lastUpdate: arc4.UintN64
-    expiration: arc4.UintN64
-}> {}
+  amount: arc4.UintN64
+  lastUpdate: arc4.UintN64
+  expiration: arc4.UintN64
+}> { }
 
 export type Escrow = {
-    hard: uint64
-    lock: uint64
+  hard: uint64
+  lock: uint64
 }
 
 export class arc4Escrow extends arc4.Struct<{
-    hard: arc4.UintN64
-    lock: arc4.UintN64
-}> {}
+  hard: arc4.UintN64
+  lock: arc4.UintN64
+}> { }
 
 export type HeartbeatKey = {
-    address: Address
-    asset: uint64
+  address: Address
+  asset: uint64
 }
 
 export class arc4HeartbeatKey extends arc4.Struct<{
-    address: Address
-    asset: arc4.UintN64
-}> {}
+  address: Address
+  asset: arc4.UintN64
+}> { }
 
 export type Heartbeat = {
-    held: uint64
-    hard: uint64
-    lock: uint64
-    timestamp: uint64
+  held: uint64
+  hard: uint64
+  lock: uint64
+  timestamp: uint64
 }
 
 export type Heartbeats = Heartbeat[]
 
 export class arc4Heartbeat extends arc4.Struct<{
-    held: arc4.UintN64
-    hard: arc4.UintN64
-    lock: arc4.UintN64
-    timestamp: arc4.UintN64
-}> {}
+  held: arc4.UintN64
+  hard: arc4.UintN64
+  lock: arc4.UintN64
+  timestamp: arc4.UintN64
+}> { }
 
 export type arc4Heartbeats = arc4.StaticArray<arc4Heartbeat, 4>
 
 export type StakeInfo = {
-    asset: uint64
-    type: StakingType
+  asset: uint64
+  type: StakingType
 }
 
 export class arc4StakeInfo extends arc4.Struct<{
-    asset: arc4.UintN64
-    type: StakingType
-}> {}
+  asset: arc4.UintN64
+  type: StakingType
+}> { }
 
 export type AssetCheck = {
-    asset: uint64
-    amount: uint64
+  asset: uint64
+  amount: uint64
 }
 
 export class arc4AssetCheck extends arc4.Struct<{
-    asset: arc4.UintN64
-    amount: arc4.UintN64
-}> {}
+  asset: arc4.UintN64
+  amount: arc4.UintN64
+}> { }
 
 export type AssetChecks = DynamicArray<arc4AssetCheck>
 
 export type StakingMBRData = {
-    stakes: uint64
-    heartbeats: uint64
+  stakes: uint64
+  heartbeats: uint64
 }

@@ -47,7 +47,7 @@ describe('Rekeying Test', () => {
       algorand,
     })
 
-    const results = await minterFactory.send.create.createApplication({
+    const results = await minterFactory.send.create.create({
       args: {
         akitaDao: 0,
         version: '1',
@@ -56,6 +56,8 @@ describe('Rekeying Test', () => {
         revocationApp: 0,
       },
     })
+
+    await results.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
 
     const abstractedAccountFactoryClient = results.appClient
 
