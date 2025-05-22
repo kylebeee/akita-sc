@@ -16,22 +16,18 @@ import {
 import { abiCall, abimethod, Address, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GateBoxPrefixAppRegistry, GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
 import { AND, arc4GateFilter, arc4GateFilterEntry, OR } from './types'
-import { GateArgs } from '../utils/types/gates'
+import { GateArgs, GateInterface } from '../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { MockGate } from './mock-gate'
 import { BaseGate } from './base'
 import { fee } from '../utils/constants'
-import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../constants'
-import { ERR_NOT_AKITA_DAO } from '../errors'
+import { classes } from 'polytype'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
-export class Gate extends BaseGate {
+export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
-
-  /** the current version of the contract */
-  version = GlobalState<string>({ key: GlobalStateKeyVersion })
-  /** the app ID of the Akita DAO */
-  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+  
   /** the id cursor for gates */
   gateCursor = GlobalState<uint64>({ key: GateGlobalStateKeyCursor })
 
@@ -122,18 +118,7 @@ export class Gate extends BaseGate {
     this.gateCursor.value = 0
   }
 
-  @abimethod({ allowActions: ['UpdateApplication'] })
-  update(newVersion: string): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.version.value = newVersion
-  }
-
   // GATE METHODS ---------------------------------------------------------------------------------
-
-  updateAkitaDAO(app: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAO.value = Application(app)
-  }
 
   register(payment: gtxn.PaymentTxn, filters: arc4.DynamicArray<arc4GateFilter>, args: GateArgs): arc4.UintN64 {
 

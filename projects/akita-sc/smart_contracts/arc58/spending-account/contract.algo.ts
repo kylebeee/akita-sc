@@ -3,8 +3,9 @@ import { ERR_INVALID_PAYMENT, ERR_ONLY_CREATOR_CAN_REKEY, ERR_ONLY_FACTORY_CAN_D
 import { abimethod, Address } from "@algorandfoundation/algorand-typescript/arc4"
 import { SpendingAccountGlobalStateKeyPluginID, SpendingAccountGlobalStateKeyWalletID } from "./constants";
 import { fee } from '../../utils/constants'
+import { SpendingAccountInterface } from "../../utils/types/spend-accounts";
  
-export class SpendingAccountContract extends Contract {
+export class SpendingAccountContract extends Contract implements SpendingAccountInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 

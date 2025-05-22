@@ -38,19 +38,14 @@ export class ImpactGate extends AkitaBaseContract {
 
   private impactGate(user: Address, op: Operator, value: uint64): boolean {
 
-    const encodedImpact = itxn
-      .applicationCall({
+    const impact = abiCall(
+      AkitaSocialImpact.prototype.getUserImpact,
+      {
         appId: getPluginAppList(this.akitaDAO.value).impact,
-        appArgs: [
-          methodSelector(AkitaSocialImpact.prototype.getUserImpact),
-          user
-        ],
+        args: [user],
         fee,
-      })
-      .submit()
-      .lastLog
-
-    const impact = btoi(encodedImpact)
+      }
+    ).returnValue
 
     if (op === Equal) {
       return impact === value

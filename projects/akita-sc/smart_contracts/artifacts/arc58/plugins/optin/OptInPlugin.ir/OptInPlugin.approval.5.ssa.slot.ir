@@ -1,0 +1,108 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@2 : block@6
+    block@2: // abi_routing_L7
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "optInToAsset(uint64,bool,uint64[],pay)void" => block@3, * => block@10}
+    block@3: // optInToAsset_route_L9
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        (assert tmp%5#0) // can only call when not creating
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%7#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let reinterpret_bytes[1]%0#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%8#0: bool = (getbit reinterpret_bytes[1]%0#0 0u)
+        let reinterpret_encoded_uint64[]%0#0: encoded_uint64[] = (txna ApplicationArgs 3)
+        let tmp%9#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%9#0 1u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.optInToAsset(tmp%7#0, tmp%8#0, reinterpret_encoded_uint64[]%0#0, gtxn_idx%0#0)
+        let smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.__puya_arc4_router__%0#0: bool = 1u
+        goto block@11
+    block@6: // bare_routing_L7
+        let tmp%10#0: uint64 = (txn OnCompletion)
+        goto tmp%10#0 ? block@10 : block@7
+    block@7: // __algots__.defaultCreate_L7
+        let tmp%11#0: uint64 = (txn ApplicationID)
+        let tmp%12#0: bool = (! tmp%11#0)
+        (assert tmp%12#0) // can only call when creating
+        let smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.__puya_arc4_router__%0#1: bool = 1u
+        goto block@11
+    block@10: // after_if_else_L7
+        let smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.__puya_arc4_router__%0#2: bool = 0u
+        goto block@11
+    block@11: // after_inlined_smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.__puya_arc4_router__%0#0 <- block@3, smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.__puya_arc4_router__%0#1 <- block@7, smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.__puya_arc4_router__%0#2 <- block@10)
+        return tmp%0#0
+
+subroutine smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.optInToAsset(walletID: uint64, rekeyBack: bool, assets: encoded_uint64[], mbrPayment: uint64) -> void:
+    block@0: // L9
+        let (spendingAddressBytes#1: bytes, _#2: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let tmp%0#0: bytes[32] = ((gtxns Receiver) mbrPayment#0)
+        let tmp%1#0: bool = (== tmp%0#0 spendingAddressBytes#1)
+        goto tmp%1#0 ? block@1 : block@3
+    block@1: // and_contd_L13
+        let tmp%2#0: uint64 = ((gtxns Amount) mbrPayment#0)
+        let tmp%3#0: uint64 = (global AssetOptInMinBalance)
+        let tmp%4#0: uint64 = (extract_uint16 assets#0 0u)
+        let tmp%5#0: uint64 = (* tmp%3#0 tmp%4#0)
+        let tmp%6#0: bool = (== tmp%2#0 tmp%5#0)
+        goto tmp%6#0 ? block@2 : block@3
+    block@2: // bool_true_L13
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L13
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L13
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        let i#0: uint64 = 0u
+        goto block@5
+    block@5: // while_top_L22
+        let i#1: uint64 = φ(i#0 <- block@4, i#2 <- block@14)
+        let tmp%7#0: uint64 = (extract_uint16 assets#0 0u)
+        let tmp%8#0: bool = (< i#1 tmp%7#0)
+        goto tmp%8#0 ? block@6 : block@8
+    block@6: // while_body_L22
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) assets#0)
+        let item_offset%0#0: uint64 = (* i#1 8u)
+        let tmp%9#0: uint64 = (extract_uint64 array_head_and_tail%0#0 item_offset%0#0)
+        let (tmp%10#0: uint64, tmp%11#0: bool) = ((asset_holding_get AssetBalance) spendingAddressBytes#1 tmp%9#0)
+        let tmp%12#0: bool = (! tmp%11#0)
+        (assert tmp%12#0) // already opted in
+        itxn_begin
+        goto rekeyBack#0 ? block@11 : block@10
+    block@10: // if_body_L167
+        let tmp%0#1: bytes[32] = (global ZeroAddress)
+        goto block@14
+    block@11: // after_if_else_L167
+        let (controlledAccountBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "controlled_address")
+        let (spendingAddressBytes#0: bytes, _#1: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (walletAddress#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) walletID#0)
+        (assert check%0#0) // application exists
+        let tmp%1#1: bool = (!= spendingAddressBytes#0 controlledAccountBytes#0)
+        goto tmp%1#1 ? block@12 : block@13
+    block@12: // if_body_L172
+        goto block@14
+    block@13: // after_if_else_L172
+        goto block@14
+    block@14: // after_inlined_smart_contracts/utils/functions.ts::rekeyAddress_L22
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = φ(tmp%0#1 <- block@10, spendingAddressBytes#0 <- block@12, walletAddress#0 <- block@13)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field XferAsset) tmp%9#0)
+        ((itxn_field AssetAmount) 0u)
+        ((itxn_field AssetReceiver) spendingAddressBytes#1)
+        ((itxn_field Sender) spendingAddressBytes#1)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let i#2: uint64 = (+ i#1 1u)
+        goto block@5
+    block@8: // after_while_L22
+        return 

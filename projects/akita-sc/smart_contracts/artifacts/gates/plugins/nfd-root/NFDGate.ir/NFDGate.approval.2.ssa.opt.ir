@@ -1,0 +1,227 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@2 : block@11
+    block@2: // abi_routing_L13
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(string,uint64)void" => block@3, method "register(byte[])uint64" => block@4, method "check(byte[])bool" => block@5, method "update(string)void" => block@6, method "updateAkitaDAO(uint64)void" => block@7, * => block@11}
+    block@3: // create_route_L68
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let tmp%7#0: bytes = (txna ApplicationArgs 1)
+        let tmp%8#0: bytes = ((extract 2 0) tmp%7#0)
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%9#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.create(tmp%8#0, tmp%9#0)
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#0: bool = 1u
+        goto block@12
+    block@4: // register_route_L77
+        let tmp%10#0: uint64 = (txn OnCompletion)
+        let tmp%11#0: bool = (! tmp%10#0)
+        (assert tmp%11#0) // OnCompletion is not NoOp
+        let tmp%12#0: uint64 = (txn ApplicationID)
+        (assert tmp%12#0) // can only call when not creating
+        let tmp%14#0: bytes = (txna ApplicationArgs 1)
+        let tmp%15#0: bytes = ((extract 2 0) tmp%14#0)
+        let to_encode%0#0: uint64 = smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.register(tmp%15#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%16#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%16#0)
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#1: bool = 1u
+        goto block@12
+    block@5: // check_route_L84
+        let tmp%17#0: uint64 = (txn OnCompletion)
+        let tmp%18#0: bool = (! tmp%17#0)
+        (assert tmp%18#0) // OnCompletion is not NoOp
+        let tmp%19#0: uint64 = (txn ApplicationID)
+        (assert tmp%19#0) // can only call when not creating
+        let tmp%21#0: bytes = (txna ApplicationArgs 1)
+        let tmp%22#0: bytes = ((extract 2 0) tmp%21#0)
+        let to_encode%1#0: bool = smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.check(tmp%22#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u to_encode%1#0)
+        let tmp%23#0: bytes = (concat 0x151f7c75 encoded_bool%0#0)
+        (log tmp%23#0)
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#2: bool = 1u
+        goto block@12
+    block@6: // update_route_L19
+        let tmp%24#0: uint64 = (txn OnCompletion)
+        let tmp%25#0: bool = (== tmp%24#0 UpdateApplication)
+        (assert tmp%25#0) // OnCompletion is not UpdateApplication
+        let tmp%26#0: uint64 = (txn ApplicationID)
+        (assert tmp%26#0) // can only call when not creating
+        let tmp%28#0: bytes = (txna ApplicationArgs 1)
+        let tmp%29#0: bytes = ((extract 2 0) tmp%28#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(tmp%29#0)
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#3: bool = 1u
+        goto block@12
+    block@7: // updateAkitaDAO_route_L27
+        let tmp%30#0: uint64 = (txn OnCompletion)
+        let tmp%31#0: bool = (! tmp%30#0)
+        (assert tmp%31#0) // OnCompletion is not NoOp
+        let tmp%32#0: uint64 = (txn ApplicationID)
+        (assert tmp%32#0) // can only call when not creating
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%34#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(tmp%34#0)
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#4: bool = 1u
+        goto block@12
+    block@11: // after_if_else_L13
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#5: bool = 0u
+        goto block@12
+    block@12: // after_inlined_smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#0 <- block@3, smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#1 <- block@4, smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#2 <- block@5, smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#3 <- block@6, smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#4 <- block@7, smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.__puya_arc4_router__%0#5 <- block@11)
+        return tmp%0#0
+
+subroutine smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.create(version: bytes, akitaDAO: uint64) -> void:
+    block@0: // L68
+        (app_global_put "version" version#0)
+        (app_global_put "akita_dao" akitaDAO#0)
+        (app_global_put "registry_cursor" 0u)
+        return 
+
+subroutine smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.register(args: bytes) -> uint64:
+    block@0: // L77
+        let (id#1: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "registry_cursor")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let materialized_values%0#0: uint64 = (+ id#1 1u)
+        (app_global_put "registry_cursor" materialized_values%0#0)
+        let encoded_value%0#0: bytes[8] = (itob id#1)
+        (box_del encoded_value%0#0)
+        (box_put encoded_value%0#0 args#0)
+        return id#1
+
+subroutine smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.check(args: bytes) -> bool:
+    block@0: // L84
+        let tmp%0#0: uint64 = (len args#0)
+        let tmp%1#0: bool = (== tmp%0#0 48u)
+        (assert tmp%1#0) // Invalid number of arguments
+        let materialized_values%0#0: uint64 = (extract_uint64 args#0 32u)
+        let encoded_value%0#0: bytes[8] = (itob materialized_values%0#0)
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (box_get encoded_value%0#0)
+        (assert maybe_exists%0#0) // Box must have value
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 0u)
+        let item_end_offset%0#0: uint64 = (len maybe_value%0#0)
+        let root#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let user#0: bytes[32] = ((extract 0 32) args#0) // on error: Index access is out of bounds
+        let appID#0: uint64 = (extract_uint64 args#0 40u)
+        let (nfdName#0: bytes, _#0: bool) = (app_global_get_ex appID#0 "i.name")
+        let (_₁#0: bytes, parentExists#0: bool) = (app_global_get_ex appID#0 "i.parentAppID")
+        goto parentExists#0 ? block@2 : block@4
+    block@2: // and_contd_L35
+        let length%0#0: uint64 = (len nfdName#0)
+        let tmp%1#1: uint64 = (len root#0)
+        let tmp%2#1: uint64 = (+ tmp%1#1 5u)
+        let tmp%3#1: uint64 = (- length%0#0 tmp%2#1)
+        let is_out_of_bounds%0#0: bool = (>= tmp%3#1 length%0#0)
+        let bounded_index%0#0: uint64 = (select tmp%3#1 length%0#0 is_out_of_bounds%0#0)
+        let tmp%5#1: uint64 = (- length%0#0 5u)
+        let is_out_of_bounds%1#0: bool = (>= tmp%5#1 length%0#0)
+        let bounded_index%1#0: uint64 = (select tmp%5#1 length%0#0 is_out_of_bounds%1#0)
+        let end_before_start%0#0: bool = (< bounded_index%1#0 bounded_index%0#0)
+        let end%0#0: uint64 = (select bounded_index%1#0 bounded_index%0#0 end_before_start%0#0)
+        let tmp%6#1: bytes = (substring3 nfdName#0 bounded_index%0#0 end%0#0)
+        let tmp%7#0: bool = (!= root#0 tmp%6#1)
+        goto tmp%7#0 ? block@3 : block@4
+    block@3: // if_body_L35
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.nfdGate%0#0: bool = 0u
+        goto block@12
+    block@4: // after_if_else_L35
+        itxn_begin
+        let (akitaDAO#0: uint64, maybe_exists%0#1: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#1) // check GlobalState exists
+        let (otherAppListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "other_al")
+        let item1%1#0: uint64 = (extract_uint64 otherAppListBytes#0 8u)
+        let length%1#0: uint64 = (len nfdName#0)
+        let as_bytes%0#0: bytes[8] = (itob length%1#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#1: bytes = (concat length_uint16%0#0 nfdName#0)
+        let val_as_bytes%0#0: bytes[8] = (itob appID#0)
+        ((itxn_field ApplicationArgs) method "isValidNfdAppId(string,uint64)bool")
+        ((itxn_field ApplicationArgs) encoded_value%0#1)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationID) item1%1#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%11#0: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%12#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%13#0: bool = (== tmp%12#0 0x151f7c75)
+        (assert tmp%13#0) // Bytes has valid prefix
+        let verified#0: bool = (getbit tmp%11#0 0u)
+        goto verified#0 ? block@6 : block@5
+    block@5: // if_body_L45
+        let smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.nfdGate%0#1: bool = 0u
+        goto block@12
+    block@6: // after_if_else_L45
+        itxn_begin
+        ((itxn_field ApplicationArgs) method "readField(byte[])byte[]")
+        ((itxn_field ApplicationArgs) 0x000d762e6361416c676f2e302e6173)
+        ((itxn_field ApplicationID) appID#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%1#0: bytes = (itxn LastLog)
+        let tmp%16#0: bytes = ((extract 0 4) awst_tmp%1#0)
+        let tmp%17#0: bool = (== tmp%16#0 0x151f7c75)
+        (assert tmp%17#0) // Bytes has valid prefix
+        let caAlgoData#0: bytes = ((extract 6 0) awst_tmp%1#0)
+        let exists#0: bool = 0u
+        let i#0: uint64 = 0u
+        goto block@7
+    block@7: // while_top_L56
+        let i#1: uint64 = φ(i#0 <- block@6, i#3 <- block@10)
+        let exists#2: bool = φ(exists#0 <- block@6, exists#3 <- block@10)
+        let tmp%19#0: uint64 = (len caAlgoData#0)
+        let tmp%20#0: bool = (< i#1 tmp%19#0)
+        goto tmp%20#0 ? block@8 : block@11
+    block@8: // while_body_L56
+        let is_out_of_bounds%2#0: bool = (>= i#1 tmp%19#0)
+        let bounded_index%2#0: uint64 = (select i#1 tmp%19#0 is_out_of_bounds%2#0)
+        let is_out_of_bounds%3#0: bool = (>= 32u tmp%19#0)
+        let bounded_index%3#0: uint64 = (select 32u tmp%19#0 is_out_of_bounds%3#0)
+        let end_before_start%1#0: bool = (< bounded_index%3#0 bounded_index%2#0)
+        let end%1#0: uint64 = (select bounded_index%3#0 bounded_index%2#0 end_before_start%1#0)
+        let addr#0: bytes = (substring3 caAlgoData#0 bounded_index%2#0 end%1#0)
+        let tmp%21#0: bool = (== addr#0 user#0)
+        goto tmp%21#0 ? block@9 : block@10
+    block@9: // if_body_L58
+        let exists#1: bool = 1u
+        goto block@10
+    block@10: // after_if_else_L58
+        let exists#3: bool = φ(exists#2 <- block@8, exists#1 <- block@9)
+        let i#3: uint64 = (+ i#1 32u)
+        goto block@7
+    block@11: // after_while_L56
+        goto block@12
+    block@12: // after_inlined_smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.nfdGate_L84
+        let tmp%6#0: bool = φ(smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.nfdGate%0#0 <- block@3, smart_contracts/gates/plugins/nfd-root/contract.algo.ts::NFDGate.nfdGate%0#1 <- block@5, exists#2 <- block@11)
+        return tmp%6#0
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+    block@0: // L19
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L27
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 

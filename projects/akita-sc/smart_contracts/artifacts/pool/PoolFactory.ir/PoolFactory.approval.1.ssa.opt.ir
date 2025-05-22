@@ -1,0 +1,289 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let reinterpret_bool%0#0: bool = (txn ApplicationID)
+        goto reinterpret_bool%0#0 ? block@2 : block@1
+    block@1: // if_body_L1
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        goto block@2
+    block@2: // after_if_else_L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        let tmp%1#0: bool = (!= tmp%0#1 0u)
+        goto tmp%0#1 ? block@4 : block@14
+    block@4: // abi_routing_L15
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(string,string,uint64,uint64)void" => block@5, method "newPool(pay,string,uint8,(uint64,uint8,uint64,uint64,uint64),address,(address,string),uint64,uint64,uint64)uint64" => block@6, method "optin(pay,uint64)void" => block@7, method "updateApplication(string,string)void" => block@8, method "updateAkitaDAO(uint64)void" => block@9, method "mbr()(uint64,uint64,uint64)" => block@10, * => block@14}
+    block@5: // create_route_L25
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let tmp%7#0: bytes = (txna ApplicationArgs 1)
+        let tmp%8#0: bytes = ((extract 2 0) tmp%7#0)
+        let tmp%9#0: bytes = (txna ApplicationArgs 2)
+        let tmp%10#0: bytes = ((extract 2 0) tmp%9#0)
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%11#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%12#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        smart_contracts/pool/factory.algo.ts::PoolFactory.create(tmp%8#0, tmp%10#0, tmp%11#0, tmp%12#0)
+        let smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#0: bool = 1u
+        goto block@15
+    block@6: // newPool_route_L35
+        let tmp%13#0: uint64 = (txn OnCompletion)
+        let tmp%14#0: bool = (! tmp%13#0)
+        (assert tmp%14#0) // OnCompletion is not NoOp
+        let tmp%15#0: uint64 = (txn ApplicationID)
+        let tmp%16#0: bool = (!= tmp%15#0 0u)
+        (assert tmp%15#0) // can only call when not creating
+        let tmp%17#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%17#0 1u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        let tmp%18#0: bytes = (txna ApplicationArgs 1)
+        let tmp%19#0: bytes = ((extract 2 0) tmp%18#0)
+        let reinterpret_bytes[1]%0#0: bytes[1] = (txna ApplicationArgs 2)
+        let reinterpret_bytes[33]%0#0: bytes[33] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 4)
+        let tmp%20#0: bytes = (txna ApplicationArgs 5)
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%21#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 7)
+        let tmp%22#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 8)
+        let tmp%23#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let to_encode%0#0: uint64 = smart_contracts/pool/factory.algo.ts::PoolFactory.newPool(gtxn_idx%0#0, tmp%19#0, reinterpret_bytes[1]%0#0, reinterpret_bytes[33]%0#0, reinterpret_bytes[32]%0#0, tmp%20#0, tmp%21#0, tmp%22#0, tmp%23#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%24#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%24#0)
+        let smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#1: bool = 1u
+        goto block@15
+    block@7: // optin_route_L22
+        let tmp%25#0: uint64 = (txn OnCompletion)
+        let tmp%26#0: bool = (! tmp%25#0)
+        (assert tmp%26#0) // OnCompletion is not NoOp
+        let tmp%27#0: uint64 = (txn ApplicationID)
+        let tmp%28#0: bool = (!= tmp%27#0 0u)
+        (assert tmp%27#0) // can only call when not creating
+        let tmp%29#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%1#0: uint64 = (- tmp%29#0 1u)
+        let gtxn_type%1#0: uint64 = ((gtxns TypeEnum) gtxn_idx%1#0)
+        let gtxn_type_matches%1#0: bool = (== gtxn_type%1#0 pay)
+        (assert gtxn_type_matches%1#0) // transaction type is pay
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%30#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(gtxn_idx%1#0, tmp%30#0)
+        let smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#2: bool = 1u
+        goto block@15
+    block@8: // updateApplication_route_L50
+        let tmp%31#0: uint64 = (txn OnCompletion)
+        let tmp%32#0: bool = (== tmp%31#0 UpdateApplication)
+        (assert tmp%32#0) // OnCompletion is not UpdateApplication
+        let tmp%33#0: uint64 = (txn ApplicationID)
+        let tmp%34#0: bool = (!= tmp%33#0 0u)
+        (assert tmp%33#0) // can only call when not creating
+        let tmp%35#0: bytes = (txna ApplicationArgs 1)
+        let tmp%36#0: bytes = ((extract 2 0) tmp%35#0)
+        let tmp%37#0: bytes = (txna ApplicationArgs 2)
+        let tmp%38#0: bytes = ((extract 2 0) tmp%37#0)
+        smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateApplication(tmp%36#0, tmp%38#0)
+        let smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#3: bool = 1u
+        goto block@15
+    block@9: // updateAkitaDAO_route_L59
+        let tmp%39#0: uint64 = (txn OnCompletion)
+        let tmp%40#0: bool = (! tmp%39#0)
+        (assert tmp%40#0) // OnCompletion is not NoOp
+        let tmp%41#0: uint64 = (txn ApplicationID)
+        let tmp%42#0: bool = (!= tmp%41#0 0u)
+        (assert tmp%41#0) // can only call when not creating
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%43#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateAkitaDAO(tmp%43#0)
+        let smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#4: bool = 1u
+        goto block@15
+    block@10: // mbr_route_L6
+        let tmp%44#0: uint64 = (txn OnCompletion)
+        let tmp%45#0: bool = (! tmp%44#0)
+        (assert tmp%45#0) // OnCompletion is not NoOp
+        let tmp%46#0: uint64 = (txn ApplicationID)
+        let tmp%47#0: bool = (!= tmp%46#0 0u)
+        (assert tmp%46#0) // can only call when not creating
+        let (elements_to_encode%0#0: uint64, elements_to_encode%1#0: uint64, elements_to_encode%2#0: uint64) = smart_contracts/pool/base.ts::BasePool.mbr()
+        let val_as_bytes%1#0: bytes[8] = (itob elements_to_encode%0#0)
+        let val_as_bytes%2#0: bytes[8] = (itob elements_to_encode%1#0)
+        let val_as_bytes%3#0: bytes[8] = (itob elements_to_encode%2#0)
+        let encoded_tuple_buffer%1#0: bytes = val_as_bytes%1#0
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%1#0 val_as_bytes%2#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 val_as_bytes%3#0)
+        let tmp%48#0: bytes = (concat 0x151f7c75 encoded_tuple_buffer%3#0)
+        (log tmp%48#0)
+        let smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#5: bool = 1u
+        goto block@15
+    block@14: // after_if_else_L15
+        let smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#6: bool = 0u
+        goto block@15
+    block@15: // after_inlined_smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#0 <- block@5, smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#1 <- block@6, smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#2 <- block@7, smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#3 <- block@8, smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#4 <- block@9, smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#5 <- block@10, smart_contracts/pool/factory.algo.ts::PoolFactory.__puya_arc4_router__%0#6 <- block@14)
+        return tmp%0#0
+
+subroutine smart_contracts/pool/factory.algo.ts::PoolFactory.create(version: bytes, childVersion: bytes, akitaDAO: uint64, escrow: uint64) -> void:
+    block@0: // L25
+        (app_global_put "version" version#0)
+        (app_global_put "child_contract_version" childVersion#0)
+        (app_global_put "akita_dao" akitaDAO#0)
+        (app_global_put "akita_escrow" escrow#0)
+        return 
+
+subroutine smart_contracts/pool/factory.algo.ts::PoolFactory.newPool(payment: uint64, title: bytes, type: bytes[1], reward: bytes[33], marketplace: bytes[32], stakeKey: bytes, minimumStakeAmount: uint64, gateID: uint64, maxEntries: uint64) -> uint64:
+    block@0: // L35
+        let tmp%0#0: bytes = ((extract 0 8) reward#0) // on error: Index access is out of bounds
+        let tmp%1#0: uint64 = (extract_uint64 reward#0 0u)
+        let isAlgoPayment#0: bool = (! tmp%1#0)
+        goto tmp%1#0 ? block@2 : block@1
+    block@1: // ternary_true_L48
+        let ternary_result%0#0: uint64 = (global AssetOptInMinBalance)
+        goto block@3
+    block@2: // ternary_false_L48
+        let tmp%2#0: uint64 = (global AssetOptInMinBalance)
+        let ternary_result%0#1: uint64 = (* tmp%2#0 2u)
+        goto block@3
+    block@3: // ternary_merge_L48
+        let optinMBR#0: uint64 = φ(ternary_result%0#0 <- block@1, ternary_result%0#1 <- block@2)
+        let childAppMBR#0: uint64 = (+ 100000u optinMBR#0)
+        let pool.approvalProgram.0#0: bytes = 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
+        let pool.approvalProgram.1#0: bytes = KGVEi/8IIiplRA1BAAsiKmVEIihlRAmM/yInCmVEixhMCowIJwuMACIoZUyMFUSLFYv/DEEAPosVFicMTFC+RElXACCMBCEEUykiTwJUIlNAABmLAFcCAIsIFosETFBQSRUlChZXBgJMUIwAixUjCIwVQv+6IihlRIv/CChMZyInCWVEixeLAIsYiPWaSCIqZUQiKGVEEkH9vScEJxVnKCJniYsGgAEDEkQiJw1lRCJZQAAEiPp7iTIKixdwAEiLGA9EIihlRIv/CCIqZUQNQQALIiplRCIoZUQJjP8iJw5lREmBCVtJTgKMGYEZW0mMGkyMCEEAB4sZixoKjAgiJw1lTElOAowHRCInG2VESSJbSU4CjB5JgQhbTIEQW4wPTwJXAgBJjAJPAoEIC1uMDScLjAAiKGVMjBNESYwMjBuLE4v/DEEA94sTSRYnDExQvkRJVwAgjARJJVtMIQRTKSJPAlQiU4wRiwxJTwIISU4CjAqLDUlPAg+LG4wcix6MH4sPjBCLAIwBTIwOi/+MFk8CjBRMjAtBATeLDUmLCklOAw6LG4wcix6MH4sPjBCLAIwBTIwOi/+MFosTjBRMjAtBAQ2LAIwBiw+MEIsRQAAfiwBXAgCLCBaLBExQUEkVJQoWVwYCTFCLDyMIjBCMAYsBjACLEIwPiwciWSMJix4SQQCaixqLDxNBADMoImeLDxaAEAAAAAAAAAAAAAAAAAAAAABMUCcbTGcnDScLZyInCWVEixeLAIsYiPPqSIkiKGVEi/8IKExnix4WixsWiw9JTgMWTgJQTFAnG0xnIicJZUSLF4sAixiI87tIixoSQfvkJwQnFWcoImcnG4AYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZycNJwtniYv/ixMJjP+LHiMISYEIC4sCTFsoImciRwKMHE8DjB+LD4wQiwCMAU8CjA6L/4wWjAuMFIscjBuLH4weixCMD4sBjACLDowNixaM/4sUiwsjCIwMIwiME0L+SCJC+h4iJwRlRCcVEkQiJwllRCIrZUQnBmVIgQhbsUwWgARUJKWRshpJshpMshgkshAisgGzgAFkTFAiuUgnCSJnJwQpZygiZycKImcnCCcTZ4mKAgKL/xaL/kxQgAFhTFC+RBeI8WqJIicIZUQpE0EAIDIHIicgZUQNQQAVMgciJxBlRAxAAAgiJxplREEAAiOJIokiJwhlRCkTQQAgMgciJxBlRA9BABUyByInEmVEDkAACCInEmVEQAACI4kiiSInCGVEIiccZUQiJwdlRCInDmVESSJbSwFXCAFLAoEJW0sDgRFbTwSBGVsiJyBlRCInGmVEIicQZUQiJxJlRCInGWVEIiplRCMIIoAMdG90YWxfc3Rha2VkZUQiJx1lRElXACBLAYEgWUsCFU8DTgJSVwIAIiceZUQiJw9lRCInGGVETxNPE08TTxNPE08TTxNPE08TTxJPE08TTxNPE08TTxNPE08TTxNPE4mKAQAxACIrZURyCEQSRIAHdmVyc2lvbov/Z4mKAQAxACIrZURyCEQSRCuL/2eJigIAMQAyCRJEi/44BzIKEkEAIYv+OAgyEBJBABcjRLEyCov/shEishKyFIEEshAisgGziSJC/+Y=
+        let pool.clearStateProgram.0#0: bytes = CoEBQw==
+        let pool.clearStateProgram.1#0: bytes = 
+        let pool.extraProgramPages#0: uint64 = 2u
+        let pool.globalUints#0: uint64 = 19u
+        let pool.globalBytes#0: uint64 = 12u
+        let pool.localUints#0: uint64 = 0u
+        let pool.localBytes#0: uint64 = 0u
+        let tmp%3#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%4#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%5#0: bool = (== tmp%3#0 tmp%4#0)
+        goto tmp%5#0 ? block@4 : block@6
+    block@4: // and_contd_L57
+        let tmp%6#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%7#0: uint64 = (* 28500u pool.globalUints#0)
+        let tmp%8#0: uint64 = (+ 400000u tmp%7#0)
+        let tmp%9#0: uint64 = (* 50000u pool.globalBytes#0)
+        let tmp%10#0: uint64 = (+ tmp%8#0 tmp%9#0)
+        let tmp%11#0: uint64 = (+ tmp%10#0 childAppMBR#0)
+        let tmp%12#0: uint64 = (+ tmp%11#0 21700u)
+        let tmp%13#0: bool = (== tmp%6#0 tmp%12#0)
+        goto tmp%13#0 ? block@5 : block@6
+    block@5: // bool_true_L57
+        let and_result%0#0: bool = 1u
+        goto block@7
+    block@6: // bool_false_L57
+        let and_result%0#1: bool = 0u
+        goto block@7
+    block@7: // bool_merge_L57
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@5, and_result%0#1 <- block@6)
+        (assert and_result%0#2) // assert target is match for conditions
+        itxn_begin
+        let length%0#0: uint64 = (len title#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 title#0)
+        let tmp%14#0: bytes[32] = (txn Sender)
+        let val_as_bytes%0#0: bytes[8] = (itob minimumStakeAmount#0)
+        let val_as_bytes%1#0: bytes[8] = (itob gateID#0)
+        let val_as_bytes%2#0: bytes[8] = (itob maxEntries#0)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let val_as_bytes%3#0: bytes[8] = (itob maybe_value%0#0)
+        ((itxn_field ApplicationArgs) method "create(string,uint8,(uint64,uint8,uint64,uint64,uint64),address,address,(address,string),uint64,uint64,uint64,uint64)void")
+        ((itxn_field ApplicationArgs) encoded_value%0#0)
+        ((itxn_field ApplicationArgs) type#0)
+        ((itxn_field ApplicationArgs) reward#0)
+        ((itxn_field ApplicationArgs) tmp%14#0)
+        ((itxn_field ApplicationArgs) marketplace#0)
+        ((itxn_field ApplicationArgs) stakeKey#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%1#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%2#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%3#0)
+        ((itxn_field ExtraProgramPages) pool.extraProgramPages#0)
+        ((itxn_field LocalNumUint) pool.localUints#0)
+        ((itxn_field LocalNumByteSlice) pool.localBytes#0)
+        ((itxn_field GlobalNumByteSlice) pool.globalBytes#0)
+        ((itxn_field GlobalNumUint) pool.globalUints#0)
+        ((itxn_field ClearStateProgramPages) pool.clearStateProgram.0#0)
+        ((itxn_field ClearStateProgramPages) pool.clearStateProgram.1#0)
+        ((itxn_field ApprovalProgramPages) pool.approvalProgram.0#0)
+        ((itxn_field ApprovalProgramPages) pool.approvalProgram.1#0)
+        ((itxn_field OnCompletion) 0u)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let newPoolApp#0: uint64 = (gitxn 0 CreatedApplicationID)
+        return newPoolApp#0
+
+subroutine smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(payment: uint64, asset: uint64) -> void:
+    block@0: // L22
+        let tmp%0#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        goto tmp%2#0 ? block@1 : block@3
+    block@1: // and_contd_L24
+        let tmp%3#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%4#0: uint64 = (global AssetOptInMinBalance)
+        let tmp%5#0: bool = (== tmp%3#0 tmp%4#0)
+        goto tmp%5#0 ? block@2 : block@3
+    block@2: // bool_true_L24
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L24
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L24
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        itxn_begin
+        let inner_txn_params%0%%param_AssetReceiver_idx_0#0: bytes[32] = (global CurrentApplicationAddress)
+        ((itxn_field XferAsset) asset#0)
+        ((itxn_field AssetAmount) 0u)
+        ((itxn_field AssetReceiver) inner_txn_params%0%%param_AssetReceiver_idx_0#0)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateApplication(newVersion: bytes, newChildVersion: bytes) -> void:
+    block@0: // L50
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        (app_global_put "child_contract_version" newChildVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L59
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 
+
+subroutine smart_contracts/pool/base.ts::BasePool.mbr() -> <uint64, uint64, uint64>:
+    block@0: // L6
+        return 25300u 25300u 6100u
+
+subroutine @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor() -> void:
+    block@0: // L1
+        return 

@@ -1,5 +1,5 @@
 import { AssetInbox } from '../../../utils/types/asset-inbox'
-import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, Global, GlobalState, gtxn, itxn, op, Txn, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, Global, GlobalState, gtxn, itxn, itxnCompose, op, Txn, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, Contract, decodeArc4, DynamicArray, methodSelector, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaSocialMBRData, MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, arc4ImpactMetaValue, ImpactMetaValue, FollowsKey, BlockListKey, VoteListKey, ReactionsKey, ReactionListKey, Action } from './types'
 import { CID } from '../../../utils/types/base'
@@ -12,7 +12,7 @@ import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescrip
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { OptInPlugin } from '../optin/contract.algo'
 import { akitaSocialFee, gateCheck, getAccounts, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, getSpendingAccount, impactRange, rekeyAddress } from '../../../utils/functions'
-import { AkitaBaseEscrow } from '../../../utils/base-contracts/base'
+import { AkitaBaseContract, AkitaBaseEscrow } from '../../../utils/base-contracts/base'
 
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { NFD } from '../../../utils/types/nfd'
@@ -22,8 +22,9 @@ import { arc4StakeInfo, STAKING_TYPE_SOFT } from '../../../staking/types'
 import { Subscriptions } from '../../../subscriptions/contract.algo'
 import { fee } from '../../../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../../../constants'
+import { AkitaSocialImpactInterface, AkitaSocialPluginInterface } from '../../../utils/types/social-impact'
 
-export class AkitaSocialPlugin extends AkitaBaseEscrow {
+export class AkitaSocialPlugin extends AkitaBaseEscrow implements AkitaSocialPluginInterface {
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -218,72 +219,83 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
     const sender = getSpendingAccount(wallet)
     const recipientOrigin = getOriginAccount(recipientWallet)
 
-    const mbrTxn = itxn.payment({
-      sender,
-      amount: mbrAmount,
-      receiver: Global.currentApplicationAddress,
-      fee,
-    })
+    itxnCompose.begin(
+      itxn.payment({
+        sender,
+        amount: mbrAmount,
+        receiver: Global.currentApplicationAddress,
+        fee,
+      })
+    )
 
-    const rekeyTxn = itxn.applicationCall({
-      sender,
-      appId: recipientWallet,
-      appArgs: [
-        methodSelector(AbstractedAccount.prototype.arc58_rekeyToPlugin),
-        getPluginAppList(this.akitaDAO.value).optin,
-        new DynamicArray<UintN64>()
-      ],
-      fee,
-    })
+    itxnCompose.next(
+      AbstractedAccount.prototype.arc58_rekeyToPlugin,
+      {
+        sender,
+        appId: recipientWallet,
+        args: [
+          getPluginAppList(this.akitaDAO.value).optin,
+          true,
+          [],
+          []
+        ],
+        fee,
+      }
+    )
 
-    const optinMBRTxn = itxn.payment({
-      sender,
-      amount: Global.assetOptInMinBalance,
-      receiver: recipientOrigin,
-      fee,
-    })
+    itxnCompose.next(
+      OptInPlugin.prototype.optInToAsset,
+      {
+        sender,
+        appId: getPluginAppList(this.akitaDAO.value).optin,
+        args: [
+          recipientWallet.id,
+          true,
+          [akta],
+          itxn.payment({
+            sender,
+            amount: Global.assetOptInMinBalance,
+            receiver: recipientOrigin,
+            fee,
+          })
+        ],
+        fee,
+      }
+    )
 
-    const optinTxn = itxn.applicationCall({
-      sender,
-      appId: getPluginAppList(this.akitaDAO.value).optin,
-      appArgs: [
-        methodSelector(OptInPlugin.prototype.optInToAsset),
-        recipientWallet,
-        true,
-        akta
-      ],
-      fee,
-    })
+    itxnCompose.next(
+      AbstractedAccount.prototype.arc58_verifyAuthAddr,
+      {
+        sender,
+        appId: recipientWallet,
+        fee,
+      }
+    )
 
-    const verifyTxn = itxn.applicationCall({
-      sender,
-      appId: recipientWallet,
-      appArgs: [
-        methodSelector(AbstractedAccount.prototype.arc58_verifyAuthAddr)
-      ],
-      fee,
-    })
-
-    const taxTxn = itxn.assetTransfer({
-      sender,
-      assetReceiver: this.akitaDAOEscrow.value.address,
-      assetAmount: tax,
-      xferAsset: akta,
-      fee,
-    })
+    itxnCompose.next(
+      itxn.assetTransfer({
+        sender,
+        assetReceiver: this.akitaDAOEscrow.value.address,
+        assetAmount: tax,
+        xferAsset: akta,
+        fee,
+      })
+    )
 
     const { reactFee } = getSocialFees(this.akitaDAO.value)
 
-    const xferTxn = itxn.assetTransfer({
-      sender,
-      assetReceiver: recipientOrigin,
-      assetAmount: reactFee - tax,
-      xferAsset: akta,
-      rekeyTo: rekeyAddress(rekeyBack, wallet),
-      fee,
-    })
+    itxnCompose.next(
+      itxn.assetTransfer({
+        sender,
+        assetReceiver: recipientOrigin,
+        assetAmount: reactFee - tax,
+        xferAsset: akta,
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+        fee,
+      })
+    )
 
-    submitGroup(mbrTxn, rekeyTxn, optinMBRTxn, optinTxn, verifyTxn, taxTxn, xferTxn)
+    itxnCompose.submit()
   }
 
   private arc59OptInAndSendReactionPayments(
@@ -414,7 +426,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
   private createEmptyPostIfNecessary(ref: bytes<32>, creator: Account): void {
     if (!this.posts(ref).exists) {
       this.posts(ref).value = {
-        ref,
+        ref: op.bzero(0),
         /**
          * when a user reacts to content other than posts
          * we set the creator to the following:
@@ -528,7 +540,7 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
 
     const postID = Txn.txId
     this.posts(postID).value = {
-      ref: cid,
+      ref: Bytes(cid),
       creator: origin,
       timestamp: Global.latestTimestamp,
       gateID: gateID,
@@ -1290,18 +1302,11 @@ export class AkitaSocialPlugin extends AkitaBaseEscrow {
   }
 
   // dummy call to allow for more references
-  gas() { }
+  gas(): void {}
 }
 
 
-export class AkitaSocialImpact extends Contract {
-
-  // GLOBAL STATE ---------------------------------------------------------------------------------
-
-  /** the current version of the contract */
-  version = GlobalState<string>({ key: GlobalStateKeyVersion })
-  /** the app ID of the Akita DAO */
-  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
 
   // BOXES ----------------------------------------------------------------------------------------    
 
@@ -1590,18 +1595,7 @@ export class AkitaSocialImpact extends Contract {
     this.akitaDAO.value = Application(akitaDAO)
   }
 
-  @abimethod({ allowActions: ['UpdateApplication'] })
-  update(newVersion: string): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.version.value = newVersion
-  }
-
   // IMPACT METHODS -------------------------------------------------------------------------------
-
-  updateAkitaDAO(app: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAO.value = Application(app)
-  }
 
   cacheMeta(subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64): uint64 {
     if (subscriptionIndex !== 0) {

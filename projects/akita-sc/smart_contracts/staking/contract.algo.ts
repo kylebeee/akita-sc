@@ -64,15 +64,13 @@ import { BaseStaking } from './base'
 import { fee } from '../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../constants'
 import { ERR_NOT_AKITA_DAO } from '../errors'
+import { StakingInterface } from '../utils/types/staking'
+import { classes } from 'polytype'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
-export class Staking extends BaseStaking {
+export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
-
-  /** the current version of the contract */
-  version = GlobalState<string>({ key: GlobalStateKeyVersion })
-  /** the app ID of the Akita DAO */
-  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
   /** The address that is allowed to call the 'beat' method to create heartbeat records */
   heartbeatManagerAddress = GlobalState<Address>({ key: StakingGlobalStateKeyHeartbeatManagerAddress })
 
@@ -94,18 +92,7 @@ export class Staking extends BaseStaking {
     this.version.value = version
   }
 
-  @abimethod({ allowActions: ['UpdateApplication'] })
-  update(newVersion: string): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.version.value = newVersion
-  }
-
   // STAKING METHODS ------------------------------------------------------------------------------
-
-  updateAkitaDAO(app: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAO.value = Application(app)
-  }
 
   stake(payment: gtxn.PaymentTxn, type: StakingType, amount: uint64, expiration: uint64): void {
     const inTheFuture = expiration > Global.latestTimestamp
@@ -308,7 +295,7 @@ export class Staking extends BaseStaking {
         assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
         assert(payment.amount === (costs.stakes + costs.heartbeats), ERR_INVALID_PAYMENT_AMOUNT)
 
-        assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
+        // if they aren't escrowing, we need to make sure the asset transfer is 0, doesn't matter to who in this case
         assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
 
         const heartbeatKey = new arc4HeartbeatKey({
@@ -346,7 +333,7 @@ export class Staking extends BaseStaking {
         assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
         assert(payment.amount === costs.stakes, ERR_INVALID_PAYMENT_AMOUNT)
 
-        assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
+        // if they aren't escrowing, we need to make sure the asset transfer is 0, doesn't matter to who in this case
         assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
       }
 
@@ -371,6 +358,8 @@ export class Staking extends BaseStaking {
         const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset.native)
         assert(optedIn, ERR_NOT_OPTED_IN)
         assert(holdingAmount >= currentStake.amount.native + amount, ERR_INSUFFICIENT_BALANCE)
+        // if they aren't escrowing, we need to make sure the asset transfer is 0, doesn't matter to who in this case
+        assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
       }
 
       const newAmount = new UintN64(currentStake.amount.native + amount)

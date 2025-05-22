@@ -1,0 +1,79 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        let tmp%1#0: bool = (!= tmp%0#1 0u)
+        goto tmp%0#1 ? block@2 : block@7
+    block@2: // abi_routing_L5
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "rekey()void" => block@3, method "deleteApplication()void" => block@4, * => block@11}
+    block@3: // rekey_route_L7
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (!= tmp%5#0 0u)
+        (assert tmp%5#0) // can only call when not creating
+        smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.rekey()
+        let smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#0: bool = 1u
+        goto block@12
+    block@4: // deleteApplication_route_L19
+        let tmp%7#0: uint64 = (txn OnCompletion)
+        let tmp%8#0: bool = (== tmp%7#0 DeleteApplication)
+        (assert tmp%8#0) // OnCompletion is not DeleteApplication
+        let tmp%9#0: uint64 = (txn ApplicationID)
+        let tmp%10#0: bool = (!= tmp%9#0 0u)
+        (assert tmp%9#0) // can only call when not creating
+        smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.deleteApplication()
+        let smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#1: bool = 1u
+        goto block@12
+    block@7: // bare_routing_L5
+        let tmp%11#0: uint64 = (txn OnCompletion)
+        goto tmp%11#0 ? block@11 : block@8
+    block@8: // __algots__.defaultCreate_L5
+        let tmp%12#0: uint64 = (txn ApplicationID)
+        let tmp%13#0: bool = (! tmp%12#0)
+        (assert tmp%13#0) // can only call when creating
+        smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__algots__.defaultCreate()
+        let smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#2: bool = 1u
+        goto block@12
+    block@11: // after_if_else_L5
+        let smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#3: bool = 0u
+        goto block@12
+    block@12: // after_inlined_smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#0 <- block@3, smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#1 <- block@4, smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#2 <- block@8, smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__puya_arc4_router__%0#3 <- block@11)
+        return tmp%0#0
+
+subroutine smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.rekey() -> void:
+    block@0: // L7
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bytes[32] = (global CreatorAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        (assert tmp%2#0) // Only the creator can rekey the account
+        itxn_begin
+        let inner_txn_params%0%%param_Receiver_idx_0#0: bytes[32] = (global CreatorAddress)
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = (global CreatorAddress)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%0%%param_Receiver_idx_0#0)
+        ((itxn_field Amount) 0u)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.deleteApplication() -> void:
+    block@0: // L19
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bytes[32] = (global CreatorAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        (assert tmp%2#0) // Only the creator can delete the application
+        itxn_begin
+        let inner_txn_params%0%%param_CloseRemainderTo_idx_0#0: bytes[32] = (global CreatorAddress)
+        ((itxn_field CloseRemainderTo) inner_txn_params%0%%param_CloseRemainderTo_idx_0#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.__algots__.defaultCreate() -> void:
+    block@0: // L5
+        return 

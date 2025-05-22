@@ -15,7 +15,7 @@ import {
   bytes,
 } from '@algorandfoundation/algorand-typescript'
 import { AssetHolding, btoi, Global, len, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abiCall, Address, Bool, Contract, decodeArc4, DynamicArray, methodSelector, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, Address, Bool, Contract, decodeArc4, DynamicArray, methodSelector, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   AbstractAccountBoxPrefixAllowances,
   AbstractAccountBoxPrefixDomainKeys,
@@ -62,15 +62,16 @@ import {
 } from './errors'
 
 import { Staking } from '../../staking/contract.algo'
-import { AllowanceInfo, AllowanceKey, arc4MethodInfo, arc4PluginInfo, DelegationTypeSelf, FullPluginValidation, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceType, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
+import { AllowanceInfo, AllowanceKey, arc4MethodInfo, arc4PluginInfo, DelegationTypeSelf, FullPluginValidation, FundsRequest, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceType, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
 import { AkitaDomain } from '../../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyRevocationApp, GlobalStateKeySpendingAccountFactoryApp, GlobalStateKeyVersion } from '../../constants'
 import { getAkitaAppList } from '../../utils/functions'
 import { fee } from '../../utils/constants'
-import { SpendingAccountFactory } from '../spending-account/factory.algo'
 import { SpendingAccountContract } from '../spending-account/contract.algo'
+import { SpendingAccountFactoryInterface } from '../../utils/types/spend-accounts'
+import { AbstractedAccountInterface } from '../../utils/abstract-account'
 
-export class AbstractedAccount extends Contract {
+export class AbstractedAccount extends Contract implements AbstractedAccountInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -531,7 +532,7 @@ export class AbstractedAccount extends Contract {
     spendingAccountFactoryApp: uint64,
     revocationApp: uint64,
     nickname: string
-  ) {
+  ): void {
     assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
     assert(admin !== controlledAddress)
 
@@ -844,7 +845,7 @@ export class AbstractedAccount extends Contract {
     if (useAllowance) {
       spendingApp =
         abiCall(
-          SpendingAccountFactory.prototype.create,
+          SpendingAccountFactoryInterface.prototype.mint,
           {
             sender: this.controlledAddress.value,
             appId: this.spendingAccountFactoryApp.value,
@@ -921,7 +922,7 @@ export class AbstractedAccount extends Contract {
 
     if (spendingApp !== 0) {
       abiCall(
-        SpendingAccountFactory.prototype.delete,
+        SpendingAccountFactoryInterface.prototype.delete,
         {
           appId: this.spendingAccountFactoryApp.value,
           args: [spendingApp],
@@ -992,7 +993,7 @@ export class AbstractedAccount extends Contract {
     if (useAllowance) {
       spendingApp = 
         abiCall(
-          SpendingAccountFactory.prototype.create,
+          SpendingAccountFactoryInterface.prototype.mint,
           {
             appId: this.spendingAccountFactoryApp.value,
             args: [
@@ -1057,7 +1058,7 @@ export class AbstractedAccount extends Contract {
 
     if (spendingApp !== 0) {
       abiCall(
-        SpendingAccountFactory.prototype.delete,
+        SpendingAccountFactoryInterface.prototype.delete,
         {
           appId: this.spendingAccountFactoryApp.value,
           args: [spendingApp],

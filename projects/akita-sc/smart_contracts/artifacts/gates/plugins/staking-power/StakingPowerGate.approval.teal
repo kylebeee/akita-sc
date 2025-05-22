@@ -1,0 +1,528 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 4 6
+    bytecblock "akita_dao" 0x151f7c75 "registry_cursor" "version"
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:27
+    // export class StakingPowerGate extends AkitaBaseContract {
+    txn NumAppArgs
+    bz main_after_if_else@11
+    pushbytess 0xcd9ad67e 0x6bcd3953 0xc61c862b 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "register(byte[])uint64", method "check(byte[])bool", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    txna ApplicationArgs 0
+    match main_create_route@3 main_register_route@4 main_check_route@5 main_update_route@6 main_updateAkitaDAO_route@7
+
+main_after_if_else@11:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:27
+    // export class StakingPowerGate extends AkitaBaseContract {
+    intc_0 // 0
+    return
+
+main_updateAkitaDAO_route@7:
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:27
+    // export class StakingPowerGate extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_update_route@6:
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    intc_2 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:27
+    // export class StakingPowerGate extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
+    intc_1 // 1
+    return
+
+main_check_route@5:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:95
+    // check(args: bytes): boolean {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:27
+    // export class StakingPowerGate extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:95
+    // check(args: bytes): boolean {
+    callsub check
+    pushbytes 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_register_route@4:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:85
+    // register(args: bytes): uint64 {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:27
+    // export class StakingPowerGate extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:85
+    // register(args: bytes): uint64 {
+    callsub register
+    itob
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_create_route@3:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:76
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:27
+    // export class StakingPowerGate extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:76
+    // @abimethod({ onCreate: 'require' })
+    callsub create
+    intc_1 // 1
+    return
+
+
+// smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.create(version: bytes, akitaDAO: uint64) -> void:
+create:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:76-77
+    // @abimethod({ onCreate: 'require' })
+    // create(version: string, akitaDAO: uint64): void {
+    proto 2 0
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    bytec_3 // "version"
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:78
+    // this.version.value = version
+    frame_dig -2
+    app_global_put
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    bytec_0 // "akita_dao"
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:79
+    // this.akitaDAO.value = Application(akitaDAO)
+    frame_dig -1
+    app_global_put
+    // smart_contracts/gates/constants.ts:2
+    // export const GateGlobalStateKeyRegistryCursor = 'registry_cursor'
+    bytec_2 // "registry_cursor"
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:80
+    // this.registryCursor.value = 0
+    intc_0 // 0
+    app_global_put
+    retsub
+
+
+// smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.register(args: bytes) -> uint64:
+register:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:85
+    // register(args: bytes): uint64 {
+    proto 1 1
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:86
+    // assert(args.length === 17, ERR_INVALID_ARG_COUNT)
+    frame_dig -1
+    len
+    pushint 17 // 17
+    ==
+    assert // Invalid number of arguments
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:89
+    // assert(params.op.native <= 6, ERR_BAD_OPERATION)
+    frame_dig -1
+    intc_0 // 0
+    getbyte
+    intc_3 // 6
+    <=
+    assert // bad operation check
+    // smart_contracts/gates/constants.ts:2
+    // export const GateGlobalStateKeyRegistryCursor = 'registry_cursor'
+    intc_0 // 0
+    bytec_2 // "registry_cursor"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:41
+    // this.registryCursor.value += 1
+    dup
+    intc_1 // 1
+    +
+    // smart_contracts/gates/constants.ts:2
+    // export const GateGlobalStateKeyRegistryCursor = 'registry_cursor'
+    bytec_2 // "registry_cursor"
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:41
+    // this.registryCursor.value += 1
+    swap
+    app_global_put
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:91
+    // this.registry(id).value = params.copy()
+    dup
+    itob
+    frame_dig -1
+    box_put
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:92
+    // return id
+    retsub
+
+
+// smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.check(args: bytes) -> uint64:
+check:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:95
+    // check(args: bytes): boolean {
+    proto 1 1
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:96
+    // assert(args.length >= 40, ERR_INVALID_ARG_COUNT)
+    frame_dig -1
+    len
+    pushint 40 // 40
+    >=
+    assert // Invalid number of arguments
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:98
+    // const info = this.registry(params.registryID.native).value.copy()
+    frame_dig -1
+    pushint 32 // 32
+    extract_uint64
+    itob
+    box_get
+    assert // Box must have value
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    frame_dig -1
+    extract 0 32 // on error: Index access is out of bounds
+    dig 1
+    extract 0 1 // on error: Index access is out of bounds
+    dup
+    cover 3
+    cover 3
+    dig 1
+    intc_1 // 1
+    extract_uint64
+    uncover 2
+    pushint 9 // 9
+    extract_uint64
+    cover 3
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:7
+    // export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
+    pushbytes "akita_al"
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:26
+    // return decodeArc4<AkitaAppList>(appListBytes)
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/utils/functions.ts:335-344
+    // const info = abiCall(StakingInterface.prototype.getInfo, {
+    //   appId: stakingApp,
+    //   args: [
+    //     user,
+    //     new arc4StakeInfo({
+    //       asset: new UintN64(asset),
+    //       type: STAKING_TYPE_LOCK,
+    //     }),
+    //   ],
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:340
+    // asset: new UintN64(asset),
+    swap
+    itob
+    // smart_contracts/staking/types.ts:30
+    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
+    pushbytes 0x03
+    // smart_contracts/utils/functions.ts:339-342
+    // new arc4StakeInfo({
+    //   asset: new UintN64(asset),
+    //   type: STAKING_TYPE_LOCK,
+    // }),
+    concat
+    // smart_contracts/utils/functions.ts:335-344
+    // const info = abiCall(StakingInterface.prototype.getInfo, {
+    //   appId: stakingApp,
+    //   args: [
+    //     user,
+    //     new arc4StakeInfo({
+    //       asset: new UintN64(asset),
+    //       type: STAKING_TYPE_LOCK,
+    //     }),
+    //   ],
+    // }).returnValue
+    pushbytes 0xc9068809 // method "getInfo(address,(uint64,uint8))(uint64,uint64,uint64)"
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    intc_2 // 4
+    extract_uint64
+    swap
+    pushint 20 // 20
+    extract_uint64
+    // smart_contracts/utils/functions.ts:346
+    // const remainingDays: uint64 = (info.expiration - Global.latestTimestamp) / ONE_DAY
+    global LatestTimestamp
+    -
+    // smart_contracts/arc58/plugins/social/constants.ts:29
+    // export const ONE_DAY: uint64 = 86_400
+    pushint 86400 // 86400
+    // smart_contracts/utils/functions.ts:346
+    // const remainingDays: uint64 = (info.expiration - Global.latestTimestamp) / ONE_DAY
+    /
+    // smart_contracts/utils/functions.ts:347
+    // return (info.amount / ONE_YEAR_IN_DAYS) * remainingDays
+    swap
+    // smart_contracts/gates/plugins/staking-power/constants.ts:4
+    // export const ONE_YEAR_IN_DAYS: uint64 = 365
+    pushint 365 // 365
+    // smart_contracts/utils/functions.ts:347
+    // return (info.amount / ONE_YEAR_IN_DAYS) * remainingDays
+    /
+    *
+    swap
+    // smart_contracts/utils/operators.ts:3
+    // export const Equal = new UintN8(1)
+    pushbytes 0x01
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:52
+    // if (op === Equal) {
+    ==
+    bz check_after_if_else@3
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:53
+    // return userPower === power
+    frame_dig 2
+    frame_dig 1
+    ==
+
+check_after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@14:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    frame_bury 0
+    retsub
+
+check_after_if_else@3:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:55
+    // if (op === NotEqual) {
+    frame_dig 0
+    // smart_contracts/utils/operators.ts:4
+    // export const NotEqual = new UintN8(2)
+    pushbytes 0x02
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:55
+    // if (op === NotEqual) {
+    ==
+    bz check_after_if_else@5
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:56
+    // return userPower !== power
+    frame_dig 2
+    frame_dig 1
+    !=
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    b check_after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@14
+
+check_after_if_else@5:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:58
+    // if (op === LessThan) {
+    frame_dig 0
+    // smart_contracts/utils/operators.ts:5
+    // export const LessThan = new UintN8(3)
+    pushbytes 0x03
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:58
+    // if (op === LessThan) {
+    ==
+    bz check_after_if_else@7
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:59
+    // return userPower < power
+    frame_dig 2
+    frame_dig 1
+    <
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    b check_after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@14
+
+check_after_if_else@7:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:61
+    // if (op === LessThanOrEqualTo) {
+    frame_dig 0
+    // smart_contracts/utils/operators.ts:6
+    // export const LessThanOrEqualTo = new UintN8(4)
+    pushbytes 0x04
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:61
+    // if (op === LessThanOrEqualTo) {
+    ==
+    bz check_after_if_else@9
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:62
+    // return userPower <= power
+    frame_dig 2
+    frame_dig 1
+    <=
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    b check_after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@14
+
+check_after_if_else@9:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:64
+    // if (op === GreaterThan) {
+    frame_dig 0
+    // smart_contracts/utils/operators.ts:7
+    // export const GreaterThan = new UintN8(5)
+    pushbytes 0x05
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:64
+    // if (op === GreaterThan) {
+    ==
+    bz check_after_if_else@11
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:65
+    // return userPower > power
+    frame_dig 2
+    frame_dig 1
+    >
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    b check_after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@14
+
+check_after_if_else@11:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:67
+    // if (op === GreaterThanOrEqualTo) {
+    frame_dig 0
+    // smart_contracts/utils/operators.ts:8
+    // export const GreaterThanOrEqualTo = new UintN8(6)
+    pushbytes 0x06
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:67
+    // if (op === GreaterThanOrEqualTo) {
+    ==
+    bz check_after_if_else@13
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:68
+    // return userPower >= power
+    frame_dig 2
+    frame_dig 1
+    >=
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    b check_after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@14
+
+check_after_if_else@13:
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:71
+    // return false
+    intc_0 // 0
+    // smart_contracts/gates/plugins/staking-power/contract.algo.ts:99
+    // return this.stakingPowerGate(params.user, info.op, info.asset.native, info.power.native)
+    b check_after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@14
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/base.ts:19-20
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(newVersion: string): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:21
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:21
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    bytec_3 // "version"
+    // smart_contracts/utils/base-contracts/base.ts:22
+    // this.version.value = newVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:28
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:28
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub

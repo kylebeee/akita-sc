@@ -5,21 +5,21 @@ import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets
 import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
 import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, fee, IMPACT_DIVISOR } from "./constants"
 import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
-import { SpendingAccountFactory } from "./types/spend-accounts"
-import { Gate } from "../gates/contract.algo"
-import { GateArgs } from "./types/gates"
+
+import { GateArgs, GateInterface } from "./types/gates"
 import { AssetInbox } from "./types/asset-inbox"
-import { AbstractedAccount } from "../arc58/account/contract.algo"
 import { btoi, itob, sha256 } from "@algorandfoundation/algorand-typescript/op"
-import { OptInPlugin } from "../arc58/plugins/optin/contract.algo"
-import { Proof } from "./types/merkles"
-import { MetaMerkles } from "../meta-merkles/contract.algo"
+import { MetaMerklesInterface, Proof } from "./types/merkles"
 import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
-import { AkitaSocialImpact } from "../arc58/plugins/social/contract.algo"
-import { Staking } from "../staking/contract.algo"
 import { arc4StakeInfo, STAKING_TYPE_LOCK } from "../staking/types"
 import { ONE_YEAR_IN_DAYS } from "../gates/plugins/staking-power/constants"
 import { ONE_DAY } from "../arc58/plugins/social/constants"
+
+import { AkitaSocialImpactInterface } from "./types/social-impact"
+import { SpendingAccountFactoryInterface } from "./types/spend-accounts"
+import { AbstractedAccountInterface } from "./abstract-account"
+import { OptInPluginInterface } from "./types/plugins/optin"
+import { StakingInterface } from "./types/staking"
 
 export function getAkitaAppList(akitaDAO: Application): AkitaAppList {
   const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
@@ -89,7 +89,7 @@ export function impactRange(impact: uint64, min: uint64, max: uint64): uint64 {
 
 export function getUserImpact(akitaDAO: Application, account: Account): uint64 {
   return abiCall(
-    AkitaSocialImpact.prototype.getUserImpact,
+    AkitaSocialImpactInterface.prototype.getUserImpact,
     {
       appId: getPluginAppList(akitaDAO).impact,
       args: [new Address(account)],
@@ -108,7 +108,7 @@ export function getOriginAccount(walletID: Application): Account {
 
 export function walletID(spendingAccountFactory: uint64): uint64 {
   return abiCall(
-    SpendingAccountFactory.prototype.get,
+    SpendingAccountFactoryInterface.prototype.get,
     {
       appId: spendingAccountFactory,
       args: [new Address(Txn.sender)],
@@ -132,7 +132,7 @@ export function gateCheck(akitaDAO: Application, caller: Address, id: uint64, ar
     return true
   }
 
-  return abiCall(Gate.prototype.check, {
+  return abiCall(GateInterface.prototype.check, {
     appId: getAkitaAppList(akitaDAO).gate,
     args: [caller, id, args],
     fee: 0,
@@ -233,7 +233,7 @@ export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint
   const origin = getOriginAccount(Application(recipientWalletID))
 
   itxnCompose.begin(
-    AbstractedAccount.prototype.arc58_rekeyToPlugin,
+    AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
     {
       appId: recipientWalletID,
       args: [optinPlugin, true, [], []],
@@ -242,7 +242,7 @@ export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint
   )
 
   itxnCompose.next(
-    OptInPlugin.prototype.optInToAsset,
+    OptInPluginInterface.prototype.optInToAsset,
     {
       appId: optinPlugin,
       args: [
@@ -273,7 +273,7 @@ export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint
   }
 
   itxnCompose.next(
-    AbstractedAccount.prototype.arc58_verifyAuthAddr,
+    AbstractedAccountInterface.prototype.arc58_verifyAuthAddr,
     { appId: recipientWalletID, fee }
   )
 
@@ -289,7 +289,7 @@ export function royalties(akitaDAO: Application, asset: Asset, name: string, pro
 
   // fetch the royalty set for the asset being sold
   const creatorRoyaltyString = abiCall(
-    MetaMerkles.prototype.verifiedRead,
+    MetaMerklesInterface.prototype.verifiedRead,
     {
       appId: getAkitaAppList(akitaDAO).metaMerkles,
       args: [
@@ -332,7 +332,7 @@ export function fmbr(): ServiceFactoryContractMBRData {
 }
 
 export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64): uint64 {
-  const info = abiCall(Staking.prototype.getInfo, {
+  const info = abiCall(StakingInterface.prototype.getInfo, {
     appId: stakingApp,
     args: [
       user,

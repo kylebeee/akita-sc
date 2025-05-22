@@ -18,7 +18,7 @@ import {
   OnCompleteAction,
 } from '@algorandfoundation/algorand-typescript'
 import { AssetHolding, btoi, len, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abiCall, Address, Bool, decodeArc4, DynamicArray, methodSelector, StaticBytes, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, Address, Bool, decodeArc4, DynamicArray, methodSelector, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   AkitaAppList,
   AkitaAssets,
@@ -97,7 +97,7 @@ import { AbstractAccountBoxPrefixAllowances, AbstractAccountBoxPrefixNamedPlugin
 import { AllowanceInfo, AllowanceKey, arc4MethodInfo, DelegationTypeSelf, FullPluginValidation, FundsRequest, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceType, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from '../arc58/account/types'
 import { ERR_ALLOWANCE_ALREADY_EXISTS, ERR_ALLOWANCE_DOES_NOT_EXIST, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY, ERR_INVALID_ONCOMPLETE, ERR_INVALID_PLUGIN_CALL, ERR_INVALID_SENDER_ARG, ERR_INVALID_SENDER_VALUE, ERR_MALFORMED_OFFSETS, ERR_METHOD_ON_COOLDOWN, ERR_MISSING_REKEY_BACK, ERR_ZERO_ADDRESS_DELEGATION_TYPE } from '../arc58/account/errors'
 import { SpendingAccountContract } from '../arc58/spending-account/contract.algo'
-import { SpendingAccountFactory } from '../utils/types/spend-accounts'
+import { SpendingAccountFactoryInterface } from '../utils/types/spend-accounts'
 import { CID } from '../utils/types/base'
 import { getOrigin, getStakingPower } from '../utils/functions'
 
@@ -199,7 +199,7 @@ export class AkitaDAO extends Contract {
     this.lastChange.value = Global.latestTimestamp
   }
 
-  private pluginCallAllowed(application: uint64, allowedCaller: Account, method: StaticBytes<4>): boolean {
+  private pluginCallAllowed(application: uint64, allowedCaller: Account, method: bytes<4>): boolean {
     const key: PluginKey = { application, allowedCaller }
 
     if (!this.plugins(key).exists) {
@@ -213,7 +213,7 @@ export class AkitaDAO extends Contract {
     const methods = this.plugins(key).value.methods.copy()
     let methodAllowed = methods.length > 0 ? false : true;
     for (let i: uint64 = 0; i < methods.length; i += 1) {
-      if (methods[i].selector === method) {
+      if (methods[i].selector.native === method) {
         methodAllowed = true;
         break;
       }
@@ -386,7 +386,7 @@ export class AkitaDAO extends Contract {
   private methodCheck(key: PluginKey, txn: gtxn.ApplicationCallTxn, offset: uint64): MethodValidation {
 
     assert(len(txn.appArgs(0)) === 4, ERR_INVALID_METHOD_SIGNATURE_LENGTH);
-    const selectorArg = new StaticBytes<4>(txn.appArgs(0).toFixed({ length: 4 }));
+    const selectorArg = txn.appArgs(0).toFixed({ length: 4 })
 
     const methods = this.plugins(key).value.methods.copy()
     const allowedMethod = methods[offset].copy()
@@ -398,7 +398,7 @@ export class AkitaDAO extends Contract {
     const epochRef = useRounds ? Global.round : Global.latestTimestamp;
     const onCooldown = (epochRef - methods[offset].lastCalled.native) < methods[offset].cooldown.native;
 
-    if (methods[offset].selector === selectorArg && (!hasCooldown || !onCooldown)) {
+    if (methods[offset].selector.native === selectorArg && (!hasCooldown || !onCooldown)) {
       // update the last called round for the method
       if (hasCooldown) {
         const lastCalled = useRounds
@@ -611,7 +611,7 @@ export class AkitaDAO extends Contract {
     if (useAllowance) {
       spendingApp =
         abiCall(
-          SpendingAccountFactory.prototype.create,
+          SpendingAccountFactoryInterface.prototype.mint,
           {
             sender: this.controlledAddress.value,
             appId: this.spendingAccountFactoryApp.value,
@@ -676,7 +676,7 @@ export class AkitaDAO extends Contract {
 
     if (spendingApp !== 0) {
       abiCall(
-        SpendingAccountFactory.prototype.delete,
+        SpendingAccountFactoryInterface.prototype.delete,
         {
           appId: this.spendingAccountFactoryApp.value,
           args: [spendingApp],
@@ -747,7 +747,7 @@ export class AkitaDAO extends Contract {
     if (useAllowance) {
       spendingApp =
         abiCall(
-          SpendingAccountFactory.prototype.create,
+          SpendingAccountFactoryInterface.prototype.mint,
           {
             appId: this.spendingAccountFactoryApp.value,
             args: [
@@ -810,7 +810,7 @@ export class AkitaDAO extends Contract {
 
     if (spendingApp !== 0) {
       abiCall(
-        SpendingAccountFactory.prototype.delete,
+        SpendingAccountFactoryInterface.prototype.delete,
         {
           appId: this.spendingAccountFactoryApp.value,
           args: [spendingApp],
@@ -1060,7 +1060,7 @@ export class AkitaDAO extends Contract {
   init(
     version: string,
     akta: uint64,
-    contentPolicy: StaticBytes<36>,
+    contentPolicy: bytes<36>,
     minimumRewardsImpact: uint64,
     fees: Fees,
     proposalSettings: ProposalSettings,
@@ -1087,7 +1087,7 @@ export class AkitaDAO extends Contract {
 
     this.status.value = STATUS_INIT
     this.version.value = version
-    this.contentPolicy.value = contentPolicy.native
+    this.contentPolicy.value = contentPolicy
     this.minimumRewardsImpact.value = minimumRewardsImpact
 
     this.socialFees.value = {
@@ -1170,7 +1170,7 @@ export class AkitaDAO extends Contract {
     plugin: uint64,
     global: boolean,
     address: Address,
-    method: StaticBytes<4>
+    method: bytes<4>
   ): boolean {
     if (global) {
       this.pluginCallAllowed(plugin, Global.zeroAddress, method);

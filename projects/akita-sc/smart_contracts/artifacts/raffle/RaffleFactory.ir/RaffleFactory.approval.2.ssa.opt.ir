@@ -1,0 +1,495 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let reinterpret_bool%0#0: bool = (txn ApplicationID)
+        goto block@2
+    block@2: // after_if_else_L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@4 : block@16
+    block@4: // abi_routing_L25
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(string,string,uint64,uint64)void" => block@5, method "newRaffle(pay,axfer,uint64,uint64,uint64,uint64,uint64,uint64,address)uint64" => block@6, method "newPrizeBoxRaffle(pay,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address)uint64" => block@7, method "initRaffle(pay,uint64,uint64)void" => block@8, method "deleteRaffle(uint64)void" => block@9, method "optin(pay,uint64)void" => block@10, method "updateApplication(string,string)void" => block@11, method "updateAkitaDAO(uint64)void" => block@12, * => block@16}
+    block@5: // create_route_L116
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let tmp%7#0: bytes = (txna ApplicationArgs 1)
+        let tmp%8#0: bytes = ((extract 2 0) tmp%7#0)
+        let tmp%9#0: bytes = (txna ApplicationArgs 2)
+        let tmp%10#0: bytes = ((extract 2 0) tmp%9#0)
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%11#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%12#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        smart_contracts/raffle/factory.algo.ts::RaffleFactory.create(tmp%8#0, tmp%10#0, tmp%11#0, tmp%12#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#0: bool = 1u
+        goto block@17
+    block@6: // newRaffle_route_L126
+        let tmp%13#0: uint64 = (txn OnCompletion)
+        let tmp%14#0: bool = (! tmp%13#0)
+        (assert tmp%14#0) // OnCompletion is not NoOp
+        let tmp%15#0: uint64 = (txn ApplicationID)
+        (assert tmp%15#0) // can only call when not creating
+        let tmp%17#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%17#0 2u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        let tmp%18#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%1#0: uint64 = (- tmp%18#0 1u)
+        let gtxn_type%1#0: uint64 = ((gtxns TypeEnum) gtxn_idx%1#0)
+        let gtxn_type_matches%1#0: bool = (== gtxn_type%1#0 axfer)
+        (assert gtxn_type_matches%1#0) // transaction type is axfer
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%19#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%20#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%21#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%22#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%23#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        let reinterpret_bytes[8]%7#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%24#0: uint64 = (btoi reinterpret_bytes[8]%7#0)
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 7)
+        let to_encode%0#0: uint64 = smart_contracts/raffle/factory.algo.ts::RaffleFactory.newRaffle(gtxn_idx%0#0, gtxn_idx%1#0, tmp%19#0, tmp%20#0, tmp%21#0, tmp%22#0, tmp%23#0, tmp%24#0, reinterpret_bytes[32]%0#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%25#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%25#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#1: bool = 1u
+        goto block@17
+    block@7: // newPrizeBoxRaffle_route_L190
+        let tmp%26#0: uint64 = (txn OnCompletion)
+        let tmp%27#0: bool = (! tmp%26#0)
+        (assert tmp%27#0) // OnCompletion is not NoOp
+        let tmp%28#0: uint64 = (txn ApplicationID)
+        (assert tmp%28#0) // can only call when not creating
+        let tmp%30#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%2#0: uint64 = (- tmp%30#0 1u)
+        let gtxn_type%2#0: uint64 = ((gtxns TypeEnum) gtxn_idx%2#0)
+        let gtxn_type_matches%2#0: bool = (== gtxn_type%2#0 pay)
+        (assert gtxn_type_matches%2#0) // transaction type is pay
+        let reinterpret_bytes[8]%8#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%31#0: uint64 = (btoi reinterpret_bytes[8]%8#0)
+        let reinterpret_bytes[8]%9#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%32#0: uint64 = (btoi reinterpret_bytes[8]%9#0)
+        let reinterpret_bytes[8]%10#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%33#0: uint64 = (btoi reinterpret_bytes[8]%10#0)
+        let reinterpret_bytes[8]%11#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%34#0: uint64 = (btoi reinterpret_bytes[8]%11#0)
+        let reinterpret_bytes[8]%12#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%35#0: uint64 = (btoi reinterpret_bytes[8]%12#0)
+        let reinterpret_bytes[8]%13#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%36#0: uint64 = (btoi reinterpret_bytes[8]%13#0)
+        let reinterpret_bytes[8]%14#0: bytes[8] = (txna ApplicationArgs 7)
+        let tmp%37#0: uint64 = (btoi reinterpret_bytes[8]%14#0)
+        let reinterpret_bytes[32]%1#0: bytes[32] = (txna ApplicationArgs 8)
+        let to_encode%1#0: uint64 = smart_contracts/raffle/factory.algo.ts::RaffleFactory.newPrizeBoxRaffle(gtxn_idx%2#0, tmp%31#0, tmp%32#0, tmp%33#0, tmp%34#0, tmp%35#0, tmp%36#0, tmp%37#0, reinterpret_bytes[32]%1#0)
+        let val_as_bytes%1#0: bytes[8] = (itob to_encode%1#0)
+        let tmp%38#0: bytes = (concat 0x151f7c75 val_as_bytes%1#0)
+        (log tmp%38#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#2: bool = 1u
+        goto block@17
+    block@8: // initRaffle_route_L226
+        let tmp%39#0: uint64 = (txn OnCompletion)
+        let tmp%40#0: bool = (! tmp%39#0)
+        (assert tmp%40#0) // OnCompletion is not NoOp
+        let tmp%41#0: uint64 = (txn ApplicationID)
+        (assert tmp%41#0) // can only call when not creating
+        let tmp%43#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%3#0: uint64 = (- tmp%43#0 1u)
+        let gtxn_type%3#0: uint64 = ((gtxns TypeEnum) gtxn_idx%3#0)
+        let gtxn_type_matches%3#0: bool = (== gtxn_type%3#0 pay)
+        (assert gtxn_type_matches%3#0) // transaction type is pay
+        let reinterpret_bytes[8]%15#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%44#0: uint64 = (btoi reinterpret_bytes[8]%15#0)
+        let reinterpret_bytes[8]%16#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%45#0: uint64 = (btoi reinterpret_bytes[8]%16#0)
+        smart_contracts/raffle/factory.algo.ts::RaffleFactory.initRaffle(gtxn_idx%3#0, tmp%44#0, tmp%45#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#3: bool = 1u
+        goto block@17
+    block@9: // deleteRaffle_route_L262
+        let tmp%46#0: uint64 = (txn OnCompletion)
+        let tmp%47#0: bool = (! tmp%46#0)
+        (assert tmp%47#0) // OnCompletion is not NoOp
+        let tmp%48#0: uint64 = (txn ApplicationID)
+        (assert tmp%48#0) // can only call when not creating
+        let reinterpret_bytes[8]%17#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%50#0: uint64 = (btoi reinterpret_bytes[8]%17#0)
+        smart_contracts/raffle/factory.algo.ts::RaffleFactory.deleteRaffle(tmp%50#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#4: bool = 1u
+        goto block@17
+    block@10: // optin_route_L22
+        let tmp%51#0: uint64 = (txn OnCompletion)
+        let tmp%52#0: bool = (! tmp%51#0)
+        (assert tmp%52#0) // OnCompletion is not NoOp
+        let tmp%53#0: uint64 = (txn ApplicationID)
+        (assert tmp%53#0) // can only call when not creating
+        let tmp%55#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%4#0: uint64 = (- tmp%55#0 1u)
+        let gtxn_type%4#0: uint64 = ((gtxns TypeEnum) gtxn_idx%4#0)
+        let gtxn_type_matches%4#0: bool = (== gtxn_type%4#0 pay)
+        (assert gtxn_type_matches%4#0) // transaction type is pay
+        let reinterpret_bytes[8]%18#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%56#0: uint64 = (btoi reinterpret_bytes[8]%18#0)
+        smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(gtxn_idx%4#0, tmp%56#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#5: bool = 1u
+        goto block@17
+    block@11: // updateApplication_route_L50
+        let tmp%57#0: uint64 = (txn OnCompletion)
+        let tmp%58#0: bool = (== tmp%57#0 UpdateApplication)
+        (assert tmp%58#0) // OnCompletion is not UpdateApplication
+        let tmp%59#0: uint64 = (txn ApplicationID)
+        (assert tmp%59#0) // can only call when not creating
+        let tmp%61#0: bytes = (txna ApplicationArgs 1)
+        let tmp%62#0: bytes = ((extract 2 0) tmp%61#0)
+        let tmp%63#0: bytes = (txna ApplicationArgs 2)
+        let tmp%64#0: bytes = ((extract 2 0) tmp%63#0)
+        smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateApplication(tmp%62#0, tmp%64#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#6: bool = 1u
+        goto block@17
+    block@12: // updateAkitaDAO_route_L59
+        let tmp%65#0: uint64 = (txn OnCompletion)
+        let tmp%66#0: bool = (! tmp%65#0)
+        (assert tmp%66#0) // OnCompletion is not NoOp
+        let tmp%67#0: uint64 = (txn ApplicationID)
+        (assert tmp%67#0) // can only call when not creating
+        let reinterpret_bytes[8]%19#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%69#0: uint64 = (btoi reinterpret_bytes[8]%19#0)
+        smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateAkitaDAO(tmp%69#0)
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#7: bool = 1u
+        goto block@17
+    block@16: // after_if_else_L25
+        let smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#8: bool = 0u
+        goto block@17
+    block@17: // after_inlined_smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#0 <- block@5, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#1 <- block@6, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#2 <- block@7, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#3 <- block@8, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#4 <- block@9, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#5 <- block@10, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#6 <- block@11, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#7 <- block@12, smart_contracts/raffle/factory.algo.ts::RaffleFactory.__puya_arc4_router__%0#8 <- block@16)
+        return tmp%0#0
+
+subroutine smart_contracts/raffle/factory.algo.ts::RaffleFactory.createChildApp(isPrizeBox: bool, payment: uint64, prizeID: uint64, ticketAsset: uint64, startTimestamp: uint64, endTimestamp: uint64, minTickets: uint64, maxTickets: uint64, gateID: uint64, marketplace: bytes[32]) -> uint64:
+    block@0: // L33
+        goto ticketAsset#0 ? block@2 : block@1
+    block@1: // ternary_true_L47
+        let ternary_result%0#0: uint64 = (global AssetOptInMinBalance)
+        goto block@3
+    block@2: // ternary_false_L47
+        let tmp%0#0: uint64 = (global AssetOptInMinBalance)
+        let ternary_result%0#1: uint64 = (* tmp%0#0 2u)
+        goto block@3
+    block@3: // ternary_merge_L47
+        let optinMBR#0: uint64 = φ(ternary_result%0#0 <- block@1, ternary_result%0#1 <- block@2)
+        let childAppMBR#0: uint64 = (+ 100000u optinMBR#0)
+        let tmp%1#0: uint64 = 541500u
+        let tmp%2#0: uint64 = 941500u
+        let tmp%3#0: uint64 = 350000u
+        let tmp%4#0: uint64 = 1291500u
+        let tmp%5#0: uint64 = 1313200u
+        let totalMBR#0: uint64 = (+ 1313200u childAppMBR#0)
+        let tmp%6#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%7#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%8#0: bool = (== tmp%6#0 tmp%7#0)
+        goto tmp%8#0 ? block@4 : block@6
+    block@4: // and_contd_L65
+        let tmp%9#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%10#0: bool = (== tmp%9#0 totalMBR#0)
+        goto tmp%10#0 ? block@5 : block@6
+    block@5: // bool_true_L65
+        let and_result%0#0: bool = 1u
+        goto block@7
+    block@6: // bool_false_L65
+        let and_result%0#1: bool = 0u
+        goto block@7
+    block@7: // bool_merge_L65
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@5, and_result%0#1 <- block@6)
+        (assert and_result%0#2) // Invalid payment
+        itxn_begin
+        let val_as_bytes%0#0: bytes[8] = (itob prizeID#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u isPrizeBox#0)
+        let val_as_bytes%1#0: bytes[8] = (itob ticketAsset#0)
+        let val_as_bytes%2#0: bytes[8] = (itob startTimestamp#0)
+        let val_as_bytes%3#0: bytes[8] = (itob endTimestamp#0)
+        let tmp%11#0: bytes[32] = (txn Sender)
+        let val_as_bytes%4#0: bytes[8] = (itob minTickets#0)
+        let val_as_bytes%5#0: bytes[8] = (itob maxTickets#0)
+        let val_as_bytes%6#0: bytes[8] = (itob gateID#0)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let val_as_bytes%7#0: bytes[8] = (itob maybe_value%0#0)
+        ((itxn_field ApplicationArgs) method "create(uint64,bool,uint64,uint64,uint64,address,uint64,uint64,uint64,address,uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationArgs) encoded_bool%0#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%1#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%2#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%3#0)
+        ((itxn_field ApplicationArgs) tmp%11#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%4#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%5#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%6#0)
+        ((itxn_field ApplicationArgs) marketplace#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%7#0)
+        ((itxn_field ExtraProgramPages) 1u)
+        ((itxn_field GlobalNumByteSlice) 7u)
+        ((itxn_field GlobalNumUint) 19u)
+        ((itxn_field ClearStateProgramPages) CoEBQw==)
+        ((itxn_field ApprovalProgramPages) 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)
+        ((itxn_field OnCompletion) 0u)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let raffleApp#0: uint64 = (gitxn 0 CreatedApplicationID)
+        let tmp%12#0: bytes[32] = ((gtxns Sender) payment#0)
+        let encoded_value%0#0: bytes[8] = (itob raffleApp#0)
+        let box_prefixed_key%0#0: bytes = (concat "c" encoded_value%0#0)
+        let val_as_bytes%8#0: bytes[8] = (itob totalMBR#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat tmp%12#0 val_as_bytes%8#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%2#0)
+        goto ticketAsset#0 ? block@9 : block@12
+    block@9: // if_body_L96
+        itxn_begin
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) raffleApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%1%%param_Amount_idx_0#0: uint64 = (global AssetOptInMinBalance)
+        ((itxn_field Amount) inner_txn_params%1%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%0#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        ((itxn_field ApplicationArgs) method "optin(pay,uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%1#0)
+        ((itxn_field OnCompletion) 0u)
+        ((itxn_field ApplicationID) raffleApp#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@12
+    block@12: // after_if_else_L96
+        return raffleApp#0
+
+subroutine smart_contracts/raffle/factory.algo.ts::RaffleFactory.create(version: bytes, childVersion: bytes, akitaDAO: uint64, escrow: uint64) -> void:
+    block@0: // L116
+        (app_global_put "version" version#0)
+        (app_global_put "child_contract_version" childVersion#0)
+        (app_global_put "akita_dao" akitaDAO#0)
+        (app_global_put "akita_escrow" escrow#0)
+        return 
+
+subroutine smart_contracts/raffle/factory.algo.ts::RaffleFactory.newRaffle(payment: uint64, assetXfer: uint64, ticketAsset: uint64, startTimestamp: uint64, endTimestamp: uint64, minTickets: uint64, maxTickets: uint64, gateID: uint64, marketplace: bytes[32]) -> uint64:
+    block@0: // L126
+        let tmp%0#0: bytes[32] = ((gtxns AssetReceiver) assetXfer#0)
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        goto tmp%2#0 ? block@1 : block@3
+    block@1: // and_contd_L139
+        let tmp%3#0: uint64 = ((gtxns AssetAmount) assetXfer#0)
+        goto tmp%3#0 ? block@2 : block@3
+    block@2: // bool_true_L139
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L139
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L139
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid transfer
+        let tmp%5#0: uint64 = ((gtxns XferAsset) assetXfer#0)
+        let raffleApp#0: uint64 = smart_contracts/raffle/factory.algo.ts::RaffleFactory.createChildApp(0u, payment#0, tmp%5#0, ticketAsset#0, startTimestamp#0, endTimestamp#0, minTickets#0, maxTickets#0, gateID#0, marketplace#0)
+        itxn_begin
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) raffleApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = (global AssetOptInMinBalance)
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%0#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let val_as_bytes%0#0: bytes[8] = (itob tmp%5#0)
+        ((itxn_field ApplicationArgs) method "optin(pay,uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field OnCompletion) 0u)
+        ((itxn_field ApplicationID) raffleApp#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        itxn_begin
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) raffleApp#0)
+        (assert check%1#0) // application exists
+        let inner_txn_params%2%%param_AssetAmount_idx_0#0: uint64 = ((gtxns AssetAmount) assetXfer#0)
+        ((itxn_field XferAsset) tmp%5#0)
+        ((itxn_field AssetAmount) inner_txn_params%2%%param_AssetAmount_idx_0#0)
+        ((itxn_field AssetReceiver) value%1#0)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return raffleApp#0
+
+subroutine smart_contracts/raffle/factory.algo.ts::RaffleFactory.newPrizeBoxRaffle(payment: uint64, prizeBoxID: uint64, ticketAsset: uint64, startTimestamp: uint64, endTimestamp: uint64, minTickets: uint64, maxTickets: uint64, gateID: uint64, marketplace: bytes[32]) -> uint64:
+    block@0: // L190
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#1: bytes[32], check%0#1: bool) = ((app_params_get AppCreator) prizeBoxID#0)
+        (assert check%0#1) // application exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let item3%1#0: uint64 = (extract_uint64 appListBytes#0 24u)
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) item3%1#0)
+        (assert check%1#0) // application exists
+        let tmp%12#0: bool = (== value%0#1 value%1#0)
+        (assert tmp%12#0) // Not a prize box
+        let (ownerBytes#0: bytes, _#0: bool) = (app_global_get_ex prizeBoxID#0 "owner")
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== ownerBytes#0 tmp%1#0)
+        (assert tmp%2#0) // Not prize box owner
+        let raffleApp#0: uint64 = smart_contracts/raffle/factory.algo.ts::RaffleFactory.createChildApp(1u, payment#0, prizeBoxID#0, ticketAsset#0, startTimestamp#0, endTimestamp#0, minTickets#0, maxTickets#0, gateID#0, marketplace#0)
+        itxn_begin
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) raffleApp#0)
+        (assert check%0#0) // application exists
+        ((itxn_field ApplicationArgs) method "transfer(address)void")
+        ((itxn_field ApplicationArgs) value%0#0)
+        ((itxn_field ApplicationID) prizeBoxID#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return raffleApp#0
+
+subroutine smart_contracts/raffle/factory.algo.ts::RaffleFactory.initRaffle(payment: uint64, raffleID: uint64, weightsListCount: uint64) -> void:
+    block@0: // L226
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) raffleID#0)
+        (assert check%0#0) // application exists
+        let tmp%0#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%1#0: bool = (== value%0#0 tmp%0#0)
+        (assert tmp%1#0) // Not a raffle
+        let encoded_value%0#0: bytes[8] = (itob raffleID#0)
+        let box_prefixed_key%0#0: bytes = (concat "c" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // App creator not found
+        let childAppMBR#0: uint64 = (* weightsListCount#0 13113300u)
+        let tmp%2#0: bytes[32] = ((gtxns Sender) payment#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let item0%0#0: bytes = ((extract 0 32) maybe_value%0#0) // on error: Index access is out of bounds
+        let tmp%3#0: bool = (== tmp%2#0 item0%0#0)
+        goto tmp%3#0 ? block@1 : block@4
+    block@1: // and_contd_L233
+        let tmp%4#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%5#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%6#0: bool = (== tmp%4#0 tmp%5#0)
+        goto tmp%6#0 ? block@2 : block@4
+    block@2: // and_contd_L233
+        let tmp%7#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%8#0: bool = (== tmp%7#0 childAppMBR#0)
+        goto tmp%8#0 ? block@3 : block@4
+    block@3: // bool_true_L233
+        let and_result%0#0: bool = 1u
+        goto block@5
+    block@4: // bool_false_L233
+        let and_result%0#1: bool = 0u
+        goto block@5
+    block@5: // bool_merge_L233
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@3, and_result%0#1 <- block@4)
+        (assert and_result%0#2) // Invalid payment
+        itxn_begin
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) raffleID#0)
+        (assert check%1#0) // application exists
+        ((itxn_field Amount) childAppMBR#0)
+        ((itxn_field Receiver) value%1#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let val_as_bytes%0#0: bytes[8] = (itob weightsListCount#0)
+        ((itxn_field ApplicationArgs) method "init(pay,uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field OnCompletion) 0u)
+        ((itxn_field ApplicationID) raffleID#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let (maybe_value%1#0: bytes, maybe_exists%2#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%2#0) // Box must have value
+        let prevAppCreators.creator#0: bytes[32] = ((extract 0 32) maybe_value%1#0) // on error: Index access is out of bounds
+        let prevAppCreators.amount#0: uint64 = (extract_uint64 maybe_value%1#0 32u)
+        let tmp%9#0: uint64 = (+ prevAppCreators.amount#0 childAppMBR#0)
+        let val_as_bytes%1#0: bytes[8] = (itob tmp%9#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat prevAppCreators.creator#0 val_as_bytes%1#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%2#0)
+        return 
+
+subroutine smart_contracts/raffle/factory.algo.ts::RaffleFactory.deleteRaffle(raffleID: uint64) -> void:
+    block@0: // L262
+        itxn_begin
+        ((itxn_field ApplicationArgs) method "deleteApplication()void")
+        ((itxn_field OnCompletion) 5u)
+        ((itxn_field ApplicationID) raffleID#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let encoded_value%0#0: bytes[8] = (itob raffleID#0)
+        let box_prefixed_key%0#0: bytes = (concat "c" encoded_value%0#0)
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Box must have value
+        let creator#0: bytes[32] = ((extract 0 32) maybe_value%0#0) // on error: Index access is out of bounds
+        let amount#0: uint64 = (extract_uint64 maybe_value%0#0 32u)
+        (box_del box_prefixed_key%0#0)
+        itxn_begin
+        ((itxn_field Receiver) creator#0)
+        ((itxn_field Amount) amount#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(payment: uint64, asset: uint64) -> void:
+    block@0: // L22
+        let tmp%0#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        goto tmp%2#0 ? block@1 : block@3
+    block@1: // and_contd_L24
+        let tmp%3#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%4#0: uint64 = (global AssetOptInMinBalance)
+        let tmp%5#0: bool = (== tmp%3#0 tmp%4#0)
+        goto tmp%5#0 ? block@2 : block@3
+    block@2: // bool_true_L24
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L24
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L24
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        itxn_begin
+        let inner_txn_params%0%%param_AssetReceiver_idx_0#0: bytes[32] = (global CurrentApplicationAddress)
+        ((itxn_field XferAsset) asset#0)
+        ((itxn_field AssetAmount) 0u)
+        ((itxn_field AssetReceiver) inner_txn_params%0%%param_AssetReceiver_idx_0#0)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateApplication(newVersion: bytes, newChildVersion: bytes) -> void:
+    block@0: // L50
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        (app_global_put "child_contract_version" newChildVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L59
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 

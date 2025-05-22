@@ -1,0 +1,204 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@2 : block@11
+    block@2: // abi_routing_L27
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(string,uint64)void" => block@3, method "register(byte[])uint64" => block@4, method "check(byte[])bool" => block@5, method "update(string)void" => block@6, method "updateAkitaDAO(uint64)void" => block@7, * => block@11}
+    block@3: // create_route_L76
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let tmp%7#0: bytes = (txna ApplicationArgs 1)
+        let tmp%8#0: bytes = ((extract 2 0) tmp%7#0)
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%9#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.create(tmp%8#0, tmp%9#0)
+        let smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#0: bool = 1u
+        goto block@12
+    block@4: // register_route_L85
+        let tmp%10#0: uint64 = (txn OnCompletion)
+        let tmp%11#0: bool = (! tmp%10#0)
+        (assert tmp%11#0) // OnCompletion is not NoOp
+        let tmp%12#0: uint64 = (txn ApplicationID)
+        (assert tmp%12#0) // can only call when not creating
+        let tmp%14#0: bytes = (txna ApplicationArgs 1)
+        let tmp%15#0: bytes = ((extract 2 0) tmp%14#0)
+        let to_encode%0#0: uint64 = smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.register(tmp%15#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%16#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%16#0)
+        let smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#1: bool = 1u
+        goto block@12
+    block@5: // check_route_L95
+        let tmp%17#0: uint64 = (txn OnCompletion)
+        let tmp%18#0: bool = (! tmp%17#0)
+        (assert tmp%18#0) // OnCompletion is not NoOp
+        let tmp%19#0: uint64 = (txn ApplicationID)
+        (assert tmp%19#0) // can only call when not creating
+        let tmp%21#0: bytes = (txna ApplicationArgs 1)
+        let tmp%22#0: bytes = ((extract 2 0) tmp%21#0)
+        let to_encode%1#0: bool = smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.check(tmp%22#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u to_encode%1#0)
+        let tmp%23#0: bytes = (concat 0x151f7c75 encoded_bool%0#0)
+        (log tmp%23#0)
+        let smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#2: bool = 1u
+        goto block@12
+    block@6: // update_route_L19
+        let tmp%24#0: uint64 = (txn OnCompletion)
+        let tmp%25#0: bool = (== tmp%24#0 UpdateApplication)
+        (assert tmp%25#0) // OnCompletion is not UpdateApplication
+        let tmp%26#0: uint64 = (txn ApplicationID)
+        (assert tmp%26#0) // can only call when not creating
+        let tmp%28#0: bytes = (txna ApplicationArgs 1)
+        let tmp%29#0: bytes = ((extract 2 0) tmp%28#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(tmp%29#0)
+        let smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#3: bool = 1u
+        goto block@12
+    block@7: // updateAkitaDAO_route_L27
+        let tmp%30#0: uint64 = (txn OnCompletion)
+        let tmp%31#0: bool = (! tmp%30#0)
+        (assert tmp%31#0) // OnCompletion is not NoOp
+        let tmp%32#0: uint64 = (txn ApplicationID)
+        (assert tmp%32#0) // can only call when not creating
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%34#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(tmp%34#0)
+        let smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#4: bool = 1u
+        goto block@12
+    block@11: // after_if_else_L27
+        let smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#5: bool = 0u
+        goto block@12
+    block@12: // after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#0 <- block@3, smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#1 <- block@4, smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#2 <- block@5, smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#3 <- block@6, smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#4 <- block@7, smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.__puya_arc4_router__%0#5 <- block@11)
+        return tmp%0#0
+
+subroutine smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.create(version: bytes, akitaDAO: uint64) -> void:
+    block@0: // L76
+        (app_global_put "version" version#0)
+        (app_global_put "akita_dao" akitaDAO#0)
+        (app_global_put "registry_cursor" 0u)
+        return 
+
+subroutine smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.register(args: bytes) -> uint64:
+    block@0: // L85
+        let tmp%0#0: uint64 = (len args#0)
+        let tmp%1#0: bool = (== tmp%0#0 17u)
+        (assert tmp%1#0) // Invalid number of arguments
+        let tmp%3#0: uint64 = (getbyte args#0 0u)
+        let tmp%4#0: bool = (<= tmp%3#0 6u)
+        (assert tmp%4#0) // bad operation check
+        let (id#1: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "registry_cursor")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let materialized_values%0#0: uint64 = (+ id#1 1u)
+        (app_global_put "registry_cursor" materialized_values%0#0)
+        let encoded_value%0#0: bytes[8] = (itob id#1)
+        (box_put encoded_value%0#0 args#0)
+        return id#1
+
+subroutine smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.check(args: bytes) -> bool:
+    block@0: // L95
+        let tmp%0#0: uint64 = (len args#0)
+        let tmp%1#0: bool = (>= tmp%0#0 40u)
+        (assert tmp%1#0) // Invalid number of arguments
+        let materialized_values%0#0: uint64 = (extract_uint64 args#0 32u)
+        let encoded_value%0#0: bytes[8] = (itob materialized_values%0#0)
+        let (info#0: bytes[17], maybe_exists%0#0: bool) = (box_get encoded_value%0#0)
+        (assert maybe_exists%0#0) // Box must have value
+        let user#0: bytes[32] = ((extract 0 32) args#0) // on error: Index access is out of bounds
+        let op#0: bytes[1] = ((extract 0 1) info#0) // on error: Index access is out of bounds
+        let asset#0: uint64 = (extract_uint64 info#0 1u)
+        let power#0: uint64 = (extract_uint64 info#0 9u)
+        let (akitaDAO#0: uint64, maybe_exists%0#1: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#1) // check GlobalState exists
+        let (appListBytes#0: bytes, _#0: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let stakingApp#0: uint64 = (extract_uint64 appListBytes#0 0u)
+        itxn_begin
+        let val_as_bytes%0#0: bytes[8] = (itob asset#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%0#0 0x03)
+        ((itxn_field ApplicationArgs) method "getInfo(address,(uint64,uint8))(uint64,uint64,uint64)")
+        ((itxn_field ApplicationArgs) user#0)
+        ((itxn_field ApplicationArgs) encoded_tuple_buffer%2#0)
+        ((itxn_field ApplicationID) stakingApp#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%1#2: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%2#2: bool = (== tmp%1#2 0x151f7c75)
+        (assert tmp%2#2) // Bytes has valid prefix
+        let info.amount#0: uint64 = (extract_uint64 awst_tmp%0#0 4u)
+        let info.expiration#0: uint64 = (extract_uint64 awst_tmp%0#0 20u)
+        let tmp%3#2: uint64 = (global LatestTimestamp)
+        let tmp%4#2: uint64 = (- info.expiration#0 tmp%3#2)
+        let remainingDays#0: uint64 = (/ tmp%4#2 86400u)
+        let tmp%5#2: uint64 = (/ info.amount#0 365u)
+        let userPower#0: uint64 = (* tmp%5#2 remainingDays#0)
+        let tmp%12#0: bool = (== op#0 0x01)
+        goto tmp%12#0 ? block@2 : block@3
+    block@2: // if_body_L52
+        let tmp%13#0: bool = (== userPower#0 power#0)
+        goto block@14
+    block@3: // after_if_else_L52
+        let tmp%14#0: bool = (== op#0 0x02)
+        goto tmp%14#0 ? block@4 : block@5
+    block@4: // if_body_L55
+        let tmp%15#0: bool = (!= userPower#0 power#0)
+        goto block@14
+    block@5: // after_if_else_L55
+        let tmp%16#0: bool = (== op#0 0x03)
+        goto tmp%16#0 ? block@6 : block@7
+    block@6: // if_body_L58
+        let tmp%17#0: bool = (< userPower#0 power#0)
+        goto block@14
+    block@7: // after_if_else_L58
+        let tmp%18#0: bool = (== op#0 0x04)
+        goto tmp%18#0 ? block@8 : block@9
+    block@8: // if_body_L61
+        let tmp%19#0: bool = (<= userPower#0 power#0)
+        goto block@14
+    block@9: // after_if_else_L61
+        let tmp%20#0: bool = (== op#0 0x05)
+        goto tmp%20#0 ? block@10 : block@11
+    block@10: // if_body_L64
+        let tmp%21#0: bool = (> userPower#0 power#0)
+        goto block@14
+    block@11: // after_if_else_L64
+        let tmp%22#0: bool = (== op#0 0x06)
+        goto tmp%22#0 ? block@12 : block@13
+    block@12: // if_body_L67
+        let tmp%23#0: bool = (>= userPower#0 power#0)
+        goto block@14
+    block@13: // after_if_else_L67
+        let smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate%0#6: bool = 0u
+        goto block@14
+    block@14: // after_inlined_smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate_L95
+        let tmp%9#0: bool = φ(tmp%13#0 <- block@2, tmp%15#0 <- block@4, tmp%17#0 <- block@6, tmp%19#0 <- block@8, tmp%21#0 <- block@10, tmp%23#0 <- block@12, smart_contracts/gates/plugins/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate%0#6 <- block@13)
+        return tmp%9#0
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+    block@0: // L19
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L27
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 

@@ -1,0 +1,1106 @@
+{
+  "version": 3,
+  "sources": [
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/arc58/spending-account/constants.ts",
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/arc58/spending-account/contract.algo.ts",
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/utils/constants.ts"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;ACOA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;AAAA;;AAmDE;;AAAA;AAAA;AAAA;;AAAA;AAnDF;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAmDE;;;AAAA;;AAjBA;;AAAA;AAAA;AAAA;;AAAA;AAlCF;;;AAkCE;;;AAAA;;AAPC;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;;AANA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AArBH;;;AAAA;AAAA;;;AAAA;AAqBG;;;AAAA;;AATY;;ADjBsC;AAAA;AAAA;AAAA;ACiBM;;AAAA;AAAhD;AAAP;AASF;;;AD1BmD;AC4BjD;;AAAA;AD3BiD;AC4BjD;;AAAA;;AAKW;;AAAkB;;AAAtB;AAAP;;AAKF;;;AACS;;;AAAP;AAEA;;;;;AAEY;;;AAFZ;;;ACzCuB;;;ADyCvB;;AAcF;;;AACS;;;AAAA;;;AApCI;;ADpBsC;AAAA;AAAA;AAAA;ACoBM;;AAAA;AAAhD;AAoCA;;;;AAAP;AAEA;;AAAA;;AAGqB;;AAHrB;AAAA;;;AAAA;;AAAA;;AAImB;;AAJnB;AAAA;;;;AAAA;AASA;AAE0B;;;;;;AACT;;;;;AAHjB;;;;ACnEuB;;;ADmEvB;;;;;;;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "@algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1"
+    },
+    "5": {
+      "op": "bytecblock \"wallet_id\" \"plugin_id\""
+    },
+    "27": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "29": {
+      "op": "bz main_after_if_else@10",
+      "stack_out": []
+    },
+    "32": {
+      "op": "pushbytess 0x9479ff63 0x2487c32c 0x65a97bcc 0x3ea11832 // method \"create(uint64,uint64)void\", method \"deleteApplication()void\", method \"rekey(address)void\", method \"optin(pay,uint64)void\"",
+      "defined_out": [
+        "Method(create(uint64,uint64)void)",
+        "Method(deleteApplication()void)",
+        "Method(optin(pay,uint64)void)",
+        "Method(rekey(address)void)"
+      ],
+      "stack_out": [
+        "Method(create(uint64,uint64)void)",
+        "Method(deleteApplication()void)",
+        "Method(rekey(address)void)",
+        "Method(optin(pay,uint64)void)"
+      ]
+    },
+    "54": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(create(uint64,uint64)void)",
+        "Method(deleteApplication()void)",
+        "Method(optin(pay,uint64)void)",
+        "Method(rekey(address)void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(create(uint64,uint64)void)",
+        "Method(deleteApplication()void)",
+        "Method(rekey(address)void)",
+        "Method(optin(pay,uint64)void)",
+        "tmp%2#0"
+      ]
+    },
+    "57": {
+      "op": "match main_create_route@3 main_deleteApplication_route@4 main_rekey_route@5 main_optin_route@6",
+      "stack_out": []
+    },
+    "67": {
+      "block": "main_after_if_else@10",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "68": {
+      "op": "return",
+      "stack_out": []
+    },
+    "69": {
+      "block": "main_optin_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "71": {
+      "op": "!",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "72": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "73": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "75": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "76": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "78": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0",
+        "1"
+      ]
+    },
+    "79": {
+      "op": "-",
+      "defined_out": [
+        "gtxn_idx%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0"
+      ]
+    },
+    "80": {
+      "op": "dup",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ]
+    },
+    "81": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ]
+    },
+    "83": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ]
+    },
+    "84": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "85": {
+      "error": "transaction type is pay",
+      "op": "assert // transaction type is pay",
+      "stack_out": [
+        "gtxn_idx%0#0"
+      ]
+    },
+    "86": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "reinterpret_bytes[8]%2#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "reinterpret_bytes[8]%2#0"
+      ]
+    },
+    "89": {
+      "op": "btoi",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "tmp%22#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "tmp%22#0"
+      ]
+    },
+    "90": {
+      "callsub": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.optin",
+      "op": "callsub optin",
+      "stack_out": []
+    },
+    "93": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "94": {
+      "op": "return",
+      "stack_out": []
+    },
+    "95": {
+      "block": "main_rekey_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "97": {
+      "op": "!",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "98": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "99": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "101": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "102": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_bytes[32]%0#0"
+      ],
+      "stack_out": [
+        "reinterpret_bytes[32]%0#0"
+      ]
+    },
+    "105": {
+      "callsub": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.rekey",
+      "op": "callsub rekey",
+      "stack_out": []
+    },
+    "108": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "109": {
+      "op": "return",
+      "stack_out": []
+    },
+    "110": {
+      "block": "main_deleteApplication_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "112": {
+      "op": "pushint 5 // DeleteApplication",
+      "defined_out": [
+        "DeleteApplication",
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0",
+        "DeleteApplication"
+      ]
+    },
+    "114": {
+      "op": "==",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "115": {
+      "error": "OnCompletion is not DeleteApplication",
+      "op": "assert // OnCompletion is not DeleteApplication",
+      "stack_out": []
+    },
+    "116": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "118": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "119": {
+      "callsub": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.deleteApplication",
+      "op": "callsub deleteApplication"
+    },
+    "122": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "123": {
+      "op": "return",
+      "stack_out": []
+    },
+    "124": {
+      "block": "main_create_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "126": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "127": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "128": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "130": {
+      "op": "!",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "131": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "132": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_bytes[8]%0#0"
+      ],
+      "stack_out": [
+        "reinterpret_bytes[8]%0#0"
+      ]
+    },
+    "135": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "136": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "reinterpret_bytes[8]%1#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "reinterpret_bytes[8]%1#0"
+      ]
+    },
+    "139": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%7#0",
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "tmp%8#0"
+      ]
+    },
+    "140": {
+      "callsub": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.create",
+      "op": "callsub create",
+      "stack_out": []
+    },
+    "143": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "144": {
+      "op": "return",
+      "stack_out": []
+    },
+    "145": {
+      "subroutine": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.isWallet",
+      "params": {},
+      "block": "isWallet",
+      "stack_in": [],
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "147": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "148": {
+      "op": "bytec_0 // \"wallet_id\"",
+      "defined_out": [
+        "\"wallet_id\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0",
+        "\"wallet_id\""
+      ]
+    },
+    "149": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "150": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "151": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "tmp%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "153": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0"
+      ]
+    },
+    "154": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "155": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "156": {
+      "subroutine": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.create",
+      "params": {
+        "walletID#0": "uint64",
+        "plugin#0": "uint64"
+      },
+      "block": "create",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "159": {
+      "op": "bytec_0 // \"wallet_id\"",
+      "defined_out": [
+        "\"wallet_id\""
+      ],
+      "stack_out": [
+        "\"wallet_id\""
+      ]
+    },
+    "160": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "\"wallet_id\"",
+        "walletID#0 (copy)"
+      ],
+      "stack_out": [
+        "\"wallet_id\"",
+        "walletID#0 (copy)"
+      ]
+    },
+    "162": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "163": {
+      "op": "bytec_1 // \"plugin_id\"",
+      "defined_out": [
+        "\"plugin_id\""
+      ],
+      "stack_out": [
+        "\"plugin_id\""
+      ]
+    },
+    "164": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"plugin_id\"",
+        "plugin#0 (copy)"
+      ],
+      "stack_out": [
+        "\"plugin_id\"",
+        "plugin#0 (copy)"
+      ]
+    },
+    "166": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "167": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "168": {
+      "subroutine": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.deleteApplication",
+      "params": {},
+      "block": "deleteApplication",
+      "stack_in": [],
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "170": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "172": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "173": {
+      "error": "Only the factory can delete the application",
+      "op": "assert // Only the factory can delete the application",
+      "stack_out": []
+    },
+    "174": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "175": {
+      "subroutine": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.rekey",
+      "params": {
+        "address#0": "bytes"
+      },
+      "block": "rekey",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "178": {
+      "callsub": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.isWallet",
+      "op": "callsub isWallet",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "181": {
+      "error": "only the creator can rekey a spend contract",
+      "op": "assert // only the creator can rekey a spend contract",
+      "stack_out": []
+    },
+    "182": {
+      "op": "itxn_begin"
+    },
+    "183": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "address#0 (copy)"
+      ],
+      "stack_out": [
+        "address#0 (copy)"
+      ]
+    },
+    "185": {
+      "op": "itxn_field RekeyTo",
+      "stack_out": []
+    },
+    "187": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "188": {
+      "op": "itxn_field Amount",
+      "stack_out": []
+    },
+    "190": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "191": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "193": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "194": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "196": {
+      "op": "itxn_submit"
+    },
+    "197": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "198": {
+      "subroutine": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.optin",
+      "params": {
+        "payment#0": "uint64",
+        "asset#0": "uint64"
+      },
+      "block": "optin",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "201": {
+      "callsub": "smart_contracts/arc58/spending-account/contract.algo.ts::SpendingAccountContract.isWallet",
+      "op": "callsub isWallet",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "204": {
+      "op": "bnz optin_bool_true@2",
+      "stack_out": []
+    },
+    "207": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "209": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "210": {
+      "op": "bytec_1 // \"plugin_id\"",
+      "defined_out": [
+        "\"plugin_id\"",
+        "0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1",
+        "0",
+        "\"plugin_id\""
+      ]
+    },
+    "211": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "212": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "213": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "tmp%0#1",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#1",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "215": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "tmp%0#1",
+        "value%0#0"
+      ]
+    },
+    "216": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "tmp%1#1"
+      ]
+    },
+    "217": {
+      "op": "bz optin_bool_false@3",
+      "stack_out": []
+    },
+    "220": {
+      "block": "optin_bool_true@2",
+      "stack_in": [],
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "or_result%0#0"
+      ],
+      "stack_out": [
+        "or_result%0#0"
+      ]
+    },
+    "221": {
+      "block": "optin_bool_merge@4",
+      "stack_in": [
+        "or_result%0#0"
+      ],
+      "error": "Only the wallet or plugin can opt in",
+      "op": "assert // Only the wallet or plugin can opt in",
+      "defined_out": [],
+      "stack_out": []
+    },
+    "222": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "payment#0 (copy)"
+      ],
+      "stack_out": [
+        "payment#0 (copy)"
+      ]
+    },
+    "224": {
+      "op": "gtxns Receiver",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "226": {
+      "op": "global CurrentApplicationAddress",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ]
+    },
+    "228": {
+      "op": "==",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "229": {
+      "op": "bz optin_bool_false@7",
+      "stack_out": []
+    },
+    "232": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "payment#0 (copy)"
+      ]
+    },
+    "234": {
+      "op": "gtxns Amount",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "236": {
+      "op": "global AssetOptInMinBalance",
+      "defined_out": [
+        "tmp%5#0",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%5#0",
+        "tmp%6#0"
+      ]
+    },
+    "238": {
+      "op": "==",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "239": {
+      "op": "bz optin_bool_false@7",
+      "stack_out": []
+    },
+    "242": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "and_result%0#0"
+      ],
+      "stack_out": [
+        "and_result%0#0"
+      ]
+    },
+    "243": {
+      "block": "optin_bool_merge@8",
+      "stack_in": [
+        "and_result%0#0"
+      ],
+      "error": "invalid payment",
+      "op": "assert // invalid payment",
+      "defined_out": [],
+      "stack_out": []
+    },
+    "244": {
+      "op": "itxn_begin"
+    },
+    "245": {
+      "op": "global CurrentApplicationAddress",
+      "defined_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "247": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "asset#0 (copy)",
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0",
+        "asset#0 (copy)"
+      ]
+    },
+    "249": {
+      "op": "itxn_field XferAsset",
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "251": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0",
+        "0"
+      ]
+    },
+    "252": {
+      "op": "itxn_field AssetAmount",
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "254": {
+      "op": "itxn_field AssetReceiver",
+      "stack_out": []
+    },
+    "256": {
+      "op": "pushint 4 // 4",
+      "defined_out": [
+        "4"
+      ],
+      "stack_out": [
+        "4"
+      ]
+    },
+    "258": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "260": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "261": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "263": {
+      "op": "itxn_submit"
+    },
+    "264": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "265": {
+      "block": "optin_bool_false@7",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "and_result%0#0"
+      ],
+      "stack_out": [
+        "and_result%0#0"
+      ]
+    },
+    "266": {
+      "op": "b optin_bool_merge@8"
+    },
+    "269": {
+      "block": "optin_bool_false@3",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "or_result%0#0"
+      ],
+      "stack_out": [
+        "or_result%0#0"
+      ]
+    },
+    "270": {
+      "op": "b optin_bool_merge@4"
+    }
+  }
+}

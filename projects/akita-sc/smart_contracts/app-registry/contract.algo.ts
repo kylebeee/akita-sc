@@ -1,6 +1,5 @@
-import { abimethod, Application, assert, assertMatch, BoxMap, Bytes, bytes, Contract, Global, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4";
-import { itob, sha512_256 } from "@algorandfoundation/algorand-typescript/op";
+import { abimethod, Application, assert, assertMatch, BoxMap, bytes, Contract, Global, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 const ERR_APP_NOT_REGISTERED = 'App not registered'
 const ERR_INVALID_PAYMENT = 'Invalid payment'
@@ -19,8 +18,8 @@ export class AppRegistry extends Contract {
     return 0
   }
 
-  private deriveAddr(app: uint64): bytes {
-   return sha512_256(Bytes('appID').concat(itob(app)))
+  private deriveAddr(app: uint64): bytes<32> {
+   return Application(app).address.bytes
   }
 
   register(

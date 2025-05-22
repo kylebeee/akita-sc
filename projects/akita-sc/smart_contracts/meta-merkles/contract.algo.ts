@@ -16,9 +16,9 @@ import {
   TemplateVar,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { btoi, itob, sha256, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abimethod, Address, StaticBytes } from '@algorandfoundation/algorand-typescript/arc4'
-import { arc4DataKey, arc4RootKey, arc4TypesValue, DataKey, MetaMerklesMBRData, RootKey, SchemaList, TypesValue } from './types'
+import { btoi, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
+import { abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { DataKey, MetaMerklesMBRData, RootKey, SchemaList, TypesValue } from './types'
 import {
   maxDataKeyLength,
   maxDataLength,
@@ -78,13 +78,13 @@ import {
 } from './errors'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
 import { bytes16, str } from '../utils/types/base'
-import { Leaf, Proof } from '../utils/types/merkles'
+import { Leaf, MetaMerklesInterface, Proof } from '../utils/types/merkles'
 import { fee } from '../utils/constants'
 import { getOrigin } from '../utils/functions'
 
 const spendingAccountFactoryApp = TemplateVar<Application>('SPENDING_ACCOUNT_FACTORY_APP')
 
-export class MetaMerkles extends Contract {
+export class MetaMerkles extends Contract implements MetaMerklesInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 

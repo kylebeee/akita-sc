@@ -190,7 +190,7 @@ describe('Abstracted Subscription Program', () => {
             args: {
               walletId: abstractedAccountClient.appId,
               rekeyBack: true,
-              asset,
+              assets: [asset],
               mbrPayment
             },
             extraFee: (1_000).microAlgo()

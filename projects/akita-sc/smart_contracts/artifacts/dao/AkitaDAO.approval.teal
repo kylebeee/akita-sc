@@ -1,0 +1,5106 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 10 8 1000 100000 217 352 216 225
+    bytecblock 0x00 "" "controlled_address" "spending_address" 0x151f7c75 "version" "krby_percentage" "mod_percentage" "akita_assets" "revocation_address" "p" "l" "content_policy" "minimum_rewards_impact" "social_fees" "staking_fees" "subscription_fees" "nft_fees" "proposal_id" 0x0f885493 "spending_account_factory_app" "status" "swap_fees" "proposal_settings" 0x002d "proposal_fee" "akita_al"
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txn NumAppArgs
+    bz main_after_if_else@18
+    pushbytess 0x240d2f67 0xd380c4f0 0xd2460644 // method "create(uint64)void", method "update(uint64)void", method "init(string,uint64,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),(uint64,uint64),address)void"
+    bytec 19 // method "arc58_verifyAuthAddr()void"
+    pushbytess 0x682fdbf8 0xde300fe9 0xbe39d3c8 0x91a02490 0x6a6494b6 0x56fd2375 0xb4236b33 0xd00e1781 // method "arc58_canCall(uint64,bool,address,byte[4])bool", method "arc58_rekeyToPlugin(uint64,bool,uint64[],(uint64,uint64)[])void", method "arc58_rekeyToNamedPlugin(string,bool,uint64[],(uint64,uint64)[])void", method "newProposal(pay,uint8,byte[36],byte[],uint8)void", method "finalizeProposal(uint64,byte[])void", method "createDailyDisbursement()void", method "optinEscrow(pay,string,uint64)void", method "getState()(uint64,string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64),(uint64,uint64,uint64,uint64),(uint64,uint64,uint64),(uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,(uint64,uint64),(uint64,uint64),address)"
+    txna ApplicationArgs 0
+    match main_create_route@3 main_update_route@4 main_init_route@5 main_arc58_verifyAuthAddr_route@6 main_arc58_canCall_route@7 main_arc58_rekeyToPlugin_route@8 main_arc58_rekeyToNamedPlugin_route@9 main_newProposal_route@10 main_finalizeProposal_route@11 main_createDailyDisbursement_route@12 main_optinEscrow_route@13 main_getState_route@14
+
+main_after_if_else@18:
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    intc_0 // 0
+    return
+
+main_getState_route@14:
+    // smart_contracts/dao/contract.algo.ts:1455
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub getState
+    uncover 50
+    itob
+    dig 50
+    len
+    itob
+    extract 6 2
+    uncover 51
+    concat
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 49
+    itob
+    uncover 11
+    uncover 11
+    concat
+    uncover 10
+    concat
+    uncover 9
+    concat
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    uncover 38
+    itob
+    uncover 38
+    itob
+    uncover 38
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    uncover 36
+    itob
+    uncover 36
+    itob
+    uncover 36
+    itob
+    uncover 36
+    itob
+    uncover 3
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    uncover 33
+    itob
+    uncover 33
+    itob
+    uncover 33
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    uncover 31
+    itob
+    uncover 31
+    itob
+    uncover 31
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 29
+    itob
+    uncover 14
+    uncover 14
+    concat
+    uncover 13
+    concat
+    uncover 12
+    concat
+    uncover 11
+    concat
+    uncover 10
+    concat
+    uncover 9
+    concat
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    uncover 15
+    itob
+    uncover 15
+    itob
+    uncover 15
+    itob
+    uncover 15
+    itob
+    concat
+    uncover 14
+    itob
+    uncover 14
+    itob
+    concat
+    uncover 12
+    pushbytes 0x01c6
+    concat
+    uncover 14
+    concat
+    uncover 11
+    concat
+    uncover 10
+    concat
+    uncover 9
+    concat
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_optinEscrow_route@13:
+    // smart_contracts/dao/contract.algo.ts:1425
+    // optinEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/dao/contract.algo.ts:1425
+    // optinEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void {
+    callsub optinEscrow
+    intc_1 // 1
+    return
+
+main_createDailyDisbursement_route@12:
+    // smart_contracts/dao/contract.algo.ts:1402
+    // createDailyDisbursement(): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub createDailyDisbursement
+    intc_1 // 1
+    return
+
+main_finalizeProposal_route@11:
+    // smart_contracts/dao/contract.algo.ts:1337
+    // finalizeProposal(proposalID: uint64, args: bytes): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    extract 2 0
+    // smart_contracts/dao/contract.algo.ts:1337
+    // finalizeProposal(proposalID: uint64, args: bytes): void {
+    callsub finalizeProposal
+    intc_1 // 1
+    return
+
+main_newProposal_route@10:
+    // smart_contracts/dao/contract.algo.ts:1293-1299
+    // newProposal(
+    //   payment: gtxn.PaymentTxn,
+    //   action: ProposalAction,
+    //   cid: CID,
+    //   data: bytes,
+    //   status: ProposalStatus,
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    extract 2 0
+    txna ApplicationArgs 4
+    // smart_contracts/dao/contract.algo.ts:1293-1299
+    // newProposal(
+    //   payment: gtxn.PaymentTxn,
+    //   action: ProposalAction,
+    //   cid: CID,
+    //   data: bytes,
+    //   status: ProposalStatus,
+    // ): void {
+    callsub newProposal
+    intc_1 // 1
+    return
+
+main_arc58_rekeyToNamedPlugin_route@9:
+    // smart_contracts/dao/contract.algo.ts:1248
+    // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    // smart_contracts/dao/contract.algo.ts:1248
+    // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
+    callsub arc58_rekeyToNamedPlugin
+    intc_1 // 1
+    return
+
+main_arc58_rekeyToPlugin_route@8:
+    // smart_contracts/dao/contract.algo.ts:1190-1195
+    // arc58_rekeyToPlugin(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   methodOffsets: uint64[],
+    //   fundsRequest: FundsRequest[]
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    // smart_contracts/dao/contract.algo.ts:1190-1195
+    // arc58_rekeyToPlugin(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   methodOffsets: uint64[],
+    //   fundsRequest: FundsRequest[]
+    // ): void {
+    callsub arc58_rekeyToPlugin
+    intc_1 // 1
+    return
+
+main_arc58_canCall_route@7:
+    // smart_contracts/dao/contract.algo.ts:1168
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    // smart_contracts/dao/contract.algo.ts:1168
+    // @abimethod({ readonly: true })
+    callsub arc58_canCall
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_arc58_verifyAuthAddr_route@6:
+    // smart_contracts/dao/contract.algo.ts:1155
+    // arc58_verifyAuthAddr(): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub arc58_verifyAuthAddr
+    intc_1 // 1
+    return
+
+main_init_route@5:
+    // smart_contracts/dao/contract.algo.ts:1060-1068
+    // init(
+    //   version: string,
+    //   akta: uint64,
+    //   contentPolicy: bytes<36>,
+    //   minimumRewardsImpact: uint64,
+    //   fees: Fees,
+    //   proposalSettings: ProposalSettings,
+    //   revocationAddress: Address
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    btoi
+    txna ApplicationArgs 5
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    dig 2
+    pushint 16 // 16
+    extract_uint64
+    dig 3
+    pushint 24 // 24
+    extract_uint64
+    dig 4
+    pushint 32 // 32
+    extract_uint64
+    dig 5
+    pushint 40 // 40
+    extract_uint64
+    dig 6
+    pushint 48 // 48
+    extract_uint64
+    dig 7
+    pushint 56 // 56
+    extract_uint64
+    dig 8
+    pushint 64 // 64
+    extract_uint64
+    dig 9
+    pushint 72 // 72
+    extract_uint64
+    dig 10
+    pushint 80 // 80
+    extract_uint64
+    dig 11
+    pushint 88 // 88
+    extract_uint64
+    dig 12
+    pushint 96 // 96
+    extract_uint64
+    dig 13
+    pushint 104 // 104
+    extract_uint64
+    dig 14
+    pushint 112 // 112
+    extract_uint64
+    dig 15
+    pushint 120 // 120
+    extract_uint64
+    dig 16
+    pushint 128 // 128
+    extract_uint64
+    dig 17
+    pushint 136 // 136
+    extract_uint64
+    dig 18
+    pushint 144 // 144
+    extract_uint64
+    dig 19
+    pushint 152 // 152
+    extract_uint64
+    dig 20
+    pushint 160 // 160
+    extract_uint64
+    dig 21
+    pushint 168 // 168
+    extract_uint64
+    dig 22
+    pushint 176 // 176
+    extract_uint64
+    dig 23
+    pushint 184 // 184
+    extract_uint64
+    dig 24
+    pushint 192 // 192
+    extract_uint64
+    dig 25
+    pushint 200 // 200
+    extract_uint64
+    dig 26
+    pushint 208 // 208
+    extract_uint64
+    dig 27
+    intc 8 // 216
+    extract_uint64
+    dig 28
+    pushint 224 // 224
+    extract_uint64
+    dig 29
+    pushint 232 // 232
+    extract_uint64
+    uncover 30
+    pushint 240 // 240
+    extract_uint64
+    txna ApplicationArgs 6
+    dup
+    intc_0 // 0
+    extract_uint64
+    swap
+    intc_3 // 8
+    extract_uint64
+    txna ApplicationArgs 7
+    // smart_contracts/dao/contract.algo.ts:1060-1068
+    // init(
+    //   version: string,
+    //   akta: uint64,
+    //   contentPolicy: bytes<36>,
+    //   minimumRewardsImpact: uint64,
+    //   fees: Fees,
+    //   proposalSettings: ProposalSettings,
+    //   revocationAddress: Address
+    // ): void {
+    callsub init
+    intc_1 // 1
+    return
+
+main_update_route@4:
+    // smart_contracts/dao/contract.algo.ts:1048
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/dao/contract.algo.ts:1048
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
+    intc_1 // 1
+    return
+
+main_create_route@3:
+    // smart_contracts/dao/contract.algo.ts:1042
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/dao/contract.algo.ts:119
+    // export class AkitaDAO extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/dao/contract.algo.ts:1042
+    // @abimethod({ onCreate: 'require' })
+    callsub create
+    intc_1 // 1
+    return
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCallAllowed(application: uint64, allowedCaller: bytes, method: bytes) -> uint64:
+pluginCallAllowed:
+    // smart_contracts/dao/contract.algo.ts:202
+    // private pluginCallAllowed(application: uint64, allowedCaller: Account, method: bytes<4>): boolean {
+    proto 3 1
+    intc_0 // 0
+    bytec_1 // ""
+    dupn 5
+    // smart_contracts/dao/contract.algo.ts:203
+    // const key: PluginKey = { application, allowedCaller }
+    frame_dig -3
+    itob
+    // smart_contracts/dao/contract.algo.ts:205
+    // if (!this.plugins(key).exists) {
+    frame_dig -2
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec 10 // "p"
+    swap
+    concat
+    dup
+    // smart_contracts/dao/contract.algo.ts:205
+    // if (!this.plugins(key).exists) {
+    box_len
+    bury 1
+    bnz pluginCallAllowed_after_if_else@2
+    // smart_contracts/dao/contract.algo.ts:206
+    // return false;
+    intc_0 // 0
+    frame_bury 0
+    retsub
+
+pluginCallAllowed_after_if_else@2:
+    // smart_contracts/dao/contract.algo.ts:209
+    // if (!this.plugins(key).value.useExecutionKey.native) {
+    frame_dig 7
+    box_get
+    assert // Box must have value
+    intc 7 // 352
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    bnz pluginCallAllowed_after_if_else@4
+    // smart_contracts/dao/contract.algo.ts:210
+    // return false;
+    intc_0 // 0
+    frame_bury 0
+    retsub
+
+pluginCallAllowed_after_if_else@4:
+    // smart_contracts/dao/contract.algo.ts:213
+    // const methods = this.plugins(key).value.methods.copy()
+    frame_dig 7
+    box_get
+    assert // Box must have value
+    dup
+    pushint 25 // 25
+    extract_uint16
+    dig 1
+    len
+    substring3
+    dup
+    frame_bury 0
+    // smart_contracts/dao/contract.algo.ts:214
+    // let methodAllowed = methods.length > 0 ? false : true;
+    intc_0 // 0
+    extract_uint16
+    dup
+    frame_bury 6
+    !
+    frame_bury 3
+    // smart_contracts/dao/contract.algo.ts:215
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    intc_0 // 0
+    frame_bury 2
+
+pluginCallAllowed_while_top@5:
+    // smart_contracts/dao/contract.algo.ts:215
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    frame_dig 2
+    frame_dig 6
+    <
+    bz pluginCallAllowed_block@10
+    // smart_contracts/dao/contract.algo.ts:216
+    // if (methods[i].selector.native === method) {
+    frame_dig 0
+    extract 2 0
+    frame_dig 2
+    pushint 20 // 20
+    *
+    pushint 20 // 20
+    extract3 // on error: Index access is out of bounds
+    extract 0 4 // on error: Index access is out of bounds
+    frame_dig -1
+    ==
+    bz pluginCallAllowed_after_if_else@8
+    // smart_contracts/dao/contract.algo.ts:217
+    // methodAllowed = true;
+    intc_1 // 1
+    frame_bury 3
+
+pluginCallAllowed_block@10:
+    // smart_contracts/dao/contract.algo.ts:222
+    // const p = decodeArc4<PluginInfo>(this.plugins(key).value.bytes)
+    frame_dig 7
+    box_get
+    assert // Box must have value
+    dup
+    pushint 18 // 18
+    extract_uint64
+    frame_bury 4
+    dup
+    intc 9 // 225
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    swap
+    pushint 29 // 29
+    extract_uint64
+    frame_bury 5
+    // smart_contracts/dao/contract.algo.ts:223
+    // const epochRef = p.useRounds ? Global.round : Global.latestTimestamp;
+    bz pluginCallAllowed_ternary_false@12
+    global Round
+    frame_bury 1
+
+pluginCallAllowed_ternary_merge@13:
+    // smart_contracts/dao/contract.algo.ts:226
+    // p.lastCalled >= epochRef &&
+    frame_dig 5
+    frame_dig 1
+    >=
+    // smart_contracts/dao/contract.algo.ts:226-227
+    // p.lastCalled >= epochRef &&
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    bz pluginCallAllowed_bool_false@16
+    // smart_contracts/dao/contract.algo.ts:227
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    frame_dig 1
+    frame_dig 5
+    -
+    frame_dig 4
+    >=
+    // smart_contracts/dao/contract.algo.ts:226-227
+    // p.lastCalled >= epochRef &&
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    bz pluginCallAllowed_bool_false@16
+    intc_1 // 1
+
+pluginCallAllowed_bool_merge@17:
+    // smart_contracts/dao/contract.algo.ts:226-228
+    // p.lastCalled >= epochRef &&
+    // (epochRef - p.lastCalled) >= p.cooldown &&
+    // methodAllowed
+    frame_dig 3
+    &&
+    // smart_contracts/dao/contract.algo.ts:225-229
+    // return (
+    //   p.lastCalled >= epochRef &&
+    //   (epochRef - p.lastCalled) >= p.cooldown &&
+    //   methodAllowed
+    // )
+    frame_bury 0
+    retsub
+
+pluginCallAllowed_bool_false@16:
+    intc_0 // 0
+    b pluginCallAllowed_bool_merge@17
+
+pluginCallAllowed_ternary_false@12:
+    // smart_contracts/dao/contract.algo.ts:223
+    // const epochRef = p.useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    frame_bury 1
+    b pluginCallAllowed_ternary_merge@13
+
+pluginCallAllowed_after_if_else@8:
+    // smart_contracts/dao/contract.algo.ts:215
+    // for (let i: uint64 = 0; i < methods.length; i += 1) {
+    frame_dig 2
+    intc_1 // 1
+    +
+    frame_bury 2
+    b pluginCallAllowed_while_top@5
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCheck(key.application: uint64, key.allowedCaller: bytes) -> uint64, uint64, uint64, uint64, uint64, uint64:
+pluginCheck:
+    // smart_contracts/dao/contract.algo.ts:250
+    // private pluginCheck(key: PluginKey): PluginValidation {
+    proto 2 6
+    intc_0 // 0
+    bytec_1 // ""
+    dupn 6
+    frame_dig -2
+    itob
+    // smart_contracts/dao/contract.algo.ts:252
+    // const exists = this.plugins(key).exists;
+    frame_dig -1
+    concat
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec 10 // "p"
+    swap
+    concat
+    dup
+    // smart_contracts/dao/contract.algo.ts:252
+    // const exists = this.plugins(key).exists;
+    box_len
+    dup
+    uncover 2
+    pop
+    // smart_contracts/dao/contract.algo.ts:253
+    // if (!exists) {
+    bnz pluginCheck_after_if_else@2
+    // smart_contracts/dao/contract.algo.ts:255
+    // exists: false,
+    intc_0 // 0
+    // smart_contracts/dao/contract.algo.ts:256
+    // expired: true,
+    intc_1 // 1
+    // smart_contracts/dao/contract.algo.ts:257-258
+    // hasCooldown: true,
+    // onCooldown: true,
+    dupn 2
+    // smart_contracts/dao/contract.algo.ts:259
+    // hasMethodRestrictions: false,
+    intc_0 // 0
+    // smart_contracts/dao/contract.algo.ts:260
+    // valid: false
+    dup
+    // smart_contracts/dao/contract.algo.ts:254-261
+    // return {
+    //   exists: false,
+    //   expired: true,
+    //   hasCooldown: true,
+    //   onCooldown: true,
+    //   hasMethodRestrictions: false,
+    //   valid: false
+    // }
+    frame_bury 5
+    frame_bury 4
+    frame_bury 3
+    frame_bury 2
+    frame_bury 1
+    frame_bury 0
+    retsub
+
+pluginCheck_after_if_else@2:
+    // smart_contracts/dao/contract.algo.ts:264
+    // const pluginInfo = decodeArc4<PluginInfo>(this.plugins(key).value.bytes)
+    frame_dig 8
+    box_get
+    assert // Box must have value
+    dup
+    intc_2 // 10
+    extract_uint64
+    frame_bury 7
+    dup
+    pushint 18 // 18
+    extract_uint64
+    frame_bury 5
+    dup
+    pushint 26 // 26
+    extract_uint16
+    dig 1
+    len
+    dig 2
+    cover 2
+    substring3
+    frame_bury 0
+    dup
+    intc 9 // 225
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    swap
+    pushint 29 // 29
+    extract_uint64
+    frame_bury 6
+    // smart_contracts/dao/contract.algo.ts:265
+    // const epochRef = pluginInfo.useRounds ? Global.round : Global.latestTimestamp;
+    bz pluginCheck_ternary_false@4
+    global Round
+
+pluginCheck_ternary_merge@5:
+    // smart_contracts/dao/contract.algo.ts:267
+    // const expired = epochRef > pluginInfo.lastValid;
+    dup
+    frame_dig 7
+    >
+    frame_bury 1
+    // smart_contracts/dao/contract.algo.ts:268
+    // const hasCooldown = pluginInfo.cooldown > 0;
+    frame_dig 5
+    dup
+    cover 2
+    intc_0 // 0
+    >
+    frame_bury 2
+    // smart_contracts/dao/contract.algo.ts:269
+    // const onCooldown = (epochRef - pluginInfo.lastCalled) < pluginInfo.cooldown;
+    frame_dig 6
+    -
+    >
+    frame_bury 4
+    // smart_contracts/dao/contract.algo.ts:270
+    // const hasMethodRestrictions = pluginInfo.methods.length > 0;
+    frame_dig 0
+    intc_0 // 0
+    extract_uint16
+    intc_0 // 0
+    >
+    frame_bury 3
+    // smart_contracts/dao/contract.algo.ts:272
+    // const valid = exists && !expired && !onCooldown;
+    frame_dig 9
+    bz pluginCheck_bool_false@9
+    frame_dig 1
+    bnz pluginCheck_bool_false@9
+    frame_dig 4
+    bnz pluginCheck_bool_false@9
+    intc_1 // 1
+
+pluginCheck_bool_merge@10:
+    // smart_contracts/dao/contract.algo.ts:274-281
+    // return {
+    //   exists,
+    //   expired,
+    //   hasCooldown,
+    //   onCooldown,
+    //   hasMethodRestrictions,
+    //   valid
+    // }
+    frame_dig 9
+    frame_dig 1
+    frame_dig 2
+    frame_dig 4
+    frame_dig 3
+    uncover 5
+    frame_bury 5
+    frame_bury 4
+    frame_bury 3
+    frame_bury 2
+    frame_bury 1
+    frame_bury 0
+    retsub
+
+pluginCheck_bool_false@9:
+    intc_0 // 0
+    b pluginCheck_bool_merge@10
+
+pluginCheck_ternary_false@4:
+    // smart_contracts/dao/contract.algo.ts:265
+    // const epochRef = pluginInfo.useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    b pluginCheck_ternary_merge@5
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.create(spendingAccountFactoryApp: uint64) -> void:
+create:
+    // smart_contracts/dao/contract.algo.ts:1042-1043
+    // @abimethod({ onCreate: 'require' })
+    // create(spendingAccountFactoryApp: uint64): void {
+    proto 1 0
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    bytec 5 // "version"
+    // smart_contracts/dao/contract.algo.ts:1044
+    // this.version.value = ''
+    bytec_1 // ""
+    app_global_put
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    bytec 20 // "spending_account_factory_app"
+    // smart_contracts/dao/contract.algo.ts:1045
+    // this.spendingAccountFactoryApp.value = Application(spendingAccountFactoryApp)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.update(proposalID: uint64) -> void:
+update:
+    // smart_contracts/dao/contract.algo.ts:1048-1049
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(proposalID: uint64): void {
+    proto 1 0
+    // smart_contracts/dao/contract.algo.ts:1050
+    // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
+    frame_dig -1
+    itob
+    // smart_contracts/dao/constants.ts:25
+    // export const AkitaDAOBoxPrefixProposals = 'l'
+    bytec 11 // "l"
+    swap
+    concat
+    // smart_contracts/dao/contract.algo.ts:1050
+    // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Proposal does not exist
+    // smart_contracts/dao/contract.algo.ts:1051
+    // const { status, action, data } = this.proposals(proposalID).value
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    extract 1 1 // on error: Index access is out of bounds
+    dig 2
+    pushint 86 // 86
+    extract_uint16
+    dig 3
+    len
+    uncover 4
+    cover 2
+    substring3
+    // smart_contracts/dao/contract.algo.ts:1052
+    // assert(status === StatusApproved, ERR_PROPOSAL_NOT_APPROVED)
+    uncover 2
+    // smart_contracts/dao/constants.ts:63
+    // export const StatusApproved = new UintN8(40)
+    pushbytes 0x28
+    // smart_contracts/dao/contract.algo.ts:1052
+    // assert(status === StatusApproved, ERR_PROPOSAL_NOT_APPROVED)
+    ==
+    assert // Proposal is not approved
+    // smart_contracts/dao/contract.algo.ts:1053
+    // assert(action === ProposalActionUpgradeApp, ERR_PROPOSAL_NOT_UPGRADE_APP)
+    swap
+    // smart_contracts/dao/constants.ts:65
+    // export const ProposalActionUpgradeApp = new UintN8(0)
+    bytec_0 // 0x00
+    // smart_contracts/dao/contract.algo.ts:1053
+    // assert(action === ProposalActionUpgradeApp, ERR_PROPOSAL_NOT_UPGRADE_APP)
+    ==
+    assert // Proposal is not an upgrade app
+    // smart_contracts/dao/contract.algo.ts:1055
+    // const { app, executionKey } = decodeArc4<ProposalUpgradeApp>(data)
+    dup
+    pushint 2 // 2
+    extract_uint64
+    swap
+    extract 10 32
+    // smart_contracts/dao/contract.algo.ts:1056
+    // assert(app === Global.currentApplicationId.id, ERR_PROPOSAL_NOT_UPGRADE_APP)
+    global CurrentApplicationID
+    uncover 2
+    ==
+    assert // Proposal is not an upgrade app
+    // smart_contracts/dao/contract.algo.ts:1057
+    // assert(Global.groupId === executionKey.bytes, ERR_EXECUTION_KEY_MISMATCH)
+    global GroupID
+    ==
+    assert // Execution key mismatch
+    retsub
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.init(version: bytes, akta: uint64, contentPolicy: bytes, minimumRewardsImpact: uint64, fees.postFee: uint64, fees.reactFee: uint64, fees.impactTaxMin: uint64, fees.impactTaxMax: uint64, fees.poolCreationFee: uint64, fees.poolImpactTaxMin: uint64, fees.poolImpactTaxMax: uint64, fees.subscriptionServiceCreationFee: uint64, fees.subscriptionPaymentPercentage: uint64, fees.subscriptionTriggerPercentage: uint64, fees.marketplaceSalePercentageMin: uint64, fees.marketplaceSalePercentageMax: uint64, fees.marketplaceComposablePercentage: uint64, fees.marketplaceRoyaltyDefaultPercentage: uint64, fees.shuffleSalePercentage: uint64, fees.omnigemSaleFee: uint64, fees.auctionCreationFee: uint64, fees.auctionSaleImpactTaxMin: uint64, fees.auctionSaleImpactTaxMax: uint64, fees.auctionComposablePercentage: uint64, fees.auctionRafflePercentage: uint64, fees.raffleCreationFee: uint64, fees.raffleSaleImpactTaxMin: uint64, fees.raffleSaleImpactTaxMax: uint64, fees.raffleComposablePercentage: uint64, fees.swapFeeImpactTaxMin: uint64, fees.swapFeeImpactTaxMax: uint64, fees.swapComposablePercentage: uint64, fees.swapLiquidityPercentage: uint64, fees.krbyPercentage: uint64, fees.moderatorPercentage: uint64, proposalSettings.minimumProposalThreshold: uint64, proposalSettings.minimumVoteThreshold: uint64, revocationAddress: bytes) -> void:
+init:
+    // smart_contracts/dao/contract.algo.ts:1060-1068
+    // init(
+    //   version: string,
+    //   akta: uint64,
+    //   contentPolicy: bytes<36>,
+    //   minimumRewardsImpact: uint64,
+    //   fees: Fees,
+    //   proposalSettings: ProposalSettings,
+    //   revocationAddress: Address
+    // ): void {
+    proto 38 0
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    intc_0 // 0
+    bytec 5 // "version"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:1069
+    // assert(this.version.value === '', ERR_ALREADY_INITIALIZED)
+    bytec_1 // ""
+    ==
+    assert // Already initialized
+    // smart_contracts/dao/contract.algo.ts:1070
+    // assert(version !== '', ERR_VERSION_CANNOT_BE_EMPTY)
+    frame_dig -38
+    bytec_1 // ""
+    !=
+    assert // Version cannot be empty
+    // smart_contracts/dao/contract.algo.ts:1072-1086
+    // const bonesCreateTxn = itxn
+    //   .assetConfig({
+    //     assetName: Bytes('Bones'),
+    //     unitName: Bytes('BONES'),
+    //     total: 100_000_000_000_000,
+    //     decimals: 2,
+    //     manager: Global.currentApplicationAddress,
+    //     reserve: Global.currentApplicationAddress,
+    //     freeze: Global.zeroAddress,
+    //     clawback: Global.zeroAddress,
+    //     defaultFrozen: false,
+    //     url: Bytes(''), // TODO: figure out the URL we should have here
+    //     // metadataHash: Bytes(''), // TODO: figure out the metadata hash we should have here
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/dao/contract.algo.ts:1078
+    // manager: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/dao/contract.algo.ts:1079
+    // reserve: Global.currentApplicationAddress,
+    dup
+    // smart_contracts/dao/contract.algo.ts:1080
+    // freeze: Global.zeroAddress,
+    global ZeroAddress
+    // smart_contracts/dao/contract.algo.ts:1081
+    // clawback: Global.zeroAddress,
+    dup
+    // smart_contracts/dao/contract.algo.ts:1083
+    // url: Bytes(''), // TODO: figure out the URL we should have here
+    bytec_1 // ""
+    itxn_field ConfigAssetURL
+    // smart_contracts/dao/contract.algo.ts:1082
+    // defaultFrozen: false,
+    intc_0 // 0
+    itxn_field ConfigAssetDefaultFrozen
+    itxn_field ConfigAssetClawback
+    itxn_field ConfigAssetFreeze
+    itxn_field ConfigAssetReserve
+    itxn_field ConfigAssetManager
+    // smart_contracts/dao/contract.algo.ts:1077
+    // decimals: 2,
+    pushint 2 // 2
+    itxn_field ConfigAssetDecimals
+    // smart_contracts/dao/contract.algo.ts:1076
+    // total: 100_000_000_000_000,
+    pushint 100000000000000 // 100000000000000
+    itxn_field ConfigAssetTotal
+    // smart_contracts/dao/contract.algo.ts:1075
+    // unitName: Bytes('BONES'),
+    pushbytes "BONES"
+    itxn_field ConfigAssetUnitName
+    // smart_contracts/dao/contract.algo.ts:1074
+    // assetName: Bytes('Bones'),
+    pushbytes "Bones"
+    itxn_field ConfigAssetName
+    // smart_contracts/dao/contract.algo.ts:1072-1085
+    // const bonesCreateTxn = itxn
+    //   .assetConfig({
+    //     assetName: Bytes('Bones'),
+    //     unitName: Bytes('BONES'),
+    //     total: 100_000_000_000_000,
+    //     decimals: 2,
+    //     manager: Global.currentApplicationAddress,
+    //     reserve: Global.currentApplicationAddress,
+    //     freeze: Global.zeroAddress,
+    //     clawback: Global.zeroAddress,
+    //     defaultFrozen: false,
+    //     url: Bytes(''), // TODO: figure out the URL we should have here
+    //     // metadataHash: Bytes(''), // TODO: figure out the metadata hash we should have here
+    //   })
+    pushint 3 // 3
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/dao/contract.algo.ts:1072-1086
+    // const bonesCreateTxn = itxn
+    //   .assetConfig({
+    //     assetName: Bytes('Bones'),
+    //     unitName: Bytes('BONES'),
+    //     total: 100_000_000_000_000,
+    //     decimals: 2,
+    //     manager: Global.currentApplicationAddress,
+    //     reserve: Global.currentApplicationAddress,
+    //     freeze: Global.zeroAddress,
+    //     clawback: Global.zeroAddress,
+    //     defaultFrozen: false,
+    //     url: Bytes(''), // TODO: figure out the URL we should have here
+    //     // metadataHash: Bytes(''), // TODO: figure out the metadata hash we should have here
+    //   })
+    //   .submit()
+    itxn_submit
+    itxn CreatedAssetID
+    // smart_contracts/dao/constants.ts:4
+    // export const AkitaDAOGlobalStateKeysStatus = 'status'
+    bytec 21 // "status"
+    // smart_contracts/dao/constants.ts:36
+    // export const STATUS_INIT: uint64 = 0
+    intc_0 // 0
+    // smart_contracts/dao/contract.algo.ts:1088
+    // this.status.value = STATUS_INIT
+    app_global_put
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    bytec 5 // "version"
+    // smart_contracts/dao/contract.algo.ts:1089
+    // this.version.value = version
+    frame_dig -38
+    app_global_put
+    // smart_contracts/dao/constants.ts:5
+    // export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
+    bytec 12 // "content_policy"
+    // smart_contracts/dao/contract.algo.ts:1090
+    // this.contentPolicy.value = contentPolicy
+    frame_dig -36
+    app_global_put
+    // smart_contracts/dao/constants.ts:6
+    // export const AkitaDAOGlobalStateKeysMinimumRewardsImpact = 'minimum_rewards_impact'
+    bytec 13 // "minimum_rewards_impact"
+    // smart_contracts/dao/contract.algo.ts:1091
+    // this.minimumRewardsImpact.value = minimumRewardsImpact
+    frame_dig -35
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1065
+    // fees: Fees,
+    frame_dig -34
+    itob
+    frame_dig -33
+    itob
+    frame_dig -32
+    itob
+    frame_dig -31
+    itob
+    // smart_contracts/dao/constants.ts:10
+    // export const AkitaDAOGlobalStateKeysSocialFees = 'social_fees'
+    uncover 3
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    bytec 14 // "social_fees"
+    // smart_contracts/dao/contract.algo.ts:1093-1098
+    // this.socialFees.value = {
+    //   postFee: fees.postFee,
+    //   reactFee: fees.reactFee,
+    //   impactTaxMin: fees.impactTaxMin,
+    //   impactTaxMax: fees.impactTaxMax,
+    // }
+    swap
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1065
+    // fees: Fees,
+    frame_dig -30
+    itob
+    frame_dig -29
+    itob
+    frame_dig -28
+    itob
+    // smart_contracts/dao/constants.ts:11
+    // export const AkitaDAOGlobalStateKeysStakingFees = 'staking_fees'
+    cover 2
+    concat
+    swap
+    concat
+    bytec 15 // "staking_fees"
+    // smart_contracts/dao/contract.algo.ts:1100-1104
+    // this.stakingFees.value = {
+    //   creationFee: fees.poolCreationFee,
+    //   impactTaxMin: fees.poolImpactTaxMin,
+    //   impactTaxMax: fees.poolImpactTaxMax
+    // }
+    swap
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1065
+    // fees: Fees,
+    frame_dig -27
+    itob
+    frame_dig -26
+    itob
+    frame_dig -25
+    itob
+    // smart_contracts/dao/constants.ts:12
+    // export const AkitaDAOGlobalStateKeysSubscriptionFees = 'subscription_fees'
+    cover 2
+    concat
+    swap
+    concat
+    bytec 16 // "subscription_fees"
+    // smart_contracts/dao/contract.algo.ts:1106-1110
+    // this.subscriptionFees.value = {
+    //   serviceCreationFee: fees.subscriptionServiceCreationFee,
+    //   paymentPercentage: fees.subscriptionPaymentPercentage,
+    //   triggerPercentage: fees.subscriptionTriggerPercentage,
+    // }
+    swap
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1065
+    // fees: Fees,
+    frame_dig -24
+    itob
+    frame_dig -23
+    itob
+    frame_dig -22
+    itob
+    frame_dig -21
+    itob
+    frame_dig -20
+    itob
+    frame_dig -19
+    itob
+    frame_dig -18
+    itob
+    frame_dig -17
+    itob
+    frame_dig -16
+    itob
+    frame_dig -15
+    itob
+    frame_dig -14
+    itob
+    frame_dig -13
+    itob
+    frame_dig -12
+    itob
+    frame_dig -11
+    itob
+    frame_dig -10
+    itob
+    // smart_contracts/dao/constants.ts:14
+    // export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
+    uncover 14
+    uncover 14
+    concat
+    uncover 13
+    concat
+    uncover 12
+    concat
+    uncover 11
+    concat
+    uncover 10
+    concat
+    uncover 9
+    concat
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    bytec 17 // "nft_fees"
+    // smart_contracts/dao/contract.algo.ts:1112-1128
+    // this.nftFees.value = {
+    //   marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
+    //   marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
+    //   marketplaceComposablePercentage: fees.marketplaceComposablePercentage,
+    //   marketplaceRoyaltyDefaultPercentage: fees.marketplaceRoyaltyDefaultPercentage,
+    //   shuffleSalePercentage: fees.shuffleSalePercentage,
+    //   omnigemSaleFee: fees.omnigemSaleFee,
+    //   auctionCreationFee: fees.auctionCreationFee,
+    //   auctionSaleImpactTaxMin: fees.auctionSaleImpactTaxMin,
+    //   auctionSaleImpactTaxMax: fees.auctionSaleImpactTaxMax,
+    //   auctionComposablePercentage: fees.auctionComposablePercentage,
+    //   auctionRafflePercentage: fees.auctionRafflePercentage,
+    //   raffleCreationFee: fees.raffleCreationFee,
+    //   raffleSaleImpactTaxMin: fees.raffleSaleImpactTaxMin,
+    //   raffleSaleImpactTaxMax: fees.raffleSaleImpactTaxMax,
+    //   raffleComposablePercentage: fees.raffleComposablePercentage,
+    // }
+    swap
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1065
+    // fees: Fees,
+    frame_dig -9
+    itob
+    frame_dig -8
+    itob
+    // smart_contracts/dao/constants.ts:13
+    // export const AkitaDAOGlobalStateKeysSwapFees = 'swap_fees'
+    concat
+    bytec 22 // "swap_fees"
+    // smart_contracts/dao/contract.algo.ts:1130-1133
+    // this.swapFees.value = {
+    //   impactTaxMin: fees.swapFeeImpactTaxMin,
+    //   impactTaxMax: fees.swapFeeImpactTaxMax,
+    // }
+    swap
+    app_global_put
+    // smart_contracts/dao/constants.ts:15
+    // export const AkitaDAOGlobalStateKeysKrbyPercentage = 'krby_percentage'
+    bytec 6 // "krby_percentage"
+    // smart_contracts/dao/contract.algo.ts:1135
+    // this.krbyPercentage.value = fees.krbyPercentage
+    frame_dig -5
+    app_global_put
+    // smart_contracts/dao/constants.ts:16
+    // export const AkitaDAOGlobalStateKeysModeratorPercentage = 'mod_percentage'
+    bytec 7 // "mod_percentage"
+    // smart_contracts/dao/contract.algo.ts:1136
+    // this.moderatorPercentage.value = fees.moderatorPercentage
+    frame_dig -4
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1066
+    // proposalSettings: ProposalSettings,
+    frame_dig -3
+    itob
+    frame_dig -2
+    itob
+    // smart_contracts/dao/constants.ts:20
+    // export const AkitaDAOGlobalStateKeysProposalSettings = 'proposal_settings'
+    concat
+    bytec 23 // "proposal_settings"
+    // smart_contracts/dao/contract.algo.ts:1138-1141
+    // this.proposalSettings.value = {
+    //   minimumProposalThreshold: proposalSettings.minimumProposalThreshold,
+    //   minimumVoteThreshold: proposalSettings.minimumVoteThreshold,
+    // }
+    swap
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1144
+    // this.akitaAssets.value = { akta, bones }
+    frame_dig -37
+    itob
+    swap
+    itob
+    // smart_contracts/dao/constants.ts:19
+    // export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
+    concat
+    bytec 8 // "akita_assets"
+    // smart_contracts/dao/contract.algo.ts:1144
+    // this.akitaAssets.value = { akta, bones }
+    swap
+    app_global_put
+    // smart_contracts/dao/constants.ts:21
+    // export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
+    bytec 9 // "revocation_address"
+    // smart_contracts/dao/contract.algo.ts:1146
+    // this.revocationAddress.value = revocationAddress.native
+    frame_dig -1
+    app_global_put
+    // smart_contracts/dao/constants.ts:22
+    // export const AkitaDAOGlobalStateKeysProposalID = 'proposal_id'
+    bytec 18 // "proposal_id"
+    // smart_contracts/dao/contract.algo.ts:1147
+    // this.proposalID.value = 0
+    intc_0 // 0
+    app_global_put
+    retsub
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_verifyAuthAddr() -> void:
+arc58_verifyAuthAddr:
+    // smart_contracts/dao/contract.algo.ts:1155
+    // arc58_verifyAuthAddr(): void {
+    proto 0 0
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:1156
+    // assert(this.spendingAddress.value.authAddress === this.getAuthAddr());
+    dup
+    acct_params_get AcctAuthAddr
+    swap
+    cover 2
+    assert // account funded
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_2 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:543
+    // return this.spendingAddress.value === this.controlledAddress.value
+    ==
+    // smart_contracts/dao/contract.algo.ts:543-547
+    // return this.spendingAddress.value === this.controlledAddress.value
+    //   ? this.controlledAddress.value === Global.currentApplicationAddress
+    //     ? Global.zeroAddress // contract controls itself
+    //     : Global.currentApplicationAddress // contract controls a different account
+    //   : Global.zeroAddress; // is a spending account
+    bz arc58_verifyAuthAddr_ternary_false@6
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_2 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:544
+    // ? this.controlledAddress.value === Global.currentApplicationAddress
+    global CurrentApplicationAddress
+    ==
+    // smart_contracts/dao/contract.algo.ts:544-546
+    // ? this.controlledAddress.value === Global.currentApplicationAddress
+    //   ? Global.zeroAddress // contract controls itself
+    //   : Global.currentApplicationAddress // contract controls a different account
+    bz arc58_verifyAuthAddr_ternary_false@4
+    // smart_contracts/dao/contract.algo.ts:545
+    // ? Global.zeroAddress // contract controls itself
+    global ZeroAddress
+
+arc58_verifyAuthAddr_ternary_merge@7:
+    // smart_contracts/dao/contract.algo.ts:1156
+    // assert(this.spendingAddress.value.authAddress === this.getAuthAddr());
+    frame_dig 0
+    ==
+    assert
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    bytec_3 // "spending_address"
+    // smart_contracts/dao/contract.algo.ts:1157
+    // this.spendingAddress.value = Global.zeroAddress
+    global ZeroAddress
+    app_global_put
+    retsub
+
+arc58_verifyAuthAddr_ternary_false@4:
+    // smart_contracts/dao/contract.algo.ts:546
+    // : Global.currentApplicationAddress // contract controls a different account
+    global CurrentApplicationAddress
+    b arc58_verifyAuthAddr_ternary_merge@7
+
+arc58_verifyAuthAddr_ternary_false@6:
+    // smart_contracts/dao/contract.algo.ts:547
+    // : Global.zeroAddress; // is a spending account
+    global ZeroAddress
+    b arc58_verifyAuthAddr_ternary_merge@7
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_canCall(plugin: uint64, global: uint64, address: bytes, method: bytes) -> uint64:
+arc58_canCall:
+    // smart_contracts/dao/contract.algo.ts:1168-1174
+    // @abimethod({ readonly: true })
+    // arc58_canCall(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   address: Address,
+    //   method: bytes<4>
+    // ): boolean {
+    proto 4 1
+    // smart_contracts/dao/contract.algo.ts:1175
+    // if (global) {
+    frame_dig -3
+    bz arc58_canCall_after_if_else@2
+    // smart_contracts/dao/contract.algo.ts:1176
+    // this.pluginCallAllowed(plugin, Global.zeroAddress, method);
+    frame_dig -4
+    global ZeroAddress
+    frame_dig -1
+    callsub pluginCallAllowed
+    pop
+
+arc58_canCall_after_if_else@2:
+    // smart_contracts/dao/contract.algo.ts:1178
+    // return this.pluginCallAllowed(plugin, address.native, method);
+    frame_dig -4
+    frame_dig -2
+    frame_dig -1
+    callsub pluginCallAllowed
+    retsub
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToPlugin(plugin: uint64, global: uint64, methodOffsets: bytes, fundsRequest: bytes) -> void:
+arc58_rekeyToPlugin:
+    // smart_contracts/dao/contract.algo.ts:1190-1195
+    // arc58_rekeyToPlugin(
+    //   plugin: uint64,
+    //   global: boolean,
+    //   methodOffsets: uint64[],
+    //   fundsRequest: FundsRequest[]
+    // ): void {
+    proto 4 0
+    intc_0 // 0
+    dupn 7
+    bytec_1 // ""
+    dupn 24
+    // smart_contracts/dao/contract.algo.ts:1200-1202
+    // allowedCaller: global
+    //   ? Global.zeroAddress
+    //   : Txn.sender
+    frame_dig -3
+    bz arc58_rekeyToPlugin_ternary_false@2
+    // smart_contracts/dao/contract.algo.ts:1201
+    // ? Global.zeroAddress
+    global ZeroAddress
+    frame_bury 4
+
+arc58_rekeyToPlugin_ternary_merge@3:
+    // smart_contracts/dao/contract.algo.ts:1198
+    // const key = {
+    frame_dig -4
+    itob
+    // smart_contracts/dao/contract.algo.ts:1205
+    // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    frame_dig 4
+    concat
+    dup
+    frame_bury 3
+    // smart_contracts/arc58/account/constants.ts:13
+    // export const AbstractAccountBoxPrefixPlugins = 'p'
+    bytec 10 // "p"
+    swap
+    concat
+    dup
+    frame_bury 1
+    // smart_contracts/dao/contract.algo.ts:1205
+    // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    dup
+    box_len
+    bury 1
+    assert // Plugin does not exist
+    // smart_contracts/dao/contract.algo.ts:1206
+    // assert(!this.plugins(key).value.useExecutionKey.native, ERR_WRONG_METHOD_FOR_EXECUTION_KEY_LOCKED_PLUGIN)
+    box_get
+    assert // Box must have value
+    dup
+    intc 7 // 352
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    !
+    assert // Wrong method for execution key locked plugin
+    // smart_contracts/dao/contract.algo.ts:328
+    // const epochRef = this.plugins(key).value.useRounds.native
+    intc 6 // 217
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    // smart_contracts/dao/contract.algo.ts:328-330
+    // const epochRef = this.plugins(key).value.useRounds.native
+    //   ? Global.round
+    //   : Global.latestTimestamp;
+    bz arc58_rekeyToPlugin_ternary_false@34
+    // smart_contracts/dao/contract.algo.ts:329
+    // ? Global.round
+    global Round
+    frame_bury 12
+
+arc58_rekeyToPlugin_ternary_merge@35:
+    // smart_contracts/dao/contract.algo.ts:332
+    // const initialCheck = this.pluginCheck(key);
+    frame_dig -4
+    frame_dig 4
+    callsub pluginCheck
+    popn 2
+    cover 3
+    frame_bury 15
+    swap
+    // smart_contracts/dao/contract.algo.ts:334
+    // assert(initialCheck.exists, ERR_PLUGIN_DOES_NOT_EXIST);
+    assert // Plugin does not exist
+    // smart_contracts/dao/contract.algo.ts:335
+    // assert(!initialCheck.expired, ERR_PLUGIN_EXPIRED);
+    !
+    assert // Plugin has expired
+    // smart_contracts/dao/contract.algo.ts:336
+    // assert(!initialCheck.onCooldown, ERR_PLUGIN_ON_COOLDOWN);
+    !
+    assert // Plugin is on cooldown
+    // smart_contracts/dao/contract.algo.ts:338
+    // let rekeysBack = false;
+    intc_0 // 0
+    frame_bury 28
+    // smart_contracts/dao/contract.algo.ts:339
+    // let methodIndex: uint64 = 0;
+    intc_0 // 0
+    frame_bury 22
+    // smart_contracts/dao/contract.algo.ts:341
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    txn GroupIndex
+    intc_1 // 1
+    +
+    frame_bury 14
+
+arc58_rekeyToPlugin_while_top@36:
+    // smart_contracts/dao/contract.algo.ts:341
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    frame_dig 14
+    global GroupSize
+    <
+    bz arc58_rekeyToPlugin_block@79
+    // smart_contracts/dao/contract.algo.ts:235
+    // txn.sender === this.controlledAddress.value &&
+    frame_dig 14
+    gtxns Sender
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_2 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:235
+    // txn.sender === this.controlledAddress.value &&
+    ==
+    // smart_contracts/dao/contract.algo.ts:235-236
+    // txn.sender === this.controlledAddress.value &&
+    // txn.rekeyTo === Global.currentApplicationAddress
+    bz arc58_rekeyToPlugin_after_if_else@40
+    // smart_contracts/dao/contract.algo.ts:236
+    // txn.rekeyTo === Global.currentApplicationAddress
+    frame_dig 14
+    gtxns RekeyTo
+    global CurrentApplicationAddress
+    ==
+    // smart_contracts/dao/contract.algo.ts:235-236
+    // txn.sender === this.controlledAddress.value &&
+    // txn.rekeyTo === Global.currentApplicationAddress
+    bz arc58_rekeyToPlugin_after_if_else@40
+    // smart_contracts/dao/contract.algo.ts:238
+    // return true;
+    intc_1 // 1
+
+arc58_rekeyToPlugin_after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.txnRekeysBack@48:
+    // smart_contracts/dao/contract.algo.ts:344
+    // if (this.txnRekeysBack(txn)) {
+    bz arc58_rekeyToPlugin_after_if_else@50
+    // smart_contracts/dao/contract.algo.ts:345
+    // rekeysBack = true;
+    intc_1 // 1
+    frame_bury 28
+
+arc58_rekeyToPlugin_block@79:
+    // smart_contracts/dao/contract.algo.ts:375
+    // assert(rekeysBack, ERR_MISSING_REKEY_BACK);
+    frame_dig 28
+    assert // missing rekey back
+    // smart_contracts/dao/contract.algo.ts:1210
+    // if (this.plugins(key).value.spendingApp.native !== 0) {
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    intc_1 // 1
+    extract_uint64
+    bz arc58_rekeyToPlugin_else_body@6
+    // smart_contracts/dao/contract.algo.ts:1211
+    // const spendingApp = Application(this.plugins(key).value.spendingApp.native)
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    intc_1 // 1
+    extract_uint64
+    dup
+    frame_bury 29
+    // smart_contracts/dao/contract.algo.ts:1212
+    // this.spendingAddress.value = spendingApp.address;
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    bytec_3 // "spending_address"
+    // smart_contracts/dao/contract.algo.ts:1212
+    // this.spendingAddress.value = spendingApp.address;
+    swap
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:431
+    // for (let i: uint64 = 0; i < fundsRequests.length; i += 1) {
+    intc_0 // 0
+    frame_bury 14
+
+arc58_rekeyToPlugin_while_top@10:
+    // smart_contracts/dao/contract.algo.ts:431
+    // for (let i: uint64 = 0; i < fundsRequests.length; i += 1) {
+    frame_dig -1
+    intc_0 // 0
+    extract_uint16
+    frame_dig 14
+    >
+    bz arc58_rekeyToPlugin_after_while@30
+    // smart_contracts/dao/contract.algo.ts:433
+    // const pluginInfo = decodeArc4<PluginInfo>(this.plugins(key).value.bytes)
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    dup
+    intc 9 // 225
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    dup
+    cover 2
+    frame_bury 27
+    pushint 37 // 37
+    extract_uint64
+    frame_bury 26
+    // smart_contracts/dao/contract.algo.ts:438
+    // asset: fundsRequests[i].asset
+    frame_dig -1
+    extract 2 0
+    frame_dig 14
+    pushint 16 // 16
+    *
+    pushint 16 // 16
+    extract3 // on error: Index access is out of bounds
+    dup
+    intc_0 // 0
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 8
+    // smart_contracts/dao/contract.algo.ts:445
+    // fundsRequests[i]
+    intc_3 // 8
+    extract_uint64
+    frame_bury 13
+    // smart_contracts/dao/contract.algo.ts:474
+    // key: AllowanceKey,
+    itob
+    // smart_contracts/dao/contract.algo.ts:477
+    // assert(this.allowances(key).exists, 'Allowance does not exist');
+    frame_dig 3
+    swap
+    concat
+    // smart_contracts/arc58/account/constants.ts:15
+    // export const AbstractAccountBoxPrefixAllowances = 'a'
+    pushbytes "a"
+    swap
+    concat
+    dup
+    frame_bury 2
+    // smart_contracts/dao/contract.algo.ts:477
+    // assert(this.allowances(key).exists, 'Allowance does not exist');
+    dup
+    box_len
+    bury 1
+    assert // Allowance does not exist
+    // smart_contracts/dao/contract.algo.ts:478
+    // const { type, spent, allowed, last, max, interval } = this.allowances(key).value
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    frame_bury 7
+    dup
+    intc_1 // 1
+    extract_uint64
+    frame_bury 21
+    dup
+    pushint 9 // 9
+    extract_uint64
+    frame_bury 9
+    dup
+    pushint 17 // 17
+    extract_uint64
+    frame_bury 30
+    dup
+    pushint 25 // 25
+    extract_uint64
+    frame_bury 16
+    pushint 33 // 33
+    extract_uint64
+    frame_bury 18
+    // smart_contracts/dao/contract.algo.ts:479-481
+    // const newLast = useRounds
+    //   ? Global.round
+    //   : Global.latestTimestamp
+    bz arc58_rekeyToPlugin_ternary_false@13
+    // smart_contracts/dao/contract.algo.ts:480
+    // ? Global.round
+    global Round
+    frame_bury 23
+
+arc58_rekeyToPlugin_ternary_merge@14:
+    // smart_contracts/dao/contract.algo.ts:483
+    // if (type === SpendAllowanceTypeFlat) {
+    frame_dig 7
+    // smart_contracts/arc58/account/types.ts:12
+    // export const SpendAllowanceTypeFlat: SpendAllowanceType = new UintN8(1)
+    pushbytes 0x01
+    // smart_contracts/dao/contract.algo.ts:483
+    // if (type === SpendAllowanceTypeFlat) {
+    ==
+    bz arc58_rekeyToPlugin_else_body@16
+    // smart_contracts/dao/contract.algo.ts:484
+    // const leftover: uint64 = allowed - spent;
+    frame_dig 9
+    frame_dig 30
+    dup
+    cover 2
+    -
+    // smart_contracts/dao/contract.algo.ts:486
+    // assert(leftover >= fundRequest.amount, 'Allowance exceeded');
+    frame_dig 13
+    dup
+    cover 2
+    >=
+    assert // Allowance exceeded
+    // smart_contracts/dao/contract.algo.ts:490
+    // spent: (spent + fundRequest.amount)
+    +
+    // smart_contracts/dao/contract.algo.ts:489
+    // ...this.allowances(key).value,
+    frame_dig 2
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    pushint 9 // 9
+    extract_uint64
+    dig 3
+    pushint 25 // 25
+    extract_uint64
+    uncover 4
+    pushint 33 // 33
+    extract_uint64
+    uncover 3
+    itob
+    uncover 3
+    itob
+    // smart_contracts/dao/contract.algo.ts:490
+    // spent: (spent + fundRequest.amount)
+    uncover 5
+    itob
+    // smart_contracts/dao/contract.algo.ts:489
+    // ...this.allowances(key).value,
+    uncover 4
+    itob
+    uncover 4
+    itob
+    // smart_contracts/dao/contract.algo.ts:488
+    // this.allowances(key).value = {
+    uncover 5
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/dao/contract.algo.ts:488-491
+    // this.allowances(key).value = {
+    //   ...this.allowances(key).value,
+    //   spent: (spent + fundRequest.amount)
+    // }
+    box_put
+
+arc58_rekeyToPlugin_after_if_else@26:
+    // smart_contracts/dao/contract.algo.ts:448
+    // if (fundsRequests[i].asset !== 0) {
+    frame_dig 8
+    bz arc58_rekeyToPlugin_else_body@28
+    // smart_contracts/dao/contract.algo.ts:449-457
+    // itxn
+    //   .assetTransfer({
+    //     sender: this.controlledAddress.value,
+    //     assetReceiver: this.spendingAddress.value,
+    //     assetAmount: fundsRequests[i].amount,
+    //     xferAsset: fundsRequests[i].asset,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_2 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    frame_dig 8
+    itxn_field XferAsset
+    frame_dig 13
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field Sender
+    // smart_contracts/dao/contract.algo.ts:449-456
+    // itxn
+    //   .assetTransfer({
+    //     sender: this.controlledAddress.value,
+    //     assetReceiver: this.spendingAddress.value,
+    //     assetAmount: fundsRequests[i].amount,
+    //     xferAsset: fundsRequests[i].asset,
+    //     fee,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/dao/contract.algo.ts:449-457
+    // itxn
+    //   .assetTransfer({
+    //     sender: this.controlledAddress.value,
+    //     assetReceiver: this.spendingAddress.value,
+    //     assetAmount: fundsRequests[i].amount,
+    //     xferAsset: fundsRequests[i].asset,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_submit
+
+arc58_rekeyToPlugin_after_if_else@29:
+    // smart_contracts/dao/contract.algo.ts:431
+    // for (let i: uint64 = 0; i < fundsRequests.length; i += 1) {
+    frame_dig 14
+    intc_1 // 1
+    +
+    frame_bury 14
+    b arc58_rekeyToPlugin_while_top@10
+
+arc58_rekeyToPlugin_else_body@28:
+    // smart_contracts/dao/contract.algo.ts:459-466
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     amount: fundsRequests[i].amount,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_2 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    intc_0 // 0
+    bytec_3 // "spending_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    frame_dig 13
+    itxn_field Amount
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/dao/contract.algo.ts:459-465
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     amount: fundsRequests[i].amount,
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/dao/contract.algo.ts:459-466
+    // itxn
+    //   .payment({
+    //     sender: this.controlledAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     amount: fundsRequests[i].amount,
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_submit
+    b arc58_rekeyToPlugin_after_if_else@29
+
+arc58_rekeyToPlugin_else_body@16:
+    // smart_contracts/dao/contract.algo.ts:492
+    // } else if (type === SpendAllowanceTypeWindow) {
+    frame_dig 7
+    // smart_contracts/arc58/account/types.ts:13
+    // export const SpendAllowanceTypeWindow: SpendAllowanceType = new UintN8(2)
+    pushbytes 0x02
+    // smart_contracts/dao/contract.algo.ts:492
+    // } else if (type === SpendAllowanceTypeWindow) {
+    ==
+    bz arc58_rekeyToPlugin_else_body@21
+    // smart_contracts/dao/contract.algo.ts:532
+    // if (useRounds) {
+    frame_dig 27
+    bz arc58_rekeyToPlugin_after_if_else@82
+    // smart_contracts/dao/contract.algo.ts:533
+    // return Global.round - ((Global.round - start) % interval)
+    global Round
+    dup
+    frame_dig 26
+    -
+    frame_dig 16
+    %
+    -
+
+arc58_rekeyToPlugin_after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.getLatestWindowStart@83:
+    // smart_contracts/dao/contract.algo.ts:495
+    // if (currentWindowStart > last) {
+    frame_dig 18
+    >
+    bz arc58_rekeyToPlugin_else_body@19
+    // smart_contracts/dao/contract.algo.ts:496
+    // assert(allowed >= fundRequest.amount, 'Allowance exceeded');
+    frame_dig 9
+    frame_dig 13
+    >=
+    assert // Allowance exceeded
+
+arc58_rekeyToPlugin_after_if_else@20:
+    // smart_contracts/dao/contract.algo.ts:505
+    // spent: (spent + fundRequest.amount),
+    frame_dig 30
+    frame_dig 13
+    +
+    // smart_contracts/dao/contract.algo.ts:504
+    // ...this.allowances(key).value,
+    frame_dig 2
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    pushint 9 // 9
+    extract_uint64
+    uncover 3
+    pushint 25 // 25
+    extract_uint64
+    uncover 2
+    itob
+    uncover 2
+    itob
+    // smart_contracts/dao/contract.algo.ts:505
+    // spent: (spent + fundRequest.amount),
+    uncover 4
+    itob
+    // smart_contracts/dao/contract.algo.ts:504
+    // ...this.allowances(key).value,
+    uncover 3
+    itob
+    // smart_contracts/dao/contract.algo.ts:506
+    // last: newLast
+    frame_dig 23
+    itob
+    // smart_contracts/dao/contract.algo.ts:503
+    // this.allowances(key).value = {
+    uncover 5
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/dao/contract.algo.ts:503-507
+    // this.allowances(key).value = {
+    //   ...this.allowances(key).value,
+    //   spent: (spent + fundRequest.amount),
+    //   last: newLast
+    // }
+    box_put
+    b arc58_rekeyToPlugin_after_if_else@26
+
+arc58_rekeyToPlugin_else_body@19:
+    // smart_contracts/dao/contract.algo.ts:499
+    // const leftover: uint64 = allowed - spent;
+    frame_dig 9
+    frame_dig 30
+    -
+    // smart_contracts/dao/contract.algo.ts:500
+    // assert(leftover >= fundRequest.amount, 'Allowance exceeded');
+    frame_dig 13
+    >=
+    assert // Allowance exceeded
+    b arc58_rekeyToPlugin_after_if_else@20
+
+arc58_rekeyToPlugin_after_if_else@82:
+    // smart_contracts/dao/contract.algo.ts:535
+    // return Global.latestTimestamp - ((Global.latestTimestamp - start) % interval)
+    global LatestTimestamp
+    dup
+    frame_dig 26
+    -
+    frame_dig 16
+    %
+    -
+    // smart_contracts/dao/contract.algo.ts:493
+    // const currentWindowStart = this.getLatestWindowStart(useRounds, start, interval)
+    b arc58_rekeyToPlugin_after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.getLatestWindowStart@83
+
+arc58_rekeyToPlugin_else_body@21:
+    // smart_contracts/dao/contract.algo.ts:509
+    // } else if (type === SpendAllowanceTypeDrip) {
+    frame_dig 7
+    // smart_contracts/arc58/account/types.ts:14
+    // export const SpendAllowanceTypeDrip: SpendAllowanceType = new UintN8(3)
+    pushbytes 0x03
+    // smart_contracts/dao/contract.algo.ts:509
+    // } else if (type === SpendAllowanceTypeDrip) {
+    ==
+    bz arc58_rekeyToPlugin_after_if_else@26
+    // smart_contracts/dao/contract.algo.ts:510
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    frame_dig 27
+    bz arc58_rekeyToPlugin_ternary_false@24
+    global Round
+    frame_bury 12
+
+arc58_rekeyToPlugin_ternary_merge@25:
+    // smart_contracts/dao/contract.algo.ts:516
+    // const passed: uint64 = epochRef - last
+    frame_dig 12
+    frame_dig 18
+    -
+    // smart_contracts/dao/contract.algo.ts:517
+    // const accrued: uint64 = lastLeftover + ((passed / interval) * accrualRate)
+    frame_dig 16
+    /
+    frame_dig 9
+    *
+    frame_dig 30
+    +
+    // smart_contracts/dao/contract.algo.ts:519
+    // const available: uint64 = accrued > max ? max : accrued
+    dup
+    frame_dig 21
+    dup
+    cover 3
+    >
+    swap
+    cover 2
+    select
+    // smart_contracts/dao/contract.algo.ts:521
+    // assert(available >= amount, 'Allowance exceeded');
+    dup
+    frame_dig 13
+    dup
+    cover 3
+    >=
+    assert // Allowance exceeded
+    // smart_contracts/dao/contract.algo.ts:525
+    // spent: (available - amount),
+    swap
+    -
+    // smart_contracts/dao/contract.algo.ts:524
+    // ...this.allowances(key).value,
+    frame_dig 2
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    pushint 9 // 9
+    extract_uint64
+    uncover 3
+    pushint 25 // 25
+    extract_uint64
+    uncover 2
+    itob
+    uncover 2
+    itob
+    // smart_contracts/dao/contract.algo.ts:525
+    // spent: (available - amount),
+    uncover 4
+    itob
+    // smart_contracts/dao/contract.algo.ts:524
+    // ...this.allowances(key).value,
+    uncover 3
+    itob
+    // smart_contracts/dao/contract.algo.ts:526
+    // last: newLast
+    frame_dig 23
+    itob
+    // smart_contracts/dao/contract.algo.ts:523
+    // this.allowances(key).value = {
+    uncover 5
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/dao/contract.algo.ts:523-527
+    // this.allowances(key).value = {
+    //   ...this.allowances(key).value,
+    //   spent: (available - amount),
+    //   last: newLast
+    // }
+    box_put
+    b arc58_rekeyToPlugin_after_if_else@26
+
+arc58_rekeyToPlugin_ternary_false@24:
+    // smart_contracts/dao/contract.algo.ts:510
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    frame_bury 12
+    b arc58_rekeyToPlugin_ternary_merge@25
+
+arc58_rekeyToPlugin_ternary_false@13:
+    // smart_contracts/dao/contract.algo.ts:481
+    // : Global.latestTimestamp
+    global LatestTimestamp
+    frame_bury 23
+    b arc58_rekeyToPlugin_ternary_merge@14
+
+arc58_rekeyToPlugin_after_while@30:
+    // smart_contracts/dao/contract.algo.ts:1215-1222
+    // abiCall(
+    //   SpendingAccountContract.prototype.rekey,
+    //   {
+    //     appId: spendingApp,
+    //     args: [new Address(pluginApp.address)],
+    //     fee,
+    //   }
+    // )
+    itxn_begin
+    // smart_contracts/dao/contract.algo.ts:1219
+    // args: [new Address(pluginApp.address)],
+    frame_dig -4
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/dao/contract.algo.ts:1215-1222
+    // abiCall(
+    //   SpendingAccountContract.prototype.rekey,
+    //   {
+    //     appId: spendingApp,
+    //     args: [new Address(pluginApp.address)],
+    //     fee,
+    //   }
+    // )
+    pushbytes 0x65a97bcc // method "rekey(address)void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig 29
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/dao/contract.algo.ts:1215-1222
+    // abiCall(
+    //   SpendingAccountContract.prototype.rekey,
+    //   {
+    //     appId: spendingApp,
+    //     args: [new Address(pluginApp.address)],
+    //     fee,
+    //   }
+    // )
+    itxn_submit
+    retsub
+
+arc58_rekeyToPlugin_else_body@6:
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    intc_0 // 0
+    bytec_2 // "controlled_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/account/constants.ts:9
+    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    bytec_3 // "spending_address"
+    // smart_contracts/dao/contract.algo.ts:1224
+    // this.spendingAddress.value = this.controlledAddress.value;
+    dig 1
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1226-1234
+    // itxn
+    //   .payment({
+    //     sender: this.spendingAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     rekeyTo: pluginApp.address,
+    //     note: 'rekeying to plugin app',
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/dao/contract.algo.ts:1230
+    // rekeyTo: pluginApp.address,
+    frame_dig -4
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/dao/contract.algo.ts:1231
+    // note: 'rekeying to plugin app',
+    pushbytes "rekeying to plugin app"
+    itxn_field Note
+    itxn_field RekeyTo
+    dup
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/dao/contract.algo.ts:1226-1233
+    // itxn
+    //   .payment({
+    //     sender: this.spendingAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     rekeyTo: pluginApp.address,
+    //     note: 'rekeying to plugin app',
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/dao/contract.algo.ts:1226-1234
+    // itxn
+    //   .payment({
+    //     sender: this.spendingAddress.value,
+    //     receiver: this.spendingAddress.value,
+    //     rekeyTo: pluginApp.address,
+    //     note: 'rekeying to plugin app',
+    //     fee,
+    //   })
+    //   .submit();
+    itxn_submit
+    retsub
+
+arc58_rekeyToPlugin_after_if_else@50:
+    // smart_contracts/dao/contract.algo.ts:349
+    // if (txn.type !== TransactionType.ApplicationCall) {
+    frame_dig 14
+    gtxns TypeEnum
+    pushint 6 // 6
+    !=
+    bnz arc58_rekeyToPlugin_block@77
+    // smart_contracts/dao/contract.algo.ts:353
+    // assert(txn.appId.id === key.application, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY);
+    frame_dig 14
+    dup
+    gtxns ApplicationID
+    frame_dig -4
+    ==
+    assert // cannot call other apps during rekey
+    // smart_contracts/dao/contract.algo.ts:354
+    // assert(txn.onCompletion === OnCompleteAction.NoOp, ERR_INVALID_ONCOMPLETE);
+    dup
+    gtxns OnCompletion
+    !
+    assert // invalid oncomplete must be no op
+    // smart_contracts/dao/contract.algo.ts:357
+    // assert(txn.numAppArgs > 1, ERR_INVALID_SENDER_ARG);
+    dup
+    gtxns NumAppArgs
+    intc_1 // 1
+    >
+    assert // invalid sender must be this app id
+    // smart_contracts/dao/contract.algo.ts:358
+    // assert(Application(btoi(txn.appArgs(1))) === Global.currentApplicationId, ERR_INVALID_SENDER_VALUE);
+    intc_1 // 1
+    gtxnsas ApplicationArgs
+    btoi
+    global CurrentApplicationID
+    ==
+    assert // invalid sender app id
+    // smart_contracts/dao/contract.algo.ts:291
+    // const check = this.pluginCheck(key);
+    frame_dig -4
+    frame_dig 4
+    callsub pluginCheck
+    dup
+    cover 6
+    frame_bury 11
+    frame_bury 10
+    popn 4
+    // smart_contracts/dao/contract.algo.ts:293
+    // if (!check.valid) {
+    bnz arc58_rekeyToPlugin_after_if_else@54
+    // smart_contracts/dao/contract.algo.ts:298
+    // methodOnCooldown: true
+    intc_1 // 1
+
+arc58_rekeyToPlugin_after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.fullPluginCheck@74:
+    // smart_contracts/dao/contract.algo.ts:362
+    // assert(!check.methodOnCooldown, ERR_METHOD_ON_COOLDOWN);
+    !
+    assert // method on cooldown
+    // smart_contracts/dao/contract.algo.ts:363
+    // assert(check.valid, ERR_INVALID_PLUGIN_CALL);
+    frame_dig 11
+    assert // invalid plugin call
+    // smart_contracts/dao/contract.algo.ts:365
+    // if (initialCheck.hasCooldown) {
+    frame_dig 15
+    bz arc58_rekeyToPlugin_after_if_else@76
+    // smart_contracts/dao/contract.algo.ts:368
+    // lastCalled: new UintN64(epochRef)
+    frame_dig 12
+    itob
+    // smart_contracts/dao/contract.algo.ts:367
+    // ...this.plugins(key).value.copy(),
+    frame_dig 1
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    // smart_contracts/dao/contract.algo.ts:366-369
+    // this.plugins(key).value = new arc4DAOPluginInfo({
+    //   ...this.plugins(key).value.copy(),
+    //   lastCalled: new UintN64(epochRef)
+    // })
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    extract 1 8 // on error: Index access is out of bounds
+    dig 2
+    extract 9 8 // on error: Index access is out of bounds
+    dig 3
+    extract 17 8 // on error: Index access is out of bounds
+    dig 4
+    pushint 25 // 25
+    extract_uint16
+    dig 5
+    len
+    dig 6
+    cover 2
+    substring3
+    dig 5
+    intc 8 // 216
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    dig 6
+    intc 6 // 217
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    dig 7
+    extract 36 8 // on error: Index access is out of bounds
+    uncover 8
+    intc 7 // 352
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    uncover 8
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    bytec 24 // 0x002d
+    concat
+    uncover 4
+    concat
+    uncover 3
+    intc_0 // 0
+    getbit
+    intc 6 // 217
+    swap
+    setbit
+    uncover 4
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    dig 1
+    box_del
+    pop
+    box_put
+
+arc58_rekeyToPlugin_after_if_else@76:
+    // smart_contracts/dao/contract.algo.ts:372
+    // methodIndex += 1;
+    frame_dig 22
+    intc_1 // 1
+    +
+    frame_bury 22
+
+arc58_rekeyToPlugin_block@77:
+    // smart_contracts/dao/contract.algo.ts:341
+    // for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+    frame_dig 14
+    intc_1 // 1
+    +
+    frame_bury 14
+    b arc58_rekeyToPlugin_while_top@36
+
+arc58_rekeyToPlugin_after_if_else@54:
+    // smart_contracts/dao/contract.algo.ts:303
+    // methodAllowed: !check.hasMethodRestrictions,
+    frame_dig 10
+    dup
+    !
+    frame_bury 19
+    // smart_contracts/dao/contract.algo.ts:305
+    // methodOnCooldown: false
+    intc_0 // 0
+    // smart_contracts/dao/contract.algo.ts:302-306
+    // let mCheck: MethodValidation = {
+    //   methodAllowed: !check.hasMethodRestrictions,
+    //   methodHasCooldown: false,
+    //   methodOnCooldown: false
+    // }
+    frame_bury 20
+    // smart_contracts/dao/contract.algo.ts:308
+    // if (check.hasMethodRestrictions) {
+    bz arc58_rekeyToPlugin_after_if_else@69
+    // smart_contracts/dao/contract.algo.ts:309
+    // assert(methodIndex < methodOffsets.length, ERR_MALFORMED_OFFSETS);
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16
+    frame_dig 22
+    dup
+    uncover 2
+    <
+    assert // malformed method offsets
+    // smart_contracts/dao/contract.algo.ts:310
+    // mCheck = this.methodCheck(key, txn, methodOffsets[methodIndex]);
+    frame_dig -2
+    extract 2 0
+    swap
+    intc_3 // 8
+    *
+    extract_uint64
+    dup
+    frame_bury 24
+    // smart_contracts/dao/contract.algo.ts:388
+    // assert(len(txn.appArgs(0)) === 4, ERR_INVALID_METHOD_SIGNATURE_LENGTH);
+    frame_dig 14
+    intc_0 // 0
+    gtxnsas ApplicationArgs
+    dup
+    frame_bury 6
+    len
+    pushint 4 // 4
+    ==
+    assert // Invalid method signature length
+    // smart_contracts/dao/contract.algo.ts:391
+    // const methods = this.plugins(key).value.methods.copy()
+    frame_dig 1
+    box_get
+    assert // Box must have value
+    dup
+    pushint 25 // 25
+    extract_uint16
+    dig 1
+    len
+    dig 2
+    cover 2
+    substring3
+    dup
+    frame_bury 5
+    // smart_contracts/dao/contract.algo.ts:392
+    // const allowedMethod = methods[offset].copy()
+    extract 2 0
+    uncover 2
+    pushint 20 // 20
+    *
+    dup
+    frame_bury 17
+    pushint 20 // 20
+    extract3 // on error: Index access is out of bounds
+    dup
+    frame_bury 0
+    // smart_contracts/dao/contract.algo.ts:394
+    // const hasCooldown = allowedMethod.cooldown.native > 0
+    pushint 4 // 4
+    extract_uint64
+    frame_bury 31
+    // smart_contracts/dao/contract.algo.ts:396
+    // const useRounds = this.plugins(key).value.useRounds.native
+    intc 6 // 217
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    dup
+    frame_bury 32
+    // smart_contracts/dao/contract.algo.ts:398
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    bz arc58_rekeyToPlugin_ternary_false@57
+    global Round
+
+arc58_rekeyToPlugin_ternary_merge@58:
+    // smart_contracts/dao/contract.algo.ts:399
+    // const onCooldown = (epochRef - methods[offset].lastCalled.native) < methods[offset].cooldown.native;
+    frame_dig 0
+    dup
+    pushint 12 // 12
+    extract_uint64
+    uncover 2
+    swap
+    -
+    frame_dig 31
+    <
+    frame_bury 25
+    // smart_contracts/dao/contract.algo.ts:401
+    // if (methods[offset].selector.native === selectorArg && (!hasCooldown || !onCooldown)) {
+    extract 0 4 // on error: Index access is out of bounds
+    frame_dig 6
+    ==
+    bz arc58_rekeyToPlugin_after_if_else@67
+    frame_dig 31
+    bz arc58_rekeyToPlugin_if_body@61
+    frame_dig 25
+    bnz arc58_rekeyToPlugin_after_if_else@67
+
+arc58_rekeyToPlugin_if_body@61:
+    // smart_contracts/dao/contract.algo.ts:403
+    // if (hasCooldown) {
+    frame_dig 31
+    bz arc58_rekeyToPlugin_after_if_else@66
+    // smart_contracts/dao/contract.algo.ts:404-406
+    // const lastCalled = useRounds
+    //   ? Global.round
+    //   : Global.latestTimestamp
+    frame_dig 32
+    bz arc58_rekeyToPlugin_ternary_false@64
+    // smart_contracts/dao/contract.algo.ts:405
+    // ? Global.round
+    global Round
+
+arc58_rekeyToPlugin_ternary_merge@65:
+    // smart_contracts/dao/contract.algo.ts:408
+    // methods[offset].lastCalled = new UintN64(lastCalled);
+    itob
+    frame_dig 0
+    swap
+    replace2 12
+    frame_dig 5
+    dup
+    intc_0 // 0
+    extract_uint16
+    frame_dig 24
+    >
+    assert // Index access is out of bounds
+    frame_dig 17
+    pushint 2 // 2
+    +
+    uncover 2
+    replace3
+    // smart_contracts/dao/contract.algo.ts:411
+    // ...this.plugins(key).value,
+    frame_dig 1
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    // smart_contracts/dao/contract.algo.ts:410-413
+    // this.plugins(key).value = new arc4DAOPluginInfo({
+    //   ...this.plugins(key).value,
+    //   methods: methods.copy(),
+    // });
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    extract 1 8 // on error: Index access is out of bounds
+    dig 2
+    extract 9 8 // on error: Index access is out of bounds
+    dig 3
+    extract 17 8 // on error: Index access is out of bounds
+    dig 4
+    intc 8 // 216
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    dig 5
+    intc 6 // 217
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    dig 6
+    extract 28 8 // on error: Index access is out of bounds
+    dig 7
+    extract 36 8 // on error: Index access is out of bounds
+    uncover 8
+    intc 7 // 352
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    uncover 8
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    bytec 24 // 0x002d
+    concat
+    uncover 5
+    concat
+    uncover 4
+    intc_0 // 0
+    getbit
+    intc 6 // 217
+    swap
+    setbit
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    dig 1
+    box_del
+    pop
+    box_put
+
+arc58_rekeyToPlugin_after_if_else@66:
+    // smart_contracts/dao/contract.algo.ts:417
+    // methodAllowed: true,
+    intc_1 // 1
+    frame_dig 25
+    frame_bury 20
+    frame_bury 19
+
+arc58_rekeyToPlugin_after_if_else@69:
+    // smart_contracts/dao/contract.algo.ts:316
+    // valid: check.valid && mCheck.methodAllowed
+    frame_dig 11
+    bz arc58_rekeyToPlugin_bool_false@72
+    frame_dig 19
+    bz arc58_rekeyToPlugin_bool_false@72
+    intc_1 // 1
+
+arc58_rekeyToPlugin_bool_merge@73:
+    frame_bury 11
+    frame_dig 20
+    // smart_contracts/dao/contract.algo.ts:360
+    // const check = this.fullPluginCheck(key, txn, methodOffsets, methodIndex);
+    b arc58_rekeyToPlugin_after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.fullPluginCheck@74
+
+arc58_rekeyToPlugin_bool_false@72:
+    intc_0 // 0
+    b arc58_rekeyToPlugin_bool_merge@73
+
+arc58_rekeyToPlugin_ternary_false@64:
+    // smart_contracts/dao/contract.algo.ts:406
+    // : Global.latestTimestamp
+    global LatestTimestamp
+    b arc58_rekeyToPlugin_ternary_merge@65
+
+arc58_rekeyToPlugin_after_if_else@67:
+    // smart_contracts/dao/contract.algo.ts:424
+    // methodAllowed: false,
+    intc_0 // 0
+    // smart_contracts/dao/contract.algo.ts:426
+    // methodOnCooldown: true
+    intc_1 // 1
+    frame_bury 20
+    frame_bury 19
+    // smart_contracts/dao/contract.algo.ts:310
+    // mCheck = this.methodCheck(key, txn, methodOffsets[methodIndex]);
+    b arc58_rekeyToPlugin_after_if_else@69
+
+arc58_rekeyToPlugin_ternary_false@57:
+    // smart_contracts/dao/contract.algo.ts:398
+    // const epochRef = useRounds ? Global.round : Global.latestTimestamp;
+    global LatestTimestamp
+    b arc58_rekeyToPlugin_ternary_merge@58
+
+arc58_rekeyToPlugin_after_if_else@40:
+    // smart_contracts/dao/contract.algo.ts:242
+    // txn.type === TransactionType.ApplicationCall
+    frame_dig 14
+    gtxns TypeEnum
+    pushint 6 // 6
+    ==
+    // smart_contracts/dao/contract.algo.ts:242-243
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz arc58_rekeyToPlugin_bool_false@46
+    // smart_contracts/dao/contract.algo.ts:243
+    // && txn.appId === Global.currentApplicationId
+    frame_dig 14
+    gtxns ApplicationID
+    global CurrentApplicationID
+    ==
+    // smart_contracts/dao/contract.algo.ts:242-243
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz arc58_rekeyToPlugin_bool_false@46
+    // smart_contracts/dao/contract.algo.ts:244
+    // && txn.numAppArgs === 1
+    frame_dig 14
+    gtxns NumAppArgs
+    intc_1 // 1
+    ==
+    // smart_contracts/dao/contract.algo.ts:242-244
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 1
+    bz arc58_rekeyToPlugin_bool_false@46
+    // smart_contracts/dao/contract.algo.ts:245
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    frame_dig 14
+    gtxns OnCompletion
+    // smart_contracts/dao/contract.algo.ts:242-245
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 1
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    bnz arc58_rekeyToPlugin_bool_false@46
+    // smart_contracts/dao/contract.algo.ts:246
+    // && txn.appArgs(0) === methodSelector('arc58_verifyAuthAddr()void')
+    frame_dig 14
+    intc_0 // 0
+    gtxnsas ApplicationArgs
+    bytec 19 // method "arc58_verifyAuthAddr()void"
+    ==
+    // smart_contracts/dao/contract.algo.ts:242-246
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 1
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    // && txn.appArgs(0) === methodSelector('arc58_verifyAuthAddr()void')
+    bz arc58_rekeyToPlugin_bool_false@46
+    intc_1 // 1
+    // smart_contracts/dao/contract.algo.ts:344
+    // if (this.txnRekeysBack(txn)) {
+    b arc58_rekeyToPlugin_after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.txnRekeysBack@48
+
+arc58_rekeyToPlugin_bool_false@46:
+    intc_0 // 0
+    // smart_contracts/dao/contract.algo.ts:344
+    // if (this.txnRekeysBack(txn)) {
+    b arc58_rekeyToPlugin_after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.txnRekeysBack@48
+
+arc58_rekeyToPlugin_ternary_false@34:
+    // smart_contracts/dao/contract.algo.ts:330
+    // : Global.latestTimestamp;
+    global LatestTimestamp
+    frame_bury 12
+    b arc58_rekeyToPlugin_ternary_merge@35
+
+arc58_rekeyToPlugin_ternary_false@2:
+    // smart_contracts/dao/contract.algo.ts:1202
+    // : Txn.sender
+    txn Sender
+    frame_bury 4
+    b arc58_rekeyToPlugin_ternary_merge@3
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToNamedPlugin(name: bytes, global: uint64, methodOffsets: bytes, fundsRequest: bytes) -> void:
+arc58_rekeyToNamedPlugin:
+    // smart_contracts/dao/contract.algo.ts:1248
+    // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
+    proto 4 0
+    // smart_contracts/arc58/account/constants.ts:14
+    // export const AbstractAccountBoxPrefixNamedPlugins = 'n'
+    pushbytes "n"
+    frame_dig -4
+    concat
+    // smart_contracts/dao/contract.algo.ts:1250
+    // this.namedPlugins(name).value.application,
+    box_get
+    assert // Box must have value
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/dao/contract.algo.ts:1249-1254
+    // this.arc58_rekeyToPlugin(
+    //   this.namedPlugins(name).value.application,
+    //   global,
+    //   methodOffsets,
+    //   fundsRequest
+    // );
+    frame_dig -3
+    frame_dig -2
+    frame_dig -1
+    callsub arc58_rekeyToPlugin
+    retsub
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.newProposal(payment: uint64, action: bytes, cid: bytes, data: bytes, status: bytes) -> void:
+newProposal:
+    // smart_contracts/dao/contract.algo.ts:1293-1299
+    // newProposal(
+    //   payment: gtxn.PaymentTxn,
+    //   action: ProposalAction,
+    //   cid: CID,
+    //   data: bytes,
+    //   status: ProposalStatus,
+    // ): void {
+    proto 5 0
+    bytec_1 // ""
+    // smart_contracts/dao/contract.algo.ts:1300
+    // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
+    frame_dig -1
+    // smart_contracts/dao/constants.ts:59
+    // export const StatusDraft = new UintN8(0)
+    bytec_0 // 0x00
+    // smart_contracts/dao/contract.algo.ts:1300
+    // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
+    ==
+    bnz newProposal_bool_true@2
+    frame_dig -1
+    // smart_contracts/dao/constants.ts:61
+    // export const StatusVoting = new UintN8(20)
+    pushbytes 0x14
+    // smart_contracts/dao/contract.algo.ts:1300
+    // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
+    ==
+    bz newProposal_bool_false@3
+
+newProposal_bool_true@2:
+    intc_1 // 1
+
+newProposal_bool_merge@4:
+    // smart_contracts/dao/contract.algo.ts:1300
+    // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
+    assert // Invalid proposal status
+    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.proposalFee.value
+    //   }
+    // )
+    frame_dig -5
+    gtxns Receiver
+    // smart_contracts/dao/contract.algo.ts:1305
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.proposalFee.value
+    //   }
+    // )
+    ==
+    bz newProposal_bool_false@7
+    frame_dig -5
+    gtxns Amount
+    // smart_contracts/dao/constants.ts:17
+    // export const AkitaDAOGlobalStateKeysProposalFee = 'proposal_fee'
+    intc_0 // 0
+    bytec 25 // "proposal_fee"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.proposalFee.value
+    //   }
+    // )
+    ==
+    bz newProposal_bool_false@7
+    intc_1 // 1
+
+newProposal_bool_merge@8:
+    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.proposalFee.value
+    //   }
+    // )
+    assert // assert target is match for conditions
+    // smart_contracts/constants.ts:6
+    // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
+    intc_0 // 0
+    bytec 20 // "spending_account_factory_app"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:110-117
+    // return abiCall(
+    //   SpendingAccountFactoryInterface.prototype.get,
+    //   {
+    //     appId: spendingAccountFactory,
+    //     args: [new Address(Txn.sender)],
+    //     fee: 0,
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:114
+    // args: [new Address(Txn.sender)],
+    txn Sender
+    // smart_contracts/utils/functions.ts:110-117
+    // return abiCall(
+    //   SpendingAccountFactoryInterface.prototype.get,
+    //   {
+    //     appId: spendingAccountFactory,
+    //     args: [new Address(Txn.sender)],
+    //     fee: 0,
+    //   }
+    // ).returnValue
+    pushbytes 0x89e79924 // method "get(address)uint64"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/functions.ts:115
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/functions.ts:110-117
+    // return abiCall(
+    //   SpendingAccountFactoryInterface.prototype.get,
+    //   {
+    //     appId: spendingAccountFactory,
+    //     args: [new Address(Txn.sender)],
+    //     fee: 0,
+    //   }
+    // ).returnValue
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec 4 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    dup
+    frame_bury 0
+    // smart_contracts/utils/functions.ts:123
+    // if (wallet === 0) {
+    bnz newProposal_after_if_else@11
+    // smart_contracts/utils/functions.ts:124
+    // return Txn.sender
+    txn Sender
+
+newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12:
+    // smart_contracts/dao/constants.ts:7
+    // export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
+    intc_0 // 0
+    bytec 26 // "akita_al"
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/dao/constants.ts:19
+    // export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
+    intc_0 // 0
+    bytec 8 // "akita_assets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/utils/functions.ts:335-344
+    // const info = abiCall(StakingInterface.prototype.getInfo, {
+    //   appId: stakingApp,
+    //   args: [
+    //     user,
+    //     new arc4StakeInfo({
+    //       asset: new UintN64(asset),
+    //       type: STAKING_TYPE_LOCK,
+    //     }),
+    //   ],
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:340
+    // asset: new UintN64(asset),
+    itob
+    // smart_contracts/staking/types.ts:30
+    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
+    pushbytes 0x03
+    // smart_contracts/utils/functions.ts:339-342
+    // new arc4StakeInfo({
+    //   asset: new UintN64(asset),
+    //   type: STAKING_TYPE_LOCK,
+    // }),
+    concat
+    // smart_contracts/utils/functions.ts:335-344
+    // const info = abiCall(StakingInterface.prototype.getInfo, {
+    //   appId: stakingApp,
+    //   args: [
+    //     user,
+    //     new arc4StakeInfo({
+    //       asset: new UintN64(asset),
+    //       type: STAKING_TYPE_LOCK,
+    //     }),
+    //   ],
+    // }).returnValue
+    pushbytes 0xc9068809 // method "getInfo(address,(uint64,uint8))(uint64,uint64,uint64)"
+    itxn_field ApplicationArgs
+    dig 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    extract 0 4
+    bytec 4 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    // smart_contracts/dao/constants.ts:22
+    // export const AkitaDAOGlobalStateKeysProposalID = 'proposal_id'
+    intc_0 // 0
+    bytec 18 // "proposal_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:194
+    // this.proposalID.value += 1
+    dup
+    intc_1 // 1
+    +
+    // smart_contracts/dao/constants.ts:22
+    // export const AkitaDAOGlobalStateKeysProposalID = 'proposal_id'
+    bytec 18 // "proposal_id"
+    // smart_contracts/dao/contract.algo.ts:194
+    // this.proposalID.value += 1
+    swap
+    app_global_put
+    // smart_contracts/dao/contract.algo.ts:1328
+    // created: Global.latestTimestamp,
+    global LatestTimestamp
+    // smart_contracts/dao/contract.algo.ts:1323
+    // this.proposals(id).value = {
+    swap
+    itob
+    // smart_contracts/dao/constants.ts:25
+    // export const AkitaDAOBoxPrefixProposals = 'l'
+    bytec 11 // "l"
+    swap
+    concat
+    // smart_contracts/dao/contract.algo.ts:1323-1331
+    // this.proposals(id).value = {
+    //   action,
+    //   status: StatusDraft,
+    //   cid,
+    //   creator: new Address(origin),
+    //   created: Global.latestTimestamp,
+    //   votes: 0,
+    //   data,
+    // }
+    dup
+    box_del
+    pop
+    // smart_contracts/dao/contract.algo.ts:1326
+    // cid,
+    frame_dig -3
+    len
+    pushint 36 // 36
+    ==
+    assert // invalid size
+    // smart_contracts/dao/contract.algo.ts:1328
+    // created: Global.latestTimestamp,
+    swap
+    itob
+    // smart_contracts/dao/contract.algo.ts:1329
+    // votes: 0,
+    intc_0 // 0
+    itob
+    // smart_contracts/dao/contract.algo.ts:1330
+    // data,
+    frame_dig -2
+    len
+    itob
+    extract 6 2
+    frame_dig -2
+    concat
+    // smart_contracts/dao/constants.ts:59
+    // export const StatusDraft = new UintN8(0)
+    bytec_0 // 0x00
+    // smart_contracts/dao/contract.algo.ts:1323
+    // this.proposals(id).value = {
+    frame_dig -4
+    concat
+    frame_dig -3
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    uncover 3
+    concat
+    pushbytes 0x0058
+    concat
+    swap
+    concat
+    // smart_contracts/dao/contract.algo.ts:1323-1331
+    // this.proposals(id).value = {
+    //   action,
+    //   status: StatusDraft,
+    //   cid,
+    //   creator: new Address(origin),
+    //   created: Global.latestTimestamp,
+    //   votes: 0,
+    //   data,
+    // }
+    box_put
+    retsub
+
+newProposal_after_if_else@11:
+    // smart_contracts/utils/functions.ts:102-105
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    frame_dig 0
+    // smart_contracts/arc58/account/constants.ts:2
+    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
+    bytec_2 // "controlled_address"
+    // smart_contracts/utils/functions.ts:102-105
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/dao/contract.algo.ts:1310
+    // const origin = getOrigin(this.spendingAccountFactoryApp.value.id)
+    b newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12
+
+newProposal_bool_false@7:
+    intc_0 // 0
+    b newProposal_bool_merge@8
+
+newProposal_bool_false@3:
+    intc_0 // 0
+    b newProposal_bool_merge@4
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.finalizeProposal(proposalID: uint64, args: bytes) -> void:
+finalizeProposal:
+    // smart_contracts/dao/contract.algo.ts:1337
+    // finalizeProposal(proposalID: uint64, args: bytes): void {
+    proto 2 0
+    intc_0 // 0
+    dupn 2
+    bytec_1 // ""
+    dupn 21
+    // smart_contracts/dao/contract.algo.ts:1338
+    // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
+    frame_dig -2
+    itob
+    // smart_contracts/dao/constants.ts:25
+    // export const AkitaDAOBoxPrefixProposals = 'l'
+    bytec 11 // "l"
+    swap
+    concat
+    // smart_contracts/dao/contract.algo.ts:1338
+    // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Proposal does not exist
+    // smart_contracts/dao/contract.algo.ts:1340
+    // const { action, creator } = this.proposals(proposalID).value
+    box_get
+    assert // Box must have value
+    dup
+    extract 1 1 // on error: Index access is out of bounds
+    dup
+    uncover 2
+    extract 54 32 // on error: Index access is out of bounds
+    // smart_contracts/dao/contract.algo.ts:1342
+    // assert(Txn.sender === creator.native, ERR_INCORRECT_SENDER)
+    txn Sender
+    ==
+    assert // Incorrect sender
+    // smart_contracts/dao/constants.ts:65
+    // export const ProposalActionUpgradeApp = new UintN8(0)
+    bytec_0 // 0x00
+    ==
+    // smart_contracts/dao/contract.algo.ts:1345-1350
+    // case ProposalActionUpgradeApp: {
+    //   // TODO: ensure its an app we control
+    //   const params = decodeArc4<ProposalUpgradeApp>(args)
+    //   this.validateUpgradeAppProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:66
+    // export const ProposalActionAddPlugin = new UintN8(10)
+    frame_dig 25
+    pushbytes 0x0a
+    ==
+    // smart_contracts/dao/contract.algo.ts:1351-1355
+    // case ProposalActionAddPlugin: {
+    //   const params = decodeArc4<ProposalAddPlugin>(args)
+    //   this.validateAddPluginProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:67
+    // export const ProposalActionAddNamedPlugin = new UintN8(20)
+    frame_dig 25
+    pushbytes 0x14
+    ==
+    // smart_contracts/dao/contract.algo.ts:1356-1360
+    // case ProposalActionAddNamedPlugin: {
+    //   const params = decodeArc4<ProposalAddNamedPlugin>(args)
+    //   this.validateAddNamedPluginProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:68
+    // export const ProposalActionExecutePlugin = new UintN8(30)
+    frame_dig 25
+    pushbytes 0x1e
+    ==
+    // smart_contracts/dao/contract.algo.ts:1361-1365
+    // case ProposalActionExecutePlugin: {
+    //   const params = decodeArc4<ProposalExecutePlugin>(args)
+    //   this.validateExecutePluginProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:69
+    // export const ProposalActionExecuteNamedPlugin = new UintN8(40)
+    frame_dig 25
+    pushbytes 0x28
+    ==
+    // smart_contracts/dao/contract.algo.ts:1366-1370
+    // case ProposalActionExecuteNamedPlugin: {
+    //   const params = decodeArc4<ProposalExecuteNamedPlugin>(args)
+    //   this.validateExecuteNamedPluginProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:70
+    // export const ProposalActionRemovePlugin = new UintN8(50)
+    frame_dig 25
+    pushbytes 0x32
+    ==
+    // smart_contracts/dao/contract.algo.ts:1371-1375
+    // case ProposalActionRemovePlugin: {
+    //   const params = decodeArc4<ProposalRemovePlugin>(args)
+    //   this.validateRemovePluginProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:71
+    // export const ProposalActionRemoveNamedPlugin = new UintN8(60)
+    frame_dig 25
+    pushbytes 0x3c
+    ==
+    // smart_contracts/dao/contract.algo.ts:1376-1380
+    // case ProposalActionRemoveNamedPlugin: {
+    //   const params = decodeArc4<ProposalRemoveNamedPlugin>(args)
+    //   this.validateRemoveNamedPluginProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:72
+    // export const ProposalActionAddAllowance = new UintN8(70)
+    frame_dig 25
+    pushbytes 0x46
+    ==
+    // smart_contracts/dao/contract.algo.ts:1381-1385
+    // case ProposalActionAddAllowance: {
+    //   const params = decodeArc4<ProposalAddAllowance>(args)
+    //   this.validateAddAllowanceProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:73
+    // export const ProposalActionRemoveAllowance = new UintN8(80)
+    frame_dig 25
+    pushbytes 0x50
+    ==
+    // smart_contracts/dao/contract.algo.ts:1386-1390
+    // case ProposalActionRemoveAllowance: {
+    //   const params = decodeArc4<ProposalRemoveAllowance>(args)
+    //   this.validateRemoveAllowanceProposal(params)
+    //   break;
+    // }
+    bnz finalizeProposal_block@31
+    // smart_contracts/dao/constants.ts:74
+    // export const ProposalActionUpdateFields = new UintN8(90)
+    frame_dig 25
+    pushbytes 0x5a
+    ==
+    // smart_contracts/dao/contract.algo.ts:1391-1395
+    // case ProposalActionUpdateFields: {
+    //   const params = decodeArc4<ProposalUpdateField[]>(args)
+    //   this.validateUpdateFieldsProposal(params)
+    //   break;
+    // }
+    bz finalizeProposal_block@31
+    // smart_contracts/dao/contract.algo.ts:888
+    // for (let i: uint64 = 0; i < params.length; i += 1) {
+    intc_0 // 0
+    frame_bury 7
+
+finalizeProposal_while_top@33:
+    // smart_contracts/dao/contract.algo.ts:888
+    // for (let i: uint64 = 0; i < params.length; i += 1) {
+    frame_dig -1
+    intc_0 // 0
+    extract_uint16
+    dup
+    frame_bury 24
+    frame_dig 7
+    >
+    bz finalizeProposal_block@31
+    // smart_contracts/dao/contract.algo.ts:889
+    // const { field, value } = params[i]
+    frame_dig -1
+    extract 2 0
+    frame_dig 7
+    dup
+    cover 2
+    pushint 2 // 2
+    *
+    dig 1
+    swap
+    extract_uint16
+    uncover 2
+    intc_1 // 1
+    +
+    dup
+    frame_bury 7
+    frame_dig 24
+    dig 1
+    - // on error: Index access is out of bounds
+    dig 3
+    len
+    uncover 2
+    pushint 2 // 2
+    *
+    dig 4
+    swap
+    extract_uint16
+    uncover 2
+    select
+    substring3
+    dup
+    intc_0 // 0
+    extract_uint16
+    dig 1
+    pushint 2 // 2
+    extract_uint16
+    dig 2
+    uncover 2
+    dig 2
+    substring3
+    extract 2 0
+    dup
+    cover 3
+    frame_bury 0
+    dig 1
+    len
+    substring3
+    dup
+    frame_bury 1
+    extract 2 0
+    frame_bury 2
+    // smart_contracts/dao/constants.ts:5
+    // export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
+    bytec 12 // "content_policy"
+    ==
+    // smart_contracts/dao/contract.algo.ts:892-895
+    // case AkitaDAOGlobalStateKeysContentPolicy: {
+    //   assert(Bytes(value).length === CID_LENGTH, ERR_INVALID_CONTENT_POLICY)
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@36
+    // smart_contracts/dao/contract.algo.ts:893
+    // assert(Bytes(value).length === CID_LENGTH, ERR_INVALID_CONTENT_POLICY)
+    frame_dig 2
+    len
+    // smart_contracts/utils/constants.ts:51
+    // export const CID_LENGTH: uint64 = 36
+    pushint 36 // 36
+    // smart_contracts/dao/contract.algo.ts:893
+    // assert(Bytes(value).length === CID_LENGTH, ERR_INVALID_CONTENT_POLICY)
+    ==
+    assert // Invalid content policy
+    // smart_contracts/dao/contract.algo.ts:894
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_after_if_else@36:
+    // smart_contracts/dao/constants.ts:6
+    // export const AkitaDAOGlobalStateKeysMinimumRewardsImpact = 'minimum_rewards_impact'
+    frame_dig 0
+    bytec 13 // "minimum_rewards_impact"
+    ==
+    // smart_contracts/dao/contract.algo.ts:896-900
+    // case AkitaDAOGlobalStateKeysMinimumRewardsImpact: {
+    //   const minImpact = btoi(Bytes(value))
+    //   assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@42
+    // smart_contracts/dao/contract.algo.ts:897
+    // const minImpact = btoi(Bytes(value))
+    frame_dig 2
+    btoi
+    dup
+    frame_bury 15
+    // smart_contracts/dao/contract.algo.ts:898
+    // assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
+    bz finalizeProposal_bool_false@40
+    frame_dig 15
+    // smart_contracts/utils/constants.ts:15
+    // export const MAX_IMPACT: uint64 = 1_000
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:898
+    // assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
+    <
+    bz finalizeProposal_bool_false@40
+    intc_1 // 1
+
+finalizeProposal_bool_merge@41:
+    // smart_contracts/dao/contract.algo.ts:898
+    // assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
+    assert // Invalid minimum rewards impact
+    // smart_contracts/dao/contract.algo.ts:899
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@40:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@41
+
+finalizeProposal_after_if_else@42:
+    // smart_contracts/dao/constants.ts:10
+    // export const AkitaDAOGlobalStateKeysSocialFees = 'social_fees'
+    frame_dig 0
+    bytec 14 // "social_fees"
+    ==
+    // smart_contracts/dao/contract.algo.ts:901-913
+    // case AkitaDAOGlobalStateKeysSocialFees: {
+    //   const { postFee, reactFee, impactTaxMin, impactTaxMax } = decodeArc4<SocialFees>(Bytes(value))
+    //   assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
+    //   assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
+    //   assert(impactTaxMin >= MIN_IMPACT_TAX_MIN, ERR_INVALID_IMPACT_TAX_MIN)
+    //   assert(
+    //     impactTaxMax > impactTaxMin
+    //     && impactTaxMax >= MIN_IMPACT_TAX_MAX
+    //     && impactTaxMax <= DIVISOR,
+    //     ERR_INVALID_IMPACT_TAX_MAX
+    //   )
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@57
+    // smart_contracts/dao/contract.algo.ts:902
+    // const { postFee, reactFee, impactTaxMin, impactTaxMax } = decodeArc4<SocialFees>(Bytes(value))
+    frame_dig 1
+    dup
+    pushint 2 // 2
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 17
+    dup
+    intc_2 // 10
+    extract_uint64
+    frame_bury 21
+    dup
+    pushint 18 // 18
+    extract_uint64
+    frame_bury 10
+    pushint 26 // 26
+    extract_uint64
+    frame_bury 8
+    // smart_contracts/utils/constants.ts:20
+    // export const MIN_POST_FEE: uint64 = 10 // 0.000010 AKTA or 10 keets
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:903
+    // assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
+    >=
+    bz finalizeProposal_bool_false@46
+    frame_dig 17
+    // smart_contracts/utils/constants.ts:21
+    // export const MAX_POST_FEE: uint64 = 100_000_000_000 // 100K AKTA
+    pushint 100000000000 // 100000000000
+    // smart_contracts/dao/contract.algo.ts:903
+    // assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
+    <
+    bz finalizeProposal_bool_false@46
+    intc_1 // 1
+
+finalizeProposal_bool_merge@47:
+    // smart_contracts/dao/contract.algo.ts:903
+    // assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
+    assert // Invalid post fee
+    // smart_contracts/dao/contract.algo.ts:904
+    // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
+    frame_dig 21
+    // smart_contracts/utils/constants.ts:22
+    // export const MIN_REACT_FEE: uint64 = 10 // 0.000010 AKTA or 10 keets
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:904
+    // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
+    >=
+    bz finalizeProposal_bool_false@50
+    frame_dig 21
+    // smart_contracts/utils/constants.ts:23
+    // export const MAX_REACT_FEE: uint64 = 10_000_000_000 // 10K AKTA
+    pushint 10000000000 // 10000000000
+    // smart_contracts/dao/contract.algo.ts:904
+    // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
+    <
+    bz finalizeProposal_bool_false@50
+    intc_1 // 1
+
+finalizeProposal_bool_merge@51:
+    // smart_contracts/dao/contract.algo.ts:904
+    // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
+    assert // Invalid react fee
+    // smart_contracts/dao/contract.algo.ts:905
+    // assert(impactTaxMin >= MIN_IMPACT_TAX_MIN, ERR_INVALID_IMPACT_TAX_MIN)
+    frame_dig 10
+    dup
+    // smart_contracts/utils/constants.ts:24
+    // export const MIN_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:905
+    // assert(impactTaxMin >= MIN_IMPACT_TAX_MIN, ERR_INVALID_IMPACT_TAX_MIN)
+    >=
+    assert // Invalid impact tax minimum
+    // smart_contracts/dao/contract.algo.ts:907
+    // impactTaxMax > impactTaxMin
+    frame_dig 8
+    <
+    // smart_contracts/dao/contract.algo.ts:907-908
+    // impactTaxMax > impactTaxMin
+    // && impactTaxMax >= MIN_IMPACT_TAX_MAX
+    bz finalizeProposal_bool_false@55
+    // smart_contracts/dao/contract.algo.ts:908
+    // && impactTaxMax >= MIN_IMPACT_TAX_MAX
+    frame_dig 8
+    // smart_contracts/utils/constants.ts:25
+    // export const MIN_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:908
+    // && impactTaxMax >= MIN_IMPACT_TAX_MAX
+    >=
+    // smart_contracts/dao/contract.algo.ts:907-908
+    // impactTaxMax > impactTaxMin
+    // && impactTaxMax >= MIN_IMPACT_TAX_MAX
+    bz finalizeProposal_bool_false@55
+    // smart_contracts/dao/contract.algo.ts:909
+    // && impactTaxMax <= DIVISOR,
+    frame_dig 8
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:909
+    // && impactTaxMax <= DIVISOR,
+    <=
+    // smart_contracts/dao/contract.algo.ts:907-909
+    // impactTaxMax > impactTaxMin
+    // && impactTaxMax >= MIN_IMPACT_TAX_MAX
+    // && impactTaxMax <= DIVISOR,
+    bz finalizeProposal_bool_false@55
+    intc_1 // 1
+
+finalizeProposal_bool_merge@56:
+    // smart_contracts/dao/contract.algo.ts:906-911
+    // assert(
+    //   impactTaxMax > impactTaxMin
+    //   && impactTaxMax >= MIN_IMPACT_TAX_MAX
+    //   && impactTaxMax <= DIVISOR,
+    //   ERR_INVALID_IMPACT_TAX_MAX
+    // )
+    assert // Invalid impact tax maximum
+    // smart_contracts/dao/contract.algo.ts:912
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@55:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@56
+
+finalizeProposal_bool_false@50:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@51
+
+finalizeProposal_bool_false@46:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@47
+
+finalizeProposal_after_if_else@57:
+    // smart_contracts/dao/constants.ts:11
+    // export const AkitaDAOGlobalStateKeysStakingFees = 'staking_fees'
+    frame_dig 0
+    bytec 15 // "staking_fees"
+    ==
+    // smart_contracts/dao/contract.algo.ts:914-925
+    // case AkitaDAOGlobalStateKeysStakingFees: {
+    //   const { creationFee, impactTaxMin, impactTaxMax } = decodeArc4<StakingFees>(Bytes(value))
+    //   assert(creationFee > 0, ERR_INVALID_POOL_CREATION_FEE)
+    //   assert(impactTaxMin >= MIN_POOL_IMPACT_TAX_MIN, ERR_INVALID_POOL_IMPACT_TAX_MIN)
+    //   assert(
+    //     impactTaxMax >= impactTaxMin
+    //     && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
+    //     && impactTaxMax <= DIVISOR,
+    //     ERR_INVALID_POOL_IMPACT_TAX_MAX
+    //   )
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@64
+    // smart_contracts/dao/contract.algo.ts:915
+    // const { creationFee, impactTaxMin, impactTaxMax } = decodeArc4<StakingFees>(Bytes(value))
+    frame_dig 1
+    dup
+    pushint 2 // 2
+    extract_uint64
+    dig 1
+    intc_2 // 10
+    extract_uint64
+    uncover 2
+    pushint 18 // 18
+    extract_uint64
+    dup
+    cover 3
+    frame_bury 9
+    // smart_contracts/dao/contract.algo.ts:916
+    // assert(creationFee > 0, ERR_INVALID_POOL_CREATION_FEE)
+    swap
+    assert // Invalid pool creation fee
+    // smart_contracts/dao/contract.algo.ts:917
+    // assert(impactTaxMin >= MIN_POOL_IMPACT_TAX_MIN, ERR_INVALID_POOL_IMPACT_TAX_MIN)
+    dup
+    // smart_contracts/utils/constants.ts:26
+    // export const MIN_POOL_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:917
+    // assert(impactTaxMin >= MIN_POOL_IMPACT_TAX_MIN, ERR_INVALID_POOL_IMPACT_TAX_MIN)
+    >=
+    assert // Invalid pool impact tax minimum
+    // smart_contracts/dao/contract.algo.ts:919
+    // impactTaxMax >= impactTaxMin
+    >=
+    // smart_contracts/dao/contract.algo.ts:919-920
+    // impactTaxMax >= impactTaxMin
+    // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
+    bz finalizeProposal_bool_false@62
+    // smart_contracts/dao/contract.algo.ts:920
+    // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
+    frame_dig 9
+    // smart_contracts/utils/constants.ts:27
+    // export const MIN_POOL_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:920
+    // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
+    >=
+    // smart_contracts/dao/contract.algo.ts:919-920
+    // impactTaxMax >= impactTaxMin
+    // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
+    bz finalizeProposal_bool_false@62
+    // smart_contracts/dao/contract.algo.ts:921
+    // && impactTaxMax <= DIVISOR,
+    frame_dig 9
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:921
+    // && impactTaxMax <= DIVISOR,
+    <=
+    // smart_contracts/dao/contract.algo.ts:919-921
+    // impactTaxMax >= impactTaxMin
+    // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
+    // && impactTaxMax <= DIVISOR,
+    bz finalizeProposal_bool_false@62
+    intc_1 // 1
+
+finalizeProposal_bool_merge@63:
+    // smart_contracts/dao/contract.algo.ts:918-923
+    // assert(
+    //   impactTaxMax >= impactTaxMin
+    //   && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
+    //   && impactTaxMax <= DIVISOR,
+    //   ERR_INVALID_POOL_IMPACT_TAX_MAX
+    // )
+    assert // Invalid pool impact tax maximum
+    // smart_contracts/dao/contract.algo.ts:924
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@62:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@63
+
+finalizeProposal_after_if_else@64:
+    // smart_contracts/dao/constants.ts:12
+    // export const AkitaDAOGlobalStateKeysSubscriptionFees = 'subscription_fees'
+    frame_dig 0
+    bytec 16 // "subscription_fees"
+    ==
+    // smart_contracts/dao/contract.algo.ts:926-933
+    // case AkitaDAOGlobalStateKeysSubscriptionFees: {
+    //   const { serviceCreationFee, paymentPercentage, triggerPercentage } = decodeArc4<SubscriptionFees>(Bytes(value))
+    //   assert(serviceCreationFee > 0, ERR_INVALID_SERVICE_CREATION_FEE)
+    //   assert(paymentPercentage >= MIN_PAYMENT_PERCENTAGE, ERR_INVALID_PAYMENT_PERCENTAGE)
+    //   assert(triggerPercentage >= MIN_TRIGGER_PERCENTAGE, ERR_INVALID_TRIGGER_PERCENTAGE)
+    //   assert((paymentPercentage + triggerPercentage) < DIVISOR, ERR_INVALID_TOTAL_PERCENTAGE_FEES)
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@66
+    // smart_contracts/dao/contract.algo.ts:927
+    // const { serviceCreationFee, paymentPercentage, triggerPercentage } = decodeArc4<SubscriptionFees>(Bytes(value))
+    frame_dig 1
+    dup
+    pushint 2 // 2
+    extract_uint64
+    dig 1
+    intc_2 // 10
+    extract_uint64
+    uncover 2
+    pushint 18 // 18
+    extract_uint64
+    // smart_contracts/dao/contract.algo.ts:928
+    // assert(serviceCreationFee > 0, ERR_INVALID_SERVICE_CREATION_FEE)
+    uncover 2
+    assert // Invalid service creation fee
+    // smart_contracts/dao/contract.algo.ts:929
+    // assert(paymentPercentage >= MIN_PAYMENT_PERCENTAGE, ERR_INVALID_PAYMENT_PERCENTAGE)
+    dig 1
+    // smart_contracts/utils/constants.ts:28
+    // export const MIN_PAYMENT_PERCENTAGE: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:929
+    // assert(paymentPercentage >= MIN_PAYMENT_PERCENTAGE, ERR_INVALID_PAYMENT_PERCENTAGE)
+    >=
+    assert // Invalid payment percentage
+    // smart_contracts/dao/contract.algo.ts:930
+    // assert(triggerPercentage >= MIN_TRIGGER_PERCENTAGE, ERR_INVALID_TRIGGER_PERCENTAGE)
+    dup
+    // smart_contracts/utils/constants.ts:29
+    // export const MIN_TRIGGER_PERCENTAGE: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:930
+    // assert(triggerPercentage >= MIN_TRIGGER_PERCENTAGE, ERR_INVALID_TRIGGER_PERCENTAGE)
+    >=
+    assert // Invalid trigger percentage
+    // smart_contracts/dao/contract.algo.ts:931
+    // assert((paymentPercentage + triggerPercentage) < DIVISOR, ERR_INVALID_TOTAL_PERCENTAGE_FEES)
+    +
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:931
+    // assert((paymentPercentage + triggerPercentage) < DIVISOR, ERR_INVALID_TOTAL_PERCENTAGE_FEES)
+    <
+    assert // Invalid subscription total percentage fees
+    // smart_contracts/dao/contract.algo.ts:932
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_after_if_else@66:
+    // smart_contracts/dao/constants.ts:14
+    // export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
+    frame_dig 0
+    bytec 17 // "nft_fees"
+    ==
+    // smart_contracts/dao/contract.algo.ts:934-996
+    // case AkitaDAOGlobalStateKeysNFTFees: {
+    //   const {
+    //     marketplaceSalePercentageMin,
+    //     marketplaceSalePercentageMax,
+    //     marketplaceComposablePercentage,
+    //     marketplaceRoyaltyDefaultPercentage,
+    //     shuffleSalePercentage,
+    //     auctionSaleImpactTaxMin,
+    //     auctionSaleImpactTaxMax,
+    //     auctionComposablePercentage,
+    //     auctionRafflePercentage,
+    //     raffleSaleImpactTaxMin,
+    //     raffleSaleImpactTaxMax,
+    //     raffleComposablePercentage,
+    //   } = decodeArc4<NFTFees>(Bytes(value))
+    // 
+    //   assert(marketplaceSalePercentageMin > MIN_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MINIMUM)
+    //   assert(
+    //     marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
+    //     marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
+    //     ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM
+    //   )
+    //   assert(
+    //     marketplaceComposablePercentage >= MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE,
+    //     ERR_INVALID_MARKETPLACE_COMPOSABLE_PERCENTAGE
+    //   )
+    //   assert(
+    //     marketplaceRoyaltyDefaultPercentage >= MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
+    //     ERR_INVALID_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE
+    //   )
+    //   assert(
+    //     (marketplaceSalePercentageMax + marketplaceComposablePercentage + marketplaceRoyaltyDefaultPercentage) <= DIVISOR,
+    //     ERR_INVALID_TOTAL_PERCENTAGE_FEES
+    //   )
+    //   // ensure total marketplace fees are less than 100%
+    //   assert(shuffleSalePercentage <= DIVISOR, ERR_INVALID_SHUFFLE_SALE_PERCENTAGE)
+    //   assert(auctionSaleImpactTaxMin >= MIN_AUCTION_SALE_IMPACT_TAX_MIN, ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MIN)
+    //   assert(
+    //     auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
+    //     && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
+    //     ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MAX
+    //   )
+    //   // ensure total auction fees are less than 100%
+    //   assert(
+    //     (auctionSaleImpactTaxMax + auctionComposablePercentage) <= DIVISOR,
+    //     ERR_INVALID_TOTAL_PERCENTAGE_FEES
+    //   )
+    //   // ensure total auction raffle fees are less than 100%
+    //   assert(auctionRafflePercentage <= DIVISOR, ERR_INVALID_AUCTION_RAFFLE_PERCENTAGE)
+    //   assert(raffleSaleImpactTaxMin >= MIN_RAFFLE_SALE_IMPACT_TAX_MIN, ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MIN)
+    //   assert(
+    //     raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
+    //     && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
+    //     ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MAX
+    //   )
+    //   // ensure total raffle fees are less than 100%
+    //   assert(
+    //     (raffleSaleImpactTaxMax + raffleComposablePercentage) < DIVISOR,
+    //     ERR_INVALID_TOTAL_PERCENTAGE_FEES
+    //   )
+    // 
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@80
+    // smart_contracts/dao/contract.algo.ts:948
+    // } = decodeArc4<NFTFees>(Bytes(value))
+    frame_dig 1
+    dup
+    pushint 2 // 2
+    extract_uint64
+    dig 1
+    intc_2 // 10
+    extract_uint64
+    dup
+    cover 3
+    frame_bury 14
+    dig 1
+    pushint 18 // 18
+    extract_uint64
+    frame_bury 12
+    dig 1
+    pushint 26 // 26
+    extract_uint64
+    frame_bury 13
+    dig 1
+    pushint 34 // 34
+    extract_uint64
+    frame_bury 22
+    dig 1
+    pushint 58 // 58
+    extract_uint64
+    frame_bury 6
+    dig 1
+    pushint 66 // 66
+    extract_uint64
+    frame_bury 5
+    dig 1
+    pushint 74 // 74
+    extract_uint64
+    frame_bury 3
+    dig 1
+    pushint 82 // 82
+    extract_uint64
+    frame_bury 4
+    dig 1
+    pushint 98 // 98
+    extract_uint64
+    frame_bury 20
+    dig 1
+    pushint 106 // 106
+    extract_uint64
+    frame_bury 19
+    swap
+    pushint 114 // 114
+    extract_uint64
+    frame_bury 18
+    // smart_contracts/dao/contract.algo.ts:950
+    // assert(marketplaceSalePercentageMin > MIN_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MINIMUM)
+    dup
+    // smart_contracts/utils/constants.ts:30
+    // export const MIN_MARKETPLACE_SALE_PERCENTAGE_MINIMUM: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:950
+    // assert(marketplaceSalePercentageMin > MIN_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MINIMUM)
+    >
+    assert // Invalid marketplace sale percentage minimum
+    // smart_contracts/dao/contract.algo.ts:952
+    // marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
+    >
+    // smart_contracts/dao/contract.algo.ts:952-953
+    // marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
+    // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
+    bz finalizeProposal_bool_false@70
+    // smart_contracts/dao/contract.algo.ts:953
+    // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
+    frame_dig 14
+    // smart_contracts/utils/constants.ts:31
+    // export const MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:953
+    // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
+    >=
+    // smart_contracts/dao/contract.algo.ts:952-953
+    // marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
+    // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
+    bz finalizeProposal_bool_false@70
+    intc_1 // 1
+
+finalizeProposal_bool_merge@71:
+    // smart_contracts/dao/contract.algo.ts:951-955
+    // assert(
+    //   marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
+    //   marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
+    //   ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM
+    // )
+    assert // Invalid marketplace sale percentage maximum
+    // smart_contracts/dao/contract.algo.ts:957
+    // marketplaceComposablePercentage >= MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE,
+    frame_dig 12
+    dup
+    // smart_contracts/utils/constants.ts:32
+    // export const MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:957
+    // marketplaceComposablePercentage >= MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE,
+    >=
+    // smart_contracts/dao/contract.algo.ts:956-959
+    // assert(
+    //   marketplaceComposablePercentage >= MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE,
+    //   ERR_INVALID_MARKETPLACE_COMPOSABLE_PERCENTAGE
+    // )
+    assert // Invalid marketplace composable percentage
+    // smart_contracts/dao/contract.algo.ts:961
+    // marketplaceRoyaltyDefaultPercentage >= MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
+    frame_dig 13
+    dup
+    // smart_contracts/utils/constants.ts:33
+    // export const MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:961
+    // marketplaceRoyaltyDefaultPercentage >= MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
+    >=
+    // smart_contracts/dao/contract.algo.ts:960-963
+    // assert(
+    //   marketplaceRoyaltyDefaultPercentage >= MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
+    //   ERR_INVALID_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE
+    // )
+    assert // Invalid marketplace royalty default percentage
+    // smart_contracts/dao/contract.algo.ts:965
+    // (marketplaceSalePercentageMax + marketplaceComposablePercentage + marketplaceRoyaltyDefaultPercentage) <= DIVISOR,
+    frame_dig 14
+    uncover 2
+    +
+    +
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:965
+    // (marketplaceSalePercentageMax + marketplaceComposablePercentage + marketplaceRoyaltyDefaultPercentage) <= DIVISOR,
+    <=
+    // smart_contracts/dao/contract.algo.ts:964-967
+    // assert(
+    //   (marketplaceSalePercentageMax + marketplaceComposablePercentage + marketplaceRoyaltyDefaultPercentage) <= DIVISOR,
+    //   ERR_INVALID_TOTAL_PERCENTAGE_FEES
+    // )
+    assert // Invalid subscription total percentage fees
+    // smart_contracts/dao/contract.algo.ts:969
+    // assert(shuffleSalePercentage <= DIVISOR, ERR_INVALID_SHUFFLE_SALE_PERCENTAGE)
+    frame_dig 22
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:969
+    // assert(shuffleSalePercentage <= DIVISOR, ERR_INVALID_SHUFFLE_SALE_PERCENTAGE)
+    <=
+    assert // Invalid shuffle sale percentage
+    // smart_contracts/dao/contract.algo.ts:970
+    // assert(auctionSaleImpactTaxMin >= MIN_AUCTION_SALE_IMPACT_TAX_MIN, ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MIN)
+    frame_dig 6
+    dup
+    // smart_contracts/utils/constants.ts:34
+    // export const MIN_AUCTION_SALE_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:970
+    // assert(auctionSaleImpactTaxMin >= MIN_AUCTION_SALE_IMPACT_TAX_MIN, ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MIN)
+    >=
+    assert // Invalid auction sale impact tax minimum
+    // smart_contracts/dao/contract.algo.ts:972
+    // auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
+    frame_dig 5
+    <
+    // smart_contracts/dao/contract.algo.ts:972-973
+    // auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
+    // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
+    bz finalizeProposal_bool_false@74
+    // smart_contracts/dao/contract.algo.ts:973
+    // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
+    frame_dig 5
+    // smart_contracts/utils/constants.ts:35
+    // export const MIN_AUCTION_SALE_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:973
+    // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
+    >=
+    // smart_contracts/dao/contract.algo.ts:972-973
+    // auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
+    // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
+    bz finalizeProposal_bool_false@74
+    intc_1 // 1
+
+finalizeProposal_bool_merge@75:
+    // smart_contracts/dao/contract.algo.ts:971-975
+    // assert(
+    //   auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
+    //   && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
+    //   ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MAX
+    // )
+    assert // Invalid auction sale impact tax maximum
+    // smart_contracts/dao/contract.algo.ts:978
+    // (auctionSaleImpactTaxMax + auctionComposablePercentage) <= DIVISOR,
+    frame_dig 5
+    frame_dig 3
+    +
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:978
+    // (auctionSaleImpactTaxMax + auctionComposablePercentage) <= DIVISOR,
+    <=
+    // smart_contracts/dao/contract.algo.ts:977-980
+    // assert(
+    //   (auctionSaleImpactTaxMax + auctionComposablePercentage) <= DIVISOR,
+    //   ERR_INVALID_TOTAL_PERCENTAGE_FEES
+    // )
+    assert // Invalid subscription total percentage fees
+    // smart_contracts/dao/contract.algo.ts:982
+    // assert(auctionRafflePercentage <= DIVISOR, ERR_INVALID_AUCTION_RAFFLE_PERCENTAGE)
+    frame_dig 4
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:982
+    // assert(auctionRafflePercentage <= DIVISOR, ERR_INVALID_AUCTION_RAFFLE_PERCENTAGE)
+    <=
+    assert // Invalid auction raffle percentage
+    // smart_contracts/dao/contract.algo.ts:983
+    // assert(raffleSaleImpactTaxMin >= MIN_RAFFLE_SALE_IMPACT_TAX_MIN, ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MIN)
+    frame_dig 20
+    dup
+    // smart_contracts/utils/constants.ts:36
+    // export const MIN_RAFFLE_SALE_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:983
+    // assert(raffleSaleImpactTaxMin >= MIN_RAFFLE_SALE_IMPACT_TAX_MIN, ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MIN)
+    >=
+    assert // Invalid raffle sale impact tax minimum
+    // smart_contracts/dao/contract.algo.ts:985
+    // raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
+    frame_dig 19
+    <
+    // smart_contracts/dao/contract.algo.ts:985-986
+    // raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
+    // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
+    bz finalizeProposal_bool_false@78
+    // smart_contracts/dao/contract.algo.ts:986
+    // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
+    frame_dig 19
+    // smart_contracts/utils/constants.ts:37
+    // export const MIN_RAFFLE_SALE_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:986
+    // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
+    >=
+    // smart_contracts/dao/contract.algo.ts:985-986
+    // raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
+    // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
+    bz finalizeProposal_bool_false@78
+    intc_1 // 1
+
+finalizeProposal_bool_merge@79:
+    // smart_contracts/dao/contract.algo.ts:984-988
+    // assert(
+    //   raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
+    //   && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
+    //   ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MAX
+    // )
+    assert // Invalid raffle sale impact tax maximum
+    // smart_contracts/dao/contract.algo.ts:991
+    // (raffleSaleImpactTaxMax + raffleComposablePercentage) < DIVISOR,
+    frame_dig 19
+    frame_dig 18
+    +
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:991
+    // (raffleSaleImpactTaxMax + raffleComposablePercentage) < DIVISOR,
+    <
+    // smart_contracts/dao/contract.algo.ts:990-993
+    // assert(
+    //   (raffleSaleImpactTaxMax + raffleComposablePercentage) < DIVISOR,
+    //   ERR_INVALID_TOTAL_PERCENTAGE_FEES
+    // )
+    assert // Invalid subscription total percentage fees
+    // smart_contracts/dao/contract.algo.ts:995
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@78:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@79
+
+finalizeProposal_bool_false@74:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@75
+
+finalizeProposal_bool_false@70:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@71
+
+finalizeProposal_after_if_else@80:
+    // smart_contracts/dao/constants.ts:13
+    // export const AkitaDAOGlobalStateKeysSwapFees = 'swap_fees'
+    frame_dig 0
+    bytec 22 // "swap_fees"
+    ==
+    // smart_contracts/dao/contract.algo.ts:997-1007
+    // case AkitaDAOGlobalStateKeysSwapFees: {
+    //   const swapFees = decodeArc4<SwapFees>(Bytes(value))
+    //   assert(swapFees.impactTaxMin >= MIN_SWAP_IMPACT_TAX_MIN, ERR_INVALID_SWAP_IMPACT_TAX_MIN)
+    //   assert(
+    //     swapFees.impactTaxMax > swapFees.impactTaxMin
+    //     && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
+    //     && swapFees.impactTaxMax <= DIVISOR,
+    //     ERR_INVALID_SWAP_IMPACT_TAX_MAX
+    //   )
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@87
+    // smart_contracts/dao/contract.algo.ts:998
+    // const swapFees = decodeArc4<SwapFees>(Bytes(value))
+    frame_dig 1
+    dup
+    pushint 2 // 2
+    extract_uint64
+    swap
+    intc_2 // 10
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 23
+    // smart_contracts/dao/contract.algo.ts:999
+    // assert(swapFees.impactTaxMin >= MIN_SWAP_IMPACT_TAX_MIN, ERR_INVALID_SWAP_IMPACT_TAX_MIN)
+    dup
+    // smart_contracts/utils/constants.ts:38
+    // export const MIN_SWAP_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
+    intc_2 // 10
+    // smart_contracts/dao/contract.algo.ts:999
+    // assert(swapFees.impactTaxMin >= MIN_SWAP_IMPACT_TAX_MIN, ERR_INVALID_SWAP_IMPACT_TAX_MIN)
+    >=
+    assert // Invalid swap impact tax minimum
+    // smart_contracts/dao/contract.algo.ts:1001
+    // swapFees.impactTaxMax > swapFees.impactTaxMin
+    >
+    // smart_contracts/dao/contract.algo.ts:1001-1002
+    // swapFees.impactTaxMax > swapFees.impactTaxMin
+    // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
+    bz finalizeProposal_bool_false@85
+    // smart_contracts/dao/contract.algo.ts:1002
+    // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
+    frame_dig 23
+    // smart_contracts/utils/constants.ts:39
+    // export const MIN_SWAP_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:1002
+    // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
+    >=
+    // smart_contracts/dao/contract.algo.ts:1001-1002
+    // swapFees.impactTaxMax > swapFees.impactTaxMin
+    // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
+    bz finalizeProposal_bool_false@85
+    // smart_contracts/dao/contract.algo.ts:1003
+    // && swapFees.impactTaxMax <= DIVISOR,
+    frame_dig 23
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:1003
+    // && swapFees.impactTaxMax <= DIVISOR,
+    <=
+    // smart_contracts/dao/contract.algo.ts:1001-1003
+    // swapFees.impactTaxMax > swapFees.impactTaxMin
+    // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
+    // && swapFees.impactTaxMax <= DIVISOR,
+    bz finalizeProposal_bool_false@85
+    intc_1 // 1
+
+finalizeProposal_bool_merge@86:
+    // smart_contracts/dao/contract.algo.ts:1000-1005
+    // assert(
+    //   swapFees.impactTaxMax > swapFees.impactTaxMin
+    //   && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
+    //   && swapFees.impactTaxMax <= DIVISOR,
+    //   ERR_INVALID_SWAP_IMPACT_TAX_MAX
+    // )
+    assert // Invalid swap impact tax maximum
+    // smart_contracts/dao/contract.algo.ts:1006
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@85:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@86
+
+finalizeProposal_after_if_else@87:
+    // smart_contracts/dao/constants.ts:15
+    // export const AkitaDAOGlobalStateKeysKrbyPercentage = 'krby_percentage'
+    frame_dig 0
+    bytec 6 // "krby_percentage"
+    ==
+    // smart_contracts/dao/contract.algo.ts:1008-1012
+    // case AkitaDAOGlobalStateKeysKrbyPercentage: {
+    //   const krbyPercentage = btoi(Bytes(value))
+    //   assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@93
+    // smart_contracts/dao/contract.algo.ts:1009
+    // const krbyPercentage = btoi(Bytes(value))
+    frame_dig 2
+    btoi
+    dup
+    frame_bury 11
+    // smart_contracts/utils/constants.ts:41
+    // export const ONE_PERCENT: uint64 = 1_000
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:1010
+    // assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
+    >=
+    bz finalizeProposal_bool_false@91
+    // smart_contracts/dao/constants.ts:16
+    // export const AkitaDAOGlobalStateKeysModeratorPercentage = 'mod_percentage'
+    intc_0 // 0
+    bytec 7 // "mod_percentage"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:1010
+    // assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
+    swap
+    -
+    frame_dig 11
+    >
+    bz finalizeProposal_bool_false@91
+    intc_1 // 1
+
+finalizeProposal_bool_merge@92:
+    // smart_contracts/dao/contract.algo.ts:1010
+    // assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
+    assert // Invalid krby percentage
+    // smart_contracts/dao/contract.algo.ts:1011
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@91:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@92
+
+finalizeProposal_after_if_else@93:
+    // smart_contracts/dao/constants.ts:16
+    // export const AkitaDAOGlobalStateKeysModeratorPercentage = 'mod_percentage'
+    frame_dig 0
+    bytec 7 // "mod_percentage"
+    ==
+    // smart_contracts/dao/contract.algo.ts:1013-1017
+    // case AkitaDAOGlobalStateKeysModeratorPercentage: {
+    //   const modPercentage = btoi(Bytes(value))
+    //   assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@99
+    // smart_contracts/dao/contract.algo.ts:1014
+    // const modPercentage = btoi(Bytes(value))
+    frame_dig 2
+    btoi
+    dup
+    frame_bury 16
+    // smart_contracts/utils/constants.ts:41
+    // export const ONE_PERCENT: uint64 = 1_000
+    intc 4 // 1000
+    // smart_contracts/dao/contract.algo.ts:1015
+    // assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
+    >=
+    bz finalizeProposal_bool_false@97
+    // smart_contracts/dao/constants.ts:15
+    // export const AkitaDAOGlobalStateKeysKrbyPercentage = 'krby_percentage'
+    intc_0 // 0
+    bytec 6 // "krby_percentage"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 5 // 100000
+    // smart_contracts/dao/contract.algo.ts:1015
+    // assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
+    swap
+    -
+    frame_dig 16
+    >
+    bz finalizeProposal_bool_false@97
+    intc_1 // 1
+
+finalizeProposal_bool_merge@98:
+    // smart_contracts/dao/contract.algo.ts:1015
+    // assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
+    assert // Invalid moderator percentage
+    // smart_contracts/dao/contract.algo.ts:1016
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@97:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@98
+
+finalizeProposal_after_if_else@99:
+    // smart_contracts/dao/constants.ts:17
+    // export const AkitaDAOGlobalStateKeysProposalFee = 'proposal_fee'
+    frame_dig 0
+    bytec 25 // "proposal_fee"
+    ==
+    // smart_contracts/dao/contract.algo.ts:1018-1022
+    // case AkitaDAOGlobalStateKeysProposalFee: {
+    //   const proposalFee = btoi(Bytes(value))
+    //   assert(proposalFee >= FIVE_ALGO, ERR_INVALID_PROPOSAL_FEE)
+    //   break
+    // }
+    bz finalizeProposal_after_if_else@101
+    // smart_contracts/dao/contract.algo.ts:1019
+    // const proposalFee = btoi(Bytes(value))
+    frame_dig 2
+    btoi
+    // smart_contracts/utils/constants.ts:47
+    // export const FIVE_ALGO: uint64 = 5_000_000
+    pushint 5000000 // 5000000
+    // smart_contracts/dao/contract.algo.ts:1020
+    // assert(proposalFee >= FIVE_ALGO, ERR_INVALID_PROPOSAL_FEE)
+    >=
+    assert // Invalid proposal fee
+    // smart_contracts/dao/contract.algo.ts:1021
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_after_if_else@101:
+    // smart_contracts/dao/constants.ts:21
+    // export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
+    frame_dig 0
+    bytec 9 // "revocation_address"
+    ==
+    // smart_contracts/dao/contract.algo.ts:1023-1028
+    // case AkitaDAOGlobalStateKeysRevocationAddress: {
+    //   assert(Bytes(value).length === ACCOUNT_LENGTH, ERR_INVALID_CONTENT_POLICY)
+    //   const revocationAddress = Account(Bytes(value))
+    //   assert(revocationAddress !== this.revocationAddress.value && revocationAddress !== Global.zeroAddress, ERR_INVALID_REVOCATION_ADDRESS)
+    //   break
+    // }
+    assert // Invalid field
+    // smart_contracts/dao/contract.algo.ts:1024
+    // assert(Bytes(value).length === ACCOUNT_LENGTH, ERR_INVALID_CONTENT_POLICY)
+    frame_dig 2
+    dup
+    len
+    // smart_contracts/utils/constants.ts:53
+    // export const ACCOUNT_LENGTH: uint64 = 58
+    pushint 58 // 58
+    // smart_contracts/dao/contract.algo.ts:1024
+    // assert(Bytes(value).length === ACCOUNT_LENGTH, ERR_INVALID_CONTENT_POLICY)
+    ==
+    assert // Invalid content policy
+    // smart_contracts/dao/constants.ts:21
+    // export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
+    intc_0 // 0
+    bytec 9 // "revocation_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:1026
+    // assert(revocationAddress !== this.revocationAddress.value && revocationAddress !== Global.zeroAddress, ERR_INVALID_REVOCATION_ADDRESS)
+    !=
+    bz finalizeProposal_bool_false@105
+    frame_dig 2
+    global ZeroAddress
+    !=
+    bz finalizeProposal_bool_false@105
+    intc_1 // 1
+
+finalizeProposal_bool_merge@106:
+    // smart_contracts/dao/contract.algo.ts:1026
+    // assert(revocationAddress !== this.revocationAddress.value && revocationAddress !== Global.zeroAddress, ERR_INVALID_REVOCATION_ADDRESS)
+    assert // Invalid revocation address
+    // smart_contracts/dao/contract.algo.ts:1027
+    // break
+    b finalizeProposal_while_top@33
+
+finalizeProposal_bool_false@105:
+    intc_0 // 0
+    b finalizeProposal_bool_merge@106
+
+finalizeProposal_block@31:
+    retsub
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.createDailyDisbursement() -> void:
+createDailyDisbursement:
+    // smart_contracts/dao/constants.ts:19
+    // export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
+    intc_0 // 0
+    bytec 8 // "akita_assets"
+    app_global_get_ex
+    bury 1
+    assert // check GlobalState exists
+    retsub
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.optinEscrow(payment: uint64, name: bytes, asset: uint64) -> void:
+optinEscrow:
+    // smart_contracts/dao/contract.algo.ts:1425
+    // optinEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void {
+    proto 3 0
+    // smart_contracts/dao/constants.ts:27
+    // export const AkitDAOBoxPrefixEscrows = 'e'
+    pushbytes "e"
+    frame_dig -2
+    concat
+    // smart_contracts/dao/contract.algo.ts:1427
+    // assert(this.escrows(name).exists, ERR_ESCROW_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Escrow does not exist
+    // smart_contracts/dao/contract.algo.ts:1429
+    // const escrow = this.escrows(name).value
+    box_get
+    assert // Box must have value
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    extract 8 32 // on error: Index access is out of bounds
+    uncover 2
+    pushint 320 // 320
+    getbit
+    bytec_0 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    // smart_contracts/dao/contract.algo.ts:1430
+    // const escrowAccount = Application(escrow.escrow).address
+    uncover 2
+    app_params_get AppAddress
+    swap
+    dup
+    cover 3
+    cover 4
+    assert // application exists
+    // smart_contracts/dao/contract.algo.ts:1432
+    // assert(escrow.account.native === Txn.sender, ERR_INCORRECT_SENDER)
+    txn Sender
+    uncover 3
+    ==
+    assert // Incorrect sender
+    // smart_contracts/dao/contract.algo.ts:1433
+    // assert(escrow.optinAllowed === true, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN)
+    intc_1 // 1
+    ==
+    assert // Escrow is not allowed to opt-in
+    // smart_contracts/dao/contract.algo.ts:1435-1442
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: escrowAccount,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -3
+    gtxns Receiver
+    ==
+    bz optinEscrow_bool_false@3
+    frame_dig -3
+    gtxns Amount
+    // smart_contracts/dao/contract.algo.ts:1439
+    // amount: Global.assetOptInMinBalance,
+    global AssetOptInMinBalance
+    // smart_contracts/dao/contract.algo.ts:1435-1442
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: escrowAccount,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz optinEscrow_bool_false@3
+    intc_1 // 1
+
+optinEscrow_bool_merge@4:
+    // smart_contracts/dao/contract.algo.ts:1435-1442
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: escrowAccount,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/dao/contract.algo.ts:1444-1450
+    // itxn.assetTransfer({
+    //   sender: escrowAccount,
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/dao/contract.algo.ts:1446
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    frame_dig -1
+    itxn_field XferAsset
+    // smart_contracts/dao/contract.algo.ts:1447
+    // assetAmount: 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    frame_dig 0
+    itxn_field Sender
+    // smart_contracts/dao/contract.algo.ts:1444-1450
+    // itxn.assetTransfer({
+    //   sender: escrowAccount,
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee,
+    // }).submit()
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/dao/contract.algo.ts:1444-1450
+    // itxn.assetTransfer({
+    //   sender: escrowAccount,
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    retsub
+
+optinEscrow_bool_false@3:
+    intc_0 // 0
+    b optinEscrow_bool_merge@4
+
+
+// smart_contracts/dao/contract.algo.ts::AkitaDAO.getState() -> uint64, bytes, bytes, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, bytes:
+getState:
+    // smart_contracts/dao/constants.ts:4
+    // export const AkitaDAOGlobalStateKeysStatus = 'status'
+    intc_0 // 0
+    bytec 21 // "status"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    intc_0 // 0
+    bytec 5 // "version"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:5
+    // export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
+    intc_0 // 0
+    bytec 12 // "content_policy"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:1460
+    // contentPolicy: new arc4.StaticBytes<36>(this.contentPolicy.value),
+    dup
+    len
+    pushint 36 // 36
+    ==
+    assert // invalid size
+    // smart_contracts/dao/constants.ts:6
+    // export const AkitaDAOGlobalStateKeysMinimumRewardsImpact = 'minimum_rewards_impact'
+    intc_0 // 0
+    bytec 13 // "minimum_rewards_impact"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:7
+    // export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
+    intc_0 // 0
+    bytec 26 // "akita_al"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    dig 2
+    pushint 16 // 16
+    extract_uint64
+    dig 3
+    pushint 24 // 24
+    extract_uint64
+    dig 4
+    pushint 32 // 32
+    extract_uint64
+    dig 5
+    pushint 40 // 40
+    extract_uint64
+    dig 6
+    pushint 48 // 48
+    extract_uint64
+    dig 7
+    pushint 56 // 56
+    extract_uint64
+    dig 8
+    pushint 64 // 64
+    extract_uint64
+    dig 9
+    pushint 72 // 72
+    extract_uint64
+    dig 10
+    pushint 80 // 80
+    extract_uint64
+    uncover 11
+    pushint 88 // 88
+    extract_uint64
+    // smart_contracts/dao/constants.ts:9
+    // export const AkitaDAOGlobalStateKeysOtherAppList = 'other_al'
+    intc_0 // 0
+    pushbytes "other_al"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    uncover 2
+    pushint 16 // 16
+    extract_uint64
+    // smart_contracts/dao/constants.ts:10
+    // export const AkitaDAOGlobalStateKeysSocialFees = 'social_fees'
+    intc_0 // 0
+    bytec 14 // "social_fees"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    dig 2
+    pushint 16 // 16
+    extract_uint64
+    uncover 3
+    pushint 24 // 24
+    extract_uint64
+    // smart_contracts/dao/constants.ts:11
+    // export const AkitaDAOGlobalStateKeysStakingFees = 'staking_fees'
+    intc_0 // 0
+    bytec 15 // "staking_fees"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    uncover 2
+    pushint 16 // 16
+    extract_uint64
+    // smart_contracts/dao/constants.ts:12
+    // export const AkitaDAOGlobalStateKeysSubscriptionFees = 'subscription_fees'
+    intc_0 // 0
+    bytec 16 // "subscription_fees"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    uncover 2
+    pushint 16 // 16
+    extract_uint64
+    // smart_contracts/dao/constants.ts:14
+    // export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
+    intc_0 // 0
+    bytec 17 // "nft_fees"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    dig 2
+    pushint 16 // 16
+    extract_uint64
+    dig 3
+    pushint 24 // 24
+    extract_uint64
+    dig 4
+    pushint 32 // 32
+    extract_uint64
+    dig 5
+    pushint 40 // 40
+    extract_uint64
+    dig 6
+    pushint 48 // 48
+    extract_uint64
+    dig 7
+    pushint 56 // 56
+    extract_uint64
+    dig 8
+    pushint 64 // 64
+    extract_uint64
+    dig 9
+    pushint 72 // 72
+    extract_uint64
+    dig 10
+    pushint 80 // 80
+    extract_uint64
+    dig 11
+    pushint 88 // 88
+    extract_uint64
+    dig 12
+    pushint 96 // 96
+    extract_uint64
+    dig 13
+    pushint 104 // 104
+    extract_uint64
+    uncover 14
+    pushint 112 // 112
+    extract_uint64
+    // smart_contracts/dao/constants.ts:15
+    // export const AkitaDAOGlobalStateKeysKrbyPercentage = 'krby_percentage'
+    intc_0 // 0
+    bytec 6 // "krby_percentage"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:16
+    // export const AkitaDAOGlobalStateKeysModeratorPercentage = 'mod_percentage'
+    intc_0 // 0
+    bytec 7 // "mod_percentage"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:20
+    // export const AkitaDAOGlobalStateKeysProposalSettings = 'proposal_settings'
+    intc_0 // 0
+    bytec 23 // "proposal_settings"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    swap
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/dao/constants.ts:19
+    // export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
+    intc_0 // 0
+    bytec 8 // "akita_assets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    intc_0 // 0
+    extract_uint64
+    swap
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/dao/constants.ts:21
+    // export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
+    intc_0 // 0
+    bytec 9 // "revocation_address"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/contract.algo.ts:1457-1473
+    // return {
+    //   status: this.status.value,
+    //   version: this.version.value,
+    //   contentPolicy: new arc4.StaticBytes<36>(this.contentPolicy.value),
+    //   minimumRewardsImpact: this.minimumRewardsImpact.value,
+    //   akitaAppList: this.akitaAppList.value,
+    //   otherAppList: this.otherAppList.value,
+    //   socialFees: this.socialFees.value,
+    //   stakingFees: this.stakingFees.value,
+    //   subscriptionFees: this.subscriptionFees.value,
+    //   nftFees: this.nftFees.value,
+    //   krbyPercentage: this.krbyPercentage.value,
+    //   moderatorPercentage: this.moderatorPercentage.value,
+    //   proposalSettings: this.proposalSettings.value,
+    //   akitaAssets: this.akitaAssets.value,
+    //   revocationAddress: new Address(this.revocationAddress.value),
+    // }
+    cover 50
+    cover 50
+    cover 50
+    cover 50
+    cover 50
+    uncover 48
+    uncover 48
+    uncover 50
+    uncover 50
+    uncover 50
+    retsub

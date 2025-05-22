@@ -1,0 +1,649 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@2 : block@14
+    block@2: // abi_routing_L1309
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(uint64,string)void" => block@3, method "cacheMeta(uint64,uint64,uint64)uint64" => block@4, method "updateSubscriptionStateModifier(pay,uint64,uint64)void" => block@5, method "getUserImpactWithoutSocial(address)uint64" => block@6, method "getUserImpact(address)uint64" => block@7, method "getMeta(address)(uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)" => block@8, method "update(string)void" => block@9, method "updateAkitaDAO(uint64)void" => block@10, * => block@14}
+    block@3: // create_route_L1592
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%7#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let tmp%8#0: bytes = (txna ApplicationArgs 2)
+        let tmp%9#0: bytes = ((extract 2 0) tmp%8#0)
+        smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.create(tmp%7#0, tmp%9#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#0: bool = 1u
+        goto block@15
+    block@4: // cacheMeta_route_L1600
+        let tmp%10#0: uint64 = (txn OnCompletion)
+        let tmp%11#0: bool = (! tmp%10#0)
+        (assert tmp%11#0) // OnCompletion is not NoOp
+        let tmp%12#0: uint64 = (txn ApplicationID)
+        (assert tmp%12#0) // can only call when not creating
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%14#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%15#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%16#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let to_encode%0#0: uint64 = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.cacheMeta(tmp%14#0, tmp%15#0, tmp%16#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%17#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%17#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#1: bool = 1u
+        goto block@15
+    block@5: // updateSubscriptionStateModifier_route_L1633
+        let tmp%18#0: uint64 = (txn OnCompletion)
+        let tmp%19#0: bool = (! tmp%18#0)
+        (assert tmp%19#0) // OnCompletion is not NoOp
+        let tmp%20#0: uint64 = (txn ApplicationID)
+        (assert tmp%20#0) // can only call when not creating
+        let tmp%22#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%22#0 1u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%23#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%24#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.updateSubscriptionStateModifier(gtxn_idx%0#0, tmp%23#0, tmp%24#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#2: bool = 1u
+        goto block@15
+    block@6: // getUserImpactWithoutSocial_route_L1651
+        let tmp%25#0: uint64 = (txn OnCompletion)
+        let tmp%26#0: bool = (! tmp%25#0)
+        (assert tmp%26#0) // OnCompletion is not NoOp
+        let tmp%27#0: uint64 = (txn ApplicationID)
+        (assert tmp%27#0) // can only call when not creating
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 1)
+        let to_encode%1#0: uint64 = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getUserImpactWithoutSocial(reinterpret_bytes[32]%0#0)
+        let val_as_bytes%1#0: bytes[8] = (itob to_encode%1#0)
+        let tmp%29#0: bytes = (concat 0x151f7c75 val_as_bytes%1#0)
+        (log tmp%29#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#3: bool = 1u
+        goto block@15
+    block@7: // getUserImpact_route_L1656
+        let tmp%30#0: uint64 = (txn OnCompletion)
+        let tmp%31#0: bool = (! tmp%30#0)
+        (assert tmp%31#0) // OnCompletion is not NoOp
+        let tmp%32#0: uint64 = (txn ApplicationID)
+        (assert tmp%32#0) // can only call when not creating
+        let reinterpret_bytes[32]%1#0: bytes[32] = (txna ApplicationArgs 1)
+        let to_encode%2#0: uint64 = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getUserImpact(reinterpret_bytes[32]%1#0)
+        let val_as_bytes%2#0: bytes[8] = (itob to_encode%2#0)
+        let tmp%34#0: bytes = (concat 0x151f7c75 val_as_bytes%2#0)
+        (log tmp%34#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#4: bool = 1u
+        goto block@15
+    block@8: // getMeta_route_L1661
+        let tmp%35#0: uint64 = (txn OnCompletion)
+        let tmp%36#0: bool = (! tmp%35#0)
+        (assert tmp%36#0) // OnCompletion is not NoOp
+        let tmp%37#0: uint64 = (txn ApplicationID)
+        (assert tmp%37#0) // can only call when not creating
+        let reinterpret_bytes[32]%2#0: bytes[32] = (txna ApplicationArgs 1)
+        let (elements_to_encode%0#0: uint64, elements_to_encode%1#0: uint64, elements_to_encode%2#0: uint64, elements_to_encode%3#0: uint64, elements_to_encode%4#0: uint64, elements_to_encode%5#0: uint64, elements_to_encode%6#0: bool, elements_to_encode%7#0: uint64, elements_to_encode%8#0: uint64) = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getMeta(reinterpret_bytes[32]%2#0)
+        let val_as_bytes%3#0: bytes[8] = (itob elements_to_encode%0#0)
+        let val_as_bytes%4#0: bytes[8] = (itob elements_to_encode%1#0)
+        let val_as_bytes%5#0: bytes[8] = (itob elements_to_encode%2#0)
+        let val_as_bytes%6#0: bytes[8] = (itob elements_to_encode%3#0)
+        let val_as_bytes%7#0: bytes[8] = (itob elements_to_encode%4#0)
+        let val_as_bytes%8#0: bytes[8] = (itob elements_to_encode%5#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u elements_to_encode%6#0)
+        let val_as_bytes%9#0: bytes[8] = (itob elements_to_encode%7#0)
+        let val_as_bytes%10#0: bytes[8] = (itob elements_to_encode%8#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%3#0 val_as_bytes%4#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 val_as_bytes%5#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 val_as_bytes%6#0)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 val_as_bytes%7#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 val_as_bytes%8#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 encoded_bool%0#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 val_as_bytes%9#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 val_as_bytes%10#0)
+        let tmp%39#0: bytes = (concat 0x151f7c75 encoded_tuple_buffer%9#0)
+        (log tmp%39#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#5: bool = 1u
+        goto block@15
+    block@9: // update_route_L19
+        let tmp%40#0: uint64 = (txn OnCompletion)
+        let tmp%41#0: bool = (== tmp%40#0 UpdateApplication)
+        (assert tmp%41#0) // OnCompletion is not UpdateApplication
+        let tmp%42#0: uint64 = (txn ApplicationID)
+        (assert tmp%42#0) // can only call when not creating
+        let tmp%44#0: bytes = (txna ApplicationArgs 1)
+        let tmp%45#0: bytes = ((extract 2 0) tmp%44#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(tmp%45#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#6: bool = 1u
+        goto block@15
+    block@10: // updateAkitaDAO_route_L27
+        let tmp%46#0: uint64 = (txn OnCompletion)
+        let tmp%47#0: bool = (! tmp%46#0)
+        (assert tmp%47#0) // OnCompletion is not NoOp
+        let tmp%48#0: uint64 = (txn ApplicationID)
+        (assert tmp%48#0) // can only call when not creating
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%50#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(tmp%50#0)
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#7: bool = 1u
+        goto block@15
+    block@14: // after_if_else_L1309
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#8: bool = 0u
+        goto block@15
+    block@15: // after_inlined_smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#0 <- block@3, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#1 <- block@4, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#2 <- block@5, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#3 <- block@6, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#4 <- block@7, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#5 <- block@8, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#6 <- block@9, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#7 <- block@10, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.__puya_arc4_router__%0#8 <- block@14)
+        return tmp%0#0
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.isSubscribed(account: bytes[32], index: uint64) -> <bool, uint64, uint64>:
+    block@0: // L1331
+        itxn_begin
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#0: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let item4%1#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        let val_as_bytes%0#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "getSubscriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])")
+        ((itxn_field ApplicationArgs) account#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationID) item4%1#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%13#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%14#0: bool = (== tmp%13#0 0x151f7c75)
+        (assert tmp%14#0) // Bytes has valid prefix
+        let info.recipient#0: bytes[32] = ((extract 4 32) awst_tmp%0#0)
+        let info.serviceID#0: uint64 = (extract_uint64 awst_tmp%0#0 36u)
+        let info.startDate#0: uint64 = (extract_uint64 awst_tmp%0#0 44u)
+        let info.interval#0: uint64 = (extract_uint64 awst_tmp%0#0 60u)
+        let info.lastPayment#0: uint64 = (extract_uint64 awst_tmp%0#0 84u)
+        let info.streak#0: uint64 = (extract_uint64 awst_tmp%0#0 92u)
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) akitaDAO#0)
+        (assert check%0#0) // application exists
+        let toAkita#0: bool = (== info.recipient#0 value%0#0)
+        let notDonating#0: bool = (!= info.serviceID#0 0u)
+        let tmp%15#0: uint64 = (global LatestTimestamp)
+        let tmp%16#0: uint64 = (global LatestTimestamp)
+        let tmp%17#0: uint64 = (- tmp%16#0 info.startDate#0)
+        let tmp%18#0: uint64 = (% tmp%17#0 info.interval#0)
+        let tmp%19#0: uint64 = (+ tmp%18#0 info.interval#0)
+        let lastWindowStart#0: uint64 = (- tmp%15#0 tmp%19#0)
+        let notStale#0: bool = (> info.lastPayment#0 lastWindowStart#0)
+        let tmp%20#0: bool = (&& toAkita#0 notDonating#0)
+        let tmp%21#0: bool = (&& tmp%20#0 notStale#0)
+        return tmp%21#0 info.serviceID#0 info.streak#0
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.userImpact(account: bytes[32], includeSocial: bool) -> uint64:
+    block@0: // L1401
+        let box_prefixed_key%0#0: bytes = (concat "m" account#0)
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Box must have value
+        let meta.subscriptionIndex#0: uint64 = (extract_uint64 maybe_value%0#0 0u)
+        let meta.NFD#0: uint64 = (extract_uint64 maybe_value%0#0 8u)
+        let meta.akitaNFT#0: uint64 = (extract_uint64 maybe_value%0#0 32u)
+        let (akitaDAO#2: uint64, maybe_exists%0#4: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#4) // check GlobalState exists
+        let (akitaAssetsBytes#1: bytes, tmp%1#7: bool) = (app_global_get_ex akitaDAO#2 "akita_assets")
+        let akta#1: uint64 = (extract_uint64 akitaAssetsBytes#1 0u)
+        itxn_begin
+        let (appListBytes#0: bytes, _#2: bool) = (app_global_get_ex akitaDAO#2 "akita_al")
+        let item0%1#2: uint64 = (extract_uint64 appListBytes#0 0u)
+        let val_as_bytes%0#0: bytes[8] = (itob akta#1)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%0#0 0x01)
+        ((itxn_field ApplicationArgs) method "getInfo(address,(uint64,uint8))(uint64,uint64,uint64)")
+        ((itxn_field ApplicationArgs) account#0)
+        ((itxn_field ApplicationArgs) encoded_tuple_buffer%2#0)
+        ((itxn_field ApplicationID) item0%1#2)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#1: bytes = (itxn LastLog)
+        let tmp%15#0: bytes = ((extract 0 4) awst_tmp%0#1)
+        let tmp%16#0: bool = (== tmp%15#0 0x151f7c75)
+        (assert tmp%16#0) // Bytes has valid prefix
+        let info.amount#0: uint64 = (extract_uint64 awst_tmp%0#1 4u)
+        let info.lastUpdate#0: uint64 = (extract_uint64 awst_tmp%0#1 12u)
+        let tmp%17#0: uint64 = (global LatestTimestamp)
+        let elapsed#0: uint64 = (- tmp%17#0 info.lastUpdate#0)
+        let tmp%18#0: bool = (< info.amount#0 10000000000u)
+        goto tmp%18#0 ? block@27 : block@26
+    block@26: // or_contd_L1441
+        let tmp%19#0: bool = (< elapsed#0 2592000u)
+        goto tmp%19#0 ? block@27 : block@28
+    block@27: // if_body_L1441
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getStakingImpactScore%0#0: uint64 = 0u
+        goto block@32
+    block@28: // after_if_else_L1441
+        let tmp%20#0: bool = (>= info.amount#0 200000000000u)
+        goto tmp%20#0 ? block@29 : block@30
+    block@29: // ternary_true_L1446
+        let ternary_result%0#3: uint64 = 200000000000u
+        goto block@31
+    block@30: // ternary_false_L1446
+        goto block@31
+    block@31: // ternary_merge_L1446
+        let amtCapped#0: uint64 = φ(ternary_result%0#3 <- block@29, info.amount#0 <- block@30)
+        let tmp%21#0: uint64 = (* amtCapped#0 250u)
+        let maxScore#0: uint64 = (/ tmp%21#0 200000000000u)
+        let tmp%22#0: bool = (>= elapsed#0 31536000u)
+        let timeCapped#0: uint64 = (select elapsed#0 31536000u tmp%22#0)
+        let tmp%23#0: uint64 = (* timeCapped#0 maxScore#0)
+        let tmp%24#0: uint64 = (/ tmp%23#0 31536000u)
+        goto block@32
+    block@32: // after_inlined_smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getStakingImpactScore_L1401
+        let stakedAktaImpact#0: uint64 = φ(smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getStakingImpactScore%0#0 <- block@27, tmp%24#0 <- block@31)
+        let subscriberImpact#1: uint64 = 0u
+        let (subscriptionState.active#0: bool, subscriptionState.serviceID#0: uint64, subscriptionState.streak#0: uint64) = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.isSubscribed(account#0, meta.subscriptionIndex#0)
+        goto subscriptionState.active#0 ? block@35 : block@34
+    block@34: // if_body_L1475
+        goto block@39
+    block@35: // after_if_else_L1475
+        let encoded_value%0#0: bytes[8] = (itob subscriptionState.serviceID#0)
+        let box_prefixed_key%0#2: bytes = (concat "s" encoded_value%0#0)
+        let (maybe_value%0#5: bytes, maybe_exists%0#5: bool) = (box_get box_prefixed_key%0#2)
+        (assert maybe_exists%0#5) // Box must have value
+        let modifier#0: uint64 = (btoi maybe_value%0#5)
+        let tmp%0#6: bool = (>= subscriptionState.streak#0 12u)
+        goto tmp%0#6 ? block@36 : block@37
+    block@36: // if_body_L1482
+        let subscriberImpact#2: uint64 = (/ 250u modifier#0)
+        goto block@38
+    block@37: // else_body_L1484
+        let tmp%2#5: uint64 = (* subscriptionState.streak#0 20u)
+        let subscriberImpact#3: uint64 = (/ tmp%2#5 modifier#0)
+        goto block@38
+    block@38: // after_if_else_L1482
+        let subscriberImpact#4: uint64 = φ(subscriberImpact#2 <- block@36, subscriberImpact#3 <- block@37)
+        goto block@39
+    block@39: // after_inlined_smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getSubscriberImpactScore_L1401
+        let subscriberImpact#0: uint64 = φ(subscriberImpact#1 <- block@34, subscriberImpact#4 <- block@38)
+        goto includeSocial#0 ? block@1 : block@2
+    block@1: // ternary_true_L1406
+        itxn_begin
+        let (akitaDAO#0: uint64, maybe_exists%0#3: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#3) // check GlobalState exists
+        let (pluginAppListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "plugn_al")
+        let item1%1#0: uint64 = (extract_uint64 pluginAppListBytes#0 8u)
+        ((itxn_field ApplicationArgs) method "getUserSocialImpact(address)uint64")
+        ((itxn_field ApplicationArgs) account#0)
+        ((itxn_field ApplicationID) item1%1#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%3#3: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%4#3: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%5#2: bool = (== tmp%4#3 0x151f7c75)
+        (assert tmp%5#2) // Bytes has valid prefix
+        let tmp%6#1: uint64 = (btoi tmp%3#3)
+        goto block@3
+    block@2: // ternary_false_L1406
+        let ternary_result%0#1: uint64 = 0u
+        goto block@3
+    block@3: // ternary_merge_L1406
+        let socialImpact#0: uint64 = φ(tmp%6#1 <- block@1, ternary_result%0#1 <- block@2)
+        let (maybe_value%0#1: bytes, maybe_exists%0#1: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#1) // Box must have value
+        let meta.NFD#1: uint64 = (extract_uint64 maybe_value%0#1 8u)
+        let meta.nfdTimeChanged#1: uint64 = (extract_uint64 maybe_value%0#1 16u)
+        let meta.nfdImpact#1: uint64 = (extract_uint64 maybe_value%0#1 24u)
+        let (lastChangedBytes#0: bytes, _#0: bool) = (app_global_get_ex meta.NFD#1 "i.timeChanged")
+        let timeChanged#0: uint64 = (btoi lastChangedBytes#0)
+        let tmp%0#1: bool = (== meta.NFD#0 meta.NFD#1)
+        (assert tmp%0#1) // Invalid NFD
+        let tmp%1#1: bool = (== meta.nfdTimeChanged#1 timeChanged#0)
+        (assert tmp%1#1) // NFD changed since impact last calculated
+        let (akitaDAO#1: uint64, maybe_exists%0#2: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#2) // check GlobalState exists
+        let (akitaAssetsBytes#0: bytes, tmp%1#6: bool) = (app_global_get_ex akitaDAO#1 "akita_assets")
+        let akta#0: uint64 = (extract_uint64 akitaAssetsBytes#0 0u)
+        let (balance#0: uint64, tmp%3#1: bool) = ((asset_holding_get AssetBalance) account#0 akta#0)
+        let tmp%4#1: bool = (< balance#0 10000000000u)
+        goto tmp%4#1 ? block@9 : block@10
+    block@9: // if_body_L1462
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getHeldAktaImpactScore%0#0: uint64 = 0u
+        goto block@11
+    block@10: // after_if_else_L1462
+        let tmp%5#0: bool = (>= balance#0 1000000000000u)
+        let capped#0: uint64 = (select balance#0 1000000000000u tmp%5#0)
+        let tmp%6#0: uint64 = (* capped#0 50u)
+        let tmp%7#0: uint64 = (/ tmp%6#0 1000000000000u)
+        goto block@11
+    block@11: // after_inlined_smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getHeldAktaImpactScore_L1406
+        let heldAkitaImpact#0: uint64 = φ(smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getHeldAktaImpactScore%0#0 <- block@9, tmp%7#0 <- block@10)
+        let (value%0#0: bytes, check%0#0: bool) = ((asset_params_get AssetUnitName) meta.akitaNFT#0)
+        (assert check%0#0) // asset exists
+        let length%0#0: uint64 = (len value%0#0)
+        let is_out_of_bounds%0#0: bool = (>= 0u length%0#0)
+        let bounded_index%0#0: uint64 = (select 0u length%0#0 is_out_of_bounds%0#0)
+        let is_out_of_bounds%1#0: bool = (>= 3u length%0#0)
+        let bounded_index%1#0: uint64 = (select 3u length%0#0 is_out_of_bounds%1#0)
+        let prefix#0: bytes = (substring3 value%0#0 bounded_index%0#0 bounded_index%1#0)
+        let (balance#1: uint64, tmp%1#3: bool) = ((asset_holding_get AssetBalance) account#0 meta.akitaNFT#0)
+        let (value%1#0: bytes[32], check%1#0: bool) = ((asset_params_get AssetCreator) meta.akitaNFT#0)
+        (assert check%1#0) // asset exists
+        let tmp%2#2: bool = (== value%1#0 addr AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI)
+        goto tmp%2#2 ? block@13 : block@19
+    block@13: // and_contd_L1579
+        goto balance#1 ? block@14 : block@19
+    block@14: // if_body_L1579
+        let tmp%4#2: bool = (== prefix#0 "AKC")
+        goto tmp%4#2 ? block@15 : block@16
+    block@15: // if_body_L1580
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore%0#0: uint64 = 50u
+        goto block@20
+    block@16: // after_if_else_L1580
+        let tmp%5#1: bool = (== prefix#0 "AOG")
+        goto tmp%5#1 ? block@17 : block@19
+    block@17: // if_body_L1583
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore%0#1: uint64 = 25u
+        goto block@20
+    block@19: // after_if_else_L1579
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore%0#2: uint64 = 0u
+        goto block@20
+    block@20: // after_inlined_smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore_L1406
+        let nftImpact#0: uint64 = φ(smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore%0#0 <- block@15, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore%0#1 <- block@17, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore%0#2 <- block@19)
+        let tmp%0#0: uint64 = (+ stakedAktaImpact#0 subscriberImpact#0)
+        let tmp%1#0: uint64 = (+ tmp%0#0 socialImpact#0)
+        let tmp%2#0: uint64 = (+ tmp%1#0 meta.nfdImpact#1)
+        let tmp%3#0: uint64 = (+ tmp%2#0 heldAkitaImpact#0)
+        let total#0: uint64 = (+ tmp%3#0 nftImpact#0)
+        goto total#0 ? block@5 : block@4
+    block@4: // if_body_L1412
+        return 1u
+    block@5: // after_if_else_L1412
+        return total#0
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.nfdReadField(NFDApp: uint64, field: bytes) -> bytes:
+    block@0: // L1502
+        itxn_begin
+        let length%0#0: uint64 = (len field#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 field#0)
+        ((itxn_field ApplicationArgs) method "readField(byte[])byte[]")
+        ((itxn_field ApplicationArgs) encoded_value%0#0)
+        ((itxn_field ApplicationID) NFDApp#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%1#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%2#0: bool = (== tmp%1#0 0x151f7c75)
+        (assert tmp%2#0) // Bytes has valid prefix
+        let fieldBytes#0: bytes = ((extract 6 0) awst_tmp%0#0)
+        return fieldBytes#0
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.create(akitaDAO: uint64, version: bytes) -> void:
+    block@0: // L1592
+        (app_global_put "version" version#0)
+        (app_global_put "akita_dao" akitaDAO#0)
+        return 
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.cacheMeta(subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64) -> uint64:
+    block@0: // L1600
+        goto subscriptionIndex#0 ? block@1 : block@2
+    block@1: // if_body_L1601
+        let tmp%1#0: bytes[32] = (txn Sender)
+        let (tmp%2#0: bool, tmp%3#0: uint64, tmp%4#0: uint64) = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.isSubscribed(tmp%1#0, subscriptionIndex#0)
+        (assert tmp%2#0) // Not an akita subscription contract
+        goto block@2
+    block@2: // after_if_else_L1601
+        let nfdTimeChanged#0: uint64 = 0u
+        let nfdImpact#0: uint64 = 0u
+        goto NFDAppID#0 ? block@3 : block@4
+    block@3: // if_body_L1607
+        let (nfdNameBytes#0: bytes, _#1: bool) = (app_global_get_ex NFDAppID#0 "i.name")
+        itxn_begin
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (otherAppListBytes#0: bytes, _#2: bool) = (app_global_get_ex akitaDAO#0 "other_al")
+        let item1%1#0: uint64 = (extract_uint64 otherAppListBytes#0 8u)
+        let length%0#0: uint64 = (len nfdNameBytes#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 nfdNameBytes#0)
+        let val_as_bytes%0#1: bytes[8] = (itob NFDAppID#0)
+        ((itxn_field ApplicationArgs) method "isValidNfdAppId(string,uint64)bool")
+        ((itxn_field ApplicationArgs) encoded_value%0#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#1)
+        ((itxn_field ApplicationID) item1%1#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%3#1: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%4#1: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%5#1: bool = (== tmp%4#1 0x151f7c75)
+        (assert tmp%5#1) // Bytes has valid prefix
+        let tmp%6#1: bool = (getbit tmp%3#1 0u)
+        (assert tmp%6#1) // Not an NFD
+        let account#1: bytes[32] = (txn Sender)
+        itxn_begin
+        ((itxn_field ApplicationArgs) method "readField(byte[])byte[]")
+        ((itxn_field ApplicationArgs) 0x000d762e6361416c676f2e302e6173)
+        ((itxn_field ApplicationID) NFDAppID#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#1: bytes = (itxn LastLog)
+        let tmp%1#2: bytes = ((extract 0 4) awst_tmp%0#1)
+        let tmp%2#2: bool = (== tmp%1#2 0x151f7c75)
+        (assert tmp%2#2) // Bytes has valid prefix
+        let caAlgoData#0: bytes = ((extract 6 0) awst_tmp%0#1)
+        let i#0: uint64 = 0u
+        goto block@14
+    block@14: // while_top_L1387
+        let i#1: uint64 = φ(i#0 <- block@3, i#3 <- block@18)
+        let tmp%4#2: uint64 = (len caAlgoData#0)
+        let tmp%5#2: bool = (< i#1 tmp%4#2)
+        goto tmp%5#2 ? block@15 : block@19
+    block@15: // while_body_L1387
+        let is_out_of_bounds%0#0: bool = (>= i#1 tmp%4#2)
+        let bounded_index%0#0: uint64 = (select i#1 tmp%4#2 is_out_of_bounds%0#0)
+        let i#3: uint64 = (+ i#1 32u)
+        let is_out_of_bounds%1#0: bool = (>= i#3 tmp%4#2)
+        let bounded_index%1#0: uint64 = (select i#3 tmp%4#2 is_out_of_bounds%1#0)
+        let end_before_start%0#0: bool = (< bounded_index%1#0 bounded_index%0#0)
+        let end%0#0: uint64 = (select bounded_index%1#0 bounded_index%0#0 end_before_start%0#0)
+        let addr#0: bytes = (substring3 caAlgoData#0 bounded_index%0#0 end%0#0)
+        let tmp%7#1: bytes[32] = (global ZeroAddress)
+        let tmp%8#1: bool = (!= addr#0 tmp%7#1)
+        goto tmp%8#1 ? block@16 : block@18
+    block@16: // and_contd_L1389
+        let tmp%9#1: bool = (== addr#0 account#1)
+        goto tmp%9#1 ? block@17 : block@18
+    block@17: // if_body_L1389
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.addressVerifiedOnNFD%0#0: bool = 1u
+        goto block@20
+    block@18: // after_if_else_L1389
+        goto block@14
+    block@19: // after_while_L1387
+        let smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.addressVerifiedOnNFD%0#1: bool = 0u
+        goto block@20
+    block@20: // after_inlined_smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.addressVerifiedOnNFD_L1607
+        let tmp%8#0: bool = φ(smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.addressVerifiedOnNFD%0#0 <- block@17, smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.addressVerifiedOnNFD%0#1 <- block@19)
+        (assert tmp%8#0) // User does not own this NFD
+        let (timeChangedBytes#0: bytes, _#0: bool) = (app_global_get_ex NFDAppID#0 "i.timeChanged")
+        let nfdTimeChanged#1: uint64 = (btoi timeChangedBytes#0)
+        let nfdImpact#4: uint64 = 50u
+        let (parentAppIDBytes#0: bytes, parentAppIDBytesExist#0: bool) = (app_global_get_ex NFDAppID#0 "i.parentAppID")
+        goto parentAppIDBytesExist#0 ? block@22 : block@24
+    block@22: // and_contd_L1530
+        let tmp%0#4: uint64 = (btoi parentAppIDBytes#0)
+        let (akitaDAO#1: uint64, maybe_exists%0#1: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#1) // check GlobalState exists
+        let (appListBytes#0: bytes, _#3: bool) = (app_global_get_ex akitaDAO#1 "akita_al")
+        let item11%1#0: uint64 = (extract_uint64 appListBytes#0 88u)
+        let tmp%13#0: bool = (== tmp%0#4 item11%1#0)
+        goto tmp%13#0 ? block@23 : block@24
+    block@23: // if_body_L1530
+        let nfdImpact#5: uint64 = 100u
+        goto block@24
+    block@24: // after_if_else_L1530
+        let nfdImpact#6: uint64 = φ(nfdImpact#4 <- block@20, nfdImpact#4 <- block@22, nfdImpact#5 <- block@23)
+        let (tmp%14#0: bytes, tmp%15#0: bool) = (app_global_get_ex NFDAppID#0 "i.ver")
+        let length%0#2: uint64 = (len tmp%14#0)
+        let is_out_of_bounds%0#1: bool = (>= 0u length%0#2)
+        let bounded_index%0#1: uint64 = (select 0u length%0#2 is_out_of_bounds%0#1)
+        let is_out_of_bounds%1#1: bool = (>= 2u length%0#2)
+        let bounded_index%1#1: uint64 = (select 2u length%0#2 is_out_of_bounds%1#1)
+        let version#0: bytes = (substring3 tmp%14#0 bounded_index%0#1 bounded_index%1#1)
+        let tmp%16#0: bool = (!= version#0 "3.")
+        goto tmp%16#0 ? block@25 : block@26
+    block@25: // if_body_L1536
+        goto block@35
+    block@26: // after_if_else_L1536
+        let domain#1: bytes = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.nfdReadField(NFDAppID#0, "v.domain")
+        let twitter#1: bytes = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.nfdReadField(NFDAppID#0, "v.twitter")
+        let discord#1: bytes = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.nfdReadField(NFDAppID#0, "v.discord")
+        let telegram#1: bytes = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.nfdReadField(NFDAppID#0, "v.telegram")
+        let tmp%17#0: uint64 = (len domain#1)
+        goto tmp%17#0 ? block@27 : block@28
+    block@27: // if_body_L1543
+        let nfdImpact#7: uint64 = (+ nfdImpact#6 10u)
+        goto block@28
+    block@28: // after_if_else_L1543
+        let nfdImpact#8: uint64 = φ(nfdImpact#6 <- block@26, nfdImpact#7 <- block@27)
+        let tmp%19#0: uint64 = (len twitter#1)
+        goto tmp%19#0 ? block@29 : block@30
+    block@29: // if_body_L1548
+        let nfdImpact#9: uint64 = (+ nfdImpact#8 20u)
+        goto block@30
+    block@30: // after_if_else_L1548
+        let nfdImpact#10: uint64 = φ(nfdImpact#8 <- block@28, nfdImpact#9 <- block@29)
+        let tmp%21#0: uint64 = (len discord#1)
+        goto tmp%21#0 ? block@31 : block@32
+    block@31: // if_body_L1553
+        let nfdImpact#11: uint64 = (+ nfdImpact#10 10u)
+        goto block@32
+    block@32: // after_if_else_L1553
+        let nfdImpact#12: uint64 = φ(nfdImpact#10 <- block@30, nfdImpact#11 <- block@31)
+        let tmp%23#0: uint64 = (len telegram#1)
+        goto tmp%23#0 ? block@33 : block@34
+    block@33: // if_body_L1558
+        let nfdImpact#13: uint64 = (+ nfdImpact#12 10u)
+        goto block@34
+    block@34: // after_if_else_L1558
+        let nfdImpact#14: uint64 = φ(nfdImpact#12 <- block@32, nfdImpact#13 <- block@33)
+        goto block@35
+    block@35: // after_inlined_smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.calcNFDImpactScore_L1607
+        let nfdImpact#1: uint64 = φ(nfdImpact#6 <- block@25, nfdImpact#14 <- block@34)
+        goto block@4
+    block@4: // after_if_else_L1607
+        let nfdTimeChanged#3: uint64 = φ(nfdTimeChanged#0 <- block@2, nfdTimeChanged#1 <- block@35)
+        let nfdImpact#3: uint64 = φ(nfdImpact#0 <- block@2, nfdImpact#1 <- block@35)
+        goto akitaAssetID#0 ? block@5 : block@6
+    block@5: // if_body_L1616
+        let (value%0#0: bytes[32], check%0#0: bool) = ((asset_params_get AssetCreator) akitaAssetID#0)
+        (assert check%0#0) // asset exists
+        let tmp%0#1: bool = (== value%0#0 addr AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI)
+        (assert tmp%0#1) // Not an akita NFT
+        let account#0: bytes[32] = (txn Sender)
+        let (tmp%0#2: uint64, tmp%1#1: bool) = ((asset_holding_get AssetBalance) account#0 akitaAssetID#0)
+        (assert tmp%0#2) // User does not own this NFT
+        goto block@6
+    block@6: // after_if_else_L1616
+        let val_as_bytes%0#0: bytes[8] = (itob subscriptionIndex#0)
+        let val_as_bytes%1#0: bytes[8] = (itob NFDAppID#0)
+        let val_as_bytes%2#0: bytes[8] = (itob nfdTimeChanged#3)
+        let val_as_bytes%3#0: bytes[8] = (itob nfdImpact#3)
+        let val_as_bytes%4#0: bytes[8] = (itob akitaAssetID#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%0#0 val_as_bytes%1#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 val_as_bytes%2#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 val_as_bytes%3#0)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 val_as_bytes%4#0)
+        let materialized_values%0#0: bytes[32] = (txn Sender)
+        let box_prefixed_key%0#0: bytes = (concat "m" materialized_values%0#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%5#0)
+        return nfdImpact#3
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.updateSubscriptionStateModifier(payment: uint64, subscriptionIndex: uint64, newModifier: uint64) -> void:
+    block@0: // L1633
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Not the DAO
+        let encoded_value%0#0: bytes[8] = (itob subscriptionIndex#0)
+        let box_prefixed_key%0#0: bytes = (concat "s" encoded_value%0#0)
+        let encoded_value%1#0: bytes[8] = (itob newModifier#0)
+        (box_put box_prefixed_key%0#0 encoded_value%1#0)
+        let tmp%2#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%3#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%4#0: bool = (== tmp%2#0 tmp%3#0)
+        goto tmp%4#0 ? block@1 : block@3
+    block@1: // and_contd_L1638
+        let tmp%5#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%8#0: bool = (== tmp%5#0 9300u)
+        goto tmp%8#0 ? block@2 : block@3
+    block@2: // bool_true_L1638
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L1638
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L1638
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        return 
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getUserImpactWithoutSocial(address: bytes[32]) -> uint64:
+    block@0: // L1651
+        let tmp%0#0: uint64 = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.userImpact(address#0, 0u)
+        return tmp%0#0
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getUserImpact(address: bytes[32]) -> uint64:
+    block@0: // L1656
+        let tmp%0#0: uint64 = smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.userImpact(address#0, 1u)
+        return tmp%0#0
+
+subroutine smart_contracts/arc58/plugins/social/contract.algo.ts::AkitaSocialImpact.getMeta(user: bytes[32]) -> <uint64, uint64, uint64, uint64, uint64, uint64, bool, uint64, uint64>:
+    block@0: // L1661
+        let box_prefixed_key%0#0: bytes = (concat "m" user#0)
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Box must have value
+        let item0%1#0: uint64 = (extract_uint64 maybe_value%0#0 0u)
+        let item1%1#0: uint64 = (extract_uint64 maybe_value%0#0 8u)
+        let item2%1#0: uint64 = (extract_uint64 maybe_value%0#0 16u)
+        let item3%1#0: uint64 = (extract_uint64 maybe_value%0#0 24u)
+        let item4%1#0: uint64 = (extract_uint64 maybe_value%0#0 32u)
+        let item5%1#0: uint64 = (extract_uint64 maybe_value%0#0 40u)
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 384u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let item6%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let item7%1#0: uint64 = (extract_uint64 maybe_value%0#0 49u)
+        let item8%1#0: uint64 = (extract_uint64 maybe_value%0#0 57u)
+        return item0%1#0 item1%1#0 item2%1#0 item3%1#0 item4%1#0 item5%1#0 item6%0#0 item7%1#0 item8%1#0
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+    block@0: // L19
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L27
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 

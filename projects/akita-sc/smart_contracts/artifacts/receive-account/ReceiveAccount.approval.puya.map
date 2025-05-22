@@ -1,0 +1,448 @@
+{
+  "version": 3,
+  "sources": [
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/receive-account/contract.algo.ts"
+  ],
+  "mappings": ";;;;;AAIA;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;AAcG;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;;AAZD;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;;AAFF;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAGe;;AAAkB;;AAAtB;AAAP;AAEA;AAGqB;;AACD;;;;;AAFR;;;AAFZ;;;AAAA;;;AAAA;;AAWW;;AAAkB;;AAAtB;AAAP;AACA;AACsC;;;;AADtC;;;AAAA;;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "@algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 1 0"
+    },
+    "5": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "7": {
+      "op": "bz main_bare_routing@7",
+      "stack_out": []
+    },
+    "10": {
+      "op": "pushbytess 0x8f15b582 0x2487c32c // method \"rekey()void\", method \"deleteApplication()void\"",
+      "defined_out": [
+        "Method(deleteApplication()void)",
+        "Method(rekey()void)"
+      ],
+      "stack_out": [
+        "Method(rekey()void)",
+        "Method(deleteApplication()void)"
+      ]
+    },
+    "22": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(deleteApplication()void)",
+        "Method(rekey()void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(rekey()void)",
+        "Method(deleteApplication()void)",
+        "tmp%2#0"
+      ]
+    },
+    "25": {
+      "op": "match main_rekey_route@3 main_deleteApplication_route@4",
+      "stack_out": []
+    },
+    "31": {
+      "block": "main_after_if_else@11",
+      "stack_in": [],
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "32": {
+      "op": "return",
+      "stack_out": []
+    },
+    "33": {
+      "block": "main_deleteApplication_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "35": {
+      "op": "pushint 5 // DeleteApplication",
+      "defined_out": [
+        "DeleteApplication",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "DeleteApplication"
+      ]
+    },
+    "37": {
+      "op": "==",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "38": {
+      "error": "OnCompletion is not DeleteApplication",
+      "op": "assert // OnCompletion is not DeleteApplication",
+      "stack_out": []
+    },
+    "39": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "41": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "42": {
+      "callsub": "smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.deleteApplication",
+      "op": "callsub deleteApplication"
+    },
+    "45": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "46": {
+      "op": "return",
+      "stack_out": []
+    },
+    "47": {
+      "block": "main_rekey_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "49": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "50": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "51": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "53": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "54": {
+      "callsub": "smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.rekey",
+      "op": "callsub rekey"
+    },
+    "57": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "58": {
+      "op": "return",
+      "stack_out": []
+    },
+    "59": {
+      "block": "main_bare_routing@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "61": {
+      "op": "bnz main_after_if_else@11",
+      "stack_out": []
+    },
+    "64": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "66": {
+      "op": "!",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "67": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "68": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "69": {
+      "op": "return",
+      "stack_out": []
+    },
+    "70": {
+      "subroutine": "smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.rekey",
+      "params": {},
+      "block": "rekey",
+      "stack_in": [],
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "72": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "74": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "75": {
+      "error": "Only the creator can rekey the account",
+      "op": "assert // Only the creator can rekey the account",
+      "stack_out": []
+    },
+    "76": {
+      "op": "itxn_begin"
+    },
+    "77": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "inner_txn_params%0%%param_Receiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_Receiver_idx_0#0"
+      ]
+    },
+    "79": {
+      "op": "dup",
+      "defined_out": [
+        "inner_txn_params%0%%param_Receiver_idx_0#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_Receiver_idx_0#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "80": {
+      "op": "itxn_field RekeyTo",
+      "stack_out": [
+        "inner_txn_params%0%%param_Receiver_idx_0#0"
+      ]
+    },
+    "82": {
+      "op": "itxn_field Receiver",
+      "stack_out": []
+    },
+    "84": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "85": {
+      "op": "itxn_field Amount",
+      "stack_out": []
+    },
+    "87": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "88": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "90": {
+      "op": "intc_1 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "91": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "93": {
+      "op": "itxn_submit"
+    },
+    "94": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "95": {
+      "subroutine": "smart_contracts/receive-account/contract.algo.ts::ReceiveAccount.deleteApplication",
+      "params": {},
+      "block": "deleteApplication",
+      "stack_in": [],
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "97": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "99": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "100": {
+      "error": "Only the creator can delete the application",
+      "op": "assert // Only the creator can delete the application",
+      "stack_out": []
+    },
+    "101": {
+      "op": "itxn_begin"
+    },
+    "102": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "inner_txn_params%0%%param_CloseRemainderTo_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_CloseRemainderTo_idx_0#0"
+      ]
+    },
+    "104": {
+      "op": "itxn_field CloseRemainderTo",
+      "stack_out": []
+    },
+    "106": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "107": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "109": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "110": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "112": {
+      "op": "itxn_submit"
+    },
+    "113": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

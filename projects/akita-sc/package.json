@@ -5,6 +5,7 @@
   "main": "smart_contracts/index.ts",
   "scripts": {
     "build": "algokit compile ts smart_contracts --output-ssa-ir --output-optimization-ir --output-source-map --out-dir artifacts && algokit generate client smart_contracts/artifacts --output {app_spec_dir}/{contract_name}Client.ts",
+    "build-social": "algokit compile ts smart_contracts/arc58/plugins/social --dry-run --output-source-map --out-dir artifacts && algokit generate client smart_contracts/artifacts --output {app_spec_dir}/{contract_name}Client.ts",
     "deploy": "ts-node-dev --transpile-only --watch .env -r dotenv/config smart_contracts/index.ts",
     "deploy:ci": "ts-node --transpile-only -r dotenv/config smart_contracts/index.ts",
     "lint": "eslint smart_contracts",
@@ -21,7 +22,7 @@
     "npm": ">=9.0"
   },
   "dependencies": {
-    "@algorandfoundation/algorand-typescript": "^1.0.0-alpha.61",
+    "@algorandfoundation/algorand-typescript": "^1.0.0-alpha.62",
     "@joe-p/merkle-tree": "github:joe-p/merkle-tree"
   },
   "devDependencies": {
@@ -29,7 +30,7 @@
     "@algorandfoundation/algokit-utils": "^9.0.0",
     "@algorandfoundation/algokit-utils-debug": "^1.0.4",
     "@algorandfoundation/algorand-typescript-testing": "^1.0.0-alpha.26",
-    "@algorandfoundation/puya-ts": "^1.0.0-alpha.61",
+    "@algorandfoundation/puya-ts": "^1.0.0-alpha.62",
     "@eslint/js": "^9.18.0",
     "@jest/globals": "^29.5.0",
     "@rollup/plugin-typescript": "^12.1.2",

@@ -1,24 +1,21 @@
-import { Account, Application, assert, assertMatch, BoxMap, bytes, Contract, Global, gtxn, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Application, assert, assertMatch, BoxMap, bytes, Contract, Global, gtxn, itxn, Uint64, uint64 } from "@algorandfoundation/algorand-typescript";
 import { abimethod, Address, compileArc4, DynamicArray, StaticBytes, UintN64 } from "@algorandfoundation/algorand-typescript/arc4";
 import { SpendingAccountContract } from "./contract.algo";
 import { SpendingAccountFactoryBoxPrefixWalletIDsByAccounts } from "./constants";
 import { ERR_FORBIDDEN, ERR_INVALID_PAYMENT, ERR_ONLY_APPS } from "./errors";
 import { AccountMinimumBalance, fee, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../../utils/constants'
 import { bytes16 } from "../../utils/types/base";
+import { SpendingAccountFactoryInterface } from "../../utils/types/spend-accounts";
 
-export class SpendingAccountFactory extends Contract {
+export class SpendingAccountFactory extends Contract implements SpendingAccountFactoryInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
   walletIDsByAccounts = BoxMap<bytes<16>, uint64>({ keyPrefix: SpendingAccountFactoryBoxPrefixWalletIDsByAccounts })
 
-  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
-
-  // TODO: create application method
-  
   // SPENDING ACCOUNT FACTORY METHODS -------------------------------------------------------------
 
-  create(payment: gtxn.PaymentTxn, plugin: uint64): uint64 {
+  mint(payment: gtxn.PaymentTxn, plugin: uint64): uint64 {
     const caller = Global.callerApplicationId
     assert(caller !== 0, ERR_ONLY_APPS)
 
@@ -120,26 +117,32 @@ export class SpendingAccountFactory extends Contract {
   }
 
   @abimethod({ readonly: true })
-  getList(addresses: DynamicArray<Address>): DynamicArray<UintN64> {
-    const apps = new DynamicArray<UintN64>()
+  getList(addresses: Address[]): uint64[] {
+    let apps: uint64[] = []
     for (let i: uint64 = 0; i < addresses.length; i++) {
       const address = addresses[i]
       if (this.walletIDsByAccounts(bytes16(address.native.bytes)).exists) {
-        apps.push(new UintN64(this.walletIDsByAccounts(bytes16(address.native.bytes)).value))
+        apps = [
+          ...apps,
+          this.walletIDsByAccounts(bytes16(address.native.bytes)).value
+        ]
       } else {
-        apps.push(new UintN64(0))
+        apps = [...apps, Uint64(0)]
       }
     }
     return apps
   }
 
   @abimethod({ readonly: true })
-  mustGetList(addresses: DynamicArray<Address>): DynamicArray<UintN64> {
-    const apps = new DynamicArray<UintN64>()
+  mustGetList(addresses: Address[]): uint64[] {
+    let apps: uint64[] = []
     for (let i: uint64 = 0; i < addresses.length; i++) {
       const address = addresses[i]
       assert(this.walletIDsByAccounts(bytes16(address.native.bytes)).exists, 'Account not found')
-      apps.push(new UintN64(this.walletIDsByAccounts(bytes16(address.native.bytes)).value))
+      apps = [
+        ...apps,
+        this.walletIDsByAccounts(bytes16(address.native.bytes)).value
+      ]
     }
     return apps
   }

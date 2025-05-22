@@ -1,4 +1,4 @@
-import { abimethod, Application, assert, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abimethod, Application, assert, Bytes, GlobalState, itxn, itxnCompose, op, uint64 } from "@algorandfoundation/algorand-typescript"
 import { abiCall, Contract, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
 import { DualStake } from '../../../utils/types/dual-stake';
 import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn';
@@ -30,19 +30,14 @@ export class DualStakePlugin extends Contract {
 
     assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
 
-    const paymentTxn = itxn.payment({
-      sender,
-      receiver: dsApp.address,
-      amount: amount,
-      fee,
-    })
-
-    const mintTxn = itxn.applicationCall({
-      sender,
-      appId: dsAppID,
-      appArgs: [methodSelector(DualStake.prototype.mint)],
-      fee,
-    })
+    itxnCompose.begin(
+      itxn.payment({
+        sender,
+        receiver: dsApp.address,
+        amount: amount,
+        fee,
+      })
+    )
 
     const rate = abiCall(
       DualStake.prototype.get_rate,
@@ -50,6 +45,16 @@ export class DualStakePlugin extends Contract {
     ).returnValue
 
     if (rate > 0) {
+
+      itxnCompose.next(
+        DualStake.prototype.mint,
+        {
+          sender,
+          appId: dsAppID,
+          fee,
+        }
+      )
+
       const asaID = op.AppGlobal.getExUint64(dsAppID, Bytes(DualStakeGlobalStateKeyAsaID))[0]
       const precision = op.AppGlobal.getExUint64(dsAppID, Bytes(DualStakeGlobalStateKeyRatePrecision))[0]
       const asaAmount = op.divw(...op.mulw(amount, rate), precision)
@@ -57,23 +62,34 @@ export class DualStakePlugin extends Contract {
       const [holdings, isOptedIn] = op.AssetHolding.assetBalance(sender, asaID)
       assert(isOptedIn && holdings >= asaAmount, ERR_NOT_ENOUGH_OF_ASA)
 
-      const asaTxn = itxn.assetTransfer({
-        sender,
-        assetReceiver: dsApp.address,
-        assetAmount: asaAmount,
-        xferAsset: asaID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
-      })
+      itxnCompose.next(
+        itxn.assetTransfer({
+          sender,
+          assetReceiver: dsApp.address,
+          assetAmount: asaAmount,
+          xferAsset: asaID,
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
+          fee,
+        })
+      )
 
-      submitGroup(paymentTxn, mintTxn, asaTxn)
+      itxnCompose.submit()
       return
     }
 
     // if the rate is 0 we can skip the asset transfer
     // which means we need to set the rekeyTo on the mint txn
-    mintTxn.set({ rekeyTo: rekeyAddress(rekeyBack, wallet) })
-    submitGroup(paymentTxn, mintTxn)
+    itxnCompose.next(
+      DualStake.prototype.mint,
+      {
+        sender,
+        appId: dsAppID,
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+        fee,
+      }
+    )
+
+    itxnCompose.submit()
   }
 
   redeem(walletID: uint64, rekeyBack: boolean, dsAppID: uint64): void {

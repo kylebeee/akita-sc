@@ -6,6 +6,7 @@ import { StandardMerkleTree } from '@joe-p/merkle-tree'
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
 import { HexString } from '@joe-p/merkle-tree/dist/bytes'
 import { MetaMerklesClient, MetaMerklesFactory } from '../artifacts/meta-merkles/MetaMerklesClient'
+import { SpendingAccountFactoryFactory } from '../artifacts/arc58/spending-account/SpendingAccountFactoryClient'
 
 const fixture = algorandFixture()
 algokit.Config.configure({ populateAppCallResources: true })
@@ -34,65 +35,32 @@ describe('MetaMerkles', () => {
 
     suggestedParams = await algod.getTransactionParams().do()
 
+    const spendingAccountFactory = new SpendingAccountFactoryFactory({
+      defaultSender: bobsAccount.addr,
+      defaultSigner: makeBasicAccountTransactionSigner(bobsAccount),
+      algorand
+    })
+
+    const spendingAccountFactoryResults = await spendingAccountFactory.send.create.bare()
+
+    await spendingAccountFactoryResults.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
+
     const minter = new MetaMerklesFactory({
       defaultSender: bobsAccount.addr,
       defaultSigner: makeBasicAccountTransactionSigner(bobsAccount),
       algorand,
     })
 
-    const results = await minter.send.create.create()
+    const results = await minter.send.create.create({
+      args: {},
+      deployTimeParams: {
+        TMPL_SPENDING_ACCOUNT_FACTORY_APP: spendingAccountFactoryResults.appClient.appId,
+      }
+    })
 
     metaMerklesClient = results.appClient
 
     metaMerklesAppAddress = metaMerklesClient.appAddress.toString()
-
-    // await metaMerklesClient.send.addSchema({
-    //     args: {
-    //         payment: await algorand.createTransaction.payment({
-    //             sender: bobsAccount.addr,
-    //             signer: makeBasicAccountTransactionSigner(bobsAccount),
-    //             receiver: metaMerklesAppAddress,
-    //             amount: (100).algo(),
-    //         }),
-    //         desc: 'Unspecified',
-    //     },
-    // })
-
-    // await metaMerklesClient.send.addSchema({
-    //     args: {
-    //         payment: await algorand.createTransaction.payment({
-    //             sender: bobsAccount.addr,
-    //             signer: makeBasicAccountTransactionSigner(bobsAccount),
-    //             receiver: metaMerklesAppAddress,
-    //             amount: (100).algo(),
-    //         }),
-    //         desc: 'String',
-    //     },
-    // })
-
-    // await metaMerklesClient.send.addSchema({
-    //     args: {
-    //         payment: await algorand.createTransaction.payment({
-    //             sender: bobsAccount.addr,
-    //             signer: makeBasicAccountTransactionSigner(bobsAccount),
-    //             receiver: metaMerklesAppAddress,
-    //             amount: (100).algo(),
-    //         }),
-    //         desc: 'Uint64',
-    //     },
-    // })
-
-    // await metaMerklesClient.send.addSchema({
-    //     args: {
-    //         payment: await algorand.createTransaction.payment({
-    //             sender: bobsAccount.addr,
-    //             signer: makeBasicAccountTransactionSigner(bobsAccount),
-    //             receiver: metaMerklesAppAddress,
-    //             amount: (100).algo(),
-    //         }),
-    //         desc: 'DoubleUint64',
-    //     },
-    // })
 
     await metaMerklesClient.send.addType({
       args: {
@@ -170,6 +138,7 @@ describe('MetaMerkles', () => {
           root: Buffer.from(tree.root.slice(2), 'hex'),
           type: 1,
         },
+        extraFee: (1000).microAlgos(),
       })
     })
 
@@ -192,6 +161,7 @@ describe('MetaMerkles', () => {
           key: 'royalty',
           value: '5000',
         },
+        extraFee: (1000).microAlgos(),
       })
     })
 

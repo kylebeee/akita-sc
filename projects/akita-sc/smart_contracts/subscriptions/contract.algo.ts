@@ -284,7 +284,10 @@ export class Subscriptions extends classes(
     // ensure the service isn't already shutdown
     assert(this.services(boxKey).value.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
 
-    this.services(boxKey).value.status = ServiceStatusPaused
+    this.services(boxKey).value = {
+      ...this.services(boxKey).value,
+      status: ServiceStatusPaused,
+    }
   }
 
   /**
@@ -300,7 +303,10 @@ export class Subscriptions extends classes(
     // ensure the service is currently paused
     assert(this.services(boxKey).value.status === ServiceStatusPaused, ERR_SERVICE_IS_NOT_PAUSED)
 
-    this.services(boxKey).value.status = ServiceStatusActive
+    this.services(boxKey).value = {
+      ...this.services(boxKey).value,
+      status: ServiceStatusActive,
+    }
   }
 
   /**
@@ -315,7 +321,10 @@ export class Subscriptions extends classes(
     // ensure the service isn't already shutdown
     assert(this.services(boxKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
 
-    this.services(boxKey).value.status = ServiceStatusShutdown
+    this.services(boxKey).value = {
+      ...this.services(boxKey).value,
+      status: ServiceStatusShutdown,
+    }
   }
 
   /**

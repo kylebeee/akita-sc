@@ -1,10 +1,9 @@
-import { Application, assert, BoxMap, bytes, Global, GlobalState, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, decodeArc4, interpretAsArc4, methodSelector, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Application, assert, BoxMap, bytes, Global, GlobalState, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Address, decodeArc4, interpretAsArc4, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { arc4SubscriptionStreakGateCheckParams, arc4SubscriptionStreakRegistryInfo, SubscriptionStreakRegistryInfo } from './types'
 import { Subscriptions } from '../../../subscriptions/contract.algo'
-import { SubscriptionInfoWithPasses } from '../../../subscriptions/types'
 import {
   Equal,
   GreaterThan,
@@ -15,6 +14,7 @@ import {
 } from '../../../utils/operators'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getAkitaAppList } from '../../../utils/functions'
+import { fee } from '../../../utils/constants'
 
 export class SubscriptionStreakGate extends AkitaBaseContract {
 
@@ -41,14 +41,14 @@ export class SubscriptionStreakGate extends AkitaBaseContract {
     op: UintN8,
     streak: uint64
   ): boolean {
-    const infoTxn = itxn
-      .applicationCall({
+    const info = abiCall(
+      Subscriptions.prototype.getSubscriptionInfo,
+      {
         appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-        appArgs: [methodSelector(Subscriptions.prototype.getSubscriptionInfo), address, id],
-      })
-      .submit()
-
-    const info = decodeArc4<SubscriptionInfoWithPasses>(infoTxn.lastLog)
+        args: [address, id],
+        fee,
+      }
+    ).returnValue
 
     const toMerchant = info.recipient === merchant
 

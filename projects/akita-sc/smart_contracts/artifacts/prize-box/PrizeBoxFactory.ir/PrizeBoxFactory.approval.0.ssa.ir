@@ -1,0 +1,250 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#0: bool = smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.__puya_arc4_router__()
+        return tmp%0#0
+
+subroutine smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.__puya_arc4_router__() -> bool:
+    block@0: // L18
+        let tmp%0#0: uint64 = (txn NumAppArgs)
+        let tmp%1#0: bool = (!= tmp%0#0 0u)
+        goto tmp%1#0 ? block@1 : block@7
+    block@1: // abi_routing_L18
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(string)void" => block@2, method "update()void" => block@3, method "mint(pay,address)uint64" => block@4, * => block@5}
+    block@2: // create_route_L22
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (== tmp%3#0 NoOp)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (== tmp%5#0 0u)
+        (assert tmp%6#0) // can only call when creating
+        let tmp%7#0: bytes = (txna ApplicationArgs 1)
+        let tmp%8#0: bytes = ((extract 2 0) tmp%7#0)
+        smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.create(tmp%8#0)
+        return 1u
+    block@3: // update_route_L27
+        let tmp%9#0: uint64 = (txn OnCompletion)
+        let tmp%10#0: bool = (== tmp%9#0 UpdateApplication)
+        (assert tmp%10#0) // OnCompletion is not UpdateApplication
+        let tmp%11#0: uint64 = (txn ApplicationID)
+        let tmp%12#0: bool = (!= tmp%11#0 0u)
+        (assert tmp%12#0) // can only call when not creating
+        smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.update()
+        return 1u
+    block@4: // mint_route_L34
+        let tmp%13#0: uint64 = (txn OnCompletion)
+        let tmp%14#0: bool = (== tmp%13#0 NoOp)
+        (assert tmp%14#0) // OnCompletion is not NoOp
+        let tmp%15#0: uint64 = (txn ApplicationID)
+        let tmp%16#0: bool = (!= tmp%15#0 0u)
+        (assert tmp%16#0) // can only call when not creating
+        let tmp%17#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%17#0 1u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 1)
+        let to_encode%0#0: uint64 = smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.mint(gtxn_idx%0#0, reinterpret_bytes[32]%0#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%18#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%18#0)
+        return 1u
+    block@5: // switch_case_default_L18
+        goto block@6
+    block@6: // switch_case_next_L18
+        goto block@8
+    block@7: // bare_routing_L18
+        goto block@8
+    block@8: // after_if_else_L18
+        return 0u
+
+subroutine smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.create(version: bytes) -> void:
+    block@0: // L22
+        (app_global_put "child_contract_version" version#0)
+        return 
+
+subroutine smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.update() -> void:
+    block@0: // L27
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bytes[32] = (global CreatorAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        (assert tmp%2#0) // Only the creator can update the application
+        return 
+
+subroutine smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.mint(payment: uint64, owner: bytes[32]) -> uint64:
+    block@0: // L34
+        let (prizeBox.approvalProgram.0#0: bytes, prizeBox.approvalProgram.1#0: bytes, prizeBox.clearStateProgram.0#0: bytes, prizeBox.clearStateProgram.1#0: bytes, prizeBox.extraProgramPages#0: uint64, prizeBox.globalUints#0: uint64, prizeBox.globalBytes#0: uint64, prizeBox.localUints#0: uint64, prizeBox.localBytes#0: uint64) = (compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=ApprovalProgramPages, program_page=0), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=ApprovalProgramPages, program_page=1), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=ClearStateProgramPages, program_page=0), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=ClearStateProgramPages, program_page=1), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=ExtraProgramPages, program_page=None), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=GlobalNumUint, program_page=None), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=GlobalNumByteSlice, program_page=None), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=LocalNumUint, program_page=None), compiled_contract('smart_contracts/prize-box/contract.algo.ts::PrizeBox', field=LocalNumByteSlice, program_page=None))
+        let tmp%0#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        goto tmp%2#0 ? block@1 : block@3
+    block@1: // and_contd_L38
+        let tmp%3#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%4#0: uint64 = (* 28500u prizeBox.globalUints#0)
+        let tmp%5#0: uint64 = (+ 100000u tmp%4#0)
+        let tmp%6#0: uint64 = (* 50000u prizeBox.globalBytes#0)
+        let tmp%7#0: uint64 = (+ tmp%5#0 tmp%6#0)
+        let tmp%8#0: uint64 = (+ tmp%7#0 100000u)
+        let tmp%9#0: bool = (== tmp%3#0 tmp%8#0)
+        goto tmp%9#0 ? block@2 : block@3
+    block@2: // bool_true_L38
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L38
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L38
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_OnCompletion_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_ApprovalProgramPages_idx_0#0: bytes = prizeBox.approvalProgram.0#0
+        let inner_txn_params%0%%param_ApprovalProgramPages_idx_1#0: bytes = prizeBox.approvalProgram.1#0
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 2u
+        let inner_txn_params%0%%param_ClearStateProgramPages_idx_0#0: bytes = prizeBox.clearStateProgram.0#0
+        let inner_txn_params%0%%param_ClearStateProgramPages_idx_1#0: bytes = prizeBox.clearStateProgram.1#0
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 2u
+        let inner_txn_params%0%%param_GlobalNumUint_idx_0#0: uint64 = prizeBox.globalUints#0
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_GlobalNumByteSlice_idx_0#0: uint64 = prizeBox.globalBytes#0
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_LocalNumByteSlice_idx_0#0: uint64 = prizeBox.localBytes#0
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_LocalNumUint_idx_0#0: uint64 = prizeBox.localUints#0
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_ExtraProgramPages_idx_0#0: uint64 = prizeBox.extraProgramPages#0
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_ApplicationArgs_idx_0#0: bytes[4] = method "create(address)void"
+        let inner_txn_params%0%%param_ApplicationArgs_idx_1#0: bytes[32] = owner#0
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 2u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ExtraProgramPages) inner_txn_params%0%%param_ExtraProgramPages_idx_0#0)
+        ((itxn_field LocalNumUint) inner_txn_params%0%%param_LocalNumUint_idx_0#0)
+        ((itxn_field LocalNumByteSlice) inner_txn_params%0%%param_LocalNumByteSlice_idx_0#0)
+        ((itxn_field GlobalNumByteSlice) inner_txn_params%0%%param_GlobalNumByteSlice_idx_0#0)
+        ((itxn_field GlobalNumUint) inner_txn_params%0%%param_GlobalNumUint_idx_0#0)
+        ((itxn_field ClearStateProgramPages) inner_txn_params%0%%param_ClearStateProgramPages_idx_0#0)
+        ((itxn_field ClearStateProgramPages) inner_txn_params%0%%param_ClearStateProgramPages_idx_1#0)
+        ((itxn_field ApprovalProgramPages) inner_txn_params%0%%param_ApprovalProgramPages_idx_0#0)
+        ((itxn_field ApprovalProgramPages) inner_txn_params%0%%param_ApprovalProgramPages_idx_1#0)
+        ((itxn_field OnCompletion) inner_txn_params%0%%param_OnCompletion_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@5
+    block@5: // next_txn_L52
+        itxn_submit
+        let prizeBoxApp#0: uint64 = itxn[itxn_group_idx(0)].CreatedApplicationID
+        itxn_begin
+        let inner_txn_params%1#0: itxn_field_set = itxn_field_set(1)
+        let inner_txn_params%1%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%1%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%1%%TypeEnum_length#0: uint64 = 1u
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) prizeBoxApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%1%%param_Receiver_idx_0#0: bytes[32] = value%0#0
+        let inner_txn_params%1%%Receiver_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_Amount_idx_0#0: uint64 = 100000u
+        let inner_txn_params%1%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%1%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%1%%Note_length#0: uint64 = 0u
+        let inner_txn_params%1%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%1%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%1%%Type_length#0: uint64 = 0u
+        let inner_txn_params%1%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%1%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%1%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%1%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%1%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%1%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%1%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%1%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%1%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%1%%param_Fee_idx_0#0)
+        goto block@6
+    block@6: // next_txn_L60
+        itxn_submit
+        return prizeBoxApp#0

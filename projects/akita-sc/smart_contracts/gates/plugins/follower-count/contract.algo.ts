@@ -1,5 +1,5 @@
 import { Application, assert, BoxMap, bytes, GlobalState, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { arc4FollowerCountGateCheckParams, arc4FollowerCountRegistryInfo, FollowerCountRegistryInfo } from './types'
 import { GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { Operator } from '../../types'
@@ -38,19 +38,14 @@ export class FollowerCountGate extends AkitaBaseContract {
 
   private followerCountGate(user: Address, op: Operator, value: uint64): boolean {
 
-    const encodedMeta = itxn
-      .applicationCall({
+    const meta = abiCall(
+      AkitaSocialPlugin.prototype.getMeta,
+      {
         appId: getPluginAppList(this.akitaDAO.value).impact,
-        appArgs: [
-          methodSelector(AkitaSocialPlugin.prototype.getMeta),
-          user
-        ],
+        args: [user],
         fee,
-      })
-      .submit()
-      .lastLog
-
-    const meta = decodeArc4<MetaValue>(encodedMeta)
+      }
+    ).returnValue
 
     if (op === Equal) {
       return meta.followerCount === value

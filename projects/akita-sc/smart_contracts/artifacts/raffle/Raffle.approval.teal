@@ -1,0 +1,4383 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 4096 8 6364136223846793005 37800 1442695040888963407 1442695040888963409 4294967295 13113300 18446744073709551615
+    bytecblock "ticket_count" "ticket_asset" "entry_count" "akita_dao" "winner" "w_totals" "a" "winning_ticket" "weights_box_count" 0x151f7c75 "w" "prize" "seller" "max_tickets" "prize_claimed" "gate_id" "refund_mbr_cursor" "end_timestamp" "e" "vrf_failure_count" 0x00 "start_timestamp" "find_winner_cursors" 0x068101 "other_al" "is_prize_box" "min_tickets" "entry_id"
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txn NumAppArgs
+    bz main_after_if_else@25
+    pushbytess 0x3d23039f 0xbd7148d0 0xf2ce2f46 0x2c942514 0x2487c32c 0x75eb7702 0x2f71c24c 0x054a3020 0x482121c3 0x696501de 0xbd1b27d1 0x65fca98b 0x8fa4a160 0x9e5726f1 0xea9180dd 0x33e92c94 0x3ea11832 // method "create(uint64,bool,uint64,uint64,uint64,address,uint64,uint64,uint64,address,uint64)void", method "init(pay,uint64)void", method "refundMBR(uint64)void", method "clearWeightsBoxes()uint64", method "deleteApplication()void", method "enter(pay,byte[][])void", method "enterAsa(pay,axfer,byte[][])void", method "add(pay,byte[][])void", method "addAsa(axfer,byte[][])void", method "raffle()void", method "findWinner(uint64)void", method "claimRafflePrize()void", method "isLive()bool", method "getState()(uint64,uint64,uint64,address,uint64,uint64,uint64,uint64,uint64,address,uint64,bool,uint64,uint64,uint64,uint64)", method "update(string)void", method "updateAkitaDAO(uint64)void", method "optin(pay,uint64)void"
+    txna ApplicationArgs 0
+    match main_create_route@5 main_init_route@6 main_refundMBR_route@7 main_clearWeightsBoxes_route@8 main_deleteApplication_route@9 main_enter_route@10 main_enterAsa_route@11 main_add_route@12 main_addAsa_route@13 main_raffle_route@14 main_findWinner_route@15 main_claimRafflePrize_route@16 main_isLive_route@17 main_getState_route@18 main_update_route@19 main_updateAkitaDAO_route@20 main_optin_route@21
+
+main_after_if_else@25:
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    intc_0 // 0
+    return
+
+main_optin_route@21:
+    // smart_contracts/utils/base-contracts/optin.ts:51
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/optin.ts:51
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    callsub optin
+    intc_1 // 1
+    return
+
+main_updateAkitaDAO_route@20:
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_update_route@19:
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
+    intc_1 // 1
+    return
+
+main_getState_route@18:
+    // smart_contracts/raffle/contract.algo.ts:600
+    // getState(): RaffleState {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub getState
+    uncover 15
+    itob
+    uncover 15
+    itob
+    uncover 15
+    itob
+    uncover 14
+    itob
+    uncover 14
+    itob
+    uncover 14
+    itob
+    uncover 14
+    itob
+    uncover 14
+    itob
+    uncover 13
+    itob
+    bytec 20 // 0x00
+    intc_0 // 0
+    uncover 15
+    setbit
+    uncover 13
+    itob
+    uncover 13
+    itob
+    uncover 13
+    itob
+    uncover 13
+    itob
+    uncover 13
+    uncover 13
+    concat
+    uncover 12
+    concat
+    uncover 13
+    concat
+    uncover 11
+    concat
+    uncover 10
+    concat
+    uncover 9
+    concat
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    bytec 9 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_isLive_route@17:
+    // smart_contracts/raffle/contract.algo.ts:592
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub isLive
+    bytec 20 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec 9 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_claimRafflePrize_route@16:
+    // smart_contracts/raffle/contract.algo.ts:522
+    // claimRafflePrize(): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub claimRafflePrize
+    intc_1 // 1
+    return
+
+main_findWinner_route@15:
+    // smart_contracts/raffle/contract.algo.ts:489
+    // findWinner(iterationAmount: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/raffle/contract.algo.ts:489
+    // findWinner(iterationAmount: uint64): void {
+    callsub findWinner
+    intc_1 // 1
+    return
+
+main_raffle_route@14:
+    // smart_contracts/raffle/contract.algo.ts:458
+    // raffle(): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub raffle
+    intc_1 // 1
+    return
+
+main_addAsa_route@13:
+    // smart_contracts/raffle/contract.algo.ts:428
+    // addAsa(assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    pushint 4 // axfer
+    ==
+    assert // transaction type is axfer
+    txna ApplicationArgs 1
+    // smart_contracts/raffle/contract.algo.ts:428
+    // addAsa(assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
+    callsub addAsa
+    intc_1 // 1
+    return
+
+main_add_route@12:
+    // smart_contracts/raffle/contract.algo.ts:399
+    // add(payment: gtxn.PaymentTxn, args: GateArgs): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    // smart_contracts/raffle/contract.algo.ts:399
+    // add(payment: gtxn.PaymentTxn, args: GateArgs): void {
+    callsub add
+    intc_1 // 1
+    return
+
+main_enterAsa_route@11:
+    // smart_contracts/raffle/contract.algo.ts:354
+    // enterAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txn GroupIndex
+    pushint 2 // 2
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    pushint 4 // axfer
+    ==
+    assert // transaction type is axfer
+    txna ApplicationArgs 1
+    // smart_contracts/raffle/contract.algo.ts:354
+    // enterAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
+    callsub enterAsa
+    intc_1 // 1
+    return
+
+main_enter_route@10:
+    // smart_contracts/raffle/contract.algo.ts:317
+    // enter(payment: gtxn.PaymentTxn, args: GateArgs): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    // smart_contracts/raffle/contract.algo.ts:317
+    // enter(payment: gtxn.PaymentTxn, args: GateArgs): void {
+    callsub enter
+    intc_1 // 1
+    return
+
+main_deleteApplication_route@9:
+    // smart_contracts/raffle/contract.algo.ts:307
+    // @abimethod({ allowActions: 'DeleteApplication' })
+    txn OnCompletion
+    pushint 5 // DeleteApplication
+    ==
+    assert // OnCompletion is not DeleteApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub deleteApplication
+    intc_1 // 1
+    return
+
+main_clearWeightsBoxes_route@8:
+    // smart_contracts/raffle/contract.algo.ts:285
+    // clearWeightsBoxes(): uint64 {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub clearWeightsBoxes
+    itob
+    bytec 9 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_refundMBR_route@7:
+    // smart_contracts/raffle/contract.algo.ts:253
+    // refundMBR(iterationAmount: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/raffle/contract.algo.ts:253
+    // refundMBR(iterationAmount: uint64): void {
+    callsub refundMBR
+    intc_1 // 1
+    return
+
+main_init_route@6:
+    // smart_contracts/raffle/contract.algo.ts:226
+    // init(payment: gtxn.PaymentTxn, weightListLength: uint64) {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/raffle/contract.algo.ts:226
+    // init(payment: gtxn.PaymentTxn, weightListLength: uint64) {
+    callsub init
+    intc_1 // 1
+    return
+
+main_create_route@5:
+    // smart_contracts/raffle/contract.algo.ts:186
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/raffle/contract.algo.ts:93-97
+    // export class Raffle extends classes(
+    //   BaseRaffle,
+    //   AkitaBaseContract,
+    //   ContractWithCreatorOnlyOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    btoi
+    txna ApplicationArgs 4
+    btoi
+    txna ApplicationArgs 5
+    btoi
+    txna ApplicationArgs 6
+    txna ApplicationArgs 7
+    btoi
+    txna ApplicationArgs 8
+    btoi
+    txna ApplicationArgs 9
+    btoi
+    txna ApplicationArgs 10
+    txna ApplicationArgs 11
+    btoi
+    // smart_contracts/raffle/contract.algo.ts:186
+    // @abimethod({ onCreate: 'require' })
+    callsub create
+    intc_1 // 1
+    return
+
+
+// _puya_lib.util.ensure_budget(required_budget: uint64, fee_source: uint64) -> void:
+ensure_budget:
+    proto 2 0
+    frame_dig -2
+    pushint 10 // 10
+    +
+
+ensure_budget_while_top@1:
+    frame_dig 0
+    global OpcodeBudget
+    >
+    bz ensure_budget_after_while@7
+    itxn_begin
+    pushint 6 // appl
+    itxn_field TypeEnum
+    pushint 5 // DeleteApplication
+    itxn_field OnCompletion
+    bytec 23 // 0x068101
+    itxn_field ApprovalProgram
+    bytec 23 // 0x068101
+    itxn_field ClearStateProgram
+    frame_dig -1
+    switch ensure_budget_switch_case_0@3 ensure_budget_switch_case_1@4
+
+ensure_budget_switch_case_next@6:
+    itxn_submit
+    b ensure_budget_while_top@1
+
+ensure_budget_switch_case_1@4:
+    global MinTxnFee
+    itxn_field Fee
+    b ensure_budget_switch_case_next@6
+
+ensure_budget_switch_case_0@3:
+    intc_0 // 0
+    itxn_field Fee
+    b ensure_budget_switch_case_next@6
+
+ensure_budget_after_while@7:
+    retsub
+
+
+// smart_contracts/utils/types/lib_pcg/pcg32.algo.ts::__pcg32Output(state: uint64) -> uint64:
+__pcg32Output:
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:23
+    // export function __pcg32Output(state: PCG32STATE): uint64 {
+    proto 1 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:24
+    // const xorshifted = __maskToUint32(op.shr(op.shr(state, 18) ^ state, 27))
+    frame_dig -1
+    pushint 18 // 18
+    shr
+    frame_dig -1
+    ^
+    pushint 27 // 27
+    shr
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:13
+    // return value & (op.shl(1, 32) - 1)
+    intc 8 // 4294967295
+    &
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:25
+    // const rot = op.shr(state, 59)
+    frame_dig -1
+    pushint 59 // 59
+    shr
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:26
+    // return op.shr(xorshifted, rot) | __maskToUint32(op.shl(xorshifted, __uint64Twos(rot) & 31))
+    dup2
+    shr
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:8
+    // const [, addLow] = op.addw(~value, 1)
+    swap
+    ~
+    intc_1 // 1
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:26
+    // return op.shr(xorshifted, rot) | __maskToUint32(op.shl(xorshifted, __uint64Twos(rot) & 31))
+    pushint 31 // 31
+    &
+    uncover 2
+    swap
+    shl
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:13
+    // return value & (op.shl(1, 32) - 1)
+    intc 8 // 4294967295
+    &
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:26
+    // return op.shr(xorshifted, rot) | __maskToUint32(op.shl(xorshifted, __uint64Twos(rot) & 31))
+    |
+    retsub
+
+
+// smart_contracts/utils/functions.ts::gateCheck(akitaDAO: uint64, caller: bytes, id: uint64, args: bytes) -> uint64:
+gateCheck:
+    // smart_contracts/utils/functions.ts:130
+    // export function gateCheck(akitaDAO: Application, caller: Address, id: uint64, args: GateArgs): boolean {
+    proto 4 1
+    // smart_contracts/utils/functions.ts:131
+    // if (id === 0) {
+    frame_dig -2
+    bnz gateCheck_after_if_else@2
+    // smart_contracts/utils/functions.ts:132
+    // return true
+    intc_1 // 1
+    retsub
+
+gateCheck_after_if_else@2:
+    // smart_contracts/utils/functions.ts:135-139
+    // return abiCall(GateInterface.prototype.check, {
+    //   appId: getAkitaAppList(akitaDAO).gate,
+    //   args: [caller, id, args],
+    //   fee: 0,
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    frame_dig -4
+    // smart_contracts/dao/constants.ts:7
+    // export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
+    pushbytes "akita_al"
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:26
+    // return decodeArc4<AkitaAppList>(appListBytes)
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/utils/functions.ts:137
+    // args: [caller, id, args],
+    frame_dig -2
+    itob
+    // smart_contracts/utils/functions.ts:135-139
+    // return abiCall(GateInterface.prototype.check, {
+    //   appId: getAkitaAppList(akitaDAO).gate,
+    //   args: [caller, id, args],
+    //   fee: 0,
+    // }).returnValue
+    pushbytes 0x200f7421 // method "check(address,uint64,byte[][])bool"
+    itxn_field ApplicationArgs
+    frame_dig -3
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/functions.ts:138
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/functions.ts:135-139
+    // return abiCall(GateInterface.prototype.check, {
+    //   appId: getAkitaAppList(akitaDAO).gate,
+    //   args: [caller, id, args],
+    //   fee: 0,
+    // }).returnValue
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec 9 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    intc_0 // 0
+    getbit
+    retsub
+
+
+// smart_contracts/utils/functions.ts::arc59OptInAndSend(akitaDAO: uint64, recipient: bytes, asset: uint64, amount: uint64, closeOut: uint64) -> void:
+arc59OptInAndSend:
+    // smart_contracts/utils/functions.ts:179
+    // export function arc59OptInAndSend(akitaDAO: Application, recipient: Address, asset: uint64, amount: uint64, closeOut: boolean): void {
+    proto 5 0
+    pushbytes ""
+    dupn 2
+    intc_0 // 0
+    // smart_contracts/utils/functions.ts:35
+    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
+    frame_dig -5
+    // smart_contracts/dao/constants.ts:9
+    // export const AkitaDAOGlobalStateKeysOtherAppList = 'other_al'
+    bytec 24 // "other_al"
+    // smart_contracts/utils/functions.ts:35
+    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:36
+    // return decodeArc4<OtherAppList>(otherAppListBytes)
+    pushint 16 // 16
+    extract_uint64
+    dupn 2
+    // smart_contracts/utils/functions.ts:181
+    // const inboxAddress = Application(assetInbox).address
+    app_params_get AppAddress
+    swap
+    cover 2
+    assert // application exists
+    // smart_contracts/utils/functions.ts:183-190
+    // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
+    //   AssetInbox.prototype.arc59_getSendAssetInfo,
+    //   {
+    //     appId: assetInbox,
+    //     args: [recipient, asset],
+    //     fee: 0,
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:187
+    // args: [recipient, asset],
+    frame_dig -3
+    itob
+    dup
+    cover 2
+    // smart_contracts/utils/functions.ts:183-190
+    // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
+    //   AssetInbox.prototype.arc59_getSendAssetInfo,
+    //   {
+    //     appId: assetInbox,
+    //     args: [recipient, asset],
+    //     fee: 0,
+    //   }
+    // ).returnValue
+    pushbytes 0xcaa8daa5 // method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
+    itxn_field ApplicationArgs
+    frame_dig -4
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/functions.ts:188
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/functions.ts:183-190
+    // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
+    //   AssetInbox.prototype.arc59_getSendAssetInfo,
+    //   {
+    //     appId: assetInbox,
+    //     args: [recipient, asset],
+    //     fee: 0,
+    //   }
+    // ).returnValue
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    dig 1
+    extract 0 4
+    bytec 9 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dig 1
+    pushint 12 // 12
+    extract_uint64
+    dup
+    cover 3
+    cover 3
+    pushint 128 // 128
+    getbit
+    bytec 20 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    intc_0 // 0
+    getbit
+    cover 2
+    pushint 21 // 21
+    extract_uint64
+    swap
+    // smart_contracts/utils/functions.ts:192
+    // if (mbr || receiverAlgoNeededForClaim) {
+    bnz arc59OptInAndSend_if_body@3
+    frame_dig 9
+    bz arc59OptInAndSend_after_if_else@5
+
+arc59OptInAndSend_if_body@3:
+    // smart_contracts/utils/functions.ts:193-197
+    // itxn.payment({
+    //   receiver: inboxAddress,
+    //   amount: mbr + receiverAlgoNeededForClaim,
+    //   fee: 0,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/utils/functions.ts:195
+    // amount: mbr + receiverAlgoNeededForClaim,
+    frame_dig 7
+    frame_dig 9
+    +
+    itxn_field Amount
+    frame_dig 5
+    itxn_field Receiver
+    // smart_contracts/utils/functions.ts:193-197
+    // itxn.payment({
+    //   receiver: inboxAddress,
+    //   amount: mbr + receiverAlgoNeededForClaim,
+    //   fee: 0,
+    // }).submit()
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/functions.ts:196
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/functions.ts:193-197
+    // itxn.payment({
+    //   receiver: inboxAddress,
+    //   amount: mbr + receiverAlgoNeededForClaim,
+    //   fee: 0,
+    // }).submit()
+    itxn_submit
+
+arc59OptInAndSend_after_if_else@5:
+    // smart_contracts/utils/functions.ts:200
+    // if (!routerOptedIn) {
+    frame_dig 8
+    bnz arc59OptInAndSend_after_if_else@8
+    // smart_contracts/utils/functions.ts:201-205
+    // abiCall(AssetInbox.prototype.arc59_optRouterIn, {
+    //   appId: assetInbox,
+    //   args: [asset],
+    //   fee: 0,
+    // })
+    itxn_begin
+    pushbytes 0xe8540810 // method "arc59_optRouterIn(uint64)void"
+    itxn_field ApplicationArgs
+    frame_dig 6
+    itxn_field ApplicationArgs
+    frame_dig 4
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/functions.ts:204
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/functions.ts:201-205
+    // abiCall(AssetInbox.prototype.arc59_optRouterIn, {
+    //   appId: assetInbox,
+    //   args: [asset],
+    //   fee: 0,
+    // })
+    itxn_submit
+
+arc59OptInAndSend_after_if_else@8:
+    // smart_contracts/utils/functions.ts:209
+    // assetReceiver: inboxAddress,
+    intc_1 // 1
+    frame_bury 2
+    // smart_contracts/utils/functions.ts:210
+    // assetAmount: amount,
+    intc_1 // 1
+    frame_bury 0
+    // smart_contracts/utils/functions.ts:208
+    // let xferTxn = itxn.assetTransfer({
+    intc_0 // 0
+    frame_bury 1
+    // smart_contracts/utils/functions.ts:215
+    // if (closeOut) {
+    frame_dig -1
+    bz arc59OptInAndSend_after_if_else@10
+    // smart_contracts/utils/functions.ts:218
+    // assetCloseTo: inboxAddress,
+    intc_1 // 1
+    frame_bury 1
+    // smart_contracts/utils/functions.ts:216
+    // xferTxn = itxn.assetTransfer({
+    intc_0 // 0
+    frame_bury 0
+    intc_0 // 0
+    frame_bury 2
+    frame_dig 5
+    frame_bury 3
+
+arc59OptInAndSend_after_if_else@10:
+    // smart_contracts/utils/functions.ts:223-227
+    // abiCall(AssetInbox.prototype.arc59_sendAsset, {
+    //   appId: assetInbox,
+    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    //   fee: 0,
+    // })
+    itxn_begin
+    // smart_contracts/utils/functions.ts:225
+    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    frame_dig 1
+    bz arc59OptInAndSend_next_field@12
+    frame_dig 3
+    itxn_field AssetCloseTo
+
+arc59OptInAndSend_next_field@12:
+    frame_dig -3
+    itxn_field XferAsset
+    // smart_contracts/utils/functions.ts:225
+    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    frame_dig 0
+    bz arc59OptInAndSend_next_field@14
+    frame_dig -2
+    itxn_field AssetAmount
+
+arc59OptInAndSend_next_field@14:
+    // smart_contracts/utils/functions.ts:225
+    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    frame_dig 2
+    bz arc59OptInAndSend_next_field@16
+    frame_dig 5
+    itxn_field AssetReceiver
+
+arc59OptInAndSend_next_field@16:
+    // smart_contracts/utils/functions.ts:208-213
+    // let xferTxn = itxn.assetTransfer({
+    //   assetReceiver: inboxAddress,
+    //   assetAmount: amount,
+    //   xferAsset: asset,
+    //   fee: 0,
+    // })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/functions.ts:212
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/functions.ts:223-227
+    // abiCall(AssetInbox.prototype.arc59_sendAsset, {
+    //   appId: assetInbox,
+    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    //   fee: 0,
+    // })
+    itxn_next
+    // smart_contracts/utils/functions.ts:225
+    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    frame_dig 9
+    itob
+    // smart_contracts/utils/functions.ts:223-227
+    // abiCall(AssetInbox.prototype.arc59_sendAsset, {
+    //   appId: assetInbox,
+    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    //   fee: 0,
+    // })
+    pushbytes 0x08531ed7 // method "arc59_sendAsset(axfer,address,uint64)address"
+    itxn_field ApplicationArgs
+    frame_dig -4
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig 4
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/functions.ts:226
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/functions.ts:223-227
+    // abiCall(AssetInbox.prototype.arc59_sendAsset, {
+    //   appId: assetInbox,
+    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    //   fee: 0,
+    // })
+    itxn_submit
+    gitxn 1 LastLog
+    extract 0 4
+    bytec 9 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    retsub
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.create(prize: uint64, isPrizeBox: uint64, ticketAsset: uint64, startTimestamp: uint64, endTimestamp: uint64, seller: bytes, minTickets: uint64, maxTickets: uint64, gateID: uint64, marketplace: bytes, akitaDAO: uint64) -> void:
+create:
+    // smart_contracts/raffle/contract.algo.ts:186-199
+    // @abimethod({ onCreate: 'require' })
+    // create(
+    //   prize: uint64,
+    //   isPrizeBox: boolean,
+    //   ticketAsset: uint64,
+    //   startTimestamp: uint64,
+    //   endTimestamp: uint64,
+    //   seller: Address,
+    //   minTickets: uint64,
+    //   maxTickets: uint64,
+    //   gateID: uint64,
+    //   marketplace: Address,
+    //   akitaDAO: uint64
+    // ): void {
+    proto 11 0
+    // smart_contracts/raffle/contract.algo.ts:200
+    // assert(Global.callerApplicationId !== 0, ERR_MUST_BE_CALLED_FROM_FACTORY)
+    global CallerApplicationID
+    assert // Only the creator of this app can call this method
+    // smart_contracts/raffle/constants.ts:13
+    // export const RaffleGlobalStateKeyPrize = 'prize'
+    bytec 11 // "prize"
+    // smart_contracts/raffle/contract.algo.ts:202
+    // this.prize.value = prize
+    frame_dig -11
+    app_global_put
+    // smart_contracts/raffle/constants.ts:14
+    // export const RaffleGlobalStateKeyIsPrizeBox = 'is_prize_box'
+    bytec 25 // "is_prize_box"
+    // smart_contracts/raffle/contract.algo.ts:203
+    // this.isPrizeBox.value = isPrizeBox
+    frame_dig -10
+    app_global_put
+    // smart_contracts/raffle/contract.algo.ts:204
+    // assert(Asset(ticketAsset).total > 0, ERR_INVALID_ASSET)
+    frame_dig -9
+    asset_params_get AssetTotal
+    assert // asset exists
+    assert // Invalid asset
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    bytec_1 // "ticket_asset"
+    // smart_contracts/raffle/contract.algo.ts:205
+    // this.ticketAsset.value = Asset(ticketAsset)
+    frame_dig -9
+    app_global_put
+    // smart_contracts/raffle/constants.ts:4
+    // export const RaffleGlobalStateKeyStartTimestamp = 'start_timestamp'
+    bytec 21 // "start_timestamp"
+    // smart_contracts/raffle/contract.algo.ts:206
+    // this.startTimestamp.value = startTimestamp
+    frame_dig -8
+    app_global_put
+    // smart_contracts/raffle/contract.algo.ts:207
+    // assert(endTimestamp > startTimestamp && endTimestamp > Global.latestTimestamp, ERR_INVALID_ENDING_ROUND)
+    frame_dig -7
+    frame_dig -8
+    >
+    bz create_bool_false@3
+    frame_dig -7
+    global LatestTimestamp
+    >
+    bz create_bool_false@3
+    intc_1 // 1
+
+create_bool_merge@4:
+    // smart_contracts/raffle/contract.algo.ts:207
+    // assert(endTimestamp > startTimestamp && endTimestamp > Global.latestTimestamp, ERR_INVALID_ENDING_ROUND)
+    assert // Ending round must be in the future
+    // smart_contracts/raffle/constants.ts:5
+    // export const RaffleGlobalStateKeyEndTimestamp = 'end_timestamp'
+    bytec 17 // "end_timestamp"
+    // smart_contracts/raffle/contract.algo.ts:208
+    // this.endTimestamp.value = endTimestamp
+    frame_dig -7
+    app_global_put
+    // smart_contracts/raffle/constants.ts:6
+    // export const RaffleGlobalStateKeySeller = 'seller'
+    bytec 12 // "seller"
+    // smart_contracts/raffle/contract.algo.ts:209
+    // this.seller.value = seller.native
+    frame_dig -6
+    app_global_put
+    // smart_contracts/raffle/constants.ts:7
+    // export const RaffleGlobalStateKeyMinTickets = 'min_tickets'
+    bytec 26 // "min_tickets"
+    // smart_contracts/raffle/contract.algo.ts:210
+    // this.minTickets.value = minTickets
+    frame_dig -5
+    app_global_put
+    // smart_contracts/raffle/constants.ts:8
+    // export const RaffleGlobalStateKeyMaxTickets = 'max_tickets'
+    bytec 13 // "max_tickets"
+    // smart_contracts/raffle/contract.algo.ts:211
+    // this.maxTickets.value = maxTickets
+    frame_dig -4
+    app_global_put
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    bytec_2 // "entry_count"
+    // smart_contracts/raffle/contract.algo.ts:212
+    // this.entryCount.value = 0
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    bytec_0 // "ticket_count"
+    // smart_contracts/raffle/contract.algo.ts:213
+    // this.ticketCount.value = 0
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    bytec 7 // "winning_ticket"
+    // smart_contracts/raffle/contract.algo.ts:214
+    // this.winningTicket.value = 0
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    bytec 4 // "winner"
+    // smart_contracts/raffle/contract.algo.ts:215
+    // this.winner.value = Global.zeroAddress
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/raffle/constants.ts:15
+    // export const RaffleGlobalStateKeyPrizeClaimed = 'prize_claimed'
+    bytec 14 // "prize_claimed"
+    // smart_contracts/raffle/contract.algo.ts:216
+    // this.prizeClaimed.value = false
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/raffle/constants.ts:17
+    // export const RaffleGlobalStateKeyGateID = 'gate_id'
+    bytec 15 // "gate_id"
+    // smart_contracts/raffle/contract.algo.ts:217
+    // this.gateID.value = gateID
+    frame_dig -3
+    app_global_put
+    // smart_contracts/raffle/constants.ts:18
+    // export const RaffleGlobalStateKeyMarketplace = 'marketplace'
+    pushbytes "marketplace"
+    // smart_contracts/raffle/contract.algo.ts:218
+    // this.marketplace.value = marketplace
+    frame_dig -2
+    app_global_put
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    bytec_3 // "akita_dao"
+    // smart_contracts/raffle/contract.algo.ts:219
+    // this.akitaDAO.value = Application(akitaDAO)
+    frame_dig -1
+    app_global_put
+    // smart_contracts/raffle/constants.ts:21
+    // export const RaffleGlobalStateKeyEntryID = 'entry_id'
+    bytec 27 // "entry_id"
+    // smart_contracts/raffle/contract.algo.ts:220
+    // this.entryID.value = 0
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    bytec 8 // "weights_box_count"
+    // smart_contracts/raffle/contract.algo.ts:221
+    // this.weightsBoxCount.value = 0
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/raffle/contract.algo.ts:222
+    // this.weightTotals.value = new arc4.StaticArray<arc4.UintN64, 15>()
+    pushint 120 // 120
+    bzero
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    bytec 5 // "w_totals"
+    // smart_contracts/raffle/contract.algo.ts:222
+    // this.weightTotals.value = new arc4.StaticArray<arc4.UintN64, 15>()
+    swap
+    app_global_put
+    // smart_contracts/raffle/constants.ts:25
+    // export const RaffleGlobalStateKeyRefundMBRCursor = 'refund_mbr_cursor'
+    bytec 16 // "refund_mbr_cursor"
+    // smart_contracts/raffle/contract.algo.ts:223
+    // this.refundMBRCursor.value = 0
+    intc_0 // 0
+    app_global_put
+    retsub
+
+create_bool_false@3:
+    intc_0 // 0
+    b create_bool_merge@4
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.init(payment: uint64, weightListLength: uint64) -> void:
+init:
+    // smart_contracts/raffle/contract.algo.ts:226
+    // init(payment: gtxn.PaymentTxn, weightListLength: uint64) {
+    proto 2 0
+    pushbytes ""
+    dup
+    // smart_contracts/raffle/contract.algo.ts:227
+    // assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
+    txn Sender
+    global CreatorAddress
+    ==
+    assert // Only the creator of this app can call this method
+    // smart_contracts/raffle/contract.algo.ts:228
+    // assert(weightListLength >= 4, ERR_MUST_ALLOCATE_AT_LEAST_FOUR_HIGHEST_BIDS_CHUNKS)
+    frame_dig -1
+    pushint 4 // 4
+    >=
+    assert // Must allocate at least four weights chunks
+    // smart_contracts/raffle/contract.algo.ts:229
+    // assert(weightListLength < 16, ERR_MUST_ALLOCATE_AT_MOST_FIFTEEN_HIGHEST_BIDS_CHUNKS)
+    frame_dig -1
+    pushint 16 // 16
+    <
+    assert // Must allocate at most fifteen weights chunks
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:232-234
+    // const optinMBR: uint64 = isAlgoBid
+    //   ? Global.assetOptInMinBalance
+    //   : Global.assetOptInMinBalance * 2
+    bnz init_ternary_false@2
+    // smart_contracts/raffle/contract.algo.ts:233
+    // ? Global.assetOptInMinBalance
+    global AssetOptInMinBalance
+
+init_ternary_merge@3:
+    // smart_contracts/utils/constants.ts:11
+    // export const AccountMinimumBalance: uint64 = 100_000
+    pushint 100000 // 100000
+    // smart_contracts/raffle/contract.algo.ts:236
+    // const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightListLength * this.mbr().weights)
+    +
+    frame_dig -1
+    // smart_contracts/raffle/base.ts:8
+    // weights: 13_113_300,
+    intc 9 // 13113300
+    // smart_contracts/raffle/contract.algo.ts:236
+    // const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightListLength * this.mbr().weights)
+    *
+    +
+    frame_bury 0
+    // smart_contracts/raffle/contract.algo.ts:238-245
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: childAppMBR,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/raffle/contract.algo.ts:241
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/raffle/contract.algo.ts:238-245
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: childAppMBR,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz init_bool_false@6
+    frame_dig -2
+    gtxns Amount
+    frame_dig 0
+    ==
+    bz init_bool_false@6
+    intc_1 // 1
+
+init_bool_merge@7:
+    // smart_contracts/raffle/contract.algo.ts:238-245
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: childAppMBR,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    bytec 8 // "weights_box_count"
+    // smart_contracts/raffle/contract.algo.ts:247
+    // this.weightsBoxCount.value = weightListLength
+    frame_dig -1
+    app_global_put
+    // smart_contracts/raffle/contract.algo.ts:248
+    // for (let i: uint64 = 0; i < weightListLength; i += 1) {
+    intc_0 // 0
+    frame_bury 1
+
+init_while_top@8:
+    // smart_contracts/raffle/contract.algo.ts:248
+    // for (let i: uint64 = 0; i < weightListLength; i += 1) {
+    frame_dig 1
+    frame_dig -1
+    <
+    bz init_after_while@10
+    // smart_contracts/raffle/contract.algo.ts:249
+    // this.weights(i).value = new arc4.StaticArray<arc4.UintN64, 4096>()
+    pushint 32768 // 32768
+    bzero
+    frame_dig 1
+    dup
+    cover 2
+    itob
+    // smart_contracts/raffle/constants.ts:29
+    // export const RaffleBoxPrefixWeights = 'w'
+    bytec 10 // "w"
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:249
+    // this.weights(i).value = new arc4.StaticArray<arc4.UintN64, 4096>()
+    swap
+    box_put
+    // smart_contracts/raffle/contract.algo.ts:248
+    // for (let i: uint64 = 0; i < weightListLength; i += 1) {
+    intc_1 // 1
+    +
+    frame_bury 1
+    b init_while_top@8
+
+init_after_while@10:
+    retsub
+
+init_bool_false@6:
+    intc_0 // 0
+    b init_bool_merge@7
+
+init_ternary_false@2:
+    // smart_contracts/raffle/contract.algo.ts:234
+    // : Global.assetOptInMinBalance * 2
+    global AssetOptInMinBalance
+    pushint 2 // 2
+    *
+    b init_ternary_merge@3
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.refundMBR(iterationAmount: uint64) -> void:
+refundMBR:
+    // smart_contracts/raffle/contract.algo.ts:253
+    // refundMBR(iterationAmount: uint64): void {
+    proto 1 0
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:254
+    // const totalCap: uint64 = this.entryCount.value - 1
+    intc_1 // 1
+    -
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:256
+    // assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    global ZeroAddress
+    !=
+    assert // Winner not found
+    // smart_contracts/raffle/constants.ts:25
+    // export const RaffleGlobalStateKeyRefundMBRCursor = 'refund_mbr_cursor'
+    intc_0 // 0
+    bytec 16 // "refund_mbr_cursor"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:258
+    // assert(totalCap !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+    dup2
+    !=
+    assert // All refunds have been completed
+    // smart_contracts/raffle/contract.algo.ts:261
+    // const remainder: uint64 = totalCap - this.refundMBRCursor.value
+    swap
+    dig 1
+    -
+    // smart_contracts/raffle/contract.algo.ts:262
+    // iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
+    dup
+    frame_dig -1
+    >
+    frame_dig -1
+    swap
+    select
+    dup
+    frame_bury -1
+    // smart_contracts/raffle/contract.algo.ts:267
+    // const opUpIterationAmount: uint64 = iterationAmount * 100
+    pushint 100 // 100
+    *
+    // smart_contracts/raffle/contract.algo.ts:268
+    // ensureBudget(opUpIterationAmount)
+    intc_0 // 0
+    callsub ensure_budget
+
+refundMBR_while_top@1:
+    // smart_contracts/raffle/contract.algo.ts:270
+    // for (let i = startingIndex; i < iterationAmount; i += 1) {
+    frame_dig 0
+    frame_dig -1
+    <
+    bz refundMBR_after_while@4
+    // smart_contracts/raffle/contract.algo.ts:271
+    // const entry = this.entries(i).value
+    frame_dig 0
+    dup
+    itob
+    // smart_contracts/raffle/constants.ts:28
+    // export const RaffleBoxPrefixEntries = 'e'
+    bytec 18 // "e"
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:271
+    // const entry = this.entries(i).value
+    dup
+    box_get
+    assert // Box must have value
+    // smart_contracts/raffle/contract.algo.ts:272
+    // this.entries(i).delete()
+    swap
+    box_del
+    pop
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    dig 1
+    concat
+    // smart_contracts/raffle/contract.algo.ts:273
+    // this.entriesByAddress(entry).delete()
+    box_del
+    pop
+    // smart_contracts/raffle/contract.algo.ts:274-279
+    // itxn
+    //   .payment({
+    //     amount: entryTotalMBR,
+    //     receiver: entry,
+    //   })
+    //   .submit()
+    itxn_begin
+    itxn_field Receiver
+    // smart_contracts/raffle/contract.algo.ts:265
+    // const entryTotalMBR: uint64 = costs.entries + costs.entriesByAddress
+    intc 5 // 37800
+    itxn_field Amount
+    // smart_contracts/raffle/contract.algo.ts:274-278
+    // itxn
+    //   .payment({
+    //     amount: entryTotalMBR,
+    //     receiver: entry,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/raffle/contract.algo.ts:274-279
+    // itxn
+    //   .payment({
+    //     amount: entryTotalMBR,
+    //     receiver: entry,
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/raffle/contract.algo.ts:270
+    // for (let i = startingIndex; i < iterationAmount; i += 1) {
+    intc_1 // 1
+    +
+    frame_bury 0
+    b refundMBR_while_top@1
+
+refundMBR_after_while@4:
+    // smart_contracts/raffle/constants.ts:25
+    // export const RaffleGlobalStateKeyRefundMBRCursor = 'refund_mbr_cursor'
+    intc_0 // 0
+    bytec 16 // "refund_mbr_cursor"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:282
+    // this.refundMBRCursor.value += iterationAmount
+    frame_dig -1
+    +
+    // smart_contracts/raffle/constants.ts:25
+    // export const RaffleGlobalStateKeyRefundMBRCursor = 'refund_mbr_cursor'
+    bytec 16 // "refund_mbr_cursor"
+    // smart_contracts/raffle/contract.algo.ts:282
+    // this.refundMBRCursor.value += iterationAmount
+    swap
+    app_global_put
+    retsub
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.clearWeightsBoxes() -> uint64:
+clearWeightsBoxes:
+    // smart_contracts/raffle/contract.algo.ts:285
+    // clearWeightsBoxes(): uint64 {
+    proto 0 1
+    // smart_contracts/raffle/constants.ts:15
+    // export const RaffleGlobalStateKeyPrizeClaimed = 'prize_claimed'
+    intc_0 // 0
+    bytec 14 // "prize_claimed"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:286
+    // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
+    assert // Prize has not been claimed
+    // smart_contracts/raffle/contract.algo.ts:288
+    // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    intc_0 // 0
+
+clearWeightsBoxes_while_top@1:
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    intc_0 // 0
+    bytec 8 // "weights_box_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:288
+    // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    frame_dig 0
+    >
+    bz clearWeightsBoxes_after_while@3
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    intc_0 // 0
+    bytec 8 // "weights_box_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:289
+    // const ri: uint64 = (this.weightsBoxCount.value - 1) - i
+    intc_1 // 1
+    -
+    frame_dig 0
+    dup
+    cover 2
+    -
+    // smart_contracts/raffle/contract.algo.ts:290
+    // this.weights(ri).delete()
+    itob
+    // smart_contracts/raffle/constants.ts:29
+    // export const RaffleBoxPrefixWeights = 'w'
+    bytec 10 // "w"
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:290
+    // this.weights(ri).delete()
+    box_del
+    pop
+    // smart_contracts/raffle/contract.algo.ts:288
+    // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    intc_1 // 1
+    +
+    frame_bury 0
+    b clearWeightsBoxes_while_top@1
+
+clearWeightsBoxes_after_while@3:
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    intc_0 // 0
+    bytec 8 // "weights_box_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/base.ts:8
+    // weights: 13_113_300,
+    intc 9 // 13113300
+    // smart_contracts/raffle/contract.algo.ts:293
+    // const returnAmount: uint64 = this.weightsBoxCount.value * this.mbr().weights
+    *
+    // smart_contracts/raffle/contract.algo.ts:295-301
+    // itxn
+    //   .payment({
+    //     receiver: Global.creatorAddress,
+    //     amount: returnAmount,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/raffle/contract.algo.ts:297
+    // receiver: Global.creatorAddress,
+    global CreatorAddress
+    dig 1
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/raffle/contract.algo.ts:295-300
+    // itxn
+    //   .payment({
+    //     receiver: Global.creatorAddress,
+    //     amount: returnAmount,
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/raffle/contract.algo.ts:295-301
+    // itxn
+    //   .payment({
+    //     receiver: Global.creatorAddress,
+    //     amount: returnAmount,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    bytec 8 // "weights_box_count"
+    // smart_contracts/raffle/contract.algo.ts:303
+    // this.weightsBoxCount.value = 0
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/raffle/contract.algo.ts:304
+    // return returnAmount
+    swap
+    retsub
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.deleteApplication() -> void:
+deleteApplication:
+    // smart_contracts/raffle/contract.algo.ts:309
+    // assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
+    txn Sender
+    global CreatorAddress
+    ==
+    assert // Only the creator of this app can call this method
+    // smart_contracts/raffle/constants.ts:15
+    // export const RaffleGlobalStateKeyPrizeClaimed = 'prize_claimed'
+    intc_0 // 0
+    bytec 14 // "prize_claimed"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:310
+    // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
+    assert // Prize has not been claimed
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:311
+    // assert(this.entryCount.value - 1 !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+    intc_1 // 1
+    -
+    // smart_contracts/raffle/constants.ts:25
+    // export const RaffleGlobalStateKeyRefundMBRCursor = 'refund_mbr_cursor'
+    intc_0 // 0
+    bytec 16 // "refund_mbr_cursor"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:311
+    // assert(this.entryCount.value - 1 !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+    !=
+    assert // All refunds have been completed
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    intc_0 // 0
+    bytec 8 // "weights_box_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:312
+    // assert(this.weightsBoxCount.value === 0, ERR_STILL_HAS_WEIGHTS_BOXES)
+    !
+    assert // Still has weights boxes
+    retsub
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.enter(payment: uint64, args: bytes) -> void:
+enter:
+    // smart_contracts/raffle/contract.algo.ts:317
+    // enter(payment: gtxn.PaymentTxn, args: GateArgs): void {
+    proto 2 0
+    // smart_contracts/raffle/contract.algo.ts:318
+    // assert(this.isLive(), ERR_NOT_LIVE)
+    callsub isLive
+    assert // Raffle is not live
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:319
+    // assert(this.ticketAsset.value.id === 0, ERR_TICKET_ASSET_NOT_ALGO)
+    !
+    assert // ticket asset is not algo
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:320
+    // assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:17
+    // export const RaffleGlobalStateKeyGateID = 'gate_id'
+    intc_0 // 0
+    bytec 15 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:320
+    // assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    frame_dig -1
+    callsub gateCheck
+    assert // Gate check failed
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:321
+    // assert(!this.entriesByAddress(Txn.sender).exists, ERR_ALREADY_ENTERED)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:321
+    // assert(!this.entriesByAddress(Txn.sender).exists, ERR_ALREADY_ENTERED)
+    box_len
+    bury 1
+    !
+    assert // You have already entered the raffle
+    // smart_contracts/raffle/contract.algo.ts:323
+    // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
+    frame_dig -2
+    gtxns Receiver
+    dup
+    global CurrentApplicationAddress
+    ==
+    assert // Invalid payment receiver
+    // smart_contracts/raffle/contract.algo.ts:331
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/raffle/contract.algo.ts:328-338
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       greaterThanEq: (this.minTickets.value + mbr),
+    //       lessThanEq: (this.maxTickets.value + mbr),
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz enter_bool_false@3
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/raffle/constants.ts:8
+    // export const RaffleGlobalStateKeyMaxTickets = 'max_tickets'
+    intc_0 // 0
+    bytec 13 // "max_tickets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:326
+    // const mbr: uint64 = costs.entries + costs.entriesByAddress
+    intc 5 // 37800
+    // smart_contracts/raffle/contract.algo.ts:334
+    // lessThanEq: (this.maxTickets.value + mbr),
+    +
+    // smart_contracts/raffle/contract.algo.ts:328-338
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       greaterThanEq: (this.minTickets.value + mbr),
+    //       lessThanEq: (this.maxTickets.value + mbr),
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    <=
+    bz enter_bool_false@3
+    intc_1 // 1
+
+enter_bool_merge@4:
+    // smart_contracts/raffle/contract.algo.ts:328-338
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       greaterThanEq: (this.minTickets.value + mbr),
+    //       lessThanEq: (this.maxTickets.value + mbr),
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:341
+    // this.entries(loc).value = Txn.sender
+    txn Sender
+    dig 1
+    itob
+    // smart_contracts/raffle/constants.ts:28
+    // export const RaffleBoxPrefixEntries = 'e'
+    bytec 18 // "e"
+    dig 1
+    concat
+    // smart_contracts/raffle/contract.algo.ts:341
+    // this.entries(loc).value = Txn.sender
+    uncover 2
+    box_put
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:342
+    // this.entriesByAddress(Txn.sender).value = new UintN64(this.entryCount.value)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:342
+    // this.entriesByAddress(Txn.sender).value = new UintN64(this.entryCount.value)
+    swap
+    box_put
+    // smart_contracts/raffle/contract.algo.ts:344
+    // const amount = new UintN64(payment.amount - mbr)
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/raffle/contract.algo.ts:326
+    // const mbr: uint64 = costs.entries + costs.entriesByAddress
+    intc 5 // 37800
+    // smart_contracts/raffle/contract.algo.ts:344
+    // const amount = new UintN64(payment.amount - mbr)
+    -
+    itob
+    // smart_contracts/raffle/contract.algo.ts:346
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    dig 1
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:346
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    /
+    dup
+    itob
+    // smart_contracts/raffle/constants.ts:29
+    // export const RaffleBoxPrefixWeights = 'w'
+    bytec 10 // "w"
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:346
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    dup
+    box_get
+    assert // Box must have value
+    uncover 4
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:346
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    %
+    dup
+    intc_2 // 4096
+    <
+    assert // Index access is out of bounds
+    intc_3 // 8
+    *
+    dig 4
+    replace3
+    box_put
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    intc_0 // 0
+    bytec 5 // "w_totals"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:347
+    // const newWeight = new UintN64(this.weightTotals.value[loc / ChunkSize].native + amount.native)
+    dig 1
+    intc_3 // 8
+    *
+    dup2
+    extract_uint64
+    uncover 4
+    btoi
+    swap
+    dig 1
+    +
+    itob
+    // smart_contracts/raffle/contract.algo.ts:348
+    // this.weightTotals.value[loc / ChunkSize] = newWeight
+    uncover 4
+    pushint 15 // 15
+    <
+    assert // Index access is out of bounds
+    uncover 3
+    uncover 3
+    uncover 2
+    replace3
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    bytec 5 // "w_totals"
+    // smart_contracts/raffle/contract.algo.ts:348
+    // this.weightTotals.value[loc / ChunkSize] = newWeight
+    swap
+    app_global_put
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:350
+    // this.entryCount.value += 1
+    intc_1 // 1
+    +
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    bytec_2 // "entry_count"
+    // smart_contracts/raffle/contract.algo.ts:350
+    // this.entryCount.value += 1
+    swap
+    app_global_put
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:351
+    // this.ticketCount.value += amount.native
+    +
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    bytec_0 // "ticket_count"
+    // smart_contracts/raffle/contract.algo.ts:351
+    // this.ticketCount.value += amount.native
+    swap
+    app_global_put
+    retsub
+
+enter_bool_false@3:
+    intc_0 // 0
+    b enter_bool_merge@4
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.enterAsa(payment: uint64, assetXfer: uint64, args: bytes) -> void:
+enterAsa:
+    // smart_contracts/raffle/contract.algo.ts:354
+    // enterAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
+    proto 3 0
+    // smart_contracts/raffle/contract.algo.ts:355
+    // assert(this.isLive(), ERR_NOT_LIVE)
+    callsub isLive
+    assert // Raffle is not live
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:356
+    // assert(this.ticketAsset.value.id !== 0, ERR_TICKET_ASSET_ALGO)
+    assert // ticket asset is algo
+    // smart_contracts/raffle/contract.algo.ts:357
+    // const arc4Sender = new Address(Txn.sender)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:17
+    // export const RaffleGlobalStateKeyGateID = 'gate_id'
+    intc_0 // 0
+    bytec 15 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:358
+    // assert(gateCheck(this.akitaDAO.value, arc4Sender, this.gateID.value, args), ERR_FAILED_GATE)
+    swap
+    cover 2
+    frame_dig -1
+    callsub gateCheck
+    assert // Gate check failed
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:359
+    // assert(!this.entriesByAddress(Txn.sender).exists, ERR_ALREADY_ENTERED)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:359
+    // assert(!this.entriesByAddress(Txn.sender).exists, ERR_ALREADY_ENTERED)
+    box_len
+    bury 1
+    !
+    assert // You have already entered the raffle
+    // smart_contracts/raffle/contract.algo.ts:364-371
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: entryTotalMBR
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -3
+    gtxns Receiver
+    // smart_contracts/raffle/contract.algo.ts:367
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/raffle/contract.algo.ts:364-371
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: entryTotalMBR
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz enterAsa_bool_false@3
+    frame_dig -3
+    gtxns Amount
+    // smart_contracts/raffle/contract.algo.ts:362
+    // const entryTotalMBR: uint64 = costs.entries + costs.entriesByAddress
+    intc 5 // 37800
+    // smart_contracts/raffle/contract.algo.ts:364-371
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: entryTotalMBR
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz enterAsa_bool_false@3
+    intc_1 // 1
+
+enterAsa_bool_merge@4:
+    // smart_contracts/raffle/contract.algo.ts:364-371
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: entryTotalMBR
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/raffle/contract.algo.ts:373-384
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       greaterThanEq: this.minTickets.value,
+    //       lessThanEq: this.maxTickets.value
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    frame_dig -2
+    gtxns AssetReceiver
+    // smart_contracts/raffle/contract.algo.ts:376
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/raffle/contract.algo.ts:373-384
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       greaterThanEq: this.minTickets.value,
+    //       lessThanEq: this.maxTickets.value
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    bz enterAsa_bool_false@8
+    frame_dig -2
+    gtxns XferAsset
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:373-384
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       greaterThanEq: this.minTickets.value,
+    //       lessThanEq: this.maxTickets.value
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    bz enterAsa_bool_false@8
+    frame_dig -2
+    gtxns AssetAmount
+    // smart_contracts/raffle/constants.ts:8
+    // export const RaffleGlobalStateKeyMaxTickets = 'max_tickets'
+    intc_0 // 0
+    bytec 13 // "max_tickets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:373-384
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       greaterThanEq: this.minTickets.value,
+    //       lessThanEq: this.maxTickets.value
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    <=
+    bz enterAsa_bool_false@8
+    intc_1 // 1
+
+enterAsa_bool_merge@9:
+    // smart_contracts/raffle/contract.algo.ts:373-384
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       greaterThanEq: this.minTickets.value,
+    //       lessThanEq: this.maxTickets.value
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    assert // Invalid transfer
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:387
+    // this.entries(loc).value = Txn.sender
+    txn Sender
+    dig 1
+    itob
+    // smart_contracts/raffle/constants.ts:28
+    // export const RaffleBoxPrefixEntries = 'e'
+    bytec 18 // "e"
+    dig 1
+    concat
+    // smart_contracts/raffle/contract.algo.ts:387
+    // this.entries(loc).value = Txn.sender
+    uncover 2
+    box_put
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:388
+    // this.entriesByAddress(Txn.sender).value = new UintN64(this.entryCount.value)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:388
+    // this.entriesByAddress(Txn.sender).value = new UintN64(this.entryCount.value)
+    swap
+    box_put
+    // smart_contracts/raffle/contract.algo.ts:390
+    // const amount = new UintN64(assetXfer.assetAmount)
+    frame_dig -2
+    gtxns AssetAmount
+    itob
+    // smart_contracts/raffle/contract.algo.ts:391
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    dig 1
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:391
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    /
+    dup
+    itob
+    // smart_contracts/raffle/constants.ts:29
+    // export const RaffleBoxPrefixWeights = 'w'
+    bytec 10 // "w"
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:391
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    dup
+    box_get
+    assert // Box must have value
+    uncover 4
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:391
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
+    %
+    dup
+    intc_2 // 4096
+    <
+    assert // Index access is out of bounds
+    intc_3 // 8
+    *
+    dig 4
+    replace3
+    box_put
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    intc_0 // 0
+    bytec 5 // "w_totals"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:392
+    // const newWeight = new UintN64(this.weightTotals.value[loc / ChunkSize].native + amount.native)
+    dig 1
+    intc_3 // 8
+    *
+    dup2
+    extract_uint64
+    uncover 4
+    btoi
+    swap
+    dig 1
+    +
+    itob
+    // smart_contracts/raffle/contract.algo.ts:393
+    // this.weightTotals.value[loc / ChunkSize] = newWeight
+    uncover 4
+    pushint 15 // 15
+    <
+    assert // Index access is out of bounds
+    uncover 3
+    uncover 3
+    uncover 2
+    replace3
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    bytec 5 // "w_totals"
+    // smart_contracts/raffle/contract.algo.ts:393
+    // this.weightTotals.value[loc / ChunkSize] = newWeight
+    swap
+    app_global_put
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:395
+    // this.entryCount.value += 1
+    intc_1 // 1
+    +
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    bytec_2 // "entry_count"
+    // smart_contracts/raffle/contract.algo.ts:395
+    // this.entryCount.value += 1
+    swap
+    app_global_put
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:396
+    // this.ticketCount.value += amount.native
+    +
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    bytec_0 // "ticket_count"
+    // smart_contracts/raffle/contract.algo.ts:396
+    // this.ticketCount.value += amount.native
+    swap
+    app_global_put
+    retsub
+
+enterAsa_bool_false@8:
+    intc_0 // 0
+    b enterAsa_bool_merge@9
+
+enterAsa_bool_false@3:
+    intc_0 // 0
+    b enterAsa_bool_merge@4
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.add(payment: uint64, args: bytes) -> void:
+add:
+    // smart_contracts/raffle/contract.algo.ts:399
+    // add(payment: gtxn.PaymentTxn, args: GateArgs): void {
+    proto 2 0
+    // smart_contracts/raffle/contract.algo.ts:400
+    // assert(this.isLive(), ERR_NOT_LIVE)
+    callsub isLive
+    assert // Raffle is not live
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:401
+    // assert(this.ticketAsset.value.id === 0, ERR_TICKET_ASSET_NOT_ALGO)
+    !
+    assert // ticket asset is not algo
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:402
+    // assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:17
+    // export const RaffleGlobalStateKeyGateID = 'gate_id'
+    intc_0 // 0
+    bytec 15 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:402
+    // assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    frame_dig -1
+    callsub gateCheck
+    assert // Gate check failed
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:403
+    // assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:403
+    // assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
+    box_len
+    bury 1
+    assert // Entry does not exist
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:405
+    // const loc = this.entriesByAddress(Txn.sender).value.native
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:405
+    // const loc = this.entriesByAddress(Txn.sender).value.native
+    box_get
+    assert // Box must have value
+    btoi
+    // smart_contracts/raffle/contract.algo.ts:406
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    dup
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:406
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    %
+    dup
+    uncover 2
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:406
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    /
+    dup
+    cover 2
+    itob
+    // smart_contracts/raffle/constants.ts:29
+    // export const RaffleBoxPrefixWeights = 'w'
+    bytec 10 // "w"
+    swap
+    concat
+    dup
+    cover 2
+    // smart_contracts/raffle/contract.algo.ts:406
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    box_get
+    swap
+    cover 2
+    assert // Box must have value
+    intc_3 // 8
+    *
+    // smart_contracts/raffle/contract.algo.ts:408-417
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/raffle/contract.algo.ts:411
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/raffle/contract.algo.ts:408-417
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz add_bool_false@3
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/raffle/constants.ts:8
+    // export const RaffleGlobalStateKeyMaxTickets = 'max_tickets'
+    intc_0 // 0
+    bytec 13 // "max_tickets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:413
+    // lessThanEq: (this.maxTickets.value - amount.native)
+    frame_dig 3
+    frame_dig 4
+    extract_uint64
+    -
+    // smart_contracts/raffle/contract.algo.ts:408-417
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    <=
+    bz add_bool_false@3
+    intc_1 // 1
+
+add_bool_merge@4:
+    // smart_contracts/raffle/contract.algo.ts:408-417
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/raffle/contract.algo.ts:420
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize].native + payment.amount
+    frame_dig 2
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    frame_dig 4
+    dup
+    cover 3
+    extract_uint64
+    frame_dig -2
+    gtxns Amount
+    swap
+    dig 1
+    +
+    // smart_contracts/raffle/contract.algo.ts:419-421
+    // const newWeights = new UintN64(
+    //   this.weights(loc / ChunkSize).value[loc % ChunkSize].native + payment.amount
+    // )
+    itob
+    // smart_contracts/raffle/contract.algo.ts:422
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = newWeights
+    frame_dig 0
+    intc_2 // 4096
+    <
+    assert // Index access is out of bounds
+    uncover 2
+    dig 3
+    uncover 2
+    replace3
+    uncover 3
+    swap
+    box_put
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    intc_0 // 0
+    bytec 5 // "w_totals"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:423
+    // const boxAmount = new UintN64(this.weightTotals.value[loc / ChunkSize].native + payment.amount)
+    frame_dig 1
+    dup
+    cover 2
+    intc_3 // 8
+    *
+    dup2
+    extract_uint64
+    uncover 4
+    +
+    itob
+    // smart_contracts/raffle/contract.algo.ts:424
+    // this.weightTotals.value[loc / ChunkSize] = boxAmount
+    uncover 3
+    pushint 15 // 15
+    <
+    assert // Index access is out of bounds
+    replace3
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    bytec 5 // "w_totals"
+    // smart_contracts/raffle/contract.algo.ts:424
+    // this.weightTotals.value[loc / ChunkSize] = boxAmount
+    swap
+    app_global_put
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:425
+    // this.ticketCount.value += amount.native
+    frame_dig 3
+    uncover 2
+    extract_uint64
+    +
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    bytec_0 // "ticket_count"
+    // smart_contracts/raffle/contract.algo.ts:425
+    // this.ticketCount.value += amount.native
+    swap
+    app_global_put
+    retsub
+
+add_bool_false@3:
+    intc_0 // 0
+    b add_bool_merge@4
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.addAsa(assetXfer: uint64, args: bytes) -> void:
+addAsa:
+    // smart_contracts/raffle/contract.algo.ts:428
+    // addAsa(assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
+    proto 2 0
+    // smart_contracts/raffle/contract.algo.ts:429
+    // assert(this.isLive(), ERR_NOT_LIVE)
+    callsub isLive
+    assert // Raffle is not live
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:430
+    // assert(this.ticketAsset.value.id !== 0, ERR_TICKET_ASSET_ALGO)
+    assert // ticket asset is algo
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:431
+    // assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:17
+    // export const RaffleGlobalStateKeyGateID = 'gate_id'
+    intc_0 // 0
+    bytec 15 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:431
+    // assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    frame_dig -1
+    callsub gateCheck
+    assert // Gate check failed
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:432
+    // assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:432
+    // assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
+    box_len
+    bury 1
+    assert // Entry does not exist
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    bytec 6 // "a"
+    // smart_contracts/raffle/contract.algo.ts:434
+    // const loc = this.entriesByAddress(Txn.sender).value.native
+    txn Sender
+    // smart_contracts/raffle/constants.ts:30
+    // export const RaffleBoxPrefixEntriesByAddress = 'a'
+    concat
+    // smart_contracts/raffle/contract.algo.ts:434
+    // const loc = this.entriesByAddress(Txn.sender).value.native
+    box_get
+    assert // Box must have value
+    btoi
+    // smart_contracts/raffle/contract.algo.ts:435
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    dup
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:435
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    %
+    dup
+    uncover 2
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:435
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    /
+    dup
+    cover 2
+    itob
+    // smart_contracts/raffle/constants.ts:29
+    // export const RaffleBoxPrefixWeights = 'w'
+    bytec 10 // "w"
+    swap
+    concat
+    dup
+    cover 2
+    // smart_contracts/raffle/contract.algo.ts:435
+    // const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
+    box_get
+    swap
+    cover 2
+    assert // Box must have value
+    intc_3 // 8
+    *
+    // smart_contracts/raffle/contract.algo.ts:437-447
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    frame_dig -2
+    gtxns AssetReceiver
+    // smart_contracts/raffle/contract.algo.ts:440
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/raffle/contract.algo.ts:437-447
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    bz addAsa_bool_false@4
+    frame_dig -2
+    gtxns XferAsset
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:437-447
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    bz addAsa_bool_false@4
+    frame_dig -2
+    gtxns AssetAmount
+    // smart_contracts/raffle/constants.ts:8
+    // export const RaffleGlobalStateKeyMaxTickets = 'max_tickets'
+    intc_0 // 0
+    bytec 13 // "max_tickets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:443
+    // lessThanEq: (this.maxTickets.value - amount.native)
+    frame_dig 3
+    frame_dig 4
+    extract_uint64
+    -
+    // smart_contracts/raffle/contract.algo.ts:437-447
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    <=
+    bz addAsa_bool_false@4
+    intc_1 // 1
+
+addAsa_bool_merge@5:
+    // smart_contracts/raffle/contract.algo.ts:437-447
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: this.ticketAsset.value,
+    //     assetAmount: {
+    //       lessThanEq: (this.maxTickets.value - amount.native)
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    assert // Invalid transfer
+    // smart_contracts/raffle/contract.algo.ts:450
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize].native + assetXfer.assetAmount
+    frame_dig 2
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    frame_dig 4
+    dup
+    cover 3
+    extract_uint64
+    frame_dig -2
+    gtxns AssetAmount
+    swap
+    dig 1
+    +
+    // smart_contracts/raffle/contract.algo.ts:449-451
+    // const newWeights = new UintN64(
+    //   this.weights(loc / ChunkSize).value[loc % ChunkSize].native + assetXfer.assetAmount
+    // )
+    itob
+    // smart_contracts/raffle/contract.algo.ts:452
+    // this.weights(loc / ChunkSize).value[loc % ChunkSize] = newWeights
+    frame_dig 0
+    intc_2 // 4096
+    <
+    assert // Index access is out of bounds
+    uncover 2
+    dig 3
+    uncover 2
+    replace3
+    uncover 3
+    swap
+    box_put
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    intc_0 // 0
+    bytec 5 // "w_totals"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:453
+    // const boxAmount = new UintN64(this.weightTotals.value[loc / ChunkSize].native + assetXfer.assetAmount)
+    frame_dig 1
+    dup
+    cover 2
+    intc_3 // 8
+    *
+    dup2
+    extract_uint64
+    uncover 4
+    +
+    itob
+    // smart_contracts/raffle/contract.algo.ts:454
+    // this.weightTotals.value[loc / ChunkSize] = boxAmount
+    uncover 3
+    pushint 15 // 15
+    <
+    assert // Index access is out of bounds
+    replace3
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    bytec 5 // "w_totals"
+    // smart_contracts/raffle/contract.algo.ts:454
+    // this.weightTotals.value[loc / ChunkSize] = boxAmount
+    swap
+    app_global_put
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:455
+    // this.ticketCount.value += amount.native
+    frame_dig 3
+    uncover 2
+    extract_uint64
+    +
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    bytec_0 // "ticket_count"
+    // smart_contracts/raffle/contract.algo.ts:455
+    // this.ticketCount.value += amount.native
+    swap
+    app_global_put
+    retsub
+
+addAsa_bool_false@4:
+    intc_0 // 0
+    b addAsa_bool_merge@5
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.raffle() -> void:
+raffle:
+    // smart_contracts/raffle/contract.algo.ts:458
+    // raffle(): void {
+    proto 0 0
+    intc_0 // 0
+    pushbytes ""
+    dupn 9
+    // smart_contracts/raffle/constants.ts:5
+    // export const RaffleGlobalStateKeyEndTimestamp = 'end_timestamp'
+    intc_0 // 0
+    bytec 17 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:459
+    // const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
+    intc_1 // 1
+    +
+    // smart_contracts/raffle/constants.ts:20
+    // export const RaffleGlobalStateKeyVRFFailureCount = 'vrf_failure_count'
+    intc_0 // 0
+    bytec 19 // "vrf_failure_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:459
+    // const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
+    pushint 4 // 4
+    *
+    +
+    // smart_contracts/raffle/contract.algo.ts:460
+    // assert(Global.round >= roundToUse + 8, ERR_NOT_ENOUGH_TIME)
+    global Round
+    dig 1
+    intc_3 // 8
+    +
+    >=
+    assert // Not enough time has passed since the raffle ended
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    intc_0 // 0
+    bytec 7 // "winning_ticket"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:461
+    // assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
+    !
+    assert // Winning ticket has already been drawn
+    // smart_contracts/raffle/contract.algo.ts:463-470
+    // const seed = abiCall(
+    //   RandomnessBeacon.prototype.get,
+    //   {
+    //     appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
+    //     args: [roundToUse, this.salt.value],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:9
+    // export const AkitaDAOGlobalStateKeysOtherAppList = 'other_al'
+    bytec 24 // "other_al"
+    // smart_contracts/utils/functions.ts:35
+    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:36
+    // return decodeArc4<OtherAppList>(otherAppListBytes)
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/raffle/contract.algo.ts:467
+    // args: [roundToUse, this.salt.value],
+    swap
+    itob
+    // smart_contracts/raffle/constants.ts:26
+    // export const RaffleGlobalStateKeySalt = 'salt'
+    intc_0 // 0
+    pushbytes "salt"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:463-470
+    // const seed = abiCall(
+    //   RandomnessBeacon.prototype.get,
+    //   {
+    //     appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
+    //     args: [roundToUse, this.salt.value],
+    //     fee,
+    //   }
+    // ).returnValue
+    pushbytes 0x189392c5 // method "get(uint64,byte[])byte[]"
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/raffle/contract.algo.ts:463-470
+    // const seed = abiCall(
+    //   RandomnessBeacon.prototype.get,
+    //   {
+    //     appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
+    //     args: [roundToUse, this.salt.value],
+    //     fee,
+    //   }
+    // ).returnValue
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec 9 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    extract 6 0
+    dup
+    // smart_contracts/raffle/contract.algo.ts:472
+    // if (seed.length === 0) {
+    len
+    dup
+    bnz raffle_after_if_else@3
+    // smart_contracts/raffle/constants.ts:20
+    // export const RaffleGlobalStateKeyVRFFailureCount = 'vrf_failure_count'
+    intc_0 // 0
+    bytec 19 // "vrf_failure_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:473
+    // this.vrfFailureCount.value += 1
+    intc_1 // 1
+    +
+    // smart_contracts/raffle/constants.ts:20
+    // export const RaffleGlobalStateKeyVRFFailureCount = 'vrf_failure_count'
+    bytec 19 // "vrf_failure_count"
+    // smart_contracts/raffle/contract.algo.ts:473
+    // this.vrfFailureCount.value += 1
+    swap
+    app_global_put
+    // smart_contracts/raffle/contract.algo.ts:474
+    // return
+    retsub
+
+raffle_after_if_else@3:
+    // smart_contracts/raffle/contract.algo.ts:477
+    // const rngState = pcg64Init(seed.slice(0, 16))
+    intc_0 // 0
+    frame_dig 12
+    dup
+    cover 2
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    pushint 16 // 16
+    dig 2
+    >=
+    pushint 16 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig 11
+    cover 2
+    substring3
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:16
+    // assert(seed.length === 16)
+    dup
+    len
+    pushint 16 // 16
+    ==
+    assert
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:19
+    // __pcg32Init(op.extractUint64(seed, 0), pcgFirstIncrement),
+    dup
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:92
+    // const state = __pcg32Step(0, incr)
+    intc_0 // 0
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:3
+    // export const pcgMultiplier = Uint64(6364136223846793005n)
+    intc 4 // 6364136223846793005
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    dup
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:5
+    // export const pcgFirstIncrement = Uint64(1442695040888963407n)
+    intc 6 // 1442695040888963407
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:93
+    // const [, addLow] = op.addw(state, initialState)
+    uncover 2
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:3
+    // export const pcgMultiplier = Uint64(6364136223846793005n)
+    intc 4 // 6364136223846793005
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:5
+    // export const pcgFirstIncrement = Uint64(1442695040888963407n)
+    intc 6 // 1442695040888963407
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    frame_bury 3
+    pop
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:20
+    // __pcg32Init(op.extractUint64(seed, 8), pcgSecondIncrement),
+    swap
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    swap
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:7
+    // export const pcgSecondIncrement = Uint64(1442695040888963409n)
+    intc 7 // 1442695040888963409
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:93
+    // const [, addLow] = op.addw(state, initialState)
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:3
+    // export const pcgMultiplier = Uint64(6364136223846793005n)
+    intc 4 // 6364136223846793005
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:7
+    // export const pcgSecondIncrement = Uint64(1442695040888963409n)
+    intc 7 // 1442695040888963409
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    frame_bury 2
+    pop
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    swap
+    dup
+    cover 2
+    frame_bury 9
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:481
+    // if (upperBound < MAX_UINT64) {
+    dup
+    // smart_contracts/utils/constants.ts:49
+    // export const MAX_UINT64: uint64 = Uint64('18446744073709551615')
+    intc 10 // 18446744073709551615
+    // smart_contracts/raffle/contract.algo.ts:481
+    // if (upperBound < MAX_UINT64) {
+    <
+    swap
+    frame_bury 10
+    bz raffle_after_if_else@5
+    // smart_contracts/raffle/contract.algo.ts:482
+    // upperBound = upperBound += 1
+    frame_dig 9
+    intc_1 // 1
+    +
+    frame_bury 10
+
+raffle_after_if_else@5:
+    frame_dig 10
+    dup
+    frame_bury 9
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:30
+    // const result = new DynamicArray<UintN64>()
+    pushbytes 0x0000
+    frame_bury 0
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:42
+    // if (upperBound !== 0) {
+    bz raffle_else_body@14
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:43
+    // assert(upperBound > 1)
+    frame_dig 9
+    dup
+    intc_1 // 1
+    >
+    assert
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:44
+    // assert(lowerBound < upperBound - 1)
+    intc_1 // 1
+    -
+    dup
+    frame_bury 1
+    // smart_contracts/raffle/contract.algo.ts:485
+    // const rngResult = pcg64Random(rngState, 1, upperBound, 1)
+    intc_1 // 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:44
+    // assert(lowerBound < upperBound - 1)
+    >
+    assert
+
+raffle_after_if_else@15:
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:8
+    // const [, addLow] = op.addw(~value, 1)
+    frame_dig 1
+    dup
+    ~
+    intc_1 // 1
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:53
+    // const threshold: uint64 = __uint64Twos(absoluteBound) % absoluteBound
+    swap
+    %
+    frame_bury 8
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    intc_0 // 0
+    frame_bury 5
+    frame_dig 2
+    frame_bury 7
+    frame_dig 3
+    frame_bury 6
+
+raffle_while_top@16:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    frame_dig 5
+    // smart_contracts/raffle/contract.algo.ts:485
+    // const rngResult = pcg64Random(rngState, 1, upperBound, 1)
+    intc_1 // 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    <
+    bz raffle_after_while@22
+
+raffle_while_top@18:
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    frame_dig 6
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:3
+    // export const pcgMultiplier = Uint64(6364136223846793005n)
+    intc 4 // 6364136223846793005
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:5
+    // export const pcgFirstIncrement = Uint64(1442695040888963407n)
+    intc 6 // 1442695040888963407
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    dup
+    cover 2
+    frame_bury 3
+    pop
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:10
+    // const newState2 = __pcg32Step(state[1], newState1 === 0 ? op.shl(pcgSecondIncrement, 1) : pcgSecondIncrement)
+    bnz raffle_ternary_false@26
+    pushint 2885390081777926818 // 2885390081777926818
+
+raffle_ternary_merge@27:
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    frame_dig 7
+    dup
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:3
+    // export const pcgMultiplier = Uint64(6364136223846793005n)
+    intc 4 // 6364136223846793005
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    uncover 2
+    addw
+    frame_bury 2
+    pop
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:12
+    // return [[newState1, newState2], op.shl(__pcg32Output(state[0]), 32) | __pcg32Output(state[1])]
+    frame_dig 6
+    callsub __pcg32Output
+    pushint 32 // 32
+    shl
+    swap
+    callsub __pcg32Output
+    |
+    dup
+    frame_bury 4
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:59
+    // if (candidate >= threshold) {
+    frame_dig 8
+    >=
+    bz raffle_after_if_else@20
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:60
+    // result.push(new UintN64((candidate % absoluteBound) + lowerBound))
+    frame_dig 0
+    extract 2 0
+    frame_dig 4
+    frame_dig 1
+    %
+    // smart_contracts/raffle/contract.algo.ts:485
+    // const rngResult = pcg64Random(rngState, 1, upperBound, 1)
+    intc_1 // 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:60
+    // result.push(new UintN64((candidate % absoluteBound) + lowerBound))
+    +
+    itob
+    concat
+    dup
+    len
+    intc_3 // 8
+    /
+    itob
+    extract 6 2
+    swap
+    concat
+    frame_bury 0
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    frame_dig 5
+    intc_1 // 1
+    +
+    frame_bury 5
+    frame_dig 2
+    frame_bury 7
+    frame_dig 3
+    frame_bury 6
+    b raffle_while_top@16
+
+raffle_after_if_else@20:
+    frame_dig 2
+    frame_bury 7
+    frame_dig 3
+    frame_bury 6
+    b raffle_while_top@18
+
+raffle_ternary_false@26:
+    // smart_contracts/utils/types/lib_pcg/consts.algo.ts:7
+    // export const pcgSecondIncrement = Uint64(1442695040888963409n)
+    intc 7 // 1442695040888963409
+    b raffle_ternary_merge@27
+
+raffle_after_while@22:
+    // smart_contracts/raffle/contract.algo.ts:486
+    // this.winningTicket.value = rngResult[1][0].native
+    frame_dig 0
+    pushint 2 // 2
+    extract_uint64
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    bytec 7 // "winning_ticket"
+    // smart_contracts/raffle/contract.algo.ts:486
+    // this.winningTicket.value = rngResult[1][0].native
+    swap
+    app_global_put
+    retsub
+
+raffle_else_body@14:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:50
+    // absoluteBound = op.btoi(Bytes(BigUint(2 ** 64) - BigUint(lowerBound)))
+    intc 10 // 18446744073709551615
+    frame_bury 1
+    b raffle_after_if_else@15
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.findWinner(iterationAmount: uint64) -> void:
+findWinner:
+    // smart_contracts/raffle/contract.algo.ts:489
+    // findWinner(iterationAmount: uint64): void {
+    proto 1 0
+    intc_0 // 0
+    pushbytes ""
+    dup
+    // smart_contracts/raffle/contract.algo.ts:490
+    // assert(Global.latestTimestamp < this.endTimestamp.value, ERR_RAFFLE_HAS_NOT_ENDED)
+    global LatestTimestamp
+    // smart_contracts/raffle/constants.ts:5
+    // export const RaffleGlobalStateKeyEndTimestamp = 'end_timestamp'
+    intc_0 // 0
+    bytec 17 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:490
+    // assert(Global.latestTimestamp < this.endTimestamp.value, ERR_RAFFLE_HAS_NOT_ENDED)
+    <
+    assert // Raffle has not ended
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    intc_0 // 0
+    bytec 7 // "winning_ticket"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:491
+    // assert(this.winningTicket.value !== 0, ERR_NO_WINNING_TICKET_YET)
+    assert // No winning ticket yet
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:492
+    // assert(this.winner.value === Global.zeroAddress, ERR_WINNER_ALREADY_FOUND)
+    global ZeroAddress
+    ==
+    assert // Winner has already been found
+    // smart_contracts/raffle/constants.ts:24
+    // export const RaffleGlobalStateKeyFindWinnersCursor = 'find_winner_cursors'
+    intc_0 // 0
+    bytec 22 // "find_winner_cursors"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:168
+    // let startingIndex = this.findWinnerCursors.value.index.native
+    dup
+    intc_0 // 0
+    extract_uint64
+    swap
+    // smart_contracts/raffle/contract.algo.ts:169
+    // let currentRangeStart = this.findWinnerCursors.value.amountIndex.native
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/raffle/contract.algo.ts:171
+    // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    intc_0 // 0
+
+findWinner_while_top@8:
+    // smart_contracts/raffle/constants.ts:22
+    // export const RaffleGlobalStateKeyWeightsBoxCount = 'weights_box_count'
+    intc_0 // 0
+    bytec 8 // "weights_box_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:171
+    // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    frame_dig 5
+    >
+    bz findWinner_after_inlined_smart_contracts/raffle/contract.algo.ts::Raffle.getWinnerWeightBoxInfo@13
+    // smart_contracts/raffle/constants.ts:23
+    // export const RaffleGlobalStateKeyWeightTotals = 'w_totals'
+    intc_0 // 0
+    bytec 5 // "w_totals"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:172
+    // const boxStake = this.weightTotals.value[i].native
+    frame_dig 5
+    intc_3 // 8
+    *
+    extract_uint64
+    dup
+    frame_bury 1
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    intc_0 // 0
+    bytec 7 // "winning_ticket"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:173
+    // if (this.winningTicket.value < currentRangeStart + boxStake) {
+    frame_dig 4
+    uncover 2
+    +
+    <
+    bnz findWinner_after_inlined_smart_contracts/raffle/contract.algo.ts::Raffle.getWinnerWeightBoxInfo@13
+    // smart_contracts/raffle/contract.algo.ts:177
+    // startingIndex += ChunkSize
+    frame_dig 3
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:177
+    // startingIndex += ChunkSize
+    +
+    frame_bury 3
+    // smart_contracts/raffle/contract.algo.ts:178
+    // currentRangeStart += boxStake + 1
+    frame_dig 1
+    intc_1 // 1
+    +
+    frame_dig 4
+    +
+    frame_bury 4
+    // smart_contracts/raffle/contract.algo.ts:171
+    // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    frame_dig 5
+    intc_1 // 1
+    +
+    frame_bury 5
+    b findWinner_while_top@8
+
+findWinner_after_inlined_smart_contracts/raffle/contract.algo.ts::Raffle.getWinnerWeightBoxInfo@13:
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:501
+    // const remainder: uint64 = this.entryCount.value - startingIndex
+    frame_dig 3
+    dup
+    cover 2
+    -
+    // smart_contracts/raffle/contract.algo.ts:502
+    // iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
+    dup
+    frame_dig -1
+    >
+    frame_dig -1
+    swap
+    select
+    frame_bury -1
+    // smart_contracts/raffle/constants.ts:35
+    // export const ChunkSize: uint64 = 4096
+    intc_2 // 4096
+    // smart_contracts/raffle/contract.algo.ts:504
+    // const weight = this.weights(startingIndex / ChunkSize).value.copy()
+    /
+    itob
+    // smart_contracts/raffle/constants.ts:29
+    // export const RaffleBoxPrefixWeights = 'w'
+    bytec 10 // "w"
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:504
+    // const weight = this.weights(startingIndex / ChunkSize).value.copy()
+    box_get
+    swap
+    frame_bury 0
+    assert // Box must have value
+    // smart_contracts/raffle/contract.algo.ts:506
+    // const opUpIterationAmount: uint64 = iterationAmount * 40
+    frame_dig -1
+    pushint 40 // 40
+    *
+    // smart_contracts/raffle/contract.algo.ts:507
+    // ensureBudget(opUpIterationAmount)
+    intc_0 // 0
+    callsub ensure_budget
+    // smart_contracts/raffle/contract.algo.ts:509
+    // for (let i: uint64 = 0; i < iterationAmount; i += 1) {
+    intc_0 // 0
+    frame_bury 5
+
+findWinner_while_top@1:
+    // smart_contracts/raffle/contract.algo.ts:509
+    // for (let i: uint64 = 0; i < iterationAmount; i += 1) {
+    frame_dig 5
+    frame_dig -1
+    <
+    bz findWinner_after_while@6
+    // smart_contracts/raffle/contract.algo.ts:510
+    // currentRangeEnd = currentRangeStart + weight[i].native
+    frame_dig 5
+    intc_3 // 8
+    *
+    frame_dig 0
+    swap
+    extract_uint64
+    frame_dig 4
+    dup
+    uncover 2
+    +
+    frame_bury 2
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    intc_0 // 0
+    bytec 7 // "winning_ticket"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:511
+    // if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
+    <=
+    bz findWinner_after_if_else@5
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    intc_0 // 0
+    bytec 7 // "winning_ticket"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:511
+    // if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
+    frame_dig 2
+    <=
+    bz findWinner_after_if_else@5
+    // smart_contracts/raffle/contract.algo.ts:512
+    // this.winner.value = this.entries(startingIndex + i + 1).value
+    frame_dig 3
+    frame_dig 5
+    +
+    intc_1 // 1
+    +
+    itob
+    // smart_contracts/raffle/constants.ts:28
+    // export const RaffleBoxPrefixEntries = 'e'
+    bytec 18 // "e"
+    swap
+    concat
+    // smart_contracts/raffle/contract.algo.ts:512
+    // this.winner.value = this.entries(startingIndex + i + 1).value
+    box_get
+    assert // Box must have value
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    bytec 4 // "winner"
+    // smart_contracts/raffle/contract.algo.ts:512
+    // this.winner.value = this.entries(startingIndex + i + 1).value
+    swap
+    app_global_put
+
+findWinner_after_if_else@5:
+    // smart_contracts/raffle/contract.algo.ts:514
+    // currentRangeStart = currentRangeEnd + 1
+    frame_dig 2
+    intc_1 // 1
+    +
+    frame_bury 4
+    // smart_contracts/raffle/contract.algo.ts:509
+    // for (let i: uint64 = 0; i < iterationAmount; i += 1) {
+    frame_dig 5
+    intc_1 // 1
+    +
+    frame_bury 5
+    b findWinner_while_top@1
+
+findWinner_after_while@6:
+    // smart_contracts/raffle/constants.ts:24
+    // export const RaffleGlobalStateKeyFindWinnersCursor = 'find_winner_cursors'
+    intc_0 // 0
+    bytec 22 // "find_winner_cursors"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:517
+    // const newIterationAmount = new UintN64(this.findWinnerCursors.value.index.native + iterationAmount)
+    dup
+    intc_0 // 0
+    extract_uint64
+    frame_dig -1
+    +
+    itob
+    // smart_contracts/raffle/contract.algo.ts:518
+    // this.findWinnerCursors.value.index = newIterationAmount
+    replace2 0
+    // smart_contracts/raffle/contract.algo.ts:519
+    // this.findWinnerCursors.value.amountIndex = new UintN64(currentRangeStart)
+    frame_dig 4
+    itob
+    replace2 8
+    // smart_contracts/raffle/constants.ts:24
+    // export const RaffleGlobalStateKeyFindWinnersCursor = 'find_winner_cursors'
+    bytec 22 // "find_winner_cursors"
+    // smart_contracts/raffle/contract.algo.ts:519
+    // this.findWinnerCursors.value.amountIndex = new UintN64(currentRangeStart)
+    swap
+    app_global_put
+    retsub
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.claimRafflePrize() -> void:
+claimRafflePrize:
+    // smart_contracts/raffle/contract.algo.ts:522
+    // claimRafflePrize(): void {
+    proto 0 0
+    pushbytes ""
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:523
+    // assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    global ZeroAddress
+    !=
+    assert // Winner not found
+    // smart_contracts/raffle/constants.ts:15
+    // export const RaffleGlobalStateKeyPrizeClaimed = 'prize_claimed'
+    intc_0 // 0
+    bytec 14 // "prize_claimed"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:524
+    // assert(!this.prizeClaimed.value, ERR_PRIZE_ALREADY_CLAIMED)
+    !
+    assert // Prize has already been claimed
+    // smart_contracts/raffle/constants.ts:14
+    // export const RaffleGlobalStateKeyIsPrizeBox = 'is_prize_box'
+    intc_0 // 0
+    bytec 25 // "is_prize_box"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:526
+    // if (this.isPrizeBox.value) {
+    bz claimRafflePrize_else_body@3
+    // smart_contracts/raffle/contract.algo.ts:527-535
+    // abiCall(
+    //   PrizeBox.prototype.transfer,
+    //   {
+    //     appId: this.prize.value,
+    //     onCompletion: OnCompleteAction.NoOp,
+    //     args: [new Address(this.winner.value)],
+    //     fee,
+    //   }
+    // )
+    itxn_begin
+    // smart_contracts/raffle/constants.ts:13
+    // export const RaffleGlobalStateKeyPrize = 'prize'
+    intc_0 // 0
+    bytec 11 // "prize"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:527-535
+    // abiCall(
+    //   PrizeBox.prototype.transfer,
+    //   {
+    //     appId: this.prize.value,
+    //     onCompletion: OnCompleteAction.NoOp,
+    //     args: [new Address(this.winner.value)],
+    //     fee,
+    //   }
+    // )
+    pushbytes 0xadf92ae4 // method "transfer(address)void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    // smart_contracts/raffle/contract.algo.ts:531
+    // onCompletion: OnCompleteAction.NoOp,
+    intc_0 // 0
+    itxn_field OnCompletion
+    itxn_field ApplicationID
+    // smart_contracts/raffle/contract.algo.ts:527-535
+    // abiCall(
+    //   PrizeBox.prototype.transfer,
+    //   {
+    //     appId: this.prize.value,
+    //     onCompletion: OnCompleteAction.NoOp,
+    //     args: [new Address(this.winner.value)],
+    //     fee,
+    //   }
+    // )
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/raffle/contract.algo.ts:527-535
+    // abiCall(
+    //   PrizeBox.prototype.transfer,
+    //   {
+    //     appId: this.prize.value,
+    //     onCompletion: OnCompleteAction.NoOp,
+    //     args: [new Address(this.winner.value)],
+    //     fee,
+    //   }
+    // )
+    itxn_submit
+
+claimRafflePrize_after_if_else@8:
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:558
+    // if (this.ticketAsset.value.id === 0) {
+    bnz claimRafflePrize_else_body@11
+    // smart_contracts/raffle/contract.algo.ts:559-565
+    // itxn
+    //   .payment({
+    //     receiver: this.seller.value,
+    //     amount: this.ticketCount.value,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/raffle/constants.ts:6
+    // export const RaffleGlobalStateKeySeller = 'seller'
+    intc_0 // 0
+    bytec 12 // "seller"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/raffle/contract.algo.ts:559-564
+    // itxn
+    //   .payment({
+    //     receiver: this.seller.value,
+    //     amount: this.ticketCount.value,
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/raffle/contract.algo.ts:559-565
+    // itxn
+    //   .payment({
+    //     receiver: this.seller.value,
+    //     amount: this.ticketCount.value,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+
+claimRafflePrize_after_if_else@16:
+    // smart_contracts/raffle/constants.ts:15
+    // export const RaffleGlobalStateKeyPrizeClaimed = 'prize_claimed'
+    bytec 14 // "prize_claimed"
+    // smart_contracts/raffle/contract.algo.ts:586
+    // this.prizeClaimed.value = true
+    intc_1 // 1
+    app_global_put
+    retsub
+
+claimRafflePrize_else_body@11:
+    // smart_contracts/raffle/constants.ts:6
+    // export const RaffleGlobalStateKeySeller = 'seller'
+    intc_0 // 0
+    bytec 12 // "seller"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:566
+    // } else if (this.seller.value.isOptedIn(this.ticketAsset.value)) {
+    asset_holding_get AssetBalance
+    bury 1
+    bz claimRafflePrize_else_body@14
+    // smart_contracts/raffle/contract.algo.ts:567-575
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.seller.value,
+    //     assetCloseTo: this.seller.value,
+    //     assetAmount: this.ticketCount.value,
+    //     xferAsset: this.ticketAsset.value,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/raffle/constants.ts:6
+    // export const RaffleGlobalStateKeySeller = 'seller'
+    intc_0 // 0
+    bytec 12 // "seller"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    itxn_field XferAsset
+    itxn_field AssetAmount
+    dup
+    itxn_field AssetCloseTo
+    itxn_field AssetReceiver
+    // smart_contracts/raffle/contract.algo.ts:567-574
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.seller.value,
+    //     assetCloseTo: this.seller.value,
+    //     assetAmount: this.ticketCount.value,
+    //     xferAsset: this.ticketAsset.value,
+    //     fee,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/raffle/contract.algo.ts:567-575
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.seller.value,
+    //     assetCloseTo: this.seller.value,
+    //     assetAmount: this.ticketCount.value,
+    //     xferAsset: this.ticketAsset.value,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+    b claimRafflePrize_after_if_else@16
+
+claimRafflePrize_else_body@14:
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:6
+    // export const RaffleGlobalStateKeySeller = 'seller'
+    intc_0 // 0
+    bytec 12 // "seller"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:582
+    // true
+    intc_1 // 1
+    // smart_contracts/raffle/contract.algo.ts:577-583
+    // arc59OptInAndSend(
+    //   this.akitaDAO.value,
+    //   new Address(this.seller.value),
+    //   this.ticketAsset.value.id,
+    //   this.ticketCount.value,
+    //   true
+    // )
+    callsub arc59OptInAndSend
+    b claimRafflePrize_after_if_else@16
+
+claimRafflePrize_else_body@3:
+    // smart_contracts/raffle/contract.algo.ts:537
+    // const prizeAmount = op.AssetHolding.assetBalance(Global.currentApplicationAddress, this.prize.value)[0]
+    global CurrentApplicationAddress
+    // smart_contracts/raffle/constants.ts:13
+    // export const RaffleGlobalStateKeyPrize = 'prize'
+    intc_0 // 0
+    bytec 11 // "prize"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:537
+    // const prizeAmount = op.AssetHolding.assetBalance(Global.currentApplicationAddress, this.prize.value)[0]
+    swap
+    dig 1
+    asset_holding_get AssetBalance
+    pop
+    frame_bury 0
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:539
+    // if (this.winner.value.isOptedIn(Asset(this.prize.value))) {
+    swap
+    asset_holding_get AssetBalance
+    bury 1
+    bz claimRafflePrize_else_body@6
+    // smart_contracts/raffle/contract.algo.ts:540-546
+    // itxn
+    //   .assetTransfer({
+    //     assetCloseTo: this.winner.value,
+    //     xferAsset: this.prize.value,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:13
+    // export const RaffleGlobalStateKeyPrize = 'prize'
+    intc_0 // 0
+    bytec 11 // "prize"
+    app_global_get_ex
+    assert // check GlobalState exists
+    itxn_field XferAsset
+    itxn_field AssetCloseTo
+    // smart_contracts/raffle/contract.algo.ts:540-545
+    // itxn
+    //   .assetTransfer({
+    //     assetCloseTo: this.winner.value,
+    //     xferAsset: this.prize.value,
+    //     fee,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/raffle/contract.algo.ts:540-546
+    // itxn
+    //   .assetTransfer({
+    //     assetCloseTo: this.winner.value,
+    //     xferAsset: this.prize.value,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+    b claimRafflePrize_after_if_else@8
+
+claimRafflePrize_else_body@6:
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:13
+    // export const RaffleGlobalStateKeyPrize = 'prize'
+    intc_0 // 0
+    bytec 11 // "prize"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:548-554
+    // arc59OptInAndSend(
+    //   this.akitaDAO.value,
+    //   new Address(this.winner.value),
+    //   this.prize.value,
+    //   prizeAmount,
+    //   true
+    // )
+    frame_dig 0
+    // smart_contracts/raffle/contract.algo.ts:553
+    // true
+    intc_1 // 1
+    // smart_contracts/raffle/contract.algo.ts:548-554
+    // arc59OptInAndSend(
+    //   this.akitaDAO.value,
+    //   new Address(this.winner.value),
+    //   this.prize.value,
+    //   prizeAmount,
+    //   true
+    // )
+    callsub arc59OptInAndSend
+    b claimRafflePrize_after_if_else@8
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.isLive() -> uint64:
+isLive:
+    // smart_contracts/raffle/contract.algo.ts:595
+    // Global.latestTimestamp <= this.startTimestamp.value &&
+    global LatestTimestamp
+    // smart_contracts/raffle/constants.ts:4
+    // export const RaffleGlobalStateKeyStartTimestamp = 'start_timestamp'
+    intc_0 // 0
+    bytec 21 // "start_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:595
+    // Global.latestTimestamp <= this.startTimestamp.value &&
+    <=
+    // smart_contracts/raffle/contract.algo.ts:595-596
+    // Global.latestTimestamp <= this.startTimestamp.value &&
+    // Global.latestTimestamp >= this.endTimestamp.value
+    bz isLive_bool_false@3
+    // smart_contracts/raffle/contract.algo.ts:596
+    // Global.latestTimestamp >= this.endTimestamp.value
+    global LatestTimestamp
+    // smart_contracts/raffle/constants.ts:5
+    // export const RaffleGlobalStateKeyEndTimestamp = 'end_timestamp'
+    intc_0 // 0
+    bytec 17 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:596
+    // Global.latestTimestamp >= this.endTimestamp.value
+    >=
+    // smart_contracts/raffle/contract.algo.ts:595-596
+    // Global.latestTimestamp <= this.startTimestamp.value &&
+    // Global.latestTimestamp >= this.endTimestamp.value
+    bz isLive_bool_false@3
+    intc_1 // 1
+    // smart_contracts/raffle/contract.algo.ts:594-597
+    // return (
+    //   Global.latestTimestamp <= this.startTimestamp.value &&
+    //   Global.latestTimestamp >= this.endTimestamp.value
+    // )
+    retsub
+
+isLive_bool_false@3:
+    intc_0 // 0
+    // smart_contracts/raffle/contract.algo.ts:594-597
+    // return (
+    //   Global.latestTimestamp <= this.startTimestamp.value &&
+    //   Global.latestTimestamp >= this.endTimestamp.value
+    // )
+    retsub
+
+
+// smart_contracts/raffle/contract.algo.ts::Raffle.getState() -> uint64, uint64, uint64, bytes, uint64, uint64, uint64, uint64, uint64, bytes, uint64, uint64, uint64, uint64, uint64, uint64:
+getState:
+    // smart_contracts/raffle/constants.ts:3
+    // export const RaffleGlobalStateKeyTicketAsset = 'ticket_asset'
+    intc_0 // 0
+    bytec_1 // "ticket_asset"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:4
+    // export const RaffleGlobalStateKeyStartTimestamp = 'start_timestamp'
+    intc_0 // 0
+    bytec 21 // "start_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:5
+    // export const RaffleGlobalStateKeyEndTimestamp = 'end_timestamp'
+    intc_0 // 0
+    bytec 17 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:6
+    // export const RaffleGlobalStateKeySeller = 'seller'
+    intc_0 // 0
+    bytec 12 // "seller"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:7
+    // export const RaffleGlobalStateKeyMinTickets = 'min_tickets'
+    intc_0 // 0
+    bytec 26 // "min_tickets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:8
+    // export const RaffleGlobalStateKeyMaxTickets = 'max_tickets'
+    intc_0 // 0
+    bytec 13 // "max_tickets"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:9
+    // export const RaffleGlobalStateKeyEntryCount = 'entry_count'
+    intc_0 // 0
+    bytec_2 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:10
+    // export const RaffleGlobalStateKeyTicketCount = 'ticket_count'
+    intc_0 // 0
+    bytec_0 // "ticket_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:11
+    // export const RaffleGlobalStateKeyWinningTicket = 'winning_ticket'
+    intc_0 // 0
+    bytec 7 // "winning_ticket"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:12
+    // export const RaffleGlobalStateKeyWinner = 'winner'
+    intc_0 // 0
+    bytec 4 // "winner"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:13
+    // export const RaffleGlobalStateKeyPrize = 'prize'
+    intc_0 // 0
+    bytec 11 // "prize"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:15
+    // export const RaffleGlobalStateKeyPrizeClaimed = 'prize_claimed'
+    intc_0 // 0
+    bytec 14 // "prize_claimed"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:17
+    // export const RaffleGlobalStateKeyGateID = 'gate_id'
+    intc_0 // 0
+    bytec 15 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:20
+    // export const RaffleGlobalStateKeyVRFFailureCount = 'vrf_failure_count'
+    intc_0 // 0
+    bytec 19 // "vrf_failure_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:21
+    // export const RaffleGlobalStateKeyEntryID = 'entry_id'
+    intc_0 // 0
+    bytec 27 // "entry_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/constants.ts:25
+    // export const RaffleGlobalStateKeyRefundMBRCursor = 'refund_mbr_cursor'
+    intc_0 // 0
+    bytec 16 // "refund_mbr_cursor"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/raffle/contract.algo.ts:601-618
+    // return {
+    //   ticketAsset: this.ticketAsset.value.id,
+    //   startTimestamp: this.startTimestamp.value,
+    //   endTimestamp: this.endTimestamp.value,
+    //   seller: new Address(this.seller.value),
+    //   minTickets: this.minTickets.value,
+    //   maxTickets: this.maxTickets.value,
+    //   entryCount: this.entryCount.value,
+    //   ticketCount: this.ticketCount.value,
+    //   winningTicket: this.winningTicket.value,
+    //   winner: new Address(this.winner.value),
+    //   prize: this.prize.value,
+    //   prizeClaimed: this.prizeClaimed.value,
+    //   gateID: this.gateID.value,
+    //   vrfFailureCount: this.vrfFailureCount.value,
+    //   entryID: this.entryID.value,
+    //   refundMBRCursor: this.refundMBRCursor.value,
+    // }
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/base.ts:19-20
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(newVersion: string): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:21
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:21
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    pushbytes "version"
+    // smart_contracts/utils/base-contracts/base.ts:22
+    // this.version.value = newVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:28
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_3 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:28
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    bytec_3 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/optin.ts::ContractWithCreatorOnlyOptIn.optin(payment: uint64, asset: uint64) -> void:
+optin:
+    // smart_contracts/utils/base-contracts/optin.ts:51
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    proto 2 0
+    // smart_contracts/utils/base-contracts/optin.ts:52
+    // assert(Txn.sender === Global.creatorAddress)
+    txn Sender
+    global CreatorAddress
+    ==
+    assert
+    // smart_contracts/utils/base-contracts/optin.ts:54-61
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/utils/base-contracts/optin.ts:57
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/utils/base-contracts/optin.ts:54-61
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz optin_bool_false@3
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/utils/base-contracts/optin.ts:58
+    // amount: Global.assetOptInMinBalance,
+    global AssetOptInMinBalance
+    // smart_contracts/utils/base-contracts/optin.ts:54-61
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz optin_bool_false@3
+    intc_1 // 1
+
+optin_bool_merge@4:
+    // smart_contracts/utils/base-contracts/optin.ts:54-61
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/utils/base-contracts/optin.ts:63-68
+    // itxn.assetTransfer({
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee: 0,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/utils/base-contracts/optin.ts:64
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    frame_dig -1
+    itxn_field XferAsset
+    // smart_contracts/utils/base-contracts/optin.ts:65
+    // assetAmount: 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    // smart_contracts/utils/base-contracts/optin.ts:63-68
+    // itxn.assetTransfer({
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee: 0,
+    // }).submit()
+    pushint 4 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/base-contracts/optin.ts:67
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/optin.ts:63-68
+    // itxn.assetTransfer({
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee: 0,
+    // }).submit()
+    itxn_submit
+    retsub
+
+optin_bool_false@3:
+    intc_0 // 0
+    b optin_bool_merge@4

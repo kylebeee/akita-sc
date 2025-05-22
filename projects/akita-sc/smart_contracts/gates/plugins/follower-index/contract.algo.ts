@@ -1,5 +1,5 @@
 import { Application, assert, BoxMap, bytes, GlobalState, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, interpretAsArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { arc4FollowerIndexGateCheckParams, arc4FollowerIndexRegistryInfo, FollowerIndexRegistryInfo } from './types'
 import { GateGlobalStateKeyRegistryCursor } from '../../constants'
@@ -36,15 +36,14 @@ export class FollowerIndexGate extends AkitaBaseContract {
   }
 
   private followerIndexGate(user: Address, index: uint64, follower: Address, op: Operator, value: uint64): boolean {
-    const isFollowerTxn = itxn
-      .applicationCall({
+    const isFollower = abiCall(
+      AkitaSocialPlugin.prototype.isFollower,
+      {
         appId: getPluginAppList(this.akitaDAO.value).social,
-        appArgs: [methodSelector(AkitaSocialPlugin.prototype.isFollower), user, index, follower],
+        args: [user, index, follower],
         fee,
-      })
-      .submit()
-
-    const isFollower = decodeArc4<boolean>(isFollowerTxn.lastLog)
+      }
+    ).returnValue
 
     if (!isFollower) {
       return false

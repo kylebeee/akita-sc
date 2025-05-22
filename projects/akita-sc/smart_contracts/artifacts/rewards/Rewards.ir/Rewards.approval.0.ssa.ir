@@ -1,0 +1,1492 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let reinterpret_bool%0#0: bool = (txn ApplicationID)
+        goto reinterpret_bool%0#0 ? block@2 : block@1
+    block@1: // if_body_L1
+        polytype/lib/polytype-module.d.ts::ClusteredContract<smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract,smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn,smart_contracts/rewards/base.ts::BaseRewards>.constructor()
+        goto block@2
+    block@2: // after_if_else_L1
+        let tmp%0#0: bool = smart_contracts/rewards/contract.algo.ts::Rewards.__puya_arc4_router__()
+        return tmp%0#0
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.__puya_arc4_router__() -> bool:
+    block@0: // L53
+        let tmp%0#0: uint64 = (txn NumAppArgs)
+        let tmp%1#0: bool = (!= tmp%0#0 0u)
+        goto tmp%1#0 ? block@1 : block@14
+    block@1: // abi_routing_L53
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "createDisbursement(pay,string,uint64,uint64,string)uint64" => block@2, method "editDisbursement(uint64,string,uint64,uint64,string)void" => block@3, method "createUserAllocations(pay,uint64,(address,uint64)[])void" => block@4, method "createAsaUserAllocations(pay,axfer,uint64,(address,uint64)[])void" => block@5, method "finalizeDisbursement(uint64)void" => block@6, method "claimRewards((uint64,uint64)[])void" => block@7, method "reclaimRewards(uint64,(address,uint64)[])void" => block@8, method "update(string)void" => block@9, method "updateAkitaDAO(uint64)void" => block@10, method "optin(pay,uint64)void" => block@11, * => block@12}
+    block@2: // createDisbursement_route_L90
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (== tmp%3#0 NoOp)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (!= tmp%5#0 0u)
+        (assert tmp%6#0) // can only call when not creating
+        let tmp%7#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%7#0 1u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        let tmp%8#0: bytes = (txna ApplicationArgs 1)
+        let tmp%9#0: bytes = ((extract 2 0) tmp%8#0)
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%10#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%11#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        let tmp%12#0: bytes = (txna ApplicationArgs 4)
+        let tmp%13#0: bytes = ((extract 2 0) tmp%12#0)
+        let to_encode%0#0: uint64 = smart_contracts/rewards/contract.algo.ts::Rewards.createDisbursement(gtxn_idx%0#0, tmp%9#0, tmp%10#0, tmp%11#0, tmp%13#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%14#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%14#0)
+        return 1u
+    block@3: // editDisbursement_route_L127
+        let tmp%15#0: uint64 = (txn OnCompletion)
+        let tmp%16#0: bool = (== tmp%15#0 NoOp)
+        (assert tmp%16#0) // OnCompletion is not NoOp
+        let tmp%17#0: uint64 = (txn ApplicationID)
+        let tmp%18#0: bool = (!= tmp%17#0 0u)
+        (assert tmp%18#0) // can only call when not creating
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%19#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let tmp%20#0: bytes = (txna ApplicationArgs 2)
+        let tmp%21#0: bytes = ((extract 2 0) tmp%20#0)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%22#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%23#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let tmp%24#0: bytes = (txna ApplicationArgs 5)
+        let tmp%25#0: bytes = ((extract 2 0) tmp%24#0)
+        smart_contracts/rewards/contract.algo.ts::Rewards.editDisbursement(tmp%19#0, tmp%21#0, tmp%22#0, tmp%23#0, tmp%25#0)
+        return 1u
+    block@4: // createUserAllocations_route_L149
+        let tmp%26#0: uint64 = (txn OnCompletion)
+        let tmp%27#0: bool = (== tmp%26#0 NoOp)
+        (assert tmp%27#0) // OnCompletion is not NoOp
+        let tmp%28#0: uint64 = (txn ApplicationID)
+        let tmp%29#0: bool = (!= tmp%28#0 0u)
+        (assert tmp%29#0) // can only call when not creating
+        let tmp%30#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%1#0: uint64 = (- tmp%30#0 1u)
+        let gtxn_type%1#0: uint64 = ((gtxns TypeEnum) gtxn_idx%1#0)
+        let gtxn_type_matches%1#0: bool = (== gtxn_type%1#0 pay)
+        (assert gtxn_type_matches%1#0) // transaction type is pay
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%31#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        let tmp%32#0: bytes = (txna ApplicationArgs 2)
+        smart_contracts/rewards/contract.algo.ts::Rewards.createUserAllocations(gtxn_idx%1#0, tmp%31#0, tmp%32#0)
+        return 1u
+    block@5: // createAsaUserAllocations_route_L193
+        let tmp%33#0: uint64 = (txn OnCompletion)
+        let tmp%34#0: bool = (== tmp%33#0 NoOp)
+        (assert tmp%34#0) // OnCompletion is not NoOp
+        let tmp%35#0: uint64 = (txn ApplicationID)
+        let tmp%36#0: bool = (!= tmp%35#0 0u)
+        (assert tmp%36#0) // can only call when not creating
+        let tmp%37#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%2#0: uint64 = (- tmp%37#0 2u)
+        let gtxn_type%2#0: uint64 = ((gtxns TypeEnum) gtxn_idx%2#0)
+        let gtxn_type_matches%2#0: bool = (== gtxn_type%2#0 pay)
+        (assert gtxn_type_matches%2#0) // transaction type is pay
+        let tmp%38#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%3#0: uint64 = (- tmp%38#0 1u)
+        let gtxn_type%3#0: uint64 = ((gtxns TypeEnum) gtxn_idx%3#0)
+        let gtxn_type_matches%3#0: bool = (== gtxn_type%3#0 axfer)
+        (assert gtxn_type_matches%3#0) // transaction type is axfer
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%39#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        let tmp%40#0: bytes = (txna ApplicationArgs 2)
+        smart_contracts/rewards/contract.algo.ts::Rewards.createAsaUserAllocations(gtxn_idx%2#0, gtxn_idx%3#0, tmp%39#0, tmp%40#0)
+        return 1u
+    block@6: // finalizeDisbursement_route_L247
+        let tmp%41#0: uint64 = (txn OnCompletion)
+        let tmp%42#0: bool = (== tmp%41#0 NoOp)
+        (assert tmp%42#0) // OnCompletion is not NoOp
+        let tmp%43#0: uint64 = (txn ApplicationID)
+        let tmp%44#0: bool = (!= tmp%43#0 0u)
+        (assert tmp%44#0) // can only call when not creating
+        let reinterpret_bytes[8]%7#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%45#0: uint64 = (btoi reinterpret_bytes[8]%7#0)
+        smart_contracts/rewards/contract.algo.ts::Rewards.finalizeDisbursement(tmp%45#0)
+        return 1u
+    block@7: // claimRewards_route_L267
+        let tmp%46#0: uint64 = (txn OnCompletion)
+        let tmp%47#0: bool = (== tmp%46#0 NoOp)
+        (assert tmp%47#0) // OnCompletion is not NoOp
+        let tmp%48#0: uint64 = (txn ApplicationID)
+        let tmp%49#0: bool = (!= tmp%48#0 0u)
+        (assert tmp%49#0) // can only call when not creating
+        let tmp%50#0: bytes = (txna ApplicationArgs 1)
+        smart_contracts/rewards/contract.algo.ts::Rewards.claimRewards(tmp%50#0)
+        return 1u
+    block@8: // reclaimRewards_route_L321
+        let tmp%51#0: uint64 = (txn OnCompletion)
+        let tmp%52#0: bool = (== tmp%51#0 NoOp)
+        (assert tmp%52#0) // OnCompletion is not NoOp
+        let tmp%53#0: uint64 = (txn ApplicationID)
+        let tmp%54#0: bool = (!= tmp%53#0 0u)
+        (assert tmp%54#0) // can only call when not creating
+        let reinterpret_bytes[8]%8#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%55#0: uint64 = (btoi reinterpret_bytes[8]%8#0)
+        let tmp%56#0: bytes = (txna ApplicationArgs 2)
+        smart_contracts/rewards/contract.algo.ts::Rewards.reclaimRewards(tmp%55#0, tmp%56#0)
+        return 1u
+    block@9: // update_route_L19
+        let tmp%57#0: uint64 = (txn OnCompletion)
+        let tmp%58#0: bool = (== tmp%57#0 UpdateApplication)
+        (assert tmp%58#0) // OnCompletion is not UpdateApplication
+        let tmp%59#0: uint64 = (txn ApplicationID)
+        let tmp%60#0: bool = (!= tmp%59#0 0u)
+        (assert tmp%60#0) // can only call when not creating
+        let tmp%61#0: bytes = (txna ApplicationArgs 1)
+        let tmp%62#0: bytes = ((extract 2 0) tmp%61#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(tmp%62#0)
+        return 1u
+    block@10: // updateAkitaDAO_route_L27
+        let tmp%63#0: uint64 = (txn OnCompletion)
+        let tmp%64#0: bool = (== tmp%63#0 NoOp)
+        (assert tmp%64#0) // OnCompletion is not NoOp
+        let tmp%65#0: uint64 = (txn ApplicationID)
+        let tmp%66#0: bool = (!= tmp%65#0 0u)
+        (assert tmp%66#0) // can only call when not creating
+        let reinterpret_bytes[8]%9#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%67#0: uint64 = (btoi reinterpret_bytes[8]%9#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(tmp%67#0)
+        return 1u
+    block@11: // optin_route_L22
+        let tmp%68#0: uint64 = (txn OnCompletion)
+        let tmp%69#0: bool = (== tmp%68#0 NoOp)
+        (assert tmp%69#0) // OnCompletion is not NoOp
+        let tmp%70#0: uint64 = (txn ApplicationID)
+        let tmp%71#0: bool = (!= tmp%70#0 0u)
+        (assert tmp%71#0) // can only call when not creating
+        let tmp%72#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%4#0: uint64 = (- tmp%72#0 1u)
+        let gtxn_type%4#0: uint64 = ((gtxns TypeEnum) gtxn_idx%4#0)
+        let gtxn_type_matches%4#0: bool = (== gtxn_type%4#0 pay)
+        (assert gtxn_type_matches%4#0) // transaction type is pay
+        let reinterpret_bytes[8]%10#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%73#0: uint64 = (btoi reinterpret_bytes[8]%10#0)
+        smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(gtxn_idx%4#0, tmp%73#0)
+        return 1u
+    block@12: // switch_case_default_L53
+        goto block@13
+    block@13: // switch_case_next_L53
+        goto block@18
+    block@14: // bare_routing_L53
+        let tmp%74#0: uint64 = (txn OnCompletion)
+        switch tmp%74#0 {0u => block@15, * => block@16}
+    block@15: // __algots__.defaultCreate_L53
+        let tmp%75#0: uint64 = (txn ApplicationID)
+        let tmp%76#0: bool = (== tmp%75#0 0u)
+        (assert tmp%76#0) // can only call when creating
+        smart_contracts/rewards/contract.algo.ts::Rewards.__algots__.defaultCreate()
+        return 1u
+    block@16: // switch_case_default_L53
+        goto block@17
+    block@17: // switch_case_next_L53
+        goto block@18
+    block@18: // after_if_else_L53
+        return 0u
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.newDisbursementID() -> uint64:
+    block@0: // L78
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "disbursement_id")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let id#0: uint64 = maybe_value%0#0
+        let (maybe_value%1#0: uint64, maybe_exists%1#0: bool) = (app_global_get_ex 0u "disbursement_id")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let materialized_values%0#0: uint64 = (+ maybe_value%1#0 1u)
+        (app_global_put "disbursement_id" materialized_values%0#0)
+        return id#0
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.createDisbursement(mbrPayment: uint64, title: bytes, timeToUnlock: uint64, expiration: uint64, note: bytes) -> uint64:
+    block@0: // L90
+        let id#0: uint64 = smart_contracts/rewards/contract.algo.ts::Rewards.newDisbursementID()
+        let (costs.disbursements#0: uint64, costs.userAllocations#0: uint64) = smart_contracts/rewards/base.ts::BaseRewards.mbr(title#0, note#0)
+        let mbrAmount#0: uint64 = costs.disbursements#0
+        let tmp%0#0: bytes[32] = ((gtxns Receiver) mbrPayment#0)
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        goto tmp%2#0 ? block@1 : block@3
+    block@1: // and_contd_L103
+        let tmp%3#0: uint64 = ((gtxns Amount) mbrPayment#0)
+        let tmp%4#0: bool = (== tmp%3#0 mbrAmount#0)
+        goto tmp%4#0 ? block@2 : block@3
+    block@2: // bool_true_L103
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L103
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L103
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        let tmp%5#0: bytes[32] = (txn Sender)
+        let length%0#0: uint64 = (len title#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 title#0)
+        let val_as_bytes%0#0: bytes[8] = (itob timeToUnlock#0)
+        let val_as_bytes%1#0: bytes[8] = (itob expiration#0)
+        let length%1#0: uint64 = (len note#0)
+        let as_bytes%1#0: bytes[8] = (itob length%1#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 note#0)
+        let current_tail_offset%0#0: uint64 = 77u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 tmp%5#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 0x00)
+        let as_bytes%2#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%0#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 0x0000000000000000)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 val_as_bytes%0#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 val_as_bytes%1#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 0x0000000000000000)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 0x0000000000000000)
+        let as_bytes%3#0: bytes[8] = (itob current_tail_offset%1#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%2#0: uint64 = (+ current_tail_offset%1#0 data_length%1#0)
+        let encoded_tuple_buffer%10#0: bytes = (concat encoded_tuple_buffer%9#0 encoded_value%0#0)
+        let encoded_tuple_buffer%11#0: bytes = (concat encoded_tuple_buffer%10#0 encoded_value%1#0)
+        let encoded_value%2#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_value%2#0)
+        (box_del box_prefixed_key%0#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%11#0)
+        return id#0
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.editDisbursement(id: uint64, title: bytes, timeToUnlock: uint64, expiration: uint64, note: bytes) -> void:
+    block@0: // L127
+        let encoded_value%0#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Disbursement does not exist
+        let encoded_value%1#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_value%1#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%1#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let copy%0#0: bytes = maybe_value%0#0
+        let disbursement#0: bytes = copy%0#0
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bytes = (extract3 disbursement#0 0u 32u) // on error: Index access is out of bounds
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        (assert tmp%2#0) // You are not the creator of this disbursement
+        let is_true%0#0: uint64 = (getbit disbursement#0 256u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let tmp%3#0: bool = (getbit encoded_bool%0#0 0u)
+        let tmp%4#0: bool = (== tmp%3#0 0u)
+        (assert tmp%4#0) // Disbursement already final
+        let length%0#0: uint64 = (len title#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%0#0 title#0)
+        let val_as_bytes%0#0: bytes[8] = (itob timeToUnlock#0)
+        let val_as_bytes%1#0: bytes[8] = (itob expiration#0)
+        let length%1#0: uint64 = (len note#0)
+        let as_bytes%1#0: bytes[8] = (itob length%1#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_value%3#0: bytes = (concat length_uint16%1#0 note#0)
+        let tmp%5#0: bytes = (extract3 disbursement#0 0u 32u) // on error: Index access is out of bounds
+        let is_true%1#0: uint64 = (getbit disbursement#0 256u)
+        let encoded_bool%1#0: bytes[1] = (setbit 0x00 0u is_true%1#0)
+        let tmp%6#0: bytes = (extract3 disbursement#0 35u 8u) // on error: Index access is out of bounds
+        let tmp%7#0: bytes = (extract3 disbursement#0 59u 8u) // on error: Index access is out of bounds
+        let tmp%8#0: bytes = (extract3 disbursement#0 67u 8u) // on error: Index access is out of bounds
+        let current_tail_offset%0#0: uint64 = 77u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 tmp%5#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 encoded_bool%1#0)
+        let as_bytes%2#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%2#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 tmp%6#0)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 val_as_bytes%0#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 val_as_bytes%1#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 tmp%7#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 tmp%8#0)
+        let as_bytes%3#0: bytes[8] = (itob current_tail_offset%1#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%3#0)
+        let current_tail_offset%2#0: uint64 = (+ current_tail_offset%1#0 data_length%1#0)
+        let encoded_tuple_buffer%10#0: bytes = (concat encoded_tuple_buffer%9#0 encoded_value%2#0)
+        let encoded_tuple_buffer%11#0: bytes = (concat encoded_tuple_buffer%10#0 encoded_value%3#0)
+        let encoded_value%4#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%2#0: bytes = (concat "d" encoded_value%4#0)
+        (box_del box_prefixed_key%2#0)
+        (box_put box_prefixed_key%2#0 encoded_tuple_buffer%11#0)
+        return 
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.createUserAllocations(payment: uint64, id: uint64, allocations: bytes) -> void:
+    block@0: // L149
+        let encoded_value%0#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Disbursement does not exist
+        let encoded_value%1#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_value%1#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%1#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let item0%0#0: bytes = (extract3 maybe_value%0#0 0u 32u) // on error: Index access is out of bounds
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 256u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let item1%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 33u)
+        let item_end_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item2%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let item2%1#0: bytes = ((extract 2 0) item2%0#0)
+        let item3%0#0: bytes = (extract3 maybe_value%0#0 35u 8u) // on error: Index access is out of bounds
+        let item3%1#0: uint64 = (btoi item3%0#0)
+        let item4%0#0: bytes = (extract3 maybe_value%0#0 43u 8u) // on error: Index access is out of bounds
+        let item4%1#0: uint64 = (btoi item4%0#0)
+        let item5%0#0: bytes = (extract3 maybe_value%0#0 51u 8u) // on error: Index access is out of bounds
+        let item5%1#0: uint64 = (btoi item5%0#0)
+        let item6%0#0: bytes = (extract3 maybe_value%0#0 59u 8u) // on error: Index access is out of bounds
+        let item6%1#0: uint64 = (btoi item6%0#0)
+        let item7%0#0: bytes = (extract3 maybe_value%0#0 67u 8u) // on error: Index access is out of bounds
+        let item7%1#0: uint64 = (btoi item7%0#0)
+        let item_start_offset%1#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item_end_offset%1#0: uint64 = (len maybe_value%0#0)
+        let item8%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%1#0 item_end_offset%1#0)
+        let item8%1#0: bytes = ((extract 2 0) item8%0#0)
+        let (disbursement.creator#0: bytes[32], disbursement.finalized#0: bool, disbursement.title#0: bytes, disbursement.amount#0: uint64, disbursement.timeToUnlock#0: uint64, disbursement.expiration#0: uint64, disbursement.allocations#0: uint64, disbursement.distributed#0: uint64, disbursement.note#0: bytes) = (item0%0#0, item1%0#0, item2%1#0, item3%1#0, item4%1#0, item5%1#0, item6%1#0, item7%1#0, item8%1#0)
+        let tmp%0#0: bool = (! disbursement.finalized#0)
+        (assert tmp%0#0) // Disbursement already final
+        let sum#0: uint64 = 0u
+        let i#0: uint64 = 0u
+        goto block@1
+    block@1: // while_top_L160
+        let i#1: uint64 = φ(i#0 <- block@0, i#2 <- block@2)
+        let sum#1: uint64 = φ(sum#0 <- block@0, sum#2 <- block@2)
+        let tmp%1#0: uint64 = (extract_uint16 allocations#0 0u)
+        let tmp%2#0: bool = (< i#1 tmp%1#0)
+        goto tmp%2#0 ? block@2 : block@3
+    block@2: // while_body_L160
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%0#0: uint64 = (* i#1 40u)
+        let tmp%3#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 40u) // on error: Index access is out of bounds
+        let tmp%4#0: bytes = (extract3 tmp%3#0 0u 32u) // on error: Index access is out of bounds
+        let current_tail_offset%0#0: uint64 = 48u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 tmp%4#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 val_as_bytes%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 0x0000000000000000)
+        let userAllocationsKey#0: bytes[48] = encoded_tuple_buffer%3#0
+        let box_prefixed_key%2#0: bytes = (concat "u" userAllocationsKey#0)
+        let (_%1#0: uint64, maybe_exists%2#0: bool) = (box_len box_prefixed_key%2#0)
+        let tmp%5#0: bool = (! maybe_exists%2#0)
+        (assert tmp%5#0) // Allocation already exists
+        let array_head_and_tail%1#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%1#0: uint64 = (* i#1 40u)
+        let tmp%6#0: bytes = (extract3 array_head_and_tail%1#0 item_offset%1#0 40u) // on error: Index access is out of bounds
+        let tmp%7#0: bytes = (extract3 tmp%6#0 32u 8u) // on error: Index access is out of bounds
+        let materialized_values%0#0: uint64 = (btoi tmp%7#0)
+        let box_prefixed_key%3#0: bytes = (concat "u" userAllocationsKey#0)
+        let encoded_value%2#0: bytes[8] = (itob materialized_values%0#0)
+        (box_put box_prefixed_key%3#0 encoded_value%2#0)
+        let encoded_value%3#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%4#0: bytes = (concat "d" encoded_value%3#0)
+        let (maybe_value%1#0: bytes, maybe_exists%3#0: bool) = (box_get box_prefixed_key%4#0)
+        (assert maybe_exists%3#0) // Box must have value
+        let tmp%8#0: bytes = (extract3 maybe_value%1#0 59u 8u) // on error: Index access is out of bounds
+        let tmp%9#0: uint64 = (btoi tmp%8#0)
+        let to_encode%0#0: uint64 = (+ tmp%9#0 1u)
+        let val_as_bytes%1#0: bytes[8] = (itob to_encode%0#0)
+        let newAllocAmount#0: bytes[8] = val_as_bytes%1#0
+        let encoded_value%4#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%5#0: bytes = (concat "d" encoded_value%4#0)
+        let (maybe_value%2#0: bytes, maybe_exists%4#0: bool) = (box_get box_prefixed_key%5#0)
+        (assert maybe_exists%4#0) // Box must have value
+        let assigned_value%0#0: bytes[8] = newAllocAmount#0
+        let updated_data%0#0: bytes = (replace3 maybe_value%2#0 59u assigned_value%0#0)
+        (box_del box_prefixed_key%5#0)
+        (box_put box_prefixed_key%5#0 updated_data%0#0)
+        let encoded_value%5#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%6#0: bytes = (concat "d" encoded_value%5#0)
+        let (maybe_value%3#0: bytes, maybe_exists%5#0: bool) = (box_get box_prefixed_key%6#0)
+        (assert maybe_exists%5#0) // Box must have value
+        let tmp%10#0: bytes = (extract3 maybe_value%3#0 35u 8u) // on error: Index access is out of bounds
+        let tmp%11#0: uint64 = (btoi tmp%10#0)
+        let array_head_and_tail%2#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%2#0: uint64 = (* i#1 40u)
+        let tmp%12#0: bytes = (extract3 array_head_and_tail%2#0 item_offset%2#0 40u) // on error: Index access is out of bounds
+        let tmp%13#0: bytes = (extract3 tmp%12#0 32u 8u) // on error: Index access is out of bounds
+        let tmp%14#0: uint64 = (btoi tmp%13#0)
+        let to_encode%1#0: uint64 = (+ tmp%11#0 tmp%14#0)
+        let val_as_bytes%2#0: bytes[8] = (itob to_encode%1#0)
+        let newAmount#0: bytes[8] = val_as_bytes%2#0
+        let encoded_value%6#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%7#0: bytes = (concat "d" encoded_value%6#0)
+        let (maybe_value%4#0: bytes, maybe_exists%6#0: bool) = (box_get box_prefixed_key%7#0)
+        (assert maybe_exists%6#0) // Box must have value
+        let assigned_value%1#0: bytes[8] = newAmount#0
+        let updated_data%1#0: bytes = (replace3 maybe_value%4#0 35u assigned_value%1#0)
+        (box_del box_prefixed_key%7#0)
+        (box_put box_prefixed_key%7#0 updated_data%1#0)
+        let array_head_and_tail%3#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%3#0: uint64 = (* i#1 40u)
+        let tmp%15#0: bytes = (extract3 array_head_and_tail%3#0 item_offset%3#0 40u) // on error: Index access is out of bounds
+        let tmp%16#0: bytes = (extract3 tmp%15#0 32u 8u) // on error: Index access is out of bounds
+        let tmp%17#0: uint64 = (btoi tmp%16#0)
+        let sum#2: uint64 = (+ sum#1 tmp%17#0)
+        let i#2: uint64 = (+ i#1 1u)
+        goto block@1
+    block@3: // after_while_L160
+        let (costs.disbursements#0: uint64, costs.userAllocations#0: uint64) = smart_contracts/rewards/base.ts::BaseRewards.mbr(disbursement.title#0, disbursement.note#0)
+        let tmp%18#0: uint64 = (extract_uint16 allocations#0 0u)
+        let mbrAmount#0: uint64 = (* costs.userAllocations#0 tmp%18#0)
+        let tmp%19#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%20#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%21#0: bool = (== tmp%19#0 tmp%20#0)
+        goto tmp%21#0 ? block@4 : block@6
+    block@4: // and_contd_L183
+        let tmp%22#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%23#0: uint64 = (+ mbrAmount#0 sum#1)
+        let tmp%24#0: bool = (== tmp%22#0 tmp%23#0)
+        goto tmp%24#0 ? block@5 : block@6
+    block@5: // bool_true_L183
+        let and_result%0#0: bool = 1u
+        goto block@7
+    block@6: // bool_false_L183
+        let and_result%0#1: bool = 0u
+        goto block@7
+    block@7: // bool_merge_L183
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@5, and_result%0#1 <- block@6)
+        (assert and_result%0#2) // Invalid payment
+        return 
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.createAsaUserAllocations(mbrPayment: uint64, assetXfer: uint64, id: uint64, allocations: bytes) -> void:
+    block@0: // L193
+        let encoded_value%0#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Disbursement does not exist
+        let encoded_value%1#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_value%1#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%1#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let item0%0#0: bytes = (extract3 maybe_value%0#0 0u 32u) // on error: Index access is out of bounds
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 256u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let item1%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 33u)
+        let item_end_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item2%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let item2%1#0: bytes = ((extract 2 0) item2%0#0)
+        let item3%0#0: bytes = (extract3 maybe_value%0#0 35u 8u) // on error: Index access is out of bounds
+        let item3%1#0: uint64 = (btoi item3%0#0)
+        let item4%0#0: bytes = (extract3 maybe_value%0#0 43u 8u) // on error: Index access is out of bounds
+        let item4%1#0: uint64 = (btoi item4%0#0)
+        let item5%0#0: bytes = (extract3 maybe_value%0#0 51u 8u) // on error: Index access is out of bounds
+        let item5%1#0: uint64 = (btoi item5%0#0)
+        let item6%0#0: bytes = (extract3 maybe_value%0#0 59u 8u) // on error: Index access is out of bounds
+        let item6%1#0: uint64 = (btoi item6%0#0)
+        let item7%0#0: bytes = (extract3 maybe_value%0#0 67u 8u) // on error: Index access is out of bounds
+        let item7%1#0: uint64 = (btoi item7%0#0)
+        let item_start_offset%1#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item_end_offset%1#0: uint64 = (len maybe_value%0#0)
+        let item8%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%1#0 item_end_offset%1#0)
+        let item8%1#0: bytes = ((extract 2 0) item8%0#0)
+        let (disbursement.creator#0: bytes[32], disbursement.finalized#0: bool, disbursement.title#0: bytes, disbursement.amount#0: uint64, disbursement.timeToUnlock#0: uint64, disbursement.expiration#0: uint64, disbursement.allocations#0: uint64, disbursement.distributed#0: uint64, disbursement.note#0: bytes) = (item0%0#0, item1%0#0, item2%1#0, item3%1#0, item4%1#0, item5%1#0, item6%1#0, item7%1#0, item8%1#0)
+        let tmp%0#0: bool = (! disbursement.finalized#0)
+        (assert tmp%0#0) // Disbursement already final
+        let matchSum#0: uint64 = 0u
+        let i#0: uint64 = 0u
+        goto block@1
+    block@1: // while_top_L205
+        let i#1: uint64 = φ(i#0 <- block@0, i#2 <- block@2)
+        let matchSum#1: uint64 = φ(matchSum#0 <- block@0, matchSum#2 <- block@2)
+        let tmp%1#0: uint64 = (extract_uint16 allocations#0 0u)
+        let tmp%2#0: bool = (< i#1 tmp%1#0)
+        goto tmp%2#0 ? block@2 : block@3
+    block@2: // while_body_L205
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%0#0: uint64 = (* i#1 40u)
+        let tmp%3#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 40u) // on error: Index access is out of bounds
+        let tmp%4#0: bytes = (extract3 tmp%3#0 0u 32u) // on error: Index access is out of bounds
+        let to_encode%0#0: uint64 = ((gtxns XferAsset) assetXfer#0)
+        let val_as_bytes%1#0: bytes[8] = (itob to_encode%0#0)
+        let current_tail_offset%0#0: uint64 = 48u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 tmp%4#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 val_as_bytes%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 val_as_bytes%1#0)
+        let userAllocationsKey#0: bytes[48] = encoded_tuple_buffer%3#0
+        let box_prefixed_key%2#0: bytes = (concat "u" userAllocationsKey#0)
+        let (_%1#0: uint64, maybe_exists%2#0: bool) = (box_len box_prefixed_key%2#0)
+        let tmp%5#0: bool = (! maybe_exists%2#0)
+        (assert tmp%5#0) // Allocation already exists
+        let array_head_and_tail%1#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%1#0: uint64 = (* i#1 40u)
+        let tmp%6#0: bytes = (extract3 array_head_and_tail%1#0 item_offset%1#0 40u) // on error: Index access is out of bounds
+        let tmp%7#0: bytes = (extract3 tmp%6#0 32u 8u) // on error: Index access is out of bounds
+        let materialized_values%0#0: uint64 = (btoi tmp%7#0)
+        let box_prefixed_key%3#0: bytes = (concat "u" userAllocationsKey#0)
+        let encoded_value%2#0: bytes[8] = (itob materialized_values%0#0)
+        (box_put box_prefixed_key%3#0 encoded_value%2#0)
+        let encoded_value%3#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%4#0: bytes = (concat "d" encoded_value%3#0)
+        let (maybe_value%1#0: bytes, maybe_exists%3#0: bool) = (box_get box_prefixed_key%4#0)
+        (assert maybe_exists%3#0) // Box must have value
+        let tmp%8#0: bytes = (extract3 maybe_value%1#0 59u 8u) // on error: Index access is out of bounds
+        let tmp%9#0: uint64 = (btoi tmp%8#0)
+        let to_encode%1#0: uint64 = (+ tmp%9#0 1u)
+        let val_as_bytes%2#0: bytes[8] = (itob to_encode%1#0)
+        let newAllocAmount#0: bytes[8] = val_as_bytes%2#0
+        let encoded_value%4#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%5#0: bytes = (concat "d" encoded_value%4#0)
+        let (maybe_value%2#0: bytes, maybe_exists%4#0: bool) = (box_get box_prefixed_key%5#0)
+        (assert maybe_exists%4#0) // Box must have value
+        let assigned_value%0#0: bytes[8] = newAllocAmount#0
+        let updated_data%0#0: bytes = (replace3 maybe_value%2#0 59u assigned_value%0#0)
+        (box_del box_prefixed_key%5#0)
+        (box_put box_prefixed_key%5#0 updated_data%0#0)
+        let encoded_value%5#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%6#0: bytes = (concat "d" encoded_value%5#0)
+        let (maybe_value%3#0: bytes, maybe_exists%5#0: bool) = (box_get box_prefixed_key%6#0)
+        (assert maybe_exists%5#0) // Box must have value
+        let tmp%10#0: bytes = (extract3 maybe_value%3#0 35u 8u) // on error: Index access is out of bounds
+        let tmp%11#0: uint64 = (btoi tmp%10#0)
+        let array_head_and_tail%2#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%2#0: uint64 = (* i#1 40u)
+        let tmp%12#0: bytes = (extract3 array_head_and_tail%2#0 item_offset%2#0 40u) // on error: Index access is out of bounds
+        let tmp%13#0: bytes = (extract3 tmp%12#0 32u 8u) // on error: Index access is out of bounds
+        let tmp%14#0: uint64 = (btoi tmp%13#0)
+        let to_encode%2#0: uint64 = (+ tmp%11#0 tmp%14#0)
+        let val_as_bytes%3#0: bytes[8] = (itob to_encode%2#0)
+        let newAmount#0: bytes[8] = val_as_bytes%3#0
+        let encoded_value%6#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%7#0: bytes = (concat "d" encoded_value%6#0)
+        let (maybe_value%4#0: bytes, maybe_exists%6#0: bool) = (box_get box_prefixed_key%7#0)
+        (assert maybe_exists%6#0) // Box must have value
+        let assigned_value%1#0: bytes[8] = newAmount#0
+        let updated_data%1#0: bytes = (replace3 maybe_value%4#0 35u assigned_value%1#0)
+        (box_del box_prefixed_key%7#0)
+        (box_put box_prefixed_key%7#0 updated_data%1#0)
+        let array_head_and_tail%3#0: bytes = ((extract 2 0) allocations#0)
+        let item_offset%3#0: uint64 = (* i#1 40u)
+        let tmp%15#0: bytes = (extract3 array_head_and_tail%3#0 item_offset%3#0 40u) // on error: Index access is out of bounds
+        let tmp%16#0: bytes = (extract3 tmp%15#0 32u 8u) // on error: Index access is out of bounds
+        let tmp%17#0: uint64 = (btoi tmp%16#0)
+        let matchSum#2: uint64 = (+ matchSum#1 tmp%17#0)
+        let i#2: uint64 = (+ i#1 1u)
+        goto block@1
+    block@3: // after_while_L205
+        let (costs.disbursements#0: uint64, costs.userAllocations#0: uint64) = smart_contracts/rewards/base.ts::BaseRewards.mbr(disbursement.title#0, disbursement.note#0)
+        let tmp%18#0: uint64 = (extract_uint16 allocations#0 0u)
+        let mbrAmount#0: uint64 = (* costs.userAllocations#0 tmp%18#0)
+        let tmp%19#0: bytes[32] = ((gtxns Receiver) mbrPayment#0)
+        let tmp%20#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%21#0: bool = (== tmp%19#0 tmp%20#0)
+        goto tmp%21#0 ? block@4 : block@6
+    block@4: // and_contd_L228
+        let tmp%22#0: uint64 = ((gtxns Amount) mbrPayment#0)
+        let tmp%23#0: bool = (== tmp%22#0 mbrAmount#0)
+        goto tmp%23#0 ? block@5 : block@6
+    block@5: // bool_true_L228
+        let and_result%0#0: bool = 1u
+        goto block@7
+    block@6: // bool_false_L228
+        let and_result%0#1: bool = 0u
+        goto block@7
+    block@7: // bool_merge_L228
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@5, and_result%0#1 <- block@6)
+        (assert and_result%0#2) // Invalid payment
+        let tmp%24#0: bytes[32] = ((gtxns AssetReceiver) assetXfer#0)
+        let tmp%25#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%26#0: bool = (== tmp%24#0 tmp%25#0)
+        goto tmp%26#0 ? block@8 : block@10
+    block@8: // and_contd_L237
+        let tmp%27#0: uint64 = ((gtxns AssetAmount) assetXfer#0)
+        let tmp%28#0: bool = (== tmp%27#0 matchSum#1)
+        goto tmp%28#0 ? block@9 : block@10
+    block@9: // bool_true_L237
+        let and_result%1#0: bool = 1u
+        goto block@11
+    block@10: // bool_false_L237
+        let and_result%1#1: bool = 0u
+        goto block@11
+    block@11: // bool_merge_L237
+        let and_result%1#2: bool = φ(and_result%1#0 <- block@9, and_result%1#1 <- block@10)
+        (assert and_result%1#2) // Invalid transfer
+        return 
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.finalizeDisbursement(id: uint64) -> void:
+    block@0: // L247
+        let encoded_value%0#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Disbursement does not exist
+        let encoded_value%1#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_value%1#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%1#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let item0%0#0: bytes = (extract3 maybe_value%0#0 0u 32u) // on error: Index access is out of bounds
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 256u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let item1%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 33u)
+        let item_end_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item2%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let item2%1#0: bytes = ((extract 2 0) item2%0#0)
+        let item3%0#0: bytes = (extract3 maybe_value%0#0 35u 8u) // on error: Index access is out of bounds
+        let item3%1#0: uint64 = (btoi item3%0#0)
+        let item4%0#0: bytes = (extract3 maybe_value%0#0 43u 8u) // on error: Index access is out of bounds
+        let item4%1#0: uint64 = (btoi item4%0#0)
+        let item5%0#0: bytes = (extract3 maybe_value%0#0 51u 8u) // on error: Index access is out of bounds
+        let item5%1#0: uint64 = (btoi item5%0#0)
+        let item6%0#0: bytes = (extract3 maybe_value%0#0 59u 8u) // on error: Index access is out of bounds
+        let item6%1#0: uint64 = (btoi item6%0#0)
+        let item7%0#0: bytes = (extract3 maybe_value%0#0 67u 8u) // on error: Index access is out of bounds
+        let item7%1#0: uint64 = (btoi item7%0#0)
+        let item_start_offset%1#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item_end_offset%1#0: uint64 = (len maybe_value%0#0)
+        let item8%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%1#0 item_end_offset%1#0)
+        let item8%1#0: bytes = ((extract 2 0) item8%0#0)
+        let (disbursement.creator#0: bytes[32], disbursement.finalized#0: bool, disbursement.title#0: bytes, disbursement.amount#0: uint64, disbursement.timeToUnlock#0: uint64, disbursement.expiration#0: uint64, disbursement.allocations#0: uint64, disbursement.distributed#0: uint64, disbursement.note#0: bytes) = (item0%0#0, item1%0#0, item2%1#0, item3%1#0, item4%1#0, item5%1#0, item6%1#0, item7%1#0, item8%1#0)
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bool = (== tmp%0#0 disbursement.creator#0)
+        (assert tmp%1#0) // You are not the creator of this disbursement
+        let tmp%2#0: bool = (! disbursement.finalized#0)
+        (assert tmp%2#0) // Disbursement already final
+        let tmp%3#0: uint64 = (global LatestTimestamp)
+        let tmp%4#0: bool = (>= disbursement.timeToUnlock#0 tmp%3#0)
+        goto tmp%4#0 ? block@2 : block@1
+    block@1: // or_contd_L254
+        let tmp%5#0: bool = (== disbursement.timeToUnlock#0 0u)
+        goto tmp%5#0 ? block@2 : block@3
+    block@2: // bool_true_L254
+        let or_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L254
+        let or_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L254
+        let or_result%0#2: bool = φ(or_result%0#0 <- block@2, or_result%0#1 <- block@3)
+        (assert or_result%0#2) // Invalid disbursement unlock time
+        let tmp%6#0: uint64 = (global LatestTimestamp)
+        let tmp%7#0: uint64 = (+ tmp%6#0 60u)
+        let tmp%8#0: bool = (>= disbursement.expiration#0 tmp%7#0)
+        goto tmp%8#0 ? block@6 : block@5
+    block@5: // or_contd_L258
+        let tmp%9#0: bool = (== disbursement.expiration#0 0u)
+        goto tmp%9#0 ? block@6 : block@7
+    block@6: // bool_true_L258
+        let or_result%1#0: bool = 1u
+        goto block@8
+    block@7: // bool_false_L258
+        let or_result%1#1: bool = 0u
+        goto block@8
+    block@8: // bool_merge_L258
+        let or_result%1#2: bool = φ(or_result%1#0 <- block@6, or_result%1#1 <- block@7)
+        (assert or_result%1#2) // Invalid disbursement expiration time
+        let tmp%10#0: bool = (> disbursement.amount#0 0u)
+        (assert tmp%10#0) // Disbursements cannot be empty
+        let tmp%11#0: bool = (> disbursement.allocations#0 0u)
+        (assert tmp%11#0) // Disbursements must have allocations
+        let encoded_value%2#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%2#0: bytes = (concat "d" encoded_value%2#0)
+        let (maybe_value%1#0: bytes, maybe_exists%2#0: bool) = (box_get box_prefixed_key%2#0)
+        (assert maybe_exists%2#0) // Box must have value
+        let assigned_value%0#0: bytes[1] = 0x80
+        let is_true%1#0: uint64 = (getbit assigned_value%0#0 0u)
+        let updated_data%0#0: bytes = (setbit maybe_value%1#0 256u is_true%1#0)
+        (box_del box_prefixed_key%2#0)
+        (box_put box_prefixed_key%2#0 updated_data%0#0)
+        return 
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.claimRewards(rewards: bytes) -> void:
+    block@0: // L267
+        let i#0: uint64 = 0u
+        goto block@1
+    block@1: // while_top_L268
+        let i#1: uint64 = φ(i#0 <- block@0, i#3 <- block@9)
+        let tmp%0#0: uint64 = (extract_uint16 rewards#0 0u)
+        let tmp%1#0: bool = (< i#1 tmp%0#0)
+        goto tmp%1#0 ? block@2 : block@10
+    block@2: // while_body_L268
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%0#0: uint64 = (* i#1 16u)
+        let tmp%2#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 16u) // on error: Index access is out of bounds
+        let tmp%3#0: bytes = (extract3 tmp%2#0 0u 8u) // on error: Index access is out of bounds
+        let materialized_values%0#0: uint64 = (btoi tmp%3#0)
+        let encoded_value%0#0: bytes[8] = (itob materialized_values%0#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Disbursement does not exist
+        let array_head_and_tail%1#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%1#0: uint64 = (* i#1 16u)
+        let tmp%4#0: bytes = (extract3 array_head_and_tail%1#0 item_offset%1#0 16u) // on error: Index access is out of bounds
+        let tmp%5#0: bytes = (extract3 tmp%4#0 0u 8u) // on error: Index access is out of bounds
+        let materialized_values%1#0: uint64 = (btoi tmp%5#0)
+        let encoded_value%1#0: bytes[8] = (itob materialized_values%1#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_value%1#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%1#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let item0%0#0: bytes = (extract3 maybe_value%0#0 0u 32u) // on error: Index access is out of bounds
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 256u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let item1%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 33u)
+        let item_end_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item2%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let item2%1#0: bytes = ((extract 2 0) item2%0#0)
+        let item3%0#0: bytes = (extract3 maybe_value%0#0 35u 8u) // on error: Index access is out of bounds
+        let item3%1#0: uint64 = (btoi item3%0#0)
+        let item4%0#0: bytes = (extract3 maybe_value%0#0 43u 8u) // on error: Index access is out of bounds
+        let item4%1#0: uint64 = (btoi item4%0#0)
+        let item5%0#0: bytes = (extract3 maybe_value%0#0 51u 8u) // on error: Index access is out of bounds
+        let item5%1#0: uint64 = (btoi item5%0#0)
+        let item6%0#0: bytes = (extract3 maybe_value%0#0 59u 8u) // on error: Index access is out of bounds
+        let item6%1#0: uint64 = (btoi item6%0#0)
+        let item7%0#0: bytes = (extract3 maybe_value%0#0 67u 8u) // on error: Index access is out of bounds
+        let item7%1#0: uint64 = (btoi item7%0#0)
+        let item_start_offset%1#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item_end_offset%1#0: uint64 = (len maybe_value%0#0)
+        let item8%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%1#0 item_end_offset%1#0)
+        let item8%1#0: bytes = ((extract 2 0) item8%0#0)
+        let (disbursement.creator#0: bytes[32], disbursement.finalized#0: bool, disbursement.title#0: bytes, disbursement.amount#0: uint64, disbursement.timeToUnlock#0: uint64, disbursement.expiration#0: uint64, disbursement.allocations#0: uint64, disbursement.distributed#0: uint64, disbursement.note#0: bytes) = (item0%0#0, item1%0#0, item2%1#0, item3%1#0, item4%1#0, item5%1#0, item6%1#0, item7%1#0, item8%1#0)
+        let tmp%6#0: uint64 = (global LatestTimestamp)
+        let tmp%7#0: uint64 = (- tmp%6#0 60u)
+        let tmp%8#0: bool = (<= disbursement.timeToUnlock#0 tmp%7#0)
+        (assert tmp%8#0) // Disbursement is locked
+        let tmp%9#0: uint64 = (global LatestTimestamp)
+        let tmp%10#0: bool = (>= disbursement.expiration#0 tmp%9#0)
+        (assert tmp%10#0) // Disbursement is locked
+        let tmp%11#0: bool = (> disbursement.amount#0 disbursement.distributed#0)
+        (assert tmp%11#0) // Disbursement is fully distributed
+        let array_head_and_tail%2#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%2#0: uint64 = (* i#1 16u)
+        let tmp%12#0: bytes = (extract3 array_head_and_tail%2#0 item_offset%2#0 16u) // on error: Index access is out of bounds
+        let tmp%13#0: bytes = (extract3 tmp%12#0 0u 8u) // on error: Index access is out of bounds
+        let tmp%14#0: bytes[32] = (txn Sender)
+        let array_head_and_tail%3#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%3#0: uint64 = (* i#1 16u)
+        let tmp%15#0: bytes = (extract3 array_head_and_tail%3#0 item_offset%3#0 16u) // on error: Index access is out of bounds
+        let tmp%16#0: bytes = (extract3 tmp%15#0 8u 8u) // on error: Index access is out of bounds
+        let current_tail_offset%0#0: uint64 = 48u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 tmp%14#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 tmp%13#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 tmp%16#0)
+        let userAllocationsKey#0: bytes[48] = encoded_tuple_buffer%3#0
+        let box_prefixed_key%2#0: bytes = (concat "u" userAllocationsKey#0)
+        let (_%1#0: uint64, maybe_exists%2#0: bool) = (box_len box_prefixed_key%2#0)
+        (assert maybe_exists%2#0) // Allocation does not exist
+        let box_prefixed_key%3#0: bytes = (concat "u" userAllocationsKey#0)
+        let (maybe_value%1#0: bytes, maybe_exists%3#0: bool) = (box_get box_prefixed_key%3#0)
+        (assert maybe_exists%3#0) // Box must have value
+        let maybe_value_converted%0#0: uint64 = (btoi maybe_value%1#0)
+        let userAllocation#0: uint64 = maybe_value_converted%0#0
+        let to_encode%0#0: uint64 = (- disbursement.allocations#0 1u)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let newAllocAmount#0: bytes[8] = val_as_bytes%0#0
+        let array_head_and_tail%4#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%4#0: uint64 = (* i#1 16u)
+        let tmp%17#0: bytes = (extract3 array_head_and_tail%4#0 item_offset%4#0 16u) // on error: Index access is out of bounds
+        let tmp%18#0: bytes = (extract3 tmp%17#0 0u 8u) // on error: Index access is out of bounds
+        let materialized_values%2#0: uint64 = (btoi tmp%18#0)
+        let encoded_value%2#0: bytes[8] = (itob materialized_values%2#0)
+        let box_prefixed_key%4#0: bytes = (concat "d" encoded_value%2#0)
+        let (maybe_value%2#0: bytes, maybe_exists%4#0: bool) = (box_get box_prefixed_key%4#0)
+        (assert maybe_exists%4#0) // Box must have value
+        let assigned_value%0#0: bytes[8] = newAllocAmount#0
+        let updated_data%0#0: bytes = (replace3 maybe_value%2#0 59u assigned_value%0#0)
+        (box_del box_prefixed_key%4#0)
+        (box_put box_prefixed_key%4#0 updated_data%0#0)
+        let to_encode%1#0: uint64 = (- disbursement.amount#0 userAllocation#0)
+        let val_as_bytes%1#0: bytes[8] = (itob to_encode%1#0)
+        let newAmount#0: bytes[8] = val_as_bytes%1#0
+        let array_head_and_tail%5#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%5#0: uint64 = (* i#1 16u)
+        let tmp%19#0: bytes = (extract3 array_head_and_tail%5#0 item_offset%5#0 16u) // on error: Index access is out of bounds
+        let tmp%20#0: bytes = (extract3 tmp%19#0 0u 8u) // on error: Index access is out of bounds
+        let materialized_values%3#0: uint64 = (btoi tmp%20#0)
+        let encoded_value%3#0: bytes[8] = (itob materialized_values%3#0)
+        let box_prefixed_key%5#0: bytes = (concat "d" encoded_value%3#0)
+        let (maybe_value%3#0: bytes, maybe_exists%5#0: bool) = (box_get box_prefixed_key%5#0)
+        (assert maybe_exists%5#0) // Box must have value
+        let assigned_value%1#0: bytes[8] = newAmount#0
+        let updated_data%1#0: bytes = (replace3 maybe_value%3#0 67u assigned_value%1#0)
+        (box_del box_prefixed_key%5#0)
+        (box_put box_prefixed_key%5#0 updated_data%1#0)
+        let box_prefixed_key%6#0: bytes = (concat "u" userAllocationsKey#0)
+        (box_del box_prefixed_key%6#0)
+        let creatorMBRRefund#0: itxn_field_set = itxn_field_set(0)
+        let creatorMBRRefund%%param_Fee_idx_0#0: uint64 = 0u
+        let creatorMBRRefund%%Fee_length#0: uint64 = 1u
+        let creatorMBRRefund%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let creatorMBRRefund%%TypeEnum_length#0: uint64 = 1u
+        let creatorMBRRefund%%param_Receiver_idx_0#0: bytes[32] = disbursement.creator#0
+        let creatorMBRRefund%%Receiver_length#0: uint64 = 1u
+        let creatorMBRRefund%%param_Amount_idx_0#0: uint64 = 24900u
+        let creatorMBRRefund%%Amount_length#0: uint64 = 1u
+        let creatorMBRRefund%%Sender_length#0: uint64 = 0u
+        let creatorMBRRefund%%Note_length#0: uint64 = 0u
+        let creatorMBRRefund%%CloseRemainderTo_length#0: uint64 = 0u
+        let creatorMBRRefund%%VotePK_length#0: uint64 = 0u
+        let creatorMBRRefund%%SelectionPK_length#0: uint64 = 0u
+        let creatorMBRRefund%%VoteFirst_length#0: uint64 = 0u
+        let creatorMBRRefund%%VoteLast_length#0: uint64 = 0u
+        let creatorMBRRefund%%VoteKeyDilution_length#0: uint64 = 0u
+        let creatorMBRRefund%%Type_length#0: uint64 = 0u
+        let creatorMBRRefund%%XferAsset_length#0: uint64 = 0u
+        let creatorMBRRefund%%AssetAmount_length#0: uint64 = 0u
+        let creatorMBRRefund%%AssetSender_length#0: uint64 = 0u
+        let creatorMBRRefund%%AssetReceiver_length#0: uint64 = 0u
+        let creatorMBRRefund%%AssetCloseTo_length#0: uint64 = 0u
+        let creatorMBRRefund%%ApplicationID_length#0: uint64 = 0u
+        let creatorMBRRefund%%OnCompletion_length#0: uint64 = 0u
+        let creatorMBRRefund%%ApprovalProgram_length#0: uint64 = 0u
+        let creatorMBRRefund%%ClearStateProgram_length#0: uint64 = 0u
+        let creatorMBRRefund%%RekeyTo_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAsset_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetTotal_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetName_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetURL_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetManager_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetReserve_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let creatorMBRRefund%%ConfigAssetClawback_length#0: uint64 = 0u
+        let creatorMBRRefund%%FreezeAsset_length#0: uint64 = 0u
+        let creatorMBRRefund%%FreezeAssetAccount_length#0: uint64 = 0u
+        let creatorMBRRefund%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let creatorMBRRefund%%GlobalNumUint_length#0: uint64 = 0u
+        let creatorMBRRefund%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let creatorMBRRefund%%LocalNumUint_length#0: uint64 = 0u
+        let creatorMBRRefund%%LocalNumByteSlice_length#0: uint64 = 0u
+        let creatorMBRRefund%%ExtraProgramPages_length#0: uint64 = 0u
+        let creatorMBRRefund%%Nonparticipation_length#0: uint64 = 0u
+        let creatorMBRRefund%%StateProofPK_length#0: uint64 = 0u
+        let creatorMBRRefund%%ApplicationArgs_length#0: uint64 = 0u
+        let creatorMBRRefund%%Accounts_length#0: uint64 = 0u
+        let creatorMBRRefund%%Assets_length#0: uint64 = 0u
+        let creatorMBRRefund%%Applications_length#0: uint64 = 0u
+        let creatorMBRRefund%%ApprovalProgramPages_length#0: uint64 = 0u
+        let creatorMBRRefund%%ClearStateProgramPages_length#0: uint64 = 0u
+        let array_head_and_tail%6#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%6#0: uint64 = (* i#1 16u)
+        let tmp%21#0: bytes = (extract3 array_head_and_tail%6#0 item_offset%6#0 16u) // on error: Index access is out of bounds
+        let tmp%22#0: bytes = (extract3 tmp%21#0 8u 8u) // on error: Index access is out of bounds
+        let tmp%23#0: uint64 = (btoi tmp%22#0)
+        let isAlgo#0: bool = (== tmp%23#0 0u)
+        goto isAlgo#0 ? block@6 : block@3
+    block@3: // if_body_L298
+        let assetXfer#0: itxn_field_set = itxn_field_set(1)
+        let assetXfer%%param_Fee_idx_0#0: uint64 = 0u
+        let assetXfer%%Fee_length#0: uint64 = 1u
+        let assetXfer%%param_TypeEnum_idx_0#0: uint64 = 4u
+        let assetXfer%%TypeEnum_length#0: uint64 = 1u
+        let assetXfer%%param_AssetReceiver_idx_0#0: bytes[32] = (txn Sender)
+        let assetXfer%%AssetReceiver_length#0: uint64 = 1u
+        let assetXfer%%param_AssetAmount_idx_0#0: uint64 = userAllocation#0
+        let assetXfer%%AssetAmount_length#0: uint64 = 1u
+        let array_head_and_tail%7#0: bytes = ((extract 2 0) rewards#0)
+        let item_offset%7#0: uint64 = (* i#1 16u)
+        let tmp%24#0: bytes = (extract3 array_head_and_tail%7#0 item_offset%7#0 16u) // on error: Index access is out of bounds
+        let tmp%25#0: bytes = (extract3 tmp%24#0 8u 8u) // on error: Index access is out of bounds
+        let assetXfer%%param_XferAsset_idx_0#0: uint64 = (btoi tmp%25#0)
+        let assetXfer%%XferAsset_length#0: uint64 = 1u
+        let assetXfer%%param_Note_idx_0#0: bytes = disbursement.note#0
+        let assetXfer%%Note_length#0: uint64 = 1u
+        let assetXfer%%Sender_length#0: uint64 = 0u
+        let assetXfer%%Receiver_length#0: uint64 = 0u
+        let assetXfer%%Amount_length#0: uint64 = 0u
+        let assetXfer%%CloseRemainderTo_length#0: uint64 = 0u
+        let assetXfer%%VotePK_length#0: uint64 = 0u
+        let assetXfer%%SelectionPK_length#0: uint64 = 0u
+        let assetXfer%%VoteFirst_length#0: uint64 = 0u
+        let assetXfer%%VoteLast_length#0: uint64 = 0u
+        let assetXfer%%VoteKeyDilution_length#0: uint64 = 0u
+        let assetXfer%%Type_length#0: uint64 = 0u
+        let assetXfer%%AssetSender_length#0: uint64 = 0u
+        let assetXfer%%AssetCloseTo_length#0: uint64 = 0u
+        let assetXfer%%ApplicationID_length#0: uint64 = 0u
+        let assetXfer%%OnCompletion_length#0: uint64 = 0u
+        let assetXfer%%ApprovalProgram_length#0: uint64 = 0u
+        let assetXfer%%ClearStateProgram_length#0: uint64 = 0u
+        let assetXfer%%RekeyTo_length#0: uint64 = 0u
+        let assetXfer%%ConfigAsset_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetTotal_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetName_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetURL_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetManager_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetReserve_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let assetXfer%%ConfigAssetClawback_length#0: uint64 = 0u
+        let assetXfer%%FreezeAsset_length#0: uint64 = 0u
+        let assetXfer%%FreezeAssetAccount_length#0: uint64 = 0u
+        let assetXfer%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let assetXfer%%GlobalNumUint_length#0: uint64 = 0u
+        let assetXfer%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let assetXfer%%LocalNumUint_length#0: uint64 = 0u
+        let assetXfer%%LocalNumByteSlice_length#0: uint64 = 0u
+        let assetXfer%%ExtraProgramPages_length#0: uint64 = 0u
+        let assetXfer%%Nonparticipation_length#0: uint64 = 0u
+        let assetXfer%%StateProofPK_length#0: uint64 = 0u
+        let assetXfer%%ApplicationArgs_length#0: uint64 = 0u
+        let assetXfer%%Accounts_length#0: uint64 = 0u
+        let assetXfer%%Assets_length#0: uint64 = 0u
+        let assetXfer%%Applications_length#0: uint64 = 0u
+        let assetXfer%%ApprovalProgramPages_length#0: uint64 = 0u
+        let assetXfer%%ClearStateProgramPages_length#0: uint64 = 0u
+        itxn_begin
+        ((itxn_field Amount) creatorMBRRefund%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) creatorMBRRefund%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) creatorMBRRefund%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) creatorMBRRefund%%param_Fee_idx_0#0)
+        goto block@4
+    block@4: // next_txn_L307
+        itxn_next
+        ((itxn_field Note) assetXfer%%param_Note_idx_0#0)
+        ((itxn_field XferAsset) assetXfer%%param_XferAsset_idx_0#0)
+        ((itxn_field AssetAmount) assetXfer%%param_AssetAmount_idx_0#0)
+        ((itxn_field AssetReceiver) assetXfer%%param_AssetReceiver_idx_0#0)
+        ((itxn_field TypeEnum) assetXfer%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) assetXfer%%param_Fee_idx_0#0)
+        goto block@5
+    block@5: // next_txn_L307
+        itxn_submit
+        goto block@9
+    block@6: // else_body_L308
+        let payment#0: itxn_field_set = itxn_field_set(2)
+        let payment%%param_Fee_idx_0#0: uint64 = 0u
+        let payment%%Fee_length#0: uint64 = 1u
+        let payment%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let payment%%TypeEnum_length#0: uint64 = 1u
+        let payment%%param_Receiver_idx_0#0: bytes[32] = (txn Sender)
+        let payment%%Receiver_length#0: uint64 = 1u
+        let payment%%param_Amount_idx_0#0: uint64 = userAllocation#0
+        let payment%%Amount_length#0: uint64 = 1u
+        let payment%%param_Note_idx_0#0: bytes = disbursement.note#0
+        let payment%%Note_length#0: uint64 = 1u
+        let payment%%Sender_length#0: uint64 = 0u
+        let payment%%CloseRemainderTo_length#0: uint64 = 0u
+        let payment%%VotePK_length#0: uint64 = 0u
+        let payment%%SelectionPK_length#0: uint64 = 0u
+        let payment%%VoteFirst_length#0: uint64 = 0u
+        let payment%%VoteLast_length#0: uint64 = 0u
+        let payment%%VoteKeyDilution_length#0: uint64 = 0u
+        let payment%%Type_length#0: uint64 = 0u
+        let payment%%XferAsset_length#0: uint64 = 0u
+        let payment%%AssetAmount_length#0: uint64 = 0u
+        let payment%%AssetSender_length#0: uint64 = 0u
+        let payment%%AssetReceiver_length#0: uint64 = 0u
+        let payment%%AssetCloseTo_length#0: uint64 = 0u
+        let payment%%ApplicationID_length#0: uint64 = 0u
+        let payment%%OnCompletion_length#0: uint64 = 0u
+        let payment%%ApprovalProgram_length#0: uint64 = 0u
+        let payment%%ClearStateProgram_length#0: uint64 = 0u
+        let payment%%RekeyTo_length#0: uint64 = 0u
+        let payment%%ConfigAsset_length#0: uint64 = 0u
+        let payment%%ConfigAssetTotal_length#0: uint64 = 0u
+        let payment%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let payment%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let payment%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let payment%%ConfigAssetName_length#0: uint64 = 0u
+        let payment%%ConfigAssetURL_length#0: uint64 = 0u
+        let payment%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let payment%%ConfigAssetManager_length#0: uint64 = 0u
+        let payment%%ConfigAssetReserve_length#0: uint64 = 0u
+        let payment%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let payment%%ConfigAssetClawback_length#0: uint64 = 0u
+        let payment%%FreezeAsset_length#0: uint64 = 0u
+        let payment%%FreezeAssetAccount_length#0: uint64 = 0u
+        let payment%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let payment%%GlobalNumUint_length#0: uint64 = 0u
+        let payment%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let payment%%LocalNumUint_length#0: uint64 = 0u
+        let payment%%LocalNumByteSlice_length#0: uint64 = 0u
+        let payment%%ExtraProgramPages_length#0: uint64 = 0u
+        let payment%%Nonparticipation_length#0: uint64 = 0u
+        let payment%%StateProofPK_length#0: uint64 = 0u
+        let payment%%ApplicationArgs_length#0: uint64 = 0u
+        let payment%%Accounts_length#0: uint64 = 0u
+        let payment%%Assets_length#0: uint64 = 0u
+        let payment%%Applications_length#0: uint64 = 0u
+        let payment%%ApprovalProgramPages_length#0: uint64 = 0u
+        let payment%%ClearStateProgramPages_length#0: uint64 = 0u
+        itxn_begin
+        ((itxn_field Amount) creatorMBRRefund%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) creatorMBRRefund%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) creatorMBRRefund%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) creatorMBRRefund%%param_Fee_idx_0#0)
+        goto block@7
+    block@7: // next_txn_L316
+        itxn_next
+        ((itxn_field Note) payment%%param_Note_idx_0#0)
+        ((itxn_field Amount) payment%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) payment%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) payment%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) payment%%param_Fee_idx_0#0)
+        goto block@8
+    block@8: // next_txn_L316
+        itxn_submit
+        goto block@9
+    block@9: // after_if_else_L298
+        let i#3: uint64 = (+ i#1 1u)
+        goto block@1
+    block@10: // after_while_L268
+        return 
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.reclaimRewards(id: uint64, reclaims: bytes) -> void:
+    block@0: // L321
+        let encoded_value%0#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Disbursement does not exist
+        let encoded_value%1#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_value%1#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%1#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let item0%0#0: bytes = (extract3 maybe_value%0#0 0u 32u) // on error: Index access is out of bounds
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 256u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let item1%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 33u)
+        let item_end_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item2%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let item2%1#0: bytes = ((extract 2 0) item2%0#0)
+        let item3%0#0: bytes = (extract3 maybe_value%0#0 35u 8u) // on error: Index access is out of bounds
+        let item3%1#0: uint64 = (btoi item3%0#0)
+        let item4%0#0: bytes = (extract3 maybe_value%0#0 43u 8u) // on error: Index access is out of bounds
+        let item4%1#0: uint64 = (btoi item4%0#0)
+        let item5%0#0: bytes = (extract3 maybe_value%0#0 51u 8u) // on error: Index access is out of bounds
+        let item5%1#0: uint64 = (btoi item5%0#0)
+        let item6%0#0: bytes = (extract3 maybe_value%0#0 59u 8u) // on error: Index access is out of bounds
+        let item6%1#0: uint64 = (btoi item6%0#0)
+        let item7%0#0: bytes = (extract3 maybe_value%0#0 67u 8u) // on error: Index access is out of bounds
+        let item7%1#0: uint64 = (btoi item7%0#0)
+        let item_start_offset%1#0: uint64 = (extract_uint16 maybe_value%0#0 75u)
+        let item_end_offset%1#0: uint64 = (len maybe_value%0#0)
+        let item8%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%1#0 item_end_offset%1#0)
+        let item8%1#0: bytes = ((extract 2 0) item8%0#0)
+        let (disbursement.creator#0: bytes[32], disbursement.finalized#0: bool, disbursement.title#0: bytes, disbursement.amount#0: uint64, disbursement.timeToUnlock#0: uint64, disbursement.expiration#0: uint64, disbursement.allocations#0: uint64, disbursement.distributed#0: uint64, disbursement.note#0: bytes) = (item0%0#0, item1%0#0, item2%1#0, item3%1#0, item4%1#0, item5%1#0, item6%1#0, item7%1#0, item8%1#0)
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bool = (== disbursement.creator#0 tmp%0#0)
+        (assert tmp%1#0) // You are not the creator of this disbursement
+        (assert disbursement.finalized#0) // Disbursement already final
+        let tmp%2#0: uint64 = (global LatestTimestamp)
+        let tmp%3#0: bool = (<= disbursement.expiration#0 tmp%2#0)
+        (assert tmp%3#0) // Disbursement has not expired
+        let i#0: uint64 = 0u
+        goto block@1
+    block@1: // while_top_L329
+        let i#1: uint64 = φ(i#0 <- block@0, i#3 <- block@8)
+        let tmp%4#0: uint64 = (extract_uint16 reclaims#0 0u)
+        let tmp%5#0: bool = (< i#1 tmp%4#0)
+        goto tmp%5#0 ? block@2 : block@9
+    block@2: // while_body_L329
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) reclaims#0)
+        let item_offset%0#0: uint64 = (* i#1 40u)
+        let tmp%6#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 40u) // on error: Index access is out of bounds
+        let tmp%7#0: bytes = (extract3 tmp%6#0 0u 32u) // on error: Index access is out of bounds
+        let array_head_and_tail%1#0: bytes = ((extract 2 0) reclaims#0)
+        let item_offset%1#0: uint64 = (* i#1 40u)
+        let tmp%8#0: bytes = (extract3 array_head_and_tail%1#0 item_offset%1#0 40u) // on error: Index access is out of bounds
+        let tmp%9#0: bytes = (extract3 tmp%8#0 32u 8u) // on error: Index access is out of bounds
+        let current_tail_offset%0#0: uint64 = 48u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 tmp%7#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 val_as_bytes%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 tmp%9#0)
+        let userAllocationsKey#0: bytes[48] = encoded_tuple_buffer%3#0
+        let box_prefixed_key%2#0: bytes = (concat "u" userAllocationsKey#0)
+        let (_%1#0: uint64, maybe_exists%2#0: bool) = (box_len box_prefixed_key%2#0)
+        (assert maybe_exists%2#0) // Allocation does not exist
+        let box_prefixed_key%3#0: bytes = (concat "u" userAllocationsKey#0)
+        let (maybe_value%1#0: bytes, maybe_exists%3#0: bool) = (box_get box_prefixed_key%3#0)
+        (assert maybe_exists%3#0) // Box must have value
+        let maybe_value_converted%0#0: uint64 = (btoi maybe_value%1#0)
+        let userAllocation#0: uint64 = maybe_value_converted%0#0
+        let val_as_bytes%1#0: bytes[8] = (itob userAllocation#0)
+        let encoded_value%2#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%4#0: bytes = (concat "d" encoded_value%2#0)
+        let (maybe_value%2#0: bytes, maybe_exists%4#0: bool) = (box_get box_prefixed_key%4#0)
+        (assert maybe_exists%4#0) // Box must have value
+        let assigned_value%0#0: bytes[8] = val_as_bytes%1#0
+        let updated_data%0#0: bytes = (replace3 maybe_value%2#0 35u assigned_value%0#0)
+        (box_del box_prefixed_key%4#0)
+        (box_put box_prefixed_key%4#0 updated_data%0#0)
+        let to_encode%0#0: uint64 = (- disbursement.allocations#0 1u)
+        let val_as_bytes%2#0: bytes[8] = (itob to_encode%0#0)
+        let newAllocAmount#0: bytes[8] = val_as_bytes%2#0
+        let encoded_value%3#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%5#0: bytes = (concat "d" encoded_value%3#0)
+        let (maybe_value%3#0: bytes, maybe_exists%5#0: bool) = (box_get box_prefixed_key%5#0)
+        (assert maybe_exists%5#0) // Box must have value
+        let assigned_value%1#0: bytes[8] = newAllocAmount#0
+        let updated_data%1#0: bytes = (replace3 maybe_value%3#0 59u assigned_value%1#0)
+        (box_del box_prefixed_key%5#0)
+        (box_put box_prefixed_key%5#0 updated_data%1#0)
+        let box_prefixed_key%6#0: bytes = (concat "u" userAllocationsKey#0)
+        (box_del box_prefixed_key%6#0)
+        let array_head_and_tail%2#0: bytes = ((extract 2 0) reclaims#0)
+        let item_offset%2#0: uint64 = (* i#1 40u)
+        let tmp%10#0: bytes = (extract3 array_head_and_tail%2#0 item_offset%2#0 40u) // on error: Index access is out of bounds
+        let tmp%11#0: bytes = (extract3 tmp%10#0 32u 8u) // on error: Index access is out of bounds
+        let tmp%12#0: uint64 = (btoi tmp%11#0)
+        let isAlgo#0: bool = (== tmp%12#0 0u)
+        goto isAlgo#0 ? block@6 : block@3
+    block@3: // if_body_L345
+        let xfer#0: itxn_field_set = itxn_field_set(0)
+        let xfer%%param_Fee_idx_0#0: uint64 = 0u
+        let xfer%%Fee_length#0: uint64 = 1u
+        let xfer%%param_TypeEnum_idx_0#0: uint64 = 4u
+        let xfer%%TypeEnum_length#0: uint64 = 1u
+        let xfer%%param_AssetReceiver_idx_0#0: bytes[32] = disbursement.creator#0
+        let xfer%%AssetReceiver_length#0: uint64 = 1u
+        let xfer%%param_AssetAmount_idx_0#0: uint64 = userAllocation#0
+        let xfer%%AssetAmount_length#0: uint64 = 1u
+        let array_head_and_tail%3#0: bytes = ((extract 2 0) reclaims#0)
+        let item_offset%3#0: uint64 = (* i#1 40u)
+        let tmp%13#0: bytes = (extract3 array_head_and_tail%3#0 item_offset%3#0 40u) // on error: Index access is out of bounds
+        let tmp%14#0: bytes = (extract3 tmp%13#0 32u 8u) // on error: Index access is out of bounds
+        let xfer%%param_XferAsset_idx_0#0: uint64 = (btoi tmp%14#0)
+        let xfer%%XferAsset_length#0: uint64 = 1u
+        let xfer%%Sender_length#0: uint64 = 0u
+        let xfer%%Note_length#0: uint64 = 0u
+        let xfer%%Receiver_length#0: uint64 = 0u
+        let xfer%%Amount_length#0: uint64 = 0u
+        let xfer%%CloseRemainderTo_length#0: uint64 = 0u
+        let xfer%%VotePK_length#0: uint64 = 0u
+        let xfer%%SelectionPK_length#0: uint64 = 0u
+        let xfer%%VoteFirst_length#0: uint64 = 0u
+        let xfer%%VoteLast_length#0: uint64 = 0u
+        let xfer%%VoteKeyDilution_length#0: uint64 = 0u
+        let xfer%%Type_length#0: uint64 = 0u
+        let xfer%%AssetSender_length#0: uint64 = 0u
+        let xfer%%AssetCloseTo_length#0: uint64 = 0u
+        let xfer%%ApplicationID_length#0: uint64 = 0u
+        let xfer%%OnCompletion_length#0: uint64 = 0u
+        let xfer%%ApprovalProgram_length#0: uint64 = 0u
+        let xfer%%ClearStateProgram_length#0: uint64 = 0u
+        let xfer%%RekeyTo_length#0: uint64 = 0u
+        let xfer%%ConfigAsset_length#0: uint64 = 0u
+        let xfer%%ConfigAssetTotal_length#0: uint64 = 0u
+        let xfer%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let xfer%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let xfer%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let xfer%%ConfigAssetName_length#0: uint64 = 0u
+        let xfer%%ConfigAssetURL_length#0: uint64 = 0u
+        let xfer%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let xfer%%ConfigAssetManager_length#0: uint64 = 0u
+        let xfer%%ConfigAssetReserve_length#0: uint64 = 0u
+        let xfer%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let xfer%%ConfigAssetClawback_length#0: uint64 = 0u
+        let xfer%%FreezeAsset_length#0: uint64 = 0u
+        let xfer%%FreezeAssetAccount_length#0: uint64 = 0u
+        let xfer%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let xfer%%GlobalNumUint_length#0: uint64 = 0u
+        let xfer%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let xfer%%LocalNumUint_length#0: uint64 = 0u
+        let xfer%%LocalNumByteSlice_length#0: uint64 = 0u
+        let xfer%%ExtraProgramPages_length#0: uint64 = 0u
+        let xfer%%Nonparticipation_length#0: uint64 = 0u
+        let xfer%%StateProofPK_length#0: uint64 = 0u
+        let xfer%%ApplicationArgs_length#0: uint64 = 0u
+        let xfer%%Accounts_length#0: uint64 = 0u
+        let xfer%%Assets_length#0: uint64 = 0u
+        let xfer%%Applications_length#0: uint64 = 0u
+        let xfer%%ApprovalProgramPages_length#0: uint64 = 0u
+        let xfer%%ClearStateProgramPages_length#0: uint64 = 0u
+        let mbrRefund#0: itxn_field_set = itxn_field_set(1)
+        let mbrRefund%%param_Fee_idx_0#0: uint64 = 0u
+        let mbrRefund%%Fee_length#0: uint64 = 1u
+        let mbrRefund%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let mbrRefund%%TypeEnum_length#0: uint64 = 1u
+        let mbrRefund%%param_Receiver_idx_0#0: bytes[32] = disbursement.creator#0
+        let mbrRefund%%Receiver_length#0: uint64 = 1u
+        let mbrRefund%%param_Amount_idx_0#0: uint64 = 24900u
+        let mbrRefund%%Amount_length#0: uint64 = 1u
+        let mbrRefund%%Sender_length#0: uint64 = 0u
+        let mbrRefund%%Note_length#0: uint64 = 0u
+        let mbrRefund%%CloseRemainderTo_length#0: uint64 = 0u
+        let mbrRefund%%VotePK_length#0: uint64 = 0u
+        let mbrRefund%%SelectionPK_length#0: uint64 = 0u
+        let mbrRefund%%VoteFirst_length#0: uint64 = 0u
+        let mbrRefund%%VoteLast_length#0: uint64 = 0u
+        let mbrRefund%%VoteKeyDilution_length#0: uint64 = 0u
+        let mbrRefund%%Type_length#0: uint64 = 0u
+        let mbrRefund%%XferAsset_length#0: uint64 = 0u
+        let mbrRefund%%AssetAmount_length#0: uint64 = 0u
+        let mbrRefund%%AssetSender_length#0: uint64 = 0u
+        let mbrRefund%%AssetReceiver_length#0: uint64 = 0u
+        let mbrRefund%%AssetCloseTo_length#0: uint64 = 0u
+        let mbrRefund%%ApplicationID_length#0: uint64 = 0u
+        let mbrRefund%%OnCompletion_length#0: uint64 = 0u
+        let mbrRefund%%ApprovalProgram_length#0: uint64 = 0u
+        let mbrRefund%%ClearStateProgram_length#0: uint64 = 0u
+        let mbrRefund%%RekeyTo_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAsset_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetTotal_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetName_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetURL_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetManager_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetReserve_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let mbrRefund%%ConfigAssetClawback_length#0: uint64 = 0u
+        let mbrRefund%%FreezeAsset_length#0: uint64 = 0u
+        let mbrRefund%%FreezeAssetAccount_length#0: uint64 = 0u
+        let mbrRefund%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let mbrRefund%%GlobalNumUint_length#0: uint64 = 0u
+        let mbrRefund%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let mbrRefund%%LocalNumUint_length#0: uint64 = 0u
+        let mbrRefund%%LocalNumByteSlice_length#0: uint64 = 0u
+        let mbrRefund%%ExtraProgramPages_length#0: uint64 = 0u
+        let mbrRefund%%Nonparticipation_length#0: uint64 = 0u
+        let mbrRefund%%StateProofPK_length#0: uint64 = 0u
+        let mbrRefund%%ApplicationArgs_length#0: uint64 = 0u
+        let mbrRefund%%Accounts_length#0: uint64 = 0u
+        let mbrRefund%%Assets_length#0: uint64 = 0u
+        let mbrRefund%%Applications_length#0: uint64 = 0u
+        let mbrRefund%%ApprovalProgramPages_length#0: uint64 = 0u
+        let mbrRefund%%ClearStateProgramPages_length#0: uint64 = 0u
+        itxn_begin
+        ((itxn_field XferAsset) xfer%%param_XferAsset_idx_0#0)
+        ((itxn_field AssetAmount) xfer%%param_AssetAmount_idx_0#0)
+        ((itxn_field AssetReceiver) xfer%%param_AssetReceiver_idx_0#0)
+        ((itxn_field TypeEnum) xfer%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) xfer%%param_Fee_idx_0#0)
+        goto block@4
+    block@4: // next_txn_L359
+        itxn_next
+        ((itxn_field Amount) mbrRefund%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) mbrRefund%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) mbrRefund%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) mbrRefund%%param_Fee_idx_0#0)
+        goto block@5
+    block@5: // next_txn_L359
+        itxn_submit
+        goto block@8
+    block@6: // else_body_L360
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(2)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Receiver_idx_0#0: bytes[32] = disbursement.creator#0
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = (+ userAllocation#0 24900u)
+        let inner_txn_params%0%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%0%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@7
+    block@7: // next_txn_L361
+        itxn_submit
+        goto block@8
+    block@8: // after_if_else_L345
+        let i#3: uint64 = (+ i#1 1u)
+        goto block@1
+    block@9: // after_while_L329
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+    block@0: // L19
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L27
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(payment: uint64, asset: uint64) -> void:
+    block@0: // L22
+        let tmp%0#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        goto tmp%2#0 ? block@1 : block@3
+    block@1: // and_contd_L24
+        let tmp%3#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%4#0: uint64 = (global AssetOptInMinBalance)
+        let tmp%5#0: bool = (== tmp%3#0 tmp%4#0)
+        goto tmp%5#0 ? block@2 : block@3
+    block@2: // bool_true_L24
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L24
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L24
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = 4u
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_AssetReceiver_idx_0#0: bytes[32] = (global CurrentApplicationAddress)
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_AssetAmount_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_XferAsset_idx_0#0: uint64 = asset#0
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 1u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field XferAsset) inner_txn_params%0%%param_XferAsset_idx_0#0)
+        ((itxn_field AssetAmount) inner_txn_params%0%%param_AssetAmount_idx_0#0)
+        ((itxn_field AssetReceiver) inner_txn_params%0%%param_AssetReceiver_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@5
+    block@5: // next_txn_L33
+        itxn_submit
+        return 
+
+subroutine smart_contracts/rewards/base.ts::BaseRewards.mbr(title: bytes, note: bytes) -> <uint64, uint64>:
+    block@0: // L6
+        let tmp%0#0: uint64 = (len title#0)
+        let tmp%1#0: uint64 = (len note#0)
+        let tmp%2#0: uint64 = (+ tmp%0#0 tmp%1#0)
+        let tmp%3#0: uint64 = (* 400u tmp%2#0)
+        let tmp%4#0: uint64 = (+ 35300u tmp%3#0)
+        return tmp%4#0 25300u
+
+subroutine smart_contracts/rewards/contract.algo.ts::Rewards.__algots__.defaultCreate() -> void:
+    block@0: // L53
+        return 
+
+subroutine polytype/lib/polytype-module.d.ts::ClusteredContract<smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract,smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn,smart_contracts/rewards/base.ts::BaseRewards>.constructor() -> void:
+    block@0: // L1
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        return 
+
+subroutine @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor() -> void:
+    block@0: // L1
+        return 

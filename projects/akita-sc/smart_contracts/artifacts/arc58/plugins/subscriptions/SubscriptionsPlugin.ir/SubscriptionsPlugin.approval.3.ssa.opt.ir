@@ -1,0 +1,697 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@4 : block@23
+    block@4: // abi_routing_L13
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(uint64,string)void" => block@5, method "optin(uint64,bool,uint64)void" => block@6, method "newService(uint64,bool,uint64,uint64,uint64,uint64,uint64,byte[36])uint64" => block@7, method "pauseService(uint64,bool,uint64)void" => block@8, method "activateService(uint64,bool,uint64)void" => block@9, method "shutdownService(uint64,bool,uint64)void" => block@10, method "block(uint64,bool,address)void" => block@11, method "unblock(uint64,bool,address)void" => block@12, method "subscribe(uint64,bool,address,uint64,uint64,uint64,byte[][])void" => block@13, method "subscribeAsa(uint64,bool,uint64,address,uint64,uint64,uint64,byte[][])void" => block@14, method "triggerPayment(uint64,bool,address,uint64,byte[][])void" => block@15, method "streakCheck(uint64,bool,address,uint64)void" => block@16, method "setPasses(uint64,bool,uint64,address[])void" => block@17, method "update(string)void" => block@18, method "updateAkitaDAO(uint64)void" => block@19, * => block@23}
+    block@5: // create_route_L17
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%7#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let tmp%8#0: bytes = (txna ApplicationArgs 2)
+        let tmp%9#0: bytes = ((extract 2 0) tmp%8#0)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.create(tmp%7#0, tmp%9#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#0: bool = 1u
+        goto block@24
+    block@6: // optin_route_L25
+        let tmp%10#0: uint64 = (txn OnCompletion)
+        let tmp%11#0: bool = (! tmp%10#0)
+        (assert tmp%11#0) // OnCompletion is not NoOp
+        let tmp%12#0: uint64 = (txn ApplicationID)
+        (assert tmp%12#0) // can only call when not creating
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%14#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        let reinterpret_bytes[1]%0#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%15#0: bool = (getbit reinterpret_bytes[1]%0#0 0u)
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%16#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.optin(tmp%14#0, tmp%15#0, tmp%16#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#1: bool = 1u
+        goto block@24
+    block@7: // newService_route_L55
+        let tmp%17#0: uint64 = (txn OnCompletion)
+        let tmp%18#0: bool = (! tmp%17#0)
+        (assert tmp%18#0) // OnCompletion is not NoOp
+        let tmp%19#0: uint64 = (txn ApplicationID)
+        (assert tmp%19#0) // can only call when not creating
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%21#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let reinterpret_bytes[1]%1#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%22#0: bool = (getbit reinterpret_bytes[1]%1#0 0u)
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%23#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%24#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%25#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        let reinterpret_bytes[8]%7#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%26#0: uint64 = (btoi reinterpret_bytes[8]%7#0)
+        let reinterpret_bytes[8]%8#0: bytes[8] = (txna ApplicationArgs 7)
+        let tmp%27#0: uint64 = (btoi reinterpret_bytes[8]%8#0)
+        let reinterpret_bytes[36]%0#0: bytes[36] = (txna ApplicationArgs 8)
+        let to_encode%0#0: uint64 = smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.newService(tmp%21#0, tmp%22#0, tmp%23#0, tmp%24#0, tmp%25#0, tmp%26#0, tmp%27#0, reinterpret_bytes[36]%0#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%28#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%28#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#2: bool = 1u
+        goto block@24
+    block@8: // pauseService_route_L97
+        let tmp%29#0: uint64 = (txn OnCompletion)
+        let tmp%30#0: bool = (! tmp%29#0)
+        (assert tmp%30#0) // OnCompletion is not NoOp
+        let tmp%31#0: uint64 = (txn ApplicationID)
+        (assert tmp%31#0) // can only call when not creating
+        let reinterpret_bytes[8]%9#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%33#0: uint64 = (btoi reinterpret_bytes[8]%9#0)
+        let reinterpret_bytes[1]%2#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%34#0: bool = (getbit reinterpret_bytes[1]%2#0 0u)
+        let reinterpret_bytes[8]%10#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%35#0: uint64 = (btoi reinterpret_bytes[8]%10#0)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.pauseService(tmp%33#0, tmp%34#0, tmp%35#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#3: bool = 1u
+        goto block@24
+    block@9: // activateService_route_L119
+        let tmp%36#0: uint64 = (txn OnCompletion)
+        let tmp%37#0: bool = (! tmp%36#0)
+        (assert tmp%37#0) // OnCompletion is not NoOp
+        let tmp%38#0: uint64 = (txn ApplicationID)
+        (assert tmp%38#0) // can only call when not creating
+        let reinterpret_bytes[8]%11#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%40#0: uint64 = (btoi reinterpret_bytes[8]%11#0)
+        let reinterpret_bytes[1]%3#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%41#0: bool = (getbit reinterpret_bytes[1]%3#0 0u)
+        let reinterpret_bytes[8]%12#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%42#0: uint64 = (btoi reinterpret_bytes[8]%12#0)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.activateService(tmp%40#0, tmp%41#0, tmp%42#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#4: bool = 1u
+        goto block@24
+    block@10: // shutdownService_route_L141
+        let tmp%43#0: uint64 = (txn OnCompletion)
+        let tmp%44#0: bool = (! tmp%43#0)
+        (assert tmp%44#0) // OnCompletion is not NoOp
+        let tmp%45#0: uint64 = (txn ApplicationID)
+        (assert tmp%45#0) // can only call when not creating
+        let reinterpret_bytes[8]%13#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%47#0: uint64 = (btoi reinterpret_bytes[8]%13#0)
+        let reinterpret_bytes[1]%4#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%48#0: bool = (getbit reinterpret_bytes[1]%4#0 0u)
+        let reinterpret_bytes[8]%14#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%49#0: uint64 = (btoi reinterpret_bytes[8]%14#0)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.shutdownService(tmp%47#0, tmp%48#0, tmp%49#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#5: bool = 1u
+        goto block@24
+    block@11: // block_route_L163
+        let tmp%50#0: uint64 = (txn OnCompletion)
+        let tmp%51#0: bool = (! tmp%50#0)
+        (assert tmp%51#0) // OnCompletion is not NoOp
+        let tmp%52#0: uint64 = (txn ApplicationID)
+        (assert tmp%52#0) // can only call when not creating
+        let reinterpret_bytes[8]%15#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%54#0: uint64 = (btoi reinterpret_bytes[8]%15#0)
+        let reinterpret_bytes[1]%5#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%55#0: bool = (getbit reinterpret_bytes[1]%5#0 0u)
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 3)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.block(tmp%54#0, tmp%55#0, reinterpret_bytes[32]%0#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#6: bool = 1u
+        goto block@24
+    block@12: // unblock_route_L193
+        let tmp%56#0: uint64 = (txn OnCompletion)
+        let tmp%57#0: bool = (! tmp%56#0)
+        (assert tmp%57#0) // OnCompletion is not NoOp
+        let tmp%58#0: uint64 = (txn ApplicationID)
+        (assert tmp%58#0) // can only call when not creating
+        let reinterpret_bytes[8]%16#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%60#0: uint64 = (btoi reinterpret_bytes[8]%16#0)
+        let reinterpret_bytes[1]%6#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%61#0: bool = (getbit reinterpret_bytes[1]%6#0 0u)
+        let reinterpret_bytes[32]%1#0: bytes[32] = (txna ApplicationArgs 3)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.unblock(tmp%60#0, tmp%61#0, reinterpret_bytes[32]%1#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#7: bool = 1u
+        goto block@24
+    block@13: // subscribe_route_L215
+        let tmp%62#0: uint64 = (txn OnCompletion)
+        let tmp%63#0: bool = (! tmp%62#0)
+        (assert tmp%63#0) // OnCompletion is not NoOp
+        let tmp%64#0: uint64 = (txn ApplicationID)
+        (assert tmp%64#0) // can only call when not creating
+        let reinterpret_bytes[8]%17#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%66#0: uint64 = (btoi reinterpret_bytes[8]%17#0)
+        let reinterpret_bytes[1]%7#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%67#0: bool = (getbit reinterpret_bytes[1]%7#0 0u)
+        let reinterpret_bytes[32]%2#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[8]%18#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%68#0: uint64 = (btoi reinterpret_bytes[8]%18#0)
+        let reinterpret_bytes[8]%19#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%69#0: uint64 = (btoi reinterpret_bytes[8]%19#0)
+        let reinterpret_bytes[8]%20#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%70#0: uint64 = (btoi reinterpret_bytes[8]%20#0)
+        let reinterpret_bytes[]%0#0: bytes[] = (txna ApplicationArgs 7)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.subscribe(tmp%66#0, tmp%67#0, reinterpret_bytes[32]%2#0, tmp%68#0, tmp%69#0, tmp%70#0, reinterpret_bytes[]%0#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#8: bool = 1u
+        goto block@24
+    block@14: // subscribeAsa_route_L271
+        let tmp%71#0: uint64 = (txn OnCompletion)
+        let tmp%72#0: bool = (! tmp%71#0)
+        (assert tmp%72#0) // OnCompletion is not NoOp
+        let tmp%73#0: uint64 = (txn ApplicationID)
+        (assert tmp%73#0) // can only call when not creating
+        let reinterpret_bytes[8]%21#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%75#0: uint64 = (btoi reinterpret_bytes[8]%21#0)
+        let reinterpret_bytes[1]%8#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%76#0: bool = (getbit reinterpret_bytes[1]%8#0 0u)
+        let reinterpret_bytes[8]%22#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%77#0: uint64 = (btoi reinterpret_bytes[8]%22#0)
+        let reinterpret_bytes[32]%3#0: bytes[32] = (txna ApplicationArgs 4)
+        let reinterpret_bytes[8]%23#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%78#0: uint64 = (btoi reinterpret_bytes[8]%23#0)
+        let reinterpret_bytes[8]%24#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%79#0: uint64 = (btoi reinterpret_bytes[8]%24#0)
+        let reinterpret_bytes[8]%25#0: bytes[8] = (txna ApplicationArgs 7)
+        let tmp%80#0: uint64 = (btoi reinterpret_bytes[8]%25#0)
+        let reinterpret_bytes[]%1#0: bytes[] = (txna ApplicationArgs 8)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.subscribeAsa(tmp%75#0, tmp%76#0, tmp%77#0, reinterpret_bytes[32]%3#0, tmp%78#0, tmp%79#0, tmp%80#0, reinterpret_bytes[]%1#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#9: bool = 1u
+        goto block@24
+    block@15: // triggerPayment_route_L339
+        let tmp%81#0: uint64 = (txn OnCompletion)
+        let tmp%82#0: bool = (! tmp%81#0)
+        (assert tmp%82#0) // OnCompletion is not NoOp
+        let tmp%83#0: uint64 = (txn ApplicationID)
+        (assert tmp%83#0) // can only call when not creating
+        let reinterpret_bytes[8]%26#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%85#0: uint64 = (btoi reinterpret_bytes[8]%26#0)
+        let reinterpret_bytes[1]%9#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%86#0: bool = (getbit reinterpret_bytes[1]%9#0 0u)
+        let reinterpret_bytes[32]%4#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[8]%27#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%87#0: uint64 = (btoi reinterpret_bytes[8]%27#0)
+        let reinterpret_bytes[]%2#0: bytes[] = (txna ApplicationArgs 5)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.triggerPayment(tmp%85#0, tmp%86#0, reinterpret_bytes[32]%4#0, tmp%87#0, reinterpret_bytes[]%2#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#10: bool = 1u
+        goto block@24
+    block@16: // streakCheck_route_L363
+        let tmp%88#0: uint64 = (txn OnCompletion)
+        let tmp%89#0: bool = (! tmp%88#0)
+        (assert tmp%89#0) // OnCompletion is not NoOp
+        let tmp%90#0: uint64 = (txn ApplicationID)
+        (assert tmp%90#0) // can only call when not creating
+        let reinterpret_bytes[8]%28#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%92#0: uint64 = (btoi reinterpret_bytes[8]%28#0)
+        let reinterpret_bytes[1]%10#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%93#0: bool = (getbit reinterpret_bytes[1]%10#0 0u)
+        let reinterpret_bytes[32]%5#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[8]%29#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%94#0: uint64 = (btoi reinterpret_bytes[8]%29#0)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.streakCheck(tmp%92#0, tmp%93#0, reinterpret_bytes[32]%5#0, tmp%94#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#11: bool = 1u
+        goto block@24
+    block@17: // setPasses_route_L386
+        let tmp%95#0: uint64 = (txn OnCompletion)
+        let tmp%96#0: bool = (! tmp%95#0)
+        (assert tmp%96#0) // OnCompletion is not NoOp
+        let tmp%97#0: uint64 = (txn ApplicationID)
+        (assert tmp%97#0) // can only call when not creating
+        let reinterpret_bytes[8]%30#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%99#0: uint64 = (btoi reinterpret_bytes[8]%30#0)
+        let reinterpret_bytes[1]%11#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%100#0: bool = (getbit reinterpret_bytes[1]%11#0 0u)
+        let reinterpret_bytes[8]%31#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%101#0: uint64 = (btoi reinterpret_bytes[8]%31#0)
+        let reinterpret_bytes[32][]%0#0: bytes[32][] = (txna ApplicationArgs 4)
+        smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.setPasses(tmp%99#0, tmp%100#0, tmp%101#0, reinterpret_bytes[32][]%0#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#12: bool = 1u
+        goto block@24
+    block@18: // update_route_L19
+        let tmp%102#0: uint64 = (txn OnCompletion)
+        let tmp%103#0: bool = (== tmp%102#0 UpdateApplication)
+        (assert tmp%103#0) // OnCompletion is not UpdateApplication
+        let tmp%104#0: uint64 = (txn ApplicationID)
+        (assert tmp%104#0) // can only call when not creating
+        let tmp%106#0: bytes = (txna ApplicationArgs 1)
+        let tmp%107#0: bytes = ((extract 2 0) tmp%106#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(tmp%107#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#13: bool = 1u
+        goto block@24
+    block@19: // updateAkitaDAO_route_L27
+        let tmp%108#0: uint64 = (txn OnCompletion)
+        let tmp%109#0: bool = (! tmp%108#0)
+        (assert tmp%109#0) // OnCompletion is not NoOp
+        let tmp%110#0: uint64 = (txn ApplicationID)
+        (assert tmp%110#0) // can only call when not creating
+        let reinterpret_bytes[8]%32#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%112#0: uint64 = (btoi reinterpret_bytes[8]%32#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(tmp%112#0)
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#14: bool = 1u
+        goto block@24
+    block@23: // after_if_else_L13
+        let smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#15: bool = 0u
+        goto block@24
+    block@24: // after_inlined_smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#0 <- block@5, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#1 <- block@6, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#2 <- block@7, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#3 <- block@8, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#4 <- block@9, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#5 <- block@10, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#6 <- block@11, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#7 <- block@12, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#8 <- block@13, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#9 <- block@14, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#10 <- block@15, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#11 <- block@16, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#12 <- block@17, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#13 <- block@18, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#14 <- block@19, smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.__puya_arc4_router__%0#15 <- block@23)
+        return tmp%0#0
+
+subroutine smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: bool, wallet: uint64) -> bytes[32]:
+    block@0: // L166
+        goto rekeyBack#0 ? block@2 : block@1
+    block@1: // if_body_L167
+        let tmp%0#0: bytes[32] = (global ZeroAddress)
+        return tmp%0#0
+    block@2: // after_if_else_L167
+        let (controlledAccountBytes#0: bytes, _#0: bool) = (app_global_get_ex wallet#0 "controlled_address")
+        let (spendingAddressBytes#0: bytes, _#1: bool) = (app_global_get_ex wallet#0 "spending_address")
+        let (walletAddress#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) wallet#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (!= spendingAddressBytes#0 controlledAccountBytes#0)
+        goto tmp%1#0 ? block@3 : block@4
+    block@3: // if_body_L172
+        return spendingAddressBytes#0
+    block@4: // after_if_else_L172
+        return walletAddress#0
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.create(akitaDAO: uint64, version: bytes) -> void:
+    block@0: // L17
+        (app_global_put "version" version#0)
+        (app_global_put "akita_dao" akitaDAO#0)
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.optin(walletID: uint64, rekeyBack: bool, asset: uint64) -> void:
+    block@0: // L25
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) subscriptionsApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = (global AssetOptInMinBalance)
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%0#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let inner_txn_params%1%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob asset#0)
+        ((itxn_field ApplicationArgs) method "optin(pay,uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%1%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.newService(walletID: uint64, rekeyBack: bool, interval: uint64, asset: uint64, amount: uint64, passes: uint64, gate: uint64, cid: bytes[36]) -> uint64:
+    block@0: // L55
+        let (spendingAddressBytes#0: bytes, _#1: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#1: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#2: bool) = (app_global_get_ex akitaDAO#1 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        let (akitaDAO#0: uint64, maybe_exists%1#0: bool) = (akitaDAO#1, maybe_exists%0#0)
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let (subscriptionFeesBytes#0: bytes, _#0: bool) = (app_global_get_ex akitaDAO#0 "subscription_fees")
+        let fee#0: uint64 = (extract_uint64 subscriptionFeesBytes#0 0u)
+        itxn_begin
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) subscriptionsApp#0)
+        (assert check%0#0) // application exists
+        ((itxn_field Amount) fee#0)
+        ((itxn_field Receiver) value%0#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) fee#0)
+        itxn_next
+        let inner_txn_params%1%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob interval#0)
+        let val_as_bytes%1#0: bytes[8] = (itob asset#0)
+        let val_as_bytes%2#0: bytes[8] = (itob amount#0)
+        let val_as_bytes%3#0: bytes[8] = (itob passes#0)
+        let val_as_bytes%4#0: bytes[8] = (itob gate#0)
+        let length%0#0: uint64 = (len cid#0)
+        let lengths_equal%0#0: bool = (== length%0#0 36u)
+        (assert lengths_equal%0#0) // invalid size
+        ((itxn_field ApplicationArgs) method "newService(pay,uint64,uint64,uint64,uint64,uint64,byte[36])uint64")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%1#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%2#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%3#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%4#0)
+        ((itxn_field ApplicationArgs) cid#0)
+        ((itxn_field RekeyTo) inner_txn_params%1%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) fee#0)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (gitxn 1 LastLog)
+        let tmp%15#0: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%16#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%17#0: bool = (== tmp%16#0 0x151f7c75)
+        (assert tmp%17#0) // Bytes has valid prefix
+        let tmp%18#0: uint64 = (btoi tmp%15#0)
+        return tmp%18#0
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.pauseService(walletID: uint64, rekeyBack: bool, index: uint64) -> void:
+    block@0: // L97
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "pauseService(uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.activateService(walletID: uint64, rekeyBack: bool, index: uint64) -> void:
+    block@0: // L119
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "activateService(uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.shutdownService(walletID: uint64, rekeyBack: bool, index: uint64) -> void:
+    block@0: // L141
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "shutdownService(uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.block(walletID: uint64, rekeyBack: bool, address: bytes[32]) -> void:
+    block@0: // L163
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) subscriptionsApp#0)
+        (assert check%0#0) // application exists
+        let tmp%0#1: uint64 = 0u
+        let tmp%1#1: uint64 = 0u
+        ((itxn_field Amount) 28100u)
+        ((itxn_field Receiver) value%0#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let inner_txn_params%1%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "block(pay,address)void")
+        ((itxn_field ApplicationArgs) address#0)
+        ((itxn_field RekeyTo) inner_txn_params%1%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.unblock(walletID: uint64, rekeyBack: bool, address: bytes[32]) -> void:
+    block@0: // L193
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "unblock(address)void")
+        ((itxn_field ApplicationArgs) address#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.subscribe(walletID: uint64, rekeyBack: bool, recipient: bytes[32], amount: uint64, interval: uint64, index: uint64, args: bytes[]) -> void:
+    block@0: // L215
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        let tmp%0#1: uint64 = 0u
+        let tmp%1#1: uint64 = 0u
+        let costs.subscriptions#0: uint64 = 54100u
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "isFirstSubscription(address)bool")
+        ((itxn_field ApplicationArgs) spendingAddressBytes#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%12#0: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%13#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%14#0: bool = (== tmp%13#0 0x151f7c75)
+        (assert tmp%14#0) // Bytes has valid prefix
+        let firstSubscription#0: bool = (getbit tmp%12#0 0u)
+        goto firstSubscription#0 ? block@2 : block@3
+    block@2: // if_body_L243
+        let mbrAmount#1: uint64 = 73000u
+        goto block@3
+    block@3: // after_if_else_L243
+        let mbrAmount#2: uint64 = φ(costs.subscriptions#0 <- block@0, mbrAmount#1 <- block@2)
+        itxn_begin
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) subscriptionsApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%1%%param_Amount_idx_0#0: uint64 = (+ amount#0 mbrAmount#2)
+        ((itxn_field Amount) inner_txn_params%1%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%0#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let inner_txn_params%2%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob amount#0)
+        let val_as_bytes%1#0: bytes[8] = (itob interval#0)
+        let val_as_bytes%2#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "subscribe(pay,address,uint64,uint64,uint64,byte[][])void")
+        ((itxn_field ApplicationArgs) recipient#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%1#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%2#0)
+        ((itxn_field ApplicationArgs) args#0)
+        ((itxn_field RekeyTo) inner_txn_params%2%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.subscribeAsa(walletID: uint64, rekeyBack: bool, asset: uint64, recipient: bytes[32], amount: uint64, interval: uint64, index: uint64, args: bytes[]) -> void:
+    block@0: // L271
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        let tmp%0#1: uint64 = 0u
+        let tmp%1#1: uint64 = 0u
+        let costs.subscriptions#0: uint64 = 54100u
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "isFirstSubscription(address)bool")
+        ((itxn_field ApplicationArgs) spendingAddressBytes#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%12#0: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%13#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%14#0: bool = (== tmp%13#0 0x151f7c75)
+        (assert tmp%14#0) // Bytes has valid prefix
+        let firstSubscription#0: bool = (getbit tmp%12#0 0u)
+        goto firstSubscription#0 ? block@2 : block@3
+    block@2: // if_body_L300
+        let mbrAmount#1: uint64 = 73000u
+        goto block@3
+    block@3: // after_if_else_L300
+        let mbrAmount#2: uint64 = φ(costs.subscriptions#0 <- block@0, mbrAmount#1 <- block@2)
+        let (maybe_value%1#0: uint64, maybe_exists%1#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%1#0)
+        (assert check%0#0) // application exists
+        let (tmp%16#0: uint64, tmp%17#0: bool) = ((asset_holding_get AssetBalance) value%0#0 asset#0)
+        goto tmp%17#0 ? block@5 : block@4
+    block@4: // if_body_L304
+        let tmp%18#0: uint64 = (global AssetOptInMinBalance)
+        let mbrAmount#3: uint64 = (+ mbrAmount#2 tmp%18#0)
+        goto block@5
+    block@5: // after_if_else_L304
+        let mbrAmount#4: uint64 = φ(mbrAmount#2 <- block@3, mbrAmount#3 <- block@4)
+        itxn_begin
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) subscriptionsApp#0)
+        (assert check%1#0) // application exists
+        let inner_txn_params%1%%param_Amount_idx_0#0: uint64 = (+ mbrAmount#4 amount#0)
+        ((itxn_field Amount) inner_txn_params%1%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%1#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let (value%2#0: bytes[32], check%2#0: bool) = ((app_params_get AppAddress) subscriptionsApp#0)
+        (assert check%2#0) // application exists
+        ((itxn_field AssetAmount) amount#0)
+        ((itxn_field XferAsset) asset#0)
+        ((itxn_field AssetReceiver) value%2#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let inner_txn_params%3%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob amount#0)
+        let val_as_bytes%1#0: bytes[8] = (itob interval#0)
+        let val_as_bytes%2#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "subscribeAsa(pay,axfer,address,uint64,uint64,uint64,byte[][])void")
+        ((itxn_field ApplicationArgs) recipient#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%1#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%2#0)
+        ((itxn_field ApplicationArgs) args#0)
+        ((itxn_field RekeyTo) inner_txn_params%3%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.triggerPayment(walletID: uint64, rekeyBack: bool, address: bytes[32], index: uint64, args: bytes[]) -> void:
+    block@0: // L339
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "triggerPayment(address,uint64,byte[][])void")
+        ((itxn_field ApplicationArgs) address#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationArgs) args#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.streakCheck(walletID: uint64, rekeyBack: bool, address: bytes[32], index: uint64) -> void:
+    block@0: // L363
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "streakCheck(address,uint64)void")
+        ((itxn_field ApplicationArgs) address#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/subscriptions/contract.algo.ts::SubscriptionsPlugin.setPasses(walletID: uint64, rekeyBack: bool, index: uint64, addresses: bytes[32][]) -> void:
+    block@0: // L386
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (akitaDAO#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (appListBytes#0: bytes, _#1: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let subscriptionsApp#0: uint64 = (extract_uint64 appListBytes#0 32u)
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob index#0)
+        ((itxn_field ApplicationArgs) method "setPasses(uint64,address[])void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationArgs) addresses#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) subscriptionsApp#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+    block@0: // L19
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L27
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 

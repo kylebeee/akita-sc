@@ -487,39 +487,40 @@ export class HyperSwap extends classes(
     }
   }
 
-  /**
-   * @param id the id of the offer being cancelled
-   * @param proof a proof of inclusion in the participants list
-   */
-  cancel(id: uint64, proof: Proof) {
-    // ensure the offer exists
-    assert(this.offers(id).exists)
-    const offer = this.offers(id).value
-    // ensure we're in a cancellable state
-    assert(offer.state === STATE_OFFERED || offer.state === STATE_ESCROWING)
-    // ensure they are a participant
-    const isParticipant = abiCall(
-      MetaMerkles.prototype.verify,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-        args: [
-          new Address(Global.currentApplicationAddress),
-          String(offer.participantsRoot),
-          sha256(sha256(Txn.sender.bytes)),
-          proof,
-          MerkleTreeTypeTrade
-        ],
-        fee
-      }
-    ).returnValue
+/**
+ * @param id the id of the offer being cancelled
+ * @param proof a proof of inclusion in the participants list
+ */
+cancel(id: uint64, proof: Proof) {
+  // ensure the offer exists
+  assert(this.offers(id).exists)
+  const offer = this.offers(id).value
+  // ensure we're in a cancellable state
+  assert(offer.state === STATE_OFFERED || offer.state === STATE_ESCROWING)
 
-    assert(isParticipant, ERR_NOT_A_PARTICIPANT)
-    // set the state to cancelled
-    this.offers(id).value = {
-      ...this.offers(id).value,
-      state: STATE_CANCELLED
+  // ensure they are a participant
+  const isParticipant = abiCall(
+    MetaMerkles.prototype.verify,
+    {
+      appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+      args: [
+        new Address(Global.currentApplicationAddress),
+        String(offer.participantsRoot),
+        sha256(sha256(Txn.sender.bytes)),
+        proof,
+        MerkleTreeTypeTrade
+      ],
+      fee
     }
+  ).returnValue
+
+  assert(isParticipant, ERR_NOT_A_PARTICIPANT)
+  // set the state to cancelled
+  this.offers(id).value = {
+    ...this.offers(id).value,
+    state: STATE_CANCELLED
   }
+}
 
   /**
    * Withdraws your assets from a cancelled swap if they're escrowed

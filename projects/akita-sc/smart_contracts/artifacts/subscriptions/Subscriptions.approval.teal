@@ -1,0 +1,4299 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 16 4 100000 28100 54100 73000
+    bytecblock "akita_dao" "s" "o" 0x00 "b" 0x151f7c75 0x02 "akita_escrow" 0x01 "subscription_fees" 0x0000000000000001
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn NumAppArgs
+    bz main_bare_routing@29
+    pushbytess 0x2a00e7f5 0x17c8730b 0x8c5e86d5 0x87e055c6 0xb59c8a54 0xaeebb378 0xaaf5a3a1 0x47b8fced 0xf2355b55 0x1ac4a758 0xe3aeb25c 0x12daa571 0xadb2c60e 0x275203af 0x4303668e 0x0d6a47a3 0x4015b840 0x603d7297 0xea9180dd 0x33e92c94 0x1ead20a9 0x3ea11832 // method "newService(pay,uint64,uint64,uint64,uint64,uint64,byte[36])uint64", method "pauseService(uint64)void", method "activateService(uint64)void", method "shutdownService(uint64)void", method "block(pay,address)void", method "unblock(address)void", method "subscribe(pay,address,uint64,uint64,uint64,byte[][])void", method "subscribeAsa(pay,axfer,address,uint64,uint64,uint64,byte[][])void", method "deposit(pay,uint64)void", method "depositAsa(axfer,uint64)void", method "withdraw(uint64,uint64)void", method "triggerPayment(address,uint64,byte[][])void", method "streakCheck(address,uint64)void", method "setPasses(uint64,address[])void", method "isBlocked(address,address)bool", method "isShutdown(address,uint64)bool", method "getSubscriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])", method "isFirstSubscription(address)bool", method "update(string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void", method "optin(pay,uint64)void"
+    txna ApplicationArgs 0
+    match main_newService_route@5 main_pauseService_route@6 main_activateService_route@7 main_shutdownService_route@8 main_block_route@9 main_unblock_route@10 main_subscribe_route@11 main_subscribeAsa_route@12 main_deposit_route@13 main_depositAsa_route@14 main_withdraw_route@15 main_triggerPayment_route@16 main_streakCheck_route@17 main_setPasses_route@18 main_isBlocked_route@19 main_isShutdown_route@20 main_getSubscriptionInfo_route@21 main_isFirstSubscription_route@22 main_update_route@23 main_updateAkitaDAO_route@24 main_updateAkitaDAOEscrow_route@25 main_optin_route@26
+
+main_after_if_else@33:
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    intc_0 // 0
+    return
+
+main_optin_route@26:
+    // smart_contracts/utils/base-contracts/optin.ts:22
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/optin.ts:22
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    callsub optin
+    intc_1 // 1
+    return
+
+main_updateAkitaDAOEscrow_route@25:
+    // smart_contracts/utils/base-contracts/base.ts:91
+    // updateAkitaDAOEscrow(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:91
+    // updateAkitaDAOEscrow(app: uint64): void {
+    callsub updateAkitaDAOEscrow
+    intc_1 // 1
+    return
+
+main_updateAkitaDAO_route@24:
+    // smart_contracts/utils/base-contracts/base.ts:86
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:86
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_update_route@23:
+    // smart_contracts/utils/base-contracts/base.ts:78
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    intc_3 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/utils/base-contracts/base.ts:78
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
+    intc_1 // 1
+    return
+
+main_isFirstSubscription_route@22:
+    // smart_contracts/subscriptions/contract.algo.ts:821
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    // smart_contracts/subscriptions/contract.algo.ts:821
+    // @abimethod({ readonly: true })
+    callsub isFirstSubscription
+    bytec_3 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_getSubscriptionInfo_route@21:
+    // smart_contracts/subscriptions/contract.algo.ts:804
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:804
+    // @abimethod({ readonly: true })
+    callsub getSubscriptionInfo
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 9
+    itob
+    uncover 10
+    uncover 9
+    concat
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    pushbytes 0x006a
+    concat
+    swap
+    concat
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_isShutdown_route@20:
+    // smart_contracts/subscriptions/contract.algo.ts:799
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:799
+    // @abimethod({ readonly: true })
+    callsub isShutdown
+    bytec_3 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_isBlocked_route@19:
+    // smart_contracts/subscriptions/contract.algo.ts:788
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    // smart_contracts/subscriptions/contract.algo.ts:788
+    // @abimethod({ readonly: true })
+    callsub isBlocked
+    bytec_3 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_setPasses_route@18:
+    // smart_contracts/subscriptions/contract.algo.ts:751
+    // setPasses(id: SubscriptionID, addresses: Address[]): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    // smart_contracts/subscriptions/contract.algo.ts:751
+    // setPasses(id: SubscriptionID, addresses: Address[]): void {
+    callsub setPasses
+    intc_1 // 1
+    return
+
+main_streakCheck_route@17:
+    // smart_contracts/subscriptions/contract.algo.ts:747
+    // streakCheck(sender: Address, id: SubscriptionID): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:747
+    // streakCheck(sender: Address, id: SubscriptionID): void {
+    callsub streakCheck
+    intc_1 // 1
+    return
+
+main_triggerPayment_route@16:
+    // smart_contracts/subscriptions/contract.algo.ts:663
+    // triggerPayment(address: Address, id: SubscriptionID, args: GateArgs): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    // smart_contracts/subscriptions/contract.algo.ts:663
+    // triggerPayment(address: Address, id: SubscriptionID, args: GateArgs): void {
+    callsub triggerPayment
+    intc_1 // 1
+    return
+
+main_withdraw_route@15:
+    // smart_contracts/subscriptions/contract.algo.ts:635
+    // withdraw(id: SubscriptionID, amount: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:635
+    // withdraw(id: SubscriptionID, amount: uint64): void {
+    callsub withdraw
+    intc_1 // 1
+    return
+
+main_depositAsa_route@14:
+    // smart_contracts/subscriptions/contract.algo.ts:619
+    // depositAsa(assetXfer: gtxn.AssetTransferTxn, id: SubscriptionID): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_3 // axfer
+    ==
+    assert // transaction type is axfer
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:619
+    // depositAsa(assetXfer: gtxn.AssetTransferTxn, id: SubscriptionID): void {
+    callsub depositAsa
+    intc_1 // 1
+    return
+
+main_deposit_route@13:
+    // smart_contracts/subscriptions/contract.algo.ts:603
+    // deposit(payment: gtxn.PaymentTxn, id: SubscriptionID): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:603
+    // deposit(payment: gtxn.PaymentTxn, id: SubscriptionID): void {
+    callsub deposit
+    intc_1 // 1
+    return
+
+main_subscribeAsa_route@12:
+    // smart_contracts/subscriptions/contract.algo.ts:481-489
+    // subscribeAsa(
+    //   payment: gtxn.PaymentTxn,
+    //   assetXfer: gtxn.AssetTransferTxn,
+    //   recipient: Address,
+    //   amount: uint64,
+    //   interval: uint64,
+    //   serviceID: ServiceID,
+    //   args: GateArgs
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn GroupIndex
+    pushint 2 // 2
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_3 // axfer
+    ==
+    assert // transaction type is axfer
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    btoi
+    txna ApplicationArgs 4
+    btoi
+    txna ApplicationArgs 5
+    // smart_contracts/subscriptions/contract.algo.ts:481-489
+    // subscribeAsa(
+    //   payment: gtxn.PaymentTxn,
+    //   assetXfer: gtxn.AssetTransferTxn,
+    //   recipient: Address,
+    //   amount: uint64,
+    //   interval: uint64,
+    //   serviceID: ServiceID,
+    //   args: GateArgs
+    // ): void {
+    callsub subscribeAsa
+    intc_1 // 1
+    return
+
+main_subscribe_route@11:
+    // smart_contracts/subscriptions/contract.algo.ts:382-389
+    // subscribe(
+    //   payment: gtxn.PaymentTxn,
+    //   recipient: Address,
+    //   amount: uint64,
+    //   interval: uint64,
+    //   serviceID: ServiceID,
+    //   args: GateArgs
+    // ): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    btoi
+    txna ApplicationArgs 4
+    btoi
+    txna ApplicationArgs 5
+    // smart_contracts/subscriptions/contract.algo.ts:382-389
+    // subscribe(
+    //   payment: gtxn.PaymentTxn,
+    //   recipient: Address,
+    //   amount: uint64,
+    //   interval: uint64,
+    //   serviceID: ServiceID,
+    //   args: GateArgs
+    // ): void {
+    callsub subscribe
+    intc_1 // 1
+    return
+
+main_unblock_route@10:
+    // smart_contracts/subscriptions/contract.algo.ts:362
+    // unblock(blocked: Address): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    // smart_contracts/subscriptions/contract.algo.ts:362
+    // unblock(blocked: Address): void {
+    callsub unblock
+    intc_1 // 1
+    return
+
+main_block_route@9:
+    // smart_contracts/subscriptions/contract.algo.ts:335
+    // block(payment: gtxn.PaymentTxn, blocked: Address): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    // smart_contracts/subscriptions/contract.algo.ts:335
+    // block(payment: gtxn.PaymentTxn, blocked: Address): void {
+    callsub block
+    intc_1 // 1
+    return
+
+main_shutdownService_route@8:
+    // smart_contracts/subscriptions/contract.algo.ts:317
+    // shutdownService(id: ServiceID): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:317
+    // shutdownService(id: ServiceID): void {
+    callsub shutdownService
+    intc_1 // 1
+    return
+
+main_activateService_route@7:
+    // smart_contracts/subscriptions/contract.algo.ts:298
+    // activateService(id: ServiceID): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:298
+    // activateService(id: ServiceID): void {
+    callsub activateService
+    intc_1 // 1
+    return
+
+main_pauseService_route@6:
+    // smart_contracts/subscriptions/contract.algo.ts:277
+    // pauseService(id: ServiceID): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/subscriptions/contract.algo.ts:277
+    // pauseService(id: ServiceID): void {
+    callsub pauseService
+    intc_1 // 1
+    return
+
+main_newService_route@5:
+    // smart_contracts/subscriptions/contract.algo.ts:221-229
+    // newService(
+    //   payment: gtxn.PaymentTxn,
+    //   interval: uint64,
+    //   asset: uint64,
+    //   amount: uint64,
+    //   passes: uint64,
+    //   gate: uint64,
+    //   cid: CID
+    // ): uint64 {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    btoi
+    txna ApplicationArgs 4
+    btoi
+    txna ApplicationArgs 5
+    btoi
+    txna ApplicationArgs 6
+    // smart_contracts/subscriptions/contract.algo.ts:221-229
+    // newService(
+    //   payment: gtxn.PaymentTxn,
+    //   interval: uint64,
+    //   asset: uint64,
+    //   amount: uint64,
+    //   passes: uint64,
+    //   gate: uint64,
+    //   cid: CID
+    // ): uint64 {
+    callsub newService
+    itob
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_bare_routing@29:
+    // smart_contracts/subscriptions/contract.algo.ts:104-108
+    // export class Subscriptions extends classes(
+    //   BaseSubscriptions,
+    //   AkitaBaseEscrow,
+    //   ContractWithOptIn
+    // ) {
+    txn OnCompletion
+    bnz main_after_if_else@33
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    intc_1 // 1
+    return
+
+
+// smart_contracts/subscriptions/contract.algo.ts::gateCheck(akitaDAO: uint64, caller: bytes, id: uint64, args: bytes) -> uint64:
+gateCheck:
+    // smart_contracts/subscriptions/contract.algo.ts:87
+    // function gateCheck(akitaDAO: Application, caller: Address, id: uint64, args: GateArgs): boolean {
+    proto 4 1
+    // smart_contracts/subscriptions/contract.algo.ts:88
+    // if (id === 0) {
+    frame_dig -2
+    bnz gateCheck_after_if_else@2
+    // smart_contracts/subscriptions/contract.algo.ts:89
+    // return true
+    intc_1 // 1
+    retsub
+
+gateCheck_after_if_else@2:
+    // smart_contracts/subscriptions/contract.algo.ts:92-96
+    // return abiCall(Gate.prototype.check, {
+    //   appId: getAkitaAppList(akitaDAO).gate,
+    //   args: [caller, id, args],
+    //   fee,
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/subscriptions/contract.algo.ts:83
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    frame_dig -4
+    // smart_contracts/dao/constants.ts:7
+    // export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
+    pushbytes "akita_al"
+    // smart_contracts/subscriptions/contract.algo.ts:83
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    app_global_get_ex
+    pop
+    // smart_contracts/subscriptions/contract.algo.ts:84
+    // return decodeArc4<AkitaAppList>(appListBytes)
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/subscriptions/contract.algo.ts:94
+    // args: [caller, id, args],
+    frame_dig -2
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:92-96
+    // return abiCall(Gate.prototype.check, {
+    //   appId: getAkitaAppList(akitaDAO).gate,
+    //   args: [caller, id, args],
+    //   fee,
+    // }).returnValue
+    pushbytes 0x200f7421 // method "check(address,uint64,byte[][])bool"
+    itxn_field ApplicationArgs
+    frame_dig -3
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:92-96
+    // return abiCall(Gate.prototype.check, {
+    //   appId: getAkitaAppList(akitaDAO).gate,
+    //   args: [caller, id, args],
+    //   fee,
+    // }).returnValue
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec 5 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    intc_0 // 0
+    getbit
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.getLatestWindowStart(startDate: uint64, interval: uint64) -> uint64:
+getLatestWindowStart:
+    // smart_contracts/subscriptions/contract.algo.ts:141
+    // private getLatestWindowStart(startDate: uint64, interval: uint64): uint64 {
+    proto 2 1
+    // smart_contracts/subscriptions/contract.algo.ts:142
+    // return Global.latestTimestamp - ((Global.latestTimestamp - startDate) % interval)
+    global LatestTimestamp
+    dup
+    frame_dig -2
+    -
+    frame_dig -1
+    %
+    -
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.updateStreak(address: bytes, id: uint64, elseStreak: uint64) -> void:
+updateStreak:
+    // smart_contracts/subscriptions/contract.algo.ts:145
+    // private updateStreak(address: Address, id: SubscriptionID, elseStreak: uint64): void {
+    proto 3 0
+    // smart_contracts/subscriptions/contract.algo.ts:146
+    // const subKey = new arc4SubscriptionKey({ address, id: new UintN64(id) })
+    frame_dig -2
+    itob
+    frame_dig -3
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    swap
+    concat
+    dup
+    // smart_contracts/subscriptions/contract.algo.ts:147
+    // const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(subKey).value.bytes)
+    box_get
+    assert // Box must have value
+    dup
+    pushint 40 // 40
+    extract_uint64
+    dig 1
+    pushint 56 // 56
+    extract_uint64
+    dig 2
+    pushint 80 // 80
+    extract_uint64
+    dup
+    cover 4
+    cover 4
+    uncover 2
+    pushint 88 // 88
+    extract_uint64
+    cover 3
+    // smart_contracts/subscriptions/contract.algo.ts:149
+    // const currentWindowStart: uint64 = this.getLatestWindowStart(sub.startDate, sub.interval)
+    swap
+    dig 1
+    callsub getLatestWindowStart
+    dup
+    cover 3
+    // smart_contracts/subscriptions/contract.algo.ts:150
+    // const lastWindowStart: uint64 = currentWindowStart - sub.interval
+    swap
+    -
+    dup
+    cover 2
+    // smart_contracts/subscriptions/contract.algo.ts:152
+    // if (sub.lastPayment < lastWindowStart) {
+    <
+    bz updateStreak_after_if_else@2
+    // smart_contracts/subscriptions/contract.algo.ts:154
+    // this.subscriptions(subKey).value.streak = new UintN64(elseStreak)
+    frame_dig -1
+    itob
+    frame_dig 0
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    swap
+    replace2 88
+    box_put
+    // smart_contracts/subscriptions/contract.algo.ts:155
+    // return
+    retsub
+
+updateStreak_after_if_else@2:
+    // smart_contracts/subscriptions/contract.algo.ts:161
+    // if (sub.lastPayment >= lastWindowStart && !(sub.lastPayment >= currentWindowStart)) {
+    frame_dig 1
+    frame_dig 4
+    >=
+    bz updateStreak_after_if_else@5
+    frame_dig 1
+    frame_dig 3
+    >=
+    bnz updateStreak_after_if_else@5
+    // smart_contracts/subscriptions/contract.algo.ts:162
+    // this.subscriptions(subKey).value.streak = new UintN64(sub.streak + 1)
+    frame_dig 2
+    intc_1 // 1
+    +
+    itob
+    frame_dig 0
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    swap
+    replace2 88
+    box_put
+
+updateStreak_after_if_else@5:
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.getAmounts(amount: uint64) -> uint64, uint64, uint64:
+getAmounts:
+    // smart_contracts/subscriptions/contract.algo.ts:166
+    // private getAmounts(amount: uint64): Amounts {
+    proto 1 3
+    pushbytes ""
+    dup
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:12
+    // export const AkitaDAOGlobalStateKeysSubscriptionFees = 'subscription_fees'
+    bytec 9 // "subscription_fees"
+    // smart_contracts/subscriptions/contract.algo.ts:100
+    // const [subscriptionFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysSubscriptionFees))
+    app_global_get_ex
+    pop
+    // smart_contracts/subscriptions/contract.algo.ts:101
+    // return decodeArc4<SubscriptionFees>(subscriptionFeesBytes)
+    dup
+    pushint 8 // 8
+    extract_uint64
+    swap
+    intc_2 // 16
+    extract_uint64
+    swap
+    // smart_contracts/subscriptions/contract.algo.ts:78
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    dup
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 4 // 100000
+    // smart_contracts/subscriptions/contract.algo.ts:78
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    <=
+    assert // Invalid percentage
+    // smart_contracts/subscriptions/contract.algo.ts:79
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    frame_dig -1
+    mulw
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 4 // 100000
+    // smart_contracts/subscriptions/contract.algo.ts:79
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    divw
+    dupn 2
+    // smart_contracts/subscriptions/contract.algo.ts:170
+    // if (akitaFee === 0 && amount > 0) {
+    bnz getAmounts_after_if_else@3
+    frame_dig 3
+    frame_bury 4
+    frame_dig -1
+    bz getAmounts_after_if_else@3
+    // smart_contracts/subscriptions/contract.algo.ts:171
+    // akitaFee = 1
+    intc_1 // 1
+    frame_bury 4
+
+getAmounts_after_if_else@3:
+    frame_dig 4
+    frame_bury 3
+    // smart_contracts/subscriptions/contract.algo.ts:78
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    frame_dig 2
+    dup
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 4 // 100000
+    // smart_contracts/subscriptions/contract.algo.ts:78
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    <=
+    assert // Invalid percentage
+    // smart_contracts/subscriptions/contract.algo.ts:79
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    frame_dig -1
+    mulw
+    // smart_contracts/utils/constants.ts:18
+    // export const DIVISOR: uint64 = 100_000 // 100%
+    intc 4 // 100000
+    // smart_contracts/subscriptions/contract.algo.ts:79
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    divw
+    dup
+    frame_bury 0
+    dup
+    frame_bury 1
+    // smart_contracts/subscriptions/contract.algo.ts:175
+    // if (triggerFee === 0 && amount > 0) {
+    bnz getAmounts_after_if_else@6
+    frame_dig 0
+    frame_bury 1
+    frame_dig -1
+    bz getAmounts_after_if_else@6
+    // smart_contracts/subscriptions/contract.algo.ts:176
+    // triggerFee = 1
+    intc_1 // 1
+    frame_bury 1
+
+getAmounts_after_if_else@6:
+    frame_dig 1
+    // smart_contracts/subscriptions/contract.algo.ts:179
+    // const leftOver: uint64 = amount - (akitaFee + triggerFee)
+    frame_dig 3
+    dup
+    cover 2
+    dig 1
+    +
+    frame_dig -1
+    swap
+    -
+    // smart_contracts/subscriptions/contract.algo.ts:181-185
+    // return {
+    //   akitaFee: akitaFee,
+    //   triggerFee: triggerFee,
+    //   leftOver: leftOver,
+    // }
+    frame_bury 2
+    frame_bury 1
+    frame_bury 0
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.newSubscriptionID(address: bytes) -> uint64:
+newSubscriptionID:
+    // smart_contracts/subscriptions/contract.algo.ts:196
+    // private newSubscriptionID(address: Address): SubscriptionID {
+    proto 1 1
+    // smart_contracts/subscriptions/constants.ts:2
+    // export const SubscriptionsBoxPrefixSubscriptionsList = 'l'
+    pushbytes "l"
+    frame_dig -1
+    concat
+    dup
+    // smart_contracts/subscriptions/contract.algo.ts:197
+    // const id: uint64 = this.subscriptionslist(address.native).exists
+    box_len
+    bury 1
+    // smart_contracts/subscriptions/contract.algo.ts:197-199
+    // const id: uint64 = this.subscriptionslist(address.native).exists
+    //   ? this.subscriptionslist(address.native).value
+    //   : 0
+    bz newSubscriptionID_ternary_false@2
+    // smart_contracts/subscriptions/contract.algo.ts:198
+    // ? this.subscriptionslist(address.native).value
+    frame_dig 0
+    box_get
+    assert // Box must have value
+    btoi
+
+newSubscriptionID_ternary_merge@3:
+    // smart_contracts/subscriptions/contract.algo.ts:200
+    // this.subscriptionslist(address.native).value = id + 1
+    dup
+    intc_1 // 1
+    +
+    itob
+    frame_dig 0
+    swap
+    box_put
+    // smart_contracts/subscriptions/contract.algo.ts:201
+    // return id
+    swap
+    retsub
+
+newSubscriptionID_ternary_false@2:
+    // smart_contracts/subscriptions/contract.algo.ts:199
+    // : 0
+    intc_0 // 0
+    b newSubscriptionID_ternary_merge@3
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.newService(payment: uint64, interval: uint64, asset: uint64, amount: uint64, passes: uint64, gate: uint64, cid: bytes) -> uint64:
+newService:
+    // smart_contracts/subscriptions/contract.algo.ts:221-229
+    // newService(
+    //   payment: gtxn.PaymentTxn,
+    //   interval: uint64,
+    //   asset: uint64,
+    //   amount: uint64,
+    //   passes: uint64,
+    //   gate: uint64,
+    //   cid: CID
+    // ): uint64 {
+    proto 7 1
+    pushbytes ""
+    dupn 2
+    // smart_contracts/subscriptions/contract.algo.ts:230
+    // const address = new Address(Txn.sender)
+    txn Sender
+    // smart_contracts/subscriptions/constants.ts:4
+    // export const SubscriptionsBoxPrefixServicesList = 'm'
+    pushbytes "m"
+    // smart_contracts/subscriptions/contract.algo.ts:230
+    // const address = new Address(Txn.sender)
+    txn Sender
+    // smart_contracts/subscriptions/constants.ts:4
+    // export const SubscriptionsBoxPrefixServicesList = 'm'
+    concat
+    dup
+    // smart_contracts/subscriptions/contract.algo.ts:189
+    // const id: uint64 = this.serviceslist(address.native).exists
+    box_len
+    bury 1
+    // smart_contracts/subscriptions/contract.algo.ts:189-191
+    // const id: uint64 = this.serviceslist(address.native).exists
+    //   ? this.serviceslist(address.native).value
+    //   : 0
+    bz newService_ternary_false@9
+    // smart_contracts/subscriptions/contract.algo.ts:190
+    // ? this.serviceslist(address.native).value
+    frame_dig 4
+    box_get
+    assert // Box must have value
+    btoi
+    frame_bury 1
+
+newService_ternary_merge@10:
+    // smart_contracts/subscriptions/contract.algo.ts:192
+    // this.serviceslist(address.native).value = id + 1
+    frame_dig 1
+    intc_1 // 1
+    +
+    itob
+    frame_dig 4
+    swap
+    box_put
+    // smart_contracts/subscriptions/contract.algo.ts:235
+    // assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
+    frame_dig -4
+    pushint 3 // 3
+    >
+    assert // Minimum amount is 3 base units
+    // smart_contracts/subscriptions/contract.algo.ts:237
+    // assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    frame_dig -6
+    pushint 60 // 60
+    >=
+    assert // Minimum interval is 60 seconds
+    // smart_contracts/subscriptions/contract.algo.ts:239
+    // assert(passes <= 5, ERR_MAX_PASSES_IS_FIVE)
+    frame_dig -3
+    pushint 5 // 5
+    <=
+    assert // Maximum number of passes is five
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:12
+    // export const AkitaDAOGlobalStateKeysSubscriptionFees = 'subscription_fees'
+    bytec 9 // "subscription_fees"
+    // smart_contracts/subscriptions/contract.algo.ts:100
+    // const [subscriptionFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysSubscriptionFees))
+    app_global_get_ex
+    pop
+    // smart_contracts/subscriptions/contract.algo.ts:101
+    // return decodeArc4<SubscriptionFees>(subscriptionFeesBytes)
+    intc_0 // 0
+    extract_uint64
+    dup
+    frame_bury 0
+    frame_bury 2
+    // smart_contracts/subscriptions/contract.algo.ts:244
+    // if (asset !== 0) {
+    frame_dig -5
+    bz newService_after_if_else@2
+    // smart_contracts/subscriptions/contract.algo.ts:245
+    // requiredAmount += Global.assetOptInMinBalance
+    frame_dig 0
+    global AssetOptInMinBalance
+    +
+    frame_bury 2
+
+newService_after_if_else@2:
+    // smart_contracts/subscriptions/contract.algo.ts:248-255
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: requiredAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -7
+    gtxns Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:251
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/subscriptions/contract.algo.ts:248-255
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: requiredAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz newService_bool_false@5
+    frame_dig -7
+    gtxns Amount
+    frame_dig 2
+    ==
+    bz newService_bool_false@5
+    intc_1 // 1
+
+newService_bool_merge@6:
+    // smart_contracts/subscriptions/contract.algo.ts:248-255
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: requiredAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/subscriptions/contract.algo.ts:232
+    // const boxKey: ServicesKey = { address, id }
+    frame_dig 1
+    dup
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:257
+    // this.services(boxKey).value = {
+    frame_dig 3
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:259
+    // interval,
+    frame_dig -6
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:260
+    // asset,
+    frame_dig -5
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:261
+    // amount,
+    frame_dig -4
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:262
+    // passes,
+    frame_dig -3
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:263
+    // gate,
+    frame_dig -2
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:264
+    // cid,
+    frame_dig -1
+    len
+    pushint 36 // 36
+    ==
+    assert // invalid size
+    // smart_contracts/subscriptions/types.ts:22
+    // export const ServiceStatusPaused: ServiceStatus = new arc4.UintN8(1)
+    bytec 8 // 0x01
+    // smart_contracts/subscriptions/contract.algo.ts:257
+    // this.services(boxKey).value = {
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    frame_dig -1
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:257-265
+    // this.services(boxKey).value = {
+    //   status: ServiceStatusPaused,
+    //   interval,
+    //   asset,
+    //   amount,
+    //   passes,
+    //   gate,
+    //   cid,
+    // }
+    box_put
+    // smart_contracts/subscriptions/contract.algo.ts:267
+    // return id
+    frame_bury 0
+    retsub
+
+newService_bool_false@5:
+    intc_0 // 0
+    b newService_bool_merge@6
+
+newService_ternary_false@9:
+    // smart_contracts/subscriptions/contract.algo.ts:191
+    // : 0
+    intc_0 // 0
+    frame_bury 1
+    b newService_ternary_merge@10
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.pauseService(id: uint64) -> void:
+pauseService:
+    // smart_contracts/subscriptions/contract.algo.ts:277
+    // pauseService(id: ServiceID): void {
+    proto 1 0
+    // smart_contracts/subscriptions/contract.algo.ts:278
+    // const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
+    txn Sender
+    // smart_contracts/subscriptions/contract.algo.ts:281
+    // assert(id > 0, ERR_SERVICE_INDEX_MUST_BE_ABOVE_ZERO)
+    frame_dig -1
+    assert // Service indexes are always above zero
+    // smart_contracts/subscriptions/contract.algo.ts:278
+    // const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
+    frame_dig -1
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:283
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:283
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Service does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:285
+    // assert(this.services(boxKey).value.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    // smart_contracts/subscriptions/types.ts:21
+    // export const ServiceStatusActive: ServiceStatus = new arc4.UintN8(0)
+    bytec_3 // 0x00
+    // smart_contracts/subscriptions/contract.algo.ts:285
+    // assert(this.services(boxKey).value.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
+    ==
+    assert // Service offering is not active
+    // smart_contracts/subscriptions/contract.algo.ts:288
+    // ...this.services(boxKey).value,
+    dup
+    intc_1 // 1
+    extract_uint64
+    dig 1
+    pushint 9 // 9
+    extract_uint64
+    dig 2
+    pushint 17 // 17
+    extract_uint64
+    dig 3
+    pushint 25 // 25
+    extract_uint64
+    dig 4
+    pushint 33 // 33
+    extract_uint64
+    uncover 5
+    extract 41 36 // on error: Index access is out of bounds
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    dig 5
+    len
+    pushint 36 // 36
+    ==
+    assert // invalid size
+    // smart_contracts/subscriptions/types.ts:22
+    // export const ServiceStatusPaused: ServiceStatus = new arc4.UintN8(1)
+    bytec 8 // 0x01
+    // smart_contracts/subscriptions/contract.algo.ts:287
+    // this.services(boxKey).value = {
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:287-290
+    // this.services(boxKey).value = {
+    //   ...this.services(boxKey).value,
+    //   status: ServiceStatusPaused,
+    // }
+    box_put
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.activateService(id: uint64) -> void:
+activateService:
+    // smart_contracts/subscriptions/contract.algo.ts:298
+    // activateService(id: ServiceID): void {
+    proto 1 0
+    // smart_contracts/subscriptions/contract.algo.ts:299
+    // const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
+    txn Sender
+    frame_dig -1
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:302
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:302
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Service does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:304
+    // assert(this.services(boxKey).value.status === ServiceStatusPaused, ERR_SERVICE_IS_NOT_PAUSED)
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    // smart_contracts/subscriptions/types.ts:22
+    // export const ServiceStatusPaused: ServiceStatus = new arc4.UintN8(1)
+    bytec 8 // 0x01
+    // smart_contracts/subscriptions/contract.algo.ts:304
+    // assert(this.services(boxKey).value.status === ServiceStatusPaused, ERR_SERVICE_IS_NOT_PAUSED)
+    ==
+    assert // Service offering is not paused
+    // smart_contracts/subscriptions/contract.algo.ts:307
+    // ...this.services(boxKey).value,
+    dup
+    intc_1 // 1
+    extract_uint64
+    dig 1
+    pushint 9 // 9
+    extract_uint64
+    dig 2
+    pushint 17 // 17
+    extract_uint64
+    dig 3
+    pushint 25 // 25
+    extract_uint64
+    dig 4
+    pushint 33 // 33
+    extract_uint64
+    uncover 5
+    extract 41 36 // on error: Index access is out of bounds
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    dig 5
+    len
+    pushint 36 // 36
+    ==
+    assert // invalid size
+    // smart_contracts/subscriptions/types.ts:21
+    // export const ServiceStatusActive: ServiceStatus = new arc4.UintN8(0)
+    bytec_3 // 0x00
+    // smart_contracts/subscriptions/contract.algo.ts:306
+    // this.services(boxKey).value = {
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:306-309
+    // this.services(boxKey).value = {
+    //   ...this.services(boxKey).value,
+    //   status: ServiceStatusActive,
+    // }
+    box_put
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.shutdownService(id: uint64) -> void:
+shutdownService:
+    // smart_contracts/subscriptions/contract.algo.ts:317
+    // shutdownService(id: ServiceID): void {
+    proto 1 0
+    // smart_contracts/subscriptions/contract.algo.ts:318
+    // const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
+    txn Sender
+    frame_dig -1
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:320
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:320
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Service does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:322
+    // assert(this.services(boxKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    // smart_contracts/subscriptions/types.ts:23
+    // export const ServiceStatusShutdown: ServiceStatus = new arc4.UintN8(2)
+    bytec 6 // 0x02
+    // smart_contracts/subscriptions/contract.algo.ts:322
+    // assert(this.services(boxKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
+    !=
+    assert // Service offering is shutdown
+    // smart_contracts/subscriptions/contract.algo.ts:325
+    // ...this.services(boxKey).value,
+    dup
+    intc_1 // 1
+    extract_uint64
+    dig 1
+    pushint 9 // 9
+    extract_uint64
+    dig 2
+    pushint 17 // 17
+    extract_uint64
+    dig 3
+    pushint 25 // 25
+    extract_uint64
+    dig 4
+    pushint 33 // 33
+    extract_uint64
+    uncover 5
+    extract 41 36 // on error: Index access is out of bounds
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    uncover 5
+    itob
+    dig 5
+    len
+    pushint 36 // 36
+    ==
+    assert // invalid size
+    // smart_contracts/subscriptions/types.ts:23
+    // export const ServiceStatusShutdown: ServiceStatus = new arc4.UintN8(2)
+    bytec 6 // 0x02
+    // smart_contracts/subscriptions/contract.algo.ts:324
+    // this.services(boxKey).value = {
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:324-327
+    // this.services(boxKey).value = {
+    //   ...this.services(boxKey).value,
+    //   status: ServiceStatusShutdown,
+    // }
+    box_put
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.block(payment: uint64, blocked: bytes) -> void:
+block:
+    // smart_contracts/subscriptions/contract.algo.ts:335
+    // block(payment: gtxn.PaymentTxn, blocked: Address): void {
+    proto 2 0
+    // smart_contracts/subscriptions/contract.algo.ts:338
+    // address: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+    txn Sender
+    substring 0 16
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:339
+    // blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig -1
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -1
+    cover 2
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:343
+    // assert(!this.blocks(boxKey).exists, ERR_USER_ALREADY_BLOCKED)
+    concat
+    // smart_contracts/subscriptions/constants.ts:5
+    // export const SubscriptionsBoxPrefixBlocks = 'b'
+    bytec 4 // "b"
+    swap
+    concat
+    dup
+    // smart_contracts/subscriptions/contract.algo.ts:343
+    // assert(!this.blocks(boxKey).exists, ERR_USER_ALREADY_BLOCKED)
+    box_len
+    bury 1
+    !
+    assert // User is already blocked
+    // smart_contracts/subscriptions/contract.algo.ts:346-353
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: costs.blocks,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:349
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/subscriptions/contract.algo.ts:346-353
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: costs.blocks,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz block_bool_false@3
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/subscriptions/base.ts:11
+    // blocks: 28_100,
+    intc 5 // 28100
+    // smart_contracts/subscriptions/contract.algo.ts:346-353
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: costs.blocks,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz block_bool_false@3
+    intc_1 // 1
+
+block_bool_merge@4:
+    // smart_contracts/subscriptions/contract.algo.ts:346-353
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: costs.blocks,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/subscriptions/contract.algo.ts:355
+    // this.blocks(boxKey).create()
+    frame_dig 0
+    intc_0 // 0
+    box_create
+    pop
+    retsub
+
+block_bool_false@3:
+    intc_0 // 0
+    b block_bool_merge@4
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.unblock(blocked: bytes) -> void:
+unblock:
+    // smart_contracts/subscriptions/contract.algo.ts:362
+    // unblock(blocked: Address): void {
+    proto 1 0
+    // smart_contracts/subscriptions/contract.algo.ts:364
+    // address: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+    txn Sender
+    substring 0 16
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:365
+    // blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig -1
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -1
+    cover 2
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:369
+    // assert(this.blocks(boxKey).exists, ERR_USER_NOT_BLOCKED)
+    concat
+    // smart_contracts/subscriptions/constants.ts:5
+    // export const SubscriptionsBoxPrefixBlocks = 'b'
+    bytec 4 // "b"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:369
+    // assert(this.blocks(boxKey).exists, ERR_USER_NOT_BLOCKED)
+    dup
+    box_len
+    bury 1
+    assert // User is not blocked
+    // smart_contracts/subscriptions/contract.algo.ts:371
+    // this.blocks(boxKey).delete()
+    box_del
+    pop
+    // smart_contracts/subscriptions/contract.algo.ts:375-379
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: costs.blocks,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/subscriptions/contract.algo.ts:376
+    // receiver: Txn.sender,
+    txn Sender
+    // smart_contracts/subscriptions/base.ts:11
+    // blocks: 28_100,
+    intc 5 // 28100
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:375-379
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: costs.blocks,
+    //   fee,
+    // }).submit()
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:375-379
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: costs.blocks,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.subscribe(payment: uint64, recipient: bytes, amount: uint64, interval: uint64, serviceID: uint64, args: bytes) -> void:
+subscribe:
+    // smart_contracts/subscriptions/contract.algo.ts:382-389
+    // subscribe(
+    //   payment: gtxn.PaymentTxn,
+    //   recipient: Address,
+    //   amount: uint64,
+    //   interval: uint64,
+    //   serviceID: ServiceID,
+    //   args: GateArgs
+    // ): void {
+    proto 6 0
+    intc_0 // 0
+    pushbytes ""
+    dupn 3
+    // smart_contracts/subscriptions/contract.algo.ts:391
+    // assert(amount >= 3, ERR_MIN_AMOUNT_IS_THREE)
+    frame_dig -4
+    pushint 3 // 3
+    >=
+    assert // Minimum amount is 3 base units
+    // smart_contracts/subscriptions/contract.algo.ts:393
+    // assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    frame_dig -3
+    pushint 60 // 60
+    >=
+    assert // Minimum interval is 60 seconds
+    // smart_contracts/subscriptions/contract.algo.ts:395
+    // const arc4Sender = new Address(Txn.sender)
+    txn Sender
+    // smart_contracts/subscriptions/contract.algo.ts:397
+    // address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig -5
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -5
+    cover 2
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:398
+    // blocked: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+    txn Sender
+    substring 0 16
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:401
+    // assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
+    concat
+    // smart_contracts/subscriptions/constants.ts:5
+    // export const SubscriptionsBoxPrefixBlocks = 'b'
+    bytec 4 // "b"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:401
+    // assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
+    box_len
+    bury 1
+    !
+    assert // This account is blocked by the recipient
+    // smart_contracts/subscriptions/contract.algo.ts:403
+    // let gate: uint64 = 0
+    intc_0 // 0
+    // smart_contracts/subscriptions/contract.algo.ts:406
+    // if (!isDonation) {
+    frame_dig -2
+    bz subscribe_after_if_else@2
+    // smart_contracts/subscriptions/contract.algo.ts:407
+    // const boxKey: ServicesKey = { address: recipient, id: serviceID }
+    frame_dig -2
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:409
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    frame_dig -5
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:409
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Service does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:411
+    // const service = this.services(boxKey).value
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    pushint 9 // 9
+    extract_uint64
+    dig 3
+    pushint 17 // 17
+    extract_uint64
+    uncover 4
+    pushint 33 // 33
+    extract_uint64
+    // smart_contracts/subscriptions/contract.algo.ts:413
+    // assert(service.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
+    uncover 4
+    // smart_contracts/subscriptions/types.ts:21
+    // export const ServiceStatusActive: ServiceStatus = new arc4.UintN8(0)
+    bytec_3 // 0x00
+    // smart_contracts/subscriptions/contract.algo.ts:413
+    // assert(service.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
+    ==
+    assert // Service offering is not active
+    // smart_contracts/subscriptions/contract.algo.ts:415
+    // assert(service.asset === 0, ERR_ASA_MISMATCH)
+    uncover 2
+    !
+    assert // Asset mismatch
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:417
+    // assert(gateCheck(this.akitaDAO.value, arc4Sender, service.gate, args), ERR_FAILED_GATE)
+    frame_dig 5
+    dig 2
+    frame_dig -1
+    callsub gateCheck
+    assert // Gate check failed
+    frame_bury 6
+    frame_bury -4
+    frame_bury -3
+
+subscribe_after_if_else@2:
+    // smart_contracts/subscriptions/contract.algo.ts:424
+    // const subscriptionID = this.newSubscriptionID(arc4Sender)
+    frame_dig 5
+    dup
+    callsub newSubscriptionID
+    // smart_contracts/subscriptions/contract.algo.ts:425
+    // const subscriptionKey = new arc4SubscriptionKey({ address: arc4Sender, id: new UintN64(subscriptionID) })
+    dup
+    itob
+    uncover 2
+    swap
+    concat
+    frame_bury 0
+    // smart_contracts/subscriptions/contract.algo.ts:427
+    // const amounts = this.getAmounts(amount)
+    frame_dig -4
+    callsub getAmounts
+    frame_bury 2
+    frame_bury 3
+    frame_bury 1
+    // smart_contracts/subscriptions/base.ts:7
+    // subscriptions: 54_100,
+    intc 6 // 54100
+    // smart_contracts/subscriptions/contract.algo.ts:431
+    // if (subscriptionID === 1) {
+    swap
+    intc_1 // 1
+    ==
+    swap
+    frame_bury 4
+    bz subscribe_after_if_else@4
+    // smart_contracts/subscriptions/contract.algo.ts:432
+    // mbrAmount += costs.subscriptionslist
+    intc 7 // 73000
+    frame_bury 4
+
+subscribe_after_if_else@4:
+    // smart_contracts/subscriptions/contract.algo.ts:435-442
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: amount + mbrAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -6
+    gtxns Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:438
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/subscriptions/contract.algo.ts:435-442
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: amount + mbrAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz subscribe_bool_false@7
+    frame_dig -6
+    gtxns Amount
+    // smart_contracts/subscriptions/contract.algo.ts:439
+    // amount: amount + mbrAmount,
+    frame_dig -4
+    frame_dig 4
+    +
+    // smart_contracts/subscriptions/contract.algo.ts:435-442
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: amount + mbrAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz subscribe_bool_false@7
+    intc_1 // 1
+
+subscribe_bool_merge@8:
+    // smart_contracts/subscriptions/contract.algo.ts:435-442
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: amount + mbrAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/subscriptions/contract.algo.ts:444-450
+    // itxn
+    // .payment({
+    //   receiver: this.akitaDAO.value.address,
+    //   amount: amounts.akitaFee + amounts.triggerFee,
+    //   fee,
+    // })
+    // .submit()
+    itxn_begin
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:446
+    // receiver: this.akitaDAO.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/subscriptions/contract.algo.ts:447
+    // amount: amounts.akitaFee + amounts.triggerFee,
+    frame_dig 1
+    frame_dig 3
+    +
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:444-449
+    // itxn
+    // .payment({
+    //   receiver: this.akitaDAO.value.address,
+    //   amount: amounts.akitaFee + amounts.triggerFee,
+    //   fee,
+    // })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:444-450
+    // itxn
+    // .payment({
+    //   receiver: this.akitaDAO.value.address,
+    //   amount: amounts.akitaFee + amounts.triggerFee,
+    //   fee,
+    // })
+    // .submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:452-458
+    // itxn
+    // .payment({
+    //   receiver: recipient.native,
+    //   amount: amounts.leftOver,
+    //   fee,
+    // })
+    // .submit()
+    itxn_begin
+    frame_dig 2
+    dup
+    itxn_field Amount
+    frame_dig -5
+    itxn_field Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:452-457
+    // itxn
+    // .payment({
+    //   receiver: recipient.native,
+    //   amount: amounts.leftOver,
+    //   fee,
+    // })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:452-458
+    // itxn
+    // .payment({
+    //   receiver: recipient.native,
+    //   amount: amounts.leftOver,
+    //   fee,
+    // })
+    // .submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:464
+    // const paymentDifference = new UintN64(payment.amount - amounts.leftOver)
+    frame_dig -6
+    gtxns Amount
+    swap
+    -
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:465
+    // const arc4LatestTimestamp = new UintN64(Global.latestTimestamp)
+    global LatestTimestamp
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:469
+    // serviceID: new UintN64(serviceID),
+    frame_dig -2
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:471
+    // amount: new UintN64(amount),
+    frame_dig -4
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:472
+    // interval: new UintN64(interval),
+    frame_dig -3
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:474
+    // gate: new UintN64(gate),
+    frame_dig 6
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:467-478
+    // this.subscriptions(subscriptionKey).value = new arc4SubscriptionInfo({
+    //   recipient: recipient,
+    //   serviceID: new UintN64(serviceID),
+    //   startDate: arc4LatestTimestamp,
+    //   amount: new UintN64(amount),
+    //   interval: new UintN64(interval),
+    //   asset: arc4Zero,
+    //   gate: new UintN64(gate),
+    //   lastPayment: arc4LatestTimestamp,
+    //   streak: new UintN64(1),
+    //   escrowed: paymentDifference,
+    // })
+    frame_dig -5
+    uncover 4
+    concat
+    dig 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    // smart_contracts/utils/constants.ts:13
+    // export const arc4Zero = new UintN64(0)
+    pushbytes 0x0000000000000000
+    // smart_contracts/subscriptions/contract.algo.ts:467-478
+    // this.subscriptions(subscriptionKey).value = new arc4SubscriptionInfo({
+    //   recipient: recipient,
+    //   serviceID: new UintN64(serviceID),
+    //   startDate: arc4LatestTimestamp,
+    //   amount: new UintN64(amount),
+    //   interval: new UintN64(interval),
+    //   asset: arc4Zero,
+    //   gate: new UintN64(gate),
+    //   lastPayment: arc4LatestTimestamp,
+    //   streak: new UintN64(1),
+    //   escrowed: paymentDifference,
+    // })
+    concat
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:476
+    // streak: new UintN64(1),
+    bytec 10 // 0x0000000000000001
+    // smart_contracts/subscriptions/contract.algo.ts:467-478
+    // this.subscriptions(subscriptionKey).value = new arc4SubscriptionInfo({
+    //   recipient: recipient,
+    //   serviceID: new UintN64(serviceID),
+    //   startDate: arc4LatestTimestamp,
+    //   amount: new UintN64(amount),
+    //   interval: new UintN64(interval),
+    //   asset: arc4Zero,
+    //   gate: new UintN64(gate),
+    //   lastPayment: arc4LatestTimestamp,
+    //   streak: new UintN64(1),
+    //   escrowed: paymentDifference,
+    // })
+    concat
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    frame_dig 0
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:467-478
+    // this.subscriptions(subscriptionKey).value = new arc4SubscriptionInfo({
+    //   recipient: recipient,
+    //   serviceID: new UintN64(serviceID),
+    //   startDate: arc4LatestTimestamp,
+    //   amount: new UintN64(amount),
+    //   interval: new UintN64(interval),
+    //   asset: arc4Zero,
+    //   gate: new UintN64(gate),
+    //   lastPayment: arc4LatestTimestamp,
+    //   streak: new UintN64(1),
+    //   escrowed: paymentDifference,
+    // })
+    swap
+    box_put
+    retsub
+
+subscribe_bool_false@7:
+    intc_0 // 0
+    b subscribe_bool_merge@8
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.subscribeAsa(payment: uint64, assetXfer: uint64, recipient: bytes, amount: uint64, interval: uint64, serviceID: uint64, args: bytes) -> void:
+subscribeAsa:
+    // smart_contracts/subscriptions/contract.algo.ts:481-489
+    // subscribeAsa(
+    //   payment: gtxn.PaymentTxn,
+    //   assetXfer: gtxn.AssetTransferTxn,
+    //   recipient: Address,
+    //   amount: uint64,
+    //   interval: uint64,
+    //   serviceID: ServiceID,
+    //   args: GateArgs
+    // ): void {
+    proto 7 0
+    intc_0 // 0
+    pushbytes ""
+    dupn 5
+    // smart_contracts/subscriptions/contract.algo.ts:491
+    // assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
+    frame_dig -4
+    pushint 3 // 3
+    >
+    assert // Minimum amount is 3 base units
+    // smart_contracts/subscriptions/contract.algo.ts:493
+    // assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    frame_dig -3
+    pushint 60 // 60
+    >=
+    assert // Minimum interval is 60 seconds
+    // smart_contracts/subscriptions/contract.algo.ts:495
+    // const arc4Sender = new Address(Txn.sender)
+    txn Sender
+    // smart_contracts/subscriptions/contract.algo.ts:497
+    // address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig -5
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -5
+    cover 2
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:498
+    // blocked: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
+    txn Sender
+    substring 0 16
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:501
+    // assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
+    concat
+    // smart_contracts/subscriptions/constants.ts:5
+    // export const SubscriptionsBoxPrefixBlocks = 'b'
+    bytec 4 // "b"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:501
+    // assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
+    box_len
+    bury 1
+    !
+    assert // This account is blocked by the recipient
+    // smart_contracts/subscriptions/contract.algo.ts:503
+    // let gate: uint64 = 0
+    intc_0 // 0
+    // smart_contracts/subscriptions/contract.algo.ts:506
+    // if (!isDonation) {
+    frame_dig -2
+    bz subscribeAsa_after_if_else@2
+    // smart_contracts/subscriptions/contract.algo.ts:507
+    // const boxKey: ServicesKey = { address: recipient, id: serviceID }
+    frame_dig -2
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:509
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    frame_dig -5
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:509
+    // assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Service does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:511
+    // const service = this.services(boxKey).value
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    dig 1
+    intc_1 // 1
+    extract_uint64
+    dig 2
+    pushint 9 // 9
+    extract_uint64
+    dig 3
+    pushint 17 // 17
+    extract_uint64
+    uncover 4
+    pushint 33 // 33
+    extract_uint64
+    // smart_contracts/subscriptions/contract.algo.ts:513
+    // assert(service.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
+    uncover 4
+    // smart_contracts/subscriptions/types.ts:21
+    // export const ServiceStatusActive: ServiceStatus = new arc4.UintN8(0)
+    bytec_3 // 0x00
+    // smart_contracts/subscriptions/contract.algo.ts:513
+    // assert(service.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
+    ==
+    assert // Service offering is not active
+    // smart_contracts/subscriptions/contract.algo.ts:515
+    // assert(service.asset === assetXfer.xferAsset.id, ERR_ASA_MISMATCH)
+    frame_dig -6
+    gtxns XferAsset
+    uncover 3
+    ==
+    assert // Asset mismatch
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:517
+    // assert(gateCheck(this.akitaDAO.value, arc4Sender, service.gate, args), ERR_FAILED_GATE)
+    frame_dig 7
+    dig 2
+    frame_dig -1
+    callsub gateCheck
+    assert // Gate check failed
+    frame_bury 8
+    frame_bury -4
+    frame_bury -3
+
+subscribeAsa_after_if_else@2:
+    // smart_contracts/subscriptions/contract.algo.ts:524
+    // const subscriptionID = this.newSubscriptionID(arc4Sender)
+    frame_dig 7
+    dup
+    callsub newSubscriptionID
+    // smart_contracts/subscriptions/contract.algo.ts:525
+    // const subscriptionKey = new arc4SubscriptionKey({ address: arc4Sender, id: new UintN64(subscriptionID) })
+    dup
+    itob
+    uncover 2
+    swap
+    concat
+    frame_bury 0
+    // smart_contracts/subscriptions/base.ts:7
+    // subscriptions: 54_100,
+    intc 6 // 54100
+    // smart_contracts/subscriptions/contract.algo.ts:529
+    // if (subscriptionID === 1) {
+    swap
+    intc_1 // 1
+    ==
+    swap
+    frame_bury 5
+    bz subscribeAsa_after_if_else@4
+    // smart_contracts/subscriptions/contract.algo.ts:530
+    // mbrAmount += costs.subscriptionslist
+    intc 7 // 73000
+    frame_bury 5
+
+subscribeAsa_after_if_else@4:
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:533
+    // if (!this.akitaDAO.value.address.isOptedIn(assetXfer.xferAsset)) {
+    app_params_get AppAddress
+    assert // application exists
+    frame_dig -6
+    gtxns XferAsset
+    dup
+    frame_bury 4
+    asset_holding_get AssetBalance
+    bury 1
+    frame_dig 5
+    frame_bury 6
+    bnz subscribeAsa_after_if_else@6
+    // smart_contracts/utils/base-contracts/base.ts:47-62
+    // abiCall(
+    //   AkitaDAO.prototype.optinEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: Global.assetOptInMinBalance,
+    //         fee: 0,
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //     fee: 0,
+    //   },
+    // )
+    itxn_begin
+    // smart_contracts/constants.ts:2
+    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    intc_0 // 0
+    bytec 7 // "akita_escrow"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:53
+    // receiver: this.akitaDAOEscrow.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/utils/base-contracts/base.ts:54
+    // amount: Global.assetOptInMinBalance,
+    global AssetOptInMinBalance
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/utils/base-contracts/base.ts:52-56
+    // itxn.payment({
+    //   receiver: this.akitaDAOEscrow.value.address,
+    //   amount: Global.assetOptInMinBalance,
+    //   fee: 0,
+    // }),
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/base-contracts/base.ts:55
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/base.ts:47-62
+    // abiCall(
+    //   AkitaDAO.prototype.optinEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: Global.assetOptInMinBalance,
+    //         fee: 0,
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //     fee: 0,
+    //   },
+    // )
+    itxn_next
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:58
+    // asset.id
+    frame_dig 4
+    itob
+    // smart_contracts/utils/base-contracts/base.ts:47-62
+    // abiCall(
+    //   AkitaDAO.prototype.optinEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: Global.assetOptInMinBalance,
+    //         fee: 0,
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //     fee: 0,
+    //   },
+    // )
+    pushbytes 0xb4236b33 // method "optinEscrow(pay,string,uint64)void"
+    itxn_field ApplicationArgs
+    // smart_contracts/utils/base-contracts/base.ts:57
+    // name,
+    pushbytes 0x000d737562736372697074696f6e73
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    // smart_contracts/utils/base-contracts/base.ts:47-62
+    // abiCall(
+    //   AkitaDAO.prototype.optinEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: Global.assetOptInMinBalance,
+    //         fee: 0,
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //     fee: 0,
+    //   },
+    // )
+    pushint 6 // appl
+    itxn_field TypeEnum
+    // smart_contracts/utils/base-contracts/base.ts:60
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/base.ts:47-62
+    // abiCall(
+    //   AkitaDAO.prototype.optinEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: Global.assetOptInMinBalance,
+    //         fee: 0,
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //     fee: 0,
+    //   },
+    // )
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:539
+    // mbrAmount += Global.assetOptInMinBalance
+    frame_dig 5
+    global AssetOptInMinBalance
+    +
+    frame_bury 6
+
+subscribeAsa_after_if_else@6:
+    frame_dig 6
+    frame_bury 5
+    // smart_contracts/subscriptions/contract.algo.ts:542
+    // const amounts = this.getAmounts(amount)
+    frame_dig -4
+    callsub getAmounts
+    frame_bury 2
+    frame_bury 3
+    frame_bury 1
+    // smart_contracts/subscriptions/contract.algo.ts:545-552
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: mbrAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -7
+    gtxns Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:548
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/subscriptions/contract.algo.ts:545-552
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: mbrAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz subscribeAsa_bool_false@9
+    frame_dig -7
+    gtxns Amount
+    frame_dig 5
+    ==
+    bz subscribeAsa_bool_false@9
+    intc_1 // 1
+
+subscribeAsa_bool_merge@10:
+    // smart_contracts/subscriptions/contract.algo.ts:545-552
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: mbrAmount,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/subscriptions/contract.algo.ts:555-562
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     assetAmount: amount,
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    frame_dig -6
+    gtxns AssetReceiver
+    // smart_contracts/subscriptions/contract.algo.ts:558
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/subscriptions/contract.algo.ts:555-562
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     assetAmount: amount,
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    bz subscribeAsa_bool_false@13
+    frame_dig -6
+    gtxns AssetAmount
+    frame_dig -4
+    ==
+    bz subscribeAsa_bool_false@13
+    intc_1 // 1
+
+subscribeAsa_bool_merge@14:
+    // smart_contracts/subscriptions/contract.algo.ts:555-562
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     assetAmount: amount,
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    assert // Invalid transfer
+    // smart_contracts/subscriptions/contract.algo.ts:564-571
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.akitaDAOEscrow.value.address,
+    //     xferAsset: assetXfer.xferAsset,
+    //     assetAmount: amounts.akitaFee + amounts.triggerFee,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/constants.ts:2
+    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    intc_0 // 0
+    bytec 7 // "akita_escrow"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:566
+    // assetReceiver: this.akitaDAOEscrow.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/subscriptions/contract.algo.ts:568
+    // assetAmount: amounts.akitaFee + amounts.triggerFee,
+    frame_dig 1
+    frame_dig 3
+    +
+    itxn_field AssetAmount
+    frame_dig 4
+    dup
+    cover 2
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/subscriptions/contract.algo.ts:564-570
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.akitaDAOEscrow.value.address,
+    //     xferAsset: assetXfer.xferAsset,
+    //     assetAmount: amounts.akitaFee + amounts.triggerFee,
+    //     fee,
+    //   })
+    intc_3 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:564-571
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.akitaDAOEscrow.value.address,
+    //     xferAsset: assetXfer.xferAsset,
+    //     assetAmount: amounts.akitaFee + amounts.triggerFee,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:573-580
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: recipient.native,
+    //     xferAsset: assetXfer.xferAsset,
+    //     assetAmount: amounts.leftOver,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    frame_dig 2
+    dup
+    cover 2
+    itxn_field AssetAmount
+    dup
+    itxn_field XferAsset
+    frame_dig -5
+    itxn_field AssetReceiver
+    // smart_contracts/subscriptions/contract.algo.ts:573-579
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: recipient.native,
+    //     xferAsset: assetXfer.xferAsset,
+    //     assetAmount: amounts.leftOver,
+    //     fee,
+    //   })
+    intc_3 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:573-580
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: recipient.native,
+    //     xferAsset: assetXfer.xferAsset,
+    //     assetAmount: amounts.leftOver,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:586
+    // const paymentDifference = new UintN64(payment.amount - amounts.leftOver)
+    frame_dig -7
+    gtxns Amount
+    uncover 2
+    -
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:587
+    // const arc4LatestTimestamp = new UintN64(Global.latestTimestamp)
+    global LatestTimestamp
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:591
+    // serviceID: new UintN64(serviceID),
+    frame_dig -2
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:593
+    // amount: new UintN64(amount),
+    frame_dig -4
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:594
+    // interval: new UintN64(interval),
+    frame_dig -3
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:595
+    // asset: new UintN64(assetXfer.xferAsset.id),
+    uncover 5
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:596
+    // gate: new UintN64(gate),
+    frame_dig 8
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:589-600
+    // this.subscriptions(subscriptionKey).value = new arc4SubscriptionInfo({
+    //   recipient: recipient,
+    //   serviceID: new UintN64(serviceID),
+    //   startDate: arc4LatestTimestamp,
+    //   amount: new UintN64(amount),
+    //   interval: new UintN64(interval),
+    //   asset: new UintN64(assetXfer.xferAsset.id),
+    //   gate: new UintN64(gate),
+    //   lastPayment: arc4LatestTimestamp,
+    //   streak: new UintN64(1),
+    //   escrowed: paymentDifference,
+    // })
+    frame_dig -5
+    uncover 5
+    concat
+    dig 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:598
+    // streak: new UintN64(1),
+    bytec 10 // 0x0000000000000001
+    // smart_contracts/subscriptions/contract.algo.ts:589-600
+    // this.subscriptions(subscriptionKey).value = new arc4SubscriptionInfo({
+    //   recipient: recipient,
+    //   serviceID: new UintN64(serviceID),
+    //   startDate: arc4LatestTimestamp,
+    //   amount: new UintN64(amount),
+    //   interval: new UintN64(interval),
+    //   asset: new UintN64(assetXfer.xferAsset.id),
+    //   gate: new UintN64(gate),
+    //   lastPayment: arc4LatestTimestamp,
+    //   streak: new UintN64(1),
+    //   escrowed: paymentDifference,
+    // })
+    concat
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    frame_dig 0
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:589-600
+    // this.subscriptions(subscriptionKey).value = new arc4SubscriptionInfo({
+    //   recipient: recipient,
+    //   serviceID: new UintN64(serviceID),
+    //   startDate: arc4LatestTimestamp,
+    //   amount: new UintN64(amount),
+    //   interval: new UintN64(interval),
+    //   asset: new UintN64(assetXfer.xferAsset.id),
+    //   gate: new UintN64(gate),
+    //   lastPayment: arc4LatestTimestamp,
+    //   streak: new UintN64(1),
+    //   escrowed: paymentDifference,
+    // })
+    swap
+    box_put
+    retsub
+
+subscribeAsa_bool_false@13:
+    intc_0 // 0
+    b subscribeAsa_bool_merge@14
+
+subscribeAsa_bool_false@9:
+    intc_0 // 0
+    b subscribeAsa_bool_merge@10
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.deposit(payment: uint64, id: uint64) -> void:
+deposit:
+    // smart_contracts/subscriptions/contract.algo.ts:603
+    // deposit(payment: gtxn.PaymentTxn, id: SubscriptionID): void {
+    proto 2 0
+    // smart_contracts/subscriptions/contract.algo.ts:604
+    // const subKey = new arc4SubscriptionKey({ address: new Address(Txn.sender), id: new UintN64(id) })
+    txn Sender
+    frame_dig -1
+    itob
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:606
+    // assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Subscription does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:608
+    // const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(subKey).value.bytes)
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 64 // 64
+    extract_uint64
+    dig 1
+    pushint 96 // 96
+    extract_uint64
+    // smart_contracts/subscriptions/contract.algo.ts:610
+    // assert(sub.asset === 0, ERR_ASA_MISMATCH)
+    swap
+    !
+    assert // Asset mismatch
+    // smart_contracts/subscriptions/contract.algo.ts:612
+    // assert(payment.receiver === Global.currentApplicationAddress, 'invalid payment receiver')
+    frame_dig -2
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert // invalid payment receiver
+    // smart_contracts/subscriptions/contract.algo.ts:614
+    // const newEscrowedAmount: uint64 = sub.escrowed + payment.amount
+    frame_dig -2
+    gtxns Amount
+    +
+    // smart_contracts/subscriptions/contract.algo.ts:616
+    // this.subscriptions(subKey).value.escrowed = new UintN64(newEscrowedAmount)
+    itob
+    replace2 96
+    box_put
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.depositAsa(assetXfer: uint64, id: uint64) -> void:
+depositAsa:
+    // smart_contracts/subscriptions/contract.algo.ts:619
+    // depositAsa(assetXfer: gtxn.AssetTransferTxn, id: SubscriptionID): void {
+    proto 2 0
+    // smart_contracts/subscriptions/contract.algo.ts:620
+    // const subKey = new arc4SubscriptionKey({ address: new Address(Txn.sender), id: new UintN64(id) })
+    txn Sender
+    frame_dig -1
+    itob
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:622
+    // assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Subscription does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:624
+    // const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(subKey).value.bytes)
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 64 // 64
+    extract_uint64
+    dig 1
+    pushint 96 // 96
+    extract_uint64
+    // smart_contracts/subscriptions/contract.algo.ts:626
+    // assert(sub.asset === assetXfer.xferAsset.id, ERR_ASA_MISMATCH)
+    frame_dig -2
+    gtxns XferAsset
+    uncover 2
+    ==
+    assert // Asset mismatch
+    // smart_contracts/subscriptions/contract.algo.ts:628
+    // assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_RECEIVER)
+    frame_dig -2
+    gtxns AssetReceiver
+    global CurrentApplicationAddress
+    ==
+    assert // Invalid asset receiver
+    // smart_contracts/subscriptions/contract.algo.ts:630
+    // const newEscrowedAmount: uint64 = sub.escrowed + assetXfer.assetAmount
+    frame_dig -2
+    gtxns AssetAmount
+    +
+    // smart_contracts/subscriptions/contract.algo.ts:632
+    // this.subscriptions(subKey).value.escrowed = new UintN64(newEscrowedAmount)
+    itob
+    replace2 96
+    box_put
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.withdraw(id: uint64, amount: uint64) -> void:
+withdraw:
+    // smart_contracts/subscriptions/contract.algo.ts:635
+    // withdraw(id: SubscriptionID, amount: uint64): void {
+    proto 2 0
+    // smart_contracts/subscriptions/contract.algo.ts:636
+    // const subKey = new arc4SubscriptionKey({ address: new Address(Txn.sender), id: new UintN64(id) })
+    txn Sender
+    frame_dig -2
+    itob
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    swap
+    concat
+    dupn 2
+    // smart_contracts/subscriptions/contract.algo.ts:638
+    // assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
+    box_len
+    bury 1
+    assert // Subscription does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:640
+    // const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(subKey).value.bytes)
+    box_get
+    assert // Box must have value
+    dup
+    pushint 64 // 64
+    extract_uint64
+    dup
+    uncover 2
+    pushint 96 // 96
+    extract_uint64
+    dup
+    cover 2
+    // smart_contracts/subscriptions/contract.algo.ts:642
+    // assert(sub.escrowed >= amount, ERR_NOT_ENOUGH_FUNDS)
+    frame_dig -1
+    >=
+    assert // Not enough funds in escrow
+    // smart_contracts/subscriptions/contract.algo.ts:644
+    // if (sub.asset !== 0) {
+    bz withdraw_else_body@3
+    // smart_contracts/subscriptions/contract.algo.ts:645-650
+    // itxn.assetTransfer({
+    //   assetReceiver: Txn.sender,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amount,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/subscriptions/contract.algo.ts:646
+    // assetReceiver: Txn.sender,
+    txn Sender
+    frame_dig -1
+    itxn_field AssetAmount
+    frame_dig 1
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/subscriptions/contract.algo.ts:645-650
+    // itxn.assetTransfer({
+    //   assetReceiver: Txn.sender,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amount,
+    //   fee,
+    // }).submit()
+    intc_3 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:645-650
+    // itxn.assetTransfer({
+    //   assetReceiver: Txn.sender,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amount,
+    //   fee,
+    // }).submit()
+    itxn_submit
+
+withdraw_after_if_else@5:
+    // smart_contracts/subscriptions/contract.algo.ts:659
+    // const newEscrowAmount = new UintN64(sub.escrowed - amount)
+    frame_dig 2
+    frame_dig -1
+    -
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:660
+    // this.subscriptions(subKey).value.escrowed = newEscrowAmount
+    frame_dig 0
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    swap
+    replace2 96
+    box_put
+    retsub
+
+withdraw_else_body@3:
+    // smart_contracts/subscriptions/contract.algo.ts:652-656
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: amount,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/subscriptions/contract.algo.ts:653
+    // receiver: Txn.sender,
+    txn Sender
+    frame_dig -1
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:652-656
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: amount,
+    //   fee,
+    // }).submit()
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:652-656
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: amount,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    b withdraw_after_if_else@5
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.triggerPayment(address: bytes, id: uint64, args: bytes) -> void:
+triggerPayment:
+    // smart_contracts/subscriptions/contract.algo.ts:663
+    // triggerPayment(address: Address, id: SubscriptionID, args: GateArgs): void {
+    proto 3 0
+    // smart_contracts/subscriptions/contract.algo.ts:664
+    // const subscriptionsKey = new arc4SubscriptionKey({ address, id: new UintN64(id) })
+    frame_dig -2
+    itob
+    frame_dig -3
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    swap
+    concat
+    dupn 2
+    // smart_contracts/subscriptions/contract.algo.ts:667
+    // assert(this.subscriptions(subscriptionsKey).exists)
+    box_len
+    bury 1
+    assert
+    // smart_contracts/subscriptions/contract.algo.ts:669
+    // const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(subscriptionsKey).value.bytes)
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 32 // on error: Index access is out of bounds
+    dup
+    uncover 2
+    dup
+    pushint 32 // 32
+    extract_uint64
+    dup
+    cover 3
+    cover 3
+    dup
+    pushint 40 // 40
+    extract_uint64
+    cover 3
+    dup
+    pushint 48 // 48
+    extract_uint64
+    cover 3
+    dup
+    pushint 56 // 56
+    extract_uint64
+    cover 3
+    dup
+    pushint 64 // 64
+    extract_uint64
+    cover 3
+    dup
+    pushint 72 // 72
+    extract_uint64
+    cover 3
+    dup
+    pushint 80 // 80
+    extract_uint64
+    cover 3
+    pushint 96 // 96
+    extract_uint64
+    cover 2
+    // smart_contracts/subscriptions/contract.algo.ts:672
+    // address: sub.recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+    dup
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:673
+    // blocked: address.bytes.slice(0, 16).toFixed({ length: 16 })
+    frame_dig -3
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -3
+    cover 2
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:677
+    // assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
+    concat
+    // smart_contracts/subscriptions/constants.ts:5
+    // export const SubscriptionsBoxPrefixBlocks = 'b'
+    bytec 4 // "b"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:677
+    // assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
+    box_len
+    bury 1
+    !
+    assert // This account is blocked by the recipient
+    // smart_contracts/subscriptions/contract.algo.ts:679
+    // if (sub.serviceID > 0) {
+    bz triggerPayment_after_if_else@2
+    // smart_contracts/subscriptions/contract.algo.ts:680
+    // const servicesKey: ServicesKey = { address: sub.recipient, id: sub.serviceID }
+    frame_dig 2
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:682
+    // assert(this.services(servicesKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
+    frame_dig 1
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:682
+    // assert(this.services(servicesKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
+    box_get
+    assert // Box must have value
+    extract 0 1 // on error: Index access is out of bounds
+    // smart_contracts/subscriptions/types.ts:23
+    // export const ServiceStatusShutdown: ServiceStatus = new arc4.UintN8(2)
+    bytec 6 // 0x02
+    // smart_contracts/subscriptions/contract.algo.ts:682
+    // assert(this.services(servicesKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
+    !=
+    assert // Service offering is shutdown
+
+triggerPayment_after_if_else@2:
+    // smart_contracts/subscriptions/contract.algo.ts:687
+    // sub.lastPayment < this.getLatestWindowStart(sub.startDate, sub.interval),
+    frame_dig 3
+    frame_dig 5
+    callsub getLatestWindowStart
+    frame_dig 8
+    >
+    // smart_contracts/subscriptions/contract.algo.ts:686-689
+    // assert(
+    //   sub.lastPayment < this.getLatestWindowStart(sub.startDate, sub.interval),
+    //   ERR_BAD_WINDOW
+    // )
+    assert // Invalid payment window
+    // smart_contracts/subscriptions/contract.algo.ts:691
+    // assert(sub.escrowed >= sub.amount, ERR_NOT_ENOUGH_FUNDS)
+    frame_dig 9
+    frame_dig 4
+    dup
+    cover 2
+    >=
+    assert // Not enough funds in escrow
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:693
+    // assert(gateCheck(this.akitaDAO.value, address, sub.gate, args), ERR_FAILED_GATE)
+    frame_dig -3
+    frame_dig 7
+    frame_dig -1
+    callsub gateCheck
+    assert // Gate check failed
+    // smart_contracts/subscriptions/contract.algo.ts:696
+    // const amounts = this.getAmounts(sub.amount)
+    callsub getAmounts
+    // smart_contracts/subscriptions/contract.algo.ts:698
+    // if (isAsa) {
+    frame_dig 6
+    bz triggerPayment_else_body@7
+    // smart_contracts/subscriptions/contract.algo.ts:699-704
+    // itxn.assetTransfer({
+    //   assetReceiver: this.akitaDAOEscrow.value.address,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.akitaFee,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/constants.ts:2
+    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    intc_0 // 0
+    bytec 7 // "akita_escrow"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:700
+    // assetReceiver: this.akitaDAOEscrow.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    uncover 3
+    itxn_field AssetAmount
+    frame_dig 6
+    dup
+    cover 2
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/subscriptions/contract.algo.ts:699-704
+    // itxn.assetTransfer({
+    //   assetReceiver: this.akitaDAOEscrow.value.address,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.akitaFee,
+    //   fee,
+    // }).submit()
+    intc_3 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:699-704
+    // itxn.assetTransfer({
+    //   assetReceiver: this.akitaDAOEscrow.value.address,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.akitaFee,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:706-711
+    // itxn.assetTransfer({
+    //   assetReceiver: Txn.sender,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.triggerFee,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/subscriptions/contract.algo.ts:707
+    // assetReceiver: Txn.sender,
+    txn Sender
+    uncover 3
+    itxn_field AssetAmount
+    dig 1
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/subscriptions/contract.algo.ts:706-711
+    // itxn.assetTransfer({
+    //   assetReceiver: Txn.sender,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.triggerFee,
+    //   fee,
+    // }).submit()
+    intc_3 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:706-711
+    // itxn.assetTransfer({
+    //   assetReceiver: Txn.sender,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.triggerFee,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:713-718
+    // itxn.assetTransfer({
+    //   assetReceiver: sub.recipient.native,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.leftOver,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    itxn_field XferAsset
+    itxn_field AssetAmount
+    frame_dig 1
+    itxn_field AssetReceiver
+    intc_3 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:713-718
+    // itxn.assetTransfer({
+    //   assetReceiver: sub.recipient.native,
+    //   xferAsset: sub.asset,
+    //   assetAmount: amounts.leftOver,
+    //   fee,
+    // }).submit()
+    itxn_submit
+
+triggerPayment_after_if_else@11:
+    // smart_contracts/subscriptions/contract.algo.ts:740
+    // this.updateStreak(address, id, 1)
+    frame_dig -3
+    frame_dig -2
+    intc_1 // 1
+    callsub updateStreak
+    // smart_contracts/subscriptions/contract.algo.ts:741
+    // const newEscrowedAmount = new UintN64(sub.escrowed - sub.amount)
+    frame_dig 9
+    frame_dig 4
+    -
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:742
+    // this.subscriptions(subscriptionsKey).value.escrowed = newEscrowedAmount
+    frame_dig 0
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    swap
+    replace2 96
+    // smart_contracts/subscriptions/contract.algo.ts:743
+    // const arc4LatestTimestamp = new UintN64(Global.latestTimestamp)
+    global LatestTimestamp
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:744
+    // this.subscriptions(subscriptionsKey).value.lastPayment = arc4LatestTimestamp
+    replace2 80
+    box_put
+    retsub
+
+triggerPayment_else_body@7:
+    // smart_contracts/subscriptions/contract.algo.ts:721-725
+    // itxn.payment({
+    //   receiver: this.akitaDAO.value.address,
+    //   amount: amounts.akitaFee,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/subscriptions/contract.algo.ts:722
+    // receiver: this.akitaDAO.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    uncover 3
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:721-725
+    // itxn.payment({
+    //   receiver: this.akitaDAO.value.address,
+    //   amount: amounts.akitaFee,
+    //   fee,
+    // }).submit()
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:721-725
+    // itxn.payment({
+    //   receiver: this.akitaDAO.value.address,
+    //   amount: amounts.akitaFee,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:727-731
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: amounts.triggerFee,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/subscriptions/contract.algo.ts:728
+    // receiver: Txn.sender,
+    txn Sender
+    uncover 2
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/subscriptions/contract.algo.ts:727-731
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: amounts.triggerFee,
+    //   fee,
+    // }).submit()
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:727-731
+    // itxn.payment({
+    //   receiver: Txn.sender,
+    //   amount: amounts.triggerFee,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    // smart_contracts/subscriptions/contract.algo.ts:733-737
+    // itxn.payment({
+    //   receiver: sub.recipient.native,
+    //   amount: amounts.leftOver,
+    //   fee,
+    // }).submit()
+    itxn_begin
+    itxn_field Amount
+    frame_dig 1
+    itxn_field Receiver
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/subscriptions/contract.algo.ts:733-737
+    // itxn.payment({
+    //   receiver: sub.recipient.native,
+    //   amount: amounts.leftOver,
+    //   fee,
+    // }).submit()
+    itxn_submit
+    b triggerPayment_after_if_else@11
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.streakCheck(sender: bytes, id: uint64) -> void:
+streakCheck:
+    // smart_contracts/subscriptions/contract.algo.ts:747
+    // streakCheck(sender: Address, id: SubscriptionID): void {
+    proto 2 0
+    // smart_contracts/subscriptions/contract.algo.ts:748
+    // this.updateStreak(sender, id, 0)
+    frame_dig -2
+    frame_dig -1
+    intc_0 // 0
+    callsub updateStreak
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.setPasses(id: uint64, addresses: bytes) -> void:
+setPasses:
+    // smart_contracts/subscriptions/contract.algo.ts:751
+    // setPasses(id: SubscriptionID, addresses: Address[]): void {
+    proto 2 0
+    // smart_contracts/subscriptions/contract.algo.ts:752
+    // const arc4Sender = new Address(Txn.sender)
+    txn Sender
+    // smart_contracts/subscriptions/contract.algo.ts:753
+    // const subscriptionsKey = new arc4SubscriptionKey({ address: arc4Sender, id: new UintN64(id) })
+    frame_dig -2
+    itob
+    concat
+    dup
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:755
+    // assert(this.subscriptions(subscriptionsKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Subscription does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:757
+    // const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(subscriptionsKey).value.bytes)
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 32 // on error: Index access is out of bounds
+    dup
+    uncover 2
+    pushint 32 // 32
+    extract_uint64
+    // smart_contracts/subscriptions/contract.algo.ts:759
+    // assert(sub.serviceID > 0, ERR_NO_DONATIONS)
+    dup
+    assert // Donations aren't applicable to passes
+    // smart_contracts/subscriptions/contract.algo.ts:761
+    // const serviceKey: ServicesKey = { address: sub.recipient, id: sub.serviceID }
+    itob
+    // smart_contracts/subscriptions/contract.algo.ts:763
+    // assert(this.services(serviceKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:763
+    // assert(this.services(serviceKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Service does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:765
+    // const service = this.services(serviceKey).value
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 1 // on error: Index access is out of bounds
+    swap
+    pushint 25 // 25
+    extract_uint64
+    // smart_contracts/subscriptions/contract.algo.ts:767
+    // assert(service.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
+    swap
+    // smart_contracts/subscriptions/types.ts:23
+    // export const ServiceStatusShutdown: ServiceStatus = new arc4.UintN8(2)
+    bytec 6 // 0x02
+    // smart_contracts/subscriptions/contract.algo.ts:767
+    // assert(service.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
+    !=
+    assert // Service offering is shutdown
+    // smart_contracts/subscriptions/contract.algo.ts:768
+    // assert(service.passes >= addresses.length, ERR_PASS_COUNT_OVERFLOW)
+    frame_dig -1
+    intc_0 // 0
+    extract_uint16
+    dup
+    cover 2
+    >=
+    assert // More addresses than available passes
+    // smart_contracts/subscriptions/contract.algo.ts:770
+    // for (let i: uint64 = 0; i < addresses.length; i += 1) {
+    intc_0 // 0
+
+setPasses_while_top@1:
+    // smart_contracts/subscriptions/contract.algo.ts:770
+    // for (let i: uint64 = 0; i < addresses.length; i += 1) {
+    frame_dig 3
+    frame_dig 2
+    <
+    bz setPasses_after_while@3
+    // smart_contracts/subscriptions/contract.algo.ts:772
+    // address: sub.recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig 1
+    dup
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:773
+    // blocked: addresses[i].bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig -1
+    extract 2 0
+    frame_dig 3
+    dup
+    cover 3
+    pushint 32 // 32
+    *
+    pushint 32 // 32
+    extract3 // on error: Index access is out of bounds
+    dup
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:775
+    // assert(!this.blocks(blockKey).exists, ERR_BLOCKED)
+    concat
+    // smart_contracts/subscriptions/constants.ts:5
+    // export const SubscriptionsBoxPrefixBlocks = 'b'
+    bytec 4 // "b"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:775
+    // assert(!this.blocks(blockKey).exists, ERR_BLOCKED)
+    box_len
+    bury 1
+    !
+    assert // This account is blocked by the recipient
+    // smart_contracts/subscriptions/contract.algo.ts:770
+    // for (let i: uint64 = 0; i < addresses.length; i += 1) {
+    intc_1 // 1
+    +
+    frame_bury 3
+    b setPasses_while_top@1
+
+setPasses_after_while@3:
+    // smart_contracts/subscriptions/constants.ts:6
+    // export const SubscriptionsBoxPrefixPasses = 'p'
+    pushbytes "p"
+    frame_dig 0
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:778
+    // this.passes({ address: arc4Sender, id }).value = addresses
+    dup
+    box_del
+    pop
+    frame_dig -1
+    box_put
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.isBlocked(address: bytes, blocked: bytes) -> uint64:
+isBlocked:
+    // smart_contracts/subscriptions/contract.algo.ts:788-789
+    // @abimethod({ readonly: true })
+    // isBlocked(address: Address, blocked: Address): boolean {
+    proto 2 1
+    // smart_contracts/subscriptions/contract.algo.ts:791
+    // address: address.bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig -2
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -2
+    cover 2
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:792
+    // blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    frame_dig -1
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    intc_2 // 16
+    dig 2
+    >=
+    intc_2 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -1
+    cover 2
+    substring3
+    dup
+    len
+    intc_2 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/subscriptions/contract.algo.ts:790-793
+    // return this.blocks({
+    //   address: address.bytes.slice(0, 16).toFixed({ length: 16 }),
+    //   blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    // }).exists
+    concat
+    // smart_contracts/subscriptions/constants.ts:5
+    // export const SubscriptionsBoxPrefixBlocks = 'b'
+    bytec 4 // "b"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:793
+    // }).exists
+    box_len
+    bury 1
+    // smart_contracts/subscriptions/contract.algo.ts:790-793
+    // return this.blocks({
+    //   address: address.bytes.slice(0, 16).toFixed({ length: 16 }),
+    //   blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    // }).exists
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.isShutdown(address: bytes, id: uint64) -> uint64:
+isShutdown:
+    // smart_contracts/subscriptions/contract.algo.ts:799-800
+    // @abimethod({ readonly: true })
+    // isShutdown(address: Address, id: uint64): boolean {
+    proto 2 1
+    // smart_contracts/subscriptions/contract.algo.ts:801
+    // return this.services({ address, id }).value.status === ServiceStatusShutdown
+    frame_dig -1
+    itob
+    frame_dig -2
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:3
+    // export const SubscriptionsBoxPrefixServices = 'o'
+    bytec_2 // "o"
+    swap
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:801
+    // return this.services({ address, id }).value.status === ServiceStatusShutdown
+    box_get
+    assert // Box must have value
+    extract 0 1 // on error: Index access is out of bounds
+    // smart_contracts/subscriptions/types.ts:23
+    // export const ServiceStatusShutdown: ServiceStatus = new arc4.UintN8(2)
+    bytec 6 // 0x02
+    // smart_contracts/subscriptions/contract.algo.ts:801
+    // return this.services({ address, id }).value.status === ServiceStatusShutdown
+    ==
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.getSubscriptionInfo(address: bytes, id: uint64) -> bytes, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, bytes:
+getSubscriptionInfo:
+    // smart_contracts/subscriptions/contract.algo.ts:804-805
+    // @abimethod({ readonly: true })
+    // getSubscriptionInfo(address: Address, id: uint64): SubscriptionInfoWithPasses {
+    proto 2 11
+    // smart_contracts/subscriptions/contract.algo.ts:806
+    // const key = new arc4SubscriptionKey({ address, id: new UintN64(id) })
+    frame_dig -1
+    itob
+    frame_dig -2
+    swap
+    concat
+    // smart_contracts/subscriptions/constants.ts:1
+    // export const SubscriptionsBoxPrefixSubscriptions = 's'
+    bytec_1 // "s"
+    dig 1
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:808
+    // assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
+    dup
+    box_len
+    bury 1
+    assert // Subscription does not exist
+    // smart_contracts/subscriptions/contract.algo.ts:810
+    // const sub = decodeArc4<SubscriptionInfo>(this.subscriptions(key).value.bytes)
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 32 // on error: Index access is out of bounds
+    cover 2
+    dup
+    pushint 32 // 32
+    extract_uint64
+    cover 2
+    dup
+    pushint 40 // 40
+    extract_uint64
+    cover 2
+    dup
+    pushint 48 // 48
+    extract_uint64
+    cover 2
+    dup
+    pushint 56 // 56
+    extract_uint64
+    cover 2
+    dup
+    pushint 64 // 64
+    extract_uint64
+    cover 2
+    dup
+    pushint 72 // 72
+    extract_uint64
+    cover 2
+    dup
+    pushint 80 // 80
+    extract_uint64
+    cover 2
+    dup
+    pushint 88 // 88
+    extract_uint64
+    cover 2
+    pushint 96 // 96
+    extract_uint64
+    swap
+    // smart_contracts/subscriptions/contract.algo.ts:813
+    // let passes: Address[] = []
+    pushbytes 0x0000
+    swap
+    // smart_contracts/subscriptions/constants.ts:6
+    // export const SubscriptionsBoxPrefixPasses = 'p'
+    pushbytes "p"
+    swap
+    concat
+    dup
+    // smart_contracts/subscriptions/contract.algo.ts:814
+    // if (this.passes(passesKey).exists) {
+    box_len
+    bury 1
+    bz getSubscriptionInfo_after_if_else@2
+    // smart_contracts/subscriptions/contract.algo.ts:815
+    // passes = [ ...passes, ...this.passes(passesKey).value ]
+    frame_dig 11
+    box_get
+    assert // Box must have value
+    extract 2 0
+    dup
+    len
+    pushint 32 // 32
+    /
+    itob
+    extract 6 2
+    swap
+    concat
+    frame_bury 10
+
+getSubscriptionInfo_after_if_else@2:
+    // smart_contracts/subscriptions/contract.algo.ts:818
+    // return { ...sub, passes }
+    retsub
+
+
+// smart_contracts/subscriptions/contract.algo.ts::Subscriptions.isFirstSubscription(address: bytes) -> uint64:
+isFirstSubscription:
+    // smart_contracts/subscriptions/contract.algo.ts:821-822
+    // @abimethod({ readonly: true })
+    // isFirstSubscription(address: Address): boolean {
+    proto 1 1
+    // smart_contracts/subscriptions/constants.ts:2
+    // export const SubscriptionsBoxPrefixSubscriptionsList = 'l'
+    pushbytes "l"
+    frame_dig -1
+    concat
+    // smart_contracts/subscriptions/contract.algo.ts:823
+    // return !this.subscriptionslist(address.native).exists
+    box_len
+    bury 1
+    !
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseEscrow.update(newVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/base.ts:78-79
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(newVersion: string): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:80
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:80
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    pushbytes "version"
+    // smart_contracts/utils/base-contracts/base.ts:81
+    // this.version.value = newVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseEscrow.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/base.ts:86
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:87
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:87
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:88
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseEscrow.updateAkitaDAOEscrow(app: uint64) -> void:
+updateAkitaDAOEscrow:
+    // smart_contracts/utils/base-contracts/base.ts:91
+    // updateAkitaDAOEscrow(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:92
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:92
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:2
+    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    bytec 7 // "akita_escrow"
+    // smart_contracts/utils/base-contracts/base.ts:93
+    // this.akitaDAOEscrow.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(payment: uint64, asset: uint64) -> void:
+optin:
+    // smart_contracts/utils/base-contracts/optin.ts:22
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    proto 2 0
+    // smart_contracts/utils/base-contracts/optin.ts:24-31
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/utils/base-contracts/optin.ts:27
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/utils/base-contracts/optin.ts:24-31
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz optin_bool_false@3
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/utils/base-contracts/optin.ts:28
+    // amount: Global.assetOptInMinBalance,
+    global AssetOptInMinBalance
+    // smart_contracts/utils/base-contracts/optin.ts:24-31
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    bz optin_bool_false@3
+    intc_1 // 1
+
+optin_bool_merge@4:
+    // smart_contracts/utils/base-contracts/optin.ts:24-31
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: Global.assetOptInMinBalance,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    assert // Invalid payment
+    // smart_contracts/utils/base-contracts/optin.ts:33-38
+    // itxn.assetTransfer({
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee: 0,
+    // }).submit()
+    itxn_begin
+    // smart_contracts/utils/base-contracts/optin.ts:34
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    frame_dig -1
+    itxn_field XferAsset
+    // smart_contracts/utils/base-contracts/optin.ts:35
+    // assetAmount: 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    // smart_contracts/utils/base-contracts/optin.ts:33-38
+    // itxn.assetTransfer({
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee: 0,
+    // }).submit()
+    intc_3 // 4
+    itxn_field TypeEnum
+    // smart_contracts/utils/base-contracts/optin.ts:37
+    // fee: 0,
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/optin.ts:33-38
+    // itxn.assetTransfer({
+    //   assetReceiver: Global.currentApplicationAddress,
+    //   assetAmount: 0,
+    //   xferAsset: asset,
+    //   fee: 0,
+    // }).submit()
+    itxn_submit
+    retsub
+
+optin_bool_false@3:
+    intc_0 // 0
+    b optin_bool_merge@4

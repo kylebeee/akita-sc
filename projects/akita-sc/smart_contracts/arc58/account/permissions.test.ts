@@ -101,7 +101,7 @@ describe('ARC58 Plugin Permissions', () => {
           args: {
             walletId: abstractedAccountClient.appId,
             rekeyBack: true,
-            asset,
+            assets: [asset],
             mbrPayment
           },
           extraFee: (1_000).microAlgos()
@@ -497,7 +497,7 @@ describe('ARC58 Plugin Permissions', () => {
           args: {
             walletId: abstractedAccountClient.appId,
             rekeyBack: false,
-            asset,
+            assets: [asset],
             mbrPayment
           },
           extraFee: (1_000).microAlgos()
@@ -521,7 +521,7 @@ describe('ARC58 Plugin Permissions', () => {
           args: {
             walletId: abstractedAccountClient.appId,
             rekeyBack: true,
-            asset,
+            assets: [asset],
             mbrPayment: mbrPaymentTwo
           },
           extraFee: (1_000).microAlgos(),
@@ -686,7 +686,7 @@ describe('ARC58 Plugin Permissions', () => {
           args: {
             walletId: abstractedAccountClient.appId,
             rekeyBack: true,
-            asset,
+            assets: [asset],
             mbrPayment
           },
           extraFee: (1_000).microAlgos()

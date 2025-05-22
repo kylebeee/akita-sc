@@ -1,0 +1,37 @@
+main smart_contracts/arc58/keys/secp256r1_passkey.algo.ts::program:
+    block@0: // L10
+        let authData#0: bytes = (arg 0)
+        let cdOne#0: bytes = (arg 1)
+        let cdTwo#0: bytes = (arg 2)
+        let cdThree#0: bytes = (arg 3)
+        let sSig#0: bytes[32] = (arg 4)
+        let tmp%0#0: uint64 = (len sSig#0)
+        let tmp%1#0: bool = (== tmp%0#0 32u)
+        (assert tmp%1#0) // Length must be 32
+        let rSig#0: bytes[32] = (arg 5)
+        let tmp%2#0: uint64 = (len rSig#0)
+        let tmp%3#0: bool = (== tmp%2#0 32u)
+        (assert tmp%3#0) // Length must be 32
+        let tmp%4#0: bytes = (concat cdOne#0 cdTwo#0)
+        let tmp%5#0: bytes = (concat tmp%4#0 cdThree#0)
+        let tmp%6#0: bytes[32] = (sha256 tmp%5#0)
+        let tmp%7#0: bytes = (concat authData#0 tmp%6#0)
+        let h#0: bytes[32] = (sha256 tmp%7#0)
+        let tmp%8#0: uint64 = (global GroupSize)
+        let tmp%9#0: bool = (> tmp%8#0 1u)
+        goto tmp%9#0 ? block@1 : block@2
+    block@1: // if_body_L20
+        let tmp%10#0: bytes[32] = (global GroupID)
+        let tmp%11#0: bytes = ((base64_decode URLEncoding) cdTwo#0)
+        let tmp%12#0: bool = (== tmp%10#0 tmp%11#0)
+        (assert tmp%12#0)
+        goto block@3
+    block@2: // else_body_L22
+        let tmp%13#0: bytes[32] = (txn TxID)
+        let tmp%14#0: bytes = ((base64_decode URLEncoding) cdTwo#0)
+        let tmp%15#0: bool = (== tmp%13#0 tmp%14#0)
+        (assert tmp%15#0)
+        goto block@3
+    block@3: // after_if_else_L20
+        let tmp%16#0: bool = ((ecdsa_verify Secp256r1) h#0 sSig#0 rSig#0 TemplateVar[bytes[32]](TMPL_X) TemplateVar[bytes[32]](TMPL_Y))
+        return tmp%16#0

@@ -1,0 +1,1828 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let reinterpret_bool%0#0: bool = (txn ApplicationID)
+        goto reinterpret_bool%0#0 ? block@2 : block@1
+    block@1: // if_body_L1
+        polytype/lib/polytype-module.d.ts::ClusteredContract<smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract,smart_contracts/hyper-swap/base.ts::BaseHyperSwap>.constructor()
+        goto block@2
+    block@2: // after_if_else_L1
+        let tmp%0#0: bool = smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.__puya_arc4_router__()
+        return tmp%0#0
+
+subroutine smart_contracts/utils/functions.ts::getAkitaAppList(akitaDAO: uint64) -> <uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64>:
+    block@0: // L24
+        let (tuple_assignment%0#0: bytes, tuple_assignment%1#0: bool) = (app_global_get_ex akitaDAO#0 "akita_al")
+        let appListBytes#0: bytes = tuple_assignment%0#0
+        let _#0: bool = tuple_assignment%1#0
+        let reinterpret_bytes[96]%0#0: bytes[96] = appListBytes#0
+        let item0%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 0u 8u) // on error: Index access is out of bounds
+        let item0%1#0: uint64 = (btoi item0%0#0)
+        let item1%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 8u 8u) // on error: Index access is out of bounds
+        let item1%1#0: uint64 = (btoi item1%0#0)
+        let item2%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 16u 8u) // on error: Index access is out of bounds
+        let item2%1#0: uint64 = (btoi item2%0#0)
+        let item3%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 24u 8u) // on error: Index access is out of bounds
+        let item3%1#0: uint64 = (btoi item3%0#0)
+        let item4%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 32u 8u) // on error: Index access is out of bounds
+        let item4%1#0: uint64 = (btoi item4%0#0)
+        let item5%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 40u 8u) // on error: Index access is out of bounds
+        let item5%1#0: uint64 = (btoi item5%0#0)
+        let item6%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 48u 8u) // on error: Index access is out of bounds
+        let item6%1#0: uint64 = (btoi item6%0#0)
+        let item7%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 56u 8u) // on error: Index access is out of bounds
+        let item7%1#0: uint64 = (btoi item7%0#0)
+        let item8%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 64u 8u) // on error: Index access is out of bounds
+        let item8%1#0: uint64 = (btoi item8%0#0)
+        let item9%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 72u 8u) // on error: Index access is out of bounds
+        let item9%1#0: uint64 = (btoi item9%0#0)
+        let item10%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 80u 8u) // on error: Index access is out of bounds
+        let item10%1#0: uint64 = (btoi item10%0#0)
+        let item11%0#0: bytes = (extract3 reinterpret_bytes[96]%0#0 88u 8u) // on error: Index access is out of bounds
+        let item11%1#0: uint64 = (btoi item11%0#0)
+        return item0%1#0 item1%1#0 item2%1#0 item3%1#0 item4%1#0 item5%1#0 item6%1#0 item7%1#0 item8%1#0 item9%1#0 item10%1#0 item11%1#0
+
+subroutine smart_contracts/utils/functions.ts::getPluginAppList(akitaDAO: uint64) -> <uint64, uint64, uint64>:
+    block@0: // L29
+        let (tuple_assignment%0#0: bytes, tuple_assignment%1#0: bool) = (app_global_get_ex akitaDAO#0 "plugn_al")
+        let pluginAppListBytes#0: bytes = tuple_assignment%0#0
+        let _#0: bool = tuple_assignment%1#0
+        let reinterpret_bytes[24]%0#0: bytes[24] = pluginAppListBytes#0
+        let item0%0#0: bytes = (extract3 reinterpret_bytes[24]%0#0 0u 8u) // on error: Index access is out of bounds
+        let item0%1#0: uint64 = (btoi item0%0#0)
+        let item1%0#0: bytes = (extract3 reinterpret_bytes[24]%0#0 8u 8u) // on error: Index access is out of bounds
+        let item1%1#0: uint64 = (btoi item1%0#0)
+        let item2%0#0: bytes = (extract3 reinterpret_bytes[24]%0#0 16u 8u) // on error: Index access is out of bounds
+        let item2%1#0: uint64 = (btoi item2%0#0)
+        return item0%1#0 item1%1#0 item2%1#0
+
+subroutine smart_contracts/utils/functions.ts::getOtherAppList(akitaDAO: uint64) -> <uint64, uint64, uint64>:
+    block@0: // L34
+        let (tuple_assignment%0#0: bytes, tuple_assignment%1#0: bool) = (app_global_get_ex akitaDAO#0 "other_al")
+        let otherAppListBytes#0: bytes = tuple_assignment%0#0
+        let _#0: bool = tuple_assignment%1#0
+        let reinterpret_bytes[24]%0#0: bytes[24] = otherAppListBytes#0
+        let item0%0#0: bytes = (extract3 reinterpret_bytes[24]%0#0 0u 8u) // on error: Index access is out of bounds
+        let item0%1#0: uint64 = (btoi item0%0#0)
+        let item1%0#0: bytes = (extract3 reinterpret_bytes[24]%0#0 8u 8u) // on error: Index access is out of bounds
+        let item1%1#0: uint64 = (btoi item1%0#0)
+        let item2%0#0: bytes = (extract3 reinterpret_bytes[24]%0#0 16u 8u) // on error: Index access is out of bounds
+        let item2%1#0: uint64 = (btoi item2%0#0)
+        return item0%1#0 item1%1#0 item2%1#0
+
+subroutine smart_contracts/utils/functions.ts::getOriginAccount(walletID: uint64) -> bytes[32]:
+    block@0: // L101
+        let (tuple_assignment%0#0: bytes, tuple_assignment%1#0: bool) = (app_global_get_ex walletID#0 "controlled_address")
+        let controlledAccountBytes#0: bytes = tuple_assignment%0#0
+        let _#0: bool = tuple_assignment%1#0
+        let reinterpret_bytes[32]%0#0: bytes[32] = controlledAccountBytes#0
+        return reinterpret_bytes[32]%0#0
+
+subroutine smart_contracts/utils/functions.ts::getAccounts(wallet: uint64) -> <bytes[32], bytes[32], bytes[32]>:
+    block@0: // L148
+        let origin#0: bytes[32] = smart_contracts/utils/functions.ts::getOriginAccount(wallet#0)
+        let sender#0: bytes[32] = smart_contracts/utils/functions.ts::getSpendingAccount(wallet#0)
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) wallet#0)
+        (assert check%0#0) // application exists
+        return value%0#0 origin#0 sender#0
+
+subroutine smart_contracts/utils/functions.ts::getSpendingAccount(wallet: uint64) -> bytes[32]:
+    block@0: // L158
+        let (tuple_assignment%0#0: bytes, tuple_assignment%1#0: bool) = (app_global_get_ex wallet#0 "spending_address")
+        let spendingAddressBytes#0: bytes = tuple_assignment%0#0
+        let _#0: bool = tuple_assignment%1#0
+        let reinterpret_bytes[32]%0#0: bytes[32] = spendingAddressBytes#0
+        return reinterpret_bytes[32]%0#0
+
+subroutine smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: bool, wallet: uint64) -> bytes[32]:
+    block@0: // L166
+        goto rekeyBack#0 ? block@2 : block@1
+    block@1: // if_body_L167
+        let tmp%0#0: bytes[32] = (global ZeroAddress)
+        return tmp%0#0
+    block@2: // after_if_else_L167
+        let (awst_tmp%0#0: bytes[32], awst_tmp%1#0: bytes[32], awst_tmp%2#0: bytes[32]) = smart_contracts/utils/functions.ts::getAccounts(wallet#0)
+        let walletAddress#0: bytes[32] = awst_tmp%0#0
+        let origin#0: bytes[32] = awst_tmp%1#0
+        let sender#0: bytes[32] = awst_tmp%2#0
+        let tmp%1#0: bool = (!= sender#0 origin#0)
+        goto tmp%1#0 ? block@3 : block@4
+    block@3: // if_body_L172
+        return sender#0
+    block@4: // after_if_else_L172
+        return walletAddress#0
+
+subroutine smart_contracts/utils/functions.ts::arc58OptInAndSend(akitaDAO: uint64, recipientWalletID: uint64, assets: encoded_uint64[], amounts: encoded_uint64[]) -> void:
+    block@0: // L230
+        let tmp%0#0: uint64 = (extract_uint16 assets#0 0u)
+        let tmp%1#0: uint64 = (extract_uint16 amounts#0 0u)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        (assert tmp%2#0) // Assets and amounts mismatch
+        let (tmp%3#0: uint64, tmp%4#0: uint64, tmp%5#0: uint64) = smart_contracts/utils/functions.ts::getPluginAppList(akitaDAO#0)
+        let optinPlugin#0: uint64 = tmp%3#0
+        let origin#0: bytes[32] = smart_contracts/utils/functions.ts::getOriginAccount(recipientWalletID#0)
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_ApplicationID_idx_0#0: uint64 = recipientWalletID#0
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 1u
+        let val_as_bytes%0#0: bytes[8] = (itob optinPlugin#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u 1u)
+        let array_data%0#0: bytes = (concat 0x0000 0x)
+        let array_data%1#0: bytes = (concat 0x0000 0x)
+        let inner_txn_params%0%%param_ApplicationArgs_idx_0#0: bytes[4] = method "arc58_rekeyToPlugin(uint64,bool,uint64[],(uint64,uint64)[])void"
+        let inner_txn_params%0%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_2#0: bytes[1] = encoded_bool%0#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_3#0: bytes = array_data%0#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_4#0: bytes = array_data%1#0
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 5u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_3#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_4#0)
+        ((itxn_field ApplicationID) inner_txn_params%0%%param_ApplicationID_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        itxn_next
+        let inner_txn_params%1#0: itxn_field_set = itxn_field_set(1)
+        let inner_txn_params%1%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%1%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%1%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_Receiver_idx_0#0: bytes[32] = origin#0
+        let inner_txn_params%1%%Receiver_length#0: uint64 = 1u
+        let tmp%6#0: uint64 = (global AssetOptInMinBalance)
+        let tmp%7#0: uint64 = (extract_uint16 assets#0 0u)
+        let inner_txn_params%1%%param_Amount_idx_0#0: uint64 = (* tmp%6#0 tmp%7#0)
+        let inner_txn_params%1%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%1%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%1%%Note_length#0: uint64 = 0u
+        let inner_txn_params%1%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%1%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%1%%Type_length#0: uint64 = 0u
+        let inner_txn_params%1%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%1%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%1%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%1%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%1%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%1%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%1%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%1%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%1%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%1%%param_Fee_idx_0#0)
+        itxn_next
+        let inner_txn_params%2#0: itxn_field_set = itxn_field_set(2)
+        let inner_txn_params%2%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%2%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%2%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%2%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%2%%param_ApplicationID_idx_0#0: uint64 = optinPlugin#0
+        let inner_txn_params%2%%ApplicationID_length#0: uint64 = 1u
+        let val_as_bytes%1#0: bytes[8] = (itob recipientWalletID#0)
+        let encoded_bool%1#0: bytes[1] = (setbit 0x00 0u 1u)
+        let inner_txn_params%2%%param_ApplicationArgs_idx_0#0: bytes[4] = method "optInToAsset(uint64,bool,uint64[],pay)void"
+        let inner_txn_params%2%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%1#0
+        let inner_txn_params%2%%param_ApplicationArgs_idx_2#0: bytes[1] = encoded_bool%1#0
+        let inner_txn_params%2%%param_ApplicationArgs_idx_3#0: encoded_uint64[] = assets#0
+        let inner_txn_params%2%%ApplicationArgs_length#0: uint64 = 4u
+        let inner_txn_params%2%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%2%%Note_length#0: uint64 = 0u
+        let inner_txn_params%2%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%2%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%2%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%2%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%2%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%2%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%2%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%2%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%2%%Type_length#0: uint64 = 0u
+        let inner_txn_params%2%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%2%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%2%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%2%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%2%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%2%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%2%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%2%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%2%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%2%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%2%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%2%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%2%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%2%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%2%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%2%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%2%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%2%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%2%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%2%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%2%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%2%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%2%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%2%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%2%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%2%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%2%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%2%%param_ApplicationArgs_idx_3#0)
+        ((itxn_field ApplicationID) inner_txn_params%2%%param_ApplicationID_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%2%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%2%%param_Fee_idx_0#0)
+        let i#0: uint64 = 0u
+        goto block@1
+    block@1: // while_top_L262
+        let i#1: uint64 = φ(i#0 <- block@0, i#3 <- block@4)
+        let tmp%8#0: uint64 = (extract_uint16 amounts#0 0u)
+        let tmp%9#0: bool = (< i#1 tmp%8#0)
+        goto tmp%9#0 ? block@2 : block@5
+    block@2: // while_body_L262
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) amounts#0)
+        let item_offset%0#0: uint64 = (* i#1 8u)
+        let arc4_item%0#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 8u) // on error: Index access is out of bounds
+        let tmp%10#0: uint64 = (btoi arc4_item%0#0)
+        let tmp%11#0: bool = (> tmp%10#0 0u)
+        goto tmp%11#0 ? block@3 : block@4
+    block@3: // if_body_L263
+        itxn_next
+        let inner_txn_params%3#0: itxn_field_set = itxn_field_set(3)
+        let inner_txn_params%3%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%3%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%3%%param_TypeEnum_idx_0#0: uint64 = 4u
+        let inner_txn_params%3%%TypeEnum_length#0: uint64 = 1u
+        let array_head_and_tail%1#0: bytes = ((extract 2 0) amounts#0)
+        let item_offset%1#0: uint64 = (* i#1 8u)
+        let arc4_item%1#0: bytes = (extract3 array_head_and_tail%1#0 item_offset%1#0 8u) // on error: Index access is out of bounds
+        let inner_txn_params%3%%param_AssetAmount_idx_0#0: uint64 = (btoi arc4_item%1#0)
+        let inner_txn_params%3%%AssetAmount_length#0: uint64 = 1u
+        let inner_txn_params%3%%param_AssetReceiver_idx_0#0: bytes[32] = origin#0
+        let inner_txn_params%3%%AssetReceiver_length#0: uint64 = 1u
+        let array_head_and_tail%2#0: bytes = ((extract 2 0) assets#0)
+        let item_offset%2#0: uint64 = (* i#1 8u)
+        let arc4_item%2#0: bytes = (extract3 array_head_and_tail%2#0 item_offset%2#0 8u) // on error: Index access is out of bounds
+        let inner_txn_params%3%%param_XferAsset_idx_0#0: uint64 = (btoi arc4_item%2#0)
+        let inner_txn_params%3%%XferAsset_length#0: uint64 = 1u
+        let inner_txn_params%3%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%3%%Note_length#0: uint64 = 0u
+        let inner_txn_params%3%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%3%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%3%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%3%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%3%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%3%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%3%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%3%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%3%%Type_length#0: uint64 = 0u
+        let inner_txn_params%3%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%3%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%3%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%3%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%3%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%3%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%3%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%3%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%3%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%3%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%3%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%3%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%3%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%3%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%3%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%3%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%3%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%3%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%3%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%3%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%3%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%3%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%3%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field XferAsset) inner_txn_params%3%%param_XferAsset_idx_0#0)
+        ((itxn_field AssetReceiver) inner_txn_params%3%%param_AssetReceiver_idx_0#0)
+        ((itxn_field AssetAmount) inner_txn_params%3%%param_AssetAmount_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%3%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%3%%param_Fee_idx_0#0)
+        goto block@4
+    block@4: // after_if_else_L263
+        let i#3: uint64 = (+ i#1 1u)
+        goto block@1
+    block@5: // after_while_L262
+        itxn_next
+        let inner_txn_params%4#0: itxn_field_set = itxn_field_set(4)
+        let inner_txn_params%4%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%4%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%4%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%4%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%4%%param_ApplicationID_idx_0#0: uint64 = recipientWalletID#0
+        let inner_txn_params%4%%ApplicationID_length#0: uint64 = 1u
+        let inner_txn_params%4%%param_ApplicationArgs_idx_0#0: bytes[4] = method "arc58_verifyAuthAddr()void"
+        let inner_txn_params%4%%ApplicationArgs_length#0: uint64 = 1u
+        let inner_txn_params%4%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%4%%Note_length#0: uint64 = 0u
+        let inner_txn_params%4%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%4%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%4%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%4%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%4%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%4%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%4%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%4%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%4%%Type_length#0: uint64 = 0u
+        let inner_txn_params%4%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%4%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%4%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%4%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%4%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%4%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%4%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%4%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%4%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%4%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%4%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%4%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%4%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%4%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%4%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%4%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%4%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%4%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%4%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%4%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%4%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%4%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%4%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%4%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%4%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%4%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationID) inner_txn_params%4%%param_ApplicationID_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%4%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%4%%param_Fee_idx_0#0)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.__puya_arc4_router__() -> bool:
+    block@0: // L13
+        let tmp%0#0: uint64 = (txn NumAppArgs)
+        let tmp%1#0: bool = (!= tmp%0#0 0u)
+        goto tmp%1#0 ? block@1 : block@12
+    block@1: // abi_routing_L13
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "offer(uint64,bool,byte[32],uint64,byte[32],uint64,uint64)void" => block@2, method "accept(uint64,bool,uint64,byte[32][])void" => block@3, method "escrow(uint64,bool,uint64,address,uint64,byte[32][])void" => block@4, method "escrowAsa(uint64,bool,uint64,address,uint64,uint64,byte[32][])void" => block@5, method "disburse(uint64,bool,uint64,uint64,address,uint64,uint64)void" => block@6, method "cancel(uint64,bool,uint64,byte[32][])void" => block@7, method "updateApplication(string,string)void" => block@8, method "updateAkitaDAO(uint64)void" => block@9, * => block@10}
+    block@2: // offer_route_L35
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (== tmp%3#0 NoOp)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (!= tmp%5#0 0u)
+        (assert tmp%6#0) // can only call when not creating
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%7#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let reinterpret_bytes[1]%0#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%8#0: bool = (getbit reinterpret_bytes[1]%0#0 0u)
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%9#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        let reinterpret_bytes[32]%1#0: bytes[32] = (txna ApplicationArgs 5)
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%10#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 7)
+        let tmp%11#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.offer(tmp%7#0, tmp%8#0, reinterpret_bytes[32]%0#0, tmp%9#0, reinterpret_bytes[32]%1#0, tmp%10#0, tmp%11#0)
+        return 1u
+    block@3: // accept_route_L76
+        let tmp%12#0: uint64 = (txn OnCompletion)
+        let tmp%13#0: bool = (== tmp%12#0 NoOp)
+        (assert tmp%13#0) // OnCompletion is not NoOp
+        let tmp%14#0: uint64 = (txn ApplicationID)
+        let tmp%15#0: bool = (!= tmp%14#0 0u)
+        (assert tmp%15#0) // can only call when not creating
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%16#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let reinterpret_bytes[1]%1#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%17#0: bool = (getbit reinterpret_bytes[1]%1#0 0u)
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%18#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        let reinterpret_bytes[32][]%0#0: bytes[32][] = (txna ApplicationArgs 4)
+        smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.accept(tmp%16#0, tmp%17#0, tmp%18#0, reinterpret_bytes[32][]%0#0)
+        return 1u
+    block@4: // escrow_route_L108
+        let tmp%19#0: uint64 = (txn OnCompletion)
+        let tmp%20#0: bool = (== tmp%19#0 NoOp)
+        (assert tmp%20#0) // OnCompletion is not NoOp
+        let tmp%21#0: uint64 = (txn ApplicationID)
+        let tmp%22#0: bool = (!= tmp%21#0 0u)
+        (assert tmp%22#0) // can only call when not creating
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%23#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        let reinterpret_bytes[1]%2#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%24#0: bool = (getbit reinterpret_bytes[1]%2#0 0u)
+        let reinterpret_bytes[8]%7#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%25#0: uint64 = (btoi reinterpret_bytes[8]%7#0)
+        let reinterpret_bytes[32]%2#0: bytes[32] = (txna ApplicationArgs 4)
+        let reinterpret_bytes[8]%8#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%26#0: uint64 = (btoi reinterpret_bytes[8]%8#0)
+        let reinterpret_bytes[32][]%1#0: bytes[32][] = (txna ApplicationArgs 6)
+        smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.escrow(tmp%23#0, tmp%24#0, tmp%25#0, reinterpret_bytes[32]%2#0, tmp%26#0, reinterpret_bytes[32][]%1#0)
+        return 1u
+    block@5: // escrowAsa_route_L144
+        let tmp%27#0: uint64 = (txn OnCompletion)
+        let tmp%28#0: bool = (== tmp%27#0 NoOp)
+        (assert tmp%28#0) // OnCompletion is not NoOp
+        let tmp%29#0: uint64 = (txn ApplicationID)
+        let tmp%30#0: bool = (!= tmp%29#0 0u)
+        (assert tmp%30#0) // can only call when not creating
+        let reinterpret_bytes[8]%9#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%31#0: uint64 = (btoi reinterpret_bytes[8]%9#0)
+        let reinterpret_bytes[1]%3#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%32#0: bool = (getbit reinterpret_bytes[1]%3#0 0u)
+        let reinterpret_bytes[8]%10#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%33#0: uint64 = (btoi reinterpret_bytes[8]%10#0)
+        let reinterpret_bytes[32]%3#0: bytes[32] = (txna ApplicationArgs 4)
+        let reinterpret_bytes[8]%11#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%34#0: uint64 = (btoi reinterpret_bytes[8]%11#0)
+        let reinterpret_bytes[8]%12#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%35#0: uint64 = (btoi reinterpret_bytes[8]%12#0)
+        let reinterpret_bytes[32][]%2#0: bytes[32][] = (txna ApplicationArgs 7)
+        smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.escrowAsa(tmp%31#0, tmp%32#0, tmp%33#0, reinterpret_bytes[32]%3#0, tmp%34#0, tmp%35#0, reinterpret_bytes[32][]%2#0)
+        return 1u
+    block@6: // disburse_route_L214
+        let tmp%36#0: uint64 = (txn OnCompletion)
+        let tmp%37#0: bool = (== tmp%36#0 NoOp)
+        (assert tmp%37#0) // OnCompletion is not NoOp
+        let tmp%38#0: uint64 = (txn ApplicationID)
+        let tmp%39#0: bool = (!= tmp%38#0 0u)
+        (assert tmp%39#0) // can only call when not creating
+        let reinterpret_bytes[8]%13#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%40#0: uint64 = (btoi reinterpret_bytes[8]%13#0)
+        let reinterpret_bytes[1]%4#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%41#0: bool = (getbit reinterpret_bytes[1]%4#0 0u)
+        let reinterpret_bytes[8]%14#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%42#0: uint64 = (btoi reinterpret_bytes[8]%14#0)
+        let reinterpret_bytes[8]%15#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%43#0: uint64 = (btoi reinterpret_bytes[8]%15#0)
+        let reinterpret_bytes[32]%4#0: bytes[32] = (txna ApplicationArgs 5)
+        let reinterpret_bytes[8]%16#0: bytes[8] = (txna ApplicationArgs 6)
+        let tmp%44#0: uint64 = (btoi reinterpret_bytes[8]%16#0)
+        let reinterpret_bytes[8]%17#0: bytes[8] = (txna ApplicationArgs 7)
+        let tmp%45#0: uint64 = (btoi reinterpret_bytes[8]%17#0)
+        smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.disburse(tmp%40#0, tmp%41#0, tmp%42#0, tmp%43#0, reinterpret_bytes[32]%4#0, tmp%44#0, tmp%45#0)
+        return 1u
+    block@7: // cancel_route_L255
+        let tmp%46#0: uint64 = (txn OnCompletion)
+        let tmp%47#0: bool = (== tmp%46#0 NoOp)
+        (assert tmp%47#0) // OnCompletion is not NoOp
+        let tmp%48#0: uint64 = (txn ApplicationID)
+        let tmp%49#0: bool = (!= tmp%48#0 0u)
+        (assert tmp%49#0) // can only call when not creating
+        let reinterpret_bytes[8]%18#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%50#0: uint64 = (btoi reinterpret_bytes[8]%18#0)
+        let reinterpret_bytes[1]%5#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%51#0: bool = (getbit reinterpret_bytes[1]%5#0 0u)
+        let reinterpret_bytes[8]%19#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%52#0: uint64 = (btoi reinterpret_bytes[8]%19#0)
+        let reinterpret_bytes[32][]%3#0: bytes[32][] = (txna ApplicationArgs 4)
+        smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.cancel(tmp%50#0, tmp%51#0, tmp%52#0, reinterpret_bytes[32][]%3#0)
+        return 1u
+    block@8: // updateApplication_route_L50
+        let tmp%53#0: uint64 = (txn OnCompletion)
+        let tmp%54#0: bool = (== tmp%53#0 UpdateApplication)
+        (assert tmp%54#0) // OnCompletion is not UpdateApplication
+        let tmp%55#0: uint64 = (txn ApplicationID)
+        let tmp%56#0: bool = (!= tmp%55#0 0u)
+        (assert tmp%56#0) // can only call when not creating
+        let tmp%57#0: bytes = (txna ApplicationArgs 1)
+        let tmp%58#0: bytes = ((extract 2 0) tmp%57#0)
+        let tmp%59#0: bytes = (txna ApplicationArgs 2)
+        let tmp%60#0: bytes = ((extract 2 0) tmp%59#0)
+        smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateApplication(tmp%58#0, tmp%60#0)
+        return 1u
+    block@9: // updateAkitaDAO_route_L59
+        let tmp%61#0: uint64 = (txn OnCompletion)
+        let tmp%62#0: bool = (== tmp%61#0 NoOp)
+        (assert tmp%62#0) // OnCompletion is not NoOp
+        let tmp%63#0: uint64 = (txn ApplicationID)
+        let tmp%64#0: bool = (!= tmp%63#0 0u)
+        (assert tmp%64#0) // can only call when not creating
+        let reinterpret_bytes[8]%20#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%65#0: uint64 = (btoi reinterpret_bytes[8]%20#0)
+        smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateAkitaDAO(tmp%65#0)
+        return 1u
+    block@10: // switch_case_default_L13
+        goto block@11
+    block@11: // switch_case_next_L13
+        goto block@16
+    block@12: // bare_routing_L13
+        let tmp%66#0: uint64 = (txn OnCompletion)
+        switch tmp%66#0 {0u => block@13, * => block@14}
+    block@13: // __algots__.defaultCreate_L13
+        let tmp%67#0: uint64 = (txn ApplicationID)
+        let tmp%68#0: bool = (== tmp%67#0 0u)
+        (assert tmp%68#0) // can only call when creating
+        smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.__algots__.defaultCreate()
+        return 1u
+    block@14: // switch_case_default_L13
+        goto block@15
+    block@15: // switch_case_next_L13
+        goto block@16
+    block@16: // after_if_else_L13
+        return 0u
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.canCallArc58OptIn(walletAppID: uint64) -> bool:
+    block@0: // L17
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_ApplicationID_idx_0#0: uint64 = walletAppID#0
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 1u
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (tmp%0#0: uint64, tmp%1#0: uint64, tmp%2#0: uint64) = smart_contracts/utils/functions.ts::getPluginAppList(maybe_value%0#0)
+        let val_as_bytes%0#0: bytes[8] = (itob tmp%0#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u 1u)
+        let tmp%3#0: bytes[32] = (global CurrentApplicationAddress)
+        let awst_tmp%0#0: bytes = (bzero 4u)
+        let reinterpret_bytes[4]%0#0: bytes[4] = awst_tmp%0#0
+        let tmp%4#0: uint64 = (len awst_tmp%0#0)
+        let tmp%5#0: bool = (== tmp%4#0 4u)
+        (assert tmp%5#0) // Length must be 4
+        let length%0#0: uint64 = (len reinterpret_bytes[4]%0#0)
+        let lengths_equal%0#0: bool = (== length%0#0 4u)
+        (assert lengths_equal%0#0) // invalid size
+        let inner_txn_params%0%%param_ApplicationArgs_idx_0#0: bytes[4] = method "arc58_canCall(uint64,bool,address,byte[4])bool"
+        let inner_txn_params%0%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_2#0: bytes[1] = encoded_bool%0#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_3#0: bytes[32] = tmp%3#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_4#0: bytes[4] = reinterpret_bytes[4]%0#0
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 5u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_3#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_4#0)
+        ((itxn_field ApplicationID) inner_txn_params%0%%param_ApplicationID_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L18
+        itxn_submit
+        let awst_tmp%1#0: bytes = itxn[itxn_group_idx(0)].LastLog
+        let tmp%6#0: bytes = ((extract 4 0) awst_tmp%1#0)
+        let tmp%7#0: bytes = ((extract 0 4) awst_tmp%1#0)
+        let tmp%8#0: bool = (== tmp%7#0 0x151f7c75)
+        (assert tmp%8#0) // Bytes has valid prefix
+        let reinterpret_bytes[1]%0#0: bytes[1] = tmp%6#0
+        let tmp%9#0: bool = (getbit reinterpret_bytes[1]%0#0 0u)
+        return tmp%9#0
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.offer(walletID: uint64, rekeyBack: bool, root: bytes[32], leaves: uint64, participantsRoot: bytes[32], participantLeaves: uint64, expiration: uint64) -> void:
+    block@0: // L35
+        let wallet#0: uint64 = walletID#0
+        let (awst_tmp%0#0: bytes[32], awst_tmp%1#0: bytes[32], awst_tmp%2#0: bytes[32]) = smart_contracts/utils/functions.ts::getAccounts(wallet#0)
+        let origin#0: bytes[32] = awst_tmp%1#0
+        let sender#0: bytes[32] = awst_tmp%2#0
+        let _#0: bytes[32] = awst_tmp%0#0
+        let (costs.offers#0: uint64, costs.participants#0: uint64, costs.hashes#0: uint64, costs.mm.root#0: uint64, costs.mm.data#0: uint64) = smart_contracts/hyper-swap/base.ts::BaseHyperSwap.mbr()
+        let metaMerklesCost#0: uint64 = (+ costs.mm.root#0 costs.mm.data#0)
+        let tmp%0#0: uint64 = (+ costs.offers#0 costs.participants#0)
+        let tmp%1#0: uint64 = (* metaMerklesCost#0 2u)
+        let hyperSwapOfferMBRAmount#0: uint64 = (+ tmp%0#0 tmp%1#0)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (tmp%2#0: uint64, tmp%3#0: uint64, tmp%4#0: uint64, tmp%5#0: uint64, tmp%6#0: uint64, tmp%7#0: uint64, tmp%8#0: uint64, tmp%9#0: uint64, tmp%10#0: uint64, tmp%11#0: uint64, tmp%12#0: uint64, tmp%13#0: uint64) = smart_contracts/utils/functions.ts::getAkitaAppList(maybe_value%0#0)
+        let hyperSwapApp#0: uint64 = tmp%9#0
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%0%%Sender_length#0: uint64 = 1u
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) hyperSwapApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%0%%param_Receiver_idx_0#0: bytes[32] = value%0#0
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = hyperSwapOfferMBRAmount#0
+        let inner_txn_params%0%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%0%%param_Receiver_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%0%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L58
+        itxn_next
+        let inner_txn_params%1#0: itxn_field_set = itxn_field_set(1)
+        let inner_txn_params%1%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%1%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%1%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%1%%Sender_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_ApplicationID_idx_0#0: uint64 = hyperSwapApp#0
+        let inner_txn_params%1%%ApplicationID_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, wallet#0)
+        let inner_txn_params%1%%RekeyTo_length#0: uint64 = 1u
+        let length%0#0: uint64 = (len root#0)
+        let lengths_equal%0#0: bool = (== length%0#0 32u)
+        (assert lengths_equal%0#0) // invalid size
+        let val_as_bytes%0#0: bytes[8] = (itob leaves#0)
+        let length%1#0: uint64 = (len participantsRoot#0)
+        let lengths_equal%1#0: bool = (== length%1#0 32u)
+        (assert lengths_equal%1#0) // invalid size
+        let val_as_bytes%1#0: bytes[8] = (itob participantLeaves#0)
+        let val_as_bytes%2#0: bytes[8] = (itob expiration#0)
+        let inner_txn_params%1%%param_ApplicationArgs_idx_0#0: bytes[4] = method "offer(pay,byte[32],uint64,byte[32],uint64,uint64)void"
+        let inner_txn_params%1%%param_ApplicationArgs_idx_1#0: bytes[32] = root#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_2#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_3#0: bytes[32] = participantsRoot#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_4#0: bytes[8] = val_as_bytes%1#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_5#0: bytes[8] = val_as_bytes%2#0
+        let inner_txn_params%1%%ApplicationArgs_length#0: uint64 = 6u
+        let inner_txn_params%1%%Note_length#0: uint64 = 0u
+        let inner_txn_params%1%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%1%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%1%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%1%%Type_length#0: uint64 = 0u
+        let inner_txn_params%1%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%1%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%1%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%1%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_3#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_4#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_5#0)
+        ((itxn_field RekeyTo) inner_txn_params%1%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) inner_txn_params%1%%param_ApplicationID_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%1%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%1%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%1%%param_Fee_idx_0#0)
+        goto block@2
+    block@2: // next_txn_L52
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.accept(walletID: uint64, rekeyBack: bool, id: uint64, proof: bytes[32][]) -> void:
+    block@0: // L76
+        let wallet#0: uint64 = walletID#0
+        let sender#0: bytes[32] = smart_contracts/utils/functions.ts::getSpendingAccount(wallet#0)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (tmp%0#0: uint64, tmp%1#0: uint64, tmp%2#0: uint64, tmp%3#0: uint64, tmp%4#0: uint64, tmp%5#0: uint64, tmp%6#0: uint64, tmp%7#0: uint64, tmp%8#0: uint64, tmp%9#0: uint64, tmp%10#0: uint64, tmp%11#0: uint64) = smart_contracts/utils/functions.ts::getAkitaAppList(maybe_value%0#0)
+        let hyperSwapApp#0: uint64 = tmp%7#0
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%0%%Sender_length#0: uint64 = 1u
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) hyperSwapApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%0%%param_Receiver_idx_0#0: bytes[32] = value%0#0
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 1u
+        let (tmp%12#0: uint64, tmp%13#0: uint64, tmp%14#0: uint64, tmp%15#0: uint64, tmp%16#0: uint64) = smart_contracts/hyper-swap/base.ts::BaseHyperSwap.mbr()
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = tmp%13#0
+        let inner_txn_params%0%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%0%%param_Receiver_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%0%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L93
+        itxn_next
+        let inner_txn_params%1#0: itxn_field_set = itxn_field_set(1)
+        let inner_txn_params%1%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%1%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%1%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%1%%Sender_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_ApplicationID_idx_0#0: uint64 = hyperSwapApp#0
+        let inner_txn_params%1%%ApplicationID_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, wallet#0)
+        let inner_txn_params%1%%RekeyTo_length#0: uint64 = 1u
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        let inner_txn_params%1%%param_ApplicationArgs_idx_0#0: bytes[4] = method "accept(pay,uint64,byte[32][])void"
+        let inner_txn_params%1%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_2#0: bytes[32][] = proof#0
+        let inner_txn_params%1%%ApplicationArgs_length#0: uint64 = 3u
+        let inner_txn_params%1%%Note_length#0: uint64 = 0u
+        let inner_txn_params%1%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%1%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%1%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%1%%Type_length#0: uint64 = 0u
+        let inner_txn_params%1%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%1%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%1%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%1%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field RekeyTo) inner_txn_params%1%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) inner_txn_params%1%%param_ApplicationID_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%1%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%1%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%1%%param_Fee_idx_0#0)
+        goto block@2
+    block@2: // next_txn_L87
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.escrow(walletID: uint64, rekeyBack: bool, id: uint64, receiver: bytes[32], amount: uint64, proof: bytes[32][]) -> void:
+    block@0: // L108
+        let wallet#0: uint64 = walletID#0
+        let sender#0: bytes[32] = smart_contracts/utils/functions.ts::getSpendingAccount(wallet#0)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (tmp%0#0: uint64, tmp%1#0: uint64, tmp%2#0: uint64, tmp%3#0: uint64, tmp%4#0: uint64, tmp%5#0: uint64, tmp%6#0: uint64, tmp%7#0: uint64, tmp%8#0: uint64, tmp%9#0: uint64, tmp%10#0: uint64, tmp%11#0: uint64) = smart_contracts/utils/functions.ts::getAkitaAppList(maybe_value%0#0)
+        let hyperSwapApp#0: uint64 = tmp%7#0
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%0%%Sender_length#0: uint64 = 1u
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) hyperSwapApp#0)
+        (assert check%0#0) // application exists
+        let inner_txn_params%0%%param_Receiver_idx_0#0: bytes[32] = value%0#0
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 1u
+        let (tmp%12#0: uint64, tmp%13#0: uint64, tmp%14#0: uint64, tmp%15#0: uint64, tmp%16#0: uint64) = smart_contracts/hyper-swap/base.ts::BaseHyperSwap.mbr()
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = (+ amount#0 tmp%14#0)
+        let inner_txn_params%0%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%0%%param_Receiver_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%0%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L127
+        itxn_next
+        let inner_txn_params%1#0: itxn_field_set = itxn_field_set(1)
+        let inner_txn_params%1%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%1%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%1%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%1%%Sender_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_ApplicationID_idx_0#0: uint64 = hyperSwapApp#0
+        let inner_txn_params%1%%ApplicationID_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, wallet#0)
+        let inner_txn_params%1%%RekeyTo_length#0: uint64 = 1u
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        let val_as_bytes%1#0: bytes[8] = (itob amount#0)
+        let inner_txn_params%1%%param_ApplicationArgs_idx_0#0: bytes[4] = method "escrow(pay,uint64,address,uint64,byte[32][])void"
+        let inner_txn_params%1%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_2#0: bytes[32] = receiver#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_3#0: bytes[8] = val_as_bytes%1#0
+        let inner_txn_params%1%%param_ApplicationArgs_idx_4#0: bytes[32][] = proof#0
+        let inner_txn_params%1%%ApplicationArgs_length#0: uint64 = 5u
+        let inner_txn_params%1%%Note_length#0: uint64 = 0u
+        let inner_txn_params%1%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%1%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%1%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%1%%Type_length#0: uint64 = 0u
+        let inner_txn_params%1%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%1%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%1%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%1%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_3#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%1%%param_ApplicationArgs_idx_4#0)
+        ((itxn_field RekeyTo) inner_txn_params%1%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) inner_txn_params%1%%param_ApplicationID_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%1%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%1%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%1%%param_Fee_idx_0#0)
+        goto block@2
+    block@2: // next_txn_L121
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.escrowAsa(walletID: uint64, rekeyBack: bool, id: uint64, receiver: bytes[32], asset: uint64, amount: uint64, proof: bytes[32][]) -> void:
+    block@0: // L144
+        let wallet#0: uint64 = walletID#0
+        let sender#0: bytes[32] = smart_contracts/utils/functions.ts::getSpendingAccount(wallet#0)
+        let (tmp%0#0: uint64, tmp%1#0: uint64, tmp%2#0: uint64, tmp%3#0: uint64, tmp%4#0: uint64) = smart_contracts/hyper-swap/base.ts::BaseHyperSwap.mbr()
+        let mbrAmount#0: uint64 = tmp%2#0
+        let (tmp%5#0: uint64, tmp%6#0: bool) = ((asset_holding_get AssetBalance) receiver#0 asset#0)
+        goto tmp%6#0 ? block@6 : block@1
+    block@1: // if_body_L158
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (tmp%7#0: uint64, tmp%8#0: uint64, tmp%9#0: uint64) = smart_contracts/utils/functions.ts::getOtherAppList(maybe_value%0#0)
+        let assetInbox#0: uint64 = tmp%9#0
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_ApplicationID_idx_0#0: uint64 = assetInbox#0
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 1u
+        let val_as_bytes%0#0: bytes[8] = (itob asset#0)
+        let inner_txn_params%0%%param_ApplicationArgs_idx_0#0: bytes[4] = method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
+        let inner_txn_params%0%%param_ApplicationArgs_idx_1#0: bytes[32] = receiver#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_2#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 3u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationID) inner_txn_params%0%%param_ApplicationID_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@2
+    block@2: // next_txn_L160
+        itxn_submit
+        let awst_tmp%0#0: bytes = itxn[itxn_group_idx(0)].LastLog
+        let tmp%10#0: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%11#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%12#0: bool = (== tmp%11#0 0x151f7c75)
+        (assert tmp%12#0) // Bytes has valid prefix
+        let reinterpret_bytes[25]%0#0: bytes[25] = tmp%10#0
+        let item0%0#0: bytes = (extract3 reinterpret_bytes[25]%0#0 0u 8u) // on error: Index access is out of bounds
+        let item0%1#0: uint64 = (btoi item0%0#0)
+        let item1%0#0: bytes = (extract3 reinterpret_bytes[25]%0#0 8u 8u) // on error: Index access is out of bounds
+        let item1%1#0: uint64 = (btoi item1%0#0)
+        let is_true%0#0: uint64 = (getbit reinterpret_bytes[25]%0#0 128u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let item2%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let is_true%1#0: uint64 = (getbit reinterpret_bytes[25]%0#0 129u)
+        let encoded_bool%1#0: bytes[1] = (setbit 0x00 0u is_true%1#0)
+        let item3%0#0: bool = (getbit encoded_bool%1#0 0u)
+        let item4%0#0: bytes = (extract3 reinterpret_bytes[25]%0#0 17u 8u) // on error: Index access is out of bounds
+        let item4%1#0: uint64 = (btoi item4%0#0)
+        let (canCallData.itxns#0: uint64, canCallData.mbr#0: uint64, canCallData.routerOptedIn#0: bool, canCallData.receiverOptedIn#0: bool, canCallData.receiverAlgoNeededForClaim#0: uint64) = (item0%1#0, item1%1#0, item2%0#0, item3%0#0, item4%1#0)
+        let mbr#0: uint64 = canCallData.mbr#0
+        let receiverAlgoNeededForClaim#0: uint64 = canCallData.receiverAlgoNeededForClaim#0
+        let reinterpret_bool%0#0: bool = mbr#0
+        goto reinterpret_bool%0#0 ? block@4 : block@3
+    block@3: // or_contd_L172
+        let reinterpret_bool%1#0: bool = receiverAlgoNeededForClaim#0
+        goto reinterpret_bool%1#0 ? block@4 : block@5
+    block@4: // if_body_L172
+        let tmp%13#0: uint64 = (+ canCallData.mbr#0 canCallData.receiverAlgoNeededForClaim#0)
+        let mbrAmount#2: uint64 = (+ mbrAmount#0 tmp%13#0)
+        goto block@5
+    block@5: // after_if_else_L172
+        let mbrAmount#4: uint64 = φ(mbrAmount#0 <- block@3, mbrAmount#2 <- block@4)
+        goto block@6
+    block@6: // after_if_else_L158
+        let mbrAmount#3: uint64 = φ(mbrAmount#0 <- block@0, mbrAmount#4 <- block@5)
+        let (maybe_value%1#0: uint64, maybe_exists%1#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let (tmp%14#0: uint64, tmp%15#0: uint64, tmp%16#0: uint64, tmp%17#0: uint64, tmp%18#0: uint64, tmp%19#0: uint64, tmp%20#0: uint64, tmp%21#0: uint64, tmp%22#0: uint64, tmp%23#0: uint64, tmp%24#0: uint64, tmp%25#0: uint64) = smart_contracts/utils/functions.ts::getAkitaAppList(maybe_value%1#0)
+        let hyperSwapApp#0: uint64 = tmp%21#0
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) hyperSwapApp#0)
+        (assert check%0#0) // application exists
+        let (tmp%26#0: uint64, tmp%27#0: bool) = ((asset_holding_get AssetBalance) value%0#0 asset#0)
+        goto tmp%27#0 ? block@8 : block@7
+    block@7: // if_body_L179
+        let tmp%28#0: uint64 = (global AssetOptInMinBalance)
+        let mbrAmount#5: uint64 = (+ mbrAmount#3 tmp%28#0)
+        goto block@8
+    block@8: // after_if_else_L179
+        let mbrAmount#6: uint64 = φ(mbrAmount#3 <- block@6, mbrAmount#5 <- block@7)
+        itxn_begin
+        let inner_txn_params%1#0: itxn_field_set = itxn_field_set(1)
+        let inner_txn_params%1%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%1%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%1%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%1%%Sender_length#0: uint64 = 1u
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) hyperSwapApp#0)
+        (assert check%1#0) // application exists
+        let inner_txn_params%1%%param_Receiver_idx_0#0: bytes[32] = value%1#0
+        let inner_txn_params%1%%Receiver_length#0: uint64 = 1u
+        let inner_txn_params%1%%param_Amount_idx_0#0: uint64 = mbrAmount#6
+        let inner_txn_params%1%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%1%%Note_length#0: uint64 = 0u
+        let inner_txn_params%1%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%1%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%1%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%1%%Type_length#0: uint64 = 0u
+        let inner_txn_params%1%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%1%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%1%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%1%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%1%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%1%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%1%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%1%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%1%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%1%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%1%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%1%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%1%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%1%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%1%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%1%%param_Receiver_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%1%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%1%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%1%%param_Fee_idx_0#0)
+        goto block@9
+    block@9: // next_txn_L189
+        itxn_next
+        let inner_txn_params%2#0: itxn_field_set = itxn_field_set(2)
+        let inner_txn_params%2%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%2%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%2%%param_TypeEnum_idx_0#0: uint64 = 4u
+        let inner_txn_params%2%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%2%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%2%%Sender_length#0: uint64 = 1u
+        let (value%2#0: bytes[32], check%2#0: bool) = ((app_params_get AppAddress) hyperSwapApp#0)
+        (assert check%2#0) // application exists
+        let inner_txn_params%2%%param_AssetReceiver_idx_0#0: bytes[32] = value%2#0
+        let inner_txn_params%2%%AssetReceiver_length#0: uint64 = 1u
+        let inner_txn_params%2%%param_AssetAmount_idx_0#0: uint64 = amount#0
+        let inner_txn_params%2%%AssetAmount_length#0: uint64 = 1u
+        let inner_txn_params%2%%param_XferAsset_idx_0#0: uint64 = asset#0
+        let inner_txn_params%2%%XferAsset_length#0: uint64 = 1u
+        let inner_txn_params%2%%Note_length#0: uint64 = 0u
+        let inner_txn_params%2%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%2%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%2%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%2%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%2%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%2%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%2%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%2%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%2%%Type_length#0: uint64 = 0u
+        let inner_txn_params%2%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%2%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%2%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%2%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%2%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%2%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%2%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%2%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%2%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%2%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%2%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%2%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%2%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%2%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%2%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%2%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%2%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%2%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%2%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%2%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%2%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%2%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%2%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%2%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field XferAsset) inner_txn_params%2%%param_XferAsset_idx_0#0)
+        ((itxn_field AssetAmount) inner_txn_params%2%%param_AssetAmount_idx_0#0)
+        ((itxn_field AssetReceiver) inner_txn_params%2%%param_AssetReceiver_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%2%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%2%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%2%%param_Fee_idx_0#0)
+        goto block@10
+    block@10: // next_txn_L195
+        itxn_next
+        let inner_txn_params%3#0: itxn_field_set = itxn_field_set(3)
+        let inner_txn_params%3%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%3%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%3%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%3%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%3%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%3%%Sender_length#0: uint64 = 1u
+        let inner_txn_params%3%%param_ApplicationID_idx_0#0: uint64 = hyperSwapApp#0
+        let inner_txn_params%3%%ApplicationID_length#0: uint64 = 1u
+        let inner_txn_params%3%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, wallet#0)
+        let inner_txn_params%3%%RekeyTo_length#0: uint64 = 1u
+        let val_as_bytes%1#0: bytes[8] = (itob id#0)
+        let val_as_bytes%2#0: bytes[8] = (itob asset#0)
+        let val_as_bytes%3#0: bytes[8] = (itob amount#0)
+        let inner_txn_params%3%%param_ApplicationArgs_idx_0#0: bytes[4] = method "escrowAsa(pay,axfer,uint64,address,uint64,uint64,byte[32][])void"
+        let inner_txn_params%3%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%1#0
+        let inner_txn_params%3%%param_ApplicationArgs_idx_2#0: bytes[32] = receiver#0
+        let inner_txn_params%3%%param_ApplicationArgs_idx_3#0: bytes[8] = val_as_bytes%2#0
+        let inner_txn_params%3%%param_ApplicationArgs_idx_4#0: bytes[8] = val_as_bytes%3#0
+        let inner_txn_params%3%%param_ApplicationArgs_idx_5#0: bytes[32][] = proof#0
+        let inner_txn_params%3%%ApplicationArgs_length#0: uint64 = 6u
+        let inner_txn_params%3%%Note_length#0: uint64 = 0u
+        let inner_txn_params%3%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%3%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%3%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%3%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%3%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%3%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%3%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%3%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%3%%Type_length#0: uint64 = 0u
+        let inner_txn_params%3%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%3%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%3%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%3%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%3%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%3%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%3%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%3%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%3%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%3%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%3%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%3%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%3%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%3%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%3%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%3%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%3%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%3%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%3%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%3%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%3%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%3%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%3%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%3%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%3%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%3%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%3%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%3%%param_ApplicationArgs_idx_3#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%3%%param_ApplicationArgs_idx_4#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%3%%param_ApplicationArgs_idx_5#0)
+        ((itxn_field RekeyTo) inner_txn_params%3%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) inner_txn_params%3%%param_ApplicationID_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%3%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%3%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%3%%param_Fee_idx_0#0)
+        goto block@11
+    block@11: // next_txn_L183
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.disburse(walletID: uint64, rekeyBack: bool, id: uint64, receiverAppID: uint64, receiver: bytes[32], asset: uint64, amount: uint64) -> void:
+    block@0: // L214
+        let wallet#0: uint64 = walletID#0
+        let sender#0: bytes[32] = smart_contracts/utils/functions.ts::getSpendingAccount(wallet#0)
+        let tmp%0#0: bool = (!= receiverAppID#0 0u)
+        goto tmp%0#0 ? block@1 : block@6
+    block@1: // if_body_L227
+        let receiverApp#0: uint64 = receiverAppID#0
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) receiverApp#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== value%0#0 receiver#0)
+        (assert tmp%1#0) // receiverAppID address mismatch
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) receiverApp#0)
+        (assert check%1#0) // application exists
+        let (tmp%2#0: uint64, tmp%3#0: bool) = ((asset_holding_get AssetBalance) value%1#0 asset#0)
+        goto tmp%3#0 ? block@5 : block@2
+    block@2: // if_body_L230
+        let canCallArc58OptIn#0: bool = smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.canCallArc58OptIn(receiverApp#0)
+        goto canCallArc58OptIn#0 ? block@3 : block@4
+    block@3: // if_body_L232
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let array_data%0#0: bytes = (concat 0x0000 0x)
+        let expr_value_trimmed%0#0: bytes = ((extract 2 0) array_data%0#0)
+        let encoded%0#0: encoded_uint64[] = encode<encoded_uint64>(asset#0)
+        let concatenated%0#0: bytes = (concat expr_value_trimmed%0#0 encoded%0#0)
+        let byte_len%0#0: uint64 = (len concatenated%0#0)
+        let len_%0#0: uint64 = (/ byte_len%0#0 8u)
+        let as_bytes%0#0: bytes[8] = (itob len_%0#0)
+        let len_16_bit%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let concat_result%0#0: bytes = (concat len_16_bit%0#0 concatenated%0#0)
+        let array_data%1#0: bytes = (concat 0x0000 0x)
+        let expr_value_trimmed%1#0: bytes = ((extract 2 0) array_data%1#0)
+        let encoded%1#0: encoded_uint64[] = encode<encoded_uint64>(0u)
+        let concatenated%1#0: bytes = (concat expr_value_trimmed%1#0 encoded%1#0)
+        let byte_len%1#0: uint64 = (len concatenated%1#0)
+        let len_%1#0: uint64 = (/ byte_len%1#0 8u)
+        let as_bytes%1#0: bytes[8] = (itob len_%1#0)
+        let len_16_bit%1#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let concat_result%1#0: bytes = (concat len_16_bit%1#0 concatenated%1#0)
+        smart_contracts/utils/functions.ts::arc58OptInAndSend(maybe_value%0#0, receiverAppID#0, concat_result%0#0, concat_result%1#0)
+        goto block@4
+    block@4: // after_if_else_L232
+        goto block@5
+    block@5: // after_if_else_L230
+        goto block@6
+    block@6: // after_if_else_L227
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%0%%Sender_length#0: uint64 = 1u
+        let (maybe_value%1#0: uint64, maybe_exists%1#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let (tmp%4#0: uint64, tmp%5#0: uint64, tmp%6#0: uint64, tmp%7#0: uint64, tmp%8#0: uint64, tmp%9#0: uint64, tmp%10#0: uint64, tmp%11#0: uint64, tmp%12#0: uint64, tmp%13#0: uint64, tmp%14#0: uint64, tmp%15#0: uint64) = smart_contracts/utils/functions.ts::getAkitaAppList(maybe_value%1#0)
+        let inner_txn_params%0%%param_ApplicationID_idx_0#0: uint64 = tmp%11#0
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, wallet#0)
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 1u
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        let val_as_bytes%1#0: bytes[8] = (itob asset#0)
+        let val_as_bytes%2#0: bytes[8] = (itob amount#0)
+        let inner_txn_params%0%%param_ApplicationArgs_idx_0#0: bytes[4] = method "disburse(uint64,address,uint64,uint64)void"
+        let inner_txn_params%0%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_2#0: bytes[32] = receiver#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_3#0: bytes[8] = val_as_bytes%1#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_4#0: bytes[8] = val_as_bytes%2#0
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 5u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_3#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_4#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) inner_txn_params%0%%param_ApplicationID_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%0%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@7
+    block@7: // next_txn_L238
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.cancel(walletID: uint64, rekeyBack: bool, id: uint64, proof: bytes[32][]) -> void:
+    block@0: // L255
+        let wallet#0: uint64 = walletID#0
+        let sender#0: bytes[32] = smart_contracts/utils/functions.ts::getSpendingAccount(wallet#0)
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Sender_idx_0#0: bytes[32] = sender#0
+        let inner_txn_params%0%%Sender_length#0: uint64 = 1u
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (tmp%0#0: uint64, tmp%1#0: uint64, tmp%2#0: uint64, tmp%3#0: uint64, tmp%4#0: uint64, tmp%5#0: uint64, tmp%6#0: uint64, tmp%7#0: uint64, tmp%8#0: uint64, tmp%9#0: uint64, tmp%10#0: uint64, tmp%11#0: uint64) = smart_contracts/utils/functions.ts::getAkitaAppList(maybe_value%0#0)
+        let inner_txn_params%0%%param_ApplicationID_idx_0#0: uint64 = tmp%7#0
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, wallet#0)
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 1u
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        let inner_txn_params%0%%param_ApplicationArgs_idx_0#0: bytes[4] = method "cancel(uint64,byte[32][])void"
+        let inner_txn_params%0%%param_ApplicationArgs_idx_1#0: bytes[8] = val_as_bytes%0#0
+        let inner_txn_params%0%%param_ApplicationArgs_idx_2#0: bytes[32][] = proof#0
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 3u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_2#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) inner_txn_params%0%%param_ApplicationID_idx_0#0)
+        ((itxn_field Sender) inner_txn_params%0%%param_Sender_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L264
+        itxn_submit
+        return 
+
+subroutine smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateApplication(newVersion: bytes, newChildVersion: bytes) -> void:
+    block@0: // L50
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        (app_global_put "child_contract_version" newChildVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L59
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 
+
+subroutine smart_contracts/hyper-swap/base.ts::BaseHyperSwap.mbr() -> <uint64, uint64, uint64, uint64, uint64>:
+    block@0: // L5
+        return 50900u 34900u 34900u 40900u 27300u
+
+subroutine smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.__algots__.defaultCreate() -> void:
+    block@0: // L13
+        return 
+
+subroutine polytype/lib/polytype-module.d.ts::ClusteredContract<smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract,smart_contracts/hyper-swap/base.ts::BaseHyperSwap>.constructor() -> void:
+    block@0: // L1
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor()
+        return 
+
+subroutine @algorandfoundation/algorand-typescript/base-contract.d.ts::BaseContract.constructor() -> void:
+    block@0: // L1
+        return 

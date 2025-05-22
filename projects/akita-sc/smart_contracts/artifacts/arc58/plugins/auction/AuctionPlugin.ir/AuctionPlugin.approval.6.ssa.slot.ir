@@ -1,0 +1,748 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@4 : block@22
+    block@4: // abi_routing_L18
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(string,uint64,uint64)void" => block@5, method "new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64)uint64" => block@6, method "clearWeightsBoxes(uint64,bool,uint64,uint64)void" => block@7, method "deleteAuctionApp(uint64,bool,address,uint64)void" => block@8, method "bid(uint64,bool,uint64,uint64,byte[][],address)void" => block@9, method "refundBid(uint64,bool,uint64,uint64)void" => block@10, method "claimPrize(uint64,bool,uint64)void" => block@11, method "claimRafflePrize(uint64,bool,uint64)void" => block@12, method "raffle(uint64,bool,uint64)void" => block@13, method "findWinner(uint64,bool,uint64,uint64)void" => block@14, method "deleteApplication(uint64,bool,uint64)void" => block@15, method "cancel(uint64,bool,uint64)void" => block@16, method "update(string)void" => block@17, method "updateAkitaDAO(uint64)void" => block@18, * => block@22}
+    block@5: // create_route_L26
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let tmp%7#0: bytes = (txna ApplicationArgs 1)
+        let tmp%8#0: bytes = ((extract 2 0) tmp%7#0)
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%9#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%10#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.create(tmp%8#0, tmp%9#0, tmp%10#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#0: bool = 1u
+        goto block@23
+    block@6: // new_route_L35
+        let tmp%11#0: uint64 = (txn OnCompletion)
+        let tmp%12#0: bool = (! tmp%11#0)
+        (assert tmp%12#0) // OnCompletion is not NoOp
+        let tmp%13#0: uint64 = (txn ApplicationID)
+        (assert tmp%13#0) // can only call when not creating
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%15#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let reinterpret_bytes[1]%0#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%16#0: bool = (getbit reinterpret_bytes[1]%0#0 0u)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%17#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%18#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let tmp%19#0: bytes = (txna ApplicationArgs 5)
+        let tmp%20#0: bytes = ((extract 2 0) tmp%19#0)
+        let reinterpret_bytes[32][]%0#0: bytes[32][] = (txna ApplicationArgs 6)
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 7)
+        let tmp%21#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 8)
+        let tmp%22#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        let reinterpret_bytes[8]%7#0: bytes[8] = (txna ApplicationArgs 9)
+        let tmp%23#0: uint64 = (btoi reinterpret_bytes[8]%7#0)
+        let reinterpret_bytes[8]%8#0: bytes[8] = (txna ApplicationArgs 10)
+        let tmp%24#0: uint64 = (btoi reinterpret_bytes[8]%8#0)
+        let reinterpret_bytes[8]%9#0: bytes[8] = (txna ApplicationArgs 11)
+        let tmp%25#0: uint64 = (btoi reinterpret_bytes[8]%9#0)
+        let reinterpret_bytes[8]%10#0: bytes[8] = (txna ApplicationArgs 12)
+        let tmp%26#0: uint64 = (btoi reinterpret_bytes[8]%10#0)
+        let reinterpret_bytes[8]%11#0: bytes[8] = (txna ApplicationArgs 13)
+        let tmp%27#0: uint64 = (btoi reinterpret_bytes[8]%11#0)
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 14)
+        let reinterpret_bytes[8]%12#0: bytes[8] = (txna ApplicationArgs 15)
+        let tmp%28#0: uint64 = (btoi reinterpret_bytes[8]%12#0)
+        let to_encode%0#0: uint64 = smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.new(tmp%15#0, tmp%16#0, tmp%17#0, tmp%18#0, tmp%20#0, reinterpret_bytes[32][]%0#0, tmp%21#0, tmp%22#0, tmp%23#0, tmp%24#0, tmp%25#0, tmp%26#0, tmp%27#0, reinterpret_bytes[32]%0#0, tmp%28#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%0#0)
+        let tmp%29#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%29#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#1: bool = 1u
+        goto block@23
+    block@7: // clearWeightsBoxes_route_L162
+        let tmp%30#0: uint64 = (txn OnCompletion)
+        let tmp%31#0: bool = (! tmp%30#0)
+        (assert tmp%31#0) // OnCompletion is not NoOp
+        let tmp%32#0: uint64 = (txn ApplicationID)
+        (assert tmp%32#0) // can only call when not creating
+        let reinterpret_bytes[8]%13#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%34#0: uint64 = (btoi reinterpret_bytes[8]%13#0)
+        let reinterpret_bytes[1]%1#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%35#0: bool = (getbit reinterpret_bytes[1]%1#0 0u)
+        let reinterpret_bytes[8]%14#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%36#0: uint64 = (btoi reinterpret_bytes[8]%14#0)
+        let reinterpret_bytes[8]%15#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%37#0: uint64 = (btoi reinterpret_bytes[8]%15#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.clearWeightsBoxes(tmp%34#0, tmp%35#0, tmp%36#0, tmp%37#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#2: bool = 1u
+        goto block@23
+    block@8: // deleteAuctionApp_route_L184
+        let tmp%38#0: uint64 = (txn OnCompletion)
+        let tmp%39#0: bool = (! tmp%38#0)
+        (assert tmp%39#0) // OnCompletion is not NoOp
+        let tmp%40#0: uint64 = (txn ApplicationID)
+        (assert tmp%40#0) // can only call when not creating
+        let reinterpret_bytes[8]%16#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%42#0: uint64 = (btoi reinterpret_bytes[8]%16#0)
+        let reinterpret_bytes[1]%2#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%43#0: bool = (getbit reinterpret_bytes[1]%2#0 0u)
+        let reinterpret_bytes[32]%1#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[8]%17#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%44#0: uint64 = (btoi reinterpret_bytes[8]%17#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.deleteAuctionApp(tmp%42#0, tmp%43#0, reinterpret_bytes[32]%1#0, tmp%44#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#3: bool = 1u
+        goto block@23
+    block@9: // bid_route_L207
+        let tmp%45#0: uint64 = (txn OnCompletion)
+        let tmp%46#0: bool = (! tmp%45#0)
+        (assert tmp%46#0) // OnCompletion is not NoOp
+        let tmp%47#0: uint64 = (txn ApplicationID)
+        (assert tmp%47#0) // can only call when not creating
+        let reinterpret_bytes[8]%18#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%49#0: uint64 = (btoi reinterpret_bytes[8]%18#0)
+        let reinterpret_bytes[1]%3#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%50#0: bool = (getbit reinterpret_bytes[1]%3#0 0u)
+        let reinterpret_bytes[8]%19#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%51#0: uint64 = (btoi reinterpret_bytes[8]%19#0)
+        let reinterpret_bytes[8]%20#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%52#0: uint64 = (btoi reinterpret_bytes[8]%20#0)
+        let reinterpret_bytes[]%0#0: bytes[] = (txna ApplicationArgs 5)
+        let reinterpret_bytes[32]%2#0: bytes[32] = (txna ApplicationArgs 6)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.bid(tmp%49#0, tmp%50#0, tmp%51#0, tmp%52#0, reinterpret_bytes[]%0#0, reinterpret_bytes[32]%2#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#4: bool = 1u
+        goto block@23
+    block@10: // refundBid_route_L295
+        let tmp%53#0: uint64 = (txn OnCompletion)
+        let tmp%54#0: bool = (! tmp%53#0)
+        (assert tmp%54#0) // OnCompletion is not NoOp
+        let tmp%55#0: uint64 = (txn ApplicationID)
+        (assert tmp%55#0) // can only call when not creating
+        let reinterpret_bytes[8]%21#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%57#0: uint64 = (btoi reinterpret_bytes[8]%21#0)
+        let reinterpret_bytes[1]%4#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%58#0: bool = (getbit reinterpret_bytes[1]%4#0 0u)
+        let reinterpret_bytes[8]%22#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%59#0: uint64 = (btoi reinterpret_bytes[8]%22#0)
+        let reinterpret_bytes[8]%23#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%60#0: uint64 = (btoi reinterpret_bytes[8]%23#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.refundBid(tmp%57#0, tmp%58#0, tmp%59#0, tmp%60#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#5: bool = 1u
+        goto block@23
+    block@11: // claimPrize_route_L318
+        let tmp%61#0: uint64 = (txn OnCompletion)
+        let tmp%62#0: bool = (! tmp%61#0)
+        (assert tmp%62#0) // OnCompletion is not NoOp
+        let tmp%63#0: uint64 = (txn ApplicationID)
+        (assert tmp%63#0) // can only call when not creating
+        let reinterpret_bytes[8]%24#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%65#0: uint64 = (btoi reinterpret_bytes[8]%24#0)
+        let reinterpret_bytes[1]%5#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%66#0: bool = (getbit reinterpret_bytes[1]%5#0 0u)
+        let reinterpret_bytes[8]%25#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%67#0: uint64 = (btoi reinterpret_bytes[8]%25#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.claimPrize(tmp%65#0, tmp%66#0, tmp%67#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#6: bool = 1u
+        goto block@23
+    block@12: // claimRafflePrize_route_L339
+        let tmp%68#0: uint64 = (txn OnCompletion)
+        let tmp%69#0: bool = (! tmp%68#0)
+        (assert tmp%69#0) // OnCompletion is not NoOp
+        let tmp%70#0: uint64 = (txn ApplicationID)
+        (assert tmp%70#0) // can only call when not creating
+        let reinterpret_bytes[8]%26#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%72#0: uint64 = (btoi reinterpret_bytes[8]%26#0)
+        let reinterpret_bytes[1]%6#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%73#0: bool = (getbit reinterpret_bytes[1]%6#0 0u)
+        let reinterpret_bytes[8]%27#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%74#0: uint64 = (btoi reinterpret_bytes[8]%27#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.claimRafflePrize(tmp%72#0, tmp%73#0, tmp%74#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#7: bool = 1u
+        goto block@23
+    block@13: // raffle_route_L360
+        let tmp%75#0: uint64 = (txn OnCompletion)
+        let tmp%76#0: bool = (! tmp%75#0)
+        (assert tmp%76#0) // OnCompletion is not NoOp
+        let tmp%77#0: uint64 = (txn ApplicationID)
+        (assert tmp%77#0) // can only call when not creating
+        let reinterpret_bytes[8]%28#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%79#0: uint64 = (btoi reinterpret_bytes[8]%28#0)
+        let reinterpret_bytes[1]%7#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%80#0: bool = (getbit reinterpret_bytes[1]%7#0 0u)
+        let reinterpret_bytes[8]%29#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%81#0: uint64 = (btoi reinterpret_bytes[8]%29#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.raffle(tmp%79#0, tmp%80#0, tmp%81#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#8: bool = 1u
+        goto block@23
+    block@14: // findWinner_route_L380
+        let tmp%82#0: uint64 = (txn OnCompletion)
+        let tmp%83#0: bool = (! tmp%82#0)
+        (assert tmp%83#0) // OnCompletion is not NoOp
+        let tmp%84#0: uint64 = (txn ApplicationID)
+        (assert tmp%84#0) // can only call when not creating
+        let reinterpret_bytes[8]%30#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%86#0: uint64 = (btoi reinterpret_bytes[8]%30#0)
+        let reinterpret_bytes[1]%8#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%87#0: bool = (getbit reinterpret_bytes[1]%8#0 0u)
+        let reinterpret_bytes[8]%31#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%88#0: uint64 = (btoi reinterpret_bytes[8]%31#0)
+        let reinterpret_bytes[8]%32#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%89#0: uint64 = (btoi reinterpret_bytes[8]%32#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.findWinner(tmp%86#0, tmp%87#0, tmp%88#0, tmp%89#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#9: bool = 1u
+        goto block@23
+    block@15: // deleteApplication_route_L403
+        let tmp%90#0: uint64 = (txn OnCompletion)
+        let tmp%91#0: bool = (== tmp%90#0 DeleteApplication)
+        (assert tmp%91#0) // OnCompletion is not DeleteApplication
+        let tmp%92#0: uint64 = (txn ApplicationID)
+        (assert tmp%92#0) // can only call when not creating
+        let reinterpret_bytes[8]%33#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%94#0: uint64 = (btoi reinterpret_bytes[8]%33#0)
+        let reinterpret_bytes[1]%9#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%95#0: bool = (getbit reinterpret_bytes[1]%9#0 0u)
+        let reinterpret_bytes[8]%34#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%96#0: uint64 = (btoi reinterpret_bytes[8]%34#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.deleteApplication(tmp%94#0, tmp%95#0, tmp%96#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#10: bool = 1u
+        goto block@23
+    block@16: // cancel_route_L424
+        let tmp%97#0: uint64 = (txn OnCompletion)
+        let tmp%98#0: bool = (! tmp%97#0)
+        (assert tmp%98#0) // OnCompletion is not NoOp
+        let tmp%99#0: uint64 = (txn ApplicationID)
+        (assert tmp%99#0) // can only call when not creating
+        let reinterpret_bytes[8]%35#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%101#0: uint64 = (btoi reinterpret_bytes[8]%35#0)
+        let reinterpret_bytes[1]%10#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%102#0: bool = (getbit reinterpret_bytes[1]%10#0 0u)
+        let reinterpret_bytes[8]%36#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%103#0: uint64 = (btoi reinterpret_bytes[8]%36#0)
+        smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.cancel(tmp%101#0, tmp%102#0, tmp%103#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#11: bool = 1u
+        goto block@23
+    block@17: // update_route_L19
+        let tmp%104#0: uint64 = (txn OnCompletion)
+        let tmp%105#0: bool = (== tmp%104#0 UpdateApplication)
+        (assert tmp%105#0) // OnCompletion is not UpdateApplication
+        let tmp%106#0: uint64 = (txn ApplicationID)
+        (assert tmp%106#0) // can only call when not creating
+        let tmp%108#0: bytes = (txna ApplicationArgs 1)
+        let tmp%109#0: bytes = ((extract 2 0) tmp%108#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(tmp%109#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#12: bool = 1u
+        goto block@23
+    block@18: // updateAkitaDAO_route_L27
+        let tmp%110#0: uint64 = (txn OnCompletion)
+        let tmp%111#0: bool = (! tmp%110#0)
+        (assert tmp%111#0) // OnCompletion is not NoOp
+        let tmp%112#0: uint64 = (txn ApplicationID)
+        (assert tmp%112#0) // can only call when not creating
+        let reinterpret_bytes[8]%37#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%114#0: uint64 = (btoi reinterpret_bytes[8]%37#0)
+        smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(tmp%114#0)
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#13: bool = 1u
+        goto block@23
+    block@22: // after_if_else_L18
+        let smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#14: bool = 0u
+        goto block@23
+    block@23: // after_inlined_smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#0 <- block@5, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#1 <- block@6, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#2 <- block@7, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#3 <- block@8, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#4 <- block@9, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#5 <- block@10, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#6 <- block@11, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#7 <- block@12, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#8 <- block@13, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#9 <- block@14, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#10 <- block@15, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#11 <- block@16, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#12 <- block@17, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#13 <- block@18, smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.__puya_arc4_router__%0#14 <- block@22)
+        return tmp%0#0
+
+subroutine smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: bool, wallet: uint64) -> bytes[32]:
+    block@0: // L166
+        goto rekeyBack#0 ? block@2 : block@1
+    block@1: // if_body_L167
+        let tmp%0#0: bytes[32] = (global ZeroAddress)
+        return tmp%0#0
+    block@2: // after_if_else_L167
+        let (controlledAccountBytes#0: bytes, _#0: bool) = (app_global_get_ex wallet#0 "controlled_address")
+        let (spendingAddressBytes#0: bytes, _#1: bool) = (app_global_get_ex wallet#0 "spending_address")
+        let (walletAddress#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) wallet#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (!= spendingAddressBytes#0 controlledAccountBytes#0)
+        goto tmp%1#0 ? block@3 : block@4
+    block@3: // if_body_L172
+        return spendingAddressBytes#0
+    block@4: // after_if_else_L172
+        return walletAddress#0
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.create(version: bytes, factory: uint64, akitaDAO: uint64) -> void:
+    block@0: // L26
+        (app_global_put "version" version#0)
+        (app_global_put "auction_factory" factory#0)
+        (app_global_put "akita_dao" akitaDAO#0)
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.new(walletID: uint64, rekeyBack: bool, prizeID: uint64, prizeAmount: uint64, name: bytes, proof: bytes[32][], bidAssetID: uint64, bidFee: uint64, startingBid: uint64, bidMinimumIncrease: uint64, startTimestamp: uint64, endtimestamp: uint64, gateID: uint64, marketplace: bytes[32], weightsListCount: uint64) -> uint64:
+    block@0: // L35
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        (assert prizeID#0) // auction prize cannot be algo
+        let (senderPrizeBalance#0: uint64, tmp%2#0: bool) = ((asset_holding_get AssetBalance) spendingAddressBytes#0 prizeID#0)
+        let tmp%3#0: bool = (>= senderPrizeBalance#0 prizeAmount#0)
+        (assert tmp%3#0) // Not enough asset
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let (tmp%4#0: uint64, tmp%5#0: bool) = ((asset_holding_get AssetBalance) value%0#0 prizeID#0)
+        goto tmp%5#0 ? block@4 : block@1
+    block@1: // if_body_L59
+        itxn_begin
+        let (maybe_value%1#0: uint64, maybe_exists%1#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%1#0)
+        (assert check%1#0) // application exists
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = (global AssetOptInMinBalance)
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%1#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let val_as_bytes%0#0: bytes[8] = (itob prizeID#0)
+        ((itxn_field ApplicationArgs) method "optin(pay,uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field ApplicationID) maybe_value%1#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@4
+    block@4: // after_if_else_L59
+        let (maybe_value%3#0: uint64, maybe_exists%3#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%3#0) // check GlobalState exists
+        let (value%2#0: bytes[32], check%2#0: bool) = ((app_params_get AppAddress) maybe_value%3#0)
+        (assert check%2#0) // application exists
+        let (tmp%6#0: uint64, tmp%7#0: bool) = ((asset_holding_get AssetBalance) value%2#0 bidAssetID#0)
+        goto tmp%7#0 ? block@8 : block@5
+    block@5: // if_body_L79
+        itxn_begin
+        let (maybe_value%4#0: uint64, maybe_exists%4#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%4#0) // check GlobalState exists
+        let (value%3#0: bytes[32], check%3#0: bool) = ((app_params_get AppAddress) maybe_value%4#0)
+        (assert check%3#0) // application exists
+        let inner_txn_params%2%%param_Amount_idx_0#0: uint64 = (global AssetOptInMinBalance)
+        ((itxn_field Amount) inner_txn_params%2%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%3#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let val_as_bytes%1#0: bytes[8] = (itob bidAssetID#0)
+        ((itxn_field ApplicationArgs) method "optin(pay,uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%1#0)
+        ((itxn_field ApplicationID) maybe_value%4#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@8
+    block@8: // after_if_else_L79
+        goto bidAssetID#0 ? block@10 : block@9
+    block@9: // ternary_true_L100
+        let ternary_result%0#0: uint64 = (global AssetOptInMinBalance)
+        goto block@11
+    block@10: // ternary_false_L100
+        let tmp%8#0: uint64 = (global AssetOptInMinBalance)
+        let ternary_result%0#1: uint64 = (* tmp%8#0 2u)
+        goto block@11
+    block@11: // ternary_merge_L100
+        let optinMBR#0: uint64 = φ(ternary_result%0#0 <- block@9, ternary_result%0#1 <- block@10)
+        let tmp%14#0: uint64 = (+ 1612500u optinMBR#0)
+        let tmp%15#0: uint64 = (* weightsListCount#0 13113300u)
+        let tmp%16#0: uint64 = (+ tmp%14#0 tmp%15#0)
+        let childContractMBR#0: uint64 = (+ tmp%16#0 21700u)
+        let (maybe_value%6#0: uint64, maybe_exists%6#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%6#0) // check GlobalState exists
+        let (value%4#0: bytes[32], check%4#0: bool) = ((app_params_get AppAddress) maybe_value%6#0)
+        (assert check%4#0) // application exists
+        let (value%5#0: bytes[32], check%5#0: bool) = ((app_params_get AppAddress) maybe_value%6#0)
+        (assert check%5#0) // application exists
+        itxn_begin
+        ((itxn_field Amount) childContractMBR#0)
+        ((itxn_field Receiver) value%4#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        ((itxn_field XferAsset) prizeID#0)
+        ((itxn_field AssetAmount) prizeAmount#0)
+        ((itxn_field AssetReceiver) value%5#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let inner_txn_params%4%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let length%0#0: uint64 = (len name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 name#0)
+        let val_as_bytes%2#0: bytes[8] = (itob bidAssetID#0)
+        let val_as_bytes%3#0: bytes[8] = (itob bidFee#0)
+        let val_as_bytes%4#0: bytes[8] = (itob startingBid#0)
+        let val_as_bytes%5#0: bytes[8] = (itob bidMinimumIncrease#0)
+        let val_as_bytes%6#0: bytes[8] = (itob startTimestamp#0)
+        let val_as_bytes%7#0: bytes[8] = (itob endtimestamp#0)
+        let val_as_bytes%8#0: bytes[8] = (itob gateID#0)
+        let val_as_bytes%9#0: bytes[8] = (itob weightsListCount#0)
+        ((itxn_field ApplicationArgs) method "newAuction(pay,axfer,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64)uint64")
+        ((itxn_field ApplicationArgs) encoded_value%0#0)
+        ((itxn_field ApplicationArgs) proof#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%2#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%3#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%4#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%5#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%6#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%7#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%8#0)
+        ((itxn_field ApplicationArgs) marketplace#0)
+        ((itxn_field ApplicationArgs) val_as_bytes%9#0)
+        ((itxn_field RekeyTo) inner_txn_params%4%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) maybe_value%6#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (gitxn 2 LastLog)
+        let tmp%17#0: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%18#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%19#0: bool = (== tmp%18#0 0x151f7c75)
+        (assert tmp%19#0) // Bytes has valid prefix
+        let newAuction#0: uint64 = (btoi tmp%17#0)
+        return newAuction#0
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.clearWeightsBoxes(walletID: uint64, rekeyBack: bool, auctionAppID: uint64, iterationAmount: uint64) -> void:
+    block@0: // L162
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob iterationAmount#0)
+        ((itxn_field ApplicationArgs) method "clearWeightsBoxes(uint64)uint64")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) maybe_value%0#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%2#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%3#0: bool = (== tmp%2#0 0x151f7c75)
+        (assert tmp%3#0) // Bytes has valid prefix
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.deleteAuctionApp(walletID: uint64, rekeyBack: bool, creator: bytes[32], auctionAppID: uint64) -> void:
+    block@0: // L184
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob auctionAppID#0)
+        ((itxn_field ApplicationArgs) method "deleteAuctionApp(uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) maybe_value%0#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.bid(walletID: uint64, rekeyBack: bool, auctionAppID: uint64, amount: uint64, args: bytes[], marketplace: bytes[32]) -> void:
+    block@0: // L207
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        let mbr#0: uint64 = 34900u
+        let (tmp%1#0: bytes, tmp%2#0: bool) = (app_global_get_ex auctionAppID#0 "bid_fee")
+        let bidFee#0: uint64 = (btoi tmp%1#0)
+        goto bidFee#0 ? block@1 : block@5
+    block@1: // if_body_L223
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "hasBid(address)bool")
+        ((itxn_field ApplicationArgs) spendingAddressBytes#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%4#0: bytes = (itxn LastLog)
+        let tmp%4#0: bytes = ((extract 4 0) awst_tmp%4#0)
+        let tmp%5#0: bytes = ((extract 0 4) awst_tmp%4#0)
+        let tmp%6#0: bool = (== tmp%5#0 0x151f7c75)
+        (assert tmp%6#0) // Bytes has valid prefix
+        let hasBid#0: bool = (getbit tmp%4#0 0u)
+        goto hasBid#0 ? block@4 : block@3
+    block@3: // if_body_L235
+        let mbr#1: uint64 = 72300u
+        goto block@4
+    block@4: // after_if_else_L235
+        let mbr#3: uint64 = φ(mbr#0 <- block@1, mbr#1 <- block@3)
+        goto block@5
+    block@5: // after_if_else_L223
+        let mbr#2: uint64 = φ(mbr#0 <- block@0, mbr#3 <- block@4)
+        let (tmp%9#0: bytes, tmp%10#0: bool) = (app_global_get_ex auctionAppID#0 "bid_asset")
+        let bidAsset#0: uint64 = (btoi tmp%9#0)
+        goto bidAsset#0 ? block@9 : block@6
+    block@6: // if_body_L241
+        itxn_begin
+        let (value%2#0: bytes[32], check%2#0: bool) = ((app_params_get AppAddress) auctionAppID#0)
+        (assert check%2#0) // application exists
+        let inner_txn_params%1%%param_Amount_idx_0#0: uint64 = (+ amount#0 mbr#2)
+        ((itxn_field Amount) inner_txn_params%1%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) value%2#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let inner_txn_params%2%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "bid(pay,byte[][],address)void")
+        ((itxn_field ApplicationArgs) args#0)
+        ((itxn_field ApplicationArgs) marketplace#0)
+        ((itxn_field RekeyTo) inner_txn_params%2%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@13
+    block@9: // else_body_L261
+        let (value%3#0: bytes[32], check%3#0: bool) = ((app_params_get AppAddress) auctionAppID#0)
+        (assert check%3#0) // application exists
+        let (value%4#0: bytes[32], check%4#0: bool) = ((app_params_get AppAddress) auctionAppID#0)
+        (assert check%4#0) // application exists
+        itxn_begin
+        ((itxn_field Amount) mbr#2)
+        ((itxn_field Receiver) value%3#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        ((itxn_field XferAsset) bidAsset#0)
+        ((itxn_field AssetAmount) amount#0)
+        ((itxn_field AssetReceiver) value%4#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_next
+        let inner_txn_params%3%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "bidAsa(pay,axfer,byte[][],address)void")
+        ((itxn_field ApplicationArgs) args#0)
+        ((itxn_field ApplicationArgs) marketplace#0)
+        ((itxn_field RekeyTo) inner_txn_params%3%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@13
+    block@13: // after_if_else_L241
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.refundBid(walletID: uint64, rekeyBack: bool, auctionAppID: uint64, id: uint64) -> void:
+    block@0: // L295
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob id#0)
+        ((itxn_field ApplicationArgs) method "refundBid(uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.claimPrize(walletID: uint64, rekeyBack: bool, auctionAppID: uint64) -> void:
+    block@0: // L318
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "claimPrize()void")
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.claimRafflePrize(walletID: uint64, rekeyBack: bool, auctionAppID: uint64) -> void:
+    block@0: // L339
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "claimRafflePrize()void")
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.raffle(walletID: uint64, rekeyBack: bool, auctionAppID: uint64) -> void:
+    block@0: // L360
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "raffle()void")
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.findWinner(walletID: uint64, rekeyBack: bool, auctionAppID: uint64, iterationAmount: uint64) -> void:
+    block@0: // L380
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        let val_as_bytes%0#0: bytes[8] = (itob iterationAmount#0)
+        ((itxn_field ApplicationArgs) method "findWinner(uint64)void")
+        ((itxn_field ApplicationArgs) val_as_bytes%0#0)
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.deleteApplication(walletID: uint64, rekeyBack: bool, auctionAppID: uint64) -> void:
+    block@0: // L403
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "deleteApplication()void")
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.cancel(walletID: uint64, rekeyBack: bool, auctionAppID: uint64) -> void:
+    block@0: // L424
+        let (spendingAddressBytes#0: bytes, _#0: bool) = (app_global_get_ex walletID#0 "spending_address")
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppCreator) auctionAppID#0)
+        (assert check%0#0) // application exists
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "auction_factory")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%1#0) // application exists
+        let tmp%0#0: bool = (== value%0#0 value%1#0)
+        (assert tmp%0#0) // Creator is not the auction factory
+        itxn_begin
+        let inner_txn_params%0%%param_RekeyTo_idx_0#0: bytes[32] = smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack#0, walletID#0)
+        ((itxn_field ApplicationArgs) method "cancel()void")
+        ((itxn_field RekeyTo) inner_txn_params%0%%param_RekeyTo_idx_0#0)
+        ((itxn_field ApplicationID) auctionAppID#0)
+        ((itxn_field Sender) spendingAddressBytes#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+    block@0: // L19
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "version" newVersion#0)
+        return 
+
+subroutine smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+    block@0: // L27
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_dao")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) maybe_value%0#0)
+        (assert check%0#0) // application exists
+        let tmp%1#0: bool = (== tmp%0#0 value%0#0)
+        (assert tmp%1#0) // Only the Akita DAO can call this function
+        (app_global_put "akita_dao" app#0)
+        return 

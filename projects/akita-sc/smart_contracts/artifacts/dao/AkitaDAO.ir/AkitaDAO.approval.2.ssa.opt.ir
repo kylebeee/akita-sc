@@ -1,0 +1,1826 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#1: uint64 = (txn NumAppArgs)
+        goto tmp%0#1 ? block@2 : block@18
+    block@2: // abi_routing_L119
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create(uint64)void" => block@3, method "update(uint64)void" => block@4, method "init(string,uint64,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),(uint64,uint64),address)void" => block@5, method "arc58_verifyAuthAddr()void" => block@6, method "arc58_canCall(uint64,bool,address,byte[4])bool" => block@7, method "arc58_rekeyToPlugin(uint64,bool,uint64[],(uint64,uint64)[])void" => block@8, method "arc58_rekeyToNamedPlugin(string,bool,uint64[],(uint64,uint64)[])void" => block@9, method "newProposal(pay,uint8,byte[36],byte[],uint8)void" => block@10, method "finalizeProposal(uint64,byte[])void" => block@11, method "createDailyDisbursement()void" => block@12, method "optinEscrow(pay,string,uint64)void" => block@13, method "getState()(uint64,string,byte[36],uint64,(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64),(uint64,uint64,uint64,uint64),(uint64,uint64,uint64),(uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64),uint64,uint64,(uint64,uint64),(uint64,uint64),address)" => block@14, * => block@18}
+    block@3: // create_route_L1042
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (! tmp%3#0)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (! tmp%5#0)
+        (assert tmp%6#0) // can only call when creating
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%7#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.create(tmp%7#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#0: bool = 1u
+        goto block@19
+    block@4: // update_route_L1048
+        let tmp%8#0: uint64 = (txn OnCompletion)
+        let tmp%9#0: bool = (== tmp%8#0 UpdateApplication)
+        (assert tmp%9#0) // OnCompletion is not UpdateApplication
+        let tmp%10#0: uint64 = (txn ApplicationID)
+        (assert tmp%10#0) // can only call when not creating
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%12#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.update(tmp%12#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#1: bool = 1u
+        goto block@19
+    block@5: // init_route_L1060
+        let tmp%13#0: uint64 = (txn OnCompletion)
+        let tmp%14#0: bool = (! tmp%13#0)
+        (assert tmp%14#0) // OnCompletion is not NoOp
+        let tmp%15#0: uint64 = (txn ApplicationID)
+        (assert tmp%15#0) // can only call when not creating
+        let tmp%17#0: bytes = (txna ApplicationArgs 1)
+        let tmp%18#0: bytes = ((extract 2 0) tmp%17#0)
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%19#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let reinterpret_bytes[36]%0#0: bytes[36] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 4)
+        let tmp%20#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let reinterpret_bytes[248]%0#0: bytes[248] = (txna ApplicationArgs 5)
+        let item0%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 0u)
+        let item1%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 8u)
+        let item2%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 16u)
+        let item3%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 24u)
+        let item4%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 32u)
+        let item5%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 40u)
+        let item6%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 48u)
+        let item7%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 56u)
+        let item8%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 64u)
+        let item9%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 72u)
+        let item10%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 80u)
+        let item11%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 88u)
+        let item12%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 96u)
+        let item13%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 104u)
+        let item14%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 112u)
+        let item15%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 120u)
+        let item16%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 128u)
+        let item17%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 136u)
+        let item18%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 144u)
+        let item19%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 152u)
+        let item20%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 160u)
+        let item21%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 168u)
+        let item22%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 176u)
+        let item23%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 184u)
+        let item24%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 192u)
+        let item25%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 200u)
+        let item26%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 208u)
+        let item27%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 216u)
+        let item28%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 224u)
+        let item29%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 232u)
+        let item30%1#0: uint64 = (extract_uint64 reinterpret_bytes[248]%0#0 240u)
+        let reinterpret_bytes[16]%0#0: bytes[16] = (txna ApplicationArgs 6)
+        let item0%3#0: uint64 = (extract_uint64 reinterpret_bytes[16]%0#0 0u)
+        let item1%3#0: uint64 = (extract_uint64 reinterpret_bytes[16]%0#0 8u)
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 7)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.init(tmp%18#0, tmp%19#0, reinterpret_bytes[36]%0#0, tmp%20#0, item0%1#0, item1%1#0, item2%1#0, item3%1#0, item4%1#0, item5%1#0, item6%1#0, item7%1#0, item8%1#0, item9%1#0, item10%1#0, item11%1#0, item12%1#0, item13%1#0, item14%1#0, item15%1#0, item16%1#0, item17%1#0, item18%1#0, item19%1#0, item20%1#0, item21%1#0, item22%1#0, item23%1#0, item24%1#0, item25%1#0, item26%1#0, item27%1#0, item28%1#0, item29%1#0, item30%1#0, item0%3#0, item1%3#0, reinterpret_bytes[32]%0#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#2: bool = 1u
+        goto block@19
+    block@6: // arc58_verifyAuthAddr_route_L1155
+        let tmp%21#0: uint64 = (txn OnCompletion)
+        let tmp%22#0: bool = (! tmp%21#0)
+        (assert tmp%22#0) // OnCompletion is not NoOp
+        let tmp%23#0: uint64 = (txn ApplicationID)
+        (assert tmp%23#0) // can only call when not creating
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_verifyAuthAddr()
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#3: bool = 1u
+        goto block@19
+    block@7: // arc58_canCall_route_L1168
+        let tmp%25#0: uint64 = (txn OnCompletion)
+        let tmp%26#0: bool = (! tmp%25#0)
+        (assert tmp%26#0) // OnCompletion is not NoOp
+        let tmp%27#0: uint64 = (txn ApplicationID)
+        (assert tmp%27#0) // can only call when not creating
+        let reinterpret_bytes[8]%4#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%29#0: uint64 = (btoi reinterpret_bytes[8]%4#0)
+        let reinterpret_bytes[1]%0#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%30#0: bool = (getbit reinterpret_bytes[1]%0#0 0u)
+        let reinterpret_bytes[32]%1#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[4]%0#0: bytes[4] = (txna ApplicationArgs 4)
+        let to_encode%0#0: bool = smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_canCall(tmp%29#0, tmp%30#0, reinterpret_bytes[32]%1#0, reinterpret_bytes[4]%0#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u to_encode%0#0)
+        let tmp%31#0: bytes = (concat 0x151f7c75 encoded_bool%0#0)
+        (log tmp%31#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#4: bool = 1u
+        goto block@19
+    block@8: // arc58_rekeyToPlugin_route_L1190
+        let tmp%32#0: uint64 = (txn OnCompletion)
+        let tmp%33#0: bool = (! tmp%32#0)
+        (assert tmp%33#0) // OnCompletion is not NoOp
+        let tmp%34#0: uint64 = (txn ApplicationID)
+        (assert tmp%34#0) // can only call when not creating
+        let reinterpret_bytes[8]%5#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%36#0: uint64 = (btoi reinterpret_bytes[8]%5#0)
+        let reinterpret_bytes[1]%1#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%37#0: bool = (getbit reinterpret_bytes[1]%1#0 0u)
+        let reinterpret_encoded_uint64[]%0#0: encoded_uint64[] = (txna ApplicationArgs 3)
+        let reinterpret_(encoded_uint64,encoded_uint64)[]%0#0: (encoded_uint64,encoded_uint64)[] = (txna ApplicationArgs 4)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToPlugin(tmp%36#0, tmp%37#0, reinterpret_encoded_uint64[]%0#0, reinterpret_(encoded_uint64,encoded_uint64)[]%0#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#5: bool = 1u
+        goto block@19
+    block@9: // arc58_rekeyToNamedPlugin_route_L1248
+        let tmp%38#0: uint64 = (txn OnCompletion)
+        let tmp%39#0: bool = (! tmp%38#0)
+        (assert tmp%39#0) // OnCompletion is not NoOp
+        let tmp%40#0: uint64 = (txn ApplicationID)
+        (assert tmp%40#0) // can only call when not creating
+        let tmp%42#0: bytes = (txna ApplicationArgs 1)
+        let tmp%43#0: bytes = ((extract 2 0) tmp%42#0)
+        let reinterpret_bytes[1]%2#0: bytes[1] = (txna ApplicationArgs 2)
+        let tmp%44#0: bool = (getbit reinterpret_bytes[1]%2#0 0u)
+        let reinterpret_encoded_uint64[]%1#0: encoded_uint64[] = (txna ApplicationArgs 3)
+        let reinterpret_(encoded_uint64,encoded_uint64)[]%1#0: (encoded_uint64,encoded_uint64)[] = (txna ApplicationArgs 4)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToNamedPlugin(tmp%43#0, tmp%44#0, reinterpret_encoded_uint64[]%1#0, reinterpret_(encoded_uint64,encoded_uint64)[]%1#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#6: bool = 1u
+        goto block@19
+    block@10: // newProposal_route_L1293
+        let tmp%45#0: uint64 = (txn OnCompletion)
+        let tmp%46#0: bool = (! tmp%45#0)
+        (assert tmp%46#0) // OnCompletion is not NoOp
+        let tmp%47#0: uint64 = (txn ApplicationID)
+        (assert tmp%47#0) // can only call when not creating
+        let tmp%49#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%49#0 1u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        let reinterpret_bytes[1]%3#0: bytes[1] = (txna ApplicationArgs 1)
+        let reinterpret_bytes[36]%1#0: bytes[36] = (txna ApplicationArgs 2)
+        let tmp%50#0: bytes = (txna ApplicationArgs 3)
+        let tmp%51#0: bytes = ((extract 2 0) tmp%50#0)
+        let reinterpret_bytes[1]%4#0: bytes[1] = (txna ApplicationArgs 4)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.newProposal(gtxn_idx%0#0, reinterpret_bytes[1]%3#0, reinterpret_bytes[36]%1#0, tmp%51#0, reinterpret_bytes[1]%4#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#7: bool = 1u
+        goto block@19
+    block@11: // finalizeProposal_route_L1337
+        let tmp%52#0: uint64 = (txn OnCompletion)
+        let tmp%53#0: bool = (! tmp%52#0)
+        (assert tmp%53#0) // OnCompletion is not NoOp
+        let tmp%54#0: uint64 = (txn ApplicationID)
+        (assert tmp%54#0) // can only call when not creating
+        let reinterpret_bytes[8]%6#0: bytes[8] = (txna ApplicationArgs 1)
+        let tmp%56#0: uint64 = (btoi reinterpret_bytes[8]%6#0)
+        let tmp%57#0: bytes = (txna ApplicationArgs 2)
+        let tmp%58#0: bytes = ((extract 2 0) tmp%57#0)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.finalizeProposal(tmp%56#0, tmp%58#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#8: bool = 1u
+        goto block@19
+    block@12: // createDailyDisbursement_route_L1402
+        let tmp%59#0: uint64 = (txn OnCompletion)
+        let tmp%60#0: bool = (! tmp%59#0)
+        (assert tmp%60#0) // OnCompletion is not NoOp
+        let tmp%61#0: uint64 = (txn ApplicationID)
+        (assert tmp%61#0) // can only call when not creating
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.createDailyDisbursement()
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#9: bool = 1u
+        goto block@19
+    block@13: // optinEscrow_route_L1425
+        let tmp%63#0: uint64 = (txn OnCompletion)
+        let tmp%64#0: bool = (! tmp%63#0)
+        (assert tmp%64#0) // OnCompletion is not NoOp
+        let tmp%65#0: uint64 = (txn ApplicationID)
+        (assert tmp%65#0) // can only call when not creating
+        let tmp%67#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%1#0: uint64 = (- tmp%67#0 1u)
+        let gtxn_type%1#0: uint64 = ((gtxns TypeEnum) gtxn_idx%1#0)
+        let gtxn_type_matches%1#0: bool = (== gtxn_type%1#0 pay)
+        (assert gtxn_type_matches%1#0) // transaction type is pay
+        let tmp%68#0: bytes = (txna ApplicationArgs 1)
+        let tmp%69#0: bytes = ((extract 2 0) tmp%68#0)
+        let reinterpret_bytes[8]%7#0: bytes[8] = (txna ApplicationArgs 2)
+        let tmp%70#0: uint64 = (btoi reinterpret_bytes[8]%7#0)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.optinEscrow(gtxn_idx%1#0, tmp%69#0, tmp%70#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#10: bool = 1u
+        goto block@19
+    block@14: // getState_route_L1455
+        let tmp%71#0: uint64 = (txn OnCompletion)
+        let tmp%72#0: bool = (! tmp%71#0)
+        (assert tmp%72#0) // OnCompletion is not NoOp
+        let tmp%73#0: uint64 = (txn ApplicationID)
+        (assert tmp%73#0) // can only call when not creating
+        let (elements_to_encode%0#0: uint64, elements_to_encode%1#0: bytes, elements_to_encode%2#0: bytes[36], elements_to_encode%3#0: uint64, elements_to_encode%4#0: uint64, elements_to_encode%5#0: uint64, elements_to_encode%6#0: uint64, elements_to_encode%7#0: uint64, elements_to_encode%8#0: uint64, elements_to_encode%9#0: uint64, elements_to_encode%10#0: uint64, elements_to_encode%11#0: uint64, elements_to_encode%12#0: uint64, elements_to_encode%13#0: uint64, elements_to_encode%14#0: uint64, elements_to_encode%15#0: uint64, elements_to_encode%16#0: uint64, elements_to_encode%17#0: uint64, elements_to_encode%18#0: uint64, elements_to_encode%19#0: uint64, elements_to_encode%20#0: uint64, elements_to_encode%21#0: uint64, elements_to_encode%22#0: uint64, elements_to_encode%23#0: uint64, elements_to_encode%24#0: uint64, elements_to_encode%25#0: uint64, elements_to_encode%26#0: uint64, elements_to_encode%27#0: uint64, elements_to_encode%28#0: uint64, elements_to_encode%29#0: uint64, elements_to_encode%30#0: uint64, elements_to_encode%31#0: uint64, elements_to_encode%32#0: uint64, elements_to_encode%33#0: uint64, elements_to_encode%34#0: uint64, elements_to_encode%35#0: uint64, elements_to_encode%36#0: uint64, elements_to_encode%37#0: uint64, elements_to_encode%38#0: uint64, elements_to_encode%39#0: uint64, elements_to_encode%40#0: uint64, elements_to_encode%41#0: uint64, elements_to_encode%42#0: uint64, elements_to_encode%43#0: uint64, elements_to_encode%44#0: uint64, elements_to_encode%45#0: uint64, elements_to_encode%46#0: uint64, elements_to_encode%47#0: uint64, elements_to_encode%48#0: uint64, elements_to_encode%49#0: uint64, elements_to_encode%50#0: bytes[32]) = smart_contracts/dao/contract.algo.ts::AkitaDAO.getState()
+        let val_as_bytes%0#0: bytes[8] = (itob elements_to_encode%0#0)
+        let length%0#0: uint64 = (len elements_to_encode%1#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 elements_to_encode%1#0)
+        let val_as_bytes%1#0: bytes[8] = (itob elements_to_encode%3#0)
+        let val_as_bytes%2#0: bytes[8] = (itob elements_to_encode%4#0)
+        let val_as_bytes%3#0: bytes[8] = (itob elements_to_encode%5#0)
+        let val_as_bytes%4#0: bytes[8] = (itob elements_to_encode%6#0)
+        let val_as_bytes%5#0: bytes[8] = (itob elements_to_encode%7#0)
+        let val_as_bytes%6#0: bytes[8] = (itob elements_to_encode%8#0)
+        let val_as_bytes%7#0: bytes[8] = (itob elements_to_encode%9#0)
+        let val_as_bytes%8#0: bytes[8] = (itob elements_to_encode%10#0)
+        let val_as_bytes%9#0: bytes[8] = (itob elements_to_encode%11#0)
+        let val_as_bytes%10#0: bytes[8] = (itob elements_to_encode%12#0)
+        let val_as_bytes%11#0: bytes[8] = (itob elements_to_encode%13#0)
+        let val_as_bytes%12#0: bytes[8] = (itob elements_to_encode%14#0)
+        let val_as_bytes%13#0: bytes[8] = (itob elements_to_encode%15#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%2#0 val_as_bytes%3#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 val_as_bytes%4#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 val_as_bytes%5#0)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 val_as_bytes%6#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 val_as_bytes%7#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 val_as_bytes%8#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 val_as_bytes%9#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 val_as_bytes%10#0)
+        let encoded_tuple_buffer%10#0: bytes = (concat encoded_tuple_buffer%9#0 val_as_bytes%11#0)
+        let encoded_tuple_buffer%11#0: bytes = (concat encoded_tuple_buffer%10#0 val_as_bytes%12#0)
+        let encoded_tuple_buffer%12#0: bytes = (concat encoded_tuple_buffer%11#0 val_as_bytes%13#0)
+        let val_as_bytes%14#0: bytes[8] = (itob elements_to_encode%16#0)
+        let val_as_bytes%15#0: bytes[8] = (itob elements_to_encode%17#0)
+        let val_as_bytes%16#0: bytes[8] = (itob elements_to_encode%18#0)
+        let encoded_tuple_buffer%15#0: bytes = (concat val_as_bytes%14#0 val_as_bytes%15#0)
+        let encoded_tuple_buffer%16#0: bytes = (concat encoded_tuple_buffer%15#0 val_as_bytes%16#0)
+        let val_as_bytes%17#0: bytes[8] = (itob elements_to_encode%19#0)
+        let val_as_bytes%18#0: bytes[8] = (itob elements_to_encode%20#0)
+        let val_as_bytes%19#0: bytes[8] = (itob elements_to_encode%21#0)
+        let val_as_bytes%20#0: bytes[8] = (itob elements_to_encode%22#0)
+        let encoded_tuple_buffer%19#0: bytes = (concat val_as_bytes%17#0 val_as_bytes%18#0)
+        let encoded_tuple_buffer%20#0: bytes = (concat encoded_tuple_buffer%19#0 val_as_bytes%19#0)
+        let encoded_tuple_buffer%21#0: bytes = (concat encoded_tuple_buffer%20#0 val_as_bytes%20#0)
+        let val_as_bytes%21#0: bytes[8] = (itob elements_to_encode%23#0)
+        let val_as_bytes%22#0: bytes[8] = (itob elements_to_encode%24#0)
+        let val_as_bytes%23#0: bytes[8] = (itob elements_to_encode%25#0)
+        let encoded_tuple_buffer%24#0: bytes = (concat val_as_bytes%21#0 val_as_bytes%22#0)
+        let encoded_tuple_buffer%25#0: bytes = (concat encoded_tuple_buffer%24#0 val_as_bytes%23#0)
+        let val_as_bytes%24#0: bytes[8] = (itob elements_to_encode%26#0)
+        let val_as_bytes%25#0: bytes[8] = (itob elements_to_encode%27#0)
+        let val_as_bytes%26#0: bytes[8] = (itob elements_to_encode%28#0)
+        let encoded_tuple_buffer%28#0: bytes = (concat val_as_bytes%24#0 val_as_bytes%25#0)
+        let encoded_tuple_buffer%29#0: bytes = (concat encoded_tuple_buffer%28#0 val_as_bytes%26#0)
+        let val_as_bytes%27#0: bytes[8] = (itob elements_to_encode%29#0)
+        let val_as_bytes%28#0: bytes[8] = (itob elements_to_encode%30#0)
+        let val_as_bytes%29#0: bytes[8] = (itob elements_to_encode%31#0)
+        let val_as_bytes%30#0: bytes[8] = (itob elements_to_encode%32#0)
+        let val_as_bytes%31#0: bytes[8] = (itob elements_to_encode%33#0)
+        let val_as_bytes%32#0: bytes[8] = (itob elements_to_encode%34#0)
+        let val_as_bytes%33#0: bytes[8] = (itob elements_to_encode%35#0)
+        let val_as_bytes%34#0: bytes[8] = (itob elements_to_encode%36#0)
+        let val_as_bytes%35#0: bytes[8] = (itob elements_to_encode%37#0)
+        let val_as_bytes%36#0: bytes[8] = (itob elements_to_encode%38#0)
+        let val_as_bytes%37#0: bytes[8] = (itob elements_to_encode%39#0)
+        let val_as_bytes%38#0: bytes[8] = (itob elements_to_encode%40#0)
+        let val_as_bytes%39#0: bytes[8] = (itob elements_to_encode%41#0)
+        let val_as_bytes%40#0: bytes[8] = (itob elements_to_encode%42#0)
+        let val_as_bytes%41#0: bytes[8] = (itob elements_to_encode%43#0)
+        let encoded_tuple_buffer%32#0: bytes = (concat val_as_bytes%27#0 val_as_bytes%28#0)
+        let encoded_tuple_buffer%33#0: bytes = (concat encoded_tuple_buffer%32#0 val_as_bytes%29#0)
+        let encoded_tuple_buffer%34#0: bytes = (concat encoded_tuple_buffer%33#0 val_as_bytes%30#0)
+        let encoded_tuple_buffer%35#0: bytes = (concat encoded_tuple_buffer%34#0 val_as_bytes%31#0)
+        let encoded_tuple_buffer%36#0: bytes = (concat encoded_tuple_buffer%35#0 val_as_bytes%32#0)
+        let encoded_tuple_buffer%37#0: bytes = (concat encoded_tuple_buffer%36#0 val_as_bytes%33#0)
+        let encoded_tuple_buffer%38#0: bytes = (concat encoded_tuple_buffer%37#0 val_as_bytes%34#0)
+        let encoded_tuple_buffer%39#0: bytes = (concat encoded_tuple_buffer%38#0 val_as_bytes%35#0)
+        let encoded_tuple_buffer%40#0: bytes = (concat encoded_tuple_buffer%39#0 val_as_bytes%36#0)
+        let encoded_tuple_buffer%41#0: bytes = (concat encoded_tuple_buffer%40#0 val_as_bytes%37#0)
+        let encoded_tuple_buffer%42#0: bytes = (concat encoded_tuple_buffer%41#0 val_as_bytes%38#0)
+        let encoded_tuple_buffer%43#0: bytes = (concat encoded_tuple_buffer%42#0 val_as_bytes%39#0)
+        let encoded_tuple_buffer%44#0: bytes = (concat encoded_tuple_buffer%43#0 val_as_bytes%40#0)
+        let encoded_tuple_buffer%45#0: bytes = (concat encoded_tuple_buffer%44#0 val_as_bytes%41#0)
+        let val_as_bytes%42#0: bytes[8] = (itob elements_to_encode%44#0)
+        let val_as_bytes%43#0: bytes[8] = (itob elements_to_encode%45#0)
+        let val_as_bytes%44#0: bytes[8] = (itob elements_to_encode%46#0)
+        let val_as_bytes%45#0: bytes[8] = (itob elements_to_encode%47#0)
+        let encoded_tuple_buffer%48#0: bytes = (concat val_as_bytes%44#0 val_as_bytes%45#0)
+        let val_as_bytes%46#0: bytes[8] = (itob elements_to_encode%48#0)
+        let val_as_bytes%47#0: bytes[8] = (itob elements_to_encode%49#0)
+        let encoded_tuple_buffer%51#0: bytes = (concat val_as_bytes%46#0 val_as_bytes%47#0)
+        let encoded_tuple_buffer%54#0: bytes = (concat val_as_bytes%0#0 0x01c6)
+        let encoded_tuple_buffer%55#0: bytes = (concat encoded_tuple_buffer%54#0 elements_to_encode%2#0)
+        let encoded_tuple_buffer%56#0: bytes = (concat encoded_tuple_buffer%55#0 val_as_bytes%1#0)
+        let encoded_tuple_buffer%57#0: bytes = (concat encoded_tuple_buffer%56#0 encoded_tuple_buffer%12#0)
+        let encoded_tuple_buffer%58#0: bytes = (concat encoded_tuple_buffer%57#0 encoded_tuple_buffer%16#0)
+        let encoded_tuple_buffer%59#0: bytes = (concat encoded_tuple_buffer%58#0 encoded_tuple_buffer%21#0)
+        let encoded_tuple_buffer%60#0: bytes = (concat encoded_tuple_buffer%59#0 encoded_tuple_buffer%25#0)
+        let encoded_tuple_buffer%61#0: bytes = (concat encoded_tuple_buffer%60#0 encoded_tuple_buffer%29#0)
+        let encoded_tuple_buffer%62#0: bytes = (concat encoded_tuple_buffer%61#0 encoded_tuple_buffer%45#0)
+        let encoded_tuple_buffer%63#0: bytes = (concat encoded_tuple_buffer%62#0 val_as_bytes%42#0)
+        let encoded_tuple_buffer%64#0: bytes = (concat encoded_tuple_buffer%63#0 val_as_bytes%43#0)
+        let encoded_tuple_buffer%65#0: bytes = (concat encoded_tuple_buffer%64#0 encoded_tuple_buffer%48#0)
+        let encoded_tuple_buffer%66#0: bytes = (concat encoded_tuple_buffer%65#0 encoded_tuple_buffer%51#0)
+        let encoded_tuple_buffer%67#0: bytes = (concat encoded_tuple_buffer%66#0 elements_to_encode%50#0)
+        let encoded_tuple_buffer%68#0: bytes = (concat encoded_tuple_buffer%67#0 encoded_value%0#0)
+        let tmp%75#0: bytes = (concat 0x151f7c75 encoded_tuple_buffer%68#0)
+        (log tmp%75#0)
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#11: bool = 1u
+        goto block@19
+    block@18: // after_if_else_L119
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#12: bool = 0u
+        goto block@19
+    block@19: // after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router___L1
+        let tmp%0#0: bool = φ(smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#0 <- block@3, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#1 <- block@4, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#2 <- block@5, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#3 <- block@6, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#4 <- block@7, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#5 <- block@8, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#6 <- block@9, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#7 <- block@10, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#8 <- block@11, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#9 <- block@12, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#10 <- block@13, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#11 <- block@14, smart_contracts/dao/contract.algo.ts::AkitaDAO.__puya_arc4_router__%0#12 <- block@18)
+        return tmp%0#0
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCallAllowed(application: uint64, allowedCaller: bytes[32], method: bytes[4]) -> bool:
+    block@0: // L202
+        let val_as_bytes%0#0: bytes[8] = (itob application#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%0#0 allowedCaller#0)
+        let box_prefixed_key%0#0: bytes = (concat "p" encoded_tuple_buffer%2#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        goto maybe_exists%0#0 ? block@2 : block@1
+    block@1: // if_body_L205
+        return 0u
+    block@2: // after_if_else_L205
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 352u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let tmp%0#0: bool = (getbit encoded_bool%0#0 0u)
+        goto tmp%0#0 ? block@4 : block@3
+    block@3: // if_body_L209
+        return 0u
+    block@4: // after_if_else_L209
+        let (maybe_value%1#0: bytes, maybe_exists%2#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%2#0) // Box must have value
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%1#0 25u)
+        let item_end_offset%0#0: uint64 = (len maybe_value%1#0)
+        let methods#0: bytes = (substring3 maybe_value%1#0 item_start_offset%0#0 item_end_offset%0#0)
+        let tmp%2#0: uint64 = (extract_uint16 methods#0 0u)
+        let methodAllowed#0: bool = (! tmp%2#0)
+        let i#0: uint64 = 0u
+        goto block@5
+    block@5: // while_top_L215
+        let i#1: uint64 = φ(i#0 <- block@4, i#2 <- block@8)
+        let tmp%5#0: bool = (< i#1 tmp%2#0)
+        goto tmp%5#0 ? block@6 : block@9
+    block@6: // while_body_L215
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) methods#0)
+        let item_offset%0#0: uint64 = (* i#1 20u)
+        let tmp%6#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 20u) // on error: Index access is out of bounds
+        let tmp%7#0: bytes = ((extract 0 4) tmp%6#0) // on error: Index access is out of bounds
+        let tmp%8#0: bool = (== tmp%7#0 method#0)
+        goto tmp%8#0 ? block@7 : block@8
+    block@7: // if_body_L216
+        let methodAllowed#1: bool = 1u
+        goto block@10
+    block@8: // after_if_else_L216
+        let i#2: uint64 = (+ i#1 1u)
+        goto block@5
+    block@9: // after_while_L215
+        goto block@10
+    block@10: // L215
+        let methodAllowed#4: bool = φ(methodAllowed#1 <- block@7, methodAllowed#0 <- block@9)
+        let (maybe_value%2#0: bytes, maybe_exists%3#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%3#0) // Box must have value
+        let is_true%1#0: uint64 = (getbit maybe_value%2#0 0u)
+        let p.cooldown#0: uint64 = (extract_uint64 maybe_value%2#0 18u)
+        let is_true%2#0: uint64 = (getbit maybe_value%2#0 224u)
+        let is_true%3#0: uint64 = (getbit maybe_value%2#0 225u)
+        let encoded_bool%3#0: bytes[1] = (setbit 0x00 0u is_true%3#0)
+        let p.useRounds#0: bool = (getbit encoded_bool%3#0 0u)
+        let p.lastCalled#0: uint64 = (extract_uint64 maybe_value%2#0 29u)
+        goto p.useRounds#0 ? block@11 : block@12
+    block@11: // ternary_true_L223
+        let ternary_result%0#0: uint64 = (global Round)
+        goto block@13
+    block@12: // ternary_false_L223
+        let ternary_result%0#1: uint64 = (global LatestTimestamp)
+        goto block@13
+    block@13: // ternary_merge_L223
+        let epochRef#0: uint64 = φ(ternary_result%0#0 <- block@11, ternary_result%0#1 <- block@12)
+        let tmp%9#0: bool = (>= p.lastCalled#0 epochRef#0)
+        goto tmp%9#0 ? block@14 : block@16
+    block@14: // and_contd_L226
+        let tmp%10#0: uint64 = (- epochRef#0 p.lastCalled#0)
+        let tmp%11#0: bool = (>= tmp%10#0 p.cooldown#0)
+        goto tmp%11#0 ? block@15 : block@16
+    block@15: // bool_true_L226
+        let and_result%0#0: bool = 1u
+        goto block@17
+    block@16: // bool_false_L226
+        let and_result%0#1: bool = 0u
+        goto block@17
+    block@17: // bool_merge_L226
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@15, and_result%0#1 <- block@16)
+        let tmp%12#0: bool = (&& and_result%0#2 methodAllowed#4)
+        return tmp%12#0
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCheck(key.application: uint64, key.allowedCaller: bytes[32]) -> <bool, bool, bool, bool, bool, bool>:
+    block@0: // L250
+        let val_as_bytes%0#0: bytes[8] = (itob key.application#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%0#0 key.allowedCaller#0)
+        let box_prefixed_key%0#0: bytes = (concat "p" encoded_tuple_buffer%2#0)
+        let (_%0#0: uint64, exists#0: bool) = (box_len box_prefixed_key%0#0)
+        goto exists#0 ? block@2 : block@1
+    block@1: // if_body_L253
+        return 0u 1u 1u 1u 0u 0u
+    block@2: // after_if_else_L253
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 0u)
+        let pluginInfo.lastValid#0: uint64 = (extract_uint64 maybe_value%0#0 10u)
+        let pluginInfo.cooldown#0: uint64 = (extract_uint64 maybe_value%0#0 18u)
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 26u)
+        let item_end_offset%0#0: uint64 = (len maybe_value%0#0)
+        let pluginInfo.methods#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let is_true%1#0: uint64 = (getbit maybe_value%0#0 224u)
+        let is_true%2#0: uint64 = (getbit maybe_value%0#0 225u)
+        let encoded_bool%2#0: bytes[1] = (setbit 0x00 0u is_true%2#0)
+        let pluginInfo.useRounds#0: bool = (getbit encoded_bool%2#0 0u)
+        let pluginInfo.lastCalled#0: uint64 = (extract_uint64 maybe_value%0#0 29u)
+        goto pluginInfo.useRounds#0 ? block@3 : block@4
+    block@3: // ternary_true_L265
+        let ternary_result%0#0: uint64 = (global Round)
+        goto block@5
+    block@4: // ternary_false_L265
+        let ternary_result%0#1: uint64 = (global LatestTimestamp)
+        goto block@5
+    block@5: // ternary_merge_L265
+        let epochRef#0: uint64 = φ(ternary_result%0#0 <- block@3, ternary_result%0#1 <- block@4)
+        let expired#0: bool = (> epochRef#0 pluginInfo.lastValid#0)
+        let hasCooldown#0: bool = (> pluginInfo.cooldown#0 0u)
+        let tmp%0#0: uint64 = (- epochRef#0 pluginInfo.lastCalled#0)
+        let onCooldown#0: bool = (< tmp%0#0 pluginInfo.cooldown#0)
+        let tmp%1#0: uint64 = (extract_uint16 pluginInfo.methods#0 0u)
+        let hasMethodRestrictions#0: bool = (> tmp%1#0 0u)
+        goto exists#0 ? block@6 : block@9
+    block@6: // and_contd_L272
+        goto expired#0 ? block@9 : block@7
+    block@7: // and_contd_L272
+        goto onCooldown#0 ? block@9 : block@8
+    block@8: // bool_true_L272
+        let and_result%0#0: bool = 1u
+        goto block@10
+    block@9: // bool_false_L272
+        let and_result%0#1: bool = 0u
+        goto block@10
+    block@10: // bool_merge_L272
+        let valid#0: bool = φ(and_result%0#0 <- block@8, and_result%0#1 <- block@9)
+        return exists#0 expired#0 hasCooldown#0 onCooldown#0 hasMethodRestrictions#0 valid#0
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.create(spendingAccountFactoryApp: uint64) -> void:
+    block@0: // L1042
+        (app_global_put "version" "")
+        (app_global_put "spending_account_factory_app" spendingAccountFactoryApp#0)
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.update(proposalID: uint64) -> void:
+    block@0: // L1048
+        let encoded_value%0#0: bytes[8] = (itob proposalID#0)
+        let box_prefixed_key%0#0: bytes = (concat "l" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Proposal does not exist
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let status#0: bytes[1] = ((extract 0 1) maybe_value%0#0) // on error: Index access is out of bounds
+        let action#0: bytes[1] = ((extract 1 1) maybe_value%0#0) // on error: Index access is out of bounds
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 86u)
+        let item_end_offset%0#0: uint64 = (len maybe_value%0#0)
+        let item6%0#0: bytes = (substring3 maybe_value%0#0 item_start_offset%0#0 item_end_offset%0#0)
+        let tmp%0#0: bool = (== status#0 0x28)
+        (assert tmp%0#0) // Proposal is not approved
+        let tmp%1#0: bool = (== action#0 0x00)
+        (assert tmp%1#0) // Proposal is not an upgrade app
+        let app#0: uint64 = (extract_uint64 item6%0#0 2u)
+        let executionKey#0: bytes[32] = ((extract 10 32) item6%0#0)
+        let tmp%2#0: uint64 = (global CurrentApplicationID)
+        let tmp%3#0: bool = (== app#0 tmp%2#0)
+        (assert tmp%3#0) // Proposal is not an upgrade app
+        let tmp%4#0: bytes[32] = (global GroupID)
+        let tmp%5#0: bool = (== tmp%4#0 executionKey#0)
+        (assert tmp%5#0) // Execution key mismatch
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.init(version: bytes, akta: uint64, contentPolicy: bytes[36], minimumRewardsImpact: uint64, fees.postFee: uint64, fees.reactFee: uint64, fees.impactTaxMin: uint64, fees.impactTaxMax: uint64, fees.poolCreationFee: uint64, fees.poolImpactTaxMin: uint64, fees.poolImpactTaxMax: uint64, fees.subscriptionServiceCreationFee: uint64, fees.subscriptionPaymentPercentage: uint64, fees.subscriptionTriggerPercentage: uint64, fees.marketplaceSalePercentageMin: uint64, fees.marketplaceSalePercentageMax: uint64, fees.marketplaceComposablePercentage: uint64, fees.marketplaceRoyaltyDefaultPercentage: uint64, fees.shuffleSalePercentage: uint64, fees.omnigemSaleFee: uint64, fees.auctionCreationFee: uint64, fees.auctionSaleImpactTaxMin: uint64, fees.auctionSaleImpactTaxMax: uint64, fees.auctionComposablePercentage: uint64, fees.auctionRafflePercentage: uint64, fees.raffleCreationFee: uint64, fees.raffleSaleImpactTaxMin: uint64, fees.raffleSaleImpactTaxMax: uint64, fees.raffleComposablePercentage: uint64, fees.swapFeeImpactTaxMin: uint64, fees.swapFeeImpactTaxMax: uint64, fees.swapComposablePercentage: uint64, fees.swapLiquidityPercentage: uint64, fees.krbyPercentage: uint64, fees.moderatorPercentage: uint64, proposalSettings.minimumProposalThreshold: uint64, proposalSettings.minimumVoteThreshold: uint64, revocationAddress: bytes[32]) -> void:
+    block@0: // L1060
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (app_global_get_ex 0u "version")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let tmp%0#0: bool = (== maybe_value%0#0 "")
+        (assert tmp%0#0) // Already initialized
+        let tmp%1#0: bool = (!= version#0 "")
+        (assert tmp%1#0) // Version cannot be empty
+        itxn_begin
+        let inner_txn_params%0%%param_ConfigAssetManager_idx_0#0: bytes[32] = (global CurrentApplicationAddress)
+        let inner_txn_params%0%%param_ConfigAssetReserve_idx_0#0: bytes[32] = (global CurrentApplicationAddress)
+        let inner_txn_params%0%%param_ConfigAssetFreeze_idx_0#0: bytes[32] = (global ZeroAddress)
+        let inner_txn_params%0%%param_ConfigAssetClawback_idx_0#0: bytes[32] = (global ZeroAddress)
+        ((itxn_field ConfigAssetURL) "")
+        ((itxn_field ConfigAssetDefaultFrozen) 0u)
+        ((itxn_field ConfigAssetClawback) inner_txn_params%0%%param_ConfigAssetClawback_idx_0#0)
+        ((itxn_field ConfigAssetFreeze) inner_txn_params%0%%param_ConfigAssetFreeze_idx_0#0)
+        ((itxn_field ConfigAssetReserve) inner_txn_params%0%%param_ConfigAssetReserve_idx_0#0)
+        ((itxn_field ConfigAssetManager) inner_txn_params%0%%param_ConfigAssetManager_idx_0#0)
+        ((itxn_field ConfigAssetDecimals) 2u)
+        ((itxn_field ConfigAssetTotal) 100000000000000u)
+        ((itxn_field ConfigAssetUnitName) "BONES")
+        ((itxn_field ConfigAssetName) "Bones")
+        ((itxn_field TypeEnum) 3u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let bonesCreateTxn.CreatedAssetID#0: uint64 = (itxn CreatedAssetID)
+        (app_global_put "status" 0u)
+        (app_global_put "version" version#0)
+        (app_global_put "content_policy" contentPolicy#0)
+        (app_global_put "minimum_rewards_impact" minimumRewardsImpact#0)
+        let val_as_bytes%0#0: bytes[8] = (itob fees.postFee#0)
+        let val_as_bytes%1#0: bytes[8] = (itob fees.reactFee#0)
+        let val_as_bytes%2#0: bytes[8] = (itob fees.impactTaxMin#0)
+        let val_as_bytes%3#0: bytes[8] = (itob fees.impactTaxMax#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%0#0 val_as_bytes%1#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 val_as_bytes%2#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 val_as_bytes%3#0)
+        (app_global_put "social_fees" encoded_tuple_buffer%4#0)
+        let val_as_bytes%4#0: bytes[8] = (itob fees.poolCreationFee#0)
+        let val_as_bytes%5#0: bytes[8] = (itob fees.poolImpactTaxMin#0)
+        let val_as_bytes%6#0: bytes[8] = (itob fees.poolImpactTaxMax#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat val_as_bytes%4#0 val_as_bytes%5#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 val_as_bytes%6#0)
+        (app_global_put "staking_fees" encoded_tuple_buffer%8#0)
+        let val_as_bytes%7#0: bytes[8] = (itob fees.subscriptionServiceCreationFee#0)
+        let val_as_bytes%8#0: bytes[8] = (itob fees.subscriptionPaymentPercentage#0)
+        let val_as_bytes%9#0: bytes[8] = (itob fees.subscriptionTriggerPercentage#0)
+        let encoded_tuple_buffer%11#0: bytes = (concat val_as_bytes%7#0 val_as_bytes%8#0)
+        let encoded_tuple_buffer%12#0: bytes = (concat encoded_tuple_buffer%11#0 val_as_bytes%9#0)
+        (app_global_put "subscription_fees" encoded_tuple_buffer%12#0)
+        let val_as_bytes%10#0: bytes[8] = (itob fees.marketplaceSalePercentageMin#0)
+        let val_as_bytes%11#0: bytes[8] = (itob fees.marketplaceSalePercentageMax#0)
+        let val_as_bytes%12#0: bytes[8] = (itob fees.marketplaceComposablePercentage#0)
+        let val_as_bytes%13#0: bytes[8] = (itob fees.marketplaceRoyaltyDefaultPercentage#0)
+        let val_as_bytes%14#0: bytes[8] = (itob fees.shuffleSalePercentage#0)
+        let val_as_bytes%15#0: bytes[8] = (itob fees.omnigemSaleFee#0)
+        let val_as_bytes%16#0: bytes[8] = (itob fees.auctionCreationFee#0)
+        let val_as_bytes%17#0: bytes[8] = (itob fees.auctionSaleImpactTaxMin#0)
+        let val_as_bytes%18#0: bytes[8] = (itob fees.auctionSaleImpactTaxMax#0)
+        let val_as_bytes%19#0: bytes[8] = (itob fees.auctionComposablePercentage#0)
+        let val_as_bytes%20#0: bytes[8] = (itob fees.auctionRafflePercentage#0)
+        let val_as_bytes%21#0: bytes[8] = (itob fees.raffleCreationFee#0)
+        let val_as_bytes%22#0: bytes[8] = (itob fees.raffleSaleImpactTaxMin#0)
+        let val_as_bytes%23#0: bytes[8] = (itob fees.raffleSaleImpactTaxMax#0)
+        let val_as_bytes%24#0: bytes[8] = (itob fees.raffleComposablePercentage#0)
+        let encoded_tuple_buffer%15#0: bytes = (concat val_as_bytes%10#0 val_as_bytes%11#0)
+        let encoded_tuple_buffer%16#0: bytes = (concat encoded_tuple_buffer%15#0 val_as_bytes%12#0)
+        let encoded_tuple_buffer%17#0: bytes = (concat encoded_tuple_buffer%16#0 val_as_bytes%13#0)
+        let encoded_tuple_buffer%18#0: bytes = (concat encoded_tuple_buffer%17#0 val_as_bytes%14#0)
+        let encoded_tuple_buffer%19#0: bytes = (concat encoded_tuple_buffer%18#0 val_as_bytes%15#0)
+        let encoded_tuple_buffer%20#0: bytes = (concat encoded_tuple_buffer%19#0 val_as_bytes%16#0)
+        let encoded_tuple_buffer%21#0: bytes = (concat encoded_tuple_buffer%20#0 val_as_bytes%17#0)
+        let encoded_tuple_buffer%22#0: bytes = (concat encoded_tuple_buffer%21#0 val_as_bytes%18#0)
+        let encoded_tuple_buffer%23#0: bytes = (concat encoded_tuple_buffer%22#0 val_as_bytes%19#0)
+        let encoded_tuple_buffer%24#0: bytes = (concat encoded_tuple_buffer%23#0 val_as_bytes%20#0)
+        let encoded_tuple_buffer%25#0: bytes = (concat encoded_tuple_buffer%24#0 val_as_bytes%21#0)
+        let encoded_tuple_buffer%26#0: bytes = (concat encoded_tuple_buffer%25#0 val_as_bytes%22#0)
+        let encoded_tuple_buffer%27#0: bytes = (concat encoded_tuple_buffer%26#0 val_as_bytes%23#0)
+        let encoded_tuple_buffer%28#0: bytes = (concat encoded_tuple_buffer%27#0 val_as_bytes%24#0)
+        (app_global_put "nft_fees" encoded_tuple_buffer%28#0)
+        let val_as_bytes%25#0: bytes[8] = (itob fees.swapFeeImpactTaxMin#0)
+        let val_as_bytes%26#0: bytes[8] = (itob fees.swapFeeImpactTaxMax#0)
+        let encoded_tuple_buffer%31#0: bytes = (concat val_as_bytes%25#0 val_as_bytes%26#0)
+        (app_global_put "swap_fees" encoded_tuple_buffer%31#0)
+        (app_global_put "krby_percentage" fees.krbyPercentage#0)
+        (app_global_put "mod_percentage" fees.moderatorPercentage#0)
+        let val_as_bytes%27#0: bytes[8] = (itob proposalSettings.minimumProposalThreshold#0)
+        let val_as_bytes%28#0: bytes[8] = (itob proposalSettings.minimumVoteThreshold#0)
+        let encoded_tuple_buffer%34#0: bytes = (concat val_as_bytes%27#0 val_as_bytes%28#0)
+        (app_global_put "proposal_settings" encoded_tuple_buffer%34#0)
+        let val_as_bytes%29#0: bytes[8] = (itob akta#0)
+        let val_as_bytes%30#0: bytes[8] = (itob bonesCreateTxn.CreatedAssetID#0)
+        let encoded_tuple_buffer%37#0: bytes = (concat val_as_bytes%29#0 val_as_bytes%30#0)
+        (app_global_put "akita_assets" encoded_tuple_buffer%37#0)
+        (app_global_put "revocation_address" revocationAddress#0)
+        (app_global_put "proposal_id" 0u)
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_verifyAuthAddr() -> void:
+    block@0: // L1155
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (app_global_get_ex 0u "spending_address")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (value%0#0: bytes[32], check%0#0: bool) = ((acct_params_get AcctAuthAddr) maybe_value%0#0)
+        (assert check%0#0) // account funded
+        let (maybe_value%1#0: bytes, maybe_exists%1#0: bool) = (app_global_get_ex 0u "controlled_address")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let tmp%0#1: bool = (== maybe_value%0#0 maybe_value%1#0)
+        goto tmp%0#1 ? block@2 : block@6
+    block@2: // ternary_true_L543
+        let (maybe_value%2#0: bytes, maybe_exists%2#0: bool) = (app_global_get_ex 0u "controlled_address")
+        (assert maybe_exists%2#0) // check GlobalState exists
+        let tmp%1#1: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== maybe_value%2#0 tmp%1#1)
+        goto tmp%2#0 ? block@3 : block@4
+    block@3: // ternary_true_L544
+        let ternary_result%1#0: bytes[32] = (global ZeroAddress)
+        goto block@5
+    block@4: // ternary_false_L544
+        let ternary_result%1#1: bytes[32] = (global CurrentApplicationAddress)
+        goto block@5
+    block@5: // ternary_merge_L544
+        let ternary_result%1#2: bytes[32] = φ(ternary_result%1#0 <- block@3, ternary_result%1#1 <- block@4)
+        goto block@7
+    block@6: // ternary_false_L543
+        let ternary_result%0#1: bytes[32] = (global ZeroAddress)
+        goto block@7
+    block@7: // ternary_merge_L543
+        let ternary_result%0#2: bytes[32] = φ(ternary_result%1#2 <- block@5, ternary_result%0#1 <- block@6)
+        let tmp%1#0: bool = (== value%0#0 ternary_result%0#2)
+        (assert tmp%1#0)
+        let materialized_values%0#0: bytes[32] = (global ZeroAddress)
+        (app_global_put "spending_address" materialized_values%0#0)
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_canCall(plugin: uint64, global: bool, address: bytes[32], method: bytes[4]) -> bool:
+    block@0: // L1168
+        goto global#0 ? block@1 : block@2
+    block@1: // if_body_L1175
+        let tmp%0#0: bytes[32] = (global ZeroAddress)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCallAllowed(plugin#0, tmp%0#0, method#0)
+        goto block@2
+    block@2: // after_if_else_L1175
+        let tmp%1#0: bool = smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCallAllowed(plugin#0, address#0, method#0)
+        return tmp%1#0
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToPlugin(plugin: uint64, global: bool, methodOffsets: encoded_uint64[], fundsRequest: (encoded_uint64,encoded_uint64)[]) -> void:
+    block@0: // L1190
+        goto global#0 ? block@1 : block@2
+    block@1: // ternary_true_L1200
+        let ternary_result%0#0: bytes[32] = (global ZeroAddress)
+        goto block@3
+    block@2: // ternary_false_L1200
+        let ternary_result%0#1: bytes[32] = (txn Sender)
+        goto block@3
+    block@3: // ternary_merge_L1200
+        let key.allowedCaller#0: bytes[32] = φ(ternary_result%0#0 <- block@1, ternary_result%0#1 <- block@2)
+        let val_as_bytes%0#0: bytes[8] = (itob plugin#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat val_as_bytes%0#0 key.allowedCaller#0)
+        let box_prefixed_key%0#0: bytes = (concat "p" encoded_tuple_buffer%2#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Plugin does not exist
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 352u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let tmp%0#0: bool = (getbit encoded_bool%0#0 0u)
+        let tmp%1#0: bool = (! tmp%0#0)
+        (assert tmp%1#0) // Wrong method for execution key locked plugin
+        let is_true%0#2: uint64 = (getbit maybe_value%0#0 217u)
+        let encoded_bool%0#2: bytes[1] = (setbit 0x00 0u is_true%0#2)
+        let tmp%0#3: bool = (getbit encoded_bool%0#2 0u)
+        goto tmp%0#3 ? block@33 : block@34
+    block@33: // ternary_true_L328
+        let ternary_result%0#5: uint64 = (global Round)
+        goto block@35
+    block@34: // ternary_false_L328
+        let ternary_result%0#6: uint64 = (global LatestTimestamp)
+        goto block@35
+    block@35: // ternary_merge_L328
+        let epochRef#1: uint64 = φ(ternary_result%0#5 <- block@33, ternary_result%0#6 <- block@34)
+        let (initialCheck.exists#0: bool, initialCheck.expired#0: bool, initialCheck.hasCooldown#0: bool, initialCheck.onCooldown#0: bool, initialCheck.hasMethodRestrictions#0: bool, initialCheck.valid#0: bool) = smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCheck(plugin#0, key.allowedCaller#0)
+        (assert initialCheck.exists#0) // Plugin does not exist
+        let tmp%1#3: bool = (! initialCheck.expired#0)
+        (assert tmp%1#3) // Plugin has expired
+        let tmp%2#3: bool = (! initialCheck.onCooldown#0)
+        (assert tmp%2#3) // Plugin is on cooldown
+        let rekeysBack#0: bool = 0u
+        let methodIndex#0: uint64 = 0u
+        let tmp%3#2: uint64 = (txn GroupIndex)
+        let i#4: uint64 = (+ tmp%3#2 1u)
+        goto block@36
+    block@36: // while_top_L341
+        let i#5: uint64 = φ(i#4 <- block@35, i#7 <- block@77)
+        let methodIndex#1: uint64 = φ(methodIndex#0 <- block@35, methodIndex#4 <- block@77)
+        let tmp%4#2: uint64 = (global GroupSize)
+        let tmp%5#2: bool = (< i#5 tmp%4#2)
+        goto tmp%5#2 ? block@37 : block@78
+    block@37: // while_body_L341
+        let tmp%0#4: bytes[32] = ((gtxns Sender) i#5)
+        let (maybe_value%0#5: bytes, maybe_exists%0#5: bool) = (app_global_get_ex 0u "controlled_address")
+        (assert maybe_exists%0#5) // check GlobalState exists
+        let tmp%1#6: bool = (== tmp%0#4 maybe_value%0#5)
+        goto tmp%1#6 ? block@38 : block@40
+    block@38: // and_contd_L235
+        let tmp%2#6: bytes[32] = ((gtxns RekeyTo) i#5)
+        let tmp%3#3: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%4#3: bool = (== tmp%2#6 tmp%3#3)
+        goto tmp%4#3 ? block@39 : block@40
+    block@39: // if_body_L237
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.txnRekeysBack%0#0: bool = 1u
+        goto block@48
+    block@40: // after_if_else_L234
+        let tmp%5#3: uint64 = ((gtxns TypeEnum) i#5)
+        let tmp%6#2: bool = (== tmp%5#3 6u)
+        goto tmp%6#2 ? block@41 : block@46
+    block@41: // and_contd_L242
+        let tmp%7#3: uint64 = ((gtxns ApplicationID) i#5)
+        let tmp%8#3: uint64 = (global CurrentApplicationID)
+        let tmp%9#2: bool = (== tmp%7#3 tmp%8#3)
+        goto tmp%9#2 ? block@42 : block@46
+    block@42: // and_contd_L242
+        let tmp%10#3: uint64 = ((gtxns NumAppArgs) i#5)
+        let tmp%11#3: bool = (== tmp%10#3 1u)
+        goto tmp%11#3 ? block@43 : block@46
+    block@43: // and_contd_L242
+        let tmp%12#3: uint64 = ((gtxns OnCompletion) i#5)
+        goto tmp%12#3 ? block@46 : block@44
+    block@44: // and_contd_L242
+        let tmp%14#1: bytes = ((gtxnsas ApplicationArgs) i#5 0u)
+        let tmp%15#1: bool = (== tmp%14#1 method "arc58_verifyAuthAddr()void")
+        goto tmp%15#1 ? block@45 : block@46
+    block@45: // bool_true_L242
+        let and_result%0#3: bool = 1u
+        goto block@47
+    block@46: // bool_false_L242
+        let and_result%0#4: bool = 0u
+        goto block@47
+    block@47: // bool_merge_L242
+        let and_result%0#5: bool = φ(and_result%0#3 <- block@45, and_result%0#4 <- block@46)
+        goto block@48
+    block@48: // after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.txnRekeysBack_L341
+        let tmp%6#1: bool = φ(smart_contracts/dao/contract.algo.ts::AkitaDAO.txnRekeysBack%0#0 <- block@39, and_result%0#5 <- block@47)
+        goto tmp%6#1 ? block@49 : block@50
+    block@49: // if_body_L344
+        let rekeysBack#1: bool = 1u
+        goto block@79
+    block@50: // after_if_else_L344
+        let tmp%7#1: uint64 = ((gtxns TypeEnum) i#5)
+        let tmp%8#1: bool = (!= tmp%7#1 6u)
+        goto tmp%8#1 ? block@51 : block@52
+    block@51: // if_body_L349
+        goto block@77
+    block@52: // after_if_else_L349
+        let tmp%9#1: uint64 = ((gtxns ApplicationID) i#5)
+        let tmp%10#1: bool = (== tmp%9#1 plugin#0)
+        (assert tmp%10#1) // cannot call other apps during rekey
+        let tmp%11#1: uint64 = ((gtxns OnCompletion) i#5)
+        let tmp%12#1: bool = (! tmp%11#1)
+        (assert tmp%12#1) // invalid oncomplete must be no op
+        let tmp%13#1: uint64 = ((gtxns NumAppArgs) i#5)
+        let tmp%14#0: bool = (> tmp%13#1 1u)
+        (assert tmp%14#0) // invalid sender must be this app id
+        let tmp%15#0: bytes = ((gtxnsas ApplicationArgs) i#5 1u)
+        let tmp%16#0: uint64 = (btoi tmp%15#0)
+        let tmp%17#0: uint64 = (global CurrentApplicationID)
+        let tmp%18#0: bool = (== tmp%16#0 tmp%17#0)
+        (assert tmp%18#0) // invalid sender app id
+        let (check.exists#1: bool, check.expired#1: bool, check.hasCooldown#1: bool, check.onCooldown#1: bool, check.hasMethodRestrictions#1: bool, check.valid#1: bool) = smart_contracts/dao/contract.algo.ts::AkitaDAO.pluginCheck(plugin#0, key.allowedCaller#0)
+        goto check.valid#1 ? block@54 : block@53
+    block@53: // if_body_L293
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.fullPluginCheck%7#0: bool = 1u
+        goto block@74
+    block@54: // after_if_else_L293
+        let mCheck.methodAllowed#0: bool = (! check.hasMethodRestrictions#1)
+        let mCheck.methodOnCooldown#0: bool = 0u
+        goto check.hasMethodRestrictions#1 ? block@55 : block@69
+    block@55: // if_body_L308
+        let tmp%1#4: uint64 = (extract_uint16 methodOffsets#0 0u)
+        let tmp%2#4: bool = (< methodIndex#1 tmp%1#4)
+        (assert tmp%2#4) // malformed method offsets
+        let array_head_and_tail%0#1: bytes = ((extract 2 0) methodOffsets#0)
+        let item_offset%0#1: uint64 = (* methodIndex#1 8u)
+        let offset#0: uint64 = (extract_uint64 array_head_and_tail%0#1 item_offset%0#1)
+        let selectorArg#0: bytes[4] = ((gtxnsas ApplicationArgs) i#5 0u)
+        let tmp%1#5: uint64 = (len selectorArg#0)
+        let tmp%2#5: bool = (== tmp%1#5 4u)
+        (assert tmp%2#5) // Invalid method signature length
+        let (maybe_value%0#4: bytes, maybe_exists%0#4: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#4) // Box must have value
+        let item_start_offset%0#2: uint64 = (extract_uint16 maybe_value%0#4 25u)
+        let item_end_offset%0#2: uint64 = (len maybe_value%0#4)
+        let methods#0: bytes = (substring3 maybe_value%0#4 item_start_offset%0#2 item_end_offset%0#2)
+        let array_head_and_tail%0#2: bytes = ((extract 2 0) methods#0)
+        let item_offset%0#2: uint64 = (* offset#0 20u)
+        let allowedMethod#0: bytes[20] = (extract3 array_head_and_tail%0#2 item_offset%0#2 20u) // on error: Index access is out of bounds
+        let tmp%8#2: uint64 = (extract_uint64 allowedMethod#0 4u)
+        let hasCooldown#0: bool = (> tmp%8#2 0u)
+        let is_true%0#3: uint64 = (getbit maybe_value%0#4 217u)
+        let encoded_bool%0#3: bytes[1] = (setbit 0x00 0u is_true%0#3)
+        let useRounds#0: bool = (getbit encoded_bool%0#3 0u)
+        goto useRounds#0 ? block@56 : block@57
+    block@56: // ternary_true_L398
+        let ternary_result%0#8: uint64 = (global Round)
+        goto block@58
+    block@57: // ternary_false_L398
+        let ternary_result%0#9: uint64 = (global LatestTimestamp)
+        goto block@58
+    block@58: // ternary_merge_L398
+        let epochRef#2: uint64 = φ(ternary_result%0#8 <- block@56, ternary_result%0#9 <- block@57)
+        let tmp%11#2: uint64 = (extract_uint64 allowedMethod#0 12u)
+        let tmp%12#2: uint64 = (- epochRef#2 tmp%11#2)
+        let onCooldown#0: bool = (< tmp%12#2 tmp%8#2)
+        let tmp%17#1: bytes = ((extract 0 4) allowedMethod#0) // on error: Index access is out of bounds
+        let tmp%18#1: bool = (== tmp%17#1 selectorArg#0)
+        goto tmp%18#1 ? block@59 : block@67
+    block@59: // and_contd_L401
+        goto tmp%8#2 ? block@60 : block@61
+    block@60: // or_contd_L401
+        goto onCooldown#0 ? block@67 : block@61
+    block@61: // if_body_L401
+        goto tmp%8#2 ? block@62 : block@66
+    block@62: // if_body_L403
+        goto useRounds#0 ? block@63 : block@64
+    block@63: // ternary_true_L404
+        let ternary_result%1#2: uint64 = (global Round)
+        goto block@65
+    block@64: // ternary_false_L404
+        let ternary_result%1#3: uint64 = (global LatestTimestamp)
+        goto block@65
+    block@65: // ternary_merge_L404
+        let lastCalled#0: uint64 = φ(ternary_result%1#2 <- block@63, ternary_result%1#3 <- block@64)
+        let val_as_bytes%2#2: bytes[8] = (itob lastCalled#0)
+        let updated_data%0#0: bytes = ((replace2 12) allowedMethod#0 val_as_bytes%2#2)
+        let array_length%0#0: uint64 = (extract_uint16 methods#0 0u)
+        let index_is_in_bounds%0#0: bool = (< offset#0 array_length%0#0)
+        (assert index_is_in_bounds%0#0) // Index access is out of bounds
+        let write_offset%0#1: uint64 = (+ item_offset%0#2 2u)
+        let methods#4: bytes = (replace3 methods#0 write_offset%0#1 updated_data%0#0)
+        let (maybe_value%2#4: bytes, maybe_exists%2#4: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%2#4) // Box must have value
+        let tmp%20#1: bytes = ((extract 0 1) maybe_value%2#4) // on error: Index access is out of bounds
+        let tmp%21#1: bytes = ((extract 1 8) maybe_value%2#4) // on error: Index access is out of bounds
+        let tmp%22#1: bytes = ((extract 9 8) maybe_value%2#4) // on error: Index access is out of bounds
+        let tmp%23#1: bytes = ((extract 17 8) maybe_value%2#4) // on error: Index access is out of bounds
+        let is_true%1#2: uint64 = (getbit maybe_value%2#4 216u)
+        let encoded_bool%1#2: bytes[1] = (setbit 0x00 0u is_true%1#2)
+        let is_true%2#2: uint64 = (getbit maybe_value%2#4 217u)
+        let encoded_bool%2#2: bytes[1] = (setbit 0x00 0u is_true%2#2)
+        let tmp%24#1: bytes = ((extract 28 8) maybe_value%2#4) // on error: Index access is out of bounds
+        let tmp%25#1: bytes = ((extract 36 8) maybe_value%2#4) // on error: Index access is out of bounds
+        let is_true%3#1: uint64 = (getbit maybe_value%2#4 352u)
+        let encoded_bool%3#1: bytes[1] = (setbit 0x00 0u is_true%3#1)
+        let encoded_tuple_buffer%35#2: bytes = (concat tmp%20#1 tmp%21#1)
+        let encoded_tuple_buffer%36#2: bytes = (concat encoded_tuple_buffer%35#2 tmp%22#1)
+        let encoded_tuple_buffer%37#2: bytes = (concat encoded_tuple_buffer%36#2 tmp%23#1)
+        let encoded_tuple_buffer%38#2: bytes = (concat encoded_tuple_buffer%37#2 0x002d)
+        let encoded_tuple_buffer%39#1: bytes = (concat encoded_tuple_buffer%38#2 encoded_bool%1#2)
+        let is_true%4#1: uint64 = (getbit encoded_bool%2#2 0u)
+        let encoded_tuple_buffer%40#1: bytes = (setbit encoded_tuple_buffer%39#1 217u is_true%4#1)
+        let encoded_tuple_buffer%41#1: bytes = (concat encoded_tuple_buffer%40#1 tmp%24#1)
+        let encoded_tuple_buffer%42#1: bytes = (concat encoded_tuple_buffer%41#1 tmp%25#1)
+        let encoded_tuple_buffer%43#1: bytes = (concat encoded_tuple_buffer%42#1 encoded_bool%3#1)
+        let encoded_tuple_buffer%44#1: bytes = (concat encoded_tuple_buffer%43#1 methods#4)
+        (box_del box_prefixed_key%0#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%44#1)
+        goto block@66
+    block@66: // after_if_else_L403
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck%0#0: bool = 1u
+        goto block@68
+    block@67: // after_if_else_L401
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck%0#1: bool = 0u
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck%1#1: bool = 1u
+        let smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck%2#1: bool = 1u
+        goto block@68
+    block@68: // after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck_L308
+        let mCheck.methodAllowed#1: bool = φ(smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck%0#0 <- block@66, smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck%0#1 <- block@67)
+        let mCheck.methodOnCooldown#1: bool = φ(onCooldown#0 <- block@66, smart_contracts/dao/contract.algo.ts::AkitaDAO.methodCheck%2#1 <- block@67)
+        goto block@69
+    block@69: // after_if_else_L308
+        let mCheck.methodAllowed#2: bool = φ(mCheck.methodAllowed#0 <- block@54, mCheck.methodAllowed#1 <- block@68)
+        let mCheck.methodOnCooldown#2: bool = φ(mCheck.methodOnCooldown#0 <- block@54, mCheck.methodOnCooldown#1 <- block@68)
+        goto check.valid#1 ? block@70 : block@72
+    block@70: // and_contd_L316
+        goto mCheck.methodAllowed#2 ? block@71 : block@72
+    block@71: // bool_true_L316
+        let and_result%0#0: bool = 1u
+        goto block@73
+    block@72: // bool_false_L316
+        let and_result%0#1: bool = 0u
+        goto block@73
+    block@73: // bool_merge_L316
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@71, and_result%0#1 <- block@72)
+        goto block@74
+    block@74: // after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.fullPluginCheck_L349
+        let check.methodOnCooldown#0: bool = φ(smart_contracts/dao/contract.algo.ts::AkitaDAO.fullPluginCheck%7#0 <- block@53, mCheck.methodOnCooldown#2 <- block@73)
+        let check.valid#0: bool = φ(check.valid#1 <- block@53, and_result%0#2 <- block@73)
+        let tmp%19#0: bool = (! check.methodOnCooldown#0)
+        (assert tmp%19#0) // method on cooldown
+        (assert check.valid#0) // invalid plugin call
+        goto initialCheck.hasCooldown#0 ? block@75 : block@76
+    block@75: // if_body_L365
+        let val_as_bytes%1#2: bytes[8] = (itob epochRef#1)
+        let (maybe_value%1#3: bytes, maybe_exists%1#3: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#3) // Box must have value
+        let tmp%20#0: bytes = ((extract 0 1) maybe_value%1#3) // on error: Index access is out of bounds
+        let tmp%21#0: bytes = ((extract 1 8) maybe_value%1#3) // on error: Index access is out of bounds
+        let tmp%22#0: bytes = ((extract 9 8) maybe_value%1#3) // on error: Index access is out of bounds
+        let tmp%23#0: bytes = ((extract 17 8) maybe_value%1#3) // on error: Index access is out of bounds
+        let item_start_offset%0#1: uint64 = (extract_uint16 maybe_value%1#3 25u)
+        let item_end_offset%0#1: uint64 = (len maybe_value%1#3)
+        let tmp%24#0: bytes = (substring3 maybe_value%1#3 item_start_offset%0#1 item_end_offset%0#1)
+        let is_true%1#1: uint64 = (getbit maybe_value%1#3 216u)
+        let encoded_bool%1#1: bytes[1] = (setbit 0x00 0u is_true%1#1)
+        let is_true%2#1: uint64 = (getbit maybe_value%1#3 217u)
+        let encoded_bool%2#1: bytes[1] = (setbit 0x00 0u is_true%2#1)
+        let tmp%25#0: bytes = ((extract 36 8) maybe_value%1#3) // on error: Index access is out of bounds
+        let is_true%3#0: uint64 = (getbit maybe_value%1#3 352u)
+        let encoded_bool%3#0: bytes[1] = (setbit 0x00 0u is_true%3#0)
+        let encoded_tuple_buffer%32#0: bytes = (concat tmp%20#0 tmp%21#0)
+        let encoded_tuple_buffer%33#0: bytes = (concat encoded_tuple_buffer%32#0 tmp%22#0)
+        let encoded_tuple_buffer%34#1: bytes = (concat encoded_tuple_buffer%33#0 tmp%23#0)
+        let encoded_tuple_buffer%35#1: bytes = (concat encoded_tuple_buffer%34#1 0x002d)
+        let encoded_tuple_buffer%36#1: bytes = (concat encoded_tuple_buffer%35#1 encoded_bool%1#1)
+        let is_true%4#0: uint64 = (getbit encoded_bool%2#1 0u)
+        let encoded_tuple_buffer%37#1: bytes = (setbit encoded_tuple_buffer%36#1 217u is_true%4#0)
+        let encoded_tuple_buffer%38#1: bytes = (concat encoded_tuple_buffer%37#1 val_as_bytes%1#2)
+        let encoded_tuple_buffer%39#0: bytes = (concat encoded_tuple_buffer%38#1 tmp%25#0)
+        let encoded_tuple_buffer%40#0: bytes = (concat encoded_tuple_buffer%39#0 encoded_bool%3#0)
+        let encoded_tuple_buffer%41#0: bytes = (concat encoded_tuple_buffer%40#0 tmp%24#0)
+        (box_del box_prefixed_key%0#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%41#0)
+        goto block@76
+    block@76: // after_if_else_L365
+        let methodIndex#3: uint64 = (+ methodIndex#1 1u)
+        goto block@77
+    block@77: // L341
+        let methodIndex#4: uint64 = φ(methodIndex#1 <- block@51, methodIndex#3 <- block@76)
+        let i#7: uint64 = (+ i#5 1u)
+        goto block@36
+    block@78: // after_while_L341
+        goto block@79
+    block@79: // L341
+        let rekeysBack#2: bool = φ(rekeysBack#1 <- block@49, rekeysBack#0 <- block@78)
+        (assert rekeysBack#2) // missing rekey back
+        let (maybe_value%1#0: bytes, maybe_exists%2#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%2#0) // Box must have value
+        let tmp%3#0: uint64 = (extract_uint64 maybe_value%1#0 1u)
+        goto tmp%3#0 ? block@4 : block@6
+    block@4: // if_body_L1210
+        let (maybe_value%2#0: bytes, maybe_exists%3#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%3#0) // Box must have value
+        let spendingApp#0: uint64 = (extract_uint64 maybe_value%2#0 1u)
+        let (value%0#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) spendingApp#0)
+        (assert check%0#0) // application exists
+        (app_global_put "spending_address" value%0#0)
+        let i#0: uint64 = 0u
+        goto block@10
+    block@10: // while_top_L431
+        let i#1: uint64 = φ(i#0 <- block@4, i#3 <- block@29)
+        let tmp%0#1: uint64 = (extract_uint16 fundsRequest#0 0u)
+        let tmp%1#1: bool = (< i#1 tmp%0#1)
+        goto tmp%1#1 ? block@11 : block@30
+    block@11: // while_body_L431
+        let (maybe_value%0#1: bytes, maybe_exists%0#1: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#1) // Box must have value
+        let is_true%2#0: uint64 = (getbit maybe_value%0#1 225u)
+        let encoded_bool%2#0: bytes[1] = (setbit 0x00 0u is_true%2#0)
+        let pluginInfo.useRounds#0: bool = (getbit encoded_bool%2#0 0u)
+        let pluginInfo.start#0: uint64 = (extract_uint64 maybe_value%0#1 37u)
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) fundsRequest#0)
+        let item_offset%0#0: uint64 = (* i#1 16u)
+        let arc4_item%0#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 16u) // on error: Index access is out of bounds
+        let allowanceKey.asset#0: uint64 = (extract_uint64 arc4_item%0#0 0u)
+        let fundRequest.amount#0: uint64 = (extract_uint64 arc4_item%0#0 8u)
+        let val_as_bytes%1#1: bytes[8] = (itob allowanceKey.asset#0)
+        let encoded_tuple_buffer%3#1: bytes = (concat encoded_tuple_buffer%2#0 val_as_bytes%1#1)
+        let box_prefixed_key%0#2: bytes = (concat "a" encoded_tuple_buffer%3#1)
+        let (_%0#1: uint64, maybe_exists%0#2: bool) = (box_len box_prefixed_key%0#2)
+        (assert maybe_exists%0#2) // Allowance does not exist
+        let (maybe_value%0#2: bytes, maybe_exists%1#2: bool) = (box_get box_prefixed_key%0#2)
+        (assert maybe_exists%1#2) // Box must have value
+        let type#0: bytes[1] = ((extract 0 1) maybe_value%0#2) // on error: Index access is out of bounds
+        let max#0: uint64 = (extract_uint64 maybe_value%0#2 1u)
+        let allowed#0: uint64 = (extract_uint64 maybe_value%0#2 9u)
+        let spent#0: uint64 = (extract_uint64 maybe_value%0#2 17u)
+        let interval#0: uint64 = (extract_uint64 maybe_value%0#2 25u)
+        let last#0: uint64 = (extract_uint64 maybe_value%0#2 33u)
+        goto pluginInfo.useRounds#0 ? block@12 : block@13
+    block@12: // ternary_true_L479
+        let ternary_result%0#3: uint64 = (global Round)
+        goto block@14
+    block@13: // ternary_false_L479
+        let ternary_result%0#4: uint64 = (global LatestTimestamp)
+        goto block@14
+    block@14: // ternary_merge_L479
+        let newLast#0: uint64 = φ(ternary_result%0#3 <- block@12, ternary_result%0#4 <- block@13)
+        let tmp%0#2: bool = (== type#0 0x01)
+        goto tmp%0#2 ? block@15 : block@16
+    block@15: // if_body_L483
+        let leftover#0: uint64 = (- allowed#0 spent#0)
+        let tmp%1#2: bool = (>= leftover#0 fundRequest.amount#0)
+        (assert tmp%1#2) // Allowance exceeded
+        let tmp%2#2: uint64 = (+ spent#0 fundRequest.amount#0)
+        let (maybe_value%1#2: bytes, maybe_exists%2#2: bool) = (box_get box_prefixed_key%0#2)
+        (assert maybe_exists%2#2) // Box must have value
+        let item0%1#1: bytes = ((extract 0 1) maybe_value%1#2) // on error: Index access is out of bounds
+        let item1%5#1: uint64 = (extract_uint64 maybe_value%1#2 1u)
+        let item2%7#0: uint64 = (extract_uint64 maybe_value%1#2 9u)
+        let item4%9#0: uint64 = (extract_uint64 maybe_value%1#2 25u)
+        let item5%11#0: uint64 = (extract_uint64 maybe_value%1#2 33u)
+        let val_as_bytes%16#0: bytes[8] = (itob item1%5#1)
+        let val_as_bytes%17#0: bytes[8] = (itob item2%7#0)
+        let val_as_bytes%18#0: bytes[8] = (itob tmp%2#2)
+        let val_as_bytes%19#0: bytes[8] = (itob item4%9#0)
+        let val_as_bytes%20#0: bytes[8] = (itob item5%11#0)
+        let encoded_tuple_buffer%34#0: bytes = (concat item0%1#1 val_as_bytes%16#0)
+        let encoded_tuple_buffer%35#0: bytes = (concat encoded_tuple_buffer%34#0 val_as_bytes%17#0)
+        let encoded_tuple_buffer%36#0: bytes = (concat encoded_tuple_buffer%35#0 val_as_bytes%18#0)
+        let encoded_tuple_buffer%37#0: bytes = (concat encoded_tuple_buffer%36#0 val_as_bytes%19#0)
+        let encoded_tuple_buffer%38#0: bytes = (concat encoded_tuple_buffer%37#0 val_as_bytes%20#0)
+        (box_put box_prefixed_key%0#2 encoded_tuple_buffer%38#0)
+        goto block@26
+    block@16: // else_body_L492
+        let tmp%3#1: bool = (== type#0 0x02)
+        goto tmp%3#1 ? block@17 : block@21
+    block@17: // if_body_L492
+        goto pluginInfo.useRounds#0 ? block@81 : block@82
+    block@81: // if_body_L532
+        let tmp%0#5: uint64 = (global Round)
+        let tmp%1#7: uint64 = (global Round)
+        let tmp%2#7: uint64 = (- tmp%1#7 pluginInfo.start#0)
+        let tmp%3#4: uint64 = (% tmp%2#7 interval#0)
+        let tmp%4#4: uint64 = (- tmp%0#5 tmp%3#4)
+        goto block@83
+    block@82: // after_if_else_L532
+        let tmp%5#4: uint64 = (global LatestTimestamp)
+        let tmp%6#3: uint64 = (global LatestTimestamp)
+        let tmp%7#4: uint64 = (- tmp%6#3 pluginInfo.start#0)
+        let tmp%8#4: uint64 = (% tmp%7#4 interval#0)
+        let tmp%9#3: uint64 = (- tmp%5#4 tmp%8#4)
+        goto block@83
+    block@83: // after_inlined_smart_contracts/dao/contract.algo.ts::AkitaDAO.getLatestWindowStart_L492
+        let currentWindowStart#0: uint64 = φ(tmp%4#4 <- block@81, tmp%9#3 <- block@82)
+        let tmp%4#1: bool = (> currentWindowStart#0 last#0)
+        goto tmp%4#1 ? block@18 : block@19
+    block@18: // if_body_L495
+        let tmp%5#1: bool = (>= allowed#0 fundRequest.amount#0)
+        (assert tmp%5#1) // Allowance exceeded
+        goto block@20
+    block@19: // else_body_L497
+        let leftover₁#0: uint64 = (- allowed#0 spent#0)
+        let tmp%6#0: bool = (>= leftover₁#0 fundRequest.amount#0)
+        (assert tmp%6#0) // Allowance exceeded
+        goto block@20
+    block@20: // after_if_else_L495
+        let tmp%7#0: uint64 = (+ spent#0 fundRequest.amount#0)
+        let (maybe_value%6#0: bytes, maybe_exists%7#0: bool) = (box_get box_prefixed_key%0#2)
+        (assert maybe_exists%7#0) // Box must have value
+        let item0%6#1: bytes = ((extract 0 1) maybe_value%6#0) // on error: Index access is out of bounds
+        let item1%15#0: uint64 = (extract_uint64 maybe_value%6#0 1u)
+        let item2%17#0: uint64 = (extract_uint64 maybe_value%6#0 9u)
+        let item4%19#0: uint64 = (extract_uint64 maybe_value%6#0 25u)
+        let val_as_bytes%31#0: bytes[8] = (itob item1%15#0)
+        let val_as_bytes%32#0: bytes[8] = (itob item2%17#0)
+        let val_as_bytes%33#0: bytes[8] = (itob tmp%7#0)
+        let val_as_bytes%34#0: bytes[8] = (itob item4%19#0)
+        let val_as_bytes%35#0: bytes[8] = (itob newLast#0)
+        let encoded_tuple_buffer%61#0: bytes = (concat item0%6#1 val_as_bytes%31#0)
+        let encoded_tuple_buffer%62#0: bytes = (concat encoded_tuple_buffer%61#0 val_as_bytes%32#0)
+        let encoded_tuple_buffer%63#0: bytes = (concat encoded_tuple_buffer%62#0 val_as_bytes%33#0)
+        let encoded_tuple_buffer%64#0: bytes = (concat encoded_tuple_buffer%63#0 val_as_bytes%34#0)
+        let encoded_tuple_buffer%65#0: bytes = (concat encoded_tuple_buffer%64#0 val_as_bytes%35#0)
+        (box_put box_prefixed_key%0#2 encoded_tuple_buffer%65#0)
+        goto block@26
+    block@21: // else_body_L509
+        let tmp%8#0: bool = (== type#0 0x03)
+        goto tmp%8#0 ? block@22 : block@26
+    block@22: // if_body_L509
+        goto pluginInfo.useRounds#0 ? block@23 : block@24
+    block@23: // ternary_true_L510
+        let ternary_result%1#0: uint64 = (global Round)
+        goto block@25
+    block@24: // ternary_false_L510
+        let ternary_result%1#1: uint64 = (global LatestTimestamp)
+        goto block@25
+    block@25: // ternary_merge_L510
+        let epochRef#0: uint64 = φ(ternary_result%1#0 <- block@23, ternary_result%1#1 <- block@24)
+        let passed#0: uint64 = (- epochRef#0 last#0)
+        let tmp%9#0: uint64 = (/ passed#0 interval#0)
+        let tmp%10#0: uint64 = (* tmp%9#0 allowed#0)
+        let accrued#0: uint64 = (+ spent#0 tmp%10#0)
+        let tmp%11#0: bool = (> accrued#0 max#0)
+        let available#0: uint64 = (select accrued#0 max#0 tmp%11#0)
+        let tmp%12#0: bool = (>= available#0 fundRequest.amount#0)
+        (assert tmp%12#0) // Allowance exceeded
+        let tmp%13#0: uint64 = (- available#0 fundRequest.amount#0)
+        let (maybe_value%10#0: bytes, maybe_exists%11#0: bool) = (box_get box_prefixed_key%0#2)
+        (assert maybe_exists%11#0) // Box must have value
+        let item0%10#1: bytes = ((extract 0 1) maybe_value%10#0) // on error: Index access is out of bounds
+        let item1%23#0: uint64 = (extract_uint64 maybe_value%10#0 1u)
+        let item2%25#0: uint64 = (extract_uint64 maybe_value%10#0 9u)
+        let item4%27#0: uint64 = (extract_uint64 maybe_value%10#0 25u)
+        let val_as_bytes%46#0: bytes[8] = (itob item1%23#0)
+        let val_as_bytes%47#0: bytes[8] = (itob item2%25#0)
+        let val_as_bytes%48#0: bytes[8] = (itob tmp%13#0)
+        let val_as_bytes%49#0: bytes[8] = (itob item4%27#0)
+        let val_as_bytes%50#0: bytes[8] = (itob newLast#0)
+        let encoded_tuple_buffer%88#0: bytes = (concat item0%10#1 val_as_bytes%46#0)
+        let encoded_tuple_buffer%89#0: bytes = (concat encoded_tuple_buffer%88#0 val_as_bytes%47#0)
+        let encoded_tuple_buffer%90#0: bytes = (concat encoded_tuple_buffer%89#0 val_as_bytes%48#0)
+        let encoded_tuple_buffer%91#0: bytes = (concat encoded_tuple_buffer%90#0 val_as_bytes%49#0)
+        let encoded_tuple_buffer%92#0: bytes = (concat encoded_tuple_buffer%91#0 val_as_bytes%50#0)
+        (box_put box_prefixed_key%0#2 encoded_tuple_buffer%92#0)
+        goto block@26
+    block@26: // after_if_else_L483
+        goto allowanceKey.asset#0 ? block@27 : block@28
+    block@27: // if_body_L448
+        itxn_begin
+        let (maybe_value%1#1: bytes, maybe_exists%1#1: bool) = (app_global_get_ex 0u "controlled_address")
+        (assert maybe_exists%1#1) // check GlobalState exists
+        let (maybe_value%2#1: bytes, maybe_exists%2#1: bool) = (app_global_get_ex 0u "spending_address")
+        (assert maybe_exists%2#1) // check GlobalState exists
+        ((itxn_field XferAsset) allowanceKey.asset#0)
+        ((itxn_field AssetAmount) fundRequest.amount#0)
+        ((itxn_field AssetReceiver) maybe_value%2#1)
+        ((itxn_field Sender) maybe_value%1#1)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@29
+    block@28: // else_body_L458
+        itxn_begin
+        let (maybe_value%3#1: bytes, maybe_exists%3#1: bool) = (app_global_get_ex 0u "controlled_address")
+        (assert maybe_exists%3#1) // check GlobalState exists
+        let (maybe_value%4#1: bytes, maybe_exists%4#1: bool) = (app_global_get_ex 0u "spending_address")
+        (assert maybe_exists%4#1) // check GlobalState exists
+        ((itxn_field Amount) fundRequest.amount#0)
+        ((itxn_field Receiver) maybe_value%4#1)
+        ((itxn_field Sender) maybe_value%3#1)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@29
+    block@29: // after_if_else_L448
+        let i#3: uint64 = (+ i#1 1u)
+        goto block@10
+    block@30: // after_while_L431
+        itxn_begin
+        let (value%1#0: bytes[32], check%1#0: bool) = ((app_params_get AppAddress) plugin#0)
+        (assert check%1#0) // application exists
+        ((itxn_field ApplicationArgs) method "rekey(address)void")
+        ((itxn_field ApplicationArgs) value%1#0)
+        ((itxn_field ApplicationID) spendingApp#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@8
+    block@6: // else_body_L1223
+        let (maybe_value%3#0: bytes, maybe_exists%4#0: bool) = (app_global_get_ex 0u "controlled_address")
+        (assert maybe_exists%4#0) // check GlobalState exists
+        (app_global_put "spending_address" maybe_value%3#0)
+        itxn_begin
+        let (value%2#0: bytes[32], check%2#0: bool) = ((app_params_get AppAddress) plugin#0)
+        (assert check%2#0) // application exists
+        ((itxn_field Note) "rekeying to plugin app")
+        ((itxn_field RekeyTo) value%2#0)
+        ((itxn_field Receiver) maybe_value%3#0)
+        ((itxn_field Sender) maybe_value%3#0)
+        ((itxn_field TypeEnum) 1u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        goto block@8
+    block@8: // after_if_else_L1210
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToNamedPlugin(name: bytes, global: bool, methodOffsets: encoded_uint64[], fundsRequest: (encoded_uint64,encoded_uint64)[]) -> void:
+    block@0: // L1248
+        let box_prefixed_key%0#0: bytes = (concat "n" name#0)
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Box must have value
+        let item0%1#0: uint64 = (extract_uint64 maybe_value%0#0 0u)
+        smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToPlugin(item0%1#0, global#0, methodOffsets#0, fundsRequest#0)
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.newProposal(payment: uint64, action: bytes[1], cid: bytes[36], data: bytes, status: bytes[1]) -> void:
+    block@0: // L1293
+        let tmp%0#0: bool = (== status#0 0x00)
+        goto tmp%0#0 ? block@2 : block@1
+    block@1: // or_contd_L1300
+        let tmp%1#0: bool = (== status#0 0x14)
+        goto tmp%1#0 ? block@2 : block@3
+    block@2: // bool_true_L1300
+        let or_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L1300
+        let or_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L1300
+        let or_result%0#2: bool = φ(or_result%0#0 <- block@2, or_result%0#1 <- block@3)
+        (assert or_result%0#2) // Invalid proposal status
+        let tmp%2#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%3#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%4#0: bool = (== tmp%2#0 tmp%3#0)
+        goto tmp%4#0 ? block@5 : block@7
+    block@5: // and_contd_L1302
+        let tmp%5#0: uint64 = ((gtxns Amount) payment#0)
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "proposal_fee")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let tmp%6#0: bool = (== tmp%5#0 maybe_value%0#0)
+        goto tmp%6#0 ? block@6 : block@7
+    block@6: // bool_true_L1302
+        let and_result%0#0: bool = 1u
+        goto block@8
+    block@7: // bool_false_L1302
+        let and_result%0#1: bool = 0u
+        goto block@8
+    block@8: // bool_merge_L1302
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@6, and_result%0#1 <- block@7)
+        (assert and_result%0#2) // assert target is match for conditions
+        let (spendingAccountFactory#0: uint64, maybe_exists%1#0: bool) = (app_global_get_ex 0u "spending_account_factory_app")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        itxn_begin
+        let tmp%0#2: bytes[32] = (txn Sender)
+        ((itxn_field ApplicationArgs) method "get(address)uint64")
+        ((itxn_field ApplicationArgs) tmp%0#2)
+        ((itxn_field ApplicationID) spendingAccountFactory#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#0: bytes = (itxn LastLog)
+        let tmp%1#2: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%2#2: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%3#1: bool = (== tmp%2#2 0x151f7c75)
+        (assert tmp%3#1) // Bytes has valid prefix
+        let wallet#0: uint64 = (btoi tmp%1#2)
+        goto wallet#0 ? block@11 : block@10
+    block@10: // if_body_L123
+        let tmp%1#1: bytes[32] = (txn Sender)
+        goto block@12
+    block@11: // after_if_else_L123
+        let (controlledAccountBytes#0: bytes, _#0: bool) = (app_global_get_ex wallet#0 "controlled_address")
+        goto block@12
+    block@12: // after_inlined_smart_contracts/utils/functions.ts::getOrigin_L1302
+        let origin#0: bytes[32] = φ(tmp%1#1 <- block@10, controlledAccountBytes#0 <- block@11)
+        let (maybe_value%2#0: bytes, maybe_exists%2#0: bool) = (app_global_get_ex 0u "akita_al")
+        (assert maybe_exists%2#0) // check GlobalState exists
+        let stakingApp#0: uint64 = (extract_uint64 maybe_value%2#0 0u)
+        let (maybe_value%3#0: bytes, maybe_exists%3#0: bool) = (app_global_get_ex 0u "akita_assets")
+        (assert maybe_exists%3#0) // check GlobalState exists
+        let asset#0: uint64 = (extract_uint64 maybe_value%3#0 8u)
+        itxn_begin
+        let val_as_bytes%0#1: bytes[8] = (itob asset#0)
+        let encoded_tuple_buffer%2#1: bytes = (concat val_as_bytes%0#1 0x03)
+        ((itxn_field ApplicationArgs) method "getInfo(address,(uint64,uint8))(uint64,uint64,uint64)")
+        ((itxn_field ApplicationArgs) origin#0)
+        ((itxn_field ApplicationArgs) encoded_tuple_buffer%2#1)
+        ((itxn_field ApplicationID) stakingApp#0)
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        let awst_tmp%0#1: bytes = (itxn LastLog)
+        let tmp%1#3: bytes = ((extract 0 4) awst_tmp%0#1)
+        let tmp%2#3: bool = (== tmp%1#3 0x151f7c75)
+        (assert tmp%2#3) // Bytes has valid prefix
+        let info.amount#0: uint64 = (extract_uint64 awst_tmp%0#1 4u)
+        let info.expiration#0: uint64 = (extract_uint64 awst_tmp%0#1 20u)
+        let tmp%3#2: uint64 = (global LatestTimestamp)
+        let tmp%4#1: uint64 = (- info.expiration#0 tmp%3#2)
+        let (id#1: uint64, maybe_exists%0#1: bool) = (app_global_get_ex 0u "proposal_id")
+        (assert maybe_exists%0#1) // check GlobalState exists
+        let materialized_values%0#0: uint64 = (+ id#1 1u)
+        (app_global_put "proposal_id" materialized_values%0#0)
+        let tmp%7#0: uint64 = (global LatestTimestamp)
+        let encoded_value%0#0: bytes[8] = (itob id#1)
+        let box_prefixed_key%0#0: bytes = (concat "l" encoded_value%0#0)
+        (box_del box_prefixed_key%0#0)
+        let length%0#0: uint64 = (len cid#0)
+        let lengths_equal%0#0: bool = (== length%0#0 36u)
+        (assert lengths_equal%0#0) // invalid size
+        let val_as_bytes%0#0: bytes[8] = (itob tmp%7#0)
+        let val_as_bytes%1#0: bytes[8] = (itob 0u)
+        let length%1#0: uint64 = (len data#0)
+        let as_bytes%0#0: bytes[8] = (itob length%1#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%0#0 data#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat 0x00 action#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 cid#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 val_as_bytes%0#0)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 val_as_bytes%1#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 origin#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 0x0058)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 encoded_value%1#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%8#0)
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.finalizeProposal(proposalID: uint64, args: bytes) -> void:
+    block@0: // L1337
+        let encoded_value%0#0: bytes[8] = (itob proposalID#0)
+        let box_prefixed_key%0#0: bytes = (concat "l" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Proposal does not exist
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let action#0: bytes[1] = ((extract 1 1) maybe_value%0#0) // on error: Index access is out of bounds
+        let creator#0: bytes[32] = ((extract 54 32) maybe_value%0#0) // on error: Index access is out of bounds
+        let item_start_offset%0#0: uint64 = (extract_uint16 maybe_value%0#0 86u)
+        let item_end_offset%0#0: uint64 = (len maybe_value%0#0)
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bool = (== tmp%0#0 creator#0)
+        (assert tmp%1#0) // Incorrect sender
+        let tmp%2#0: bool = (== action#0 0x00)
+        goto tmp%2#0 ? block@31 : block@3
+    block@3: // after_if_else_L1345
+        let tmp%3#0: bool = (== action#0 0x0a)
+        goto tmp%3#0 ? block@4 : block@6
+    block@4: // if_body_L1351
+        let is_true%0#0: uint64 = (getbit args#0 472u)
+        let is_true%1#0: uint64 = (getbit args#0 473u)
+        let is_true%2#0: uint64 = (getbit args#0 474u)
+        goto block@31
+    block@6: // after_if_else_L1351
+        let tmp%4#0: bool = (== action#0 0x14)
+        goto tmp%4#0 ? block@7 : block@9
+    block@7: // if_body_L1356
+        let item_start_offset%2#0: uint64 = (extract_uint16 args#0 0u)
+        let item_end_offset%2#0: uint64 = (extract_uint16 args#0 59u)
+        let is_true%3#0: uint64 = (getbit args#0 488u)
+        let is_true%4#0: uint64 = (getbit args#0 489u)
+        let is_true%5#0: uint64 = (getbit args#0 490u)
+        goto block@31
+    block@9: // after_if_else_L1356
+        let tmp%5#0: bool = (== action#0 0x1e)
+        goto tmp%5#0 ? block@31 : block@12
+    block@12: // after_if_else_L1361
+        let tmp%6#0: bool = (== action#0 0x28)
+        goto tmp%6#0 ? block@13 : block@15
+    block@13: // if_body_L1366
+        let item_start_offset%5#0: uint64 = (extract_uint16 args#0 0u)
+        let item_end_offset%5#0: uint64 = (extract_uint16 args#0 2u)
+        goto block@31
+    block@15: // after_if_else_L1366
+        let tmp%7#0: bool = (== action#0 0x32)
+        goto tmp%7#0 ? block@31 : block@18
+    block@18: // after_if_else_L1371
+        let tmp%8#0: bool = (== action#0 0x3c)
+        goto tmp%8#0 ? block@19 : block@21
+    block@19: // if_body_L1376
+        let item_start_offset%7#0: uint64 = (extract_uint16 args#0 0u)
+        let item_end_offset%7#0: uint64 = (len args#0)
+        goto block@31
+    block@21: // after_if_else_L1376
+        let tmp%9#0: bool = (== action#0 0x46)
+        goto tmp%9#0 ? block@31 : block@24
+    block@24: // after_if_else_L1381
+        let tmp%10#0: bool = (== action#0 0x50)
+        goto tmp%10#0 ? block@31 : block@27
+    block@27: // after_if_else_L1386
+        let tmp%11#0: bool = (== action#0 0x5a)
+        goto tmp%11#0 ? block@28 : block@31
+    block@28: // if_body_L1391
+        let i#0: uint64 = 0u
+        goto block@33
+    block@33: // while_top_L888
+        let i#1: uint64 = φ(i#0 <- block@28, i#3 <- block@108)
+        let tmp%0#1: uint64 = (extract_uint16 args#0 0u)
+        let tmp%1#1: bool = (< i#1 tmp%0#1)
+        goto tmp%1#1 ? block@34 : block@31
+    block@34: // while_body_L888
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) args#0)
+        let item_offset_offset%0#0: uint64 = (* i#1 2u)
+        let item_offset%0#0: uint64 = (extract_uint16 array_head_and_tail%0#0 item_offset_offset%0#0)
+        let i#3: uint64 = (+ i#1 1u)
+        let has_next%0#0: uint64 = (- tmp%0#1 i#3) // on error: Index access is out of bounds
+        let end_of_array%0#0: uint64 = (len array_head_and_tail%0#0)
+        let next_item_offset_offset%0#0: uint64 = (* i#3 2u)
+        let next_item_offset%0#0: uint64 = (extract_uint16 array_head_and_tail%0#0 next_item_offset_offset%0#0)
+        let end_offset%0#0: uint64 = (select end_of_array%0#0 next_item_offset%0#0 has_next%0#0)
+        let arc4_item%0#0: bytes = (substring3 array_head_and_tail%0#0 item_offset%0#0 end_offset%0#0)
+        let item_start_offset%0#1: uint64 = (extract_uint16 arc4_item%0#0 0u)
+        let item_end_offset%0#1: uint64 = (extract_uint16 arc4_item%0#0 2u)
+        let item0%0#1: bytes = (substring3 arc4_item%0#0 item_start_offset%0#1 item_end_offset%0#1)
+        let field#0: bytes = ((extract 2 0) item0%0#1)
+        let item_end_offset%1#1: uint64 = (len arc4_item%0#0)
+        let item1%0#1: bytes = (substring3 arc4_item%0#0 item_end_offset%0#1 item_end_offset%1#1)
+        let value#0: bytes = ((extract 2 0) item1%0#1)
+        let tmp%2#1: bool = (== field#0 "content_policy")
+        goto tmp%2#1 ? block@35 : block@36
+    block@35: // if_body_L892
+        let tmp%3#1: uint64 = (len value#0)
+        let tmp%4#1: bool = (== tmp%3#1 36u)
+        (assert tmp%4#1) // Invalid content policy
+        goto block@108
+    block@36: // after_if_else_L892
+        let tmp%5#1: bool = (== field#0 "minimum_rewards_impact")
+        goto tmp%5#1 ? block@37 : block@42
+    block@37: // if_body_L896
+        let minImpact#0: uint64 = (btoi value#0)
+        goto minImpact#0 ? block@38 : block@40
+    block@38: // and_contd_L898
+        let tmp%7#1: bool = (< minImpact#0 1000u)
+        goto tmp%7#1 ? block@39 : block@40
+    block@39: // bool_true_L898
+        let and_result%0#0: bool = 1u
+        goto block@41
+    block@40: // bool_false_L898
+        let and_result%0#1: bool = 0u
+        goto block@41
+    block@41: // bool_merge_L898
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@39, and_result%0#1 <- block@40)
+        (assert and_result%0#2) // Invalid minimum rewards impact
+        goto block@108
+    block@42: // after_if_else_L896
+        let tmp%8#1: bool = (== field#0 "social_fees")
+        goto tmp%8#1 ? block@43 : block@57
+    block@43: // if_body_L901
+        let postFee#0: uint64 = (extract_uint64 item1%0#1 2u)
+        let reactFee#0: uint64 = (extract_uint64 item1%0#1 10u)
+        let impactTaxMin#0: uint64 = (extract_uint64 item1%0#1 18u)
+        let impactTaxMax#0: uint64 = (extract_uint64 item1%0#1 26u)
+        let tmp%9#1: bool = (>= postFee#0 10u)
+        goto tmp%9#1 ? block@44 : block@46
+    block@44: // and_contd_L903
+        let tmp%10#1: bool = (< postFee#0 100000000000u)
+        goto tmp%10#1 ? block@45 : block@46
+    block@45: // bool_true_L903
+        let and_result%1#0: bool = 1u
+        goto block@47
+    block@46: // bool_false_L903
+        let and_result%1#1: bool = 0u
+        goto block@47
+    block@47: // bool_merge_L903
+        let and_result%1#2: bool = φ(and_result%1#0 <- block@45, and_result%1#1 <- block@46)
+        (assert and_result%1#2) // Invalid post fee
+        let tmp%11#1: bool = (>= reactFee#0 10u)
+        goto tmp%11#1 ? block@48 : block@50
+    block@48: // and_contd_L904
+        let tmp%12#0: bool = (< reactFee#0 10000000000u)
+        goto tmp%12#0 ? block@49 : block@50
+    block@49: // bool_true_L904
+        let and_result%2#0: bool = 1u
+        goto block@51
+    block@50: // bool_false_L904
+        let and_result%2#1: bool = 0u
+        goto block@51
+    block@51: // bool_merge_L904
+        let and_result%2#2: bool = φ(and_result%2#0 <- block@49, and_result%2#1 <- block@50)
+        (assert and_result%2#2) // Invalid react fee
+        let tmp%13#0: bool = (>= impactTaxMin#0 10u)
+        (assert tmp%13#0) // Invalid impact tax minimum
+        let tmp%14#0: bool = (> impactTaxMax#0 impactTaxMin#0)
+        goto tmp%14#0 ? block@52 : block@55
+    block@52: // and_contd_L907
+        let tmp%15#0: bool = (>= impactTaxMax#0 1000u)
+        goto tmp%15#0 ? block@53 : block@55
+    block@53: // and_contd_L907
+        let tmp%16#0: bool = (<= impactTaxMax#0 100000u)
+        goto tmp%16#0 ? block@54 : block@55
+    block@54: // bool_true_L907
+        let and_result%3#0: bool = 1u
+        goto block@56
+    block@55: // bool_false_L907
+        let and_result%3#1: bool = 0u
+        goto block@56
+    block@56: // bool_merge_L907
+        let and_result%3#2: bool = φ(and_result%3#0 <- block@54, and_result%3#1 <- block@55)
+        (assert and_result%3#2) // Invalid impact tax maximum
+        goto block@108
+    block@57: // after_if_else_L901
+        let tmp%17#0: bool = (== field#0 "staking_fees")
+        goto tmp%17#0 ? block@58 : block@64
+    block@58: // if_body_L914
+        let creationFee#0: uint64 = (extract_uint64 item1%0#1 2u)
+        let impactTaxMin₁#0: uint64 = (extract_uint64 item1%0#1 10u)
+        let impactTaxMax₁#0: uint64 = (extract_uint64 item1%0#1 18u)
+        (assert creationFee#0) // Invalid pool creation fee
+        let tmp%19#0: bool = (>= impactTaxMin₁#0 10u)
+        (assert tmp%19#0) // Invalid pool impact tax minimum
+        let tmp%20#0: bool = (>= impactTaxMax₁#0 impactTaxMin₁#0)
+        goto tmp%20#0 ? block@59 : block@62
+    block@59: // and_contd_L919
+        let tmp%21#0: bool = (>= impactTaxMax₁#0 1000u)
+        goto tmp%21#0 ? block@60 : block@62
+    block@60: // and_contd_L919
+        let tmp%22#0: bool = (<= impactTaxMax₁#0 100000u)
+        goto tmp%22#0 ? block@61 : block@62
+    block@61: // bool_true_L919
+        let and_result%4#0: bool = 1u
+        goto block@63
+    block@62: // bool_false_L919
+        let and_result%4#1: bool = 0u
+        goto block@63
+    block@63: // bool_merge_L919
+        let and_result%4#2: bool = φ(and_result%4#0 <- block@61, and_result%4#1 <- block@62)
+        (assert and_result%4#2) // Invalid pool impact tax maximum
+        goto block@108
+    block@64: // after_if_else_L914
+        let tmp%23#0: bool = (== field#0 "subscription_fees")
+        goto tmp%23#0 ? block@65 : block@66
+    block@65: // if_body_L926
+        let serviceCreationFee#0: uint64 = (extract_uint64 item1%0#1 2u)
+        let paymentPercentage#0: uint64 = (extract_uint64 item1%0#1 10u)
+        let triggerPercentage#0: uint64 = (extract_uint64 item1%0#1 18u)
+        (assert serviceCreationFee#0) // Invalid service creation fee
+        let tmp%25#0: bool = (>= paymentPercentage#0 1000u)
+        (assert tmp%25#0) // Invalid payment percentage
+        let tmp%26#0: bool = (>= triggerPercentage#0 10u)
+        (assert tmp%26#0) // Invalid trigger percentage
+        let tmp%27#0: uint64 = (+ paymentPercentage#0 triggerPercentage#0)
+        let tmp%28#0: bool = (< tmp%27#0 100000u)
+        (assert tmp%28#0) // Invalid subscription total percentage fees
+        goto block@108
+    block@66: // after_if_else_L926
+        let tmp%29#0: bool = (== field#0 "nft_fees")
+        goto tmp%29#0 ? block@67 : block@80
+    block@67: // if_body_L934
+        let marketplaceSalePercentageMin#0: uint64 = (extract_uint64 item1%0#1 2u)
+        let marketplaceSalePercentageMax#0: uint64 = (extract_uint64 item1%0#1 10u)
+        let marketplaceComposablePercentage#0: uint64 = (extract_uint64 item1%0#1 18u)
+        let marketplaceRoyaltyDefaultPercentage#0: uint64 = (extract_uint64 item1%0#1 26u)
+        let shuffleSalePercentage#0: uint64 = (extract_uint64 item1%0#1 34u)
+        let auctionSaleImpactTaxMin#0: uint64 = (extract_uint64 item1%0#1 58u)
+        let auctionSaleImpactTaxMax#0: uint64 = (extract_uint64 item1%0#1 66u)
+        let auctionComposablePercentage#0: uint64 = (extract_uint64 item1%0#1 74u)
+        let auctionRafflePercentage#0: uint64 = (extract_uint64 item1%0#1 82u)
+        let raffleSaleImpactTaxMin#0: uint64 = (extract_uint64 item1%0#1 98u)
+        let raffleSaleImpactTaxMax#0: uint64 = (extract_uint64 item1%0#1 106u)
+        let raffleComposablePercentage#0: uint64 = (extract_uint64 item1%0#1 114u)
+        let tmp%30#0: bool = (> marketplaceSalePercentageMin#0 10u)
+        (assert tmp%30#0) // Invalid marketplace sale percentage minimum
+        let tmp%31#0: bool = (> marketplaceSalePercentageMax#0 marketplaceSalePercentageMin#0)
+        goto tmp%31#0 ? block@68 : block@70
+    block@68: // and_contd_L952
+        let tmp%32#0: bool = (>= marketplaceSalePercentageMax#0 1000u)
+        goto tmp%32#0 ? block@69 : block@70
+    block@69: // bool_true_L952
+        let and_result%5#0: bool = 1u
+        goto block@71
+    block@70: // bool_false_L952
+        let and_result%5#1: bool = 0u
+        goto block@71
+    block@71: // bool_merge_L952
+        let and_result%5#2: bool = φ(and_result%5#0 <- block@69, and_result%5#1 <- block@70)
+        (assert and_result%5#2) // Invalid marketplace sale percentage maximum
+        let tmp%33#0: bool = (>= marketplaceComposablePercentage#0 10u)
+        (assert tmp%33#0) // Invalid marketplace composable percentage
+        let tmp%34#0: bool = (>= marketplaceRoyaltyDefaultPercentage#0 1000u)
+        (assert tmp%34#0) // Invalid marketplace royalty default percentage
+        let tmp%35#0: uint64 = (+ marketplaceSalePercentageMax#0 marketplaceComposablePercentage#0)
+        let tmp%36#0: uint64 = (+ tmp%35#0 marketplaceRoyaltyDefaultPercentage#0)
+        let tmp%37#0: bool = (<= tmp%36#0 100000u)
+        (assert tmp%37#0) // Invalid subscription total percentage fees
+        let tmp%38#0: bool = (<= shuffleSalePercentage#0 100000u)
+        (assert tmp%38#0) // Invalid shuffle sale percentage
+        let tmp%39#0: bool = (>= auctionSaleImpactTaxMin#0 10u)
+        (assert tmp%39#0) // Invalid auction sale impact tax minimum
+        let tmp%40#0: bool = (> auctionSaleImpactTaxMax#0 auctionSaleImpactTaxMin#0)
+        goto tmp%40#0 ? block@72 : block@74
+    block@72: // and_contd_L972
+        let tmp%41#0: bool = (>= auctionSaleImpactTaxMax#0 1000u)
+        goto tmp%41#0 ? block@73 : block@74
+    block@73: // bool_true_L972
+        let and_result%6#0: bool = 1u
+        goto block@75
+    block@74: // bool_false_L972
+        let and_result%6#1: bool = 0u
+        goto block@75
+    block@75: // bool_merge_L972
+        let and_result%6#2: bool = φ(and_result%6#0 <- block@73, and_result%6#1 <- block@74)
+        (assert and_result%6#2) // Invalid auction sale impact tax maximum
+        let tmp%42#0: uint64 = (+ auctionSaleImpactTaxMax#0 auctionComposablePercentage#0)
+        let tmp%43#0: bool = (<= tmp%42#0 100000u)
+        (assert tmp%43#0) // Invalid subscription total percentage fees
+        let tmp%44#0: bool = (<= auctionRafflePercentage#0 100000u)
+        (assert tmp%44#0) // Invalid auction raffle percentage
+        let tmp%45#0: bool = (>= raffleSaleImpactTaxMin#0 10u)
+        (assert tmp%45#0) // Invalid raffle sale impact tax minimum
+        let tmp%46#0: bool = (> raffleSaleImpactTaxMax#0 raffleSaleImpactTaxMin#0)
+        goto tmp%46#0 ? block@76 : block@78
+    block@76: // and_contd_L985
+        let tmp%47#0: bool = (>= raffleSaleImpactTaxMax#0 1000u)
+        goto tmp%47#0 ? block@77 : block@78
+    block@77: // bool_true_L985
+        let and_result%7#0: bool = 1u
+        goto block@79
+    block@78: // bool_false_L985
+        let and_result%7#1: bool = 0u
+        goto block@79
+    block@79: // bool_merge_L985
+        let and_result%7#2: bool = φ(and_result%7#0 <- block@77, and_result%7#1 <- block@78)
+        (assert and_result%7#2) // Invalid raffle sale impact tax maximum
+        let tmp%48#0: uint64 = (+ raffleSaleImpactTaxMax#0 raffleComposablePercentage#0)
+        let tmp%49#0: bool = (< tmp%48#0 100000u)
+        (assert tmp%49#0) // Invalid subscription total percentage fees
+        goto block@108
+    block@80: // after_if_else_L934
+        let tmp%50#0: bool = (== field#0 "swap_fees")
+        goto tmp%50#0 ? block@81 : block@87
+    block@81: // if_body_L997
+        let swapFees.impactTaxMin#0: uint64 = (extract_uint64 item1%0#1 2u)
+        let swapFees.impactTaxMax#0: uint64 = (extract_uint64 item1%0#1 10u)
+        let tmp%51#0: bool = (>= swapFees.impactTaxMin#0 10u)
+        (assert tmp%51#0) // Invalid swap impact tax minimum
+        let tmp%52#0: bool = (> swapFees.impactTaxMax#0 swapFees.impactTaxMin#0)
+        goto tmp%52#0 ? block@82 : block@85
+    block@82: // and_contd_L1001
+        let tmp%53#0: bool = (>= swapFees.impactTaxMax#0 1000u)
+        goto tmp%53#0 ? block@83 : block@85
+    block@83: // and_contd_L1001
+        let tmp%54#0: bool = (<= swapFees.impactTaxMax#0 100000u)
+        goto tmp%54#0 ? block@84 : block@85
+    block@84: // bool_true_L1001
+        let and_result%8#0: bool = 1u
+        goto block@86
+    block@85: // bool_false_L1001
+        let and_result%8#1: bool = 0u
+        goto block@86
+    block@86: // bool_merge_L1001
+        let and_result%8#2: bool = φ(and_result%8#0 <- block@84, and_result%8#1 <- block@85)
+        (assert and_result%8#2) // Invalid swap impact tax maximum
+        goto block@108
+    block@87: // after_if_else_L997
+        let tmp%55#0: bool = (== field#0 "krby_percentage")
+        goto tmp%55#0 ? block@88 : block@93
+    block@88: // if_body_L1008
+        let krbyPercentage#0: uint64 = (btoi value#0)
+        let tmp%56#0: bool = (>= krbyPercentage#0 1000u)
+        goto tmp%56#0 ? block@89 : block@91
+    block@89: // and_contd_L1010
+        let (maybe_value%0#1: uint64, maybe_exists%0#1: bool) = (app_global_get_ex 0u "mod_percentage")
+        (assert maybe_exists%0#1) // check GlobalState exists
+        let tmp%57#0: uint64 = (- 100000u maybe_value%0#1)
+        let tmp%58#0: bool = (< krbyPercentage#0 tmp%57#0)
+        goto tmp%58#0 ? block@90 : block@91
+    block@90: // bool_true_L1010
+        let and_result%9#0: bool = 1u
+        goto block@92
+    block@91: // bool_false_L1010
+        let and_result%9#1: bool = 0u
+        goto block@92
+    block@92: // bool_merge_L1010
+        let and_result%9#2: bool = φ(and_result%9#0 <- block@90, and_result%9#1 <- block@91)
+        (assert and_result%9#2) // Invalid krby percentage
+        goto block@108
+    block@93: // after_if_else_L1008
+        let tmp%59#0: bool = (== field#0 "mod_percentage")
+        goto tmp%59#0 ? block@94 : block@99
+    block@94: // if_body_L1013
+        let modPercentage#0: uint64 = (btoi value#0)
+        let tmp%60#0: bool = (>= modPercentage#0 1000u)
+        goto tmp%60#0 ? block@95 : block@97
+    block@95: // and_contd_L1015
+        let (maybe_value%1#0: uint64, maybe_exists%1#1: bool) = (app_global_get_ex 0u "krby_percentage")
+        (assert maybe_exists%1#1) // check GlobalState exists
+        let tmp%61#0: uint64 = (- 100000u maybe_value%1#0)
+        let tmp%62#0: bool = (< modPercentage#0 tmp%61#0)
+        goto tmp%62#0 ? block@96 : block@97
+    block@96: // bool_true_L1015
+        let and_result%10#0: bool = 1u
+        goto block@98
+    block@97: // bool_false_L1015
+        let and_result%10#1: bool = 0u
+        goto block@98
+    block@98: // bool_merge_L1015
+        let and_result%10#2: bool = φ(and_result%10#0 <- block@96, and_result%10#1 <- block@97)
+        (assert and_result%10#2) // Invalid moderator percentage
+        goto block@108
+    block@99: // after_if_else_L1013
+        let tmp%63#0: bool = (== field#0 "proposal_fee")
+        goto tmp%63#0 ? block@100 : block@101
+    block@100: // if_body_L1018
+        let proposalFee#0: uint64 = (btoi value#0)
+        let tmp%64#0: bool = (>= proposalFee#0 5000000u)
+        (assert tmp%64#0) // Invalid proposal fee
+        goto block@108
+    block@101: // after_if_else_L1018
+        let tmp%65#0: bool = (== field#0 "revocation_address")
+        (assert tmp%65#0) // Invalid field
+        let tmp%66#0: uint64 = (len value#0)
+        let tmp%67#0: bool = (== tmp%66#0 58u)
+        (assert tmp%67#0) // Invalid content policy
+        let (maybe_value%2#0: bytes, maybe_exists%2#0: bool) = (app_global_get_ex 0u "revocation_address")
+        (assert maybe_exists%2#0) // check GlobalState exists
+        let tmp%68#0: bool = (!= value#0 maybe_value%2#0)
+        goto tmp%68#0 ? block@103 : block@105
+    block@103: // and_contd_L1026
+        let tmp%69#0: bytes[32] = (global ZeroAddress)
+        let tmp%70#0: bool = (!= value#0 tmp%69#0)
+        goto tmp%70#0 ? block@104 : block@105
+    block@104: // bool_true_L1026
+        let and_result%11#0: bool = 1u
+        goto block@106
+    block@105: // bool_false_L1026
+        let and_result%11#1: bool = 0u
+        goto block@106
+    block@106: // bool_merge_L1026
+        let and_result%11#2: bool = φ(and_result%11#0 <- block@104, and_result%11#1 <- block@105)
+        (assert and_result%11#2) // Invalid revocation address
+        goto block@108
+    block@108: // L891
+        goto block@33
+    block@31: // L1344
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.createDailyDisbursement() -> void:
+    block@0: // L1402
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (app_global_get_ex 0u "akita_assets")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.optinEscrow(payment: uint64, name: bytes, asset: uint64) -> void:
+    block@0: // L1425
+        let box_prefixed_key%0#0: bytes = (concat "e" name#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Escrow does not exist
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let escrow.escrow#0: uint64 = (extract_uint64 maybe_value%0#0 0u)
+        let escrow.account#0: bytes[32] = ((extract 8 32) maybe_value%0#0) // on error: Index access is out of bounds
+        let is_true%0#0: uint64 = (getbit maybe_value%0#0 320u)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u is_true%0#0)
+        let escrow.optinAllowed#0: bool = (getbit encoded_bool%0#0 0u)
+        let (escrowAccount#0: bytes[32], check%0#0: bool) = ((app_params_get AppAddress) escrow.escrow#0)
+        (assert check%0#0) // application exists
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let tmp%1#0: bool = (== escrow.account#0 tmp%0#0)
+        (assert tmp%1#0) // Incorrect sender
+        let tmp%2#0: bool = (== escrow.optinAllowed#0 1u)
+        (assert tmp%2#0) // Escrow is not allowed to opt-in
+        let tmp%3#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%4#0: bool = (== tmp%3#0 escrowAccount#0)
+        goto tmp%4#0 ? block@1 : block@3
+    block@1: // and_contd_L1435
+        let tmp%5#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%6#0: uint64 = (global AssetOptInMinBalance)
+        let tmp%7#0: bool = (== tmp%5#0 tmp%6#0)
+        goto tmp%7#0 ? block@2 : block@3
+    block@2: // bool_true_L1435
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L1435
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L1435
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        itxn_begin
+        let inner_txn_params%0%%param_AssetReceiver_idx_0#0: bytes[32] = (global CurrentApplicationAddress)
+        ((itxn_field XferAsset) asset#0)
+        ((itxn_field AssetAmount) 0u)
+        ((itxn_field AssetReceiver) inner_txn_params%0%%param_AssetReceiver_idx_0#0)
+        ((itxn_field Sender) escrowAccount#0)
+        ((itxn_field TypeEnum) 4u)
+        ((itxn_field Fee) 0u)
+        itxn_submit
+        return 
+
+subroutine smart_contracts/dao/contract.algo.ts::AkitaDAO.getState() -> <uint64, bytes, bytes[36], uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, uint64, bytes[32]>:
+    block@0: // L1455
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "status")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let (maybe_value%1#0: bytes, maybe_exists%1#0: bool) = (app_global_get_ex 0u "version")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let (maybe_value%2#0: bytes, maybe_exists%2#0: bool) = (app_global_get_ex 0u "content_policy")
+        (assert maybe_exists%2#0) // check GlobalState exists
+        let length%0#0: uint64 = (len maybe_value%2#0)
+        let lengths_equal%0#0: bool = (== length%0#0 36u)
+        (assert lengths_equal%0#0) // invalid size
+        let (maybe_value%3#0: uint64, maybe_exists%3#0: bool) = (app_global_get_ex 0u "minimum_rewards_impact")
+        (assert maybe_exists%3#0) // check GlobalState exists
+        let (maybe_value%4#0: bytes, maybe_exists%4#0: bool) = (app_global_get_ex 0u "akita_al")
+        (assert maybe_exists%4#0) // check GlobalState exists
+        let item0%1#0: uint64 = (extract_uint64 maybe_value%4#0 0u)
+        let item1%1#0: uint64 = (extract_uint64 maybe_value%4#0 8u)
+        let item2%1#0: uint64 = (extract_uint64 maybe_value%4#0 16u)
+        let item3%1#0: uint64 = (extract_uint64 maybe_value%4#0 24u)
+        let item4%1#0: uint64 = (extract_uint64 maybe_value%4#0 32u)
+        let item5%1#0: uint64 = (extract_uint64 maybe_value%4#0 40u)
+        let item6%1#0: uint64 = (extract_uint64 maybe_value%4#0 48u)
+        let item7%1#0: uint64 = (extract_uint64 maybe_value%4#0 56u)
+        let item8%1#0: uint64 = (extract_uint64 maybe_value%4#0 64u)
+        let item9%1#0: uint64 = (extract_uint64 maybe_value%4#0 72u)
+        let item10%1#0: uint64 = (extract_uint64 maybe_value%4#0 80u)
+        let item11%1#0: uint64 = (extract_uint64 maybe_value%4#0 88u)
+        let (maybe_value%5#0: bytes, maybe_exists%5#0: bool) = (app_global_get_ex 0u "other_al")
+        (assert maybe_exists%5#0) // check GlobalState exists
+        let item0%3#0: uint64 = (extract_uint64 maybe_value%5#0 0u)
+        let item1%3#0: uint64 = (extract_uint64 maybe_value%5#0 8u)
+        let item2%3#0: uint64 = (extract_uint64 maybe_value%5#0 16u)
+        let (maybe_value%6#0: bytes, maybe_exists%6#0: bool) = (app_global_get_ex 0u "social_fees")
+        (assert maybe_exists%6#0) // check GlobalState exists
+        let item0%5#0: uint64 = (extract_uint64 maybe_value%6#0 0u)
+        let item1%5#0: uint64 = (extract_uint64 maybe_value%6#0 8u)
+        let item2%5#0: uint64 = (extract_uint64 maybe_value%6#0 16u)
+        let item3%3#0: uint64 = (extract_uint64 maybe_value%6#0 24u)
+        let (maybe_value%7#0: bytes, maybe_exists%7#0: bool) = (app_global_get_ex 0u "staking_fees")
+        (assert maybe_exists%7#0) // check GlobalState exists
+        let item0%7#0: uint64 = (extract_uint64 maybe_value%7#0 0u)
+        let item1%7#0: uint64 = (extract_uint64 maybe_value%7#0 8u)
+        let item2%7#0: uint64 = (extract_uint64 maybe_value%7#0 16u)
+        let (maybe_value%8#0: bytes, maybe_exists%8#0: bool) = (app_global_get_ex 0u "subscription_fees")
+        (assert maybe_exists%8#0) // check GlobalState exists
+        let item0%9#0: uint64 = (extract_uint64 maybe_value%8#0 0u)
+        let item1%9#0: uint64 = (extract_uint64 maybe_value%8#0 8u)
+        let item2%9#0: uint64 = (extract_uint64 maybe_value%8#0 16u)
+        let (maybe_value%9#0: bytes, maybe_exists%9#0: bool) = (app_global_get_ex 0u "nft_fees")
+        (assert maybe_exists%9#0) // check GlobalState exists
+        let item0%11#0: uint64 = (extract_uint64 maybe_value%9#0 0u)
+        let item1%11#0: uint64 = (extract_uint64 maybe_value%9#0 8u)
+        let item2%11#0: uint64 = (extract_uint64 maybe_value%9#0 16u)
+        let item3%5#0: uint64 = (extract_uint64 maybe_value%9#0 24u)
+        let item4%3#0: uint64 = (extract_uint64 maybe_value%9#0 32u)
+        let item5%3#0: uint64 = (extract_uint64 maybe_value%9#0 40u)
+        let item6%3#0: uint64 = (extract_uint64 maybe_value%9#0 48u)
+        let item7%3#0: uint64 = (extract_uint64 maybe_value%9#0 56u)
+        let item8%3#0: uint64 = (extract_uint64 maybe_value%9#0 64u)
+        let item9%3#0: uint64 = (extract_uint64 maybe_value%9#0 72u)
+        let item10%3#0: uint64 = (extract_uint64 maybe_value%9#0 80u)
+        let item11%3#0: uint64 = (extract_uint64 maybe_value%9#0 88u)
+        let item12%1#0: uint64 = (extract_uint64 maybe_value%9#0 96u)
+        let item13%1#0: uint64 = (extract_uint64 maybe_value%9#0 104u)
+        let item14%1#0: uint64 = (extract_uint64 maybe_value%9#0 112u)
+        let (maybe_value%10#0: uint64, maybe_exists%10#0: bool) = (app_global_get_ex 0u "krby_percentage")
+        (assert maybe_exists%10#0) // check GlobalState exists
+        let (maybe_value%11#0: uint64, maybe_exists%11#0: bool) = (app_global_get_ex 0u "mod_percentage")
+        (assert maybe_exists%11#0) // check GlobalState exists
+        let (maybe_value%12#0: bytes, maybe_exists%12#0: bool) = (app_global_get_ex 0u "proposal_settings")
+        (assert maybe_exists%12#0) // check GlobalState exists
+        let item0%13#0: uint64 = (extract_uint64 maybe_value%12#0 0u)
+        let item1%13#0: uint64 = (extract_uint64 maybe_value%12#0 8u)
+        let (maybe_value%13#0: bytes, maybe_exists%13#0: bool) = (app_global_get_ex 0u "akita_assets")
+        (assert maybe_exists%13#0) // check GlobalState exists
+        let item0%15#0: uint64 = (extract_uint64 maybe_value%13#0 0u)
+        let item1%15#0: uint64 = (extract_uint64 maybe_value%13#0 8u)
+        let (maybe_value%14#0: bytes, maybe_exists%14#0: bool) = (app_global_get_ex 0u "revocation_address")
+        (assert maybe_exists%14#0) // check GlobalState exists
+        return maybe_value%0#0 maybe_value%1#0 maybe_value%2#0 maybe_value%3#0 item0%1#0 item1%1#0 item2%1#0 item3%1#0 item4%1#0 item5%1#0 item6%1#0 item7%1#0 item8%1#0 item9%1#0 item10%1#0 item11%1#0 item0%3#0 item1%3#0 item2%3#0 item0%5#0 item1%5#0 item2%5#0 item3%3#0 item0%7#0 item1%7#0 item2%7#0 item0%9#0 item1%9#0 item2%9#0 item0%11#0 item1%11#0 item2%11#0 item3%5#0 item4%3#0 item5%3#0 item6%3#0 item7%3#0 item8%3#0 item9%3#0 item10%3#0 item11%3#0 item12%1#0 item13%1#0 item14%1#0 maybe_value%10#0 maybe_value%11#0 item0%15#0 item1%15#0 item0%13#0 item1%13#0 maybe_value%14#0

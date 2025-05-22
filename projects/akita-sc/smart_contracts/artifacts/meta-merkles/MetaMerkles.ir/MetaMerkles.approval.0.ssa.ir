@@ -1,0 +1,1386 @@
+main @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram:
+    block@0: // L1
+        let tmp%0#0: bool = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.__puya_arc4_router__()
+        return tmp%0#0
+
+subroutine _puya_lib.util.ensure_budget(required_budget: uint64, fee_source: uint64) -> void:
+    block@0: // L12
+        let required_budget_with_buffer#0: uint64 = (+ required_budget#0 10u)
+        goto block@1
+    block@1: // while_top_L20
+        let tmp%0#0: uint64 = (global OpcodeBudget)
+        let tmp%1#0: bool = (> required_budget_with_buffer#0 tmp%0#0)
+        goto tmp%1#0 ? block@2 : block@7
+    block@2: // while_body_L21
+        itxn_begin
+        ((itxn_field TypeEnum) appl)
+        ((itxn_field OnCompletion) DeleteApplication)
+        ((itxn_field ApprovalProgram) 0x068101)
+        ((itxn_field ClearStateProgram) 0x068101)
+        switch fee_source#0 {0u => block@3, 1u => block@4, * => block@5}
+    block@3: // switch_case_0_L28
+        ((itxn_field Fee) 0u)
+        goto block@6
+    block@4: // switch_case_1_L30
+        let tmp%2#0: uint64 = (global MinTxnFee)
+        ((itxn_field Fee) tmp%2#0)
+        goto block@6
+    block@5: // switch_case_default_L26
+        goto block@6
+    block@6: // switch_case_next_L26
+        itxn_submit
+        goto block@1
+    block@7: // after_while_L20
+        return 
+
+subroutine smart_contracts/utils/types/base.ts::bytes16(v: bytes) -> bytes[16]:
+    block@0: // L8
+        let length%0#0: uint64 = (len v#0)
+        let is_out_of_bounds%0#0: bool = (>= 0u length%0#0)
+        let bounded_index%0#0: uint64 = (select 0u length%0#0 is_out_of_bounds%0#0)
+        let is_out_of_bounds%1#0: bool = (>= 16u length%0#0)
+        let bounded_index%1#0: uint64 = (select 16u length%0#0 is_out_of_bounds%1#0)
+        let awst_tmp%0#0: bytes = (substring3 v#0 bounded_index%0#0 bounded_index%1#0)
+        let reinterpret_bytes[16]%0#0: bytes[16] = awst_tmp%0#0
+        let tmp%0#0: uint64 = (len awst_tmp%0#0)
+        let tmp%1#0: bool = (== tmp%0#0 16u)
+        (assert tmp%1#0) // Length must be 16
+        return reinterpret_bytes[16]%0#0
+
+subroutine smart_contracts/utils/functions.ts::getOriginAccount(walletID: uint64) -> bytes[32]:
+    block@0: // L101
+        let (tuple_assignment%0#0: bytes, tuple_assignment%1#0: bool) = (app_global_get_ex walletID#0 "controlled_address")
+        let controlledAccountBytes#0: bytes = tuple_assignment%0#0
+        let _#0: bool = tuple_assignment%1#0
+        let reinterpret_bytes[32]%0#0: bytes[32] = controlledAccountBytes#0
+        return reinterpret_bytes[32]%0#0
+
+subroutine smart_contracts/utils/functions.ts::walletID(spendingAccountFactory: uint64) -> uint64:
+    block@0: // L109
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = appl
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_ApplicationID_idx_0#0: uint64 = spendingAccountFactory#0
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 1u
+        let tmp%0#0: bytes[32] = (txn Sender)
+        let inner_txn_params%0%%param_ApplicationArgs_idx_0#0: bytes[4] = method "get(address)uint64"
+        let inner_txn_params%0%%param_ApplicationArgs_idx_1#0: bytes[32] = tmp%0#0
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 2u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%Amount_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_0#0)
+        ((itxn_field ApplicationArgs) inner_txn_params%0%%param_ApplicationArgs_idx_1#0)
+        ((itxn_field ApplicationID) inner_txn_params%0%%param_ApplicationID_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L110
+        itxn_submit
+        let awst_tmp%0#0: bytes = itxn[itxn_group_idx(0)].LastLog
+        let tmp%1#0: bytes = ((extract 4 0) awst_tmp%0#0)
+        let tmp%2#0: bytes = ((extract 0 4) awst_tmp%0#0)
+        let tmp%3#0: bool = (== tmp%2#0 0x151f7c75)
+        (assert tmp%3#0) // Bytes has valid prefix
+        let reinterpret_bytes[8]%0#0: bytes[8] = tmp%1#0
+        let tmp%4#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        return tmp%4#0
+
+subroutine smart_contracts/utils/functions.ts::getOrigin(spendingAccountFactory: uint64) -> bytes[32]:
+    block@0: // L120
+        let wallet#0: uint64 = smart_contracts/utils/functions.ts::walletID(spendingAccountFactory#0)
+        let tmp%0#0: bool = (== wallet#0 0u)
+        goto tmp%0#0 ? block@1 : block@2
+    block@1: // if_body_L123
+        let tmp%1#0: bytes[32] = (txn Sender)
+        return tmp%1#0
+    block@2: // after_if_else_L123
+        let tmp%2#0: bytes[32] = smart_contracts/utils/functions.ts::getOriginAccount(wallet#0)
+        return tmp%2#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.__puya_arc4_router__() -> bool:
+    block@0: // L87
+        let tmp%0#0: uint64 = (txn NumAppArgs)
+        let tmp%1#0: bool = (!= tmp%0#0 0u)
+        goto tmp%1#0 ? block@1 : block@17
+    block@1: // abi_routing_L87
+        let tmp%2#0: bytes = (txna ApplicationArgs 0)
+        switch tmp%2#0 {method "create()void" => block@2, method "addRoot(pay,string,byte[32],uint64)void" => block@3, method "deleteRoot(string)void" => block@4, method "updateRoot(string,byte[32])void" => block@5, method "addData(pay,string,string,string)void" => block@6, method "deleteData(string,string)void" => block@7, method "verify(address,string,byte[32],byte[32][],uint64)bool" => block@8, method "read(address,string,string)string" => block@9, method "verifiedRead(address,string,byte[32],byte[32][],uint64,string)string" => block@10, method "verifiedMustRead(address,string,byte[32],byte[32][],uint64,string)string" => block@11, method "addType(pay,string,uint8[])void" => block@12, method "rootCosts(string)uint64" => block@13, method "dataCosts(string,string,string)uint64" => block@14, * => block@15}
+    block@2: // create_route_L138
+        let tmp%3#0: uint64 = (txn OnCompletion)
+        let tmp%4#0: bool = (== tmp%3#0 NoOp)
+        (assert tmp%4#0) // OnCompletion is not NoOp
+        let tmp%5#0: uint64 = (txn ApplicationID)
+        let tmp%6#0: bool = (== tmp%5#0 0u)
+        (assert tmp%6#0) // can only call when creating
+        smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.create()
+        return 1u
+    block@3: // addRoot_route_L155
+        let tmp%7#0: uint64 = (txn OnCompletion)
+        let tmp%8#0: bool = (== tmp%7#0 NoOp)
+        (assert tmp%8#0) // OnCompletion is not NoOp
+        let tmp%9#0: uint64 = (txn ApplicationID)
+        let tmp%10#0: bool = (!= tmp%9#0 0u)
+        (assert tmp%10#0) // can only call when not creating
+        let tmp%11#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%0#0: uint64 = (- tmp%11#0 1u)
+        let gtxn_type%0#0: uint64 = ((gtxns TypeEnum) gtxn_idx%0#0)
+        let gtxn_type_matches%0#0: bool = (== gtxn_type%0#0 pay)
+        (assert gtxn_type_matches%0#0) // transaction type is pay
+        let tmp%12#0: bytes = (txna ApplicationArgs 1)
+        let tmp%13#0: bytes = ((extract 2 0) tmp%12#0)
+        let reinterpret_bytes[32]%0#0: bytes[32] = (txna ApplicationArgs 2)
+        let reinterpret_bytes[8]%0#0: bytes[8] = (txna ApplicationArgs 3)
+        let tmp%14#0: uint64 = (btoi reinterpret_bytes[8]%0#0)
+        smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addRoot(gtxn_idx%0#0, tmp%13#0, reinterpret_bytes[32]%0#0, tmp%14#0)
+        return 1u
+    block@4: // deleteRoot_route_L191
+        let tmp%15#0: uint64 = (txn OnCompletion)
+        let tmp%16#0: bool = (== tmp%15#0 NoOp)
+        (assert tmp%16#0) // OnCompletion is not NoOp
+        let tmp%17#0: uint64 = (txn ApplicationID)
+        let tmp%18#0: bool = (!= tmp%17#0 0u)
+        (assert tmp%18#0) // can only call when not creating
+        let tmp%19#0: bytes = (txna ApplicationArgs 1)
+        let tmp%20#0: bytes = ((extract 2 0) tmp%19#0)
+        smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.deleteRoot(tmp%20#0)
+        return 1u
+    block@5: // updateRoot_route_L217
+        let tmp%21#0: uint64 = (txn OnCompletion)
+        let tmp%22#0: bool = (== tmp%21#0 NoOp)
+        (assert tmp%22#0) // OnCompletion is not NoOp
+        let tmp%23#0: uint64 = (txn ApplicationID)
+        let tmp%24#0: bool = (!= tmp%23#0 0u)
+        (assert tmp%24#0) // can only call when not creating
+        let tmp%25#0: bytes = (txna ApplicationArgs 1)
+        let tmp%26#0: bytes = ((extract 2 0) tmp%25#0)
+        let reinterpret_bytes[32]%1#0: bytes[32] = (txna ApplicationArgs 2)
+        smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.updateRoot(tmp%26#0, reinterpret_bytes[32]%1#0)
+        return 1u
+    block@6: // addData_route_L233
+        let tmp%27#0: uint64 = (txn OnCompletion)
+        let tmp%28#0: bool = (== tmp%27#0 NoOp)
+        (assert tmp%28#0) // OnCompletion is not NoOp
+        let tmp%29#0: uint64 = (txn ApplicationID)
+        let tmp%30#0: bool = (!= tmp%29#0 0u)
+        (assert tmp%30#0) // can only call when not creating
+        let tmp%31#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%1#0: uint64 = (- tmp%31#0 1u)
+        let gtxn_type%1#0: uint64 = ((gtxns TypeEnum) gtxn_idx%1#0)
+        let gtxn_type_matches%1#0: bool = (== gtxn_type%1#0 pay)
+        (assert gtxn_type_matches%1#0) // transaction type is pay
+        let tmp%32#0: bytes = (txna ApplicationArgs 1)
+        let tmp%33#0: bytes = ((extract 2 0) tmp%32#0)
+        let tmp%34#0: bytes = (txna ApplicationArgs 2)
+        let tmp%35#0: bytes = ((extract 2 0) tmp%34#0)
+        let tmp%36#0: bytes = (txna ApplicationArgs 3)
+        let tmp%37#0: bytes = ((extract 2 0) tmp%36#0)
+        smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addData(gtxn_idx%1#0, tmp%33#0, tmp%35#0, tmp%37#0)
+        return 1u
+    block@7: // deleteData_route_L269
+        let tmp%38#0: uint64 = (txn OnCompletion)
+        let tmp%39#0: bool = (== tmp%38#0 NoOp)
+        (assert tmp%39#0) // OnCompletion is not NoOp
+        let tmp%40#0: uint64 = (txn ApplicationID)
+        let tmp%41#0: bool = (!= tmp%40#0 0u)
+        (assert tmp%41#0) // can only call when not creating
+        let tmp%42#0: bytes = (txna ApplicationArgs 1)
+        let tmp%43#0: bytes = ((extract 2 0) tmp%42#0)
+        let tmp%44#0: bytes = (txna ApplicationArgs 2)
+        let tmp%45#0: bytes = ((extract 2 0) tmp%44#0)
+        smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.deleteData(tmp%43#0, tmp%45#0)
+        return 1u
+    block@8: // verify_route_L300
+        let tmp%46#0: uint64 = (txn OnCompletion)
+        let tmp%47#0: bool = (== tmp%46#0 NoOp)
+        (assert tmp%47#0) // OnCompletion is not NoOp
+        let tmp%48#0: uint64 = (txn ApplicationID)
+        let tmp%49#0: bool = (!= tmp%48#0 0u)
+        (assert tmp%49#0) // can only call when not creating
+        let reinterpret_bytes[32]%2#0: bytes[32] = (txna ApplicationArgs 1)
+        let tmp%50#0: bytes = (txna ApplicationArgs 2)
+        let tmp%51#0: bytes = ((extract 2 0) tmp%50#0)
+        let reinterpret_bytes[32]%3#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[32][]%0#0: bytes[32][] = (txna ApplicationArgs 4)
+        let reinterpret_bytes[8]%1#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%52#0: uint64 = (btoi reinterpret_bytes[8]%1#0)
+        let to_encode%0#0: bool = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verify(reinterpret_bytes[32]%2#0, tmp%51#0, reinterpret_bytes[32]%3#0, reinterpret_bytes[32][]%0#0, tmp%52#0)
+        let encoded_bool%0#0: bytes[1] = (setbit 0x00 0u to_encode%0#0)
+        let tmp%53#0: bytes = (concat 0x151f7c75 encoded_bool%0#0)
+        (log tmp%53#0)
+        return 1u
+    block@9: // read_route_L333
+        let tmp%54#0: uint64 = (txn OnCompletion)
+        let tmp%55#0: bool = (== tmp%54#0 NoOp)
+        (assert tmp%55#0) // OnCompletion is not NoOp
+        let tmp%56#0: uint64 = (txn ApplicationID)
+        let tmp%57#0: bool = (!= tmp%56#0 0u)
+        (assert tmp%57#0) // can only call when not creating
+        let reinterpret_bytes[32]%4#0: bytes[32] = (txna ApplicationArgs 1)
+        let tmp%58#0: bytes = (txna ApplicationArgs 2)
+        let tmp%59#0: bytes = ((extract 2 0) tmp%58#0)
+        let tmp%60#0: bytes = (txna ApplicationArgs 3)
+        let tmp%61#0: bytes = ((extract 2 0) tmp%60#0)
+        let to_encode%1#0: bytes = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.read(reinterpret_bytes[32]%4#0, tmp%59#0, tmp%61#0)
+        let length%0#0: uint64 = (len to_encode%1#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 to_encode%1#0)
+        let tmp%62#0: bytes = (concat 0x151f7c75 encoded_value%0#0)
+        (log tmp%62#0)
+        return 1u
+    block@10: // verifiedRead_route_L358
+        let tmp%63#0: uint64 = (txn OnCompletion)
+        let tmp%64#0: bool = (== tmp%63#0 NoOp)
+        (assert tmp%64#0) // OnCompletion is not NoOp
+        let tmp%65#0: uint64 = (txn ApplicationID)
+        let tmp%66#0: bool = (!= tmp%65#0 0u)
+        (assert tmp%66#0) // can only call when not creating
+        let reinterpret_bytes[32]%5#0: bytes[32] = (txna ApplicationArgs 1)
+        let tmp%67#0: bytes = (txna ApplicationArgs 2)
+        let tmp%68#0: bytes = ((extract 2 0) tmp%67#0)
+        let reinterpret_bytes[32]%6#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[32][]%1#0: bytes[32][] = (txna ApplicationArgs 4)
+        let reinterpret_bytes[8]%2#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%69#0: uint64 = (btoi reinterpret_bytes[8]%2#0)
+        let tmp%70#0: bytes = (txna ApplicationArgs 6)
+        let tmp%71#0: bytes = ((extract 2 0) tmp%70#0)
+        let to_encode%2#0: bytes = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verifiedRead(reinterpret_bytes[32]%5#0, tmp%68#0, reinterpret_bytes[32]%6#0, reinterpret_bytes[32][]%1#0, tmp%69#0, tmp%71#0)
+        let length%1#0: uint64 = (len to_encode%2#0)
+        let as_bytes%1#0: bytes[8] = (itob length%1#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 to_encode%2#0)
+        let tmp%72#0: bytes = (concat 0x151f7c75 encoded_value%1#0)
+        (log tmp%72#0)
+        return 1u
+    block@11: // verifiedMustRead_route_L385
+        let tmp%73#0: uint64 = (txn OnCompletion)
+        let tmp%74#0: bool = (== tmp%73#0 NoOp)
+        (assert tmp%74#0) // OnCompletion is not NoOp
+        let tmp%75#0: uint64 = (txn ApplicationID)
+        let tmp%76#0: bool = (!= tmp%75#0 0u)
+        (assert tmp%76#0) // can only call when not creating
+        let reinterpret_bytes[32]%7#0: bytes[32] = (txna ApplicationArgs 1)
+        let tmp%77#0: bytes = (txna ApplicationArgs 2)
+        let tmp%78#0: bytes = ((extract 2 0) tmp%77#0)
+        let reinterpret_bytes[32]%8#0: bytes[32] = (txna ApplicationArgs 3)
+        let reinterpret_bytes[32][]%2#0: bytes[32][] = (txna ApplicationArgs 4)
+        let reinterpret_bytes[8]%3#0: bytes[8] = (txna ApplicationArgs 5)
+        let tmp%79#0: uint64 = (btoi reinterpret_bytes[8]%3#0)
+        let tmp%80#0: bytes = (txna ApplicationArgs 6)
+        let tmp%81#0: bytes = ((extract 2 0) tmp%80#0)
+        let to_encode%3#0: bytes = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verifiedMustRead(reinterpret_bytes[32]%7#0, tmp%78#0, reinterpret_bytes[32]%8#0, reinterpret_bytes[32][]%2#0, tmp%79#0, tmp%81#0)
+        let length%2#0: uint64 = (len to_encode%3#0)
+        let as_bytes%2#0: bytes[8] = (itob length%2#0)
+        let length_uint16%2#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%2#0 to_encode%3#0)
+        let tmp%82#0: bytes = (concat 0x151f7c75 encoded_value%2#0)
+        (log tmp%82#0)
+        return 1u
+    block@12: // addType_route_L397
+        let tmp%83#0: uint64 = (txn OnCompletion)
+        let tmp%84#0: bool = (== tmp%83#0 NoOp)
+        (assert tmp%84#0) // OnCompletion is not NoOp
+        let tmp%85#0: uint64 = (txn ApplicationID)
+        let tmp%86#0: bool = (!= tmp%85#0 0u)
+        (assert tmp%86#0) // can only call when not creating
+        let tmp%87#0: uint64 = (txn GroupIndex)
+        let gtxn_idx%2#0: uint64 = (- tmp%87#0 1u)
+        let gtxn_type%2#0: uint64 = ((gtxns TypeEnum) gtxn_idx%2#0)
+        let gtxn_type_matches%2#0: bool = (== gtxn_type%2#0 pay)
+        (assert gtxn_type_matches%2#0) // transaction type is pay
+        let tmp%88#0: bytes = (txna ApplicationArgs 1)
+        let tmp%89#0: bytes = ((extract 2 0) tmp%88#0)
+        let tmp%90#0: bytes = (txna ApplicationArgs 2)
+        smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addType(gtxn_idx%2#0, tmp%89#0, tmp%90#0)
+        return 1u
+    block@13: // rootCosts_route_L473
+        let tmp%91#0: uint64 = (txn OnCompletion)
+        let tmp%92#0: bool = (== tmp%91#0 NoOp)
+        (assert tmp%92#0) // OnCompletion is not NoOp
+        let tmp%93#0: uint64 = (txn ApplicationID)
+        let tmp%94#0: bool = (!= tmp%93#0 0u)
+        (assert tmp%94#0) // can only call when not creating
+        let tmp%95#0: bytes = (txna ApplicationArgs 1)
+        let tmp%96#0: bytes = ((extract 2 0) tmp%95#0)
+        let to_encode%4#0: uint64 = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.rootCosts(tmp%96#0)
+        let val_as_bytes%0#0: bytes[8] = (itob to_encode%4#0)
+        let tmp%97#0: bytes = (concat 0x151f7c75 val_as_bytes%0#0)
+        (log tmp%97#0)
+        return 1u
+    block@14: // dataCosts_route_L479
+        let tmp%98#0: uint64 = (txn OnCompletion)
+        let tmp%99#0: bool = (== tmp%98#0 NoOp)
+        (assert tmp%99#0) // OnCompletion is not NoOp
+        let tmp%100#0: uint64 = (txn ApplicationID)
+        let tmp%101#0: bool = (!= tmp%100#0 0u)
+        (assert tmp%101#0) // can only call when not creating
+        let tmp%102#0: bytes = (txna ApplicationArgs 1)
+        let tmp%103#0: bytes = (txna ApplicationArgs 2)
+        let tmp%104#0: bytes = (txna ApplicationArgs 3)
+        let to_encode%5#0: uint64 = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.dataCosts(tmp%102#0, tmp%103#0, tmp%104#0)
+        let val_as_bytes%1#0: bytes[8] = (itob to_encode%5#0)
+        let tmp%105#0: bytes = (concat 0x151f7c75 val_as_bytes%1#0)
+        (log tmp%105#0)
+        return 1u
+    block@15: // switch_case_default_L87
+        goto block@16
+    block@16: // switch_case_next_L87
+        goto block@18
+    block@17: // bare_routing_L87
+        goto block@18
+    block@18: // after_if_else_L87
+        return 0u
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr(typeDescription: bytes, schema: bytes, rootName: bytes, dataKey: bytes, dataValue: bytes) -> <uint64, uint64, uint64>:
+    block@0: // L109
+        let tmp%0#0: uint64 = (len typeDescription#0)
+        let tmp%1#0: uint64 = (* 400u tmp%0#0)
+        let tmp%2#0: uint64 = (len schema#0)
+        let tmp%3#0: uint64 = (+ tmp%1#0 tmp%2#0)
+        let tmp%4#0: uint64 = (+ 6100u tmp%3#0)
+        let tmp%5#0: uint64 = (len rootName#0)
+        let tmp%6#0: uint64 = (* 400u tmp%5#0)
+        let tmp%7#0: uint64 = (+ 28500u tmp%6#0)
+        let tmp%8#0: uint64 = (len rootName#0)
+        let tmp%9#0: uint64 = (len dataKey#0)
+        let tmp%10#0: uint64 = (+ tmp%8#0 tmp%9#0)
+        let tmp%11#0: uint64 = (len dataValue#0)
+        let tmp%12#0: uint64 = (+ tmp%10#0 tmp%11#0)
+        let tmp%13#0: uint64 = (* 400u tmp%12#0)
+        let tmp%14#0: uint64 = (+ 9300u tmp%13#0)
+        return tmp%4#0 tmp%7#0 tmp%14#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.newTypesID() -> uint64:
+    block@0: // L123
+        let (maybe_value%0#0: uint64, maybe_exists%0#0: bool) = (app_global_get_ex 0u "types_id")
+        (assert maybe_exists%0#0) // check GlobalState exists
+        let id#0: uint64 = maybe_value%0#0
+        let (maybe_value%1#0: uint64, maybe_exists%1#0: bool) = (app_global_get_ex 0u "types_id")
+        (assert maybe_exists%1#0) // check GlobalState exists
+        let materialized_values%0#0: uint64 = (+ maybe_value%1#0 1u)
+        (app_global_put "types_id" materialized_values%0#0)
+        return id#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.hash(a: bytes[32], b: bytes[32]) -> bytes[32]:
+    block@0: // L129
+        let reinterpret_biguint%0#0: biguint = a#0
+        let reinterpret_biguint%1#0: biguint = b#0
+        let tmp%0#0: bool = (b> reinterpret_biguint%0#0 reinterpret_biguint%1#0)
+        goto tmp%0#0 ? block@1 : block@2
+    block@1: // if_body_L130
+        let tmp%1#0: bytes = (concat b#0 a#0)
+        let tmp%2#0: bytes[32] = (sha256 tmp%1#0)
+        return tmp%2#0
+    block@2: // after_if_else_L130
+        let tmp%3#0: bytes = (concat a#0 b#0)
+        let tmp%4#0: bytes[32] = (sha256 tmp%3#0)
+        return tmp%4#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.create() -> void:
+    block@0: // L138
+        (app_global_put "types_id" 0u)
+        return 
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addRoot(payment: uint64, name: bytes, root: bytes[32], type: uint64) -> void:
+    block@0: // L155
+        let tmp%0#0: uint64 = (len name#0)
+        let tmp%1#0: bool = (<= tmp%0#0 31u)
+        (assert tmp%1#0) // Cannot add root with name longer than 31 bytes
+        let encoded_value%0#0: bytes[8] = (itob type#0)
+        let box_prefixed_key%0#0: bytes = (concat "t" encoded_value%0#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // tree type does not exist
+        let origin#0: bytes[32] = smart_contracts/utils/functions.ts::getOrigin(TemplateVar[uint64](TMPL_SPENDING_ACCOUNT_FACTORY_APP))
+        let truncatedAddress#0: bytes[16] = smart_contracts/utils/types/base.ts::bytes16(origin#0)
+        let (rootKey.address#0: bytes[32], rootKey.name#0: bytes) = (origin#0, name#0)
+        let (typeKey.address#0: bytes[16], typeKey.name#0: bytes, typeKey.key#0: bytes) = (truncatedAddress#0, name#0, "l.type")
+        let length%0#0: uint64 = (len rootKey.name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%0#0 rootKey.name#0)
+        let current_tail_offset%0#0: uint64 = 34u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 rootKey.address#0)
+        let as_bytes%1#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 encoded_value%1#0)
+        let box_prefixed_key%1#0: bytes = (concat "r" encoded_tuple_buffer%3#0)
+        let (_%1#0: uint64, maybe_exists%1#0: bool) = (box_len box_prefixed_key%1#0)
+        let tmp%2#0: bool = (! maybe_exists%1#0)
+        (assert tmp%2#0) // this name is already in use
+        let length%1#0: uint64 = (len typeKey.address#0)
+        let lengths_equal%0#0: bool = (== length%1#0 16u)
+        (assert lengths_equal%0#0) // invalid size
+        let length%2#0: uint64 = (len typeKey.name#0)
+        let as_bytes%2#0: bytes[8] = (itob length%2#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%1#0 typeKey.name#0)
+        let length%3#0: uint64 = (len typeKey.key#0)
+        let as_bytes%3#0: bytes[8] = (itob length%3#0)
+        let length_uint16%2#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_value%3#0: bytes = (concat length_uint16%2#0 typeKey.key#0)
+        let current_tail_offset%2#0: uint64 = 20u
+        let encoded_tuple_buffer%4#0: bytes[0] = 0x
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 typeKey.address#0)
+        let as_bytes%4#0: bytes[8] = (itob current_tail_offset%2#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%4#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%2#0)
+        let current_tail_offset%3#0: uint64 = (+ current_tail_offset%2#0 data_length%1#0)
+        let as_bytes%5#0: bytes[8] = (itob current_tail_offset%3#0)
+        let offset_as_uint16%2#0: bytes = ((extract 6 2) as_bytes%5#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 offset_as_uint16%2#0)
+        let data_length%2#0: uint64 = (len encoded_value%3#0)
+        let current_tail_offset%4#0: uint64 = (+ current_tail_offset%3#0 data_length%2#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 encoded_value%2#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 encoded_value%3#0)
+        let box_prefixed_key%2#0: bytes = (concat "d" encoded_tuple_buffer%9#0)
+        let (_%2#0: uint64, maybe_exists%2#0: bool) = (box_len box_prefixed_key%2#0)
+        let tmp%3#0: bool = (! maybe_exists%2#0)
+        (assert tmp%3#0) // tree type key already exists for this root
+        let tmp%4#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%5#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%6#0: bool = (== tmp%4#0 tmp%5#0)
+        goto tmp%6#0 ? block@1 : block@3
+    block@1: // and_contd_L173
+        let tmp%7#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%8#0: uint64 = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.rootCosts(name#0)
+        let tmp%9#0: bool = (== tmp%7#0 tmp%8#0)
+        goto tmp%9#0 ? block@2 : block@3
+    block@2: // bool_true_L173
+        let and_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L173
+        let and_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L173
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@2, and_result%0#1 <- block@3)
+        (assert and_result%0#2) // Invalid payment
+        let length%4#0: uint64 = (len rootKey.name#0)
+        let as_bytes%6#0: bytes[8] = (itob length%4#0)
+        let length_uint16%3#0: bytes = ((extract 6 2) as_bytes%6#0)
+        let encoded_value%4#0: bytes = (concat length_uint16%3#0 rootKey.name#0)
+        let current_tail_offset%5#0: uint64 = 34u
+        let encoded_tuple_buffer%10#0: bytes[0] = 0x
+        let encoded_tuple_buffer%11#0: bytes = (concat encoded_tuple_buffer%10#0 rootKey.address#0)
+        let as_bytes%7#0: bytes[8] = (itob current_tail_offset%5#0)
+        let offset_as_uint16%3#0: bytes = ((extract 6 2) as_bytes%7#0)
+        let encoded_tuple_buffer%12#0: bytes = (concat encoded_tuple_buffer%11#0 offset_as_uint16%3#0)
+        let data_length%3#0: uint64 = (len encoded_value%4#0)
+        let current_tail_offset%6#0: uint64 = (+ current_tail_offset%5#0 data_length%3#0)
+        let encoded_tuple_buffer%13#0: bytes = (concat encoded_tuple_buffer%12#0 encoded_value%4#0)
+        let box_prefixed_key%3#0: bytes = (concat "r" encoded_tuple_buffer%13#0)
+        (box_put box_prefixed_key%3#0 root#0)
+        let materialized_values%0#0: bytes[8] = (itob type#0)
+        let length%5#0: uint64 = (len typeKey.address#0)
+        let lengths_equal%1#0: bool = (== length%5#0 16u)
+        (assert lengths_equal%1#0) // invalid size
+        let length%6#0: uint64 = (len typeKey.name#0)
+        let as_bytes%8#0: bytes[8] = (itob length%6#0)
+        let length_uint16%4#0: bytes = ((extract 6 2) as_bytes%8#0)
+        let encoded_value%5#0: bytes = (concat length_uint16%4#0 typeKey.name#0)
+        let length%7#0: uint64 = (len typeKey.key#0)
+        let as_bytes%9#0: bytes[8] = (itob length%7#0)
+        let length_uint16%5#0: bytes = ((extract 6 2) as_bytes%9#0)
+        let encoded_value%6#0: bytes = (concat length_uint16%5#0 typeKey.key#0)
+        let current_tail_offset%7#0: uint64 = 20u
+        let encoded_tuple_buffer%14#0: bytes[0] = 0x
+        let encoded_tuple_buffer%15#0: bytes = (concat encoded_tuple_buffer%14#0 typeKey.address#0)
+        let as_bytes%10#0: bytes[8] = (itob current_tail_offset%7#0)
+        let offset_as_uint16%4#0: bytes = ((extract 6 2) as_bytes%10#0)
+        let encoded_tuple_buffer%16#0: bytes = (concat encoded_tuple_buffer%15#0 offset_as_uint16%4#0)
+        let data_length%4#0: uint64 = (len encoded_value%5#0)
+        let current_tail_offset%8#0: uint64 = (+ current_tail_offset%7#0 data_length%4#0)
+        let as_bytes%11#0: bytes[8] = (itob current_tail_offset%8#0)
+        let offset_as_uint16%5#0: bytes = ((extract 6 2) as_bytes%11#0)
+        let encoded_tuple_buffer%17#0: bytes = (concat encoded_tuple_buffer%16#0 offset_as_uint16%5#0)
+        let data_length%5#0: uint64 = (len encoded_value%6#0)
+        let current_tail_offset%9#0: uint64 = (+ current_tail_offset%8#0 data_length%5#0)
+        let encoded_tuple_buffer%18#0: bytes = (concat encoded_tuple_buffer%17#0 encoded_value%5#0)
+        let encoded_tuple_buffer%19#0: bytes = (concat encoded_tuple_buffer%18#0 encoded_value%6#0)
+        let box_prefixed_key%4#0: bytes = (concat "d" encoded_tuple_buffer%19#0)
+        (box_del box_prefixed_key%4#0)
+        (box_put box_prefixed_key%4#0 materialized_values%0#0)
+        return 
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.deleteRoot(name: bytes) -> void:
+    block@0: // L191
+        let origin#0: bytes[32] = smart_contracts/utils/functions.ts::getOrigin(TemplateVar[uint64](TMPL_SPENDING_ACCOUNT_FACTORY_APP))
+        let truncatedAddress#0: bytes[16] = smart_contracts/utils/types/base.ts::bytes16(origin#0)
+        let (rootKey.address#0: bytes[32], rootKey.name#0: bytes) = (origin#0, name#0)
+        let (typeKey.address#0: bytes[16], typeKey.name#0: bytes, typeKey.key#0: bytes) = (truncatedAddress#0, name#0, "l.type")
+        let length%0#0: uint64 = (len rootKey.name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 rootKey.name#0)
+        let current_tail_offset%0#0: uint64 = 34u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 rootKey.address#0)
+        let as_bytes%1#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%0#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 encoded_value%0#0)
+        let box_prefixed_key%0#0: bytes = (concat "r" encoded_tuple_buffer%3#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // a root with this name does not exist
+        let length%1#0: uint64 = (len rootKey.name#0)
+        let as_bytes%2#0: bytes[8] = (itob length%1#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 rootKey.name#0)
+        let current_tail_offset%2#0: uint64 = 34u
+        let encoded_tuple_buffer%4#0: bytes[0] = 0x
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 rootKey.address#0)
+        let as_bytes%3#0: bytes[8] = (itob current_tail_offset%2#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%3#0: uint64 = (+ current_tail_offset%2#0 data_length%1#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 encoded_value%1#0)
+        let box_prefixed_key%1#0: bytes = (concat "r" encoded_tuple_buffer%7#0)
+        (box_del box_prefixed_key%1#0)
+        let length%2#0: uint64 = (len typeKey.address#0)
+        let lengths_equal%0#0: bool = (== length%2#0 16u)
+        (assert lengths_equal%0#0) // invalid size
+        let length%3#0: uint64 = (len typeKey.name#0)
+        let as_bytes%4#0: bytes[8] = (itob length%3#0)
+        let length_uint16%2#0: bytes = ((extract 6 2) as_bytes%4#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%2#0 typeKey.name#0)
+        let length%4#0: uint64 = (len typeKey.key#0)
+        let as_bytes%5#0: bytes[8] = (itob length%4#0)
+        let length_uint16%3#0: bytes = ((extract 6 2) as_bytes%5#0)
+        let encoded_value%3#0: bytes = (concat length_uint16%3#0 typeKey.key#0)
+        let current_tail_offset%4#0: uint64 = 20u
+        let encoded_tuple_buffer%8#0: bytes[0] = 0x
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 typeKey.address#0)
+        let as_bytes%6#0: bytes[8] = (itob current_tail_offset%4#0)
+        let offset_as_uint16%2#0: bytes = ((extract 6 2) as_bytes%6#0)
+        let encoded_tuple_buffer%10#0: bytes = (concat encoded_tuple_buffer%9#0 offset_as_uint16%2#0)
+        let data_length%2#0: uint64 = (len encoded_value%2#0)
+        let current_tail_offset%5#0: uint64 = (+ current_tail_offset%4#0 data_length%2#0)
+        let as_bytes%7#0: bytes[8] = (itob current_tail_offset%5#0)
+        let offset_as_uint16%3#0: bytes = ((extract 6 2) as_bytes%7#0)
+        let encoded_tuple_buffer%11#0: bytes = (concat encoded_tuple_buffer%10#0 offset_as_uint16%3#0)
+        let data_length%3#0: uint64 = (len encoded_value%3#0)
+        let current_tail_offset%6#0: uint64 = (+ current_tail_offset%5#0 data_length%3#0)
+        let encoded_tuple_buffer%12#0: bytes = (concat encoded_tuple_buffer%11#0 encoded_value%2#0)
+        let encoded_tuple_buffer%13#0: bytes = (concat encoded_tuple_buffer%12#0 encoded_value%3#0)
+        let box_prefixed_key%2#0: bytes = (concat "d" encoded_tuple_buffer%13#0)
+        (box_del box_prefixed_key%2#0)
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Receiver_idx_0#0: bytes[32] = origin#0
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.rootCosts(name#0)
+        let inner_txn_params%0%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%0%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L204
+        itxn_submit
+        return 
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.updateRoot(name: bytes, newRoot: bytes[32]) -> void:
+    block@0: // L217
+        let origin#0: bytes[32] = smart_contracts/utils/functions.ts::getOrigin(TemplateVar[uint64](TMPL_SPENDING_ACCOUNT_FACTORY_APP))
+        let (key.address#0: bytes[32], key.name#0: bytes) = (origin#0, name#0)
+        let length%0#0: uint64 = (len key.name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 key.name#0)
+        let current_tail_offset%0#0: uint64 = 34u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 key.address#0)
+        let as_bytes%1#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%0#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 encoded_value%0#0)
+        let box_prefixed_key%0#0: bytes = (concat "r" encoded_tuple_buffer%3#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // a root with this name does not exist
+        let length%1#0: uint64 = (len key.name#0)
+        let as_bytes%2#0: bytes[8] = (itob length%1#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 key.name#0)
+        let current_tail_offset%2#0: uint64 = 34u
+        let encoded_tuple_buffer%4#0: bytes[0] = 0x
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 key.address#0)
+        let as_bytes%3#0: bytes[8] = (itob current_tail_offset%2#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%3#0: uint64 = (+ current_tail_offset%2#0 data_length%1#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 encoded_value%1#0)
+        let box_prefixed_key%1#0: bytes = (concat "r" encoded_tuple_buffer%7#0)
+        (box_put box_prefixed_key%1#0 newRoot#0)
+        return 
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addData(payment: uint64, name: bytes, key: bytes, value: bytes) -> void:
+    block@0: // L233
+        let origin#0: bytes[32] = smart_contracts/utils/functions.ts::getOrigin(TemplateVar[uint64](TMPL_SPENDING_ACCOUNT_FACTORY_APP))
+        let (rootKey.address#0: bytes[32], rootKey.name#0: bytes) = (origin#0, name#0)
+        let keyBytes#0: bytes = key#0
+        let tmp%0#0: uint64 = (len keyBytes#0)
+        let tmp%1#0: bool = (<= tmp%0#0 15u)
+        (assert tmp%1#0) // max key length is 32 bytes
+        let tmp%2#0: uint64 = (len value#0)
+        let tmp%3#0: bool = (<= tmp%2#0 1024u)
+        (assert tmp%3#0) // max data length is 1024 bytes
+        let tmp%4#0: uint64 = (len keyBytes#0)
+        let tmp%5#0: bool = (< tmp%4#0 2u)
+        goto tmp%5#0 ? block@2 : block@1
+    block@1: // or_contd_L241
+        let length%0#0: uint64 = (len keyBytes#0)
+        let is_out_of_bounds%0#0: bool = (>= 0u length%0#0)
+        let bounded_index%0#0: uint64 = (select 0u length%0#0 is_out_of_bounds%0#0)
+        let is_out_of_bounds%1#0: bool = (>= 2u length%0#0)
+        let bounded_index%1#0: uint64 = (select 2u length%0#0 is_out_of_bounds%1#0)
+        let tmp%6#0: bytes = (substring3 keyBytes#0 bounded_index%0#0 bounded_index%1#0)
+        let tmp%7#0: bool = (== tmp%6#0 "l.")
+        goto tmp%7#0 ? block@3 : block@2
+    block@2: // bool_true_L241
+        let or_result%0#0: bool = 1u
+        goto block@4
+    block@3: // bool_false_L241
+        let or_result%0#1: bool = 0u
+        goto block@4
+    block@4: // bool_merge_L241
+        let or_result%0#2: bool = φ(or_result%0#0 <- block@2, or_result%0#1 <- block@3)
+        (assert or_result%0#2) // l. is reserved for internals
+        let length%1#0: uint64 = (len rootKey.name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%1#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 rootKey.name#0)
+        let current_tail_offset%0#0: uint64 = 34u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 rootKey.address#0)
+        let as_bytes%1#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%0#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 encoded_value%0#0)
+        let box_prefixed_key%0#0: bytes = (concat "r" encoded_tuple_buffer%3#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // there must be a root to associate the data to
+        let (costs.types#0: uint64, costs.roots#0: uint64, costs.data#0: uint64) = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr("", "", name#0, key#0, value#0)
+        let tmp%8#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%9#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%10#0: bool = (== tmp%8#0 tmp%9#0)
+        goto tmp%10#0 ? block@5 : block@7
+    block@5: // and_contd_L248
+        let tmp%11#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%12#0: bool = (== tmp%11#0 costs.data#0)
+        goto tmp%12#0 ? block@6 : block@7
+    block@6: // bool_true_L248
+        let and_result%0#0: bool = 1u
+        goto block@8
+    block@7: // bool_false_L248
+        let and_result%0#1: bool = 0u
+        goto block@8
+    block@8: // bool_merge_L248
+        let and_result%0#2: bool = φ(and_result%0#0 <- block@6, and_result%0#1 <- block@7)
+        (assert and_result%0#2) // Invalid payment
+        let truncatedAddress#0: bytes[16] = smart_contracts/utils/types/base.ts::bytes16(origin#0)
+        let (dataKey.address#0: bytes[16], dataKey.name#0: bytes, dataKey.key#0: bytes) = (truncatedAddress#0, name#0, key#0)
+        let length%2#0: uint64 = (len dataKey.address#0)
+        let lengths_equal%0#0: bool = (== length%2#0 16u)
+        (assert lengths_equal%0#0) // invalid size
+        let length%3#0: uint64 = (len dataKey.name#0)
+        let as_bytes%2#0: bytes[8] = (itob length%3#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 dataKey.name#0)
+        let length%4#0: uint64 = (len dataKey.key#0)
+        let as_bytes%3#0: bytes[8] = (itob length%4#0)
+        let length_uint16%2#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%2#0 dataKey.key#0)
+        let current_tail_offset%2#0: uint64 = 20u
+        let encoded_tuple_buffer%4#0: bytes[0] = 0x
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 dataKey.address#0)
+        let as_bytes%4#0: bytes[8] = (itob current_tail_offset%2#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%4#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%3#0: uint64 = (+ current_tail_offset%2#0 data_length%1#0)
+        let as_bytes%5#0: bytes[8] = (itob current_tail_offset%3#0)
+        let offset_as_uint16%2#0: bytes = ((extract 6 2) as_bytes%5#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 offset_as_uint16%2#0)
+        let data_length%2#0: uint64 = (len encoded_value%2#0)
+        let current_tail_offset%4#0: uint64 = (+ current_tail_offset%3#0 data_length%2#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 encoded_value%1#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 encoded_value%2#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_tuple_buffer%9#0)
+        (box_del box_prefixed_key%1#0)
+        (box_put box_prefixed_key%1#0 value#0)
+        return 
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.deleteData(name: bytes, key: bytes) -> void:
+    block@0: // L269
+        let origin#0: bytes[32] = smart_contracts/utils/functions.ts::getOrigin(TemplateVar[uint64](TMPL_SPENDING_ACCOUNT_FACTORY_APP))
+        let truncatedAddress#0: bytes[16] = smart_contracts/utils/types/base.ts::bytes16(origin#0)
+        let (dataKey.address#0: bytes[16], dataKey.name#0: bytes, dataKey.key#0: bytes) = (truncatedAddress#0, name#0, key#0)
+        let length%0#0: uint64 = (len dataKey.address#0)
+        let lengths_equal%0#0: bool = (== length%0#0 16u)
+        (assert lengths_equal%0#0) // invalid size
+        let length%1#0: uint64 = (len dataKey.name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%1#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 dataKey.name#0)
+        let length%2#0: uint64 = (len dataKey.key#0)
+        let as_bytes%1#0: bytes[8] = (itob length%2#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 dataKey.key#0)
+        let current_tail_offset%0#0: uint64 = 20u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 dataKey.address#0)
+        let as_bytes%2#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%0#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let as_bytes%3#0: bytes[8] = (itob current_tail_offset%1#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%2#0: uint64 = (+ current_tail_offset%1#0 data_length%1#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 encoded_value%0#0)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 encoded_value%1#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_tuple_buffer%5#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // data does not exist
+        let length%3#0: uint64 = (len dataKey.address#0)
+        let lengths_equal%1#0: bool = (== length%3#0 16u)
+        (assert lengths_equal%1#0) // invalid size
+        let length%4#0: uint64 = (len dataKey.name#0)
+        let as_bytes%4#0: bytes[8] = (itob length%4#0)
+        let length_uint16%2#0: bytes = ((extract 6 2) as_bytes%4#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%2#0 dataKey.name#0)
+        let length%5#0: uint64 = (len dataKey.key#0)
+        let as_bytes%5#0: bytes[8] = (itob length%5#0)
+        let length_uint16%3#0: bytes = ((extract 6 2) as_bytes%5#0)
+        let encoded_value%3#0: bytes = (concat length_uint16%3#0 dataKey.key#0)
+        let current_tail_offset%3#0: uint64 = 20u
+        let encoded_tuple_buffer%6#0: bytes[0] = 0x
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 dataKey.address#0)
+        let as_bytes%6#0: bytes[8] = (itob current_tail_offset%3#0)
+        let offset_as_uint16%2#0: bytes = ((extract 6 2) as_bytes%6#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 offset_as_uint16%2#0)
+        let data_length%2#0: uint64 = (len encoded_value%2#0)
+        let current_tail_offset%4#0: uint64 = (+ current_tail_offset%3#0 data_length%2#0)
+        let as_bytes%7#0: bytes[8] = (itob current_tail_offset%4#0)
+        let offset_as_uint16%3#0: bytes = ((extract 6 2) as_bytes%7#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 offset_as_uint16%3#0)
+        let data_length%3#0: uint64 = (len encoded_value%3#0)
+        let current_tail_offset%5#0: uint64 = (+ current_tail_offset%4#0 data_length%3#0)
+        let encoded_tuple_buffer%10#0: bytes = (concat encoded_tuple_buffer%9#0 encoded_value%2#0)
+        let encoded_tuple_buffer%11#0: bytes = (concat encoded_tuple_buffer%10#0 encoded_value%3#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_tuple_buffer%11#0)
+        (box_del box_prefixed_key%1#0)
+        let length%6#0: uint64 = (len dataKey.address#0)
+        let lengths_equal%2#0: bool = (== length%6#0 16u)
+        (assert lengths_equal%2#0) // invalid size
+        let length%7#0: uint64 = (len dataKey.name#0)
+        let as_bytes%8#0: bytes[8] = (itob length%7#0)
+        let length_uint16%4#0: bytes = ((extract 6 2) as_bytes%8#0)
+        let encoded_value%4#0: bytes = (concat length_uint16%4#0 dataKey.name#0)
+        let length%8#0: uint64 = (len dataKey.key#0)
+        let as_bytes%9#0: bytes[8] = (itob length%8#0)
+        let length_uint16%5#0: bytes = ((extract 6 2) as_bytes%9#0)
+        let encoded_value%5#0: bytes = (concat length_uint16%5#0 dataKey.key#0)
+        let current_tail_offset%6#0: uint64 = 20u
+        let encoded_tuple_buffer%12#0: bytes[0] = 0x
+        let encoded_tuple_buffer%13#0: bytes = (concat encoded_tuple_buffer%12#0 dataKey.address#0)
+        let as_bytes%10#0: bytes[8] = (itob current_tail_offset%6#0)
+        let offset_as_uint16%4#0: bytes = ((extract 6 2) as_bytes%10#0)
+        let encoded_tuple_buffer%14#0: bytes = (concat encoded_tuple_buffer%13#0 offset_as_uint16%4#0)
+        let data_length%4#0: uint64 = (len encoded_value%4#0)
+        let current_tail_offset%7#0: uint64 = (+ current_tail_offset%6#0 data_length%4#0)
+        let as_bytes%11#0: bytes[8] = (itob current_tail_offset%7#0)
+        let offset_as_uint16%5#0: bytes = ((extract 6 2) as_bytes%11#0)
+        let encoded_tuple_buffer%15#0: bytes = (concat encoded_tuple_buffer%14#0 offset_as_uint16%5#0)
+        let data_length%5#0: uint64 = (len encoded_value%5#0)
+        let current_tail_offset%8#0: uint64 = (+ current_tail_offset%7#0 data_length%5#0)
+        let encoded_tuple_buffer%16#0: bytes = (concat encoded_tuple_buffer%15#0 encoded_value%4#0)
+        let encoded_tuple_buffer%17#0: bytes = (concat encoded_tuple_buffer%16#0 encoded_value%5#0)
+        let box_prefixed_key%2#0: bytes = (concat "d" encoded_tuple_buffer%17#0)
+        let (maybe_value%0#0: bytes, maybe_exists%1#0: bool) = (box_get box_prefixed_key%2#0)
+        (assert maybe_exists%1#0) // Box must have value
+        let (costs.types#0: uint64, costs.roots#0: uint64, costs.data#0: uint64) = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr("", "", name#0, key#0, maybe_value%0#0)
+        itxn_begin
+        let inner_txn_params%0#0: itxn_field_set = itxn_field_set(0)
+        let inner_txn_params%0%%param_Fee_idx_0#0: uint64 = 0u
+        let inner_txn_params%0%%Fee_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_TypeEnum_idx_0#0: uint64 = 1u
+        let inner_txn_params%0%%TypeEnum_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Receiver_idx_0#0: bytes[32] = origin#0
+        let inner_txn_params%0%%Receiver_length#0: uint64 = 1u
+        let inner_txn_params%0%%param_Amount_idx_0#0: uint64 = costs.data#0
+        let inner_txn_params%0%%Amount_length#0: uint64 = 1u
+        let inner_txn_params%0%%Sender_length#0: uint64 = 0u
+        let inner_txn_params%0%%Note_length#0: uint64 = 0u
+        let inner_txn_params%0%%CloseRemainderTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%VotePK_length#0: uint64 = 0u
+        let inner_txn_params%0%%SelectionPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteFirst_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteLast_length#0: uint64 = 0u
+        let inner_txn_params%0%%VoteKeyDilution_length#0: uint64 = 0u
+        let inner_txn_params%0%%Type_length#0: uint64 = 0u
+        let inner_txn_params%0%%XferAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetAmount_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetSender_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetReceiver_length#0: uint64 = 0u
+        let inner_txn_params%0%%AssetCloseTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationID_length#0: uint64 = 0u
+        let inner_txn_params%0%%OnCompletion_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgram_length#0: uint64 = 0u
+        let inner_txn_params%0%%RekeyTo_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetTotal_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDecimals_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetDefaultFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetUnitName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetName_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetURL_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetMetadataHash_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetManager_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetReserve_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetFreeze_length#0: uint64 = 0u
+        let inner_txn_params%0%%ConfigAssetClawback_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAsset_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetAccount_length#0: uint64 = 0u
+        let inner_txn_params%0%%FreezeAssetFrozen_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%GlobalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumUint_length#0: uint64 = 0u
+        let inner_txn_params%0%%LocalNumByteSlice_length#0: uint64 = 0u
+        let inner_txn_params%0%%ExtraProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%Nonparticipation_length#0: uint64 = 0u
+        let inner_txn_params%0%%StateProofPK_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApplicationArgs_length#0: uint64 = 0u
+        let inner_txn_params%0%%Accounts_length#0: uint64 = 0u
+        let inner_txn_params%0%%Assets_length#0: uint64 = 0u
+        let inner_txn_params%0%%Applications_length#0: uint64 = 0u
+        let inner_txn_params%0%%ApprovalProgramPages_length#0: uint64 = 0u
+        let inner_txn_params%0%%ClearStateProgramPages_length#0: uint64 = 0u
+        ((itxn_field Amount) inner_txn_params%0%%param_Amount_idx_0#0)
+        ((itxn_field Receiver) inner_txn_params%0%%param_Receiver_idx_0#0)
+        ((itxn_field TypeEnum) inner_txn_params%0%%param_TypeEnum_idx_0#0)
+        ((itxn_field Fee) inner_txn_params%0%%param_Fee_idx_0#0)
+        goto block@1
+    block@1: // next_txn_L280
+        itxn_submit
+        return 
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verify(address: bytes[32], name: bytes, leaf: bytes[32], proof: bytes[32][], type: uint64) -> bool:
+    block@0: // L300
+        let truncatedAddress#0: bytes[16] = smart_contracts/utils/types/base.ts::bytes16(address#0)
+        let (rootKey.address#0: bytes[32], rootKey.name#0: bytes) = (address#0, name#0)
+        let (typeKey.address#0: bytes[16], typeKey.name#0: bytes, typeKey.key#0: bytes) = (truncatedAddress#0, name#0, "l.type")
+        let length%0#0: uint64 = (len rootKey.name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 rootKey.name#0)
+        let current_tail_offset%0#0: uint64 = 34u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 rootKey.address#0)
+        let as_bytes%1#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%0#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 encoded_value%0#0)
+        let box_prefixed_key%0#0: bytes = (concat "r" encoded_tuple_buffer%3#0)
+        let (_%0#0: uint64, maybe_exists%0#0: bool) = (box_len box_prefixed_key%0#0)
+        goto maybe_exists%0#0 ? block@1 : block@2
+    block@1: // or_contd_L306
+        let length%1#0: uint64 = (len typeKey.address#0)
+        let lengths_equal%0#0: bool = (== length%1#0 16u)
+        (assert lengths_equal%0#0) // invalid size
+        let length%2#0: uint64 = (len typeKey.name#0)
+        let as_bytes%2#0: bytes[8] = (itob length%2#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 typeKey.name#0)
+        let length%3#0: uint64 = (len typeKey.key#0)
+        let as_bytes%3#0: bytes[8] = (itob length%3#0)
+        let length_uint16%2#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%2#0 typeKey.key#0)
+        let current_tail_offset%2#0: uint64 = 20u
+        let encoded_tuple_buffer%4#0: bytes[0] = 0x
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 typeKey.address#0)
+        let as_bytes%4#0: bytes[8] = (itob current_tail_offset%2#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%4#0)
+        let encoded_tuple_buffer%6#0: bytes = (concat encoded_tuple_buffer%5#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%3#0: uint64 = (+ current_tail_offset%2#0 data_length%1#0)
+        let as_bytes%5#0: bytes[8] = (itob current_tail_offset%3#0)
+        let offset_as_uint16%2#0: bytes = ((extract 6 2) as_bytes%5#0)
+        let encoded_tuple_buffer%7#0: bytes = (concat encoded_tuple_buffer%6#0 offset_as_uint16%2#0)
+        let data_length%2#0: uint64 = (len encoded_value%2#0)
+        let current_tail_offset%4#0: uint64 = (+ current_tail_offset%3#0 data_length%2#0)
+        let encoded_tuple_buffer%8#0: bytes = (concat encoded_tuple_buffer%7#0 encoded_value%1#0)
+        let encoded_tuple_buffer%9#0: bytes = (concat encoded_tuple_buffer%8#0 encoded_value%2#0)
+        let box_prefixed_key%1#0: bytes = (concat "d" encoded_tuple_buffer%9#0)
+        let (_%1#0: uint64, maybe_exists%1#0: bool) = (box_len box_prefixed_key%1#0)
+        goto maybe_exists%1#0 ? block@3 : block@2
+    block@2: // if_body_L306
+        return 0u
+    block@3: // after_if_else_L306
+        let length%4#0: uint64 = (len typeKey.address#0)
+        let lengths_equal%1#0: bool = (== length%4#0 16u)
+        (assert lengths_equal%1#0) // invalid size
+        let length%5#0: uint64 = (len typeKey.name#0)
+        let as_bytes%6#0: bytes[8] = (itob length%5#0)
+        let length_uint16%3#0: bytes = ((extract 6 2) as_bytes%6#0)
+        let encoded_value%3#0: bytes = (concat length_uint16%3#0 typeKey.name#0)
+        let length%6#0: uint64 = (len typeKey.key#0)
+        let as_bytes%7#0: bytes[8] = (itob length%6#0)
+        let length_uint16%4#0: bytes = ((extract 6 2) as_bytes%7#0)
+        let encoded_value%4#0: bytes = (concat length_uint16%4#0 typeKey.key#0)
+        let current_tail_offset%5#0: uint64 = 20u
+        let encoded_tuple_buffer%10#0: bytes[0] = 0x
+        let encoded_tuple_buffer%11#0: bytes = (concat encoded_tuple_buffer%10#0 typeKey.address#0)
+        let as_bytes%8#0: bytes[8] = (itob current_tail_offset%5#0)
+        let offset_as_uint16%3#0: bytes = ((extract 6 2) as_bytes%8#0)
+        let encoded_tuple_buffer%12#0: bytes = (concat encoded_tuple_buffer%11#0 offset_as_uint16%3#0)
+        let data_length%3#0: uint64 = (len encoded_value%3#0)
+        let current_tail_offset%6#0: uint64 = (+ current_tail_offset%5#0 data_length%3#0)
+        let as_bytes%9#0: bytes[8] = (itob current_tail_offset%6#0)
+        let offset_as_uint16%4#0: bytes = ((extract 6 2) as_bytes%9#0)
+        let encoded_tuple_buffer%13#0: bytes = (concat encoded_tuple_buffer%12#0 offset_as_uint16%4#0)
+        let data_length%4#0: uint64 = (len encoded_value%4#0)
+        let current_tail_offset%7#0: uint64 = (+ current_tail_offset%6#0 data_length%4#0)
+        let encoded_tuple_buffer%14#0: bytes = (concat encoded_tuple_buffer%13#0 encoded_value%3#0)
+        let encoded_tuple_buffer%15#0: bytes = (concat encoded_tuple_buffer%14#0 encoded_value%4#0)
+        let box_prefixed_key%2#0: bytes = (concat "d" encoded_tuple_buffer%15#0)
+        let (maybe_value%0#0: bytes, maybe_exists%2#0: bool) = (box_get box_prefixed_key%2#0)
+        (assert maybe_exists%2#0) // Box must have value
+        let treeType#0: uint64 = (btoi maybe_value%0#0)
+        let tmp%0#0: bool = (!= type#0 0u)
+        goto tmp%0#0 ? block@4 : block@6
+    block@4: // and_contd_L311
+        let tmp%1#0: bool = (!= treeType#0 type#0)
+        goto tmp%1#0 ? block@5 : block@6
+    block@5: // if_body_L311
+        return 0u
+    block@6: // after_if_else_L311
+        let tmp%2#0: uint64 = (extract_uint16 proof#0 0u)
+        let tmp%3#0: uint64 = (* tmp%2#0 50u)
+        _puya_lib.util.ensure_budget(tmp%3#0, 0u)
+        let hash#0: bytes[32] = leaf#0
+        let i#0: uint64 = 0u
+        goto block@7
+    block@7: // while_top_L318
+        let i#1: uint64 = φ(i#0 <- block@6, i#2 <- block@8)
+        let hash#1: bytes[32] = φ(hash#0 <- block@6, hash#2 <- block@8)
+        let tmp%4#0: uint64 = (extract_uint16 proof#0 0u)
+        let tmp%5#0: bool = (< i#1 tmp%4#0)
+        goto tmp%5#0 ? block@8 : block@9
+    block@8: // while_body_L318
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) proof#0)
+        let item_offset%0#0: uint64 = (* i#1 32u)
+        let arc4_item%0#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 32u) // on error: Index access is out of bounds
+        let hash#2: bytes[32] = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.hash(arc4_item%0#0, hash#1)
+        let i#2: uint64 = (+ i#1 1u)
+        goto block@7
+    block@9: // after_while_L318
+        let length%7#0: uint64 = (len rootKey.name#0)
+        let as_bytes%10#0: bytes[8] = (itob length%7#0)
+        let length_uint16%5#0: bytes = ((extract 6 2) as_bytes%10#0)
+        let encoded_value%5#0: bytes = (concat length_uint16%5#0 rootKey.name#0)
+        let current_tail_offset%8#0: uint64 = 34u
+        let encoded_tuple_buffer%16#0: bytes[0] = 0x
+        let encoded_tuple_buffer%17#0: bytes = (concat encoded_tuple_buffer%16#0 rootKey.address#0)
+        let as_bytes%11#0: bytes[8] = (itob current_tail_offset%8#0)
+        let offset_as_uint16%5#0: bytes = ((extract 6 2) as_bytes%11#0)
+        let encoded_tuple_buffer%18#0: bytes = (concat encoded_tuple_buffer%17#0 offset_as_uint16%5#0)
+        let data_length%5#0: uint64 = (len encoded_value%5#0)
+        let current_tail_offset%9#0: uint64 = (+ current_tail_offset%8#0 data_length%5#0)
+        let encoded_tuple_buffer%19#0: bytes = (concat encoded_tuple_buffer%18#0 encoded_value%5#0)
+        let box_prefixed_key%3#0: bytes = (concat "r" encoded_tuple_buffer%19#0)
+        let (maybe_value%1#0: bytes, maybe_exists%3#0: bool) = (box_get box_prefixed_key%3#0)
+        (assert maybe_exists%3#0) // Box must have value
+        let tmp%6#0: bool = (== hash#1 maybe_value%1#0)
+        return tmp%6#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.read(address: bytes[32], name: bytes, key: bytes) -> bytes:
+    block@0: // L333
+        let truncatedAddress#0: bytes[16] = smart_contracts/utils/types/base.ts::bytes16(address#0)
+        let length%0#0: uint64 = (len truncatedAddress#0)
+        let lengths_equal%0#0: bool = (== length%0#0 16u)
+        (assert lengths_equal%0#0) // invalid size
+        let length%1#0: uint64 = (len name#0)
+        let as_bytes%0#0: bytes[8] = (itob length%1#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%0#0: bytes = (concat length_uint16%0#0 name#0)
+        let length%2#0: uint64 = (len key#0)
+        let as_bytes%1#0: bytes[8] = (itob length%2#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%1#0 key#0)
+        let current_tail_offset%0#0: uint64 = 20u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 truncatedAddress#0)
+        let as_bytes%2#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%0#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let as_bytes%3#0: bytes[8] = (itob current_tail_offset%1#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%2#0: uint64 = (+ current_tail_offset%1#0 data_length%1#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 encoded_value%0#0)
+        let encoded_tuple_buffer%5#0: bytes = (concat encoded_tuple_buffer%4#0 encoded_value%1#0)
+        let box_prefixed_key%0#0: bytes = (concat "d" encoded_tuple_buffer%5#0)
+        let (maybe_value%0#0: bytes, maybe_exists%0#0: bool) = (box_get box_prefixed_key%0#0)
+        (assert maybe_exists%0#0) // Box must have value
+        return maybe_value%0#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verifiedRead(address: bytes[32], name: bytes, leaf: bytes[32], proof: bytes[32][], type: uint64, key: bytes) -> bytes:
+    block@0: // L358
+        let verified#0: bool = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verify(address#0, name#0, leaf#0, proof#0, type#0)
+        goto verified#0 ? block@2 : block@1
+    block@1: // if_body_L360
+        return ""
+    block@2: // after_if_else_L360
+        let tmp%0#0: bytes = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.read(address#0, name#0, key#0)
+        return tmp%0#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verifiedMustRead(address: bytes[32], name: bytes, leaf: bytes[32], proof: bytes[32][], type: uint64, key: bytes) -> bytes:
+    block@0: // L385
+        let tmp%0#0: bool = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verify(address#0, name#0, leaf#0, proof#0, type#0)
+        (assert tmp%0#0) // failed to verify inclusion
+        let tmp%1#0: bytes = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.read(address#0, name#0, key#0)
+        return tmp%1#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addType(payment: uint64, description: bytes, schemaList: bytes) -> void:
+    block@0: // L397
+        let tmp%0#0: bytes[32] = ((gtxns Receiver) payment#0)
+        let tmp%1#0: bytes[32] = (global CurrentApplicationAddress)
+        let tmp%2#0: bool = (== tmp%0#0 tmp%1#0)
+        (assert tmp%2#0) // Invalid payment receiver
+        let tmp%3#0: uint64 = ((gtxns Amount) payment#0)
+        let tmp%4#0: bool = (== tmp%3#0 100000000u)
+        (assert tmp%4#0) // Invalid payment amount
+        let tmp%5#0: uint64 = (len description#0)
+        let tmp%6#0: bool = (<= tmp%5#0 800u)
+        (assert tmp%6#0) // max data length is 1024 bytes
+        let schema#0: bytes = ""
+        let i#0: uint64 = 0u
+        goto block@1
+    block@1: // while_top_L403
+        let i#1: uint64 = φ(i#0 <- block@0, i#4 <- block@57)
+        let schema#37: bytes = φ(schema#0 <- block@0, schema#38 <- block@57)
+        let tmp%7#0: uint64 = (extract_uint16 schemaList#0 0u)
+        let tmp%8#0: bool = (< i#1 tmp%7#0)
+        goto tmp%8#0 ? block@2 : block@58
+    block@2: // while_body_L403
+        let array_head_and_tail%0#0: bytes = ((extract 2 0) schemaList#0)
+        let item_offset%0#0: uint64 = (* i#1 1u)
+        let awst_tmp%0#0: bytes = (extract3 array_head_and_tail%0#0 item_offset%0#0 1u) // on error: Index access is out of bounds
+        let tmp%9#0: bool = (== awst_tmp%0#0 0x0a)
+        goto tmp%9#0 ? block@3 : block@5
+    block@3: // if_body_L405
+        goto block@4
+    block@4: // L405
+        let schema#2: bytes = (concat schema#37 "uint8")
+        goto block@54
+    block@5: // after_if_else_L405
+        let tmp%10#0: bool = (== awst_tmp%0#0 0x0b)
+        goto tmp%10#0 ? block@6 : block@8
+    block@6: // if_body_L408
+        goto block@7
+    block@7: // L408
+        let schema#4: bytes = (concat schema#37 "uint16")
+        goto block@54
+    block@8: // after_if_else_L408
+        let tmp%11#0: bool = (== awst_tmp%0#0 0x0c)
+        goto tmp%11#0 ? block@9 : block@11
+    block@9: // if_body_L411
+        goto block@10
+    block@10: // L411
+        let schema#6: bytes = (concat schema#37 "uint32")
+        goto block@54
+    block@11: // after_if_else_L411
+        let tmp%12#0: bool = (== awst_tmp%0#0 0x0d)
+        goto tmp%12#0 ? block@12 : block@14
+    block@12: // if_body_L414
+        goto block@13
+    block@13: // L414
+        let schema#8: bytes = (concat schema#37 "uint64")
+        goto block@54
+    block@14: // after_if_else_L414
+        let tmp%13#0: bool = (== awst_tmp%0#0 0x0e)
+        goto tmp%13#0 ? block@15 : block@17
+    block@15: // if_body_L417
+        goto block@16
+    block@16: // L417
+        let schema#10: bytes = (concat schema#37 "uint128")
+        goto block@54
+    block@17: // after_if_else_L417
+        let tmp%14#0: bool = (== awst_tmp%0#0 0x0f)
+        goto tmp%14#0 ? block@18 : block@20
+    block@18: // if_body_L420
+        goto block@19
+    block@19: // L420
+        let schema#12: bytes = (concat schema#37 "uint256")
+        goto block@54
+    block@20: // after_if_else_L420
+        let tmp%15#0: bool = (== awst_tmp%0#0 0x10)
+        goto tmp%15#0 ? block@21 : block@23
+    block@21: // if_body_L423
+        goto block@22
+    block@22: // L423
+        let schema#14: bytes = (concat schema#37 "uint512")
+        goto block@54
+    block@23: // after_if_else_L423
+        let tmp%16#0: bool = (== awst_tmp%0#0 0x14)
+        goto tmp%16#0 ? block@24 : block@26
+    block@24: // if_body_L426
+        goto block@25
+    block@25: // L426
+        let schema#16: bytes = (concat schema#37 "bytes4")
+        goto block@54
+    block@26: // after_if_else_L426
+        let tmp%17#0: bool = (== awst_tmp%0#0 0x15)
+        goto tmp%17#0 ? block@27 : block@29
+    block@27: // if_body_L429
+        goto block@28
+    block@28: // L429
+        let schema#18: bytes = (concat schema#37 "bytes8")
+        goto block@54
+    block@29: // after_if_else_L429
+        let tmp%18#0: bool = (== awst_tmp%0#0 0x16)
+        goto tmp%18#0 ? block@30 : block@32
+    block@30: // if_body_L432
+        goto block@31
+    block@31: // L432
+        let schema#20: bytes = (concat schema#37 "bytes16")
+        goto block@54
+    block@32: // after_if_else_L432
+        let tmp%19#0: bool = (== awst_tmp%0#0 0x17)
+        goto tmp%19#0 ? block@33 : block@35
+    block@33: // if_body_L435
+        goto block@34
+    block@34: // L435
+        let schema#22: bytes = (concat schema#37 "bytes32")
+        goto block@54
+    block@35: // after_if_else_L435
+        let tmp%20#0: bool = (== awst_tmp%0#0 0x18)
+        goto tmp%20#0 ? block@36 : block@38
+    block@36: // if_body_L438
+        goto block@37
+    block@37: // L438
+        let schema#24: bytes = (concat schema#37 "bytes64")
+        goto block@54
+    block@38: // after_if_else_L438
+        let tmp%21#0: bool = (== awst_tmp%0#0 0x19)
+        goto tmp%21#0 ? block@39 : block@41
+    block@39: // if_body_L441
+        goto block@40
+    block@40: // L441
+        let schema#26: bytes = (concat schema#37 "bytes128")
+        goto block@54
+    block@41: // after_if_else_L441
+        let tmp%22#0: bool = (== awst_tmp%0#0 0x1a)
+        goto tmp%22#0 ? block@42 : block@44
+    block@42: // if_body_L444
+        goto block@43
+    block@43: // L444
+        let schema#28: bytes = (concat schema#37 "bytes256")
+        goto block@54
+    block@44: // after_if_else_L444
+        let tmp%23#0: bool = (== awst_tmp%0#0 0x1b)
+        goto tmp%23#0 ? block@45 : block@47
+    block@45: // if_body_L447
+        goto block@46
+    block@46: // L447
+        let schema#30: bytes = (concat schema#37 "bytes512")
+        goto block@54
+    block@47: // after_if_else_L447
+        let tmp%24#0: bool = (== awst_tmp%0#0 0x1e)
+        goto tmp%24#0 ? block@48 : block@50
+    block@48: // if_body_L450
+        goto block@49
+    block@49: // L450
+        let schema#32: bytes = (concat schema#37 "string")
+        goto block@54
+    block@50: // after_if_else_L450
+        let tmp%25#0: bool = (== awst_tmp%0#0 0x28)
+        goto tmp%25#0 ? block@51 : block@53
+    block@51: // if_body_L453
+        goto block@52
+    block@52: // L453
+        let schema#34: bytes = (concat schema#37 "address")
+        goto block@54
+    block@53: // after_if_else_L453
+        goto block@54
+    block@54: // L404
+        let schema#35: bytes = φ(schema#2 <- block@4, schema#4 <- block@7, schema#6 <- block@10, schema#8 <- block@13, schema#10 <- block@16, schema#12 <- block@19, schema#14 <- block@22, schema#16 <- block@25, schema#18 <- block@28, schema#20 <- block@31, schema#22 <- block@34, schema#24 <- block@37, schema#26 <- block@40, schema#28 <- block@43, schema#30 <- block@46, schema#32 <- block@49, schema#34 <- block@52, schema#37 <- block@53)
+        let tmp%26#0: uint64 = (extract_uint16 schemaList#0 0u)
+        let tmp%27#0: bool = (> tmp%26#0 0u)
+        goto tmp%27#0 ? block@55 : block@57
+    block@55: // and_contd_L458
+        let tmp%28#0: uint64 = (extract_uint16 schemaList#0 0u)
+        let tmp%29#0: uint64 = (- tmp%28#0 1u)
+        let tmp%30#0: bool = (!= i#1 tmp%29#0)
+        goto tmp%30#0 ? block@56 : block@57
+    block@56: // if_body_L458
+        let schema#36: bytes = (concat schema#35 ",")
+        goto block@57
+    block@57: // after_if_else_L458
+        let schema#38: bytes = φ(schema#35 <- block@54, schema#35 <- block@55, schema#36 <- block@56)
+        let i#4: uint64 = (+ i#1 1u)
+        goto block@1
+    block@58: // after_while_L403
+        let id#0: uint64 = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.newTypesID()
+        let encoded_value%0#0: bytes[8] = (itob id#0)
+        let box_prefixed_key%0#0: bytes = (concat "t" encoded_value%0#0)
+        (box_del box_prefixed_key%0#0)
+        let length%0#0: uint64 = (len description#0)
+        let as_bytes%0#0: bytes[8] = (itob length%0#0)
+        let length_uint16%0#0: bytes = ((extract 6 2) as_bytes%0#0)
+        let encoded_value%1#0: bytes = (concat length_uint16%0#0 description#0)
+        let length%1#0: uint64 = (len schema#37)
+        let as_bytes%1#0: bytes[8] = (itob length%1#0)
+        let length_uint16%1#0: bytes = ((extract 6 2) as_bytes%1#0)
+        let encoded_value%2#0: bytes = (concat length_uint16%1#0 schema#37)
+        let current_tail_offset%0#0: uint64 = 4u
+        let encoded_tuple_buffer%0#0: bytes[0] = 0x
+        let as_bytes%2#0: bytes[8] = (itob current_tail_offset%0#0)
+        let offset_as_uint16%0#0: bytes = ((extract 6 2) as_bytes%2#0)
+        let encoded_tuple_buffer%1#0: bytes = (concat encoded_tuple_buffer%0#0 offset_as_uint16%0#0)
+        let data_length%0#0: uint64 = (len encoded_value%1#0)
+        let current_tail_offset%1#0: uint64 = (+ current_tail_offset%0#0 data_length%0#0)
+        let as_bytes%3#0: bytes[8] = (itob current_tail_offset%1#0)
+        let offset_as_uint16%1#0: bytes = ((extract 6 2) as_bytes%3#0)
+        let encoded_tuple_buffer%2#0: bytes = (concat encoded_tuple_buffer%1#0 offset_as_uint16%1#0)
+        let data_length%1#0: uint64 = (len encoded_value%2#0)
+        let current_tail_offset%2#0: uint64 = (+ current_tail_offset%1#0 data_length%1#0)
+        let encoded_tuple_buffer%3#0: bytes = (concat encoded_tuple_buffer%2#0 encoded_value%1#0)
+        let encoded_tuple_buffer%4#0: bytes = (concat encoded_tuple_buffer%3#0 encoded_value%2#0)
+        (box_put box_prefixed_key%0#0 encoded_tuple_buffer%4#0)
+        return 
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.rootCosts(name: bytes) -> uint64:
+    block@0: // L473
+        let tmp%0#0: bytes[8] = (itob 0u)
+        let (costs.types#0: uint64, costs.roots#0: uint64, costs.data#0: uint64) = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr("", "", name#0, "l.type", tmp%0#0)
+        let tmp%1#0: uint64 = (+ costs.roots#0 costs.data#0)
+        return tmp%1#0
+
+subroutine smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.dataCosts(name: bytes, key: bytes, value: bytes) -> uint64:
+    block@0: // L479
+        let tmp%0#0: bytes = ((extract 2 0) name#0)
+        let tmp%1#0: bytes = ((extract 2 0) key#0)
+        let tmp%2#0: bytes = ((extract 2 0) value#0)
+        let (costs.types#0: uint64, costs.roots#0: uint64, costs.data#0: uint64) = smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr("", "", tmp%0#0, tmp%1#0, tmp%2#0)
+        return costs.data#0
