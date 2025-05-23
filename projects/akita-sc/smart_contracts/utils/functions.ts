@@ -15,7 +15,7 @@ import { arc4StakeInfo, STAKING_TYPE_LOCK } from "../staking/types"
 import { ONE_YEAR_IN_DAYS } from "../gates/plugins/staking-power/constants"
 import { ONE_DAY } from "../arc58/plugins/social/constants"
 
-import { AkitaSocialImpactInterface } from "./types/social-impact"
+import { AkitaSocialImpactInterface } from "./types/social"
 import { SpendingAccountFactoryInterface } from "./types/spend-accounts"
 import { AbstractedAccountInterface } from "./abstract-account"
 import { OptInPluginInterface } from "./types/plugins/optin"

@@ -1,6 +1,6 @@
 import { AssetInbox } from '../../../utils/types/asset-inbox'
-import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, Global, GlobalState, gtxn, itxn, itxnCompose, op, Txn, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Contract, decodeArc4, DynamicArray, methodSelector, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, Global, gtxn, itxn, itxnCompose, op, Txn, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Address, decodeArc4, methodSelector, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaSocialMBRData, MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, arc4ImpactMetaValue, ImpactMetaValue, FollowsKey, BlockListKey, VoteListKey, ReactionsKey, ReactionListKey, Action } from './types'
 import { CID } from '../../../utils/types/base'
 import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA } from './constants'
@@ -21,8 +21,7 @@ import { Staking } from '../../../staking/contract.algo'
 import { arc4StakeInfo, STAKING_TYPE_SOFT } from '../../../staking/types'
 import { Subscriptions } from '../../../subscriptions/contract.algo'
 import { fee } from '../../../utils/constants'
-import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../../../constants'
-import { AkitaSocialImpactInterface, AkitaSocialPluginInterface } from '../../../utils/types/social-impact'
+import { AkitaSocialImpactInterface, AkitaSocialPluginInterface } from '../../../utils/types/social'
 
 export class AkitaSocialPlugin extends AkitaBaseEscrow implements AkitaSocialPluginInterface {
 
