@@ -22,7 +22,7 @@ main_after_if_else@18:
     return
 
 main_getState_route@14:
-    // smart_contracts/dao/contract.algo.ts:1455
+    // smart_contracts/dao/contract.algo.ts:1462
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
@@ -244,7 +244,7 @@ main_getState_route@14:
     return
 
 main_optinEscrow_route@13:
-    // smart_contracts/dao/contract.algo.ts:1425
+    // smart_contracts/dao/contract.algo.ts:1432
     // optinEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void {
     txn OnCompletion
     !
@@ -265,14 +265,14 @@ main_optinEscrow_route@13:
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/dao/contract.algo.ts:1425
+    // smart_contracts/dao/contract.algo.ts:1432
     // optinEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void {
     callsub optinEscrow
     intc_1 // 1
     return
 
 main_createDailyDisbursement_route@12:
-    // smart_contracts/dao/contract.algo.ts:1402
+    // smart_contracts/dao/contract.algo.ts:1409
     // createDailyDisbursement(): void {
     txn OnCompletion
     !
@@ -284,7 +284,7 @@ main_createDailyDisbursement_route@12:
     return
 
 main_finalizeProposal_route@11:
-    // smart_contracts/dao/contract.algo.ts:1337
+    // smart_contracts/dao/contract.algo.ts:1344
     // finalizeProposal(proposalID: uint64, args: bytes): void {
     txn OnCompletion
     !
@@ -297,14 +297,14 @@ main_finalizeProposal_route@11:
     btoi
     txna ApplicationArgs 2
     extract 2 0
-    // smart_contracts/dao/contract.algo.ts:1337
+    // smart_contracts/dao/contract.algo.ts:1344
     // finalizeProposal(proposalID: uint64, args: bytes): void {
     callsub finalizeProposal
     intc_1 // 1
     return
 
 main_newProposal_route@10:
-    // smart_contracts/dao/contract.algo.ts:1293-1299
+    // smart_contracts/dao/contract.algo.ts:1300-1306
     // newProposal(
     //   payment: gtxn.PaymentTxn,
     //   action: ProposalAction,
@@ -332,7 +332,7 @@ main_newProposal_route@10:
     txna ApplicationArgs 3
     extract 2 0
     txna ApplicationArgs 4
-    // smart_contracts/dao/contract.algo.ts:1293-1299
+    // smart_contracts/dao/contract.algo.ts:1300-1306
     // newProposal(
     //   payment: gtxn.PaymentTxn,
     //   action: ProposalAction,
@@ -345,7 +345,7 @@ main_newProposal_route@10:
     return
 
 main_arc58_rekeyToNamedPlugin_route@9:
-    // smart_contracts/dao/contract.algo.ts:1248
+    // smart_contracts/dao/contract.algo.ts:1255
     // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
     txn OnCompletion
     !
@@ -361,14 +361,14 @@ main_arc58_rekeyToNamedPlugin_route@9:
     getbit
     txna ApplicationArgs 3
     txna ApplicationArgs 4
-    // smart_contracts/dao/contract.algo.ts:1248
+    // smart_contracts/dao/contract.algo.ts:1255
     // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
     callsub arc58_rekeyToNamedPlugin
     intc_1 // 1
     return
 
 main_arc58_rekeyToPlugin_route@8:
-    // smart_contracts/dao/contract.algo.ts:1190-1195
+    // smart_contracts/dao/contract.algo.ts:1197-1202
     // arc58_rekeyToPlugin(
     //   plugin: uint64,
     //   global: boolean,
@@ -389,7 +389,7 @@ main_arc58_rekeyToPlugin_route@8:
     getbit
     txna ApplicationArgs 3
     txna ApplicationArgs 4
-    // smart_contracts/dao/contract.algo.ts:1190-1195
+    // smart_contracts/dao/contract.algo.ts:1197-1202
     // arc58_rekeyToPlugin(
     //   plugin: uint64,
     //   global: boolean,
@@ -401,7 +401,7 @@ main_arc58_rekeyToPlugin_route@8:
     return
 
 main_arc58_canCall_route@7:
-    // smart_contracts/dao/contract.algo.ts:1168
+    // smart_contracts/dao/contract.algo.ts:1175
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
@@ -417,7 +417,7 @@ main_arc58_canCall_route@7:
     getbit
     txna ApplicationArgs 3
     txna ApplicationArgs 4
-    // smart_contracts/dao/contract.algo.ts:1168
+    // smart_contracts/dao/contract.algo.ts:1175
     // @abimethod({ readonly: true })
     callsub arc58_canCall
     bytec_0 // 0x00
@@ -432,7 +432,7 @@ main_arc58_canCall_route@7:
     return
 
 main_arc58_verifyAuthAddr_route@6:
-    // smart_contracts/dao/contract.algo.ts:1155
+    // smart_contracts/dao/contract.algo.ts:1162
     // arc58_verifyAuthAddr(): void {
     txn OnCompletion
     !
@@ -444,7 +444,7 @@ main_arc58_verifyAuthAddr_route@6:
     return
 
 main_init_route@5:
-    // smart_contracts/dao/contract.algo.ts:1060-1068
+    // smart_contracts/dao/contract.algo.ts:1067-1075
     // init(
     //   version: string,
     //   akta: uint64,
@@ -570,7 +570,7 @@ main_init_route@5:
     intc_3 // 8
     extract_uint64
     txna ApplicationArgs 7
-    // smart_contracts/dao/contract.algo.ts:1060-1068
+    // smart_contracts/dao/contract.algo.ts:1067-1075
     // init(
     //   version: string,
     //   akta: uint64,
@@ -585,7 +585,7 @@ main_init_route@5:
     return
 
 main_update_route@4:
-    // smart_contracts/dao/contract.algo.ts:1048
+    // smart_contracts/dao/contract.algo.ts:1055
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -597,14 +597,14 @@ main_update_route@4:
     // export class AkitaDAO extends Contract {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/dao/contract.algo.ts:1048
+    // smart_contracts/dao/contract.algo.ts:1055
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub update
     intc_1 // 1
     return
 
 main_create_route@3:
-    // smart_contracts/dao/contract.algo.ts:1042
+    // smart_contracts/dao/contract.algo.ts:1049
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -616,7 +616,7 @@ main_create_route@3:
     // export class AkitaDAO extends Contract {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/dao/contract.algo.ts:1042
+    // smart_contracts/dao/contract.algo.ts:1049
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_1 // 1
@@ -997,21 +997,21 @@ pluginCheck_ternary_false@4:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.create(spendingAccountFactoryApp: uint64) -> void:
 create:
-    // smart_contracts/dao/contract.algo.ts:1042-1043
+    // smart_contracts/dao/contract.algo.ts:1049-1050
     // @abimethod({ onCreate: 'require' })
     // create(spendingAccountFactoryApp: uint64): void {
     proto 1 0
     // smart_contracts/constants.ts:3
     // export const GlobalStateKeyVersion = 'version'
     bytec 5 // "version"
-    // smart_contracts/dao/contract.algo.ts:1044
+    // smart_contracts/dao/contract.algo.ts:1051
     // this.version.value = ''
     bytec_1 // ""
     app_global_put
     // smart_contracts/constants.ts:6
     // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
     bytec 20 // "spending_account_factory_app"
-    // smart_contracts/dao/contract.algo.ts:1045
+    // smart_contracts/dao/contract.algo.ts:1052
     // this.spendingAccountFactoryApp.value = Application(spendingAccountFactoryApp)
     frame_dig -1
     app_global_put
@@ -1020,11 +1020,11 @@ create:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.update(proposalID: uint64) -> void:
 update:
-    // smart_contracts/dao/contract.algo.ts:1048-1049
+    // smart_contracts/dao/contract.algo.ts:1055-1056
     // @abimethod({ allowActions: ['UpdateApplication'] })
     // update(proposalID: uint64): void {
     proto 1 0
-    // smart_contracts/dao/contract.algo.ts:1050
+    // smart_contracts/dao/contract.algo.ts:1057
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     frame_dig -1
     itob
@@ -1033,13 +1033,13 @@ update:
     bytec 11 // "l"
     swap
     concat
-    // smart_contracts/dao/contract.algo.ts:1050
+    // smart_contracts/dao/contract.algo.ts:1057
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     dup
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/dao/contract.algo.ts:1051
+    // smart_contracts/dao/contract.algo.ts:1058
     // const { status, action, data } = this.proposals(proposalID).value
     box_get
     assert // Box must have value
@@ -1055,40 +1055,40 @@ update:
     uncover 4
     cover 2
     substring3
-    // smart_contracts/dao/contract.algo.ts:1052
+    // smart_contracts/dao/contract.algo.ts:1059
     // assert(status === StatusApproved, ERR_PROPOSAL_NOT_APPROVED)
     uncover 2
     // smart_contracts/dao/constants.ts:63
     // export const StatusApproved = new UintN8(40)
     pushbytes 0x28
-    // smart_contracts/dao/contract.algo.ts:1052
+    // smart_contracts/dao/contract.algo.ts:1059
     // assert(status === StatusApproved, ERR_PROPOSAL_NOT_APPROVED)
     ==
     assert // Proposal is not approved
-    // smart_contracts/dao/contract.algo.ts:1053
+    // smart_contracts/dao/contract.algo.ts:1060
     // assert(action === ProposalActionUpgradeApp, ERR_PROPOSAL_NOT_UPGRADE_APP)
     swap
     // smart_contracts/dao/constants.ts:65
     // export const ProposalActionUpgradeApp = new UintN8(0)
     bytec_0 // 0x00
-    // smart_contracts/dao/contract.algo.ts:1053
+    // smart_contracts/dao/contract.algo.ts:1060
     // assert(action === ProposalActionUpgradeApp, ERR_PROPOSAL_NOT_UPGRADE_APP)
     ==
     assert // Proposal is not an upgrade app
-    // smart_contracts/dao/contract.algo.ts:1055
+    // smart_contracts/dao/contract.algo.ts:1062
     // const { app, executionKey } = decodeArc4<ProposalUpgradeApp>(data)
     dup
     pushint 2 // 2
     extract_uint64
     swap
     extract 10 32
-    // smart_contracts/dao/contract.algo.ts:1056
+    // smart_contracts/dao/contract.algo.ts:1063
     // assert(app === Global.currentApplicationId.id, ERR_PROPOSAL_NOT_UPGRADE_APP)
     global CurrentApplicationID
     uncover 2
     ==
     assert // Proposal is not an upgrade app
-    // smart_contracts/dao/contract.algo.ts:1057
+    // smart_contracts/dao/contract.algo.ts:1064
     // assert(Global.groupId === executionKey.bytes, ERR_EXECUTION_KEY_MISMATCH)
     global GroupID
     ==
@@ -1098,7 +1098,7 @@ update:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.init(version: bytes, akta: uint64, contentPolicy: bytes, minimumRewardsImpact: uint64, fees.postFee: uint64, fees.reactFee: uint64, fees.impactTaxMin: uint64, fees.impactTaxMax: uint64, fees.poolCreationFee: uint64, fees.poolImpactTaxMin: uint64, fees.poolImpactTaxMax: uint64, fees.subscriptionServiceCreationFee: uint64, fees.subscriptionPaymentPercentage: uint64, fees.subscriptionTriggerPercentage: uint64, fees.marketplaceSalePercentageMin: uint64, fees.marketplaceSalePercentageMax: uint64, fees.marketplaceComposablePercentage: uint64, fees.marketplaceRoyaltyDefaultPercentage: uint64, fees.shuffleSalePercentage: uint64, fees.omnigemSaleFee: uint64, fees.auctionCreationFee: uint64, fees.auctionSaleImpactTaxMin: uint64, fees.auctionSaleImpactTaxMax: uint64, fees.auctionComposablePercentage: uint64, fees.auctionRafflePercentage: uint64, fees.raffleCreationFee: uint64, fees.raffleSaleImpactTaxMin: uint64, fees.raffleSaleImpactTaxMax: uint64, fees.raffleComposablePercentage: uint64, fees.swapFeeImpactTaxMin: uint64, fees.swapFeeImpactTaxMax: uint64, fees.swapComposablePercentage: uint64, fees.swapLiquidityPercentage: uint64, fees.krbyPercentage: uint64, fees.moderatorPercentage: uint64, proposalSettings.minimumProposalThreshold: uint64, proposalSettings.minimumVoteThreshold: uint64, revocationAddress: bytes) -> void:
 init:
-    // smart_contracts/dao/contract.algo.ts:1060-1068
+    // smart_contracts/dao/contract.algo.ts:1067-1075
     // init(
     //   version: string,
     //   akta: uint64,
@@ -1115,18 +1115,18 @@ init:
     bytec 5 // "version"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/dao/contract.algo.ts:1069
+    // smart_contracts/dao/contract.algo.ts:1076
     // assert(this.version.value === '', ERR_ALREADY_INITIALIZED)
     bytec_1 // ""
     ==
     assert // Already initialized
-    // smart_contracts/dao/contract.algo.ts:1070
+    // smart_contracts/dao/contract.algo.ts:1077
     // assert(version !== '', ERR_VERSION_CANNOT_BE_EMPTY)
     frame_dig -38
     bytec_1 // ""
     !=
     assert // Version cannot be empty
-    // smart_contracts/dao/contract.algo.ts:1072-1086
+    // smart_contracts/dao/contract.algo.ts:1079-1093
     // const bonesCreateTxn = itxn
     //   .assetConfig({
     //     assetName: Bytes('Bones'),
@@ -1143,23 +1143,23 @@ init:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/dao/contract.algo.ts:1078
+    // smart_contracts/dao/contract.algo.ts:1085
     // manager: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/dao/contract.algo.ts:1079
+    // smart_contracts/dao/contract.algo.ts:1086
     // reserve: Global.currentApplicationAddress,
     dup
-    // smart_contracts/dao/contract.algo.ts:1080
+    // smart_contracts/dao/contract.algo.ts:1087
     // freeze: Global.zeroAddress,
     global ZeroAddress
-    // smart_contracts/dao/contract.algo.ts:1081
+    // smart_contracts/dao/contract.algo.ts:1088
     // clawback: Global.zeroAddress,
     dup
-    // smart_contracts/dao/contract.algo.ts:1083
+    // smart_contracts/dao/contract.algo.ts:1090
     // url: Bytes(''), // TODO: figure out the URL we should have here
     bytec_1 // ""
     itxn_field ConfigAssetURL
-    // smart_contracts/dao/contract.algo.ts:1082
+    // smart_contracts/dao/contract.algo.ts:1089
     // defaultFrozen: false,
     intc_0 // 0
     itxn_field ConfigAssetDefaultFrozen
@@ -1167,23 +1167,23 @@ init:
     itxn_field ConfigAssetFreeze
     itxn_field ConfigAssetReserve
     itxn_field ConfigAssetManager
-    // smart_contracts/dao/contract.algo.ts:1077
+    // smart_contracts/dao/contract.algo.ts:1084
     // decimals: 2,
     pushint 2 // 2
     itxn_field ConfigAssetDecimals
-    // smart_contracts/dao/contract.algo.ts:1076
+    // smart_contracts/dao/contract.algo.ts:1083
     // total: 100_000_000_000_000,
     pushint 100000000000000 // 100000000000000
     itxn_field ConfigAssetTotal
-    // smart_contracts/dao/contract.algo.ts:1075
+    // smart_contracts/dao/contract.algo.ts:1082
     // unitName: Bytes('BONES'),
     pushbytes "BONES"
     itxn_field ConfigAssetUnitName
-    // smart_contracts/dao/contract.algo.ts:1074
+    // smart_contracts/dao/contract.algo.ts:1081
     // assetName: Bytes('Bones'),
     pushbytes "Bones"
     itxn_field ConfigAssetName
-    // smart_contracts/dao/contract.algo.ts:1072-1085
+    // smart_contracts/dao/contract.algo.ts:1079-1092
     // const bonesCreateTxn = itxn
     //   .assetConfig({
     //     assetName: Bytes('Bones'),
@@ -1202,7 +1202,7 @@ init:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/dao/contract.algo.ts:1072-1086
+    // smart_contracts/dao/contract.algo.ts:1079-1093
     // const bonesCreateTxn = itxn
     //   .assetConfig({
     //     assetName: Bytes('Bones'),
@@ -1226,31 +1226,31 @@ init:
     // smart_contracts/dao/constants.ts:36
     // export const STATUS_INIT: uint64 = 0
     intc_0 // 0
-    // smart_contracts/dao/contract.algo.ts:1088
+    // smart_contracts/dao/contract.algo.ts:1095
     // this.status.value = STATUS_INIT
     app_global_put
     // smart_contracts/constants.ts:3
     // export const GlobalStateKeyVersion = 'version'
     bytec 5 // "version"
-    // smart_contracts/dao/contract.algo.ts:1089
+    // smart_contracts/dao/contract.algo.ts:1096
     // this.version.value = version
     frame_dig -38
     app_global_put
     // smart_contracts/dao/constants.ts:5
     // export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
     bytec 12 // "content_policy"
-    // smart_contracts/dao/contract.algo.ts:1090
+    // smart_contracts/dao/contract.algo.ts:1097
     // this.contentPolicy.value = contentPolicy
     frame_dig -36
     app_global_put
     // smart_contracts/dao/constants.ts:6
     // export const AkitaDAOGlobalStateKeysMinimumRewardsImpact = 'minimum_rewards_impact'
     bytec 13 // "minimum_rewards_impact"
-    // smart_contracts/dao/contract.algo.ts:1091
+    // smart_contracts/dao/contract.algo.ts:1098
     // this.minimumRewardsImpact.value = minimumRewardsImpact
     frame_dig -35
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1065
+    // smart_contracts/dao/contract.algo.ts:1072
     // fees: Fees,
     frame_dig -34
     itob
@@ -1270,7 +1270,7 @@ init:
     swap
     concat
     bytec 14 // "social_fees"
-    // smart_contracts/dao/contract.algo.ts:1093-1098
+    // smart_contracts/dao/contract.algo.ts:1100-1105
     // this.socialFees.value = {
     //   postFee: fees.postFee,
     //   reactFee: fees.reactFee,
@@ -1279,7 +1279,7 @@ init:
     // }
     swap
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1065
+    // smart_contracts/dao/contract.algo.ts:1072
     // fees: Fees,
     frame_dig -30
     itob
@@ -1294,7 +1294,7 @@ init:
     swap
     concat
     bytec 15 // "staking_fees"
-    // smart_contracts/dao/contract.algo.ts:1100-1104
+    // smart_contracts/dao/contract.algo.ts:1107-1111
     // this.stakingFees.value = {
     //   creationFee: fees.poolCreationFee,
     //   impactTaxMin: fees.poolImpactTaxMin,
@@ -1302,7 +1302,7 @@ init:
     // }
     swap
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1065
+    // smart_contracts/dao/contract.algo.ts:1072
     // fees: Fees,
     frame_dig -27
     itob
@@ -1317,7 +1317,7 @@ init:
     swap
     concat
     bytec 16 // "subscription_fees"
-    // smart_contracts/dao/contract.algo.ts:1106-1110
+    // smart_contracts/dao/contract.algo.ts:1113-1117
     // this.subscriptionFees.value = {
     //   serviceCreationFee: fees.subscriptionServiceCreationFee,
     //   paymentPercentage: fees.subscriptionPaymentPercentage,
@@ -1325,7 +1325,7 @@ init:
     // }
     swap
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1065
+    // smart_contracts/dao/contract.algo.ts:1072
     // fees: Fees,
     frame_dig -24
     itob
@@ -1389,7 +1389,7 @@ init:
     swap
     concat
     bytec 17 // "nft_fees"
-    // smart_contracts/dao/contract.algo.ts:1112-1128
+    // smart_contracts/dao/contract.algo.ts:1119-1135
     // this.nftFees.value = {
     //   marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
     //   marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
@@ -1409,7 +1409,7 @@ init:
     // }
     swap
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1065
+    // smart_contracts/dao/contract.algo.ts:1072
     // fees: Fees,
     frame_dig -9
     itob
@@ -1419,7 +1419,7 @@ init:
     // export const AkitaDAOGlobalStateKeysSwapFees = 'swap_fees'
     concat
     bytec 22 // "swap_fees"
-    // smart_contracts/dao/contract.algo.ts:1130-1133
+    // smart_contracts/dao/contract.algo.ts:1137-1140
     // this.swapFees.value = {
     //   impactTaxMin: fees.swapFeeImpactTaxMin,
     //   impactTaxMax: fees.swapFeeImpactTaxMax,
@@ -1429,18 +1429,18 @@ init:
     // smart_contracts/dao/constants.ts:15
     // export const AkitaDAOGlobalStateKeysKrbyPercentage = 'krby_percentage'
     bytec 6 // "krby_percentage"
-    // smart_contracts/dao/contract.algo.ts:1135
+    // smart_contracts/dao/contract.algo.ts:1142
     // this.krbyPercentage.value = fees.krbyPercentage
     frame_dig -5
     app_global_put
     // smart_contracts/dao/constants.ts:16
     // export const AkitaDAOGlobalStateKeysModeratorPercentage = 'mod_percentage'
     bytec 7 // "mod_percentage"
-    // smart_contracts/dao/contract.algo.ts:1136
+    // smart_contracts/dao/contract.algo.ts:1143
     // this.moderatorPercentage.value = fees.moderatorPercentage
     frame_dig -4
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1066
+    // smart_contracts/dao/contract.algo.ts:1073
     // proposalSettings: ProposalSettings,
     frame_dig -3
     itob
@@ -1450,14 +1450,14 @@ init:
     // export const AkitaDAOGlobalStateKeysProposalSettings = 'proposal_settings'
     concat
     bytec 23 // "proposal_settings"
-    // smart_contracts/dao/contract.algo.ts:1138-1141
+    // smart_contracts/dao/contract.algo.ts:1145-1148
     // this.proposalSettings.value = {
     //   minimumProposalThreshold: proposalSettings.minimumProposalThreshold,
     //   minimumVoteThreshold: proposalSettings.minimumVoteThreshold,
     // }
     swap
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1144
+    // smart_contracts/dao/contract.algo.ts:1151
     // this.akitaAssets.value = { akta, bones }
     frame_dig -37
     itob
@@ -1467,21 +1467,21 @@ init:
     // export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
     concat
     bytec 8 // "akita_assets"
-    // smart_contracts/dao/contract.algo.ts:1144
+    // smart_contracts/dao/contract.algo.ts:1151
     // this.akitaAssets.value = { akta, bones }
     swap
     app_global_put
     // smart_contracts/dao/constants.ts:21
     // export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
     bytec 9 // "revocation_address"
-    // smart_contracts/dao/contract.algo.ts:1146
+    // smart_contracts/dao/contract.algo.ts:1153
     // this.revocationAddress.value = revocationAddress.native
     frame_dig -1
     app_global_put
     // smart_contracts/dao/constants.ts:22
     // export const AkitaDAOGlobalStateKeysProposalID = 'proposal_id'
     bytec 18 // "proposal_id"
-    // smart_contracts/dao/contract.algo.ts:1147
+    // smart_contracts/dao/contract.algo.ts:1154
     // this.proposalID.value = 0
     intc_0 // 0
     app_global_put
@@ -1490,7 +1490,7 @@ init:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_verifyAuthAddr() -> void:
 arc58_verifyAuthAddr:
-    // smart_contracts/dao/contract.algo.ts:1155
+    // smart_contracts/dao/contract.algo.ts:1162
     // arc58_verifyAuthAddr(): void {
     proto 0 0
     // smart_contracts/arc58/account/constants.ts:9
@@ -1499,7 +1499,7 @@ arc58_verifyAuthAddr:
     bytec_3 // "spending_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/dao/contract.algo.ts:1156
+    // smart_contracts/dao/contract.algo.ts:1163
     // assert(this.spendingAddress.value.authAddress === this.getAuthAddr());
     dup
     acct_params_get AcctAuthAddr
@@ -1542,7 +1542,7 @@ arc58_verifyAuthAddr:
     global ZeroAddress
 
 arc58_verifyAuthAddr_ternary_merge@7:
-    // smart_contracts/dao/contract.algo.ts:1156
+    // smart_contracts/dao/contract.algo.ts:1163
     // assert(this.spendingAddress.value.authAddress === this.getAuthAddr());
     frame_dig 0
     ==
@@ -1550,7 +1550,7 @@ arc58_verifyAuthAddr_ternary_merge@7:
     // smart_contracts/arc58/account/constants.ts:9
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_3 // "spending_address"
-    // smart_contracts/dao/contract.algo.ts:1157
+    // smart_contracts/dao/contract.algo.ts:1164
     // this.spendingAddress.value = Global.zeroAddress
     global ZeroAddress
     app_global_put
@@ -1571,7 +1571,7 @@ arc58_verifyAuthAddr_ternary_false@6:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_canCall(plugin: uint64, global: uint64, address: bytes, method: bytes) -> uint64:
 arc58_canCall:
-    // smart_contracts/dao/contract.algo.ts:1168-1174
+    // smart_contracts/dao/contract.algo.ts:1175-1181
     // @abimethod({ readonly: true })
     // arc58_canCall(
     //   plugin: uint64,
@@ -1580,11 +1580,11 @@ arc58_canCall:
     //   method: bytes<4>
     // ): boolean {
     proto 4 1
-    // smart_contracts/dao/contract.algo.ts:1175
+    // smart_contracts/dao/contract.algo.ts:1182
     // if (global) {
     frame_dig -3
     bz arc58_canCall_after_if_else@2
-    // smart_contracts/dao/contract.algo.ts:1176
+    // smart_contracts/dao/contract.algo.ts:1183
     // this.pluginCallAllowed(plugin, Global.zeroAddress, method);
     frame_dig -4
     global ZeroAddress
@@ -1593,7 +1593,7 @@ arc58_canCall:
     pop
 
 arc58_canCall_after_if_else@2:
-    // smart_contracts/dao/contract.algo.ts:1178
+    // smart_contracts/dao/contract.algo.ts:1185
     // return this.pluginCallAllowed(plugin, address.native, method);
     frame_dig -4
     frame_dig -2
@@ -1604,7 +1604,7 @@ arc58_canCall_after_if_else@2:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToPlugin(plugin: uint64, global: uint64, methodOffsets: bytes, fundsRequest: bytes) -> void:
 arc58_rekeyToPlugin:
-    // smart_contracts/dao/contract.algo.ts:1190-1195
+    // smart_contracts/dao/contract.algo.ts:1197-1202
     // arc58_rekeyToPlugin(
     //   plugin: uint64,
     //   global: boolean,
@@ -1616,23 +1616,23 @@ arc58_rekeyToPlugin:
     dupn 7
     bytec_1 // ""
     dupn 24
-    // smart_contracts/dao/contract.algo.ts:1200-1202
+    // smart_contracts/dao/contract.algo.ts:1207-1209
     // allowedCaller: global
     //   ? Global.zeroAddress
     //   : Txn.sender
     frame_dig -3
     bz arc58_rekeyToPlugin_ternary_false@2
-    // smart_contracts/dao/contract.algo.ts:1201
+    // smart_contracts/dao/contract.algo.ts:1208
     // ? Global.zeroAddress
     global ZeroAddress
     frame_bury 4
 
 arc58_rekeyToPlugin_ternary_merge@3:
-    // smart_contracts/dao/contract.algo.ts:1198
+    // smart_contracts/dao/contract.algo.ts:1205
     // const key = {
     frame_dig -4
     itob
-    // smart_contracts/dao/contract.algo.ts:1205
+    // smart_contracts/dao/contract.algo.ts:1212
     // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
     frame_dig 4
     concat
@@ -1645,13 +1645,13 @@ arc58_rekeyToPlugin_ternary_merge@3:
     concat
     dup
     frame_bury 1
-    // smart_contracts/dao/contract.algo.ts:1205
+    // smart_contracts/dao/contract.algo.ts:1212
     // assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST);
     dup
     box_len
     bury 1
     assert // Plugin does not exist
-    // smart_contracts/dao/contract.algo.ts:1206
+    // smart_contracts/dao/contract.algo.ts:1213
     // assert(!this.plugins(key).value.useExecutionKey.native, ERR_WRONG_METHOD_FOR_EXECUTION_KEY_LOCKED_PLUGIN)
     box_get
     assert // Box must have value
@@ -1774,7 +1774,7 @@ arc58_rekeyToPlugin_block@79:
     // assert(rekeysBack, ERR_MISSING_REKEY_BACK);
     frame_dig 28
     assert // missing rekey back
-    // smart_contracts/dao/contract.algo.ts:1210
+    // smart_contracts/dao/contract.algo.ts:1217
     // if (this.plugins(key).value.spendingApp.native !== 0) {
     frame_dig 1
     box_get
@@ -1782,7 +1782,7 @@ arc58_rekeyToPlugin_block@79:
     intc_1 // 1
     extract_uint64
     bz arc58_rekeyToPlugin_else_body@6
-    // smart_contracts/dao/contract.algo.ts:1211
+    // smart_contracts/dao/contract.algo.ts:1218
     // const spendingApp = Application(this.plugins(key).value.spendingApp.native)
     frame_dig 1
     box_get
@@ -1791,14 +1791,14 @@ arc58_rekeyToPlugin_block@79:
     extract_uint64
     dup
     frame_bury 29
-    // smart_contracts/dao/contract.algo.ts:1212
+    // smart_contracts/dao/contract.algo.ts:1219
     // this.spendingAddress.value = spendingApp.address;
     app_params_get AppAddress
     assert // application exists
     // smart_contracts/arc58/account/constants.ts:9
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_3 // "spending_address"
-    // smart_contracts/dao/contract.algo.ts:1212
+    // smart_contracts/dao/contract.algo.ts:1219
     // this.spendingAddress.value = spendingApp.address;
     swap
     app_global_put
@@ -2371,7 +2371,7 @@ arc58_rekeyToPlugin_ternary_false@13:
     b arc58_rekeyToPlugin_ternary_merge@14
 
 arc58_rekeyToPlugin_after_while@30:
-    // smart_contracts/dao/contract.algo.ts:1215-1222
+    // smart_contracts/dao/contract.algo.ts:1222-1229
     // abiCall(
     //   SpendingAccountContract.prototype.rekey,
     //   {
@@ -2381,12 +2381,12 @@ arc58_rekeyToPlugin_after_while@30:
     //   }
     // )
     itxn_begin
-    // smart_contracts/dao/contract.algo.ts:1219
+    // smart_contracts/dao/contract.algo.ts:1226
     // args: [new Address(pluginApp.address)],
     frame_dig -4
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/dao/contract.algo.ts:1215-1222
+    // smart_contracts/dao/contract.algo.ts:1222-1229
     // abiCall(
     //   SpendingAccountContract.prototype.rekey,
     //   {
@@ -2406,7 +2406,7 @@ arc58_rekeyToPlugin_after_while@30:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/dao/contract.algo.ts:1215-1222
+    // smart_contracts/dao/contract.algo.ts:1222-1229
     // abiCall(
     //   SpendingAccountContract.prototype.rekey,
     //   {
@@ -2428,11 +2428,11 @@ arc58_rekeyToPlugin_else_body@6:
     // smart_contracts/arc58/account/constants.ts:9
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_3 // "spending_address"
-    // smart_contracts/dao/contract.algo.ts:1224
+    // smart_contracts/dao/contract.algo.ts:1231
     // this.spendingAddress.value = this.controlledAddress.value;
     dig 1
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1226-1234
+    // smart_contracts/dao/contract.algo.ts:1233-1241
     // itxn
     //   .payment({
     //     sender: this.spendingAddress.value,
@@ -2443,12 +2443,12 @@ arc58_rekeyToPlugin_else_body@6:
     //   })
     //   .submit();
     itxn_begin
-    // smart_contracts/dao/contract.algo.ts:1230
+    // smart_contracts/dao/contract.algo.ts:1237
     // rekeyTo: pluginApp.address,
     frame_dig -4
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/dao/contract.algo.ts:1231
+    // smart_contracts/dao/contract.algo.ts:1238
     // note: 'rekeying to plugin app',
     pushbytes "rekeying to plugin app"
     itxn_field Note
@@ -2456,7 +2456,7 @@ arc58_rekeyToPlugin_else_body@6:
     dup
     itxn_field Receiver
     itxn_field Sender
-    // smart_contracts/dao/contract.algo.ts:1226-1233
+    // smart_contracts/dao/contract.algo.ts:1233-1240
     // itxn
     //   .payment({
     //     sender: this.spendingAddress.value,
@@ -2471,7 +2471,7 @@ arc58_rekeyToPlugin_else_body@6:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/dao/contract.algo.ts:1226-1234
+    // smart_contracts/dao/contract.algo.ts:1233-1241
     // itxn
     //   .payment({
     //     sender: this.spendingAddress.value,
@@ -3014,7 +3014,7 @@ arc58_rekeyToPlugin_ternary_false@34:
     b arc58_rekeyToPlugin_ternary_merge@35
 
 arc58_rekeyToPlugin_ternary_false@2:
-    // smart_contracts/dao/contract.algo.ts:1202
+    // smart_contracts/dao/contract.algo.ts:1209
     // : Txn.sender
     txn Sender
     frame_bury 4
@@ -3023,7 +3023,7 @@ arc58_rekeyToPlugin_ternary_false@2:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.arc58_rekeyToNamedPlugin(name: bytes, global: uint64, methodOffsets: bytes, fundsRequest: bytes) -> void:
 arc58_rekeyToNamedPlugin:
-    // smart_contracts/dao/contract.algo.ts:1248
+    // smart_contracts/dao/contract.algo.ts:1255
     // arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void {
     proto 4 0
     // smart_contracts/arc58/account/constants.ts:14
@@ -3031,13 +3031,13 @@ arc58_rekeyToNamedPlugin:
     pushbytes "n"
     frame_dig -4
     concat
-    // smart_contracts/dao/contract.algo.ts:1250
+    // smart_contracts/dao/contract.algo.ts:1257
     // this.namedPlugins(name).value.application,
     box_get
     assert // Box must have value
     intc_0 // 0
     extract_uint64
-    // smart_contracts/dao/contract.algo.ts:1249-1254
+    // smart_contracts/dao/contract.algo.ts:1256-1261
     // this.arc58_rekeyToPlugin(
     //   this.namedPlugins(name).value.application,
     //   global,
@@ -3053,7 +3053,7 @@ arc58_rekeyToNamedPlugin:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.newProposal(payment: uint64, action: bytes, cid: bytes, data: bytes, status: bytes) -> void:
 newProposal:
-    // smart_contracts/dao/contract.algo.ts:1293-1299
+    // smart_contracts/dao/contract.algo.ts:1300-1306
     // newProposal(
     //   payment: gtxn.PaymentTxn,
     //   action: ProposalAction,
@@ -3063,13 +3063,13 @@ newProposal:
     // ): void {
     proto 5 0
     bytec_1 // ""
-    // smart_contracts/dao/contract.algo.ts:1300
+    // smart_contracts/dao/contract.algo.ts:1307
     // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
     frame_dig -1
     // smart_contracts/dao/constants.ts:59
     // export const StatusDraft = new UintN8(0)
     bytec_0 // 0x00
-    // smart_contracts/dao/contract.algo.ts:1300
+    // smart_contracts/dao/contract.algo.ts:1307
     // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
     ==
     bnz newProposal_bool_true@2
@@ -3077,7 +3077,7 @@ newProposal:
     // smart_contracts/dao/constants.ts:61
     // export const StatusVoting = new UintN8(20)
     pushbytes 0x14
-    // smart_contracts/dao/contract.algo.ts:1300
+    // smart_contracts/dao/contract.algo.ts:1307
     // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
     ==
     bz newProposal_bool_false@3
@@ -3086,10 +3086,10 @@ newProposal_bool_true@2:
     intc_1 // 1
 
 newProposal_bool_merge@4:
-    // smart_contracts/dao/contract.algo.ts:1300
+    // smart_contracts/dao/contract.algo.ts:1307
     // assert(status === StatusDraft || status === StatusVoting, ERR_INVALID_PROPOSAL_STATUS)
     assert // Invalid proposal status
-    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // smart_contracts/dao/contract.algo.ts:1309-1315
     // assertMatch(
     //   payment,
     //   {
@@ -3099,10 +3099,10 @@ newProposal_bool_merge@4:
     // )
     frame_dig -5
     gtxns Receiver
-    // smart_contracts/dao/contract.algo.ts:1305
+    // smart_contracts/dao/contract.algo.ts:1312
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // smart_contracts/dao/contract.algo.ts:1309-1315
     // assertMatch(
     //   payment,
     //   {
@@ -3120,7 +3120,7 @@ newProposal_bool_merge@4:
     bytec 25 // "proposal_fee"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // smart_contracts/dao/contract.algo.ts:1309-1315
     // assertMatch(
     //   payment,
     //   {
@@ -3133,7 +3133,7 @@ newProposal_bool_merge@4:
     intc_1 // 1
 
 newProposal_bool_merge@8:
-    // smart_contracts/dao/contract.algo.ts:1302-1308
+    // smart_contracts/dao/contract.algo.ts:1309-1315
     // assertMatch(
     //   payment,
     //   {
@@ -3294,10 +3294,10 @@ newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12:
     // this.proposalID.value += 1
     swap
     app_global_put
-    // smart_contracts/dao/contract.algo.ts:1328
+    // smart_contracts/dao/contract.algo.ts:1335
     // created: Global.latestTimestamp,
     global LatestTimestamp
-    // smart_contracts/dao/contract.algo.ts:1323
+    // smart_contracts/dao/contract.algo.ts:1330
     // this.proposals(id).value = {
     swap
     itob
@@ -3306,7 +3306,7 @@ newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12:
     bytec 11 // "l"
     swap
     concat
-    // smart_contracts/dao/contract.algo.ts:1323-1331
+    // smart_contracts/dao/contract.algo.ts:1330-1338
     // this.proposals(id).value = {
     //   action,
     //   status: StatusDraft,
@@ -3319,22 +3319,22 @@ newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12:
     dup
     box_del
     pop
-    // smart_contracts/dao/contract.algo.ts:1326
+    // smart_contracts/dao/contract.algo.ts:1333
     // cid,
     frame_dig -3
     len
     pushint 36 // 36
     ==
     assert // invalid size
-    // smart_contracts/dao/contract.algo.ts:1328
+    // smart_contracts/dao/contract.algo.ts:1335
     // created: Global.latestTimestamp,
     swap
     itob
-    // smart_contracts/dao/contract.algo.ts:1329
+    // smart_contracts/dao/contract.algo.ts:1336
     // votes: 0,
     intc_0 // 0
     itob
-    // smart_contracts/dao/contract.algo.ts:1330
+    // smart_contracts/dao/contract.algo.ts:1337
     // data,
     frame_dig -2
     len
@@ -3345,7 +3345,7 @@ newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12:
     // smart_contracts/dao/constants.ts:59
     // export const StatusDraft = new UintN8(0)
     bytec_0 // 0x00
-    // smart_contracts/dao/contract.algo.ts:1323
+    // smart_contracts/dao/contract.algo.ts:1330
     // this.proposals(id).value = {
     frame_dig -4
     concat
@@ -3361,7 +3361,7 @@ newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12:
     concat
     swap
     concat
-    // smart_contracts/dao/contract.algo.ts:1323-1331
+    // smart_contracts/dao/contract.algo.ts:1330-1338
     // this.proposals(id).value = {
     //   action,
     //   status: StatusDraft,
@@ -3391,7 +3391,7 @@ newProposal_after_if_else@11:
     // )
     app_global_get_ex
     pop
-    // smart_contracts/dao/contract.algo.ts:1310
+    // smart_contracts/dao/contract.algo.ts:1317
     // const origin = getOrigin(this.spendingAccountFactoryApp.value.id)
     b newProposal_after_inlined_smart_contracts/utils/functions.ts::getOrigin@12
 
@@ -3406,14 +3406,14 @@ newProposal_bool_false@3:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.finalizeProposal(proposalID: uint64, args: bytes) -> void:
 finalizeProposal:
-    // smart_contracts/dao/contract.algo.ts:1337
+    // smart_contracts/dao/contract.algo.ts:1344
     // finalizeProposal(proposalID: uint64, args: bytes): void {
     proto 2 0
     intc_0 // 0
     dupn 2
     bytec_1 // ""
     dupn 21
-    // smart_contracts/dao/contract.algo.ts:1338
+    // smart_contracts/dao/contract.algo.ts:1345
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     frame_dig -2
     itob
@@ -3422,13 +3422,13 @@ finalizeProposal:
     bytec 11 // "l"
     swap
     concat
-    // smart_contracts/dao/contract.algo.ts:1338
+    // smart_contracts/dao/contract.algo.ts:1345
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     dup
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/dao/contract.algo.ts:1340
+    // smart_contracts/dao/contract.algo.ts:1347
     // const { action, creator } = this.proposals(proposalID).value
     box_get
     assert // Box must have value
@@ -3437,7 +3437,7 @@ finalizeProposal:
     dup
     uncover 2
     extract 54 32 // on error: Index access is out of bounds
-    // smart_contracts/dao/contract.algo.ts:1342
+    // smart_contracts/dao/contract.algo.ts:1349
     // assert(Txn.sender === creator.native, ERR_INCORRECT_SENDER)
     txn Sender
     ==
@@ -3446,7 +3446,7 @@ finalizeProposal:
     // export const ProposalActionUpgradeApp = new UintN8(0)
     bytec_0 // 0x00
     ==
-    // smart_contracts/dao/contract.algo.ts:1345-1350
+    // smart_contracts/dao/contract.algo.ts:1352-1357
     // case ProposalActionUpgradeApp: {
     //   // TODO: ensure its an app we control
     //   const params = decodeArc4<ProposalUpgradeApp>(args)
@@ -3459,7 +3459,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x0a
     ==
-    // smart_contracts/dao/contract.algo.ts:1351-1355
+    // smart_contracts/dao/contract.algo.ts:1358-1362
     // case ProposalActionAddPlugin: {
     //   const params = decodeArc4<ProposalAddPlugin>(args)
     //   this.validateAddPluginProposal(params)
@@ -3471,7 +3471,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x14
     ==
-    // smart_contracts/dao/contract.algo.ts:1356-1360
+    // smart_contracts/dao/contract.algo.ts:1363-1367
     // case ProposalActionAddNamedPlugin: {
     //   const params = decodeArc4<ProposalAddNamedPlugin>(args)
     //   this.validateAddNamedPluginProposal(params)
@@ -3483,7 +3483,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x1e
     ==
-    // smart_contracts/dao/contract.algo.ts:1361-1365
+    // smart_contracts/dao/contract.algo.ts:1368-1372
     // case ProposalActionExecutePlugin: {
     //   const params = decodeArc4<ProposalExecutePlugin>(args)
     //   this.validateExecutePluginProposal(params)
@@ -3495,7 +3495,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x28
     ==
-    // smart_contracts/dao/contract.algo.ts:1366-1370
+    // smart_contracts/dao/contract.algo.ts:1373-1377
     // case ProposalActionExecuteNamedPlugin: {
     //   const params = decodeArc4<ProposalExecuteNamedPlugin>(args)
     //   this.validateExecuteNamedPluginProposal(params)
@@ -3507,7 +3507,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x32
     ==
-    // smart_contracts/dao/contract.algo.ts:1371-1375
+    // smart_contracts/dao/contract.algo.ts:1378-1382
     // case ProposalActionRemovePlugin: {
     //   const params = decodeArc4<ProposalRemovePlugin>(args)
     //   this.validateRemovePluginProposal(params)
@@ -3519,7 +3519,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x3c
     ==
-    // smart_contracts/dao/contract.algo.ts:1376-1380
+    // smart_contracts/dao/contract.algo.ts:1383-1387
     // case ProposalActionRemoveNamedPlugin: {
     //   const params = decodeArc4<ProposalRemoveNamedPlugin>(args)
     //   this.validateRemoveNamedPluginProposal(params)
@@ -3531,7 +3531,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x46
     ==
-    // smart_contracts/dao/contract.algo.ts:1381-1385
+    // smart_contracts/dao/contract.algo.ts:1388-1392
     // case ProposalActionAddAllowance: {
     //   const params = decodeArc4<ProposalAddAllowance>(args)
     //   this.validateAddAllowanceProposal(params)
@@ -3543,7 +3543,7 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x50
     ==
-    // smart_contracts/dao/contract.algo.ts:1386-1390
+    // smart_contracts/dao/contract.algo.ts:1393-1397
     // case ProposalActionRemoveAllowance: {
     //   const params = decodeArc4<ProposalRemoveAllowance>(args)
     //   this.validateRemoveAllowanceProposal(params)
@@ -3555,20 +3555,20 @@ finalizeProposal:
     frame_dig 25
     pushbytes 0x5a
     ==
-    // smart_contracts/dao/contract.algo.ts:1391-1395
+    // smart_contracts/dao/contract.algo.ts:1398-1402
     // case ProposalActionUpdateFields: {
     //   const params = decodeArc4<ProposalUpdateField[]>(args)
     //   this.validateUpdateFieldsProposal(params)
     //   break;
     // }
     bz finalizeProposal_block@31
-    // smart_contracts/dao/contract.algo.ts:888
+    // smart_contracts/dao/contract.algo.ts:893
     // for (let i: uint64 = 0; i < params.length; i += 1) {
     intc_0 // 0
     frame_bury 7
 
 finalizeProposal_while_top@33:
-    // smart_contracts/dao/contract.algo.ts:888
+    // smart_contracts/dao/contract.algo.ts:893
     // for (let i: uint64 = 0; i < params.length; i += 1) {
     frame_dig -1
     intc_0 // 0
@@ -3578,7 +3578,7 @@ finalizeProposal_while_top@33:
     frame_dig 7
     >
     bz finalizeProposal_block@31
-    // smart_contracts/dao/contract.algo.ts:889
+    // smart_contracts/dao/contract.algo.ts:894
     // const { field, value } = params[i]
     frame_dig -1
     extract 2 0
@@ -3634,24 +3634,24 @@ finalizeProposal_while_top@33:
     // export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
     bytec 12 // "content_policy"
     ==
-    // smart_contracts/dao/contract.algo.ts:892-895
+    // smart_contracts/dao/contract.algo.ts:897-900
     // case AkitaDAOGlobalStateKeysContentPolicy: {
     //   assert(Bytes(value).length === CID_LENGTH, ERR_INVALID_CONTENT_POLICY)
     //   break
     // }
     bz finalizeProposal_after_if_else@36
-    // smart_contracts/dao/contract.algo.ts:893
+    // smart_contracts/dao/contract.algo.ts:898
     // assert(Bytes(value).length === CID_LENGTH, ERR_INVALID_CONTENT_POLICY)
     frame_dig 2
     len
     // smart_contracts/utils/constants.ts:51
     // export const CID_LENGTH: uint64 = 36
     pushint 36 // 36
-    // smart_contracts/dao/contract.algo.ts:893
+    // smart_contracts/dao/contract.algo.ts:898
     // assert(Bytes(value).length === CID_LENGTH, ERR_INVALID_CONTENT_POLICY)
     ==
     assert // Invalid content policy
-    // smart_contracts/dao/contract.algo.ts:894
+    // smart_contracts/dao/contract.algo.ts:899
     // break
     b finalizeProposal_while_top@33
 
@@ -3661,37 +3661,37 @@ finalizeProposal_after_if_else@36:
     frame_dig 0
     bytec 13 // "minimum_rewards_impact"
     ==
-    // smart_contracts/dao/contract.algo.ts:896-900
+    // smart_contracts/dao/contract.algo.ts:901-905
     // case AkitaDAOGlobalStateKeysMinimumRewardsImpact: {
     //   const minImpact = btoi(Bytes(value))
     //   assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
     //   break
     // }
     bz finalizeProposal_after_if_else@42
-    // smart_contracts/dao/contract.algo.ts:897
+    // smart_contracts/dao/contract.algo.ts:902
     // const minImpact = btoi(Bytes(value))
     frame_dig 2
     btoi
     dup
     frame_bury 15
-    // smart_contracts/dao/contract.algo.ts:898
+    // smart_contracts/dao/contract.algo.ts:903
     // assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
     bz finalizeProposal_bool_false@40
     frame_dig 15
     // smart_contracts/utils/constants.ts:15
     // export const MAX_IMPACT: uint64 = 1_000
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:898
+    // smart_contracts/dao/contract.algo.ts:903
     // assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
     <
     bz finalizeProposal_bool_false@40
     intc_1 // 1
 
 finalizeProposal_bool_merge@41:
-    // smart_contracts/dao/contract.algo.ts:898
+    // smart_contracts/dao/contract.algo.ts:903
     // assert(minImpact > 0 && minImpact < MAX_IMPACT, ERR_INVALID_MINIMUM_REWARDS_IMPACT)
     assert // Invalid minimum rewards impact
-    // smart_contracts/dao/contract.algo.ts:899
+    // smart_contracts/dao/contract.algo.ts:904
     // break
     b finalizeProposal_while_top@33
 
@@ -3705,7 +3705,7 @@ finalizeProposal_after_if_else@42:
     frame_dig 0
     bytec 14 // "social_fees"
     ==
-    // smart_contracts/dao/contract.algo.ts:901-913
+    // smart_contracts/dao/contract.algo.ts:906-918
     // case AkitaDAOGlobalStateKeysSocialFees: {
     //   const { postFee, reactFee, impactTaxMin, impactTaxMax } = decodeArc4<SocialFees>(Bytes(value))
     //   assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
@@ -3720,7 +3720,7 @@ finalizeProposal_after_if_else@42:
     //   break
     // }
     bz finalizeProposal_after_if_else@57
-    // smart_contracts/dao/contract.algo.ts:902
+    // smart_contracts/dao/contract.algo.ts:907
     // const { postFee, reactFee, impactTaxMin, impactTaxMax } = decodeArc4<SocialFees>(Bytes(value))
     frame_dig 1
     dup
@@ -3743,7 +3743,7 @@ finalizeProposal_after_if_else@42:
     // smart_contracts/utils/constants.ts:20
     // export const MIN_POST_FEE: uint64 = 10 // 0.000010 AKTA or 10 keets
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:903
+    // smart_contracts/dao/contract.algo.ts:908
     // assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
     >=
     bz finalizeProposal_bool_false@46
@@ -3751,23 +3751,23 @@ finalizeProposal_after_if_else@42:
     // smart_contracts/utils/constants.ts:21
     // export const MAX_POST_FEE: uint64 = 100_000_000_000 // 100K AKTA
     pushint 100000000000 // 100000000000
-    // smart_contracts/dao/contract.algo.ts:903
+    // smart_contracts/dao/contract.algo.ts:908
     // assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
     <
     bz finalizeProposal_bool_false@46
     intc_1 // 1
 
 finalizeProposal_bool_merge@47:
-    // smart_contracts/dao/contract.algo.ts:903
+    // smart_contracts/dao/contract.algo.ts:908
     // assert(postFee >= MIN_POST_FEE && postFee < MAX_POST_FEE, ERR_INVALID_POST_FEE)
     assert // Invalid post fee
-    // smart_contracts/dao/contract.algo.ts:904
+    // smart_contracts/dao/contract.algo.ts:909
     // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
     frame_dig 21
     // smart_contracts/utils/constants.ts:22
     // export const MIN_REACT_FEE: uint64 = 10 // 0.000010 AKTA or 10 keets
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:904
+    // smart_contracts/dao/contract.algo.ts:909
     // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
     >=
     bz finalizeProposal_bool_false@50
@@ -3775,58 +3775,58 @@ finalizeProposal_bool_merge@47:
     // smart_contracts/utils/constants.ts:23
     // export const MAX_REACT_FEE: uint64 = 10_000_000_000 // 10K AKTA
     pushint 10000000000 // 10000000000
-    // smart_contracts/dao/contract.algo.ts:904
+    // smart_contracts/dao/contract.algo.ts:909
     // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
     <
     bz finalizeProposal_bool_false@50
     intc_1 // 1
 
 finalizeProposal_bool_merge@51:
-    // smart_contracts/dao/contract.algo.ts:904
+    // smart_contracts/dao/contract.algo.ts:909
     // assert(reactFee >= MIN_REACT_FEE && reactFee < MAX_REACT_FEE, ERR_INVALID_REACT_FEE)
     assert // Invalid react fee
-    // smart_contracts/dao/contract.algo.ts:905
+    // smart_contracts/dao/contract.algo.ts:910
     // assert(impactTaxMin >= MIN_IMPACT_TAX_MIN, ERR_INVALID_IMPACT_TAX_MIN)
     frame_dig 10
     dup
     // smart_contracts/utils/constants.ts:24
     // export const MIN_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:905
+    // smart_contracts/dao/contract.algo.ts:910
     // assert(impactTaxMin >= MIN_IMPACT_TAX_MIN, ERR_INVALID_IMPACT_TAX_MIN)
     >=
     assert // Invalid impact tax minimum
-    // smart_contracts/dao/contract.algo.ts:907
+    // smart_contracts/dao/contract.algo.ts:912
     // impactTaxMax > impactTaxMin
     frame_dig 8
     <
-    // smart_contracts/dao/contract.algo.ts:907-908
+    // smart_contracts/dao/contract.algo.ts:912-913
     // impactTaxMax > impactTaxMin
     // && impactTaxMax >= MIN_IMPACT_TAX_MAX
     bz finalizeProposal_bool_false@55
-    // smart_contracts/dao/contract.algo.ts:908
+    // smart_contracts/dao/contract.algo.ts:913
     // && impactTaxMax >= MIN_IMPACT_TAX_MAX
     frame_dig 8
     // smart_contracts/utils/constants.ts:25
     // export const MIN_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:908
+    // smart_contracts/dao/contract.algo.ts:913
     // && impactTaxMax >= MIN_IMPACT_TAX_MAX
     >=
-    // smart_contracts/dao/contract.algo.ts:907-908
+    // smart_contracts/dao/contract.algo.ts:912-913
     // impactTaxMax > impactTaxMin
     // && impactTaxMax >= MIN_IMPACT_TAX_MAX
     bz finalizeProposal_bool_false@55
-    // smart_contracts/dao/contract.algo.ts:909
+    // smart_contracts/dao/contract.algo.ts:914
     // && impactTaxMax <= DIVISOR,
     frame_dig 8
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:909
+    // smart_contracts/dao/contract.algo.ts:914
     // && impactTaxMax <= DIVISOR,
     <=
-    // smart_contracts/dao/contract.algo.ts:907-909
+    // smart_contracts/dao/contract.algo.ts:912-914
     // impactTaxMax > impactTaxMin
     // && impactTaxMax >= MIN_IMPACT_TAX_MAX
     // && impactTaxMax <= DIVISOR,
@@ -3834,7 +3834,7 @@ finalizeProposal_bool_merge@51:
     intc_1 // 1
 
 finalizeProposal_bool_merge@56:
-    // smart_contracts/dao/contract.algo.ts:906-911
+    // smart_contracts/dao/contract.algo.ts:911-916
     // assert(
     //   impactTaxMax > impactTaxMin
     //   && impactTaxMax >= MIN_IMPACT_TAX_MAX
@@ -3842,7 +3842,7 @@ finalizeProposal_bool_merge@56:
     //   ERR_INVALID_IMPACT_TAX_MAX
     // )
     assert // Invalid impact tax maximum
-    // smart_contracts/dao/contract.algo.ts:912
+    // smart_contracts/dao/contract.algo.ts:917
     // break
     b finalizeProposal_while_top@33
 
@@ -3864,7 +3864,7 @@ finalizeProposal_after_if_else@57:
     frame_dig 0
     bytec 15 // "staking_fees"
     ==
-    // smart_contracts/dao/contract.algo.ts:914-925
+    // smart_contracts/dao/contract.algo.ts:919-930
     // case AkitaDAOGlobalStateKeysStakingFees: {
     //   const { creationFee, impactTaxMin, impactTaxMax } = decodeArc4<StakingFees>(Bytes(value))
     //   assert(creationFee > 0, ERR_INVALID_POOL_CREATION_FEE)
@@ -3878,7 +3878,7 @@ finalizeProposal_after_if_else@57:
     //   break
     // }
     bz finalizeProposal_after_if_else@64
-    // smart_contracts/dao/contract.algo.ts:915
+    // smart_contracts/dao/contract.algo.ts:920
     // const { creationFee, impactTaxMin, impactTaxMax } = decodeArc4<StakingFees>(Bytes(value))
     frame_dig 1
     dup
@@ -3893,50 +3893,50 @@ finalizeProposal_after_if_else@57:
     dup
     cover 3
     frame_bury 9
-    // smart_contracts/dao/contract.algo.ts:916
+    // smart_contracts/dao/contract.algo.ts:921
     // assert(creationFee > 0, ERR_INVALID_POOL_CREATION_FEE)
     swap
     assert // Invalid pool creation fee
-    // smart_contracts/dao/contract.algo.ts:917
+    // smart_contracts/dao/contract.algo.ts:922
     // assert(impactTaxMin >= MIN_POOL_IMPACT_TAX_MIN, ERR_INVALID_POOL_IMPACT_TAX_MIN)
     dup
     // smart_contracts/utils/constants.ts:26
     // export const MIN_POOL_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:917
+    // smart_contracts/dao/contract.algo.ts:922
     // assert(impactTaxMin >= MIN_POOL_IMPACT_TAX_MIN, ERR_INVALID_POOL_IMPACT_TAX_MIN)
     >=
     assert // Invalid pool impact tax minimum
-    // smart_contracts/dao/contract.algo.ts:919
+    // smart_contracts/dao/contract.algo.ts:924
     // impactTaxMax >= impactTaxMin
     >=
-    // smart_contracts/dao/contract.algo.ts:919-920
+    // smart_contracts/dao/contract.algo.ts:924-925
     // impactTaxMax >= impactTaxMin
     // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
     bz finalizeProposal_bool_false@62
-    // smart_contracts/dao/contract.algo.ts:920
+    // smart_contracts/dao/contract.algo.ts:925
     // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
     frame_dig 9
     // smart_contracts/utils/constants.ts:27
     // export const MIN_POOL_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:920
+    // smart_contracts/dao/contract.algo.ts:925
     // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
     >=
-    // smart_contracts/dao/contract.algo.ts:919-920
+    // smart_contracts/dao/contract.algo.ts:924-925
     // impactTaxMax >= impactTaxMin
     // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
     bz finalizeProposal_bool_false@62
-    // smart_contracts/dao/contract.algo.ts:921
+    // smart_contracts/dao/contract.algo.ts:926
     // && impactTaxMax <= DIVISOR,
     frame_dig 9
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:921
+    // smart_contracts/dao/contract.algo.ts:926
     // && impactTaxMax <= DIVISOR,
     <=
-    // smart_contracts/dao/contract.algo.ts:919-921
+    // smart_contracts/dao/contract.algo.ts:924-926
     // impactTaxMax >= impactTaxMin
     // && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
     // && impactTaxMax <= DIVISOR,
@@ -3944,7 +3944,7 @@ finalizeProposal_after_if_else@57:
     intc_1 // 1
 
 finalizeProposal_bool_merge@63:
-    // smart_contracts/dao/contract.algo.ts:918-923
+    // smart_contracts/dao/contract.algo.ts:923-928
     // assert(
     //   impactTaxMax >= impactTaxMin
     //   && impactTaxMax >= MIN_POOL_IMPACT_TAX_MAX
@@ -3952,7 +3952,7 @@ finalizeProposal_bool_merge@63:
     //   ERR_INVALID_POOL_IMPACT_TAX_MAX
     // )
     assert // Invalid pool impact tax maximum
-    // smart_contracts/dao/contract.algo.ts:924
+    // smart_contracts/dao/contract.algo.ts:929
     // break
     b finalizeProposal_while_top@33
 
@@ -3966,7 +3966,7 @@ finalizeProposal_after_if_else@64:
     frame_dig 0
     bytec 16 // "subscription_fees"
     ==
-    // smart_contracts/dao/contract.algo.ts:926-933
+    // smart_contracts/dao/contract.algo.ts:931-938
     // case AkitaDAOGlobalStateKeysSubscriptionFees: {
     //   const { serviceCreationFee, paymentPercentage, triggerPercentage } = decodeArc4<SubscriptionFees>(Bytes(value))
     //   assert(serviceCreationFee > 0, ERR_INVALID_SERVICE_CREATION_FEE)
@@ -3976,7 +3976,7 @@ finalizeProposal_after_if_else@64:
     //   break
     // }
     bz finalizeProposal_after_if_else@66
-    // smart_contracts/dao/contract.algo.ts:927
+    // smart_contracts/dao/contract.algo.ts:932
     // const { serviceCreationFee, paymentPercentage, triggerPercentage } = decodeArc4<SubscriptionFees>(Bytes(value))
     frame_dig 1
     dup
@@ -3988,41 +3988,41 @@ finalizeProposal_after_if_else@64:
     uncover 2
     pushint 18 // 18
     extract_uint64
-    // smart_contracts/dao/contract.algo.ts:928
+    // smart_contracts/dao/contract.algo.ts:933
     // assert(serviceCreationFee > 0, ERR_INVALID_SERVICE_CREATION_FEE)
     uncover 2
     assert // Invalid service creation fee
-    // smart_contracts/dao/contract.algo.ts:929
+    // smart_contracts/dao/contract.algo.ts:934
     // assert(paymentPercentage >= MIN_PAYMENT_PERCENTAGE, ERR_INVALID_PAYMENT_PERCENTAGE)
     dig 1
     // smart_contracts/utils/constants.ts:28
     // export const MIN_PAYMENT_PERCENTAGE: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:929
+    // smart_contracts/dao/contract.algo.ts:934
     // assert(paymentPercentage >= MIN_PAYMENT_PERCENTAGE, ERR_INVALID_PAYMENT_PERCENTAGE)
     >=
     assert // Invalid payment percentage
-    // smart_contracts/dao/contract.algo.ts:930
+    // smart_contracts/dao/contract.algo.ts:935
     // assert(triggerPercentage >= MIN_TRIGGER_PERCENTAGE, ERR_INVALID_TRIGGER_PERCENTAGE)
     dup
     // smart_contracts/utils/constants.ts:29
     // export const MIN_TRIGGER_PERCENTAGE: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:930
+    // smart_contracts/dao/contract.algo.ts:935
     // assert(triggerPercentage >= MIN_TRIGGER_PERCENTAGE, ERR_INVALID_TRIGGER_PERCENTAGE)
     >=
     assert // Invalid trigger percentage
-    // smart_contracts/dao/contract.algo.ts:931
+    // smart_contracts/dao/contract.algo.ts:936
     // assert((paymentPercentage + triggerPercentage) < DIVISOR, ERR_INVALID_TOTAL_PERCENTAGE_FEES)
     +
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:931
+    // smart_contracts/dao/contract.algo.ts:936
     // assert((paymentPercentage + triggerPercentage) < DIVISOR, ERR_INVALID_TOTAL_PERCENTAGE_FEES)
     <
     assert // Invalid subscription total percentage fees
-    // smart_contracts/dao/contract.algo.ts:932
+    // smart_contracts/dao/contract.algo.ts:937
     // break
     b finalizeProposal_while_top@33
 
@@ -4032,7 +4032,7 @@ finalizeProposal_after_if_else@66:
     frame_dig 0
     bytec 17 // "nft_fees"
     ==
-    // smart_contracts/dao/contract.algo.ts:934-996
+    // smart_contracts/dao/contract.algo.ts:939-1001
     // case AkitaDAOGlobalStateKeysNFTFees: {
     //   const {
     //     marketplaceSalePercentageMin,
@@ -4097,7 +4097,7 @@ finalizeProposal_after_if_else@66:
     //   break
     // }
     bz finalizeProposal_after_if_else@80
-    // smart_contracts/dao/contract.algo.ts:948
+    // smart_contracts/dao/contract.algo.ts:953
     // } = decodeArc4<NFTFees>(Bytes(value))
     frame_dig 1
     dup
@@ -4149,79 +4149,79 @@ finalizeProposal_after_if_else@66:
     pushint 114 // 114
     extract_uint64
     frame_bury 18
-    // smart_contracts/dao/contract.algo.ts:950
+    // smart_contracts/dao/contract.algo.ts:955
     // assert(marketplaceSalePercentageMin > MIN_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MINIMUM)
     dup
     // smart_contracts/utils/constants.ts:30
     // export const MIN_MARKETPLACE_SALE_PERCENTAGE_MINIMUM: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:950
+    // smart_contracts/dao/contract.algo.ts:955
     // assert(marketplaceSalePercentageMin > MIN_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MINIMUM)
     >
     assert // Invalid marketplace sale percentage minimum
-    // smart_contracts/dao/contract.algo.ts:952
+    // smart_contracts/dao/contract.algo.ts:957
     // marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
     >
-    // smart_contracts/dao/contract.algo.ts:952-953
+    // smart_contracts/dao/contract.algo.ts:957-958
     // marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
     // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
     bz finalizeProposal_bool_false@70
-    // smart_contracts/dao/contract.algo.ts:953
+    // smart_contracts/dao/contract.algo.ts:958
     // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
     frame_dig 14
     // smart_contracts/utils/constants.ts:31
     // export const MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:953
+    // smart_contracts/dao/contract.algo.ts:958
     // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
     >=
-    // smart_contracts/dao/contract.algo.ts:952-953
+    // smart_contracts/dao/contract.algo.ts:957-958
     // marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
     // marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
     bz finalizeProposal_bool_false@70
     intc_1 // 1
 
 finalizeProposal_bool_merge@71:
-    // smart_contracts/dao/contract.algo.ts:951-955
+    // smart_contracts/dao/contract.algo.ts:956-960
     // assert(
     //   marketplaceSalePercentageMax > marketplaceSalePercentageMin &&
     //   marketplaceSalePercentageMax >= MIN_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM,
     //   ERR_INVALID_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM
     // )
     assert // Invalid marketplace sale percentage maximum
-    // smart_contracts/dao/contract.algo.ts:957
+    // smart_contracts/dao/contract.algo.ts:962
     // marketplaceComposablePercentage >= MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE,
     frame_dig 12
     dup
     // smart_contracts/utils/constants.ts:32
     // export const MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:957
+    // smart_contracts/dao/contract.algo.ts:962
     // marketplaceComposablePercentage >= MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE,
     >=
-    // smart_contracts/dao/contract.algo.ts:956-959
+    // smart_contracts/dao/contract.algo.ts:961-964
     // assert(
     //   marketplaceComposablePercentage >= MIN_MARKETPLACE_COMPOSABLE_PERCENTAGE,
     //   ERR_INVALID_MARKETPLACE_COMPOSABLE_PERCENTAGE
     // )
     assert // Invalid marketplace composable percentage
-    // smart_contracts/dao/contract.algo.ts:961
+    // smart_contracts/dao/contract.algo.ts:966
     // marketplaceRoyaltyDefaultPercentage >= MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
     frame_dig 13
     dup
     // smart_contracts/utils/constants.ts:33
     // export const MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:961
+    // smart_contracts/dao/contract.algo.ts:966
     // marketplaceRoyaltyDefaultPercentage >= MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
     >=
-    // smart_contracts/dao/contract.algo.ts:960-963
+    // smart_contracts/dao/contract.algo.ts:965-968
     // assert(
     //   marketplaceRoyaltyDefaultPercentage >= MIN_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE,
     //   ERR_INVALID_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE
     // )
     assert // Invalid marketplace royalty default percentage
-    // smart_contracts/dao/contract.algo.ts:965
+    // smart_contracts/dao/contract.algo.ts:970
     // (marketplaceSalePercentageMax + marketplaceComposablePercentage + marketplaceRoyaltyDefaultPercentage) <= DIVISOR,
     frame_dig 14
     uncover 2
@@ -4230,68 +4230,68 @@ finalizeProposal_bool_merge@71:
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:965
+    // smart_contracts/dao/contract.algo.ts:970
     // (marketplaceSalePercentageMax + marketplaceComposablePercentage + marketplaceRoyaltyDefaultPercentage) <= DIVISOR,
     <=
-    // smart_contracts/dao/contract.algo.ts:964-967
+    // smart_contracts/dao/contract.algo.ts:969-972
     // assert(
     //   (marketplaceSalePercentageMax + marketplaceComposablePercentage + marketplaceRoyaltyDefaultPercentage) <= DIVISOR,
     //   ERR_INVALID_TOTAL_PERCENTAGE_FEES
     // )
     assert // Invalid subscription total percentage fees
-    // smart_contracts/dao/contract.algo.ts:969
+    // smart_contracts/dao/contract.algo.ts:974
     // assert(shuffleSalePercentage <= DIVISOR, ERR_INVALID_SHUFFLE_SALE_PERCENTAGE)
     frame_dig 22
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:969
+    // smart_contracts/dao/contract.algo.ts:974
     // assert(shuffleSalePercentage <= DIVISOR, ERR_INVALID_SHUFFLE_SALE_PERCENTAGE)
     <=
     assert // Invalid shuffle sale percentage
-    // smart_contracts/dao/contract.algo.ts:970
+    // smart_contracts/dao/contract.algo.ts:975
     // assert(auctionSaleImpactTaxMin >= MIN_AUCTION_SALE_IMPACT_TAX_MIN, ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MIN)
     frame_dig 6
     dup
     // smart_contracts/utils/constants.ts:34
     // export const MIN_AUCTION_SALE_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:970
+    // smart_contracts/dao/contract.algo.ts:975
     // assert(auctionSaleImpactTaxMin >= MIN_AUCTION_SALE_IMPACT_TAX_MIN, ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MIN)
     >=
     assert // Invalid auction sale impact tax minimum
-    // smart_contracts/dao/contract.algo.ts:972
+    // smart_contracts/dao/contract.algo.ts:977
     // auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
     frame_dig 5
     <
-    // smart_contracts/dao/contract.algo.ts:972-973
+    // smart_contracts/dao/contract.algo.ts:977-978
     // auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
     // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
     bz finalizeProposal_bool_false@74
-    // smart_contracts/dao/contract.algo.ts:973
+    // smart_contracts/dao/contract.algo.ts:978
     // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
     frame_dig 5
     // smart_contracts/utils/constants.ts:35
     // export const MIN_AUCTION_SALE_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:973
+    // smart_contracts/dao/contract.algo.ts:978
     // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
     >=
-    // smart_contracts/dao/contract.algo.ts:972-973
+    // smart_contracts/dao/contract.algo.ts:977-978
     // auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
     // && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
     bz finalizeProposal_bool_false@74
     intc_1 // 1
 
 finalizeProposal_bool_merge@75:
-    // smart_contracts/dao/contract.algo.ts:971-975
+    // smart_contracts/dao/contract.algo.ts:976-980
     // assert(
     //   auctionSaleImpactTaxMax > auctionSaleImpactTaxMin
     //   && auctionSaleImpactTaxMax >= MIN_AUCTION_SALE_IMPACT_TAX_MAX,
     //   ERR_INVALID_AUCTION_SALE_IMPACT_TAX_MAX
     // )
     assert // Invalid auction sale impact tax maximum
-    // smart_contracts/dao/contract.algo.ts:978
+    // smart_contracts/dao/contract.algo.ts:983
     // (auctionSaleImpactTaxMax + auctionComposablePercentage) <= DIVISOR,
     frame_dig 5
     frame_dig 3
@@ -4299,68 +4299,68 @@ finalizeProposal_bool_merge@75:
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:978
+    // smart_contracts/dao/contract.algo.ts:983
     // (auctionSaleImpactTaxMax + auctionComposablePercentage) <= DIVISOR,
     <=
-    // smart_contracts/dao/contract.algo.ts:977-980
+    // smart_contracts/dao/contract.algo.ts:982-985
     // assert(
     //   (auctionSaleImpactTaxMax + auctionComposablePercentage) <= DIVISOR,
     //   ERR_INVALID_TOTAL_PERCENTAGE_FEES
     // )
     assert // Invalid subscription total percentage fees
-    // smart_contracts/dao/contract.algo.ts:982
+    // smart_contracts/dao/contract.algo.ts:987
     // assert(auctionRafflePercentage <= DIVISOR, ERR_INVALID_AUCTION_RAFFLE_PERCENTAGE)
     frame_dig 4
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:982
+    // smart_contracts/dao/contract.algo.ts:987
     // assert(auctionRafflePercentage <= DIVISOR, ERR_INVALID_AUCTION_RAFFLE_PERCENTAGE)
     <=
     assert // Invalid auction raffle percentage
-    // smart_contracts/dao/contract.algo.ts:983
+    // smart_contracts/dao/contract.algo.ts:988
     // assert(raffleSaleImpactTaxMin >= MIN_RAFFLE_SALE_IMPACT_TAX_MIN, ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MIN)
     frame_dig 20
     dup
     // smart_contracts/utils/constants.ts:36
     // export const MIN_RAFFLE_SALE_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:983
+    // smart_contracts/dao/contract.algo.ts:988
     // assert(raffleSaleImpactTaxMin >= MIN_RAFFLE_SALE_IMPACT_TAX_MIN, ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MIN)
     >=
     assert // Invalid raffle sale impact tax minimum
-    // smart_contracts/dao/contract.algo.ts:985
+    // smart_contracts/dao/contract.algo.ts:990
     // raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
     frame_dig 19
     <
-    // smart_contracts/dao/contract.algo.ts:985-986
+    // smart_contracts/dao/contract.algo.ts:990-991
     // raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
     // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
     bz finalizeProposal_bool_false@78
-    // smart_contracts/dao/contract.algo.ts:986
+    // smart_contracts/dao/contract.algo.ts:991
     // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
     frame_dig 19
     // smart_contracts/utils/constants.ts:37
     // export const MIN_RAFFLE_SALE_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:986
+    // smart_contracts/dao/contract.algo.ts:991
     // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
     >=
-    // smart_contracts/dao/contract.algo.ts:985-986
+    // smart_contracts/dao/contract.algo.ts:990-991
     // raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
     // && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
     bz finalizeProposal_bool_false@78
     intc_1 // 1
 
 finalizeProposal_bool_merge@79:
-    // smart_contracts/dao/contract.algo.ts:984-988
+    // smart_contracts/dao/contract.algo.ts:989-993
     // assert(
     //   raffleSaleImpactTaxMax > raffleSaleImpactTaxMin
     //   && raffleSaleImpactTaxMax >= MIN_RAFFLE_SALE_IMPACT_TAX_MAX,
     //   ERR_INVALID_RAFFLE_SALE_IMPACT_TAX_MAX
     // )
     assert // Invalid raffle sale impact tax maximum
-    // smart_contracts/dao/contract.algo.ts:991
+    // smart_contracts/dao/contract.algo.ts:996
     // (raffleSaleImpactTaxMax + raffleComposablePercentage) < DIVISOR,
     frame_dig 19
     frame_dig 18
@@ -4368,16 +4368,16 @@ finalizeProposal_bool_merge@79:
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:991
+    // smart_contracts/dao/contract.algo.ts:996
     // (raffleSaleImpactTaxMax + raffleComposablePercentage) < DIVISOR,
     <
-    // smart_contracts/dao/contract.algo.ts:990-993
+    // smart_contracts/dao/contract.algo.ts:995-998
     // assert(
     //   (raffleSaleImpactTaxMax + raffleComposablePercentage) < DIVISOR,
     //   ERR_INVALID_TOTAL_PERCENTAGE_FEES
     // )
     assert // Invalid subscription total percentage fees
-    // smart_contracts/dao/contract.algo.ts:995
+    // smart_contracts/dao/contract.algo.ts:1000
     // break
     b finalizeProposal_while_top@33
 
@@ -4399,7 +4399,7 @@ finalizeProposal_after_if_else@80:
     frame_dig 0
     bytec 22 // "swap_fees"
     ==
-    // smart_contracts/dao/contract.algo.ts:997-1007
+    // smart_contracts/dao/contract.algo.ts:1002-1012
     // case AkitaDAOGlobalStateKeysSwapFees: {
     //   const swapFees = decodeArc4<SwapFees>(Bytes(value))
     //   assert(swapFees.impactTaxMin >= MIN_SWAP_IMPACT_TAX_MIN, ERR_INVALID_SWAP_IMPACT_TAX_MIN)
@@ -4412,7 +4412,7 @@ finalizeProposal_after_if_else@80:
     //   break
     // }
     bz finalizeProposal_after_if_else@87
-    // smart_contracts/dao/contract.algo.ts:998
+    // smart_contracts/dao/contract.algo.ts:1003
     // const swapFees = decodeArc4<SwapFees>(Bytes(value))
     frame_dig 1
     dup
@@ -4424,46 +4424,46 @@ finalizeProposal_after_if_else@80:
     dup
     cover 2
     frame_bury 23
-    // smart_contracts/dao/contract.algo.ts:999
+    // smart_contracts/dao/contract.algo.ts:1004
     // assert(swapFees.impactTaxMin >= MIN_SWAP_IMPACT_TAX_MIN, ERR_INVALID_SWAP_IMPACT_TAX_MIN)
     dup
     // smart_contracts/utils/constants.ts:38
     // export const MIN_SWAP_IMPACT_TAX_MIN: uint64 = 10 // 0.01%
     intc_2 // 10
-    // smart_contracts/dao/contract.algo.ts:999
+    // smart_contracts/dao/contract.algo.ts:1004
     // assert(swapFees.impactTaxMin >= MIN_SWAP_IMPACT_TAX_MIN, ERR_INVALID_SWAP_IMPACT_TAX_MIN)
     >=
     assert // Invalid swap impact tax minimum
-    // smart_contracts/dao/contract.algo.ts:1001
+    // smart_contracts/dao/contract.algo.ts:1006
     // swapFees.impactTaxMax > swapFees.impactTaxMin
     >
-    // smart_contracts/dao/contract.algo.ts:1001-1002
+    // smart_contracts/dao/contract.algo.ts:1006-1007
     // swapFees.impactTaxMax > swapFees.impactTaxMin
     // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
     bz finalizeProposal_bool_false@85
-    // smart_contracts/dao/contract.algo.ts:1002
+    // smart_contracts/dao/contract.algo.ts:1007
     // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
     frame_dig 23
     // smart_contracts/utils/constants.ts:39
     // export const MIN_SWAP_IMPACT_TAX_MAX: uint64 = 1_000 // 1%
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:1002
+    // smart_contracts/dao/contract.algo.ts:1007
     // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
     >=
-    // smart_contracts/dao/contract.algo.ts:1001-1002
+    // smart_contracts/dao/contract.algo.ts:1006-1007
     // swapFees.impactTaxMax > swapFees.impactTaxMin
     // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
     bz finalizeProposal_bool_false@85
-    // smart_contracts/dao/contract.algo.ts:1003
+    // smart_contracts/dao/contract.algo.ts:1008
     // && swapFees.impactTaxMax <= DIVISOR,
     frame_dig 23
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:1003
+    // smart_contracts/dao/contract.algo.ts:1008
     // && swapFees.impactTaxMax <= DIVISOR,
     <=
-    // smart_contracts/dao/contract.algo.ts:1001-1003
+    // smart_contracts/dao/contract.algo.ts:1006-1008
     // swapFees.impactTaxMax > swapFees.impactTaxMin
     // && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
     // && swapFees.impactTaxMax <= DIVISOR,
@@ -4471,7 +4471,7 @@ finalizeProposal_after_if_else@80:
     intc_1 // 1
 
 finalizeProposal_bool_merge@86:
-    // smart_contracts/dao/contract.algo.ts:1000-1005
+    // smart_contracts/dao/contract.algo.ts:1005-1010
     // assert(
     //   swapFees.impactTaxMax > swapFees.impactTaxMin
     //   && swapFees.impactTaxMax >= MIN_SWAP_IMPACT_TAX_MAX
@@ -4479,7 +4479,7 @@ finalizeProposal_bool_merge@86:
     //   ERR_INVALID_SWAP_IMPACT_TAX_MAX
     // )
     assert // Invalid swap impact tax maximum
-    // smart_contracts/dao/contract.algo.ts:1006
+    // smart_contracts/dao/contract.algo.ts:1011
     // break
     b finalizeProposal_while_top@33
 
@@ -4493,14 +4493,14 @@ finalizeProposal_after_if_else@87:
     frame_dig 0
     bytec 6 // "krby_percentage"
     ==
-    // smart_contracts/dao/contract.algo.ts:1008-1012
+    // smart_contracts/dao/contract.algo.ts:1013-1017
     // case AkitaDAOGlobalStateKeysKrbyPercentage: {
     //   const krbyPercentage = btoi(Bytes(value))
     //   assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
     //   break
     // }
     bz finalizeProposal_after_if_else@93
-    // smart_contracts/dao/contract.algo.ts:1009
+    // smart_contracts/dao/contract.algo.ts:1014
     // const krbyPercentage = btoi(Bytes(value))
     frame_dig 2
     btoi
@@ -4509,7 +4509,7 @@ finalizeProposal_after_if_else@87:
     // smart_contracts/utils/constants.ts:41
     // export const ONE_PERCENT: uint64 = 1_000
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:1010
+    // smart_contracts/dao/contract.algo.ts:1015
     // assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
     >=
     bz finalizeProposal_bool_false@91
@@ -4522,7 +4522,7 @@ finalizeProposal_after_if_else@87:
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:1010
+    // smart_contracts/dao/contract.algo.ts:1015
     // assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
     swap
     -
@@ -4532,10 +4532,10 @@ finalizeProposal_after_if_else@87:
     intc_1 // 1
 
 finalizeProposal_bool_merge@92:
-    // smart_contracts/dao/contract.algo.ts:1010
+    // smart_contracts/dao/contract.algo.ts:1015
     // assert(krbyPercentage >= ONE_PERCENT && krbyPercentage < (DIVISOR - this.moderatorPercentage.value), ERR_INVALID_KRBY_PERCENTAGE)
     assert // Invalid krby percentage
-    // smart_contracts/dao/contract.algo.ts:1011
+    // smart_contracts/dao/contract.algo.ts:1016
     // break
     b finalizeProposal_while_top@33
 
@@ -4549,14 +4549,14 @@ finalizeProposal_after_if_else@93:
     frame_dig 0
     bytec 7 // "mod_percentage"
     ==
-    // smart_contracts/dao/contract.algo.ts:1013-1017
+    // smart_contracts/dao/contract.algo.ts:1018-1022
     // case AkitaDAOGlobalStateKeysModeratorPercentage: {
     //   const modPercentage = btoi(Bytes(value))
     //   assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
     //   break
     // }
     bz finalizeProposal_after_if_else@99
-    // smart_contracts/dao/contract.algo.ts:1014
+    // smart_contracts/dao/contract.algo.ts:1019
     // const modPercentage = btoi(Bytes(value))
     frame_dig 2
     btoi
@@ -4565,7 +4565,7 @@ finalizeProposal_after_if_else@93:
     // smart_contracts/utils/constants.ts:41
     // export const ONE_PERCENT: uint64 = 1_000
     intc 4 // 1000
-    // smart_contracts/dao/contract.algo.ts:1015
+    // smart_contracts/dao/contract.algo.ts:1020
     // assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
     >=
     bz finalizeProposal_bool_false@97
@@ -4578,7 +4578,7 @@ finalizeProposal_after_if_else@93:
     // smart_contracts/utils/constants.ts:18
     // export const DIVISOR: uint64 = 100_000 // 100%
     intc 5 // 100000
-    // smart_contracts/dao/contract.algo.ts:1015
+    // smart_contracts/dao/contract.algo.ts:1020
     // assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
     swap
     -
@@ -4588,10 +4588,10 @@ finalizeProposal_after_if_else@93:
     intc_1 // 1
 
 finalizeProposal_bool_merge@98:
-    // smart_contracts/dao/contract.algo.ts:1015
+    // smart_contracts/dao/contract.algo.ts:1020
     // assert(modPercentage >= ONE_PERCENT && modPercentage < (DIVISOR - this.krbyPercentage.value), ERR_INVALID_MOD_PERCENTAGE)
     assert // Invalid moderator percentage
-    // smart_contracts/dao/contract.algo.ts:1016
+    // smart_contracts/dao/contract.algo.ts:1021
     // break
     b finalizeProposal_while_top@33
 
@@ -4605,25 +4605,25 @@ finalizeProposal_after_if_else@99:
     frame_dig 0
     bytec 25 // "proposal_fee"
     ==
-    // smart_contracts/dao/contract.algo.ts:1018-1022
+    // smart_contracts/dao/contract.algo.ts:1023-1027
     // case AkitaDAOGlobalStateKeysProposalFee: {
     //   const proposalFee = btoi(Bytes(value))
     //   assert(proposalFee >= FIVE_ALGO, ERR_INVALID_PROPOSAL_FEE)
     //   break
     // }
     bz finalizeProposal_after_if_else@101
-    // smart_contracts/dao/contract.algo.ts:1019
+    // smart_contracts/dao/contract.algo.ts:1024
     // const proposalFee = btoi(Bytes(value))
     frame_dig 2
     btoi
     // smart_contracts/utils/constants.ts:47
     // export const FIVE_ALGO: uint64 = 5_000_000
     pushint 5000000 // 5000000
-    // smart_contracts/dao/contract.algo.ts:1020
+    // smart_contracts/dao/contract.algo.ts:1025
     // assert(proposalFee >= FIVE_ALGO, ERR_INVALID_PROPOSAL_FEE)
     >=
     assert // Invalid proposal fee
-    // smart_contracts/dao/contract.algo.ts:1021
+    // smart_contracts/dao/contract.algo.ts:1026
     // break
     b finalizeProposal_while_top@33
 
@@ -4633,7 +4633,7 @@ finalizeProposal_after_if_else@101:
     frame_dig 0
     bytec 9 // "revocation_address"
     ==
-    // smart_contracts/dao/contract.algo.ts:1023-1028
+    // smart_contracts/dao/contract.algo.ts:1028-1033
     // case AkitaDAOGlobalStateKeysRevocationAddress: {
     //   assert(Bytes(value).length === ACCOUNT_LENGTH, ERR_INVALID_CONTENT_POLICY)
     //   const revocationAddress = Account(Bytes(value))
@@ -4641,7 +4641,7 @@ finalizeProposal_after_if_else@101:
     //   break
     // }
     assert // Invalid field
-    // smart_contracts/dao/contract.algo.ts:1024
+    // smart_contracts/dao/contract.algo.ts:1029
     // assert(Bytes(value).length === ACCOUNT_LENGTH, ERR_INVALID_CONTENT_POLICY)
     frame_dig 2
     dup
@@ -4649,7 +4649,7 @@ finalizeProposal_after_if_else@101:
     // smart_contracts/utils/constants.ts:53
     // export const ACCOUNT_LENGTH: uint64 = 58
     pushint 58 // 58
-    // smart_contracts/dao/contract.algo.ts:1024
+    // smart_contracts/dao/contract.algo.ts:1029
     // assert(Bytes(value).length === ACCOUNT_LENGTH, ERR_INVALID_CONTENT_POLICY)
     ==
     assert // Invalid content policy
@@ -4659,7 +4659,7 @@ finalizeProposal_after_if_else@101:
     bytec 9 // "revocation_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/dao/contract.algo.ts:1026
+    // smart_contracts/dao/contract.algo.ts:1031
     // assert(revocationAddress !== this.revocationAddress.value && revocationAddress !== Global.zeroAddress, ERR_INVALID_REVOCATION_ADDRESS)
     !=
     bz finalizeProposal_bool_false@105
@@ -4670,10 +4670,10 @@ finalizeProposal_after_if_else@101:
     intc_1 // 1
 
 finalizeProposal_bool_merge@106:
-    // smart_contracts/dao/contract.algo.ts:1026
+    // smart_contracts/dao/contract.algo.ts:1031
     // assert(revocationAddress !== this.revocationAddress.value && revocationAddress !== Global.zeroAddress, ERR_INVALID_REVOCATION_ADDRESS)
     assert // Invalid revocation address
-    // smart_contracts/dao/contract.algo.ts:1027
+    // smart_contracts/dao/contract.algo.ts:1032
     // break
     b finalizeProposal_while_top@33
 
@@ -4699,7 +4699,7 @@ createDailyDisbursement:
 
 // smart_contracts/dao/contract.algo.ts::AkitaDAO.optinEscrow(payment: uint64, name: bytes, asset: uint64) -> void:
 optinEscrow:
-    // smart_contracts/dao/contract.algo.ts:1425
+    // smart_contracts/dao/contract.algo.ts:1432
     // optinEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void {
     proto 3 0
     // smart_contracts/dao/constants.ts:27
@@ -4707,13 +4707,13 @@ optinEscrow:
     pushbytes "e"
     frame_dig -2
     concat
-    // smart_contracts/dao/contract.algo.ts:1427
+    // smart_contracts/dao/contract.algo.ts:1434
     // assert(this.escrows(name).exists, ERR_ESCROW_DOES_NOT_EXIST)
     dup
     box_len
     bury 1
     assert // Escrow does not exist
-    // smart_contracts/dao/contract.algo.ts:1429
+    // smart_contracts/dao/contract.algo.ts:1436
     // const escrow = this.escrows(name).value
     box_get
     assert // Box must have value
@@ -4731,7 +4731,7 @@ optinEscrow:
     setbit
     intc_0 // 0
     getbit
-    // smart_contracts/dao/contract.algo.ts:1430
+    // smart_contracts/dao/contract.algo.ts:1437
     // const escrowAccount = Application(escrow.escrow).address
     uncover 2
     app_params_get AppAddress
@@ -4740,18 +4740,18 @@ optinEscrow:
     cover 3
     cover 4
     assert // application exists
-    // smart_contracts/dao/contract.algo.ts:1432
+    // smart_contracts/dao/contract.algo.ts:1439
     // assert(escrow.account.native === Txn.sender, ERR_INCORRECT_SENDER)
     txn Sender
     uncover 3
     ==
     assert // Incorrect sender
-    // smart_contracts/dao/contract.algo.ts:1433
+    // smart_contracts/dao/contract.algo.ts:1440
     // assert(escrow.optinAllowed === true, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN)
     intc_1 // 1
     ==
     assert // Escrow is not allowed to opt-in
-    // smart_contracts/dao/contract.algo.ts:1435-1442
+    // smart_contracts/dao/contract.algo.ts:1442-1449
     // assertMatch(
     //   payment,
     //   {
@@ -4766,10 +4766,10 @@ optinEscrow:
     bz optinEscrow_bool_false@3
     frame_dig -3
     gtxns Amount
-    // smart_contracts/dao/contract.algo.ts:1439
+    // smart_contracts/dao/contract.algo.ts:1446
     // amount: Global.assetOptInMinBalance,
     global AssetOptInMinBalance
-    // smart_contracts/dao/contract.algo.ts:1435-1442
+    // smart_contracts/dao/contract.algo.ts:1442-1449
     // assertMatch(
     //   payment,
     //   {
@@ -4783,7 +4783,7 @@ optinEscrow:
     intc_1 // 1
 
 optinEscrow_bool_merge@4:
-    // smart_contracts/dao/contract.algo.ts:1435-1442
+    // smart_contracts/dao/contract.algo.ts:1442-1449
     // assertMatch(
     //   payment,
     //   {
@@ -4793,7 +4793,7 @@ optinEscrow_bool_merge@4:
     //   ERR_INVALID_PAYMENT
     // )
     assert // Invalid payment
-    // smart_contracts/dao/contract.algo.ts:1444-1450
+    // smart_contracts/dao/contract.algo.ts:1451-1457
     // itxn.assetTransfer({
     //   sender: escrowAccount,
     //   assetReceiver: Global.currentApplicationAddress,
@@ -4802,19 +4802,19 @@ optinEscrow_bool_merge@4:
     //   fee,
     // }).submit()
     itxn_begin
-    // smart_contracts/dao/contract.algo.ts:1446
+    // smart_contracts/dao/contract.algo.ts:1453
     // assetReceiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
     frame_dig -1
     itxn_field XferAsset
-    // smart_contracts/dao/contract.algo.ts:1447
+    // smart_contracts/dao/contract.algo.ts:1454
     // assetAmount: 0,
     intc_0 // 0
     itxn_field AssetAmount
     itxn_field AssetReceiver
     frame_dig 0
     itxn_field Sender
-    // smart_contracts/dao/contract.algo.ts:1444-1450
+    // smart_contracts/dao/contract.algo.ts:1451-1457
     // itxn.assetTransfer({
     //   sender: escrowAccount,
     //   assetReceiver: Global.currentApplicationAddress,
@@ -4828,7 +4828,7 @@ optinEscrow_bool_merge@4:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/dao/contract.algo.ts:1444-1450
+    // smart_contracts/dao/contract.algo.ts:1451-1457
     // itxn.assetTransfer({
     //   sender: escrowAccount,
     //   assetReceiver: Global.currentApplicationAddress,
@@ -4864,7 +4864,7 @@ getState:
     bytec 12 // "content_policy"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/dao/contract.algo.ts:1460
+    // smart_contracts/dao/contract.algo.ts:1467
     // contentPolicy: new arc4.StaticBytes<36>(this.contentPolicy.value),
     dup
     len
@@ -5075,7 +5075,7 @@ getState:
     bytec 9 // "revocation_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/dao/contract.algo.ts:1457-1473
+    // smart_contracts/dao/contract.algo.ts:1464-1480
     // return {
     //   status: this.status.value,
     //   version: this.version.value,

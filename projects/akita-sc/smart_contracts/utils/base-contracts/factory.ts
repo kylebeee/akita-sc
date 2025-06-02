@@ -3,14 +3,18 @@ import {
   Application,
   arc4,
   assert,
+  Asset,
   BoxMap,
+  Global,
   GlobalState,
+  itxn,
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, Contract, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, Contract, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
+import { AkitaDAO } from '../../dao/contract.algo'
 
 export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
 export const BaseFactoryBoxPrefixAppCreators = 'c'
@@ -37,13 +41,38 @@ export class FactoryContract extends Contract {
   akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
   /** the current version of the child contract */
   childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
-}
 
-export class ServiceFactoryContract extends FactoryContract {
+  // PRIVATE METHODS ------------------------------------------------------------------------------
 
-  // BOXES ----------------------------------------------------------------------------------------
+  protected optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
+    abiCall(
+      AkitaDAO.prototype.optinEscrow,
+      {
+        appId: this.akitaDAO.value,
+        args: [
+          itxn.payment({
+            receiver: this.akitaDAOEscrow.value.address,
+            amount: Global.assetOptInMinBalance,
+            fee: 0,
+          }),
+          name,
+          asset.id
+        ],
+        fee: 0,
+      },
+    )
 
-  appCreators = BoxMap<uint64, AppCreatorValue>({ keyPrefix: BaseFactoryBoxPrefixAppCreators })
+    if (amount > 0) {
+      itxn
+        .assetTransfer({
+          assetReceiver: this.akitaDAOEscrow.value.address,
+          assetAmount: amount,
+          xferAsset: asset,
+          fee: 0,
+        })
+        .submit()
+    }
+  }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
@@ -54,10 +83,23 @@ export class ServiceFactoryContract extends FactoryContract {
     this.childContractVersion.value = newChildVersion
   }
 
-  // FACTORY METHODS ------------------------------------------------------------------------------
+  // AKITA BASE ESCROW METHODS --------------------------------------------------------------------
 
   updateAkitaDAO(app: uint64): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     this.akitaDAO.value = Application(app)
   }
+
+  updateAkitaDAOEscrow(app: uint64): void {
+    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    this.akitaDAOEscrow.value = Application(app)
+  }
+}
+
+export class ServiceFactoryContract extends FactoryContract {
+
+  // BOXES ----------------------------------------------------------------------------------------
+
+  appCreators = BoxMap<uint64, AppCreatorValue>({ keyPrefix: BaseFactoryBoxPrefixAppCreators })
+
 }

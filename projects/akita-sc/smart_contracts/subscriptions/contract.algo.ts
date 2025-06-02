@@ -2,7 +2,6 @@ import {
   abimethod,
   Account,
   Application,
-  arc4,
   assert,
   assertMatch,
   BoxMap,
@@ -166,14 +165,20 @@ export class Subscriptions extends classes(
   private getAmounts(amount: uint64): Amounts {
     const fees = getSubscriptionFees(this.akitaDAO.value)
 
-    let akitaFee = calcPercent(amount, fees.paymentPercentage)
-    if (akitaFee === 0 && amount > 0) {
-      akitaFee = 1
+    let akitaFee: uint64 = 0
+    if (fees.paymentPercentage > 0) {
+      akitaFee = calcPercent(amount, fees.paymentPercentage)
+      if (akitaFee === 0 && amount > 0) {
+        akitaFee = 1
+      }
     }
 
-    let triggerFee = calcPercent(amount, fees.triggerPercentage)
-    if (triggerFee === 0 && amount > 0) {
-      triggerFee = 1
+    let triggerFee: uint64 = 0
+    if (fees.triggerPercentage > 0) {
+      let triggerFee = calcPercent(amount, fees.triggerPercentage)
+      if (triggerFee === 0 && amount > 0) {
+        triggerFee = 1
+      }
     }
 
     const leftOver: uint64 = amount - (akitaFee + triggerFee)
@@ -202,9 +207,14 @@ export class Subscriptions extends classes(
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
-  
-  // TODO: create application
-  
+
+  @abimethod({ onCreate: 'require' })
+  create(version: string, akitaDAO: uint64, escrow: uint64): void {
+    this.version.value = version
+    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAOEscrow.value = Application(escrow)
+  }
+
   // SUBSCRIPTION METHODS -------------------------------------------------------------------------
 
   /**
@@ -238,9 +248,10 @@ export class Subscriptions extends classes(
     // family passes have a max of 5
     assert(passes <= 5, ERR_MAX_PASSES_IS_FIVE)
 
-    const fee = getSubscriptionFees(this.akitaDAO.value).serviceCreationFee
+    const serviceCreationFee = getSubscriptionFees(this.akitaDAO.value).serviceCreationFee
+    const costs = this.mbr(passes)
 
-    let requiredAmount = fee
+    let requiredAmount: uint64 = serviceCreationFee + costs.services
     if (asset !== 0) {
       requiredAmount += Global.assetOptInMinBalance
     }
@@ -253,6 +264,14 @@ export class Subscriptions extends classes(
       },
       ERR_INVALID_PAYMENT
     )
+
+    itxn
+      .payment({
+        receiver: this.akitaDAOEscrow.value.address,
+        amount: serviceCreationFee,
+        fee,
+      })
+      .submit()
 
     this.services(boxKey).value = {
       status: ServiceStatusPaused,
@@ -442,20 +461,20 @@ export class Subscriptions extends classes(
     )
 
     itxn
-    .payment({
-      receiver: this.akitaDAO.value.address,
-      amount: amounts.akitaFee + amounts.triggerFee,
-      fee,
-    })
-    .submit()
+      .payment({
+        receiver: this.akitaDAOEscrow.value.address,
+        amount: amounts.akitaFee + amounts.triggerFee,
+        fee,
+      })
+      .submit()
 
     itxn
-    .payment({
-      receiver: recipient.native,
-      amount: amounts.leftOver,
-      fee,
-    })
-    .submit()
+      .payment({
+        receiver: recipient.native,
+        amount: amounts.leftOver,
+        fee,
+      })
+      .submit()
 
     // amounts.leftOver is the send amount after fees
     // payment.amount should be allowed to be over if
@@ -530,7 +549,7 @@ export class Subscriptions extends classes(
       mbrAmount += costs.subscriptionslist
     }
 
-    if (!this.akitaDAO.value.address.isOptedIn(assetXfer.xferAsset)) {
+    if (!this.akitaDAOEscrow.value.address.isOptedIn(assetXfer.xferAsset)) {
       this.optAkitaEscrowInAndSend(
         AkitaDAOEscrowAccountSubscriptions,
         assetXfer.xferAsset,
@@ -696,6 +715,8 @@ export class Subscriptions extends classes(
     const amounts = this.getAmounts(sub.amount)
 
     if (isAsa) {
+      // we know the escrow will be opted in because it would be opted in
+      // when the subscription was created
       itxn.assetTransfer({
         assetReceiver: this.akitaDAOEscrow.value.address,
         xferAsset: sub.asset,
@@ -719,7 +740,7 @@ export class Subscriptions extends classes(
     } else {
       // mbr payment for subscriptions & subscriptionslist boxes
       itxn.payment({
-        receiver: this.akitaDAO.value.address,
+        receiver: this.akitaDAOEscrow.value.address,
         amount: amounts.akitaFee,
         fee,
       }).submit()
@@ -778,7 +799,7 @@ export class Subscriptions extends classes(
     this.passes({ address: arc4Sender, id }).value = addresses
   }
 
-    // READ ONLY METHODS ----------------------------------------------------------------------------
+  // READ ONLY METHODS ----------------------------------------------------------------------------
 
   /**
    * isBlocked checks if an address is blocked for a merchant
@@ -812,7 +833,7 @@ export class Subscriptions extends classes(
     const passesKey = { address, id }
     let passes: Address[] = []
     if (this.passes(passesKey).exists) {
-      passes = [ ...passes, ...this.passes(passesKey).value ]
+      passes = [...passes, ...this.passes(passesKey).value]
     }
 
     return { ...sub, passes }

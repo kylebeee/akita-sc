@@ -2,13 +2,13 @@ import { classes } from "polytype";
 import { ServiceFactoryContract } from "../utils/base-contracts/factory";
 import { BasePool } from "./base";
 import { ContractWithOptIn } from "../utils/base-contracts/optin";
-import { abimethod, Application, assertMatch, Global, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Application, assertMatch, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { StakingType } from "../staking/types";
 import { Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { arc4Reward } from "./types";
 import { arc4RootKey } from "../meta-merkles/types";
 import { Pool } from "./contract.algo";
-import { fmbr } from "../utils/functions";
+import { fmbr, getStakingFees } from "../utils/functions";
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
 import { fee } from "../utils/constants";
 
@@ -51,7 +51,8 @@ export class PoolFactory extends classes(
 
     const fcosts = fmbr()
     const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
-    
+    const fees = getStakingFees(this.akitaDAO.value)
+
     const pool = compileArc4(Pool)
 
     assertMatch(
@@ -59,6 +60,7 @@ export class PoolFactory extends classes(
       {
         receiver: Global.currentApplicationAddress,
         amount: (
+          fees.creationFee +
           MAX_PROGRAM_PAGES +
           (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
           (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
@@ -67,6 +69,14 @@ export class PoolFactory extends classes(
         ),
       }
     )
+
+    itxn
+      .payment({
+        receiver: this.akitaDAOEscrow.value.address,
+        amount: fees.creationFee,
+        fee,
+      })
+      .submit()
 
     const newPoolApp = pool.call
       .create({

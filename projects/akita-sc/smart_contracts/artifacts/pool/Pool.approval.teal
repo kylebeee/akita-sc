@@ -5,7 +5,7 @@
 main:
     intcblock 0 1 6 40 400 6364136223846793005 1442695040888963407 1442695040888963409 100000 4294967295 18446744073709551615
     bytecblock "disbursement_cursor" 0x00 "entry_count" "akita_dao" "disbursement_phase" 0x151f7c75 "akita_al" "type" "status" "active_disbursement_id" "qualified_stake" 0x0000 "e" "wtickets" "reward" "gate_id" "start_timestamp" "vrf_failure_count" "end_timestamp" 0x0a 0x14 0x1e 0x01 0x02 "creator" "max_entries" "allow_late_signups" "raffle_cursor" "title" "stake_key" "minimum_stake_amount" "active_disbursement_window" "signup_timestamp" 0x0033 0xc9068809 "salt" "last_disbursement_timestamp"
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -18,7 +18,7 @@ main:
     match main_create_route@5 main_init_route@6 main_deleteApplication_route@7 main_finalize_route@8 main_enter_route@9 main_withdraw_route@10 main_startDisbursement_route@11 main_raffle_route@12 main_disburseRewards_route@13 main_finalizeDistribution_route@14 main_check_route@15 main_signUpsOpen_route@16 main_isLive_route@17 main_getState_route@18 main_update_route@19 main_updateAkitaDAO_route@20 main_optin_route@21 main_mbr_route@22
 
 main_after_if_else@26:
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -48,7 +48,7 @@ main_optin_route@21:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -78,7 +78,7 @@ main_updateAkitaDAO_route@20:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -101,7 +101,7 @@ main_update_route@19:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -116,7 +116,7 @@ main_update_route@19:
     return
 
 main_getState_route@18:
-    // smart_contracts/pool/contract.algo.ts:905
+    // smart_contracts/pool/contract.algo.ts:904
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
@@ -226,7 +226,7 @@ main_getState_route@18:
     return
 
 main_isLive_route@17:
-    // smart_contracts/pool/contract.algo.ts:896
+    // smart_contracts/pool/contract.algo.ts:895
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
@@ -246,7 +246,7 @@ main_isLive_route@17:
     return
 
 main_signUpsOpen_route@16:
-    // smart_contracts/pool/contract.algo.ts:886
+    // smart_contracts/pool/contract.algo.ts:885
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
@@ -266,14 +266,14 @@ main_signUpsOpen_route@16:
     return
 
 main_check_route@15:
-    // smart_contracts/pool/contract.algo.ts:877
+    // smart_contracts/pool/contract.algo.ts:876
     // check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -282,7 +282,7 @@ main_check_route@15:
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/pool/contract.algo.ts:877
+    // smart_contracts/pool/contract.algo.ts:876
     // check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
     callsub check
     bytec_1 // 0x00
@@ -300,7 +300,7 @@ main_check_route@15:
     return
 
 main_finalizeDistribution_route@14:
-    // smart_contracts/pool/contract.algo.ts:862
+    // smart_contracts/pool/contract.algo.ts:861
     // finalizeDistribution(): void {
     txn OnCompletion
     !
@@ -312,14 +312,14 @@ main_finalizeDistribution_route@14:
     return
 
 main_disburseRewards_route@13:
-    // smart_contracts/pool/contract.algo.ts:831
+    // smart_contracts/pool/contract.algo.ts:830
     // disburseRewards(iterationAmount: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -327,14 +327,14 @@ main_disburseRewards_route@13:
     // ) {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/pool/contract.algo.ts:831
+    // smart_contracts/pool/contract.algo.ts:830
     // disburseRewards(iterationAmount: uint64): void {
     callsub disburseRewards
     intc_1 // 1
     return
 
 main_raffle_route@12:
-    // smart_contracts/pool/contract.algo.ts:797
+    // smart_contracts/pool/contract.algo.ts:796
     // raffle(): void {
     txn OnCompletion
     !
@@ -346,7 +346,7 @@ main_raffle_route@12:
     return
 
 main_startDisbursement_route@11:
-    // smart_contracts/pool/contract.algo.ts:776
+    // smart_contracts/pool/contract.algo.ts:775
     // startDisbursement(): void {
     txn OnCompletion
     !
@@ -358,7 +358,7 @@ main_startDisbursement_route@11:
     return
 
 main_withdraw_route@10:
-    // smart_contracts/pool/contract.algo.ts:774
+    // smart_contracts/pool/contract.algo.ts:773
     // withdraw(): void { }
     txn OnCompletion
     !
@@ -369,14 +369,14 @@ main_withdraw_route@10:
     return
 
 main_enter_route@9:
-    // smart_contracts/pool/contract.algo.ts:694
+    // smart_contracts/pool/contract.algo.ts:693
     // enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -392,21 +392,21 @@ main_enter_route@9:
     assert // transaction type is pay
     txna ApplicationArgs 1
     txna ApplicationArgs 2
-    // smart_contracts/pool/contract.algo.ts:694
+    // smart_contracts/pool/contract.algo.ts:693
     // enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
     callsub enter
     intc_1 // 1
     return
 
 main_finalize_route@8:
-    // smart_contracts/pool/contract.algo.ts:664
+    // smart_contracts/pool/contract.algo.ts:663
     // finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -418,14 +418,14 @@ main_finalize_route@8:
     btoi
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/pool/contract.algo.ts:664
+    // smart_contracts/pool/contract.algo.ts:663
     // finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
     callsub finalize
     intc_1 // 1
     return
 
 main_deleteApplication_route@7:
-    // smart_contracts/pool/contract.algo.ts:655
+    // smart_contracts/pool/contract.algo.ts:654
     // @abimethod({ allowActions: 'DeleteApplication' })
     txn OnCompletion
     pushint 5 // DeleteApplication
@@ -433,21 +433,21 @@ main_deleteApplication_route@7:
     assert // OnCompletion is not DeleteApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
     //   ContractWithCreatorOnlyOptIn
     // ) {
     txna ApplicationArgs 1
-    // smart_contracts/pool/contract.algo.ts:655
+    // smart_contracts/pool/contract.algo.ts:654
     // @abimethod({ allowActions: 'DeleteApplication' })
     callsub deleteApplication
     intc_1 // 1
     return
 
 main_init_route@6:
-    // smart_contracts/pool/contract.algo.ts:643
+    // smart_contracts/pool/contract.algo.ts:642
     // init() {
     txn OnCompletion
     !
@@ -459,7 +459,7 @@ main_init_route@6:
     return
 
 main_create_route@5:
-    // smart_contracts/pool/contract.algo.ts:583
+    // smart_contracts/pool/contract.algo.ts:582
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -467,7 +467,7 @@ main_create_route@5:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/pool/contract.algo.ts:99-103
+    // smart_contracts/pool/contract.algo.ts:98-102
     // export class Pool extends classes(
     //   BasePool,
     //   AkitaBaseContract,
@@ -488,7 +488,7 @@ main_create_route@5:
     btoi
     txna ApplicationArgs 10
     btoi
-    // smart_contracts/pool/contract.algo.ts:583
+    // smart_contracts/pool/contract.algo.ts:582
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_1 // 1
@@ -628,7 +628,7 @@ gateCheck_after_if_else@2:
 
 // smart_contracts/pool/contract.algo.ts::Pool.checkByID(id: uint64) -> uint64, uint64:
 checkByID:
-    // smart_contracts/pool/contract.algo.ts:417
+    // smart_contracts/pool/contract.algo.ts:416
     // private checkByID(id: uint64): { valid: boolean, balance: uint64 } {
     proto 1 2
     intc_0 // 0
@@ -644,7 +644,7 @@ checkByID:
     // smart_contracts/pool/types.ts:33
     // export const POOL_STAKING_TYPE_NONE: PoolStakingType = new arc4.UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:419
+    // smart_contracts/pool/contract.algo.ts:418
     // this.type.value !== POOL_STAKING_TYPE_NONE || this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
     !=
     bnz checkByID_bool_true@2
@@ -657,7 +657,7 @@ checkByID:
     // smart_contracts/pool/types.ts:34
     // export const POOL_STAKING_TYPE_HEARTBEAT: PoolStakingType = new arc4.UintN8(1)
     bytec 22 // 0x01
-    // smart_contracts/pool/contract.algo.ts:419
+    // smart_contracts/pool/contract.algo.ts:418
     // this.type.value !== POOL_STAKING_TYPE_NONE || this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
     !=
     bz checkByID_bool_false@3
@@ -666,13 +666,13 @@ checkByID_bool_true@2:
     intc_1 // 1
 
 checkByID_bool_merge@4:
-    // smart_contracts/pool/contract.algo.ts:418-421
+    // smart_contracts/pool/contract.algo.ts:417-420
     // assert(
     //   this.type.value !== POOL_STAKING_TYPE_NONE || this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
     //   ERR_INVALID_POOL_TYPE_FOR_CHECK
     // )
     assert // Invalid pool type for check
-    // smart_contracts/pool/contract.algo.ts:423
+    // smart_contracts/pool/contract.algo.ts:422
     // const entry = this.entries(id).value
     frame_dig -1
     itob
@@ -683,7 +683,7 @@ checkByID_bool_merge@4:
     concat
     dup
     frame_bury 0
-    // smart_contracts/pool/contract.algo.ts:423
+    // smart_contracts/pool/contract.algo.ts:422
     // const entry = this.entries(id).value
     box_get
     assert // Box must have value
@@ -706,10 +706,10 @@ checkByID_bool_merge@4:
     setbit
     intc_0 // 0
     getbit
-    // smart_contracts/pool/contract.algo.ts:425
+    // smart_contracts/pool/contract.algo.ts:424
     // if (entry.disqualified) {
     bz checkByID_after_if_else@6
-    // smart_contracts/pool/contract.algo.ts:426
+    // smart_contracts/pool/contract.algo.ts:425
     // return { valid: false, balance: 0 }
     intc_0 // 0
     dup
@@ -727,11 +727,11 @@ checkByID_after_if_else@6:
     // smart_contracts/pool/types.ts:35
     // export const POOL_STAKING_TYPE_SOFT: PoolStakingType = new arc4.UintN8(2)
     bytec 23 // 0x02
-    // smart_contracts/pool/contract.algo.ts:429
+    // smart_contracts/pool/contract.algo.ts:428
     // if (this.type.value === POOL_STAKING_TYPE_SOFT) {
     ==
     bz checkByID_else_body@11
-    // smart_contracts/pool/contract.algo.ts:430-434
+    // smart_contracts/pool/contract.algo.ts:429-433
     // const check = abiCall(Staking.prototype.softCheck, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [entry.address, entry.asset],
@@ -755,11 +755,11 @@ checkByID_after_if_else@6:
     // return decodeArc4<AkitaAppList>(appListBytes)
     intc_0 // 0
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:432
+    // smart_contracts/pool/contract.algo.ts:431
     // args: [entry.address, entry.asset],
     frame_dig 3
     itob
-    // smart_contracts/pool/contract.algo.ts:430-434
+    // smart_contracts/pool/contract.algo.ts:429-433
     // const check = abiCall(Staking.prototype.softCheck, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [entry.address, entry.asset],
@@ -777,7 +777,7 @@ checkByID_after_if_else@6:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:430-434
+    // smart_contracts/pool/contract.algo.ts:429-433
     // const check = abiCall(Staking.prototype.softCheck, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [entry.address, entry.asset],
@@ -794,12 +794,12 @@ checkByID_after_if_else@6:
     extract_uint64
     dup
     frame_bury 2
-    // smart_contracts/pool/contract.algo.ts:436
+    // smart_contracts/pool/contract.algo.ts:435
     // if (check.balance >= entry.quantity) {
     frame_dig 4
     >=
     bz checkByID_after_if_else@15
-    // smart_contracts/pool/contract.algo.ts:437
+    // smart_contracts/pool/contract.algo.ts:436
     // return { valid: true, balance: check.balance }
     intc_1 // 1
     frame_dig 2
@@ -808,7 +808,7 @@ checkByID_after_if_else@6:
     retsub
 
 checkByID_after_if_else@15:
-    // smart_contracts/pool/contract.algo.ts:458
+    // smart_contracts/pool/contract.algo.ts:457
     // ...this.entries(id).value,
     frame_dig 0
     dup
@@ -830,7 +830,7 @@ checkByID_after_if_else@15:
     uncover 5
     cover 2
     substring3
-    // smart_contracts/pool/contract.algo.ts:457-460
+    // smart_contracts/pool/contract.algo.ts:456-459
     // this.entries(id).value = {
     //   ...this.entries(id).value,
     //   disqualified: true
@@ -838,13 +838,13 @@ checkByID_after_if_else@15:
     dig 4
     box_del
     pop
-    // smart_contracts/pool/contract.algo.ts:458
+    // smart_contracts/pool/contract.algo.ts:457
     // ...this.entries(id).value,
     uncover 2
     itob
     uncover 2
     itob
-    // smart_contracts/pool/contract.algo.ts:457
+    // smart_contracts/pool/contract.algo.ts:456
     // this.entries(id).value = {
     uncover 3
     uncover 2
@@ -853,21 +853,21 @@ checkByID_after_if_else@15:
     concat
     bytec 33 // 0x0033
     concat
-    // smart_contracts/pool/contract.algo.ts:459
+    // smart_contracts/pool/contract.algo.ts:458
     // disqualified: true
     pushbytes 0x80
-    // smart_contracts/pool/contract.algo.ts:457
+    // smart_contracts/pool/contract.algo.ts:456
     // this.entries(id).value = {
     concat
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:457-460
+    // smart_contracts/pool/contract.algo.ts:456-459
     // this.entries(id).value = {
     //   ...this.entries(id).value,
     //   disqualified: true
     // }
     box_put
-    // smart_contracts/pool/contract.algo.ts:461
+    // smart_contracts/pool/contract.algo.ts:460
     // return { valid: false, balance: 0 }
     intc_0 // 0
     dup
@@ -876,7 +876,7 @@ checkByID_after_if_else@15:
     retsub
 
 checkByID_else_body@11:
-    // smart_contracts/pool/contract.algo.ts:440-450
+    // smart_contracts/pool/contract.algo.ts:439-449
     // const info = abiCall(Staking.prototype.getInfo, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [
@@ -906,20 +906,20 @@ checkByID_else_body@11:
     // return decodeArc4<AkitaAppList>(appListBytes)
     intc_0 // 0
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:445
+    // smart_contracts/pool/contract.algo.ts:444
     // asset: new UintN64(entry.asset),
     frame_dig 3
     itob
-    // smart_contracts/pool/contract.algo.ts:446
+    // smart_contracts/pool/contract.algo.ts:445
     // type: this.stakingType(),
     callsub stakingType
-    // smart_contracts/pool/contract.algo.ts:444-447
+    // smart_contracts/pool/contract.algo.ts:443-446
     // new arc4StakeInfo({
     //   asset: new UintN64(entry.asset),
     //   type: this.stakingType(),
     // }),
     concat
-    // smart_contracts/pool/contract.algo.ts:440-450
+    // smart_contracts/pool/contract.algo.ts:439-449
     // const info = abiCall(Staking.prototype.getInfo, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [
@@ -943,7 +943,7 @@ checkByID_else_body@11:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:440-450
+    // smart_contracts/pool/contract.algo.ts:439-449
     // const info = abiCall(Staking.prototype.getInfo, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [
@@ -966,12 +966,12 @@ checkByID_else_body@11:
     extract_uint64
     dup
     frame_bury 5
-    // smart_contracts/pool/contract.algo.ts:452
+    // smart_contracts/pool/contract.algo.ts:451
     // if (info.amount >= entry.quantity) {
     frame_dig 4
     >=
     bz checkByID_after_if_else@15
-    // smart_contracts/pool/contract.algo.ts:453
+    // smart_contracts/pool/contract.algo.ts:452
     // return { valid: true, balance: info.amount }
     intc_1 // 1
     frame_dig 5
@@ -986,7 +986,7 @@ checkByID_bool_false@3:
 
 // smart_contracts/pool/contract.algo.ts::Pool.getLatestWindowStart() -> uint64:
 getLatestWindowStart:
-    // smart_contracts/pool/contract.algo.ts:465
+    // smart_contracts/pool/contract.algo.ts:464
     // return Global.latestTimestamp - ((Global.latestTimestamp - this.startTimestamp.value) % this.rewardInterval.value)
     global LatestTimestamp
     dup
@@ -996,7 +996,7 @@ getLatestWindowStart:
     bytec 16 // "start_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:465
+    // smart_contracts/pool/contract.algo.ts:464
     // return Global.latestTimestamp - ((Global.latestTimestamp - this.startTimestamp.value) % this.rewardInterval.value)
     -
     // smart_contracts/pool/constants.ts:13
@@ -1005,7 +1005,7 @@ getLatestWindowStart:
     pushbytes "reward_interval"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:465
+    // smart_contracts/pool/contract.algo.ts:464
     // return Global.latestTimestamp - ((Global.latestTimestamp - this.startTimestamp.value) % this.rewardInterval.value)
     %
     -
@@ -1020,17 +1020,17 @@ stakingType:
     bytec 7 // "type"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:474
+    // smart_contracts/pool/contract.algo.ts:473
     // assert(this.type.value !== POOL_STAKING_TYPE_NONE, 'pool staking type is not set')
     dup
     // smart_contracts/pool/types.ts:33
     // export const POOL_STAKING_TYPE_NONE: PoolStakingType = new arc4.UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:474
+    // smart_contracts/pool/contract.algo.ts:473
     // assert(this.type.value !== POOL_STAKING_TYPE_NONE, 'pool staking type is not set')
     !=
     assert // pool staking type is not set
-    // smart_contracts/pool/contract.algo.ts:475
+    // smart_contracts/pool/contract.algo.ts:474
     // return new UintN8(this.type.value.native - 1)
     btoi
     intc_1 // 1
@@ -1047,7 +1047,7 @@ stakingType:
 
 // smart_contracts/pool/contract.algo.ts::Pool.createRewardAllocations(disbursementID: uint64, asset: uint64, allocations: bytes, sum: uint64) -> bytes:
 createRewardAllocations:
-    // smart_contracts/pool/contract.algo.ts:520-525
+    // smart_contracts/pool/contract.algo.ts:519-524
     // private createRewardAllocations(
     //   disbursementID: uint64,
     //   asset: uint64,
@@ -1072,7 +1072,7 @@ createRewardAllocations:
     // return decodeArc4<AkitaAppList>(appListBytes)
     pushint 8 // 8
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:578
+    // smart_contracts/pool/contract.algo.ts:577
     // return 24_900 * allocations.length
     frame_dig -2
     intc_0 // 0
@@ -1080,11 +1080,11 @@ createRewardAllocations:
     pushint 24900 // 24900
     *
     swap
-    // smart_contracts/pool/contract.algo.ts:530
+    // smart_contracts/pool/contract.algo.ts:529
     // if (asset === 0) {
     frame_dig -3
     bnz createRewardAllocations_else_body@6
-    // smart_contracts/pool/contract.algo.ts:532-543
+    // smart_contracts/pool/contract.algo.ts:531-542
     // abiCall(Rewards.prototype.createUserAllocations, {
     //   appId: rewardsApp,
     //   args: [
@@ -1098,19 +1098,19 @@ createRewardAllocations:
     //   ],
     // })
     itxn_begin
-    // smart_contracts/pool/contract.algo.ts:536
+    // smart_contracts/pool/contract.algo.ts:535
     // receiver: rewardsApp.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/pool/contract.algo.ts:537
+    // smart_contracts/pool/contract.algo.ts:536
     // amount: mbrAmount + sum,
     frame_dig 0
     frame_dig -1
     +
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/pool/contract.algo.ts:535-539
+    // smart_contracts/pool/contract.algo.ts:534-538
     // itxn.payment({
     //   receiver: rewardsApp.address,
     //   amount: mbrAmount + sum,
@@ -1122,7 +1122,7 @@ createRewardAllocations:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:532-543
+    // smart_contracts/pool/contract.algo.ts:531-542
     // abiCall(Rewards.prototype.createUserAllocations, {
     //   appId: rewardsApp,
     //   args: [
@@ -1136,11 +1136,11 @@ createRewardAllocations:
     //   ],
     // })
     itxn_next
-    // smart_contracts/pool/contract.algo.ts:540
+    // smart_contracts/pool/contract.algo.ts:539
     // disbursementID,
     frame_dig -4
     itob
-    // smart_contracts/pool/contract.algo.ts:532-543
+    // smart_contracts/pool/contract.algo.ts:531-542
     // abiCall(Rewards.prototype.createUserAllocations, {
     //   appId: rewardsApp,
     //   args: [
@@ -1171,7 +1171,7 @@ createRewardAllocations_after_if_else@10:
     retsub
 
 createRewardAllocations_else_body@6:
-    // smart_contracts/pool/contract.algo.ts:546-563
+    // smart_contracts/pool/contract.algo.ts:545-562
     // abiCall(Rewards.prototype.createAsaUserAllocations, {
     //   appId: rewardsApp,
     //   args: [
@@ -1191,7 +1191,7 @@ createRewardAllocations_else_body@6:
     //   ],
     // })
     itxn_begin
-    // smart_contracts/pool/contract.algo.ts:550
+    // smart_contracts/pool/contract.algo.ts:549
     // receiver: rewardsApp.address,
     dup
     app_params_get AppAddress
@@ -1199,7 +1199,7 @@ createRewardAllocations_else_body@6:
     frame_dig 0
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/pool/contract.algo.ts:549-553
+    // smart_contracts/pool/contract.algo.ts:548-552
     // itxn.payment({
     //   receiver: rewardsApp.address,
     //   amount: mbrAmount,
@@ -1211,7 +1211,7 @@ createRewardAllocations_else_body@6:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:554-559
+    // smart_contracts/pool/contract.algo.ts:553-558
     // itxn.assetTransfer({
     //   assetReceiver: rewardsApp.address,
     //   xferAsset: asset,
@@ -1219,7 +1219,7 @@ createRewardAllocations_else_body@6:
     //   fee,
     // }),
     itxn_next
-    // smart_contracts/pool/contract.algo.ts:555
+    // smart_contracts/pool/contract.algo.ts:554
     // assetReceiver: rewardsApp.address,
     dup
     app_params_get AppAddress
@@ -1229,7 +1229,7 @@ createRewardAllocations_else_body@6:
     frame_dig -3
     itxn_field XferAsset
     itxn_field AssetReceiver
-    // smart_contracts/pool/contract.algo.ts:554-559
+    // smart_contracts/pool/contract.algo.ts:553-558
     // itxn.assetTransfer({
     //   assetReceiver: rewardsApp.address,
     //   xferAsset: asset,
@@ -1242,7 +1242,7 @@ createRewardAllocations_else_body@6:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:546-563
+    // smart_contracts/pool/contract.algo.ts:545-562
     // abiCall(Rewards.prototype.createAsaUserAllocations, {
     //   appId: rewardsApp,
     //   args: [
@@ -1262,11 +1262,11 @@ createRewardAllocations_else_body@6:
     //   ],
     // })
     itxn_next
-    // smart_contracts/pool/contract.algo.ts:560
+    // smart_contracts/pool/contract.algo.ts:559
     // disbursementID,
     frame_dig -4
     itob
-    // smart_contracts/pool/contract.algo.ts:546-563
+    // smart_contracts/pool/contract.algo.ts:545-562
     // abiCall(Rewards.prototype.createAsaUserAllocations, {
     //   appId: rewardsApp,
     //   args: [
@@ -1301,7 +1301,7 @@ createRewardAllocations_else_body@6:
 
 // smart_contracts/pool/contract.algo.ts::Pool.create(title: bytes, type: bytes, reward: bytes, creator: bytes, marketplace: bytes, stakeKey: bytes, minimumStakeAmount: uint64, gateID: uint64, maxEntries: uint64, akitaDAO: uint64) -> void:
 create:
-    // smart_contracts/pool/contract.algo.ts:583-595
+    // smart_contracts/pool/contract.algo.ts:582-594
     // @abimethod({ onCreate: 'require' })
     // create(
     //   title: string,
@@ -1324,31 +1324,31 @@ create:
     // smart_contracts/pool/constants.ts:38
     // export const PoolStatusDraft = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:596
+    // smart_contracts/pool/contract.algo.ts:595
     // this.status.value = PoolStatusDraft
     app_global_put
     // smart_contracts/pool/constants.ts:6
     // export const PoolGlobalStateKeyTitle = 'title'
     bytec 28 // "title"
-    // smart_contracts/pool/contract.algo.ts:597
+    // smart_contracts/pool/contract.algo.ts:596
     // this.title.value = title
     frame_dig -10
     app_global_put
     // smart_contracts/pool/constants.ts:7
     // export const PoolGlobalStateKeyType = 'type'
     bytec 7 // "type"
-    // smart_contracts/pool/contract.algo.ts:598
+    // smart_contracts/pool/contract.algo.ts:597
     // this.type.value = type
     frame_dig -9
     app_global_put
     // smart_contracts/pool/constants.ts:8
     // export const PoolGlobalStateKeyReward = 'reward'
     bytec 14 // "reward"
-    // smart_contracts/pool/contract.algo.ts:599
+    // smart_contracts/pool/contract.algo.ts:598
     // this.reward.value = reward.copy()
     frame_dig -8
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:600
+    // smart_contracts/pool/contract.algo.ts:599
     // const decodedReward = decodeArc4<Reward>(reward.bytes)
     frame_dig -8
     pushint 9 // 9
@@ -1358,44 +1358,44 @@ create:
     pushint 25 // 25
     extract_uint64
     swap
-    // smart_contracts/pool/contract.algo.ts:601
+    // smart_contracts/pool/contract.algo.ts:600
     // assert(decodedReward.rate > 0, ERR_RATE_MUST_BE_GREATER_THAN_ZERO)
     assert // Rate must be greater than zero
     // smart_contracts/pool/constants.ts:23
     // export const PoolGlobalStateKeyCreator = 'creator'
     bytec 24 // "creator"
-    // smart_contracts/pool/contract.algo.ts:602
+    // smart_contracts/pool/contract.algo.ts:601
     // this.creator.value = creator
     frame_dig -7
     app_global_put
     // smart_contracts/pool/constants.ts:24
     // export const PoolGlobalStateKeyMarketplace = 'marketplace'
     pushbytes "marketplace"
-    // smart_contracts/pool/contract.algo.ts:603
+    // smart_contracts/pool/contract.algo.ts:602
     // this.marketplace.value = marketplace
     frame_dig -6
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:611
+    // smart_contracts/pool/contract.algo.ts:610
     // stakeKey.address.native !== Global.zeroAddress ||
     frame_dig -5
     extract 0 32 // on error: Index access is out of bounds
     global ZeroAddress
     !=
-    // smart_contracts/pool/contract.algo.ts:611-612
+    // smart_contracts/pool/contract.algo.ts:610-611
     // stakeKey.address.native !== Global.zeroAddress ||
     // reward.distribution !== DistributionTypePercentage,
     bnz create_bool_true@2
-    // smart_contracts/pool/contract.algo.ts:612
+    // smart_contracts/pool/contract.algo.ts:611
     // reward.distribution !== DistributionTypePercentage,
     frame_dig -8
     extract 8 1 // on error: Index access is out of bounds
     // smart_contracts/pool/types.ts:14
     // export const DistributionTypePercentage = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:612
+    // smart_contracts/pool/contract.algo.ts:611
     // reward.distribution !== DistributionTypePercentage,
     !=
-    // smart_contracts/pool/contract.algo.ts:611-612
+    // smart_contracts/pool/contract.algo.ts:610-611
     // stakeKey.address.native !== Global.zeroAddress ||
     // reward.distribution !== DistributionTypePercentage,
     bz create_bool_false@3
@@ -1404,14 +1404,14 @@ create_bool_true@2:
     intc_1 // 1
 
 create_bool_merge@4:
-    // smart_contracts/pool/contract.algo.ts:610-614
+    // smart_contracts/pool/contract.algo.ts:609-613
     // assert(
     //   stakeKey.address.native !== Global.zeroAddress ||
     //   reward.distribution !== DistributionTypePercentage,
     //   ERR_STAKE_KEY_REQUIRED
     // )
     assert // Stake key required
-    // smart_contracts/pool/contract.algo.ts:616
+    // smart_contracts/pool/contract.algo.ts:615
     // if (reward.distribution === DistributionTypeShuffle) {
     frame_dig -8
     extract 8 1 // on error: Index access is out of bounds
@@ -1420,11 +1420,11 @@ create_bool_merge@4:
     // smart_contracts/pool/types.ts:29
     // export const DistributionTypeShuffle = new UintN8(3)
     pushbytes 0x03
-    // smart_contracts/pool/contract.algo.ts:616
+    // smart_contracts/pool/contract.algo.ts:615
     // if (reward.distribution === DistributionTypeShuffle) {
     ==
     bz create_after_if_else@6
-    // smart_contracts/pool/contract.algo.ts:617
+    // smart_contracts/pool/contract.algo.ts:616
     // assert(decodedReward.rate > decodedReward.winnerCount, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT)
     frame_dig 2
     frame_dig 3
@@ -1432,19 +1432,19 @@ create_bool_merge@4:
     assert // Rate must be greater than winner count
 
 create_after_if_else@6:
-    // smart_contracts/pool/contract.algo.ts:620
+    // smart_contracts/pool/contract.algo.ts:619
     // if (reward.distribution === DistributionTypeEven) {
     frame_dig 0
     // smart_contracts/pool/types.ts:24
     // export const DistributionTypeEven = new UintN8(2)
     bytec 23 // 0x02
-    // smart_contracts/pool/contract.algo.ts:620
+    // smart_contracts/pool/contract.algo.ts:619
     // if (reward.distribution === DistributionTypeEven) {
     ==
     frame_dig -2
     frame_bury 1
     bz create_after_if_else@10
-    // smart_contracts/pool/contract.algo.ts:621
+    // smart_contracts/pool/contract.algo.ts:620
     // assert(maxEntries < decodedReward.rate, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE)
     frame_dig -2
     frame_dig 2
@@ -1452,7 +1452,7 @@ create_after_if_else@6:
     assert // Max entries cannot be greater than rate
     frame_dig -2
     frame_bury 1
-    // smart_contracts/pool/contract.algo.ts:622
+    // smart_contracts/pool/contract.algo.ts:621
     // if (maxEntries === 0) {
     frame_dig -2
     bnz create_after_if_else@9
@@ -1471,42 +1471,42 @@ create_after_if_else@10:
     // smart_contracts/pool/constants.ts:19
     // export const PoolGlobalStateKeyStakeKey = 'stake_key'
     bytec 29 // "stake_key"
-    // smart_contracts/pool/contract.algo.ts:627
+    // smart_contracts/pool/contract.algo.ts:626
     // this.stakeKey.value = stakeKey.copy()
     frame_dig -5
     app_global_put
     // smart_contracts/pool/constants.ts:20
     // export const PoolGlobalStateKeyMinimumStakeAmount = 'minimum_stake_amount'
     bytec 30 // "minimum_stake_amount"
-    // smart_contracts/pool/contract.algo.ts:628
+    // smart_contracts/pool/contract.algo.ts:627
     // this.minimumStakeAmount.value = minimumStakeAmount
     frame_dig -4
     app_global_put
     // smart_contracts/pool/constants.ts:21
     // export const PoolGlobalStateKeyGateID = 'gate_id'
     bytec 15 // "gate_id"
-    // smart_contracts/pool/contract.algo.ts:629
+    // smart_contracts/pool/contract.algo.ts:628
     // this.gateID.value = gateID
     frame_dig -3
     app_global_put
     // smart_contracts/pool/constants.ts:15
     // export const PoolGlobalStateKeyMaxEntries = 'max_entries'
     bytec 25 // "max_entries"
-    // smart_contracts/pool/contract.algo.ts:630
+    // smart_contracts/pool/contract.algo.ts:629
     // this.maxEntries.value = maxEntries
     frame_dig -2
     app_global_put
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
     bytec_3 // "akita_dao"
-    // smart_contracts/pool/contract.algo.ts:631
+    // smart_contracts/pool/contract.algo.ts:630
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -1
     app_global_put
     // smart_contracts/pool/constants.ts:25
     // export const PoolGlobalStateKeySalt = 'salt'
     bytec 35 // "salt"
-    // smart_contracts/pool/contract.algo.ts:632
+    // smart_contracts/pool/contract.algo.ts:631
     // this.salt.value = Txn.txId
     txn TxID
     app_global_put
@@ -1516,48 +1516,48 @@ create_after_if_else@10:
     // smart_contracts/pool/constants.ts:42
     // export const DisbursementPhaseIdle = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:633
+    // smart_contracts/pool/contract.algo.ts:632
     // this.disbursementPhase.value = DisbursementPhaseIdle
     app_global_put
     // smart_contracts/pool/constants.ts:26
     // export const PoolGlobalStateKeyActiveDisbursementID = 'active_disbursement_id'
     bytec 9 // "active_disbursement_id"
-    // smart_contracts/pool/contract.algo.ts:634
+    // smart_contracts/pool/contract.algo.ts:633
     // this.activeDisbursementID.value = 0
     intc_0 // 0
     app_global_put
     // smart_contracts/pool/constants.ts:27
     // export const PoolGlobalStateKeyActiveDisbursementWindow = 'active_disbursement_window'
     bytec 31 // "active_disbursement_window"
-    // smart_contracts/pool/contract.algo.ts:635
+    // smart_contracts/pool/contract.algo.ts:634
     // this.activeDisbursementWindow.value = 0
     intc_0 // 0
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:636
+    // smart_contracts/pool/contract.algo.ts:635
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
     // smart_contracts/pool/constants.ts:29
     // export const PoolGlobalStateKeyQualifiedStake = 'qualified_stake'
     bytec 10 // "qualified_stake"
-    // smart_contracts/pool/contract.algo.ts:638
+    // smart_contracts/pool/contract.algo.ts:637
     // this.qualifiedStake.value = 0
     intc_0 // 0
     app_global_put
     // smart_contracts/pool/constants.ts:30
     // export const PoolGlobalStateKeyWinningTickets = 'wtickets'
     bytec 13 // "wtickets"
-    // smart_contracts/pool/contract.algo.ts:639
+    // smart_contracts/pool/contract.algo.ts:638
     // this.winningTickets.value = new DynamicArray<UintN64>()
     bytec 11 // 0x0000
     app_global_put
     // smart_contracts/pool/constants.ts:32
     // export const PoolGlobalStateKeyVRFFailureCount = 'vrf_failure_count'
     bytec 17 // "vrf_failure_count"
-    // smart_contracts/pool/contract.algo.ts:640
+    // smart_contracts/pool/contract.algo.ts:639
     // this.vrfGetFailureCount.value = 0
     intc_0 // 0
     app_global_put
@@ -1570,7 +1570,7 @@ create_bool_false@3:
 
 // smart_contracts/pool/contract.algo.ts::Pool.init() -> void:
 init:
-    // smart_contracts/pool/contract.algo.ts:644
+    // smart_contracts/pool/contract.algo.ts:643
     // assert(Global.callerApplicationAddress === Global.creatorAddress, 'only the factory can init the pool')
     global CallerApplicationAddress
     global CreatorAddress
@@ -1582,10 +1582,10 @@ init:
     bytec 15 // "gate_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:646
+    // smart_contracts/pool/contract.algo.ts:645
     // if (this.gateID.value > 0) {
     bz init_after_if_else@3
-    // smart_contracts/pool/contract.algo.ts:647-651
+    // smart_contracts/pool/contract.algo.ts:646-650
     // this.gateSize.value = abiCall(Gate.prototype.size, {
     //   appId: getAkitaAppList(this.akitaDAO.value).gate,
     //   args: [this.gateID.value],
@@ -1616,7 +1616,7 @@ init:
     app_global_get_ex
     assert // check GlobalState exists
     itob
-    // smart_contracts/pool/contract.algo.ts:647-651
+    // smart_contracts/pool/contract.algo.ts:646-650
     // this.gateSize.value = abiCall(Gate.prototype.size, {
     //   appId: getAkitaAppList(this.akitaDAO.value).gate,
     //   args: [this.gateID.value],
@@ -1632,7 +1632,7 @@ init:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:647-651
+    // smart_contracts/pool/contract.algo.ts:646-650
     // this.gateSize.value = abiCall(Gate.prototype.size, {
     //   appId: getAkitaAppList(this.akitaDAO.value).gate,
     //   args: [this.gateID.value],
@@ -1651,7 +1651,7 @@ init:
     // smart_contracts/pool/constants.ts:22
     // export const PoolGlobalStateKeyGateSize = 'gate_size'
     pushbytes "gate_size"
-    // smart_contracts/pool/contract.algo.ts:647-651
+    // smart_contracts/pool/contract.algo.ts:646-650
     // this.gateSize.value = abiCall(Gate.prototype.size, {
     //   appId: getAkitaAppList(this.akitaDAO.value).gate,
     //   args: [this.gateID.value],
@@ -1666,11 +1666,11 @@ init_after_if_else@3:
 
 // smart_contracts/pool/contract.algo.ts::Pool.deleteApplication(caller: bytes) -> void:
 deleteApplication:
-    // smart_contracts/pool/contract.algo.ts:655-656
+    // smart_contracts/pool/contract.algo.ts:654-655
     // @abimethod({ allowActions: 'DeleteApplication' })
     // deleteApplication(caller: Address): void {
     proto 1 0
-    // smart_contracts/pool/contract.algo.ts:657
+    // smart_contracts/pool/contract.algo.ts:656
     // assert(Txn.sender === Global.creatorAddress, 'call must come from factory')
     txn Sender
     global CreatorAddress
@@ -1682,7 +1682,7 @@ deleteApplication:
     bytec 24 // "creator"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:658
+    // smart_contracts/pool/contract.algo.ts:657
     // assert(caller.native === this.creator.value.native, 'only the creator can delete the pool')
     frame_dig -1
     ==
@@ -1696,7 +1696,7 @@ deleteApplication:
     // smart_contracts/pool/constants.ts:38
     // export const PoolStatusDraft = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:659
+    // smart_contracts/pool/contract.algo.ts:658
     // assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
     ==
     bnz deleteApplication_bool_true@2
@@ -1707,7 +1707,7 @@ deleteApplication:
     bytec 18 // "end_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:659
+    // smart_contracts/pool/contract.algo.ts:658
     // assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
     >
     bz deleteApplication_bool_false@3
@@ -1716,7 +1716,7 @@ deleteApplication_bool_true@2:
     intc_1 // 1
 
 deleteApplication_bool_merge@4:
-    // smart_contracts/pool/contract.algo.ts:659
+    // smart_contracts/pool/contract.algo.ts:658
     // assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
     assert // the pool must be in draft or ended
     retsub
@@ -1728,11 +1728,11 @@ deleteApplication_bool_false@3:
 
 // smart_contracts/pool/contract.algo.ts::Pool.finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) -> void:
 finalize:
-    // smart_contracts/pool/contract.algo.ts:664
+    // smart_contracts/pool/contract.algo.ts:663
     // finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
     proto 3 0
     pushbytes ""
-    // smart_contracts/pool/contract.algo.ts:665
+    // smart_contracts/pool/contract.algo.ts:664
     // assert(Txn.sender === this.creator.value.native, 'only the creator can finalize the pool')
     txn Sender
     // smart_contracts/pool/constants.ts:23
@@ -1741,7 +1741,7 @@ finalize:
     bytec 24 // "creator"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:665
+    // smart_contracts/pool/contract.algo.ts:664
     // assert(Txn.sender === this.creator.value.native, 'only the creator can finalize the pool')
     ==
     assert // only the creator can finalize the pool
@@ -1754,11 +1754,11 @@ finalize:
     // smart_contracts/pool/constants.ts:38
     // export const PoolStatusDraft = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:666
+    // smart_contracts/pool/contract.algo.ts:665
     // assert(this.status.value === PoolStatusDraft, 'the pool must be in draft state to finalize')
     ==
     assert // the pool must be in draft state to finalize
-    // smart_contracts/pool/contract.algo.ts:668
+    // smart_contracts/pool/contract.algo.ts:667
     // signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
     frame_dig -3
     global LatestTimestamp
@@ -1772,7 +1772,7 @@ finalize:
     bytec 26 // "allow_late_signups"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:668
+    // smart_contracts/pool/contract.algo.ts:667
     // signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
     bz finalize_bool_false@4
 
@@ -1780,23 +1780,23 @@ finalize_bool_true@3:
     intc_1 // 1
 
 finalize_bool_merge@5:
-    // smart_contracts/pool/contract.algo.ts:667-670
+    // smart_contracts/pool/contract.algo.ts:666-669
     // assert(
     //   signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
     //   'the signup round must be zero and late sign ups allowed or in the future'
     // )
     assert // the signup round must be zero and late sign ups allowed or in the future
-    // smart_contracts/pool/contract.algo.ts:673-674
+    // smart_contracts/pool/contract.algo.ts:672-673
     // startTimestamp === 0 ||
     // startTimestamp > Global.latestTimestamp,
     frame_dig -2
     bz finalize_bool_true@7
-    // smart_contracts/pool/contract.algo.ts:674
+    // smart_contracts/pool/contract.algo.ts:673
     // startTimestamp > Global.latestTimestamp,
     frame_dig -2
     global LatestTimestamp
     >
-    // smart_contracts/pool/contract.algo.ts:673-674
+    // smart_contracts/pool/contract.algo.ts:672-673
     // startTimestamp === 0 ||
     // startTimestamp > Global.latestTimestamp,
     bz finalize_bool_false@8
@@ -1805,7 +1805,7 @@ finalize_bool_true@7:
     intc_1 // 1
 
 finalize_bool_merge@9:
-    // smart_contracts/pool/contract.algo.ts:672-676
+    // smart_contracts/pool/contract.algo.ts:671-675
     // assert(
     //   startTimestamp === 0 ||
     //   startTimestamp > Global.latestTimestamp,
@@ -1814,11 +1814,11 @@ finalize_bool_merge@9:
     assert // the starting round must be zero or in the future
     frame_dig -2
     frame_bury 0
-    // smart_contracts/pool/contract.algo.ts:678
+    // smart_contracts/pool/contract.algo.ts:677
     // if (startTimestamp === 0) {
     frame_dig -2
     bnz finalize_after_if_else@15
-    // smart_contracts/pool/contract.algo.ts:679
+    // smart_contracts/pool/contract.algo.ts:678
     // assert(signupTimestamp === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
     frame_dig -3
     bnz finalize_bool_false@13
@@ -1828,16 +1828,16 @@ finalize_bool_merge@9:
     bytec 26 // "allow_late_signups"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:679
+    // smart_contracts/pool/contract.algo.ts:678
     // assert(signupTimestamp === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
     bz finalize_bool_false@13
     intc_1 // 1
 
 finalize_bool_merge@14:
-    // smart_contracts/pool/contract.algo.ts:679
+    // smart_contracts/pool/contract.algo.ts:678
     // assert(signupTimestamp === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
     assert // if the starting round is zero, the signup round must be zero and allowLateSignups must be true
-    // smart_contracts/pool/contract.algo.ts:680
+    // smart_contracts/pool/contract.algo.ts:679
     // startTimestamp = Global.latestTimestamp
     global LatestTimestamp
     dup
@@ -1847,7 +1847,7 @@ finalize_bool_merge@14:
 finalize_after_if_else@15:
     frame_dig 0
     frame_bury -2
-    // smart_contracts/pool/contract.algo.ts:684
+    // smart_contracts/pool/contract.algo.ts:683
     // endTimestamp === 0 || endTimestamp > (startTimestamp + 10),
     frame_dig -1
     bz finalize_bool_true@17
@@ -1862,7 +1862,7 @@ finalize_bool_true@17:
     intc_1 // 1
 
 finalize_bool_merge@19:
-    // smart_contracts/pool/contract.algo.ts:683-686
+    // smart_contracts/pool/contract.algo.ts:682-685
     // assert(
     //   endTimestamp === 0 || endTimestamp > (startTimestamp + 10),
     //   'the ending round must be zero or after the starting round + 10'
@@ -1871,21 +1871,21 @@ finalize_bool_merge@19:
     // smart_contracts/pool/constants.ts:9
     // export const PoolGlobalStateKeySignupTimestamp = 'signup_timestamp'
     bytec 32 // "signup_timestamp"
-    // smart_contracts/pool/contract.algo.ts:688
+    // smart_contracts/pool/contract.algo.ts:687
     // this.signupTimestamp.value = signupTimestamp
     frame_dig -3
     app_global_put
     // smart_contracts/pool/constants.ts:11
     // export const PoolGlobalStateKeyStartTimestamp = 'start_timestamp'
     bytec 16 // "start_timestamp"
-    // smart_contracts/pool/contract.algo.ts:689
+    // smart_contracts/pool/contract.algo.ts:688
     // this.startTimestamp.value = startTimestamp
     frame_dig -2
     app_global_put
     // smart_contracts/pool/constants.ts:12
     // export const PoolGlobalStateKeyEndTimestamp = 'end_timestamp'
     bytec 18 // "end_timestamp"
-    // smart_contracts/pool/contract.algo.ts:690
+    // smart_contracts/pool/contract.algo.ts:689
     // this.endTimestamp.value = endTimestamp
     frame_dig -1
     app_global_put
@@ -1895,7 +1895,7 @@ finalize_bool_merge@19:
     // smart_contracts/pool/constants.ts:39
     // export const PoolStatusFinal = new UintN8(10)
     bytec 19 // 0x0a
-    // smart_contracts/pool/contract.algo.ts:691
+    // smart_contracts/pool/contract.algo.ts:690
     // this.status.value = PoolStatusFinal
     app_global_put
     retsub
@@ -1919,13 +1919,13 @@ finalize_bool_false@4:
 
 // smart_contracts/pool/contract.algo.ts::Pool.enter(payment: uint64, entries: bytes, args: bytes) -> void:
 enter:
-    // smart_contracts/pool/contract.algo.ts:694
+    // smart_contracts/pool/contract.algo.ts:693
     // enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
     proto 3 0
     intc_0 // 0
     pushbytes ""
     dupn 5
-    // smart_contracts/pool/contract.algo.ts:696
+    // smart_contracts/pool/contract.algo.ts:695
     // assert(this.isLive(), 'the pool is not live')
     callsub isLive
     assert // the pool is not live
@@ -1935,7 +1935,7 @@ enter:
     bytec_3 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:698
+    // smart_contracts/pool/contract.algo.ts:697
     // gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args),
     txn Sender
     // smart_contracts/pool/constants.ts:21
@@ -1944,11 +1944,11 @@ enter:
     bytec 15 // "gate_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:698
+    // smart_contracts/pool/contract.algo.ts:697
     // gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args),
     frame_dig -1
     callsub gateCheck
-    // smart_contracts/pool/contract.algo.ts:697-700
+    // smart_contracts/pool/contract.algo.ts:696-699
     // assert(
     //   gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args),
     //   'user does not meet gate requirements'
@@ -1960,7 +1960,7 @@ enter:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:702
+    // smart_contracts/pool/contract.algo.ts:701
     // (this.entryID.value + 1) < this.maxEntries.value ||
     intc_1 // 1
     +
@@ -1970,10 +1970,10 @@ enter:
     bytec 25 // "max_entries"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:702
+    // smart_contracts/pool/contract.algo.ts:701
     // (this.entryID.value + 1) < this.maxEntries.value ||
     <
-    // smart_contracts/pool/contract.algo.ts:702-703
+    // smart_contracts/pool/contract.algo.ts:701-702
     // (this.entryID.value + 1) < this.maxEntries.value ||
     // this.maxEntries.value === 0,
     bnz enter_bool_true@2
@@ -1983,7 +1983,7 @@ enter:
     bytec 25 // "max_entries"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:702-703
+    // smart_contracts/pool/contract.algo.ts:701-702
     // (this.entryID.value + 1) < this.maxEntries.value ||
     // this.maxEntries.value === 0,
     bnz enter_bool_false@3
@@ -1992,21 +1992,21 @@ enter_bool_true@2:
     intc_1 // 1
 
 enter_bool_merge@4:
-    // smart_contracts/pool/contract.algo.ts:701-705
+    // smart_contracts/pool/contract.algo.ts:700-704
     // assert(
     //   (this.entryID.value + 1) < this.maxEntries.value ||
     //   this.maxEntries.value === 0,
     //   'pool has reached maximum entries'
     // )
     assert // pool has reached maximum entries
-    // smart_contracts/pool/contract.algo.ts:707
+    // smart_contracts/pool/contract.algo.ts:706
     // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     frame_dig -3
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Invalid payment receiver
-    // smart_contracts/pool/contract.algo.ts:712
+    // smart_contracts/pool/contract.algo.ts:711
     // assert(payment.amount === (entryMBR * entries.length), ERR_INVALID_PAYMENT_AMOUNT)
     frame_dig -3
     gtxns Amount
@@ -2015,27 +2015,27 @@ enter_bool_merge@4:
     extract_uint16
     dup
     frame_bury 6
-    // smart_contracts/pool/contract.algo.ts:710
+    // smart_contracts/pool/contract.algo.ts:709
     // const entryMBR: uint64 = costs.entries + costs.entriesByAddress
     pushint 50600 // 50600
-    // smart_contracts/pool/contract.algo.ts:712
+    // smart_contracts/pool/contract.algo.ts:711
     // assert(payment.amount === (entryMBR * entries.length), ERR_INVALID_PAYMENT_AMOUNT)
     *
     ==
     assert // Invalid payment amount
-    // smart_contracts/pool/contract.algo.ts:714
+    // smart_contracts/pool/contract.algo.ts:713
     // for (let i: uint64 = 0; i < entries.length; i++) {
     intc_0 // 0
     frame_bury 2
 
 enter_while_top@5:
-    // smart_contracts/pool/contract.algo.ts:714
+    // smart_contracts/pool/contract.algo.ts:713
     // for (let i: uint64 = 0; i < entries.length; i++) {
     frame_dig 2
     frame_dig 6
     <
     bz enter_after_while@16
-    // smart_contracts/pool/contract.algo.ts:715
+    // smart_contracts/pool/contract.algo.ts:714
     // assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
     frame_dig -2
     extract 2 0
@@ -2086,7 +2086,7 @@ enter_while_top@5:
     bytec 30 // "minimum_stake_amount"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:715
+    // smart_contracts/pool/contract.algo.ts:714
     // assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
     >=
     assert // quantity is less than minimum stake amount
@@ -2099,10 +2099,10 @@ enter_while_top@5:
     // smart_contracts/pool/types.ts:34
     // export const POOL_STAKING_TYPE_HEARTBEAT: PoolStakingType = new arc4.UintN8(1)
     bytec 22 // 0x01
-    // smart_contracts/pool/contract.algo.ts:719
+    // smart_contracts/pool/contract.algo.ts:718
     // this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
     ==
-    // smart_contracts/pool/contract.algo.ts:719-720
+    // smart_contracts/pool/contract.algo.ts:718-719
     // this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
     // this.type.value === POOL_STAKING_TYPE_SOFT
     bnz enter_if_body@8
@@ -2115,16 +2115,16 @@ enter_while_top@5:
     // smart_contracts/pool/types.ts:35
     // export const POOL_STAKING_TYPE_SOFT: PoolStakingType = new arc4.UintN8(2)
     bytec 23 // 0x02
-    // smart_contracts/pool/contract.algo.ts:720
+    // smart_contracts/pool/contract.algo.ts:719
     // this.type.value === POOL_STAKING_TYPE_SOFT
     ==
-    // smart_contracts/pool/contract.algo.ts:719-720
+    // smart_contracts/pool/contract.algo.ts:718-719
     // this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
     // this.type.value === POOL_STAKING_TYPE_SOFT
     bz enter_after_if_else@13
 
 enter_if_body@8:
-    // smart_contracts/pool/contract.algo.ts:722
+    // smart_contracts/pool/contract.algo.ts:721
     // const [balance, optedIn] = AssetHolding.assetBalance(Txn.sender, entries[i].asset)
     txn Sender
     frame_dig 0
@@ -2133,7 +2133,7 @@ enter_if_body@8:
     asset_holding_get AssetBalance
     swap
     frame_bury 1
-    // smart_contracts/pool/contract.algo.ts:723
+    // smart_contracts/pool/contract.algo.ts:722
     // assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
     bz enter_bool_false@11
     frame_dig 1
@@ -2143,12 +2143,12 @@ enter_if_body@8:
     intc_1 // 1
 
 enter_bool_merge@12:
-    // smart_contracts/pool/contract.algo.ts:723
+    // smart_contracts/pool/contract.algo.ts:722
     // assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
     assert // user does not have min balance
 
 enter_after_if_else@13:
-    // smart_contracts/pool/contract.algo.ts:726-736
+    // smart_contracts/pool/contract.algo.ts:725-735
     // const stakeInfo = abiCall(Staking.prototype.getInfo, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [
@@ -2178,10 +2178,10 @@ enter_after_if_else@13:
     // return decodeArc4<AkitaAppList>(appListBytes)
     intc_0 // 0
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:729
+    // smart_contracts/pool/contract.algo.ts:728
     // new Address(Txn.sender),
     txn Sender
-    // smart_contracts/pool/contract.algo.ts:731
+    // smart_contracts/pool/contract.algo.ts:730
     // asset: new UintN64(entries[i].asset),
     frame_dig 0
     dup
@@ -2189,10 +2189,10 @@ enter_after_if_else@13:
     intc_0 // 0
     extract_uint64
     itob
-    // smart_contracts/pool/contract.algo.ts:732
+    // smart_contracts/pool/contract.algo.ts:731
     // type: this.stakingType(),
     callsub stakingType
-    // smart_contracts/pool/contract.algo.ts:730-733
+    // smart_contracts/pool/contract.algo.ts:729-732
     // new arc4StakeInfo({
     //   asset: new UintN64(entries[i].asset),
     //   type: this.stakingType(),
@@ -2200,7 +2200,7 @@ enter_after_if_else@13:
     dig 1
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:726-736
+    // smart_contracts/pool/contract.algo.ts:725-735
     // const stakeInfo = abiCall(Staking.prototype.getInfo, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [
@@ -2225,7 +2225,7 @@ enter_after_if_else@13:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:726-736
+    // smart_contracts/pool/contract.algo.ts:725-735
     // const stakeInfo = abiCall(Staking.prototype.getInfo, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [
@@ -2246,7 +2246,7 @@ enter_after_if_else@13:
     assert // Bytes has valid prefix
     pushint 4 // 4
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:738
+    // smart_contracts/pool/contract.algo.ts:737
     // assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
     frame_dig 3
     dup
@@ -2259,7 +2259,7 @@ enter_after_if_else@13:
     bytec 29 // "stake_key"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:740
+    // smart_contracts/pool/contract.algo.ts:739
     // const { address, name } = decodeArc4<RootKey>(this.stakeKey.value.bytes)
     dup
     extract 0 32 // on error: Index access is out of bounds
@@ -2272,7 +2272,7 @@ enter_after_if_else@13:
     cover 2
     substring3
     extract 2 0
-    // smart_contracts/pool/contract.algo.ts:741-751
+    // smart_contracts/pool/contract.algo.ts:740-750
     // const verified = abiCall(MetaMerkles.prototype.verify, {
     //   appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     //   args: [
@@ -2302,7 +2302,7 @@ enter_after_if_else@13:
     // return decodeArc4<AkitaAppList>(appListBytes)
     pushint 72 // 72
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:745
+    // smart_contracts/pool/contract.algo.ts:744
     // name,
     dig 1
     len
@@ -2310,22 +2310,22 @@ enter_after_if_else@13:
     extract 6 2
     uncover 2
     concat
-    // smart_contracts/pool/contract.algo.ts:746
+    // smart_contracts/pool/contract.algo.ts:745
     // sha256(sha256(itob(entries[i].asset))),
     dig 3
     sha256
     sha256
-    // smart_contracts/pool/contract.algo.ts:747
+    // smart_contracts/pool/contract.algo.ts:746
     // entries[i].proof,
     uncover 5
     frame_dig 5
     frame_dig 4
     substring3
-    // smart_contracts/pool/contract.algo.ts:97
+    // smart_contracts/pool/contract.algo.ts:96
     // const MERKLE_TREE_TYPE_ASSET: uint64 = 1
     intc_1 // 1
     itob
-    // smart_contracts/pool/contract.algo.ts:741-751
+    // smart_contracts/pool/contract.algo.ts:740-750
     // const verified = abiCall(MetaMerkles.prototype.verify, {
     //   appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     //   args: [
@@ -2355,7 +2355,7 @@ enter_after_if_else@13:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:741-751
+    // smart_contracts/pool/contract.algo.ts:740-750
     // const verified = abiCall(MetaMerkles.prototype.verify, {
     //   appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     //   args: [
@@ -2378,7 +2378,7 @@ enter_after_if_else@13:
     assert // Bytes has valid prefix
     intc_0 // 0
     getbit
-    // smart_contracts/pool/contract.algo.ts:753
+    // smart_contracts/pool/contract.algo.ts:752
     // assert(verified, 'failed to verify stake requirements')
     assert // failed to verify stake requirements
     // smart_contracts/pool/constants.ts:16
@@ -2387,7 +2387,7 @@ enter_after_if_else@13:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:184
+    // smart_contracts/pool/contract.algo.ts:183
     // this.entryID.value += 1
     dup
     intc_1 // 1
@@ -2395,14 +2395,14 @@ enter_after_if_else@13:
     // smart_contracts/pool/constants.ts:16
     // export const PoolGlobalStateKeyEntryCount = 'entry_count'
     bytec_2 // "entry_count"
-    // smart_contracts/pool/contract.algo.ts:184
+    // smart_contracts/pool/contract.algo.ts:183
     // this.entryID.value += 1
     swap
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:757
+    // smart_contracts/pool/contract.algo.ts:756
     // address: new Address(Txn.sender),
     txn Sender
-    // smart_contracts/pool/contract.algo.ts:756
+    // smart_contracts/pool/contract.algo.ts:755
     // this.entries(entryID).value = {
     swap
     itob
@@ -2411,7 +2411,7 @@ enter_after_if_else@13:
     bytec 12 // "e"
     dig 1
     concat
-    // smart_contracts/pool/contract.algo.ts:756-762
+    // smart_contracts/pool/contract.algo.ts:755-761
     // this.entries(entryID).value = {
     //   address: new Address(Txn.sender),
     //   asset: entries[i].asset,
@@ -2422,11 +2422,11 @@ enter_after_if_else@13:
     dup
     box_del
     pop
-    // smart_contracts/pool/contract.algo.ts:759
+    // smart_contracts/pool/contract.algo.ts:758
     // quantity: entries[i].quantity,
     uncover 4
     itob
-    // smart_contracts/pool/contract.algo.ts:756
+    // smart_contracts/pool/contract.algo.ts:755
     // this.entries(entryID).value = {
     uncover 3
     dig 4
@@ -2435,15 +2435,15 @@ enter_after_if_else@13:
     concat
     bytec 33 // 0x0033
     concat
-    // smart_contracts/pool/contract.algo.ts:761
+    // smart_contracts/pool/contract.algo.ts:760
     // disqualified: false
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:756
+    // smart_contracts/pool/contract.algo.ts:755
     // this.entries(entryID).value = {
     concat
     frame_dig -1
     concat
-    // smart_contracts/pool/contract.algo.ts:756-762
+    // smart_contracts/pool/contract.algo.ts:755-761
     // this.entries(entryID).value = {
     //   address: new Address(Txn.sender),
     //   asset: entries[i].asset,
@@ -2452,10 +2452,10 @@ enter_after_if_else@13:
     //   disqualified: false
     // }
     box_put
-    // smart_contracts/pool/contract.algo.ts:765
+    // smart_contracts/pool/contract.algo.ts:764
     // address: new Address(Txn.sender),
     txn Sender
-    // smart_contracts/pool/contract.algo.ts:764-767
+    // smart_contracts/pool/contract.algo.ts:763-766
     // const aKey = new arc4EntryKey({
     //   address: new Address(Txn.sender),
     //   asset: new UintN64(entries[i].asset),
@@ -2467,7 +2467,7 @@ enter_after_if_else@13:
     pushbytes "a"
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:769
+    // smart_contracts/pool/contract.algo.ts:768
     // this.entriesByAddress(aKey).value = entryID
     swap
     box_put
@@ -2487,18 +2487,18 @@ enter_bool_false@3:
 
 // smart_contracts/pool/contract.algo.ts::Pool.startDisbursement() -> void:
 startDisbursement:
-    // smart_contracts/pool/contract.algo.ts:776
+    // smart_contracts/pool/contract.algo.ts:775
     // startDisbursement(): void {
     proto 0 0
-    // smart_contracts/pool/contract.algo.ts:777
+    // smart_contracts/pool/contract.algo.ts:776
     // assert(this.isLive(), 'the pool is not live')
     callsub isLive
     assert // the pool is not live
-    // smart_contracts/pool/contract.algo.ts:469
+    // smart_contracts/pool/contract.algo.ts:468
     // const latestWindowStart = this.getLatestWindowStart()
     callsub getLatestWindowStart
     dup
-    // smart_contracts/pool/contract.algo.ts:470
+    // smart_contracts/pool/contract.algo.ts:469
     // return latestWindowStart !== Global.latestTimestamp && this.lastDisbursementTimestamp.value < latestWindowStart
     global LatestTimestamp
     !=
@@ -2509,7 +2509,7 @@ startDisbursement:
     bytec 36 // "last_disbursement_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:470
+    // smart_contracts/pool/contract.algo.ts:469
     // return latestWindowStart !== Global.latestTimestamp && this.lastDisbursementTimestamp.value < latestWindowStart
     frame_dig 0
     <
@@ -2517,7 +2517,7 @@ startDisbursement:
     intc_1 // 1
 
 startDisbursement_bool_merge@5:
-    // smart_contracts/pool/contract.algo.ts:778
+    // smart_contracts/pool/contract.algo.ts:777
     // assert(this.validWindow(), 'distribution window is not open')
     assert // distribution window is not open
     // smart_contracts/pool/constants.ts:5
@@ -2529,7 +2529,7 @@ startDisbursement_bool_merge@5:
     // smart_contracts/pool/constants.ts:42
     // export const DisbursementPhaseIdle = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:779
+    // smart_contracts/pool/contract.algo.ts:778
     // assert(this.disbursementPhase.value === DisbursementPhaseIdle, 'distribution already in progress')
     ==
     assert // distribution already in progress
@@ -2539,14 +2539,14 @@ startDisbursement_bool_merge@5:
     bytec 28 // "title"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:782
+    // smart_contracts/pool/contract.algo.ts:781
     // `${this.title.value} - Rewards`,
     pushbytes " - Rewards"
     concat
-    // smart_contracts/pool/contract.algo.ts:783
+    // smart_contracts/pool/contract.algo.ts:782
     // Global.latestTimestamp,
     global LatestTimestamp
-    // smart_contracts/pool/contract.algo.ts:784
+    // smart_contracts/pool/contract.algo.ts:783
     // Global.latestTimestamp + this.reward.value.expiration.native
     dup
     // smart_contracts/pool/constants.ts:8
@@ -2555,7 +2555,7 @@ startDisbursement_bool_merge@5:
     bytec 14 // "reward"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:784
+    // smart_contracts/pool/contract.algo.ts:783
     // Global.latestTimestamp + this.reward.value.expiration.native
     pushint 17 // 17
     extract_uint64
@@ -2577,7 +2577,7 @@ startDisbursement_bool_merge@5:
     // return decodeArc4<AkitaAppList>(appListBytes)
     pushint 8 // 8
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:499
+    // smart_contracts/pool/contract.algo.ts:498
     // const rewardMBR: uint64 = 35_300 + (400 * Bytes(title).length)
     dig 3
     len
@@ -2586,12 +2586,12 @@ startDisbursement_bool_merge@5:
     *
     pushint 35300 // 35300
     +
-    // smart_contracts/pool/contract.algo.ts:502
+    // smart_contracts/pool/contract.algo.ts:501
     // receiver: rewardsApp.address,
     dig 2
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/pool/contract.algo.ts:507-517
+    // smart_contracts/pool/contract.algo.ts:506-516
     // return abiCall(Rewards.prototype.createDisbursement, {
     //   appId: rewardsApp,
     //   args: [
@@ -2606,7 +2606,7 @@ startDisbursement_bool_merge@5:
     itxn_begin
     itxn_field Receiver
     itxn_field Amount
-    // smart_contracts/pool/contract.algo.ts:501-505
+    // smart_contracts/pool/contract.algo.ts:500-504
     // const mbrPayment = itxn.payment({
     //   receiver: rewardsApp.address,
     //   amount: rewardMBR,
@@ -2618,7 +2618,7 @@ startDisbursement_bool_merge@5:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:507-517
+    // smart_contracts/pool/contract.algo.ts:506-516
     // return abiCall(Rewards.prototype.createDisbursement, {
     //   appId: rewardsApp,
     //   args: [
@@ -2631,21 +2631,21 @@ startDisbursement_bool_merge@5:
     //   fee,
     // }).returnValue
     itxn_next
-    // smart_contracts/pool/contract.algo.ts:511
+    // smart_contracts/pool/contract.algo.ts:510
     // title,
     itob
     extract 6 2
     uncover 4
     concat
-    // smart_contracts/pool/contract.algo.ts:512
+    // smart_contracts/pool/contract.algo.ts:511
     // timeToUnlock,
     uncover 3
     itob
-    // smart_contracts/pool/contract.algo.ts:513
+    // smart_contracts/pool/contract.algo.ts:512
     // expiration,
     uncover 3
     itob
-    // smart_contracts/pool/contract.algo.ts:507-517
+    // smart_contracts/pool/contract.algo.ts:506-516
     // return abiCall(Rewards.prototype.createDisbursement, {
     //   appId: rewardsApp,
     //   args: [
@@ -2664,12 +2664,12 @@ startDisbursement_bool_merge@5:
     swap
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
-    // smart_contracts/pool/contract.algo.ts:514
+    // smart_contracts/pool/contract.algo.ts:513
     // '',
     bytec 11 // 0x0000
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/pool/contract.algo.ts:507-517
+    // smart_contracts/pool/contract.algo.ts:506-516
     // return abiCall(Rewards.prototype.createDisbursement, {
     //   appId: rewardsApp,
     //   args: [
@@ -2687,7 +2687,7 @@ startDisbursement_bool_merge@5:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:507-517
+    // smart_contracts/pool/contract.algo.ts:506-516
     // return abiCall(Rewards.prototype.createDisbursement, {
     //   appId: rewardsApp,
     //   args: [
@@ -2715,44 +2715,44 @@ startDisbursement_bool_merge@5:
     // smart_contracts/pool/constants.ts:40
     // export const PoolStatusDisbursing = new UintN8(20)
     bytec 20 // 0x14
-    // smart_contracts/pool/contract.algo.ts:787
+    // smart_contracts/pool/contract.algo.ts:786
     // this.status.value = PoolStatusDisbursing
     app_global_put
     // smart_contracts/pool/constants.ts:26
     // export const PoolGlobalStateKeyActiveDisbursementID = 'active_disbursement_id'
     bytec 9 // "active_disbursement_id"
-    // smart_contracts/pool/contract.algo.ts:788
+    // smart_contracts/pool/contract.algo.ts:787
     // this.activeDisbursementID.value = disbursementID
     swap
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:789
+    // smart_contracts/pool/contract.algo.ts:788
     // this.activeDisbursementWindow.value = this.getLatestWindowStart()
     callsub getLatestWindowStart
     // smart_contracts/pool/constants.ts:27
     // export const PoolGlobalStateKeyActiveDisbursementWindow = 'active_disbursement_window'
     bytec 31 // "active_disbursement_window"
-    // smart_contracts/pool/contract.algo.ts:789
+    // smart_contracts/pool/contract.algo.ts:788
     // this.activeDisbursementWindow.value = this.getLatestWindowStart()
     swap
     app_global_put
     // smart_contracts/pool/constants.ts:14
     // export const PoolGlobalStateKeyLastDisbursementTimestamp = 'last_disbursement_timestamp'
     bytec 36 // "last_disbursement_timestamp"
-    // smart_contracts/pool/contract.algo.ts:790
+    // smart_contracts/pool/contract.algo.ts:789
     // this.lastDisbursementTimestamp.value = Global.latestTimestamp
     global LatestTimestamp
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:791
+    // smart_contracts/pool/contract.algo.ts:790
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
     // smart_contracts/pool/constants.ts:29
     // export const PoolGlobalStateKeyQualifiedStake = 'qualified_stake'
     bytec 10 // "qualified_stake"
-    // smart_contracts/pool/contract.algo.ts:793
+    // smart_contracts/pool/contract.algo.ts:792
     // this.qualifiedStake.value = 0
     intc_0 // 0
     app_global_put
@@ -2762,7 +2762,7 @@ startDisbursement_bool_merge@5:
     // smart_contracts/pool/constants.ts:43
     // export const DisbursementPhasePreparation = new UintN8(10)
     bytec 19 // 0x0a
-    // smart_contracts/pool/contract.algo.ts:794
+    // smart_contracts/pool/contract.algo.ts:793
     // this.disbursementPhase.value = DisbursementPhasePreparation
     app_global_put
     retsub
@@ -2774,7 +2774,7 @@ startDisbursement_bool_false@4:
 
 // smart_contracts/pool/contract.algo.ts::Pool.raffle() -> void:
 raffle:
-    // smart_contracts/pool/contract.algo.ts:797
+    // smart_contracts/pool/contract.algo.ts:796
     // raffle(): void {
     proto 0 0
     intc_0 // 0
@@ -2789,7 +2789,7 @@ raffle:
     // smart_contracts/pool/constants.ts:44
     // export const DisbursementPhaseAllocation = new UintN8(20)
     bytec 20 // 0x14
-    // smart_contracts/pool/contract.algo.ts:798
+    // smart_contracts/pool/contract.algo.ts:797
     // assert(this.disbursementPhase.value === DisbursementPhaseAllocation, ERR_INVALID_DISBURSEMENT_PHASE)
     ==
     assert // Invalid disbursement phase
@@ -2799,7 +2799,7 @@ raffle:
     bytec 13 // "wtickets"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:799
+    // smart_contracts/pool/contract.algo.ts:798
     // assert(this.winningTickets.value.length === 0, ERR_WINNING_TICKETS_ALREADY_EXIST)
     intc_0 // 0
     extract_uint16
@@ -2811,7 +2811,7 @@ raffle:
     bytec 31 // "active_disbursement_window"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:801
+    // smart_contracts/pool/contract.algo.ts:800
     // const roundToUse: uint64 = this.activeDisbursementWindow.value + 1 + (4 * this.vrfGetFailureCount.value)
     intc_1 // 1
     +
@@ -2821,12 +2821,12 @@ raffle:
     bytec 17 // "vrf_failure_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:801
+    // smart_contracts/pool/contract.algo.ts:800
     // const roundToUse: uint64 = this.activeDisbursementWindow.value + 1 + (4 * this.vrfGetFailureCount.value)
     pushint 4 // 4
     *
     +
-    // smart_contracts/pool/contract.algo.ts:803-810
+    // smart_contracts/pool/contract.algo.ts:802-809
     // const seed = abiCall(
     //   RandomnessBeacon.prototype.get,
     //   {
@@ -2853,7 +2853,7 @@ raffle:
     // return decodeArc4<OtherAppList>(otherAppListBytes)
     intc_0 // 0
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:807
+    // smart_contracts/pool/contract.algo.ts:806
     // args: [roundToUse, this.salt.value],
     swap
     itob
@@ -2869,7 +2869,7 @@ raffle:
     extract 6 2
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:803-810
+    // smart_contracts/pool/contract.algo.ts:802-809
     // const seed = abiCall(
     //   RandomnessBeacon.prototype.get,
     //   {
@@ -2890,7 +2890,7 @@ raffle:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:803-810
+    // smart_contracts/pool/contract.algo.ts:802-809
     // const seed = abiCall(
     //   RandomnessBeacon.prototype.get,
     //   {
@@ -2908,7 +2908,7 @@ raffle:
     assert // Bytes has valid prefix
     extract 6 0
     dup
-    // smart_contracts/pool/contract.algo.ts:812
+    // smart_contracts/pool/contract.algo.ts:811
     // if (seed.length === 0) {
     len
     dup
@@ -2919,23 +2919,23 @@ raffle:
     bytec 17 // "vrf_failure_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:813
+    // smart_contracts/pool/contract.algo.ts:812
     // this.vrfGetFailureCount.value += 1
     intc_1 // 1
     +
     // smart_contracts/pool/constants.ts:32
     // export const PoolGlobalStateKeyVRFFailureCount = 'vrf_failure_count'
     bytec 17 // "vrf_failure_count"
-    // smart_contracts/pool/contract.algo.ts:813
+    // smart_contracts/pool/contract.algo.ts:812
     // this.vrfGetFailureCount.value += 1
     swap
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:814
+    // smart_contracts/pool/contract.algo.ts:813
     // return
     retsub
 
 raffle_after_if_else@3:
-    // smart_contracts/pool/contract.algo.ts:818
+    // smart_contracts/pool/contract.algo.ts:817
     // const rngState = pcg64Init(seed.slice(0, 16))
     intc_0 // 0
     frame_dig 12
@@ -3052,19 +3052,19 @@ raffle_after_if_else@3:
     cover 2
     frame_bury 9
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:822
+    // smart_contracts/pool/contract.algo.ts:821
     // if (upperBound < MAX_UINT64) {
     dup
     // smart_contracts/utils/constants.ts:49
     // export const MAX_UINT64: uint64 = Uint64('18446744073709551615')
     intc 10 // 18446744073709551615
-    // smart_contracts/pool/contract.algo.ts:822
+    // smart_contracts/pool/contract.algo.ts:821
     // if (upperBound < MAX_UINT64) {
     <
     swap
     frame_bury 10
     bz raffle_after_if_else@5
-    // smart_contracts/pool/contract.algo.ts:823
+    // smart_contracts/pool/contract.algo.ts:822
     // upperBound += 1
     frame_dig 9
     intc_1 // 1
@@ -3095,7 +3095,7 @@ raffle_after_if_else@5:
     -
     dup
     frame_bury 1
-    // smart_contracts/pool/contract.algo.ts:826
+    // smart_contracts/pool/contract.algo.ts:825
     // const rngResult = pcg64Random(rngState, 1, upperBound, MaxGlobalStateUint64Array)
     intc_1 // 1
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:44
@@ -3205,7 +3205,7 @@ raffle_ternary_merge@27:
     frame_dig 4
     frame_dig 1
     %
-    // smart_contracts/pool/contract.algo.ts:826
+    // smart_contracts/pool/contract.algo.ts:825
     // const rngResult = pcg64Random(rngState, 1, upperBound, MaxGlobalStateUint64Array)
     intc_1 // 1
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:60
@@ -3251,14 +3251,14 @@ raffle_after_while@22:
     // smart_contracts/pool/constants.ts:30
     // export const PoolGlobalStateKeyWinningTickets = 'wtickets'
     bytec 13 // "wtickets"
-    // smart_contracts/pool/contract.algo.ts:827
+    // smart_contracts/pool/contract.algo.ts:826
     // this.winningTickets.value = rngResult[1].copy()
     frame_dig 0
     app_global_put
     // smart_contracts/pool/constants.ts:32
     // export const PoolGlobalStateKeyVRFFailureCount = 'vrf_failure_count'
     bytec 17 // "vrf_failure_count"
-    // smart_contracts/pool/contract.algo.ts:828
+    // smart_contracts/pool/contract.algo.ts:827
     // this.vrfGetFailureCount.value = 0
     intc_0 // 0
     app_global_put
@@ -3274,7 +3274,7 @@ raffle_else_body@14:
 
 // smart_contracts/pool/contract.algo.ts::Pool.disburseRewards(iterationAmount: uint64) -> void:
 disburseRewards:
-    // smart_contracts/pool/contract.algo.ts:831
+    // smart_contracts/pool/contract.algo.ts:830
     // disburseRewards(iterationAmount: uint64): void {
     proto 1 0
     intc_0 // 0
@@ -3290,7 +3290,7 @@ disburseRewards:
     // smart_contracts/pool/constants.ts:40
     // export const PoolStatusDisbursing = new UintN8(20)
     bytec 20 // 0x14
-    // smart_contracts/pool/contract.algo.ts:832
+    // smart_contracts/pool/contract.algo.ts:831
     // assert(this.status.value === PoolStatusDisbursing, 'pool is not in disbursement phase')
     ==
     assert // pool is not in disbursement phase
@@ -3303,10 +3303,10 @@ disburseRewards:
     // smart_contracts/pool/constants.ts:43
     // export const DisbursementPhasePreparation = new UintN8(10)
     bytec 19 // 0x0a
-    // smart_contracts/pool/contract.algo.ts:834
+    // smart_contracts/pool/contract.algo.ts:833
     // this.disbursementPhase.value === DisbursementPhasePreparation ||
     ==
-    // smart_contracts/pool/contract.algo.ts:834-835
+    // smart_contracts/pool/contract.algo.ts:833-834
     // this.disbursementPhase.value === DisbursementPhasePreparation ||
     // this.disbursementPhase.value === DisbursementPhaseAllocation,
     bnz disburseRewards_bool_true@2
@@ -3319,10 +3319,10 @@ disburseRewards:
     // smart_contracts/pool/constants.ts:44
     // export const DisbursementPhaseAllocation = new UintN8(20)
     bytec 20 // 0x14
-    // smart_contracts/pool/contract.algo.ts:835
+    // smart_contracts/pool/contract.algo.ts:834
     // this.disbursementPhase.value === DisbursementPhaseAllocation,
     ==
-    // smart_contracts/pool/contract.algo.ts:834-835
+    // smart_contracts/pool/contract.algo.ts:833-834
     // this.disbursementPhase.value === DisbursementPhasePreparation ||
     // this.disbursementPhase.value === DisbursementPhaseAllocation,
     bz disburseRewards_bool_false@3
@@ -3331,7 +3331,7 @@ disburseRewards_bool_true@2:
     intc_1 // 1
 
 disburseRewards_bool_merge@4:
-    // smart_contracts/pool/contract.algo.ts:833-837
+    // smart_contracts/pool/contract.algo.ts:832-836
     // assert(
     //   this.disbursementPhase.value === DisbursementPhasePreparation ||
     //   this.disbursementPhase.value === DisbursementPhaseAllocation,
@@ -3344,7 +3344,7 @@ disburseRewards_bool_merge@4:
     bytec 14 // "reward"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:839
+    // smart_contracts/pool/contract.algo.ts:838
     // const reward = decodeArc4<Reward>(this.reward.value.bytes)
     dup
     intc_0 // 0
@@ -3365,15 +3365,15 @@ disburseRewards_bool_merge@4:
     // smart_contracts/pool/constants.ts:43
     // export const DisbursementPhasePreparation = new UintN8(10)
     bytec 19 // 0x0a
-    // smart_contracts/pool/contract.algo.ts:841
+    // smart_contracts/pool/contract.algo.ts:840
     // if (this.disbursementPhase.value === DisbursementPhasePreparation) {
     ==
     bz disburseRewards_else_body@6
-    // smart_contracts/pool/contract.algo.ts:189
+    // smart_contracts/pool/contract.algo.ts:188
     // let count: uint64 = 0
     intc_0 // 0
     frame_bury 9
-    // smart_contracts/pool/contract.algo.ts:190
+    // smart_contracts/pool/contract.algo.ts:189
     // let total: uint64 = 0
     intc_0 // 0
     frame_bury 32
@@ -3383,7 +3383,7 @@ disburseRewards_bool_merge@4:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:192
+    // smart_contracts/pool/contract.algo.ts:191
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     frame_dig -1
     +
@@ -3393,7 +3393,7 @@ disburseRewards_bool_merge@4:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:192
+    // smart_contracts/pool/contract.algo.ts:191
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     >
     bz disburseRewards_after_if_else@82
@@ -3409,7 +3409,7 @@ disburseRewards_bool_merge@4:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:193
+    // smart_contracts/pool/contract.algo.ts:192
     // iterationAmount = this.entryID.value - this.disbursementCursor.value
     -
     frame_bury -1
@@ -3425,13 +3425,13 @@ disburseRewards_after_if_else@82:
     assert // check GlobalState exists
 
 disburseRewards_while_top@83:
-    // smart_contracts/pool/contract.algo.ts:196
+    // smart_contracts/pool/contract.algo.ts:195
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     frame_dig -1
     <
     bz disburseRewards_after_while@97
-    // smart_contracts/pool/contract.algo.ts:197
+    // smart_contracts/pool/contract.algo.ts:196
     // const entry = this.entries(id).value
     frame_dig 21
     itob
@@ -3442,7 +3442,7 @@ disburseRewards_while_top@83:
     concat
     dup
     frame_bury 3
-    // smart_contracts/pool/contract.algo.ts:197
+    // smart_contracts/pool/contract.algo.ts:196
     // const entry = this.entries(id).value
     box_get
     assert // Box must have value
@@ -3470,7 +3470,7 @@ disburseRewards_while_top@83:
     setbit
     intc_0 // 0
     getbit
-    // smart_contracts/pool/contract.algo.ts:198
+    // smart_contracts/pool/contract.algo.ts:197
     // if (entry.disqualified) {
     bnz disburseRewards_block@96
     // smart_contracts/pool/constants.ts:7
@@ -3482,16 +3482,16 @@ disburseRewards_while_top@83:
     // smart_contracts/pool/types.ts:33
     // export const POOL_STAKING_TYPE_NONE: PoolStakingType = new arc4.UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:479
+    // smart_contracts/pool/contract.algo.ts:478
     // if (this.type.value === POOL_STAKING_TYPE_NONE) {
     ==
     bz disburseRewards_else_body@88
-    // smart_contracts/pool/contract.algo.ts:480
+    // smart_contracts/pool/contract.algo.ts:479
     // return { valid: true, balance: 0 }
     intc_1 // 1
 
 disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getStakeValue@91:
-    // smart_contracts/pool/contract.algo.ts:203
+    // smart_contracts/pool/contract.algo.ts:202
     // if (!valid) {
     bz disburseRewards_block@96
     // smart_contracts/constants.ts:1
@@ -3506,22 +3506,22 @@ disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getSta
     bytec 15 // "gate_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:207
+    // smart_contracts/pool/contract.algo.ts:206
     // const passes = gateCheck(this.akitaDAO.value, entry.address, this.gateID.value, entry.gateArgs)
     frame_dig 4
     swap
     frame_dig 5
     callsub gateCheck
-    // smart_contracts/pool/contract.algo.ts:208
+    // smart_contracts/pool/contract.algo.ts:207
     // if (!passes) {
     bz disburseRewards_block@96
-    // smart_contracts/pool/contract.algo.ts:212
+    // smart_contracts/pool/contract.algo.ts:211
     // count += 1
     frame_dig 9
     intc_1 // 1
     +
     frame_bury 9
-    // smart_contracts/pool/contract.algo.ts:213
+    // smart_contracts/pool/contract.algo.ts:212
     // total += entry.quantity
     frame_dig 32
     frame_dig 18
@@ -3529,7 +3529,7 @@ disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getSta
     frame_bury 32
 
 disburseRewards_block@96:
-    // smart_contracts/pool/contract.algo.ts:196
+    // smart_contracts/pool/contract.algo.ts:195
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     intc_1 // 1
@@ -3547,11 +3547,11 @@ disburseRewards_else_body@88:
     // smart_contracts/pool/types.ts:34
     // export const POOL_STAKING_TYPE_HEARTBEAT: PoolStakingType = new arc4.UintN8(1)
     bytec 22 // 0x01
-    // smart_contracts/pool/contract.algo.ts:481
+    // smart_contracts/pool/contract.algo.ts:480
     // } else if (this.type.value === POOL_STAKING_TYPE_HEARTBEAT) {
     ==
     bz disburseRewards_after_if_else@90
-    // smart_contracts/pool/contract.algo.ts:482
+    // smart_contracts/pool/contract.algo.ts:481
     // const entry = this.entries(id).value
     frame_dig 3
     box_get
@@ -3561,7 +3561,7 @@ disburseRewards_else_body@88:
     swap
     pushint 32 // 32
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:484-488
+    // smart_contracts/pool/contract.algo.ts:483-487
     // const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [entry.address, entry.asset, true],
@@ -3585,11 +3585,11 @@ disburseRewards_else_body@88:
     // return decodeArc4<AkitaAppList>(appListBytes)
     intc_0 // 0
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:486
+    // smart_contracts/pool/contract.algo.ts:485
     // args: [entry.address, entry.asset, true],
     swap
     itob
-    // smart_contracts/pool/contract.algo.ts:484-488
+    // smart_contracts/pool/contract.algo.ts:483-487
     // const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [entry.address, entry.asset, true],
@@ -3600,12 +3600,12 @@ disburseRewards_else_body@88:
     uncover 2
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
-    // smart_contracts/pool/contract.algo.ts:486
+    // smart_contracts/pool/contract.algo.ts:485
     // args: [entry.address, entry.asset, true],
     pushbytes 0x80
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/pool/contract.algo.ts:484-488
+    // smart_contracts/pool/contract.algo.ts:483-487
     // const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [entry.address, entry.asset, true],
@@ -3617,7 +3617,7 @@ disburseRewards_else_body@88:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:484-488
+    // smart_contracts/pool/contract.algo.ts:483-487
     // const avg = abiCall(Staking.prototype.getHeartbeatAverage, {
     //   appId: getAkitaAppList(this.akitaDAO.value).staking,
     //   args: [entry.address, entry.asset, true],
@@ -3629,20 +3629,20 @@ disburseRewards_else_body@88:
     bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/pool/contract.algo.ts:490
+    // smart_contracts/pool/contract.algo.ts:489
     // return { valid: true, balance: avg }
     intc_1 // 1
-    // smart_contracts/pool/contract.algo.ts:202
+    // smart_contracts/pool/contract.algo.ts:201
     // const { valid } = this.getStakeValue(id)
     b disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getStakeValue@91
 
 disburseRewards_after_if_else@90:
-    // smart_contracts/pool/contract.algo.ts:493
+    // smart_contracts/pool/contract.algo.ts:492
     // return this.checkByID(id)
     frame_dig 21
     callsub checkByID
     pop
-    // smart_contracts/pool/contract.algo.ts:202
+    // smart_contracts/pool/contract.algo.ts:201
     // const { valid } = this.getStakeValue(id)
     b disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getStakeValue@91
 
@@ -3653,14 +3653,14 @@ disburseRewards_after_while@97:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:216
+    // smart_contracts/pool/contract.algo.ts:215
     // this.disbursementCursor.value += iterationAmount
     frame_dig -1
     +
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:216
+    // smart_contracts/pool/contract.algo.ts:215
     // this.disbursementCursor.value += iterationAmount
     swap
     app_global_put
@@ -3670,18 +3670,18 @@ disburseRewards_after_while@97:
     bytec 10 // "qualified_stake"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:217
+    // smart_contracts/pool/contract.algo.ts:216
     // this.qualifiedStakers.value += count
     frame_dig 9
     +
-    // smart_contracts/pool/contract.algo.ts:218
+    // smart_contracts/pool/contract.algo.ts:217
     // this.qualifiedStake.value += total
     frame_dig 32
     +
     // smart_contracts/pool/constants.ts:29
     // export const PoolGlobalStateKeyQualifiedStake = 'qualified_stake'
     bytec 10 // "qualified_stake"
-    // smart_contracts/pool/contract.algo.ts:218
+    // smart_contracts/pool/contract.algo.ts:217
     // this.qualifiedStake.value += total
     swap
     app_global_put
@@ -3697,7 +3697,7 @@ disburseRewards_after_while@97:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:220
+    // smart_contracts/pool/contract.algo.ts:219
     // if (this.entryID.value === this.disbursementCursor.value) {
     ==
     bz disburseRewards_after_if_else@22
@@ -3707,13 +3707,13 @@ disburseRewards_after_while@97:
     // smart_contracts/pool/constants.ts:44
     // export const DisbursementPhaseAllocation = new UintN8(20)
     bytec 20 // 0x14
-    // smart_contracts/pool/contract.algo.ts:221
+    // smart_contracts/pool/contract.algo.ts:220
     // this.disbursementPhase.value = DisbursementPhaseAllocation
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:222
+    // smart_contracts/pool/contract.algo.ts:221
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
@@ -3722,13 +3722,13 @@ disburseRewards_after_if_else@22:
     retsub
 
 disburseRewards_else_body@6:
-    // smart_contracts/pool/contract.algo.ts:844
+    // smart_contracts/pool/contract.algo.ts:843
     // if (reward.distribution === DistributionTypePercentage) {
     frame_dig 6
     // smart_contracts/pool/types.ts:14
     // export const DistributionTypePercentage = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:844
+    // smart_contracts/pool/contract.algo.ts:843
     // if (reward.distribution === DistributionTypePercentage) {
     ==
     bz disburseRewards_else_body@8
@@ -3738,7 +3738,7 @@ disburseRewards_else_body@6:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:228
+    // smart_contracts/pool/contract.algo.ts:227
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     frame_dig -1
     +
@@ -3748,7 +3748,7 @@ disburseRewards_else_body@6:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:228
+    // smart_contracts/pool/contract.algo.ts:227
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     >
     bz disburseRewards_after_if_else@70
@@ -3764,7 +3764,7 @@ disburseRewards_else_body@6:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:229
+    // smart_contracts/pool/contract.algo.ts:228
     // iterationAmount = this.entryID.value - this.disbursementCursor.value
     -
     frame_bury -1
@@ -3776,16 +3776,16 @@ disburseRewards_after_if_else@70:
     bytec 14 // "reward"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:232
+    // smart_contracts/pool/contract.algo.ts:231
     // const reward = decodeArc4<Reward>(this.reward.value.bytes)
     pushint 9 // 9
     extract_uint64
     frame_bury 24
-    // smart_contracts/pool/contract.algo.ts:233
+    // smart_contracts/pool/contract.algo.ts:232
     // const allocations = new DynamicArray<arc4UserAllocation>()
     bytec 11 // 0x0000
     frame_bury 0
-    // smart_contracts/pool/contract.algo.ts:234
+    // smart_contracts/pool/contract.algo.ts:233
     // let sum: uint64 = 0
     intc_0 // 0
     frame_bury 29
@@ -3799,13 +3799,13 @@ disburseRewards_after_if_else@70:
     assert // check GlobalState exists
 
 disburseRewards_while_top@71:
-    // smart_contracts/pool/contract.algo.ts:236
+    // smart_contracts/pool/contract.algo.ts:235
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     frame_dig -1
     <
     bz disburseRewards_after_while@76
-    // smart_contracts/pool/contract.algo.ts:237
+    // smart_contracts/pool/contract.algo.ts:236
     // const entry = this.entries(id).value
     frame_dig 21
     itob
@@ -3814,7 +3814,7 @@ disburseRewards_while_top@71:
     bytec 12 // "e"
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:237
+    // smart_contracts/pool/contract.algo.ts:236
     // const entry = this.entries(id).value
     box_get
     assert // Box must have value
@@ -3833,7 +3833,7 @@ disburseRewards_while_top@71:
     setbit
     intc_0 // 0
     getbit
-    // smart_contracts/pool/contract.algo.ts:238
+    // smart_contracts/pool/contract.algo.ts:237
     // if (entry.disqualified) {
     bnz disburseRewards_block@75
     // smart_contracts/pool/constants.ts:29
@@ -3881,7 +3881,7 @@ disburseRewards_while_top@71:
     // smart_contracts/utils/functions.ts:71
     // return op.divw(...op.mulw(a, p), DIVISOR)
     divw
-    // smart_contracts/pool/contract.algo.ts:244-249
+    // smart_contracts/pool/contract.algo.ts:243-248
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -3890,11 +3890,11 @@ disburseRewards_while_top@71:
     // )
     frame_dig 0
     extract 2 0
-    // smart_contracts/pool/contract.algo.ts:247
+    // smart_contracts/pool/contract.algo.ts:246
     // amount: new UintN64(amount)
     dig 1
     itob
-    // smart_contracts/pool/contract.algo.ts:245-248
+    // smart_contracts/pool/contract.algo.ts:244-247
     // new arc4UserAllocation({
     //   address: entry.address,
     //   amount: new UintN64(amount)
@@ -3902,7 +3902,7 @@ disburseRewards_while_top@71:
     frame_dig 4
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:244-249
+    // smart_contracts/pool/contract.algo.ts:243-248
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -3919,14 +3919,14 @@ disburseRewards_while_top@71:
     swap
     concat
     frame_bury 0
-    // smart_contracts/pool/contract.algo.ts:250
+    // smart_contracts/pool/contract.algo.ts:249
     // sum += amount
     frame_dig 29
     +
     frame_bury 29
 
 disburseRewards_block@75:
-    // smart_contracts/pool/contract.algo.ts:236
+    // smart_contracts/pool/contract.algo.ts:235
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     intc_1 // 1
@@ -3941,14 +3941,14 @@ disburseRewards_after_while@76:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:253
+    // smart_contracts/pool/contract.algo.ts:252
     // this.disbursementCursor.value += iterationAmount
     frame_dig -1
     +
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:253
+    // smart_contracts/pool/contract.algo.ts:252
     // this.disbursementCursor.value += iterationAmount
     swap
     app_global_put
@@ -3958,7 +3958,7 @@ disburseRewards_after_while@76:
     bytec 9 // "active_disbursement_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:254
+    // smart_contracts/pool/contract.algo.ts:253
     // this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
     frame_dig 23
     frame_dig 0
@@ -3977,7 +3977,7 @@ disburseRewards_after_while@76:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:256
+    // smart_contracts/pool/contract.algo.ts:255
     // if (this.entryID.value === this.disbursementCursor.value) {
     ==
     bz disburseRewards_after_if_else@22
@@ -3987,26 +3987,26 @@ disburseRewards_after_while@76:
     // smart_contracts/pool/constants.ts:45
     // export const DisbursementPhaseFinalization = new UintN8(30)
     bytec 21 // 0x1e
-    // smart_contracts/pool/contract.algo.ts:257
+    // smart_contracts/pool/contract.algo.ts:256
     // this.disbursementPhase.value = DisbursementPhaseFinalization
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:258
+    // smart_contracts/pool/contract.algo.ts:257
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
     retsub
 
 disburseRewards_else_body@8:
-    // smart_contracts/pool/contract.algo.ts:846
+    // smart_contracts/pool/contract.algo.ts:845
     // } else if (reward.distribution === DistributionTypeFlat) {
     frame_dig 6
     // smart_contracts/pool/types.ts:19
     // export const DistributionTypeFlat = new UintN8(1)
     bytec 22 // 0x01
-    // smart_contracts/pool/contract.algo.ts:846
+    // smart_contracts/pool/contract.algo.ts:845
     // } else if (reward.distribution === DistributionTypeFlat) {
     ==
     bz disburseRewards_else_body@10
@@ -4016,17 +4016,17 @@ disburseRewards_else_body@8:
     bytec 10 // "qualified_stake"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:263
+    // smart_contracts/pool/contract.algo.ts:262
     // const total: uint64 = this.qualifiedStakers.value * amount
     frame_dig 24
     *
-    // smart_contracts/pool/contract.algo.ts:264
+    // smart_contracts/pool/contract.algo.ts:263
     // const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
     global CurrentApplicationAddress
     frame_dig 23
     asset_holding_get AssetBalance
     pop
-    // smart_contracts/pool/contract.algo.ts:266
+    // smart_contracts/pool/contract.algo.ts:265
     // assert(balance >= total, ERR_NOT_ENOUGH_FUNDS)
     <=
     assert // Not enough funds
@@ -4036,7 +4036,7 @@ disburseRewards_else_body@8:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:268
+    // smart_contracts/pool/contract.algo.ts:267
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     frame_dig -1
     +
@@ -4046,7 +4046,7 @@ disburseRewards_else_body@8:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:268
+    // smart_contracts/pool/contract.algo.ts:267
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     >
     bz disburseRewards_after_if_else@58
@@ -4062,17 +4062,17 @@ disburseRewards_else_body@8:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:269
+    // smart_contracts/pool/contract.algo.ts:268
     // iterationAmount = this.entryID.value - this.disbursementCursor.value
     -
     frame_bury -1
 
 disburseRewards_after_if_else@58:
-    // smart_contracts/pool/contract.algo.ts:272
+    // smart_contracts/pool/contract.algo.ts:271
     // const allocations = new DynamicArray<arc4UserAllocation>()
     bytec 11 // 0x0000
     frame_bury 0
-    // smart_contracts/pool/contract.algo.ts:273
+    // smart_contracts/pool/contract.algo.ts:272
     // let sum: uint64 = 0
     intc_0 // 0
     frame_bury 29
@@ -4086,13 +4086,13 @@ disburseRewards_after_if_else@58:
     assert // check GlobalState exists
 
 disburseRewards_while_top@59:
-    // smart_contracts/pool/contract.algo.ts:275
+    // smart_contracts/pool/contract.algo.ts:274
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     frame_dig -1
     <
     bz disburseRewards_after_while@64
-    // smart_contracts/pool/contract.algo.ts:276
+    // smart_contracts/pool/contract.algo.ts:275
     // const entry = this.entries(id).value
     frame_dig 21
     itob
@@ -4101,7 +4101,7 @@ disburseRewards_while_top@59:
     bytec 12 // "e"
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:276
+    // smart_contracts/pool/contract.algo.ts:275
     // const entry = this.entries(id).value
     box_get
     assert // Box must have value
@@ -4116,10 +4116,10 @@ disburseRewards_while_top@59:
     setbit
     intc_0 // 0
     getbit
-    // smart_contracts/pool/contract.algo.ts:277
+    // smart_contracts/pool/contract.algo.ts:276
     // if (entry.disqualified) {
     bnz disburseRewards_block@63
-    // smart_contracts/pool/contract.algo.ts:281-286
+    // smart_contracts/pool/contract.algo.ts:280-285
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -4128,13 +4128,13 @@ disburseRewards_while_top@59:
     // )
     frame_dig 0
     extract 2 0
-    // smart_contracts/pool/contract.algo.ts:284
+    // smart_contracts/pool/contract.algo.ts:283
     // amount: new UintN64(amount)
     frame_dig 24
     dup
     cover 2
     itob
-    // smart_contracts/pool/contract.algo.ts:282-285
+    // smart_contracts/pool/contract.algo.ts:281-284
     // new arc4UserAllocation({
     //   address: entry.address,
     //   amount: new UintN64(amount)
@@ -4142,7 +4142,7 @@ disburseRewards_while_top@59:
     frame_dig 4
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:281-286
+    // smart_contracts/pool/contract.algo.ts:280-285
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -4159,14 +4159,14 @@ disburseRewards_while_top@59:
     swap
     concat
     frame_bury 0
-    // smart_contracts/pool/contract.algo.ts:287
+    // smart_contracts/pool/contract.algo.ts:286
     // sum += amount
     frame_dig 29
     +
     frame_bury 29
 
 disburseRewards_block@63:
-    // smart_contracts/pool/contract.algo.ts:275
+    // smart_contracts/pool/contract.algo.ts:274
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     intc_1 // 1
@@ -4181,14 +4181,14 @@ disburseRewards_after_while@64:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:290
+    // smart_contracts/pool/contract.algo.ts:289
     // this.disbursementCursor.value += iterationAmount
     frame_dig -1
     +
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:290
+    // smart_contracts/pool/contract.algo.ts:289
     // this.disbursementCursor.value += iterationAmount
     swap
     app_global_put
@@ -4198,7 +4198,7 @@ disburseRewards_after_while@64:
     bytec 9 // "active_disbursement_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:291
+    // smart_contracts/pool/contract.algo.ts:290
     // this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
     frame_dig 23
     frame_dig 0
@@ -4217,7 +4217,7 @@ disburseRewards_after_while@64:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:293
+    // smart_contracts/pool/contract.algo.ts:292
     // if (this.entryID.value === this.disbursementCursor.value) {
     ==
     bz disburseRewards_after_if_else@22
@@ -4227,36 +4227,36 @@ disburseRewards_after_while@64:
     // smart_contracts/pool/constants.ts:45
     // export const DisbursementPhaseFinalization = new UintN8(30)
     bytec 21 // 0x1e
-    // smart_contracts/pool/contract.algo.ts:294
+    // smart_contracts/pool/contract.algo.ts:293
     // this.disbursementPhase.value = DisbursementPhaseFinalization
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:295
+    // smart_contracts/pool/contract.algo.ts:294
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
     retsub
 
 disburseRewards_else_body@10:
-    // smart_contracts/pool/contract.algo.ts:848
+    // smart_contracts/pool/contract.algo.ts:847
     // } else if (reward.distribution === DistributionTypeEven) {
     frame_dig 6
     // smart_contracts/pool/types.ts:24
     // export const DistributionTypeEven = new UintN8(2)
     bytec 23 // 0x02
-    // smart_contracts/pool/contract.algo.ts:848
+    // smart_contracts/pool/contract.algo.ts:847
     // } else if (reward.distribution === DistributionTypeEven) {
     ==
     bz disburseRewards_else_body@12
-    // smart_contracts/pool/contract.algo.ts:300
+    // smart_contracts/pool/contract.algo.ts:299
     // const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
     global CurrentApplicationAddress
     frame_dig 23
     asset_holding_get AssetBalance
     pop
-    // smart_contracts/pool/contract.algo.ts:301
+    // smart_contracts/pool/contract.algo.ts:300
     // assert(balance >= sum, ERR_NOT_ENOUGH_FUNDS)
     frame_dig 24
     >=
@@ -4267,7 +4267,7 @@ disburseRewards_else_body@10:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:303
+    // smart_contracts/pool/contract.algo.ts:302
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     frame_dig -1
     +
@@ -4277,7 +4277,7 @@ disburseRewards_else_body@10:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:303
+    // smart_contracts/pool/contract.algo.ts:302
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     >
     bz disburseRewards_after_if_else@46
@@ -4293,7 +4293,7 @@ disburseRewards_else_body@10:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:304
+    // smart_contracts/pool/contract.algo.ts:303
     // iterationAmount = this.entryID.value - this.disbursementCursor.value
     -
     frame_bury -1
@@ -4305,13 +4305,13 @@ disburseRewards_after_if_else@46:
     bytec 10 // "qualified_stake"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:307
+    // smart_contracts/pool/contract.algo.ts:306
     // const amount: uint64 = sum / this.qualifiedStakers.value
     frame_dig 24
     swap
     /
     frame_bury 8
-    // smart_contracts/pool/contract.algo.ts:308
+    // smart_contracts/pool/contract.algo.ts:307
     // const allocations = new DynamicArray<arc4UserAllocation>()
     bytec 11 // 0x0000
     frame_bury 0
@@ -4325,13 +4325,13 @@ disburseRewards_after_if_else@46:
     assert // check GlobalState exists
 
 disburseRewards_while_top@47:
-    // smart_contracts/pool/contract.algo.ts:309
+    // smart_contracts/pool/contract.algo.ts:308
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     frame_dig -1
     <
     bz disburseRewards_after_while@52
-    // smart_contracts/pool/contract.algo.ts:310
+    // smart_contracts/pool/contract.algo.ts:309
     // const entry = this.entries(id).value
     frame_dig 21
     itob
@@ -4340,7 +4340,7 @@ disburseRewards_while_top@47:
     bytec 12 // "e"
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:310
+    // smart_contracts/pool/contract.algo.ts:309
     // const entry = this.entries(id).value
     box_get
     assert // Box must have value
@@ -4355,10 +4355,10 @@ disburseRewards_while_top@47:
     setbit
     intc_0 // 0
     getbit
-    // smart_contracts/pool/contract.algo.ts:311
+    // smart_contracts/pool/contract.algo.ts:310
     // if (entry.disqualified) {
     bnz disburseRewards_block@51
-    // smart_contracts/pool/contract.algo.ts:315-320
+    // smart_contracts/pool/contract.algo.ts:314-319
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -4367,11 +4367,11 @@ disburseRewards_while_top@47:
     // )
     frame_dig 0
     extract 2 0
-    // smart_contracts/pool/contract.algo.ts:318
+    // smart_contracts/pool/contract.algo.ts:317
     // amount: new UintN64(amount)
     frame_dig 8
     itob
-    // smart_contracts/pool/contract.algo.ts:316-319
+    // smart_contracts/pool/contract.algo.ts:315-318
     // new arc4UserAllocation({
     //   address: entry.address,
     //   amount: new UintN64(amount)
@@ -4379,7 +4379,7 @@ disburseRewards_while_top@47:
     frame_dig 4
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:315-320
+    // smart_contracts/pool/contract.algo.ts:314-319
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -4398,7 +4398,7 @@ disburseRewards_while_top@47:
     frame_bury 0
 
 disburseRewards_block@51:
-    // smart_contracts/pool/contract.algo.ts:309
+    // smart_contracts/pool/contract.algo.ts:308
     // for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
     frame_dig 21
     intc_1 // 1
@@ -4413,14 +4413,14 @@ disburseRewards_after_while@52:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:323
+    // smart_contracts/pool/contract.algo.ts:322
     // this.disbursementCursor.value += iterationAmount
     frame_dig -1
     +
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:323
+    // smart_contracts/pool/contract.algo.ts:322
     // this.disbursementCursor.value += iterationAmount
     swap
     app_global_put
@@ -4430,7 +4430,7 @@ disburseRewards_after_while@52:
     bytec 9 // "active_disbursement_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:324
+    // smart_contracts/pool/contract.algo.ts:323
     // this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
     frame_dig 23
     frame_dig 0
@@ -4449,7 +4449,7 @@ disburseRewards_after_while@52:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:326
+    // smart_contracts/pool/contract.algo.ts:325
     // if (this.entryID.value === this.disbursementCursor.value) {
     ==
     bz disburseRewards_after_if_else@22
@@ -4459,26 +4459,26 @@ disburseRewards_after_while@52:
     // smart_contracts/pool/constants.ts:45
     // export const DisbursementPhaseFinalization = new UintN8(30)
     bytec 21 // 0x1e
-    // smart_contracts/pool/contract.algo.ts:327
+    // smart_contracts/pool/contract.algo.ts:326
     // this.disbursementPhase.value = DisbursementPhaseFinalization
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:328
+    // smart_contracts/pool/contract.algo.ts:327
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
     retsub
 
 disburseRewards_else_body@12:
-    // smart_contracts/pool/contract.algo.ts:850
+    // smart_contracts/pool/contract.algo.ts:849
     // } else if (reward.distribution === DistributionTypeShuffle) {
     frame_dig 6
     // smart_contracts/pool/types.ts:29
     // export const DistributionTypeShuffle = new UintN8(3)
     pushbytes 0x03
-    // smart_contracts/pool/contract.algo.ts:850
+    // smart_contracts/pool/contract.algo.ts:849
     // } else if (reward.distribution === DistributionTypeShuffle) {
     ==
     assert // unknown reward rate type
@@ -4488,24 +4488,24 @@ disburseRewards_else_body@12:
     bytec 13 // "wtickets"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:851
+    // smart_contracts/pool/contract.algo.ts:850
     // if (this.winningTickets.value.length === 0) {
     intc_0 // 0
     extract_uint16
     bnz disburseRewards_else_body@15
-    // smart_contracts/pool/contract.algo.ts:852
+    // smart_contracts/pool/contract.algo.ts:851
     // this.raffle()
     callsub raffle
     retsub
 
 disburseRewards_else_body@15:
-    // smart_contracts/pool/contract.algo.ts:339
+    // smart_contracts/pool/contract.algo.ts:338
     // const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
     global CurrentApplicationAddress
     frame_dig 23
     asset_holding_get AssetBalance
     pop
-    // smart_contracts/pool/contract.algo.ts:340
+    // smart_contracts/pool/contract.algo.ts:339
     // assert(balance >= sum, ERR_NOT_ENOUGH_FUNDS)
     frame_dig 24
     >=
@@ -4516,7 +4516,7 @@ disburseRewards_else_body@15:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:342
+    // smart_contracts/pool/contract.algo.ts:341
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     frame_dig -1
     +
@@ -4526,7 +4526,7 @@ disburseRewards_else_body@15:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:342
+    // smart_contracts/pool/contract.algo.ts:341
     // if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
     >
     bz disburseRewards_after_if_else@25
@@ -4542,7 +4542,7 @@ disburseRewards_else_body@15:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:343
+    // smart_contracts/pool/contract.algo.ts:342
     // iterationAmount = this.entryID.value - this.disbursementCursor.value
     -
     frame_bury -1
@@ -4554,7 +4554,7 @@ disburseRewards_after_if_else@25:
     bytec 14 // "reward"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:346
+    // smart_contracts/pool/contract.algo.ts:345
     // const reward = decodeArc4<Reward>(this.reward.value.bytes)
     dup
     pushint 9 // 9
@@ -4568,10 +4568,10 @@ disburseRewards_after_if_else@25:
     frame_bury 26
     swap
     frame_bury 8
-    // smart_contracts/pool/contract.algo.ts:349
+    // smart_contracts/pool/contract.algo.ts:348
     // if (reward.winnerCount > 0) {
     bz disburseRewards_after_if_else@27
-    // smart_contracts/pool/contract.algo.ts:350
+    // smart_contracts/pool/contract.algo.ts:349
     // amount = reward.rate / reward.winnerCount
     frame_dig 25
     frame_dig 26
@@ -4595,7 +4595,7 @@ disburseRewards_after_if_else@27:
     bytec 27 // "raffle_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:354
+    // smart_contracts/pool/contract.algo.ts:353
     // let { stake, ticket, disbursed } = decodeArc4<RaffleCursor>(this.raffleCursor.value.bytes)
     dup
     intc_0 // 0
@@ -4610,7 +4610,7 @@ disburseRewards_after_if_else@27:
     pushint 16 // 16
     extract_uint64
     frame_bury 15
-    // smart_contracts/pool/contract.algo.ts:355
+    // smart_contracts/pool/contract.algo.ts:354
     // let currentTicket = tickets[ticket]
     uncover 2
     extract 2 0
@@ -4621,7 +4621,7 @@ disburseRewards_after_if_else@27:
     *
     extract_uint64
     frame_bury 13
-    // smart_contracts/pool/contract.algo.ts:359
+    // smart_contracts/pool/contract.algo.ts:358
     // const allocations = new DynamicArray<arc4UserAllocation>()
     bytec 11 // 0x0000
     frame_bury 0
@@ -4638,13 +4638,13 @@ disburseRewards_after_if_else@27:
     frame_bury 27
 
 disburseRewards_while_top@28:
-    // smart_contracts/pool/contract.algo.ts:360
+    // smart_contracts/pool/contract.algo.ts:359
     // for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
     frame_dig 19
     frame_dig -1
     <
     bz disburseRewards_block@40
-    // smart_contracts/pool/contract.algo.ts:361
+    // smart_contracts/pool/contract.algo.ts:360
     // const entry = this.entries(i).value
     frame_dig 19
     dup
@@ -4654,7 +4654,7 @@ disburseRewards_while_top@28:
     bytec 12 // "e"
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:361
+    // smart_contracts/pool/contract.algo.ts:360
     // const entry = this.entries(i).value
     box_get
     assert // Box must have value
@@ -4674,7 +4674,7 @@ disburseRewards_while_top@28:
     intc_0 // 0
     getbit
     frame_bury 17
-    // smart_contracts/pool/contract.algo.ts:363
+    // smart_contracts/pool/contract.algo.ts:362
     // currentRangeEnd = currentRangeStart + entry.quantity
     frame_dig 12
     dup
@@ -4683,7 +4683,7 @@ disburseRewards_while_top@28:
     dup
     cover 2
     frame_bury 10
-    // smart_contracts/pool/contract.algo.ts:364
+    // smart_contracts/pool/contract.algo.ts:363
     // if (currentTicket >= currentRangeStart && currentTicket <= currentRangeEnd) {
     frame_dig 13
     dup
@@ -4733,11 +4733,11 @@ disburseRewards_while_top@28:
     frame_bury 1
     frame_dig 15
     frame_bury 16
-    // smart_contracts/pool/contract.algo.ts:365
+    // smart_contracts/pool/contract.algo.ts:364
     // if (!entry.disqualified) {
     frame_dig 17
     bnz disburseRewards_after_if_else@33
-    // smart_contracts/pool/contract.algo.ts:366-371
+    // smart_contracts/pool/contract.algo.ts:365-370
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -4746,11 +4746,11 @@ disburseRewards_while_top@28:
     // )
     frame_dig 0
     extract 2 0
-    // smart_contracts/pool/contract.algo.ts:369
+    // smart_contracts/pool/contract.algo.ts:368
     // amount: new UintN64(amount)
     frame_dig 8
     itob
-    // smart_contracts/pool/contract.algo.ts:367-370
+    // smart_contracts/pool/contract.algo.ts:366-369
     // new arc4UserAllocation({
     //   address: entry.address,
     //   amount: new UintN64(amount)
@@ -4758,7 +4758,7 @@ disburseRewards_while_top@28:
     frame_dig 4
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:366-371
+    // smart_contracts/pool/contract.algo.ts:365-370
     // allocations.push(
     //   new arc4UserAllocation({
     //     address: entry.address,
@@ -4774,7 +4774,7 @@ disburseRewards_while_top@28:
     extract 6 2
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:372
+    // smart_contracts/pool/contract.algo.ts:371
     // disbursed++
     frame_dig 15
     intc_1 // 1
@@ -4787,7 +4787,7 @@ disburseRewards_after_if_else@33:
     frame_bury 0
     frame_dig 16
     frame_bury 15
-    // smart_contracts/pool/contract.algo.ts:375
+    // smart_contracts/pool/contract.algo.ts:374
     // if (ticket === tickets.length - 1) {
     frame_dig 7
     intc_0 // 0
@@ -4797,7 +4797,7 @@ disburseRewards_after_if_else@33:
     frame_dig 30
     ==
     bz disburseRewards_after_if_else@37
-    // smart_contracts/pool/contract.algo.ts:377
+    // smart_contracts/pool/contract.algo.ts:376
     // if (reward.winnerCount !== disbursed) {
     frame_dig 26
     frame_dig 15
@@ -4806,15 +4806,15 @@ disburseRewards_after_if_else@33:
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:378
+    // smart_contracts/pool/contract.algo.ts:377
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:382
+    // smart_contracts/pool/contract.algo.ts:381
     // disbursed: new UintN64(disbursed),
     frame_dig 15
     itob
-    // smart_contracts/pool/contract.algo.ts:379-383
+    // smart_contracts/pool/contract.algo.ts:378-382
     // this.raffleCursor.value = new arc4RaffleCursor({
     //   ticket: new UintN64(0),
     //   stake: new UintN64(0),
@@ -4826,7 +4826,7 @@ disburseRewards_after_if_else@33:
     // smart_contracts/pool/constants.ts:31
     // export const PoolGlobalStateKeyRaffleCursor = 'raffle_cursor'
     bytec 27 // "raffle_cursor"
-    // smart_contracts/pool/contract.algo.ts:379-383
+    // smart_contracts/pool/contract.algo.ts:378-382
     // this.raffleCursor.value = new arc4RaffleCursor({
     //   ticket: new UintN64(0),
     //   stake: new UintN64(0),
@@ -4837,7 +4837,7 @@ disburseRewards_after_if_else@33:
     // smart_contracts/pool/constants.ts:30
     // export const PoolGlobalStateKeyWinningTickets = 'wtickets'
     bytec 13 // "wtickets"
-    // smart_contracts/pool/contract.algo.ts:384
+    // smart_contracts/pool/contract.algo.ts:383
     // this.winningTickets.value = new DynamicArray<UintN64>()
     bytec 11 // 0x0000
     app_global_put
@@ -4847,7 +4847,7 @@ disburseRewards_after_if_else@33:
     bytec 9 // "active_disbursement_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:385
+    // smart_contracts/pool/contract.algo.ts:384
     // this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
     frame_dig 23
     frame_dig 0
@@ -4863,32 +4863,32 @@ disburseRewards_block@40:
     bytec_0 // "disbursement_cursor"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:402
+    // smart_contracts/pool/contract.algo.ts:401
     // this.disbursementCursor.value += iterationAmount
     frame_dig -1
     +
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:402
+    // smart_contracts/pool/contract.algo.ts:401
     // this.disbursementCursor.value += iterationAmount
     swap
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:404
+    // smart_contracts/pool/contract.algo.ts:403
     // ticket: new UintN64(ticket),
     frame_dig 30
     itob
-    // smart_contracts/pool/contract.algo.ts:405
+    // smart_contracts/pool/contract.algo.ts:404
     // stake: new UintN64(stake),
     frame_dig 27
     itob
-    // smart_contracts/pool/contract.algo.ts:406
+    // smart_contracts/pool/contract.algo.ts:405
     // disbursed: new UintN64(disbursed),
     frame_dig 15
     dup
     cover 3
     itob
-    // smart_contracts/pool/contract.algo.ts:403-407
+    // smart_contracts/pool/contract.algo.ts:402-406
     // this.raffleCursor.value = new arc4RaffleCursor({
     //   ticket: new UintN64(ticket),
     //   stake: new UintN64(stake),
@@ -4901,7 +4901,7 @@ disburseRewards_block@40:
     // smart_contracts/pool/constants.ts:31
     // export const PoolGlobalStateKeyRaffleCursor = 'raffle_cursor'
     bytec 27 // "raffle_cursor"
-    // smart_contracts/pool/contract.algo.ts:403-407
+    // smart_contracts/pool/contract.algo.ts:402-406
     // this.raffleCursor.value = new arc4RaffleCursor({
     //   ticket: new UintN64(ticket),
     //   stake: new UintN64(stake),
@@ -4915,14 +4915,14 @@ disburseRewards_block@40:
     bytec 9 // "active_disbursement_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:408
+    // smart_contracts/pool/contract.algo.ts:407
     // this.createRewardAllocations(this.activeDisbursementID.value, asset, allocations, sum)
     frame_dig 23
     frame_dig 0
     frame_dig 24
     callsub createRewardAllocations
     pop
-    // smart_contracts/pool/contract.algo.ts:410
+    // smart_contracts/pool/contract.algo.ts:409
     // if (reward.winnerCount === disbursed) {
     frame_dig 26
     ==
@@ -4933,45 +4933,45 @@ disburseRewards_block@40:
     // smart_contracts/pool/constants.ts:45
     // export const DisbursementPhaseFinalization = new UintN8(30)
     bytec 21 // 0x1e
-    // smart_contracts/pool/contract.algo.ts:411
+    // smart_contracts/pool/contract.algo.ts:410
     // this.disbursementPhase.value = DisbursementPhaseFinalization
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:412
+    // smart_contracts/pool/contract.algo.ts:411
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
     // smart_contracts/pool/constants.ts:31
     // export const PoolGlobalStateKeyRaffleCursor = 'raffle_cursor'
     bytec 27 // "raffle_cursor"
-    // smart_contracts/pool/contract.algo.ts:334
+    // smart_contracts/pool/contract.algo.ts:333
     // this.raffleCursor.value = new arc4RaffleCursor({ ticket: zero, stake: zero, disbursed: zero })
     pushbytes 0x000000000000000000000000000000000000000000000000
     app_global_put
     // smart_contracts/pool/constants.ts:30
     // export const PoolGlobalStateKeyWinningTickets = 'wtickets'
     bytec 13 // "wtickets"
-    // smart_contracts/pool/contract.algo.ts:335
+    // smart_contracts/pool/contract.algo.ts:334
     // this.winningTickets.value = new DynamicArray<UintN64>()
     bytec 11 // 0x0000
     app_global_put
     retsub
 
 disburseRewards_after_if_else@37:
-    // smart_contracts/pool/contract.algo.ts:391
+    // smart_contracts/pool/contract.algo.ts:390
     // iterationAmount -= i
     frame_dig -1
     frame_dig 19
     -
     frame_bury -1
-    // smart_contracts/pool/contract.algo.ts:392
+    // smart_contracts/pool/contract.algo.ts:391
     // ticket++
     frame_dig 30
     intc_1 // 1
     +
-    // smart_contracts/pool/contract.algo.ts:393
+    // smart_contracts/pool/contract.algo.ts:392
     // currentTicket = tickets[ticket]
     dup
     pushint 8 // 8
@@ -4982,14 +4982,14 @@ disburseRewards_after_if_else@37:
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:394
+    // smart_contracts/pool/contract.algo.ts:393
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
-    // smart_contracts/pool/contract.algo.ts:395
+    // smart_contracts/pool/contract.algo.ts:394
     // i = 0
     intc_0 // 0
-    // smart_contracts/pool/contract.algo.ts:396-397
+    // smart_contracts/pool/contract.algo.ts:395-396
     // stake = 0
     // currentRangeEnd = 0
     dupn 2
@@ -5022,12 +5022,12 @@ disburseRewards_after_if_else@38:
     frame_bury -1
     frame_dig 20
     frame_dig 11
-    // smart_contracts/pool/contract.algo.ts:399
+    // smart_contracts/pool/contract.algo.ts:398
     // currentRangeStart = currentRangeEnd + 1
     intc_1 // 1
     +
     frame_bury 12
-    // smart_contracts/pool/contract.algo.ts:360
+    // smart_contracts/pool/contract.algo.ts:359
     // for (let i = this.disbursementCursor.value; i < iterationAmount; i++) {
     intc_1 // 1
     +
@@ -5050,7 +5050,7 @@ finalizeDistribution:
     // smart_contracts/pool/constants.ts:45
     // export const DisbursementPhaseFinalization = new UintN8(30)
     bytec 21 // 0x1e
-    // smart_contracts/pool/contract.algo.ts:863
+    // smart_contracts/pool/contract.algo.ts:862
     // assert(this.disbursementPhase.value === DisbursementPhaseFinalization, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION)
     ==
     assert // Disbursement not ready for finalization
@@ -5077,18 +5077,18 @@ finalizeDistribution:
     // return decodeArc4<AkitaAppList>(appListBytes)
     pushint 8 // 8
     extract_uint64
-    // smart_contracts/pool/contract.algo.ts:570-574
+    // smart_contracts/pool/contract.algo.ts:569-573
     // abiCall(Rewards.prototype.finalizeDisbursement, {
     //   appId: rewardsApp,
     //   args: [disbursementID],
     //   fee,
     // })
     itxn_begin
-    // smart_contracts/pool/contract.algo.ts:572
+    // smart_contracts/pool/contract.algo.ts:571
     // args: [disbursementID],
     swap
     itob
-    // smart_contracts/pool/contract.algo.ts:570-574
+    // smart_contracts/pool/contract.algo.ts:569-573
     // abiCall(Rewards.prototype.finalizeDisbursement, {
     //   appId: rewardsApp,
     //   args: [disbursementID],
@@ -5106,7 +5106,7 @@ finalizeDistribution:
     // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/contract.algo.ts:570-574
+    // smart_contracts/pool/contract.algo.ts:569-573
     // abiCall(Rewards.prototype.finalizeDisbursement, {
     //   appId: rewardsApp,
     //   args: [disbursementID],
@@ -5118,7 +5118,7 @@ finalizeDistribution:
     pushbytes "d"
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:867
+    // smart_contracts/pool/contract.algo.ts:866
     // this.disbursements(this.activeDisbursementID.value).create()
     intc_0 // 0
     box_create
@@ -5126,7 +5126,7 @@ finalizeDistribution:
     // smart_contracts/pool/constants.ts:26
     // export const PoolGlobalStateKeyActiveDisbursementID = 'active_disbursement_id'
     bytec 9 // "active_disbursement_id"
-    // smart_contracts/pool/contract.algo.ts:869
+    // smart_contracts/pool/contract.algo.ts:868
     // this.activeDisbursementID.value = 0
     intc_0 // 0
     app_global_put
@@ -5136,20 +5136,20 @@ finalizeDistribution:
     // smart_contracts/pool/constants.ts:42
     // export const DisbursementPhaseIdle = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:870
+    // smart_contracts/pool/contract.algo.ts:869
     // this.disbursementPhase.value = DisbursementPhaseIdle
     app_global_put
     // smart_contracts/pool/constants.ts:28
     // export const PoolGlobalStateKeyDisbursementCursor = 'disbursement_cursor'
     bytec_0 // "disbursement_cursor"
-    // smart_contracts/pool/contract.algo.ts:871
+    // smart_contracts/pool/contract.algo.ts:870
     // this.disbursementCursor.value = 0
     intc_0 // 0
     app_global_put
     // smart_contracts/pool/constants.ts:29
     // export const PoolGlobalStateKeyQualifiedStake = 'qualified_stake'
     bytec 10 // "qualified_stake"
-    // smart_contracts/pool/contract.algo.ts:873
+    // smart_contracts/pool/contract.algo.ts:872
     // this.qualifiedStake.value = 0
     intc_0 // 0
     app_global_put
@@ -5159,7 +5159,7 @@ finalizeDistribution:
     // smart_contracts/pool/constants.ts:39
     // export const PoolStatusFinal = new UintN8(10)
     bytec 19 // 0x0a
-    // smart_contracts/pool/contract.algo.ts:874
+    // smart_contracts/pool/contract.algo.ts:873
     // this.status.value = PoolStatusFinal
     app_global_put
     retsub
@@ -5167,10 +5167,10 @@ finalizeDistribution:
 
 // smart_contracts/pool/contract.algo.ts::Pool.check(address: bytes, asset: uint64) -> uint64, uint64:
 check:
-    // smart_contracts/pool/contract.algo.ts:877
+    // smart_contracts/pool/contract.algo.ts:876
     // check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
     proto 2 2
-    // smart_contracts/pool/contract.algo.ts:878
+    // smart_contracts/pool/contract.algo.ts:877
     // const key = new arc4EntryKey({ address, asset: new UintN64(asset) })
     frame_dig -1
     itob
@@ -5182,12 +5182,12 @@ check:
     pushbytes "a"
     swap
     concat
-    // smart_contracts/pool/contract.algo.ts:879
+    // smart_contracts/pool/contract.algo.ts:878
     // const id = this.entriesByAddress(key).value
     box_get
     assert // Box must have value
     btoi
-    // smart_contracts/pool/contract.algo.ts:880
+    // smart_contracts/pool/contract.algo.ts:879
     // return this.checkByID(id)
     callsub checkByID
     retsub
@@ -5204,14 +5204,14 @@ signUpsOpen:
     // smart_contracts/pool/constants.ts:38
     // export const PoolStatusDraft = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:889
+    // smart_contracts/pool/contract.algo.ts:888
     // this.status.value !== PoolStatusDraft &&
     !=
-    // smart_contracts/pool/contract.algo.ts:889-890
+    // smart_contracts/pool/contract.algo.ts:888-889
     // this.status.value !== PoolStatusDraft &&
     // Global.latestTimestamp > this.signupTimestamp.value &&
     bz signUpsOpen_bool_false@5
-    // smart_contracts/pool/contract.algo.ts:890
+    // smart_contracts/pool/contract.algo.ts:889
     // Global.latestTimestamp > this.signupTimestamp.value &&
     global LatestTimestamp
     // smart_contracts/pool/constants.ts:9
@@ -5220,14 +5220,14 @@ signUpsOpen:
     bytec 32 // "signup_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:890
+    // smart_contracts/pool/contract.algo.ts:889
     // Global.latestTimestamp > this.signupTimestamp.value &&
     >
-    // smart_contracts/pool/contract.algo.ts:889-890
+    // smart_contracts/pool/contract.algo.ts:888-889
     // this.status.value !== PoolStatusDraft &&
     // Global.latestTimestamp > this.signupTimestamp.value &&
     bz signUpsOpen_bool_false@5
-    // smart_contracts/pool/contract.algo.ts:891
+    // smart_contracts/pool/contract.algo.ts:890
     // (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
     global LatestTimestamp
     // smart_contracts/pool/constants.ts:11
@@ -5236,7 +5236,7 @@ signUpsOpen:
     bytec 16 // "start_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:891
+    // smart_contracts/pool/contract.algo.ts:890
     // (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
     <
     bnz signUpsOpen_bool_true@4
@@ -5246,13 +5246,13 @@ signUpsOpen:
     bytec 26 // "allow_late_signups"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:891
+    // smart_contracts/pool/contract.algo.ts:890
     // (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
     bz signUpsOpen_bool_false@5
 
 signUpsOpen_bool_true@4:
     intc_1 // 1
-    // smart_contracts/pool/contract.algo.ts:888-892
+    // smart_contracts/pool/contract.algo.ts:887-891
     // return (
     //   this.status.value !== PoolStatusDraft &&
     //   Global.latestTimestamp > this.signupTimestamp.value &&
@@ -5262,7 +5262,7 @@ signUpsOpen_bool_true@4:
 
 signUpsOpen_bool_false@5:
     intc_0 // 0
-    // smart_contracts/pool/contract.algo.ts:888-892
+    // smart_contracts/pool/contract.algo.ts:887-891
     // return (
     //   this.status.value !== PoolStatusDraft &&
     //   Global.latestTimestamp > this.signupTimestamp.value &&
@@ -5282,14 +5282,14 @@ isLive:
     // smart_contracts/pool/constants.ts:38
     // export const PoolStatusDraft = new UintN8(0)
     bytec_1 // 0x00
-    // smart_contracts/pool/contract.algo.ts:899
+    // smart_contracts/pool/contract.algo.ts:898
     // this.status.value !== PoolStatusDraft &&
     !=
-    // smart_contracts/pool/contract.algo.ts:899-900
+    // smart_contracts/pool/contract.algo.ts:898-899
     // this.status.value !== PoolStatusDraft &&
     // (Global.latestTimestamp >= this.startTimestamp.value) &&
     bz isLive_bool_false@5
-    // smart_contracts/pool/contract.algo.ts:900
+    // smart_contracts/pool/contract.algo.ts:899
     // (Global.latestTimestamp >= this.startTimestamp.value) &&
     global LatestTimestamp
     // smart_contracts/pool/constants.ts:11
@@ -5298,14 +5298,14 @@ isLive:
     bytec 16 // "start_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:900
+    // smart_contracts/pool/contract.algo.ts:899
     // (Global.latestTimestamp >= this.startTimestamp.value) &&
     >=
-    // smart_contracts/pool/contract.algo.ts:899-900
+    // smart_contracts/pool/contract.algo.ts:898-899
     // this.status.value !== PoolStatusDraft &&
     // (Global.latestTimestamp >= this.startTimestamp.value) &&
     bz isLive_bool_false@5
-    // smart_contracts/pool/contract.algo.ts:901
+    // smart_contracts/pool/contract.algo.ts:900
     // (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
     global LatestTimestamp
     // smart_contracts/pool/constants.ts:12
@@ -5314,7 +5314,7 @@ isLive:
     bytec 18 // "end_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:901
+    // smart_contracts/pool/contract.algo.ts:900
     // (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
     <=
     bnz isLive_bool_true@4
@@ -5324,13 +5324,13 @@ isLive:
     bytec 18 // "end_timestamp"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:901
+    // smart_contracts/pool/contract.algo.ts:900
     // (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
     bnz isLive_bool_false@5
 
 isLive_bool_true@4:
     intc_1 // 1
-    // smart_contracts/pool/contract.algo.ts:898-902
+    // smart_contracts/pool/contract.algo.ts:897-901
     // return (
     //   this.status.value !== PoolStatusDraft &&
     //   (Global.latestTimestamp >= this.startTimestamp.value) &&
@@ -5340,7 +5340,7 @@ isLive_bool_true@4:
 
 isLive_bool_false@5:
     intc_0 // 0
-    // smart_contracts/pool/contract.algo.ts:898-902
+    // smart_contracts/pool/contract.algo.ts:897-901
     // return (
     //   this.status.value !== PoolStatusDraft &&
     //   (Global.latestTimestamp >= this.startTimestamp.value) &&
@@ -5375,7 +5375,7 @@ getState:
     bytec 14 // "reward"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:911
+    // smart_contracts/pool/contract.algo.ts:910
     // reward: decodeArc4<Reward>(this.reward.value.bytes),
     dup
     intc_0 // 0
@@ -5427,7 +5427,7 @@ getState:
     bytec_2 // "entry_count"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:917
+    // smart_contracts/pool/contract.algo.ts:916
     // entryCount: (this.entryID.value + 1),
     intc_1 // 1
     +
@@ -5443,7 +5443,7 @@ getState:
     bytec 29 // "stake_key"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:919
+    // smart_contracts/pool/contract.algo.ts:918
     // stakeKey: decodeArc4<RootKey>(this.stakeKey.value.bytes),
     dup
     extract 0 32 // on error: Index access is out of bounds
@@ -5474,7 +5474,7 @@ getState:
     bytec 24 // "creator"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/contract.algo.ts:907-923
+    // smart_contracts/pool/contract.algo.ts:906-922
     // return {
     //   status: this.status.value,
     //   title: this.title.value,

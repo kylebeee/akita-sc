@@ -1,11 +1,12 @@
 {
   "version": 3,
   "sources": [
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/constants.ts",
     "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/prize-box/factory.algo.ts",
     "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/utils/base-contracts/factory.ts",
     "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/utils/constants.ts"
   ],
-  "mappings": ";;;;;AAiBA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;AAAA;;AAgBE;;AAAA;AAAA;AAAA;;AAAA;AAhBF;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAgBE;;;AAAA;AAAA;;;;;;AAAA;AAAA;AAAA;AAAA;;AAPC;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAJH;;;AAAA;;;AAIG;;;AAAA;;AAAD;;;ACP2D;;;;;;;;;;;;;;;;;;;;;;;;ADSzD;;AAAA;;AAKW;;AAAkB;;AAAtB;AAAP;;AAKF;;;AAIE;;AAAA;;AAGqB;;AAHrB;AAAA;;;AAAA;;AAAA;;AAKM;;;;AALN;AAAA;;;;AAAA;AAcoB;AAAA;;;;;;;;;;;;AAhBH;;;AAAA;;;AAAA;;;;;;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAgBG;;;AAAA;;;;AEhDG;;;AFgDH;AAMjB;;;AAEH;AAE0B;AAAA;;AAAA;AEnDe;;;;;;;;AFiDzC;;;AExDuB;;;AFwDvB;AAQA;;",
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ACiBA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;;AC2EE;;AAAA;AAAA;AAAA;;AAAA;AD3EF;;;AAAA;AC2EE;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;ADtEF;;;AAAA;ACsEE;;;AAAA;;AATC;;AAAA;AAAA;AAAA;AAAA;;AAAA;AD7DH;;;AAAA;;;AAAA;;;AAAA;;;AC6DG;;;AAAA;;AD7CD;;AAAA;AAAA;AAAA;;AAAA;AAhBF;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAgBE;;;AAAA;AAAA;;;;;;AAAA;AAAA;AAAA;AAAA;;AAPC;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAJH;;;AAAA;;;AAIG;;;AAAA;;AAAD;;;ACH2D;ADKzD;;AAAA;;AAKW;;AAAkB;;AAAtB;AAAP;;AAKF;;;AAIE;;AAAA;;AAGqB;;AAHrB;AAAA;;;AAAA;;AAAA;;AAKM;;;;AALN;AAAA;;;;AAAA;AAcoB;AAAA;;;;;;;;;;;;AAhBH;;;AAAA;;;AAAA;;;;;;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAgBG;;;AAAA;;;;AEhDG;;;AFgDH;AAMjB;;;AAEH;AAE0B;AAAA;;AAAA;AEnDe;;;;;;;;AFiDzC;;;AExDuB;;;AFwDvB;AAQA;;;;;ACWF;;;AAEa;;AFhFuB;AAAA;AAAA;AAAA;AEgFQ;;AAAA;AAAnC;AAAP;AF9EiC;;;;;;;;;AE+EjC;;AAAA;AA/DyD;AAgEzD;;AAAA;;AAKF;;;AACa;;AFxFuB;AAAA;AAAA;AAAA;AEwFQ;;AAAA;AAAnC;AAAP;AFxFkC;AEyFlC;;AAAA;;AAGF;;;AACa;;AF7FuB;AAAA;AAAA;AAAA;AE6FQ;;AAAA;AAAnC;AAAP;AF5FqC;;;;;;;;;;;;;;AE6FrC;;AAAA;",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -13,9 +14,12 @@
       "params": {},
       "block": "main",
       "stack_in": [],
-      "op": "intcblock 1 0"
+      "op": "intcblock 1 0 4"
     },
-    "5": {
+    "6": {
+      "op": "bytecblock \"akita_dao\" \"child_contract_version\""
+    },
+    "41": {
       "op": "txn NumAppArgs",
       "defined_out": [
         "tmp%0#1"
@@ -24,44 +28,56 @@
         "tmp%0#1"
       ]
     },
-    "7": {
-      "op": "bz main_after_if_else@9",
+    "43": {
+      "op": "bz main_after_if_else@12",
       "stack_out": []
     },
-    "10": {
-      "op": "pushbytess 0x20df3a54 0xa0e81872 0x3decb140 // method \"create(string)void\", method \"update()void\", method \"mint(pay,address)uint64\"",
+    "46": {
+      "op": "pushbytess 0x20df3a54 0xa0e81872 0x3decb140 0xc385cfae 0x33e92c94 0x1ead20a9 // method \"create(string)void\", method \"update()void\", method \"mint(pay,address)uint64\", method \"updateApplication(string,string)void\", method \"updateAkitaDAO(uint64)void\", method \"updateAkitaDAOEscrow(uint64)void\"",
       "defined_out": [
         "Method(create(string)void)",
         "Method(mint(pay,address)uint64)",
-        "Method(update()void)"
+        "Method(update()void)",
+        "Method(updateAkitaDAO(uint64)void)",
+        "Method(updateAkitaDAOEscrow(uint64)void)",
+        "Method(updateApplication(string,string)void)"
       ],
       "stack_out": [
         "Method(create(string)void)",
         "Method(update()void)",
-        "Method(mint(pay,address)uint64)"
+        "Method(mint(pay,address)uint64)",
+        "Method(updateApplication(string,string)void)",
+        "Method(updateAkitaDAO(uint64)void)",
+        "Method(updateAkitaDAOEscrow(uint64)void)"
       ]
     },
-    "27": {
+    "78": {
       "op": "txna ApplicationArgs 0",
       "defined_out": [
         "Method(create(string)void)",
         "Method(mint(pay,address)uint64)",
         "Method(update()void)",
+        "Method(updateAkitaDAO(uint64)void)",
+        "Method(updateAkitaDAOEscrow(uint64)void)",
+        "Method(updateApplication(string,string)void)",
         "tmp%2#0"
       ],
       "stack_out": [
         "Method(create(string)void)",
         "Method(update()void)",
         "Method(mint(pay,address)uint64)",
+        "Method(updateApplication(string,string)void)",
+        "Method(updateAkitaDAO(uint64)void)",
+        "Method(updateAkitaDAOEscrow(uint64)void)",
         "tmp%2#0"
       ]
     },
-    "30": {
-      "op": "match main_create_route@3 main_update_route@4 main_mint_route@5",
+    "81": {
+      "op": "match main_create_route@3 main_update_route@4 main_mint_route@5 main_updateApplication_route@6 main_updateAkitaDAO_route@7 main_updateAkitaDAOEscrow_route@8",
       "stack_out": []
     },
-    "38": {
-      "block": "main_after_if_else@9",
+    "95": {
+      "block": "main_after_if_else@12",
       "stack_in": [],
       "op": "intc_1 // 0",
       "defined_out": [
@@ -71,11 +87,269 @@
         "tmp%0#0"
       ]
     },
-    "39": {
+    "96": {
       "op": "return",
       "stack_out": []
     },
-    "40": {
+    "97": {
+      "block": "main_updateAkitaDAOEscrow_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%32#0"
+      ],
+      "stack_out": [
+        "tmp%32#0"
+      ]
+    },
+    "99": {
+      "op": "!",
+      "defined_out": [
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%33#0"
+      ]
+    },
+    "100": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "101": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%34#0"
+      ]
+    },
+    "103": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "104": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_bytes[8]%1#0"
+      ],
+      "stack_out": [
+        "reinterpret_bytes[8]%1#0"
+      ]
+    },
+    "107": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%36#0"
+      ],
+      "stack_out": [
+        "tmp%36#0"
+      ]
+    },
+    "108": {
+      "callsub": "smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow",
+      "op": "callsub updateAkitaDAOEscrow",
+      "stack_out": []
+    },
+    "111": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "112": {
+      "op": "return",
+      "stack_out": []
+    },
+    "113": {
+      "block": "main_updateAkitaDAO_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "115": {
+      "op": "!",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "116": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "117": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%29#0"
+      ],
+      "stack_out": [
+        "tmp%29#0"
+      ]
+    },
+    "119": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "120": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_bytes[8]%0#0"
+      ],
+      "stack_out": [
+        "reinterpret_bytes[8]%0#0"
+      ]
+    },
+    "123": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0"
+      ]
+    },
+    "124": {
+      "callsub": "smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO",
+      "op": "callsub updateAkitaDAO",
+      "stack_out": []
+    },
+    "127": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "128": {
+      "op": "return",
+      "stack_out": []
+    },
+    "129": {
+      "block": "main_updateApplication_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "131": {
+      "op": "intc_2 // UpdateApplication",
+      "defined_out": [
+        "UpdateApplication",
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0",
+        "UpdateApplication"
+      ]
+    },
+    "132": {
+      "op": "==",
+      "defined_out": [
+        "tmp%20#0"
+      ],
+      "stack_out": [
+        "tmp%20#0"
+      ]
+    },
+    "133": {
+      "error": "OnCompletion is not UpdateApplication",
+      "op": "assert // OnCompletion is not UpdateApplication",
+      "stack_out": []
+    },
+    "134": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "136": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "137": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "140": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%24#0"
+      ]
+    },
+    "143": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%24#0",
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%24#0",
+        "tmp%25#0"
+      ]
+    },
+    "146": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%24#0",
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%24#0",
+        "tmp%26#0"
+      ]
+    },
+    "149": {
+      "callsub": "smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateApplication",
+      "op": "callsub updateApplication",
+      "stack_out": []
+    },
+    "152": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "153": {
+      "op": "return",
+      "stack_out": []
+    },
+    "154": {
       "block": "main_mint_route@5",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -86,7 +360,7 @@
         "tmp%13#0"
       ]
     },
-    "42": {
+    "156": {
       "op": "!",
       "defined_out": [
         "tmp%14#0"
@@ -95,12 +369,12 @@
         "tmp%14#0"
       ]
     },
-    "43": {
+    "157": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "44": {
+    "158": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%15#0"
@@ -109,12 +383,12 @@
         "tmp%15#0"
       ]
     },
-    "46": {
+    "160": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "47": {
+    "161": {
       "op": "txn GroupIndex",
       "defined_out": [
         "tmp%17#0"
@@ -123,7 +397,7 @@
         "tmp%17#0"
       ]
     },
-    "49": {
+    "163": {
       "op": "intc_0 // 1",
       "defined_out": [
         "1",
@@ -134,7 +408,7 @@
         "1"
       ]
     },
-    "50": {
+    "164": {
       "op": "-",
       "defined_out": [
         "gtxn_idx%0#0"
@@ -143,7 +417,7 @@
         "gtxn_idx%0#0"
       ]
     },
-    "51": {
+    "165": {
       "op": "dup",
       "defined_out": [
         "gtxn_idx%0#0",
@@ -154,7 +428,7 @@
         "gtxn_idx%0#0 (copy)"
       ]
     },
-    "52": {
+    "166": {
       "op": "gtxns TypeEnum",
       "defined_out": [
         "gtxn_idx%0#0",
@@ -165,7 +439,7 @@
         "gtxn_type%0#0"
       ]
     },
-    "54": {
+    "168": {
       "op": "intc_0 // pay",
       "defined_out": [
         "gtxn_idx%0#0",
@@ -178,7 +452,7 @@
         "pay"
       ]
     },
-    "55": {
+    "169": {
       "op": "==",
       "defined_out": [
         "gtxn_idx%0#0",
@@ -189,14 +463,14 @@
         "gtxn_type_matches%0#0"
       ]
     },
-    "56": {
+    "170": {
       "error": "transaction type is pay",
       "op": "assert // transaction type is pay",
       "stack_out": [
         "gtxn_idx%0#0"
       ]
     },
-    "57": {
+    "171": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "gtxn_idx%0#0",
@@ -207,7 +481,7 @@
         "reinterpret_bytes[32]%0#0"
       ]
     },
-    "60": {
+    "174": {
       "callsub": "smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.mint",
       "op": "callsub mint",
       "defined_out": [
@@ -217,7 +491,7 @@
         "to_encode%0#0"
       ]
     },
-    "63": {
+    "177": {
       "op": "itob",
       "defined_out": [
         "val_as_bytes%0#0"
@@ -226,7 +500,7 @@
         "val_as_bytes%0#0"
       ]
     },
-    "64": {
+    "178": {
       "op": "pushbytes 0x151f7c75",
       "defined_out": [
         "0x151f7c75",
@@ -237,14 +511,14 @@
         "0x151f7c75"
       ]
     },
-    "70": {
+    "184": {
       "op": "swap",
       "stack_out": [
         "0x151f7c75",
         "val_as_bytes%0#0"
       ]
     },
-    "71": {
+    "185": {
       "op": "concat",
       "defined_out": [
         "tmp%18#0"
@@ -253,11 +527,11 @@
         "tmp%18#0"
       ]
     },
-    "72": {
+    "186": {
       "op": "log",
       "stack_out": []
     },
-    "73": {
+    "187": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -266,11 +540,11 @@
         "tmp%0#0"
       ]
     },
-    "74": {
+    "188": {
       "op": "return",
       "stack_out": []
     },
-    "75": {
+    "189": {
       "block": "main_update_route@4",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -281,8 +555,8 @@
         "tmp%9#0"
       ]
     },
-    "77": {
-      "op": "pushint 4 // UpdateApplication",
+    "191": {
+      "op": "intc_2 // UpdateApplication",
       "defined_out": [
         "UpdateApplication",
         "tmp%9#0"
@@ -292,7 +566,7 @@
         "UpdateApplication"
       ]
     },
-    "79": {
+    "192": {
       "op": "==",
       "defined_out": [
         "tmp%10#0"
@@ -301,12 +575,12 @@
         "tmp%10#0"
       ]
     },
-    "80": {
+    "193": {
       "error": "OnCompletion is not UpdateApplication",
       "op": "assert // OnCompletion is not UpdateApplication",
       "stack_out": []
     },
-    "81": {
+    "194": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%11#0"
@@ -315,16 +589,16 @@
         "tmp%11#0"
       ]
     },
-    "83": {
+    "196": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "84": {
+    "197": {
       "callsub": "smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.update",
       "op": "callsub update"
     },
-    "87": {
+    "200": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -333,11 +607,11 @@
         "tmp%0#0"
       ]
     },
-    "88": {
+    "201": {
       "op": "return",
       "stack_out": []
     },
-    "89": {
+    "202": {
       "block": "main_create_route@3",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -348,7 +622,7 @@
         "tmp%3#0"
       ]
     },
-    "91": {
+    "204": {
       "op": "!",
       "defined_out": [
         "tmp%4#0"
@@ -357,12 +631,12 @@
         "tmp%4#0"
       ]
     },
-    "92": {
+    "205": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "93": {
+    "206": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%5#0"
@@ -371,7 +645,7 @@
         "tmp%5#0"
       ]
     },
-    "95": {
+    "208": {
       "op": "!",
       "defined_out": [
         "tmp%6#0"
@@ -380,12 +654,12 @@
         "tmp%6#0"
       ]
     },
-    "96": {
+    "209": {
       "error": "can only call when creating",
       "op": "assert // can only call when creating",
       "stack_out": []
     },
-    "97": {
+    "210": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "tmp%7#0"
@@ -394,7 +668,7 @@
         "tmp%7#0"
       ]
     },
-    "100": {
+    "213": {
       "op": "extract 2 0",
       "defined_out": [
         "tmp%8#0"
@@ -403,12 +677,12 @@
         "tmp%8#0"
       ]
     },
-    "103": {
+    "216": {
       "callsub": "smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.create",
       "op": "callsub create",
       "stack_out": []
     },
-    "106": {
+    "219": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -417,11 +691,11 @@
         "tmp%0#0"
       ]
     },
-    "107": {
+    "220": {
       "op": "return",
       "stack_out": []
     },
-    "108": {
+    "221": {
       "subroutine": "smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.create",
       "params": {
         "version#0": "bytes"
@@ -430,8 +704,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "111": {
-      "op": "pushbytes \"child_contract_version\"",
+    "224": {
+      "op": "bytec_1 // \"child_contract_version\"",
       "defined_out": [
         "\"child_contract_version\""
       ],
@@ -439,7 +713,7 @@
         "\"child_contract_version\""
       ]
     },
-    "135": {
+    "225": {
       "op": "frame_dig -1",
       "defined_out": [
         "\"child_contract_version\"",
@@ -450,15 +724,15 @@
         "version#0 (copy)"
       ]
     },
-    "137": {
+    "227": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "138": {
+    "228": {
       "retsub": true,
       "op": "retsub"
     },
-    "139": {
+    "229": {
       "subroutine": "smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.update",
       "params": {},
       "block": "update",
@@ -471,7 +745,7 @@
         "tmp%0#0"
       ]
     },
-    "141": {
+    "231": {
       "op": "global CreatorAddress",
       "defined_out": [
         "tmp%0#0",
@@ -482,7 +756,7 @@
         "tmp%1#0"
       ]
     },
-    "143": {
+    "233": {
       "op": "==",
       "defined_out": [
         "tmp%2#0"
@@ -491,16 +765,16 @@
         "tmp%2#0"
       ]
     },
-    "144": {
+    "234": {
       "error": "Only the creator can update the application",
       "op": "assert // Only the creator can update the application",
       "stack_out": []
     },
-    "145": {
+    "235": {
       "retsub": true,
       "op": "retsub"
     },
-    "146": {
+    "236": {
       "subroutine": "smart_contracts/prize-box/factory.algo.ts::PrizeBoxFactory.mint",
       "params": {
         "payment#0": "uint64",
@@ -510,7 +784,7 @@
       "stack_in": [],
       "op": "proto 2 1"
     },
-    "149": {
+    "239": {
       "op": "frame_dig -2",
       "defined_out": [
         "payment#0 (copy)"
@@ -519,7 +793,7 @@
         "payment#0 (copy)"
       ]
     },
-    "151": {
+    "241": {
       "op": "gtxns Receiver",
       "defined_out": [
         "tmp%0#0"
@@ -528,7 +802,7 @@
         "tmp%0#0"
       ]
     },
-    "153": {
+    "243": {
       "op": "global CurrentApplicationAddress",
       "defined_out": [
         "tmp%0#0",
@@ -539,7 +813,7 @@
         "tmp%1#0"
       ]
     },
-    "155": {
+    "245": {
       "op": "==",
       "defined_out": [
         "tmp%2#0"
@@ -548,17 +822,17 @@
         "tmp%2#0"
       ]
     },
-    "156": {
+    "246": {
       "op": "bz mint_bool_false@3",
       "stack_out": []
     },
-    "159": {
+    "249": {
       "op": "frame_dig -2",
       "stack_out": [
         "payment#0 (copy)"
       ]
     },
-    "161": {
+    "251": {
       "op": "gtxns Amount",
       "defined_out": [
         "tmp%3#0"
@@ -567,7 +841,7 @@
         "tmp%3#0"
       ]
     },
-    "163": {
+    "253": {
       "op": "pushint 278500 // 278500",
       "defined_out": [
         "278500",
@@ -578,7 +852,7 @@
         "278500"
       ]
     },
-    "167": {
+    "257": {
       "op": "==",
       "defined_out": [
         "tmp%9#0"
@@ -587,11 +861,11 @@
         "tmp%9#0"
       ]
     },
-    "168": {
+    "258": {
       "op": "bz mint_bool_false@3",
       "stack_out": []
     },
-    "171": {
+    "261": {
       "op": "intc_0 // 1",
       "defined_out": [
         "and_result%0#0"
@@ -600,7 +874,7 @@
         "and_result%0#0"
       ]
     },
-    "172": {
+    "262": {
       "block": "mint_bool_merge@4",
       "stack_in": [
         "and_result%0#0"
@@ -610,10 +884,10 @@
       "defined_out": [],
       "stack_out": []
     },
-    "173": {
+    "263": {
       "op": "itxn_begin"
     },
-    "174": {
+    "264": {
       "op": "pushbytes 0xcc694eaa // method \"create(address)void\"",
       "defined_out": [
         "Method(create(address)void)"
@@ -622,11 +896,11 @@
         "Method(create(address)void)"
       ]
     },
-    "180": {
+    "270": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "182": {
+    "272": {
       "op": "frame_dig -1",
       "defined_out": [
         "owner#0 (copy)"
@@ -635,11 +909,11 @@
         "owner#0 (copy)"
       ]
     },
-    "184": {
+    "274": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "186": {
+    "276": {
       "op": "intc_0 // 1",
       "defined_out": [
         "1"
@@ -648,21 +922,21 @@
         "1"
       ]
     },
-    "187": {
+    "277": {
       "op": "itxn_field GlobalNumByteSlice",
       "stack_out": []
     },
-    "189": {
+    "279": {
       "op": "intc_0 // 1",
       "stack_out": [
         "1"
       ]
     },
-    "190": {
+    "280": {
       "op": "itxn_field GlobalNumUint",
       "stack_out": []
     },
-    "192": {
+    "282": {
       "op": "pushbytes base64(CoEBQw==)",
       "defined_out": [
         "CoEBQw=="
@@ -671,11 +945,11 @@
         "CoEBQw=="
       ]
     },
-    "198": {
+    "288": {
       "op": "itxn_field ClearStateProgramPages",
       "stack_out": []
     },
-    "200": {
+    "290": {
       "op": "pushbytes base64(CiAEAAEEECYCBW93bmVyC29wdGluX2NvdW50MRtBACqCBQTMaU6qBCSHwywEPqEYMgSt+SrkBEQgD702GgCOBQBIADoAIAARAAIiQzEZFEQxGEQ2GgGIAMIjQzEZFEQxGEQ2GgGIAKMjQzEZFEQxGEQxFiMJSTgQIxJENhoBF4gARyNDMRmBBRJEMRhEiAAdI0MxGRREMRgURDYaAYgAAiNDigEAKIv/ZykiZ4kxACIoZURMSwESRCIpZUQURLGyCSOyECKyAbOJigIAMQAiKGVEEkSL/jgHMgoSQQApi/44CDIQEkEAHyNEsTIKi/+yESKyErIUJLIQIrIBsyIpZUQjCClMZ4kiQv/eigEAMQAiKGVEEkQoi/9niYoBAIAAMQAiKGVEEkQii/8iWYsBDUEAfIv/VwIAiwElCyVYSSJbSYwAQQBSMgqLAHAAREyBCFtJTgISQQApIillRCMJKUxnsSIoZURJshWyFLISiwCyESSyECKyAbOLASMIjAFC/6exIihlRLIUshKLALIRJLIQIrIBs0L/4LGBCFsiKGVEsgeyCCOyECKyAbNC/8qJ)",
       "defined_out": [
         "CiAEAAEEECYCBW93bmVyC29wdGluX2NvdW50MRtBACqCBQTMaU6qBCSHwywEPqEYMgSt+SrkBEQgD702GgCOBQBIADoAIAARAAIiQzEZFEQxGEQ2GgGIAMIjQzEZFEQxGEQ2GgGIAKMjQzEZFEQxGEQxFiMJSTgQIxJENhoBF4gARyNDMRmBBRJEMRhEiAAdI0MxGRREMRgURDYaAYgAAiNDigEAKIv/ZykiZ4kxACIoZURMSwESRCIpZUQURLGyCSOyECKyAbOJigIAMQAiKGVEEkSL/jgHMgoSQQApi/44CDIQEkEAHyNEsTIKi/+yESKyErIUJLIQIrIBsyIpZUQjCClMZ4kiQv/eigEAMQAiKGVEEkQoi/9niYoBAIAAMQAiKGVEEkQii/8iWYsBDUEAfIv/VwIAiwElCyVYSSJbSYwAQQBSMgqLAHAAREyBCFtJTgISQQApIillRCMJKUxnsSIoZURJshWyFLISiwCyESSyECKyAbOLASMIjAFC/6exIihlRLIUshKLALIRJLIQIrIBs0L/4LGBCFsiKGVEsgeyCCOyECKyAbNC/8qJ"
@@ -684,11 +958,11 @@
         "CiAEAAEEECYCBW93bmVyC29wdGluX2NvdW50MRtBACqCBQTMaU6qBCSHwywEPqEYMgSt+SrkBEQgD702GgCOBQBIADoAIAARAAIiQzEZFEQxGEQ2GgGIAMIjQzEZFEQxGEQ2GgGIAKMjQzEZFEQxGEQxFiMJSTgQIxJENhoBF4gARyNDMRmBBRJEMRhEiAAdI0MxGRREMRgURDYaAYgAAiNDigEAKIv/ZykiZ4kxACIoZURMSwESRCIpZUQURLGyCSOyECKyAbOJigIAMQAiKGVEEkSL/jgHMgoSQQApi/44CDIQEkEAHyNEsTIKi/+yESKyErIUJLIQIrIBsyIpZUQjCClMZ4kiQv/eigEAMQAiKGVEEkQoi/9niYoBAIAAMQAiKGVEEkQii/8iWYsBDUEAfIv/VwIAiwElCyVYSSJbSYwAQQBSMgqLAHAAREyBCFtJTgISQQApIillRCMJKUxnsSIoZURJshWyFLISiwCyESSyECKyAbOLASMIjAFC/6exIihlRLIUshKLALIRJLIQIrIBs0L/4LGBCFsiKGVEsgeyCCOyECKyAbNC/8qJ"
       ]
     },
-    "635": {
+    "725": {
       "op": "itxn_field ApprovalProgramPages",
       "stack_out": []
     },
-    "637": {
+    "727": {
       "op": "intc_1 // 0",
       "defined_out": [
         "0"
@@ -697,11 +971,11 @@
         "0"
       ]
     },
-    "638": {
+    "728": {
       "op": "itxn_field OnCompletion",
       "stack_out": []
     },
-    "640": {
+    "730": {
       "op": "pushint 6 // appl",
       "defined_out": [
         "appl"
@@ -710,24 +984,24 @@
         "appl"
       ]
     },
-    "642": {
+    "732": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "644": {
+    "734": {
       "op": "intc_1 // 0",
       "stack_out": [
         "0"
       ]
     },
-    "645": {
+    "735": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "647": {
+    "737": {
       "op": "itxn_submit"
     },
-    "648": {
+    "738": {
       "op": "gitxn 0 CreatedApplicationID",
       "defined_out": [
         "prizeBoxApp#0"
@@ -736,10 +1010,10 @@
         "prizeBoxApp#0"
       ]
     },
-    "651": {
+    "741": {
       "op": "itxn_begin"
     },
-    "652": {
+    "742": {
       "op": "dup",
       "defined_out": [
         "prizeBoxApp#0",
@@ -750,7 +1024,7 @@
         "prizeBoxApp#0 (copy)"
       ]
     },
-    "653": {
+    "743": {
       "op": "app_params_get AppAddress",
       "defined_out": [
         "check%0#0",
@@ -763,7 +1037,7 @@
         "check%0#0"
       ]
     },
-    "655": {
+    "745": {
       "error": "application exists",
       "op": "assert // application exists",
       "stack_out": [
@@ -771,7 +1045,7 @@
         "value%0#0"
       ]
     },
-    "656": {
+    "746": {
       "op": "pushint 100000 // 100000",
       "defined_out": [
         "100000",
@@ -784,53 +1058,53 @@
         "100000"
       ]
     },
-    "660": {
+    "750": {
       "op": "itxn_field Amount",
       "stack_out": [
         "prizeBoxApp#0",
         "value%0#0"
       ]
     },
-    "662": {
+    "752": {
       "op": "itxn_field Receiver",
       "stack_out": [
         "prizeBoxApp#0"
       ]
     },
-    "664": {
+    "754": {
       "op": "intc_0 // 1",
       "stack_out": [
         "prizeBoxApp#0",
         "1"
       ]
     },
-    "665": {
+    "755": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "prizeBoxApp#0"
       ]
     },
-    "667": {
+    "757": {
       "op": "intc_1 // 0",
       "stack_out": [
         "prizeBoxApp#0",
         "0"
       ]
     },
-    "668": {
+    "758": {
       "op": "itxn_field Fee",
       "stack_out": [
         "prizeBoxApp#0"
       ]
     },
-    "670": {
+    "760": {
       "op": "itxn_submit"
     },
-    "671": {
+    "761": {
       "retsub": true,
       "op": "retsub"
     },
-    "672": {
+    "762": {
       "block": "mint_bool_false@3",
       "stack_in": [],
       "op": "intc_1 // 0",
@@ -841,8 +1115,408 @@
         "and_result%0#0"
       ]
     },
-    "673": {
+    "763": {
       "op": "b mint_bool_merge@4"
+    },
+    "766": {
+      "subroutine": "smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateApplication",
+      "params": {
+        "newVersion#0": "bytes",
+        "newChildVersion#0": "bytes"
+      },
+      "block": "updateApplication",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "769": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "771": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "772": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "defined_out": [
+        "\"akita_dao\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0",
+        "\"akita_dao\""
+      ]
+    },
+    "773": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "774": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "775": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "tmp%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "777": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0"
+      ]
+    },
+    "778": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "779": {
+      "error": "Only the Akita DAO can call this function",
+      "op": "assert // Only the Akita DAO can call this function",
+      "stack_out": []
+    },
+    "780": {
+      "op": "pushbytes \"version\"",
+      "defined_out": [
+        "\"version\""
+      ],
+      "stack_out": [
+        "\"version\""
+      ]
+    },
+    "789": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "\"version\"",
+        "newVersion#0 (copy)"
+      ],
+      "stack_out": [
+        "\"version\"",
+        "newVersion#0 (copy)"
+      ]
+    },
+    "791": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "792": {
+      "op": "bytec_1 // \"child_contract_version\"",
+      "defined_out": [
+        "\"child_contract_version\""
+      ],
+      "stack_out": [
+        "\"child_contract_version\""
+      ]
+    },
+    "793": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"child_contract_version\"",
+        "newChildVersion#0 (copy)"
+      ],
+      "stack_out": [
+        "\"child_contract_version\"",
+        "newChildVersion#0 (copy)"
+      ]
+    },
+    "795": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "796": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "797": {
+      "subroutine": "smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO",
+      "params": {
+        "app#0": "uint64"
+      },
+      "block": "updateAkitaDAO",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "800": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "802": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "803": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "defined_out": [
+        "\"akita_dao\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0",
+        "\"akita_dao\""
+      ]
+    },
+    "804": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "805": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "806": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "tmp%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "808": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0"
+      ]
+    },
+    "809": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "810": {
+      "error": "Only the Akita DAO can call this function",
+      "op": "assert // Only the Akita DAO can call this function",
+      "stack_out": []
+    },
+    "811": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "stack_out": [
+        "\"akita_dao\""
+      ]
+    },
+    "812": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"akita_dao\"",
+        "app#0 (copy)"
+      ],
+      "stack_out": [
+        "\"akita_dao\"",
+        "app#0 (copy)"
+      ]
+    },
+    "814": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "815": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "816": {
+      "subroutine": "smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow",
+      "params": {
+        "app#0": "uint64"
+      },
+      "block": "updateAkitaDAOEscrow",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "819": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "821": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "822": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "defined_out": [
+        "\"akita_dao\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0",
+        "\"akita_dao\""
+      ]
+    },
+    "823": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "824": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "825": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "tmp%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "827": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0"
+      ]
+    },
+    "828": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "829": {
+      "error": "Only the Akita DAO can call this function",
+      "op": "assert // Only the Akita DAO can call this function",
+      "stack_out": []
+    },
+    "830": {
+      "op": "pushbytes \"akita_escrow\"",
+      "defined_out": [
+        "\"akita_escrow\""
+      ],
+      "stack_out": [
+        "\"akita_escrow\""
+      ]
+    },
+    "844": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"akita_escrow\"",
+        "app#0 (copy)"
+      ],
+      "stack_out": [
+        "\"akita_escrow\"",
+        "app#0 (copy)"
+      ]
+    },
+    "846": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "847": {
+      "retsub": true,
+      "op": "retsub"
     }
   }
 }

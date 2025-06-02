@@ -19,6 +19,7 @@ import { PrizeBox } from "../../../prize-box/contract.algo"
 import { RafflePluginGlobalStateKeyFactory } from "./constants"
 import { fmbr, getPrizeBoxOwner, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { fee } from "../../../utils/constants"
+import { Proof } from "../../../utils/types/merkles"
 
 export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
 
@@ -48,6 +49,8 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
     maxTickets: uint64,
     gateID: uint64,
     marketplace: Address,
+    name: string,
+    proof: Proof
   ): uint64 {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -86,7 +89,6 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
     }
 
     const fcosts = fmbr()
-    const costs = this.mbr()
 
     const raffle = compileArc4(Raffle)
 
@@ -129,6 +131,8 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
           maxTickets,
           gateID,
           marketplace,
+          name,
+          proof
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
         fee,
@@ -220,6 +224,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
     rekeyBack: boolean,
     raffleAppID: uint64,
     amount: uint64,
+    marketplace: Address,
     args: GateArgs
   ): void {
     const wallet = Application(walletID)
@@ -244,6 +249,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
               amount: amount + mbr,
               fee,
             }),
+            marketplace,
             args,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
@@ -270,6 +276,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
               xferAsset: ticketAsset,
               fee,
             }),
+            marketplace,
             args,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),

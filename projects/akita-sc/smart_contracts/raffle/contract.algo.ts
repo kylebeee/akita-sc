@@ -22,7 +22,7 @@ import { abiCall, Address, UintN64 } from '@algorandfoundation/algorand-typescri
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { AccountMinimumBalance, MAX_UINT64 } from '../utils/constants'
-import { arc4FindWinnerCursor, arc4WeightLocation, arc4WeightsList, RaffleState } from './types'
+import { arc4FindWinnerCursor, arc4WeightLocation, arc4WeightsList, EntryData, RaffleState } from './types'
 import {
   ChunkSize,
   RaffleBoxPrefixEntries,
@@ -86,13 +86,15 @@ import { PrizeBox } from '../prize-box/contract.algo'
 import { classes } from 'polytype'
 import { BaseRaffle } from './base'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
-import { arc59OptInAndSend, gateCheck, getOtherAppList } from '../utils/functions'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, impactRange, percentageOf } from '../utils/functions'
+import { AkitaBaseEscrow } from '../utils/base-contracts/base'
 import { fee } from '../utils/constants'
+import { RoyaltyAmounts } from '../utils/types/royalties'
+import { AkitaDAOEscrowAccountRaffles } from '../dao/constants'
 
 export class Raffle extends classes(
   BaseRaffle,
-  AkitaBaseContract,
+  AkitaBaseEscrow,
   ContractWithCreatorOnlyOptIn
 ) {
 
@@ -156,11 +158,11 @@ export class Raffle extends classes(
   // BOXES ----------------------------------------------------------------------------------------
 
   /** The entries for the raffle */
-  entries = BoxMap<uint64, Account>({ keyPrefix: RaffleBoxPrefixEntries })
+  entries = BoxMap<uint64, EntryData>({ keyPrefix: RaffleBoxPrefixEntries })
   /** weights set for bidders */
   weights = BoxMap<uint64, arc4WeightsList>({ keyPrefix: RaffleBoxPrefixWeights })
   /** The address map of entries for the raffle */
-  entriesByAddress = BoxMap<Account, arc4WeightLocation>({ keyPrefix: RaffleBoxPrefixEntriesByAddress })
+  entriesByAddress = BoxMap<Account, uint64>({ keyPrefix: RaffleBoxPrefixEntriesByAddress })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -181,6 +183,46 @@ export class Raffle extends classes(
     return [startingIndex, currentRangeStart]
   }
 
+  private getAmounts(amount: uint64, isPrizeBox: boolean): RoyaltyAmounts {
+
+    let creatorAmount: uint64 = 0
+    if (!isPrizeBox && this.creatorRoyalty.value > 0) {
+      creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
+      if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
+        creatorAmount = 1
+      }
+    }
+
+    const { raffleSaleImpactTaxMin: min, raffleSaleImpactTaxMax: max } = getNFTFees(this.akitaDAO.value)
+    let akitaAmount: uint64 = 0
+    if (max > 0) {
+      const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
+      const akitaTaxRate = impactRange(impact, min, max)
+
+      akitaAmount = calcPercent(amount, akitaTaxRate)
+      if (akitaAmount === 0 && amount > 0) {
+        akitaAmount = 1
+      }
+    }
+
+    let marketplaceAmount: uint64 = 0
+    if (this.marketplaceRoyalties.value > 0) {
+      marketplaceAmount = calcPercent(amount, this.marketplaceRoyalties.value)
+      if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
+        marketplaceAmount = 1
+      }
+    }
+
+    const sellerAmount: uint64 = amount - (creatorAmount + akitaAmount + (2 * marketplaceAmount))
+
+    return {
+      creator: creatorAmount,
+      akita: akitaAmount,
+      marketplace: marketplaceAmount,
+      seller: sellerAmount,
+    }
+  }
+
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
@@ -191,11 +233,13 @@ export class Raffle extends classes(
     startTimestamp: uint64,
     endTimestamp: uint64,
     seller: Address,
+    creatorRoyalty: uint64,
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
     marketplace: Address,
-    akitaDAO: uint64
+    akitaDAO: uint64,
+    feeEscrow: uint64,
   ): void {
     assert(Global.callerApplicationId !== 0, ERR_MUST_BE_CALLED_FROM_FACTORY)
 
@@ -217,6 +261,10 @@ export class Raffle extends classes(
     this.gateID.value = gateID
     this.marketplace.value = marketplace
     this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAOEscrow.value = Application(feeEscrow)
+
+    // internal variables
+    this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).raffleComposablePercentage
     this.entryID.value = 0
     this.weightsBoxCount.value = 0
     this.weightTotals.value = new arc4.StaticArray<arc4.UintN64, 15>()
@@ -270,11 +318,11 @@ export class Raffle extends classes(
     for (let i = startingIndex; i < iterationAmount; i += 1) {
       const entry = this.entries(i).value
       this.entries(i).delete()
-      this.entriesByAddress(entry).delete()
+      this.entriesByAddress(entry.address.native).delete()
       itxn
         .payment({
           amount: entryTotalMBR,
-          receiver: entry,
+          receiver: entry.address.native,
         })
         .submit()
     }
@@ -314,7 +362,7 @@ export class Raffle extends classes(
 
   // RAFFLE METHODS -------------------------------------------------------------------------------
 
-  enter(payment: gtxn.PaymentTxn, args: GateArgs): void {
+  enter(payment: gtxn.PaymentTxn, marketplace: Address, args: GateArgs): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id === 0, ERR_TICKET_ASSET_NOT_ALGO)
     assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
@@ -338,8 +386,11 @@ export class Raffle extends classes(
     )
 
     const loc = this.entryCount.value
-    this.entries(loc).value = Txn.sender
-    this.entriesByAddress(Txn.sender).value = new UintN64(this.entryCount.value)
+    this.entries(loc).value = {
+      address: new Address(Txn.sender),
+      marketplace,
+    }
+    this.entriesByAddress(Txn.sender).value = this.entryCount.value
 
     const amount = new UintN64(payment.amount - mbr)
 
@@ -351,7 +402,7 @@ export class Raffle extends classes(
     this.ticketCount.value += amount.native
   }
 
-  enterAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
+  enterAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, marketplace: Address, args: GateArgs): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id !== 0, ERR_TICKET_ASSET_ALGO)
     const arc4Sender = new Address(Txn.sender)
@@ -384,8 +435,11 @@ export class Raffle extends classes(
     )
 
     const loc = this.entryCount.value
-    this.entries(loc).value = Txn.sender
-    this.entriesByAddress(Txn.sender).value = new UintN64(this.entryCount.value)
+    this.entries(loc).value = {
+      address: new Address(Txn.sender),
+      marketplace
+    }
+    this.entriesByAddress(Txn.sender).value = loc
 
     const amount = new UintN64(assetXfer.assetAmount)
     this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
@@ -402,7 +456,7 @@ export class Raffle extends classes(
     assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
     assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
 
-    const loc = this.entriesByAddress(Txn.sender).value.native
+    const loc = this.entriesByAddress(Txn.sender).value
     const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
 
     assertMatch(
@@ -431,7 +485,7 @@ export class Raffle extends classes(
     assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
     assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
 
-    const loc = this.entriesByAddress(Txn.sender).value.native
+    const loc = this.entriesByAddress(Txn.sender).value
     const amount = this.weights(loc / ChunkSize).value[loc % ChunkSize]
 
     assertMatch(
@@ -509,7 +563,7 @@ export class Raffle extends classes(
     for (let i: uint64 = 0; i < iterationAmount; i += 1) {
       currentRangeEnd = currentRangeStart + weight[i].native
       if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
-        this.winner.value = this.entries(startingIndex + i + 1).value
+        this.winner.value = this.entries(startingIndex + i + 1).value.address.native
       }
       currentRangeStart = currentRangeEnd + 1
     }
@@ -523,6 +577,7 @@ export class Raffle extends classes(
     assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
     assert(!this.prizeClaimed.value, ERR_PRIZE_ALREADY_CLAIMED)
 
+    // give the winner the prize
     if (this.isPrizeBox.value) {
       abiCall(
         PrizeBox.prototype.transfer,
@@ -555,32 +610,153 @@ export class Raffle extends classes(
       }
     }
 
+    const amounts = this.getAmounts(this.ticketCount.value, this.isPrizeBox.value)
+
+    const loc = this.entriesByAddress(this.winner.value).value
+    const marketplace = this.entries(loc).value.marketplace
+
     if (this.ticketAsset.value.id === 0) {
+
+      if (amounts.creator > 0) {
+        // pay the nft creator
+        itxn
+          .payment({
+            receiver: Asset(this.prize.value).creator,
+            amount: amounts.creator,
+            fee,
+          })
+          .submit()
+      }
+
+      itxn
+        .payment({
+          receiver: this.akitaDAOEscrow.value.address,
+          amount: amounts.akita,
+          fee,
+        })
+        .submit()
+
+      itxn
+        .payment({
+          receiver: this.marketplace.value.native,
+          amount: amounts.marketplace,
+          fee,
+        })
+        .submit()
+
+      itxn
+        .payment({
+          receiver: marketplace.native,
+          amount: amounts.marketplace,
+          fee,
+        })
+        .submit()
+
       itxn
         .payment({
           receiver: this.seller.value,
-          amount: this.ticketCount.value,
+          amount: amounts.seller,
           fee,
         })
         .submit()
-    } else if (this.seller.value.isOptedIn(this.ticketAsset.value)) {
-      itxn
-        .assetTransfer({
-          assetReceiver: this.seller.value,
-          assetCloseTo: this.seller.value,
-          assetAmount: this.ticketCount.value,
-          xferAsset: this.ticketAsset.value,
-          fee,
-        })
-        .submit()
+
     } else {
-      arc59OptInAndSend(
-        this.akitaDAO.value,
-        new Address(this.seller.value),
-        this.ticketAsset.value.id,
-        this.ticketCount.value,
-        true
-      )
+
+      if (amounts.creator > 0) {
+        if (Asset(this.prize.value).creator.isOptedIn(this.ticketAsset.value)) {
+          itxn
+            .assetTransfer({
+              assetReceiver: Asset(this.prize.value).creator,
+              assetAmount: amounts.creator,
+              xferAsset: this.ticketAsset.value,
+              fee,
+            })
+            .submit()
+        } else {
+          arc59OptInAndSend(
+            this.akitaDAO.value,
+            new Address(Asset(this.prize.value).creator),
+            this.ticketAsset.value.id,
+            amounts.creator,
+            false
+          )
+        }
+      }
+
+      if (this.akitaDAOEscrow.value.address.isOptedIn(this.ticketAsset.value)) {
+        itxn
+          .assetTransfer({
+            assetReceiver: this.akitaDAOEscrow.value.address,
+            assetAmount: amounts.akita,
+            xferAsset: this.ticketAsset.value,
+            fee,
+          })
+          .submit()
+      } else {
+        this.optAkitaEscrowInAndSend(
+          AkitaDAOEscrowAccountRaffles,
+          this.ticketAsset.value,
+          amounts.akita,
+        )
+      }
+
+      if (this.marketplace.value.native.isOptedIn(this.ticketAsset.value)) {
+        itxn
+          .assetTransfer({
+            assetReceiver: this.marketplace.value.native,
+            assetAmount: amounts.marketplace,
+            xferAsset: this.ticketAsset.value,
+            fee,
+          })
+          .submit()
+      } else {
+        arc59OptInAndSend(
+          this.akitaDAO.value,
+          this.marketplace.value,
+          this.ticketAsset.value.id,
+          amounts.marketplace,
+          false
+        )
+      }
+
+      if (marketplace.native.isOptedIn(this.ticketAsset.value)) {
+        itxn
+          .assetTransfer({
+            assetReceiver: marketplace.native,
+            assetAmount: amounts.marketplace,
+            xferAsset: this.ticketAsset.value,
+            fee,
+          })
+          .submit()
+      } else {
+        arc59OptInAndSend(
+          this.akitaDAO.value,
+          marketplace,
+          this.ticketAsset.value.id,
+          amounts.marketplace,
+          false
+        )
+      }
+
+      if (this.seller.value.isOptedIn(this.ticketAsset.value)) {
+        itxn
+          .assetTransfer({
+            assetReceiver: this.seller.value,
+            assetCloseTo: this.seller.value,
+            assetAmount: this.ticketCount.value,
+            xferAsset: this.ticketAsset.value,
+            fee,
+          })
+          .submit()
+      } else {
+        arc59OptInAndSend(
+          this.akitaDAO.value,
+          new Address(this.seller.value),
+          this.ticketAsset.value.id,
+          this.ticketCount.value,
+          true
+        )
+      }
     }
 
     this.prizeClaimed.value = true

@@ -17,10 +17,11 @@ import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } fr
 import { PrizeBox } from '../prize-box/contract.algo'
 import { BaseRaffle } from './base'
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
-import { fmbr, getPrizeBoxOwner } from '../utils/functions'
+import { fmbr, getNFTFees, getPrizeBoxOwner, royalties } from '../utils/functions'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { ERR_APP_CREATOR_NOT_FOUND, ERR_NOT_A_RAFFLE } from './errors'
 import { fee } from '../utils/constants'
+import { Proof } from '../utils/types/merkles'
 
 export class RaffleFactory extends classes(
   BaseRaffle,
@@ -37,10 +38,11 @@ export class RaffleFactory extends classes(
     ticketAsset: uint64,
     startTimestamp: uint64,
     endTimestamp: uint64,
+    creatorRoyalty: uint64,
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Address
   ): Application {
 
     const isAlgoTicket = ticketAsset === 0
@@ -51,10 +53,12 @@ export class RaffleFactory extends classes(
     const fcosts = fmbr()
 
     const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
+    const fees = getNFTFees(this.akitaDAO.value)
 
     const raffle = compileArc4(Raffle)
 
     const totalMBR: uint64 = (
+      fees.raffleCreationFee +
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
@@ -71,6 +75,14 @@ export class RaffleFactory extends classes(
       ERR_INVALID_PAYMENT
     )
 
+    itxn
+      .payment({
+        receiver: this.akitaDAOEscrow.value.address,
+        amount: fees.raffleCreationFee,
+        fee,
+      })
+      .submit()
+
     const raffleApp = raffle.call
       .create({
         args: [
@@ -80,18 +92,23 @@ export class RaffleFactory extends classes(
           startTimestamp,
           endTimestamp,
           new Address(Txn.sender),
+          creatorRoyalty,
           minTickets,
           maxTickets,
           gateID,
           marketplace,
           this.akitaDAO.value.id,
+          this.akitaDAOEscrow.value.id,
         ],
         fee,
       })
       .itxn
       .createdApp
 
-    this.appCreators(raffleApp.id).value = { creator: payment.sender, amount: totalMBR }
+    this.appCreators(raffleApp.id).value = {
+      creator: payment.sender,
+      amount: (totalMBR - fees.raffleCreationFee),
+    }
 
     if (!isAlgoTicket) {
       raffle.call.optin({
@@ -133,6 +150,8 @@ export class RaffleFactory extends classes(
     maxTickets: uint64,
     gateID: uint64,
     marketplace: Address,
+    name: string,
+    proof: Proof
   ): uint64 {
 
     // make sure they actually sent the asset they want to raffle
@@ -145,6 +164,8 @@ export class RaffleFactory extends classes(
       ERR_INVALID_TRANSFER
     )
 
+    const creatorRoyalty = royalties(this.akitaDAO.value, assetXfer.xferAsset, name, proof)
+
     const raffleApp = this.createChildApp(
       false,
       payment,
@@ -152,6 +173,7 @@ export class RaffleFactory extends classes(
       ticketAsset,
       startTimestamp,
       endTimestamp,
+      creatorRoyalty,
       minTickets,
       maxTickets,
       gateID,
@@ -208,10 +230,11 @@ export class RaffleFactory extends classes(
       ticketAsset,
       startTimestamp,
       endTimestamp,
+      0,
       minTickets,
       maxTickets,
       gateID,
-      marketplace,
+      marketplace
     )
 
     abiCall(PrizeBox.prototype.transfer, {

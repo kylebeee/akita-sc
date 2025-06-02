@@ -18,7 +18,6 @@ import { Staking } from '../staking/contract.algo'
 import { Rewards } from '../rewards/contract.algo'
 import { MetaMerkles } from '../meta-merkles/contract.algo'
 import {
-  arc4EntryData,
   arc4EntryKey,
   arc4RaffleCursor,
   arc4Reward,

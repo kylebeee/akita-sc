@@ -62,8 +62,6 @@ import {
 import { uint64Array } from '../utils/types/base'
 import { BaseStaking } from './base'
 import { fee } from '../utils/constants'
-import { GlobalStateKeyAkitaDAO, GlobalStateKeyVersion } from '../constants'
-import { ERR_NOT_AKITA_DAO } from '../errors'
 import { StakingInterface } from '../utils/types/staking'
 import { classes } from 'polytype'
 import { AkitaBaseContract } from '../utils/base-contracts/base'

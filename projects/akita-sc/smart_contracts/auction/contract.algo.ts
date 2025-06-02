@@ -180,23 +180,33 @@ export class Auction extends classes(
   }
 
   private getAmounts(amount: uint64): RoyaltyAmounts {
-    let creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
-    if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
-      creatorAmount = 1
+
+    let creatorAmount: uint64 = 0
+    if (this.creatorRoyalty.value > 0) {
+      creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
+      if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
+        creatorAmount = 1
+      }
     }
 
     const { auctionSaleImpactTaxMin: min, auctionSaleImpactTaxMax: max } = getNFTFees(this.akitaDAO.value)
-    const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
-    const akitaTaxRate = impactRange(impact, min, max)
+    let akitaAmount: uint64 = 0
+    if (max > 0) {
+      const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
+      const akitaTaxRate = impactRange(impact, min, max)
 
-    let akitaAmount = calcPercent(amount, akitaTaxRate)
-    if (akitaAmount === 0 && amount > 0) {
-      akitaAmount = 1
+      akitaAmount = calcPercent(amount, akitaTaxRate)
+      if (akitaAmount === 0 && amount > 0) {
+        akitaAmount = 1
+      }
     }
 
-    let marketplaceAmount = calcPercent(amount, this.marketplaceRoyalties.value)
-    if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
-      marketplaceAmount = 1
+    let marketplaceAmount: uint64 = 0
+    if (this.marketplaceRoyalties.value > 0) {
+      marketplaceAmount = calcPercent(amount, this.marketplaceRoyalties.value)
+      if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
+        marketplaceAmount = 1
+      }
     }
 
     const sellerAmount: uint64 = amount - (creatorAmount + akitaAmount + (2 * marketplaceAmount))
@@ -234,7 +244,7 @@ export class Auction extends classes(
         .submit()
     } else {
       arc59OptInAndSend(
-        this.akitaDAO.value, 
+        this.akitaDAO.value,
         new Address(buyer),
         this.prize.value,
         prizeAmount,
@@ -305,7 +315,7 @@ export class Auction extends classes(
         })
         .submit()
     } else if (!this.isPrizeBox.value) {
-      arc59OptInAndSend(this.akitaDAO.value, 
+      arc59OptInAndSend(this.akitaDAO.value,
         new Address(Asset(this.prize.value).creator),
         this.bidAsset.value.id,
         creator,
@@ -342,7 +352,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      arc59OptInAndSend(this.akitaDAO.value, 
+      arc59OptInAndSend(this.akitaDAO.value,
         new Address(this.marketplace.value),
         this.bidAsset.value.id,
         marketplace,
@@ -361,7 +371,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      arc59OptInAndSend(this.akitaDAO.value, 
+      arc59OptInAndSend(this.akitaDAO.value,
         new Address(buySideMarketplace),
         this.bidAsset.value.id,
         marketplace,
@@ -380,7 +390,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      arc59OptInAndSend(this.akitaDAO.value, 
+      arc59OptInAndSend(this.akitaDAO.value,
         new Address(this.seller.value),
         this.bidAsset.value.id,
         seller,
@@ -815,7 +825,7 @@ export class Auction extends classes(
         })
         .submit()
     } else {
-      arc59OptInAndSend(this.akitaDAO.value, 
+      arc59OptInAndSend(this.akitaDAO.value,
         new Address(this.raffleWinner.value),
         this.bidAsset.value.id,
         this.raffleAmount.value,

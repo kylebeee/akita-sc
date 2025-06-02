@@ -4,19 +4,76 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 6
-    bytecblock "revocation_app" "akita_dao" "child_contract_version" "spending_account_factory_app"
+    bytecblock "akita_dao" "child_contract_version" "revocation_app" "version" "spending_account_factory_app"
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
     txn NumAppArgs
-    bz main_after_if_else@9
-    pushbytess 0x3ba9072f 0xac9df27e 0xe05fc422 // method "create(uint64,string,string,uint64,uint64)void", method "updateRevocationApp(uint64)void", method "mint(pay,address,address,string)uint64"
+    bz main_after_if_else@12
+    pushbytess 0x3ba9072f 0xac9df27e 0xe05fc422 0xc385cfae 0x33e92c94 0x1ead20a9 // method "create(uint64,string,string,uint64,uint64)void", method "updateRevocationApp(uint64)void", method "mint(pay,address,address,string)uint64", method "updateApplication(string,string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@3 main_updateRevocationApp_route@4 main_mint_route@5
+    match main_create_route@3 main_updateRevocationApp_route@4 main_mint_route@5 main_updateApplication_route@6 main_updateAkitaDAO_route@7 main_updateAkitaDAOEscrow_route@8
 
-main_after_if_else@9:
+main_after_if_else@12:
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
     intc_0 // 0
+    return
+
+main_updateAkitaDAOEscrow_route@8:
+    // smart_contracts/utils/base-contracts/factory.ts:93
+    // updateAkitaDAOEscrow(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/factory.algo.ts:21
+    // export class AbstractedAccountFactory extends FactoryContract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/factory.ts:93
+    // updateAkitaDAOEscrow(app: uint64): void {
+    callsub updateAkitaDAOEscrow
+    intc_1 // 1
+    return
+
+main_updateAkitaDAO_route@7:
+    // smart_contracts/utils/base-contracts/factory.ts:88
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/factory.algo.ts:21
+    // export class AbstractedAccountFactory extends FactoryContract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/factory.ts:88
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_updateApplication_route@6:
+    // smart_contracts/utils/base-contracts/factory.ts:79
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/account/factory.algo.ts:21
+    // export class AbstractedAccountFactory extends FactoryContract {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    extract 2 0
+    // smart_contracts/utils/base-contracts/factory.ts:79
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub updateApplication
+    intc_1 // 1
     return
 
 main_mint_route@5:
@@ -106,35 +163,35 @@ create:
     proto 5 0
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    bytec_1 // "akita_dao"
+    bytec_0 // "akita_dao"
     // smart_contracts/arc58/account/factory.algo.ts:34
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -5
     app_global_put
     // smart_contracts/constants.ts:3
     // export const GlobalStateKeyVersion = 'version'
-    pushbytes "version"
+    bytec_3 // "version"
     // smart_contracts/arc58/account/factory.algo.ts:35
     // this.version.value = version
     frame_dig -4
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:15
+    // smart_contracts/utils/base-contracts/factory.ts:19
     // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
-    bytec_2 // "child_contract_version"
+    bytec_1 // "child_contract_version"
     // smart_contracts/arc58/account/factory.algo.ts:36
     // this.childContractVersion.value = childVersion
     frame_dig -3
     app_global_put
     // smart_contracts/constants.ts:6
     // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
-    bytec_3 // "spending_account_factory_app"
+    bytec 4 // "spending_account_factory_app"
     // smart_contracts/arc58/account/factory.algo.ts:37
     // this.spendingAccountFactoryApp.value = Application(spendingAccountFactoryApp)
     frame_dig -2
     app_global_put
     // smart_contracts/constants.ts:5
     // export const GlobalStateKeyRevocationApp = 'revocation_app'
-    bytec_0 // "revocation_app"
+    bytec_2 // "revocation_app"
     // smart_contracts/arc58/account/factory.algo.ts:38
     // this.revocationApp.value = Application(revocationApp)
     frame_dig -1
@@ -153,7 +210,7 @@ updateRevocationApp:
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
     intc_0 // 0
-    bytec_1 // "akita_dao"
+    bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/arc58/account/factory.algo.ts:44
@@ -164,7 +221,7 @@ updateRevocationApp:
     assert // Only the Akita DAO can call this function
     // smart_contracts/constants.ts:5
     // export const GlobalStateKeyRevocationApp = 'revocation_app'
-    bytec_0 // "revocation_app"
+    bytec_2 // "revocation_app"
     // smart_contracts/arc58/account/factory.algo.ts:45
     // this.revocationApp.value = Application(app)
     frame_dig -1
@@ -249,10 +306,10 @@ mint_bool_merge@4:
     //     fee,
     //   })
     itxn_begin
-    // smart_contracts/utils/base-contracts/factory.ts:15
+    // smart_contracts/utils/base-contracts/factory.ts:19
     // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
     intc_0 // 0
-    bytec_2 // "child_contract_version"
+    bytec_1 // "child_contract_version"
     app_global_get_ex
     assert // check GlobalState exists
     dup
@@ -264,7 +321,7 @@ mint_bool_merge@4:
     // smart_contracts/constants.ts:6
     // export const GlobalStateKeySpendingAccountFactoryApp = 'spending_account_factory_app'
     intc_0 // 0
-    bytec_3 // "spending_account_factory_app"
+    bytec 4 // "spending_account_factory_app"
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/arc58/account/factory.algo.ts:74
@@ -273,7 +330,7 @@ mint_bool_merge@4:
     // smart_contracts/constants.ts:5
     // export const GlobalStateKeyRevocationApp = 'revocation_app'
     intc_0 // 0
-    bytec_0 // "revocation_app"
+    bytec_2 // "revocation_app"
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/arc58/account/factory.algo.ts:75
@@ -432,3 +489,101 @@ mint_bool_merge@4:
 mint_bool_false@3:
     intc_0 // 0
     b mint_bool_merge@4
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateApplication(newVersion: bytes, newChildVersion: bytes) -> void:
+updateApplication:
+    // smart_contracts/utils/base-contracts/factory.ts:79-80
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // updateApplication(newVersion: string, newChildVersion: string): void {
+    proto 2 0
+    // smart_contracts/utils/base-contracts/factory.ts:81
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/factory.ts:81
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:3
+    // export const GlobalStateKeyVersion = 'version'
+    bytec_3 // "version"
+    // smart_contracts/utils/base-contracts/factory.ts:82
+    // this.version.value = newVersion
+    frame_dig -2
+    app_global_put
+    // smart_contracts/utils/base-contracts/factory.ts:19
+    // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
+    bytec_1 // "child_contract_version"
+    // smart_contracts/utils/base-contracts/factory.ts:83
+    // this.childContractVersion.value = newChildVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/factory.ts:88
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/factory.ts:89
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/factory.ts:89
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/factory.ts:90
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow(app: uint64) -> void:
+updateAkitaDAOEscrow:
+    // smart_contracts/utils/base-contracts/factory.ts:93
+    // updateAkitaDAOEscrow(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/factory.ts:94
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/factory.ts:94
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:2
+    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    pushbytes "akita_escrow"
+    // smart_contracts/utils/base-contracts/factory.ts:95
+    // this.akitaDAOEscrow.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub

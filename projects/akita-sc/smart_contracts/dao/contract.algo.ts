@@ -105,15 +105,15 @@ import { getOrigin, getStakingPower } from '../utils/functions'
  * The Akita DAO contract has several responsibilities:
  * [-] Manages the disbursement of the bones token
  * [x] Manages the content policy of the protocol
- * [-] Manages the minimum impact score to qualify for daily disbursement
+ * [x] Manages the minimum impact score to qualify for daily disbursement
  * [x] Sets the fee to post on akita social
  * [x] Sets the fee to react on akita social
- * [-] Sets the fee structure for Akita Staking
- * [-] Sets the fee structure for Akita Subscriptions
- * [-] Sets the fee structure for Akita NFT Listings
- * [-] Sets the fee structure for Akita NFT Shuffles
- * [-] Sets the fee structure for Akita Auctions
- * [-] Sets the fee structure for Akita Asset Swaps
+ * [x] Sets the fee structure for Akita Staking
+ * [x] Sets the fee structure for Akita Subscriptions
+ * [x] Sets the fee structure for Akita NFT Listings
+ * [x] Sets the fee structure for Akita NFT Shuffles
+ * [x] Sets the fee structure for Akita Auctions
+ * [x] Sets the fee structure for Akita Asset Swaps
  */
 
 export class AkitaDAO extends Contract {
@@ -547,6 +547,7 @@ export class AkitaDAO extends Contract {
       : Global.zeroAddress; // is a spending account 
   }
 
+  // TODO:
   private validateAddPluginProposal(params: ProposalAddPlugin): boolean {
     // app id cant be 0
     // plugin must be open source: aka source link must be provided
@@ -643,6 +644,7 @@ export class AkitaDAO extends Contract {
     });
   }
 
+  // TODO:
   private validateRemovePluginProposal(params: ProposalRemovePlugin): boolean {
     return false
   }
@@ -686,6 +688,7 @@ export class AkitaDAO extends Contract {
     }
   }
 
+  // TODO:
   private validateAddNamedPluginProposal(params: ProposalAddNamedPlugin): boolean {
     return false
   }
@@ -820,6 +823,7 @@ export class AkitaDAO extends Contract {
     }
   }
 
+  // TODO:
   private validateAddAllowanceProposal(params: ProposalAddAllowance): void {}
 
   private addAllowance(
@@ -859,6 +863,7 @@ export class AkitaDAO extends Contract {
     }
   }
 
+  // TODO:
   private validateRemoveAllowanceProposal(params: ProposalRemoveAllowance): void {}
 
   private removeAllowance(plugin: uint64, caller: Address, asset: uint64): void {
@@ -1033,8 +1038,10 @@ export class AkitaDAO extends Contract {
     }
   }
 
+  // TODO:
   private validateExecutePluginProposal(params: ProposalExecutePlugin): void {}
 
+  // TODO:
   private validateExecuteNamedPluginProposal(params: ProposalExecuteNamedPlugin): void {}
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------

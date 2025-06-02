@@ -66,7 +66,7 @@ export class AkitaBaseEscrow extends Contract {
         .assetTransfer({
           assetReceiver: this.akitaDAOEscrow.value.address,
           assetAmount: amount,
-          xferAsset: asset.id,
+          xferAsset: asset,
           fee: 0,
         })
         .submit()

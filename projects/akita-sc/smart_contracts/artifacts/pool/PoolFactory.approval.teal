@@ -3,8 +3,8 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 1 0 4 2
-    bytecblock "akita_dao" "version" "child_contract_version"
+    intcblock 0 1 4 2
+    bytecblock "akita_dao" "akita_escrow" "version" "child_contract_version"
     // smart_contracts/pool/factory.algo.ts:15-19
     // export class PoolFactory extends classes(
     //   BasePool,
@@ -12,22 +12,22 @@ main:
     //   ContractWithOptIn
     // ) {
     txn NumAppArgs
-    bz main_after_if_else@14
-    pushbytess 0xc426f4ba 0x3be19b43 0x3ea11832 0xc385cfae 0x33e92c94 0xd9a35fa4 // method "create(string,string,uint64,uint64)void", method "newPool(pay,string,uint8,(uint64,uint8,uint64,uint64,uint64),address,(address,string),uint64,uint64,uint64)uint64", method "optin(pay,uint64)void", method "updateApplication(string,string)void", method "updateAkitaDAO(uint64)void", method "mbr()(uint64,uint64,uint64)"
+    bz main_after_if_else@15
+    pushbytess 0xc426f4ba 0x3be19b43 0x3ea11832 0xc385cfae 0x33e92c94 0x1ead20a9 0xd9a35fa4 // method "create(string,string,uint64,uint64)void", method "newPool(pay,string,uint8,(uint64,uint8,uint64,uint64,uint64),address,(address,string),uint64,uint64,uint64)uint64", method "optin(pay,uint64)void", method "updateApplication(string,string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void", method "mbr()(uint64,uint64,uint64)"
     txna ApplicationArgs 0
-    match main_create_route@5 main_newPool_route@6 main_optin_route@7 main_updateApplication_route@8 main_updateAkitaDAO_route@9 main_mbr_route@10
+    match main_create_route@5 main_newPool_route@6 main_optin_route@7 main_updateApplication_route@8 main_updateAkitaDAO_route@9 main_updateAkitaDAOEscrow_route@10 main_mbr_route@11
 
-main_after_if_else@14:
+main_after_if_else@15:
     // smart_contracts/pool/factory.algo.ts:15-19
     // export class PoolFactory extends classes(
     //   BasePool,
     //   ServiceFactoryContract,
     //   ContractWithOptIn
     // ) {
-    intc_1 // 0
+    intc_0 // 0
     return
 
-main_mbr_route@10:
+main_mbr_route@11:
     // smart_contracts/pool/base.ts:6
     // @abimethod({ readonly: true })
     txn OnCompletion
@@ -37,11 +37,33 @@ main_mbr_route@10:
     assert // can only call when not creating
     pushbytes 0x151f7c7500000000000062d400000000000062d400000000000017d4
     log
-    intc_0 // 1
+    intc_1 // 1
+    return
+
+main_updateAkitaDAOEscrow_route@10:
+    // smart_contracts/utils/base-contracts/factory.ts:93
+    // updateAkitaDAOEscrow(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/factory.algo.ts:15-19
+    // export class PoolFactory extends classes(
+    //   BasePool,
+    //   ServiceFactoryContract,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/factory.ts:93
+    // updateAkitaDAOEscrow(app: uint64): void {
+    callsub updateAkitaDAOEscrow
+    intc_1 // 1
     return
 
 main_updateAkitaDAO_route@9:
-    // smart_contracts/utils/base-contracts/factory.ts:59
+    // smart_contracts/utils/base-contracts/factory.ts:88
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
     !
@@ -56,14 +78,14 @@ main_updateAkitaDAO_route@9:
     // ) {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/factory.ts:59
+    // smart_contracts/utils/base-contracts/factory.ts:88
     // updateAkitaDAO(app: uint64): void {
     callsub updateAkitaDAO
-    intc_0 // 1
+    intc_1 // 1
     return
 
 main_updateApplication_route@8:
-    // smart_contracts/utils/base-contracts/factory.ts:50
+    // smart_contracts/utils/base-contracts/factory.ts:79
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     intc_2 // UpdateApplication
@@ -81,10 +103,10 @@ main_updateApplication_route@8:
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:50
+    // smart_contracts/utils/base-contracts/factory.ts:79
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub updateApplication
-    intc_0 // 1
+    intc_1 // 1
     return
 
 main_optin_route@7:
@@ -102,11 +124,11 @@ main_optin_route@7:
     //   ContractWithOptIn
     // ) {
     txn GroupIndex
-    intc_0 // 1
+    intc_1 // 1
     -
     dup
     gtxns TypeEnum
-    intc_0 // pay
+    intc_1 // pay
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
@@ -114,7 +136,7 @@ main_optin_route@7:
     // smart_contracts/utils/base-contracts/optin.ts:22
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     callsub optin
-    intc_0 // 1
+    intc_1 // 1
     return
 
 main_newPool_route@6:
@@ -142,11 +164,11 @@ main_newPool_route@6:
     //   ContractWithOptIn
     // ) {
     txn GroupIndex
-    intc_0 // 1
+    intc_1 // 1
     -
     dup
     gtxns TypeEnum
-    intc_0 // pay
+    intc_1 // pay
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
@@ -179,7 +201,7 @@ main_newPool_route@6:
     swap
     concat
     log
-    intc_0 // 1
+    intc_1 // 1
     return
 
 main_create_route@5:
@@ -208,7 +230,7 @@ main_create_route@5:
     // smart_contracts/pool/factory.algo.ts:25
     // @abimethod({ onCreate: 'require' })
     callsub create
-    intc_0 // 1
+    intc_1 // 1
     return
 
 
@@ -220,14 +242,14 @@ create:
     proto 4 0
     // smart_contracts/constants.ts:3
     // export const GlobalStateKeyVersion = 'version'
-    bytec_1 // "version"
+    bytec_2 // "version"
     // smart_contracts/pool/factory.algo.ts:27
     // this.version.value = version
     frame_dig -4
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:15
+    // smart_contracts/utils/base-contracts/factory.ts:19
     // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
-    bytec_2 // "child_contract_version"
+    bytec_3 // "child_contract_version"
     // smart_contracts/pool/factory.algo.ts:28
     // this.childContractVersion.value = childVersion
     frame_dig -3
@@ -241,7 +263,7 @@ create:
     app_global_put
     // smart_contracts/constants.ts:2
     // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
-    pushbytes "akita_escrow"
+    bytec_1 // "akita_escrow"
     // smart_contracts/pool/factory.algo.ts:30
     // this.akitaDAOEscrow.value = Application(escrow)
     frame_dig -1
@@ -265,10 +287,11 @@ newPool:
     // ): uint64 {
     proto 9 1
     pushbytes ""
+    dup
     // smart_contracts/pool/factory.algo.ts:47
     // const isAlgoPayment = reward.asset.native === 0
     frame_dig -6
-    intc_1 // 0
+    intc_0 // 0
     extract_uint64
     // smart_contracts/pool/factory.algo.ts:48-50
     // const optinMBR: uint64 = isAlgoPayment
@@ -287,12 +310,31 @@ newPool_ternary_merge@3:
     // const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
     +
     frame_bury 0
-    // smart_contracts/pool/factory.algo.ts:57-69
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/dao/constants.ts:11
+    // export const AkitaDAOGlobalStateKeysStakingFees = 'staking_fees'
+    pushbytes "staking_fees"
+    // smart_contracts/utils/functions.ts:45
+    // const [stakingFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysStakingFees))
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:46
+    // return decodeArc4<StakingFees>(stakingFeesBytes)
+    intc_0 // 0
+    extract_uint64
+    frame_bury 1
+    // smart_contracts/pool/factory.algo.ts:58-71
     // assertMatch(
     //   payment,
     //   {
     //     receiver: Global.currentApplicationAddress,
     //     amount: (
+    //       fees.creationFee +
     //       MAX_PROGRAM_PAGES +
     //       (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     //       (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
@@ -303,15 +345,16 @@ newPool_ternary_merge@3:
     // )
     frame_dig -9
     gtxns Receiver
-    // smart_contracts/pool/factory.algo.ts:60
+    // smart_contracts/pool/factory.algo.ts:61
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/pool/factory.algo.ts:57-69
+    // smart_contracts/pool/factory.algo.ts:58-71
     // assertMatch(
     //   payment,
     //   {
     //     receiver: Global.currentApplicationAddress,
     //     amount: (
+    //       fees.creationFee +
     //       MAX_PROGRAM_PAGES +
     //       (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     //       (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
@@ -324,12 +367,36 @@ newPool_ternary_merge@3:
     bz newPool_bool_false@6
     frame_dig -9
     gtxns Amount
-    // smart_contracts/pool/factory.algo.ts:62-64
+    // smart_contracts/pool/factory.algo.ts:63-64
+    // fees.creationFee +
+    // MAX_PROGRAM_PAGES +
+    frame_dig 1
+    // smart_contracts/utils/constants.ts:7
+    // export const MAX_PROGRAM_PAGES: uint64 = 400_000
+    pushint 400000 // 400000
+    // smart_contracts/pool/factory.algo.ts:63-64
+    // fees.creationFee +
+    // MAX_PROGRAM_PAGES +
+    +
+    // smart_contracts/pool/factory.algo.ts:65
+    // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
+    pushint 541500 // 541500
+    // smart_contracts/pool/factory.algo.ts:63-65
+    // fees.creationFee +
+    // MAX_PROGRAM_PAGES +
+    // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
+    +
+    // smart_contracts/pool/factory.algo.ts:66
+    // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
+    pushint 600000 // 600000
+    // smart_contracts/pool/factory.algo.ts:63-66
+    // fees.creationFee +
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
-    pushint 1541500 // 1541500
-    // smart_contracts/pool/factory.algo.ts:62-65
+    +
+    // smart_contracts/pool/factory.algo.ts:63-67
+    // fees.creationFee +
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
@@ -339,19 +406,21 @@ newPool_ternary_merge@3:
     // smart_contracts/utils/functions.ts:330
     // appCreators: 21_700
     pushint 21700 // 21700
-    // smart_contracts/pool/factory.algo.ts:62-66
+    // smart_contracts/pool/factory.algo.ts:63-68
+    // fees.creationFee +
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
     // childAppMBR +
     // fcosts.appCreators
     +
-    // smart_contracts/pool/factory.algo.ts:57-69
+    // smart_contracts/pool/factory.algo.ts:58-71
     // assertMatch(
     //   payment,
     //   {
     //     receiver: Global.currentApplicationAddress,
     //     amount: (
+    //       fees.creationFee +
     //       MAX_PROGRAM_PAGES +
     //       (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     //       (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
@@ -362,15 +431,16 @@ newPool_ternary_merge@3:
     // )
     ==
     bz newPool_bool_false@6
-    intc_0 // 1
+    intc_1 // 1
 
 newPool_bool_merge@7:
-    // smart_contracts/pool/factory.algo.ts:57-69
+    // smart_contracts/pool/factory.algo.ts:58-71
     // assertMatch(
     //   payment,
     //   {
     //     receiver: Global.currentApplicationAddress,
     //     amount: (
+    //       fees.creationFee +
     //       MAX_PROGRAM_PAGES +
     //       (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     //       (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
@@ -380,7 +450,51 @@ newPool_bool_merge@7:
     //   }
     // )
     assert // assert target is match for conditions
-    // smart_contracts/pool/factory.algo.ts:71-86
+    // smart_contracts/pool/factory.algo.ts:73-79
+    // itxn
+    //   .payment({
+    //     receiver: this.akitaDAOEscrow.value.address,
+    //     amount: fees.creationFee,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/constants.ts:2
+    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    intc_0 // 0
+    bytec_1 // "akita_escrow"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/factory.algo.ts:75
+    // receiver: this.akitaDAOEscrow.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    frame_dig 1
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/pool/factory.algo.ts:73-78
+    // itxn
+    //   .payment({
+    //     receiver: this.akitaDAOEscrow.value.address,
+    //     amount: fees.creationFee,
+    //     fee,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    // smart_contracts/utils/constants.ts:4
+    // export const fee: uint64 = 0
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/factory.algo.ts:73-79
+    // itxn
+    //   .payment({
+    //     receiver: this.akitaDAOEscrow.value.address,
+    //     amount: fees.creationFee,
+    //     fee,
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/pool/factory.algo.ts:81-96
     // const newPoolApp = pool.call
     //   .create({
     //     args: [
@@ -398,7 +512,7 @@ newPool_bool_merge@7:
     //     fee,
     //   })
     itxn_begin
-    // smart_contracts/pool/factory.algo.ts:74
+    // smart_contracts/pool/factory.algo.ts:84
     // title,
     frame_dig -8
     len
@@ -406,31 +520,31 @@ newPool_bool_merge@7:
     extract 6 2
     frame_dig -8
     concat
-    // smart_contracts/pool/factory.algo.ts:77
+    // smart_contracts/pool/factory.algo.ts:87
     // new Address(Txn.sender),
     txn Sender
-    // smart_contracts/pool/factory.algo.ts:80
+    // smart_contracts/pool/factory.algo.ts:90
     // minimumStakeAmount,
     frame_dig -3
     itob
-    // smart_contracts/pool/factory.algo.ts:81
+    // smart_contracts/pool/factory.algo.ts:91
     // gateID,
     frame_dig -2
     itob
-    // smart_contracts/pool/factory.algo.ts:82
+    // smart_contracts/pool/factory.algo.ts:92
     // maxEntries,
     frame_dig -1
     itob
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    intc_1 // 0
+    intc_0 // 0
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/pool/factory.algo.ts:83
+    // smart_contracts/pool/factory.algo.ts:93
     // this.akitaDAO.value.id,
     itob
-    // smart_contracts/pool/factory.algo.ts:71-86
+    // smart_contracts/pool/factory.algo.ts:81-96
     // const newPoolApp = pool.call
     //   .create({
     //     args: [
@@ -468,7 +582,7 @@ newPool_bool_merge@7:
     swap
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
-    // smart_contracts/pool/factory.algo.ts:55
+    // smart_contracts/pool/factory.algo.ts:56
     // const pool = compileArc4(Pool)
     intc_3 // 2
     itxn_field ExtraProgramPages
@@ -482,7 +596,7 @@ newPool_bool_merge@7:
     itxn_field ApprovalProgramPages
     pushbytes base64(KGVEi/8IIiplRA1BAAsiKmVEIihlRAmM/yInCmVEixhMCowIJwuMACIoZUyMFUSLFYv/DEEAPosVFicMTFC+RElXACCMBCEEUykiTwJUIlNAABmLAFcCAIsIFosETFBQSRUlChZXBgJMUIwAixUjCIwVQv+6IihlRIv/CChMZyInCWVEixeLAIsYiPWaSCIqZUQiKGVEEkH9vScEJxVnKCJniYsGgAEDEkQiJw1lRCJZQAAEiPp7iTIKixdwAEiLGA9EIihlRIv/CCIqZUQNQQALIiplRCIoZUQJjP8iJw5lREmBCVtJTgKMGYEZW0mMGkyMCEEAB4sZixoKjAgiJw1lTElOAowHRCInG2VESSJbSU4CjB5JgQhbTIEQW4wPTwJXAgBJjAJPAoEIC1uMDScLjAAiKGVMjBNESYwMjBuLE4v/DEEA94sTSRYnDExQvkRJVwAgjARJJVtMIQRTKSJPAlQiU4wRiwxJTwIISU4CjAqLDUlPAg+LG4wcix6MH4sPjBCLAIwBTIwOi/+MFk8CjBRMjAtBATeLDUmLCklOAw6LG4wcix6MH4sPjBCLAIwBTIwOi/+MFosTjBRMjAtBAQ2LAIwBiw+MEIsRQAAfiwBXAgCLCBaLBExQUEkVJQoWVwYCTFCLDyMIjBCMAYsBjACLEIwPiwciWSMJix4SQQCaixqLDxNBADMoImeLDxaAEAAAAAAAAAAAAAAAAAAAAABMUCcbTGcnDScLZyInCWVEixeLAIsYiPPqSIkiKGVEi/8IKExnix4WixsWiw9JTgMWTgJQTFAnG0xnIicJZUSLF4sAixiI87tIixoSQfvkJwQnFWcoImcnG4AYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZycNJwtniYv/ixMJjP+LHiMISYEIC4sCTFsoImciRwKMHE8DjB+LD4wQiwCMAU8CjA6L/4wWjAuMFIscjBuLH4weixCMD4sBjACLDowNixaM/4sUiwsjCIwMIwiME0L+SCJC+h4iJwRlRCcVEkQiJwllRCIrZUQnBmVIgQhbsUwWgARUJKWRshpJshpMshgkshAisgGzgAFkTFAiuUgnCSJnJwQpZygiZycKImcnCCcTZ4mKAgKL/xaL/kxQgAFhTFC+RBeI8WqJIicIZUQpE0EAIDIHIicgZUQNQQAVMgciJxBlRAxAAAgiJxplREEAAiOJIokiJwhlRCkTQQAgMgciJxBlRA9BABUyByInEmVEDkAACCInEmVEQAACI4kiiSInCGVEIiccZUQiJwdlRCInDmVESSJbSwFXCAFLAoEJW0sDgRFbTwSBGVsiJyBlRCInGmVEIicQZUQiJxJlRCInGWVEIiplRCMIIoAMdG90YWxfc3Rha2VkZUQiJx1lRElXACBLAYEgWUsCFU8DTgJSVwIAIiceZUQiJw9lRCInGGVETxNPE08TTxNPE08TTxNPE08TTxJPE08TTxNPE08TTxNPE08TTxNPE4mKAQAxACIrZURyCEQSRIAHdmVyc2lvbov/Z4mKAQAxACIrZURyCEQSRCuL/2eJigIAMQAyCRJEi/44BzIKEkEAIYv+OAgyEBJBABcjRLEyCov/shEishKyFIEEshAisgGziSJC/+Y=)
     itxn_field ApprovalProgramPages
-    // smart_contracts/pool/factory.algo.ts:71-86
+    // smart_contracts/pool/factory.algo.ts:81-96
     // const newPoolApp = pool.call
     //   .create({
     //     args: [
@@ -499,15 +613,15 @@ newPool_bool_merge@7:
     //     ],
     //     fee,
     //   })
-    intc_1 // 0
+    intc_0 // 0
     itxn_field OnCompletion
     pushint 6 // appl
     itxn_field TypeEnum
     // smart_contracts/utils/constants.ts:4
     // export const fee: uint64 = 0
-    intc_1 // 0
+    intc_0 // 0
     itxn_field Fee
-    // smart_contracts/pool/factory.algo.ts:71-86
+    // smart_contracts/pool/factory.algo.ts:81-96
     // const newPoolApp = pool.call
     //   .create({
     //     args: [
@@ -525,16 +639,16 @@ newPool_bool_merge@7:
     //     fee,
     //   })
     itxn_submit
-    // smart_contracts/pool/factory.algo.ts:88
+    // smart_contracts/pool/factory.algo.ts:98
     // .createdApp
     gitxn 0 CreatedApplicationID
-    // smart_contracts/pool/factory.algo.ts:90
+    // smart_contracts/pool/factory.algo.ts:100
     // return newPoolApp.id
-    swap
+    frame_bury 0
     retsub
 
 newPool_bool_false@6:
-    intc_1 // 0
+    intc_0 // 0
     b newPool_bool_merge@7
 
 newPool_ternary_false@2:
@@ -592,7 +706,7 @@ optin:
     // )
     ==
     bz optin_bool_false@3
-    intc_0 // 1
+    intc_1 // 1
 
 optin_bool_merge@4:
     // smart_contracts/utils/base-contracts/optin.ts:24-31
@@ -620,7 +734,7 @@ optin_bool_merge@4:
     itxn_field XferAsset
     // smart_contracts/utils/base-contracts/optin.ts:35
     // assetAmount: 0,
-    intc_1 // 0
+    intc_0 // 0
     itxn_field AssetAmount
     itxn_field AssetReceiver
     // smart_contracts/utils/base-contracts/optin.ts:33-38
@@ -634,7 +748,7 @@ optin_bool_merge@4:
     itxn_field TypeEnum
     // smart_contracts/utils/base-contracts/optin.ts:37
     // fee: 0,
-    intc_1 // 0
+    intc_0 // 0
     itxn_field Fee
     // smart_contracts/utils/base-contracts/optin.ts:33-38
     // itxn.assetTransfer({
@@ -647,26 +761,26 @@ optin_bool_merge@4:
     retsub
 
 optin_bool_false@3:
-    intc_1 // 0
+    intc_0 // 0
     b optin_bool_merge@4
 
 
-// smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateApplication(newVersion: bytes, newChildVersion: bytes) -> void:
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateApplication(newVersion: bytes, newChildVersion: bytes) -> void:
 updateApplication:
-    // smart_contracts/utils/base-contracts/factory.ts:50-51
+    // smart_contracts/utils/base-contracts/factory.ts:79-80
     // @abimethod({ allowActions: ['UpdateApplication'] })
     // updateApplication(newVersion: string, newChildVersion: string): void {
     proto 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:52
+    // smart_contracts/utils/base-contracts/factory.ts:81
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    intc_1 // 0
+    intc_0 // 0
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:52
+    // smart_contracts/utils/base-contracts/factory.ts:81
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
@@ -674,36 +788,36 @@ updateApplication:
     assert // Only the Akita DAO can call this function
     // smart_contracts/constants.ts:3
     // export const GlobalStateKeyVersion = 'version'
-    bytec_1 // "version"
-    // smart_contracts/utils/base-contracts/factory.ts:53
+    bytec_2 // "version"
+    // smart_contracts/utils/base-contracts/factory.ts:82
     // this.version.value = newVersion
     frame_dig -2
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:15
+    // smart_contracts/utils/base-contracts/factory.ts:19
     // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
-    bytec_2 // "child_contract_version"
-    // smart_contracts/utils/base-contracts/factory.ts:54
+    bytec_3 // "child_contract_version"
+    // smart_contracts/utils/base-contracts/factory.ts:83
     // this.childContractVersion.value = newChildVersion
     frame_dig -1
     app_global_put
     retsub
 
 
-// smart_contracts/utils/base-contracts/factory.ts::ServiceFactoryContract.updateAkitaDAO(app: uint64) -> void:
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO(app: uint64) -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/factory.ts:59
+    // smart_contracts/utils/base-contracts/factory.ts:88
     // updateAkitaDAO(app: uint64): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/factory.ts:60
+    // smart_contracts/utils/base-contracts/factory.ts:89
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    intc_1 // 0
+    intc_0 // 0
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:60
+    // smart_contracts/utils/base-contracts/factory.ts:89
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
@@ -712,8 +826,38 @@ updateAkitaDAO:
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:61
+    // smart_contracts/utils/base-contracts/factory.ts:90
     // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow(app: uint64) -> void:
+updateAkitaDAOEscrow:
+    // smart_contracts/utils/base-contracts/factory.ts:93
+    // updateAkitaDAOEscrow(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/factory.ts:94
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/constants.ts:1
+    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/factory.ts:94
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/constants.ts:2
+    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    bytec_1 // "akita_escrow"
+    // smart_contracts/utils/base-contracts/factory.ts:95
+    // this.akitaDAOEscrow.value = Application(app)
     frame_dig -1
     app_global_put
     retsub
