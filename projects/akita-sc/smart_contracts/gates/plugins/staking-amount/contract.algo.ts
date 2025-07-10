@@ -56,13 +56,7 @@ export class StakingAmountGate extends AkitaBaseContract {
     } else {
       const info = abiCall(Staking.prototype.mustGetInfo, {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
-        args: [
-          user,
-          new arc4StakeInfo({
-            asset: new UintN64(asset),
-            type,
-          }),
-        ],
+        args: [ user, { asset, type } ],
         fee,
       }).returnValue
 

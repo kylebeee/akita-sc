@@ -1,4 +1,5 @@
 import {
+  Application,
   assert,
   assertMatch,
   BoxMap,
@@ -10,7 +11,7 @@ import {
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
-import { Address, Bool, decodeArc4, Str, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abimethod, Address, Bool, decodeArc4, Str, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { arc4Zero } from '../utils/constants'
 import {
   arc4Claims,
@@ -83,7 +84,11 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
-  // TODO: create application method
+  @abimethod({ onCreate: 'require' })
+  create(version: string, akitaDAO: uint64): void {
+    this.version.value = version
+    this.akitaDAO.value = Application(akitaDAO)
+  }
 
   // REWARDS METHODS ------------------------------------------------------------------------------
 

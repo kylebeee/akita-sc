@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1
-    bytecblock "gate_app_id" "spending_address"
+    bytecblock "gate_app_id"
     // smart_contracts/arc58/plugins/gate/contract.algo.ts:12
     // export class GatePlugin extends BaseGate {
     txn NumAppArgs
@@ -98,18 +98,16 @@ register:
     //   args: GateArgs
     // ): void {
     proto 4 0
-    intc_0 // 0
-    dup
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    pushbytes "spending_address"
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -202,15 +200,15 @@ register:
     //   }
     // )
     itxn_next
-    // smart_contracts/utils/functions.ts:167
+    // smart_contracts/utils/functions.ts:180
     // if (!rekeyBack) {
     frame_dig -3
     bnz register_after_if_else@5
-    // smart_contracts/utils/functions.ts:168
+    // smart_contracts/utils/functions.ts:181
     // return Global.zeroAddress
     global ZeroAddress
 
-register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8:
+register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
     // smart_contracts/arc58/plugins/gate/contract.algo.ts:36-54
     // abiCall(
     //   Gate.prototype.register,
@@ -238,9 +236,9 @@ register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8:
     frame_dig -1
     itxn_field ApplicationArgs
     itxn_field RekeyTo
-    frame_dig 3
+    frame_dig 1
     itxn_field ApplicationID
-    frame_dig 2
+    frame_dig 0
     itxn_field Sender
     pushint 6 // appl
     itxn_field TypeEnum
@@ -277,58 +275,11 @@ register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8:
     retsub
 
 register_after_if_else@5:
-    // smart_contracts/utils/functions.ts:102-105
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:2
-    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
-    pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:102-105
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/functions.ts:159-162
-    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    // )
-    frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
-    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    // )
-    app_global_get_ex
-    pop
-    dup
-    frame_bury 0
-    // smart_contracts/utils/functions.ts:152
-    // walletAddress: wallet.address,
+    // smart_contracts/utils/functions.ts:184
+    // return wallet.address
     frame_dig -4
     app_params_get AppAddress
-    swap
-    frame_bury 1
     assert // application exists
-    // smart_contracts/utils/functions.ts:172
-    // if (sender !== origin) {
-    !=
-    bz register_after_if_else@7
-    frame_dig 0
     // smart_contracts/arc58/plugins/gate/contract.algo.ts:51
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    b register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8
-
-register_after_if_else@7:
-    frame_dig 1
-    // smart_contracts/arc58/plugins/gate/contract.algo.ts:51
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    b register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8
+    b register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6

@@ -116,4 +116,5 @@ export type AssetChecks = DynamicArray<arc4AssetCheck>
 export type StakingMBRData = {
   stakes: uint64
   heartbeats: uint64
+  settings: uint64
 }

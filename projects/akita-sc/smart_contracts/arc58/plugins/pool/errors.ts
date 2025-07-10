@@ -1,0 +1,1 @@
+export const ERR_NOT_A_VALID_POOL = 'Not a valid pool'

@@ -3,6 +3,7 @@ import {
   Application,
   assert,
   assertMatch,
+  Asset,
   Global,
   gtxn,
   itxn,
@@ -46,9 +47,12 @@ export class RaffleFactory extends classes(
   ): Application {
 
     const isAlgoTicket = ticketAsset === 0
-    const optinMBR: uint64 = isAlgoTicket
-      ? Global.assetOptInMinBalance
-      : Global.assetOptInMinBalance * 2
+    const daoEscrowNeedsToOptIn = !this.akitaDAOEscrow.value.address.isOptedIn(Asset(ticketAsset))
+    const optinMBR: uint64 = (
+      Global.assetOptInMinBalance * (
+        isAlgoTicket ? 0 : daoEscrowNeedsToOptIn ? 2 : 6
+      )
+    )
 
     const fcosts = fmbr()
 

@@ -1,21 +1,19 @@
 import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Bool, DynamicArray, DynamicBytes, StaticBytes, Str, Struct, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Address, Bool, DynamicArray, DynamicBytes, StaticBytes, Struct, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { arc4MethodInfo, MethodRestriction, SpendAllowanceType } from '../arc58/account/types';
 import { CID } from '../utils/types/base';
 
 export class arc4DAOPluginInfo extends Struct<{
   /** the type of delegation the plugin is using */
   delegationType: UintN8;
-  /** the spending account to use for the plugin */
-  spendingApp: UintN64;
+  /** the escrow account to use for the plugin */
+  escrow: UintN64;
   /** The last round or unix time at which this plugin can be called */
   lastValid: UintN64;
   /** The number of rounds or seconds that must pass before the plugin can be called again */
   cooldown: UintN64;
   /** The methods that are allowed to be called for the plugin by the address */
   methods: DynamicArray<arc4MethodInfo>;
-  /** Whether the plugin has allowance restrictions */
-  useAllowance: Bool;
   /** Whether to use unix timestamps or round for lastValid and cooldown */
   useRounds: Bool;
   /** The last round or unix time the plugin was called */
@@ -24,7 +22,44 @@ export class arc4DAOPluginInfo extends Struct<{
   start: UintN64;
   /** whether to require the group ID of the submitted group to match */
   useExecutionKey: Bool;
+  /** the power needed to propose plugin execution */
+  executionProposalCreationMinimum: UintN64;
+  /** the threshold of participation needed to execute the plugin */
+  executionParticipationThreshold: UintN64;
+  /** the threshold of approval votes needed to execute the plugin */
+  executionApprovalThreshold: UintN64;
+  /** the amount of seconds the voting period lasts */
+  executionVotingDuration: UintN64;
 }> { }
+
+export type DAOPluginInfo = {
+  /** the type of delegation the plugin is using */
+  delegationType: UintN8;
+  /** the escrow account to use for the plugin */
+  escrow: uint64;
+  /** The last round or unix time at which this plugin can be called */
+  lastValid: uint64;
+  /** The number of rounds or seconds that must pass before the plugin can be called again */
+  cooldown: uint64;
+  /** The methods that are allowed to be called for the plugin by the address */
+  methods: DynamicArray<arc4MethodInfo>;
+  /** Whether to use unix timestamps or round for lastValid and cooldown */
+  useRounds: boolean;
+  /** The last round or unix time the plugin was called */
+  lastCalled: uint64;
+  /** The round or unix time the plugin was installed */
+  start: uint64;
+  /** whether to require the group ID of the submitted group to match */
+  useExecutionKey: boolean;
+  /** the power needed to propose plugin execution */
+  executionProposalCreationMinimum: uint64;
+  /** the threshold of participation needed to execute the plugin */
+  executionParticipationThreshold: uint64;
+  /** the threshold of approval votes needed to execute the plugin */
+  executionApprovalThreshold: uint64;
+  /** the amount of seconds the voting period lasts */
+  executionVotingDuration: uint64;
+}
 
 export type ProposalStatus = UintN8
 
@@ -36,15 +71,31 @@ export type ProposalUpgradeApp = {
 }
 
 export type ProposalAddPlugin = {
-  app: uint64,
-  allowedCaller: Address,
-  delegationType: UintN8,
-  lastValid: uint64,
-  cooldown: uint64,
-  methods: MethodRestriction[],
-  useAllowance: boolean,
-  useRounds: boolean,
-  useExecutionKey: boolean,
+  app: uint64
+  allowedCaller: Address
+  delegationType: UintN8
+  escrow: string  
+  lastValid: uint64
+  cooldown: uint64
+  methods: MethodRestriction[]
+  useRounds: boolean
+  useExecutionKey: boolean
+  executionProposalCreationMinimum: uint64
+  executionParticipationThreshold: uint64
+  executionApprovalThreshold: uint64
+  executionVotingDuration: uint64
+  sourceLink: string
+  allowances: AllowanceProposal[]
+}
+
+export type AllowanceProposal = {
+  asset: uint64
+  type: SpendAllowanceType
+  max: uint64
+  allowed: uint64
+  spent: uint64
+  interval: uint64
+  last: uint64
 }
 
 export type ProposalAddNamedPlugin = {
@@ -58,24 +109,35 @@ export type ProposalAddNamedPlugin = {
   useAllowance: boolean,
   useRounds: boolean,
   useExecutionKey: boolean,
+  executionParticipationThreshold: uint64
+  executionApprovalThreshold: uint64
+  executionVotingDuration: uint64
+  sourceLink: string
+  allowances: AllowanceProposal[]
 }
 
 export type ProposalExecutePlugin = {
   app: uint64
-  txns: bytes[][]
+  allowedCaller: Address,
+  executionKey: ExecutionKey
 }
 
 export type ProposalExecuteNamedPlugin = {
   name: string
-  txns: bytes[][]
+  app: uint64
+  allowedCaller: Address,
+  executionKey: ExecutionKey
 }
 
 export type ProposalRemovePlugin = {
   app: uint64
+  allowedCaller: Address,
 }
 
 export type ProposalRemoveNamedPlugin = {
   name: string
+    app: uint64
+  allowedCaller: Address,
 }
 
 export type ProposalAddAllowance = {
@@ -119,7 +181,7 @@ export class arc4ProposalDetails extends arc4.Struct<{
   data: DynamicBytes
 }> { }
 
-export type ExecutionKey = arc4.StaticBytes<32>
+export type ExecutionKey = bytes<32>
 
 export type ExecutionInfo = {
   /** whether the txn group has been executed */
@@ -133,20 +195,42 @@ export class arc4ExecutionInfo extends arc4.Struct<{
   lastValidRound: arc4.UintN64
 }> { }
 
-export type EscrowInfo = {
+export type ReceiveEscrowDisbursementPhase = UintN8
+
+export type ReceiveEscrowInfo = {
   /** the escrow app id */
   escrow: uint64
-  /** the account that uses the escrow */
-  account: Address
+  /** the account that is allowed to use the escrow */
+  caller: Address
+  /** whether the escrow is allocatable for paying the DAO/krby/mods */
+  allocatable: boolean
   /** whether the account is allowed to opt in */
   optinAllowed: boolean
+  /** the number of assets the escrow is opted into */
+  optinCount: uint64
+  /** the current phase of the escrow disbursement */
+  phase: ReceiveEscrowDisbursementPhase
+  /** allocation counter to track the number of assets we need to disburse */
+  allocationCounter: uint64
+  /** the last unix time the escrow was disbursed */
+  lastDisbursement: uint64
+  /** the unix timestamp the escrow was created */
+  creationDate: uint64
 }
 
 export class arc4EscrowInfo extends arc4.Struct<{
   escrow: UintN64,
   account: Address,
   optinAllowed: arc4.Bool,
+  phase: ReceiveEscrowDisbursementPhase,
+  lastDisbursement: UintN64,
+  creationDate: UintN64
 }> { }
+
+export type EscrowAssetKey = {
+  escrow: uint64
+  asset: uint64
+}
 
 // distribute Bones for DAU
 // distribute Bones for Bones Stakers
@@ -156,8 +240,8 @@ export class arc4EscrowInfo extends arc4.Struct<{
 export type AkitaDAOState = {
   status: uint64
   version: string
-  contentPolicy: arc4.StaticBytes<36>
-  minimumRewardsImpact: uint64
+  contentPolicy: CID
+  minRewardsImpact: uint64
   akitaAppList: AkitaAppList
   otherAppList: OtherAppList
   socialFees: SocialFees
@@ -167,7 +251,12 @@ export type AkitaDAOState = {
   krbyPercentage: uint64
   moderatorPercentage: uint64
   akitaAssets: AkitaAssets
-  proposalSettings: ProposalSettings
+  proposalSettings: {
+    creation: ProposalSettings
+    participation: ProposalSettings
+    approval: ProposalSettings
+    duration: ProposalSettings
+  }
   revocationAddress: Address
 }
 
@@ -450,10 +539,12 @@ export class arc4AkitaAssets extends arc4.Struct<{
 }> { }
 
 export type ProposalSettings = {
-  /** the minimum staking power needed to create a proposal */
-  minimumProposalThreshold: uint64
-  /** the minimum of positive votes necessary to pass a proposal */
-  minimumVoteThreshold: uint64
+  upgradeApp: uint64
+  addPlugin: uint64
+  removePlugin: uint64
+  addAllowance: uint64
+  removeAllowance: uint64
+  updateField: uint64
 }
 
 /** arc4 variant of ProposalSettings */
@@ -461,3 +552,13 @@ export class arc4ProposalSettings extends arc4.Struct<{
   minimumProposalThreshold: arc4.UintN64
   minimumVoteThreshold: arc4.UintN64
 }> { }
+
+export type AkitaDAOMBRData = {
+  plugins: uint64
+  namedPlugins: uint64
+  allowances: uint64
+  proposals: uint64
+  executions: uint64
+  escrows: uint64
+  escrowAssets: uint64
+}

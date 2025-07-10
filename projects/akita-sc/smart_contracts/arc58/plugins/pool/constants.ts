@@ -1,0 +1,1 @@
+export const PoolPluginGlobalStateKeyFactory = 'pool_factory'

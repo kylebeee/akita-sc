@@ -24,6 +24,12 @@ export const ERR_TOKEN_ALLOCATION_BOX_ALREADY_EXISTS = 'Token allocation box alr
 export const ERR_INSUFFICIENT_AKITA = 'Insufficient Akita'
 export const ERR_INVALID_RECEIVE_PAYMENT = 'Invalid receive payment'
 export const ERR_ESCROW_DOES_NOT_EXIST = 'Escrow does not exist'
+export const ERR_ESCROW_NOT_IN_ALLOCATION_PHASE = 'Escrow is not in allocation phase'
+export const ERR_ASSET_ALREADY_ALLOCATED = 'Asset is already allocated'
+export const ERR_ESCROW_NOT_OPTED_IN = 'Escrow is not opted in to the asset'
+export const ERR_ESCROW_NOT_IDLE = 'Escrow is not in idle phase'
+export const ERR_ESCROW_NOT_ALLOCATABLE = 'Escrow is not allocatable'
+export const ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT = 'Escrow is not ready for disbursement'
 export const ERR_PROPOSAL_DOES_NOT_EXIST = 'Proposal does not exist'
 export const ERR_PROPOSAL_NOT_APPROVED = 'Proposal is not approved'
 
@@ -74,3 +80,5 @@ export const ERR_INVALID_REVOCATION_ADDRESS = 'Invalid revocation address'
 
 export const ERR_INVALID_FIELD = 'Invalid field'
 export const ERR_INVALID_PROPOSAL_STATUS = 'Invalid proposal status'
+
+export const ERR_INSUFFICIENT_PROPOSAL_THRESHOLD = 'Insufficient proposal threshold'

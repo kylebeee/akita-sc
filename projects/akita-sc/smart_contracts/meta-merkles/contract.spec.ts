@@ -6,7 +6,7 @@ import { StandardMerkleTree } from '@joe-p/merkle-tree'
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
 import { HexString } from '@joe-p/merkle-tree/dist/bytes'
 import { MetaMerklesClient, MetaMerklesFactory } from '../artifacts/meta-merkles/MetaMerklesClient'
-import { SpendingAccountFactoryFactory } from '../artifacts/arc58/spending-account/SpendingAccountFactoryClient'
+import { EscrowFactoryFactory } from '../artifacts/escrow/EscrowFactoryClient'
 
 const fixture = algorandFixture()
 algokit.Config.configure({ populateAppCallResources: true })
@@ -35,15 +35,15 @@ describe('MetaMerkles', () => {
 
     suggestedParams = await algod.getTransactionParams().do()
 
-    const spendingAccountFactory = new SpendingAccountFactoryFactory({
+    const escrowFactory = new EscrowFactoryFactory({
       defaultSender: bobsAccount.addr,
       defaultSigner: makeBasicAccountTransactionSigner(bobsAccount),
       algorand
     })
 
-    const spendingAccountFactoryResults = await spendingAccountFactory.send.create.bare()
+    const escrowFactoryResults = await escrowFactory.send.create.bare()
 
-    await spendingAccountFactoryResults.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
+    await escrowFactoryResults.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
 
     const minter = new MetaMerklesFactory({
       defaultSender: bobsAccount.addr,
@@ -54,7 +54,7 @@ describe('MetaMerkles', () => {
     const results = await minter.send.create.create({
       args: {},
       deployTimeParams: {
-        TMPL_SPENDING_ACCOUNT_FACTORY_APP: spendingAccountFactoryResults.appClient.appId,
+        TMPL_ESCROW_FACTORY: escrowFactoryResults.appClient.appId,
       }
     })
 

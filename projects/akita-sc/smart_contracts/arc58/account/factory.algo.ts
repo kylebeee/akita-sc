@@ -9,7 +9,7 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { GlobalStateKeyRevocationApp, GlobalStateKeySpendingAccountFactoryApp } from '../../constants'
+import { GlobalStateKeyEscrowFactory, GlobalStateKeyRevocation } from '../../constants'
 import { AbstractedAccount } from './contract.algo'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
 import { abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
@@ -22,30 +22,30 @@ export class AbstractedAccountFactory extends FactoryContract {
   
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  /** the spending account factory app */
-  spendingAccountFactoryApp = GlobalState<Application>({ key: GlobalStateKeySpendingAccountFactoryApp })
+  /** the escrow factory app */
+  escrowFactory = GlobalState<Application>({ key: GlobalStateKeyEscrowFactory })
   /** the default app thats allowed to revoke plugins */
-  revocationApp = GlobalState<Application>({ key: GlobalStateKeyRevocationApp })
+  revocation = GlobalState<Application>({ key: GlobalStateKeyRevocation })
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(akitaDAO: uint64, version: string, childVersion: string, spendingAccountFactoryApp: uint64, revocationApp: uint64): void {
+  create(akitaDAO: uint64, version: string, childVersion: string, escrowFactoryApp: uint64, revocationApp: uint64): void {
     this.akitaDAO.value = Application(akitaDAO)
     this.version.value = version
     this.childContractVersion.value = childVersion
-    this.spendingAccountFactoryApp.value = Application(spendingAccountFactoryApp)
-    this.revocationApp.value = Application(revocationApp)
+    this.escrowFactory.value = Application(escrowFactoryApp)
+    this.revocation.value = Application(revocationApp)
   }
 
   // ABSTRACTED ACCOUNT FACTORY METHODS -----------------------------------------------------------
 
   updateRevocationApp(app: uint64): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.revocationApp.value = Application(app)
+    this.revocation.value = Application(app)
   }
 
-  mint(payment: gtxn.PaymentTxn, controlledAccount: Address, admin: Address, nickname: string): uint64 {
+  mint(payment: gtxn.PaymentTxn, controlledAddress: Address, admin: Address, nickname: string): uint64 {
     
     const abstractedAccount = compileArc4(AbstractedAccount)
 
@@ -69,10 +69,10 @@ export class AbstractedAccountFactory extends FactoryContract {
       .create({
         args: [
           this.childContractVersion.value,
-          controlledAccount,
+          controlledAddress,
           admin,
-          this.spendingAccountFactoryApp.value.id,
-          this.revocationApp.value.id,
+          this.escrowFactory.value.id,
+          this.revocation.value.id,
           nickname,
         ],
         extraProgramPages: 3,

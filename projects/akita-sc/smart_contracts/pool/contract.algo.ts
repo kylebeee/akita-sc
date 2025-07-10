@@ -1,7 +1,10 @@
 import {
+  Account,
   Application,
   arc4,
   assert,
+  assertMatch,
+  Asset,
   BoxMap,
   Bytes,
   bytes,
@@ -37,7 +40,7 @@ import {
 } from './types'
 import { arc4RootKey, RootKey } from '../meta-merkles/types'
 import { GateArgs } from '../utils/types/gates'
-import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
 import { arc4StakeInfo, StakingType } from '../staking/types'
 import {
   DisbursementPhaseAllocation,
@@ -50,6 +53,8 @@ import {
   PoolBoxPrefixEntriesByAddress,
   PoolGlobalStateKeyActiveDisbursementID,
   PoolGlobalStateKeyActiveDisbursementWindow,
+  PoolGlobalStateKeyAkitaRoyalty,
+  PoolGlobalStateKeyAkitaRoyaltyAmount,
   PoolGlobalStateKeyAllowLateSignups,
   PoolGlobalStateKeyCreator,
   PoolGlobalStateKeyDisbursementCursor,
@@ -60,6 +65,7 @@ import {
   PoolGlobalStateKeyGateSize,
   PoolGlobalStateKeyLastDisbursementTimestamp,
   PoolGlobalStateKeyMarketplace,
+  PoolGlobalStateKeyMarketplaceRoyalties,
   PoolGlobalStateKeyMaxEntries,
   PoolGlobalStateKeyMinimumStakeAmount,
   PoolGlobalStateKeyQualifiedStake,
@@ -89,15 +95,16 @@ import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { MAX_UINT64 } from '../utils/constants'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
-import { calcPercent, gateCheck, getAkitaAppList, getOtherAppList, percentageOf } from '../utils/functions'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { calcPercent, gateCheck, getAkitaAppList, getOtherAppList, getStakingFees, getUserImpact, impactRange, percentageOf } from '../utils/functions'
+import { AkitaBaseEscrow } from '../utils/base-contracts/base'
 import { fee } from '../utils/constants'
+import { AkitaDAOEscrowAccountStakingPools } from '../dao/constants'
 
 const MERKLE_TREE_TYPE_ASSET: uint64 = 1
 
 export class Pool extends classes(
   BasePool,
-  AkitaBaseContract,
+  AkitaBaseEscrow,
   ContractWithCreatorOnlyOptIn
 ) {
 
@@ -143,9 +150,15 @@ export class Pool extends classes(
   /** the size of the gate were using */
   gateSize = GlobalState<uint64>({ key: PoolGlobalStateKeyGateSize })
   /** the address of the creator of the staking pool */
-  creator = GlobalState<Address>({ key: PoolGlobalStateKeyCreator })
+  creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
   /** marketplace is pool creation side marketplace */
-  marketplace = GlobalState<Address>({ key: PoolGlobalStateKeyMarketplace })
+  marketplace = GlobalState<Account>({ key: PoolGlobalStateKeyMarketplace })
+  /** the amount the marketplaces will get for the sale */
+  marketplaceRoyalties = GlobalState<uint64>({ key: PoolGlobalStateKeyMarketplaceRoyalties })
+  /** the akita royalty for the pool */
+  akitaRoyalty = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyalty })
+  /** the amount of royalties that were paid in a disbursement */
+  akitaRoyaltyAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyaltyAmount })
   /** salt for randomness */
   salt = GlobalState<bytes<32>>({ key: PoolGlobalStateKeySalt })
   /** a sub status of the disbursement phase of the pool */
@@ -184,6 +197,45 @@ export class Pool extends classes(
     return id
   }
 
+  private payAkitaRoyalty(): void {
+    const reward = decodeArc4<Reward>(this.reward.value.bytes)
+    
+    let amount: uint64 = 0
+    if (reward.distribution === DistributionTypeFlat) {
+      amount = calcPercent((this.qualifiedStakers.value * reward.rate), this.akitaRoyalty.value)
+    } else {
+      amount = calcPercent(reward.rate, this.akitaRoyalty.value)
+    }
+
+    this.akitaRoyaltyAmount.value = amount 
+
+    // pay the akita dao
+    if (this.reward.value.asset.native === 0) {
+      itxn
+        .payment({
+          receiver: this.akitaDAOEscrow.value.address,
+          amount,
+          fee,
+        })
+        .submit()
+    } else if (this.akitaDAOEscrow.value.address.isOptedIn(Asset(reward.asset))) {
+      itxn
+        .assetTransfer({
+          assetReceiver: this.akitaDAOEscrow.value.address,
+          assetAmount: amount,
+          xferAsset: reward.asset,
+          fee,
+        })
+        .submit()
+    } else {
+      this.optAkitaEscrowInAndSend(
+        AkitaDAOEscrowAccountStakingPools,
+        Asset(reward.asset),
+        amount
+      )
+    }
+  }
+
   private processPreparationPhase(iterationAmount: uint64): void {
     let count: uint64 = 0
     let total: uint64 = 0
@@ -198,6 +250,7 @@ export class Pool extends classes(
         continue
       }
 
+      // if its not avg based, this check will disqualify the entry if necessary
       const { valid } = this.getStakeValue(id)
       if (!valid) {
         continue
@@ -205,6 +258,12 @@ export class Pool extends classes(
 
       const passes = gateCheck(this.akitaDAO.value, entry.address, this.gateID.value, entry.gateArgs)
       if (!passes) {
+        if (this.type.value !== POOL_STAKING_TYPE_HEARTBEAT) {
+          this.entries(id).value = {
+            ...this.entries(id).value,
+            disqualified: true
+          }
+        }
         continue
       }
 
@@ -219,17 +278,18 @@ export class Pool extends classes(
     if (this.entryID.value === this.disbursementCursor.value) {
       this.disbursementPhase.value = DisbursementPhaseAllocation
       this.disbursementCursor.value = 0
+      this.payAkitaRoyalty()
     }
   }
 
-  private createPercentageDisbursement(iterationAmount: uint64, asset: uint64): void {
+  private createPercentageDisbursement(iterationAmount: uint64, asset: uint64, amount: uint64): void {
 
     if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
       iterationAmount = this.entryID.value - this.disbursementCursor.value
     }
 
-    const reward = decodeArc4<Reward>(this.reward.value.bytes)
     const allocations = new DynamicArray<arc4UserAllocation>()
+    const actualAmount: uint64 = amount - this.akitaRoyaltyAmount.value
     let sum: uint64 = 0
 
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
@@ -238,15 +298,15 @@ export class Pool extends classes(
         continue
       }
 
-      const amount = calcPercent(reward.rate, percentageOf(entry.quantity, this.qualifiedStake.value))
+      const individualAmount = calcPercent(actualAmount, percentageOf(entry.quantity, this.qualifiedStake.value))
 
       allocations.push(
         new arc4UserAllocation({
           address: entry.address,
-          amount: new UintN64(amount)
+          amount: new UintN64(individualAmount)
         }),
       )
-      sum += amount
+      sum += individualAmount
     }
 
     this.disbursementCursor.value += iterationAmount
@@ -259,7 +319,9 @@ export class Pool extends classes(
   }
 
   private createFlatDisbursement(iterationAmount: uint64, asset: uint64, amount: uint64): void {
-    const total: uint64 = this.qualifiedStakers.value * amount
+    const total: uint64 = (this.qualifiedStakers.value * amount) - this.akitaRoyaltyAmount.value
+    const percentageAkitaFee = calcPercent(amount, this.akitaRoyalty.value)
+    const adjustedAmount: uint64 = amount - percentageAkitaFee
     const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
 
     assert(balance >= total, ERR_NOT_ENOUGH_FUNDS)
@@ -280,10 +342,10 @@ export class Pool extends classes(
       allocations.push(
         new arc4UserAllocation({
           address: entry.address,
-          amount: new UintN64(amount)
+          amount: new UintN64(adjustedAmount)
         }),
       )
-      sum += amount
+      sum += adjustedAmount
     }
 
     this.disbursementCursor.value += iterationAmount
@@ -297,13 +359,14 @@ export class Pool extends classes(
 
   private createEvenDisbursement(iterationAmount: uint64, asset: uint64, sum: uint64): void {
     const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
-    assert(balance >= sum, ERR_NOT_ENOUGH_FUNDS)
+    const actualSum: uint64 = sum - this.akitaRoyaltyAmount.value
+    assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
 
     if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
       iterationAmount = this.entryID.value - this.disbursementCursor.value
     }
 
-    const amount: uint64 = sum / this.qualifiedStakers.value
+    const amount: uint64 = actualSum / this.qualifiedStakers.value
     const allocations = new DynamicArray<arc4UserAllocation>()
     for (let id = this.disbursementCursor.value; id < iterationAmount; id++) {
       const entry = this.entries(id).value
@@ -336,7 +399,8 @@ export class Pool extends classes(
 
   private createShuffleDisbursement(iterationAmount: uint64, asset: uint64, sum: uint64): void {
     const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
-    assert(balance >= sum, ERR_NOT_ENOUGH_FUNDS)
+    const actualSum: uint64 = sum - this.akitaRoyaltyAmount.value
+    assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
 
     if ((this.disbursementCursor.value + iterationAmount) > this.entryID.value) {
       iterationAmount = this.entryID.value - this.disbursementCursor.value
@@ -344,9 +408,9 @@ export class Pool extends classes(
 
     const reward = decodeArc4<Reward>(this.reward.value.bytes)
 
-    let amount = reward.rate
+    let amount = actualSum
     if (reward.winnerCount > 0) {
-      amount = reward.rate / reward.winnerCount
+      amount = actualSum / reward.winnerCount
     }
 
     const tickets = decodeArc4<uint64[]>(this.winningTickets.value.bytes)
@@ -440,10 +504,10 @@ export class Pool extends classes(
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [
           entry.address,
-          new arc4StakeInfo({
-            asset: new UintN64(entry.asset),
+          {
+            asset: entry.asset,
             type: this.stakingType(),
-          }),
+          },
         ],
         fee,
       }).returnValue
@@ -598,8 +662,8 @@ export class Pool extends classes(
     this.reward.value = reward.copy()
     const decodedReward = decodeArc4<Reward>(reward.bytes)
     assert(decodedReward.rate > 0, ERR_RATE_MUST_BE_GREATER_THAN_ZERO)
-    this.creator.value = creator
-    this.marketplace.value = marketplace
+    this.creator.value = creator.native
+    this.marketplace.value = marketplace.native
 
     // stake key is optional if the distribution type is not percentage based
     // we use this to qualify stakes for the pool but in some cases users may
@@ -630,6 +694,11 @@ export class Pool extends classes(
     this.akitaDAO.value = Application(akitaDAO)
     this.salt.value = Txn.txId
     this.disbursementPhase.value = DisbursementPhaseIdle
+
+    const fees = getStakingFees(this.akitaDAO.value)
+    const impact = getUserImpact(this.akitaDAO.value, this.creator.value)
+    this.akitaRoyalty.value = impactRange(impact, fees.impactTaxMin, fees.impactTaxMax)
+
     this.activeDisbursementID.value = 0
     this.activeDisbursementWindow.value = 0
     this.disbursementCursor.value = 0
@@ -652,16 +721,16 @@ export class Pool extends classes(
   }
 
   @abimethod({ allowActions: 'DeleteApplication' })
-  deleteApplication(caller: Address): void {
+  delete(caller: Address): void {
     assert(Txn.sender === Global.creatorAddress, 'call must come from factory')
-    assert(caller.native === this.creator.value.native, 'only the creator can delete the pool')
+    assert(caller.native === this.creator.value, 'only the creator can delete the pool')
     assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
   }
 
   // POOL METHODS ---------------------------------------------------------------------------------
 
   finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
-    assert(Txn.sender === this.creator.value.native, 'only the creator can finalize the pool')
+    assert(Txn.sender === this.creator.value, 'only the creator can finalize the pool')
     assert(this.status.value === PoolStatusDraft, 'the pool must be in draft state to finalize')
     assert(
       signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
@@ -703,12 +772,17 @@ export class Pool extends classes(
       'pool has reached maximum entries'
     )
     // Verify payment for box storage (increased for additional box)
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-
     const costs = this.mbr()
     const entryMBR: uint64 = costs.entries + costs.entriesByAddress
 
-    assert(payment.amount === (entryMBR * entries.length), ERR_INVALID_PAYMENT_AMOUNT)
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: entryMBR * entries.length,
+      },
+      ERR_INVALID_PAYMENT
+    )
 
     for (let i: uint64 = 0; i < entries.length; i++) {
       assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
@@ -726,10 +800,10 @@ export class Pool extends classes(
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [
           new Address(Txn.sender),
-          new arc4StakeInfo({
-            asset: new UintN64(entries[i].asset),
+          {
+            asset: entries[i].asset,
             type: this.stakingType(),
-          }),
+          },
         ],
         fee,
       }).returnValue
@@ -768,9 +842,6 @@ export class Pool extends classes(
       this.entriesByAddress(aKey).value = entryID
     }
   }
-
-  // TODO: implement withdraw?
-  withdraw(): void { }
 
   startDisbursement(): void {
     assert(this.isLive(), 'the pool is not live')
@@ -840,20 +911,30 @@ export class Pool extends classes(
     if (this.disbursementPhase.value === DisbursementPhasePreparation) {
       this.processPreparationPhase(iterationAmount)
     } else {
-      if (reward.distribution === DistributionTypePercentage) {
-        this.createPercentageDisbursement(iterationAmount, reward.asset)
-      } else if (reward.distribution === DistributionTypeFlat) {
-        this.createFlatDisbursement(iterationAmount, reward.asset, reward.rate)
-      } else if (reward.distribution === DistributionTypeEven) {
-        this.createEvenDisbursement(iterationAmount, reward.asset, reward.rate)
-      } else if (reward.distribution === DistributionTypeShuffle) {
-        if (this.winningTickets.value.length === 0) {
-          this.raffle()
-        } else {
-          this.createShuffleDisbursement(iterationAmount, reward.asset, reward.rate)
+      switch (reward.distribution) {
+        case DistributionTypePercentage: {
+          this.createPercentageDisbursement(iterationAmount, reward.asset, reward.rate)
+          break
         }
-      } else {
-        assert(false, 'unknown reward rate type')
+        case DistributionTypeFlat: {
+          this.createFlatDisbursement(iterationAmount, reward.asset, reward.rate)
+          break
+        }
+        case DistributionTypeEven: {
+          this.createEvenDisbursement(iterationAmount, reward.asset, reward.rate)
+          break
+        }
+        case DistributionTypeShuffle: {
+          if (this.winningTickets.value.length === 0) {
+            this.raffle()
+          } else {
+            this.createShuffleDisbursement(iterationAmount, reward.asset, reward.rate)
+          }
+          break
+        }
+        default: {
+          assert(false, 'unknown reward rate type')
+        }
       }
     }
   }
@@ -918,7 +999,7 @@ export class Pool extends classes(
       stakeKey: decodeArc4<RootKey>(this.stakeKey.value.bytes),
       minimumStakeAmount: this.minimumStakeAmount.value,
       gateID: this.gateID.value,
-      creator: this.creator.value,
+      creator: new Address(this.creator.value),
     }
   }
 }

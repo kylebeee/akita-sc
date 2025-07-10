@@ -551,76 +551,24 @@ main_create_route@3:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:166
+    // smart_contracts/utils/functions.ts:179
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    intc_0 // 0
-    dup
-    // smart_contracts/utils/functions.ts:167
+    // smart_contracts/utils/functions.ts:180
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:168
+    // smart_contracts/utils/functions.ts:181
     // return Global.zeroAddress
     global ZeroAddress
-    frame_bury 0
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:102-105
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    frame_dig -1
-    // smart_contracts/arc58/account/constants.ts:2
-    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
-    pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:102-105
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/functions.ts:159-162
-    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    // )
-    frame_dig -1
-    // smart_contracts/arc58/account/constants.ts:9
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
-    bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
-    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    // )
-    app_global_get_ex
-    pop
-    dup
-    frame_bury 0
-    // smart_contracts/utils/functions.ts:152
-    // walletAddress: wallet.address,
+    // smart_contracts/utils/functions.ts:184
+    // return wallet.address
     frame_dig -1
     app_params_get AppAddress
-    swap
-    frame_bury 1
     assert // application exists
-    // smart_contracts/utils/functions.ts:172
-    // if (sender !== origin) {
-    !=
-    bz rekeyAddress_after_if_else@4
-    // smart_contracts/utils/functions.ts:173
-    // return sender
-    retsub
-
-rekeyAddress_after_if_else@4:
-    // smart_contracts/utils/functions.ts:176
-    // return walletAddress
-    frame_dig 1
-    frame_bury 0
     retsub
 
 
@@ -735,16 +683,16 @@ deleteFields:
     //   fieldNames: DynamicArray<DynamicBytes>
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -823,16 +771,16 @@ updateFields:
     //   fieldAndVals: DynamicArray<DynamicBytes>
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -912,16 +860,16 @@ offerForSale:
     //   reservedFor: Address
     // ): void {
     proto 5 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1004,16 +952,16 @@ cancelSale:
     //   nfdAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1091,16 +1039,16 @@ postOffer:
     //   note: string
     // ): void {
     proto 5 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1189,16 +1137,16 @@ purchase:
     //   nfdAppID: uint64,
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1353,16 +1301,16 @@ updateHash:
     //   hash: bytes
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1448,16 +1396,16 @@ contractLock:
     //   lock: boolean
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1542,16 +1490,16 @@ segmentLock:
     //   usdPrice: uint64
     // ): void {
     proto 5 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1639,16 +1587,16 @@ vaultOptInLock:
     //   lock: boolean
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1732,16 +1680,16 @@ vaultOptIn:
     //   assets: uint64[]
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1824,16 +1772,16 @@ vaultSend:
     //   otherAssets: uint64[]
     // ): void {
     proto 8 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -8
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1931,16 +1879,16 @@ renew:
     //   years: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2128,16 +2076,16 @@ setPrimaryAddress:
     //   address: Address
     // ): void {
     proto 5 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_0 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)

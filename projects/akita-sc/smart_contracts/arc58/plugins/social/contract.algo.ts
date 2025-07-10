@@ -1425,10 +1425,10 @@ export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialI
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [
           new Address(account),
-          new arc4StakeInfo({
-            asset: new UintN64(akta),
+          {
+            asset: akta,
             type: STAKING_TYPE_SOFT,
-          })
+          }
         ],
         fee,
       }

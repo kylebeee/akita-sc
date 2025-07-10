@@ -28,6 +28,7 @@ import {
   RaffleBoxPrefixEntries,
   RaffleBoxPrefixEntriesByAddress,
   RaffleBoxPrefixWeights,
+  RaffleGlobalStateKeyAkitaRoyalty,
   RaffleGlobalStateKeyCreatorRoyalty,
   RaffleGlobalStateKeyEndTimestamp,
   RaffleGlobalStateKeyEntryCount,
@@ -134,6 +135,8 @@ export class Raffle extends classes(
   marketplace = GlobalState<Address>({ key: RaffleGlobalStateKeyMarketplace })
   /** the amount the marketplaces will get for the sale */
   marketplaceRoyalties = GlobalState<uint64>({ key: RaffleGlobalStateKeyMarketplaceRoyalties })
+  /** the minimum impact tax for the raffle */
+  akitaRoyalty = GlobalState<uint64>({ key: RaffleGlobalStateKeyAkitaRoyalty })
   /** counter for how many times we've failed to get rng from the beacon */
   vrfFailureCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyVRFFailureCount })
   /** The id's of the raffle entries */
@@ -193,13 +196,9 @@ export class Raffle extends classes(
       }
     }
 
-    const { raffleSaleImpactTaxMin: min, raffleSaleImpactTaxMax: max } = getNFTFees(this.akitaDAO.value)
     let akitaAmount: uint64 = 0
-    if (max > 0) {
-      const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
-      const akitaTaxRate = impactRange(impact, min, max)
-
-      akitaAmount = calcPercent(amount, akitaTaxRate)
+    if (this.akitaRoyalty.value > 0) {
+      akitaAmount = calcPercent(amount, this.akitaRoyalty.value)
       if (akitaAmount === 0 && amount > 0) {
         akitaAmount = 1
       }
@@ -264,7 +263,12 @@ export class Raffle extends classes(
     this.akitaDAOEscrow.value = Application(feeEscrow)
 
     // internal variables
-    this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).raffleComposablePercentage
+    const fees = getNFTFees(this.akitaDAO.value)
+    this.marketplaceRoyalties.value = fees.raffleComposablePercentage
+
+    const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
+    this.akitaRoyalty.value = impactRange(impact, fees.raffleSaleImpactTaxMin, fees.raffleSaleImpactTaxMax)
+
     this.entryID.value = 0
     this.weightsBoxCount.value = 0
     this.weightTotals.value = new arc4.StaticArray<arc4.UintN64, 15>()

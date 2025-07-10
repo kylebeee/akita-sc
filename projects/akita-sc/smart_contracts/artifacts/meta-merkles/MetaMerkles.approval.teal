@@ -3,7 +3,7 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 1 0 16 20 TMPL_SPENDING_ACCOUNT_FACTORY_APP 400
+    intcblock 1 0 16 20 TMPL_ESCROW_FACTORY 400
     bytecblock "" 0x151f7c75 0x0014 "d" 0x0022 "r" "types_id" 0x00066c2e74797065 0x068101
     // smart_contracts/meta-merkles/contract.algo.ts:87
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
@@ -413,49 +413,50 @@ bytes16:
     retsub
 
 
-// smart_contracts/utils/functions.ts::getOrigin(spendingAccountFactory: uint64) -> bytes:
+// smart_contracts/utils/functions.ts::getOrigin(escrowFactory: uint64) -> bytes:
 getOrigin:
-    // smart_contracts/utils/functions.ts:120
-    // export function getOrigin(spendingAccountFactory: uint64): Account {
+    // smart_contracts/utils/functions.ts:133
+    // export function getOrigin(escrowFactory: uint64): Account {
     proto 1 1
-    // smart_contracts/utils/functions.ts:110-117
-    // return abiCall(
-    //   SpendingAccountFactoryInterface.prototype.get,
+    bytec_0 // ""
+    // smart_contracts/utils/functions.ts:117-124
+    // const data = abiCall(
+    //   EscrowFactoryInterface.prototype.get,
     //   {
-    //     appId: spendingAccountFactory,
+    //     appId: escrowFactory,
     //     args: [new Address(Txn.sender)],
     //     fee: 0,
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/utils/functions.ts:114
+    // smart_contracts/utils/functions.ts:121
     // args: [new Address(Txn.sender)],
     txn Sender
-    // smart_contracts/utils/functions.ts:110-117
-    // return abiCall(
-    //   SpendingAccountFactoryInterface.prototype.get,
+    // smart_contracts/utils/functions.ts:117-124
+    // const data = abiCall(
+    //   EscrowFactoryInterface.prototype.get,
     //   {
-    //     appId: spendingAccountFactory,
+    //     appId: escrowFactory,
     //     args: [new Address(Txn.sender)],
     //     fee: 0,
     //   }
     // ).returnValue
-    pushbytes 0x89e79924 // method "get(address)uint64"
+    pushbytes 0x3c1a6f33 // method "get(address)byte[]"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationID
     pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:115
+    // smart_contracts/utils/functions.ts:122
     // fee: 0,
     intc_1 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:110-117
-    // return abiCall(
-    //   SpendingAccountFactoryInterface.prototype.get,
+    // smart_contracts/utils/functions.ts:117-124
+    // const data = abiCall(
+    //   EscrowFactoryInterface.prototype.get,
     //   {
-    //     appId: spendingAccountFactory,
+    //     appId: escrowFactory,
     //     args: [new Address(Txn.sender)],
     //     fee: 0,
     //   }
@@ -463,44 +464,70 @@ getOrigin:
     itxn_submit
     itxn LastLog
     dup
-    extract 4 0
-    swap
     extract 0 4
     bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    btoi
+    extract 6 0
     dup
-    // smart_contracts/utils/functions.ts:123
+    // smart_contracts/utils/functions.ts:126
+    // if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
+    len
+    dup
+    bz getOrigin_if_body@7
+    frame_dig 2
+    pushint 8 // 8
+    !=
+    bz getOrigin_after_if_else@8
+
+getOrigin_if_body@7:
+    // smart_contracts/utils/functions.ts:127
+    // return 0
+    intc_1 // 0
+    frame_bury 0
+
+getOrigin_after_inlined_smart_contracts/utils/functions.ts::walletID@9:
+    // smart_contracts/utils/functions.ts:136
     // if (wallet === 0) {
+    frame_dig 0
     bnz getOrigin_after_if_else@2
-    // smart_contracts/utils/functions.ts:124
+    // smart_contracts/utils/functions.ts:137
     // return Txn.sender
     txn Sender
-    swap
+    frame_bury 0
     retsub
 
 getOrigin_after_if_else@2:
-    // smart_contracts/utils/functions.ts:102-105
+    // smart_contracts/utils/functions.ts:109-112
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     frame_dig 0
-    // smart_contracts/arc58/account/constants.ts:2
+    // smart_contracts/arc58/account/constants.ts:4
     // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:102-105
+    // smart_contracts/utils/functions.ts:109-112
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:127
+    // smart_contracts/utils/functions.ts:140
     // return getOriginAccount(Application(wallet))
-    swap
+    frame_bury 0
     retsub
+
+getOrigin_after_if_else@8:
+    // smart_contracts/utils/functions.ts:130
+    // return btoi(data)
+    frame_dig 1
+    btoi
+    frame_bury 0
+    // smart_contracts/utils/functions.ts:134
+    // const wallet = walletID(escrowFactory)
+    b getOrigin_after_inlined_smart_contracts/utils/functions.ts::walletID@9
 
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr(typeDescription: bytes, schema: bytes, rootName: bytes, dataKey: bytes, dataValue: bytes) -> uint64, uint64, uint64:
@@ -603,10 +630,10 @@ addRoot:
     bury 1
     assert // tree type does not exist
     // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const spendingAccountFactoryApp = TemplateVar<Application>('SPENDING_ACCOUNT_FACTORY_APP')
-    intc 4 // TMPL_SPENDING_ACCOUNT_FACTORY_APP
+    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
+    intc 4 // TMPL_ESCROW_FACTORY
     // smart_contracts/meta-merkles/contract.algo.ts:164
-    // const origin = getOrigin(spendingAccountFactoryApp.id)
+    // const origin = getOrigin(escrowFactory.id)
     callsub getOrigin
     // smart_contracts/meta-merkles/contract.algo.ts:165
     // const truncatedAddress = bytes16(origin.bytes)
@@ -761,10 +788,10 @@ deleteRoot:
     // deleteRoot(name: string): void {
     proto 1 0
     // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const spendingAccountFactoryApp = TemplateVar<Application>('SPENDING_ACCOUNT_FACTORY_APP')
-    intc 4 // TMPL_SPENDING_ACCOUNT_FACTORY_APP
+    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
+    intc 4 // TMPL_ESCROW_FACTORY
     // smart_contracts/meta-merkles/contract.algo.ts:192
-    // const origin = getOrigin(spendingAccountFactoryApp.id)
+    // const origin = getOrigin(escrowFactory.id)
     callsub getOrigin
     // smart_contracts/meta-merkles/contract.algo.ts:193
     // const truncatedAddress = bytes16(origin.bytes)
@@ -879,10 +906,10 @@ updateRoot:
     // updateRoot(name: string, newRoot: bytes<32>): void {
     proto 2 0
     // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const spendingAccountFactoryApp = TemplateVar<Application>('SPENDING_ACCOUNT_FACTORY_APP')
-    intc 4 // TMPL_SPENDING_ACCOUNT_FACTORY_APP
+    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
+    intc 4 // TMPL_ESCROW_FACTORY
     // smart_contracts/meta-merkles/contract.algo.ts:218
-    // const origin = getOrigin(spendingAccountFactoryApp.id)
+    // const origin = getOrigin(escrowFactory.id)
     callsub getOrigin
     // smart_contracts/meta-merkles/contract.algo.ts:219
     // const key: RootKey = { address: new Address(origin), name }
@@ -926,10 +953,10 @@ addData:
     bytec_0 // ""
     dup
     // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const spendingAccountFactoryApp = TemplateVar<Application>('SPENDING_ACCOUNT_FACTORY_APP')
-    intc 4 // TMPL_SPENDING_ACCOUNT_FACTORY_APP
+    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
+    intc 4 // TMPL_ESCROW_FACTORY
     // smart_contracts/meta-merkles/contract.algo.ts:234
-    // const origin = getOrigin(spendingAccountFactoryApp.id)
+    // const origin = getOrigin(escrowFactory.id)
     callsub getOrigin
     // smart_contracts/meta-merkles/contract.algo.ts:238
     // assert(keyBytes.length <= maxDataKeyLength, ERR_KEY_TOO_LONG)
@@ -1139,10 +1166,10 @@ deleteData:
     // deleteData(name: string, key: string): void {
     proto 2 0
     // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const spendingAccountFactoryApp = TemplateVar<Application>('SPENDING_ACCOUNT_FACTORY_APP')
-    intc 4 // TMPL_SPENDING_ACCOUNT_FACTORY_APP
+    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
+    intc 4 // TMPL_ESCROW_FACTORY
     // smart_contracts/meta-merkles/contract.algo.ts:270
-    // const origin = getOrigin(spendingAccountFactoryApp.id)
+    // const origin = getOrigin(escrowFactory.id)
     callsub getOrigin
     // smart_contracts/meta-merkles/contract.algo.ts:271
     // const truncatedAddress = bytes16(origin.bytes)

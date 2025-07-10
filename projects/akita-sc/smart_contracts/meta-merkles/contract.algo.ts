@@ -77,12 +77,12 @@ import {
   ERR_TREE_TYPE_KEY_ALREADY_EXISTS,
 } from './errors'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
-import { bytes16, str } from '../utils/types/base'
+import { bytes16 } from '../utils/types/base'
 import { Leaf, MetaMerklesInterface, Proof } from '../utils/types/merkles'
 import { fee } from '../utils/constants'
 import { getOrigin } from '../utils/functions'
 
-const spendingAccountFactoryApp = TemplateVar<Application>('SPENDING_ACCOUNT_FACTORY_APP')
+const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
 
 export class MetaMerkles extends Contract implements MetaMerklesInterface {
 
@@ -161,7 +161,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
     assert(Bytes(name).length <= 31, 'Cannot add root with name longer than 31 bytes')
     assert(this.types(type).exists, ERR_NO_TREE_TYPE)
 
-    const origin = getOrigin(spendingAccountFactoryApp.id)
+    const origin = getOrigin(escrowFactory.id)
     const truncatedAddress = bytes16(origin.bytes)
 
     const rootKey: RootKey = { address: new Address(origin), name }
@@ -189,7 +189,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param name the name of the merkle tree root
    */
   deleteRoot(name: string): void {
-    const origin = getOrigin(spendingAccountFactoryApp.id)
+    const origin = getOrigin(escrowFactory.id)
     const truncatedAddress = bytes16(origin.bytes)
 
     const rootKey: RootKey = { address: new Address(origin), name }
@@ -215,7 +215,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param newRoot the new 32 byte merkle tree root
    */
   updateRoot(name: string, newRoot: bytes<32>): void {
-    const origin = getOrigin(spendingAccountFactoryApp.id)
+    const origin = getOrigin(escrowFactory.id)
     const key: RootKey = { address: new Address(origin), name }
     assert(this.roots(key).exists, ERR_NO_NAME)
     this.roots(key).value = newRoot
@@ -231,7 +231,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param value the metadata value eg. `5` encoded as a bytestring for 5%
    */
   addData(payment: gtxn.PaymentTxn, name: string, key: string, value: string): void {
-    const origin = getOrigin(spendingAccountFactoryApp.id)
+    const origin = getOrigin(escrowFactory.id)
     const rootKey: RootKey = { address: new Address(origin), name }
 
     const keyBytes = Bytes(key)
@@ -267,7 +267,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param key the metadata key you want to remove
    */
   deleteData(name: string, key: string): void {
-    const origin = getOrigin(spendingAccountFactoryApp.id)
+    const origin = getOrigin(escrowFactory.id)
     const truncatedAddress = bytes16(origin.bytes)
     const dataKey: DataKey = { address: truncatedAddress, name, key }
 

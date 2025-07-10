@@ -11,30 +11,30 @@ export type DistributionType = UintN8
  * disburse the rewards at the given rate based on the users % of stake in the pool
  * eg. the rate is 1000 and a users stake is 6% of the pool, they get 166.66
  */
-export const DistributionTypePercentage = new UintN8(0)
+export const DistributionTypePercentage = new UintN8(10)
 /**
  * disburse the rewards at the given rate using a flat amount
  * eg. each user gets 10 AKTA per day if they qualify
  */
-export const DistributionTypeFlat = new UintN8(1)
+export const DistributionTypeFlat = new UintN8(20)
 /**
  * disburse the rewards at the given rate evenly among all participants
  * eg. the rate is 1000 & theres 6 stakers, each gets 166.66
  */
-export const DistributionTypeEven = new UintN8(2)
+export const DistributionTypeEven = new UintN8(30)
 /**
  * disburse the rewards randomly to a single user at the given rate
  * eg. the rate is 1000, one random qualified user gets it all
  */
-export const DistributionTypeShuffle = new UintN8(3)
+export const DistributionTypeShuffle = new UintN8(40)
 
 export type PoolStakingType = UintN8
 
 export const POOL_STAKING_TYPE_NONE: PoolStakingType = new arc4.UintN8(0)
-export const POOL_STAKING_TYPE_HEARTBEAT: PoolStakingType = new arc4.UintN8(1)
-export const POOL_STAKING_TYPE_SOFT: PoolStakingType = new arc4.UintN8(2)
-export const POOL_STAKING_TYPE_HARD: PoolStakingType = new arc4.UintN8(3)
-export const POOL_STAKING_TYPE_LOCK: PoolStakingType = new arc4.UintN8(4)
+export const POOL_STAKING_TYPE_HEARTBEAT: PoolStakingType = new arc4.UintN8(10)
+export const POOL_STAKING_TYPE_SOFT: PoolStakingType = new arc4.UintN8(20)
+export const POOL_STAKING_TYPE_HARD: PoolStakingType = new arc4.UintN8(30)
+export const POOL_STAKING_TYPE_LOCK: PoolStakingType = new arc4.UintN8(40)
 
 export type EntryKey = {
     address: Address

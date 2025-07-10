@@ -2,15 +2,16 @@ import { classes } from "polytype";
 import { ServiceFactoryContract } from "../utils/base-contracts/factory";
 import { BasePool } from "./base";
 import { ContractWithOptIn } from "../utils/base-contracts/optin";
-import { abimethod, Application, assertMatch, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Application, assert, assertMatch, Asset, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { StakingType } from "../staking/types";
-import { Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
+import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { arc4Reward } from "./types";
 import { arc4RootKey } from "../meta-merkles/types";
 import { Pool } from "./contract.algo";
 import { fmbr, getStakingFees } from "../utils/functions";
 import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
 import { fee } from "../utils/constants";
+import { ERR_NOT_CREATOR } from "./errors";
 
 export class PoolFactory extends classes(
   BasePool,
@@ -43,11 +44,17 @@ export class PoolFactory extends classes(
     gateID: uint64,
     maxEntries: uint64,
   ): uint64 {
+    // if the reward isn't algo we need to ensure we can opt the child in
+    const isAlgoReward = reward.asset.native === 0
+    // check if the akita dao escrow is opted in to the asset
+    // if it does that means 4 extra optins are needed
+    const daoEscrowNeedsToOptIn = !isAlgoReward && !this.akitaDAOEscrow.value.address.isOptedIn(Asset(reward.asset.native))
 
-    const isAlgoPayment = reward.asset.native === 0
-    const optinMBR: uint64 = isAlgoPayment
-      ? Global.assetOptInMinBalance
-      : Global.assetOptInMinBalance * 2
+    const optinMBR: uint64 = (
+      Global.assetOptInMinBalance * (
+        isAlgoReward ? 0 : daoEscrowNeedsToOptIn ? 5 : 1
+      )
+    )
 
     const fcosts = fmbr()
     const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
@@ -98,6 +105,19 @@ export class PoolFactory extends classes(
       .createdApp
 
     return newPoolApp.id
+  }
+
+  deletePool(poolID: uint64): void {
+    assert(Application(poolID).creator === Global.currentApplicationAddress, ERR_NOT_CREATOR)
+
+    abiCall(
+      Pool.prototype.delete,
+      {
+        appId: Application(poolID),
+        args: [ new Address(Txn.sender) ],
+        fee, 
+      }
+    )
   }
 
   // READ ONLY METHODS ----------------------------------------------------------------------------

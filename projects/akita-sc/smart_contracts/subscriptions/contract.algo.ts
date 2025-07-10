@@ -555,7 +555,7 @@ export class Subscriptions extends classes(
         assetXfer.xferAsset,
         0
       )
-      mbrAmount += Global.assetOptInMinBalance
+      mbrAmount += (Global.assetOptInMinBalance * 4)
     }
 
     const amounts = this.getAmounts(amount)

@@ -11,12 +11,12 @@ import { AssetInbox } from "./types/asset-inbox"
 import { btoi, itob, sha256 } from "@algorandfoundation/algorand-typescript/op"
 import { MetaMerklesInterface, Proof } from "./types/merkles"
 import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
-import { arc4StakeInfo, STAKING_TYPE_LOCK } from "../staking/types"
+import { STAKING_TYPE_LOCK } from "../staking/types"
 import { ONE_YEAR_IN_DAYS } from "../gates/plugins/staking-power/constants"
 import { ONE_DAY } from "../arc58/plugins/social/constants"
 
 import { AkitaSocialImpactInterface } from "./types/social"
-import { SpendingAccountFactoryInterface } from "./types/spend-accounts"
+import { EscrowFactoryInterface } from "./types/escrows"
 import { AbstractedAccountInterface } from "./abstract-account"
 import { OptInPluginInterface } from "./types/plugins/optin"
 import { StakingInterface } from "./types/staking"
@@ -76,6 +76,13 @@ export function percentageOf(a: uint64, b: uint64): uint64 {
   return op.divw(...op.mulw(a, DIVISOR), b)
 }
 
+export function wideRatio(numerators: [uint64, uint64], denominators: [uint64, uint64]): uint64 {
+  assert(denominators[0] > 0 && denominators[1] > 0, ERR_INVALID_PERCENTAGE)
+  const [overflow, result] = op.divmodw(...op.mulw(...numerators), ...op.mulw(...denominators))
+  assert(overflow === 0, ERR_INVALID_PERCENTAGE)
+  return result
+}
+
 export function akitaSocialFee(akitaDAO: Application, impact: uint64): uint64 {
   const { impactTaxMin, impactTaxMax } = getSocialFees(akitaDAO)
   return impactRange(impact, impactTaxMin, impactTaxMax)
@@ -106,19 +113,25 @@ export function getOriginAccount(walletID: Application): Account {
   return Account(Bytes(controlledAccountBytes))
 }
 
-export function walletID(spendingAccountFactory: uint64): uint64 {
-  return abiCall(
-    SpendingAccountFactoryInterface.prototype.get,
+export function walletID(escrowFactory: uint64): uint64 {
+  const data = abiCall(
+    EscrowFactoryInterface.prototype.get,
     {
-      appId: spendingAccountFactory,
+      appId: escrowFactory,
       args: [new Address(Txn.sender)],
       fee: 0,
     }
   ).returnValue
+
+  if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
+    return 0
+  }
+
+  return btoi(data)
 }
 
-export function getOrigin(spendingAccountFactory: uint64): Account {
-  const wallet = walletID(spendingAccountFactory)
+export function getOrigin(escrowFactory: uint64): Account {
+  const wallet = walletID(escrowFactory)
 
   if (wallet === 0) {
     return Txn.sender
@@ -168,12 +181,7 @@ export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     return Global.zeroAddress
   }
 
-  const { walletAddress, origin, sender } = getAccounts(wallet)
-  if (sender !== origin) {
-    return sender
-  }
-
-  return walletAddress
+  return wallet.address
 }
 
 export function arc59OptInAndSend(akitaDAO: Application, recipient: Address, asset: uint64, amount: uint64, closeOut: boolean): void {
@@ -336,13 +344,23 @@ export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64
     appId: stakingApp,
     args: [
       user,
-      new arc4StakeInfo({
-        asset: new UintN64(asset),
+      {
+        asset,
         type: STAKING_TYPE_LOCK,
-      }),
+      },
     ],
   }).returnValue
 
-  const remainingDays: uint64 = (info.expiration - Global.latestTimestamp) / ONE_DAY
-  return (info.amount / ONE_YEAR_IN_DAYS) * remainingDays
+  if (info.expiration <= Global.latestTimestamp) { 
+    return 0
+  }
+
+  const remainingTime: uint64 = info.expiration - Global.latestTimestamp
+
+  if (remainingTime < ONE_DAY) {
+    return 0
+  }
+
+  const remainingDays: uint64 = remainingTime / ONE_DAY
+  return op.divw(...op.mulw(wideRatio([info.amount, 1_000_000], [ONE_YEAR_IN_DAYS, 1_000_000]), remainingDays), 1_000_000)
 }

@@ -6,6 +6,7 @@ export class BaseStaking extends Contract {
     return {
       stakes: 28_900,
       heartbeats: 70_100,
+      settings: 9_300
     }
   }
 }

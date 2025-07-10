@@ -7,7 +7,7 @@ import { BaseHyperSwap } from "../../../hyper-swap/base"
 import { HyperSwap } from "../../../hyper-swap/contract.algo"
 import { Proof } from "../../../utils/types/merkles"
 import { AssetInbox } from "../../../utils/types/asset-inbox"
-import { arc58OptInAndSend, getAccounts, getAkitaAppList, getOtherAppList, getPluginAppList, getSpendingAccount, getSwapFees, getUserImpact, impactRange, rekeyAddress } from "../../../utils/functions"
+import { arc58OptInAndSend, getAccounts, getAkitaAppList, getOtherAppList, getPluginAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { fee } from "../../../utils/constants"
 
 export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContract) {

@@ -79,12 +79,12 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
 
     let optinMBR: uint64 = 0
     const prizeAssetIsAlgo = prizeID === 0
-    if (prizeAssetIsAlgo) {
+    if (!prizeAssetIsAlgo) {
       optinMBR = Global.assetOptInMinBalance
     }
 
     const ticketAssetIsAlgo = ticketAssetID === 0
-    if (ticketAssetIsAlgo) {
+    if (!ticketAssetIsAlgo) {
       optinMBR += Global.assetOptInMinBalance
     }
 

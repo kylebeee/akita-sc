@@ -46,7 +46,7 @@ export class FactoryContract extends Contract {
 
   protected optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
     abiCall(
-      AkitaDAO.prototype.optinEscrow,
+      AkitaDAO.prototype.optinReceiveEscrow,
       {
         appId: this.akitaDAO.value,
         args: [

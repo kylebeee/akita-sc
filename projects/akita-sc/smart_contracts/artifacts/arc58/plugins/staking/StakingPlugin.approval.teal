@@ -20,7 +20,7 @@ main_after_if_else@15:
     return
 
 main_updateAkitaDAO_route@11:
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
     !
@@ -31,14 +31,14 @@ main_updateAkitaDAO_route@11:
     // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // updateAkitaDAO(app: uint64): void {
     callsub updateAkitaDAO
     intc_1 // 1
     return
 
 main_update_route@10:
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:20
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     intc_3 // UpdateApplication
@@ -50,7 +50,7 @@ main_update_route@10:
     // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:20
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub update
     intc_1 // 1
@@ -229,76 +229,24 @@ main_create_route@5:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:166
+    // smart_contracts/utils/functions.ts:179
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    intc_0 // 0
-    dup
-    // smart_contracts/utils/functions.ts:167
+    // smart_contracts/utils/functions.ts:180
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:168
+    // smart_contracts/utils/functions.ts:181
     // return Global.zeroAddress
     global ZeroAddress
-    frame_bury 0
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:102-105
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    frame_dig -1
-    // smart_contracts/arc58/account/constants.ts:2
-    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
-    pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:102-105
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/functions.ts:159-162
-    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    // )
-    frame_dig -1
-    // smart_contracts/arc58/account/constants.ts:9
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
-    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    // )
-    app_global_get_ex
-    pop
-    dup
-    frame_bury 0
-    // smart_contracts/utils/functions.ts:152
-    // walletAddress: wallet.address,
+    // smart_contracts/utils/functions.ts:184
+    // return wallet.address
     frame_dig -1
     app_params_get AppAddress
-    swap
-    frame_bury 1
     assert // application exists
-    // smart_contracts/utils/functions.ts:172
-    // if (sender !== origin) {
-    !=
-    bz rekeyAddress_after_if_else@4
-    // smart_contracts/utils/functions.ts:173
-    // return sender
-    retsub
-
-rekeyAddress_after_if_else@4:
-    // smart_contracts/utils/functions.ts:176
-    // return walletAddress
-    frame_dig 1
-    frame_bury 0
     retsub
 
 
@@ -340,16 +288,16 @@ stake:
     proto 7 0
     pushbytes ""
     dupn 2
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -7
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -839,16 +787,16 @@ withdraw:
     //   type: StakingType
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -943,16 +891,16 @@ createHeartbeat:
     //   asset: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1047,16 +995,16 @@ softCheck:
     //   asset: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:9
+    // smart_contracts/arc58/account/constants.ts:11
     // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:172-175
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1148,11 +1096,11 @@ softCheck:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:19-20
+    // smart_contracts/utils/base-contracts/base.ts:20-21
     // @abimethod({ allowActions: ['UpdateApplication'] })
     // update(newVersion: string): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:21
+    // smart_contracts/utils/base-contracts/base.ts:22
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/constants.ts:1
@@ -1161,7 +1109,7 @@ update:
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:21
+    // smart_contracts/utils/base-contracts/base.ts:22
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
@@ -1170,7 +1118,7 @@ update:
     // smart_contracts/constants.ts:3
     // export const GlobalStateKeyVersion = 'version'
     bytec_3 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:22
+    // smart_contracts/utils/base-contracts/base.ts:23
     // this.version.value = newVersion
     frame_dig -1
     app_global_put
@@ -1179,10 +1127,10 @@ update:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // updateAkitaDAO(app: uint64): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:29
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/constants.ts:1
@@ -1191,7 +1139,7 @@ updateAkitaDAO:
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:29
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
@@ -1200,7 +1148,7 @@ updateAkitaDAO:
     // smart_contracts/constants.ts:1
     // export const GlobalStateKeyAkitaDAO = 'akita_dao'
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:29
+    // smart_contracts/utils/base-contracts/base.ts:30
     // this.akitaDAO.value = Application(app)
     frame_dig -1
     app_global_put

@@ -4,6 +4,7 @@ import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersio
 
 import { ERR_NOT_AKITA_DAO } from '../../errors'
 import { AkitaDAO } from '../../dao/contract.algo'
+import { AkitaDAOInterface } from '../types/dao'
 
 export class AkitaBaseContract extends Contract {
 
@@ -45,13 +46,13 @@ export class AkitaBaseEscrow extends Contract {
 
   protected optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
     abiCall(
-      AkitaDAO.prototype.optinEscrow,
+      AkitaDAOInterface.prototype.optinReceiveEscrow,
       {
         appId: this.akitaDAO.value,
         args: [
           itxn.payment({
             receiver: this.akitaDAOEscrow.value.address,
-            amount: Global.assetOptInMinBalance,
+            amount: (Global.assetOptInMinBalance * 4),
             fee: 0,
           }),
           name,

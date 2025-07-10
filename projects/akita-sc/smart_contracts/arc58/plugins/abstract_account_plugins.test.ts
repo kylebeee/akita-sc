@@ -5,7 +5,8 @@ import algosdk, { encodeUint64, makeBasicAccountTransactionSigner, makePaymentTx
 import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../../artifacts/arc58/account/AbstractedAccountFactoryClient';
 import { AbstractedAccountClient } from '../../artifacts/arc58/account/AbstractedAccountClient';
 import { OptInPluginClient, OptInPluginFactory } from '../../artifacts/arc58/plugins/optin/OptInPluginClient';
-import { SpendingAccountFactoryFactory } from '../../artifacts/arc58/spending-account/SpendingAccountFactoryClient';
+import { EscrowFactoryFactory } from '../../artifacts/escrow/EscrowFactoryClient';
+
 
 export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 1_028_000
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
@@ -39,15 +40,15 @@ describe('Abstracted Subscription Program', () => {
     suggestedParams = await algorand.getSuggestedParams();
     aliceEOA = testAccount;
 
-    const spendingAccountFactory = new SpendingAccountFactoryFactory({
+    const escrowFactory = new EscrowFactoryFactory({
       defaultSender: aliceEOA.addr,
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
       algorand
     })
 
-    const spendingAccountFactoryResults = await spendingAccountFactory.send.create.bare()
+    const escrowFactoryResults = await escrowFactory.send.create.bare()
 
-    await spendingAccountFactoryResults.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
+    await escrowFactoryResults.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
 
     const minterFactory = new AbstractedAccountFactoryFactory({
       defaultSender: aliceEOA.addr,
@@ -60,7 +61,7 @@ describe('Abstracted Subscription Program', () => {
         akitaDao: 0,
         version: '1',
         childVersion: '1',
-        spendingAccountFactoryApp: spendingAccountFactoryResults.appClient.appId,
+        escrowFactoryApp: escrowFactoryResults.appClient.appId,
         revocationApp: 0,
       },
     })
@@ -81,7 +82,7 @@ describe('Abstracted Subscription Program', () => {
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
         payment: mintPayment,
-        controlledAccount: ZERO_ADDRESS,
+        controlledAddress: ZERO_ADDRESS,
         admin: aliceEOA.addr.toString(),
         nickname: 'Alice',
       },
@@ -163,10 +164,10 @@ describe('Abstracted Subscription Program', () => {
           allowedCaller: ZERO_ADDRESS,
           admin: false,
           delegationType: 3,
+          escrow: '',
           lastValid: maxUint64,
           cooldown: 0,
           methods: [],
-          useAllowance: false,
           useRounds: false,
         }
       });

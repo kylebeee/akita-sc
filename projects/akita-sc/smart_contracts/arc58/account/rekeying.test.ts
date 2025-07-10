@@ -2,10 +2,10 @@ import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import algosdk, { makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
 import { microAlgos } from '@algorandfoundation/algokit-utils';
-import { SpendingAccountFactoryFactory } from '../../artifacts/arc58/spending-account/SpendingAccountFactoryClient';
 import { ABSTRACTED_ACCOUNT_MINT_PAYMENT } from '../plugins/abstract_account_plugins.test';
 import { AbstractedAccountClient } from '../../artifacts/arc58/account/AbstractedAccountClient';
 import { AbstractedAccountFactoryFactory } from '../../artifacts/arc58/account/AbstractedAccountFactoryClient';
+import { EscrowFactoryFactory } from '../../artifacts/escrow/EscrowFactoryClient';
 
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 const fixture = algorandFixture();
@@ -31,15 +31,15 @@ describe('Rekeying Test', () => {
 
     await algod.setBlockOffsetTimestamp(60).do();
 
-    const spendingAccountFactory = new SpendingAccountFactoryFactory({
+    const escrowFactory = new EscrowFactoryFactory({
       defaultSender: aliceEOA.addr,
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
       algorand
     })
 
-    const spendingAccountFactoryResults = await spendingAccountFactory.send.create.bare()
+    const escrowFactoryResults = await escrowFactory.send.create.bare()
 
-    await spendingAccountFactoryResults.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
+    await escrowFactoryResults.appClient.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
 
     const minterFactory = new AbstractedAccountFactoryFactory({
       defaultSender: aliceEOA.addr,
@@ -52,7 +52,7 @@ describe('Rekeying Test', () => {
         akitaDao: 0,
         version: '1',
         childVersion: '1',
-        spendingAccountFactoryApp: spendingAccountFactoryResults.appClient.appId,
+        escrowFactoryApp: escrowFactoryResults.appClient.appId,
         revocationApp: 0,
       },
     })
@@ -73,7 +73,7 @@ describe('Rekeying Test', () => {
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
         payment: mintPayment,
-        controlledAccount: ZERO_ADDRESS,
+        controlledAddress: ZERO_ADDRESS,
         admin: aliceEOA.addr.toString(),
         nickname: 'Alice',
       },

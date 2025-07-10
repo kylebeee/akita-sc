@@ -17,7 +17,7 @@ import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { arc59OptInAndSend, getAkitaAppList, getOtherAppList } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { fee } from '../utils/constants'
-import { GlobalStateKeySpendingAccountFactoryApp } from '../constants'
+import { GlobalStateKeyEscrowFactory } from '../constants'
 
 export class HyperSwap extends classes(
   BaseHyperSwap,
@@ -30,7 +30,7 @@ export class HyperSwap extends classes(
   /** global counter for offers */
   offerCursor = GlobalState<uint64>({ key: HyperSwapGlobalStateKeyOfferCursor })
   /** ths factory app for spending accounts */
-  spendingAccountFactory = GlobalState<Application>({ key: GlobalStateKeySpendingAccountFactoryApp })
+  escrowFactory = GlobalState<Application>({ key: GlobalStateKeyEscrowFactory })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -51,7 +51,13 @@ export class HyperSwap extends classes(
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
-  // TODO: createApplication method
+  create(
+    version: string,
+    spendingAccountFactory: uint64
+  ): void {
+    this.version.value = version
+    this.escrowFactory.value = Application(spendingAccountFactory)
+  }
 
   // HYPER SWAP METHODS ---------------------------------------------------------------------------
 
