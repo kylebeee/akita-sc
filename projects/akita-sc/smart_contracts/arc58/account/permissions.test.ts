@@ -1,4 +1,5 @@
-import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+// import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk';
@@ -174,7 +175,7 @@ describe('ARC58 Plugin Permissions', () => {
     const minterFactory = new AbstractedAccountFactoryFactory({
       defaultSender: aliceEOA.addr,
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
-      algorand
+      algorand,
     });
 
     const results = await minterFactory.send.create.create({
@@ -217,6 +218,8 @@ describe('ARC58 Plugin Permissions', () => {
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
       appId: freshAbstractedAccountId,
     })
+
+    await abstractedAccountClient.send.init({ args: {}, extraFee: (3_000).microAlgo() })
   });
 
   beforeAll(async () => {

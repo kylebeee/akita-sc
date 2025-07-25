@@ -1,6 +1,4 @@
-import { bytes, Contract, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address } from "@algorandfoundation/algorand-typescript/arc4";
-
+import { Contract, uint64 } from "@algorandfoundation/algorand-typescript";
 
 export class DualStake extends Contract {
     mint(): void {}

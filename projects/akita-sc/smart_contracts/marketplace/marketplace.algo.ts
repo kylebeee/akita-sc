@@ -1,23 +1,20 @@
-import { abiCall, abimethod, Address, compileArc4, StaticArray } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Proof } from '../utils/types/merkles'
 import { Listing } from './listing.algo'
-import { Application, assert, assertMatch, BoxMap, Global, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, assertMatch, Bytes, Global, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 import { ServiceFactoryContract } from '../utils/base-contracts/factory'
-import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { arc4FloorData } from './types'
 import { ERR_NOT_A_LISTING, ERR_PRICE_TOO_LOW } from './errors'
-import { GateArgs } from '../utils/types/gates'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { fmbr, royalties } from '../utils/functions'
-import { fee } from '../utils/constants'
+import { fmbr, gateCheck, getWalletIDUsingAkitaDAO, originOrTxnSender, royalties } from '../utils/functions'
+import { ListingGlobalStateKeyGateID } from './constants'
+import { ERR_HAS_GATE } from '../social/errors'
 
 export class Marketplace extends classes(ServiceFactoryContract, ContractWithOptIn) {
 
   // BOXES ----------------------------------------------------------------------------------------
-
-  floors = BoxMap<string, StaticArray<arc4FloorData, 10>>({ keyPrefix: '' })
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
@@ -53,7 +50,7 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
 
     const fcosts = fmbr()
 
-    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
+    const childAppMBR: uint64 = Global.minBalance + optinMBR
 
     const listing = compileArc4(Listing)
     
@@ -102,7 +99,6 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
           this.childContractVersion.value,
           this.akitaDAO.value.id,
         ],
-        fee,
       })
       .itxn
       .createdApp
@@ -114,11 +110,9 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
         itxn.payment({
           receiver: listingApp.address,
           amount: Global.assetOptInMinBalance,
-          fee,
         }),
         assetXfer.xferAsset.id,
       ],
-      fee,
     })
 
     // xfer asset to child
@@ -127,7 +121,6 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
         assetReceiver: listingApp.address,
         assetAmount: assetXfer.assetAmount,
         xferAsset: assetXfer.xferAsset,
-        fee,
       })
       .submit()
 
@@ -139,11 +132,9 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
           itxn.payment({
             receiver: listingApp.address,
             amount: optinMBR,
-            fee,
           }),
           paymentAsset,
         ],
-        fee,
       })
     }
 
@@ -164,13 +155,18 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
     return 0
   }
 
-  purchase(
+  gatedPurchase(
     payment: gtxn.PaymentTxn,
+    gateTxn: gtxn.ApplicationCallTxn,
     listingID: uint64,
     marketplace: Address,
-    args: GateArgs
   ): void {
+    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    const origin = originOrTxnSender(wallet)
+
     assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, gateID))
     assertMatch(
       payment,
       { receiver: Global.currentApplicationAddress },
@@ -185,13 +181,10 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
           itxn.payment({
             receiver: Application(listingID).address,
             amount: payment.amount,
-            fee,
           }),
           new Address(Txn.sender),
-          marketplace,
-          args,
+          marketplace
         ],
-        fee,
       }
     )
 
@@ -201,18 +194,66 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       .payment({
         amount,
         receiver: creator,
-        fee,
       })
       .submit()
+  }
+
+  purchase(
+    payment: gtxn.PaymentTxn,
+    listingID: uint64,
+    marketplace: Address,
+  ): void {
+    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+    assert(gateID === 0, ERR_HAS_GATE)
+    assertMatch(
+      payment,
+      { receiver: Global.currentApplicationAddress },
+      ERR_INVALID_PAYMENT
+    )
+
+    abiCall(
+      Listing.prototype.purchase,
+      {
+        appId: listingID,
+        args: [
+          itxn.payment({
+            receiver: Application(listingID).address,
+            amount: payment.amount,
+          }),
+          new Address(Txn.sender),
+          marketplace
+        ],
+      }
+    )
+
+    const { amount, creator } = this.appCreators(listingID).value
+
+    itxn
+      .payment({
+        amount,
+        receiver: creator,
+      })
+      .submit()
+  }
+
+  gatedPurchaseAsa(
+    assetXfer: gtxn.AssetTransferTxn,
+    gateTxn: gtxn.ApplicationCallTxn,
+    listingID: uint64,
+    marketplace: Address,
+  ): void {
+
   }
 
   purchaseAsa(
     assetXfer: gtxn.AssetTransferTxn,
     listingID: uint64,
     marketplace: Address,
-    args: GateArgs
   ): void {
     assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+    assert(gateID === 0, ERR_HAS_GATE)
     assertMatch(
       assetXfer,
       {
@@ -231,13 +272,10 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
             assetReceiver: Application(listingID).address,
             assetAmount: assetXfer.assetAmount,
             xferAsset: assetXfer.xferAsset,
-            fee,
           }),
           new Address(Txn.sender),
-          marketplace,
-          args,
+          marketplace
         ],
-        fee,
       }
     )
 
@@ -247,7 +285,6 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       .payment({
         amount,
         receiver: creator,
-        fee,
       })
       .submit()
   }
@@ -260,7 +297,6 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       {
         appId: listingID,
         args: [new Address(Txn.sender)],
-        fee,
       }
     )
 
@@ -270,7 +306,6 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       .payment({
         amount,
         receiver: creator,
-        fee,
       })
       .submit()
   }

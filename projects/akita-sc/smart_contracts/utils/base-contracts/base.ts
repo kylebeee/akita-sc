@@ -3,7 +3,6 @@ import { abiCall, abimethod, Contract } from '@algorandfoundation/algorand-types
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
 
 import { ERR_NOT_AKITA_DAO } from '../../errors'
-import { AkitaDAO } from '../../dao/contract.algo'
 import { AkitaDAOInterface } from '../types/dao'
 
 export class AkitaBaseContract extends Contract {
@@ -53,12 +52,10 @@ export class AkitaBaseEscrow extends Contract {
           itxn.payment({
             receiver: this.akitaDAOEscrow.value.address,
             amount: (Global.assetOptInMinBalance * 4),
-            fee: 0,
           }),
           name,
           asset.id
         ],
-        fee: 0,
       },
     )
 
@@ -68,7 +65,6 @@ export class AkitaBaseEscrow extends Contract {
           assetReceiver: this.akitaDAOEscrow.value.address,
           assetAmount: amount,
           xferAsset: asset,
-          fee: 0,
         })
         .submit()
     }

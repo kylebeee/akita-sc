@@ -1,19 +1,18 @@
 import { abimethod, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
 import { classes } from "polytype"
 import { Proof } from "../../../utils/types/merkles"
-import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4"
+import { abiCall, Address, compileArc4, encodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { ERR_AUCTION_PRIZE_CANNOT_BE_ALGO, ERR_CREATOR_NOT_AUCTION_FACTORY, ERR_NOT_ENOUGH_ASSET } from "./errors"
 import { AssetHolding, btoi, Global } from "@algorandfoundation/algorand-typescript/op"
 import { AuctionFactory } from "../../../auction/factory.algo"
-import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
 import { BaseAuction } from "../../../auction/base"
 import { Auction } from "../../../auction/contract.algo"
-import { AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee } from "../../../auction/constants"
-import { GateArgs } from "../../../utils/types/gates"
+import { AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyGateID } from "../../../auction/constants"
+import { GateArgs, GateInterface } from "../../../utils/types/gates"
 import { AuctionPluginGlobalStateKeyFactory } from "./constants"
-import { fmbr, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { fmbr, getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
-import { fee } from "../../../utils/constants"
 
 export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
 
@@ -66,12 +65,10 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
             itxn.payment({
               sender,
               receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance,
-              fee,
+              amount: Global.assetOptInMinBalance
             }),
             prizeID,
-          ],
-          fee,
+          ]
         }
       )
     }
@@ -86,12 +83,10 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
             itxn.payment({
               sender,
               receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance,
-              fee,
+              amount: Global.assetOptInMinBalance
             }),
             bidAssetID,
-          ],
-          fee,
+          ]
         }
       )
     }
@@ -110,7 +105,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
-      AccountMinimumBalance +
+      Global.minBalance +
       optinMBR +
       (weightsListCount * costs.weights) +
       fcosts.appCreators
@@ -119,16 +114,14 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     const mbrTxn = itxn.payment({
       sender,
       receiver: this.factory.value.address,
-      amount: childContractMBR,
-      fee,
+      amount: childContractMBR
     })
 
     const prizeTxn = itxn.assetTransfer({
       sender,
       assetReceiver: this.factory.value.address,
       assetAmount: prizeAmount,
-      xferAsset: Asset(prizeID),
-      fee,
+      xferAsset: Asset(prizeID)
     })
 
     const newAuction = abiCall(
@@ -151,8 +144,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
           marketplace,
           weightsListCount
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     ).returnValue
 
@@ -175,8 +167,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: this.factory.value,
         args: [iterationAmount],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -198,8 +189,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: this.factory.value,
         args: [auctionAppID],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -213,7 +203,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     marketplace: Address
   ): void {
     const wallet = Application(walletID)
-    const sender = getSpendingAccount(wallet)
+    const { origin, sender } = getAccounts(wallet)
 
     assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
@@ -227,8 +217,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
           sender,
           appId: auctionAppID,
           args: [new Address(sender)],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee,
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
         }
       ).returnValue
 
@@ -239,56 +228,109 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
 
     const bidAsset = Asset(btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidAsset))[0]))
     if (bidAsset.id === 0) {
-      abiCall(
-        Auction.prototype.bid,
-        {
-          sender,
-          appId: auctionAppID,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: Application(auctionAppID).address,
-              amount: amount + mbr,
-              fee,
-            }),
-            args,
-            marketplace,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee,
-        }
-      )
+
+      const mbrPayment = itxn.payment({
+        sender,
+        receiver: Application(auctionAppID).address,
+        amount: amount + mbr
+      })
+
+      if (args.length > 0) {
+        const gate = getAkitaAppList(this.akitaDAO.value).gate
+        const gateID = op.AppGlobal.getExUint64(auctionAppID, Bytes(AuctionGlobalStateKeyGateID))[0]
+
+        abiCall(
+          Auction.prototype.gatedBid,
+          {
+            sender,
+            appId: auctionAppID,
+            args: [
+              mbrPayment,
+              itxn.applicationCall({
+                sender,
+                appId: gate,
+                appArgs: [
+                  methodSelector(GateInterface.prototype.mustCheck),
+                  new Address(origin),
+                  gateID,
+                  encodeArc4(args)
+                ]
+              }),
+              marketplace,
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      } else {
+        abiCall(
+          Auction.prototype.bid,
+          {
+            sender,
+            appId: auctionAppID,
+            args: [
+              mbrPayment,
+              marketplace,
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      }
     } else {
       const mbrTxn = itxn.payment({
         sender,
         receiver: Application(auctionAppID).address,
-        amount: mbr,
-        fee,
+        amount: mbr
       })
 
       const xferTxn = itxn.assetTransfer({
         sender,
         assetReceiver: Application(auctionAppID).address,
         assetAmount: amount,
-        xferAsset: bidAsset,
-        fee,
+        xferAsset: bidAsset
       })
 
-      abiCall(
-        Auction.prototype.bidAsa,
-        {
-          sender,
-          appId: auctionAppID,
-          args: [
-            mbrTxn,
-            xferTxn,
-            args,
-            marketplace,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee,
-        }
-      )
+      if (args.length > 0) {
+        const gate = getAkitaAppList(this.akitaDAO.value).gate
+        const gateID = op.AppGlobal.getExUint64(auctionAppID, Bytes(AuctionGlobalStateKeyGateID))[0]
+
+        abiCall(
+          Auction.prototype.gatedBidAsa,
+          {
+            sender,
+            appId: auctionAppID,
+            args: [
+              mbrTxn,
+              xferTxn,
+              itxn.applicationCall({
+                sender,
+                appId: gate,
+                appArgs: [
+                  methodSelector(GateInterface.prototype.mustCheck),
+                  new Address(origin),
+                  gateID,
+                  encodeArc4(args)
+                ]
+              }),
+              marketplace,
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      } else {
+        abiCall(
+          Auction.prototype.bidAsa,
+          {
+            sender,
+            appId: auctionAppID,
+            args: [
+              mbrTxn,
+              xferTxn,
+              marketplace,
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      }
     }
   }
 
@@ -309,8 +351,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: auctionAppID,
         args: [id],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -330,8 +371,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -351,8 +391,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -371,8 +410,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -394,8 +432,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
         sender,
         appId: auctionAppID,
         args: [iterationAmount],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -415,8 +452,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -436,8 +472,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       {
         sender,
         appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }

@@ -1,7 +1,8 @@
 import { uint64 } from '@algorandfoundation/algorand-typescript'
-import { UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { PayoutEscrowType, ProposalAction, ProposalStatus, ProposalVoteType } from './types'
 
-export const AkitaDAOGlobalStateKeysStatus = 'status'
+export const AkitaDAOGlobalStateKeysInitialized = 'initialized'
 export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
 export const AkitaDAOGlobalStateKeysMinRewardsImpact = 'min_rewards_impact'
 export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
@@ -28,47 +29,73 @@ export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
 export const AkitaDAOGlobalStateKeysProposalID = 'proposal_id'
 export const AkitaDAOGlobalStateKeysDisbursementCursor = 'disbursement_cursor'
 
-export const AkitaDAOBoxPrefixProposals = 'l'
-export const AkitaDAOBoxPrefixExecutions = 'x'
 export const AkitDAOBoxPrefixEscrows = 'e'
-export const AkitDAOBoxPrefixEscrowAssets = 's'
 export const AkitaDAOBoxPrefixReceiveEscrows = 'r'
+export const AkitDAOBoxPrefixReceiveAssets = 's'
+export const AkitaDAOBoxPrefixPayoutEscrows = 'p' 
+export const AkitaDAOBoxPrefixProposals = 'l'
+export const AkitaDAOBoxPrefixProposalVotes = 'v'
+export const AkitaDAOBoxPrefixExecutions = 'x'
 
+// payout escrows
+export const AkitaDAOEscrowAccountKrby = 'krby'
+export const AkitaDAOEscrowAccountModerators = 'moderators'
+export const AkitaDAOEscrowAccountGovernors = 'governors'
+// receive escrows
 export const AkitaDAOEscrowAccountSocial = 'social'
-export const AkitaDAOEscrowAccountStakingPools = 'staking'
+export const AkitaDAOEscrowAccountStakingPools = 'staking_pools'
 export const AkitaDAOEscrowAccountSubscriptions = 'subscriptions'
 export const AkitaDAOEscrowAccountMarketplace = 'marketplace'
 export const AkitaDAOEscrowAccountAuctions = 'auctions'
 export const AkitaDAOEscrowAccountRaffles = 'raffles'
-export const AkitaDAOEscrowAccountModerators = 'moderators'
-export const AkitaDAOEscrowAccountKrby = 'krby'
 
-export const DAOStatusInit: uint64 = 0
-// const DAO_STATUS_LOADING_REWARDS = 1;
-// const DAO_STATUS_DISTRIBUTING_REWARDS = 2;
-// const DAO_STATUS_RUNNING = 3;
+export const MethodRestrictionByteLength: uint64 = 20
 
-export const EscrowDisbursementPhaseIdle = new UintN8(0)
-export const EscrowDisbursementPhasePreparation = new UintN8(10)
-export const EscrowDisbursementPhaseAllocation = new UintN8(20)
-export const EscrowDisbursementPhaseFinalization = new UintN8(30)
+export const MinDAOPluginMBR: uint64 = 50_500
+export const MinDAONamedPluginMBR: uint64 = 18_900
+export const MinDAOEscrowMBR: uint64 = 6_100
+export const DAOReceiveEscrowsMBR: uint64 = 32_900
+export const DAOReceiveAssetsMBR: uint64 = 9_300
+export const MinDAOPayoutEscrowsMBR: uint64 = 8_100
+export const DAOAllowanceMBR: uint64 = 29_300
+export const MinDAOProposalsMBR: uint64 = 42_100
+export const DAOProposalVotesMBR: uint64 = 22_500
+export const DAOExecutionsMBR: uint64 = 0
+
+export const DAOPayoutEscrowIndividualByteLength: uint64 = 32
+export const DAOPayoutEscrowGroupByteLength: uint64 = 8
+
+export const EscrowDisbursementPhaseIdle = new Uint8(0)
+export const EscrowDisbursementPhasePreparation = new Uint8(10)
+export const EscrowDisbursementPhaseAllocation = new Uint8(20)
+export const EscrowDisbursementPhaseFinalization = new Uint8(30)
+
+export const PayoutEscrowTypeIndividual: PayoutEscrowType = new Uint8(10)
+export const PayoutEscrowTypeGroup: PayoutEscrowType = new Uint8(20)
 
 // proposal statuses
-export const ProposalStatusDraft = new UintN8(0)
-export const ProposalStatusInvalid = new UintN8(10)
-export const ProposalStatusVoting = new UintN8(20)
-export const ProposalStatusRejected = new UintN8(30)
-export const ProposalStatusApproved = new UintN8(40)
+export const ProposalStatusDraft: ProposalStatus = new Uint8(0)
+export const ProposalStatusInvalid: ProposalStatus = new Uint8(10)
+export const ProposalStatusVoting: ProposalStatus = new Uint8(20)
+export const ProposalStatusRejected: ProposalStatus = new Uint8(30)
+export const ProposalStatusApproved: ProposalStatus = new Uint8(40)
 
-export const ProposalActionUpgradeApp = new UintN8(0)
-export const ProposalActionAddPlugin = new UintN8(10)
-export const ProposalActionAddNamedPlugin = new UintN8(20)
-export const ProposalActionExecutePlugin = new UintN8(30)
-export const ProposalActionExecuteNamedPlugin = new UintN8(40)
-export const ProposalActionRemovePlugin = new UintN8(50)
-export const ProposalActionRemoveNamedPlugin = new UintN8(60)
-export const ProposalActionAddAllowance = new UintN8(70)
-export const ProposalActionRemoveAllowance = new UintN8(80)
-export const ProposalActionUpdateFields = new UintN8(90)
+// proposal actions
+export const ProposalActionUpgradeApp: ProposalAction = new Uint8(10)
+export const ProposalActionAddPlugin: ProposalAction = new Uint8(20)
+export const ProposalActionAddNamedPlugin: ProposalAction = new Uint8(21)
+export const ProposalActionExecutePlugin: ProposalAction = new Uint8(30)
+export const ProposalActionExecuteNamedPlugin: ProposalAction = new Uint8(31)
+export const ProposalActionRemovePlugin: ProposalAction = new Uint8(40)
+export const ProposalActionRemoveNamedPlugin: ProposalAction = new Uint8(41)
+export const ProposalActionAddAllowance: ProposalAction = new Uint8(50)
+export const ProposalActionRemoveAllowance: ProposalAction = new Uint8(60)
+export const ProposalActionUpdateFields: ProposalAction = new Uint8(70)
+export const ProposalActionNewEscrow: ProposalAction = new Uint8(80)
+export const ProposalActionNewReceiveEscrow: ProposalAction = new Uint8(81)
 
-export const PLUGIN_STATUS_APPROVED: uint64 = 1
+
+// proposal vote types
+export const ProposalVoteTypeApprove: ProposalVoteType = new Uint8(10)
+export const ProposalVoteTypeReject: ProposalVoteType = new Uint8(20)
+export const ProposalVoteTypeAbstain: ProposalVoteType = new Uint8(30)

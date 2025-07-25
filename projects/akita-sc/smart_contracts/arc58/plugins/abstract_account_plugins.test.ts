@@ -1,4 +1,5 @@
-import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+// import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk, { encodeUint64, makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
@@ -8,7 +9,7 @@ import { OptInPluginClient, OptInPluginFactory } from '../../artifacts/arc58/plu
 import { EscrowFactoryFactory } from '../../artifacts/escrow/EscrowFactoryClient';
 
 
-export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 1_028_000
+export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 1_028_000 + 12_100
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 algokit.Config.configure({ populateAppCallResources: true });
 const fixture = algorandFixture();
@@ -96,6 +97,9 @@ describe('Abstracted Subscription Program', () => {
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
       appId: freshAbstractedAccountId,
     })
+
+    await abstractedAccountClient.send.init({ args: {}, extraFee: (3_000).microAlgo() })
+
     aliceAbstractedAccount = abstractedAccountClient.appAddress.toString()
 
     // Fund the abstracted account with 0.2 ALGO so it can hold an ASA

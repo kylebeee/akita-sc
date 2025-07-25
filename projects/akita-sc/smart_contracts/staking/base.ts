@@ -1,12 +1,13 @@
 import { Contract } from "@algorandfoundation/algorand-typescript";
 import { StakingMBRData } from "./types";
+import { HeartbeatsMBR, SettingsMBR, StakesMBR } from "./constants";
 
 export class BaseStaking extends Contract {
   protected mbr(): StakingMBRData {
     return {
-      stakes: 28_900,
-      heartbeats: 70_100,
-      settings: 9_300
+      stakes: StakesMBR,
+      heartbeats: HeartbeatsMBR,
+      settings: SettingsMBR
     }
   }
 }

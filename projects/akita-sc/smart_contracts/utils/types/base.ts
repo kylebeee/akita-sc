@@ -1,8 +1,7 @@
-import { arc4, bytes, op, StringCompat, uint64, Uint64Compat } from '@algorandfoundation/algorand-typescript'
-import { Address, DynamicArray, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
 
 export function uint8(v: uint64) {
-    return new arc4.UintN8(v)
+    return new arc4.Uint8(v)
 }
 
 export function bytes16(v: bytes) {
@@ -10,9 +9,3 @@ export function bytes16(v: bytes) {
 }
 
 export type CID = bytes<36>
-
-export type uint64Array = DynamicArray<UintN64>
-
-export function str(s: string) {
-    return new arc4.Str(s)
-}

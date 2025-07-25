@@ -1,5 +1,5 @@
-import { Account, arc4, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Bool, DynamicArray, StaticBytes, Struct, UintN64, UintN8 } from "@algorandfoundation/algorand-typescript/arc4";
+import { Account, arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Bool, DynamicArray, StaticBytes, Struct, Uint64, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
 
 export type AllowanceKey = {
   /** the id of the escrow account to apply the allowance to */
@@ -8,11 +8,11 @@ export type AllowanceKey = {
   asset: uint64;
 }
 
-export type SpendAllowanceType = UintN8
+export type SpendAllowanceType = Uint8
 
-export const SpendAllowanceTypeFlat: SpendAllowanceType = new UintN8(1)
-export const SpendAllowanceTypeWindow: SpendAllowanceType = new UintN8(2)
-export const SpendAllowanceTypeDrip: SpendAllowanceType = new UintN8(3)
+export const SpendAllowanceTypeFlat: SpendAllowanceType = new Uint8(1)
+export const SpendAllowanceTypeWindow: SpendAllowanceType = new Uint8(2)
+export const SpendAllowanceTypeDrip: SpendAllowanceType = new Uint8(3)
 
 export type AllowanceInfo = {
   /** the type of allowance to use */
@@ -52,58 +52,58 @@ export type PluginKey = {
   allowedCaller: Account;
 }
 
-export const DelegationTypeSelf = new UintN8(1)
-export const DelegationTypeAgent = new UintN8(2)
-export const DelegationTypeOther = new UintN8(3)
+export const DelegationTypeSelf = new Uint8(1)
+export const DelegationTypeAgent = new Uint8(2)
+export const DelegationTypeOther = new Uint8(3)
 
 export class arc4PluginInfo extends Struct<{
   /** Whether the plugin has permissions to change the admin account */
   admin: Bool;
   /** the type of delegation the plugin is using */
-  delegationType: UintN8;
+  delegationType: Uint8;
   /** the escrow account to use for the plugin */
-  escrow: UintN64;
+  escrow: Uint64;
   /** The last round or unix time at which this plugin can be called */
-  lastValid: UintN64;
+  lastValid: Uint64;
   /** The number of rounds or seconds that must pass before the plugin can be called again */
-  cooldown: UintN64;
+  cooldown: Uint64;
   /** The methods that are allowed to be called for the plugin by the address */
   methods: DynamicArray<arc4MethodInfo>;
   /** Whether to use unix timestamps or round for lastValid and cooldown */
   useRounds: Bool;
   /** The last round or unix time the plugin was called */
-  lastCalled: UintN64;
+  lastCalled: Uint64;
   /** The round or unix time the plugin was installed */
-  start: UintN64;
+  start: Uint64;
 }> { }
 
 export type PluginInfo = {
   admin: boolean;
-  delegationType: UintN8;
+  delegationType: Uint8;
   escrow: uint64;
   lastValid: uint64;
   cooldown: uint64;
-  methods: DynamicArray<arc4MethodInfo>;
+  methods: MethodInfo[];
   useRounds: boolean;
   lastCalled: uint64;
   start: uint64;
 }
 
 export type MethodRestriction = {
-  selector: StaticBytes<4>;
+  selector: bytes<4>;
   cooldown: uint64;
 }
 
 export type MethodInfo = {
-  selector: StaticBytes<4>;
+  selector: bytes<4>;
   cooldown: uint64;
   lastCalled: uint64;
 }
 
 export class arc4MethodInfo extends arc4.Struct<{
   selector: StaticBytes<4>;
-  cooldown: UintN64;
-  lastCalled: UintN64;
+  cooldown: Uint64;
+  lastCalled: Uint64;
 }> {}
 
 export type PluginValidation = {

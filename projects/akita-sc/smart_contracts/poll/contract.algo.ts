@@ -3,13 +3,15 @@ import {
   Application,
   arc4,
   assert,
+  assertMatch,
   BoxMap,
+  bytes,
   GlobalState,
   gtxn,
   itxn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, DynamicArray, StaticBytes, Str } from '@algorandfoundation/algorand-typescript/arc4'
+import { abimethod, Address, DynamicArray, Str, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Global, Txn } from '@algorandfoundation/algorand-typescript/op'
 import {
   PollGlobalStateKeyBoxCount,
@@ -29,6 +31,7 @@ import {
   PollGlobalStateKeyVotesOne,
   PollGlobalStateKeyVotesThree,
   PollGlobalStateKeyVotesTwo,
+  votesMBR,
 } from './constants'
 import { MultipleChoice, MultipleChoiceImpact, PollType, SingleChoice, SingleChoiceImpact } from './types'
 import {
@@ -45,17 +48,17 @@ import {
   ERR_POLL_ACTIVE,
   ERR_POLL_ENDED,
 } from './errors'
-import { GateArgs } from '../utils/types/gates'
-import { ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
+import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { gateCheck, getUserImpact } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { ERR_HAS_GATE } from '../social/errors'
 
 export class Poll extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
   /** The type of poll: SingleChoice, MultipleChoice, SingleChoiceImpact or MultipleChoiceImpact */
-  type = GlobalState<arc4.UintN8>({ key: PollGlobalStateKeyType })
+  type = GlobalState<Uint8>({ key: PollGlobalStateKeyType })
   /** the gate id to be used for filtering who can interact with this poll */
   gateID = GlobalState<uint64>({ key: PollGlobalStateKeyGateID })
   /** the time the poll ends as a unix timestamp */
@@ -84,88 +87,11 @@ export class Poll extends AkitaBaseContract {
   // BOXES ----------------------------------------------------------------------------------------
 
   /** A map of addresses to empty bytes to track who has voted */
-  votes = BoxMap<Account, StaticBytes<0>>({ keyPrefix: '' })
+  votes = BoxMap<Account, bytes<0>>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
-  private mbr(): uint64 {
-    return 15_300
-  }
-
-  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
-
-  @abimethod({ onCreate: 'require' })
-  create(
-    akitaDAO: uint64,
-    type: PollType,
-    endTime: uint64,
-    maxSelected: uint64,
-    question: string,
-    options: DynamicArray<Str>,
-    gateID: uint64
-  ): void {
-    assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
-    assert(Global.latestTimestamp < endTime, ERR_INVALID_END_TIME)
-    assert(type.native < 4, ERR_INVALID_POLL_TYPE)
-
-    this.akitaDAO.value = Application(akitaDAO)
-    this.type.value = type
-    this.gateID.value = gateID
-    this.endTime.value = endTime
-    this.question.value = question
-
-    assert(options.length >= 2 && options.length <= 5, ERR_INVALID_OPTION_COUNT)
-
-    if (type === MultipleChoice || type === MultipleChoiceImpact) {
-      assert(maxSelected >= 2 && maxSelected <= options.length - 1, ERR_INVALID_MAX_SELECTION)
-      this.maxSelected.value = maxSelected
-    }
-
-    this.optionCount.value = options.length
-    this.boxCount.value = 0
-
-    this.optionOne.value = options[0].native
-    this.optionTwo.value = options[1].native
-
-    if (options.length >= 3) {
-      this.optionThree.value = options[2].native
-    }
-
-    if (options.length >= 4) {
-      this.optionFour.value = options[3].native
-    }
-
-    if (options.length >= 5) {
-      this.optionFive.value = options[4].native
-    }
-  }
-
-  deleteBoxes(address: Address): void {
-    assert(Global.latestTimestamp > this.endTime.value, ERR_POLL_ACTIVE)
-
-    this.votes(address.native).delete()
-
-    itxn.payment({
-      receiver: address.native,
-      amount: this.mbr(),
-      note: 'MBR refund for poll vote',
-    }).submit()
-
-    this.boxCount.value -= 1
-  }
-
-  // POLL METHODS --------------------------------------------------------------------------------
-
-  vote(payment: gtxn.PaymentTxn, votes: uint64[], args: GateArgs): void {
-    assert(Global.latestTimestamp <= this.endTime.value, ERR_POLL_ENDED)
-    const arc4Sender = new Address(Txn.sender)
-    assert(!this.votes(Txn.sender).exists, ERR_ALREADY_VOTED)
-    assert(votes.length <= 5 && votes.length >= 1, ERR_INVALID_VOTE)
-    assert(gateCheck(this.akitaDAO.value, arc4Sender, this.gateID.value, args), ERR_FAILED_GATE)
-
-    assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
-    assert(payment.amount === this.mbr(), ERR_INVALID_PAYMENT_AMOUNT)
-
+  private createVote(votes: uint64[]): void {
     let impact: uint64 = 1
     if (this.type.value === SingleChoiceImpact || this.type.value === MultipleChoiceImpact) {
       impact = getUserImpact(this.akitaDAO.value, Txn.sender)
@@ -205,7 +131,111 @@ export class Poll extends AkitaBaseContract {
       }
     }
 
-    this.votes(Txn.sender).value = new arc4.StaticBytes<0>()
+    this.votes(Txn.sender).create()
     this.boxCount.value += 1
+  }
+
+  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
+
+  @abimethod({ onCreate: 'require' })
+  create(
+    akitaDAO: uint64,
+    type: PollType,
+    endTime: uint64,
+    maxSelected: uint64,
+    question: string,
+    options: string[],
+    gateID: uint64
+  ): void {
+    assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
+    assert(Global.latestTimestamp < endTime, ERR_INVALID_END_TIME)
+    assert(type.native < 4, ERR_INVALID_POLL_TYPE)
+
+    this.akitaDAO.value = Application(akitaDAO)
+    this.type.value = type
+    this.gateID.value = gateID
+    this.endTime.value = endTime
+    this.question.value = question
+
+    assert(options.length >= 2 && options.length <= 5, ERR_INVALID_OPTION_COUNT)
+
+    if (type === MultipleChoice || type === MultipleChoiceImpact) {
+      assert(maxSelected >= 2 && maxSelected <= options.length - 1, ERR_INVALID_MAX_SELECTION)
+      this.maxSelected.value = maxSelected
+    }
+
+    this.optionCount.value = options.length
+    this.boxCount.value = 0
+
+    this.optionOne.value = options[0]
+    this.optionTwo.value = options[1]
+
+    if (options.length >= 3) {
+      this.optionThree.value = options[2]
+    }
+
+    if (options.length >= 4) {
+      this.optionFour.value = options[3]
+    }
+
+    if (options.length >= 5) {
+      this.optionFive.value = options[4]
+    }
+  }
+
+  deleteBoxes(address: Address): void {
+    assert(Global.latestTimestamp > this.endTime.value, ERR_POLL_ACTIVE)
+
+    this.votes(address.native).delete()
+
+    itxn
+      .payment({
+        receiver: address.native,
+        amount: votesMBR,
+        note: 'MBR refund for poll vote',
+      })
+      .submit()
+
+    this.boxCount.value -= 1
+  }
+
+  // POLL METHODS --------------------------------------------------------------------------------
+
+  gatedVote(
+    mbrPayment: gtxn.PaymentTxn,
+    gateTxn: gtxn.ApplicationCallTxn,
+    votes: uint64[]
+  ): void {
+    assert(Global.latestTimestamp <= this.endTime.value, ERR_POLL_ENDED)
+    assert(!this.votes(Txn.sender).exists, ERR_ALREADY_VOTED)
+    assert(votes.length <= 5 && votes.length >= 1, ERR_INVALID_VOTE)
+    assert(gateCheck(gateTxn, this.akitaDAO.value, Txn.sender, this.gateID.value), ERR_FAILED_GATE)
+    assertMatch(
+      mbrPayment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: votesMBR,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    this.createVote(votes)
+  }
+
+  vote(mbrPayment: gtxn.PaymentTxn, votes: uint64[]): void {
+    assert(Global.latestTimestamp <= this.endTime.value, ERR_POLL_ENDED)
+    assert(!this.votes(Txn.sender).exists, ERR_ALREADY_VOTED)
+    assert(votes.length <= 5 && votes.length >= 1, ERR_INVALID_VOTE)
+    assert(this.gateID.value === 0, ERR_HAS_GATE)
+    assertMatch(
+      mbrPayment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: votesMBR,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    this.createVote(votes)
   }
 }

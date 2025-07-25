@@ -1,15 +1,17 @@
 import { Contract, uint64 } from "@algorandfoundation/algorand-typescript";
 import { SubscriptionsMBRData } from "./types";
+import { BlocksMBR, MinPassesMBR, ServicesListMBR, ServicesMBR, SubscriptionsListMBR, SubscriptionsMBR } from "./constants";
+import { AccountLength, BoxCostPerBox } from "../utils/constants";
 
 export class BaseSubscriptions extends Contract {
   protected mbr(passes: uint64): SubscriptionsMBRData {
     return {
-      subscriptions: 54_100,
-      subscriptionslist: 18_900,
-      services: 49_700,
-      serviceslist: 18_900,
-      blocks: 28_100,
-      passes: 18_900 + (400 * (32 * passes)),
+      subscriptions: SubscriptionsMBR,
+      subscriptionslist: SubscriptionsListMBR,
+      services: ServicesMBR,
+      serviceslist: ServicesListMBR,
+      blocks: BlocksMBR,
+      passes: MinPassesMBR + (BoxCostPerBox * (AccountLength * passes)),
     }
   }
 }

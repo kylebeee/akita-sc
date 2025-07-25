@@ -1,18 +1,21 @@
 import { BasePool } from "../../../pool/base";
 import { classes } from 'polytype';
 import { ServiceFactoryContract } from "../../../utils/base-contracts/factory";
-import { abimethod, Application, assert, Asset, Global, GlobalState, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Application, assert, Asset, Bytes, Global, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
 import { PoolPluginGlobalStateKeyFactory } from "./constants";
 import { fmbr, getSpendingAccount, getStakingFees, rekeyAddress } from "../../../utils/functions";
 import { StakingType } from "../../../staking/types";
-import { arc4Reward, StakeEntry } from "../../../pool/types";
+import { Reward, StakeEntry } from "../../../pool/types";
 import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
-import { arc4RootKey } from "../../../meta-merkles/types";
+import { RootKey } from "../../../meta-merkles/types";
 import { PoolFactory } from "../../../pool/factory.algo";
-import { AccountMinimumBalance, fee, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants";
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants";
 import { Pool } from "../../../pool/contract.algo";
 import { GateArgs } from "../../../utils/types/gates";
 import { ERR_NOT_A_VALID_POOL } from "./errors";
+import { GlobalStateKeyAkitaEscrow } from "../../../constants";
+import { btoi } from "@algorandfoundation/algorand-typescript/op";
+import { PoolEntriesByAddressMBR, PoolEntriesMBR, PoolUniquesMBR, WinnerCountCap } from "../../../pool/constants";
 
 export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
 
@@ -35,9 +38,8 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
     rekeyBack: boolean,
     title: string,
     type: StakingType,
-    reward: arc4Reward,
     marketplace: Address,
-    stakeKey: arc4RootKey,
+    stakeKey: RootKey,
     minimumStakeAmount: uint64,
     gateID: uint64,
     maxEntries: uint64,
@@ -45,34 +47,7 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    if (!this.factory.value.address.isOptedIn(Asset(reward.asset.native))) {
-      abiCall(
-        PoolFactory.prototype.optin,
-        {
-          sender,
-          appId: this.factory.value,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance,
-              fee,
-            }),
-            reward.asset.native,
-          ],
-          fee,
-        }
-      )
-    }
-
-    let optinMBR: uint64 = 0
-    const prizeAssetIsAlgo = reward.asset.native === 0
-    if (prizeAssetIsAlgo) {
-      optinMBR = Global.assetOptInMinBalance
-    }
-
     const fcosts = fmbr()
-    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
     const fees = getStakingFees(this.akitaDAO.value)
 
     const pool = compileArc4(Pool)
@@ -82,15 +57,14 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
-      childAppMBR +
+      Global.minBalance +
       fcosts.appCreators
     )
 
     const mbrTxn = itxn.payment({
       sender,
       receiver: this.factory.value.address,
-      amount: childContractMBR,
-      fee,
+      amount: childContractMBR
     })
 
     abiCall(
@@ -102,15 +76,13 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
           mbrTxn,
           title,
           type,
-          reward,
           marketplace,
           stakeKey,
           minimumStakeAmount,
           gateID,
           maxEntries,
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -130,8 +102,7 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
       {
         sender,
         appId: poolID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -152,10 +123,93 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
         sender,
         appId: this.factory.value,
         args: [ poolID ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
+  }
+
+  addReward(
+    walletID: uint64,
+    rekeyBack: boolean,
+    poolID: uint64,
+    reward: Reward,
+    amount: uint64
+  ): void {
+    assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+
+    const wallet = Application(walletID)
+    const sender = getSpendingAccount(wallet)
+
+    if (reward.asset === 0) {
+      abiCall(
+        Pool.prototype.addReward,
+        {
+          sender,
+          appId: poolID,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: Application(poolID).address,
+              amount: amount + this.rewardsMbr(reward.winnerCount)
+            }),
+            reward
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
+        }
+      )
+    } else {
+      // check if pool is opted into the reward asset
+      if (!Application(poolID).address.isOptedIn(Asset(reward.asset))) {
+        
+        // get the akita dao escrow for the pool factory
+        const escrowBytes = op.AppGlobal.getExBytes(this.factory.value, Bytes(GlobalStateKeyAkitaEscrow))[0]
+        const escrow = Application(btoi(escrowBytes));
+        let optinMBR: uint64 = Global.assetOptInMinBalance * (
+          !escrow.address.isOptedIn(Asset(reward.asset)) ? 4 : 1
+        )
+
+        const rewardsMBR: uint64 = this.rewardsMbr(WinnerCountCap) * 2        
+
+        abiCall(
+          Pool.prototype.optin,
+          {
+            sender,
+            appId: poolID,
+            args: [
+              itxn.payment({
+                sender,
+                receiver: Application(poolID).address,
+                amount: optinMBR + rewardsMBR
+              }),
+              reward.asset,
+            ]
+          }
+        )
+      }
+
+      abiCall(
+        Pool.prototype.addRewardAsa,
+        {
+          sender,
+          appId: poolID,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: Application(poolID).address,
+              amount: this.rewardsMbr(reward.winnerCount)
+            }),
+            itxn.assetTransfer({
+              sender,
+              assetReceiver: Application(poolID).address,
+              assetAmount: amount,
+              xferAsset: reward.asset
+            }),
+            reward
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
+        }
+      )
+    }
   }
 
   finalizePool(
@@ -181,8 +235,7 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
           startTimestamp,
           endTimestamp,
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -199,14 +252,26 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    const costs = this.mbr()
-    const entryMBR: uint64 = costs.entries + costs.entriesByAddress
-    const mbrAmount: uint64 = entryMBR * entries.length
+    const entryMBR: uint64 = PoolEntriesMBR + PoolEntriesByAddressMBR
+    let total: uint64 = entryMBR * entries.length
+    
+    const isEntered = abiCall(
+      Pool.prototype.isEntered,
+      {
+        sender,
+        appId: poolID,
+        args: [ new Address(sender) ]
+      }
+    ).returnValue
+
+    if (!isEntered) {
+      total += PoolUniquesMBR
+    }
 
     const mbrPayment = itxn.payment({
       sender,
       receiver: Application(poolID).address,
-      amount: mbrAmount
+      amount: total
     })
 
     abiCall(
@@ -219,8 +284,7 @@ export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
           entries,
           args
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }

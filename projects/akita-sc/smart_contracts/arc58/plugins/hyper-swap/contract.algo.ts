@@ -2,13 +2,12 @@ import { Application, assert, Asset, bytes, Global, itxn, op, uint64 } from "@al
 import { ServiceFactoryContract } from "../../../utils/base-contracts/factory"
 import { classes } from 'polytype'
 import { AbstractedAccount } from "../../account/contract.algo"
-import { abiCall, Address, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4"
+import { abiCall, Address } from "@algorandfoundation/algorand-typescript/arc4"
 import { BaseHyperSwap } from "../../../hyper-swap/base"
 import { HyperSwap } from "../../../hyper-swap/contract.algo"
 import { Proof } from "../../../utils/types/merkles"
 import { AssetInbox } from "../../../utils/types/asset-inbox"
 import { arc58OptInAndSend, getAccounts, getAkitaAppList, getOtherAppList, getPluginAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
-import { fee } from "../../../utils/constants"
 
 export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContract) {
 
@@ -24,8 +23,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           true,
           new Address(Global.currentApplicationAddress),
           op.bzero(4).toFixed({ length: 4 }),
-        ],
-        fee,
+        ]
       }
     ).returnValue
   }
@@ -42,7 +40,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
     expiration: uint64
   ) {
     const wallet = Application(walletID)
-    const { origin, sender } = getAccounts(wallet)
+    const sender = getSpendingAccount(wallet)
 
     const costs = this.mbr()
     const metaMerklesCost: uint64 = costs.mm.root + costs.mm.data
@@ -58,8 +56,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           itxn.payment({
             sender,
             receiver: hyperSwapApp.address,
-            amount: hyperSwapOfferMBRAmount,
-            fee,
+            amount: hyperSwapOfferMBRAmount
           }),
           root,
           leaves,
@@ -67,8 +64,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           participantLeaves,
           expiration,
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -93,14 +89,12 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           itxn.payment({
             sender,
             receiver: hyperSwapApp.address,
-            amount: this.mbr().participants,
-            fee,
+            amount: this.mbr().participants
           }),
           id,
           proof,
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -127,16 +121,14 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           itxn.payment({
             sender,
             receiver: hyperSwapApp.address,
-            amount: amount + this.mbr().hashes,
-            fee,
+            amount: amount + this.mbr().hashes
           }),
           id,
           receiver,
           amount,
           proof,
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -161,8 +153,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
         AssetInbox.prototype.arc59_getSendAssetInfo,
         {
           appId: assetInbox,
-          args: [receiver, asset],
-          fee,
+          args: [receiver, asset]
         }
       ).returnValue
 
@@ -189,15 +180,13 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           itxn.payment({
             sender,
             receiver: hyperSwapApp.address,
-            amount: mbrAmount,
-            fee,
+            amount: mbrAmount
           }),
           itxn.assetTransfer({
             sender,
             assetReceiver: hyperSwapApp.address,
             assetAmount: amount,
-            xferAsset: asset,
-            fee,
+            xferAsset: asset
           }),
           id,
           receiver,
@@ -205,8 +194,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           amount,
           proof,
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -246,8 +234,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           asset,
           amount,
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -267,8 +254,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
         sender,
         appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
         args: [id, proof],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }

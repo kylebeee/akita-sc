@@ -1,5 +1,4 @@
 import { assert, bytes, LogicSig, op, TemplateVar } from "@algorandfoundation/algorand-typescript"
-import { decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4"
 import { base64Decode, ed25519verify, Global, sha256, Txn } from "@algorandfoundation/algorand-typescript/op"
 
 const PK = TemplateVar<bytes<32>>('PK')

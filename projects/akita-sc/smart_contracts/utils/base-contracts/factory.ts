@@ -11,10 +11,10 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Contract, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, Contract, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
-import { AkitaDAO } from '../../dao/contract.algo'
+import { AkitaDAOInterface } from '../types/dao'
 
 export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
 export const BaseFactoryBoxPrefixAppCreators = 'c'
@@ -23,11 +23,6 @@ export type AppCreatorValue = {
   creator: Account
   amount: uint64
 }
-
-export class arc4AppCreatorValue extends arc4.Struct<{
-  creator: Address
-  amount: UintN64
-}> { }
 
 export class FactoryContract extends Contract {
 
@@ -46,19 +41,17 @@ export class FactoryContract extends Contract {
 
   protected optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
     abiCall(
-      AkitaDAO.prototype.optinReceiveEscrow,
+      AkitaDAOInterface.prototype.optinReceiveEscrow,
       {
         appId: this.akitaDAO.value,
         args: [
           itxn.payment({
             receiver: this.akitaDAOEscrow.value.address,
             amount: Global.assetOptInMinBalance,
-            fee: 0,
           }),
           name,
           asset.id
         ],
-        fee: 0,
       },
     )
 
@@ -68,7 +61,6 @@ export class FactoryContract extends Contract {
           assetReceiver: this.akitaDAOEscrow.value.address,
           assetAmount: amount,
           xferAsset: asset,
-          fee: 0,
         })
         .submit()
     }

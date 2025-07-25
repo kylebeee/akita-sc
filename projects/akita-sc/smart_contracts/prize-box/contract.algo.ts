@@ -17,7 +17,6 @@ import { ERR_INVALID_ASSET, ERR_NOT_EMPTY, ERR_NOT_OWNER } from './errors'
 import { PrizeBoxGlobalStateKeyOptinCount, PrizeBoxGlobalStateKeyOwner } from './constants'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { AssetInfo } from '../utils/types/asset'
-import { fee } from '../utils/constants'
 
 export class PrizeBox extends Contract {
   
@@ -68,7 +67,6 @@ export class PrizeBox extends Contract {
         assetReceiver: Global.currentApplicationAddress,
         assetAmount: 0,
         xferAsset: asset,
-        fee,
       })
       .submit()
 
@@ -101,7 +99,6 @@ export class PrizeBox extends Contract {
               assetAmount: assets[i].amount,
               assetReceiver: this.owner.value,
               assetCloseTo: this.owner.value,
-              fee,
             })
             .submit()
         } else {
@@ -110,7 +107,6 @@ export class PrizeBox extends Contract {
               xferAsset: assets[i].asset,
               assetAmount: assets[i].amount,
               assetReceiver: this.owner.value,
-              fee,
             })
             .submit()
         }

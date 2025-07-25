@@ -1,5 +1,5 @@
-import { assert, BigUint, Bytes, bytes, op, uint64, Uint64 } from '@algorandfoundation/algorand-typescript'
-import { DynamicArray, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { arc4, assert, BigUint, Bytes, bytes, clone, op, uint64, Uint64 } from '@algorandfoundation/algorand-typescript'
+import { DynamicArray } from '@algorandfoundation/algorand-typescript/arc4'
 import { pcgFirstIncrement, pcgSecondIncrement } from './consts.algo'
 import { __pcg32Init, __pcg32Output, __pcg32Step, __uint64Twos } from './pcg32.algo'
 
@@ -26,17 +26,17 @@ export function pcg64Random(
     lowerBound: uint64,
     upperBound: uint64,
     length: uint64
-): [PCG64STATE, DynamicArray<UintN64>] {
-    const result = new DynamicArray<UintN64>()
+): [PCG64STATE, DynamicArray<arc4.Uint64>] {
+    const result = new DynamicArray<arc4.Uint64>()
 
     let absoluteBound: uint64
 
     if (lowerBound === 0 && upperBound === 0) {
         for (let i = Uint64(0); i < length; i = i + 1) {
             const [newState, n] = __pcg64UnboundedRandom(state)
-            state = newState
+            state = clone(newState)
 
-            result.push(new UintN64(n))
+            result.push(new arc4.Uint64(n))
         }
     } else {
         if (upperBound !== 0) {
@@ -55,14 +55,14 @@ export function pcg64Random(
         for (let i = Uint64(0); i < length; i = i + 1) {
             while (true) {
                 const [newState, candidate] = __pcg64UnboundedRandom(state)
-                state = newState
+                state = clone(newState)
                 if (candidate >= threshold) {
-                    result.push(new UintN64((candidate % absoluteBound) + lowerBound))
+                    result.push(new arc4.Uint64((candidate % absoluteBound) + lowerBound))
                     break
                 }
             }
         }
     }
 
-    return [state, result.copy()]
+    return [state, result]
 }

@@ -7,7 +7,6 @@ import { ERR_NOT_AN_NFD } from './errors'
 import { NFDGlobalStateKeySaleAmountKey, NFDPluginGlobalStateKeyRegistry } from './constants'
 import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 import { NFDGlobalStateKeysName } from '../social/constants'
-import { fee } from '../../../utils/constants'
 
 export class NFDPlugin extends Contract {
 
@@ -18,14 +17,13 @@ export class NFDPlugin extends Contract {
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
   private isNFD(NFDApp: Application): boolean {
-    const [nfdNameBytes] = op.AppGlobal.getExBytes(NFDApp, Bytes(NFDGlobalStateKeysName))
+    const nfdNameBytes = op.AppGlobal.getExBytes(NFDApp, Bytes(NFDGlobalStateKeysName))[0]
 
     return abiCall(
       NFDRegistry.prototype.isValidNfdAppId,
       {
         appId: this.registry.value,
-        args: [String(nfdNameBytes), NFDApp.id],
-        fee,
+        args: [String(nfdNameBytes), NFDApp.id]
       }
     ).returnValue
   }
@@ -43,7 +41,7 @@ export class NFDPlugin extends Contract {
     walletID: uint64,
     rekeyBack: boolean,
     nfdAppID: uint64,
-    fieldNames: DynamicArray<DynamicBytes>
+    fieldNames: bytes[]
   ): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -56,8 +54,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [fieldNames],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       },
     )
   }
@@ -66,7 +63,7 @@ export class NFDPlugin extends Contract {
     walletID: uint64,
     rekeyBack: boolean,
     nfdAppID: uint64,
-    fieldAndVals: DynamicArray<DynamicBytes>
+    fieldAndVals: bytes[]
   ): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -79,8 +76,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [fieldAndVals],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -103,8 +99,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [sellAmount, reservedFor],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -125,8 +120,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -149,8 +143,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [offer, note],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -177,12 +170,10 @@ export class NFDPlugin extends Contract {
           itxn.payment({
             sender,
             receiver: Application(nfdAppID).address,
-            amount: btoi(saleAmountBytes),
-            fee,
+            amount: btoi(saleAmountBytes)
           }),
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -204,8 +195,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [hash],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -227,8 +217,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [lock],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -251,8 +240,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [lock, usdPrice],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -274,8 +262,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [lock],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -297,8 +284,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [assets],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -324,8 +310,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [amount, receiver, note, asset, otherAssets],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -346,8 +331,7 @@ export class NFDPlugin extends Contract {
       {
         sender,
         appId: nfdAppID,
-        args: [],
-        fee,
+        args: []
       }
     ).returnValue
 
@@ -360,12 +344,10 @@ export class NFDPlugin extends Contract {
           itxn.payment({
             sender,
             receiver: Application(nfdAppID).address,
-            amount: (price * years),
-            fee,
+            amount: (price * years)
           })
         ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }
@@ -388,8 +370,7 @@ export class NFDPlugin extends Contract {
         sender,
         appId: nfdAppID,
         args: [fieldName, address],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }

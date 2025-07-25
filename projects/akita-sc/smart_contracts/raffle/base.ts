@@ -1,12 +1,13 @@
 import { Contract } from "@algorandfoundation/algorand-typescript";
 import { RaffleMBRData } from "./types";
+import { EntriesByAddressMBR, EntriesMBR, WeightsMBR } from "./constants";
 
 export class BaseRaffle extends Contract {
     protected mbr(): RaffleMBRData {
         return {
-            entries: 31_700,
-            weights: 13_113_300,
-            entriesByAddress: 18_900
+            entries: EntriesMBR,
+            weights: WeightsMBR,
+            entriesByAddress: EntriesByAddressMBR
         }
     }
 }

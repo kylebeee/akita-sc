@@ -1,8 +1,9 @@
 import { bytes, Contract, Global, gtxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AkitaDAOState, ExecutionKey, Fees, ProposalAction, ProposalSettings, ProposalStatus } from "../../dao/types";
+import { AkitaDAOApps, AkitaDAOFees, AkitaDAOState, ProposalAction, ProposalSettings, ProposalStatus } from "../../dao/types";
 import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 import { CID } from "./base";
 import { FundsRequest } from "../../arc58/account/types";
+import { RootKey } from "../../meta-merkles/types";
 
 export class AkitaDAOInterface extends Contract {
   create(escrowFactory: uint64): void { }
@@ -12,14 +13,19 @@ export class AkitaDAOInterface extends Contract {
     akta: uint64,
     contentPolicy: CID,
     minRewardsImpact: uint64,
-    fees: Fees,
+    apps: AkitaDAOApps,
+    fees: AkitaDAOFees,
     proposalSettings: {
       creation: ProposalSettings,
       participation: ProposalSettings,
       approval: ProposalSettings,
       duration: ProposalSettings,
     },
-    revocationAddress: Address
+    revocationAddress: Address,
+    krbyPayoutAddress: Address,
+    moderatorGateID: uint64,
+    govStakeKey: RootKey,
+    govGateID: uint64,
   ): void { }
   arc58_verifyAuthAddr(): void { }
   arc58_canCall(
@@ -55,7 +61,7 @@ export class AkitaDAOInterface extends Contract {
   processEscrowAllocation(escrow: string, ids: uint64[]): void { }
   getState(): AkitaDAOState {
     return {
-      status: 0,
+      initialized: false,
       version: '',
       contentPolicy: op.bzero(36).toFixed({ length: 36 }),
       minRewardsImpact: 0,
@@ -71,12 +77,15 @@ export class AkitaDAOInterface extends Contract {
         raffle: 0,
         metaMerkles: 0,
         marketplace: 0,
-        akitaNFD: 0
+        akitaNfd: 0,
+        social: 0,
+        impact: 0,
       },
       otherAppList: {
         vrfBeacon: 0,
         nfdRegistry: 0,
-        assetInbox: 0
+        assetInbox: 0,
+        escrowFactory: 0
       },
       socialFees: {
         postFee: 0,

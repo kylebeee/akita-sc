@@ -1,5 +1,5 @@
 import { bytes, Contract, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address, UintN8 } from "@algorandfoundation/algorand-typescript/arc4";
+import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
 import { AddAllowanceInfo, EscrowReclaim, FundsRequest, MethodRestriction, SpendAllowanceType } from "../arc58/account/types";
 
 export class AbstractedAccountInterface extends Contract {
@@ -28,7 +28,7 @@ export class AbstractedAccountInterface extends Contract {
     app: uint64, 
     allowedCaller: Address, 
     admin: boolean, 
-    delegationType: UintN8, 
+    delegationType: Uint8, 
     escrow: string, 
     lastValid: uint64, 
     cooldown: uint64, 
@@ -42,7 +42,7 @@ export class AbstractedAccountInterface extends Contract {
     app: uint64, 
     allowedCaller: Address, 
     admin: boolean, 
-    delegationType: UintN8, 
+    delegationType: Uint8, 
     escrow: string, 
     lastValid: uint64, 
     cooldown: uint64, 

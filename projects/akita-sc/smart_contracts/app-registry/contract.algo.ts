@@ -1,4 +1,4 @@
-import { abimethod, Application, assert, assertMatch, BoxMap, bytes, Contract, Global, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Application, assert, assertMatch, BoxMap, bytes, clone, Contract, Global, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 
 const ERR_APP_NOT_REGISTERED = 'App not registered'
@@ -63,7 +63,7 @@ export class AppRegistry extends Contract {
       return false
     }
 
-    const apps = this.apps(addr4).value
+    const apps = clone(this.apps(addr4).value)
     const matchingAppID = this.findMatch(address, apps)
 
     return matchingAppID !== 0
@@ -77,7 +77,7 @@ export class AppRegistry extends Contract {
       return 0
     }
 
-    const apps = this.apps(addr4).value
+    const apps = clone(this.apps(addr4).value)
     const matchingAppID = this.findMatch(address, apps)
 
     return matchingAppID
@@ -91,7 +91,7 @@ export class AppRegistry extends Contract {
       return 0
     }
 
-    const apps = this.apps(addr4).value
+    const apps = clone(this.apps(addr4).value)
     const matchingAppID = this.findMatch(address, apps)
 
     assert(matchingAppID !== 0, ERR_APP_NOT_REGISTERED)
@@ -111,7 +111,7 @@ export class AppRegistry extends Contract {
         continue
       }
 
-      const appList = this.apps(addr4).value
+      const appList = clone(this.apps(addr4).value)
       apps = [
         ...apps,
         this.findMatch(address, appList)
@@ -130,7 +130,7 @@ export class AppRegistry extends Contract {
         assert(false, ERR_APP_NOT_REGISTERED)
       }
 
-      const appList = this.apps(addr4).value
+      const appList = clone(this.apps(addr4).value)
       const matchingAppID = this.findMatch(address, appList)
 
       assert(matchingAppID !== 0, ERR_APP_NOT_REGISTERED)

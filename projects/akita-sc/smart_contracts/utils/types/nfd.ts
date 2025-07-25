@@ -16,15 +16,15 @@ export class NFD extends Contract {
 
     mintAsa(nfdName: string, url: string): void {}
 
-    deleteFields(fieldNames: arc4.DynamicArray<arc4.DynamicBytes>): void {}
+    deleteFields(fieldNames: bytes[]): void {}
 
     updateSegmentCount(childNfdName: string, childNfdAppID: uint64): void {}
 
-    getFieldUpdateCost(fieldAndVals: arc4.DynamicArray<arc4.UintN64>): uint64 {
+    getFieldUpdateCost(fieldAndVals: uint64[]): uint64 {
         return 0
     }
 
-    updateFields(fieldAndVals: arc4.DynamicArray<arc4.DynamicBytes>): void {}
+    updateFields(fieldAndVals: bytes[]): void {}
 
     readField(fieldName: bytes): bytes {
         return Bytes('')

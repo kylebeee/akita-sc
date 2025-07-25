@@ -1,14 +1,14 @@
 import { Marketplace } from '../../../marketplace/marketplace.algo'
 import { Listing } from '../../../marketplace/listing.algo'
 import { Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, compileArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { Proof } from '../../../utils/types/merkles'
 import { ERR_LISTING_CREATOR_NOT_MARKETPLACE, ERR_NOT_ENOUGH_ASSET } from './errors'
 import { AssetHolding, Global } from '@algorandfoundation/algorand-typescript/op'
-import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../../../utils/constants'
-import { ListingGlobalStateKeyPaymentAsset, ListingGlobalStateKeyPrice } from '../../../marketplace/constants'
-import { GateArgs } from '../../../utils/types/gates'
-import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../../../utils/constants'
+import { ListingGlobalStateKeyGateID, ListingGlobalStateKeyPaymentAsset, ListingGlobalStateKeyPrice } from '../../../marketplace/constants'
+import { GateArgs, GateInterface } from '../../../utils/types/gates'
+import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { MarketplacePluginGlobalStateKeyFactory } from './constants'
 
@@ -58,12 +58,10 @@ export class MarketplacePlugin extends AkitaBaseContract {
             itxn.payment({
               sender,
               receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance,
-              fee: 0,
+              amount: Global.assetOptInMinBalance
             }),
             asset,
-          ],
-          fee: 0,
+          ]
         }
       )
     }
@@ -78,12 +76,10 @@ export class MarketplacePlugin extends AkitaBaseContract {
             itxn.payment({
               sender,
               receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance,
-              fee: 0,
+              amount: Global.assetOptInMinBalance
             }),
             paymentAsset,
-          ],
-          fee: 0,
+          ]
         }
       )
     }
@@ -96,7 +92,7 @@ export class MarketplacePlugin extends AkitaBaseContract {
       MIN_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * listing.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * listing.globalBytes) +
-      AccountMinimumBalance +
+      Global.minBalance +
       optinMBR
     )
 
@@ -109,15 +105,13 @@ export class MarketplacePlugin extends AkitaBaseContract {
           itxn.payment({
             sender,
             receiver: this.factory.value.address,
-            amount: childContractMBR,
-            fee: 0,
+            amount: childContractMBR
           }),
           itxn.assetTransfer({
             sender,
             assetReceiver: this.factory.value.address,
             assetAmount: assetAmount,
-            xferAsset: asset,
-            fee: 0,
+            xferAsset: asset
           }),
           price,
           paymentAsset,
@@ -142,7 +136,7 @@ export class MarketplacePlugin extends AkitaBaseContract {
     args: GateArgs
   ): void {
     const wallet = Application(walletID)
-    const sender = getSpendingAccount(wallet)
+    const { origin, sender } = getAccounts(wallet)
 
     assert(Application(listingID).creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
 
@@ -150,48 +144,111 @@ export class MarketplacePlugin extends AkitaBaseContract {
     const paymentAsset = Asset(op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyPaymentAsset))[0])
 
     if (paymentAsset.id === 0) {
-      abiCall(
-        Marketplace.prototype.purchase,
-        {
-          sender,
-          appId: this.factory.value,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: this.factory.value.address,
-              amount: price,
-              fee: 0,
-            }),
-            listingID,
-            marketplace,
-            args,
+      if (args.length > 0) {
+        const { gate } = getAkitaAppList(this.akitaDAO.value)
+        const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+
+        const gateTxn = itxn.applicationCall({
+          appId: gate,
+          appArgs: [
+            methodSelector(GateInterface.prototype.mustCheck),
+            new Address(origin),
+            gateID,
+            args
           ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
-        }
-      )
+        })
+
+        abiCall(
+          Marketplace.prototype.gatedPurchase,
+          {
+            sender,
+            appId: this.factory.value,
+            args: [
+              itxn.payment({
+                sender,
+                receiver: this.factory.value.address,
+                amount: price
+              }),
+              gateTxn,
+              listingID,
+              marketplace,
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      } else {
+        abiCall(
+          Marketplace.prototype.purchase,
+          {
+            sender,
+            appId: this.factory.value,
+            args: [
+              itxn.payment({
+                sender,
+                receiver: this.factory.value.address,
+                amount: price
+              }),
+              listingID,
+              marketplace
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      }
     } else {
-      abiCall(
-        Marketplace.prototype.purchaseAsa,
-        {
-          sender,
-          appId: this.factory.value,
-          args: [
-            itxn.assetTransfer({
-              sender,
-              assetReceiver: this.factory.value.address,
-              assetAmount: price,
-              xferAsset: paymentAsset,
-              fee: 0,
-            }),
-            listingID,
-            marketplace,
-            args,
+      if (args.length > 0) {
+        const { gate } = getAkitaAppList(this.akitaDAO.value)
+        const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+
+        const gateTxn = itxn.applicationCall({
+          appId: gate,
+          appArgs: [
+            methodSelector(GateInterface.prototype.mustCheck),
+            new Address(origin),
+            gateID,
+            args
           ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee: 0,
-        }
-      )
+        })
+
+        abiCall(
+          Marketplace.prototype.gatedPurchaseAsa,
+          {
+            sender,
+            appId: this.factory.value,
+            args: [
+              itxn.assetTransfer({
+                sender,
+                assetReceiver: this.factory.value.address,
+                assetAmount: price,
+                xferAsset: paymentAsset
+              }),
+              gateTxn,
+              listingID,
+              marketplace
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      } else {
+        abiCall(
+          Marketplace.prototype.purchaseAsa,
+          {
+            sender,
+            appId: this.factory.value,
+            args: [
+              itxn.assetTransfer({
+                sender,
+                assetReceiver: this.factory.value.address,
+                assetAmount: price,
+                xferAsset: paymentAsset
+              }),
+              listingID,
+              marketplace
+            ],
+            rekeyTo: rekeyAddress(rekeyBack, wallet)
+          }
+        )
+      }
     }
   }
 

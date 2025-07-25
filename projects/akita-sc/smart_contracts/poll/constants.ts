@@ -18,4 +18,4 @@ export const PollGlobalStateKeyVotesFour = 'votes_four'
 export const PollGlobalStateKeyOptionFive = 'option_five'
 export const PollGlobalStateKeyVotesFive = 'votes_five'
 
-export const voteMBR: uint64 = 15_300
+export const votesMBR: uint64 = 15_300

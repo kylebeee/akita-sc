@@ -1,40 +1,40 @@
 import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Bool, DynamicArray, DynamicBytes, StaticBytes, Struct, UintN64, UintN8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { arc4MethodInfo, MethodRestriction, SpendAllowanceType } from '../arc58/account/types';
+import { Address, Bool, DynamicArray, DynamicBytes, StaticBytes, Struct, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { arc4MethodInfo, MethodInfo, MethodRestriction, SpendAllowanceType } from '../arc58/account/types';
 import { CID } from '../utils/types/base';
 
 export class arc4DAOPluginInfo extends Struct<{
   /** the type of delegation the plugin is using */
-  delegationType: UintN8;
+  delegationType: Uint8;
   /** the escrow account to use for the plugin */
-  escrow: UintN64;
+  escrow: Uint64;
   /** The last round or unix time at which this plugin can be called */
-  lastValid: UintN64;
+  lastValid: Uint64;
   /** The number of rounds or seconds that must pass before the plugin can be called again */
-  cooldown: UintN64;
+  cooldown: Uint64;
   /** The methods that are allowed to be called for the plugin by the address */
   methods: DynamicArray<arc4MethodInfo>;
   /** Whether to use unix timestamps or round for lastValid and cooldown */
   useRounds: Bool;
   /** The last round or unix time the plugin was called */
-  lastCalled: UintN64;
+  lastCalled: Uint64;
   /** The round or unix time the plugin was installed */
-  start: UintN64;
+  start: Uint64;
   /** whether to require the group ID of the submitted group to match */
   useExecutionKey: Bool;
   /** the power needed to propose plugin execution */
-  executionProposalCreationMinimum: UintN64;
+  executionProposalCreationMinimum: Uint64;
   /** the threshold of participation needed to execute the plugin */
-  executionParticipationThreshold: UintN64;
+  executionParticipationThreshold: Uint64;
   /** the threshold of approval votes needed to execute the plugin */
-  executionApprovalThreshold: UintN64;
+  executionApprovalThreshold: Uint64;
   /** the amount of seconds the voting period lasts */
-  executionVotingDuration: UintN64;
+  executionVotingDuration: Uint64;
 }> { }
 
 export type DAOPluginInfo = {
   /** the type of delegation the plugin is using */
-  delegationType: UintN8;
+  delegationType: Uint8;
   /** the escrow account to use for the plugin */
   escrow: uint64;
   /** The last round or unix time at which this plugin can be called */
@@ -42,7 +42,7 @@ export type DAOPluginInfo = {
   /** The number of rounds or seconds that must pass before the plugin can be called again */
   cooldown: uint64;
   /** The methods that are allowed to be called for the plugin by the address */
-  methods: DynamicArray<arc4MethodInfo>;
+  methods: MethodInfo[];
   /** Whether to use unix timestamps or round for lastValid and cooldown */
   useRounds: boolean;
   /** The last round or unix time the plugin was called */
@@ -61,9 +61,9 @@ export type DAOPluginInfo = {
   executionVotingDuration: uint64;
 }
 
-export type ProposalStatus = UintN8
+export type ProposalStatus = Uint8
 
-export type ProposalAction = UintN8
+export type ProposalAction = Uint8
 
 export type ProposalUpgradeApp = {
   app: uint64
@@ -73,7 +73,7 @@ export type ProposalUpgradeApp = {
 export type ProposalAddPlugin = {
   app: uint64
   allowedCaller: Address
-  delegationType: UintN8
+  delegationType: Uint8
   escrow: string  
   lastValid: uint64
   cooldown: uint64
@@ -102,7 +102,7 @@ export type ProposalAddNamedPlugin = {
   name: string,
   app: uint64,
   allowedCaller: Address,
-  delegationType: UintN8,
+  delegationType: Uint8,
   lastValid: uint64,
   cooldown: uint64,
   methods: MethodRestriction[],
@@ -136,13 +136,13 @@ export type ProposalRemovePlugin = {
 
 export type ProposalRemoveNamedPlugin = {
   name: string
-    app: uint64
-  allowedCaller: Address,
+  app: uint64
+  allowedCaller: Address
 }
 
 export type ProposalAddAllowance = {
-  plugin: uint64,
-  caller: Address,
+  app: uint64,
+  allowedCaller: Address,
   asset: uint64,
   type: SpendAllowanceType,
   allowed: uint64,
@@ -151,8 +151,8 @@ export type ProposalAddAllowance = {
 }
 
 export type ProposalRemoveAllowance = {
-  plugin: uint64,
-  caller: Address,
+  app: uint64,
+  allowedCaller: Address,
   asset: uint64,
 }
 
@@ -175,11 +175,23 @@ export class arc4ProposalDetails extends arc4.Struct<{
   status: ProposalStatus
   action: ProposalAction
   cid: StaticBytes<36>
-  created: arc4.UintN64
-  votes: arc4.UintN64
+  created: arc4.Uint64
+  votes: arc4.Uint64
   creator: Address
   data: DynamicBytes
 }> { }
+
+export type ProposalVoteKey = {
+  proposalId: uint64
+  voter: Address
+}
+
+export type ProposalVoteType = Uint8
+
+export type ProposalVoteInfo = {
+  type: ProposalVoteType
+  power: uint64
+}
 
 export type ExecutionKey = bytes<32>
 
@@ -192,16 +204,14 @@ export type ExecutionInfo = {
 
 export class arc4ExecutionInfo extends arc4.Struct<{
   executed: arc4.Bool
-  lastValidRound: arc4.UintN64
+  lastValidRound: arc4.Uint64
 }> { }
 
-export type ReceiveEscrowDisbursementPhase = UintN8
+export type ReceiveEscrowDisbursementPhase = Uint8
 
 export type ReceiveEscrowInfo = {
-  /** the escrow app id */
-  escrow: uint64
-  /** the account that is allowed to use the escrow */
-  caller: Address
+  /** the source address of funds for the escrow */
+  source: Address
   /** whether the escrow is allocatable for paying the DAO/krby/mods */
   allocatable: boolean
   /** whether the account is allowed to opt in */
@@ -219,12 +229,12 @@ export type ReceiveEscrowInfo = {
 }
 
 export class arc4EscrowInfo extends arc4.Struct<{
-  escrow: UintN64,
+  escrow: Uint64,
   account: Address,
   optinAllowed: arc4.Bool,
   phase: ReceiveEscrowDisbursementPhase,
-  lastDisbursement: UintN64,
-  creationDate: UintN64
+  lastDisbursement: Uint64,
+  creationDate: Uint64
 }> { }
 
 export type EscrowAssetKey = {
@@ -232,13 +242,29 @@ export type EscrowAssetKey = {
   asset: uint64
 }
 
+export type PayoutEscrowType = Uint8
+
+export type PayoutEscrowInfo = {
+  type: PayoutEscrowType
+  data: bytes
+}
+
+export type PayoutEscrowIndividual = {
+  recipient: Address
+}
+
+export type PayoutEscrowPool = {
+  poolID: uint64
+}
+
+
 // distribute Bones for DAU
 // distribute Bones for Bones Stakers
 // distribute Bones for Service Usage
 // distribute AKTA & other tokens for Bones Stakers
 
 export type AkitaDAOState = {
-  status: uint64
+  initialized: boolean
   version: string
   contentPolicy: CID
   minRewardsImpact: uint64
@@ -272,31 +298,33 @@ export type AkitaAppList = {
   raffle: uint64 // Akita Raffle
   metaMerkles: uint64 // Akita MetaMerkles
   marketplace: uint64 // Akita Marketplace
-  akitaNFD: uint64 // akita.algo NFD
+  akitaNfd: uint64 // akita.algo NFD
+  social: uint64 // akita social
+  impact: uint64 // akita impact
   // empty slot
   // empty slot
   // empty slot
 }
 
 export class arc4AkitaAppList extends arc4.Struct<{
-  staking: arc4.UintN64
-  rewards: arc4.UintN64
-  pool: arc4.UintN64
-  prizeBox: arc4.UintN64
-  subscriptions: arc4.UintN64
-  gate: arc4.UintN64
-  auction: arc4.UintN64
-  hyperSwap: arc4.UintN64
-  raffle: arc4.UintN64
-  metaMerkles: arc4.UintN64
-  marketplace: arc4.UintN64
-  akitaNFD: arc4.UintN64
+  staking: arc4.Uint64
+  rewards: arc4.Uint64
+  pool: arc4.Uint64
+  prizeBox: arc4.Uint64
+  subscriptions: arc4.Uint64
+  gate: arc4.Uint64
+  auction: arc4.Uint64
+  hyperSwap: arc4.Uint64
+  raffle: arc4.Uint64
+  metaMerkles: arc4.Uint64
+  marketplace: arc4.Uint64
+  akitaNFD: arc4.Uint64
+  social: arc4.Uint64
+  impact: arc4.Uint64
 }> { }
 
 export type PluginAppList = {
   optin: uint64
-  social: uint64
-  impact: uint64
   // empty slot
   // empty slot
   // empty slot
@@ -312,16 +340,16 @@ export type PluginAppList = {
 }
 
 export class arc4PluginAppList extends arc4.Struct<{
-  optin: arc4.UintN64
-  social: arc4.UintN64
-  impact: arc4.UintN64
+  optin: arc4.Uint64
+  social: arc4.Uint64
+  impact: arc4.Uint64
 }> { }
 
 export type OtherAppList = {
   vrfBeacon: uint64 // vrf beacon
   nfdRegistry: uint64 // NFD Registry
   assetInbox: uint64 // asset inbox
-  // empty slot
+  escrowFactory: uint64 // escrow factory
   // empty slot
   // empty slot
   // empty slot
@@ -336,10 +364,33 @@ export type OtherAppList = {
 }
 
 export class arc4OtherAppList extends arc4.Struct<{
-  vrfBeacon: arc4.UintN64
-  nfdRegistry: arc4.UintN64
-  assetInbox: arc4.UintN64
+  vrfBeacon: arc4.Uint64
+  nfdRegistry: arc4.Uint64
+  assetInbox: arc4.Uint64
+  escrowFactory: arc4.Uint64
 }> { }
+
+export type AkitaDAOApps = {
+  staking: uint64 // universal staking
+  rewards: uint64 // akita rewards distro
+  pool: uint64 // akita staking pools
+  prizeBox: uint64 // akita prize box
+  subscriptions: uint64 // akita subscriptions
+  gate: uint64 // main gate
+  auction: uint64 // Akita Auctions
+  hyperSwap: uint64 // Akita HyperSwap
+  raffle: uint64 // Akita Raffle
+  metaMerkles: uint64 // Akita MetaMerkles
+  marketplace: uint64 // Akita Marketplace
+  akitaNfd: uint64 // akita.algo NFD
+  optin: uint64 // optin plugin
+  social: uint64 // social plugin
+  impact: uint64 // impact plugin
+  vrfBeacon: uint64 // vrf beacon
+  nfdRegistry: uint64 // NFD Registry
+  assetInbox: uint64 // asset inbox
+  escrowFactory: uint64 // escrow factory
+}
 
 export type SocialFees = {
   /** the cost to post on akita social */
@@ -359,10 +410,10 @@ export type SocialFees = {
 }
 
 export class arc4SocialFees extends arc4.Struct<{
-  postFee: arc4.UintN64
-  reactFee: arc4.UintN64
-  impactTaxMin: arc4.UintN64
-  impactTaxMax: arc4.UintN64
+  postFee: arc4.Uint64
+  reactFee: arc4.Uint64
+  impactTaxMin: arc4.Uint64
+  impactTaxMax: arc4.Uint64
 }> { }
 
 export type StakingFees = {
@@ -375,9 +426,9 @@ export type StakingFees = {
 }
 
 export class arc4StakingFees extends arc4.Struct<{
-  creationFee: arc4.UintN64
-  impactTaxMin: arc4.UintN64
-  impactTaxMax: arc4.UintN64
+  creationFee: arc4.Uint64
+  impactTaxMin: arc4.Uint64
+  impactTaxMax: arc4.Uint64
 }> { }
 
 export type SubscriptionFees = {
@@ -390,9 +441,9 @@ export type SubscriptionFees = {
 }
 
 export class arc4SubscriptionFees extends arc4.Struct<{
-  serviceCreationFee: arc4.UintN64
-  paymentPercentage: arc4.UintN64
-  triggerPercentage: arc4.UintN64
+  serviceCreationFee: arc4.Uint64
+  paymentPercentage: arc4.Uint64
+  triggerPercentage: arc4.Uint64
 }> { }
 
 export type SwapFees = {
@@ -401,8 +452,8 @@ export type SwapFees = {
 }
 
 export class arc4SwapFees extends arc4.Struct<{
-  impactTaxMin: arc4.UintN64
-  impactTaxMax: arc4.UintN64
+  impactTaxMin: arc4.Uint64
+  impactTaxMax: arc4.Uint64
 }> { }
 
 export type NFTFees = {
@@ -424,24 +475,24 @@ export type NFTFees = {
 }
 
 export class arc4NFTFees extends arc4.Struct<{
-  marketplaceSalePercentageMin: arc4.UintN64
-  marketplaceSalePercentageMax: arc4.UintN64
-  marketplaceComposablePercentage: arc4.UintN64
-  marketplaceRoyaltyDefaultPercentage: arc4.UintN64
-  shuffleSalePercentage: arc4.UintN64
-  omnigemSaleFee: arc4.UintN64
-  auctionCreationFee: arc4.UintN64
-  auctionSaleImpactTaxMin: arc4.UintN64
-  auctionSaleImpactTaxMax: arc4.UintN64
-  auctionComposablePercentage: arc4.UintN64
-  auctionRafflePercentage: arc4.UintN64
-  raffleCreationFee: arc4.UintN64
-  raffleSaleImpactTaxMin: arc4.UintN64
-  raffleSaleImpactTaxMax: arc4.UintN64
-  raffleComposablePercentage: arc4.UintN64
+  marketplaceSalePercentageMin: arc4.Uint64
+  marketplaceSalePercentageMax: arc4.Uint64
+  marketplaceComposablePercentage: arc4.Uint64
+  marketplaceRoyaltyDefaultPercentage: arc4.Uint64
+  shuffleSalePercentage: arc4.Uint64
+  omnigemSaleFee: arc4.Uint64
+  auctionCreationFee: arc4.Uint64
+  auctionSaleImpactTaxMin: arc4.Uint64
+  auctionSaleImpactTaxMax: arc4.Uint64
+  auctionComposablePercentage: arc4.Uint64
+  auctionRafflePercentage: arc4.Uint64
+  raffleCreationFee: arc4.Uint64
+  raffleSaleImpactTaxMin: arc4.Uint64
+  raffleSaleImpactTaxMax: arc4.Uint64
+  raffleComposablePercentage: arc4.Uint64
 }> { }
 
-export type Fees = {
+export type AkitaDAOFees = {
   postFee: uint64
   reactFee: uint64
   impactTaxMin: uint64
@@ -483,47 +534,50 @@ export type Fees = {
   moderatorPercentage: uint64
 }
 
+export type AkitaProposalSettings = {
+  
+}
 
 export class arc4Fees extends Struct<{
-  postFee: arc4.UintN64
-  reactFee: arc4.UintN64
-  impactTaxMin: arc4.UintN64
-  impactTaxMax: arc4.UintN64
+  postFee: arc4.Uint64
+  reactFee: arc4.Uint64
+  impactTaxMin: arc4.Uint64
+  impactTaxMax: arc4.Uint64
 
-  poolCreationFee: arc4.UintN64
-  poolImpactTaxMin: arc4.UintN64
-  poolImpactTaxMax: arc4.UintN64
+  poolCreationFee: arc4.Uint64
+  poolImpactTaxMin: arc4.Uint64
+  poolImpactTaxMax: arc4.Uint64
 
-  subscriptionServiceCreationFee: arc4.UintN64
-  subscriptionPaymentPercentage: arc4.UintN64
-  subscriptionTriggerPercentage: arc4.UintN64
+  subscriptionServiceCreationFee: arc4.Uint64
+  subscriptionPaymentPercentage: arc4.Uint64
+  subscriptionTriggerPercentage: arc4.Uint64
 
-  marketplaceSalePercentageMin: arc4.UintN64
-  marketplaceSalePercentageMax: arc4.UintN64
-  marketplaceComposablePercentage: arc4.UintN64
-  marketplaceRoyaltyDefaultPercentage: arc4.UintN64
+  marketplaceSalePercentageMin: arc4.Uint64
+  marketplaceSalePercentageMax: arc4.Uint64
+  marketplaceComposablePercentage: arc4.Uint64
+  marketplaceRoyaltyDefaultPercentage: arc4.Uint64
 
-  shuffleSalePercentage: arc4.UintN64
-  omnigemSaleFee: arc4.UintN64
+  shuffleSalePercentage: arc4.Uint64
+  omnigemSaleFee: arc4.Uint64
 
-  auctionCreationFee: arc4.UintN64
-  auctionSaleImpactTaxMin: arc4.UintN64
-  auctionSaleImpactTaxMax: arc4.UintN64
-  auctionComposablePercentage: arc4.UintN64
-  auctionRafflePercentage: arc4.UintN64
+  auctionCreationFee: arc4.Uint64
+  auctionSaleImpactTaxMin: arc4.Uint64
+  auctionSaleImpactTaxMax: arc4.Uint64
+  auctionComposablePercentage: arc4.Uint64
+  auctionRafflePercentage: arc4.Uint64
 
-  raffleCreationFee: arc4.UintN64
-  raffleSaleImpactTaxMin: arc4.UintN64
-  raffleSaleImpactTaxMax: arc4.UintN64
-  raffleComposablePercentage: arc4.UintN64
+  raffleCreationFee: arc4.Uint64
+  raffleSaleImpactTaxMin: arc4.Uint64
+  raffleSaleImpactTaxMax: arc4.Uint64
+  raffleComposablePercentage: arc4.Uint64
 
-  swapFeeImpactTaxMin: arc4.UintN64
-  swapFeeImpactTaxMax: arc4.UintN64
-  swapComposablePercentage: arc4.UintN64
-  swapLiquidityPercentage: arc4.UintN64
+  swapFeeImpactTaxMin: arc4.Uint64
+  swapFeeImpactTaxMax: arc4.Uint64
+  swapComposablePercentage: arc4.Uint64
+  swapLiquidityPercentage: arc4.Uint64
 
-  krbyPercentage: arc4.UintN64
-  moderatorPercentage: arc4.UintN64
+  krbyPercentage: arc4.Uint64
+  moderatorPercentage: arc4.Uint64
 }> { }
 
 export type AkitaAssets = {
@@ -534,8 +588,8 @@ export type AkitaAssets = {
 }
 
 export class arc4AkitaAssets extends arc4.Struct<{
-  akta: arc4.UintN64
-  bones: arc4.UintN64
+  akta: arc4.Uint64
+  bones: arc4.Uint64
 }> { }
 
 export type ProposalSettings = {
@@ -549,16 +603,19 @@ export type ProposalSettings = {
 
 /** arc4 variant of ProposalSettings */
 export class arc4ProposalSettings extends arc4.Struct<{
-  minimumProposalThreshold: arc4.UintN64
-  minimumVoteThreshold: arc4.UintN64
+  minimumProposalThreshold: arc4.Uint64
+  minimumVoteThreshold: arc4.Uint64
 }> { }
 
 export type AkitaDAOMBRData = {
   plugins: uint64
   namedPlugins: uint64
+  escrows: uint64
+  receiveEscrows: uint64
+  receiveAssets: uint64
+  payoutEscrows: uint64
   allowances: uint64
   proposals: uint64
+  proposalVotes: uint64
   executions: uint64
-  escrows: uint64
-  escrowAssets: uint64
 }

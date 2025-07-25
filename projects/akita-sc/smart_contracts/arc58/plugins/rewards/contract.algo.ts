@@ -3,10 +3,10 @@ import { BaseRewards } from '../../../rewards/base'
 import { classes } from 'polytype'
 import { abiCall } from '@algorandfoundation/algorand-typescript/arc4'
 import { Rewards } from '../../../rewards/contract.algo'
-import { arc4Claims, arc4Reclaims, arc4UserAllocations } from '../../../rewards/types'
+
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
-import { fee } from '../../../utils/constants'
+import { AllocationReclaimDetails, ClaimDetails, UserAllocation } from '../../../rewards/types'
 
 export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
 
@@ -34,7 +34,6 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
             sender,
             amount: mbrAmount,
             receiver: Application(rewardsID).address,
-            fee,
           }),
           title,
           timeToUnlock,
@@ -42,7 +41,6 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
           note,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     ).returnValue
   }
@@ -66,7 +64,6 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [id, title, timeToUnlock, expiration, note],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }
@@ -75,7 +72,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
     walletID: uint64,
     rekeyBack: boolean,
     id: uint64,
-    allocations: arc4UserAllocations,
+    allocations: UserAllocation[],
     sum: uint64
   ): void {
     const wallet = Application(walletID)
@@ -94,13 +91,11 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
             sender,
             amount: mbrAmount + sum,
             receiver: Application(rewardsID).address,
-            fee,
           }),
           id,
           allocations,
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }
@@ -110,7 +105,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
     rekeyBack: boolean,
     id: uint64,
     assetID: uint64,
-    allocations: arc4UserAllocations,
+    allocations: UserAllocation[],
     sum: uint64
   ): void {
     const wallet = Application(walletID)
@@ -133,20 +128,17 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
             sender,
             amount: mbrAmount,
             receiver: rewardsApp.address,
-            fee,
           }),
           itxn.assetTransfer({
             sender,
             assetReceiver: rewardsApp.address,
             assetAmount: sum,
             xferAsset: assetID,
-            fee,
           }),
           id,
           allocations
         ],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }
@@ -166,7 +158,6 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [id],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }
@@ -174,7 +165,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
   claimRewards(
     walletID: uint64,
     rekeyBack: boolean,
-    rewards: arc4Claims
+    rewards: ClaimDetails[]
   ): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -186,7 +177,6 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [rewards],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }
@@ -195,7 +185,7 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
     walletID: uint64,
     rekeyBack: boolean,
     id: uint64,
-    reclaims: arc4Reclaims
+    reclaims: AllocationReclaimDetails[]
   ): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
@@ -207,7 +197,6 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).rewards,
         args: [id, reclaims],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }

@@ -2,11 +2,12 @@ import { Account, Application, assert, assertMatch, BoxMap, Bytes, bytes, Contra
 import { abimethod, Address, compileArc4, DynamicArray, DynamicBytes, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4";
 import { Escrow } from "./contract.algo";
 import { btoi, itob } from "@algorandfoundation/algorand-typescript/op";
-import { ERR_FORBIDDEN } from "./errors";
+import { ERR_ALREADY_REGISTERED, ERR_FORBIDDEN } from "./errors";
 import { ERR_DOESNT_EXIST } from './errors'
-import { fee, MIN_PROGRAM_PAGES } from "../utils/constants";
+import { BoxCostPerByte } from "../utils/constants";
 import { ERR_INVALID_PAYMENT } from "../utils/errors";
 import { EscrowFactoryInterface } from "../utils/types/escrows";
+import { MinPages, MinWalletIDsByAccountsMbr } from "./constants";
 
 function bytes16(acc: Account): bytes<16> {
   return acc.bytes.slice(0, 16).toFixed({ length: 16 })
@@ -14,24 +15,33 @@ function bytes16(acc: Account): bytes<16> {
 
 export class EscrowFactory extends Contract implements EscrowFactoryInterface {
 
-  childMBR = GlobalState<uint64>({ key: 'child_mbr', initialValue: MIN_PROGRAM_PAGES })
-
   // 8 or 16 bytes
   walletIDsByAccounts = BoxMap<bytes<16>, bytes>({ keyPrefix: '' })
 
   private mbr(length: uint64): uint64 {
-    return 8_900 + (length * 400)
+    return MinWalletIDsByAccountsMbr + (length * BoxCostPerByte)
+  }
+
+  private getCreator(): bytes {
+    const appCaller = Global.callerApplicationId === 0
+    return appCaller
+      ? Bytes(bytes16(Txn.sender))
+      : Bytes(itob(Global.callerApplicationId))
+  }
+
+  @abimethod({ readonly: true })
+  newCost(): uint64 {
+    const creator = this.getCreator()
+    return (MinPages + this.mbr(creator.length) + Global.minBalance)
   }
 
   new(payment: gtxn.PaymentTxn): uint64 {
     const appCaller = Global.callerApplicationId === 0
-    const creator = appCaller
-      ? Bytes(bytes16(Txn.sender))
-      : Bytes(itob(Global.callerApplicationId))
+    const creator = this.getCreator()
 
     const escrow = compileArc4(Escrow);
 
-    const childAppMBR: uint64 = this.childMBR.value + this.mbr(creator.length)
+    const childAppMBR: uint64 = MinPages + this.mbr(creator.length)
 
     assertMatch(
       payment,
@@ -42,7 +52,7 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
       ERR_INVALID_PAYMENT
     )
 
-    const newEscrow = escrow.bareCreate({ fee }).createdApp
+    const newEscrow = escrow.bareCreate().createdApp
 
     const id = newEscrow.id
     const spendAccount = bytes16(newEscrow.address)
@@ -52,8 +62,7 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
     itxn
       .payment({
         receiver: newEscrow.address,
-        amount: Global.minBalance,
-        fee,
+        amount: Global.minBalance
       })
       .submit()
 
@@ -61,11 +70,29 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
       appId: id,
       args: [
         appCaller ? Global.callerApplicationAddress : Txn.sender
-      ],
-      fee
+      ]
     })
 
     return id
+  }
+
+  register(payment: gtxn.PaymentTxn): void {
+    assert(Global.callerApplicationId !== 0)
+    const creator = Bytes(itob(Global.callerApplicationId))
+    const app = Application(Global.callerApplicationId)
+    const appAddress = bytes16(app.address)
+    assert(!this.walletIDsByAccounts(appAddress).exists, ERR_ALREADY_REGISTERED)
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: this.mbr(creator.length),
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    this.walletIDsByAccounts(appAddress).value = creator
   }
 
   delete(id: uint64): void {
@@ -84,15 +111,14 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
 
     const childAppMBR: uint64 = Global.minBalance + this.mbr(creator.length)
 
-    spendingAccount.call.delete({ appId: id, fee })
+    spendingAccount.call.delete({ appId: id })
 
     this.walletIDsByAccounts(key).delete()
 
     itxn
       .payment({
         receiver: creator.length === 8 ? Global.callerApplicationAddress : Txn.sender,
-        amount: childAppMBR,
-        fee,
+        amount: childAppMBR
       })
       .submit()
   }

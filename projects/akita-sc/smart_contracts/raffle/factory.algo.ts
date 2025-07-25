@@ -17,11 +17,10 @@ import { Raffle } from './contract.algo'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
 import { PrizeBox } from '../prize-box/contract.algo'
 import { BaseRaffle } from './base'
-import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
 import { fmbr, getNFTFees, getPrizeBoxOwner, royalties } from '../utils/functions'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { ERR_APP_CREATOR_NOT_FOUND, ERR_NOT_A_RAFFLE } from './errors'
-import { fee } from '../utils/constants'
 import { Proof } from '../utils/types/merkles'
 
 export class RaffleFactory extends classes(
@@ -56,7 +55,7 @@ export class RaffleFactory extends classes(
 
     const fcosts = fmbr()
 
-    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR
+    const childAppMBR: uint64 = Global.minBalance + optinMBR
     const fees = getNFTFees(this.akitaDAO.value)
 
     const raffle = compileArc4(Raffle)
@@ -83,7 +82,6 @@ export class RaffleFactory extends classes(
       .payment({
         receiver: this.akitaDAOEscrow.value.address,
         amount: fees.raffleCreationFee,
-        fee,
       })
       .submit()
 
@@ -104,7 +102,6 @@ export class RaffleFactory extends classes(
           this.akitaDAO.value.id,
           this.akitaDAOEscrow.value.id,
         ],
-        fee,
       })
       .itxn
       .createdApp
@@ -121,11 +118,9 @@ export class RaffleFactory extends classes(
           itxn.payment({
             receiver: raffleApp.address,
             amount: Global.assetOptInMinBalance,
-            fee,
           }),
           ticketAsset,
         ],
-        fee,
       })
     }
 
@@ -193,11 +188,9 @@ export class RaffleFactory extends classes(
         itxn.payment({
           receiver: raffleApp.address,
           amount: Global.assetOptInMinBalance,
-          fee,
         }),
         assetXfer.xferAsset.id,
       ],
-      fee,
     })
 
     // xfer asset to child
@@ -206,7 +199,6 @@ export class RaffleFactory extends classes(
         assetReceiver: raffleApp.address,
         assetAmount: assetXfer.assetAmount,
         xferAsset: assetXfer.xferAsset,
-        fee,
       })
       .submit()
 
@@ -244,7 +236,6 @@ export class RaffleFactory extends classes(
     abiCall(PrizeBox.prototype.transfer, {
       appId: prizeBoxID,
       args: [new Address(raffleApp.address)],
-      fee,
     })
 
     return raffleApp.id
@@ -275,22 +266,19 @@ export class RaffleFactory extends classes(
         itxn.payment({
           receiver: Application(raffleID).address,
           amount: childAppMBR,
-          fee,
         }),
         weightsListCount,
       ],
-      fee,
     })
 
-    const prevAppCreators = this.appCreators(raffleID).value
-    this.appCreators(raffleID).value = { ...prevAppCreators, amount: (prevAppCreators.amount + childAppMBR) }
+    this.appCreators(raffleID).value.amount += childAppMBR
   }
 
   deleteRaffle(raffleID: uint64): void {
 
     const raffle = compileArc4(Raffle)
 
-    raffle.call.deleteApplication({ appId: raffleID, fee })
+    raffle.call.deleteApplication({ appId: raffleID })
 
     const { amount, creator } = this.appCreators(raffleID).value
     this.appCreators(raffleID).delete()
@@ -299,7 +287,6 @@ export class RaffleFactory extends classes(
       .payment({
         amount,
         receiver: creator,
-        fee,
       })
       .submit()
   }

@@ -1,11 +1,11 @@
-import { UintN8 } from "@algorandfoundation/algorand-typescript/arc4"
+import { Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
 
-export const Equal = new UintN8(1)
-export const NotEqual = new UintN8(2)
-export const LessThan = new UintN8(3)
-export const LessThanOrEqualTo = new UintN8(4)
-export const GreaterThan = new UintN8(5)
-export const GreaterThanOrEqualTo = new UintN8(6)
-export const IncludedIn = new UintN8(7)
-export const IncludedInRoot = new UintN8(8)
-export const NotIncludedIn = new UintN8(9)
+export const Equal = new Uint8(10)
+export const NotEqual = new Uint8(20)
+export const LessThan = new Uint8(30)
+export const LessThanOrEqualTo = new Uint8(40)
+export const GreaterThan = new Uint8(50)
+export const GreaterThanOrEqualTo = new Uint8(60)
+export const IncludedIn = new Uint8(70)
+export const IncludedInRoot = new Uint8(80)
+export const NotIncludedIn = new Uint8(90)

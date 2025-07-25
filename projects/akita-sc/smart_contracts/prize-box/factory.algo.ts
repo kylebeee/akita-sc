@@ -12,8 +12,7 @@ import { Address, compileArc4 } from '@algorandfoundation/algorand-typescript/ar
 import { PrizeBox } from './contract.algo'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { FactoryContract } from '../utils/base-contracts/factory'
-import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
-import { fee } from '../utils/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 
 export class PrizeBoxFactory extends FactoryContract {
 
@@ -43,7 +42,7 @@ export class PrizeBoxFactory extends FactoryContract {
           MIN_PROGRAM_PAGES +
           (GLOBAL_STATE_KEY_UINT_COST * prizeBox.globalUints) +
           (GLOBAL_STATE_KEY_BYTES_COST * prizeBox.globalBytes) +
-          AccountMinimumBalance
+          Global.minBalance
         ),
       },
       ERR_INVALID_PAYMENT
@@ -52,7 +51,6 @@ export class PrizeBoxFactory extends FactoryContract {
     const prizeBoxApp = prizeBox.call
       .create({
         args: [owner],
-        fee,
       })
       .itxn
       .createdApp
@@ -60,8 +58,7 @@ export class PrizeBoxFactory extends FactoryContract {
     itxn
       .payment({
         receiver: prizeBoxApp.address,
-        amount: AccountMinimumBalance,
-        fee,
+        amount: Global.minBalance,
       })
       .submit()
 

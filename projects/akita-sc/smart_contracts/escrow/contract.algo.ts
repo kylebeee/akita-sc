@@ -1,7 +1,6 @@
 import { Account, assert, Contract, Global, itxn, Txn } from "@algorandfoundation/algorand-typescript"
 import { ERR_ONLY_CREATOR_CAN_REKEY, ERR_ONLY_FACTORY_CAN_DELETE } from "./errors"
 import { abimethod } from "@algorandfoundation/algorand-typescript/arc4"
-import { fee } from "../utils/constants";
 import { EscrowInterface } from "../utils/types/escrows";
 
 export class Escrow extends Contract implements EscrowInterface {
@@ -13,8 +12,7 @@ export class Escrow extends Contract implements EscrowInterface {
       .payment({
         amount: 0,
         receiver: Global.currentApplicationAddress,
-        rekeyTo,
-        fee,
+        rekeyTo
       })
       .submit()
   }

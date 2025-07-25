@@ -1,5 +1,4 @@
 import {
-  Application,
   arc4,
   assert,
   assertMatch,
@@ -13,10 +12,9 @@ import {
   GlobalState,
   gtxn,
   itxn,
-  TemplateVar,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { btoi, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
+import { btoi, itob, sha256, Txn } from '@algorandfoundation/algorand-typescript/op'
 import { abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { DataKey, MetaMerklesMBRData, RootKey, SchemaList, TypesValue } from './types'
 import {
@@ -27,6 +25,9 @@ import {
   MetaMerklesBoxPrefixRoots,
   MetaMerklesBoxPrefixTypes,
   MetaMerklesGlobalStateKeyTypesID,
+  MinDataMBR,
+  MinRootsMBR,
+  MinTypesMBR,
   reservedDataKeyPrefix,
   SchemaPartAddress,
   SchemaPartAddressString,
@@ -79,10 +80,7 @@ import {
 import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
 import { bytes16 } from '../utils/types/base'
 import { Leaf, MetaMerklesInterface, Proof } from '../utils/types/merkles'
-import { fee } from '../utils/constants'
-import { getOrigin } from '../utils/functions'
-
-const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
+import { BoxCostPerByte } from '../utils/constants'
 
 export class MetaMerkles extends Contract implements MetaMerklesInterface {
 
@@ -114,9 +112,9 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
     dataValue: string
   ): MetaMerklesMBRData {
     return {
-      types: 6_100 + (400 * Bytes(typeDescription).length + Bytes(schema).length),
-      roots: 28_500 + (400 * Bytes(rootName).length),
-      data: 9_300 + (400 * (Bytes(rootName).length + Bytes(dataKey).length + Bytes(dataValue).length)),
+      types: MinTypesMBR + (BoxCostPerByte * Bytes(typeDescription).length + Bytes(schema).length),
+      roots: MinRootsMBR + (BoxCostPerByte * Bytes(rootName).length),
+      data: MinDataMBR + (BoxCostPerByte * (Bytes(rootName).length + Bytes(dataKey).length + Bytes(dataValue).length)),
     }
   }
 
@@ -161,10 +159,9 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
     assert(Bytes(name).length <= 31, 'Cannot add root with name longer than 31 bytes')
     assert(this.types(type).exists, ERR_NO_TREE_TYPE)
 
-    const origin = getOrigin(escrowFactory.id)
-    const truncatedAddress = bytes16(origin.bytes)
+    const truncatedAddress = bytes16(Txn.sender.bytes)
 
-    const rootKey: RootKey = { address: new Address(origin), name }
+    const rootKey: RootKey = { address: new Address(Txn.sender), name }
     const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
 
     assert(!this.roots(rootKey).exists, ERR_NAME_TAKEN)
@@ -189,10 +186,9 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param name the name of the merkle tree root
    */
   deleteRoot(name: string): void {
-    const origin = getOrigin(escrowFactory.id)
-    const truncatedAddress = bytes16(origin.bytes)
+    const truncatedAddress = bytes16(Txn.sender.bytes)
 
-    const rootKey: RootKey = { address: new Address(origin), name }
+    const rootKey: RootKey = { address: new Address(Txn.sender), name }
     const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
 
     assert(this.roots(rootKey).exists, ERR_NO_NAME)
@@ -201,11 +197,12 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
     this.data(typeKey).delete()
 
     // return their MBR
-    itxn.payment({
-      receiver: origin,
-      amount: this.rootCosts(name),
-      fee,
-    }).submit()
+    itxn
+      .payment({
+        receiver: Txn.sender,
+        amount: this.rootCosts(name),
+      })
+      .submit()
   }
 
   /**
@@ -215,8 +212,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param newRoot the new 32 byte merkle tree root
    */
   updateRoot(name: string, newRoot: bytes<32>): void {
-    const origin = getOrigin(escrowFactory.id)
-    const key: RootKey = { address: new Address(origin), name }
+    const key: RootKey = { address: new Address(Txn.sender), name }
     assert(this.roots(key).exists, ERR_NO_NAME)
     this.roots(key).value = newRoot
   }
@@ -231,8 +227,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param value the metadata value eg. `5` encoded as a bytestring for 5%
    */
   addData(payment: gtxn.PaymentTxn, name: string, key: string, value: string): void {
-    const origin = getOrigin(escrowFactory.id)
-    const rootKey: RootKey = { address: new Address(origin), name }
+    const rootKey: RootKey = { address: new Address(Txn.sender), name }
 
     const keyBytes = Bytes(key)
     assert(keyBytes.length <= maxDataKeyLength, ERR_KEY_TOO_LONG)
@@ -254,7 +249,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
       ERR_INVALID_PAYMENT
     )
 
-    const truncatedAddress = bytes16(origin.bytes)
+    const truncatedAddress = bytes16(Txn.sender.bytes)
     const dataKey: DataKey = { address: truncatedAddress, name, key }
 
     this.data(dataKey).value = value
@@ -267,8 +262,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param key the metadata key you want to remove
    */
   deleteData(name: string, key: string): void {
-    const origin = getOrigin(escrowFactory.id)
-    const truncatedAddress = bytes16(origin.bytes)
+    const truncatedAddress = bytes16(Txn.sender.bytes)
     const dataKey: DataKey = { address: truncatedAddress, name, key }
 
     assert(this.data(dataKey).exists, ERR_NO_DATA)
@@ -279,9 +273,8 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
 
     itxn
       .payment({
-        receiver: origin,
+        receiver: Txn.sender,
         amount: costs.data,
-        fee,
       })
       .submit()
   }

@@ -5,3 +5,4 @@ export const ERR_FORBIDDEN = 'only the creator wallet can delete a spending acco
 export const ERR_ONLY_WALLET_OR_PLUGIN = 'Only the wallet or plugin can opt in'
 export const ERR_ONLY_FACTORY_CAN_DELETE = 'Only the factory can delete the application'
 export const ERR_DOESNT_EXIST = 'does not exist'
+export const ERR_ALREADY_REGISTERED = 'already registered'

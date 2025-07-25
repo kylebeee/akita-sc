@@ -1,5 +1,5 @@
 import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { Address, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ServiceFactoryContractMBRData } from '../utils/functions'
 
 export type WeightLocation = {
@@ -7,21 +7,16 @@ export type WeightLocation = {
   location: uint64
 }
 
-export type arc4WeightLocation = arc4.UintN64
+export type arc4WeightLocation = Uint64
 
 export type EntryData = {
   address: Address
   marketplace: Address
 }
 
-export type arc4WeightsList = arc4.StaticArray<arc4.UintN64, 4096>
+export type arc4WeightsList = arc4.StaticArray<Uint64, 4096>
 
 export type FindWinnerCursors = { index: uint64; amountIndex: uint64 }
-
-export class arc4FindWinnerCursor extends arc4.Struct<{
-  index: arc4.UintN64
-  amountIndex: arc4.UintN64
-}> { }
 
 export type RaffleState = {
   ticketAsset: uint64
@@ -43,22 +38,22 @@ export type RaffleState = {
 }
 
 export class arc4RaffleState extends arc4.Struct<{
-  ticketAsset: arc4.UintN64
-  startingRound: arc4.UintN64
-  endingRound: arc4.UintN64
+  ticketAsset: Uint64
+  startingRound: Uint64
+  endingRound: Uint64
   seller: Address
-  minTickets: arc4.UintN64
-  maxTickets: arc4.UintN64
-  entryCount: arc4.UintN64
-  ticketCount: arc4.UintN64
-  winningTicket: arc4.UintN64
+  minTickets: Uint64
+  maxTickets: Uint64
+  entryCount: Uint64
+  ticketCount: Uint64
+  winningTicket: Uint64
   winner: Address
-  prize: arc4.UintN64
+  prize: Uint64
   prizeClaimed: arc4.Bool
-  gateID: arc4.UintN64
-  vrfFailureCount: arc4.UintN64
-  entryID: arc4.UintN64
-  refundMBRCursor: arc4.UintN64
+  gateID: Uint64
+  vrfFailureCount: Uint64
+  entryID: Uint64
+  refundMBRCursor: Uint64
 }> { }
 
 export type RaffleMBRData = {

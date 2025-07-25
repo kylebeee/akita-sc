@@ -1,16 +1,19 @@
-import { biguint, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
-import { UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { arc4, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
 
-export const fee: uint64 = 0
+export const arc4Zero = new arc4.Uint64(0)
 
 export const MIN_PROGRAM_PAGES: uint64 = 100_000
 export const MAX_PROGRAM_PAGES: uint64 = 400_000
 export const GLOBAL_STATE_KEY_UINT_COST: uint64 = 28_500
 export const GLOBAL_STATE_KEY_BYTES_COST: uint64 = 50_000
 
-export const AccountMinimumBalance: uint64 = 100_000
+export const AccountLength: uint64 = 32
 
-export const arc4Zero = new UintN64(0)
+export const BoxCostPerBox: uint64 = 2_500
+export const BoxCostPerByte: uint64 = 400
+
+export const DynamicOffset: uint64 = 2
+export const DynamicLength: uint64 = 2
 
 export const MAX_IMPACT: uint64 = 1_000
 

@@ -6,7 +6,6 @@ import { abiCall, abimethod, Address } from "@algorandfoundation/algorand-typesc
 import { Staking } from "../../../staking/contract.algo"
 import { getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
-import { fee } from "../../../utils/constants"
 
 export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
 
@@ -63,14 +62,12 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
               sender,
               receiver: stakingApp.address,
               amount: sendAmount,
-              fee,
             }),
             type,
             amount,
             expiration,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee,
         }
       )
     } else {
@@ -84,21 +81,18 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
               sender,
               receiver: stakingApp.address,
               amount: sendAmount,
-              fee,
             }),
             itxn.assetTransfer({
               sender,
               assetReceiver: stakingApp.address,
               assetAmount: amount,
               xferAsset: assetID,
-              fee,
             }),
             type,
             amount,
             expiration,
           ],
           rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee,
         }
       )
     }
@@ -120,7 +114,6 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [asset, type],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }
@@ -141,7 +134,6 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [address, asset],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }
@@ -162,7 +154,6 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [address, asset],
         rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
       }
     )
   }

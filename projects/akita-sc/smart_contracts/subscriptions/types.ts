@@ -1,5 +1,5 @@
-import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, StaticBytes } from '@algorandfoundation/algorand-typescript/arc4'
+import { bytes, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { CID } from '../utils/types/base'
 
 export type SubscriptionID = uint64
@@ -9,18 +9,13 @@ export type ServicesKey = {
   id: uint64
 }
 
-export class arc4ServicesKey extends arc4.Struct<{
-  address: Address
-  id: arc4.UintN64
-}> { }
-
 export type ServiceID = uint64
 
-export type ServiceStatus = arc4.UintN8
+export type ServiceStatus = Uint8
 
-export const ServiceStatusActive: ServiceStatus = new arc4.UintN8(0)
-export const ServiceStatusPaused: ServiceStatus = new arc4.UintN8(1)
-export const ServiceStatusShutdown: ServiceStatus = new arc4.UintN8(2)
+export const ServiceStatusActive: ServiceStatus = new Uint8(10)
+export const ServiceStatusPaused: ServiceStatus = new Uint8(20)
+export const ServiceStatusShutdown: ServiceStatus = new Uint8(30)
 
 export type Service = {
   status: ServiceStatus
@@ -28,39 +23,19 @@ export type Service = {
   asset: uint64
   amount: uint64
   passes: uint64
-  gate: uint64
+  gateID: uint64
   cid: CID
 }
-
-export class arc4Service extends arc4.Struct<{
-  status: ServiceStatus
-  interval: arc4.UintN64
-  asset: arc4.UintN64
-  amount: arc4.UintN64
-  passes: arc4.UintN64
-  gate: arc4.UintN64
-  cid: arc4.StaticBytes<36>
-}> { }
-
-export class arc4BlockListKey extends arc4.Struct<{
-  address: arc4.StaticBytes<16>
-  blocked: arc4.StaticBytes<16>
-}> { }
 
 export type BlockListKey = {
   address: bytes<16>
   blocked: bytes<16>
 }
 
-// export type SubscriptionKey = {
-//     address: Address;
-//     index: uint64;
-// };
-
-export class arc4SubscriptionKey extends arc4.Struct<{
-  address: Address
-  id: arc4.UintN64
-}> { }
+export type SubscriptionKey = {
+    address: Address;
+    id: uint64;
+};
 
 export type SubscriptionInfo = {
   recipient: Address
@@ -69,29 +44,11 @@ export type SubscriptionInfo = {
   amount: uint64
   interval: uint64
   asset: uint64
-  gate: uint64
+  gateID: uint64
   lastPayment: uint64
   streak: uint64
   escrowed: uint64
 }
-
-export class arc4SubscriptionInfo extends arc4.Struct<{
-  recipient: Address
-  serviceID: arc4.UintN64
-  startDate: arc4.UintN64
-  amount: arc4.UintN64
-  interval: arc4.UintN64
-  asset: arc4.UintN64
-  gate: arc4.UintN64
-  lastPayment: arc4.UintN64
-  streak: arc4.UintN64
-  escrowed: arc4.UintN64
-}> { }
-
-export class arc4PassesKey extends arc4.Struct<{
-  address: Address
-  id: arc4.UintN64
-}> { }
 
 export type PassesKey = {
   address: Address
@@ -105,26 +62,12 @@ export type SubscriptionInfoWithPasses = {
   amount: uint64
   interval: uint64
   asset: uint64
-  gate: uint64
+  gateID: uint64
   lastPayment: uint64
   streak: uint64
   escrowed: uint64
   passes: Address[]
 }
-
-export class arc4SubscriptionInfoWithPasses extends arc4.Struct<{
-  recipient: Address
-  serviceID: arc4.UintN64
-  startDate: arc4.UintN64
-  amount: arc4.UintN64
-  interval: arc4.UintN64
-  asset: arc4.UintN64
-  gate: arc4.UintN64
-  lastPayment: arc4.UintN64
-  streak: arc4.UintN64
-  escrowed: arc4.UintN64
-  passes: arc4.DynamicArray<Address>
-}> { }
 
 export type Amounts = {
   akitaFee: uint64
@@ -140,5 +83,3 @@ export type SubscriptionsMBRData = {
   blocks: uint64
   passes: uint64
 }
-
-export type Addresses = arc4.DynamicArray<Address>

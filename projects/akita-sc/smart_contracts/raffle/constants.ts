@@ -30,6 +30,10 @@ export const RaffleBoxPrefixEntries = 'e'
 export const RaffleBoxPrefixWeights = 'w'
 export const RaffleBoxPrefixEntriesByAddress = 'a'
 
+export const EntriesMBR: uint64 = 31_700
+export const WeightsMBR: uint64 = 13_113_300
+export const EntriesByAddressMBR: uint64 = 18_900
+
 export const BoxWeightTotalsSize: uint64 = 15
 
 // 4096*8 bytes = 32KB

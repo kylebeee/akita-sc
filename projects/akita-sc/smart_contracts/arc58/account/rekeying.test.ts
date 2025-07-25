@@ -1,4 +1,5 @@
-import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+// import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import algosdk, { makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
 import { microAlgos } from '@algorandfoundation/algokit-utils';
@@ -87,6 +88,8 @@ describe('Rekeying Test', () => {
       defaultSigner: makeBasicAccountTransactionSigner(aliceEOA),
       appId: freshAbstractedAccountId,
     })
+
+    await abstractedAccountClient.send.init({ args: {}, extraFee: (3_000).microAlgo() })
 
     aliceAbstractedAccount = abstractedAccountClient.appAddress.toString()
 

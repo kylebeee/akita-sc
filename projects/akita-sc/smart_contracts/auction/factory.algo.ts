@@ -2,18 +2,18 @@
 import { classes } from 'polytype'
 import { ServiceFactoryContract } from '../utils/base-contracts/factory'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { Application, assert, assertMatch, Asset, Global, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, assert, assertMatch, Asset, Bytes, Global, gtxn, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Proof } from '../utils/types/merkles'
 import { abiCall, abimethod, Address, compileArc4, DynamicArray, StaticBytes } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_APP_CREATOR_NOT_FOUND, ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START, ERR_NOT_AN_AUCTION } from './errors'
 import { BaseAuction } from './base'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
-import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
 import { Txn } from '@algorandfoundation/algorand-typescript/op'
 import { Auction } from './contract.algo'
 import { fmbr, getPrizeBoxOwner, royalties } from '../utils/functions'
 import { PrizeBox } from '../prize-box/contract.algo'
-import { fee } from '../utils/constants'
+import { AuctionGlobalStateKeySeller } from './constants'
 
 export class AuctionFactory extends classes(
   BaseAuction,
@@ -68,7 +68,7 @@ export class AuctionFactory extends classes(
 
     const auction = compileArc4(Auction)
 
-    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightsListCount * costs.weights)
+    const childAppMBR: uint64 = Global.minBalance + optinMBR + (weightsListCount * costs.weights)
     const totalMBR: uint64 = (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
@@ -117,8 +117,7 @@ export class AuctionFactory extends classes(
           this.childContractVersion.value,
           this.akitaDAO.value.id,
           this.akitaDAOEscrow.value.id,
-        ],
-        fee,
+        ]
       })
       .itxn
       .createdApp
@@ -131,12 +130,10 @@ export class AuctionFactory extends classes(
       args: [
         itxn.payment({
           receiver: auctionApp.address,
-          amount: Global.assetOptInMinBalance,
-          fee,
+          amount: Global.assetOptInMinBalance
         }),
         assetXfer.xferAsset.id,
-      ],
-      fee,
+      ]
     })
 
     // xfer asset to child
@@ -144,8 +141,7 @@ export class AuctionFactory extends classes(
       .assetTransfer({
         assetReceiver: auctionApp.address,
         assetAmount: assetXfer.assetAmount,
-        xferAsset: assetXfer.xferAsset,
-        fee,
+        xferAsset: assetXfer.xferAsset
       })
       .submit()
 
@@ -156,12 +152,10 @@ export class AuctionFactory extends classes(
         args: [
           itxn.payment({
             receiver: auctionApp.address,
-            amount: Global.assetOptInMinBalance,
-            fee,
+            amount: Global.assetOptInMinBalance
           }),
           bidAssetID,
-        ],
-        fee,
+        ]
       })
     }
 
@@ -190,7 +184,7 @@ export class AuctionFactory extends classes(
     const fcosts = fmbr()
 
     const auction = compileArc4(Auction)
-    
+
     const totalMBR: uint64 = (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
@@ -229,8 +223,7 @@ export class AuctionFactory extends classes(
           this.childContractVersion.value,
           this.akitaDAO.value.id,
           this.akitaDAOEscrow.value.id,
-        ],
-        fee,
+        ]
       })
       .itxn
       .createdApp
@@ -241,15 +234,13 @@ export class AuctionFactory extends classes(
       PrizeBox.prototype.transfer,
       {
         appId: prizeBoxID,
-        args: [new Address(auctionApp.address)],
-        fee,
+        args: [new Address(auctionApp.address)]
       }
     )
 
     const accountActivation = itxn.payment({
       receiver: auctionApp.address,
-      amount: optinMBR,
-      fee,
+      amount: optinMBR
     })
 
     if (!isAlgoBid) {
@@ -259,8 +250,7 @@ export class AuctionFactory extends classes(
         args: [
           accountActivation,
           bidAssetID,
-        ],
-        fee,
+        ]
       })
     } else {
       accountActivation.submit()
@@ -293,25 +283,23 @@ export class AuctionFactory extends classes(
       args: [
         itxn.payment({
           receiver: Application(auctionID).address,
-          amount: childAppMBR,
-          fee,
+          amount: childAppMBR
         }),
         weightsListCount,
-      ],
-      fee,
+      ]
     })
 
-    const prevAppCreators = this.appCreators(auctionID).value
-    this.appCreators(auctionID).value = { ...prevAppCreators, amount: (prevAppCreators.amount + childAppMBR) }
+    this.appCreators(auctionID).value.amount += childAppMBR
   }
 
   deleteAuctionApp(auctionID: uint64): void {
     assert(Application(auctionID).creator === Global.currentApplicationAddress, ERR_NOT_AN_AUCTION)
-
+    const seller = Account(op.AppGlobal.getExBytes(auctionID, Bytes(AuctionGlobalStateKeySeller))[0])
+    assert(seller === Txn.sender, ERR_NOT_PRIZE_BOX_OWNER)
 
     const auction = compileArc4(Auction)
 
-    auction.call.deleteApplication({ appId: auctionID, fee })
+    auction.call.deleteApplication({ appId: auctionID })
 
     const { amount, creator } = this.appCreators(auctionID).value
     this.appCreators(auctionID).delete()
@@ -319,8 +307,27 @@ export class AuctionFactory extends classes(
     itxn
       .payment({
         amount,
-        receiver: creator,
-        fee,
+        receiver: creator
+      })
+      .submit()
+  }
+
+  cancelAuction(auctionID: uint64): void {
+    assert(Application(auctionID).creator === Global.currentApplicationAddress, ERR_NOT_AN_AUCTION)
+    const seller = Account(op.AppGlobal.getExBytes(auctionID, Bytes(AuctionGlobalStateKeySeller))[0])
+    assert(seller === Txn.sender, ERR_NOT_PRIZE_BOX_OWNER)
+
+    const auction = compileArc4(Auction)
+
+    auction.call.cancel({ appId: auctionID })
+
+    const { amount, creator } = this.appCreators(auctionID).value
+    this.appCreators(auctionID).delete()
+
+    itxn
+      .payment({
+        amount,
+        receiver: creator
       })
       .submit()
   }

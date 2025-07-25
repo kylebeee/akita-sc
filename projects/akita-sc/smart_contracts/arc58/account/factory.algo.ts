@@ -15,8 +15,8 @@ import { ERR_NOT_AKITA_DAO } from '../../errors'
 import { abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_INVALID_PAYMENT } from '../../utils/errors'
 import { FactoryContract } from '../../utils/base-contracts/factory'
-import { AccountMinimumBalance, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
-import { fee } from '../../utils/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
+import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
 
 export class AbstractedAccountFactory extends FactoryContract {
   
@@ -53,7 +53,8 @@ export class AbstractedAccountFactory extends FactoryContract {
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
       (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
-      AccountMinimumBalance
+      Global.minBalance +
+      ARC58WalletIDsByAccountsMbr
     )
 
     assertMatch(
@@ -75,8 +76,7 @@ export class AbstractedAccountFactory extends FactoryContract {
           this.revocation.value.id,
           nickname,
         ],
-        extraProgramPages: 3,
-        fee,
+        extraProgramPages: 3
       })
       .itxn
       .createdApp
@@ -85,8 +85,7 @@ export class AbstractedAccountFactory extends FactoryContract {
     itxn
       .payment({
         receiver: Application(walletID).address,
-        amount: AccountMinimumBalance,
-        fee,
+        amount: Global.minBalance + ARC58WalletIDsByAccountsMbr
       })
       .submit()
 

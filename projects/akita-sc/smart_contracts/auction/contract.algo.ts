@@ -1,23 +1,21 @@
-import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, ensureBudget, Global, GlobalState, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Bool, decodeArc4, interpretAsArc4, StaticArray, StaticBytes, UintN128, UintN64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { arc4BidInfo, arc4FindWinnerCursors, BidInfo, FindWinnerCursors, WeightLocation, WeightsList } from './types'
-import { AuctionBoxPrefixBids, AuctionBoxPrefixBidsByAddress, AuctionBoxPrefixLocations, AuctionBoxPrefixWeights, AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyBidID, AuctionGlobalStateKeyBidMinimumIncrease, AuctionGlobalStateKeyBidTotal, AuctionGlobalStateKeyCreatorRoyalty, AuctionGlobalStateKeyEndTimestamp, AuctionGlobalStateKeyFindWInnerCursors, AuctionGlobalStateKeyGateID, AuctionGlobalStateKeyHighestBid, AuctionGlobalStateKeyIsPrizeBox, AuctionGlobalStateKeyMarketplace, AuctionGlobalStateKeyMarketplaceRoyalties, AuctionGlobalStateKeyPrize, AuctionGlobalStateKeyPrizeClaimed, AuctionGlobalStateKeyRaffleAmount, AuctionGlobalStateKeyRafflePrizeClaimed, AuctionGlobalStateKeyRaffleWinner, AuctionGlobalStateKeyRefundCount, AuctionGlobalStateKeyRefundMBRCursor, AuctionGlobalStateKeySalt, AuctionGlobalStateKeySeller, AuctionGlobalStateKeyStartingBid, AuctionGlobalStateKeyStartTimestamp, AuctionGlobalStateKeyUniqueAddressCount, AuctionGlobalStateKeyVRFFailureCount, AuctionGlobalStateKeyWeightedBidTotal, AuctionGlobalStateKeyWeightsBoxCount, AuctionGlobalStateKeyWeightTotals, AuctionGlobalStateKeyWinningTicket, ChunkSize, MaxRefundIterationsPerGroup, SNIPE_EXTENSION, SNIPE_RANGE } from './constants'
+import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, clone, ensureBudget, Global, GlobalState, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Address, Bool, decodeArc4, StaticArray, Uint128, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { arc4FindWinnerCursors, BidInfo, FindWinnerCursors, WeightLocation, WeightsList } from './types'
+import { AuctionBoxPrefixBids, AuctionBoxPrefixBidsByAddress, AuctionBoxPrefixLocations, AuctionBoxPrefixWeights, AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyBidID, AuctionGlobalStateKeyBidMinimumIncrease, AuctionGlobalStateKeyBidTotal, AuctionGlobalStateKeyCreatorRoyalty, AuctionGlobalStateKeyEndTimestamp, AuctionGlobalStateKeyFindWinnerCursors, AuctionGlobalStateKeyGateID, AuctionGlobalStateKeyHighestBid, AuctionGlobalStateKeyIsPrizeBox, AuctionGlobalStateKeyMarketplace, AuctionGlobalStateKeyMarketplaceRoyalties, AuctionGlobalStateKeyPrize, AuctionGlobalStateKeyPrizeClaimed, AuctionGlobalStateKeyRaffleAmount, AuctionGlobalStateKeyRafflePrizeClaimed, AuctionGlobalStateKeyRaffleWinner, AuctionGlobalStateKeyRefundCount, AuctionGlobalStateKeyRefundMBRCursor, AuctionGlobalStateKeySalt, AuctionGlobalStateKeySeller, AuctionGlobalStateKeyStartingBid, AuctionGlobalStateKeyStartTimestamp, AuctionGlobalStateKeyUniqueAddressCount, AuctionGlobalStateKeyVRFFailureCount, AuctionGlobalStateKeyWeightedBidTotal, AuctionGlobalStateKeyWeightsBoxCount, AuctionGlobalStateKeyWeightTotals, AuctionGlobalStateKeyWinningTicket, ChunkSize, MaxRefundIterationsPerGroup, SNIPE_EXTENSION, SNIPE_RANGE } from './constants'
 import { ERR_ALL_REFUNDS_COMPLETE, ERR_AUCTION_HAS_NOT_ENDED, ERR_AUCTION_NOT_LIVE, ERR_BID_ALREADY_REFUNDED, ERR_BID_NOT_FOUND, ERR_CANNOT_REFUND_MOST_RECENT_BID, ERR_MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS, ERR_MUST_BE_CALLED_FROM_FACTORY, ERR_NOT_ALL_REFUNDS_COMPLETE, ERR_NOT_APPLICABLE_TO_THIS_AUCTION, ERR_NOT_ENOUGH_TIME, ERR_PRIZE_ALREADY_CLAIMED, ERR_PRIZE_NOT_CLAIMED, ERR_RAFFLE_ALREADY_PRIZE_CLAIMED, ERR_RAFFLE_NOT_PRIZE_CLAIMED, ERR_RAFFLE_WINNER_HAS_NOT_CLAIMED, ERR_STILL_HAS_HIGHEST_BIDS_BOXES, ERR_TOO_MANY_PARTICIPANTS, ERR_WINNER_ALREADY_DRAWN, ERR_WINNER_ALREADY_FOUND, ERR_WINNER_NOT_FOUND, ERR_WINNING_NUMBER_NOT_FOUND } from './errors'
 import { RoyaltyAmounts } from '../utils/types/royalties'
-import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn'
 import { ERR_FAILED_GATE, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_PAYMENT } from '../utils/errors'
 import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
-import { AccountMinimumBalance, MAX_UINT64 } from '../utils/constants'
+import { MAX_UINT64 } from '../utils/constants'
 import { classes } from 'polytype'
 import { BaseAuction } from './base'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
-import { GateArgs } from '../utils/types/gates'
 import { PrizeBox } from '../prize-box/contract.algo'
 import { AkitaBaseEscrow } from '../utils/base-contracts/base'
-import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, impactRange } from '../utils/functions'
+import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender } from '../utils/functions'
 import { AkitaDAOEscrowAccountAuctions } from '../dao/constants'
-import { fee } from '../utils/constants'
+import { ERR_HAS_GATE } from '../social/errors'
 
 export class Auction extends classes(
   BaseAuction,
@@ -68,7 +66,7 @@ export class Auction extends classes(
   /** the number of bids that have been refunded */
   refundCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundCount })
   /** the total sum of all bids */
-  bidTotal = GlobalState<UintN128>({ key: AuctionGlobalStateKeyBidTotal })
+  bidTotal = GlobalState<Uint128>({ key: AuctionGlobalStateKeyBidTotal })
   /** the total sum of all highest bids */
   weightedBidTotal = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightedBidTotal })
   /** highest bid the contract has received thus far */
@@ -87,13 +85,13 @@ export class Auction extends classes(
   /** the number of boxes allocated to tracking weights */
   weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
   /** totals for each box of weights for our skip list */
-  weightTotals = GlobalState<StaticArray<UintN64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
+  weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
   /**
    * cursors to track iteration of finding winner
    * index being for the bid iteration
    * amountIndex being the index for the amount of the bids seen
    */
-  findWinnerCursors = GlobalState<arc4FindWinnerCursors>({ key: AuctionGlobalStateKeyFindWInnerCursors })
+  findWinnerCursors = GlobalState<FindWinnerCursors>({ key: AuctionGlobalStateKeyFindWinnerCursors })
   /** cursor to track iteration of MBR refunds */
   refundMBRCursor = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundMBRCursor })
   /**
@@ -110,7 +108,7 @@ export class Auction extends classes(
   // BOXES ----------------------------------------------------------------------------------------
 
   /** the list of bids in the auction */
-  bids = BoxMap<uint64, arc4BidInfo>({ keyPrefix: AuctionBoxPrefixBids })
+  bids = BoxMap<uint64, BidInfo>({ keyPrefix: AuctionBoxPrefixBids })
   /** weights set for bidders */
   weights = BoxMap<uint64, WeightsList>({ keyPrefix: AuctionBoxPrefixWeights })
   /**
@@ -139,12 +137,12 @@ export class Auction extends classes(
   }
 
   private setNewBid(id: uint64, bidAmount: uint64, marketplace: Address): void {
-    this.bids(id).value = new arc4BidInfo({
+    this.bids(id).value = {
       address: new Address(Txn.sender),
-      amount: new UintN64(bidAmount),
-      refunded: new Bool(false),
+      amount: bidAmount,
+      refunded: false,
       marketplace,
-    })
+    }
 
     if (this.bidFee.value > 0) {
       if (this.bidsByAddress(Txn.sender).exists) {
@@ -154,8 +152,8 @@ export class Auction extends classes(
         const lastWeightedTotal = this.weightTotals.value[loc / ChunkSize].native
 
         this.weightedBidTotal.value += difference
-        this.weights(loc / ChunkSize).value[loc % ChunkSize] = new UintN64(bidAmount)
-        this.weightTotals.value[loc / ChunkSize] = new UintN64(lastWeightedTotal + difference)
+        this.weights(loc / ChunkSize).value[loc % ChunkSize] = new Uint64(bidAmount)
+        this.weightTotals.value[loc / ChunkSize] = new Uint64(lastWeightedTotal + difference)
       } else {
         const loc = this.uniqueAddressCount.value
         assert(loc < ChunkSize * this.weightsBoxCount.value, ERR_TOO_MANY_PARTICIPANTS)
@@ -163,8 +161,8 @@ export class Auction extends classes(
 
         this.weightedBidTotal.value += bidAmount
         this.bidsByAddress(Txn.sender).value = loc
-        this.weights(loc / ChunkSize).value[loc % ChunkSize] = new UintN64(bidAmount)
-        this.weightTotals.value[loc / ChunkSize] = new UintN64(lastWeightedTotal + bidAmount)
+        this.weights(loc / ChunkSize).value[loc % ChunkSize] = new Uint64(bidAmount)
+        this.weightTotals.value[loc / ChunkSize] = new Uint64(lastWeightedTotal + bidAmount)
         this.locations(loc).value = new Address(Txn.sender)
         this.uniqueAddressCount.value += 1
       }
@@ -226,7 +224,6 @@ export class Auction extends classes(
         {
           appId: this.prize.value,
           args: [new Address(buyer)],
-          fee,
         }
       )
       return
@@ -239,7 +236,6 @@ export class Auction extends classes(
         .assetTransfer({
           assetCloseTo: buyer,
           xferAsset: this.prize.value,
-          fee,
         })
         .submit()
     } else {
@@ -261,43 +257,38 @@ export class Auction extends classes(
     const creatorTxn = itxn.payment({
       receiver: Asset(this.prize.value).creator,
       amount: creator,
-      fee,
     })
 
     const akitaTxn = itxn.payment({
       receiver: this.akitaDAO.value.address,
       amount: akita,
-      fee,
     })
 
     // pay listing marketplace
     const listingMarketplaceTxn = itxn.payment({
       receiver: this.marketplace.value,
       amount: marketplace,
-      fee,
     })
 
     // pay buying marketplace
     const buySideMarketplaceTxn = itxn.payment({
       receiver: buySideMarketplace,
       amount: marketplace,
-      fee,
     })
 
     // pay seller
     const sellerTxn = itxn.payment({
       receiver: this.seller.value,
       amount: seller,
-      fee,
     })
 
     if (!this.isPrizeBox.value) {
       akitaTxn.set({ amount: (akita + creator) })
-      submitGroup(akitaTxn, listingMarketplaceTxn, buySideMarketplaceTxn, sellerTxn)
+      itxn.submitGroup(akitaTxn, listingMarketplaceTxn, buySideMarketplaceTxn, sellerTxn)
       return
     }
 
-    submitGroup(creatorTxn, akitaTxn, listingMarketplaceTxn, buySideMarketplaceTxn, sellerTxn)
+    itxn.submitGroup(creatorTxn, akitaTxn, listingMarketplaceTxn, buySideMarketplaceTxn, sellerTxn)
   }
 
   private completeAsaPayments(amount: uint64, buySideMarketplace: Account): void {
@@ -311,7 +302,6 @@ export class Auction extends classes(
           assetReceiver: Asset(this.prize.value).creator,
           assetAmount: creator,
           xferAsset: this.bidAsset.value,
-          fee,
         })
         .submit()
     } else if (!this.isPrizeBox.value) {
@@ -330,7 +320,6 @@ export class Auction extends classes(
           assetReceiver: this.akitaDAO.value.address,
           assetAmount: !this.isPrizeBox.value ? akita : (akita + creator),
           xferAsset: this.bidAsset.value,
-          fee,
         })
         .submit()
     } else {
@@ -348,7 +337,6 @@ export class Auction extends classes(
           assetReceiver: this.marketplace.value,
           assetAmount: marketplace,
           xferAsset: this.bidAsset.value,
-          fee,
         })
         .submit()
     } else {
@@ -367,7 +355,6 @@ export class Auction extends classes(
           assetReceiver: buySideMarketplace,
           assetAmount: marketplace,
           xferAsset: this.bidAsset.value,
-          fee,
         })
         .submit()
     } else {
@@ -386,7 +373,6 @@ export class Auction extends classes(
           assetReceiver: this.seller.value,
           assetAmount: seller,
           xferAsset: this.bidAsset.value,
-          fee,
         })
         .submit()
     } else {
@@ -400,7 +386,7 @@ export class Auction extends classes(
   }
 
   private getWinnerWeightBoxInfo(): [uint64, uint64] {
-    let { startingIndex, currentRangeStart } = decodeArc4<FindWinnerCursors>(this.findWinnerCursors.value.bytes)
+    let { startingIndex, currentRangeStart } = this.findWinnerCursors.value
 
     for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
       const boxStake = this.weightTotals.value[i].native
@@ -413,6 +399,92 @@ export class Auction extends classes(
     }
 
     return [startingIndex, currentRangeStart]
+  }
+
+  private createBid(payment: gtxn.PaymentTxn, marketplace: Address): void {
+    const id = this.newBidID()
+
+    const { bids, bidsByAddress, locations } = this.mbr()
+    let mbr = bids
+    if (this.bidFee.value > 0 && !this.bidsByAddress(Txn.sender).exists) {
+      mbr += (bidsByAddress + locations)
+    }
+    const bidAmount: uint64 = payment.amount - mbr
+    const minimumBidAmount = this.getMinimumBidAmount()
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: (minimumBidAmount + mbr),
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    this.setNewBid(id, bidAmount, marketplace)
+
+    // if this is a snipe increase the time left by 5 minutes
+    if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
+      this.endTimestamp.value += SNIPE_EXTENSION
+    }
+
+    if (this.bidFee.value > 0) {
+      const bidFee = this.getBidFee(bidAmount)
+      this.raffleAmount.value += bidFee
+    }
+
+    this.highestBid.value = bidAmount
+  }
+
+  private createBidAsa(
+    payment: gtxn.PaymentTxn,
+    assetXfer: gtxn.AssetTransferTxn,
+    marketplace: Address
+  ): void {
+    const id = this.newBidID()
+
+    const { bids, bidsByAddress, locations } = this.mbr()
+    let mbr = bids
+    if (this.bidFee.value > 0) {
+      if (!this.bidsByAddress(Txn.sender).exists) {
+        mbr += (bidsByAddress + locations)
+      }
+    }
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: mbr
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    const bidAmount = assetXfer.assetAmount
+    const minimumBidAmount = this.getMinimumBidAmount()
+
+    assertMatch(
+      assetXfer,
+      {
+        assetReceiver: Global.currentApplicationAddress,
+        assetAmount: minimumBidAmount,
+        xferAsset: this.bidAsset.value,
+      }
+    )
+
+    this.setNewBid(id, bidAmount, marketplace)
+
+    // if this is a snipe increase the time left by 5 minutes
+    if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
+      this.endTimestamp.value += SNIPE_EXTENSION
+    }
+
+    if (this.bidFee.value > 0) {
+      const bidFee = this.getBidFee(bidAmount)
+      this.raffleAmount.value += bidFee
+    }
+
+    this.highestBid.value = bidAmount
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -465,8 +537,8 @@ export class Auction extends classes(
     this.raffleAmount.value = 0
     this.rafflePrizeClaimed.value = false
     this.uniqueAddressCount.value = 0
-    this.weightTotals.value = new StaticArray<UintN64, 15>()
-    this.findWinnerCursors.value = new arc4FindWinnerCursors({ startingIndex: new UintN64(0), currentRangeStart: new UintN64(0) })
+    this.weightTotals.value = new StaticArray<Uint64, 15>()
+    this.findWinnerCursors.value = { startingIndex: 0, currentRangeStart: 0 }
     this.refundMBRCursor.value = 0
     this.winningTicket.value = 0
     this.raffleWinner.value = Global.zeroAddress
@@ -484,7 +556,7 @@ export class Auction extends classes(
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const childAppMBR: uint64 = AccountMinimumBalance + optinMBR + (weightListLength * this.mbr().weights)
+    const childAppMBR: uint64 = Global.minBalance + optinMBR + (weightListLength * this.mbr().weights)
 
     assertMatch(
       payment,
@@ -525,7 +597,6 @@ export class Auction extends classes(
     const closePrizeTxn = itxn.assetTransfer({
       assetCloseTo: this.seller.value,
       xferAsset: this.prize.value,
-      fee,
     })
 
     const closeMBRTxn = itxn.payment({
@@ -534,97 +605,56 @@ export class Auction extends classes(
       amount: 0,
     })
 
-    submitGroup(closePrizeTxn, closeMBRTxn)
+    itxn.submitGroup(closePrizeTxn, closeMBRTxn)
   }
 
   // AUCTION METHODS ------------------------------------------------------------------------------
 
-  bid(payment: gtxn.PaymentTxn, args: GateArgs, marketplace: Address): void {
+  gatedBid(
+    payment: gtxn.PaymentTxn,
+    gateTxn: gtxn.ApplicationCallTxn,
+    marketplace: Address,
+  ): void {
+    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    const origin = originOrTxnSender(wallet)
+
     assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
-    assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
 
-    const id = this.newBidID()
-
-    const { bids, bidsByAddress, locations } = this.mbr()
-    let mbr = bids
-    if (this.bidFee.value > 0 && !this.bidsByAddress(Txn.sender).exists) {
-      mbr += (bidsByAddress + locations)
-    }
-    const bidAmount: uint64 = payment.amount - mbr
-    const minimumBidAmount = this.getMinimumBidAmount()
-
-    assertMatch(
-      payment,
-      {
-        receiver: Global.currentApplicationAddress,
-        amount: (minimumBidAmount + mbr),
-      },
-      ERR_INVALID_PAYMENT
-    )
-
-    this.setNewBid(id, bidAmount, marketplace)
-
-    // if this is a snipe increase the time left by 5 minutes
-    if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
-      this.endTimestamp.value += SNIPE_EXTENSION
-    }
-
-    if (this.bidFee.value > 0) {
-      const bidFee = this.getBidFee(bidAmount)
-      this.raffleAmount.value += bidFee
-    }
-
-    this.highestBid.value = bidAmount
+    this.createBid(payment, marketplace)
   }
 
-  bidAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, args: GateArgs, marketplace: Address): void {
+  bid(payment: gtxn.PaymentTxn, marketplace: Address): void {
     assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
-    assert(gateCheck(this.akitaDAO.value, new Address(Txn.sender), this.gateID.value, args), ERR_FAILED_GATE)
+    assert(this.gateID.value === 0, ERR_HAS_GATE)
 
-    const id = this.newBidID()
+    this.createBid(payment, marketplace)
+  }
 
-    const { bids, bidsByAddress, locations } = this.mbr()
-    let mbr = bids
-    if (this.bidFee.value > 0) {
-      if (!this.bidsByAddress(Txn.sender).exists) {
-        mbr += (bidsByAddress + locations)
-      }
-    }
+  gatedBidAsa(
+    payment: gtxn.PaymentTxn,
+    assetXfer: gtxn.AssetTransferTxn,
+    gateTxn: gtxn.ApplicationCallTxn,
+    marketplace: Address
+  ): void {
+    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    const origin = originOrTxnSender(wallet)
 
-    assertMatch(
-      payment,
-      {
-        receiver: Global.currentApplicationAddress,
-        amount: mbr
-      },
-      ERR_INVALID_PAYMENT
-    )
+    assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
+    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
 
-    const bidAmount = assetXfer.assetAmount
-    const minimumBidAmount = this.getMinimumBidAmount()
+    this.createBidAsa(payment, assetXfer, marketplace)
+  }
 
-    assertMatch(
-      assetXfer,
-      {
-        assetReceiver: Global.currentApplicationAddress,
-        assetAmount: minimumBidAmount,
-        xferAsset: this.bidAsset.value,
-      }
-    )
+  bidAsa(
+    payment: gtxn.PaymentTxn,
+    assetXfer: gtxn.AssetTransferTxn,
+    marketplace: Address
+  ): void {
+    assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
+    assert(this.gateID.value === 0, ERR_HAS_GATE)
 
-    this.setNewBid(id, bidAmount, marketplace)
-
-    // if this is a snipe increase the time left by 5 minutes
-    if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
-      this.endTimestamp.value += SNIPE_EXTENSION
-    }
-
-    if (this.bidFee.value > 0) {
-      const bidFee = this.getBidFee(bidAmount)
-      this.raffleAmount.value += bidFee
-    }
-
-    this.highestBid.value = bidAmount
+    this.createBidAsa(payment, assetXfer, marketplace)
   }
 
   refundBid(id: uint64): void {
@@ -633,29 +663,27 @@ export class Auction extends classes(
     // make sure the bid exists
     assert(this.bids(id).exists, ERR_BID_NOT_FOUND)
     // get bid info
-    const bid = decodeArc4<BidInfo>(this.bids(id).value.bytes)
+    const { refunded, amount, address } = this.bids(id).value
     // make sure its not already refunded
-    assert(!bid.refunded, ERR_BID_ALREADY_REFUNDED)
+    assert(!refunded, ERR_BID_ALREADY_REFUNDED)
     // mark the bid as refunded
-    this.bids(id).value.refunded = new Bool(true)
+    this.bids(id).value.refunded = true
 
-    const bidFee = this.getBidFee(bid.amount)
+    const bidFee = this.getBidFee(amount)
 
-    const returnAmount: uint64 = bid.amount - bidFee
+    const returnAmount: uint64 = amount - bidFee
 
     if (this.bidAsset.value.id === 0) {
       // return the bidders funds
       itxn.payment({
         amount: returnAmount,
-        receiver: bid.address.native,
-        fee,
+        receiver: address.native,
       }).submit()
     } else {
       itxn.assetTransfer({
         assetAmount: returnAmount,
-        assetReceiver: bid.address.native,
+        assetReceiver: address.native,
         xferAsset: this.bidAsset.value,
-        fee,
       }).submit()
     }
     // increment our refund counter
@@ -672,7 +700,6 @@ export class Auction extends classes(
       {
         appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
         args: [roundToUse, this.salt.value],
-        fee,
       }
     ).returnValue
 
@@ -713,7 +740,7 @@ export class Auction extends classes(
     const remainder: uint64 = (this.uniqueAddressCount.value - 2) - startingIndex
     iterationAmount = remainder > iterationAmount ? iterationAmount : remainder
 
-    const weight = this.weights(startingIndex / ChunkSize).value.copy()
+    const weight = clone(this.weights(startingIndex / ChunkSize).value)
 
     ensureBudget((iterationAmount * 60))
 
@@ -732,10 +759,10 @@ export class Auction extends classes(
       currentRangeStart = currentRangeEnd + 1
     }
 
-    this.findWinnerCursors.value = new arc4FindWinnerCursors({
-      startingIndex: new UintN64(startingIndex + iterationAmount),
-      currentRangeStart: new UintN64(currentRangeStart),
-    })
+    this.findWinnerCursors.value = {
+      startingIndex: (startingIndex + iterationAmount),
+      currentRangeStart: currentRangeStart,
+    }
   }
 
   refundMBR(iterationAmount: uint64): void {
@@ -756,27 +783,25 @@ export class Auction extends classes(
 
     for (let i = startingIndex; i < iterationAmount; i += 1) {
 
-      const bid = decodeArc4<BidInfo>(this.bids(i).value.bytes)
-      if (!bid.refunded) {
+      const { refunded, address, } = this.bids(i).value
+      if (!refunded) {
         this.refundBid(i)
       }
 
       // free up the MBR
       let refundAmount = bids
       this.bids(i).delete()
-      const bidAccount = bid.address.native
-      if (this.bidsByAddress(bidAccount).exists) {
-        const loc = this.bidsByAddress(bidAccount).value
-        this.bidsByAddress(bidAccount).delete()
+      if (this.bidsByAddress(address.native).exists) {
+        const loc = this.bidsByAddress(address.native).value
+        this.bidsByAddress(address.native).delete()
         this.locations(loc).delete()
         refundAmount = totalMBR
       }
 
       itxn
         .payment({
-          receiver: bidAccount,
+          receiver: address.native,
           amount: refundAmount,
-          fee,
         })
         .submit()
     }
@@ -790,14 +815,14 @@ export class Auction extends classes(
     assert(!this.prizeClaimed.value, ERR_PRIZE_ALREADY_CLAIMED)
 
     // get the winners details
-    const winner = decodeArc4<BidInfo>(this.bids(this.bidID.value).value.bytes)
+    const { address, amount, marketplace } = this.bids(this.bidID.value).value
 
-    this.transferPurchaseToBuyer(winner.address.native)
+    this.transferPurchaseToBuyer(address.native)
 
     if (this.bidAsset.value.id === 0) {
-      this.completeAlgoPayments(winner.amount, winner.marketplace.native)
+      this.completeAlgoPayments(amount, marketplace.native)
     } else {
-      this.completeAsaPayments(winner.amount, winner.marketplace.native)
+      this.completeAsaPayments(amount, marketplace.native)
     }
 
     this.prizeClaimed.value = true
@@ -812,7 +837,6 @@ export class Auction extends classes(
         .payment({
           receiver: this.raffleWinner.value,
           amount: this.raffleAmount.value,
-          fee,
         })
         .submit()
     } else if (this.raffleWinner.value.isOptedIn(this.bidAsset.value)) {
@@ -821,7 +845,6 @@ export class Auction extends classes(
           assetReceiver: this.raffleWinner.value,
           assetAmount: this.raffleAmount.value,
           xferAsset: this.bidAsset.value,
-          fee,
         })
         .submit()
     } else {
@@ -856,7 +879,6 @@ export class Auction extends classes(
       .payment({
         receiver: Global.creatorAddress,
         amount: returnAmount,
-        fee,
       })
       .submit()
 

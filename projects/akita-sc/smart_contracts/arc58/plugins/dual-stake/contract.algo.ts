@@ -1,11 +1,9 @@
 import { abimethod, Application, assert, Bytes, GlobalState, itxn, itxnCompose, op, uint64 } from "@algorandfoundation/algorand-typescript"
-import { abiCall, Contract, methodSelector } from '@algorandfoundation/algorand-typescript/arc4';
+import { abiCall, Contract } from '@algorandfoundation/algorand-typescript/arc4';
 import { DualStake } from '../../../utils/types/dual-stake';
-import { submitGroup } from '@algorandfoundation/algorand-typescript/itxn';
 import { ERR_NOT_A_DUALSTAKE_APP, ERR_NOT_ENOUGH_OF_ASA } from './errors';
 import { DualStakeGlobalStateKeyAsaID, DualStakeGlobalStateKeyRatePrecision, DualStakePluginGlobalStateKey } from './constants';
 import { getSpendingAccount, rekeyAddress } from '../../../utils/functions';
-import { fee } from "../../../utils/constants";
 
 export class DualStakePlugin extends Contract {
 
@@ -34,15 +32,11 @@ export class DualStakePlugin extends Contract {
       itxn.payment({
         sender,
         receiver: dsApp.address,
-        amount: amount,
-        fee,
+        amount: amount
       })
     )
 
-    const rate = abiCall(
-      DualStake.prototype.get_rate,
-      { sender, fee }
-    ).returnValue
+    const rate = abiCall(DualStake.prototype.get_rate, { sender }).returnValue
 
     if (rate > 0) {
 
@@ -50,8 +44,7 @@ export class DualStakePlugin extends Contract {
         DualStake.prototype.mint,
         {
           sender,
-          appId: dsAppID,
-          fee,
+          appId: dsAppID
         }
       )
 
@@ -68,8 +61,7 @@ export class DualStakePlugin extends Contract {
           assetReceiver: dsApp.address,
           assetAmount: asaAmount,
           xferAsset: asaID,
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-          fee,
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
         })
       )
 
@@ -84,8 +76,7 @@ export class DualStakePlugin extends Contract {
       {
         sender,
         appId: dsAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
 
@@ -105,8 +96,7 @@ export class DualStakePlugin extends Contract {
       {
         sender,
         appId: dsAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-        fee,
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
   }

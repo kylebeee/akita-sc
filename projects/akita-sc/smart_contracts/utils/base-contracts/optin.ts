@@ -33,8 +33,7 @@ export class ContractWithOptIn extends Contract {
     itxn.assetTransfer({
       assetReceiver: Global.currentApplicationAddress,
       assetAmount: 0,
-      xferAsset: asset,
-      fee: 0,
+      xferAsset: asset
     }).submit()
   }
 }
@@ -63,8 +62,7 @@ export class ContractWithCreatorOnlyOptIn extends Contract {
     itxn.assetTransfer({
       assetReceiver: Global.currentApplicationAddress,
       assetAmount: 0,
-      xferAsset: asset,
-      fee: 0,
+      xferAsset: asset
     }).submit()
   }
 }
