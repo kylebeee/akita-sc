@@ -1,6 +1,15 @@
 import { Account, arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Bool, DynamicArray, StaticBytes, Struct, Uint64, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
 
+export type ExecutionKey = bytes<32>
+
+export type EscrowInfo = {
+  /** the app id of the escrow account */
+  id: uint64;
+  /** whether the escrow is locked, eg plugins & allowance changes are allowed */
+  locked: boolean;
+}
+
 export type AllowanceKey = {
   /** the id of the escrow account to apply the allowance to */
   escrow: uint64;
@@ -85,6 +94,7 @@ export type PluginInfo = {
   cooldown: uint64;
   methods: MethodInfo[];
   useRounds: boolean;
+  useExecutionKey: boolean;
   lastCalled: uint64;
   start: uint64;
 }
@@ -122,15 +132,15 @@ export type MethodValidation = {
 }
 
 export type FullPluginValidation = {
-  exists: boolean;
-  expired: boolean;
-  hasCooldown: boolean;
-  onCooldown: boolean;
-  hasMethodRestrictions: boolean;
-  methodAllowed: boolean;
-  methodHasCooldown: boolean;
-  methodOnCooldown: boolean;
-  valid: boolean;
+  exists: boolean
+  expired: boolean
+  hasCooldown: boolean
+  onCooldown: boolean
+  hasMethodRestrictions: boolean
+  methodAllowed: boolean
+  methodHasCooldown: boolean
+  methodOnCooldown: boolean
+  valid: boolean
 }
 
 export type EscrowReclaim = {
@@ -143,6 +153,7 @@ export type AbstractAccountBoxMBRData = {
   plugins: uint64;
   namedPlugins: uint64;
   escrows: uint64;
+  namedEscrows: uint64;
   allowances: uint64;
   domainKeys: uint64;
 }

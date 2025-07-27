@@ -24,6 +24,8 @@ export const ERR_TOKEN_ALLOCATION_BOX_ALREADY_EXISTS = 'Token allocation box alr
 export const ERR_INSUFFICIENT_AKITA = 'Insufficient Akita'
 export const ERR_INVALID_RECEIVE_PAYMENT = 'Invalid receive payment'
 export const ERR_ESCROW_DOES_NOT_EXIST = 'Escrow does not exist'
+export const ERR_ESCROW_LOCKED = 'Escrow is locked'
+export const ERR_ESCROW_NOT_LOCKED = 'Escrow is not locked'
 export const ERR_ESCROW_IS_ALREADY_OPTED_IN = 'Escrow is already opted in'
 export const ERR_RECEIVE_ESCROW_DOES_NOT_EXIST = 'Receive escrow does not exist'
 export const ERR_ESCROW_NOT_IN_ALLOCATION_PHASE = 'Escrow is not in allocation phase'
@@ -40,6 +42,7 @@ export const ERR_EXECUTION_KEY_MISMATCH = 'Execution key mismatch'
 
 export const ERR_INCORRECT_SENDER = 'Incorrect sender'
 export const ERR_INVALID_PROPOSAL_STATE = 'invalid proposal state'
+
 export const ERR_ESCROW_NOT_ALLOWED_TO_OPTIN = 'Escrow is not allowed to opt-in'
 export const ERR_WRONG_METHOD_FOR_EXECUTION_KEY_LOCKED_PLUGIN = 'Wrong method for execution key locked plugin'
 export const ERR_BAD_DAO_DELEGATION_TYPE = 'Bad DAO delegation type'
@@ -84,4 +87,5 @@ export const ERR_INVALID_REVOCATION_ADDRESS = 'Invalid revocation address'
 export const ERR_INVALID_FIELD = 'Invalid field'
 export const ERR_INVALID_PROPOSAL_STATUS = 'Invalid proposal status'
 
+export const ERR_INVALID_PROPOSAL_ACTION = 'Invalid proposal action'
 export const ERR_INSUFFICIENT_PROPOSAL_THRESHOLD = 'Insufficient proposal threshold'

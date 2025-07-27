@@ -27,6 +27,7 @@ export const NFDMetaKeyVerifiedDiscord = 'v.discord'
 export const NFDMetaKeyVerifiedTelegram = 'v.telegram'
 
 export const ONE_DAY: uint64 = 86_400
+export const ONE_WEEK: uint64 = 604_800
 export const TWO_YEARS: uint64 = 63_072_000
 export const THIRTY_DAYS: uint64 = 2_592_000
 export const ONE_YEAR: uint64 = 31_536_000

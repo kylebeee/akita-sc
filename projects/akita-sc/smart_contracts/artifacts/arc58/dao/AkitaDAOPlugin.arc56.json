@@ -1,0 +1,632 @@
+{
+    "name": "AkitaDAOPlugin",
+    "structs": {
+        "PluginKey": [
+            {
+                "name": "application",
+                "type": "uint64"
+            },
+            {
+                "name": "allowedCaller",
+                "type": "address"
+            }
+        ],
+        "DAOPluginInfo": [
+            {
+                "name": "useExecutionKey",
+                "type": "bool"
+            },
+            {
+                "name": "executionProposalCreationMinimum",
+                "type": "uint64"
+            },
+            {
+                "name": "executionParticipationThreshold",
+                "type": "uint64"
+            },
+            {
+                "name": "executionApprovalThreshold",
+                "type": "uint64"
+            },
+            {
+                "name": "executionVotingDuration",
+                "type": "uint64"
+            }
+        ],
+        "AkitaAppList": [
+            {
+                "name": "staking",
+                "type": "uint64"
+            },
+            {
+                "name": "rewards",
+                "type": "uint64"
+            },
+            {
+                "name": "pool",
+                "type": "uint64"
+            },
+            {
+                "name": "prizeBox",
+                "type": "uint64"
+            },
+            {
+                "name": "subscriptions",
+                "type": "uint64"
+            },
+            {
+                "name": "gate",
+                "type": "uint64"
+            },
+            {
+                "name": "auction",
+                "type": "uint64"
+            },
+            {
+                "name": "hyperSwap",
+                "type": "uint64"
+            },
+            {
+                "name": "raffle",
+                "type": "uint64"
+            },
+            {
+                "name": "metaMerkles",
+                "type": "uint64"
+            },
+            {
+                "name": "marketplace",
+                "type": "uint64"
+            },
+            {
+                "name": "akitaNfd",
+                "type": "uint64"
+            },
+            {
+                "name": "social",
+                "type": "uint64"
+            },
+            {
+                "name": "impact",
+                "type": "uint64"
+            }
+        ],
+        "AkitaAssets": [
+            {
+                "name": "akta",
+                "type": "uint64"
+            },
+            {
+                "name": "bones",
+                "type": "uint64"
+            }
+        ],
+        "EscrowAssetKey": [
+            {
+                "name": "escrow",
+                "type": "uint64"
+            },
+            {
+                "name": "asset",
+                "type": "uint64"
+            }
+        ],
+        "ExecutionInfo": [
+            {
+                "name": "executed",
+                "type": "bool"
+            },
+            {
+                "name": "lastValidRound",
+                "type": "uint64"
+            }
+        ],
+        "NFTFees": [
+            {
+                "name": "marketplaceSalePercentageMin",
+                "type": "uint64"
+            },
+            {
+                "name": "marketplaceSalePercentageMax",
+                "type": "uint64"
+            },
+            {
+                "name": "marketplaceComposablePercentage",
+                "type": "uint64"
+            },
+            {
+                "name": "marketplaceRoyaltyDefaultPercentage",
+                "type": "uint64"
+            },
+            {
+                "name": "shuffleSalePercentage",
+                "type": "uint64"
+            },
+            {
+                "name": "omnigemSaleFee",
+                "type": "uint64"
+            },
+            {
+                "name": "auctionCreationFee",
+                "type": "uint64"
+            },
+            {
+                "name": "auctionSaleImpactTaxMin",
+                "type": "uint64"
+            },
+            {
+                "name": "auctionSaleImpactTaxMax",
+                "type": "uint64"
+            },
+            {
+                "name": "auctionComposablePercentage",
+                "type": "uint64"
+            },
+            {
+                "name": "auctionRafflePercentage",
+                "type": "uint64"
+            },
+            {
+                "name": "raffleCreationFee",
+                "type": "uint64"
+            },
+            {
+                "name": "raffleSaleImpactTaxMin",
+                "type": "uint64"
+            },
+            {
+                "name": "raffleSaleImpactTaxMax",
+                "type": "uint64"
+            },
+            {
+                "name": "raffleComposablePercentage",
+                "type": "uint64"
+            }
+        ],
+        "OtherAppList": [
+            {
+                "name": "vrfBeacon",
+                "type": "uint64"
+            },
+            {
+                "name": "nfdRegistry",
+                "type": "uint64"
+            },
+            {
+                "name": "assetInbox",
+                "type": "uint64"
+            },
+            {
+                "name": "escrowFactory",
+                "type": "uint64"
+            }
+        ],
+        "PayoutEscrowInfo": [
+            {
+                "name": "type",
+                "type": "uint8"
+            },
+            {
+                "name": "data",
+                "type": "byte[]"
+            }
+        ],
+        "PluginAppList": [
+            {
+                "name": "optin",
+                "type": "uint64"
+            }
+        ],
+        "ProposalDetails": [
+            {
+                "name": "status",
+                "type": "uint8"
+            },
+            {
+                "name": "action",
+                "type": "uint8"
+            },
+            {
+                "name": "cid",
+                "type": "byte[36]"
+            },
+            {
+                "name": "created",
+                "type": "uint64"
+            },
+            {
+                "name": "votes",
+                "type": "uint64"
+            },
+            {
+                "name": "creator",
+                "type": "address"
+            },
+            {
+                "name": "data",
+                "type": "byte[]"
+            }
+        ],
+        "ProposalSettings": [
+            {
+                "name": "upgradeApp",
+                "type": "uint64"
+            },
+            {
+                "name": "addPlugin",
+                "type": "uint64"
+            },
+            {
+                "name": "removePlugin",
+                "type": "uint64"
+            },
+            {
+                "name": "addAllowance",
+                "type": "uint64"
+            },
+            {
+                "name": "removeAllowance",
+                "type": "uint64"
+            },
+            {
+                "name": "updateField",
+                "type": "uint64"
+            }
+        ],
+        "ProposalVoteInfo": [
+            {
+                "name": "type",
+                "type": "uint8"
+            },
+            {
+                "name": "power",
+                "type": "uint64"
+            }
+        ],
+        "ProposalVoteKey": [
+            {
+                "name": "proposalId",
+                "type": "uint64"
+            },
+            {
+                "name": "voter",
+                "type": "address"
+            }
+        ],
+        "ReceiveEscrowInfo": [
+            {
+                "name": "source",
+                "type": "address"
+            },
+            {
+                "name": "allocatable",
+                "type": "bool"
+            },
+            {
+                "name": "optinAllowed",
+                "type": "bool"
+            },
+            {
+                "name": "optinCount",
+                "type": "uint64"
+            },
+            {
+                "name": "phase",
+                "type": "uint8"
+            },
+            {
+                "name": "allocationCounter",
+                "type": "uint64"
+            },
+            {
+                "name": "lastDisbursement",
+                "type": "uint64"
+            },
+            {
+                "name": "creationDate",
+                "type": "uint64"
+            }
+        ],
+        "SocialFees": [
+            {
+                "name": "postFee",
+                "type": "uint64"
+            },
+            {
+                "name": "reactFee",
+                "type": "uint64"
+            },
+            {
+                "name": "impactTaxMin",
+                "type": "uint64"
+            },
+            {
+                "name": "impactTaxMax",
+                "type": "uint64"
+            }
+        ],
+        "StakingFees": [
+            {
+                "name": "creationFee",
+                "type": "uint64"
+            },
+            {
+                "name": "impactTaxMin",
+                "type": "uint64"
+            },
+            {
+                "name": "impactTaxMax",
+                "type": "uint64"
+            }
+        ],
+        "SubscriptionFees": [
+            {
+                "name": "serviceCreationFee",
+                "type": "uint64"
+            },
+            {
+                "name": "paymentPercentage",
+                "type": "uint64"
+            },
+            {
+                "name": "triggerPercentage",
+                "type": "uint64"
+            }
+        ],
+        "SwapFees": [
+            {
+                "name": "impactTaxMin",
+                "type": "uint64"
+            },
+            {
+                "name": "impactTaxMax",
+                "type": "uint64"
+            }
+        ]
+    },
+    "methods": [],
+    "arcs": [
+        22,
+        28
+    ],
+    "networks": {},
+    "state": {
+        "schema": {
+            "global": {
+                "ints": 7,
+                "bytes": 15
+            },
+            "local": {
+                "ints": 0,
+                "bytes": 0
+            }
+        },
+        "keys": {
+            "global": {
+                "initialized": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "aW5pdGlhbGl6ZWQ=",
+                    "desc": "state of the DAO"
+                },
+                "version": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMString",
+                    "key": "dmVyc2lvbg==",
+                    "desc": "the version number of the DAO"
+                },
+                "contentPolicy": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMBytes",
+                    "key": "Y29udGVudF9wb2xpY3k=",
+                    "desc": "the raw 36 byte content policy of the protocol"
+                },
+                "minRewardsImpact": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "bWluX3Jld2FyZHNfaW1wYWN0",
+                    "desc": "the minimum impact score to qualify for daily disbursement"
+                },
+                "akitaAppList": {
+                    "keyType": "AVMString",
+                    "valueType": "AkitaAppList",
+                    "key": "YWtpdGFfYWw=",
+                    "desc": "the list of akita contract ids"
+                },
+                "pluginAppList": {
+                    "keyType": "AVMString",
+                    "valueType": "PluginAppList",
+                    "key": "cGx1Z25fYWw=",
+                    "desc": "the list of plugin contract ids"
+                },
+                "otherAppList": {
+                    "keyType": "AVMString",
+                    "valueType": "OtherAppList",
+                    "key": "b3RoZXJfYWw=",
+                    "desc": "the list of other contract ids we use"
+                },
+                "socialFees": {
+                    "keyType": "AVMString",
+                    "valueType": "SocialFees",
+                    "key": "c29jaWFsX2ZlZXM=",
+                    "desc": "fees associated with akita social"
+                },
+                "stakingFees": {
+                    "keyType": "AVMString",
+                    "valueType": "StakingFees",
+                    "key": "c3Rha2luZ19mZWVz",
+                    "desc": "fees associated with staking assets"
+                },
+                "subscriptionFees": {
+                    "keyType": "AVMString",
+                    "valueType": "SubscriptionFees",
+                    "key": "c3Vic2NyaXB0aW9uX2ZlZXM=",
+                    "desc": "fees associated with subscriptions"
+                },
+                "nftFees": {
+                    "keyType": "AVMString",
+                    "valueType": "NFTFees",
+                    "key": "bmZ0X2ZlZXM=",
+                    "desc": "fees associated with NFT sales"
+                },
+                "swapFees": {
+                    "keyType": "AVMString",
+                    "valueType": "SwapFees",
+                    "key": "c3dhcF9mZWVz",
+                    "desc": "fees associated with swaps"
+                },
+                "krbyPercentage": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "a3JieV9wZXJjZW50YWdl",
+                    "desc": "The percentage of total rewards allocated to krby expressed in the hundreds\neg. 3% is 300, 12.75% is 1275"
+                },
+                "moderatorPercentage": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "bW9kX3BlcmNlbnRhZ2U=",
+                    "desc": "moderator fee"
+                },
+                "proposalFee": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "cHJvcG9zYWxfZmVl",
+                    "desc": "fee for creating new proposals"
+                },
+                "akitaAssets": {
+                    "keyType": "AVMString",
+                    "valueType": "AkitaAssets",
+                    "key": "YWtpdGFfYXNzZXRz",
+                    "desc": "the akita assets"
+                },
+                "proposalCreationSettings": {
+                    "keyType": "AVMString",
+                    "valueType": "ProposalSettings",
+                    "key": "cHJvcG9zYWxfY3JlYXRpb25fc2V0dGluZ3M=",
+                    "desc": "The default settings for creating proposals by proposal action"
+                },
+                "proposalParticipationSettings": {
+                    "keyType": "AVMString",
+                    "valueType": "ProposalSettings",
+                    "key": "cHJvcG9zYWxfcGFydGljaXBhdGlvbl9zZXR0aW5ncw==",
+                    "desc": "The default minimum participation needed for a proposal to be valid"
+                },
+                "proposalApprovalThresholdSettings": {
+                    "keyType": "AVMString",
+                    "valueType": "ProposalSettings",
+                    "key": "cHJvcG9zYWxfYXBwcm92YWxfdGhyZXNob2xkX3NldHRpbmdz",
+                    "desc": "The default threshold of approval votes needed for a proposal to pass"
+                },
+                "proposalVotingDurationSettings": {
+                    "keyType": "AVMString",
+                    "valueType": "ProposalSettings",
+                    "key": "cHJvcG9zYWxfdm90aW5nX2R1cmF0aW9uX3NldHRpbmdz",
+                    "desc": "The default duration for which a proposal must be open for voting"
+                },
+                "proposalID": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "cHJvcG9zYWxfaWQ=",
+                    "desc": "the next proposal id"
+                },
+                "walletID": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "d2FsbGV0X2lk",
+                    "desc": "the arc58 wallet the DAO controls"
+                }
+            },
+            "local": {},
+            "box": {}
+        },
+        "maps": {
+            "global": {},
+            "local": {},
+            "box": {
+                "plugins": {
+                    "keyType": "PluginKey",
+                    "valueType": "DAOPluginInfo",
+                    "desc": "Plugins that add functionality to the controlledAddress and the account that has permission to use it.",
+                    "prefix": "cA=="
+                },
+                "receiveEscrows": {
+                    "keyType": "uint64",
+                    "valueType": "ReceiveEscrowInfo",
+                    "desc": "escrow accounts for services to payback revenue to the DAO",
+                    "prefix": "cg=="
+                },
+                "receiveAssets": {
+                    "keyType": "EscrowAssetKey",
+                    "valueType": "AVMBytes",
+                    "desc": "box map of escrow assets that have already been processed during this allocation",
+                    "prefix": "cw=="
+                },
+                "payoutEscrows": {
+                    "keyType": "uint64",
+                    "valueType": "PayoutEscrowInfo",
+                    "desc": "escrow accounts meant to payout recipients",
+                    "prefix": "cA=="
+                },
+                "proposals": {
+                    "keyType": "uint64",
+                    "valueType": "ProposalDetails",
+                    "desc": "voting state of a proposal",
+                    "prefix": "bA=="
+                },
+                "proposalVotes": {
+                    "keyType": "ProposalVoteKey",
+                    "valueType": "ProposalVoteInfo",
+                    "desc": "votes by proposal id & address",
+                    "prefix": "dg=="
+                },
+                "executions": {
+                    "keyType": "AVMBytes",
+                    "valueType": "ExecutionInfo",
+                    "desc": "execution keys and their state",
+                    "prefix": "eA=="
+                }
+            }
+        }
+    },
+    "bareActions": {
+        "create": [
+            "NoOp"
+        ],
+        "call": []
+    },
+    "sourceInfo": {
+        "approval": {
+            "sourceInfo": [
+                {
+                    "pc": [
+                        77
+                    ],
+                    "errorMessage": "can only call when creating"
+                }
+            ],
+            "pcOffsetMethod": "none"
+        },
+        "clear": {
+            "sourceInfo": [],
+            "pcOffsetMethod": "none"
+        }
+    },
+    "source": {
+        "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBpbnRjYmxvY2sgMAogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGJueiBtYWluX2FmdGVyX2lmX2Vsc2VAMgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L2Rhby9jb250cmFjdC5hbGdvLnRzOjEzCiAgICAvLyBpbml0aWFsaXplZCA9IEdsb2JhbFN0YXRlPGJvb2xlYW4+KHsgaW5pdGlhbFZhbHVlOiBmYWxzZSwga2V5OiBBa2l0YURBT0dsb2JhbFN0YXRlS2V5c0luaXRpYWxpemVkIH0pCiAgICBwdXNoYnl0ZXMgImluaXRpYWxpemVkIgogICAgaW50Y18wIC8vIDAKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvZGFvL2NvbnRyYWN0LmFsZ28udHM6MTUKICAgIC8vIHZlcnNpb24gPSBHbG9iYWxTdGF0ZTxzdHJpbmc+KHsgaW5pdGlhbFZhbHVlOiAnJywga2V5OiBHbG9iYWxTdGF0ZUtleVZlcnNpb24gfSkKICAgIHB1c2hieXRlc3MgInZlcnNpb24iICIiIC8vICJ2ZXJzaW9uIiwgIiIKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvZGFvL2NvbnRyYWN0LmFsZ28udHM6NTcKICAgIC8vIHByb3Bvc2FsSUQgPSBHbG9iYWxTdGF0ZTx1aW50NjQ+KHsgaW5pdGlhbFZhbHVlOiAwLCBrZXk6IEFraXRhREFPR2xvYmFsU3RhdGVLZXlzUHJvcG9zYWxJRCB9KQogICAgcHVzaGJ5dGVzICJwcm9wb3NhbF9pZCIKICAgIGludGNfMCAvLyAwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L2Rhby9jb250cmFjdC5hbGdvLnRzOjU5CiAgICAvLyB3YWxsZXRJRCA9IEdsb2JhbFN0YXRlPHVpbnQ2ND4oeyBpbml0aWFsVmFsdWU6IDAsIGtleTogQWtpdGFEQU9HbG9iYWxTdGF0ZUtleXNXYWxsZXRJRCB9KQogICAgcHVzaGJ5dGVzICJ3YWxsZXRfaWQiCiAgICBpbnRjXzAgLy8gMAogICAgYXBwX2dsb2JhbF9wdXQKCm1haW5fYWZ0ZXJfaWZfZWxzZUAyOgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L2Rhby9jb250cmFjdC5hbGdvLnRzOjExCiAgICAvLyBleHBvcnQgY2xhc3MgQWtpdGFEQU9QbHVnaW4gZXh0ZW5kcyBDb250cmFjdCB7CiAgICB0eG4gTnVtQXBwQXJncwogICAgYm56IG1haW5fYWZ0ZXJfaWZfZWxzZUA5CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICBibnogbWFpbl9hZnRlcl9pZl9lbHNlQDkKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICAhCiAgICBhc3NlcnQgLy8gY2FuIG9ubHkgY2FsbCB3aGVuIGNyZWF0aW5nCiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCgptYWluX2FmdGVyX2lmX2Vsc2VAOToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9kYW8vY29udHJhY3QuYWxnby50czoxMQogICAgLy8gZXhwb3J0IGNsYXNzIEFraXRhREFPUGx1Z2luIGV4dGVuZHMgQ29udHJhY3QgewogICAgaW50Y18wIC8vIDAKICAgIHJldHVybgo=",
+        "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg=="
+    },
+    "byteCode": {
+        "approval": "CiABADEYQAA3gAtpbml0aWFsaXplZCJnggIHdmVyc2lvbgBngAtwcm9wb3NhbF9pZCJngAl3YWxsZXRfaWQiZzEbQAAMMRlAAAcxGBREgQFDIkM=",
+        "clear": "CoEBQw=="
+    },
+    "compilerInfo": {
+        "compiler": "puya",
+        "compilerVersion": {
+            "major": 5,
+            "minor": 0,
+            "patch": 0
+        }
+    },
+    "events": [],
+    "templateVariables": {}
+}

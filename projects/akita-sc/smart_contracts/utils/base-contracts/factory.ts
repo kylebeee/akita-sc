@@ -69,7 +69,7 @@ export class FactoryContract extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ allowActions: ['UpdateApplication'] })
-  updateApplication(newVersion: string, newChildVersion: string): void {
+  update(newVersion: string, newChildVersion: string): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     this.version.value = newVersion
     this.childContractVersion.value = newChildVersion

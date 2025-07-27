@@ -1,6 +1,7 @@
 import { uint64 } from '@algorandfoundation/algorand-typescript'
 import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { PayoutEscrowType, ProposalAction, ProposalStatus, ProposalVoteType } from './types'
+import { PayoutEscrowType, ProposalVoteType } from './types'
+import { ProposalActionType, ProposalStatus } from '../arc58/dao/types'
 
 export const AkitaDAOGlobalStateKeysInitialized = 'initialized'
 export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
@@ -81,18 +82,18 @@ export const ProposalStatusRejected: ProposalStatus = new Uint8(30)
 export const ProposalStatusApproved: ProposalStatus = new Uint8(40)
 
 // proposal actions
-export const ProposalActionUpgradeApp: ProposalAction = new Uint8(10)
-export const ProposalActionAddPlugin: ProposalAction = new Uint8(20)
-export const ProposalActionAddNamedPlugin: ProposalAction = new Uint8(21)
-export const ProposalActionExecutePlugin: ProposalAction = new Uint8(30)
-export const ProposalActionExecuteNamedPlugin: ProposalAction = new Uint8(31)
-export const ProposalActionRemovePlugin: ProposalAction = new Uint8(40)
-export const ProposalActionRemoveNamedPlugin: ProposalAction = new Uint8(41)
-export const ProposalActionAddAllowance: ProposalAction = new Uint8(50)
-export const ProposalActionRemoveAllowance: ProposalAction = new Uint8(60)
-export const ProposalActionUpdateFields: ProposalAction = new Uint8(70)
-export const ProposalActionNewEscrow: ProposalAction = new Uint8(80)
-export const ProposalActionNewReceiveEscrow: ProposalAction = new Uint8(81)
+export const ProposalActionUpgradeApp: ProposalActionType = new Uint8(10)
+export const ProposalActionAddPlugin: ProposalActionType = new Uint8(20)
+export const ProposalActionAddNamedPlugin: ProposalActionType = new Uint8(21)
+export const ProposalActionExecutePlugin: ProposalActionType = new Uint8(30)
+export const ProposalActionExecuteNamedPlugin: ProposalActionType = new Uint8(31)
+export const ProposalActionRemovePlugin: ProposalActionType = new Uint8(40)
+export const ProposalActionRemoveNamedPlugin: ProposalActionType = new Uint8(41)
+export const ProposalActionAddAllowance: ProposalActionType = new Uint8(50)
+export const ProposalActionRemoveAllowance: ProposalActionType = new Uint8(60)
+export const ProposalActionUpdateFields: ProposalActionType = new Uint8(70)
+export const ProposalActionNewEscrow: ProposalActionType = new Uint8(80)
+export const ProposalActionNewReceiveEscrow: ProposalActionType = new Uint8(81)
 
 
 // proposal vote types

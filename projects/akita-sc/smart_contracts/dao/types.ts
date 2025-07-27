@@ -1,101 +1,31 @@
 import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Bool, DynamicArray, DynamicBytes, StaticBytes, Struct, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { arc4MethodInfo, MethodInfo, MethodRestriction, SpendAllowanceType } from '../arc58/account/types';
+import { Address, DynamicBytes, StaticBytes, Struct, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { AddAllowanceInfo, ExecutionKey, MethodRestriction } from '../arc58/account/types';
 import { CID } from '../utils/types/base';
-
-export class arc4DAOPluginInfo extends Struct<{
-  /** the type of delegation the plugin is using */
-  delegationType: Uint8;
-  /** the escrow account to use for the plugin */
-  escrow: Uint64;
-  /** The last round or unix time at which this plugin can be called */
-  lastValid: Uint64;
-  /** The number of rounds or seconds that must pass before the plugin can be called again */
-  cooldown: Uint64;
-  /** The methods that are allowed to be called for the plugin by the address */
-  methods: DynamicArray<arc4MethodInfo>;
-  /** Whether to use unix timestamps or round for lastValid and cooldown */
-  useRounds: Bool;
-  /** The last round or unix time the plugin was called */
-  lastCalled: Uint64;
-  /** The round or unix time the plugin was installed */
-  start: Uint64;
-  /** whether to require the group ID of the submitted group to match */
-  useExecutionKey: Bool;
-  /** the power needed to propose plugin execution */
-  executionProposalCreationMinimum: Uint64;
-  /** the threshold of participation needed to execute the plugin */
-  executionParticipationThreshold: Uint64;
-  /** the threshold of approval votes needed to execute the plugin */
-  executionApprovalThreshold: Uint64;
-  /** the amount of seconds the voting period lasts */
-  executionVotingDuration: Uint64;
-}> { }
-
-export type DAOPluginInfo = {
-  /** the type of delegation the plugin is using */
-  delegationType: Uint8;
-  /** the escrow account to use for the plugin */
-  escrow: uint64;
-  /** The last round or unix time at which this plugin can be called */
-  lastValid: uint64;
-  /** The number of rounds or seconds that must pass before the plugin can be called again */
-  cooldown: uint64;
-  /** The methods that are allowed to be called for the plugin by the address */
-  methods: MethodInfo[];
-  /** Whether to use unix timestamps or round for lastValid and cooldown */
-  useRounds: boolean;
-  /** The last round or unix time the plugin was called */
-  lastCalled: uint64;
-  /** The round or unix time the plugin was installed */
-  start: uint64;
-  /** whether to require the group ID of the submitted group to match */
-  useExecutionKey: boolean;
-  /** the power needed to propose plugin execution */
-  executionProposalCreationMinimum: uint64;
-  /** the threshold of participation needed to execute the plugin */
-  executionParticipationThreshold: uint64;
-  /** the threshold of approval votes needed to execute the plugin */
-  executionApprovalThreshold: uint64;
-  /** the amount of seconds the voting period lasts */
-  executionVotingDuration: uint64;
-}
-
-export type ProposalStatus = Uint8
-
-export type ProposalAction = Uint8
+import { ProposalActionType, ProposalStatus } from '../arc58/dao/types';
 
 export type ProposalUpgradeApp = {
   app: uint64
   executionKey: ExecutionKey
+  lastValidRound: uint64
 }
 
 export type ProposalAddPlugin = {
-  app: uint64
-  allowedCaller: Address
-  delegationType: Uint8
-  escrow: string  
-  lastValid: uint64
-  cooldown: uint64
-  methods: MethodRestriction[]
-  useRounds: boolean
-  useExecutionKey: boolean
-  executionProposalCreationMinimum: uint64
-  executionParticipationThreshold: uint64
-  executionApprovalThreshold: uint64
-  executionVotingDuration: uint64
+  app: uint64,
+  allowedCaller: Address,
+  delegationType: Uint8,
+  escrow: string,
+  lastValid: uint64,
+  cooldown: uint64,
+  methods: MethodRestriction[],
+  useRounds: boolean,
+  useExecutionKey: boolean,
+  create: uint64,
+  duration: uint64,
+  participation: uint64,
+  approval: uint64
   sourceLink: string
-  allowances: AllowanceProposal[]
-}
-
-export type AllowanceProposal = {
-  asset: uint64
-  type: SpendAllowanceType
-  max: uint64
-  allowed: uint64
-  spent: uint64
-  interval: uint64
-  last: uint64
+  allowances: AddAllowanceInfo[]
 }
 
 export type ProposalAddNamedPlugin = {
@@ -103,23 +33,25 @@ export type ProposalAddNamedPlugin = {
   app: uint64,
   allowedCaller: Address,
   delegationType: Uint8,
+  escrow: string,
   lastValid: uint64,
   cooldown: uint64,
   methods: MethodRestriction[],
-  useAllowance: boolean,
   useRounds: boolean,
   useExecutionKey: boolean,
-  executionParticipationThreshold: uint64
-  executionApprovalThreshold: uint64
-  executionVotingDuration: uint64
+  create: uint64,
+  duration: uint64,
+  participation: uint64,
+  approval: uint64
   sourceLink: string
-  allowances: AllowanceProposal[]
+  allowances: AddAllowanceInfo[]
 }
 
 export type ProposalExecutePlugin = {
   app: uint64
   allowedCaller: Address,
   executionKey: ExecutionKey
+  lastValidRound: uint64
 }
 
 export type ProposalExecuteNamedPlugin = {
@@ -140,49 +72,96 @@ export type ProposalRemoveNamedPlugin = {
   allowedCaller: Address
 }
 
-export type ProposalAddAllowance = {
-  app: uint64,
-  allowedCaller: Address,
-  asset: uint64,
-  type: SpendAllowanceType,
-  allowed: uint64,
-  max: uint64,
-  interval: uint64,
+export type ProposalAddAllowances = {
+  escrow: string
+  allowances: AddAllowanceInfo[]
 }
 
-export type ProposalRemoveAllowance = {
-  app: uint64,
-  allowedCaller: Address,
-  asset: uint64,
+export type ProposalRemoveAllowances = {
+  escrow: string
+  assets: uint64[]
+}
+
+export type EscrowType = Uint8
+
+export const EscrowTypeDefault: EscrowType = new Uint8(0)
+export const EscrowTypeReceive: EscrowType = new Uint8(10)
+export const EscrowTypePayout: EscrowType = new Uint8(20)
+
+export type ProposalNewEscrow = {
+  type: EscrowType
+  escrow: string
+  data: bytes
+}
+
+export type ProposalNewReceive = {
+  source: Address,
+  allocatable: boolean,
+  optinAllowed: boolean
+}
+
+export type ProposalNewReceiveEscrow = {
+  escrow: string
+  source: Address,
+  allocatable: boolean,
+  optinAllowed: boolean
+}
+
+export type ProposalNewIndividualPayout = {
+  recipient: Address
+}
+
+export type ProposalNewIndividualPayoutEscrow = {
+  escrow: string,
+  recipient: Address
+}
+
+export type ProposalNewPoolPayout = {
+  poolID: uint64
+}
+
+export type ProposalNewPoolPayoutEscrow = {
+  escrow: string
+  poolID: uint64
 }
 
 export type ProposalUpdateField = {
   field: string
-  value: string
+  value: bytes
 }
 
 export type ProposalDetails = {
+  // the status of the proposal
   status: ProposalStatus
-  action: ProposalAction
+  // markdown content description of the proposal
   cid: CID
-  created: uint64
-  votes: uint64
+  // vote counters
+  votes: ProposalVoteTotals
+  // the origin address of the proposal creator
   creator: Address
+  // the timestamp the proposal went to voting
+  votingTs: uint64
+  // the timestamp the proposal was created
+  created: uint64
+  // the actions
+  actions: ProposalAction[]
+}
+
+export type ProposalAction = {
+  // the action type the proposal wants to take
+  type: ProposalActionType
+  // the data specific to the proposal action
   data: bytes
 }
 
-export class arc4ProposalDetails extends arc4.Struct<{
-  status: ProposalStatus
-  action: ProposalAction
-  cid: StaticBytes<36>
-  created: arc4.Uint64
-  votes: arc4.Uint64
-  creator: Address
-  data: DynamicBytes
-}> { }
+export type ProposalVoteTotals = {
+  approvals: uint64
+  rejections: uint64
+  abstains: uint64
+}
 
 export type ProposalVoteKey = {
-  proposalId: uint64
+  proposalID: uint64
   voter: Address
 }
 
@@ -193,7 +172,6 @@ export type ProposalVoteInfo = {
   power: uint64
 }
 
-export type ExecutionKey = bytes<32>
 
 export type ExecutionInfo = {
   /** whether the txn group has been executed */
@@ -201,11 +179,6 @@ export type ExecutionInfo = {
   /** The last round at which this plugin can be called */
   lastValidRound: uint64
 }
-
-export class arc4ExecutionInfo extends arc4.Struct<{
-  executed: arc4.Bool
-  lastValidRound: arc4.Uint64
-}> { }
 
 export type ReceiveEscrowDisbursementPhase = Uint8
 
@@ -535,7 +508,7 @@ export type AkitaDAOFees = {
 }
 
 export type AkitaProposalSettings = {
-  
+
 }
 
 export class arc4Fees extends Struct<{
@@ -593,12 +566,14 @@ export class arc4AkitaAssets extends arc4.Struct<{
 }> { }
 
 export type ProposalSettings = {
-  upgradeApp: uint64
-  addPlugin: uint64
-  removePlugin: uint64
-  addAllowance: uint64
-  removeAllowance: uint64
-  updateField: uint64
+  // the minimum power needed to create a proposal
+  create: uint64
+  /** the minimum duration of the voting period */
+  duration: uint64
+  /** the minimum participation % needed for a proposal to be valid, basis points in the thousands so 1_000 = 1% */
+  participation: uint64
+  /** the minimum approval % needed for a proposal to be valid, basis points in the thousands so 1_000 = 1% */
+  approval: uint64
 }
 
 /** arc4 variant of ProposalSettings */

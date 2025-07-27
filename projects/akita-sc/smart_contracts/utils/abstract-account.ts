@@ -1,6 +1,6 @@
 import { bytes, Contract, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
-import { AddAllowanceInfo, EscrowReclaim, FundsRequest, MethodRestriction, SpendAllowanceType } from "../arc58/account/types";
+import { AddAllowanceInfo, EscrowReclaim, ExecutionKey, FundsRequest, MethodRestriction } from "../arc58/account/types";
 
 export class AbstractedAccountInterface extends Contract {
   create(
@@ -11,6 +11,7 @@ export class AbstractedAccountInterface extends Contract {
     revocationApp: uint64, 
     nickname: string
   ): void { }
+  init(): void { }
   update(version: string): void { }
   changeRevocationApp(newRevocationApp: uint64): void { }
   setNickname(nickname: string): void { }
@@ -33,7 +34,8 @@ export class AbstractedAccountInterface extends Contract {
     lastValid: uint64, 
     cooldown: uint64, 
     methods: MethodRestriction[], 
-    useRounds: boolean
+    useRounds: boolean,
+    useExecutionKey: boolean
   ): void { }
   assignDomain(caller: Address, domain: string): void { }
   arc58_removePlugin(app: uint64, allowedCaller: Address): void { }
@@ -47,10 +49,12 @@ export class AbstractedAccountInterface extends Contract {
     lastValid: uint64, 
     cooldown: uint64, 
     methods: MethodRestriction[], 
-    useRounds: boolean
+    useRounds: boolean,
+    useExecutionKey: boolean
   ): void { }
   arc58_removeNamedPlugin(name: string): void { }
-  arc58_newEscrow(escrow: string): void { }
+  arc58_newEscrow(escrow: string): uint64 { return 0 }
+  arc58_toggleEscrowLock(escrow: string): boolean { return false; }
   arc58_reclaim(escrow: string, reclaims: EscrowReclaim[]): void { }
   arc58_optinEscrow(escrow: string, assets: uint64[]): void { }
   arc58_pluginOptinEscrow(
@@ -61,6 +65,31 @@ export class AbstractedAccountInterface extends Contract {
   ): void { }
   arc58_addAllowances(escrow: string, allowances: AddAllowanceInfo[]): void { }
   arc58_removeAllowances(escrow: string, assets: uint64[]): void { }
+  arc58_addExecutionKey(key: ExecutionKey, lastValidRound: uint64): void { }
+  arc58_removeExecutionKey(key: ExecutionKey): void { }
   arc58_getAdmin(): Address { return new Address(Txn.sender); }
+  arc58_getEscrow(name: string): uint64 { return 0 }
+  arc58_mustGetEscrow(name: string): uint64 { return 0 }
   balance(assets: uint64[]): uint64[] { return [] }
+}
+
+
+export class AbstractedAccountFactoryInterface extends Contract {
+  create(
+    akitaDAO: uint64,
+    version: string,
+    childVersion: string,
+    escrowFactoryApp: uint64,
+    revocationApp: uint64
+  ): void {}
+  update(newVersion: string, newChildVersion: string): void {}
+  updateAkitaDAO(app: uint64): void {}
+  updateAkitaDAOEscrow(app: uint64): void {}
+  updateRevocationApp(app: uint64): void {}
+  mint(
+    payment: gtxn.PaymentTxn,
+    controlledAddress: Address,
+    admin: Address,
+    nickname: string
+  ): uint64 { return 0 }
 }

@@ -17,11 +17,15 @@ export const AbstractAccountBoxPrefixNamedPlugins = 'n'
 export const AbstractAccountBoxPrefixEscrows = 'e'
 export const AbstractAccountBoxPrefixAllowances = 'a'
 export const AbstractAccountBoxPrefixDomainKeys = 'd'
+export const AbstractAccountBoxPrefixExecutions = 'x'
 
 export const MethodRestrictionByteLength: uint64 = 20
 
-export const MinPluginMBR: uint64 = 37_700
+export const MinPluginMBR: uint64 = 38_100
 export const MinNamedPluginMBR: uint64 = 18_900
-export const MinEscrowsMBR: uint64 = 6_100
+export const EscrowsMBR: uint64 = 6_500
+export const MinNamedEscrowsMBR: uint64 = 6_100
 export const AllowanceMBR: uint64 = 29_300
 export const MinDomainKeysMBR: uint64 = 15_700
+
+export const ABSTRACTED_ACCOUNT_MINT_PAYMENT: uint64 = 1_028_000 + 12_100 // 1_028_000 for the account, 12_100 for the escrow factory

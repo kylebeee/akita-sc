@@ -1,0 +1,6523 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 6 8 400 100000 6364136223846793005 1442695040888963407 1442695040888963409 4294967295 18446744073709551615
+    bytecblock "entry_count" 0x151f7c75 0x00 "akita_al" "type" 0x0a "gate_id" 0x0000 "e" 0x14 "status" "creator" 0x1e "max_entries" "end_timestamp" "r" "start_timestamp" "akita_royalty_amount" "akita_dao" 0x80 "stake_key" "akita_royalty" "allow_late_signups" "title" "minimum_stake_amount" "reward_count" "signup_timestamp" "akita_escrow" 0x000000000000000000 0x40e914e6 "salt" "controlled_address" 0x000000000000000000000000000000000000000000000000
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txn NumAppArgs
+    bz main_after_if_else@30
+    pushbytess 0xd5f3c06a 0x83f14748 0xab8b213a 0x3ea11832 0x645a7bcc 0x0f2fc312 0x181e8291 0x68558c70 0xa9418d37 0xfc699cb3 0x6e76b2ca 0xcdb0ac6a 0xb223d35d 0x592ee341 0x8fa4a160 0xe3377342 0x71704649 0xa4b3e789 0x85875840 0xea9180dd 0x33e92c94 0x1ead20a9 // method "create(string,uint8,address,address,(address,string),uint64,uint64,uint64,uint64)void", method "init()void", method "delete(address)void", method "optin(pay,uint64)void", method "addReward(pay,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void", method "addRewardAsa(pay,axfer,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void", method "finalize(uint64,uint64,uint64)void", method "enter(pay,(uint64,uint64,byte[32][])[],byte[][])void", method "startDisbursement(uint64)void", method "raffle(uint64)void", method "disburseRewards(uint64,uint64)void", method "finalizeDistribution(uint64)void", method "check(address,uint64)(bool,uint64)", method "signUpsOpen()bool", method "isLive()bool", method "isEntered(address)bool", method "getState()(uint8,string,uint8,uint64,uint64,bool,uint64,uint64,uint64,uint64,uint64,(address,string),uint64,uint64,address)", method "mbr(uint64)(uint64,uint64,uint64,uint64,uint64)", method "optAkitaEscrowInAndSend(string,asset,uint64)void", method "update(string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void"
+    txna ApplicationArgs 0
+    match main_create_route@5 main_init_route@6 main_delete_route@7 main_optin_route@8 main_addReward_route@9 main_addRewardAsa_route@10 main_finalize_route@11 main_enter_route@12 main_startDisbursement_route@13 main_raffle_route@14 main_disburseRewards_route@15 main_finalizeDistribution_route@16 main_check_route@17 main_signUpsOpen_route@18 main_isLive_route@19 main_isEntered_route@20 main_getState_route@21 main_mbr_route@22 main_optAkitaEscrowInAndSend_route@23 main_update_route@24 main_updateAkitaDAO_route@25 main_updateAkitaDAOEscrow_route@26
+
+main_after_if_else@30:
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    intc_0 // 0
+    return
+
+main_updateAkitaDAOEscrow_route@26:
+    // smart_contracts/utils/base-contracts/escrow.ts:62
+    // updateAkitaDAOEscrow(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/escrow.ts:62
+    // updateAkitaDAOEscrow(app: uint64): void {
+    callsub updateAkitaDAOEscrow
+    intc_1 // 1
+    return
+
+main_updateAkitaDAO_route@25:
+    // smart_contracts/utils/base-contracts/escrow.ts:57
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/escrow.ts:57
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_update_route@24:
+    // smart_contracts/utils/base-contracts/escrow.ts:49
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/utils/base-contracts/escrow.ts:49
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
+    intc_1 // 1
+    return
+
+main_optAkitaEscrowInAndSend_route@23:
+    // smart_contracts/utils/base-contracts/escrow.ts:20
+    // optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    btoi
+    txnas Assets
+    txna ApplicationArgs 3
+    btoi
+    // smart_contracts/utils/base-contracts/escrow.ts:20
+    // optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
+    callsub optAkitaEscrowInAndSend
+    intc_1 // 1
+    return
+
+main_mbr_route@22:
+    // smart_contracts/pool/base.ts:13
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/pool/base.ts:13
+    // @abimethod({ readonly: true })
+    callsub mbr
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_getState_route@21:
+    // smart_contracts/pool/contract.algo.ts:1091
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub getState
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_isEntered_route@20:
+    // smart_contracts/pool/contract.algo.ts:1086
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    // smart_contracts/pool/contract.algo.ts:1086
+    // @abimethod({ readonly: true })
+    callsub isEntered
+    bytec_2 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_isLive_route@19:
+    // smart_contracts/pool/contract.algo.ts:1076
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub isLive
+    bytec_2 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_signUpsOpen_route@18:
+    // smart_contracts/pool/contract.algo.ts:1066
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub signUpsOpen
+    bytec_2 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_check_route@17:
+    // smart_contracts/pool/contract.algo.ts:1057
+    // check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/pool/contract.algo.ts:1057
+    // check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
+    callsub check
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_finalizeDistribution_route@16:
+    // smart_contracts/pool/contract.algo.ts:1040
+    // finalizeDistribution(rewardID: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/pool/contract.algo.ts:1040
+    // finalizeDistribution(rewardID: uint64): void {
+    callsub finalizeDistribution
+    intc_1 // 1
+    return
+
+main_disburseRewards_route@15:
+    // smart_contracts/pool/contract.algo.ts:997
+    // disburseRewards(rewardID: uint64, iterationAmount: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    // smart_contracts/pool/contract.algo.ts:997
+    // disburseRewards(rewardID: uint64, iterationAmount: uint64): void {
+    callsub disburseRewards
+    intc_1 // 1
+    return
+
+main_raffle_route@14:
+    // smart_contracts/pool/contract.algo.ts:954
+    // raffle(rewardID: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/pool/contract.algo.ts:954
+    // raffle(rewardID: uint64): void {
+    callsub raffle
+    intc_1 // 1
+    return
+
+main_startDisbursement_route@13:
+    // smart_contracts/pool/contract.algo.ts:930
+    // startDisbursement(rewardID: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/pool/contract.algo.ts:930
+    // startDisbursement(rewardID: uint64): void {
+    callsub startDisbursement
+    intc_1 // 1
+    return
+
+main_enter_route@12:
+    // smart_contracts/pool/contract.algo.ts:829
+    // enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    // smart_contracts/pool/contract.algo.ts:829
+    // enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
+    callsub enter
+    intc_1 // 1
+    return
+
+main_finalize_route@11:
+    // smart_contracts/pool/contract.algo.ts:799
+    // finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    btoi
+    // smart_contracts/pool/contract.algo.ts:799
+    // finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
+    callsub finalize
+    intc_1 // 1
+    return
+
+main_addRewardAsa_route@10:
+    // smart_contracts/pool/contract.algo.ts:783
+    // addRewardAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, reward: Reward): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txn GroupIndex
+    pushint 2 // 2
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    pushint 4 // axfer
+    ==
+    assert // transaction type is axfer
+    txna ApplicationArgs 1
+    // smart_contracts/pool/contract.algo.ts:783
+    // addRewardAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, reward: Reward): void {
+    callsub addRewardAsa
+    intc_1 // 1
+    return
+
+main_addReward_route@9:
+    // smart_contracts/pool/contract.algo.ts:762
+    // addReward(payment: gtxn.PaymentTxn, reward: Reward): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    // smart_contracts/pool/contract.algo.ts:762
+    // addReward(payment: gtxn.PaymentTxn, reward: Reward): void {
+    callsub addReward
+    pop
+    intc_1 // 1
+    return
+
+main_optin_route@8:
+    // smart_contracts/pool/contract.algo.ts:722
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/pool/contract.algo.ts:722
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    callsub optin
+    intc_1 // 1
+    return
+
+main_delete_route@7:
+    // smart_contracts/pool/contract.algo.ts:708
+    // @abimethod({ allowActions: 'DeleteApplication' })
+    txn OnCompletion
+    pushint 5 // DeleteApplication
+    ==
+    assert // OnCompletion is not DeleteApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    // smart_contracts/pool/contract.algo.ts:708
+    // @abimethod({ allowActions: 'DeleteApplication' })
+    callsub delete
+    intc_1 // 1
+    return
+
+main_init_route@6:
+    // smart_contracts/pool/contract.algo.ts:694
+    // init() {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub init
+    intc_1 // 1
+    return
+
+main_create_route@5:
+    // smart_contracts/pool/contract.algo.ts:664
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/pool/contract.algo.ts:97-100
+    // export class Pool extends classes(
+    //   BasePool,
+    //   AkitaBaseEscrow
+    // ) {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    txna ApplicationArgs 3
+    txna ApplicationArgs 4
+    txna ApplicationArgs 5
+    txna ApplicationArgs 6
+    btoi
+    txna ApplicationArgs 7
+    btoi
+    txna ApplicationArgs 8
+    btoi
+    txna ApplicationArgs 9
+    btoi
+    // smart_contracts/pool/contract.algo.ts:664
+    // @abimethod({ onCreate: 'require' })
+    callsub create
+    intc_1 // 1
+    return
+
+
+// smart_contracts/utils/types/lib_pcg/pcg32.algo.ts::__pcg32Output(state: uint64) -> uint64:
+__pcg32Output:
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:23
+    // export function __pcg32Output(state: PCG32STATE): uint64 {
+    proto 1 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:24
+    // const xorshifted = __maskToUint32(op.shr(op.shr(state, 18) ^ state, 27))
+    frame_dig -1
+    pushint 18 // 18
+    shr
+    frame_dig -1
+    ^
+    pushint 27 // 27
+    shr
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:13
+    // return value & (op.shl(1, 32) - 1)
+    intc 9 // 4294967295
+    &
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:25
+    // const rot = op.shr(state, 59)
+    frame_dig -1
+    pushint 59 // 59
+    shr
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:26
+    // return op.shr(xorshifted, rot) | __maskToUint32(op.shl(xorshifted, __uint64Twos(rot) & 31))
+    dup2
+    shr
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:8
+    // const [, addLow] = op.addw(~value, 1)
+    swap
+    ~
+    intc_1 // 1
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:26
+    // return op.shr(xorshifted, rot) | __maskToUint32(op.shl(xorshifted, __uint64Twos(rot) & 31))
+    pushint 31 // 31
+    &
+    uncover 2
+    swap
+    shl
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:13
+    // return value & (op.shl(1, 32) - 1)
+    intc 9 // 4294967295
+    &
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:26
+    // return op.shr(xorshifted, rot) | __maskToUint32(op.shl(xorshifted, __uint64Twos(rot) & 31))
+    |
+    retsub
+
+
+// smart_contracts/utils/functions.ts::getWalletIDUsingAkitaDAO(akitaDAO: uint64, address: bytes) -> uint64:
+getWalletIDUsingAkitaDAO:
+    // smart_contracts/utils/functions.ts:130
+    // export function getWalletIDUsingAkitaDAO(akitaDAO: Application, address: Account): Application {
+    proto 2 1
+    // smart_contracts/utils/functions.ts:40
+    // return op.AppGlobal.getExUint64(akitaDAO, Bytes(AbstractAccountGlobalStateKeysEscrowFactory))[0]
+    frame_dig -2
+    pushbytes "escrow_factory"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:136-142
+    // const data = abiCall(
+    //   EscrowFactoryInterface.prototype.get,
+    //   {
+    //     appId: escrowFactory,
+    //     args: [new Address(address)]
+    //   }
+    // ).returnValue
+    itxn_begin
+    pushbytes 0x79345adc // method "get(byte[32])byte[]"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    extract 6 0
+    dup
+    // smart_contracts/utils/functions.ts:144
+    // if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
+    len
+    dup
+    bz getWalletIDUsingAkitaDAO_if_body@6
+    frame_dig 1
+    intc_3 // 8
+    !=
+    bz getWalletIDUsingAkitaDAO_after_if_else@7
+
+getWalletIDUsingAkitaDAO_if_body@6:
+    // smart_contracts/utils/functions.ts:145
+    // return 0
+    intc_0 // 0
+
+getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8:
+    // smart_contracts/utils/functions.ts:132
+    // return Application(getWalletID(escrowFactory, address))
+    frame_bury 0
+    retsub
+
+getWalletIDUsingAkitaDAO_after_if_else@7:
+    // smart_contracts/utils/functions.ts:148
+    // return btoi(data)
+    frame_dig 0
+    btoi
+    // smart_contracts/utils/functions.ts:132
+    // return Application(getWalletID(escrowFactory, address))
+    b getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8
+
+
+// smart_contracts/utils/functions.ts::gateCall(akitaDAO: uint64, caller: bytes, id: uint64, args: bytes) -> uint64, bytes:
+gateCall:
+    // smart_contracts/utils/functions.ts:161
+    // export function gateCall(akitaDAO: Application, caller: Account, id: uint64, args: GateArgs): boolean {
+    proto 4 2
+    // smart_contracts/utils/functions.ts:162-172
+    // return abiCall(
+    //   GateInterface.prototype.check,
+    //   {
+    //     appId: getAkitaAppList(akitaDAO).gate,
+    //     args: [
+    //       new Address(caller),
+    //       id,
+    //       args,
+    //     ],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    frame_dig -4
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:165
+    // appId: getAkitaAppList(akitaDAO).gate,
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/utils/functions.ts:168
+    // id,
+    frame_dig -2
+    itob
+    // smart_contracts/utils/functions.ts:162-172
+    // return abiCall(
+    //   GateInterface.prototype.check,
+    //   {
+    //     appId: getAkitaAppList(akitaDAO).gate,
+    //     args: [
+    //       new Address(caller),
+    //       id,
+    //       args,
+    //     ],
+    //   }
+    // ).returnValue
+    pushbytes 0x9bb1d0dd // method "check(byte[32],uint64,byte[][])bool"
+    itxn_field ApplicationArgs
+    frame_dig -3
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    intc_0 // 0
+    getbit
+    frame_dig -1
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.checkByID(id: uint64) -> bytes:
+checkByID:
+    // smart_contracts/pool/contract.algo.ts:465
+    // private checkByID(id: uint64): { valid: boolean, balance: uint64 } {
+    proto 1 1
+    intc_0 // 0
+    dupn 2
+    pushbytes ""
+    dupn 3
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:467
+    // this.type.value !== POOL_STAKING_TYPE_NONE || this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
+    bytec_2 // 0x00
+    !=
+    bnz checkByID_bool_true@2
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:467
+    // this.type.value !== POOL_STAKING_TYPE_NONE || this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
+    bytec 5 // 0x0a
+    !=
+    bz checkByID_bool_false@3
+
+checkByID_bool_true@2:
+    intc_1 // 1
+
+checkByID_bool_merge@4:
+    // smart_contracts/pool/contract.algo.ts:466-469
+    // assert(
+    //   this.type.value !== POOL_STAKING_TYPE_NONE || this.type.value !== POOL_STAKING_TYPE_HEARTBEAT,
+    //   ERR_INVALID_POOL_TYPE_FOR_CHECK
+    // )
+    assert // Invalid pool type for check
+    // smart_contracts/pool/contract.algo.ts:471
+    // const { disqualified, address, asset, quantity } = this.entries(id).value
+    frame_dig -1
+    itob
+    // smart_contracts/pool/contract.algo.ts:153
+    // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+    bytec 8 // "e"
+    swap
+    concat
+    dup
+    frame_bury 2
+    // smart_contracts/pool/contract.algo.ts:471
+    // const { disqualified, address, asset, quantity } = this.entries(id).value
+    box_get
+    assert // Box must have value
+    dup
+    intc 4 // 400
+    getbit
+    dig 1
+    extract 0 32
+    frame_bury 0
+    dig 1
+    extract 32 8
+    frame_bury 1
+    dig 1
+    pushint 32 // 32
+    extract_uint64
+    frame_bury 3
+    swap
+    pushint 40 // 40
+    extract_uint64
+    frame_bury 4
+    // smart_contracts/pool/contract.algo.ts:473
+    // if (disqualified) {
+    bz checkByID_after_if_else@6
+    // smart_contracts/pool/contract.algo.ts:474
+    // return { valid: false, balance: 0 }
+    bytec 28 // 0x000000000000000000
+    frame_bury 0
+    retsub
+
+checkByID_after_if_else@6:
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:477
+    // if (this.type.value === POOL_STAKING_TYPE_SOFT) {
+    bytec 9 // 0x14
+    ==
+    bz checkByID_else_body@11
+    // smart_contracts/pool/contract.algo.ts:478-484
+    // const check = abiCall(
+    //   StakingInterface.prototype.softCheck,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [address, asset],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:481
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:481
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:478-484
+    // const check = abiCall(
+    //   StakingInterface.prototype.softCheck,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [address, asset],
+    //   }
+    // ).returnValue
+    pushbytes 0x837be43e // method "softCheck(byte[32],uint64)(bool,uint64)"
+    itxn_field ApplicationArgs
+    frame_dig 0
+    itxn_field ApplicationArgs
+    frame_dig 1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    pushint 5 // 5
+    // smart_contracts/pool/contract.algo.ts:486
+    // if (check.balance >= quantity) {
+    extract_uint64
+    dup
+    frame_bury 5
+    frame_dig 4
+    >=
+    bz checkByID_after_if_else@15
+    // smart_contracts/pool/contract.algo.ts:487
+    // return { valid: true, balance: check.balance }
+    frame_dig 5
+    itob
+    bytec 19 // 0x80
+    swap
+    concat
+    frame_bury 0
+    retsub
+
+checkByID_after_if_else@15:
+    // smart_contracts/pool/contract.algo.ts:509
+    // this.entries(id).value.disqualified = true
+    frame_dig 2
+    dup
+    box_get
+    assert // Box must have value
+    intc 4 // 400
+    intc_1 // 1
+    setbit
+    dig 1
+    box_del
+    pop
+    box_put
+    // smart_contracts/pool/contract.algo.ts:510
+    // return { valid: false, balance: 0 }
+    bytec 28 // 0x000000000000000000
+    frame_bury 0
+    retsub
+
+checkByID_else_body@11:
+    // smart_contracts/pool/contract.algo.ts:490-502
+    // const info = abiCall(
+    //   StakingInterface.prototype.getInfo,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [
+    //       address,
+    //       {
+    //         asset: asset,
+    //         type: this.stakingType(),
+    //       },
+    //     ],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:493
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:493
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:498
+    // type: this.stakingType(),
+    callsub stakingType
+    // smart_contracts/pool/contract.algo.ts:496-499
+    // {
+    //   asset: asset,
+    //   type: this.stakingType(),
+    // },
+    frame_dig 3
+    itob
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:490-502
+    // const info = abiCall(
+    //   StakingInterface.prototype.getInfo,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [
+    //       address,
+    //       {
+    //         asset: asset,
+    //         type: this.stakingType(),
+    //       },
+    //     ],
+    //   }
+    // ).returnValue
+    bytec 29 // method "getInfo(byte[32],(uint64,uint8))(uint64,uint64,uint64)"
+    itxn_field ApplicationArgs
+    frame_dig 0
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    pushint 4 // 4
+    // smart_contracts/pool/contract.algo.ts:504
+    // if (info.amount >= quantity) {
+    extract_uint64
+    dup
+    frame_bury 6
+    frame_dig 4
+    >=
+    bz checkByID_after_if_else@15
+    // smart_contracts/pool/contract.algo.ts:505
+    // return { valid: true, balance: info.amount }
+    frame_dig 6
+    itob
+    bytec 19 // 0x80
+    swap
+    concat
+    frame_bury 0
+    retsub
+
+checkByID_bool_false@3:
+    intc_0 // 0
+    b checkByID_bool_merge@4
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.stakingType() -> bytes:
+stakingType:
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:523
+    // assert(this.type.value !== POOL_STAKING_TYPE_NONE, 'pool staking type is not set')
+    dup
+    bytec_2 // 0x00
+    !=
+    assert // pool staking type is not set
+    // smart_contracts/pool/contract.algo.ts:524
+    // return new Uint8(this.type.value.native - 1)
+    btoi
+    intc_1 // 1
+    -
+    itob
+    dup
+    bitlen
+    intc_3 // 8
+    <=
+    assert // overflow
+    extract 7 1
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.createRewardAllocations(disbursementID: uint64, asset: uint64, allocations: bytes, sum: uint64) -> bytes:
+createRewardAllocations:
+    // smart_contracts/pool/contract.algo.ts:572-577
+    // private createRewardAllocations(
+    //   disbursementID: uint64,
+    //   asset: uint64,
+    //   allocations: UserAllocation[],
+    //   sum: uint64
+    // ): void {
+    proto 4 1
+    // smart_contracts/pool/contract.algo.ts:579
+    // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:579
+    // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:659
+    // return 24_900 * allocations.length
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16
+    pushint 24900 // 24900
+    *
+    swap
+    // smart_contracts/pool/contract.algo.ts:582
+    // if (asset === 0) {
+    frame_dig -3
+    bnz createRewardAllocations_else_body@6
+    // smart_contracts/pool/contract.algo.ts:584-597
+    // abiCall(
+    //   RewardsInterface.prototype.createUserAllocations,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: rewardsApp.address,
+    //         amount: mbrAmount + sum,
+    //       }),
+    //       disbursementID,
+    //       allocations,
+    //     ],
+    //   }
+    // )
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:590
+    // receiver: rewardsApp.address,
+    dup
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/pool/contract.algo.ts:591
+    // amount: mbrAmount + sum,
+    frame_dig 0
+    frame_dig -1
+    +
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/pool/contract.algo.ts:589-592
+    // itxn.payment({
+    //   receiver: rewardsApp.address,
+    //   amount: mbrAmount + sum,
+    // }),
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/contract.algo.ts:584-597
+    // abiCall(
+    //   RewardsInterface.prototype.createUserAllocations,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: rewardsApp.address,
+    //         amount: mbrAmount + sum,
+    //       }),
+    //       disbursementID,
+    //       allocations,
+    //     ],
+    //   }
+    // )
+    itxn_next
+    // smart_contracts/pool/contract.algo.ts:593
+    // disbursementID,
+    frame_dig -4
+    itob
+    // smart_contracts/pool/contract.algo.ts:584-597
+    // abiCall(
+    //   RewardsInterface.prototype.createUserAllocations,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: rewardsApp.address,
+    //         amount: mbrAmount + sum,
+    //       }),
+    //       disbursementID,
+    //       allocations,
+    //     ],
+    //   }
+    // )
+    pushbytes 0x0979a90c // method "createUserAllocations(pay,uint64,(byte[32],uint64)[])void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig -2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+
+createRewardAllocations_after_if_else@10:
+    frame_dig -2
+    swap
+    retsub
+
+createRewardAllocations_else_body@6:
+    // smart_contracts/pool/contract.algo.ts:600-618
+    // abiCall(
+    //   RewardsInterface.prototype.createAsaUserAllocations,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: rewardsApp.address,
+    //         amount: mbrAmount,
+    //       }),
+    //       itxn.assetTransfer({
+    //         assetReceiver: rewardsApp.address,
+    //         xferAsset: asset,
+    //         assetAmount: sum,
+    //       }),
+    //       disbursementID,
+    //       allocations,
+    //     ],
+    //   }
+    // )
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:606
+    // receiver: rewardsApp.address,
+    dup
+    app_params_get AppAddress
+    assert // application exists
+    frame_dig 0
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/pool/contract.algo.ts:605-608
+    // itxn.payment({
+    //   receiver: rewardsApp.address,
+    //   amount: mbrAmount,
+    // }),
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/contract.algo.ts:609-613
+    // itxn.assetTransfer({
+    //   assetReceiver: rewardsApp.address,
+    //   xferAsset: asset,
+    //   assetAmount: sum,
+    // }),
+    itxn_next
+    // smart_contracts/pool/contract.algo.ts:610
+    // assetReceiver: rewardsApp.address,
+    dup
+    app_params_get AppAddress
+    assert // application exists
+    frame_dig -1
+    itxn_field AssetAmount
+    frame_dig -3
+    itxn_field XferAsset
+    itxn_field AssetReceiver
+    // smart_contracts/pool/contract.algo.ts:609-613
+    // itxn.assetTransfer({
+    //   assetReceiver: rewardsApp.address,
+    //   xferAsset: asset,
+    //   assetAmount: sum,
+    // }),
+    pushint 4 // 4
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/contract.algo.ts:600-618
+    // abiCall(
+    //   RewardsInterface.prototype.createAsaUserAllocations,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: rewardsApp.address,
+    //         amount: mbrAmount,
+    //       }),
+    //       itxn.assetTransfer({
+    //         assetReceiver: rewardsApp.address,
+    //         xferAsset: asset,
+    //         assetAmount: sum,
+    //       }),
+    //       disbursementID,
+    //       allocations,
+    //     ],
+    //   }
+    // )
+    itxn_next
+    // smart_contracts/pool/contract.algo.ts:614
+    // disbursementID,
+    frame_dig -4
+    itob
+    // smart_contracts/pool/contract.algo.ts:600-618
+    // abiCall(
+    //   RewardsInterface.prototype.createAsaUserAllocations,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: rewardsApp.address,
+    //         amount: mbrAmount,
+    //       }),
+    //       itxn.assetTransfer({
+    //         assetReceiver: rewardsApp.address,
+    //         xferAsset: asset,
+    //         assetAmount: sum,
+    //       }),
+    //       disbursementID,
+    //       allocations,
+    //     ],
+    //   }
+    // )
+    pushbytes 0x6f313796 // method "createAsaUserAllocations(pay,axfer,uint64,(byte[32],uint64)[])void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig -2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    b createRewardAllocations_after_if_else@10
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.create(title: bytes, type: bytes, creator: bytes, marketplace: bytes, stakeKey: bytes, minimumStakeAmount: uint64, gateID: uint64, maxEntries: uint64, akitaDAO: uint64) -> void:
+create:
+    // smart_contracts/pool/contract.algo.ts:664-675
+    // @abimethod({ onCreate: 'require' })
+    // create(
+    //   title: string,
+    //   type: StakingType,
+    //   creator: Address,
+    //   marketplace: Address,
+    //   stakeKey: RootKey,
+    //   minimumStakeAmount: uint64,
+    //   gateID: uint64,
+    //   maxEntries: uint64,
+    //   akitaDAO: uint64
+    // ): void {
+    proto 9 0
+    // smart_contracts/pool/contract.algo.ts:105
+    // status = GlobalState<PoolStatus>({ key: PoolGlobalStateKeyStatus })
+    bytec 10 // "status"
+    // smart_contracts/pool/contract.algo.ts:676
+    // this.status.value = PoolStatusDraft
+    bytec_2 // 0x00
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:107
+    // title = GlobalState<string>({ key: PoolGlobalStateKeyTitle })
+    bytec 23 // "title"
+    // smart_contracts/pool/contract.algo.ts:677
+    // this.title.value = title
+    frame_dig -9
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    bytec 4 // "type"
+    // smart_contracts/pool/contract.algo.ts:678
+    // this.type.value = type
+    frame_dig -8
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:138
+    // creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
+    bytec 11 // "creator"
+    // smart_contracts/pool/contract.algo.ts:679
+    // this.creator.value = creator.native
+    frame_dig -7
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:140
+    // marketplace = GlobalState<Account>({ key: PoolGlobalStateKeyMarketplace })
+    pushbytes "marketplace"
+    // smart_contracts/pool/contract.algo.ts:680
+    // this.marketplace.value = marketplace.native
+    frame_dig -6
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:130
+    // stakeKey = GlobalState<RootKey>({ key: PoolGlobalStateKeyStakeKey })
+    bytec 20 // "stake_key"
+    // smart_contracts/pool/contract.algo.ts:682
+    // this.stakeKey.value = clone(stakeKey)
+    frame_dig -5
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:132
+    // minimumStakeAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyMinimumStakeAmount })
+    bytec 24 // "minimum_stake_amount"
+    // smart_contracts/pool/contract.algo.ts:683
+    // this.minimumStakeAmount.value = minimumStakeAmount
+    frame_dig -4
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    bytec 6 // "gate_id"
+    // smart_contracts/pool/contract.algo.ts:684
+    // this.gateID.value = gateID
+    frame_dig -3
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:119
+    // maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
+    bytec 13 // "max_entries"
+    // smart_contracts/pool/contract.algo.ts:685
+    // this.maxEntries.value = maxEntries
+    frame_dig -2
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:148
+    // salt = GlobalState<bytes<32>>({ key: PoolGlobalStateKeySalt })
+    bytec 30 // "salt"
+    // smart_contracts/pool/contract.algo.ts:687
+    // this.salt.value = Txn.txId
+    txn TxID
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:689
+    // const fees = getStakingFees(Global.currentApplicationId)
+    global CurrentApplicationID
+    dup
+    frame_bury -1
+    // smart_contracts/utils/functions.ts:49
+    // const [stakingFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysStakingFees))
+    pushbytes "staking_fees"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:690
+    // const impact = getUserImpact(Global.currentApplicationId, this.creator.value)
+    global CurrentApplicationID
+    frame_bury -1
+    // smart_contracts/pool/contract.algo.ts:138
+    // creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
+    intc_0 // 0
+    bytec 11 // "creator"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:102-108
+    // return abiCall(
+    //   AkitaSocialImpactInterface.prototype.getUserImpact,
+    //   {
+    //     appId: getAkitaAppList(akitaDAO).impact,
+    //     args: [new Address(account)]
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    frame_dig -1
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:105
+    // appId: getAkitaAppList(akitaDAO).impact,
+    pushint 104 // 104
+    extract_uint64
+    // smart_contracts/utils/functions.ts:102-108
+    // return abiCall(
+    //   AkitaSocialImpactInterface.prototype.getUserImpact,
+    //   {
+    //     appId: getAkitaAppList(akitaDAO).impact,
+    //     args: [new Address(account)]
+    //   }
+    // ).returnValue
+    pushbytes 0x0a59370d // method "getUserImpact(byte[32])uint64"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    itxn_field ApplicationArgs
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    dup
+    cover 2
+    // smart_contracts/pool/contract.algo.ts:691
+    // this.akitaRoyalty.value = impactRange(impact, fees.impactTaxMin, fees.impactTaxMax)
+    dig 1
+    intc_3 // 8
+    extract_uint64
+    cover 2
+    swap
+    pushint 16 // 16
+    extract_uint64
+    swap
+    // smart_contracts/utils/functions.ts:97
+    // const minImpact: uint64 = (impact > 1) ? impact - 1 : 1
+    intc_1 // 1
+    >
+    bz create_ternary_false@7
+    frame_dig 0
+    intc_1 // 1
+    -
+
+create_ternary_merge@8:
+    // smart_contracts/utils/functions.ts:98
+    // return max - (((max - min) * minImpact) / IMPACT_DIVISOR)
+    frame_dig 2
+    dup
+    frame_dig 1
+    -
+    uncover 2
+    *
+    pushint 1000 // 1000
+    /
+    -
+    // smart_contracts/pool/contract.algo.ts:144
+    // akitaRoyalty = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyalty })
+    bytec 21 // "akita_royalty"
+    // smart_contracts/pool/contract.algo.ts:691
+    // this.akitaRoyalty.value = impactRange(impact, fees.impactTaxMin, fees.impactTaxMax)
+    swap
+    app_global_put
+    retsub
+
+create_ternary_false@7:
+    // smart_contracts/utils/functions.ts:97
+    // const minImpact: uint64 = (impact > 1) ? impact - 1 : 1
+    intc_1 // 1
+    b create_ternary_merge@8
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.init() -> void:
+init:
+    // smart_contracts/pool/contract.algo.ts:695
+    // assert(Global.callerApplicationAddress === Global.creatorAddress, 'only the factory can init the pool')
+    global CallerApplicationAddress
+    global CreatorAddress
+    ==
+    assert // only the factory can init the pool
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    intc_0 // 0
+    bytec 6 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:697
+    // if (this.gateID.value > 0) {
+    bz init_after_if_else@3
+    // smart_contracts/pool/contract.algo.ts:698-704
+    // this.gateSize.value = abiCall(
+    //   GateInterface.prototype.size,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).gate,
+    //     args: [this.gateID.value],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:701
+    // appId: getAkitaAppList(Global.currentApplicationId).gate,
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:701
+    // appId: getAkitaAppList(Global.currentApplicationId).gate,
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    intc_0 // 0
+    bytec 6 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    itob
+    // smart_contracts/pool/contract.algo.ts:698-704
+    // this.gateSize.value = abiCall(
+    //   GateInterface.prototype.size,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).gate,
+    //     args: [this.gateID.value],
+    //   }
+    // ).returnValue
+    pushbytes 0xdf56b01e // method "size(uint64)uint64"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    // smart_contracts/pool/contract.algo.ts:136
+    // gateSize = GlobalState<uint64>({ key: PoolGlobalStateKeyGateSize })
+    pushbytes "gate_size"
+    // smart_contracts/pool/contract.algo.ts:698-704
+    // this.gateSize.value = abiCall(
+    //   GateInterface.prototype.size,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).gate,
+    //     args: [this.gateID.value],
+    //   }
+    // ).returnValue
+    swap
+    app_global_put
+
+init_after_if_else@3:
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.delete(caller: bytes) -> void:
+delete:
+    // smart_contracts/pool/contract.algo.ts:708-709
+    // @abimethod({ allowActions: 'DeleteApplication' })
+    // delete(caller: Address): void {
+    proto 1 0
+    // smart_contracts/pool/contract.algo.ts:710
+    // assert(Txn.sender === Global.creatorAddress, 'call must come from factory')
+    txn Sender
+    global CreatorAddress
+    ==
+    assert // call must come from factory
+    // smart_contracts/pool/contract.algo.ts:138
+    // creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
+    intc_0 // 0
+    bytec 11 // "creator"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:711
+    // assert(caller.native === this.creator.value, 'only the creator can delete the pool')
+    frame_dig -1
+    ==
+    assert // only the creator can delete the pool
+    // smart_contracts/pool/contract.algo.ts:105
+    // status = GlobalState<PoolStatus>({ key: PoolGlobalStateKeyStatus })
+    intc_0 // 0
+    bytec 10 // "status"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:712
+    // assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
+    bytec_2 // 0x00
+    ==
+    bnz delete_bool_true@2
+    global LatestTimestamp
+    // smart_contracts/pool/contract.algo.ts:117
+    // endTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyEndTimestamp })
+    intc_0 // 0
+    bytec 14 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:712
+    // assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
+    >
+    bz delete_bool_false@3
+
+delete_bool_true@2:
+    intc_1 // 1
+
+delete_bool_merge@4:
+    // smart_contracts/pool/contract.algo.ts:712
+    // assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
+    assert // the pool must be in draft or ended
+    retsub
+
+delete_bool_false@3:
+    intc_0 // 0
+    b delete_bool_merge@4
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.optin(payment: uint64, asset: uint64) -> void:
+optin:
+    // smart_contracts/pool/contract.algo.ts:722
+    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    proto 2 0
+    // smart_contracts/pool/contract.algo.ts:723
+    // assert(Txn.sender === this.creator.value, ERR_FORBIDDEN)
+    txn Sender
+    // smart_contracts/pool/contract.algo.ts:138
+    // creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
+    intc_0 // 0
+    bytec 11 // "creator"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:723
+    // assert(Txn.sender === this.creator.value, ERR_FORBIDDEN)
+    ==
+    assert // Forbidden
+    // smart_contracts/pool/contract.algo.ts:727
+    // const daoEscrowNeedsToOptIn = !Global.zeroAddress.isOptedIn(Asset(asset))
+    global ZeroAddress
+    frame_dig -1
+    asset_holding_get AssetBalance
+    bury 1
+    !
+    // smart_contracts/pool/contract.algo.ts:731
+    // Global.assetOptInMinBalance * (
+    global AssetOptInMinBalance
+    // smart_contracts/pool/contract.algo.ts:732
+    // daoEscrowNeedsToOptIn ? 4 : 1
+    intc_1 // 1
+    pushint 4 // 4
+    uncover 3
+    select
+    // smart_contracts/pool/contract.algo.ts:731-733
+    // Global.assetOptInMinBalance * (
+    //   daoEscrowNeedsToOptIn ? 4 : 1
+    // )
+    *
+    // smart_contracts/pool/contract.algo.ts:738-745
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: optinMBR + rewardsMBR,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/pool/contract.algo.ts:741
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/pool/contract.algo.ts:738-745
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: optinMBR + rewardsMBR,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/pool/contract.algo.ts:742
+    // amount: optinMBR + rewardsMBR,
+    uncover 2
+    // smart_contracts/pool/contract.algo.ts:736
+    // const rewardsMBR: uint64 = this.rewardsMbr(WinnerCountCap) * 2
+    pushint 8000 // 8000
+    // smart_contracts/pool/contract.algo.ts:742
+    // amount: optinMBR + rewardsMBR,
+    +
+    // smart_contracts/pool/contract.algo.ts:738-745
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: optinMBR + rewardsMBR,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    &&
+    assert // Invalid payment
+    // smart_contracts/pool/contract.algo.ts:747-753
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     assetAmount: 0,
+    //     xferAsset: asset,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:749
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    frame_dig -1
+    itxn_field XferAsset
+    // smart_contracts/pool/contract.algo.ts:750
+    // assetAmount: 0,
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    // smart_contracts/pool/contract.algo.ts:747-752
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     assetAmount: 0,
+    //     xferAsset: asset,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/contract.algo.ts:747-753
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     assetAmount: 0,
+    //     xferAsset: asset,
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/pool/contract.algo.ts:756
+    // AkitaDAOEscrowAccountStakingPools,
+    pushbytes "staking_pools"
+    // smart_contracts/pool/contract.algo.ts:755-759
+    // this.optAkitaEscrowInAndSend(
+    //   AkitaDAOEscrowAccountStakingPools,
+    //   Asset(asset),
+    //   0
+    // )
+    frame_dig -1
+    // smart_contracts/pool/contract.algo.ts:758
+    // 0
+    intc_0 // 0
+    // smart_contracts/pool/contract.algo.ts:755-759
+    // this.optAkitaEscrowInAndSend(
+    //   AkitaDAOEscrowAccountStakingPools,
+    //   Asset(asset),
+    //   0
+    // )
+    callsub optAkitaEscrowInAndSend
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.addReward(payment: uint64, reward: bytes) -> bytes:
+addReward:
+    // smart_contracts/pool/contract.algo.ts:762
+    // addReward(payment: gtxn.PaymentTxn, reward: Reward): void {
+    proto 2 1
+    intc_0 // 0
+    pushbytes ""
+    // smart_contracts/pool/contract.algo.ts:763
+    // assert(Txn.sender === this.creator.value, ERR_FORBIDDEN)
+    txn Sender
+    // smart_contracts/pool/contract.algo.ts:138
+    // creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
+    intc_0 // 0
+    bytec 11 // "creator"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:763
+    // assert(Txn.sender === this.creator.value, ERR_FORBIDDEN)
+    ==
+    assert // Forbidden
+    // smart_contracts/pool/contract.algo.ts:764
+    // assert(reward.asset === 0, ERR_NOT_ALGO)
+    frame_dig -1
+    intc_0 // 0
+    extract_uint64
+    !
+    assert // Must be an Algo asset
+    // smart_contracts/pool/contract.algo.ts:130
+    // stakeKey = GlobalState<RootKey>({ key: PoolGlobalStateKeyStakeKey })
+    intc_0 // 0
+    bytec 20 // "stake_key"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:641
+    // this.stakeKey.value.address.native !== Global.zeroAddress || reward.distribution !== DistributionTypePercentage,
+    extract 0 32
+    global ZeroAddress
+    !=
+    bnz addReward_bool_true@7
+    frame_dig -1
+    extract 8 1
+    bytec 5 // 0x0a
+    !=
+    bz addReward_bool_false@8
+
+addReward_bool_true@7:
+    intc_1 // 1
+
+addReward_bool_merge@9:
+    // smart_contracts/pool/contract.algo.ts:640-643
+    // assert(
+    //   this.stakeKey.value.address.native !== Global.zeroAddress || reward.distribution !== DistributionTypePercentage,
+    //   ERR_STAKE_KEY_REQUIRED
+    // )
+    assert // Stake key required
+    // smart_contracts/pool/contract.algo.ts:646
+    // if (reward.distribution === DistributionTypeShuffle) {
+    frame_dig -1
+    extract 8 1
+    dup
+    frame_bury 0
+    pushbytes 0x28
+    ==
+    bz addReward_after_if_else@15
+    // smart_contracts/pool/contract.algo.ts:647
+    // assert(reward.rate > reward.winnerCount && reward.winnerCount <= WinnerCountCap, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT)
+    frame_dig -1
+    pushint 9 // 9
+    extract_uint64
+    frame_dig -1
+    pushint 49 // 49
+    extract_uint64
+    dup
+    frame_bury 1
+    >
+    bz addReward_bool_false@13
+    frame_dig 1
+    pushint 10 // 10
+    <=
+    bz addReward_bool_false@13
+    intc_1 // 1
+
+addReward_bool_merge@14:
+    // smart_contracts/pool/contract.algo.ts:647
+    // assert(reward.rate > reward.winnerCount && reward.winnerCount <= WinnerCountCap, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT)
+    assert // Rate must be greater than winner count
+
+addReward_after_if_else@15:
+    // smart_contracts/pool/contract.algo.ts:651
+    // if (reward.distribution === DistributionTypeEven) {
+    frame_dig 0
+    bytec 12 // 0x1e
+    ==
+    bz addReward_after_if_else@21
+    // smart_contracts/pool/contract.algo.ts:119
+    // maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
+    intc_0 // 0
+    bytec 13 // "max_entries"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:652
+    // assert(this.maxEntries.value === 0 || this.maxEntries.value <= reward.rate, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE)
+    bz addReward_bool_true@18
+    // smart_contracts/pool/contract.algo.ts:119
+    // maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
+    intc_0 // 0
+    bytec 13 // "max_entries"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:652
+    // assert(this.maxEntries.value === 0 || this.maxEntries.value <= reward.rate, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE)
+    frame_dig -1
+    pushint 9 // 9
+    extract_uint64
+    <=
+    bz addReward_bool_false@19
+
+addReward_bool_true@18:
+    intc_1 // 1
+
+addReward_bool_merge@20:
+    // smart_contracts/pool/contract.algo.ts:652
+    // assert(this.maxEntries.value === 0 || this.maxEntries.value <= reward.rate, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE)
+    assert // Max entries cannot be greater than rate
+
+addReward_after_if_else@21:
+    // smart_contracts/pool/contract.algo.ts:655
+    // assert(reward.rate > 0, ERR_RATE_MUST_BE_GREATER_THAN_ZERO)
+    frame_dig -1
+    pushint 9 // 9
+    extract_uint64
+    assert // Rate must be greater than zero
+    // smart_contracts/pool/contract.algo.ts:768-777
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       greaterThanEq: this.rewardsMbr(reward.winnerCount)
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -2
+    gtxns Receiver
+    // smart_contracts/pool/contract.algo.ts:771
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/pool/contract.algo.ts:768-777
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       greaterThanEq: this.rewardsMbr(reward.winnerCount)
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    frame_dig -2
+    gtxns Amount
+    // smart_contracts/pool/contract.algo.ts:773
+    // greaterThanEq: this.rewardsMbr(reward.winnerCount)
+    frame_dig -1
+    pushint 49 // 49
+    extract_uint64
+    // smart_contracts/pool/base.ts:9
+    // return MinPoolRewardsMBR + (BoxCostPerByte * winningTickets)
+    intc 4 // 400
+    *
+    // smart_contracts/pool/contract.algo.ts:768-777
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: {
+    //       greaterThanEq: this.rewardsMbr(reward.winnerCount)
+    //     }
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    >=
+    &&
+    assert // Invalid payment
+    // smart_contracts/pool/contract.algo.ts:123
+    // rewardID = GlobalState<uint64>({ key: PoolGlobalStateKeyRewardCount })
+    intc_0 // 0
+    bytec 25 // "reward_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:174
+    // this.rewardID.value += 1
+    dup
+    intc_1 // 1
+    +
+    // smart_contracts/pool/contract.algo.ts:123
+    // rewardID = GlobalState<uint64>({ key: PoolGlobalStateKeyRewardCount })
+    bytec 25 // "reward_count"
+    // smart_contracts/pool/contract.algo.ts:174
+    // this.rewardID.value += 1
+    swap
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:780
+    // this.rewards(id).value = clone(reward)
+    itob
+    // smart_contracts/pool/contract.algo.ts:159
+    // rewards = BoxMap<uint64, Reward>({ keyPrefix: PoolBoxPrefixRewards })
+    bytec 15 // "r"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:780
+    // this.rewards(id).value = clone(reward)
+    dup
+    box_del
+    pop
+    frame_dig -1
+    box_put
+    frame_dig -1
+    frame_bury 0
+    retsub
+
+addReward_bool_false@19:
+    intc_0 // 0
+    b addReward_bool_merge@20
+
+addReward_bool_false@13:
+    intc_0 // 0
+    b addReward_bool_merge@14
+
+addReward_bool_false@8:
+    intc_0 // 0
+    b addReward_bool_merge@9
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.addRewardAsa(payment: uint64, assetXfer: uint64, reward: bytes) -> void:
+addRewardAsa:
+    // smart_contracts/pool/contract.algo.ts:783
+    // addRewardAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, reward: Reward): void {
+    proto 3 0
+    // smart_contracts/pool/contract.algo.ts:784-794
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: Asset(reward.asset),
+    //     assetAmount: {
+    //       greaterThan: 0
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    frame_dig -2
+    gtxns AssetReceiver
+    // smart_contracts/pool/contract.algo.ts:787
+    // assetReceiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/pool/contract.algo.ts:784-794
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: Asset(reward.asset),
+    //     assetAmount: {
+    //       greaterThan: 0
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    frame_dig -2
+    gtxns XferAsset
+    // smart_contracts/pool/contract.algo.ts:788
+    // xferAsset: Asset(reward.asset),
+    frame_dig -1
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:784-794
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: Asset(reward.asset),
+    //     assetAmount: {
+    //       greaterThan: 0
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    &&
+    frame_dig -2
+    gtxns AssetAmount
+    // smart_contracts/pool/contract.algo.ts:790
+    // greaterThan: 0
+    intc_0 // 0
+    // smart_contracts/pool/contract.algo.ts:784-794
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     xferAsset: Asset(reward.asset),
+    //     assetAmount: {
+    //       greaterThan: 0
+    //     }
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    >
+    &&
+    assert // Invalid transfer
+    // smart_contracts/pool/contract.algo.ts:796
+    // this.addReward(payment, reward)
+    frame_dig -3
+    frame_dig -1
+    callsub addReward
+    frame_bury -1
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) -> void:
+finalize:
+    // smart_contracts/pool/contract.algo.ts:799
+    // finalize(signupTimestamp: uint64, startTimestamp: uint64, endTimestamp: uint64) {
+    proto 3 0
+    pushbytes ""
+    // smart_contracts/pool/contract.algo.ts:800
+    // assert(Txn.sender === this.creator.value, 'only the creator can finalize the pool')
+    txn Sender
+    // smart_contracts/pool/contract.algo.ts:138
+    // creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
+    intc_0 // 0
+    bytec 11 // "creator"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:800
+    // assert(Txn.sender === this.creator.value, 'only the creator can finalize the pool')
+    ==
+    assert // only the creator can finalize the pool
+    // smart_contracts/pool/contract.algo.ts:105
+    // status = GlobalState<PoolStatus>({ key: PoolGlobalStateKeyStatus })
+    intc_0 // 0
+    bytec 10 // "status"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:801
+    // assert(this.status.value === PoolStatusDraft, 'the pool must be in draft state to finalize')
+    bytec_2 // 0x00
+    ==
+    assert // the pool must be in draft state to finalize
+    // smart_contracts/pool/contract.algo.ts:803
+    // signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
+    frame_dig -3
+    global LatestTimestamp
+    >
+    bnz finalize_bool_true@3
+    frame_dig -3
+    bnz finalize_bool_false@4
+    // smart_contracts/pool/contract.algo.ts:113
+    // allowLateSignups = GlobalState<boolean>({ key: PoolGlobalStateKeyAllowLateSignups })
+    intc_0 // 0
+    bytec 22 // "allow_late_signups"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:803
+    // signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
+    bz finalize_bool_false@4
+
+finalize_bool_true@3:
+    intc_1 // 1
+
+finalize_bool_merge@5:
+    // smart_contracts/pool/contract.algo.ts:802-805
+    // assert(
+    //   signupTimestamp > Global.latestTimestamp || (signupTimestamp === 0 && this.allowLateSignups.value),
+    //   'the signup round must be zero and late sign ups allowed or in the future'
+    // )
+    assert // the signup round must be zero and late sign ups allowed or in the future
+    // smart_contracts/pool/contract.algo.ts:808-809
+    // startTimestamp === 0 ||
+    // startTimestamp > Global.latestTimestamp,
+    frame_dig -2
+    bz finalize_bool_true@7
+    // smart_contracts/pool/contract.algo.ts:809
+    // startTimestamp > Global.latestTimestamp,
+    frame_dig -2
+    global LatestTimestamp
+    >
+    // smart_contracts/pool/contract.algo.ts:808-809
+    // startTimestamp === 0 ||
+    // startTimestamp > Global.latestTimestamp,
+    bz finalize_bool_false@8
+
+finalize_bool_true@7:
+    intc_1 // 1
+
+finalize_bool_merge@9:
+    // smart_contracts/pool/contract.algo.ts:807-811
+    // assert(
+    //   startTimestamp === 0 ||
+    //   startTimestamp > Global.latestTimestamp,
+    //   'the starting round must be zero or in the future'
+    // )
+    assert // the starting round must be zero or in the future
+    frame_dig -2
+    frame_bury 0
+    // smart_contracts/pool/contract.algo.ts:813
+    // if (startTimestamp === 0) {
+    frame_dig -2
+    bnz finalize_after_if_else@15
+    // smart_contracts/pool/contract.algo.ts:814
+    // assert(signupTimestamp === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
+    frame_dig -3
+    bnz finalize_bool_false@13
+    // smart_contracts/pool/contract.algo.ts:113
+    // allowLateSignups = GlobalState<boolean>({ key: PoolGlobalStateKeyAllowLateSignups })
+    intc_0 // 0
+    bytec 22 // "allow_late_signups"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:814
+    // assert(signupTimestamp === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
+    bz finalize_bool_false@13
+    intc_1 // 1
+
+finalize_bool_merge@14:
+    // smart_contracts/pool/contract.algo.ts:814
+    // assert(signupTimestamp === 0 && this.allowLateSignups.value, 'if the starting round is zero, the signup round must be zero and allowLateSignups must be true')
+    assert // if the starting round is zero, the signup round must be zero and allowLateSignups must be true
+    // smart_contracts/pool/contract.algo.ts:815
+    // startTimestamp = Global.latestTimestamp
+    global LatestTimestamp
+    dup
+    frame_bury -2
+    frame_bury 0
+
+finalize_after_if_else@15:
+    frame_dig 0
+    frame_bury -2
+    // smart_contracts/pool/contract.algo.ts:819
+    // endTimestamp === 0 || endTimestamp > (startTimestamp + 10),
+    frame_dig -1
+    bz finalize_bool_true@17
+    frame_dig -2
+    pushint 10 // 10
+    +
+    frame_dig -1
+    <
+    bz finalize_bool_false@18
+
+finalize_bool_true@17:
+    intc_1 // 1
+
+finalize_bool_merge@19:
+    // smart_contracts/pool/contract.algo.ts:818-821
+    // assert(
+    //   endTimestamp === 0 || endTimestamp > (startTimestamp + 10),
+    //   'the ending round must be zero or after the starting round + 10'
+    // )
+    assert // the ending round must be zero or after the starting round + 10
+    // smart_contracts/pool/contract.algo.ts:111
+    // signupTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeySignupTimestamp })
+    bytec 26 // "signup_timestamp"
+    // smart_contracts/pool/contract.algo.ts:823
+    // this.signupTimestamp.value = signupTimestamp
+    frame_dig -3
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:115
+    // startTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyStartTimestamp })
+    bytec 16 // "start_timestamp"
+    // smart_contracts/pool/contract.algo.ts:824
+    // this.startTimestamp.value = startTimestamp
+    frame_dig -2
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:117
+    // endTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyEndTimestamp })
+    bytec 14 // "end_timestamp"
+    // smart_contracts/pool/contract.algo.ts:825
+    // this.endTimestamp.value = endTimestamp
+    frame_dig -1
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:105
+    // status = GlobalState<PoolStatus>({ key: PoolGlobalStateKeyStatus })
+    bytec 10 // "status"
+    // smart_contracts/pool/contract.algo.ts:826
+    // this.status.value = PoolStatusFinal
+    bytec 5 // 0x0a
+    app_global_put
+    retsub
+
+finalize_bool_false@18:
+    intc_0 // 0
+    b finalize_bool_merge@19
+
+finalize_bool_false@13:
+    intc_0 // 0
+    b finalize_bool_merge@14
+
+finalize_bool_false@8:
+    intc_0 // 0
+    b finalize_bool_merge@9
+
+finalize_bool_false@4:
+    intc_0 // 0
+    b finalize_bool_merge@5
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.enter(payment: uint64, entries: bytes, args: bytes) -> void:
+enter:
+    // smart_contracts/pool/contract.algo.ts:829
+    // enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
+    proto 3 0
+    intc_0 // 0
+    dupn 3
+    pushbytes ""
+    dupn 6
+    // smart_contracts/pool/contract.algo.ts:831
+    // assert(this.isLive(), 'the pool is not live')
+    callsub isLive
+    assert // the pool is not live
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    intc_0 // 0
+    bytec 6 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    frame_dig -1
+    swap
+    // smart_contracts/pool/contract.algo.ts:833
+    // if (this.gateID.value !== 0) {
+    bz enter_after_if_else@2
+    // smart_contracts/pool/contract.algo.ts:834
+    // const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, Txn.sender)
+    global CurrentApplicationID
+    txn Sender
+    callsub getWalletIDUsingAkitaDAO
+    dup
+    frame_bury 10
+    // smart_contracts/utils/functions.ts:119
+    // return originOr(walletID, Txn.sender)
+    txn Sender
+    frame_bury 3
+    // smart_contracts/utils/functions.ts:112
+    // if (walletID.id === 0) {
+    bnz enter_after_if_else@25
+    frame_dig 3
+
+enter_after_inlined_smart_contracts/utils/functions.ts::originOr@26:
+    // smart_contracts/pool/contract.algo.ts:837
+    // gateCall(Global.currentApplicationId, origin, this.gateID.value, args),
+    global CurrentApplicationID
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    intc_0 // 0
+    bytec 6 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:837
+    // gateCall(Global.currentApplicationId, origin, this.gateID.value, args),
+    swap
+    cover 2
+    frame_dig -1
+    callsub gateCall
+    frame_bury -1
+    // smart_contracts/pool/contract.algo.ts:836-839
+    // assert(
+    //   gateCall(Global.currentApplicationId, origin, this.gateID.value, args),
+    //   'user does not meet gate requirements'
+    // )
+    assert // user does not meet gate requirements
+    frame_dig -1
+    frame_bury 11
+
+enter_after_if_else@2:
+    frame_dig 11
+    frame_bury -1
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:843
+    // (this.entryID.value + 1) < this.maxEntries.value ||
+    intc_1 // 1
+    +
+    // smart_contracts/pool/contract.algo.ts:119
+    // maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
+    intc_0 // 0
+    bytec 13 // "max_entries"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:843
+    // (this.entryID.value + 1) < this.maxEntries.value ||
+    <
+    // smart_contracts/pool/contract.algo.ts:843-844
+    // (this.entryID.value + 1) < this.maxEntries.value ||
+    // this.maxEntries.value === 0,
+    bnz enter_bool_true@4
+    // smart_contracts/pool/contract.algo.ts:119
+    // maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
+    intc_0 // 0
+    bytec 13 // "max_entries"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:843-844
+    // (this.entryID.value + 1) < this.maxEntries.value ||
+    // this.maxEntries.value === 0,
+    bnz enter_bool_false@5
+
+enter_bool_true@4:
+    intc_1 // 1
+
+enter_bool_merge@6:
+    // smart_contracts/pool/contract.algo.ts:842-846
+    // assert(
+    //   (this.entryID.value + 1) < this.maxEntries.value ||
+    //   this.maxEntries.value === 0,
+    //   'pool has reached maximum entries'
+    // )
+    assert // pool has reached maximum entries
+    // smart_contracts/pool/contract.algo.ts:850
+    // let total: uint64 = entryMBR * entries.length
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16
+    dup
+    frame_bury 4
+    pushint 50600 // 50600
+    *
+    dup
+    frame_bury 7
+    // smart_contracts/pool/contract.algo.ts:155
+    // uniques = BoxMap<Account, uint64>({ keyPrefix: PoolGlobalStateKeyUniques })
+    pushbytes "u"
+    // smart_contracts/pool/contract.algo.ts:851
+    // if (!this.uniques(Txn.sender).exists) {
+    txn Sender
+    // smart_contracts/pool/contract.algo.ts:155
+    // uniques = BoxMap<Account, uint64>({ keyPrefix: PoolGlobalStateKeyUniques })
+    concat
+    // smart_contracts/pool/contract.algo.ts:851
+    // if (!this.uniques(Txn.sender).exists) {
+    box_len
+    bury 1
+    swap
+    frame_bury 8
+    bnz enter_after_if_else@8
+    // smart_contracts/pool/contract.algo.ts:852
+    // total += PoolUniquesMBR
+    frame_dig 7
+    pushint 18900 // 18900
+    +
+    frame_bury 8
+
+enter_after_if_else@8:
+    frame_dig 8
+    // smart_contracts/pool/contract.algo.ts:855-862
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: total,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -3
+    gtxns Receiver
+    // smart_contracts/pool/contract.algo.ts:858
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/pool/contract.algo.ts:855-862
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: total,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    frame_dig -3
+    gtxns Amount
+    uncover 2
+    ==
+    &&
+    assert // Invalid payment
+    // smart_contracts/pool/contract.algo.ts:130
+    // stakeKey = GlobalState<RootKey>({ key: PoolGlobalStateKeyStakeKey })
+    intc_0 // 0
+    bytec 20 // "stake_key"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    extract 0 32
+    frame_bury 0
+    dup
+    pushint 32 // 32
+    extract_uint16
+    dig 1
+    len
+    substring3
+    frame_bury 1
+    // smart_contracts/pool/contract.algo.ts:866
+    // for (let i: uint64 = 0; i < entries.length; i++) {
+    intc_0 // 0
+    frame_bury 6
+
+enter_while_top@9:
+    // smart_contracts/pool/contract.algo.ts:866
+    // for (let i: uint64 = 0; i < entries.length; i++) {
+    frame_dig 6
+    frame_dig 4
+    <
+    bz enter_after_while@22
+    // smart_contracts/pool/contract.algo.ts:867
+    // assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
+    frame_dig -2
+    extract 2 0
+    frame_dig 6
+    dup
+    cover 2
+    pushint 2 // 2
+    *
+    dig 1
+    swap
+    extract_uint16
+    uncover 2
+    intc_1 // 1
+    +
+    dup
+    frame_bury 6
+    frame_dig 4
+    dig 1
+    - // on error: index access is out of bounds
+    dig 3
+    len
+    uncover 2
+    pushint 2 // 2
+    *
+    dig 4
+    swap
+    extract_uint16
+    uncover 2
+    select
+    substring3
+    dup
+    frame_bury 2
+    intc_3 // 8
+    extract_uint64
+    dup
+    frame_bury 9
+    // smart_contracts/pool/contract.algo.ts:132
+    // minimumStakeAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyMinimumStakeAmount })
+    intc_0 // 0
+    bytec 24 // "minimum_stake_amount"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:867
+    // assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
+    >=
+    assert // quantity is less than minimum stake amount
+    // smart_contracts/pool/contract.algo.ts:869
+    // if (address.native !== Global.zeroAddress) {
+    frame_dig 0
+    global ZeroAddress
+    !=
+    bz enter_after_if_else@13
+    // smart_contracts/pool/contract.algo.ts:870-882
+    // const verified = abiCall(
+    //   MetaMerklesInterface.prototype.verify,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).metaMerkles,
+    //     args: [
+    //       address,
+    //       name,
+    //       sha256(sha256(itob(entries[i].asset))),
+    //       entries[i].proof,
+    //       MERKLE_TREE_TYPE_ASSET,
+    //     ],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:873
+    // appId: getAkitaAppList(Global.currentApplicationId).metaMerkles,
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:873
+    // appId: getAkitaAppList(Global.currentApplicationId).metaMerkles,
+    pushint 72 // 72
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:877
+    // sha256(sha256(itob(entries[i].asset))),
+    frame_dig 2
+    dup
+    intc_0 // 0
+    extract_uint64
+    itob
+    sha256
+    sha256
+    // smart_contracts/pool/contract.algo.ts:878
+    // entries[i].proof,
+    dig 1
+    pushint 16 // 16
+    extract_uint16
+    dig 2
+    len
+    uncover 3
+    cover 2
+    substring3
+    // smart_contracts/pool/contract.algo.ts:879
+    // MERKLE_TREE_TYPE_ASSET,
+    intc_1 // 1
+    itob
+    // smart_contracts/pool/contract.algo.ts:870-882
+    // const verified = abiCall(
+    //   MetaMerklesInterface.prototype.verify,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).metaMerkles,
+    //     args: [
+    //       address,
+    //       name,
+    //       sha256(sha256(itob(entries[i].asset))),
+    //       entries[i].proof,
+    //       MERKLE_TREE_TYPE_ASSET,
+    //     ],
+    //   }
+    // ).returnValue
+    pushbytes 0xc948969b // method "verify(byte[32],string,byte[32],byte[32][],uint64)bool"
+    itxn_field ApplicationArgs
+    frame_dig 0
+    itxn_field ApplicationArgs
+    frame_dig 1
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    intc_0 // 0
+    getbit
+    // smart_contracts/pool/contract.algo.ts:884
+    // assert(verified, 'failed to verify stake requirements')
+    assert // failed to verify stake requirements
+
+enter_after_if_else@13:
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:889
+    // this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
+    bytec 5 // 0x0a
+    ==
+    // smart_contracts/pool/contract.algo.ts:889-890
+    // this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
+    // this.type.value === POOL_STAKING_TYPE_SOFT
+    bnz enter_if_body@15
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:890
+    // this.type.value === POOL_STAKING_TYPE_SOFT
+    bytec 9 // 0x14
+    ==
+    // smart_contracts/pool/contract.algo.ts:889-890
+    // this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
+    // this.type.value === POOL_STAKING_TYPE_SOFT
+    bz enter_after_if_else@20
+
+enter_if_body@15:
+    // smart_contracts/pool/contract.algo.ts:892
+    // const [balance, optedIn] = AssetHolding.assetBalance(Txn.sender, entries[i].asset)
+    txn Sender
+    frame_dig 2
+    intc_0 // 0
+    extract_uint64
+    asset_holding_get AssetBalance
+    swap
+    frame_bury 5
+    // smart_contracts/pool/contract.algo.ts:893
+    // assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
+    bz enter_bool_false@18
+    frame_dig 5
+    frame_dig 9
+    >=
+    bz enter_bool_false@18
+    intc_1 // 1
+
+enter_bool_merge@19:
+    // smart_contracts/pool/contract.algo.ts:893
+    // assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
+    assert // user does not have min balance
+
+enter_after_if_else@20:
+    // smart_contracts/pool/contract.algo.ts:896-908
+    // const stakeInfo = abiCall(
+    //   StakingInterface.prototype.getInfo,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [
+    //       new Address(Txn.sender),
+    //       {
+    //         asset: entries[i].asset,
+    //         type: this.stakingType(),
+    //       },
+    //     ],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:899
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:899
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:901
+    // new Address(Txn.sender),
+    txn Sender
+    // smart_contracts/pool/contract.algo.ts:903
+    // asset: entries[i].asset,
+    frame_dig 2
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:904
+    // type: this.stakingType(),
+    callsub stakingType
+    // smart_contracts/pool/contract.algo.ts:902-905
+    // {
+    //   asset: entries[i].asset,
+    //   type: this.stakingType(),
+    // },
+    swap
+    itob
+    dup
+    uncover 2
+    concat
+    // smart_contracts/pool/contract.algo.ts:896-908
+    // const stakeInfo = abiCall(
+    //   StakingInterface.prototype.getInfo,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [
+    //       new Address(Txn.sender),
+    //       {
+    //         asset: entries[i].asset,
+    //         type: this.stakingType(),
+    //       },
+    //     ],
+    //   }
+    // ).returnValue
+    bytec 29 // method "getInfo(byte[32],(uint64,uint8))(uint64,uint64,uint64)"
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    pushint 4 // 4
+    // smart_contracts/pool/contract.algo.ts:910
+    // assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
+    extract_uint64
+    frame_dig 9
+    dup
+    cover 2
+    >=
+    assert // user does not have enough staked
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:168
+    // this.entryID.value += 1
+    dup
+    intc_1 // 1
+    +
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    bytec_0 // "entry_count"
+    // smart_contracts/pool/contract.algo.ts:168
+    // this.entryID.value += 1
+    swap
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:914
+    // address: new Address(Txn.sender),
+    txn Sender
+    // smart_contracts/pool/contract.algo.ts:913-919
+    // this.entries(entryID).value = {
+    //   address: new Address(Txn.sender),
+    //   asset: entries[i].asset,
+    //   quantity: entries[i].quantity,
+    //   gateArgs: clone(args),
+    //   disqualified: false
+    // }
+    dig 3
+    concat
+    uncover 2
+    itob
+    concat
+    pushbytes 0x003300
+    concat
+    frame_dig -1
+    concat
+    // smart_contracts/pool/contract.algo.ts:913
+    // this.entries(entryID).value = {
+    swap
+    itob
+    // smart_contracts/pool/contract.algo.ts:153
+    // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+    bytec 8 // "e"
+    dig 1
+    concat
+    // smart_contracts/pool/contract.algo.ts:913-919
+    // this.entries(entryID).value = {
+    //   address: new Address(Txn.sender),
+    //   asset: entries[i].asset,
+    //   quantity: entries[i].quantity,
+    //   gateArgs: clone(args),
+    //   disqualified: false
+    // }
+    dup
+    box_del
+    pop
+    uncover 2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:922
+    // address: new Address(Txn.sender),
+    txn Sender
+    // smart_contracts/pool/contract.algo.ts:921-924
+    // const aKey = {
+    //   address: new Address(Txn.sender),
+    //   asset: entries[i].asset,
+    // }
+    uncover 2
+    concat
+    // smart_contracts/pool/contract.algo.ts:926
+    // this.entriesByAddress(aKey).value = entryID
+    dup
+    extract 0 32
+    swap
+    pushint 32 // 32
+    extract_uint64
+    itob
+    concat
+    // smart_contracts/pool/contract.algo.ts:157
+    // entriesByAddress = BoxMap<EntryKey, uint64>({ keyPrefix: PoolBoxPrefixEntriesByAddress })
+    pushbytes "a"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:926
+    // this.entriesByAddress(aKey).value = entryID
+    swap
+    box_put
+    b enter_while_top@9
+
+enter_bool_false@18:
+    intc_0 // 0
+    b enter_bool_merge@19
+
+enter_after_while@22:
+    retsub
+
+enter_bool_false@5:
+    intc_0 // 0
+    b enter_bool_merge@6
+
+enter_after_if_else@25:
+    // smart_contracts/utils/functions.ts:123-126
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    frame_dig 10
+    // smart_contracts/utils/functions.ts:125
+    // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    bytec 31 // "controlled_address"
+    // smart_contracts/utils/functions.ts:123-126
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:119
+    // return originOr(walletID, Txn.sender)
+    b enter_after_inlined_smart_contracts/utils/functions.ts::originOr@26
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.startDisbursement(rewardID: uint64) -> void:
+startDisbursement:
+    // smart_contracts/pool/contract.algo.ts:930
+    // startDisbursement(rewardID: uint64): void {
+    proto 1 0
+    // smart_contracts/pool/contract.algo.ts:931
+    // assert(this.isLive(), 'the pool is not live')
+    callsub isLive
+    assert // the pool is not live
+    // smart_contracts/pool/contract.algo.ts:932
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    frame_dig -1
+    itob
+    // smart_contracts/pool/contract.algo.ts:159
+    // rewards = BoxMap<uint64, Reward>({ keyPrefix: PoolBoxPrefixRewards })
+    bytec 15 // "r"
+    swap
+    concat
+    dupn 2
+    // smart_contracts/pool/contract.algo.ts:932
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    box_len
+    bury 1
+    assert // reward does not exist
+    // smart_contracts/pool/contract.algo.ts:934
+    // const { phase, interval, lastDisbursementTimestamp, expiration } = this.rewards(rewardID).value
+    box_get
+    pop
+    dup
+    extract 91 1
+    dig 1
+    pushint 25 // 25
+    extract_uint64
+    dig 2
+    pushint 116 // 116
+    extract_uint64
+    cover 3
+    uncover 2
+    pushint 17 // 17
+    extract_uint64
+    cover 2
+    // smart_contracts/pool/contract.algo.ts:936
+    // assert(phase === DisbursementPhaseIdle, 'reward is already in a disbursement phase')
+    swap
+    bytec_2 // 0x00
+    ==
+    assert // reward is already in a disbursement phase
+    // smart_contracts/pool/contract.algo.ts:514
+    // return Global.latestTimestamp - ((Global.latestTimestamp - this.startTimestamp.value) % interval)
+    global LatestTimestamp
+    dup
+    // smart_contracts/pool/contract.algo.ts:115
+    // startTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyStartTimestamp })
+    intc_0 // 0
+    bytec 16 // "start_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:514
+    // return Global.latestTimestamp - ((Global.latestTimestamp - this.startTimestamp.value) % interval)
+    -
+    uncover 2
+    %
+    -
+    dup
+    // smart_contracts/pool/contract.algo.ts:519
+    // return latestWindowStart !== Global.latestTimestamp && last < latestWindowStart
+    global LatestTimestamp
+    !=
+    bz startDisbursement_bool_false@4
+    frame_dig 1
+    frame_dig 3
+    <
+    bz startDisbursement_bool_false@4
+    intc_1 // 1
+
+startDisbursement_bool_merge@5:
+    // smart_contracts/pool/contract.algo.ts:937
+    // assert(this.validWindow(interval, lastDisbursementTimestamp), 'distribution window is not open')
+    assert // distribution window is not open
+    // smart_contracts/pool/contract.algo.ts:107
+    // title = GlobalState<string>({ key: PoolGlobalStateKeyTitle })
+    intc_0 // 0
+    bytec 23 // "title"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:940
+    // `${this.title.value} - Rewards`,
+    pushbytes " - Rewards"
+    concat
+    // smart_contracts/pool/contract.algo.ts:941
+    // Global.latestTimestamp,
+    global LatestTimestamp
+    // smart_contracts/pool/contract.algo.ts:942
+    // Global.latestTimestamp + expiration
+    dup
+    frame_dig 2
+    +
+    // smart_contracts/pool/contract.algo.ts:549
+    // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:549
+    // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:550
+    // const rewardMBR: uint64 = MinDisbursementsMBR + (BoxCostPerByte * Bytes(title).length)
+    dig 3
+    len
+    intc 4 // 400
+    dig 1
+    *
+    pushint 35300 // 35300
+    +
+    // smart_contracts/pool/contract.algo.ts:553
+    // receiver: rewardsApp.address,
+    dig 2
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/pool/contract.algo.ts:557-569
+    // return abiCall(
+    //   RewardsInterface.prototype.createDisbursement,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       mbrPayment,
+    //       title,
+    //       timeToUnlock,
+    //       expiration,
+    //       '',
+    //     ],
+    //   }
+    // ).returnValue
+    itxn_begin
+    itxn_field Receiver
+    itxn_field Amount
+    // smart_contracts/pool/contract.algo.ts:552-555
+    // const mbrPayment = itxn.payment({
+    //   receiver: rewardsApp.address,
+    //   amount: rewardMBR,
+    // })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/contract.algo.ts:557-569
+    // return abiCall(
+    //   RewardsInterface.prototype.createDisbursement,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       mbrPayment,
+    //       title,
+    //       timeToUnlock,
+    //       expiration,
+    //       '',
+    //     ],
+    //   }
+    // ).returnValue
+    itxn_next
+    // smart_contracts/pool/contract.algo.ts:563
+    // title,
+    itob
+    extract 6 2
+    uncover 4
+    concat
+    // smart_contracts/pool/contract.algo.ts:564
+    // timeToUnlock,
+    uncover 3
+    itob
+    // smart_contracts/pool/contract.algo.ts:565
+    // expiration,
+    uncover 3
+    itob
+    // smart_contracts/pool/contract.algo.ts:566
+    // '',
+    intc_0 // 0
+    itob
+    // smart_contracts/pool/contract.algo.ts:557-569
+    // return abiCall(
+    //   RewardsInterface.prototype.createDisbursement,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       mbrPayment,
+    //       title,
+    //       timeToUnlock,
+    //       expiration,
+    //       '',
+    //     ],
+    //   }
+    // ).returnValue
+    pushbytes 0x1c9ebbdb // method "createDisbursement(pay,string,uint64,uint64,string)uint64"
+    itxn_field ApplicationArgs
+    uncover 3
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    // smart_contracts/pool/contract.algo.ts:566
+    // '',
+    bytec 7 // 0x0000
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationID
+    // smart_contracts/pool/contract.algo.ts:557-569
+    // return abiCall(
+    //   RewardsInterface.prototype.createDisbursement,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [
+    //       mbrPayment,
+    //       title,
+    //       timeToUnlock,
+    //       expiration,
+    //       '',
+    //     ],
+    //   }
+    // ).returnValue
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    gitxn 1 LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    // smart_contracts/pool/contract.algo.ts:945
+    // this.rewards(rewardID).value.qualifiedStakers = 0
+    frame_dig 0
+    dup
+    box_get
+    assert // Box must have value
+    dig 3
+    replace2 33
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:946
+    // this.rewards(rewardID).value.qualifiedStake = 0
+    dig 3
+    replace2 41
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:947
+    // this.rewards(rewardID).value.phase = DisbursementPhasePreparation
+    bytec 5 // 0x0a
+    replace2 91
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:948
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    uncover 3
+    replace2 92
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:949
+    // this.rewards(rewardID).value.activeDisbursementID = disbursementID
+    uncover 2
+    replace2 100
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:950
+    // this.rewards(rewardID).value.activeDisbursementRoundStart = Global.round
+    global Round
+    itob
+    replace2 108
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:951
+    // this.rewards(rewardID).value.lastDisbursementTimestamp = Global.latestTimestamp
+    global LatestTimestamp
+    itob
+    replace2 116
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+startDisbursement_bool_false@4:
+    intc_0 // 0
+    b startDisbursement_bool_merge@5
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.raffle(rewardID: uint64) -> void:
+raffle:
+    // smart_contracts/pool/contract.algo.ts:954
+    // raffle(rewardID: uint64): void {
+    proto 1 0
+    intc_0 // 0
+    dupn 3
+    pushbytes ""
+    dupn 7
+    // smart_contracts/pool/contract.algo.ts:955
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    frame_dig -1
+    itob
+    // smart_contracts/pool/contract.algo.ts:159
+    // rewards = BoxMap<uint64, Reward>({ keyPrefix: PoolBoxPrefixRewards })
+    bytec 15 // "r"
+    swap
+    concat
+    dupn 2
+    // smart_contracts/pool/contract.algo.ts:955
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    box_len
+    bury 1
+    assert // reward does not exist
+    // smart_contracts/pool/contract.algo.ts:962
+    // } = clone(this.rewards(rewardID).value)
+    box_get
+    pop
+    dup
+    extract 91 1
+    dig 1
+    pushint 57 // 57
+    extract_uint16
+    dig 2
+    len
+    dig 3
+    cover 2
+    substring3
+    dig 2
+    pushint 108 // 108
+    extract_uint64
+    dig 3
+    pushint 83 // 83
+    extract_uint64
+    uncover 4
+    pushint 41 // 41
+    extract_uint64
+    cover 4
+    // smart_contracts/pool/contract.algo.ts:964
+    // assert(phase === DisbursementPhaseAllocation, ERR_INVALID_DISBURSEMENT_PHASE)
+    uncover 3
+    bytec 9 // 0x14
+    ==
+    assert // Invalid disbursement phase
+    // smart_contracts/pool/contract.algo.ts:965
+    // assert(winningTickets.length === 0, ERR_WINNING_TICKETS_ALREADY_EXIST)
+    uncover 2
+    intc_0 // 0
+    extract_uint16
+    !
+    assert // Winning tickets already exist
+    // smart_contracts/pool/contract.algo.ts:967
+    // const roundToUse: uint64 = activeDisbursementRoundStart + 1 + (4 * vrfFailureCount)
+    swap
+    intc_1 // 1
+    +
+    pushint 4 // 4
+    uncover 2
+    *
+    +
+    // smart_contracts/pool/contract.algo.ts:969-975
+    // const seed = abiCall(
+    //   RandomnessBeacon.prototype.get,
+    //   {
+    //     appId: getOtherAppList(Global.currentApplicationId).vrfBeacon,
+    //     args: [roundToUse, this.salt.value],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:972
+    // appId: getOtherAppList(Global.currentApplicationId).vrfBeacon,
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:35
+    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
+    pushbytes "other_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:972
+    // appId: getOtherAppList(Global.currentApplicationId).vrfBeacon,
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:973
+    // args: [roundToUse, this.salt.value],
+    swap
+    itob
+    // smart_contracts/pool/contract.algo.ts:148
+    // salt = GlobalState<bytes<32>>({ key: PoolGlobalStateKeySalt })
+    intc_0 // 0
+    bytec 30 // "salt"
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:969-975
+    // const seed = abiCall(
+    //   RandomnessBeacon.prototype.get,
+    //   {
+    //     appId: getOtherAppList(Global.currentApplicationId).vrfBeacon,
+    //     args: [roundToUse, this.salt.value],
+    //   }
+    // ).returnValue
+    pushbytes 0x189392c5 // method "get(uint64,byte[])byte[]"
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    extract 6 0
+    dup
+    // smart_contracts/pool/contract.algo.ts:977
+    // if (seed.length === 0) {
+    len
+    dup
+    bnz raffle_after_if_else@3
+    // smart_contracts/pool/contract.algo.ts:978
+    // this.rewards(rewardID).value.vrfFailureCount += 1
+    frame_dig 12
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 83 // 83
+    extract_uint64
+    intc_1 // 1
+    +
+    itob
+    replace2 83
+    dig 1
+    box_del
+    pop
+    box_put
+    // smart_contracts/pool/contract.algo.ts:979
+    // return
+    retsub
+
+raffle_after_if_else@3:
+    // smart_contracts/pool/contract.algo.ts:983
+    // const rngState = pcg64Init(seed.slice(0, 16))
+    intc_0 // 0
+    frame_dig 15
+    dup
+    cover 2
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    pushint 16 // 16
+    dig 2
+    >=
+    pushint 16 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig 14
+    cover 2
+    substring3
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:16
+    // assert(seed.length === 16)
+    dup
+    len
+    pushint 16 // 16
+    ==
+    assert
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:19
+    // __pcg32Init(op.extractUint64(seed, 0), pcgFirstIncrement),
+    dup
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:92
+    // const state = __pcg32Step(0, incr)
+    intc_0 // 0
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    intc 6 // 6364136223846793005
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    dup
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:19
+    // __pcg32Init(op.extractUint64(seed, 0), pcgFirstIncrement),
+    intc 7 // 1442695040888963407
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:93
+    // const [, addLow] = op.addw(state, initialState)
+    uncover 2
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    intc 6 // 6364136223846793005
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:19
+    // __pcg32Init(op.extractUint64(seed, 0), pcgFirstIncrement),
+    intc 7 // 1442695040888963407
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    cover 2
+    pop
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:20
+    // __pcg32Init(op.extractUint64(seed, 8), pcgSecondIncrement),
+    uncover 2
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    swap
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:20
+    // __pcg32Init(op.extractUint64(seed, 8), pcgSecondIncrement),
+    intc 8 // 1442695040888963409
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:93
+    // const [, addLow] = op.addw(state, initialState)
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    intc 6 // 6364136223846793005
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:20
+    // __pcg32Init(op.extractUint64(seed, 8), pcgSecondIncrement),
+    intc 8 // 1442695040888963409
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:18-21
+    // return [
+    //     __pcg32Init(op.extractUint64(seed, 0), pcgFirstIncrement),
+    //     __pcg32Init(op.extractUint64(seed, 8), pcgSecondIncrement),
+    // ]
+    swap
+    itob
+    swap
+    itob
+    concat
+    frame_bury 2
+    // smart_contracts/pool/contract.algo.ts:987
+    // if (upperBound < MAX_UINT64) {
+    frame_dig 13
+    dup
+    intc 10 // 18446744073709551615
+    <
+    swap
+    frame_bury 11
+    bz raffle_after_if_else@5
+    // smart_contracts/pool/contract.algo.ts:988
+    // upperBound += 1
+    frame_dig 13
+    intc_1 // 1
+    +
+    frame_bury 11
+
+raffle_after_if_else@5:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:30
+    // const result = new DynamicArray<arc4.Uint64>()
+    intc_0 // 0
+    itob
+    frame_bury 0
+    bytec 7 // 0x0000
+    frame_bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:42
+    // if (upperBound !== 0) {
+    frame_dig 11
+    bz raffle_else_body@14
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:43
+    // assert(upperBound > 1)
+    frame_dig 11
+    dup
+    intc_1 // 1
+    >
+    assert
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:44
+    // assert(lowerBound < upperBound - 1)
+    intc_1 // 1
+    -
+    dup
+    frame_bury 4
+    // smart_contracts/pool/contract.algo.ts:991
+    // const rngResult = pcg64Random(rngState, 1, upperBound, MaxGlobalStateUint64Array)
+    intc_1 // 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:44
+    // assert(lowerBound < upperBound - 1)
+    >
+    assert
+
+raffle_after_if_else@15:
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:8
+    // const [, addLow] = op.addw(~value, 1)
+    frame_dig 4
+    dup
+    ~
+    intc_1 // 1
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:53
+    // const threshold: uint64 = __uint64Twos(absoluteBound) % absoluteBound
+    swap
+    %
+    frame_bury 10
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    intc_0 // 0
+    frame_bury 7
+    frame_dig 2
+    frame_bury 3
+
+raffle_while_top@16:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    frame_dig 7
+    // smart_contracts/pool/contract.algo.ts:991
+    // const rngResult = pcg64Random(rngState, 1, upperBound, MaxGlobalStateUint64Array)
+    pushint 15 // 15
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    <
+    bz raffle_after_while@22
+
+raffle_while_top@18:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:9
+    // const newState1 = __pcg32Step(state[0], pcgFirstIncrement)
+    frame_dig 3
+    dup
+    intc_0 // 0
+    extract_uint64
+    dup
+    frame_bury 9
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    intc 6 // 6364136223846793005
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:9
+    // const newState1 = __pcg32Step(state[0], pcgFirstIncrement)
+    intc 7 // 1442695040888963407
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    addw
+    dup
+    cover 2
+    frame_bury 5
+    pop
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:10
+    // const newState2 = __pcg32Step(state[1], newState1 === 0 ? op.shl(pcgSecondIncrement, 1) : pcgSecondIncrement)
+    swap
+    intc_3 // 8
+    extract_uint64
+    frame_bury 8
+    bnz raffle_ternary_false@26
+    pushint 2885390081777926818 // 2885390081777926818
+
+raffle_ternary_merge@27:
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
+    // const [, mulLow] = op.mulw(state, pcgMultiplier)
+    frame_dig 8
+    dup
+    intc 6 // 6364136223846793005
+    mulw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
+    // const [, addLow] = op.addw(mulLow, incr)
+    uncover 2
+    addw
+    bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:12
+    // return [[newState1, newState2], op.shl(__pcg32Output(state[0]), 32) | __pcg32Output(state[1])]
+    frame_dig 5
+    itob
+    swap
+    itob
+    concat
+    frame_dig 9
+    callsub __pcg32Output
+    pushint 32 // 32
+    shl
+    uncover 2
+    callsub __pcg32Output
+    |
+    itob
+    concat
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:57
+    // const [newState, candidate] = __pcg64UnboundedRandom(state)
+    dup
+    extract 0 16
+    swap
+    pushint 16 // 16
+    extract_uint64
+    dup
+    frame_bury 6
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:59
+    // if (candidate >= threshold) {
+    frame_dig 10
+    >=
+    bz raffle_after_if_else@20
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:60
+    // result.push(new arc4.Uint64((candidate % absoluteBound) + lowerBound))
+    frame_dig 6
+    frame_dig 4
+    %
+    // smart_contracts/pool/contract.algo.ts:991
+    // const rngResult = pcg64Random(rngState, 1, upperBound, MaxGlobalStateUint64Array)
+    intc_1 // 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:60
+    // result.push(new arc4.Uint64((candidate % absoluteBound) + lowerBound))
+    +
+    itob
+    frame_dig 1
+    dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
+    itob
+    extract 6 2
+    replace2 0
+    frame_bury 1
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:55
+    // for (let i = Uint64(0); i < length; i = i + 1) {
+    frame_dig 7
+    intc_1 // 1
+    +
+    frame_bury 7
+    frame_bury 3
+    b raffle_while_top@16
+
+raffle_after_if_else@20:
+    frame_bury 3
+    b raffle_while_top@18
+
+raffle_ternary_false@26:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:10
+    // const newState2 = __pcg32Step(state[1], newState1 === 0 ? op.shl(pcgSecondIncrement, 1) : pcgSecondIncrement)
+    intc 8 // 1442695040888963409
+    b raffle_ternary_merge@27
+
+raffle_after_while@22:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:67
+    // return [state, result]
+    frame_dig 3
+    pushbytes 0x0012
+    concat
+    frame_dig 1
+    concat
+    // smart_contracts/pool/contract.algo.ts:993
+    // this.rewards(rewardID).value.winningTickets = decodeArc4<uint64[]>(rngResult[1].bytes)
+    dup
+    pushint 16 // 16
+    extract_uint16
+    dig 1
+    len
+    substring3
+    frame_dig 12
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    dup
+    pushint 57 // 57
+    extract_uint16
+    intc_0 // 0
+    swap
+    extract3
+    swap
+    concat
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:994
+    // this.rewards(rewardID).value.vrfFailureCount = 0
+    frame_dig 0
+    replace2 83
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+raffle_else_body@14:
+    // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:50
+    // absoluteBound = op.btoi(Bytes(BigUint(2 ** 64) - BigUint(lowerBound)))
+    intc 10 // 18446744073709551615
+    frame_bury 4
+    b raffle_after_if_else@15
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.disburseRewards(rewardID: uint64, iterationAmount: uint64) -> void:
+disburseRewards:
+    // smart_contracts/pool/contract.algo.ts:997
+    // disburseRewards(rewardID: uint64, iterationAmount: uint64): void {
+    proto 2 0
+    intc_0 // 0
+    dupn 11
+    pushbytes ""
+    dupn 32
+    // smart_contracts/pool/contract.algo.ts:999
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    frame_dig -2
+    itob
+    // smart_contracts/pool/contract.algo.ts:159
+    // rewards = BoxMap<uint64, Reward>({ keyPrefix: PoolBoxPrefixRewards })
+    bytec 15 // "r"
+    swap
+    concat
+    dupn 2
+    // smart_contracts/pool/contract.algo.ts:999
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    box_len
+    bury 1
+    assert // reward does not exist
+    // smart_contracts/pool/contract.algo.ts:1001
+    // const { phase, distribution, winningTickets } = clone(this.rewards(rewardID).value)
+    box_get
+    pop
+    dup
+    extract 91 1
+    dup
+    uncover 2
+    dup
+    extract 8 1
+    cover 2
+    dup
+    pushint 57 // 57
+    extract_uint16
+    dig 1
+    len
+    substring3
+    swap
+    // smart_contracts/pool/contract.algo.ts:1004
+    // phase === DisbursementPhasePreparation ||
+    bytec 5 // 0x0a
+    ==
+    dup
+    // smart_contracts/pool/contract.algo.ts:1004-1005
+    // phase === DisbursementPhasePreparation ||
+    // phase === DisbursementPhaseAllocation,
+    bnz disburseRewards_bool_true@2
+    // smart_contracts/pool/contract.algo.ts:1005
+    // phase === DisbursementPhaseAllocation,
+    frame_dig 46
+    bytec 9 // 0x14
+    ==
+    // smart_contracts/pool/contract.algo.ts:1004-1005
+    // phase === DisbursementPhasePreparation ||
+    // phase === DisbursementPhaseAllocation,
+    bz disburseRewards_bool_false@3
+
+disburseRewards_bool_true@2:
+    intc_1 // 1
+
+disburseRewards_bool_merge@4:
+    // smart_contracts/pool/contract.algo.ts:1003-1007
+    // assert(
+    //   phase === DisbursementPhasePreparation ||
+    //   phase === DisbursementPhaseAllocation,
+    //   ERR_NOT_READY_TO_DISBURSE
+    // )
+    assert // Not ready to disburse
+    // smart_contracts/pool/contract.algo.ts:1009
+    // if (phase === DisbursementPhasePreparation) {
+    frame_dig 49
+    bz disburseRewards_else_body@6
+    // smart_contracts/pool/contract.algo.ts:210
+    // const { disbursementCursor, distribution, rate, asset } = this.rewards(rewardID).value
+    frame_dig 45
+    box_get
+    assert // Box must have value
+    dup
+    pushint 92 // 92
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 27
+    dup
+    extract 8 1
+    frame_bury 47
+    dup
+    pushint 9 // 9
+    extract_uint64
+    frame_bury 36
+    intc_0 // 0
+    extract_uint64
+    frame_bury 17
+    // smart_contracts/pool/contract.algo.ts:211
+    // let count: uint64 = 0
+    intc_0 // 0
+    frame_bury 19
+    // smart_contracts/pool/contract.algo.ts:212
+    // let total: uint64 = 0
+    intc_0 // 0
+    frame_bury 42
+    // smart_contracts/pool/contract.algo.ts:214
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    frame_dig -1
+    +
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:214
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    >
+    bz disburseRewards_after_if_else@85
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:215
+    // iterationAmount = this.entryID.value - disbursementCursor
+    frame_dig 27
+    -
+    frame_bury -1
+
+disburseRewards_after_if_else@85:
+    frame_dig 27
+    frame_bury 31
+
+disburseRewards_while_top@86:
+    // smart_contracts/pool/contract.algo.ts:218
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    frame_dig -1
+    <
+    bz disburseRewards_after_while@103
+    // smart_contracts/pool/contract.algo.ts:219
+    // const { disqualified, address, gateArgs, quantity } = clone(this.entries(id).value)
+    frame_dig 31
+    itob
+    // smart_contracts/pool/contract.algo.ts:153
+    // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+    bytec 8 // "e"
+    swap
+    concat
+    dup
+    frame_bury 8
+    // smart_contracts/pool/contract.algo.ts:219
+    // const { disqualified, address, gateArgs, quantity } = clone(this.entries(id).value)
+    box_get
+    assert // Box must have value
+    dup
+    intc 4 // 400
+    getbit
+    dig 1
+    extract 0 32
+    frame_bury 0
+    dig 1
+    pushint 48 // 48
+    extract_uint16
+    dig 2
+    len
+    dig 3
+    cover 2
+    substring3
+    frame_bury 9
+    swap
+    pushint 40 // 40
+    extract_uint64
+    frame_bury 35
+    // smart_contracts/pool/contract.algo.ts:220
+    // if (disqualified) {
+    bnz disburseRewards_block@102
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:528
+    // if (this.type.value === POOL_STAKING_TYPE_NONE) {
+    bytec_2 // 0x00
+    ==
+    bz disburseRewards_else_body@91
+    // smart_contracts/pool/contract.algo.ts:529
+    // return { valid: true, balance: 0 }
+    pushbytes 0x800000000000000000
+
+disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getStakeValue@94:
+    // smart_contracts/pool/contract.algo.ts:225
+    // const { valid } = this.getStakeValue(id)
+    intc_0 // 0
+    getbit
+    // smart_contracts/pool/contract.algo.ts:226
+    // if (!valid) {
+    bz disburseRewards_block@102
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    intc_0 // 0
+    bytec 6 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:230
+    // if (this.gateID.value !== 0) {
+    bz disburseRewards_after_if_else@101
+    // smart_contracts/pool/contract.algo.ts:231
+    // const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, address.native)
+    global CurrentApplicationID
+    frame_dig 0
+    callsub getWalletIDUsingAkitaDAO
+    dup
+    frame_bury 43
+    // smart_contracts/utils/functions.ts:112
+    // if (walletID.id === 0) {
+    bnz disburseRewards_after_if_else@121
+    frame_dig 0
+
+disburseRewards_after_inlined_smart_contracts/utils/functions.ts::originOr@122:
+    // smart_contracts/pool/contract.algo.ts:234
+    // const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
+    global CurrentApplicationID
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    intc_0 // 0
+    bytec 6 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:234
+    // const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
+    swap
+    cover 2
+    frame_dig 9
+    callsub gateCall
+    pop
+    // smart_contracts/pool/contract.algo.ts:235
+    // if (!passes) {
+    bnz disburseRewards_after_if_else@101
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:236
+    // if (this.type.value !== POOL_STAKING_TYPE_HEARTBEAT) {
+    bytec 5 // 0x0a
+    !=
+    bz disburseRewards_block@102
+    // smart_contracts/pool/contract.algo.ts:237
+    // this.entries(id).value.disqualified = true
+    frame_dig 8
+    dup
+    box_get
+    assert // Box must have value
+    intc 4 // 400
+    intc_1 // 1
+    setbit
+    dig 1
+    box_del
+    pop
+    box_put
+
+disburseRewards_block@102:
+    // smart_contracts/pool/contract.algo.ts:218
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    intc_1 // 1
+    +
+    frame_bury 31
+    b disburseRewards_while_top@86
+
+disburseRewards_after_if_else@101:
+    // smart_contracts/pool/contract.algo.ts:243
+    // count += 1
+    frame_dig 19
+    intc_1 // 1
+    +
+    frame_bury 19
+    // smart_contracts/pool/contract.algo.ts:244
+    // total += quantity
+    frame_dig 42
+    frame_dig 35
+    +
+    frame_bury 42
+    b disburseRewards_block@102
+
+disburseRewards_after_if_else@121:
+    // smart_contracts/utils/functions.ts:123-126
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    frame_dig 43
+    // smart_contracts/utils/functions.ts:125
+    // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    bytec 31 // "controlled_address"
+    // smart_contracts/utils/functions.ts:123-126
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:232
+    // const origin = originOr(wallet, address.native)
+    b disburseRewards_after_inlined_smart_contracts/utils/functions.ts::originOr@122
+
+disburseRewards_else_body@91:
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:530
+    // } else if (this.type.value === POOL_STAKING_TYPE_HEARTBEAT) {
+    bytec 5 // 0x0a
+    ==
+    bz disburseRewards_after_if_else@93
+    // smart_contracts/pool/contract.algo.ts:531
+    // const { address, asset } = this.entries(id).value
+    frame_dig 8
+    box_get
+    assert // Box must have value
+    dup
+    extract 0 32
+    swap
+    extract 32 8
+    // smart_contracts/pool/contract.algo.ts:533-539
+    // const avg = abiCall(
+    //   StakingInterface.prototype.getHeartbeatAverage,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [address, asset, true],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:536
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:536
+    // appId: getAkitaAppList(Global.currentApplicationId).staking,
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:533-539
+    // const avg = abiCall(
+    //   StakingInterface.prototype.getHeartbeatAverage,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [address, asset, true],
+    //   }
+    // ).returnValue
+    pushbytes 0x3e7d259a // method "getHeartbeatAverage(byte[32],uint64,bool)uint64"
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    // smart_contracts/pool/contract.algo.ts:537
+    // args: [address, asset, true],
+    bytec 19 // 0x80
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    // smart_contracts/pool/contract.algo.ts:533-539
+    // const avg = abiCall(
+    //   StakingInterface.prototype.getHeartbeatAverage,
+    //   {
+    //     appId: getAkitaAppList(Global.currentApplicationId).staking,
+    //     args: [address, asset, true],
+    //   }
+    // ).returnValue
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    // smart_contracts/pool/contract.algo.ts:541
+    // return { valid: true, balance: avg }
+    itob
+    bytec 19 // 0x80
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:225
+    // const { valid } = this.getStakeValue(id)
+    b disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getStakeValue@94
+
+disburseRewards_after_if_else@93:
+    // smart_contracts/pool/contract.algo.ts:544
+    // return this.checkByID(id)
+    frame_dig 31
+    callsub checkByID
+    // smart_contracts/pool/contract.algo.ts:225
+    // const { valid } = this.getStakeValue(id)
+    b disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getStakeValue@94
+
+disburseRewards_after_while@103:
+    // smart_contracts/pool/contract.algo.ts:247
+    // this.rewards(rewardID).value.qualifiedStakers += count
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 33 // 33
+    extract_uint64
+    frame_dig 19
+    +
+    itob
+    replace2 33
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:248
+    // this.rewards(rewardID).value.qualifiedStake += total
+    dup
+    pushint 41 // 41
+    extract_uint64
+    frame_dig 42
+    +
+    itob
+    replace2 41
+    dig 1
+    box_del
+    pop
+    box_put
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:250
+    // if (this.entryID.value === disbursementCursor) {
+    frame_dig 27
+    ==
+    bz disburseRewards_else_body@110
+    // smart_contracts/pool/contract.algo.ts:252
+    // this.rewards(rewardID).value.phase = DisbursementPhaseAllocation
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    bytec 9 // 0x14
+    replace2 91
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:253
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    intc_0 // 0
+    itob
+    replace2 92
+    dig 1
+    box_del
+    pop
+    swap
+    dig 1
+    box_put
+    // smart_contracts/pool/contract.algo.ts:255
+    // this.payAkitaRoyalty(distribution, rate, asset, this.rewards(rewardID).value.qualifiedStakers)
+    pushint 33 // 33
+    extract_uint64
+    frame_bury 34
+    // smart_contracts/pool/contract.algo.ts:180
+    // if (distribution === DistributionTypeFlat) {
+    frame_dig 47
+    bytec 9 // 0x14
+    ==
+    bz disburseRewards_else_body@106
+    // smart_contracts/pool/contract.algo.ts:181
+    // amount = calcPercent((qualifiedStakers * rate), this.akitaRoyalty.value)
+    frame_dig 34
+    frame_dig 36
+    *
+    // smart_contracts/pool/contract.algo.ts:144
+    // akitaRoyalty = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyalty })
+    intc_0 // 0
+    bytec 21 // "akita_royalty"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:74
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    dup
+    intc 5 // 100000
+    <=
+    assert // Invalid percentage
+    // smart_contracts/utils/functions.ts:75
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    mulw
+    intc 5 // 100000
+    divw
+    frame_bury 16
+
+disburseRewards_after_if_else@107:
+    // smart_contracts/pool/contract.algo.ts:146
+    // akitaRoyaltyAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyaltyAmount })
+    bytec 17 // "akita_royalty_amount"
+    // smart_contracts/pool/contract.algo.ts:186
+    // this.akitaRoyaltyAmount.value = amount
+    frame_dig 16
+    app_global_put
+    // smart_contracts/pool/contract.algo.ts:189
+    // if (asset === 0) {
+    frame_dig 17
+    bnz disburseRewards_else_body@109
+    // smart_contracts/pool/contract.algo.ts:190-195
+    // itxn
+    //   .payment({
+    //     receiver: Global.zeroAddress,
+    //     amount,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:192
+    // receiver: Global.zeroAddress,
+    global ZeroAddress
+    frame_dig 16
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/pool/contract.algo.ts:190-194
+    // itxn
+    //   .payment({
+    //     receiver: Global.zeroAddress,
+    //     amount,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/contract.algo.ts:190-195
+    // itxn
+    //   .payment({
+    //     receiver: Global.zeroAddress,
+    //     amount,
+    //   })
+    //   .submit()
+    itxn_submit
+
+disburseRewards_after_if_else@24:
+    retsub
+
+disburseRewards_else_body@109:
+    // smart_contracts/pool/contract.algo.ts:197
+    // assert(Global.zeroAddress.isOptedIn(Asset(asset)), ERR_DAO_NOT_OPTED_IN)
+    global ZeroAddress
+    frame_dig 17
+    dup
+    cover 2
+    asset_holding_get AssetBalance
+    bury 1
+    assert // DAO not opted in to the asset
+    // smart_contracts/pool/contract.algo.ts:199-205
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.zeroAddress,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/pool/contract.algo.ts:201
+    // assetReceiver: Global.zeroAddress,
+    global ZeroAddress
+    swap
+    itxn_field XferAsset
+    frame_dig 16
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    // smart_contracts/pool/contract.algo.ts:199-204
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.zeroAddress,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/pool/contract.algo.ts:199-205
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: Global.zeroAddress,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //   })
+    //   .submit()
+    itxn_submit
+    retsub
+
+disburseRewards_else_body@106:
+    // smart_contracts/pool/contract.algo.ts:144
+    // akitaRoyalty = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyalty })
+    intc_0 // 0
+    bytec 21 // "akita_royalty"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:74
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    dup
+    intc 5 // 100000
+    <=
+    assert // Invalid percentage
+    // smart_contracts/utils/functions.ts:75
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    frame_dig 36
+    mulw
+    intc 5 // 100000
+    divw
+    frame_bury 16
+    b disburseRewards_after_if_else@107
+
+disburseRewards_else_body@110:
+    // smart_contracts/pool/contract.algo.ts:258
+    // this.rewards(rewardID).value.disbursementCursor += iterationAmount
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 92 // 92
+    extract_uint64
+    frame_dig -1
+    +
+    itob
+    replace2 92
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+disburseRewards_else_body@6:
+    // smart_contracts/pool/contract.algo.ts:1013
+    // case DistributionTypePercentage: {
+    frame_dig 47
+    bytec 5 // 0x0a
+    ==
+    // smart_contracts/pool/contract.algo.ts:1013-1016
+    // case DistributionTypePercentage: {
+    //   this.createPercentageDisbursement(rewardID, iterationAmount)
+    //   break
+    // }
+    bz disburseRewards_after_if_else@9
+    // smart_contracts/pool/contract.algo.ts:269
+    // } = this.rewards(rewardID).value
+    frame_dig 45
+    box_get
+    assert // Box must have value
+    dup
+    intc_0 // 0
+    extract_uint64
+    frame_bury 17
+    dup
+    pushint 92 // 92
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 27
+    dup
+    pushint 100 // 100
+    extract_uint64
+    frame_bury 12
+    dup
+    pushint 41 // 41
+    extract_uint64
+    frame_bury 33
+    pushint 9 // 9
+    extract_uint64
+    frame_bury 16
+    // smart_contracts/pool/contract.algo.ts:271
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    frame_dig -1
+    +
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:271
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    >
+    bz disburseRewards_after_if_else@73
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:272
+    // iterationAmount = this.entryID.value - disbursementCursor
+    frame_dig 27
+    -
+    frame_bury -1
+
+disburseRewards_after_if_else@73:
+    // smart_contracts/pool/contract.algo.ts:146
+    // akitaRoyaltyAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyaltyAmount })
+    intc_0 // 0
+    bytec 17 // "akita_royalty_amount"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:275
+    // const actualAmount: uint64 = amount - this.akitaRoyaltyAmount.value
+    frame_dig 16
+    swap
+    -
+    frame_bury 13
+    // smart_contracts/pool/contract.algo.ts:276
+    // let allocations: UserAllocation[] = []
+    intc_0 // 0
+    itob
+    frame_bury 2
+    bytec 7 // 0x0000
+    frame_bury 6
+    // smart_contracts/pool/contract.algo.ts:277
+    // let sum: uint64 = 0
+    intc_0 // 0
+    frame_bury 39
+    frame_dig 27
+    frame_bury 31
+
+disburseRewards_while_top@74:
+    // smart_contracts/pool/contract.algo.ts:279
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    frame_dig -1
+    <
+    bz disburseRewards_after_while@79
+    // smart_contracts/pool/contract.algo.ts:280
+    // const { disqualified, quantity, address } = this.entries(id).value
+    frame_dig 31
+    itob
+    // smart_contracts/pool/contract.algo.ts:153
+    // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+    bytec 8 // "e"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:280
+    // const { disqualified, quantity, address } = this.entries(id).value
+    box_get
+    assert // Box must have value
+    dup
+    intc 4 // 400
+    getbit
+    dig 1
+    pushint 40 // 40
+    extract_uint64
+    frame_bury 35
+    swap
+    extract 0 32
+    frame_bury 0
+    // smart_contracts/pool/contract.algo.ts:281
+    // if (disqualified) {
+    bnz disburseRewards_block@78
+    // smart_contracts/utils/functions.ts:79
+    // assert(a < b, ERR_INVALID_PERCENTAGE_OF_ARGS)
+    frame_dig 35
+    dup
+    frame_dig 33
+    dup
+    cover 3
+    <
+    assert // Invalid percentage of args
+    // smart_contracts/utils/functions.ts:80
+    // return op.divw(...op.mulw(a, DIVISOR), b)
+    intc 5 // 100000
+    mulw
+    uncover 2
+    divw
+    // smart_contracts/utils/functions.ts:74
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    dup
+    intc 5 // 100000
+    <=
+    assert // Invalid percentage
+    // smart_contracts/utils/functions.ts:75
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    frame_dig 13
+    mulw
+    intc 5 // 100000
+    divw
+    // smart_contracts/pool/contract.algo.ts:286
+    // allocations.push({ address, amount: individualAmount })
+    dup
+    itob
+    frame_dig 0
+    swap
+    concat
+    frame_dig 6
+    dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
+    itob
+    extract 6 2
+    replace2 0
+    frame_bury 6
+    // smart_contracts/pool/contract.algo.ts:287
+    // sum += individualAmount
+    frame_dig 39
+    +
+    frame_bury 39
+
+disburseRewards_block@78:
+    // smart_contracts/pool/contract.algo.ts:279
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    intc_1 // 1
+    +
+    frame_bury 31
+    b disburseRewards_while_top@74
+
+disburseRewards_after_while@79:
+    // smart_contracts/pool/contract.algo.ts:290
+    // this.rewards(rewardID).value.disbursementCursor += iterationAmount
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 92 // 92
+    extract_uint64
+    frame_dig -1
+    +
+    itob
+    replace2 92
+    dig 1
+    box_del
+    pop
+    box_put
+    // smart_contracts/pool/contract.algo.ts:292
+    // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
+    frame_dig 12
+    frame_dig 17
+    frame_dig 6
+    frame_dig 39
+    callsub createRewardAllocations
+    pop
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:294
+    // if (this.entryID.value === (disbursementCursor + iterationAmount)) {
+    frame_dig 27
+    frame_dig -1
+    +
+    ==
+    bz disburseRewards_after_if_else@24
+    // smart_contracts/pool/contract.algo.ts:295
+    // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    bytec 12 // 0x1e
+    replace2 91
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:296
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    frame_dig 2
+    replace2 92
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+disburseRewards_after_if_else@9:
+    // smart_contracts/pool/contract.algo.ts:1017
+    // case DistributionTypeFlat: {
+    frame_dig 47
+    bytec 9 // 0x14
+    ==
+    // smart_contracts/pool/contract.algo.ts:1017-1020
+    // case DistributionTypeFlat: {
+    //   this.createFlatDisbursement(rewardID, iterationAmount)
+    //   break
+    // }
+    bz disburseRewards_after_if_else@12
+    // smart_contracts/pool/contract.algo.ts:307
+    // } = this.rewards(rewardID).value
+    frame_dig 45
+    box_get
+    assert // Box must have value
+    dup
+    pushint 100 // 100
+    extract_uint64
+    frame_bury 12
+    dup
+    pushint 92 // 92
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 27
+    dup
+    pushint 33 // 33
+    extract_uint64
+    dig 1
+    pushint 9 // 9
+    extract_uint64
+    uncover 2
+    intc_0 // 0
+    extract_uint64
+    dup
+    cover 3
+    frame_bury 17
+    // smart_contracts/pool/contract.algo.ts:309
+    // const total: uint64 = (qualifiedStakers * amount) - this.akitaRoyaltyAmount.value
+    swap
+    dig 1
+    *
+    // smart_contracts/pool/contract.algo.ts:146
+    // akitaRoyaltyAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyaltyAmount })
+    intc_0 // 0
+    bytec 17 // "akita_royalty_amount"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:309
+    // const total: uint64 = (qualifiedStakers * amount) - this.akitaRoyaltyAmount.value
+    -
+    // smart_contracts/pool/contract.algo.ts:144
+    // akitaRoyalty = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyalty })
+    intc_0 // 0
+    bytec 21 // "akita_royalty"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:74
+    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
+    dup
+    intc 5 // 100000
+    <=
+    assert // Invalid percentage
+    // smart_contracts/utils/functions.ts:75
+    // return op.divw(...op.mulw(a, p), DIVISOR)
+    dig 2
+    mulw
+    intc 5 // 100000
+    divw
+    // smart_contracts/pool/contract.algo.ts:311
+    // const adjustedAmount: uint64 = amount - percentageAkitaFee
+    uncover 2
+    swap
+    -
+    frame_bury 15
+    // smart_contracts/pool/contract.algo.ts:312
+    // const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
+    global CurrentApplicationAddress
+    uncover 2
+    asset_holding_get AssetBalance
+    pop
+    // smart_contracts/pool/contract.algo.ts:314
+    // assert(balance >= total, ERR_NOT_ENOUGH_FUNDS)
+    <=
+    assert // Not enough funds
+    // smart_contracts/pool/contract.algo.ts:316
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    frame_dig -1
+    +
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:316
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    >
+    bz disburseRewards_after_if_else@61
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:317
+    // iterationAmount = this.entryID.value - disbursementCursor
+    frame_dig 27
+    -
+    frame_bury -1
+
+disburseRewards_after_if_else@61:
+    // smart_contracts/pool/contract.algo.ts:320
+    // let allocations: UserAllocation[] = []
+    intc_0 // 0
+    itob
+    frame_bury 3
+    bytec 7 // 0x0000
+    frame_bury 6
+    // smart_contracts/pool/contract.algo.ts:321
+    // let sum: uint64 = 0
+    intc_0 // 0
+    frame_bury 39
+    frame_dig 27
+    frame_bury 31
+
+disburseRewards_while_top@62:
+    // smart_contracts/pool/contract.algo.ts:323
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    frame_dig -1
+    <
+    bz disburseRewards_after_while@67
+    // smart_contracts/pool/contract.algo.ts:324
+    // const { disqualified, address } = this.entries(id).value
+    frame_dig 31
+    itob
+    // smart_contracts/pool/contract.algo.ts:153
+    // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+    bytec 8 // "e"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:324
+    // const { disqualified, address } = this.entries(id).value
+    box_get
+    assert // Box must have value
+    dup
+    intc 4 // 400
+    getbit
+    swap
+    extract 0 32
+    frame_bury 0
+    // smart_contracts/pool/contract.algo.ts:325
+    // if (disqualified) {
+    bnz disburseRewards_block@66
+    // smart_contracts/pool/contract.algo.ts:329
+    // allocations.push({ address, amount: adjustedAmount })
+    frame_dig 15
+    dup
+    itob
+    frame_dig 0
+    swap
+    concat
+    frame_dig 6
+    dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
+    itob
+    extract 6 2
+    replace2 0
+    frame_bury 6
+    // smart_contracts/pool/contract.algo.ts:330
+    // sum += adjustedAmount
+    frame_dig 39
+    +
+    frame_bury 39
+
+disburseRewards_block@66:
+    // smart_contracts/pool/contract.algo.ts:323
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    intc_1 // 1
+    +
+    frame_bury 31
+    b disburseRewards_while_top@62
+
+disburseRewards_after_while@67:
+    // smart_contracts/pool/contract.algo.ts:333
+    // const newCursorValue: uint64 = disbursementCursor + iterationAmount
+    frame_dig 27
+    frame_dig -1
+    +
+    // smart_contracts/pool/contract.algo.ts:334
+    // this.rewards(rewardID).value.disbursementCursor = newCursorValue
+    frame_dig 45
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    dig 1
+    itob
+    replace2 92
+    dig 2
+    box_del
+    pop
+    uncover 2
+    swap
+    box_put
+    // smart_contracts/pool/contract.algo.ts:335
+    // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
+    frame_dig 12
+    frame_dig 17
+    frame_dig 6
+    frame_dig 39
+    callsub createRewardAllocations
+    pop
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:337
+    // if (this.entryID.value === newCursorValue) {
+    ==
+    bz disburseRewards_after_if_else@24
+    // smart_contracts/pool/contract.algo.ts:338
+    // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    bytec 12 // 0x1e
+    replace2 91
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:339
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    frame_dig 3
+    replace2 92
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+disburseRewards_after_if_else@12:
+    // smart_contracts/pool/contract.algo.ts:1021
+    // case DistributionTypeEven: {
+    frame_dig 47
+    bytec 12 // 0x1e
+    ==
+    // smart_contracts/pool/contract.algo.ts:1021-1024
+    // case DistributionTypeEven: {
+    //   this.createEvenDisbursement(rewardID, iterationAmount)
+    //   break
+    // }
+    bz disburseRewards_after_if_else@15
+    // smart_contracts/pool/contract.algo.ts:350
+    // } = this.rewards(rewardID).value
+    frame_dig 45
+    box_get
+    assert // Box must have value
+    dup
+    pushint 100 // 100
+    extract_uint64
+    frame_bury 12
+    dup
+    pushint 92 // 92
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 27
+    dup
+    pushint 33 // 33
+    extract_uint64
+    frame_bury 34
+    dup
+    intc_0 // 0
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 17
+    pushint 9 // 9
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 39
+    // smart_contracts/pool/contract.algo.ts:352
+    // const balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
+    global CurrentApplicationAddress
+    swap
+    asset_holding_get AssetBalance
+    pop
+    // smart_contracts/pool/contract.algo.ts:146
+    // akitaRoyaltyAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyaltyAmount })
+    intc_0 // 0
+    bytec 17 // "akita_royalty_amount"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:353
+    // const actualSum: uint64 = sum - this.akitaRoyaltyAmount.value
+    uncover 2
+    swap
+    -
+    dup
+    frame_bury 14
+    // smart_contracts/pool/contract.algo.ts:354
+    // assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
+    >=
+    assert // Not enough funds
+    // smart_contracts/pool/contract.algo.ts:356
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    frame_dig -1
+    +
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:356
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    >
+    bz disburseRewards_after_if_else@49
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:357
+    // iterationAmount = this.entryID.value - disbursementCursor
+    frame_dig 27
+    -
+    frame_bury -1
+
+disburseRewards_after_if_else@49:
+    // smart_contracts/pool/contract.algo.ts:360
+    // const amount: uint64 = actualSum / qualifiedStakers
+    frame_dig 14
+    frame_dig 34
+    /
+    frame_bury 16
+    // smart_contracts/pool/contract.algo.ts:361
+    // let allocations: UserAllocation[] = []
+    intc_0 // 0
+    itob
+    frame_bury 4
+    bytec 7 // 0x0000
+    frame_bury 6
+    frame_dig 27
+    frame_bury 31
+
+disburseRewards_while_top@50:
+    // smart_contracts/pool/contract.algo.ts:362
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    frame_dig -1
+    <
+    bz disburseRewards_after_while@55
+    // smart_contracts/pool/contract.algo.ts:363
+    // const { disqualified, address } = this.entries(id).value
+    frame_dig 31
+    itob
+    // smart_contracts/pool/contract.algo.ts:153
+    // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+    bytec 8 // "e"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:363
+    // const { disqualified, address } = this.entries(id).value
+    box_get
+    assert // Box must have value
+    dup
+    intc 4 // 400
+    getbit
+    swap
+    extract 0 32
+    frame_bury 0
+    // smart_contracts/pool/contract.algo.ts:364
+    // if (disqualified) {
+    bnz disburseRewards_block@54
+    // smart_contracts/pool/contract.algo.ts:368
+    // allocations.push({ address, amount })
+    frame_dig 16
+    itob
+    frame_dig 0
+    swap
+    concat
+    frame_dig 6
+    dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
+    itob
+    extract 6 2
+    replace2 0
+    frame_bury 6
+
+disburseRewards_block@54:
+    // smart_contracts/pool/contract.algo.ts:362
+    // for (let id = disbursementCursor; id < iterationAmount; id++) {
+    frame_dig 31
+    intc_1 // 1
+    +
+    frame_bury 31
+    b disburseRewards_while_top@50
+
+disburseRewards_after_while@55:
+    // smart_contracts/pool/contract.algo.ts:371
+    // const newCursorValue: uint64 = disbursementCursor + iterationAmount
+    frame_dig 27
+    frame_dig -1
+    +
+    // smart_contracts/pool/contract.algo.ts:372
+    // this.rewards(rewardID).value.disbursementCursor = newCursorValue
+    frame_dig 45
+    dup
+    cover 2
+    box_get
+    assert // Box must have value
+    dig 1
+    itob
+    replace2 92
+    dig 2
+    box_del
+    pop
+    uncover 2
+    swap
+    box_put
+    // smart_contracts/pool/contract.algo.ts:373
+    // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
+    frame_dig 12
+    frame_dig 17
+    frame_dig 6
+    frame_dig 39
+    callsub createRewardAllocations
+    pop
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:375
+    // if (this.entryID.value === newCursorValue) {
+    ==
+    bz disburseRewards_after_if_else@24
+    // smart_contracts/pool/contract.algo.ts:376
+    // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    bytec 12 // 0x1e
+    replace2 91
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:377
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    frame_dig 4
+    replace2 92
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+disburseRewards_after_if_else@15:
+    // smart_contracts/pool/contract.algo.ts:1025
+    // case DistributionTypeShuffle: {
+    frame_dig 47
+    pushbytes 0x28
+    ==
+    // smart_contracts/pool/contract.algo.ts:1025-1032
+    // case DistributionTypeShuffle: {
+    //   if (winningTickets.length === 0) {
+    //     this.raffle(rewardID)
+    //   } else {
+    //     this.createShuffleDisbursement(rewardID, iterationAmount)
+    //   }
+    //   break
+    // }
+    assert // unknown reward rate type
+    // smart_contracts/pool/contract.algo.ts:1026
+    // if (winningTickets.length === 0) {
+    frame_dig 48
+    intc_0 // 0
+    extract_uint16
+    bnz disburseRewards_else_body@19
+    // smart_contracts/pool/contract.algo.ts:1027
+    // this.raffle(rewardID)
+    frame_dig -2
+    callsub raffle
+    retsub
+
+disburseRewards_else_body@19:
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
+    frame_dig 45
+    box_get
+    assert // Box must have value
+    dup
+    pushint 100 // 100
+    extract_uint64
+    frame_bury 12
+    dup
+    pushint 92 // 92
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 27
+    dup
+    pushint 49 // 49
+    extract_uint64
+    frame_bury 44
+    dup
+    pushint 57 // 57
+    extract_uint16
+    dig 1
+    len
+    dig 2
+    cover 2
+    substring3
+    frame_bury 11
+    dup
+    intc_0 // 0
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 17
+    dup
+    pushint 9 // 9
+    extract_uint64
+    dup
+    cover 3
+    frame_bury 39
+    extract 59 24
+    frame_bury 10
+    // smart_contracts/pool/contract.algo.ts:392
+    // const balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
+    global CurrentApplicationAddress
+    swap
+    asset_holding_get AssetBalance
+    pop
+    // smart_contracts/pool/contract.algo.ts:146
+    // akitaRoyaltyAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyaltyAmount })
+    intc_0 // 0
+    bytec 17 // "akita_royalty_amount"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:393
+    // const actualSum: uint64 = sum - this.akitaRoyaltyAmount.value
+    uncover 2
+    swap
+    -
+    dup
+    frame_bury 14
+    // smart_contracts/pool/contract.algo.ts:394
+    // assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
+    >=
+    assert // Not enough funds
+    // smart_contracts/pool/contract.algo.ts:396
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    frame_dig -1
+    +
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:396
+    // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
+    >
+    bz disburseRewards_after_if_else@27
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:397
+    // iterationAmount = this.entryID.value - disbursementCursor
+    frame_dig 27
+    -
+    frame_bury -1
+
+disburseRewards_after_if_else@27:
+    frame_dig 14
+    frame_bury 16
+    // smart_contracts/pool/contract.algo.ts:401
+    // if (winnerCount > 0) {
+    frame_dig 44
+    bz disburseRewards_after_if_else@29
+    // smart_contracts/pool/contract.algo.ts:402
+    // amount = actualSum / winnerCount
+    frame_dig 14
+    frame_dig 44
+    /
+    frame_bury 16
+
+disburseRewards_after_if_else@29:
+    // smart_contracts/pool/contract.algo.ts:405
+    // let { stake, ticket, disbursed } = raffleCursor
+    frame_dig 10
+    dup
+    intc_3 // 8
+    extract_uint64
+    dig 1
+    intc_0 // 0
+    extract_uint64
+    dup
+    cover 2
+    frame_bury 40
+    uncover 2
+    pushint 16 // 16
+    extract_uint64
+    frame_bury 25
+    // smart_contracts/pool/contract.algo.ts:406
+    // let currentTicket = tickets[ticket]
+    frame_dig 11
+    extract 2 0
+    dup
+    frame_bury 1
+    uncover 2
+    intc_3 // 8
+    *
+    extract_uint64
+    frame_bury 23
+    // smart_contracts/pool/contract.algo.ts:410
+    // let allocations: UserAllocation[] = []
+    intc_0 // 0
+    itob
+    frame_bury 5
+    bytec 7 // 0x0000
+    frame_bury 6
+    dup
+    frame_bury 22
+    frame_bury 37
+    frame_dig 27
+    frame_bury 29
+
+disburseRewards_while_top@30:
+    // smart_contracts/pool/contract.algo.ts:411
+    // for (let i = disbursementCursor; i < iterationAmount; i++) {
+    frame_dig 29
+    frame_dig -1
+    <
+    bz disburseRewards_block@42
+    // smart_contracts/pool/contract.algo.ts:412
+    // const { disqualified, address, asset, quantity } = this.entries(i).value
+    frame_dig 29
+    dup
+    itob
+    // smart_contracts/pool/contract.algo.ts:153
+    // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
+    bytec 8 // "e"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:412
+    // const { disqualified, address, asset, quantity } = this.entries(i).value
+    box_get
+    assert // Box must have value
+    dup
+    intc 4 // 400
+    getbit
+    frame_bury 28
+    dup
+    extract 0 32
+    frame_bury 0
+    dup
+    pushint 32 // 32
+    extract_uint64
+    frame_bury 18
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:414
+    // currentRangeEnd = currentRangeStart + quantity
+    frame_dig 22
+    dup
+    uncover 2
+    +
+    dup
+    cover 2
+    frame_bury 20
+    // smart_contracts/pool/contract.algo.ts:415
+    // if (currentTicket >= currentRangeStart && currentTicket <= currentRangeEnd) {
+    frame_dig 23
+    dup
+    uncover 2
+    >=
+    frame_dig 37
+    frame_bury 38
+    frame_dig 40
+    frame_bury 41
+    frame_dig 25
+    frame_bury 26
+    frame_dig 6
+    frame_bury 7
+    swap
+    frame_bury 24
+    frame_dig -1
+    frame_bury 32
+    uncover 2
+    frame_bury 30
+    swap
+    frame_bury 21
+    bz disburseRewards_after_if_else@40
+    frame_dig 23
+    dup
+    frame_dig 20
+    dup
+    cover 3
+    <=
+    frame_dig 37
+    frame_bury 38
+    frame_dig 40
+    frame_bury 41
+    frame_dig 25
+    frame_bury 26
+    frame_dig 6
+    frame_bury 7
+    swap
+    frame_bury 24
+    frame_dig -1
+    frame_bury 32
+    frame_dig 29
+    frame_bury 30
+    swap
+    frame_bury 21
+    bz disburseRewards_after_if_else@40
+    frame_dig 6
+    frame_bury 7
+    frame_dig 25
+    frame_bury 26
+    // smart_contracts/pool/contract.algo.ts:416
+    // if (!disqualified) {
+    frame_dig 28
+    bnz disburseRewards_after_if_else@35
+    // smart_contracts/pool/contract.algo.ts:417
+    // allocations.push({ address, amount })
+    frame_dig 16
+    itob
+    frame_dig 0
+    swap
+    concat
+    frame_dig 6
+    dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
+    itob
+    extract 6 2
+    replace2 0
+    // smart_contracts/pool/contract.algo.ts:418
+    // disbursed++
+    frame_dig 25
+    intc_1 // 1
+    +
+    frame_bury 26
+    frame_bury 7
+
+disburseRewards_after_if_else@35:
+    frame_dig 7
+    frame_bury 6
+    frame_dig 26
+    frame_bury 25
+    // smart_contracts/pool/contract.algo.ts:421
+    // if (ticket === tickets.length - 1) {
+    frame_dig 11
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    -
+    frame_dig 40
+    ==
+    bz disburseRewards_after_if_else@39
+    // smart_contracts/pool/contract.algo.ts:423
+    // if (winnerCount !== disbursed) {
+    frame_dig 44
+    frame_dig 25
+    !=
+    bz disburseRewards_block@42
+    // smart_contracts/pool/contract.algo.ts:424
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    frame_dig 5
+    replace2 92
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:425-429
+    // this.rewards(rewardID).value.raffleCursor = {
+    //   ticket: 0,
+    //   stake: 0,
+    //   disbursed: 0,
+    // }
+    bytec 32 // 0x000000000000000000000000000000000000000000000000
+    replace2 59
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:430
+    // this.rewards(rewardID).value.winningTickets = []
+    dup
+    pushint 57 // 57
+    extract_uint16
+    intc_0 // 0
+    swap
+    extract3
+    bytec 7 // 0x0000
+    concat
+    dig 1
+    box_del
+    pop
+    box_put
+    // smart_contracts/pool/contract.algo.ts:431
+    // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
+    frame_dig 12
+    frame_dig 18
+    frame_dig 6
+    frame_dig 39
+    callsub createRewardAllocations
+    pop
+    retsub
+
+disburseRewards_block@42:
+    // smart_contracts/pool/contract.algo.ts:448
+    // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
+    frame_dig 12
+    frame_dig 17
+    frame_dig 6
+    frame_dig 39
+    callsub createRewardAllocations
+    pop
+    // smart_contracts/pool/contract.algo.ts:450
+    // if (winnerCount === disbursed) {
+    frame_dig 44
+    frame_dig 25
+    ==
+    bz disburseRewards_else_body@44
+    // smart_contracts/pool/contract.algo.ts:451
+    // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    bytec 12 // 0x1e
+    replace2 91
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:452
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    frame_dig 5
+    replace2 92
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:453-457
+    // this.rewards(rewardID).value.raffleCursor = {
+    //   ticket: 0,
+    //   stake: 0,
+    //   disbursed: 0,
+    // }
+    bytec 32 // 0x000000000000000000000000000000000000000000000000
+    replace2 59
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:458
+    // this.rewards(rewardID).value.winningTickets = []
+    dup
+    pushint 57 // 57
+    extract_uint16
+    intc_0 // 0
+    swap
+    extract3
+    bytec 7 // 0x0000
+    concat
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+disburseRewards_else_body@44:
+    // smart_contracts/pool/contract.algo.ts:460
+    // this.rewards(rewardID).value.disbursementCursor += iterationAmount
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    dup
+    pushint 92 // 92
+    extract_uint64
+    frame_dig -1
+    +
+    itob
+    replace2 92
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:461
+    // this.rewards(rewardID).value.raffleCursor = { ticket, stake, disbursed }
+    frame_dig 40
+    itob
+    frame_dig 37
+    itob
+    concat
+    frame_dig 25
+    itob
+    concat
+    replace2 59
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+disburseRewards_after_if_else@39:
+    // smart_contracts/pool/contract.algo.ts:437
+    // iterationAmount -= i
+    frame_dig -1
+    frame_dig 29
+    -
+    frame_bury -1
+    // smart_contracts/pool/contract.algo.ts:438
+    // ticket++
+    frame_dig 40
+    intc_1 // 1
+    +
+    // smart_contracts/pool/contract.algo.ts:439
+    // currentTicket = tickets[ticket]
+    dup
+    intc_3 // 8
+    *
+    frame_dig 1
+    swap
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:440
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    frame_dig 45
+    dup
+    box_get
+    assert // Box must have value
+    frame_dig 5
+    replace2 92
+    dig 1
+    box_del
+    pop
+    box_put
+    // smart_contracts/pool/contract.algo.ts:441
+    // i = 0
+    intc_0 // 0
+    // smart_contracts/pool/contract.algo.ts:442-443
+    // stake = 0
+    // currentRangeEnd = 0
+    dupn 2
+    frame_bury 38
+    uncover 3
+    frame_bury 41
+    frame_dig 25
+    frame_bury 26
+    frame_dig 6
+    frame_bury 7
+    uncover 2
+    frame_bury 24
+    frame_dig -1
+    frame_bury 32
+    frame_bury 21
+    frame_bury 30
+
+disburseRewards_after_if_else@40:
+    frame_dig 38
+    frame_bury 37
+    frame_dig 41
+    frame_bury 40
+    frame_dig 26
+    frame_bury 25
+    frame_dig 7
+    frame_bury 6
+    frame_dig 24
+    frame_bury 23
+    frame_dig 32
+    frame_bury -1
+    frame_dig 30
+    frame_dig 21
+    // smart_contracts/pool/contract.algo.ts:445
+    // currentRangeStart = currentRangeEnd + 1
+    intc_1 // 1
+    +
+    frame_bury 22
+    // smart_contracts/pool/contract.algo.ts:411
+    // for (let i = disbursementCursor; i < iterationAmount; i++) {
+    intc_1 // 1
+    +
+    frame_bury 29
+    b disburseRewards_while_top@30
+
+disburseRewards_bool_false@3:
+    intc_0 // 0
+    b disburseRewards_bool_merge@4
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.finalizeDistribution(rewardID: uint64) -> void:
+finalizeDistribution:
+    // smart_contracts/pool/contract.algo.ts:1040
+    // finalizeDistribution(rewardID: uint64): void {
+    proto 1 0
+    // smart_contracts/pool/contract.algo.ts:1041
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    frame_dig -1
+    itob
+    // smart_contracts/pool/contract.algo.ts:159
+    // rewards = BoxMap<uint64, Reward>({ keyPrefix: PoolBoxPrefixRewards })
+    bytec 15 // "r"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:1041
+    // assert(this.rewards(rewardID).exists, 'reward does not exist')
+    dup
+    box_len
+    bury 1
+    assert // reward does not exist
+    // smart_contracts/pool/contract.algo.ts:1042
+    // const { phase, activeDisbursementID } = this.rewards(rewardID).value
+    dup
+    box_get
+    pop
+    dup
+    extract 91 1
+    dig 1
+    extract 100 8
+    uncover 2
+    pushint 100 // 100
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:1043
+    // assert(phase === DisbursementPhaseFinalization, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION)
+    uncover 2
+    bytec 12 // 0x1e
+    ==
+    assert // Disbursement not ready for finalization
+    // smart_contracts/pool/contract.algo.ts:623
+    // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
+    global CurrentApplicationID
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec_3 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/pool/contract.algo.ts:623
+    // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/pool/contract.algo.ts:625-631
+    // abiCall(
+    //   RewardsInterface.prototype.finalizeDisbursement,
+    //   {
+    //     appId: rewardsApp,
+    //     args: [disbursementID],
+    //   }
+    // )
+    itxn_begin
+    pushbytes 0x5424a591 // method "finalizeDisbursement(uint64)void"
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    // smart_contracts/pool/contract.algo.ts:1047
+    // this.disbursements(activeDisbursementID).create()
+    itob
+    // smart_contracts/pool/contract.algo.ts:161
+    // disbursements = BoxMap<uint64, bytes<0>>({ keyPrefix: PoolBoxPrefixDisbursements })
+    pushbytes "d"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:1047
+    // this.disbursements(activeDisbursementID).create()
+    intc_0 // 0
+    box_create
+    pop
+    // smart_contracts/pool/contract.algo.ts:1049
+    // this.rewards(rewardID).value.phase = DisbursementPhaseIdle
+    dup
+    box_get
+    pop
+    bytec_2 // 0x00
+    replace2 91
+    dig 1
+    box_del
+    pop
+    dup2
+    box_put
+    // smart_contracts/pool/contract.algo.ts:1050
+    // this.rewards(rewardID).value.activeDisbursementID = 0
+    intc_0 // 0
+    itob
+    swap
+    dig 1
+    replace2 100
+    dig 2
+    box_del
+    pop
+    dig 2
+    dig 1
+    box_put
+    // smart_contracts/pool/contract.algo.ts:1051
+    // this.rewards(rewardID).value.activeDisbursementRoundStart = 0
+    dig 1
+    replace2 108
+    dig 2
+    box_del
+    pop
+    dig 2
+    dig 1
+    box_put
+    // smart_contracts/pool/contract.algo.ts:1052
+    // this.rewards(rewardID).value.disbursementCursor = 0
+    dig 1
+    replace2 92
+    dig 2
+    box_del
+    pop
+    dig 2
+    dig 1
+    box_put
+    // smart_contracts/pool/contract.algo.ts:1053
+    // this.rewards(rewardID).value.qualifiedStakers = 0
+    dig 1
+    replace2 33
+    dig 2
+    box_del
+    pop
+    dig 2
+    dig 1
+    box_put
+    // smart_contracts/pool/contract.algo.ts:1054
+    // this.rewards(rewardID).value.qualifiedStake = 0
+    swap
+    replace2 41
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.check(address: bytes, asset: uint64) -> bytes:
+check:
+    // smart_contracts/pool/contract.algo.ts:1057
+    // check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
+    proto 2 1
+    // smart_contracts/pool/contract.algo.ts:1058
+    // const key: EntryKey = { address, asset }
+    frame_dig -1
+    itob
+    frame_dig -2
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:157
+    // entriesByAddress = BoxMap<EntryKey, uint64>({ keyPrefix: PoolBoxPrefixEntriesByAddress })
+    pushbytes "a"
+    swap
+    concat
+    // smart_contracts/pool/contract.algo.ts:1059
+    // const id = this.entriesByAddress(key).value
+    box_get
+    assert // Box must have value
+    btoi
+    // smart_contracts/pool/contract.algo.ts:1060
+    // return this.checkByID(id)
+    callsub checkByID
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.signUpsOpen() -> uint64:
+signUpsOpen:
+    // smart_contracts/pool/contract.algo.ts:105
+    // status = GlobalState<PoolStatus>({ key: PoolGlobalStateKeyStatus })
+    intc_0 // 0
+    bytec 10 // "status"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1069
+    // this.status.value !== PoolStatusDraft &&
+    bytec_2 // 0x00
+    !=
+    // smart_contracts/pool/contract.algo.ts:1069-1070
+    // this.status.value !== PoolStatusDraft &&
+    // Global.latestTimestamp > this.signupTimestamp.value &&
+    bz signUpsOpen_bool_false@5
+    // smart_contracts/pool/contract.algo.ts:1070
+    // Global.latestTimestamp > this.signupTimestamp.value &&
+    global LatestTimestamp
+    // smart_contracts/pool/contract.algo.ts:111
+    // signupTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeySignupTimestamp })
+    intc_0 // 0
+    bytec 26 // "signup_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1070
+    // Global.latestTimestamp > this.signupTimestamp.value &&
+    >
+    // smart_contracts/pool/contract.algo.ts:1069-1070
+    // this.status.value !== PoolStatusDraft &&
+    // Global.latestTimestamp > this.signupTimestamp.value &&
+    bz signUpsOpen_bool_false@5
+    // smart_contracts/pool/contract.algo.ts:1071
+    // (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
+    global LatestTimestamp
+    // smart_contracts/pool/contract.algo.ts:115
+    // startTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyStartTimestamp })
+    intc_0 // 0
+    bytec 16 // "start_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1071
+    // (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
+    <
+    bnz signUpsOpen_bool_true@4
+    // smart_contracts/pool/contract.algo.ts:113
+    // allowLateSignups = GlobalState<boolean>({ key: PoolGlobalStateKeyAllowLateSignups })
+    intc_0 // 0
+    bytec 22 // "allow_late_signups"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1071
+    // (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
+    bz signUpsOpen_bool_false@5
+
+signUpsOpen_bool_true@4:
+    intc_1 // 1
+    // smart_contracts/pool/contract.algo.ts:1068-1072
+    // return (
+    //   this.status.value !== PoolStatusDraft &&
+    //   Global.latestTimestamp > this.signupTimestamp.value &&
+    //   (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
+    // )
+    retsub
+
+signUpsOpen_bool_false@5:
+    intc_0 // 0
+    // smart_contracts/pool/contract.algo.ts:1068-1072
+    // return (
+    //   this.status.value !== PoolStatusDraft &&
+    //   Global.latestTimestamp > this.signupTimestamp.value &&
+    //   (Global.latestTimestamp < this.startTimestamp.value || this.allowLateSignups.value)
+    // )
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.isLive() -> uint64:
+isLive:
+    // smart_contracts/pool/contract.algo.ts:105
+    // status = GlobalState<PoolStatus>({ key: PoolGlobalStateKeyStatus })
+    intc_0 // 0
+    bytec 10 // "status"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1079
+    // this.status.value !== PoolStatusDraft &&
+    bytec_2 // 0x00
+    !=
+    // smart_contracts/pool/contract.algo.ts:1079-1080
+    // this.status.value !== PoolStatusDraft &&
+    // (Global.latestTimestamp >= this.startTimestamp.value) &&
+    bz isLive_bool_false@5
+    // smart_contracts/pool/contract.algo.ts:1080
+    // (Global.latestTimestamp >= this.startTimestamp.value) &&
+    global LatestTimestamp
+    // smart_contracts/pool/contract.algo.ts:115
+    // startTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyStartTimestamp })
+    intc_0 // 0
+    bytec 16 // "start_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1080
+    // (Global.latestTimestamp >= this.startTimestamp.value) &&
+    >=
+    // smart_contracts/pool/contract.algo.ts:1079-1080
+    // this.status.value !== PoolStatusDraft &&
+    // (Global.latestTimestamp >= this.startTimestamp.value) &&
+    bz isLive_bool_false@5
+    // smart_contracts/pool/contract.algo.ts:1081
+    // (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
+    global LatestTimestamp
+    // smart_contracts/pool/contract.algo.ts:117
+    // endTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyEndTimestamp })
+    intc_0 // 0
+    bytec 14 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1081
+    // (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
+    <=
+    bnz isLive_bool_true@4
+    // smart_contracts/pool/contract.algo.ts:117
+    // endTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyEndTimestamp })
+    intc_0 // 0
+    bytec 14 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1081
+    // (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
+    bnz isLive_bool_false@5
+
+isLive_bool_true@4:
+    intc_1 // 1
+    // smart_contracts/pool/contract.algo.ts:1078-1082
+    // return (
+    //   this.status.value !== PoolStatusDraft &&
+    //   (Global.latestTimestamp >= this.startTimestamp.value) &&
+    //   (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
+    // )
+    retsub
+
+isLive_bool_false@5:
+    intc_0 // 0
+    // smart_contracts/pool/contract.algo.ts:1078-1082
+    // return (
+    //   this.status.value !== PoolStatusDraft &&
+    //   (Global.latestTimestamp >= this.startTimestamp.value) &&
+    //   (Global.latestTimestamp <= this.endTimestamp.value || this.endTimestamp.value === 0)
+    // )
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.isEntered(address: bytes) -> uint64:
+isEntered:
+    // smart_contracts/pool/contract.algo.ts:1086-1087
+    // @abimethod({ readonly: true })
+    // isEntered(address: Address): boolean {
+    proto 1 1
+    // smart_contracts/pool/contract.algo.ts:155
+    // uniques = BoxMap<Account, uint64>({ keyPrefix: PoolGlobalStateKeyUniques })
+    pushbytes "u"
+    frame_dig -1
+    concat
+    // smart_contracts/pool/contract.algo.ts:1088
+    // return this.uniques(address.native).exists;
+    box_len
+    bury 1
+    retsub
+
+
+// smart_contracts/pool/contract.algo.ts::Pool.getState() -> bytes:
+getState:
+    // smart_contracts/pool/contract.algo.ts:105
+    // status = GlobalState<PoolStatus>({ key: PoolGlobalStateKeyStatus })
+    intc_0 // 0
+    bytec 10 // "status"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:107
+    // title = GlobalState<string>({ key: PoolGlobalStateKeyTitle })
+    intc_0 // 0
+    bytec 23 // "title"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:109
+    // type = GlobalState<PoolStakingType>({ key: PoolGlobalStateKeyType })
+    intc_0 // 0
+    bytec 4 // "type"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:111
+    // signupTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeySignupTimestamp })
+    intc_0 // 0
+    bytec 26 // "signup_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:113
+    // allowLateSignups = GlobalState<boolean>({ key: PoolGlobalStateKeyAllowLateSignups })
+    intc_0 // 0
+    bytec 22 // "allow_late_signups"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:115
+    // startTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyStartTimestamp })
+    intc_0 // 0
+    bytec 16 // "start_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:117
+    // endTimestamp = GlobalState<uint64>({ key: PoolGlobalStateKeyEndTimestamp })
+    intc_0 // 0
+    bytec 14 // "end_timestamp"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:119
+    // maxEntries = GlobalState<uint64>({ key: PoolGlobalStateKeyMaxEntries })
+    intc_0 // 0
+    bytec 13 // "max_entries"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:121
+    // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
+    intc_0 // 0
+    bytec_0 // "entry_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1102
+    // entryCount: (this.entryID.value + 1),
+    intc_1 // 1
+    +
+    // smart_contracts/pool/contract.algo.ts:123
+    // rewardID = GlobalState<uint64>({ key: PoolGlobalStateKeyRewardCount })
+    intc_0 // 0
+    bytec 25 // "reward_count"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1103
+    // rewardCount: (this.rewardID.value + 1),
+    intc_1 // 1
+    +
+    // smart_contracts/pool/contract.algo.ts:125
+    // totalStaked = GlobalState<uint64>({ key: PoolGlobalStateKeyTotalStaked })
+    intc_0 // 0
+    pushbytes "total_staked"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:130
+    // stakeKey = GlobalState<RootKey>({ key: PoolGlobalStateKeyStakeKey })
+    intc_0 // 0
+    bytec 20 // "stake_key"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:132
+    // minimumStakeAmount = GlobalState<uint64>({ key: PoolGlobalStateKeyMinimumStakeAmount })
+    intc_0 // 0
+    bytec 24 // "minimum_stake_amount"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:134
+    // gateID = GlobalState<uint64>({ key: PoolGlobalStateKeyGateID })
+    intc_0 // 0
+    bytec 6 // "gate_id"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:138
+    // creator = GlobalState<Account>({ key: PoolGlobalStateKeyCreator })
+    intc_0 // 0
+    bytec 11 // "creator"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/pool/contract.algo.ts:1093-1109
+    // return {
+    //   status: this.status.value,
+    //   title: this.title.value,
+    //   type: this.type.value,
+    //   signupTimestamp: this.signupTimestamp.value,
+    //   allowLateSignups: this.allowLateSignups.value,
+    //   startTimestamp: this.startTimestamp.value,
+    //   endTimestamp: this.endTimestamp.value,
+    //   maxEntries: this.maxEntries.value,
+    //   entryCount: (this.entryID.value + 1),
+    //   rewardCount: (this.rewardID.value + 1),
+    //   totalStaked: this.totalStaked.value,
+    //   stakeKey: this.stakeKey.value,
+    //   minimumStakeAmount: this.minimumStakeAmount.value,
+    //   gateID: this.gateID.value,
+    //   creator: new Address(this.creator.value),
+    // }
+    dig 13
+    len
+    itob
+    extract 6 2
+    uncover 14
+    concat
+    uncover 14
+    pushbytes 0x006f
+    concat
+    dig 1
+    len
+    pushint 111 // 111
+    +
+    swap
+    uncover 15
+    concat
+    uncover 14
+    itob
+    concat
+    uncover 12
+    itob
+    concat
+    bytec_2 // 0x00
+    intc_0 // 0
+    uncover 14
+    setbit
+    concat
+    uncover 11
+    itob
+    concat
+    uncover 10
+    itob
+    concat
+    uncover 9
+    itob
+    concat
+    uncover 8
+    itob
+    concat
+    uncover 7
+    itob
+    concat
+    swap
+    itob
+    extract 6 2
+    concat
+    uncover 4
+    itob
+    concat
+    uncover 3
+    itob
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    swap
+    concat
+    retsub
+
+
+// smart_contracts/pool/base.ts::BasePool.mbr(winningTickets: uint64) -> bytes:
+mbr:
+    // smart_contracts/pool/base.ts:13-14
+    // @abimethod({ readonly: true })
+    // mbr(winningTickets: uint64): PoolMBRData {
+    proto 1 1
+    // smart_contracts/pool/base.ts:9
+    // return MinPoolRewardsMBR + (BoxCostPerByte * winningTickets)
+    intc 4 // 400
+    frame_dig -1
+    *
+    // smart_contracts/pool/base.ts:15-21
+    // return {
+    //   entries: PoolEntriesMBR,
+    //   uniques: PoolUniquesMBR,
+    //   entriesByAddress: PoolEntriesByAddressMBR,
+    //   rewards: this.rewardsMbr(winningTickets),
+    //   disbursements: PoolDisbursementSMBR
+    // }
+    itob
+    pushbytes 0x00000000000062d400000000000049d400000000000062d4
+    swap
+    concat
+    // smart_contracts/pool/base.ts:20
+    // disbursements: PoolDisbursementSMBR
+    pushint 6100 // 6100
+    // smart_contracts/pool/base.ts:15-21
+    // return {
+    //   entries: PoolEntriesMBR,
+    //   uniques: PoolUniquesMBR,
+    //   entriesByAddress: PoolEntriesByAddressMBR,
+    //   rewards: this.rewardsMbr(winningTickets),
+    //   disbursements: PoolDisbursementSMBR
+    // }
+    itob
+    concat
+    retsub
+
+
+// smart_contracts/utils/base-contracts/escrow.ts::AkitaBaseEscrow.optAkitaEscrowInAndSend(name: bytes, asset: uint64, amount: uint64) -> void:
+optAkitaEscrowInAndSend:
+    // smart_contracts/utils/base-contracts/escrow.ts:20
+    // optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
+    proto 3 0
+    // smart_contracts/utils/base-contracts/escrow.ts:21-34
+    // abiCall(
+    //   AkitaDAOInterface.prototype.optinReceiveEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: (Global.assetOptInMinBalance * 4),
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //   },
+    // )
+    itxn_begin
+    // smart_contracts/utils/base-contracts/escrow.ts:16
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+    intc_0 // 0
+    bytec 27 // "akita_escrow"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/escrow.ts:27
+    // receiver: this.akitaDAOEscrow.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/utils/base-contracts/escrow.ts:28
+    // amount: (Global.assetOptInMinBalance * 4),
+    global AssetOptInMinBalance
+    pushint 4 // 4
+    *
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/utils/base-contracts/escrow.ts:26-29
+    // itxn.payment({
+    //   receiver: this.akitaDAOEscrow.value.address,
+    //   amount: (Global.assetOptInMinBalance * 4),
+    // }),
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/escrow.ts:21-34
+    // abiCall(
+    //   AkitaDAOInterface.prototype.optinReceiveEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: (Global.assetOptInMinBalance * 4),
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //   },
+    // )
+    itxn_next
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec 18 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/escrow.ts:30
+    // name,
+    frame_dig -3
+    len
+    itob
+    extract 6 2
+    frame_dig -3
+    concat
+    // smart_contracts/utils/base-contracts/escrow.ts:31
+    // asset.id
+    frame_dig -2
+    itob
+    // smart_contracts/utils/base-contracts/escrow.ts:21-34
+    // abiCall(
+    //   AkitaDAOInterface.prototype.optinReceiveEscrow,
+    //   {
+    //     appId: this.akitaDAO.value,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: this.akitaDAOEscrow.value.address,
+    //         amount: (Global.assetOptInMinBalance * 4),
+    //       }),
+    //       name,
+    //       asset.id
+    //     ],
+    //   },
+    // )
+    pushbytes 0x3cc3d0a4 // method "optinReceiveEscrow(pay,string,uint64)void"
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    // smart_contracts/utils/base-contracts/escrow.ts:36
+    // if (amount > 0) {
+    frame_dig -1
+    bz optAkitaEscrowInAndSend_after_if_else@5
+    // smart_contracts/utils/base-contracts/escrow.ts:37-43
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.akitaDAOEscrow.value.address,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/utils/base-contracts/escrow.ts:16
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+    intc_0 // 0
+    bytec 27 // "akita_escrow"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/escrow.ts:39
+    // assetReceiver: this.akitaDAOEscrow.value.address,
+    app_params_get AppAddress
+    assert // application exists
+    frame_dig -2
+    itxn_field XferAsset
+    frame_dig -1
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    // smart_contracts/utils/base-contracts/escrow.ts:37-42
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.akitaDAOEscrow.value.address,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/escrow.ts:37-43
+    // itxn
+    //   .assetTransfer({
+    //     assetReceiver: this.akitaDAOEscrow.value.address,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //   })
+    //   .submit()
+    itxn_submit
+
+optAkitaEscrowInAndSend_after_if_else@5:
+    retsub
+
+
+// smart_contracts/utils/base-contracts/escrow.ts::AkitaBaseEscrow.update(newVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/escrow.ts:49-50
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(newVersion: string): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/escrow.ts:51
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec 18 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/escrow.ts:51
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/escrow.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    pushbytes "version"
+    // smart_contracts/utils/base-contracts/escrow.ts:52
+    // this.version.value = newVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/escrow.ts::AkitaBaseEscrow.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/escrow.ts:57
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/escrow.ts:58
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec 18 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/escrow.ts:58
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec 18 // "akita_dao"
+    // smart_contracts/utils/base-contracts/escrow.ts:59
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/escrow.ts::AkitaBaseEscrow.updateAkitaDAOEscrow(app: uint64) -> void:
+updateAkitaDAOEscrow:
+    // smart_contracts/utils/base-contracts/escrow.ts:62
+    // updateAkitaDAOEscrow(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/escrow.ts:63
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec 18 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/escrow.ts:63
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/escrow.ts:16
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+    bytec 27 // "akita_escrow"
+    // smart_contracts/utils/base-contracts/escrow.ts:64
+    // this.akitaDAOEscrow.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub

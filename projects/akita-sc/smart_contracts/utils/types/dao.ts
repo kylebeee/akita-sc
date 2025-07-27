@@ -1,5 +1,5 @@
-import { bytes, Contract, Global, gtxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AkitaDAOApps, AkitaDAOFees, AkitaDAOState, ProposalAction, ProposalSettings, ProposalStatus } from "../../dao/types";
+import { bytes, Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { AkitaDAOApps, AkitaDAOFees, ProposalAction, ProposalSettings, ProposalStatus } from "../../dao/types";
 import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 import { CID } from "./base";
 import { FundsRequest } from "../../arc58/account/types";
@@ -13,14 +13,14 @@ export class AkitaDAOInterface extends Contract {
     akta: uint64,
     contentPolicy: CID,
     minRewardsImpact: uint64,
-    apps: AkitaDAOApps,
-    fees: AkitaDAOFees,
-    proposalSettings: {
-      creation: ProposalSettings,
-      participation: ProposalSettings,
-      approval: ProposalSettings,
-      duration: ProposalSettings,
-    },
+    // apps: AkitaDAOApps,
+    // fees: AkitaDAOFees,
+    // proposalSettings: {
+    //   creation: ProposalSettings,
+    //   participation: ProposalSettings,
+    //   approval: ProposalSettings,
+    //   duration: ProposalSettings,
+    // },
     revocationAddress: Address,
     krbyPayoutAddress: Address,
     moderatorGateID: uint64,
@@ -59,108 +59,4 @@ export class AkitaDAOInterface extends Contract {
   optinReceiveEscrow(payment: gtxn.PaymentTxn, name: string, asset: uint64): void { }
   startEscrowDisbursement(escrow: string): void { }
   processEscrowAllocation(escrow: string, ids: uint64[]): void { }
-  getState(): AkitaDAOState {
-    return {
-      initialized: false,
-      version: '',
-      contentPolicy: op.bzero(36).toFixed({ length: 36 }),
-      minRewardsImpact: 0,
-      akitaAppList: {
-        staking: 0,
-        rewards: 0,
-        pool: 0,
-        prizeBox: 0,
-        subscriptions: 0,
-        gate: 0,
-        auction: 0,
-        hyperSwap: 0,
-        raffle: 0,
-        metaMerkles: 0,
-        marketplace: 0,
-        akitaNfd: 0,
-        social: 0,
-        impact: 0,
-      },
-      otherAppList: {
-        vrfBeacon: 0,
-        nfdRegistry: 0,
-        assetInbox: 0,
-        escrowFactory: 0
-      },
-      socialFees: {
-        postFee: 0,
-        reactFee: 0,
-        impactTaxMin: 0,
-        impactTaxMax: 0
-      },
-      stakingFees: {
-        creationFee: 0,
-        impactTaxMin: 0,
-        impactTaxMax: 0
-      },
-      subscriptionFees: {
-        serviceCreationFee: 0,
-        paymentPercentage: 0,
-        triggerPercentage: 0
-      },
-      nftFees: {
-        marketplaceSalePercentageMin: 0, // the minimum percentage to take on an NFT sale based on user impact
-        marketplaceSalePercentageMax: 0, // the maximum percentage to take on an NFT sale based on user impact
-        marketplaceComposablePercentage: 0, // the percentage each side of the composable marketplace takes on an NFT sale
-        marketplaceRoyaltyDefaultPercentage: 0,
-        shuffleSalePercentage: 0, // the nft shuffle sale % fee
-        omnigemSaleFee: 0, // omnigem sale fee
-        auctionCreationFee: 0,
-        auctionSaleImpactTaxMin: 0, // the minimum percentage to take on an NFT auction based on user impact
-        auctionSaleImpactTaxMax: 0, // the maximum percentage to take on an NFT auction based on user impact
-        auctionComposablePercentage: 0, // the percentage each side of the composable auction takes on an NFT sale
-        auctionRafflePercentage: 0,
-        raffleCreationFee: 0,
-        raffleSaleImpactTaxMin: 0,
-        raffleSaleImpactTaxMax: 0,
-        raffleComposablePercentage: 0
-      },
-      krbyPercentage: 0,
-      moderatorPercentage: 0,
-      akitaAssets: {
-        akta: 0,
-        bones: 0,
-      },
-      proposalSettings: {
-        creation: {
-          upgradeApp: 0,
-          addPlugin: 0,
-          removePlugin: 0,
-          addAllowance: 0,
-          removeAllowance: 0,
-          updateField: 0
-        },
-        participation: {
-          upgradeApp: 0,
-          addPlugin: 0,
-          removePlugin: 0,
-          addAllowance: 0,
-          removeAllowance: 0,
-          updateField: 0
-        },
-        approval: {
-          upgradeApp: 0,
-          addPlugin: 0,
-          removePlugin: 0,
-          addAllowance: 0,
-          removeAllowance: 0,
-          updateField: 0
-        },
-        duration: {
-          upgradeApp: 0,
-          addPlugin: 0,
-          removePlugin: 0,
-          addAllowance: 0,
-          removeAllowance: 0,
-          updateField: 0
-        },
-      },
-      revocationAddress: new Address(Global.zeroAddress)
-    }
-  }
 }

@@ -3,66 +3,96 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 6
+    intcblock 0 1 6 8
     bytecblock "akita_dao" "child_contract_version" "revocation" "version" "escrow_factory"
+
+main_block@0:
+
+main_block@1:
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
     txn NumAppArgs
-    bz main_after_if_else@12
-    pushbytess 0x3ba9072f 0xac9df27e 0xe05fc422 0xc385cfae 0x33e92c94 0x1ead20a9 // method "create(uint64,string,string,uint64,uint64)void", method "updateRevocationApp(uint64)void", method "mint(pay,address,address,string)uint64", method "updateApplication(string,string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void"
+    intc_0 // 0
+    !=
+    bz main_bare_routing@11
+
+main_abi_routing@2:
+    // smart_contracts/arc58/account/factory.algo.ts:21
+    // export class AbstractedAccountFactory extends FactoryContract {
     txna ApplicationArgs 0
-    match main_create_route@3 main_updateRevocationApp_route@4 main_mint_route@5 main_updateApplication_route@6 main_updateAkitaDAO_route@7 main_updateAkitaDAOEscrow_route@8
+    pushbytes 0x3ba9072f // method "create(uint64,string,string,uint64,uint64)void"
+    pushbytes 0xac9df27e // method "updateRevocationApp(uint64)void"
+    pushbytes 0xe05fc422 // method "mint(pay,address,address,string)uint64"
+    pushbytes 0x23cf4fef // method "update(string,string)void"
+    pushbytes 0x33e92c94 // method "updateAkitaDAO(uint64)void"
+    pushbytes 0x1ead20a9 // method "updateAkitaDAOEscrow(uint64)void"
+    uncover 6
+    match main_create_route@3 main_updateRevocationApp_route@4 main_mint_route@5 main_update_route@6 main_updateAkitaDAO_route@7 main_updateAkitaDAOEscrow_route@8
+
+main_switch_case_default@9:
+
+main_switch_case_next@10:
 
 main_after_if_else@12:
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
     intc_0 // 0
+
+main_after_inlined_smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.__puya_arc4_router__@13:
     return
 
 main_updateAkitaDAOEscrow_route@8:
-    // smart_contracts/utils/base-contracts/factory.ts:93
+    // smart_contracts/utils/base-contracts/factory.ts:85
     // updateAkitaDAOEscrow(app: uint64): void {
     txn OnCompletion
-    !
+    intc_0 // NoOp
+    ==
     assert // OnCompletion is not NoOp
     txn ApplicationID
+    intc_0 // 0
+    !=
     assert // can only call when not creating
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/factory.ts:93
+    // smart_contracts/utils/base-contracts/factory.ts:85
     // updateAkitaDAOEscrow(app: uint64): void {
     callsub updateAkitaDAOEscrow
     intc_1 // 1
-    return
+    b main_after_inlined_smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.__puya_arc4_router__@13
 
 main_updateAkitaDAO_route@7:
-    // smart_contracts/utils/base-contracts/factory.ts:88
+    // smart_contracts/utils/base-contracts/factory.ts:80
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
-    !
+    intc_0 // NoOp
+    ==
     assert // OnCompletion is not NoOp
     txn ApplicationID
+    intc_0 // 0
+    !=
     assert // can only call when not creating
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/factory.ts:88
+    // smart_contracts/utils/base-contracts/factory.ts:80
     // updateAkitaDAO(app: uint64): void {
     callsub updateAkitaDAO
     intc_1 // 1
-    return
+    b main_after_inlined_smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.__puya_arc4_router__@13
 
-main_updateApplication_route@6:
-    // smart_contracts/utils/base-contracts/factory.ts:79
+main_update_route@6:
+    // smart_contracts/utils/base-contracts/factory.ts:71
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
     ==
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
+    intc_0 // 0
+    !=
     assert // can only call when not creating
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
@@ -70,19 +100,22 @@ main_updateApplication_route@6:
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:79
+    // smart_contracts/utils/base-contracts/factory.ts:71
     // @abimethod({ allowActions: ['UpdateApplication'] })
-    callsub updateApplication
+    callsub update
     intc_1 // 1
-    return
+    b main_after_inlined_smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.__puya_arc4_router__@13
 
 main_mint_route@5:
     // smart_contracts/arc58/account/factory.algo.ts:48
     // mint(payment: gtxn.PaymentTxn, controlledAddress: Address, admin: Address, nickname: string): uint64 {
     txn OnCompletion
-    !
+    intc_0 // NoOp
+    ==
     assert // OnCompletion is not NoOp
     txn ApplicationID
+    intc_0 // 0
+    !=
     assert // can only call when not creating
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
@@ -100,6 +133,10 @@ main_mint_route@5:
     extract 2 0
     // smart_contracts/arc58/account/factory.algo.ts:48
     // mint(payment: gtxn.PaymentTxn, controlledAddress: Address, admin: Address, nickname: string): uint64 {
+    uncover 3
+    uncover 3
+    uncover 3
+    uncover 3
     callsub mint
     itob
     pushbytes 0x151f7c75
@@ -107,15 +144,18 @@ main_mint_route@5:
     concat
     log
     intc_1 // 1
-    return
+    b main_after_inlined_smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.__puya_arc4_router__@13
 
 main_updateRevocationApp_route@4:
     // smart_contracts/arc58/account/factory.algo.ts:43
     // updateRevocationApp(app: uint64): void {
     txn OnCompletion
-    !
+    intc_0 // NoOp
+    ==
     assert // OnCompletion is not NoOp
     txn ApplicationID
+    intc_0 // 0
+    !=
     assert // can only call when not creating
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
@@ -125,16 +165,18 @@ main_updateRevocationApp_route@4:
     // updateRevocationApp(app: uint64): void {
     callsub updateRevocationApp
     intc_1 // 1
-    return
+    b main_after_inlined_smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.__puya_arc4_router__@13
 
 main_create_route@3:
     // smart_contracts/arc58/account/factory.algo.ts:32
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
-    !
+    intc_0 // NoOp
+    ==
     assert // OnCompletion is not NoOp
     txn ApplicationID
-    !
+    intc_0 // 0
+    ==
     assert // can only call when creating
     // smart_contracts/arc58/account/factory.algo.ts:21
     // export class AbstractedAccountFactory extends FactoryContract {
@@ -150,9 +192,17 @@ main_create_route@3:
     btoi
     // smart_contracts/arc58/account/factory.algo.ts:32
     // @abimethod({ onCreate: 'require' })
+    uncover 4
+    uncover 4
+    uncover 4
+    uncover 4
+    uncover 4
     callsub create
     intc_1 // 1
-    return
+    b main_after_inlined_smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.__puya_arc4_router__@13
+
+main_bare_routing@11:
+    b main_after_if_else@12
 
 
 // smart_contracts/arc58/account/factory.algo.ts::AbstractedAccountFactory.create(akitaDAO: uint64, version: bytes, childVersion: bytes, escrowFactoryApp: uint64, revocationApp: uint64) -> void:
@@ -161,36 +211,38 @@ create:
     // @abimethod({ onCreate: 'require' })
     // create(akitaDAO: uint64, version: string, childVersion: string, escrowFactoryApp: uint64, revocationApp: uint64): void {
     proto 5 0
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+
+create_block@0:
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/arc58/account/factory.algo.ts:34
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -5
     app_global_put
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
+    // smart_contracts/utils/base-contracts/factory.ts:32
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
     // smart_contracts/arc58/account/factory.algo.ts:35
     // this.version.value = version
     frame_dig -4
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:19
-    // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
+    // smart_contracts/utils/base-contracts/factory.ts:38
+    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
     bytec_1 // "child_contract_version"
     // smart_contracts/arc58/account/factory.algo.ts:36
     // this.childContractVersion.value = childVersion
     frame_dig -3
     app_global_put
-    // smart_contracts/constants.ts:6
-    // export const GlobalStateKeyEscrowFactory = 'escrow_factory'
+    // smart_contracts/arc58/account/factory.algo.ts:26
+    // escrowFactory = GlobalState<Application>({ key: GlobalStateKeyEscrowFactory })
     bytec 4 // "escrow_factory"
     // smart_contracts/arc58/account/factory.algo.ts:37
     // this.escrowFactory.value = Application(escrowFactoryApp)
     frame_dig -2
     app_global_put
-    // smart_contracts/constants.ts:5
-    // export const GlobalStateKeyRevocation = 'revocation'
+    // smart_contracts/arc58/account/factory.algo.ts:28
+    // revocation = GlobalState<Application>({ key: GlobalStateKeyRevocation })
     bytec_2 // "revocation"
     // smart_contracts/arc58/account/factory.algo.ts:38
     // this.revocation.value = Application(revocationApp)
@@ -204,11 +256,13 @@ updateRevocationApp:
     // smart_contracts/arc58/account/factory.algo.ts:43
     // updateRevocationApp(app: uint64): void {
     proto 1 0
+
+updateRevocationApp_block@0:
     // smart_contracts/arc58/account/factory.algo.ts:44
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_0 // "akita_dao"
     app_global_get_ex
@@ -219,8 +273,8 @@ updateRevocationApp:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:5
-    // export const GlobalStateKeyRevocation = 'revocation'
+    // smart_contracts/arc58/account/factory.algo.ts:28
+    // revocation = GlobalState<Application>({ key: GlobalStateKeyRevocation })
     bytec_2 // "revocation"
     // smart_contracts/arc58/account/factory.algo.ts:45
     // this.revocation.value = Application(app)
@@ -234,7 +288,58 @@ mint:
     // smart_contracts/arc58/account/factory.algo.ts:48
     // mint(payment: gtxn.PaymentTxn, controlledAddress: Address, admin: Address, nickname: string): uint64 {
     proto 4 1
-    // smart_contracts/arc58/account/factory.algo.ts:59-66
+
+mint_block@0:
+    // smart_contracts/arc58/account/factory.algo.ts:54
+    // (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+    pushint 28500 // 28500
+    // smart_contracts/arc58/account/factory.algo.ts:50
+    // const abstractedAccount = compileArc4(AbstractedAccount)
+    intc_3 // 8
+    // smart_contracts/arc58/account/factory.algo.ts:54
+    // (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+    *
+    // smart_contracts/arc58/account/factory.algo.ts:53
+    // MAX_PROGRAM_PAGES +
+    pushint 400000 // 400000
+    // smart_contracts/arc58/account/factory.algo.ts:53-54
+    // MAX_PROGRAM_PAGES +
+    // (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+    +
+    // smart_contracts/arc58/account/factory.algo.ts:55
+    // (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
+    pushint 50000 // 50000
+    // smart_contracts/arc58/account/factory.algo.ts:50
+    // const abstractedAccount = compileArc4(AbstractedAccount)
+    intc_2 // 6
+    // smart_contracts/arc58/account/factory.algo.ts:55
+    // (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
+    *
+    // smart_contracts/arc58/account/factory.algo.ts:53-55
+    // MAX_PROGRAM_PAGES +
+    // (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+    // (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
+    +
+    // smart_contracts/arc58/account/factory.algo.ts:56
+    // Global.minBalance +
+    global MinBalance
+    // smart_contracts/arc58/account/factory.algo.ts:53-56
+    // MAX_PROGRAM_PAGES +
+    // (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+    // (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
+    // Global.minBalance +
+    +
+    // smart_contracts/arc58/account/factory.algo.ts:57
+    // ARC58WalletIDsByAccountsMbr
+    pushint 12100 // 12100
+    // smart_contracts/arc58/account/factory.algo.ts:53-57
+    // MAX_PROGRAM_PAGES +
+    // (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+    // (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
+    // Global.minBalance +
+    // ARC58WalletIDsByAccountsMbr
+    +
+    // smart_contracts/arc58/account/factory.algo.ts:60-67
     // assertMatch(
     //   payment,
     //   {
@@ -245,10 +350,10 @@ mint:
     // )
     frame_dig -4
     gtxns Receiver
-    // smart_contracts/arc58/account/factory.algo.ts:62
+    // smart_contracts/arc58/account/factory.algo.ts:63
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/account/factory.algo.ts:59-66
+    // smart_contracts/arc58/account/factory.algo.ts:60-67
     // assertMatch(
     //   payment,
     //   {
@@ -258,40 +363,13 @@ mint:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz mint_bool_false@3
     frame_dig -4
     gtxns Amount
-    // smart_contracts/arc58/account/factory.algo.ts:53-56
-    // MAX_PROGRAM_PAGES +
-    // (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
-    // (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
-    // AccountMinimumBalance
-    pushint 1028000 // 1028000
-    // smart_contracts/arc58/account/factory.algo.ts:59-66
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: childMBR,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
+    uncover 2
     ==
-    bz mint_bool_false@3
-    intc_1 // 1
-
-mint_bool_merge@4:
-    // smart_contracts/arc58/account/factory.algo.ts:59-66
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: childMBR,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
+    &&
     assert // Invalid payment
-    // smart_contracts/arc58/account/factory.algo.ts:68-80
+    // smart_contracts/arc58/account/factory.algo.ts:69-80
     // const walletID = abstractedAccount.call
     //   .create({
     //     args: [
@@ -302,12 +380,11 @@ mint_bool_merge@4:
     //       this.revocation.value.id,
     //       nickname,
     //     ],
-    //     extraProgramPages: 3,
-    //     fee,
+    //     extraProgramPages: 3
     //   })
     itxn_begin
-    // smart_contracts/utils/base-contracts/factory.ts:19
-    // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
+    // smart_contracts/utils/base-contracts/factory.ts:38
+    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
     intc_0 // 0
     bytec_1 // "child_contract_version"
     app_global_get_ex
@@ -318,25 +395,25 @@ mint_bool_merge@4:
     extract 6 2
     swap
     concat
-    // smart_contracts/constants.ts:6
-    // export const GlobalStateKeyEscrowFactory = 'escrow_factory'
+    // smart_contracts/arc58/account/factory.algo.ts:26
+    // escrowFactory = GlobalState<Application>({ key: GlobalStateKeyEscrowFactory })
     intc_0 // 0
     bytec 4 // "escrow_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/account/factory.algo.ts:74
+    // smart_contracts/arc58/account/factory.algo.ts:75
     // this.escrowFactory.value.id,
     itob
-    // smart_contracts/constants.ts:5
-    // export const GlobalStateKeyRevocation = 'revocation'
+    // smart_contracts/arc58/account/factory.algo.ts:28
+    // revocation = GlobalState<Application>({ key: GlobalStateKeyRevocation })
     intc_0 // 0
     bytec_2 // "revocation"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/account/factory.algo.ts:75
+    // smart_contracts/arc58/account/factory.algo.ts:76
     // this.revocation.value.id,
     itob
-    // smart_contracts/arc58/account/factory.algo.ts:76
+    // smart_contracts/arc58/account/factory.algo.ts:77
     // nickname,
     frame_dig -1
     len
@@ -344,7 +421,26 @@ mint_bool_merge@4:
     extract 6 2
     frame_dig -1
     concat
-    // smart_contracts/arc58/account/factory.algo.ts:68-80
+    // smart_contracts/utils/base-contracts/factory.ts:38
+    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
+    uncover 3
+    swap
+    // smart_contracts/arc58/account/factory.algo.ts:73
+    // controlledAddress,
+    frame_dig -3
+    cover 2
+    // smart_contracts/arc58/account/factory.algo.ts:74
+    // admin,
+    frame_dig -2
+    cover 3
+    // smart_contracts/arc58/account/factory.algo.ts:75
+    // this.escrowFactory.value.id,
+    uncover 5
+    cover 4
+    // smart_contracts/arc58/account/factory.algo.ts:77
+    // nickname,
+    cover 5
+    // smart_contracts/arc58/account/factory.algo.ts:69-80
     // const walletID = abstractedAccount.call
     //   .create({
     //     args: [
@@ -355,35 +451,35 @@ mint_bool_merge@4:
     //       this.revocation.value.id,
     //       nickname,
     //     ],
-    //     extraProgramPages: 3,
-    //     fee,
+    //     extraProgramPages: 3
     //   })
-    pushbytes 0x70ca115d // method "create(string,address,address,uint64,uint64,string)void"
+    pushbytes 0x1fb32aa5 // method "create(string,byte[32],byte[32],uint64,uint64,string)void"
     itxn_field ApplicationArgs
-    uncover 3
     itxn_field ApplicationArgs
-    frame_dig -3
     itxn_field ApplicationArgs
-    frame_dig -2
     itxn_field ApplicationArgs
-    uncover 2
     itxn_field ApplicationArgs
-    swap
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     // smart_contracts/arc58/account/factory.algo.ts:50
     // const abstractedAccount = compileArc4(AbstractedAccount)
+    intc_0 // 0
+    itxn_field LocalNumUint
+    intc_0 // 0
+    itxn_field LocalNumByteSlice
     intc_2 // 6
     itxn_field GlobalNumByteSlice
-    pushint 8 // 8
+    intc_3 // 8
     itxn_field GlobalNumUint
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(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)
+    pushbytes 0x
+    itxn_field ClearStateProgramPages
+    pushbytes base64(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)
     itxn_field ApprovalProgramPages
-    pushbytes base64(i/5XAgCLA0lOA4EMC4EMWElXAARMJFsWUCcMUFBJFYEUChZXBgJMUIwCIwiMA0L/wCIoZUQyChNBACWxIihlRDIKiwIiWYjz+Yv2FSEECyEHCAiyCLIHsgAjshAisgGzi/uI8/KMAIv/QQBIMgYpIov5VIsAFov8Fov9Fikii/9UTwUWTwWL+lBPBVBPBFBPA1AnEFBPAlAnDFBMUIsCUCcFiwFQSbxITL8rMgdnJwYyB2eJMgdC/7WKAQAiiPRAQAAGiPRwQQBqI0QnEYv/UEm9RQFESb5ESSJbTFcIIEwWTFAnBUxQSb1FAURJvkRJgRpZSwEVUowATLxIvEgiKGVEMgoTQQAhsSIoZUSL/xUhBAshBwiLACJZiPMlCLIIsgcjshAisgGzKzIHZycGMgdniSJC/5OKAQAxACInBGVEEkQnCIv/UL1FARREi/+I8zBIiYoCACJHAipHBCJJMQAiJwRlRBJEJwiL/lBJvUUBRL5EF3IIRCKL/yJZiwsNQQCti/9XAgCLC4ERC4ERWEmMAEkiW0lOAowDgYABUykiTwJUTEAARSIoZUyMAUSLAIEIW4wEIowGIlNBAAkiKGVEI4wGjAmxiwZBAASLCbIJiwSyCIsBsgeLCrIAI7IQIrIBs4sLIwiMC0L/jCIoZUyMAkSLAIEIW4wFIowHIlNBAAkiKGVEI4wHjAixiwdBAASLCLIViwOyEYsFshKLArIUiwqyACSyECKyAbNC/7SJigIAMQAiJwRlRBJEJwiL/lBHAr1FAUS+RBdyCExJTwJEsSIoZUQyEIv/IllJTgQLsgiyALIHI7IQIrIBsyKLA4sCDEEAPIsAvkQXi/9XAgCLA0lOA4EIC1tMFksBFlAnCkxQvUUBRLGyESKyEosBSbIUsgAkshAisgGzIwiMA0L/vImKBAAiKkmL/BaL/VAnBUxQSb1FAUS+RCVbSUQxAIv8cghEEkAAEDEAi/0SQAAIi/0yAxJBAI0jRIsDcghMjABEi/84ByIoZUQSQQBzi/84CDIQi/4iWQsSQQBkI0SxIihlRDIQi/4iWUmMAguyCIsAsgeyACOyECKyAbMijAGLAYsCDEEAOIv+VwIAiwFJTgKBCAtbiwMWSwEWUCcKTFC9RQFEsbIRIrISiwBJshSyACSyECKyAbMjCIwBQv/AiSJC/5kiQv9wigIAIkkqRwSI8XpEJwiL/lBJvUUBRCIoZUQyChNBABuxIihlRDIKi/8iWSEIC7IIsgeyACOyECKyAbMijAOL/yJZiwMNQQCRi/9XAgCLA4EiC4EiWEkiW0sBVwgBjAFLAYEJW4wCSwGBEVuMBUsBgRlbjARMgYgCUykiTwJUIlNJjAaLB75EFxZPAhZQJwpMUEmMAL1FARREQQA4MgaLBRaLAhYiFosEFk8EFikiiwZUiwFPBlBPBVBLBFBPA1BPA1BPAlBMUIsATL+LAyMIjANC/2oyB0L/xSsyB2cnBjIHZ4mKAgAqiPCbRCcIi/5QSb1FAUQiKGVEMgoTQQAXsSIoZUSL/yJZIQgLsgiyByOyECKyAbMijACL/yJZiwANQQAqiwG+RBeL/1cCAIsASU4DgQgLW0wWTBZQJwpMUEm9RQFEvEgjCIwAQv/MKzIHZycGMgdniSInBGVEiYoDBYv9iO9ii/4VIQQLIQdLAQiL/xUhBAuB1C8IgdR6TwMITgMhCE8EiYoBASpHAicSIov/IlmLBA1BAKcijACL/1cCAIsEgQgLW0mMAUAAgDIKcwBMjABEsSKACWFraXRhX2Rhb2VEgAhha2l0YV9hbGVIIlsiKGVEiwEWgARMiOrOshpMshqyGrIYgQayECKyAbO0PklXAAQnCRJESSRbTIEMW4sDVwIAiwBPAwhPAggWJw9MUFcCAFBJFYEIChZXBgJMUIwDiwQjCIwEQv9iMgqLAXAATIwCQf98iwKMAEL/dYsDjACJ)
+    pushbytes base64(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)
     itxn_field ApprovalProgramPages
-    // smart_contracts/arc58/account/factory.algo.ts:68-80
+    // smart_contracts/arc58/account/factory.algo.ts:69-80
     // const walletID = abstractedAccount.call
     //   .create({
     //     args: [
@@ -394,16 +490,15 @@ mint_bool_merge@4:
     //       this.revocation.value.id,
     //       nickname,
     //     ],
-    //     extraProgramPages: 3,
-    //     fee,
+    //     extraProgramPages: 3
     //   })
     intc_0 // 0
     itxn_field OnCompletion
-    // smart_contracts/arc58/account/factory.algo.ts:78
-    // extraProgramPages: 3,
+    // smart_contracts/arc58/account/factory.algo.ts:79
+    // extraProgramPages: 3
     pushint 3 // 3
     itxn_field ExtraProgramPages
-    // smart_contracts/arc58/account/factory.algo.ts:68-80
+    // smart_contracts/arc58/account/factory.algo.ts:69-80
     // const walletID = abstractedAccount.call
     //   .create({
     //     args: [
@@ -414,16 +509,15 @@ mint_bool_merge@4:
     //       this.revocation.value.id,
     //       nickname,
     //     ],
-    //     extraProgramPages: 3,
-    //     fee,
+    //     extraProgramPages: 3
     //   })
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/account/factory.algo.ts:68-80
+
+mint_next_txn@1:
+    // smart_contracts/arc58/account/factory.algo.ts:69-80
     // const walletID = abstractedAccount.call
     //   .create({
     //     args: [
@@ -434,95 +528,107 @@ mint_bool_merge@4:
     //       this.revocation.value.id,
     //       nickname,
     //     ],
-    //     extraProgramPages: 3,
-    //     fee,
+    //     extraProgramPages: 3
     //   })
     itxn_submit
     // smart_contracts/arc58/account/factory.algo.ts:82
     // .createdApp
     gitxn 0 CreatedApplicationID
-    // smart_contracts/arc58/account/factory.algo.ts:85-91
+    // smart_contracts/arc58/account/factory.algo.ts:69-83
+    // const walletID = abstractedAccount.call
+    //   .create({
+    //     args: [
+    //       this.childContractVersion.value,
+    //       controlledAddress,
+    //       admin,
+    //       this.escrowFactory.value.id,
+    //       this.revocation.value.id,
+    //       nickname,
+    //     ],
+    //     extraProgramPages: 3
+    //   })
+    //   .itxn
+    //   .createdApp
+    //   .id
+    dup
+    // smart_contracts/arc58/account/factory.algo.ts:85-90
     // itxn
     //   .payment({
     //     receiver: Application(walletID).address,
-    //     amount: AccountMinimumBalance,
-    //     fee,
+    //     amount: Global.minBalance + ARC58WalletIDsByAccountsMbr
     //   })
     //   .submit()
     itxn_begin
     // smart_contracts/arc58/account/factory.algo.ts:87
     // receiver: Application(walletID).address,
-    dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/utils/constants.ts:11
-    // export const AccountMinimumBalance: uint64 = 100_000
-    pushint 100000 // 100000
+    // smart_contracts/arc58/account/factory.algo.ts:88
+    // amount: Global.minBalance + ARC58WalletIDsByAccountsMbr
+    global MinBalance
+    pushint 12100 // 12100
+    +
     itxn_field Amount
     itxn_field Receiver
+    // smart_contracts/arc58/account/factory.algo.ts:85-89
+    // itxn
+    //   .payment({
+    //     receiver: Application(walletID).address,
+    //     amount: Global.minBalance + ARC58WalletIDsByAccountsMbr
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+
+mint_next_txn@2:
     // smart_contracts/arc58/account/factory.algo.ts:85-90
     // itxn
     //   .payment({
     //     receiver: Application(walletID).address,
-    //     amount: AccountMinimumBalance,
-    //     fee,
-    //   })
-    intc_1 // 1
-    itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
-    intc_0 // 0
-    itxn_field Fee
-    // smart_contracts/arc58/account/factory.algo.ts:85-91
-    // itxn
-    //   .payment({
-    //     receiver: Application(walletID).address,
-    //     amount: AccountMinimumBalance,
-    //     fee,
+    //     amount: Global.minBalance + ARC58WalletIDsByAccountsMbr
     //   })
     //   .submit()
     itxn_submit
-    // smart_contracts/arc58/account/factory.algo.ts:93
+    // smart_contracts/arc58/account/factory.algo.ts:92
     // return walletID
     retsub
 
-mint_bool_false@3:
-    intc_0 // 0
-    b mint_bool_merge@4
 
-
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateApplication(newVersion: bytes, newChildVersion: bytes) -> void:
-updateApplication:
-    // smart_contracts/utils/base-contracts/factory.ts:79-80
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.update(newVersion: bytes, newChildVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/factory.ts:71-72
     // @abimethod({ allowActions: ['UpdateApplication'] })
-    // updateApplication(newVersion: string, newChildVersion: string): void {
+    // update(newVersion: string, newChildVersion: string): void {
     proto 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:81
+
+update_block@0:
+    // smart_contracts/utils/base-contracts/factory.ts:73
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:81
+    // smart_contracts/utils/base-contracts/factory.ts:73
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
+    // smart_contracts/utils/base-contracts/factory.ts:32
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
-    // smart_contracts/utils/base-contracts/factory.ts:82
+    // smart_contracts/utils/base-contracts/factory.ts:74
     // this.version.value = newVersion
     frame_dig -2
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:19
-    // export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
+    // smart_contracts/utils/base-contracts/factory.ts:38
+    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
     bytec_1 // "child_contract_version"
-    // smart_contracts/utils/base-contracts/factory.ts:83
+    // smart_contracts/utils/base-contracts/factory.ts:75
     // this.childContractVersion.value = newChildVersion
     frame_dig -1
     app_global_put
@@ -531,28 +637,30 @@ updateApplication:
 
 // smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO(app: uint64) -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/factory.ts:88
+    // smart_contracts/utils/base-contracts/factory.ts:80
     // updateAkitaDAO(app: uint64): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/factory.ts:89
+
+updateAkitaDAO_block@0:
+    // smart_contracts/utils/base-contracts/factory.ts:81
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:89
+    // smart_contracts/utils/base-contracts/factory.ts:81
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:90
+    // smart_contracts/utils/base-contracts/factory.ts:82
     // this.akitaDAO.value = Application(app)
     frame_dig -1
     app_global_put
@@ -561,28 +669,30 @@ updateAkitaDAO:
 
 // smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow(app: uint64) -> void:
 updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/factory.ts:93
+    // smart_contracts/utils/base-contracts/factory.ts:85
     // updateAkitaDAOEscrow(app: uint64): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/factory.ts:94
+
+updateAkitaDAOEscrow_block@0:
+    // smart_contracts/utils/base-contracts/factory.ts:86
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_0 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:94
+    // smart_contracts/utils/base-contracts/factory.ts:86
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:2
-    // export const GlobalStateKeyAkitaEscrow = 'akita_escrow'
+    // smart_contracts/utils/base-contracts/factory.ts:36
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     pushbytes "akita_escrow"
-    // smart_contracts/utils/base-contracts/factory.ts:95
+    // smart_contracts/utils/base-contracts/factory.ts:87
     // this.akitaDAOEscrow.value = Application(app)
     frame_dig -1
     app_global_put

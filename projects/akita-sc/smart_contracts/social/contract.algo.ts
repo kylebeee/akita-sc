@@ -10,8 +10,8 @@ import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescrip
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { OptInPlugin } from '../arc58/plugins/optin/contract.algo'
 import { akitaSocialFee, gateCheck, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, getSpendingAccount, impactRange, getWalletIDUsingAkitaDAO, originOrTxnSender, originOr } from '../utils/functions'
-import { AkitaBaseContract, AkitaBaseEscrow } from '../utils/base-contracts/base'
-
+import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { NFDRegistry } from '../utils/types/nfd-registry'
 import { NFD } from '../utils/types/nfd'
 import { AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress } from '../utils/constants'

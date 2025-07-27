@@ -22,6 +22,7 @@ import {
   AbstractAccountBoxPrefixAllowances,
   AbstractAccountBoxPrefixDomainKeys,
   AbstractAccountBoxPrefixEscrows,
+  AbstractAccountBoxPrefixExecutions,
   AbstractAccountBoxPrefixNamedPlugins,
   AbstractAccountBoxPrefixPlugins,
   AbstractAccountGlobalStateKeysAdmin,
@@ -36,9 +37,10 @@ import {
   AbstractAccountGlobalStateKeysNickname,
   AbstractAccountGlobalStateKeysSpendingAddress,
   AllowanceMBR,
+  EscrowsMBR,
   MethodRestrictionByteLength,
   MinDomainKeysMBR,
-  MinEscrowsMBR,
+  MinNamedEscrowsMBR,
   MinNamedPluginMBR,
   MinPluginMBR,
 } from './constants'
@@ -48,9 +50,12 @@ import {
   ERR_ALLOWANCE_DOES_NOT_EXIST,
   ERR_ALLOWANCE_EXCEEDED,
   ERR_BAD_DEPLOYER,
+  ERR_BAD_EXECUTION_KEY,
   ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY,
   ERR_DOES_NOT_HOLD_ASSET,
   ERR_ESCROW_ALREADY_EXISTS,
+  ERR_EXECUTION_KEY_ALREADY_EXISTS,
+  ERR_EXECUTION_KEY_DOES_NOT_EXIST,
   ERR_FORBIDDEN,
   ERR_INVALID_METHOD_SIGNATURE_LENGTH,
   ERR_INVALID_ONCOMPLETE,
@@ -77,13 +82,13 @@ import {
 } from './errors'
 
 import { Staking } from '../../staking/contract.algo'
-import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, arc4MethodInfo, arc4PluginInfo, DelegationTypeSelf, EscrowReclaim, FullPluginValidation, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceType, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
+import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, arc4MethodInfo, arc4PluginInfo, DelegationTypeSelf, EscrowInfo, EscrowReclaim, ExecutionKey, FullPluginValidation, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceType, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
 import { AkitaDomain, BoxCostPerByte } from '../../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyRevocation, GlobalStateKeyVersion } from '../../constants'
 import { getAkitaAppList } from '../../utils/functions'
 import { AbstractedAccountInterface } from '../../utils/abstract-account'
 import { EscrowFactory } from '../../escrow/factory.algo'
-import { ERR_ESCROW_DOES_NOT_EXIST } from '../../dao/errors'
+import { ERR_ESCROW_DOES_NOT_EXIST, ERR_ESCROW_LOCKED } from '../../dao/errors'
 import { ARC58WalletIDsByAccountsMbr, NewCostForARC58 } from '../../escrow/constants'
 
 export class AbstractedAccount extends Contract implements AbstractedAccountInterface {
@@ -126,9 +131,14 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   /** Plugins that have been given a name for discoverability */
   namedPlugins = BoxMap<string, PluginKey>({ keyPrefix: AbstractAccountBoxPrefixNamedPlugins });
   /** the escrows that this wallet has created for specific callers with allowances */
-  escrows = BoxMap<string, uint64>({ keyPrefix: AbstractAccountBoxPrefixEscrows })
+  escrows = BoxMap<uint64, boolean>({ keyPrefix: AbstractAccountBoxPrefixEscrows })
+  /** Escrows that have been given a name */
+  namedEscrows = BoxMap<string, uint64>({ keyPrefix: AbstractAccountBoxPrefixEscrows }) // 6_100
   /** The Allowances for plugins installed on the smart contract with useAllowance set to true */
   allowances = BoxMap<AllowanceKey, AllowanceInfo>({ keyPrefix: AbstractAccountBoxPrefixAllowances }) // 38_500
+  /** execution keys */
+  executions = BoxMap<ExecutionKey, uint64>({ keyPrefix: AbstractAccountBoxPrefixExecutions })
+
   /**
    * Passkeys on the account and their corresponding domain names
    * address : domain
@@ -160,8 +170,12 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     return MinNamedPluginMBR + (BoxCostPerByte * Bytes(name).length);
   }
 
-  private escrowsMbr(name: string): uint64 {
-    return MinEscrowsMBR + (BoxCostPerByte * Bytes(name).length);
+  private escrowsMbr(): uint64 {
+    return EscrowsMBR;
+  }
+
+  private namedEscrowsMbr(name: string): uint64 {
+    return MinNamedEscrowsMBR + (BoxCostPerByte * Bytes(name).length);
   }
 
   private allowancesMbr(): uint64 {
@@ -174,12 +188,12 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
   private maybeNewEscrow(escrow: string): uint64 {
     if (escrow === '') {
-      return 0;
+      return 0
     }
 
-    return this.escrows(escrow).exists
-      ? this.escrows(escrow).value
-      : this.newEscrow(escrow);
+    return this.namedEscrows(escrow).exists
+      ? this.namedEscrows(escrow).value
+      : this.newEscrow(escrow)
   }
 
   private newEscrow(escrow: string): uint64 {
@@ -188,12 +202,12 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .payment({
           sender: this.controlledAddress.value,
           receiver: Global.currentApplicationAddress,
-          amount: this.escrowsMbr(escrow)
+          amount: this.namedEscrowsMbr(escrow) + this.escrowsMbr()
         })
         .submit()
     }
 
-    const escrowID = abiCall(
+    const id = abiCall(
       EscrowFactory.prototype.new,
       {
         sender: this.controlledAddress.value,
@@ -208,9 +222,10 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       }
     ).returnValue
 
-    this.escrows(escrow).value = escrowID;
+    this.escrows(id).value = false
+    this.namedEscrows(escrow).value = id
 
-    return escrowID;
+    return id;
   }
 
   /** @returns whether or not the caller is an admin on the wallet */
@@ -233,7 +248,12 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       return false;
     }
 
-    const { methods, useRounds, lastCalled, cooldown } = clone(this.plugins(key).value)
+    const { methods, useRounds, lastCalled, cooldown, useExecutionKey } = clone(this.plugins(key).value)
+    
+    if (useExecutionKey) {
+      return false
+    }
+
     let methodAllowed = methods.length > 0 ? false : true;
     for (let i: uint64 = 0; i < methods.length; i += 1) {
       if (methods[i].selector === method) {
@@ -317,42 +337,6 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     }
   }
 
-  private fullPluginCheck(
-    key: PluginKey,
-    txn: gtxn.ApplicationCallTxn,
-    methodOffsets: uint64[],
-    methodIndex: uint64
-  ): FullPluginValidation {
-
-    const check = this.pluginCheck(key);
-
-    if (!check.valid) {
-      return {
-        ...check,
-        methodAllowed: false,
-        methodHasCooldown: true,
-        methodOnCooldown: true
-      }
-    }
-
-    let mCheck: MethodValidation = {
-      methodAllowed: !check.hasMethodRestrictions,
-      methodHasCooldown: false,
-      methodOnCooldown: false
-    }
-
-    if (check.hasMethodRestrictions) {
-      assert(methodIndex < methodOffsets.length, ERR_MALFORMED_OFFSETS);
-      mCheck = this.methodCheck(key, txn, methodOffsets[methodIndex]);
-    }
-
-    return {
-      ...check,
-      ...mCheck,
-      valid: check.valid && mCheck.methodAllowed
-    }
-  }
-
   /**
    * Guarantee that our txn group is valid in a single loop over all txns in the group
    * 
@@ -361,9 +345,19 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   */
   private assertValidGroup(key: PluginKey, methodOffsets: uint64[]): void {
 
-    const epochRef = this.plugins(key).value.useRounds
+    const { useRounds, useExecutionKey } = this.plugins(key).value
+
+    const epochRef = useRounds
       ? Global.round
       : Global.latestTimestamp;
+
+    if (useExecutionKey) {
+      assert(
+        this.executions(Global.groupId).exists &&
+        epochRef < this.executions(Global.groupId).value,
+        ERR_BAD_EXECUTION_KEY
+      )
+    }
 
     const initialCheck = this.pluginCheck(key);
 
@@ -393,10 +387,15 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       assert(txn.numAppArgs > 1, ERR_INVALID_SENDER_ARG);
       assert(Application(btoi(txn.appArgs(1))) === Global.currentApplicationId, ERR_INVALID_SENDER_VALUE);
 
-      const check = this.fullPluginCheck(key, txn, methodOffsets, methodIndex);
+      const { hasMethodRestrictions, valid } = this.pluginCheck(key);
 
-      assert(!check.methodOnCooldown, ERR_METHOD_ON_COOLDOWN);
-      assert(check.valid, ERR_INVALID_PLUGIN_CALL);
+      assert(valid, ERR_INVALID_PLUGIN_CALL);
+
+      if (hasMethodRestrictions) {
+        assert(methodIndex < methodOffsets.length, ERR_MALFORMED_OFFSETS);
+        const { methodAllowed, methodOnCooldown } = this.methodCheck(key, txn, methodOffsets[methodIndex]);
+        assert(methodAllowed && !methodOnCooldown, ERR_METHOD_ON_COOLDOWN);
+      }
 
       if (initialCheck.hasCooldown) {
         this.plugins(key).value.lastCalled = epochRef
@@ -421,8 +420,8 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     assert(len(txn.appArgs(0)) === 4, ERR_INVALID_METHOD_SIGNATURE_LENGTH)
     const selectorArg = txn.appArgs(0).toFixed({ length: 4 })
 
-    const { methods, useRounds } = clone(this.plugins(key).value)
-    const { selector, cooldown, lastCalled } = methods[offset]
+    const { useRounds } = this.plugins(key).value
+    const { selector, cooldown, lastCalled } = this.plugins(key).value.methods[offset]
 
     const hasCooldown = cooldown > 0
 
@@ -432,13 +431,8 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     if (selector === selectorArg && (!hasCooldown || !onCooldown)) {
       // update the last called round for the method
       if (hasCooldown) {
-        const lastCalled = useRounds
-          ? Global.round
-          : Global.latestTimestamp;
-
-        methods[offset].lastCalled = lastCalled
-
-        this.plugins(key).value.methods = clone(methods)
+        const lastCalled = useRounds ? Global.round : Global.latestTimestamp;
+        this.plugins(key).value.methods[offset].lastCalled = lastCalled
       }
 
       return {
@@ -869,6 +863,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     cooldown: uint64,
     methods: MethodRestriction[],
     useRounds: boolean,
+    useExecutionKey: boolean
   ): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
     const badDelegationCombo = (
@@ -905,6 +900,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       cooldown,
       methods: clone(methodInfos),
       useRounds,
+      useExecutionKey,
       lastCalled: 0,
       start: epochRef,
     }
@@ -990,6 +986,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     cooldown: uint64,
     methods: MethodRestriction[],
     useRounds: boolean,
+    useExecutionKey: boolean
   ): void {
     assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
     assert(!this.namedPlugins(name).exists);
@@ -1024,6 +1021,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       cooldown,
       methods: clone(methodInfos),
       useRounds,
+      useExecutionKey,
       lastCalled: 0,
       start: epochRef
     }
@@ -1066,10 +1064,28 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    *
    * @param escrow The name of the escrow to create
   */
-  arc58_newEscrow(escrow: string): void {
-    assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
-    assert(!this.escrows(escrow).exists, ERR_ESCROW_ALREADY_EXISTS);
-    this.newEscrow(escrow);
+  arc58_newEscrow(escrow: string): uint64 {
+    assert(this.isAdmin(), ERR_ADMIN_ONLY);
+    assert(!this.namedEscrows(escrow).exists, ERR_ESCROW_ALREADY_EXISTS);
+    return this.newEscrow(escrow);
+  }
+
+  /**
+   * Lock or Unlock an escrow account
+   *
+   * @param escrow The escrow to lock or unlock
+  */
+  arc58_toggleEscrowLock(escrow: string): boolean {
+    assert(this.isAdmin(), ERR_FORBIDDEN);
+    assert(this.namedEscrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    const escrowID = this.namedEscrows(escrow).value
+
+    this.escrows(escrowID).value = !this.escrows(escrowID).value;
+
+    this.updateLastUserInteraction();
+    this.updateLastChange();
+
+    return this.escrows(escrowID).value;
   }
 
   /**
@@ -1079,9 +1095,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * @param reclaims The list of reclaims to make from the escrow
   */
   arc58_reclaim(escrow: string, reclaims: EscrowReclaim[]): void {
-    assert(Txn.sender === this.admin.value, ERR_FORBIDDEN);
-    assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
-    const sender = Application(this.escrows(escrow).value).address
+    assert(this.isAdmin(), ERR_FORBIDDEN);
+    assert(this.namedEscrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    const sender = Application(this.namedEscrows(escrow).value).address
 
     for (let i: uint64 = 0; i < reclaims.length; i += 1) {
       if (reclaims[i].asset === 0) {
@@ -1120,9 +1136,11 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * @param assets The list of assets to opt-in to
   */
   arc58_optinEscrow(escrow: string, assets: uint64[]): void {
-    assert(Txn.sender === this.admin.value, ERR_FORBIDDEN);
-    assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
-    const escrowAddress = Application(this.escrows(escrow).value).address
+    assert(this.isAdmin(), ERR_FORBIDDEN)
+    assert(this.namedEscrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
+    const escrowID = this.namedEscrows(escrow).value
+    const escrowAddress = Application(escrowID).address
+    assert(!this.escrows(escrowID).value, ERR_ESCROW_LOCKED)
 
     itxn
       .payment({
@@ -1134,7 +1152,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     for (let i: uint64 = 0; i < assets.length; i += 1) {
       assert(
-        this.allowances({ escrow: this.escrows(escrow).value, asset: assets[i] }).exists,
+        this.allowances({ escrow: escrowID, asset: assets[i] }).exists,
         ERR_ALLOWANCE_DOES_NOT_EXIST
       );
 
@@ -1173,7 +1191,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       Txn.sender === allowedCaller.native ||
       allowedCaller.native === Global.zeroAddress,
       ERR_FORBIDDEN
-    );
+    )
+    assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
+    assert(!this.escrows(escrow).value, ERR_ESCROW_LOCKED)
 
     const escrowAddress = Application(escrow).address
 
@@ -1219,7 +1239,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   */
   arc58_addAllowances(escrow: string, allowances: AddAllowanceInfo[]): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
-    assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    assert(this.namedEscrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    const escrowID = this.namedEscrows(escrow).value
+    assert(!this.escrows(escrowID).value, ERR_ESCROW_LOCKED);
 
     if (this.controlledAddress.value !== Global.currentApplicationAddress) {
       itxn
@@ -1233,7 +1255,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     for (let i: uint64 = 0; i < allowances.length; i += 1) {
       const { asset, type, allowed, max, interval, useRounds } = allowances[i];
-      const key: AllowanceKey = { escrow: this.escrows(escrow).value, asset }
+      const key: AllowanceKey = { escrow: escrowID, asset }
       assert(!this.allowances(key).exists, ERR_ALLOWANCE_ALREADY_EXISTS);
       const start = useRounds ? Global.round : Global.latestTimestamp;
 
@@ -1260,8 +1282,10 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * @param assets The list of assets to remove the allowance for
   */
   arc58_removeAllowances(escrow: string, assets: uint64[]): void {
-    assert(this.isAdmin(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_METHOD_RESTRICTION);
-    assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_METHOD_RESTRICTION);
+    assert(this.namedEscrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    const escrowID = this.namedEscrows(escrow).value
+    assert(!this.escrows(escrowID).value, ERR_ESCROW_LOCKED);
 
     if (this.controlledAddress.value !== Global.currentApplicationAddress) {
       itxn
@@ -1274,15 +1298,34 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     for (let i: uint64 = 0; i < assets.length; i += 1) {
       const key: AllowanceKey = {
-        escrow: this.escrows(escrow).value,
+        escrow: escrowID,
         asset: assets[i]
       }
-      assert(this.allowances(key).exists, ERR_ALLOWANCE_DOES_NOT_EXIST);
-      this.allowances(key).delete();
+      assert(this.allowances(key).exists, ERR_ALLOWANCE_DOES_NOT_EXIST)
+      this.allowances(key).delete()
     }
 
-    this.updateLastUserInteraction();
-    this.updateLastChange();
+    this.updateLastUserInteraction()
+    this.updateLastChange()
+  }
+
+  arc58_addExecutionKey(key: ExecutionKey, lastValidRound: uint64): void {
+    assert(this.isAdmin(), ERR_ADMIN_ONLY)
+    assert(!this.executions(key).exists, ERR_EXECUTION_KEY_ALREADY_EXISTS)
+
+    this.executions(key).value = lastValidRound
+
+    this.updateLastUserInteraction()
+    this.updateLastChange()
+  }
+
+  arc58_removeExecutionKey(key: ExecutionKey): void {
+    assert(this.isAdmin(), ERR_ADMIN_ONLY)
+    assert(this.executions(key).exists, ERR_EXECUTION_KEY_DOES_NOT_EXIST)
+    this.executions(key).delete()
+
+    this.updateLastUserInteraction()
+    this.updateLastChange()
   }
 
   // READ ONLY METHODS ----------------------------------------------------------------------------
@@ -1297,6 +1340,20 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   }
 
   @abimethod({ readonly: true })
+  arc58_getEscrow(name: string): uint64 {
+    if (this.namedEscrows(name).exists) {
+      return this.namedEscrows(name).value
+    }
+    return 0
+  }
+
+  @abimethod({ readonly: true })
+  arc58_mustGetEscrow(name: string): uint64 {
+    assert(this.namedEscrows(name).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    return this.namedEscrows(name).value
+  }
+
+  @abimethod({ readonly: true })
   mbr(
     methodCount: uint64,
     pluginName: string,
@@ -1305,7 +1362,8 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     return {
       plugins: this.pluginsMbr(methodCount),
       namedPlugins: this.namedPluginsMbr(pluginName),
-      escrows: this.escrowsMbr(escrowName),
+      escrows: this.escrowsMbr(),
+      namedEscrows: this.namedEscrowsMbr(escrowName),
       allowances: this.allowancesMbr(),
       domainKeys: this.domainKeysMbr(pluginName),
     }

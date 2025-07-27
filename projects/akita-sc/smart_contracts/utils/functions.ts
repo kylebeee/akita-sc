@@ -13,7 +13,7 @@ import { MetaMerklesInterface, Proof } from "./types/merkles"
 import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
 import { STAKING_TYPE_LOCK } from "../staking/types"
 import { ONE_YEAR_IN_DAYS } from "../gates/sub-gates/staking-power/constants"
-import { ONE_DAY } from "../arc58/plugins/social/constants"
+import { ONE_DAY, ONE_WEEK } from "../arc58/plugins/social/constants"
 
 import { AkitaSocialImpactInterface } from "./types/social"
 import { EscrowFactoryInterface } from "./types/escrows"
@@ -380,7 +380,7 @@ export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64
 
   const remainingTime: uint64 = info.expiration - Global.latestTimestamp
 
-  if (remainingTime < ONE_DAY) {
+  if (remainingTime < ONE_WEEK) {
     return 0
   }
 

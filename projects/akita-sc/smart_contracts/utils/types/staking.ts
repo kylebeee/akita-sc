@@ -11,6 +11,7 @@ export class StakingInterface extends Contract {
     withdraw(asset: uint64, type: StakingType): void {}
     createHeartbeat(address: Address, asset: uint64): void {}
     softCheck(address: Address, asset: uint64): { valid: boolean, balance: uint64 } { return { valid: false, balance: 0 }}
+    updateSettings(payment: gtxn.PaymentTxn, asset: uint64, value: uint64): void {}
     getTimeLeft(address: Address, asset: uint64): uint64 { return 0 }
     mustGetTimeLeft(address: Address, asset: uint64): uint64 { return 0 }
     getInfo(address: Address, stake: StakeInfo): Stake { return { amount: 0, lastUpdate: 0, expiration: 0 } }
@@ -18,6 +19,7 @@ export class StakingInterface extends Contract {
     getEscrowInfo(address: Address, asset: uint64): Escrow { return { hard: 0, lock: 0 } }
     getHeartbeat(address: Address, asset: uint64): Heartbeats { return [] }
     mustGetHeartbeat(address: Address, asset: uint64): Heartbeats { return [] }
+    getHeartbeatAverage(address: Address, asset: uint64, includeStaked: boolean): uint64 { return 0 }
     mustGetHeartbeatAverage(address: Address, asset: uint64, includeStaked: boolean): uint64 { return 0 }
     getInfoList(address: Address, type: StakingType, assets: uint64[]): Stake[] { return [] }
     mustGetInfoList(address: Address, type: StakingType, assets: uint64[]): Stake[] { return [] }

@@ -20,15 +20,10 @@ import {
   clone,
 } from '@algorandfoundation/algorand-typescript'
 import { AssetHolding, btoi, itob, len, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abiCall, Address, Bool, compileArc4, decodeArc4, DynamicArray, methodSelector, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, Address, decodeArc4, methodSelector, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   AkitaAppList,
   AkitaAssets,
-  AkitaDAOApps,
-  AkitaDAOFees,
-  AkitaDAOMBRData,
-  AkitaDAOState,
-  arc4DAOPluginInfo,
   DAOPluginInfo,
   EscrowAssetKey,
   ExecutionInfo,
@@ -134,19 +129,19 @@ import { GlobalStateKeyVersion } from '../constants'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { BoxCostPerByte, GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
 import { AbstractAccountBoxPrefixAllowances, AbstractAccountBoxPrefixNamedPlugins, AbstractAccountBoxPrefixPlugins, AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysLastChange, AbstractAccountGlobalStateKeysSpendingAddress, MethodRestrictionByteLength } from '../arc58/account/constants'
-import { AddAllowanceInfo, AllowanceInfo, AllowanceKey, arc4MethodInfo, DelegationTypeSelf, FullPluginValidation, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from '../arc58/account/types'
+import { AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, FullPluginValidation, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from '../arc58/account/types'
 import { ERR_ALLOWANCE_ALREADY_EXISTS, ERR_ALLOWANCE_DOES_NOT_EXIST, ERR_ALLOWANCE_EXCEEDED, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY, ERR_INVALID_ONCOMPLETE, ERR_INVALID_PLUGIN_CALL, ERR_INVALID_SENDER_ARG, ERR_INVALID_SENDER_VALUE, ERR_MALFORMED_OFFSETS, ERR_METHOD_ON_COOLDOWN, ERR_MISSING_REKEY_BACK, ERR_NOT_USING_ESCROW } from '../arc58/account/errors'
 import { CID } from '../utils/types/base'
 import { AppCreatorsMbr, calcPercent, getOrigin, getStakingPower } from '../utils/functions'
 import { ONE_DAY } from '../gates/sub-gates/staking-power/constants'
-import { EscrowFactory } from '../escrow/factory.algo'
+// import { EscrowFactory } from '../escrow/factory.algo'
 import { ERR_FORBIDDEN } from '../escrow/errors'
-import { AkitaDAOInterface } from '../utils/types/dao'
+// import { AkitaDAOInterface } from '../utils/types/dao'
 import { NewCostForARC58 } from '../escrow/constants'
-import { PoolFactory } from '../pool/factory.algo'
-import { Pool } from '../pool/contract.algo'
-import { MinPoolRewardsMBR, POOL_STAKING_TYPE_LOCK, POOL_STAKING_TYPE_NONE, WinnerCountCap } from '../pool/constants'
+import { MinPoolRewardsMBR, POOL_STAKING_TYPE_LOCK, POOL_STAKING_TYPE_NONE, PoolGlobalStateBytesCount, PoolGlobalStateUintCount, WinnerCountCap } from '../pool/constants'
 import { RootKey } from '../meta-merkles/types'
+// import { PoolFactoryInterface } from '../utils/types/pool'
+import { EscrowFactoryInterface } from '../utils/types/escrows'
 
 /**
  * The Akita DAO contract has several responsibilities:
@@ -157,7 +152,7 @@ import { RootKey } from '../meta-merkles/types'
  * [x] Manages service fees
  */
 
-export class AkitaDAO extends Contract implements AkitaDAOInterface {
+export class AkitaDAODep extends Contract { // implements AkitaDAOInterface
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -304,7 +299,7 @@ export class AkitaDAO extends Contract implements AkitaDAOInterface {
 
   private newEscrow(escrow: string): uint64 {
     const escrowID = abiCall(
-      EscrowFactory.prototype.new,
+      EscrowFactoryInterface.prototype.new,
       {
         sender: this.controlledAddress.value,
         appId: this.escrowFactory.value,
@@ -710,59 +705,6 @@ export class AkitaDAO extends Contract implements AkitaDAOInterface {
       ? Global.zeroAddress
       : Global.currentApplicationAddress
   }
-
-  // TODO:
-  // private validateAddPluginProposal(params: ProposalAddPlugin): void {
-
-  //   // validate delegation type is not self
-  //   assert(params.delegationType !== DelegationTypeSelf, ERR_BAD_DAO_DELEGATION_TYPE)
-
-  //   // validate plugin doesn't already exist
-  //   const key: PluginKey = { application: params.app, allowedCaller: params.allowedCaller.native }
-  //   assert(!this.plugins(key).exists, 'Plugin already exists')
-
-  //   // validate execution settings are reasonable
-  //   assert(params.executionProposalCreationMinimum >= 0, 'Invalid execution proposal creation minimum')
-  //   assert(params.executionParticipationThreshold > 0 && params.executionParticipationThreshold <= DIVISOR, 'Invalid execution participation threshold')
-  //   assert(params.executionApprovalThreshold > 0 && params.executionApprovalThreshold <= DIVISOR, 'Invalid execution approval threshold')
-  //   assert(params.executionVotingDuration > 0, 'Invalid execution voting duration')
-
-  //   // validate method restrictions if any
-  //   for (let i: uint64 = 0; i < params.methods.length; i += 1) {
-  //     const method = params.methods[i]
-  //     // validate method selector is 4 bytes
-  //     assert(method.selector.length === 4, ERR_INVALID_METHOD_SIGNATURE_LENGTH)
-  //     // validate method cooldown is reasonable
-  //     assert(method.cooldown <= 365 * ONE_DAY, 'Method cooldown too long')
-  //   }
-
-  //   // validate allowances if useAllowance is true
-  //   if (params.allowances.length > 0) {
-  //     for (let i: uint64 = 0; i < params.allowances.length; i += 1) {
-  //       const allowance = params.allowances[i]
-
-  //       // validate allowance type
-  //       assert(
-  //         allowance.type === SpendAllowanceTypeFlat ||
-  //         allowance.type === SpendAllowanceTypeWindow ||
-  //         allowance.type === SpendAllowanceTypeDrip,
-  //         'Invalid allowance type'
-  //       )
-
-  //       // validate amounts are positive
-  //       assert(allowance.allowed > 0, 'Allowance amount must be positive')
-
-  //       if (allowance.type === SpendAllowanceTypeDrip) {
-  //         assert(allowance.max > 0, 'Max allowance must be positive for drip type')
-  //         assert(allowance.interval > 0, 'Interval must be positive for drip type')
-  //       }
-
-  //       if (allowance.type === SpendAllowanceTypeWindow) {
-  //         assert(allowance.interval > 0, 'Interval must be positive for window type')
-  //       }
-  //     }
-  //   }
-  // }
 
   /**
    * Add an app to the list of approved plugins
@@ -1257,83 +1199,83 @@ export class AkitaDAO extends Contract implements AkitaDAOInterface {
     this.contentPolicy.value = contentPolicy
     this.minRewardsImpact.value = minRewardsImpact
 
-    this.akitaAppList.value = {
-      staking: apps.staking,
-      rewards: apps.rewards,
-      pool: apps.pool,
-      prizeBox: apps.prizeBox,
-      subscriptions: apps.subscriptions,
-      gate: apps.gate,
-      auction: apps.auction,
-      hyperSwap: apps.hyperSwap,
-      raffle: apps.raffle,
-      metaMerkles: apps.metaMerkles,
-      marketplace: apps.marketplace,
-      akitaNfd: apps.akitaNfd,
-      social: apps.social,
-      impact: apps.impact
-    }
+    // this.akitaAppList.value = {
+    //   staking: apps.staking,
+    //   rewards: apps.rewards,
+    //   pool: apps.pool,
+    //   prizeBox: apps.prizeBox,
+    //   subscriptions: apps.subscriptions,
+    //   gate: apps.gate,
+    //   auction: apps.auction,
+    //   hyperSwap: apps.hyperSwap,
+    //   raffle: apps.raffle,
+    //   metaMerkles: apps.metaMerkles,
+    //   marketplace: apps.marketplace,
+    //   akitaNfd: apps.akitaNfd,
+    //   social: apps.social,
+    //   impact: apps.impact
+    // }
 
-    this.pluginAppList.value = {
-      optin: apps.optin,
-    }
+    // this.pluginAppList.value = {
+    //   optin: apps.optin,
+    // }
 
-    this.otherAppList.value = {
-      vrfBeacon: apps.vrfBeacon,
-      nfdRegistry: apps.nfdRegistry,
-      assetInbox: apps.assetInbox,
-      escrowFactory: apps.escrowFactory,
-    }
+    // this.otherAppList.value = {
+    //   vrfBeacon: apps.vrfBeacon,
+    //   nfdRegistry: apps.nfdRegistry,
+    //   assetInbox: apps.assetInbox,
+    //   escrowFactory: apps.escrowFactory,
+    // }
 
-    this.socialFees.value = {
-      postFee: fees.postFee,
-      reactFee: fees.reactFee,
-      impactTaxMin: fees.impactTaxMin,
-      impactTaxMax: fees.impactTaxMax,
-    }
+    // this.socialFees.value = {
+    //   postFee: fees.postFee,
+    //   reactFee: fees.reactFee,
+    //   impactTaxMin: fees.impactTaxMin,
+    //   impactTaxMax: fees.impactTaxMax,
+    // }
 
-    this.stakingFees.value = {
-      creationFee: fees.poolCreationFee,
-      impactTaxMin: fees.poolImpactTaxMin,
-      impactTaxMax: fees.poolImpactTaxMax
-    }
+    // this.stakingFees.value = {
+    //   creationFee: fees.poolCreationFee,
+    //   impactTaxMin: fees.poolImpactTaxMin,
+    //   impactTaxMax: fees.poolImpactTaxMax
+    // }
 
-    this.subscriptionFees.value = {
-      serviceCreationFee: fees.subscriptionServiceCreationFee,
-      paymentPercentage: fees.subscriptionPaymentPercentage,
-      triggerPercentage: fees.subscriptionTriggerPercentage,
-    }
+    // this.subscriptionFees.value = {
+    //   serviceCreationFee: fees.subscriptionServiceCreationFee,
+    //   paymentPercentage: fees.subscriptionPaymentPercentage,
+    //   triggerPercentage: fees.subscriptionTriggerPercentage,
+    // }
 
-    this.nftFees.value = {
-      marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
-      marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
-      marketplaceComposablePercentage: fees.marketplaceComposablePercentage,
-      marketplaceRoyaltyDefaultPercentage: fees.marketplaceRoyaltyDefaultPercentage,
-      shuffleSalePercentage: fees.shuffleSalePercentage,
-      omnigemSaleFee: fees.omnigemSaleFee,
-      auctionCreationFee: fees.auctionCreationFee,
-      auctionSaleImpactTaxMin: fees.auctionSaleImpactTaxMin,
-      auctionSaleImpactTaxMax: fees.auctionSaleImpactTaxMax,
-      auctionComposablePercentage: fees.auctionComposablePercentage,
-      auctionRafflePercentage: fees.auctionRafflePercentage,
-      raffleCreationFee: fees.raffleCreationFee,
-      raffleSaleImpactTaxMin: fees.raffleSaleImpactTaxMin,
-      raffleSaleImpactTaxMax: fees.raffleSaleImpactTaxMax,
-      raffleComposablePercentage: fees.raffleComposablePercentage,
-    }
+    // this.nftFees.value = {
+    //   marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
+    //   marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
+    //   marketplaceComposablePercentage: fees.marketplaceComposablePercentage,
+    //   marketplaceRoyaltyDefaultPercentage: fees.marketplaceRoyaltyDefaultPercentage,
+    //   shuffleSalePercentage: fees.shuffleSalePercentage,
+    //   omnigemSaleFee: fees.omnigemSaleFee,
+    //   auctionCreationFee: fees.auctionCreationFee,
+    //   auctionSaleImpactTaxMin: fees.auctionSaleImpactTaxMin,
+    //   auctionSaleImpactTaxMax: fees.auctionSaleImpactTaxMax,
+    //   auctionComposablePercentage: fees.auctionComposablePercentage,
+    //   auctionRafflePercentage: fees.auctionRafflePercentage,
+    //   raffleCreationFee: fees.raffleCreationFee,
+    //   raffleSaleImpactTaxMin: fees.raffleSaleImpactTaxMin,
+    //   raffleSaleImpactTaxMax: fees.raffleSaleImpactTaxMax,
+    //   raffleComposablePercentage: fees.raffleComposablePercentage,
+    // }
 
-    this.swapFees.value = {
-      impactTaxMin: fees.swapFeeImpactTaxMin,
-      impactTaxMax: fees.swapFeeImpactTaxMax,
-    }
+    // this.swapFees.value = {
+    //   impactTaxMin: fees.swapFeeImpactTaxMin,
+    //   impactTaxMax: fees.swapFeeImpactTaxMax,
+    // }
 
-    this.krbyPercentage.value = fees.krbyPercentage
-    this.moderatorPercentage.value = fees.moderatorPercentage
+    // this.krbyPercentage.value = fees.krbyPercentage
+    // this.moderatorPercentage.value = fees.moderatorPercentage
 
-    this.proposalCreationSettings.value = clone(proposalSettings.creation)
-    this.proposalParticipationSettings.value = clone(proposalSettings.participation)
-    this.proposalApprovalThresholdSettings.value = clone(proposalSettings.approval)
-    this.proposalVotingDurationSettings.value = clone(proposalSettings.duration)
+    // this.proposalCreationSettings.value = clone(proposalSettings.creation)
+    // this.proposalParticipationSettings.value = clone(proposalSettings.participation)
+    // this.proposalApprovalThresholdSettings.value = clone(proposalSettings.approval)
+    // this.proposalVotingDurationSettings.value = clone(proposalSettings.duration)
 
     this.revocationAddress.value = revocationAddress.native
 
@@ -1356,122 +1298,120 @@ export class AkitaDAO extends Contract implements AkitaDAOInterface {
     this.akitaAssets.value = { akta, bones }
 
     // receive escrows
-    this.newReceiveEscrow(
-      AkitaDAOEscrowAccountSocial,
-      Application(apps.social).address,
-      true,
-      true
-    )
+    // this.newReceiveEscrow(
+    //   AkitaDAOEscrowAccountSocial,
+    //   Application(apps.social).address,
+    //   true,
+    //   true
+    // )
 
-    const stakingEscrow = this.newReceiveEscrow(
-      AkitaDAOEscrowAccountStakingPools,
-      Application(apps.pool).address,
-      true,
-      true
-    )
+    // const stakingEscrow = this.newReceiveEscrow(
+    //   AkitaDAOEscrowAccountStakingPools,
+    //   Application(apps.pool).address,
+    //   true,
+    //   true
+    // )
 
-    abiCall(
-      PoolFactory.prototype.setEscrow,
-      {
-        appId: apps.pool,
-        args: [ stakingEscrow ]
-      }
-    )
+    // abiCall(
+    //   PoolFactoryInterface.prototype.setEscrow,
+    //   {
+    //     appId: apps.pool,
+    //     args: [ stakingEscrow ]
+    //   }
+    // )
 
-    this.newReceiveEscrow(
-      AkitaDAOEscrowAccountSubscriptions,
-      Application(apps.subscriptions).address,
-      true,
-      true
-    )
+    // this.newReceiveEscrow(
+    //   AkitaDAOEscrowAccountSubscriptions,
+    //   Application(apps.subscriptions).address,
+    //   true,
+    //   true
+    // )
 
-    this.newReceiveEscrow(
-      AkitaDAOEscrowAccountMarketplace,
-      Application(apps.marketplace).address,
-      true,
-      true
-    )
+    // this.newReceiveEscrow(
+    //   AkitaDAOEscrowAccountMarketplace,
+    //   Application(apps.marketplace).address,
+    //   true,
+    //   true
+    // )
 
-    this.newReceiveEscrow(
-      AkitaDAOEscrowAccountAuctions,
-      Application(apps.auction).address,
-      true,
-      true
-    )
+    // this.newReceiveEscrow(
+    //   AkitaDAOEscrowAccountAuctions,
+    //   Application(apps.auction).address,
+    //   true,
+    //   true
+    // )
 
-    this.newReceiveEscrow(
-      AkitaDAOEscrowAccountRaffles,
-      Application(apps.raffle).address,
-      true,
-      true
-    )
+    // this.newReceiveEscrow(
+    //   AkitaDAOEscrowAccountRaffles,
+    //   Application(apps.raffle).address,
+    //   true,
+    //   true
+    // )
 
-    // payout escrows
-    this.newIndividualPayoutEscrow(
-      AkitaDAOEscrowAccountKrby,
-      krbyPayoutAddress
-    )
+    // // payout escrows
+    // this.newIndividualPayoutEscrow(
+    //   AkitaDAOEscrowAccountKrby,
+    //   krbyPayoutAddress
+    // )
 
-    const pool = compileArc4(Pool)
+    // const childContractMBR: uint64 = (
+    //   this.stakingFees.value.creationFee +
+    //   MAX_PROGRAM_PAGES +
+    //   (GLOBAL_STATE_KEY_UINT_COST * PoolGlobalStateUintCount) +
+    //   (GLOBAL_STATE_KEY_BYTES_COST * PoolGlobalStateBytesCount) +
+    //   Global.minBalance +
+    //   AppCreatorsMbr
+    // )
 
-    const childContractMBR: uint64 = (
-      this.stakingFees.value.creationFee +
-      MAX_PROGRAM_PAGES +
-      (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
-      (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
-      Global.minBalance +
-      AppCreatorsMbr
-    )
+    // const modStakingPoolID = abiCall(
+    //   PoolFactoryInterface.prototype.newPool,
+    //   {
+    //     appId: apps.pool,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: Application(apps.pool).address,
+    //         amount: childContractMBR
+    //       }),
+    //       'Akita DAO Moderator Staking Pool',
+    //       POOL_STAKING_TYPE_NONE,
+    //       new Address(Application(stakingEscrow).address),
+    //       { address: new Address(Global.zeroAddress), name: '' },
+    //       0,
+    //       moderatorGateID,
+    //       0,
+    //     ]
+    //   }
+    // ).returnValue
 
-    const modStakingPoolID = abiCall(
-      PoolFactory.prototype.newPool,
-      {
-        appId: apps.pool,
-        args: [
-          itxn.payment({
-            receiver: Application(apps.pool).address,
-            amount: childContractMBR
-          }),
-          'Akita DAO Moderator Staking Pool',
-          POOL_STAKING_TYPE_NONE,
-          new Address(Application(stakingEscrow).address),
-          { address: new Address(Global.zeroAddress), name: '' },
-          0,
-          moderatorGateID,
-          0,
-        ]
-      }
-    ).returnValue
+    // this.newGroupPayoutEscrow(
+    //   AkitaDAOEscrowAccountModerators,
+    //   modStakingPoolID
+    // )
 
-    this.newGroupPayoutEscrow(
-      AkitaDAOEscrowAccountModerators,
-      modStakingPoolID
-    )
+    // const govStakingPoolID = abiCall(
+    //   PoolFactoryInterface.prototype.newPool,
+    //   {
+    //     appId: apps.pool,
+    //     args: [
+    //       itxn.payment({
+    //         receiver: Application(apps.pool).address,
+    //         amount: childContractMBR
+    //       }),
+    //       'Akita DAO Governance Staking Pool',
+    //       POOL_STAKING_TYPE_LOCK,
+    //       new Address(Application(stakingEscrow).address),
+    //       govStakeKey,
+    //       0,
+    //       govGateID,
+    //       0,
+    //     ]
+    //   }
+    // ).returnValue
 
-    const govStakingPoolID = abiCall(
-      PoolFactory.prototype.newPool,
-      {
-        appId: apps.pool,
-        args: [
-          itxn.payment({
-            receiver: Application(apps.pool).address,
-            amount: childContractMBR
-          }),
-          'Akita DAO Governance Staking Pool',
-          POOL_STAKING_TYPE_LOCK,
-          new Address(Application(stakingEscrow).address),
-          govStakeKey,
-          0,
-          govGateID,
-          0,
-        ]
-      }
-    ).returnValue
-
-    this.newGroupPayoutEscrow(
-      AkitaDAOEscrowAccountGovernors,
-      govStakingPoolID
-    )
+    // this.newGroupPayoutEscrow(
+    //   AkitaDAOEscrowAccountGovernors,
+    //   govStakingPoolID
+    // )
   }
 
   // AKITA ARC58 METHODS --------------------------------------------------------------------------
@@ -2020,51 +1960,25 @@ export class AkitaDAO extends Contract implements AkitaDAOInterface {
 
   // READ ONLY METHODS ----------------------------------------------------------------------------
 
-  @abimethod({ readonly: true })
-  mbr(
-    methodCount: uint64,
-    pluginName: string,
-    escrowName: string,
-    payoutEscrowType: Uint8,
-    proposalData: bytes
-  ): AkitaDAOMBRData {
-    return {
-      plugins: this.pluginsMbr(methodCount),
-      namedPlugins: this.namedPluginsMbr(pluginName),
-      escrows: this.escrowsMbr(escrowName),
-      receiveEscrows: this.receiveEscrowsMbr(),
-      receiveAssets: this.receiveAssetsMbr(),
-      payoutEscrows: this.payoutEscrowsMbr(payoutEscrowType),
-      allowances: this.allowancesMbr(),
-      proposals: this.proposalsMbr(proposalData),
-      proposalVotes: this.proposalVotesMbr(),
-      executions: this.executionsMbr(),
-    }
-  }
-
-  @abimethod({ readonly: true })
-  getState(): AkitaDAOState {
-    return {
-      initialized: this.initialized.value,
-      version: this.version.value,
-      contentPolicy: this.contentPolicy.value,
-      minRewardsImpact: this.minRewardsImpact.value,
-      akitaAppList: this.akitaAppList.value,
-      otherAppList: this.otherAppList.value,
-      socialFees: this.socialFees.value,
-      stakingFees: this.stakingFees.value,
-      subscriptionFees: this.subscriptionFees.value,
-      nftFees: this.nftFees.value,
-      krbyPercentage: this.krbyPercentage.value,
-      moderatorPercentage: this.moderatorPercentage.value,
-      proposalSettings: {
-        creation: this.proposalCreationSettings.value,
-        participation: this.proposalParticipationSettings.value,
-        approval: this.proposalApprovalThresholdSettings.value,
-        duration: this.proposalVotingDurationSettings.value,
-      },
-      akitaAssets: this.akitaAssets.value,
-      revocationAddress: new Address(this.revocationAddress.value),
-    }
-  }
+  // @abimethod({ readonly: true })
+  // mbr(
+  //   methodCount: uint64,
+  //   pluginName: string,
+  //   escrowName: string,
+  //   payoutEscrowType: Uint8,
+  //   proposalData: bytes
+  // ): AkitaDAOMBRData {
+  //   return {
+  //     plugins: this.pluginsMbr(methodCount),
+  //     namedPlugins: this.namedPluginsMbr(pluginName),
+  //     escrows: this.escrowsMbr(escrowName),
+  //     receiveEscrows: this.receiveEscrowsMbr(),
+  //     receiveAssets: this.receiveAssetsMbr(),
+  //     payoutEscrows: this.payoutEscrowsMbr(payoutEscrowType),
+  //     allowances: this.allowancesMbr(),
+  //     proposals: this.proposalsMbr(proposalData),
+  //     proposalVotes: this.proposalVotesMbr(),
+  //     executions: this.executionsMbr(),
+  //   }
+  // }
 }

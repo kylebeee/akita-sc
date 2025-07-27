@@ -17,6 +17,7 @@ export const ERR_SENDER_NOT_ALLOWED_TO_CALL_PLUGIN = 'This sender is not allowed
 export const ERR_PLUGIN_DOES_NOT_CONTROL_WALLET = 'This plugin is not in control of the account'
 export const ERR_PLUGIN_DOES_NOT_HAVE_ADMIN_PRIVILEGES = 'This plugin does not have admin privileges'
 export const ERR_DOMAIN_MUST_BE_LONGER_THAN_ZERO = 'Domain must not be length 0'
+export const ERR_BAD_EXECUTION_KEY = 'The execution key does not match the group ID of the transaction'
 export const ERR_PLUGIN_DOES_NOT_EXIST = 'Plugin does not exist'
 export const ERR_METHOD_DOES_NOT_EXIST = 'Method does not exist'
 export const ERR_METHOD_ALREADY_EXISTS = 'Method already exists'
@@ -40,6 +41,8 @@ export const ERR_SENDER_MUST_BE_ADMIN_PLUGIN = 'sender must be admin plugin'
 export const ERR_ZERO_ADDRESS_DELEGATION_TYPE = 'delegation type must not be self for global plugins'
 export const ERR_ALLOWANCE_ALREADY_EXISTS = 'allowance already exists'
 export const ERR_ALLOWANCE_DOES_NOT_EXIST = 'allowance does not exist'
+export const ERR_EXECUTION_KEY_ALREADY_EXISTS = 'execution key already exists'
+export const ERR_EXECUTION_KEY_DOES_NOT_EXIST = 'execution key does not exist'
 
 export const ERR_INVALID_PAYMENT = 'invalid payment'
 

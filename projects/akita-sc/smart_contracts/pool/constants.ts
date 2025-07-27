@@ -2,6 +2,10 @@ import { uint64 } from "@algorandfoundation/algorand-typescript"
 import { Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
 import { DisbursementPhase, DistributionType, PoolStakingType, PoolStatus } from "./types"
 
+export const PoolGlobalStateUintCount: uint64 = 13
+export const PoolGlobalStateBytesCount: uint64 = 8
+
+
 export const PoolGlobalStateKeyStatus = 'status'
 export const PoolGlobalStateKeyDisbursementPhase = 'disbursement_phase'
 export const PoolGlobalStateKeyTitle = 'title'

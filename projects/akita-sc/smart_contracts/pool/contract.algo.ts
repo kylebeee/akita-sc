@@ -17,9 +17,6 @@ import {
 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, decodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { Staking } from '../staking/contract.algo'
-import { Rewards } from '../rewards/contract.algo'
-import { MetaMerkles } from '../meta-merkles/contract.algo'
 import {
   DistributionType,
   EntryData,
@@ -31,7 +28,7 @@ import {
   StakeEntry,
 } from './types'
 import { RootKey } from '../meta-merkles/types'
-import { GateArgs } from '../utils/types/gates'
+import { GateArgs, GateInterface } from '../utils/types/gates'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { StakingType } from '../staking/types'
 import {
@@ -84,14 +81,16 @@ import { ERR_DAO_NOT_OPTED_IN, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION, ERR_
 import { UserAllocation } from '../rewards/types'
 import { BasePool } from './base'
 import { classes } from 'polytype'
-import { Gate } from '../gates/contract.algo'
 import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { BoxCostPerByte, MAX_UINT64 } from '../utils/constants'
 import { calcPercent, gateCall, getAkitaAppList, getOtherAppList, getStakingFees, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, percentageOf } from '../utils/functions'
-import { AkitaBaseEscrow } from '../utils/base-contracts/base'
+import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { AkitaDAOEscrowAccountStakingPools } from '../dao/constants'
 import { MinDisbursementsMBR } from '../rewards/constants'
+import { StakingInterface } from '../utils/types/staking'
+import { RewardsInterface } from '../utils/types/rewards'
+import { MetaMerklesInterface } from '../utils/types/merkles'
 
 const MERKLE_TREE_TYPE_ASSET: uint64 = 1
 
@@ -190,16 +189,16 @@ export class Pool extends classes(
     if (asset === 0) {
       itxn
         .payment({
-          receiver: this.akitaDAOEscrow.value.address,
+          receiver: Global.zeroAddress,
           amount,
         })
         .submit()
     } else {
-      assert(this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset)), ERR_DAO_NOT_OPTED_IN)
+      assert(Global.zeroAddress.isOptedIn(Asset(asset)), ERR_DAO_NOT_OPTED_IN)
 
       itxn
         .assetTransfer({
-          assetReceiver: this.akitaDAOEscrow.value.address,
+          assetReceiver: Global.zeroAddress,
           assetAmount: amount,
           xferAsset: asset,
         })
@@ -229,10 +228,10 @@ export class Pool extends classes(
       }
 
       if (this.gateID.value !== 0) {
-        const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, address.native)
+        const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, address.native)
         const origin = originOr(wallet, address.native)
 
-        const passes = gateCall(this.akitaDAO.value, origin, this.gateID.value, gateArgs)
+        const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
         if (!passes) {
           if (this.type.value !== POOL_STAKING_TYPE_HEARTBEAT) {
             this.entries(id).value.disqualified = true
@@ -477,9 +476,9 @@ export class Pool extends classes(
 
     if (this.type.value === POOL_STAKING_TYPE_SOFT) {
       const check = abiCall(
-        Staking.prototype.softCheck,
+        StakingInterface.prototype.softCheck,
         {
-          appId: getAkitaAppList(this.akitaDAO.value).staking,
+          appId: getAkitaAppList(Global.currentApplicationId).staking,
           args: [address, asset],
         }
       ).returnValue
@@ -489,9 +488,9 @@ export class Pool extends classes(
       }
     } else {
       const info = abiCall(
-        Staking.prototype.getInfo,
+        StakingInterface.prototype.getInfo,
         {
-          appId: getAkitaAppList(this.akitaDAO.value).staking,
+          appId: getAkitaAppList(Global.currentApplicationId).staking,
           args: [
             address,
             {
@@ -532,9 +531,9 @@ export class Pool extends classes(
       const { address, asset } = this.entries(id).value
 
       const avg = abiCall(
-        Staking.prototype.getHeartbeatAverage,
+        StakingInterface.prototype.getHeartbeatAverage,
         {
-          appId: getAkitaAppList(this.akitaDAO.value).staking,
+          appId: getAkitaAppList(Global.currentApplicationId).staking,
           args: [address, asset, true],
         }
       ).returnValue
@@ -547,7 +546,7 @@ export class Pool extends classes(
 
   private createRewards(title: string, timeToUnlock: uint64, expiration: uint64): uint64 {
 
-    const rewardsApp = Application(getAkitaAppList(this.akitaDAO.value).rewards)
+    const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
     const rewardMBR: uint64 = MinDisbursementsMBR + (BoxCostPerByte * Bytes(title).length)
 
     const mbrPayment = itxn.payment({
@@ -556,7 +555,7 @@ export class Pool extends classes(
     })
 
     return abiCall(
-      Rewards.prototype.createDisbursement,
+      RewardsInterface.prototype.createDisbursement,
       {
         appId: rewardsApp,
         args: [
@@ -577,13 +576,13 @@ export class Pool extends classes(
     sum: uint64
   ): void {
 
-    const rewardsApp = Application(getAkitaAppList(this.akitaDAO.value).rewards)
+    const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
     const mbrAmount = this.calculateAllocationMBR(allocations)
 
     if (asset === 0) {
       // ALGO allocations
       abiCall(
-        Rewards.prototype.createUserAllocations,
+        RewardsInterface.prototype.createUserAllocations,
         {
           appId: rewardsApp,
           args: [
@@ -599,7 +598,7 @@ export class Pool extends classes(
     } else {
       // ASA allocations
       abiCall(
-        Rewards.prototype.createAsaUserAllocations,
+        RewardsInterface.prototype.createAsaUserAllocations,
         {
           appId: rewardsApp,
           args: [
@@ -621,10 +620,10 @@ export class Pool extends classes(
   }
 
   private finalizeRewards(disbursementID: uint64): void {
-    const rewardsApp = Application(getAkitaAppList(this.akitaDAO.value).rewards)
+    const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
 
     abiCall(
-      Rewards.prototype.finalizeDisbursement,
+      RewardsInterface.prototype.finalizeDisbursement,
       {
         appId: rewardsApp,
         args: [disbursementID],
@@ -684,11 +683,11 @@ export class Pool extends classes(
     this.minimumStakeAmount.value = minimumStakeAmount
     this.gateID.value = gateID
     this.maxEntries.value = maxEntries
-    this.akitaDAO.value = Application(akitaDAO)
+    // Global.currentApplicationId = Application(akitaDAO)
     this.salt.value = Txn.txId
 
-    const fees = getStakingFees(this.akitaDAO.value)
-    const impact = getUserImpact(this.akitaDAO.value, this.creator.value)
+    const fees = getStakingFees(Global.currentApplicationId)
+    const impact = getUserImpact(Global.currentApplicationId, this.creator.value)
     this.akitaRoyalty.value = impactRange(impact, fees.impactTaxMin, fees.impactTaxMax)
   }
 
@@ -697,9 +696,9 @@ export class Pool extends classes(
 
     if (this.gateID.value > 0) {
       this.gateSize.value = abiCall(
-        Gate.prototype.size,
+        GateInterface.prototype.size,
         {
-          appId: getAkitaAppList(this.akitaDAO.value).gate,
+          appId: getAkitaAppList(Global.currentApplicationId).gate,
           args: [this.gateID.value],
         }
       ).returnValue
@@ -725,7 +724,7 @@ export class Pool extends classes(
 
     // check if the akita dao escrow is opted in to the asset
     // if it does that means 4 extra optins are needed
-    const daoEscrowNeedsToOptIn = !this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))
+    const daoEscrowNeedsToOptIn = !Global.zeroAddress.isOptedIn(Asset(asset))
 
     // if the dao escrow needs to opt in, we also may need to opt in the krby & mod escrows
     const optinMBR: uint64 = (
@@ -832,10 +831,10 @@ export class Pool extends classes(
     assert(this.isLive(), 'the pool is not live')
 
     if (this.gateID.value !== 0) {
-      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+      const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, Txn.sender)
       const origin = originOrTxnSender(wallet)
       assert(
-        gateCall(this.akitaDAO.value, origin, this.gateID.value, args),
+        gateCall(Global.currentApplicationId, origin, this.gateID.value, args),
         'user does not meet gate requirements'
       )
     }
@@ -869,9 +868,9 @@ export class Pool extends classes(
 
       if (address.native !== Global.zeroAddress) {
         const verified = abiCall(
-          MetaMerkles.prototype.verify,
+          MetaMerklesInterface.prototype.verify,
           {
-            appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+            appId: getAkitaAppList(Global.currentApplicationId).metaMerkles,
             args: [
               address,
               name,
@@ -895,9 +894,9 @@ export class Pool extends classes(
       }
 
       const stakeInfo = abiCall(
-        Staking.prototype.getInfo,
+        StakingInterface.prototype.getInfo,
         {
-          appId: getAkitaAppList(this.akitaDAO.value).staking,
+          appId: getAkitaAppList(Global.currentApplicationId).staking,
           args: [
             new Address(Txn.sender),
             {
@@ -970,7 +969,7 @@ export class Pool extends classes(
     const seed = abiCall(
       RandomnessBeacon.prototype.get,
       {
-        appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
+        appId: getOtherAppList(Global.currentApplicationId).vrfBeacon,
         args: [roundToUse, this.salt.value],
       }
     ).returnValue

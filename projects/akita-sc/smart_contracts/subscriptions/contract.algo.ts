@@ -65,7 +65,7 @@ import { BaseSubscriptions } from './base'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { classes } from 'polytype'
 import { AkitaDAOEscrowAccountSubscriptions } from '../dao/constants'
-import { AkitaBaseEscrow } from '../utils/base-contracts/base'
+import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { calcPercent, gateCheck, getSubscriptionFees, getWalletIDUsingAkitaDAO, originOrTxnSender } from '../utils/functions'
 import { ERR_HAS_GATE } from '../social/errors'
 

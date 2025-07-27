@@ -9,11 +9,12 @@ import { Pool } from "./contract.algo";
 import { fmbr, getStakingFees } from "../utils/functions";
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
 import { ERR_NOT_CREATOR } from "./errors";
+import { PoolFactoryInterface } from "../utils/types/pool";
 
 export class PoolFactory extends classes(
   BasePool,
   ServiceFactoryContract
-) {
+) implements PoolFactoryInterface {
   // GLOBAL STATE ---------------------------------------------------------------------------------
   // BOXES ----------------------------------------------------------------------------------------
   // PRIVATE METHODS ------------------------------------------------------------------------------

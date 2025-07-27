@@ -1,0 +1,46 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/arc58/dao/contract.algo.ts:13
+    // initialized = GlobalState<boolean>({ initialValue: false, key: AkitaDAOGlobalStateKeysInitialized })
+    pushbytes "initialized"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/arc58/dao/contract.algo.ts:15
+    // version = GlobalState<string>({ initialValue: '', key: GlobalStateKeyVersion })
+    pushbytess "version" "" // "version", ""
+    app_global_put
+    // smart_contracts/arc58/dao/contract.algo.ts:57
+    // proposalID = GlobalState<uint64>({ initialValue: 0, key: AkitaDAOGlobalStateKeysProposalID })
+    pushbytes "proposal_id"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/arc58/dao/contract.algo.ts:59
+    // walletID = GlobalState<uint64>({ initialValue: 0, key: AkitaDAOGlobalStateKeysWalletID })
+    pushbytes "wallet_id"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/arc58/dao/contract.algo.ts:11
+    // export class AkitaDAOPlugin extends Contract {
+    txn NumAppArgs
+    bnz main_after_if_else@9
+    txn OnCompletion
+    bnz main_after_if_else@9
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    pushint 1 // 1
+    return
+
+main_after_if_else@9:
+    // smart_contracts/arc58/dao/contract.algo.ts:11
+    // export class AkitaDAOPlugin extends Contract {
+    intc_0 // 0
+    return

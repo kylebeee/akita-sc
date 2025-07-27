@@ -19,7 +19,7 @@ import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PA
 import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
 
 export class AbstractedAccountFactory extends FactoryContract {
-  
+
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
   /** the escrow factory app */

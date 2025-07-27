@@ -1,5 +1,5 @@
-import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, DynamicArray, DynamicBytes, StaticBytes, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { uint64 } from '@algorandfoundation/algorand-typescript'
+import { Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { StakingType } from '../staking/types'
 import { RootKey } from '../meta-merkles/types'
 import { Proof } from '../utils/types/merkles'

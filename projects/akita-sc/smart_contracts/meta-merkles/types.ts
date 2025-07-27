@@ -1,4 +1,4 @@
-import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
+import { bytes, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type TypesValue = {
