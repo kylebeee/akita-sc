@@ -1,5 +1,5 @@
 import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, DynamicBytes, StaticBytes, Struct, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Address, Struct, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AddAllowanceInfo, ExecutionKey, MethodRestriction } from '../arc58/account/types';
 import { CID } from '../utils/types/base';
 import { ProposalActionType, ProposalStatus } from '../arc58/dao/types';
@@ -20,7 +20,9 @@ export type ProposalAddPlugin = {
   methods: MethodRestriction[],
   useRounds: boolean,
   useExecutionKey: boolean,
-  create: uint64,
+  defaultToEscrow: boolean,
+  fee: uint64,
+  power: uint64,
   duration: uint64,
   participation: uint64,
   approval: uint64
@@ -39,7 +41,9 @@ export type ProposalAddNamedPlugin = {
   methods: MethodRestriction[],
   useRounds: boolean,
   useExecutionKey: boolean,
-  create: uint64,
+  defaultToEscrow: boolean,
+  fee: uint64,
+  power: uint64,
   duration: uint64,
   participation: uint64,
   approval: uint64
@@ -151,6 +155,8 @@ export type ProposalDetails = {
   votingTs: uint64
   // the timestamp the proposal was created
   created: uint64
+  // the fees paid to create the proposal
+  feesPaid: uint64
   // the actions
   actions: ProposalAction[]
 }
@@ -557,8 +563,10 @@ export type DAOPluginKey = {
 }
 
 export type ProposalSettings = {
+  // the minimum amount of ALGO needed to create a proposal
+  fee: uint64
   // the minimum power needed to create a proposal
-  create: uint64
+  power: uint64
   /** the minimum duration of the voting period */
   duration: uint64
   /** the minimum participation % needed for a proposal to be valid, basis points in the thousands so 1_000 = 1% */

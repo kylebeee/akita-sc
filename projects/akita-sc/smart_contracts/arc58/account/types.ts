@@ -89,6 +89,7 @@ export class arc4PluginInfo extends Struct<{
 }> { }
 
 export type PluginInfo = {
+  escrow: uint64;
   admin: boolean;
   delegationType: Uint8;
   lastValid: uint64;

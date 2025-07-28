@@ -9,7 +9,6 @@ import { EscrowFactoryFactory } from '../../artifacts/escrow/EscrowFactoryClient
 import { PoolFactoryFactory } from '../../artifacts/pool/PoolFactoryClient'
 import { AkitaDaoClient, AkitaDaoFactory } from '../../artifacts/arc58/dao/AkitaDAOClient'
 
-
 algokit.Config.configure({ populateAppCallResources: true })
 
 const fixture = algorandFixture()

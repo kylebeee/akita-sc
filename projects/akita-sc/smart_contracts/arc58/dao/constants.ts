@@ -1,10 +1,11 @@
 import { uint64 } from '@algorandfoundation/algorand-typescript'
 import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { PayoutEscrowType, ProposalActionType, ProposalStatus, ProposalVoteType } from './types'
+import { ProposalActionType, ProposalStatus, PayoutEscrowType, ProposalVoteType } from './types'
 
 export const AkitaDAOGlobalStateKeysInitialized = 'initialized'
 export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
 export const AkitaDAOGlobalStateKeysWalletID = 'wallet_id'
+export const AkitaDAOGlobalStateKeysProposalActionLimit = 'proposal_action_limit'
 export const AkitaDAOGlobalStateKeysMinRewardsImpact = 'min_rewards_impact'
 export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
 export const AkitaDAOGlobalStateKeysPluginAppList = 'plugn_al'
@@ -17,9 +18,8 @@ export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
 export const AkitaDAOGlobalStateKeysKrbyPercentage = 'krby_percentage'
 export const AkitaDAOGlobalStateKeysModeratorPercentage = 'mod_percentage'
 export const AkitaDAOGlobalStateKeysProposalFee = 'proposal_fee'
-// export const AkitaDAOGlobalStateKeysProposalSuccessRebate = 'proposal_success_rebate'
-export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
 
+export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
 export const AkitaDAOGlobalStateKeysUpgradeAppProposalSettings = 'upgrade_app_ps'
 export const AkitaDAOGlobalStateKeysAddPluginProposalSettings = 'add_plugin_ps'
 export const AkitaDAOGlobalStateKeysRemovePluginProposalSettings = 'remove_plugin_ps'
@@ -30,9 +30,9 @@ export const AkitaDAOGlobalStateKeysNewEscrowProposalSettings = 'new_escrow_ps'
 export const AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings = 'toggle_escrow_lock_ps'
 export const AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings = 'update_fields_ps'
 
+export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
 export const AkitaDAOGlobalStateKeysProposalID = 'proposal_id'
 export const AkitaDAOGlobalStateKeysDisbursementCursor = 'disbursement_cursor'
-
 
 export const AkitDAOBoxPrefixEscrows = 'e'
 export const AkitaDAOBoxPrefixReceiveEscrows = 'r'
@@ -97,11 +97,10 @@ export const ProposalActionTypeRemovePlugin: ProposalActionType = new Uint8(40)
 export const ProposalActionTypeRemoveNamedPlugin: ProposalActionType = new Uint8(41)
 export const ProposalActionTypeAddAllowance: ProposalActionType = new Uint8(50)
 export const ProposalActionTypeRemoveAllowance: ProposalActionType = new Uint8(60)
-export const ProposalActionTypeUpdateFields: ProposalActionType = new Uint8(70)
-export const ProposalActionTypeNewEscrow: ProposalActionType = new Uint8(80)
-export const ProposalActionTypeNewReceiveEscrow: ProposalActionType = new Uint8(81)
-export const ProposalActionTypeNewPayoutEscrow: ProposalActionType = new Uint8(82)
-export const ProposalActionTypeToggleEscrowLock: ProposalActionType = new Uint8(90)
+export const ProposalActionTypeNewEscrow: ProposalActionType = new Uint8(70)
+export const ProposalActionTypeToggleEscrowLock: ProposalActionType = new Uint8(71)
+export const ProposalActionTypeNewReceiveEscrow: ProposalActionType = new Uint8(72)
+export const ProposalActionTypeUpdateFields: ProposalActionType = new Uint8(80)
 
 // proposal vote types
 export const ProposalVoteTypeApprove: ProposalVoteType = new Uint8(10)

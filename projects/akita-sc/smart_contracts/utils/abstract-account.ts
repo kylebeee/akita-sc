@@ -35,7 +35,8 @@ export class AbstractedAccountInterface extends Contract {
     cooldown: uint64, 
     methods: MethodRestriction[], 
     useRounds: boolean,
-    useExecutionKey: boolean
+    useExecutionKey: boolean,
+    defaultToEscrow: boolean
   ): void { }
   assignDomain(caller: Address, domain: string): void { }
   arc58_removePlugin(plugin: uint64, caller: Address, escrow: string): void { }
@@ -50,7 +51,8 @@ export class AbstractedAccountInterface extends Contract {
     cooldown: uint64, 
     methods: MethodRestriction[], 
     useRounds: boolean,
-    useExecutionKey: boolean
+    useExecutionKey: boolean,
+    defaultToEscrow: boolean
   ): void { }
   arc58_removeNamedPlugin(name: string): void { }
   arc58_newEscrow(escrow: string): uint64 { return 0 }

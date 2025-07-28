@@ -41,6 +41,8 @@ export const ERR_PROPOSAL_NOT_UPGRADE_APP = 'Proposal is not an upgrade app'
 export const ERR_EXECUTION_KEY_MISMATCH = 'Execution key mismatch'
 
 export const ERR_INCORRECT_SENDER = 'Incorrect sender'
+export const ERR_PAYMENT_REQUIRED = 'Payment required'
+export const ERR_PAYMENT_NOT_REQUIRED = 'Payment not required'
 export const ERR_INVALID_PROPOSAL_STATE = 'invalid proposal state'
 
 export const ERR_ESCROW_NOT_ALLOWED_TO_OPTIN = 'Escrow is not allowed to opt-in'

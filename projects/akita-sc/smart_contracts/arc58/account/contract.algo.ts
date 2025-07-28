@@ -54,6 +54,7 @@ import {
   ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY,
   ERR_DOES_NOT_HOLD_ASSET,
   ERR_ESCROW_ALREADY_EXISTS,
+  ERR_ESCROW_REQUIRED_TO_BE_SET_AS_DEFAULT,
   ERR_EXECUTION_KEY_ALREADY_EXISTS,
   ERR_EXECUTION_KEY_DOES_NOT_EXIST,
   ERR_FORBIDDEN,
@@ -871,7 +872,8 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     cooldown: uint64,
     methods: MethodRestriction[],
     useRounds: boolean,
-    useExecutionKey: boolean
+    useExecutionKey: boolean,
+    defaultToEscrow: boolean
   ): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
     const badDelegationCombo = (
@@ -879,7 +881,14 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       caller.native === Global.zeroAddress
     )
     assert(!badDelegationCombo, ERR_ZERO_ADDRESS_DELEGATION_TYPE)
-    const key: PluginKey = { plugin, caller: caller.native, escrow }
+
+    let escrowKey: string = escrow
+    if (defaultToEscrow) {
+      assert(escrow !== '', ERR_ESCROW_REQUIRED_TO_BE_SET_AS_DEFAULT)
+      escrowKey = ''
+    }
+
+    const key: PluginKey = { plugin, caller: caller.native, escrow: escrowKey }
 
     let methodInfos: MethodInfo[] = []
     for (let i: uint64 = 0; i < methods.length; i += 1) {
@@ -898,9 +907,10 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .submit()
     }
 
-    this.maybeNewEscrow(escrow);
+    const escrowID = this.maybeNewEscrow(escrow);
 
     this.plugins(key).value = {
+      escrow: escrowID,
       admin,
       delegationType,
       lastValid,
@@ -993,12 +1003,19 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     cooldown: uint64,
     methods: MethodRestriction[],
     useRounds: boolean,
-    useExecutionKey: boolean
+    useExecutionKey: boolean,
+    defaultToEscrow: boolean
   ): void {
     assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
     assert(!this.namedPlugins(name).exists);
 
-    const key: PluginKey = { plugin, caller: caller.native, escrow }
+    let escrowKey: string = escrow
+    if (defaultToEscrow) {
+      assert(escrow !== '', ERR_ESCROW_REQUIRED_TO_BE_SET_AS_DEFAULT)
+      escrowKey = ''
+    }
+
+    const key: PluginKey = { plugin, caller: caller.native, escrow: escrowKey }
     this.namedPlugins(name).value = clone(key)
 
     let methodInfos: MethodInfo[] = []
@@ -1016,11 +1033,12 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .submit()
     }
 
-    this.maybeNewEscrow(escrow);
+    const escrowID = this.maybeNewEscrow(escrow);
 
     const epochRef = useRounds ? Global.round : Global.latestTimestamp;
 
     this.plugins(key).value = {
+      escrow: escrowID,
       admin,
       delegationType,
       lastValid,
