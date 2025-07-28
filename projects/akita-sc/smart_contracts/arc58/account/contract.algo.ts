@@ -161,9 +161,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     this.lastChange.value = Global.latestTimestamp
   }
 
-  private pluginsMbr(methodCount: uint64): uint64 {
+  private pluginsMbr(escrow: string, methodCount: uint64): uint64 {
     return MinPluginMBR + (
-      BoxCostPerByte * (MethodRestrictionByteLength * methodCount)
+      BoxCostPerByte * ((MethodRestrictionByteLength * methodCount) + Bytes(escrow).length)
     );
   }
 
@@ -902,7 +902,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .payment({
           sender: this.controlledAddress.value,
           receiver: Global.currentApplicationAddress,
-          amount: this.pluginsMbr(methodInfos.length)
+          amount: this.pluginsMbr(escrowKey, methodInfos.length)
         })
         .submit()
     }
@@ -968,7 +968,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       itxn
         .payment({
           receiver: this.controlledAddress.value,
-          amount: this.pluginsMbr(methodsLength)
+          amount: this.pluginsMbr(escrow, methodsLength)
         })
         .submit()
     }
@@ -1028,7 +1028,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .payment({
           sender: this.controlledAddress.value,
           receiver: Global.currentApplicationAddress,
-          amount: this.pluginsMbr(methodInfos.length) + this.namedPluginsMbr(name)
+          amount: this.pluginsMbr(escrowKey, methodInfos.length) + this.namedPluginsMbr(name)
         })
         .submit()
     }
@@ -1074,7 +1074,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       itxn
         .payment({
           receiver: this.controlledAddress.value,
-          amount: this.namedPluginsMbr(name) + this.pluginsMbr(methodsLength)
+          amount: this.namedPluginsMbr(name) + this.pluginsMbr(app.escrow, methodsLength)
         })
         .submit()
     }
@@ -1381,12 +1381,13 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
   @abimethod({ readonly: true })
   mbr(
+    escrow: string,
     methodCount: uint64,
     pluginName: string,
     escrowName: string
   ): AbstractAccountBoxMBRData {
     return {
-      plugins: this.pluginsMbr(methodCount),
+      plugins: this.pluginsMbr(escrow, methodCount),
       namedPlugins: this.namedPluginsMbr(pluginName),
       escrows: this.escrowsMbr(),
       namedEscrows: this.namedEscrowsMbr(escrowName),
