@@ -19,18 +19,18 @@ export class AbstractedAccountInterface extends Contract {
   setBanner(banner: uint64): void { }
   setBio(bio: string): void { }
   arc58_changeAdmin(newAdmin: Address): void { }
-  arc58_pluginChangeAdmin(plugin: uint64, allowedCaller: Address, newAdmin: Address): void { }
+  arc58_pluginChangeAdmin(plugin: uint64, caller: Address, newAdmin: Address): void { }
   arc58_verifyAuthAddr(): void { }
   arc58_rekeyTo(address: Address, flash: boolean): void { }
-  arc58_canCall(plugin: uint64, global: boolean, address: Address, method: bytes<4>): boolean { return false; }
-  arc58_rekeyToPlugin(plugin: uint64, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void { }
-  arc58_rekeyToNamedPlugin(name: string, global: boolean, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void { }
+  arc58_canCall(plugin: uint64, global: boolean, address: Address, escrow: string, method: bytes<4>): boolean { return false; }
+  arc58_rekeyToPlugin(plugin: uint64, global: boolean, escrow: string, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void { }
+  arc58_rekeyToNamedPlugin(name: string, global: boolean, escrow: string, methodOffsets: uint64[], fundsRequest: FundsRequest[]): void { }
   arc58_addPlugin(
-    app: uint64, 
-    allowedCaller: Address, 
+    plugin: uint64, 
+    caller: Address,
+    escrow: string, 
     admin: boolean, 
     delegationType: Uint8, 
-    escrow: string, 
     lastValid: uint64, 
     cooldown: uint64, 
     methods: MethodRestriction[], 
@@ -38,14 +38,14 @@ export class AbstractedAccountInterface extends Contract {
     useExecutionKey: boolean
   ): void { }
   assignDomain(caller: Address, domain: string): void { }
-  arc58_removePlugin(app: uint64, allowedCaller: Address): void { }
+  arc58_removePlugin(plugin: uint64, caller: Address, escrow: string): void { }
   arc58_addNamedPlugin(
     name: string, 
-    app: uint64, 
-    allowedCaller: Address, 
-    admin: boolean, 
-    delegationType: Uint8, 
+    plugin: uint64, 
+    caller: Address,
     escrow: string, 
+    admin: boolean,
+    delegationType: Uint8,
     lastValid: uint64, 
     cooldown: uint64, 
     methods: MethodRestriction[], 
@@ -60,6 +60,7 @@ export class AbstractedAccountInterface extends Contract {
   arc58_pluginOptinEscrow(
     plugin: uint64,
     caller: Address,
+    escrow: string,
     assets: uint64[],
     mbrPayment: gtxn.PaymentTxn
   ): void { }

@@ -1,9 +1,10 @@
 import { bytes, Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AkitaDAOApps, AkitaDAOFees, ProposalAction, ProposalSettings, ProposalStatus } from "../../dao/types";
+import { ProposalAction } from "../../dao/types";
 import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 import { CID } from "./base";
 import { FundsRequest } from "../../arc58/account/types";
 import { RootKey } from "../../meta-merkles/types";
+import { ProposalStatus } from "../../arc58/dao/types";
 
 export class AkitaDAOInterface extends Contract {
   create(escrowFactory: uint64): void { }

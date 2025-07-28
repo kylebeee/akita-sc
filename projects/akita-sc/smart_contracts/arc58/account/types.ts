@@ -57,8 +57,12 @@ export type FundsRequest = {
 }
 
 export type PluginKey = {
-  application: uint64;
-  allowedCaller: Account;
+  /** the app id of the plugin */
+  plugin: uint64;
+  /** the allowed caller of the plugin */
+  caller: Account;
+  /** the escrow to be used during the */
+  escrow: string;
 }
 
 export const DelegationTypeSelf = new Uint8(1)
@@ -70,8 +74,6 @@ export class arc4PluginInfo extends Struct<{
   admin: Bool;
   /** the type of delegation the plugin is using */
   delegationType: Uint8;
-  /** the escrow account to use for the plugin */
-  escrow: Uint64;
   /** The last round or unix time at which this plugin can be called */
   lastValid: Uint64;
   /** The number of rounds or seconds that must pass before the plugin can be called again */
@@ -89,7 +91,6 @@ export class arc4PluginInfo extends Struct<{
 export type PluginInfo = {
   admin: boolean;
   delegationType: Uint8;
-  escrow: uint64;
   lastValid: uint64;
   cooldown: uint64;
   methods: MethodInfo[];

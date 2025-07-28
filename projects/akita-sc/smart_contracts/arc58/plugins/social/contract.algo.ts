@@ -1886,8 +1886,6 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const { social } = getAkitaAppList(this.akitaDAO.value)
 
-    
-
     return 0
   }
 

@@ -35,6 +35,7 @@ export class BaseSocial extends Contract {
           getPluginAppList(akitaDAO).optin,
           true,
           new Address(Global.zeroAddress),
+          '',
           methodSelector(OptInPluginInterface.prototype.optInToAsset)
         ]
       }

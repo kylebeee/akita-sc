@@ -167,6 +167,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
         args: [
           getPluginAppList(this.akitaDAO.value).optin,
           true, // global
+          '', // default account
           [], // no method offsets
           [] // no funds request
         ]
@@ -1777,7 +1778,7 @@ export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialI
 
     const [parentAppIDBytes, parentAppIDBytesExist] = op.AppGlobal.getExBytes(NFDApp, Bytes(NFDGlobalStateKeysParentAppID))
 
-    if (parentAppIDBytesExist && btoi(parentAppIDBytes) === getAkitaAppList(this.akitaDAO.value).akitaNfd) {
+    if (parentAppIDBytesExist && btoi(parentAppIDBytes) === getOtherAppList(this.akitaDAO.value).akitaNfd) {
       nfdImpact += 50
     }
 

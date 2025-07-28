@@ -1,12 +1,12 @@
 import { Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, clone, Contract, GlobalState, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { ProposalActionType, ProposalStatus, ProposalVoteType } from "./types";
+import { ProposalStatus, ProposalVoteType } from "./types";
 import { AbstractAccountBoxPrefixPlugins, ABSTRACTED_ACCOUNT_MINT_PAYMENT } from "../account/constants";
 import { AddAllowanceInfo, ExecutionKey } from "../account/types";
 import { AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOGlobalStateKeysInitialized } from "../../dao/constants";
 import { GlobalStateKeyVersion } from "../../constants";
 import { CID } from "../../utils/types/base";
 import { AkitaDAOBoxPrefixPayoutEscrows, AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOBoxPrefixReceiveAssets, AkitaDAOBoxPrefixReceiveEscrows, AkitaDAOEscrowAccountGovernors, AkitaDAOEscrowAccountKrby, AkitaDAOEscrowAccountModerators, AkitaDAOGlobalStateKeysAddAllowanceProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysKrbyPercentage, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysModeratorPercentage, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalFee, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowanceProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, AkitaDAOGlobalStateKeysWalletID, DAOProposalVotesMBR, DAOReceiveAssetsMBR, DAOReceiveEscrowsMBR, EscrowDisbursementPhaseAllocation, EscrowDisbursementPhaseFinalization, EscrowDisbursementPhaseIdle, MinDAOPayoutEscrowsMBR, PayoutEscrowTypeGroup, PayoutEscrowTypeIndividual, ProposalActionTypeAddAllowance, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecuteNamedPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveAllowance, ProposalActionTypeRemoveExecutePlugin, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject } from "./constants";
-import { AkitaAppList, AkitaAssets, AkitaDAOApps, AkitaDAOFees, EscrowAssetKey, EscrowTypeDefault, EscrowTypePayout, EscrowTypeReceive, NFTFees, OtherAppList, PayoutEscrowInfo, PluginAppList, ProposalAction, ProposalAddAllowances, ProposalAddNamedPlugin, ProposalAddPlugin, ProposalDetails, ProposalExecuteNamedPlugin, ProposalExecutePlugin, ProposalNewEscrow, ProposalNewIndividualPayout, ProposalNewIndividualPayoutEscrow, ProposalNewPoolPayout, ProposalNewPoolPayoutEscrow, ProposalNewReceive, ProposalNewReceiveEscrow, ProposalRemoveAllowances, ProposalRemoveNamedPlugin, ProposalRemovePlugin, ProposalSettings, ProposalUpdateField, ProposalUpgradeApp, ProposalVoteInfo, ProposalVoteKey, ReceiveEscrowInfo, SocialFees, StakingFees, SubscriptionFees, SwapFees } from "../../dao/types";
+import { AkitaAppList, AkitaAssets, AkitaDAOApps, AkitaDAOFees, DAOPluginKey, EscrowAssetKey, EscrowTypeDefault, EscrowTypePayout, EscrowTypeReceive, NFTFees, OtherAppList, PayoutEscrowInfo, PluginAppList, ProposalAction, ProposalAddAllowances, ProposalAddNamedPlugin, ProposalAddPlugin, ProposalDetails, ProposalExecuteNamedPlugin, ProposalExecutePlugin, ProposalNewEscrow, ProposalNewIndividualPayout, ProposalNewIndividualPayoutEscrow, ProposalNewPoolPayout, ProposalNewPoolPayoutEscrow, ProposalNewReceive, ProposalNewReceiveEscrow, ProposalRemoveAllowances, ProposalRemoveNamedPlugin, ProposalRemovePlugin, ProposalSettings, ProposalToggleEscrowLock, ProposalUpdateField, ProposalUpgradeApp, ProposalVoteInfo, ProposalVoteKey, ReceiveEscrowInfo, SocialFees, StakingFees, SubscriptionFees, SwapFees } from "../../dao/types";
 import { BoxCostPerByte } from "../../utils/constants";
 import { abiCall, abimethod, Address, decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { AssetHolding, btoi, Global, itob, Txn } from "@algorandfoundation/algorand-typescript/op";
@@ -85,7 +85,7 @@ export class AkitaDAO extends Contract {
   // BOXES ----------------------------------------------------------------------------------------
 
   /** Plugins that add functionality to the controlledAddress and the account that has permission to use it. */
-  plugins = BoxMap<uint64, ProposalSettings>({ keyPrefix: AbstractAccountBoxPrefixPlugins })
+  plugins = BoxMap<DAOPluginKey, ProposalSettings>({ keyPrefix: AbstractAccountBoxPrefixPlugins })
   /** escrow accounts for services to payback revenue to the DAO */
   receiveEscrows = BoxMap<uint64, ReceiveEscrowInfo>({ keyPrefix: AkitaDAOBoxPrefixReceiveEscrows })
   /** box map of escrow assets that have already been processed during this allocation */
@@ -118,10 +118,10 @@ export class AkitaDAO extends Contract {
   private addPlugin(data: ProposalAddNamedPlugin): void {
     const {
       name,
-      app,
-      allowedCaller,
-      delegationType,
+      plugin,
+      caller,
       escrow,
+      delegationType,
       lastValid,
       cooldown,
       methods,
@@ -135,9 +135,9 @@ export class AkitaDAO extends Contract {
 
     let useExecutionKey = false
 
-    if (allowedCaller.native === Global.currentApplicationAddress) {
+    if (caller.native === Global.currentApplicationAddress) {
       useExecutionKey = true
-      this.plugins(app).value = {
+      this.plugins({ plugin, escrow }).value = {
         create,
         duration,
         participation,
@@ -152,11 +152,11 @@ export class AkitaDAO extends Contract {
           appId: this.walletID.value,
           args: [
             name,
-            app,
-            allowedCaller,
+            plugin,
+            caller,
+            escrow,
             false,
             delegationType,
-            escrow,
             lastValid,
             cooldown,
             methods,
@@ -171,11 +171,11 @@ export class AkitaDAO extends Contract {
         {
           appId: this.walletID.value,
           args: [
-            app,
-            allowedCaller,
+            plugin,
+            caller,
+            escrow,
             false,
             delegationType,
-            escrow,
             lastValid,
             cooldown,
             methods,
@@ -212,10 +212,10 @@ export class AkitaDAO extends Contract {
   }
 
   private removePlugin(data: ProposalRemoveNamedPlugin): void {
-    const { name, app, allowedCaller } = data
+    const { name, plugin, caller, escrow } = data
 
-    if (allowedCaller.native === Global.currentApplicationAddress) {
-      this.plugins(app).delete()
+    if (caller.native === Global.currentApplicationAddress) {
+      this.plugins({ plugin, escrow }).delete()
     }
 
     if (name !== '') {
@@ -233,7 +233,7 @@ export class AkitaDAO extends Contract {
       AbstractedAccountInterface.prototype.arc58_removePlugin,
       {
         appId: this.walletID.value,
-        args: [app, allowedCaller]
+        args: [plugin, caller, escrow]
       }
     )
   }
@@ -464,6 +464,7 @@ export class AkitaDAO extends Contract {
     assert(version !== '', ERR_VERSION_CANNOT_BE_EMPTY)
 
     this.version.value = version
+    this.akitaAssets.value = { akta, bones: 0 }
     this.contentPolicy.value = contentPolicy
     this.minRewardsImpact.value = minRewardsImpact
 
@@ -479,7 +480,7 @@ export class AkitaDAO extends Contract {
       raffle: apps.raffle,
       metaMerkles: apps.metaMerkles,
       marketplace: apps.marketplace,
-      akitaNfd: apps.akitaNfd,
+      walletFactory: apps.walletFactory,
       social: apps.social,
       impact: apps.impact
     }
@@ -493,6 +494,7 @@ export class AkitaDAO extends Contract {
       nfdRegistry: apps.nfdRegistry,
       assetInbox: apps.assetInbox,
       escrowFactory: apps.escrowFactory,
+      akitaNfd: apps.akitaNfd,
     }
 
     this.socialFees.value = {
@@ -564,14 +566,15 @@ export class AkitaDAO extends Contract {
     assert(Global.groupId === executionKey, ERR_EXECUTION_KEY_MISMATCH)
   }
 
-  setup(abstractedAccountFactoryID: uint64): void {
+  setup(): void {
+    const walletFactoryID = this.akitaAppList.value.walletFactory
     this.walletID.value = abiCall(
       AbstractedAccountFactoryInterface.prototype.mint,
       {
-        appId: abstractedAccountFactoryID,
+        appId: walletFactoryID,
         args: [
           itxn.payment({
-            receiver: Application(abstractedAccountFactoryID).address,
+            receiver: Application(walletFactoryID).address,
             amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
           }),
           new Address(Global.zeroAddress),
@@ -665,8 +668,8 @@ export class AkitaDAO extends Contract {
         }
         case ProposalActionTypeExecutePlugin:
         case ProposalActionTypeExecuteNamedPlugin: {
-          const params = decodeArc4<ProposalExecuteNamedPlugin>(data)
-          tmpRequired = this.plugins(params.app).value.create
+          const { plugin, escrow } = decodeArc4<ProposalExecuteNamedPlugin>(data)
+          tmpRequired = this.plugins({ plugin, escrow }).value.create
           break;
         }
         case ProposalActionTypeRemoveExecutePlugin: {
@@ -841,54 +844,46 @@ export class AkitaDAO extends Contract {
       let approval: uint64 = 0
       let participationThreshold: uint64 = 0
 
-      let app: uint64 = 0
-      if (type === ProposalActionTypeExecutePlugin || type === ProposalActionTypeExecuteNamedPlugin) {
-        ({ app } = decodeArc4<ProposalExecutePlugin>(data))
-        assert(this.plugins(app).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
-      }
-
       switch (type) {
         case ProposalActionTypeUpgradeApp: {
           ({ duration, participation, approval } = this.upgradeAppProposalSettings.value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
           break
         }
         case ProposalActionTypeAddPlugin:
         case ProposalActionTypeAddNamedPlugin: {
           ({ duration, participation, approval } = this.addPluginProposalSettings.value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
           break
         }
         case ProposalActionTypeExecutePlugin:
         case ProposalActionTypeExecuteNamedPlugin: {
-          ({ duration, participation, approval } = this.plugins(app).value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
+          const { plugin, escrow } = decodeArc4<ProposalExecutePlugin>(data)
+          assert(this.plugins({ plugin, escrow }).exists, ERR_PROPOSAL_DOES_NOT_EXIST);
+          ({ duration, participation, approval } = this.plugins({ plugin, escrow }).value)
           break
         }
         case ProposalActionTypeRemovePlugin:
         case ProposalActionTypeRemoveNamedPlugin: {
           ({ duration, participation, approval } = this.removePluginProposalSettings.value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
           break
         }
         case ProposalActionTypeAddAllowance: {
           ({ duration, participation, approval } = this.addAllowanceProposalSettings.value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
           break
         }
         case ProposalActionTypeRemoveAllowance: {
           ({ duration, participation, approval } = this.removeAllowanceProposalSettings.value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
           break
         }
         case ProposalActionTypeNewEscrow: {
           ({ duration, participation, approval } = this.newEscrowProposalSettings.value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
+          break
+        }
+        case ProposalActionTypeToggleEscrowLock: {
+          ({ duration, participation, approval } = this.toggleEscrowLockProposalSettings.value)
           break
         }
         case ProposalActionTypeUpdateFields: {
           ({ duration, participation, approval } = this.updateFieldsProposalSettings.value)
-          participationThreshold = calcPercent(circulatingSupply, participation)
           break
         }
       }
@@ -897,6 +892,7 @@ export class AkitaDAO extends Contract {
         highestDuration = duration
       }
 
+      participationThreshold = calcPercent(circulatingSupply, participation)
       if (participation > highestParticipation) {
         highestParticipation = participation
       }
@@ -992,6 +988,11 @@ export class AkitaDAO extends Contract {
               assert(false, ERR_INVALID_PROPOSAL_ACTION)
             }
           }
+          break
+        }
+        case ProposalActionTypeToggleEscrowLock: {
+          const { escrow } = decodeArc4<ProposalToggleEscrowLock>(data)
+          this.toggleEscrowLock(escrow)
           break
         }
         case ProposalActionTypeUpdateFields: {

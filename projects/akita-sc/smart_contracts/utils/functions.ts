@@ -261,7 +261,7 @@ export function arc59OptInAndSend(akitaDAO: Application, recipient: Address, ass
   })
 }
 
-export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint64, assets: uint64[], amounts: uint64[]): void {
+export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint64, escrow: string, assets: uint64[], amounts: uint64[]): void {
   assert(assets.length === amounts.length, ERR_ASSETS_AND_AMOUNTS_MISMATCH)
   const optinPlugin = getPluginAppList(akitaDAO).optin
   const origin = getOriginAccount(Application(recipientWalletID))
@@ -270,7 +270,7 @@ export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint
     AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
     {
       appId: recipientWalletID,
-      args: [optinPlugin, true, [], []]
+      args: [optinPlugin, true, escrow, [], []]
     }
   )
 

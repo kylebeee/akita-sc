@@ -11,10 +11,10 @@ export type ProposalUpgradeApp = {
 }
 
 export type ProposalAddPlugin = {
-  app: uint64,
-  allowedCaller: Address,
-  delegationType: Uint8,
+  plugin: uint64,
+  caller: Address,
   escrow: string,
+  delegationType: Uint8,
   lastValid: uint64,
   cooldown: uint64,
   methods: MethodRestriction[],
@@ -30,10 +30,10 @@ export type ProposalAddPlugin = {
 
 export type ProposalAddNamedPlugin = {
   name: string,
-  app: uint64,
-  allowedCaller: Address,
-  delegationType: Uint8,
+  plugin: uint64,
+  caller: Address,
   escrow: string,
+  delegationType: Uint8,
   lastValid: uint64,
   cooldown: uint64,
   methods: MethodRestriction[],
@@ -48,28 +48,32 @@ export type ProposalAddNamedPlugin = {
 }
 
 export type ProposalExecutePlugin = {
-  app: uint64
-  allowedCaller: Address,
+  plugin: uint64
+  caller: Address
+  escrow: string
   executionKey: ExecutionKey
   lastValidRound: uint64
 }
 
 export type ProposalExecuteNamedPlugin = {
   name: string
-  app: uint64
-  allowedCaller: Address,
+  plugin: uint64
+  caller: Address
+  escrow: string
   executionKey: ExecutionKey
 }
 
 export type ProposalRemovePlugin = {
-  app: uint64
-  allowedCaller: Address,
+  plugin: uint64
+  caller: Address
+  escrow: string
 }
 
 export type ProposalRemoveNamedPlugin = {
   name: string
-  app: uint64
-  allowedCaller: Address
+  plugin: uint64
+  caller: Address
+  escrow: string
 }
 
 export type ProposalAddAllowances = {
@@ -98,6 +102,10 @@ export type ProposalNewReceive = {
   source: Address,
   allocatable: boolean,
   optinAllowed: boolean
+}
+
+export type ProposalToggleEscrowLock = {
+  escrow: string
 }
 
 export type ProposalNewReceiveEscrow = {
@@ -271,30 +279,11 @@ export type AkitaAppList = {
   raffle: uint64 // Akita Raffle
   metaMerkles: uint64 // Akita MetaMerkles
   marketplace: uint64 // Akita Marketplace
-  akitaNfd: uint64 // akita.algo NFD
+  walletFactory: uint64 // abstracted account factory
   social: uint64 // akita social
   impact: uint64 // akita impact
   // empty slot
-  // empty slot
-  // empty slot
 }
-
-export class arc4AkitaAppList extends arc4.Struct<{
-  staking: arc4.Uint64
-  rewards: arc4.Uint64
-  pool: arc4.Uint64
-  prizeBox: arc4.Uint64
-  subscriptions: arc4.Uint64
-  gate: arc4.Uint64
-  auction: arc4.Uint64
-  hyperSwap: arc4.Uint64
-  raffle: arc4.Uint64
-  metaMerkles: arc4.Uint64
-  marketplace: arc4.Uint64
-  akitaNFD: arc4.Uint64
-  social: arc4.Uint64
-  impact: arc4.Uint64
-}> { }
 
 export type PluginAppList = {
   optin: uint64
@@ -310,20 +299,16 @@ export type PluginAppList = {
   // empty slot
   // empty slot
   // empty slot
+  // empty slot
+  // empty slot
 }
-
-export class arc4PluginAppList extends arc4.Struct<{
-  optin: arc4.Uint64
-  social: arc4.Uint64
-  impact: arc4.Uint64
-}> { }
 
 export type OtherAppList = {
   vrfBeacon: uint64 // vrf beacon
   nfdRegistry: uint64 // NFD Registry
   assetInbox: uint64 // asset inbox
   escrowFactory: uint64 // escrow factory
-  // empty slot
+  akitaNfd: uint64 // akita.algo NFD
   // empty slot
   // empty slot
   // empty slot
@@ -362,6 +347,7 @@ export type AkitaDAOApps = {
   vrfBeacon: uint64 // vrf beacon
   nfdRegistry: uint64 // NFD Registry
   assetInbox: uint64 // asset inbox
+  walletFactory: uint64 // abstracted account factory
   escrowFactory: uint64 // escrow factory
 }
 
@@ -564,6 +550,11 @@ export class arc4AkitaAssets extends arc4.Struct<{
   akta: arc4.Uint64
   bones: arc4.Uint64
 }> { }
+
+export type DAOPluginKey = {
+  plugin: uint64
+  escrow: string
+}
 
 export type ProposalSettings = {
   // the minimum power needed to create a proposal

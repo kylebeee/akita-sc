@@ -1,5 +1,5 @@
-// import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+// import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk';
@@ -86,6 +86,7 @@ describe('ARC58 Plugin Permissions', () => {
         args: {
           plugin: payPlugin,
           global,
+          escrow,
           methodOffsets: offsets,
           fundsRequest: [[asset, amount]]
         },
@@ -140,6 +141,7 @@ describe('ARC58 Plugin Permissions', () => {
         args: {
           plugin,
           global,
+          escrow,
           methodOffsets: offsets,
           fundsRequest: []
         },
@@ -296,29 +298,31 @@ describe('ARC58 Plugin Permissions', () => {
 
     await abstractedAccountClient.send.arc58AddPlugin({
       args: {
-        app: plugin,
-        allowedCaller: caller.addr.toString(),
+        plugin,
+        caller: caller.addr.toString(),
+        escrow: '',
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 0,
         methods: [],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
     await abstractedAccountClient.send.arc58AddPlugin({
       args: {
-        app: plugin,
-        allowedCaller: ZERO_ADDRESS,
+        plugin,
+        caller: ZERO_ADDRESS,
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 1,
         methods: [],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -372,15 +376,16 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: ZERO_ADDRESS,
+        plugin,
+        caller: ZERO_ADDRESS,
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 1,
         methods: [],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -434,15 +439,16 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: caller.addr.toString(),
+        plugin,
+        caller: caller.addr.toString(),
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 1,
         methods: [],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -497,11 +503,11 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: caller.addr.toString(),
+        plugin,
+        caller: caller.addr.toString(),
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 1,
         methods: [
@@ -509,7 +515,8 @@ describe('ARC58 Plugin Permissions', () => {
           [Buffer.from('dddd'), 0],
           [Buffer.from('aaaa'), 0]
         ],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false,
       }
     });
 
@@ -569,17 +576,18 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: ZERO_ADDRESS,
+        plugin,
+        caller: ZERO_ADDRESS,
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 0,
         methods: [
           [optInToAssetSelector, 100] // cooldown of 1 so we can call it at most once per round
         ],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -644,17 +652,18 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: ZERO_ADDRESS,
+        plugin,
+        caller: ZERO_ADDRESS,
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 0,
         methods: [
           [optInToAssetSelector, 1] // cooldown of 1 so we can call it at most once per round
         ],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -719,6 +728,7 @@ describe('ARC58 Plugin Permissions', () => {
           args: {
             plugin,
             global: true,
+            escrow,
             methodOffsets: [0, 0],
             fundsRequest: []
           },
@@ -771,15 +781,16 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: caller.addr.toString(),
+        plugin,
+        caller: caller.addr.toString(),
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 100,
         methods: [],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -839,15 +850,16 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: ZERO_ADDRESS,
+        plugin,
+        caller: ZERO_ADDRESS,
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: 1,
         cooldown: 0,
         methods: [],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -893,15 +905,16 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: ZERO_ADDRESS,
+        plugin,
+        caller: ZERO_ADDRESS,
+        escrow,
         admin: false,
         delegationType: 3,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 0,
         methods: [],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -921,15 +934,16 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: plugin,
-          allowedCaller: caller.addr.toString(),
+          plugin,
+          caller: caller.addr.toString(),
+          escrow,
           admin: false,
           delegationType: 3,
-          escrow: '',
           lastValid: MAX_UINT64,
           cooldown: 0,
           methods: [],
-          useRounds: false
+          useRounds: false,
+          useExecutionKey: false
         }
       })
     ).transactions[0];
@@ -960,6 +974,7 @@ describe('ARC58 Plugin Permissions', () => {
           args: {
             plugin,
             global: true,
+            escrow,
             methodOffsets: [],
             fundsRequest: []
           },
@@ -1011,17 +1026,18 @@ describe('ARC58 Plugin Permissions', () => {
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
-        app: plugin,
-        allowedCaller: ZERO_ADDRESS,
+        plugin,
+        caller: ZERO_ADDRESS,
+        escrow,
         admin: false,
         delegationType: 0,
-        escrow: '',
         lastValid: MAX_UINT64,
         cooldown: 0,
         methods: [
           [new Uint8Array(Buffer.from('dddd')), 0]
         ],
-        useRounds: false
+        useRounds: false,
+        useExecutionKey: false
       }
     });
 
@@ -1079,15 +1095,16 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: plugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           admin: false,
           delegationType: 3,
-          escrow: '',
           lastValid: MAX_UINT64,
           cooldown: 1,
           methods: [],
-          useRounds: false
+          useRounds: false,
+          useExecutionKey: false
         }
       })
 
@@ -1127,15 +1144,16 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: payPlugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin: payPlugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           admin: false,
           delegationType: 3,
-          escrow,
           lastValid: MAX_UINT64,
           cooldown: 1,
           methods: [],
-          useRounds: false
+          useRounds: false,
+          useExecutionKey: false
         }
       })
       .arc58AddAllowances({
@@ -1157,8 +1175,9 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: payPlugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin: payPlugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           assets: [asset],
           mbrPayment,
         },
@@ -1262,15 +1281,16 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: plugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           admin: false,
           delegationType: 3,
-          escrow: '',
           lastValid: MAX_UINT64,
           cooldown: 1,
           methods: [],
-          useRounds: false
+          useRounds: false,
+          useExecutionKey: false
         }
       })
 
@@ -1303,15 +1323,16 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: payPlugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin: payPlugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           admin: false,
           delegationType: 3,
-          escrow,
           lastValid: MAX_UINT64,
           cooldown: 1,
           methods: [],
-          useRounds: false
+          useRounds: false,
+          useExecutionKey: false
         }
       })
       .arc58AddAllowances({
@@ -1335,8 +1356,9 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: payPlugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin: payPlugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           assets: [asset],
           mbrPayment,
         },
@@ -1473,15 +1495,16 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: plugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           admin: false,
           delegationType: 3,
-          escrow: '',
           lastValid: MAX_UINT64,
           cooldown: 1,
           methods: [],
-          useRounds: false
+          useRounds: false,
+          useExecutionKey: false
         }
       })
 
@@ -1514,15 +1537,16 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: payPlugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin: payPlugin,
+          caller: ZERO_ADDRESS,
           admin: false,
           delegationType: 3,
           escrow,
           lastValid: MAX_UINT64,
           cooldown: 1,
           methods: [],
-          useRounds: true
+          useRounds: true,
+          useExecutionKey: false
         }
       })
       .arc58AddAllowances({
@@ -1546,8 +1570,9 @@ describe('ARC58 Plugin Permissions', () => {
         sender: aliceEOA.addr,
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
-          app: payPlugin,
-          allowedCaller: ZERO_ADDRESS,
+          plugin: payPlugin,
+          caller: ZERO_ADDRESS,
+          escrow,
           assets: [asset],
           mbrPayment,
         },
@@ -1607,5 +1632,9 @@ describe('ARC58 Plugin Permissions', () => {
     )) as AllowanceInfoTuple;
 
     expect(allowanceBox[3]).toBe(6_000_000n);
+  })
+
+  test('execution key', async () => {
+    
   })
 });

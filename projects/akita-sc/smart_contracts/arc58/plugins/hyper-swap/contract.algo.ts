@@ -22,6 +22,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
           getPluginAppList(this.akitaDAO.value).optin,
           true,
           new Address(Global.currentApplicationAddress),
+          '',
           op.bzero(4).toFixed({ length: 4 }),
         ]
       }
@@ -218,7 +219,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContra
       if (!receiverApp.address.isOptedIn(Asset(asset))) {
         const canCallArc58OptIn = this.canCallArc58OptIn(receiverApp)
         if (canCallArc58OptIn) {
-          arc58OptInAndSend(this.akitaDAO.value, receiverAppID, [asset], [0])
+          arc58OptInAndSend(this.akitaDAO.value, receiverAppID, '', [asset], [0])
         }
       }
     }

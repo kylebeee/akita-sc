@@ -1,5 +1,5 @@
-// import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+// import { beforeAll, beforeEach, describe, test } from 'vitest'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk, { encodeUint64, makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
@@ -7,7 +7,6 @@ import { AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from 
 import { AbstractedAccountClient } from '../../artifacts/arc58/account/AbstractedAccountClient';
 import { OptInPluginClient, OptInPluginFactory } from '../../artifacts/arc58/plugins/optin/OptInPluginClient';
 import { EscrowFactoryFactory } from '../../artifacts/escrow/EscrowFactoryClient';
-
 
 export const ABSTRACTED_ACCOUNT_MINT_PAYMENT = 1_028_000 + 12_100
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
@@ -29,6 +28,8 @@ describe('Abstracted Subscription Program', () => {
   let optInPluginID: bigint;
   /** The suggested params for transactions */
   let suggestedParams: algosdk.SuggestedParams;
+  /** The escrow address to use for the abstracted account */
+  let escrow: string = ''
 
   /** The maximum uint64 value. Used to indicate a never-expiring plugin */
   const maxUint64 = BigInt('18446744073709551615');
@@ -164,15 +165,16 @@ describe('Abstracted Subscription Program', () => {
         signer: makeBasicAccountTransactionSigner(aliceEOA),
         args: {
           name: 'optIn',
-          app: optInPluginID,
-          allowedCaller: ZERO_ADDRESS,
+          plugin: optInPluginID,
+          caller: ZERO_ADDRESS,
+          escrow,
           admin: false,
           delegationType: 3,
-          escrow: '',
           lastValid: maxUint64,
           cooldown: 0,
           methods: [],
           useRounds: false,
+          useExecutionKey: false
         }
       });
     });
@@ -212,6 +214,7 @@ describe('Abstracted Subscription Program', () => {
           args: {
             name: 'optIn',
             global: true,
+            escrow,
             methodOffsets: [],
             fundsRequest: []
           },
