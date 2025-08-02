@@ -1,0 +1,37 @@
+{
+  "name": "akita-sdk",
+  "version": "0.0.1",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist/ src/generated/",
+    "prebuild": "npm run clean && npm run generate",
+    "generate": "algokit generate client ../akita-sc/smart_contracts/artifacts -o src/generated/{contract_name}Client.ts",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "build": "concurrently 'npm run build:cjs' 'npm run build:esm'"
+  },
+  "author": "Kyle Breeding",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@algorandfoundation/algokit-client-generator": "^6.0.0",
+    "@types/node": "^24.0.14",
+    "concurrently": "^9.2.0",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "@algorandfoundation/algokit-utils": "^9.1.2",
+    "algosdk": "^3.3.1"
+  }
+}
