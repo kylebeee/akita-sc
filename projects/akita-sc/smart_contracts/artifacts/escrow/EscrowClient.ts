@@ -22,9 +22,8 @@ import { AppFactory as _AppFactory, AppFactoryAppClientParams, AppFactoryResolve
 import { TransactionComposer, AppCallMethodCall, AppMethodCallTransactionArgument, SimulateOptions, RawSimulateOptions, SkipSignaturesSimulateOptions } from '@algorandfoundation/algokit-utils/types/composer'
 import { SendParams, SendSingleTransactionResult, SendAtomicTransactionComposerResults } from '@algorandfoundation/algokit-utils/types/transaction'
 import { Address, encodeAddress, modelsv2, OnApplicationComplete, Transaction, TransactionSigner } from 'algosdk'
-import SimulateResponse = modelsv2.SimulateResponse
 
-export const APP_SPEC: Arc56Contract = {"name":"Escrow","structs":{},"methods":[{"name":"rekey","args":[{"type":"account","name":"rekeyTo"}],"returns":{"type":"void"},"actions":{"create":[],"call":["NoOp"]},"readonly":false,"events":[],"recommendations":{}},{"name":"delete","args":[],"returns":{"type":"void"},"actions":{"create":[],"call":["DeleteApplication"]},"readonly":false,"events":[],"recommendations":{}}],"arcs":[22,28],"networks":{},"state":{"schema":{"global":{"ints":0,"bytes":0},"local":{"ints":0,"bytes":0}},"keys":{"global":{},"local":{},"box":{}},"maps":{"global":{},"local":{},"box":{}}},"bareActions":{"create":["NoOp"],"call":[]},"sourceInfo":{"approval":{"sourceInfo":[{"pc":[38],"errorMessage":"OnCompletion is not DeleteApplication"},{"pc":[50],"errorMessage":"OnCompletion is not NoOp"},{"pc":[110],"errorMessage":"Only the factory can delete the application"},{"pc":[73],"errorMessage":"can only call when creating"},{"pc":[41,53],"errorMessage":"can only call when not creating"},{"pc":[84],"errorMessage":"only the creator can rekey a spend contract"}],"pcOffsetMethod":"none"},"clear":{"sourceInfo":[],"pcOffsetMethod":"none"}},"source":{"approval":"I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBpbnRjYmxvY2sgMSAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZXNjcm93L2NvbnRyYWN0LmFsZ28udHM6NwogICAgLy8gZXhwb3J0IGNsYXNzIEVzY3JvdyBleHRlbmRzIENvbnRyYWN0IGltcGxlbWVudHMgRXNjcm93SW50ZXJmYWNlIHsKICAgIHR4biBOdW1BcHBBcmdzCiAgICBieiBtYWluX2JhcmVfcm91dGluZ0A3CiAgICBwdXNoYnl0ZXNzIDB4MDBiODZjYWYgMHgyNDM3OGQzYyAvLyBtZXRob2QgInJla2V5KGFjY291bnQpdm9pZCIsIG1ldGhvZCAiZGVsZXRlKCl2b2lkIgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl9yZWtleV9yb3V0ZUAzIG1haW5fZGVsZXRlX3JvdXRlQDQKCm1haW5fYWZ0ZXJfaWZfZWxzZUAxMToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo3CiAgICAvLyBleHBvcnQgY2xhc3MgRXNjcm93IGV4dGVuZHMgQ29udHJhY3QgaW1wbGVtZW50cyBFc2Nyb3dJbnRlcmZhY2UgewogICAgaW50Y18xIC8vIDAKICAgIHJldHVybgoKbWFpbl9kZWxldGVfcm91dGVANDoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoyMgogICAgLy8gQGFiaW1ldGhvZCh7IGFsbG93QWN0aW9uczogJ0RlbGV0ZUFwcGxpY2F0aW9uJyB9KQogICAgdHhuIE9uQ29tcGxldGlvbgogICAgcHVzaGludCA1IC8vIERlbGV0ZUFwcGxpY2F0aW9uCiAgICA9PQogICAgYXNzZXJ0IC8vIE9uQ29tcGxldGlvbiBpcyBub3QgRGVsZXRlQXBwbGljYXRpb24KICAgIHR4biBBcHBsaWNhdGlvbklECiAgICBhc3NlcnQgLy8gY2FuIG9ubHkgY2FsbCB3aGVuIG5vdCBjcmVhdGluZwogICAgY2FsbHN1YiBkZWxldGUKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCm1haW5fcmVrZXlfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo5CiAgICAvLyByZWtleShyZWtleVRvOiBBY2NvdW50KTogdm9pZCB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIG5vdCBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo3CiAgICAvLyBleHBvcnQgY2xhc3MgRXNjcm93IGV4dGVuZHMgQ29udHJhY3QgaW1wbGVtZW50cyBFc2Nyb3dJbnRlcmZhY2UgewogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgYnRvaQogICAgdHhuYXMgQWNjb3VudHMKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo5CiAgICAvLyByZWtleShyZWtleVRvOiBBY2NvdW50KTogdm9pZCB7CiAgICBjYWxsc3ViIHJla2V5CiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgptYWluX2JhcmVfcm91dGluZ0A3OgogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjcKICAgIC8vIGV4cG9ydCBjbGFzcyBFc2Nyb3cgZXh0ZW5kcyBDb250cmFjdCBpbXBsZW1lbnRzIEVzY3Jvd0ludGVyZmFjZSB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICBibnogbWFpbl9hZnRlcl9pZl9lbHNlQDExCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgIQogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBjcmVhdGluZwogICAgaW50Y18wIC8vIDEKICAgIHJldHVybgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo6RXNjcm93LnJla2V5KHJla2V5VG86IGJ5dGVzKSAtPiB2b2lkOgpyZWtleToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo5CiAgICAvLyByZWtleShyZWtleVRvOiBBY2NvdW50KTogdm9pZCB7CiAgICBwcm90byAxIDAKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoxMAogICAgLy8gYXNzZXJ0KFR4bi5zZW5kZXIgPT09IEdsb2JhbC5jcmVhdG9yQWRkcmVzcywgRVJSX09OTFlfQ1JFQVRPUl9DQU5fUkVLRVkpCiAgICB0eG4gU2VuZGVyCiAgICBnbG9iYWwgQ3JlYXRvckFkZHJlc3MKICAgID09CiAgICBhc3NlcnQgLy8gb25seSB0aGUgY3JlYXRvciBjYW4gcmVrZXkgYSBzcGVuZCBjb250cmFjdAogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjEyLTE5CiAgICAvLyBpdHhuCiAgICAvLyAgIC5wYXltZW50KHsKICAgIC8vICAgICBhbW91bnQ6IDAsCiAgICAvLyAgICAgcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgLy8gICAgIHJla2V5VG8sCiAgICAvLyAgICAgZmVlLAogICAgLy8gICB9KQogICAgLy8gICAuc3VibWl0KCkKICAgIGl0eG5fYmVnaW4KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoxNQogICAgLy8gcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgZ2xvYmFsIEN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MKICAgIGZyYW1lX2RpZyAtMQogICAgaXR4bl9maWVsZCBSZWtleVRvCiAgICBpdHhuX2ZpZWxkIFJlY2VpdmVyCiAgICAvLyBzbWFydF9jb250cmFjdHMvZXNjcm93L2NvbnRyYWN0LmFsZ28udHM6MTQKICAgIC8vIGFtb3VudDogMCwKICAgIGludGNfMSAvLyAwCiAgICBpdHhuX2ZpZWxkIEFtb3VudAogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjEyLTE4CiAgICAvLyBpdHhuCiAgICAvLyAgIC5wYXltZW50KHsKICAgIC8vICAgICBhbW91bnQ6IDAsCiAgICAvLyAgICAgcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgLy8gICAgIHJla2V5VG8sCiAgICAvLyAgICAgZmVlLAogICAgLy8gICB9KQogICAgaW50Y18wIC8vIDEKICAgIGl0eG5fZmllbGQgVHlwZUVudW0KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9jb25zdGFudHMudHM6NAogICAgLy8gZXhwb3J0IGNvbnN0IGZlZTogdWludDY0ID0gMAogICAgaW50Y18xIC8vIDAKICAgIGl0eG5fZmllbGQgRmVlCiAgICAvLyBzbWFydF9jb250cmFjdHMvZXNjcm93L2NvbnRyYWN0LmFsZ28udHM6MTItMTkKICAgIC8vIGl0eG4KICAgIC8vICAgLnBheW1lbnQoewogICAgLy8gICAgIGFtb3VudDogMCwKICAgIC8vICAgICByZWNlaXZlcjogR2xvYmFsLmN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MsCiAgICAvLyAgICAgcmVrZXlUbywKICAgIC8vICAgICBmZWUsCiAgICAvLyAgIH0pCiAgICAvLyAgIC5zdWJtaXQoKQogICAgaXR4bl9zdWJtaXQKICAgIHJldHN1YgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo6RXNjcm93LmRlbGV0ZSgpIC0+IHZvaWQ6CmRlbGV0ZToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoyNAogICAgLy8gYXNzZXJ0KFR4bi5zZW5kZXIgPT09IEdsb2JhbC5jcmVhdG9yQWRkcmVzcywgRVJSX09OTFlfRkFDVE9SWV9DQU5fREVMRVRFKQogICAgdHhuIFNlbmRlcgogICAgZ2xvYmFsIENyZWF0b3JBZGRyZXNzCiAgICA9PQogICAgYXNzZXJ0IC8vIE9ubHkgdGhlIGZhY3RvcnkgY2FuIGRlbGV0ZSB0aGUgYXBwbGljYXRpb24KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoyNi0yOAogICAgLy8gaXR4bgogICAgLy8gICAucGF5bWVudCh7IGNsb3NlUmVtYWluZGVyVG86IEdsb2JhbC5jcmVhdG9yQWRkcmVzcyB9KQogICAgLy8gICAuc3VibWl0KCkKICAgIGl0eG5fYmVnaW4KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoyNwogICAgLy8gLnBheW1lbnQoeyBjbG9zZVJlbWFpbmRlclRvOiBHbG9iYWwuY3JlYXRvckFkZHJlc3MgfSkKICAgIGdsb2JhbCBDcmVhdG9yQWRkcmVzcwogICAgaXR4bl9maWVsZCBDbG9zZVJlbWFpbmRlclRvCiAgICAvLyBzbWFydF9jb250cmFjdHMvZXNjcm93L2NvbnRyYWN0LmFsZ28udHM6MjYtMjcKICAgIC8vIGl0eG4KICAgIC8vICAgLnBheW1lbnQoeyBjbG9zZVJlbWFpbmRlclRvOiBHbG9iYWwuY3JlYXRvckFkZHJlc3MgfSkKICAgIGludGNfMCAvLyAxCiAgICBpdHhuX2ZpZWxkIFR5cGVFbnVtCiAgICBpbnRjXzEgLy8gMAogICAgaXR4bl9maWVsZCBGZWUKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoyNi0yOAogICAgLy8gaXR4bgogICAgLy8gICAucGF5bWVudCh7IGNsb3NlUmVtYWluZGVyVG86IEdsb2JhbC5jcmVhdG9yQWRkcmVzcyB9KQogICAgLy8gICAuc3VibWl0KCkKICAgIGl0eG5fc3VibWl0CiAgICByZXRzdWIK","clear":"I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg=="},"byteCode":{"approval":"CiACAQAxG0EAN4ICBAC4bK8EJDeNPDYaAI4CABAAAiNDMRmBBRJEMRhEiAA8IkMxGRREMRhENhoBF8AciAANIkMxGUD/2TEYFEQiQ4oBADEAMgkSRLEyCov/siCyByOyCCKyECOyAbOJMQAyCRJEsTIJsgkishAjsgGziQ==","clear":"CoEBQw=="},"compilerInfo":{"compiler":"puya","compilerVersion":{"major":4,"minor":9,"patch":0}},"events":[],"templateVariables":{}} as unknown as Arc56Contract
+export const APP_SPEC: Arc56Contract = {"name":"Escrow","structs":{},"methods":[{"name":"rekey","args":[{"type":"address","name":"rekeyTo"}],"returns":{"type":"void"},"actions":{"create":[],"call":["NoOp"]},"readonly":false,"events":[],"recommendations":{}},{"name":"delete","args":[],"returns":{"type":"void"},"actions":{"create":[],"call":["DeleteApplication"]},"readonly":false,"events":[],"recommendations":{}}],"arcs":[22,28],"networks":{},"state":{"schema":{"global":{"ints":0,"bytes":0},"local":{"ints":0,"bytes":0}},"keys":{"global":{},"local":{},"box":{}},"maps":{"global":{},"local":{},"box":{}}},"bareActions":{"create":["NoOp"],"call":[]},"sourceInfo":{"approval":{"sourceInfo":[{"pc":[38],"errorMessage":"OnCompletion is not DeleteApplication"},{"pc":[50],"errorMessage":"OnCompletion is not NoOp"},{"pc":[107],"errorMessage":"Only the factory can delete the application"},{"pc":[70],"errorMessage":"can only call when creating"},{"pc":[41,53],"errorMessage":"can only call when not creating"},{"pc":[81],"errorMessage":"only the creator can rekey a spend contract"}],"pcOffsetMethod":"none"},"clear":{"sourceInfo":[],"pcOffsetMethod":"none"}},"source":{"approval":"I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBpbnRjYmxvY2sgMSAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZXNjcm93L2NvbnRyYWN0LmFsZ28udHM6NgogICAgLy8gZXhwb3J0IGNsYXNzIEVzY3JvdyBleHRlbmRzIENvbnRyYWN0IGltcGxlbWVudHMgRXNjcm93SW50ZXJmYWNlIHsKICAgIHR4biBOdW1BcHBBcmdzCiAgICBieiBtYWluX2JhcmVfcm91dGluZ0A3CiAgICBwdXNoYnl0ZXNzIDB4NjVhOTdiY2MgMHgyNDM3OGQzYyAvLyBtZXRob2QgInJla2V5KGFkZHJlc3Mpdm9pZCIsIG1ldGhvZCAiZGVsZXRlKCl2b2lkIgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl9yZWtleV9yb3V0ZUAzIG1haW5fZGVsZXRlX3JvdXRlQDQKCm1haW5fYWZ0ZXJfaWZfZWxzZUAxMToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo2CiAgICAvLyBleHBvcnQgY2xhc3MgRXNjcm93IGV4dGVuZHMgQ29udHJhY3QgaW1wbGVtZW50cyBFc2Nyb3dJbnRlcmZhY2UgewogICAgaW50Y18xIC8vIDAKICAgIHJldHVybgoKbWFpbl9kZWxldGVfcm91dGVANDoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoyMAogICAgLy8gQGFiaW1ldGhvZCh7IGFsbG93QWN0aW9uczogJ0RlbGV0ZUFwcGxpY2F0aW9uJyB9KQogICAgdHhuIE9uQ29tcGxldGlvbgogICAgcHVzaGludCA1IC8vIERlbGV0ZUFwcGxpY2F0aW9uCiAgICA9PQogICAgYXNzZXJ0IC8vIE9uQ29tcGxldGlvbiBpcyBub3QgRGVsZXRlQXBwbGljYXRpb24KICAgIHR4biBBcHBsaWNhdGlvbklECiAgICBhc3NlcnQgLy8gY2FuIG9ubHkgY2FsbCB3aGVuIG5vdCBjcmVhdGluZwogICAgY2FsbHN1YiBkZWxldGUKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCm1haW5fcmVrZXlfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo4CiAgICAvLyByZWtleShyZWtleVRvOiBBY2NvdW50KTogdm9pZCB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIG5vdCBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czo2CiAgICAvLyBleHBvcnQgY2xhc3MgRXNjcm93IGV4dGVuZHMgQ29udHJhY3QgaW1wbGVtZW50cyBFc2Nyb3dJbnRlcmZhY2UgewogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjgKICAgIC8vIHJla2V5KHJla2V5VG86IEFjY291bnQpOiB2b2lkIHsKICAgIGNhbGxzdWIgcmVrZXkKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCm1haW5fYmFyZV9yb3V0aW5nQDc6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZXNjcm93L2NvbnRyYWN0LmFsZ28udHM6NgogICAgLy8gZXhwb3J0IGNsYXNzIEVzY3JvdyBleHRlbmRzIENvbnRyYWN0IGltcGxlbWVudHMgRXNjcm93SW50ZXJmYWNlIHsKICAgIHR4biBPbkNvbXBsZXRpb24KICAgIGJueiBtYWluX2FmdGVyX2lmX2Vsc2VAMTEKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICAhCiAgICBhc3NlcnQgLy8gY2FuIG9ubHkgY2FsbCB3aGVuIGNyZWF0aW5nCiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgoKLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjpFc2Nyb3cucmVrZXkocmVrZXlUbzogYnl0ZXMpIC0+IHZvaWQ6CnJla2V5OgogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjgKICAgIC8vIHJla2V5KHJla2V5VG86IEFjY291bnQpOiB2b2lkIHsKICAgIHByb3RvIDEgMAogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjkKICAgIC8vIGFzc2VydChUeG4uc2VuZGVyID09PSBHbG9iYWwuY3JlYXRvckFkZHJlc3MsIEVSUl9PTkxZX0NSRUFUT1JfQ0FOX1JFS0VZKQogICAgdHhuIFNlbmRlcgogICAgZ2xvYmFsIENyZWF0b3JBZGRyZXNzCiAgICA9PQogICAgYXNzZXJ0IC8vIG9ubHkgdGhlIGNyZWF0b3IgY2FuIHJla2V5IGEgc3BlbmQgY29udHJhY3QKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoxMS0xNwogICAgLy8gaXR4bgogICAgLy8gICAucGF5bWVudCh7CiAgICAvLyAgICAgYW1vdW50OiAwLAogICAgLy8gICAgIHJlY2VpdmVyOiBHbG9iYWwuY3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcywKICAgIC8vICAgICByZWtleVRvCiAgICAvLyAgIH0pCiAgICAvLyAgIC5zdWJtaXQoKQogICAgaXR4bl9iZWdpbgogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjE0CiAgICAvLyByZWNlaXZlcjogR2xvYmFsLmN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MsCiAgICBnbG9iYWwgQ3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcwogICAgZnJhbWVfZGlnIC0xCiAgICBpdHhuX2ZpZWxkIFJla2V5VG8KICAgIGl0eG5fZmllbGQgUmVjZWl2ZXIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoxMwogICAgLy8gYW1vdW50OiAwLAogICAgaW50Y18xIC8vIDAKICAgIGl0eG5fZmllbGQgQW1vdW50CiAgICAvLyBzbWFydF9jb250cmFjdHMvZXNjcm93L2NvbnRyYWN0LmFsZ28udHM6MTEtMTYKICAgIC8vIGl0eG4KICAgIC8vICAgLnBheW1lbnQoewogICAgLy8gICAgIGFtb3VudDogMCwKICAgIC8vICAgICByZWNlaXZlcjogR2xvYmFsLmN1cnJlbnRBcHBsaWNhdGlvbkFkZHJlc3MsCiAgICAvLyAgICAgcmVrZXlUbwogICAgLy8gICB9KQogICAgaW50Y18wIC8vIDEKICAgIGl0eG5fZmllbGQgVHlwZUVudW0KICAgIGludGNfMSAvLyAwCiAgICBpdHhuX2ZpZWxkIEZlZQogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjExLTE3CiAgICAvLyBpdHhuCiAgICAvLyAgIC5wYXltZW50KHsKICAgIC8vICAgICBhbW91bnQ6IDAsCiAgICAvLyAgICAgcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgLy8gICAgIHJla2V5VG8KICAgIC8vICAgfSkKICAgIC8vICAgLnN1Ym1pdCgpCiAgICBpdHhuX3N1Ym1pdAogICAgcmV0c3ViCgoKLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjpFc2Nyb3cuZGVsZXRlKCkgLT4gdm9pZDoKZGVsZXRlOgogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjIyCiAgICAvLyBhc3NlcnQoVHhuLnNlbmRlciA9PT0gR2xvYmFsLmNyZWF0b3JBZGRyZXNzLCBFUlJfT05MWV9GQUNUT1JZX0NBTl9ERUxFVEUpCiAgICB0eG4gU2VuZGVyCiAgICBnbG9iYWwgQ3JlYXRvckFkZHJlc3MKICAgID09CiAgICBhc3NlcnQgLy8gT25seSB0aGUgZmFjdG9yeSBjYW4gZGVsZXRlIHRoZSBhcHBsaWNhdGlvbgogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjI0LTI2CiAgICAvLyBpdHhuCiAgICAvLyAgIC5wYXltZW50KHsgY2xvc2VSZW1haW5kZXJUbzogR2xvYmFsLmNyZWF0b3JBZGRyZXNzIH0pCiAgICAvLyAgIC5zdWJtaXQoKQogICAgaXR4bl9iZWdpbgogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjI1CiAgICAvLyAucGF5bWVudCh7IGNsb3NlUmVtYWluZGVyVG86IEdsb2JhbC5jcmVhdG9yQWRkcmVzcyB9KQogICAgZ2xvYmFsIENyZWF0b3JBZGRyZXNzCiAgICBpdHhuX2ZpZWxkIENsb3NlUmVtYWluZGVyVG8KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9lc2Nyb3cvY29udHJhY3QuYWxnby50czoyNC0yNQogICAgLy8gaXR4bgogICAgLy8gICAucGF5bWVudCh7IGNsb3NlUmVtYWluZGVyVG86IEdsb2JhbC5jcmVhdG9yQWRkcmVzcyB9KQogICAgaW50Y18wIC8vIDEKICAgIGl0eG5fZmllbGQgVHlwZUVudW0KICAgIGludGNfMSAvLyAwCiAgICBpdHhuX2ZpZWxkIEZlZQogICAgLy8gc21hcnRfY29udHJhY3RzL2VzY3Jvdy9jb250cmFjdC5hbGdvLnRzOjI0LTI2CiAgICAvLyBpdHhuCiAgICAvLyAgIC5wYXltZW50KHsgY2xvc2VSZW1haW5kZXJUbzogR2xvYmFsLmNyZWF0b3JBZGRyZXNzIH0pCiAgICAvLyAgIC5zdWJtaXQoKQogICAgaXR4bl9zdWJtaXQKICAgIHJldHN1Ygo=","clear":"I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg=="},"byteCode":{"approval":"CiACAQAxG0EANIICBGWpe8wEJDeNPDYaAI4CABAAAiNDMRmBBRJEMRhEiAA5IkMxGRREMRhENhoBiAANIkMxGUD/3DEYFEQiQ4oBADEAMgkSRLEyCov/siCyByOyCCKyECOyAbOJMQAyCRJEsTIJsgkishAjsgGziQ==","clear":"CoEBQw=="},"events":[],"templateVariables":{}} as unknown as Arc56Contract
 
 /**
  * A state record containing binary data
@@ -71,8 +70,8 @@ export type EscrowArgs = {
    * The object representation of the arguments for each method
    */
   obj: {
-    'rekey(account)void': {
-      rekeyTo: Uint8Array | string
+    'rekey(address)void': {
+      rekeyTo: string
     }
     'delete()void': Record<string, never>
   }
@@ -80,7 +79,7 @@ export type EscrowArgs = {
    * The tuple representation of the arguments for each method
    */
   tuple: {
-    'rekey(account)void': [rekeyTo: Uint8Array | string]
+    'rekey(address)void': [rekeyTo: string]
     'delete()void': []
   }
 }
@@ -89,7 +88,7 @@ export type EscrowArgs = {
  * The return type for each method
  */
 export type EscrowReturns = {
-  'rekey(account)void': void
+  'rekey(address)void': void
   'delete()void': void
 }
 
@@ -101,10 +100,10 @@ export type EscrowTypes = {
    * Maps method signatures / names to their argument and return types.
    */
   methods:
-    & Record<'rekey(account)void' | 'rekey', {
-      argsObj: EscrowArgs['obj']['rekey(account)void']
-      argsTuple: EscrowArgs['tuple']['rekey(account)void']
-      returns: EscrowReturns['rekey(account)void']
+    & Record<'rekey(address)void' | 'rekey', {
+      argsObj: EscrowArgs['obj']['rekey(address)void']
+      argsTuple: EscrowArgs['tuple']['rekey(address)void']
+      returns: EscrowReturns['rekey(address)void']
     }>
     & Record<'delete()void' | 'delete', {
       argsObj: EscrowArgs['obj']['delete()void']
@@ -202,15 +201,15 @@ export abstract class EscrowParamsFactory {
   }
 
   /**
-   * Constructs a no op call for the rekey(account)void ABI method
+   * Constructs a no op call for the rekey(address)void ABI method
    *
    * @param params Parameters for the call
    * @returns An `AppClientMethodCallParams` object for the call
    */
-  static rekey(params: CallParams<EscrowArgs['obj']['rekey(account)void'] | EscrowArgs['tuple']['rekey(account)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
+  static rekey(params: CallParams<EscrowArgs['obj']['rekey(address)void'] | EscrowArgs['tuple']['rekey(address)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete {
     return {
       ...params,
-      method: 'rekey(account)void' as const,
+      method: 'rekey(address)void' as const,
       args: Array.isArray(params.args) ? params.args : [params.args.rekeyTo],
     }
   }
@@ -487,12 +486,12 @@ export class EscrowClient {
     },
 
     /**
-     * Makes a call to the Escrow smart contract using the `rekey(account)void` ABI method.
+     * Makes a call to the Escrow smart contract using the `rekey(address)void` ABI method.
      *
      * @param params The params for the smart contract call
      * @returns The call params
      */
-    rekey: (params: CallParams<EscrowArgs['obj']['rekey(account)void'] | EscrowArgs['tuple']['rekey(account)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    rekey: (params: CallParams<EscrowArgs['obj']['rekey(address)void'] | EscrowArgs['tuple']['rekey(address)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       return this.appClient.params.call(EscrowParamsFactory.rekey(params))
     },
 
@@ -529,12 +528,12 @@ export class EscrowClient {
     },
 
     /**
-     * Makes a call to the Escrow smart contract using the `rekey(account)void` ABI method.
+     * Makes a call to the Escrow smart contract using the `rekey(address)void` ABI method.
      *
      * @param params The params for the smart contract call
      * @returns The call transaction
      */
-    rekey: (params: CallParams<EscrowArgs['obj']['rekey(account)void'] | EscrowArgs['tuple']['rekey(account)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    rekey: (params: CallParams<EscrowArgs['obj']['rekey(address)void'] | EscrowArgs['tuple']['rekey(address)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       return this.appClient.createTransaction.call(EscrowParamsFactory.rekey(params))
     },
 
@@ -572,14 +571,14 @@ export class EscrowClient {
     },
 
     /**
-     * Makes a call to the Escrow smart contract using the `rekey(account)void` ABI method.
+     * Makes a call to the Escrow smart contract using the `rekey(address)void` ABI method.
      *
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    rekey: async (params: CallParams<EscrowArgs['obj']['rekey(account)void'] | EscrowArgs['tuple']['rekey(account)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
+    rekey: async (params: CallParams<EscrowArgs['obj']['rekey(address)void'] | EscrowArgs['tuple']['rekey(address)void']> & SendParams & {onComplete?: OnApplicationComplete.NoOpOC}) => {
       const result = await this.appClient.send.call(EscrowParamsFactory.rekey(params))
-      return {...result, return: result.return as unknown as (undefined | EscrowReturns['rekey(account)void'])}
+      return {...result, return: result.return as unknown as (undefined | EscrowReturns['rekey(address)void'])}
     },
 
   }
@@ -607,9 +606,9 @@ export class EscrowClient {
     const resultMappers: Array<undefined | ((x: ABIReturn | undefined) => any)> = []
     return {
       /**
-       * Add a rekey(account)void method call against the Escrow contract
+       * Add a rekey(address)void method call against the Escrow contract
        */
-      rekey(params: CallParams<EscrowArgs['obj']['rekey(account)void'] | EscrowArgs['tuple']['rekey(account)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
+      rekey(params: CallParams<EscrowArgs['obj']['rekey(address)void'] | EscrowArgs['tuple']['rekey(address)void']> & {onComplete?: OnApplicationComplete.NoOpOC}) {
         promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.rekey(params)))
         resultMappers.push(undefined)
         return this
@@ -659,13 +658,13 @@ export class EscrowClient {
 }
 export type EscrowComposer<TReturns extends [...any[]] = []> = {
   /**
-   * Calls the rekey(account)void ABI method.
+   * Calls the rekey(address)void ABI method.
    *
    * @param args The arguments for the contract call
    * @param params Any additional parameters for the call
    * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
    */
-  rekey(params?: CallParams<EscrowArgs['obj']['rekey(account)void'] | EscrowArgs['tuple']['rekey(account)void']>): EscrowComposer<[...TReturns, EscrowReturns['rekey(account)void'] | undefined]>
+  rekey(params?: CallParams<EscrowArgs['obj']['rekey(address)void'] | EscrowArgs['tuple']['rekey(address)void']>): EscrowComposer<[...TReturns, EscrowReturns['rekey(address)void'] | undefined]>
 
   /**
    * Gets available delete methods
@@ -703,9 +702,9 @@ export type EscrowComposer<TReturns extends [...any[]] = []> = {
   /**
    * Simulates the transaction group and returns the result
    */
-  simulate(): Promise<EscrowComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
-  simulate(options: SkipSignaturesSimulateOptions): Promise<EscrowComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
-  simulate(options: RawSimulateOptions): Promise<EscrowComposerResults<TReturns> & { simulateResponse: SimulateResponse }>
+  simulate(): Promise<EscrowComposerResults<TReturns> & { simulateResponse: modelsv2.SimulateResponse }>
+  simulate(options: SkipSignaturesSimulateOptions): Promise<EscrowComposerResults<TReturns> & { simulateResponse: modelsv2.SimulateResponse }>
+  simulate(options: RawSimulateOptions): Promise<EscrowComposerResults<TReturns> & { simulateResponse: modelsv2.SimulateResponse }>
   /**
    * Sends the transaction group to the network and returns the results
    */

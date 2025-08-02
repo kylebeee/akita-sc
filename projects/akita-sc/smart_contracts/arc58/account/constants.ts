@@ -9,6 +9,8 @@ export const AbstractAccountGlobalStateKeysBio = 'bio'
 export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
 export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
 export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+export const AbstractAccountGlobalStateKeysCurrentEscrowID = 'current_escrow_id'
+export const AbstractAccountGlobalStateKeysRekeyIndex = 'rekey_index'
 export const AbstractAccountGlobalStateKeysEscrowFactory = 'escrow_factory'
 export const AbstractAccountGlobalStateKeysFactoryApp = 'factory_app'
 

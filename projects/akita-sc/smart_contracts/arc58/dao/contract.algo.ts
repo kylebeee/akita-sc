@@ -1,20 +1,17 @@
-import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, clone, Contract, GlobalState, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { ProposalActionType, ProposalVoteType } from "./types";
+import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, clone, Contract, GlobalState, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
+import { ProposalActionType, ProposalVoteType, AkitaAppList, AkitaAssets, AkitaDAOApps, AkitaDAOFees, DAOPluginKey, NFTFees, OtherAppList, PluginAppList, ProposalAction, ProposalAddAllowances, ProposalAddNamedPlugin, ProposalAddPlugin, ProposalDetails, ProposalExecutePlugin, ProposalNewEscrow, ProposalRemoveAllowances, ProposalRemoveNamedPlugin, ProposalRemovePlugin, ProposalSettings, ProposalToggleEscrowLock, ProposalUpdateField, ProposalUpgradeApp, ProposalVoteInfo, ProposalVoteKey, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees, ProposalRemoveExecutePlugin } from "./types";
 import { AbstractAccountBoxPrefixPlugins, ABSTRACTED_ACCOUNT_MINT_PAYMENT } from "../account/constants";
 import { AddAllowanceInfo, ExecutionKey } from "../account/types";
 import { GlobalStateKeyVersion } from "../../constants";
 import { CID } from "../../utils/types/base";
-import { AkitaDAOGlobalStateKeysInitialized, AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOBoxPrefixPayoutEscrows, AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOBoxPrefixReceiveAssets, AkitaDAOBoxPrefixReceiveEscrows, AkitaDAOEscrowAccountGovernors, AkitaDAOEscrowAccountKrby, AkitaDAOEscrowAccountModerators, AkitaDAOGlobalStateKeysAddAllowanceProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysKrbyPercentage, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysModeratorPercentage, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalActionLimit, AkitaDAOGlobalStateKeysProposalFee, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowanceProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, AkitaDAOGlobalStateKeysWalletID, DAOProposalVotesMBR, DAOReceiveAssetsMBR, DAOReceiveEscrowsMBR, EscrowDisbursementPhaseAllocation, EscrowDisbursementPhaseFinalization, EscrowDisbursementPhaseIdle, MinDAOPayoutEscrowsMBR, PayoutEscrowTypeGroup, ProposalActionTypeAddAllowance, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecuteNamedPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveAllowance, ProposalActionTypeRemoveExecutePlugin, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject } from "./constants";
-import { AkitaAppList, AkitaAssets, AkitaDAOApps, AkitaDAOFees, DAOPluginKey, EscrowAssetKey, EscrowTypeDefault, EscrowTypePayout, EscrowTypeReceive, NFTFees, OtherAppList, PayoutEscrowInfo, PluginAppList, ProposalAction, ProposalAddAllowances, ProposalAddNamedPlugin, ProposalAddPlugin, ProposalDetails, ProposalExecuteNamedPlugin, ProposalExecutePlugin, ProposalNewEscrow, ProposalNewPoolPayoutEscrow, ProposalNewReceive, ProposalNewReceiveEscrow, ProposalRemoveAllowances, ProposalRemoveNamedPlugin, ProposalRemovePlugin, ProposalSettings, ProposalToggleEscrowLock, ProposalUpdateField, ProposalUpgradeApp, ProposalVoteInfo, ProposalVoteKey, ReceiveEscrowInfo, SocialFees, StakingFees, SubscriptionFees, SwapFees } from "../../dao/types";
+import { AkitaDAOGlobalStateKeysInitialized, AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOGlobalStateKeysAddAllowanceProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalActionLimit, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowanceProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, AkitaDAOGlobalStateKeysWalletID, DAOProposalVotesMBR, DAOReceiveAssetsMBR, DAOReceiveEscrowsMBR, MinDAOPayoutEscrowsMBR, PayoutEscrowTypeGroup, ProposalActionTypeAddAllowance, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecuteNamedPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveAllowance, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject, AkitaDAOGlobalStateKeysWalletFees, ProposalActionTypeRemoveExecutePlugin } from "./constants";
 import { BoxCostPerByte } from "../../utils/constants";
 import { abiCall, abimethod, Address, decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4";
-import { AssetHolding, btoi, Global, itob, Txn } from "@algorandfoundation/algorand-typescript/op";
+import { btoi, Global, Txn } from "@algorandfoundation/algorand-typescript/op";
 import { AbstractedAccountFactoryInterface, AbstractedAccountInterface } from "../../utils/abstract-account";
-import { ERR_ALREADY_INITIALIZED, ERR_ASSET_ALREADY_ALLOCATED, ERR_ESCROW_DOES_NOT_EXIST, ERR_ESCROW_NOT_ALLOCATABLE, ERR_ESCROW_NOT_IDLE, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE, ERR_ESCROW_NOT_OPTED_IN, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT, ERR_EXECUTION_KEY_MISMATCH, ERR_INCORRECT_SENDER, ERR_INSUFFICIENT_PROPOSAL_THRESHOLD, ERR_INVALID_PROPOSAL_ACTION, ERR_INVALID_PROPOSAL_STATE, ERR_INVALID_PROPOSAL_STATUS, ERR_PAYMENT_NOT_REQUIRED, ERR_PAYMENT_REQUIRED, ERR_PROPOSAL_DOES_NOT_EXIST, ERR_PROPOSAL_NOT_APPROVED, ERR_PROPOSAL_NOT_UPGRADE_APP, ERR_VERSION_CANNOT_BE_EMPTY } from "../../dao/errors";
 import { calcPercent, getOrigin, getStakingPower, percentageOf } from "../../utils/functions";
-import { ONE_DAY } from "../plugins/social/constants";
 import { ERR_INVALID_PAYMENT } from "../../utils/errors";
-import { ERR_EMPTY_ACTION_LIST, ERR_TOO_MANY_ACTIONS, ERR_VOTING_DURATION_NOT_MET, ERR_VOTING_PARTICIPATION_NOT_MET } from "./errors";
+import { ERR_EMPTY_ACTION_LIST, ERR_TOO_MANY_ACTIONS, ERR_VOTING_DURATION_NOT_MET, ERR_VOTING_PARTICIPATION_NOT_MET, ERR_ALREADY_INITIALIZED, ERR_EXECUTION_KEY_MISMATCH, ERR_INCORRECT_SENDER, ERR_INSUFFICIENT_PROPOSAL_THRESHOLD, ERR_INVALID_PROPOSAL_ACTION, ERR_INVALID_PROPOSAL_STATE, ERR_PAYMENT_NOT_REQUIRED, ERR_PAYMENT_REQUIRED, ERR_PROPOSAL_DOES_NOT_EXIST, ERR_PROPOSAL_NOT_APPROVED, ERR_PROPOSAL_NOT_UPGRADE_APP, ERR_VERSION_CANNOT_BE_EMPTY } from "./errors";
 import { ERR_FORBIDDEN } from "../account/errors";
 
 export class AkitaDAO extends Contract {
@@ -39,6 +36,8 @@ export class AkitaDAO extends Contract {
   pluginAppList = GlobalState<PluginAppList>({ key: AkitaDAOGlobalStateKeysPluginAppList })
   /** the list of other contract ids we use */
   otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
+  /** the fees for akita wallet operations */
+  walletFees = GlobalState<WalletFees>({ key: AkitaDAOGlobalStateKeysWalletFees })
   /** fees associated with akita social */
   socialFees = GlobalState<SocialFees>({ key: AkitaDAOGlobalStateKeysSocialFees })
   /** fees associated with staking assets */
@@ -49,15 +48,6 @@ export class AkitaDAO extends Contract {
   nftFees = GlobalState<NFTFees>({ key: AkitaDAOGlobalStateKeysNFTFees })
   /** fees associated with swaps */
   swapFees = GlobalState<SwapFees>({ key: AkitaDAOGlobalStateKeysSwapFees })
-  /**
-   * The percentage of total rewards allocated to krby expressed in the hundreds
-   * eg. 3% is 300, 12.75% is 1275
-   */
-  krbyPercentage = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysKrbyPercentage })
-  /** moderator fee */
-  moderatorPercentage = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysModeratorPercentage })
-  /** fee for creating new proposals */
-  proposalFee = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysProposalFee })
   /** the akita assets */
   akitaAssets = GlobalState<AkitaAssets>({ key: AkitaDAOGlobalStateKeysAkitaAssets })
 
@@ -87,12 +77,6 @@ export class AkitaDAO extends Contract {
 
   /** Plugins that add functionality to the controlledAddress and the account that has permission to use it. */
   plugins = BoxMap<DAOPluginKey, ProposalSettings>({ keyPrefix: AbstractAccountBoxPrefixPlugins })
-  /** escrow accounts for services to payback revenue to the DAO */
-  receiveEscrows = BoxMap<uint64, ReceiveEscrowInfo>({ keyPrefix: AkitaDAOBoxPrefixReceiveEscrows })
-  /** box map of escrow assets that have already been processed during this allocation */
-  receiveAssets = BoxMap<EscrowAssetKey, bytes<0>>({ keyPrefix: AkitaDAOBoxPrefixReceiveAssets })
-  /** escrow accounts meant to payout recipients */
-  payoutEscrows = BoxMap<uint64, PayoutEscrowInfo>({ keyPrefix: AkitaDAOBoxPrefixPayoutEscrows })
   /** voting state of a proposal */
   proposals = BoxMap<uint64, ProposalDetails>({ keyPrefix: AkitaDAOBoxPrefixProposals })
   /** votes by proposal id & address */
@@ -389,57 +373,6 @@ export class AkitaDAO extends Contract {
     ).returnValue
   }
 
-  private getEscrow(escrow: string, must: boolean): uint64 {
-    if (must) {
-      return abiCall(
-        AbstractedAccountInterface.prototype.arc58_mustGetEscrow,
-        {
-          appId: this.walletID.value,
-          args: [escrow]
-        }
-      ).returnValue;
-    }
-
-    return abiCall(
-      AbstractedAccountInterface.prototype.arc58_getEscrow,
-      {
-        appId: this.walletID.value,
-        args: [escrow]
-      }
-    ).returnValue;
-  }
-
-  private newPoolPayoutEscrow(data: ProposalNewPoolPayoutEscrow): uint64 {
-    const { escrow, poolID } = clone(data)
-
-    const escrowID = this.newEscrow(escrow)
-    this.payoutEscrows(escrowID).value = {
-      type: PayoutEscrowTypeGroup,
-      data: Bytes(itob(poolID))
-    }
-
-    return escrowID
-  }
-
-  private newReceiveEscrow(data: ProposalNewReceiveEscrow): uint64 {
-    const { source, allocatable, optinAllowed, escrow } = clone(data)
-
-    const escrowID = this.newEscrow(escrow)
-
-    this.receiveEscrows(escrowID).value = {
-      source,
-      allocatable,
-      optinAllowed,
-      optinCount: 0,
-      phase: EscrowDisbursementPhaseIdle,
-      allocationCounter: 0,
-      lastDisbursement: 0,
-      creationDate: Global.latestTimestamp,
-    }
-
-    return escrowID;
-  }
-
   private updateField(field: string, value: bytes): void {
     switch (field) {
       case AkitaDAOGlobalStateKeysContentPolicy: {
@@ -469,6 +402,11 @@ export class AkitaDAO extends Contract {
         this.otherAppList.value = clone(otherAppList)
         break
       }
+      case AkitaDAOGlobalStateKeysWalletFees: {
+        const walletFees = decodeArc4<WalletFees>(value)
+        this.walletFees.value = clone(walletFees)
+        break
+      }
       case AkitaDAOGlobalStateKeysSocialFees: {
         const socialFees = decodeArc4<SocialFees>(value)
         this.socialFees.value = clone(socialFees)
@@ -492,18 +430,6 @@ export class AkitaDAO extends Contract {
       case AkitaDAOGlobalStateKeysSwapFees: {
         const swapFees = decodeArc4<SwapFees>(value)
         this.swapFees.value = clone(swapFees)
-        break
-      }
-      case AkitaDAOGlobalStateKeysKrbyPercentage: {
-        this.krbyPercentage.value = btoi(value)
-        break
-      }
-      case AkitaDAOGlobalStateKeysModeratorPercentage: {
-        this.moderatorPercentage.value = btoi(value)
-        break
-      }
-      case AkitaDAOGlobalStateKeysProposalFee: {
-        this.proposalFee.value = btoi(value)
         break
       }
       case AkitaDAOGlobalStateKeysAkitaAssets: {
@@ -632,6 +558,8 @@ export class AkitaDAO extends Contract {
       akitaNfd: apps.akitaNfd,
     }
 
+    this.walletFees.value = { createFee: fees.walletCreateFee }
+
     this.socialFees.value = {
       postFee: fees.postFee,
       reactFee: fees.reactFee,
@@ -674,9 +602,6 @@ export class AkitaDAO extends Contract {
       impactTaxMax: fees.swapFeeImpactTaxMax,
     }
 
-    this.krbyPercentage.value = fees.krbyPercentage
-    this.moderatorPercentage.value = fees.moderatorPercentage
-
     this.upgradeAppProposalSettings.value = clone(proposalSettings.upgradeApp)
     this.addPluginProposalSettings.value = clone(proposalSettings.addPlugin)
     this.removeExecutePluginProposalSettings.value = clone(proposalSettings.removeExecutePlugin)
@@ -702,14 +627,15 @@ export class AkitaDAO extends Contract {
   }
 
   setup(): void {
-    const walletFactoryID = this.akitaAppList.value.walletFactory
+    const { walletFactory } = this.akitaAppList.value
+
     this.walletID.value = abiCall(
-      AbstractedAccountFactoryInterface.prototype.mint,
+      AbstractedAccountFactoryInterface.prototype.new,
       {
-        appId: walletFactoryID,
+        appId: walletFactory,
         args: [
           itxn.payment({
-            receiver: Application(walletFactoryID).address,
+            receiver: Application(walletFactory).address,
             amount: ABSTRACTED_ACCOUNT_MINT_PAYMENT,
           }),
           new Address(Global.zeroAddress),
@@ -856,12 +782,11 @@ export class AkitaDAO extends Contract {
       }
     }
 
-    const power = getStakingPower(
-      this.akitaAppList.value.staking,
-      voter,
-      this.akitaAssets.value.bones
-    )
+    const { staking } = this.akitaAppList.value
+    const { bones } = this.akitaAssets.value
+    const power = getStakingPower(staking, voter, bones)
 
+    // getStakingPower will return 0 if the unlock is within 1 week
     assert(power > 0, ERR_FORBIDDEN)
 
     switch (vote) {
@@ -953,6 +878,11 @@ export class AkitaDAO extends Contract {
           this.newExecution(executionKey, lastValidRound)
           break
         }
+        case ProposalActionTypeRemoveExecutePlugin: {
+          const { executionKey } = decodeArc4<ProposalRemoveExecutePlugin>(data)
+          this.removeExecution(executionKey)
+          break
+        }
         case ProposalActionTypeAddPlugin: {
           this.addPlugin({ name: '', ...decodeArc4<ProposalAddPlugin>(data) })
           break
@@ -980,21 +910,8 @@ export class AkitaDAO extends Contract {
           break
         }
         case ProposalActionTypeNewEscrow: {
-          const { escrow, type, data: escrowData } = decodeArc4<ProposalNewEscrow>(data)
-          switch (type) {
-            case EscrowTypeDefault: {
-              this.newEscrow(escrow)
-              break
-            }
-            case EscrowTypeReceive: {
-              const receiveData = decodeArc4<ProposalNewReceive>(data)
-              this.newReceiveEscrow({ escrow, ...receiveData })
-              break
-            }
-            default: {
-              assert(false, ERR_INVALID_PROPOSAL_ACTION)
-            }
-          }
+          const { escrow } = decodeArc4<ProposalNewEscrow>(data)
+          this.newEscrow(escrow)
           break
         }
         case ProposalActionTypeToggleEscrowLock: {
@@ -1011,117 +928,5 @@ export class AkitaDAO extends Contract {
     }
 
     this.proposals(proposalID).value.status = ProposalStatusExecuted
-  }
-
-  startEscrowDisbursement(name: string): void {
-    const escrowID = this.getEscrow(name, true)
-    assert(this.receiveEscrows(escrowID).exists, ERR_ESCROW_DOES_NOT_EXIST)
-    // validate the time window of the last escrow payout
-    const { phase, allocatable, lastDisbursement, creationDate } = this.receiveEscrows(escrowID).value
-    assert(phase === EscrowDisbursementPhaseIdle, ERR_ESCROW_NOT_IDLE)
-    assert(allocatable, ERR_ESCROW_NOT_ALLOCATABLE)
-
-    const latestWindow: uint64 = Global.latestTimestamp - ((Global.latestTimestamp - creationDate) % ONE_DAY)
-    assert(latestWindow >= lastDisbursement, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT)
-
-    this.receiveEscrows(escrowID).value.phase = EscrowDisbursementPhaseAllocation
-    this.receiveEscrows(escrowID).value.lastDisbursement = latestWindow
-  }
-
-  processEscrowAllocation(name: string, ids: uint64[]): void {
-    const escrowID = this.getEscrow(name, true)
-    const { phase, source, optinCount } = this.receiveEscrows(escrowID).value
-    assert(phase === EscrowDisbursementPhaseAllocation, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE)
-
-    const sender = source.native
-
-    const krbyEscrowID = this.getEscrow(AkitaDAOEscrowAccountKrby, true)
-    const krbyAccount = Application(krbyEscrowID).address
-
-    const modEscrowID = this.getEscrow(AkitaDAOEscrowAccountModerators, true)
-    const modAccount = Application(modEscrowID).address
-
-    const govEscrowID = this.getEscrow(AkitaDAOEscrowAccountGovernors, true)
-    const govAccount = Application(govEscrowID).address
-
-    for (let i: uint64 = 0; i < ids.length; i += 1) {
-      const asset = ids[i]
-      assert(!this.receiveAssets({ escrow: escrowID, asset }).exists, ERR_ASSET_ALREADY_ALLOCATED)
-      assert(sender.isOptedIn(Asset(asset)), ERR_ESCROW_NOT_OPTED_IN)
-
-      const balance = AssetHolding.assetBalance(sender, asset)[0]
-
-      const krbyAmount = calcPercent(balance, this.krbyPercentage.value)
-      const modAmount = calcPercent(balance, this.moderatorPercentage.value)
-      const govAmount: uint64 = balance - (krbyAmount + modAmount)
-
-      // pay krby
-      if (asset === 0) {
-        itxn
-          .payment({
-            sender,
-            receiver: krbyAccount,
-            amount: krbyAmount
-          })
-          .submit()
-      } else {
-        itxn
-          .assetTransfer({
-            sender,
-            assetReceiver: krbyAccount,
-            assetAmount: krbyAmount,
-            xferAsset: asset
-          })
-          .submit()
-      }
-
-      // pay moderator fund
-      if (asset === 0) {
-        itxn
-          .payment({
-            sender,
-            receiver: modAccount,
-            amount: modAmount
-          })
-          .submit()
-      } else {
-        itxn
-          .assetTransfer({
-            sender,
-            assetReceiver: modAccount,
-            assetAmount: modAmount,
-            xferAsset: asset
-          })
-          .submit()
-      }
-
-      // pay governor fund
-      if (asset === 0) {
-        itxn
-          .payment({
-            sender,
-            receiver: govAccount,
-            amount: govAmount
-          })
-          .submit()
-      } else {
-        itxn
-          .assetTransfer({
-            sender,
-            assetReceiver: govAccount,
-            assetAmount: govAmount,
-            xferAsset: asset
-          })
-          .submit()
-      }
-
-      this.receiveAssets({ escrow: escrowID, asset }).create()
-    }
-
-    const allocationCounter: uint64 = this.receiveEscrows(escrowID).value.allocationCounter + ids.length
-    this.receiveEscrows(escrowID).value.allocationCounter = allocationCounter
-    if (allocationCounter === (optinCount + 1)) {
-      this.receiveEscrows(escrowID).value.phase = EscrowDisbursementPhaseFinalization
-    }
   }
 }

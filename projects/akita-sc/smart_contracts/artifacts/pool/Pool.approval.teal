@@ -3,7 +3,7 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 6 8 400 100000 6364136223846793005 1442695040888963407 1442695040888963409 4294967295 18446744073709551615
+    intcblock 0 1 8 92 100000 6364136223846793005 400 1442695040888963407 1442695040888963409 4294967295 18446744073709551615
     bytecblock "entry_count" 0x151f7c75 0x00 "akita_al" "type" 0x0a "gate_id" 0x0000 "e" 0x14 "status" "creator" 0x1e "max_entries" "end_timestamp" "r" "start_timestamp" "akita_royalty_amount" "akita_dao" 0x80 "stake_key" "akita_royalty" "allow_late_signups" "title" "minimum_stake_amount" "reward_count" "signup_timestamp" "akita_escrow" 0x000000000000000000 0x40e914e6 "salt" "controlled_address" 0x000000000000000000000000000000000000000000000000
     // smart_contracts/pool/contract.algo.ts:97-100
     // export class Pool extends classes(
@@ -12,7 +12,7 @@ main:
     // ) {
     txn NumAppArgs
     bz main_after_if_else@30
-    pushbytess 0xd5f3c06a 0x83f14748 0xab8b213a 0x3ea11832 0x645a7bcc 0x0f2fc312 0x181e8291 0x68558c70 0xa9418d37 0xfc699cb3 0x6e76b2ca 0xcdb0ac6a 0xb223d35d 0x592ee341 0x8fa4a160 0xe3377342 0x71704649 0xa4b3e789 0x85875840 0xea9180dd 0x33e92c94 0x1ead20a9 // method "create(string,uint8,address,address,(address,string),uint64,uint64,uint64,uint64)void", method "init()void", method "delete(address)void", method "optin(pay,uint64)void", method "addReward(pay,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void", method "addRewardAsa(pay,axfer,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void", method "finalize(uint64,uint64,uint64)void", method "enter(pay,(uint64,uint64,byte[32][])[],byte[][])void", method "startDisbursement(uint64)void", method "raffle(uint64)void", method "disburseRewards(uint64,uint64)void", method "finalizeDistribution(uint64)void", method "check(address,uint64)(bool,uint64)", method "signUpsOpen()bool", method "isLive()bool", method "isEntered(address)bool", method "getState()(uint8,string,uint8,uint64,uint64,bool,uint64,uint64,uint64,uint64,uint64,(address,string),uint64,uint64,address)", method "mbr(uint64)(uint64,uint64,uint64,uint64,uint64)", method "optAkitaEscrowInAndSend(string,asset,uint64)void", method "update(string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void"
+    pushbytess 0xd5f3c06a 0x83f14748 0xab8b213a 0x3ea11832 0x645a7bcc 0x0f2fc312 0x181e8291 0x68558c70 0xa9418d37 0xfc699cb3 0x6e76b2ca 0xcdb0ac6a 0xb223d35d 0x592ee341 0x8fa4a160 0xe3377342 0x71704649 0xa4b3e789 0x776e3a65 0xea9180dd 0x33e92c94 0x1ead20a9 // method "create(string,uint8,address,address,(address,string),uint64,uint64,uint64,uint64)void", method "init()void", method "delete(address)void", method "optin(pay,uint64)void", method "addReward(pay,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void", method "addRewardAsa(pay,axfer,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void", method "finalize(uint64,uint64,uint64)void", method "enter(pay,(uint64,uint64,byte[32][])[],byte[][])void", method "startDisbursement(uint64)void", method "raffle(uint64)void", method "disburseRewards(uint64,uint64)void", method "finalizeDistribution(uint64)void", method "check(address,uint64)(bool,uint64)", method "signUpsOpen()bool", method "isLive()bool", method "isEntered(address)bool", method "getState()(uint8,string,uint8,uint64,uint64,bool,uint64,uint64,uint64,uint64,uint64,(address,string),uint64,uint64,address)", method "mbr(uint64)(uint64,uint64,uint64,uint64,uint64)", method "optAkitaEscrowInAndSend(string,uint64,uint64)void", method "update(string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void"
     txna ApplicationArgs 0
     match main_create_route@5 main_init_route@6 main_delete_route@7 main_optin_route@8 main_addReward_route@9 main_addRewardAsa_route@10 main_finalize_route@11 main_enter_route@12 main_startDisbursement_route@13 main_raffle_route@14 main_disburseRewards_route@15 main_finalizeDistribution_route@16 main_check_route@17 main_signUpsOpen_route@18 main_isLive_route@19 main_isEntered_route@20 main_getState_route@21 main_mbr_route@22 main_optAkitaEscrowInAndSend_route@23 main_update_route@24 main_updateAkitaDAO_route@25 main_updateAkitaDAOEscrow_route@26
 
@@ -106,7 +106,6 @@ main_optAkitaEscrowInAndSend_route@23:
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    txnas Assets
     txna ApplicationArgs 3
     btoi
     // smart_contracts/utils/base-contracts/escrow.ts:20
@@ -628,7 +627,7 @@ getWalletIDUsingAkitaDAO:
     frame_dig -1
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -647,7 +646,7 @@ getWalletIDUsingAkitaDAO:
     dup
     bz getWalletIDUsingAkitaDAO_if_body@6
     frame_dig 1
-    intc_3 // 8
+    intc_2 // 8
     !=
     bz getWalletIDUsingAkitaDAO_after_if_else@7
 
@@ -724,7 +723,7 @@ gateCall:
     frame_dig -1
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -798,24 +797,30 @@ checkByID_bool_merge@4:
     frame_bury 2
     // smart_contracts/pool/contract.algo.ts:471
     // const { disqualified, address, asset, quantity } = this.entries(id).value
-    box_get
-    assert // Box must have value
     dup
-    intc 4 // 400
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
     getbit
     dig 1
-    extract 0 32
+    intc_0 // 0
+    pushint 32 // 32
+    box_extract
     frame_bury 0
     dig 1
-    extract 32 8
-    frame_bury 1
-    dig 1
     pushint 32 // 32
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    dup
+    frame_bury 1
+    btoi
     frame_bury 3
     swap
     pushint 40 // 40
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     frame_bury 4
     // smart_contracts/pool/contract.algo.ts:473
     // if (disqualified) {
@@ -874,7 +879,7 @@ checkByID_after_if_else@6:
     frame_dig 1
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -909,15 +914,15 @@ checkByID_after_if_else@15:
     // this.entries(id).value.disqualified = true
     frame_dig 2
     dup
-    box_get
-    assert // Box must have value
-    intc 4 // 400
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
     intc_1 // 1
     setbit
-    dig 1
-    box_del
-    pop
-    box_put
+    pushint 50 // 50
+    swap
+    box_replace
     // smart_contracts/pool/contract.algo.ts:510
     // return { valid: false, balance: 0 }
     bytec 28 // 0x000000000000000000
@@ -984,7 +989,7 @@ checkByID_else_body@11:
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -1041,7 +1046,7 @@ stakingType:
     itob
     dup
     bitlen
-    intc_3 // 8
+    intc_2 // 8
     <=
     assert // overflow
     extract 7 1
@@ -1068,7 +1073,7 @@ createRewardAllocations:
     pop
     // smart_contracts/pool/contract.algo.ts:579
     // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
-    intc_3 // 8
+    intc_2 // 8
     extract_uint64
     // smart_contracts/pool/contract.algo.ts:659
     // return 24_900 * allocations.length
@@ -1160,7 +1165,7 @@ createRewardAllocations:
     frame_dig -2
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -1288,7 +1293,7 @@ createRewardAllocations_else_body@6:
     frame_dig -2
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -1433,7 +1438,7 @@ create:
     itxn_field ApplicationArgs
     itxn_field ApplicationID
     itxn_field ApplicationArgs
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -1452,7 +1457,7 @@ create:
     // smart_contracts/pool/contract.algo.ts:691
     // this.akitaRoyalty.value = impactRange(impact, fees.impactTaxMin, fees.impactTaxMax)
     dig 1
-    intc_3 // 8
+    intc_2 // 8
     extract_uint64
     cover 2
     swap
@@ -1553,7 +1558,7 @@ init:
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -1962,7 +1967,7 @@ addReward_after_if_else@21:
     extract_uint64
     // smart_contracts/pool/base.ts:9
     // return MinPoolRewardsMBR + (BoxCostPerByte * winningTickets)
-    intc 4 // 400
+    intc 6 // 400
     *
     // smart_contracts/pool/contract.algo.ts:768-777
     // assertMatch(
@@ -2337,10 +2342,10 @@ enter:
     frame_bury 3
     // smart_contracts/utils/functions.ts:112
     // if (walletID.id === 0) {
-    bnz enter_after_if_else@25
+    bnz enter_after_if_else@29
     frame_dig 3
 
-enter_after_inlined_smart_contracts/utils/functions.ts::originOr@26:
+enter_after_inlined_smart_contracts/utils/functions.ts::originOr@30:
     // smart_contracts/pool/contract.algo.ts:837
     // gateCall(Global.currentApplicationId, origin, this.gateID.value, args),
     global CurrentApplicationID
@@ -2541,7 +2546,7 @@ enter_while_top@9:
     substring3
     dup
     frame_bury 2
-    intc_3 // 8
+    intc_2 // 8
     extract_uint64
     dup
     frame_bury 9
@@ -2637,7 +2642,7 @@ enter_while_top@9:
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -2780,7 +2785,7 @@ enter_after_if_else@20:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -2901,7 +2906,7 @@ enter_bool_false@5:
     intc_0 // 0
     b enter_bool_merge@6
 
-enter_after_if_else@25:
+enter_after_if_else@29:
     // smart_contracts/utils/functions.ts:123-126
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
@@ -2920,7 +2925,7 @@ enter_after_if_else@25:
     pop
     // smart_contracts/utils/functions.ts:119
     // return originOr(walletID, Txn.sender)
-    b enter_after_inlined_smart_contracts/utils/functions.ts::originOr@26
+    b enter_after_inlined_smart_contracts/utils/functions.ts::originOr@30
 
 
 // smart_contracts/pool/contract.algo.ts::Pool.startDisbursement(rewardID: uint64) -> void:
@@ -2949,20 +2954,26 @@ startDisbursement:
     assert // reward does not exist
     // smart_contracts/pool/contract.algo.ts:934
     // const { phase, interval, lastDisbursementTimestamp, expiration } = this.rewards(rewardID).value
-    box_get
-    pop
     dup
-    extract 91 1
+    pushint 91 // 91
+    intc_1 // 1
+    box_extract
     dig 1
     pushint 25 // 25
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     dig 2
     pushint 116 // 116
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     cover 3
     uncover 2
     pushint 17 // 17
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     cover 2
     // smart_contracts/pool/contract.algo.ts:936
     // assert(phase === DisbursementPhaseIdle, 'reward is already in a disbursement phase')
@@ -3030,13 +3041,13 @@ startDisbursement_bool_merge@5:
     pop
     // smart_contracts/pool/contract.algo.ts:549
     // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
-    intc_3 // 8
+    intc_2 // 8
     extract_uint64
     // smart_contracts/pool/contract.algo.ts:550
     // const rewardMBR: uint64 = MinDisbursementsMBR + (BoxCostPerByte * Bytes(title).length)
     dig 3
     len
-    intc 4 // 400
+    intc 6 // 400
     dig 1
     *
     pushint 35300 // 35300
@@ -3147,7 +3158,7 @@ startDisbursement_bool_merge@5:
     //     ],
     //   }
     // ).returnValue
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -3164,70 +3175,48 @@ startDisbursement_bool_merge@5:
     // this.rewards(rewardID).value.qualifiedStakers = 0
     frame_dig 0
     dup
-    box_get
-    assert // Box must have value
-    dig 3
-    replace2 33
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    pushint 33 // 33
+    dig 4
+    box_replace
     // smart_contracts/pool/contract.algo.ts:946
     // this.rewards(rewardID).value.qualifiedStake = 0
-    dig 3
-    replace2 41
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    dup
+    pushint 41 // 41
+    dig 4
+    box_replace
     // smart_contracts/pool/contract.algo.ts:947
     // this.rewards(rewardID).value.phase = DisbursementPhasePreparation
+    dup
+    pushint 91 // 91
     bytec 5 // 0x0a
-    replace2 91
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:948
     // this.rewards(rewardID).value.disbursementCursor = 0
-    uncover 3
-    replace2 92
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    dup
+    intc_3 // 92
+    uncover 4
+    box_replace
     // smart_contracts/pool/contract.algo.ts:949
     // this.rewards(rewardID).value.activeDisbursementID = disbursementID
-    uncover 2
-    replace2 100
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    dup
+    pushint 100 // 100
+    uncover 3
+    box_replace
     // smart_contracts/pool/contract.algo.ts:950
     // this.rewards(rewardID).value.activeDisbursementRoundStart = Global.round
     global Round
     itob
-    replace2 108
     dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    pushint 108 // 108
+    uncover 2
+    box_replace
     // smart_contracts/pool/contract.algo.ts:951
     // this.rewards(rewardID).value.lastDisbursementTimestamp = Global.latestTimestamp
     global LatestTimestamp
     itob
-    replace2 116
-    dig 1
-    box_del
-    pop
-    box_put
+    pushint 116 // 116
+    swap
+    box_replace
     retsub
 
 startDisbursement_bool_false@4:
@@ -3261,39 +3250,40 @@ raffle:
     assert // reward does not exist
     // smart_contracts/pool/contract.algo.ts:962
     // } = clone(this.rewards(rewardID).value)
-    box_get
-    pop
     dup
-    extract 91 1
+    pushint 91 // 91
+    intc_1 // 1
+    box_extract
     dig 1
-    pushint 57 // 57
-    extract_uint16
-    dig 2
-    len
-    dig 3
-    cover 2
-    substring3
-    dig 2
     pushint 108 // 108
-    extract_uint64
-    dig 3
+    intc_2 // 8
+    box_extract
+    btoi
+    dig 2
     pushint 83 // 83
-    extract_uint64
-    uncover 4
+    intc_2 // 8
+    box_extract
+    btoi
+    dig 3
     pushint 41 // 41
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     cover 4
     // smart_contracts/pool/contract.algo.ts:964
     // assert(phase === DisbursementPhaseAllocation, ERR_INVALID_DISBURSEMENT_PHASE)
-    uncover 3
+    uncover 2
     bytec 9 // 0x14
     ==
     assert // Invalid disbursement phase
+    // smart_contracts/pool/contract.algo.ts:962
+    // } = clone(this.rewards(rewardID).value)
+    uncover 2
+    pushints 124 2 // 124, 2
+    box_extract
+    btoi
     // smart_contracts/pool/contract.algo.ts:965
     // assert(winningTickets.length === 0, ERR_WINNING_TICKETS_ALREADY_EXIST)
-    uncover 2
-    intc_0 // 0
-    extract_uint16
     !
     assert // Winning tickets already exist
     // smart_contracts/pool/contract.algo.ts:967
@@ -3356,7 +3346,7 @@ raffle:
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -3378,19 +3368,16 @@ raffle:
     // this.rewards(rewardID).value.vrfFailureCount += 1
     frame_dig 12
     dup
-    box_get
-    assert // Box must have value
-    dup
     pushint 83 // 83
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     intc_1 // 1
     +
     itob
-    replace2 83
-    dig 1
-    box_del
-    pop
-    box_put
+    pushint 83 // 83
+    swap
+    box_replace
     // smart_contracts/pool/contract.algo.ts:979
     // return
     retsub
@@ -3434,7 +3421,7 @@ raffle_after_if_else@3:
     intc_0 // 0
     // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
     // const [, mulLow] = op.mulw(state, pcgMultiplier)
-    intc 6 // 6364136223846793005
+    intc 5 // 6364136223846793005
     mulw
     bury 1
     // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
@@ -3454,7 +3441,7 @@ raffle_after_if_else@3:
     bury 1
     // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
     // const [, mulLow] = op.mulw(state, pcgMultiplier)
-    intc 6 // 6364136223846793005
+    intc 5 // 6364136223846793005
     mulw
     bury 1
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:19
@@ -3468,7 +3455,7 @@ raffle_after_if_else@3:
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:20
     // __pcg32Init(op.extractUint64(seed, 8), pcgSecondIncrement),
     uncover 2
-    intc_3 // 8
+    intc_2 // 8
     extract_uint64
     // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
     // const [, addLow] = op.addw(mulLow, incr)
@@ -3486,7 +3473,7 @@ raffle_after_if_else@3:
     bury 1
     // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
     // const [, mulLow] = op.mulw(state, pcgMultiplier)
-    intc 6 // 6364136223846793005
+    intc 5 // 6364136223846793005
     mulw
     bury 1
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:20
@@ -3600,7 +3587,7 @@ raffle_while_top@18:
     frame_bury 9
     // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:17
     // const [, mulLow] = op.mulw(state, pcgMultiplier)
-    intc 6 // 6364136223846793005
+    intc 5 // 6364136223846793005
     mulw
     bury 1
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:9
@@ -3616,7 +3603,7 @@ raffle_while_top@18:
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:10
     // const newState2 = __pcg32Step(state[1], newState1 === 0 ? op.shl(pcgSecondIncrement, 1) : pcgSecondIncrement)
     swap
-    intc_3 // 8
+    intc_2 // 8
     extract_uint64
     frame_bury 8
     bnz raffle_ternary_false@26
@@ -3627,7 +3614,7 @@ raffle_ternary_merge@27:
     // const [, mulLow] = op.mulw(state, pcgMultiplier)
     frame_dig 8
     dup
-    intc 6 // 6364136223846793005
+    intc 5 // 6364136223846793005
     mulw
     bury 1
     // smart_contracts/utils/types/lib_pcg/pcg32.algo.ts:18
@@ -3741,16 +3728,14 @@ raffle_after_while@22:
     dig 1
     box_del
     pop
-    dup2
+    dig 1
+    swap
     box_put
     // smart_contracts/pool/contract.algo.ts:994
     // this.rewards(rewardID).value.vrfFailureCount = 0
+    pushint 83 // 83
     frame_dig 0
-    replace2 83
-    dig 1
-    box_del
-    pop
-    box_put
+    box_replace
     retsub
 
 raffle_else_body@14:
@@ -3767,7 +3752,7 @@ disburseRewards:
     // disburseRewards(rewardID: uint64, iterationAmount: uint64): void {
     proto 2 0
     intc_0 // 0
-    dupn 11
+    dupn 8
     pushbytes ""
     dupn 32
     // smart_contracts/pool/contract.algo.ts:999
@@ -3787,21 +3772,15 @@ disburseRewards:
     assert // reward does not exist
     // smart_contracts/pool/contract.algo.ts:1001
     // const { phase, distribution, winningTickets } = clone(this.rewards(rewardID).value)
-    box_get
-    pop
     dup
-    extract 91 1
+    pushint 91 // 91
+    intc_1 // 1
+    box_extract
     dup
     uncover 2
-    dup
-    extract 8 1
-    cover 2
-    dup
-    pushint 57 // 57
-    extract_uint16
-    dig 1
-    len
-    substring3
+    intc_2 // 8
+    intc_1 // 1
+    box_extract
     swap
     // smart_contracts/pool/contract.algo.ts:1004
     // phase === DisbursementPhasePreparation ||
@@ -3814,7 +3793,7 @@ disburseRewards:
     bnz disburseRewards_bool_true@2
     // smart_contracts/pool/contract.algo.ts:1005
     // phase === DisbursementPhaseAllocation,
-    frame_dig 46
+    frame_dig 43
     bytec 9 // 0x14
     ==
     // smart_contracts/pool/contract.algo.ts:1004-1005
@@ -3835,37 +3814,43 @@ disburseRewards_bool_merge@4:
     assert // Not ready to disburse
     // smart_contracts/pool/contract.algo.ts:1009
     // if (phase === DisbursementPhasePreparation) {
-    frame_dig 49
+    frame_dig 45
     bz disburseRewards_else_body@6
     // smart_contracts/pool/contract.algo.ts:210
     // const { disbursementCursor, distribution, rate, asset } = this.rewards(rewardID).value
-    frame_dig 45
-    box_get
-    assert // Box must have value
+    frame_dig 42
     dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 27
+    frame_bury 24
     dup
-    extract 8 1
-    frame_bury 47
+    intc_2 // 8
+    intc_1 // 1
+    box_extract
+    frame_bury 44
     dup
     pushint 9 // 9
-    extract_uint64
-    frame_bury 36
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 33
     intc_0 // 0
-    extract_uint64
-    frame_bury 17
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 14
     // smart_contracts/pool/contract.algo.ts:211
     // let count: uint64 = 0
     intc_0 // 0
-    frame_bury 19
+    frame_bury 16
     // smart_contracts/pool/contract.algo.ts:212
     // let total: uint64 = 0
     intc_0 // 0
-    frame_bury 42
+    frame_bury 39
     // smart_contracts/pool/contract.algo.ts:214
     // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
     frame_dig -1
@@ -3888,24 +3873,24 @@ disburseRewards_bool_merge@4:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:215
     // iterationAmount = this.entryID.value - disbursementCursor
-    frame_dig 27
+    frame_dig 24
     -
     frame_bury -1
 
 disburseRewards_after_if_else@85:
-    frame_dig 27
-    frame_bury 31
+    frame_dig 24
+    frame_bury 28
 
 disburseRewards_while_top@86:
     // smart_contracts/pool/contract.algo.ts:218
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     frame_dig -1
     <
     bz disburseRewards_after_while@103
     // smart_contracts/pool/contract.algo.ts:219
     // const { disqualified, address, gateArgs, quantity } = clone(this.entries(id).value)
-    frame_dig 31
+    frame_dig 28
     itob
     // smart_contracts/pool/contract.algo.ts:153
     // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
@@ -3913,30 +3898,38 @@ disburseRewards_while_top@86:
     swap
     concat
     dup
-    frame_bury 8
+    frame_bury 7
     // smart_contracts/pool/contract.algo.ts:219
     // const { disqualified, address, gateArgs, quantity } = clone(this.entries(id).value)
+    dup
     box_get
     assert // Box must have value
-    dup
-    intc 4 // 400
-    getbit
     dig 1
-    extract 0 32
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
+    getbit
+    dig 2
+    intc_0 // 0
+    pushint 32 // 32
+    box_extract
     frame_bury 0
     dig 1
     pushint 48 // 48
     extract_uint16
     dig 2
     len
-    dig 3
+    uncover 3
     cover 2
     substring3
-    frame_bury 9
+    frame_bury 8
     swap
     pushint 40 // 40
-    extract_uint64
-    frame_bury 35
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 32
     // smart_contracts/pool/contract.algo.ts:220
     // if (disqualified) {
     bnz disburseRewards_block@102
@@ -3978,7 +3971,7 @@ disburseRewards_after_inlined_smart_contracts/pool/contract.algo.ts::Pool.getSta
     frame_dig 0
     callsub getWalletIDUsingAkitaDAO
     dup
-    frame_bury 43
+    frame_bury 40
     // smart_contracts/utils/functions.ts:112
     // if (walletID.id === 0) {
     bnz disburseRewards_after_if_else@121
@@ -3998,7 +3991,7 @@ disburseRewards_after_inlined_smart_contracts/utils/functions.ts::originOr@122:
     // const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
     swap
     cover 2
-    frame_dig 9
+    frame_dig 8
     callsub gateCall
     pop
     // smart_contracts/pool/contract.algo.ts:235
@@ -4017,40 +4010,40 @@ disburseRewards_after_inlined_smart_contracts/utils/functions.ts::originOr@122:
     bz disburseRewards_block@102
     // smart_contracts/pool/contract.algo.ts:237
     // this.entries(id).value.disqualified = true
-    frame_dig 8
+    frame_dig 7
     dup
-    box_get
-    assert // Box must have value
-    intc 4 // 400
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
     intc_1 // 1
     setbit
-    dig 1
-    box_del
-    pop
-    box_put
+    pushint 50 // 50
+    swap
+    box_replace
 
 disburseRewards_block@102:
     // smart_contracts/pool/contract.algo.ts:218
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     intc_1 // 1
     +
-    frame_bury 31
+    frame_bury 28
     b disburseRewards_while_top@86
 
 disburseRewards_after_if_else@101:
     // smart_contracts/pool/contract.algo.ts:243
     // count += 1
-    frame_dig 19
+    frame_dig 16
     intc_1 // 1
     +
-    frame_bury 19
+    frame_bury 16
     // smart_contracts/pool/contract.algo.ts:244
     // total += quantity
-    frame_dig 42
-    frame_dig 35
+    frame_dig 39
+    frame_dig 32
     +
-    frame_bury 42
+    frame_bury 39
     b disburseRewards_block@102
 
 disburseRewards_after_if_else@121:
@@ -4059,7 +4052,7 @@ disburseRewards_after_if_else@121:
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
-    frame_dig 43
+    frame_dig 40
     // smart_contracts/utils/functions.ts:125
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     bytec 31 // "controlled_address"
@@ -4088,13 +4081,15 @@ disburseRewards_else_body@91:
     bz disburseRewards_after_if_else@93
     // smart_contracts/pool/contract.algo.ts:531
     // const { address, asset } = this.entries(id).value
-    frame_dig 8
-    box_get
-    assert // Box must have value
+    frame_dig 7
     dup
-    extract 0 32
+    intc_0 // 0
+    pushint 32 // 32
+    box_extract
     swap
-    extract 32 8
+    pushint 32 // 32
+    intc_2 // 8
+    box_extract
     // smart_contracts/pool/contract.algo.ts:533-539
     // const avg = abiCall(
     //   StakingInterface.prototype.getHeartbeatAverage,
@@ -4143,7 +4138,7 @@ disburseRewards_else_body@91:
     //     args: [address, asset, true],
     //   }
     // ).returnValue
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -4170,7 +4165,7 @@ disburseRewards_else_body@91:
 disburseRewards_after_if_else@93:
     // smart_contracts/pool/contract.algo.ts:544
     // return this.checkByID(id)
-    frame_dig 31
+    frame_dig 28
     callsub checkByID
     // smart_contracts/pool/contract.algo.ts:225
     // const { valid } = this.getStakeValue(id)
@@ -4179,35 +4174,32 @@ disburseRewards_after_if_else@93:
 disburseRewards_after_while@103:
     // smart_contracts/pool/contract.algo.ts:247
     // this.rewards(rewardID).value.qualifiedStakers += count
-    frame_dig 45
-    dup
-    box_get
-    assert // Box must have value
+    frame_dig 42
     dup
     pushint 33 // 33
-    extract_uint64
-    frame_dig 19
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_dig 16
     +
     itob
-    replace2 33
     dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    pushint 33 // 33
+    uncover 2
+    box_replace
     // smart_contracts/pool/contract.algo.ts:248
     // this.rewards(rewardID).value.qualifiedStake += total
     dup
     pushint 41 // 41
-    extract_uint64
-    frame_dig 42
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_dig 39
     +
     itob
-    replace2 41
-    dig 1
-    box_del
-    pop
-    box_put
+    pushint 41 // 41
+    swap
+    box_replace
     // smart_contracts/pool/contract.algo.ts:121
     // entryID = GlobalState<uint64>({ key: PoolGlobalStateKeyEntryCount })
     intc_0 // 0
@@ -4216,48 +4208,41 @@ disburseRewards_after_while@103:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:250
     // if (this.entryID.value === disbursementCursor) {
-    frame_dig 27
+    frame_dig 24
     ==
     bz disburseRewards_else_body@110
     // smart_contracts/pool/contract.algo.ts:252
     // this.rewards(rewardID).value.phase = DisbursementPhaseAllocation
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
+    pushint 91 // 91
     bytec 9 // 0x14
-    replace2 91
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:253
     // this.rewards(rewardID).value.disbursementCursor = 0
     intc_0 // 0
     itob
-    replace2 92
     dig 1
-    box_del
-    pop
-    swap
-    dig 1
-    box_put
+    intc_3 // 92
+    uncover 2
+    box_replace
     // smart_contracts/pool/contract.algo.ts:255
     // this.payAkitaRoyalty(distribution, rate, asset, this.rewards(rewardID).value.qualifiedStakers)
     pushint 33 // 33
-    extract_uint64
-    frame_bury 34
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 31
     // smart_contracts/pool/contract.algo.ts:180
     // if (distribution === DistributionTypeFlat) {
-    frame_dig 47
+    frame_dig 44
     bytec 9 // 0x14
     ==
     bz disburseRewards_else_body@106
     // smart_contracts/pool/contract.algo.ts:181
     // amount = calcPercent((qualifiedStakers * rate), this.akitaRoyalty.value)
-    frame_dig 34
-    frame_dig 36
+    frame_dig 31
+    frame_dig 33
     *
     // smart_contracts/pool/contract.algo.ts:144
     // akitaRoyalty = GlobalState<uint64>({ key: PoolGlobalStateKeyAkitaRoyalty })
@@ -4268,15 +4253,15 @@ disburseRewards_after_while@103:
     // smart_contracts/utils/functions.ts:74
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
-    intc 5 // 100000
+    intc 4 // 100000
     <=
     assert // Invalid percentage
     // smart_contracts/utils/functions.ts:75
     // return op.divw(...op.mulw(a, p), DIVISOR)
     mulw
-    intc 5 // 100000
+    intc 4 // 100000
     divw
-    frame_bury 16
+    frame_bury 13
 
 disburseRewards_after_if_else@107:
     // smart_contracts/pool/contract.algo.ts:146
@@ -4284,11 +4269,11 @@ disburseRewards_after_if_else@107:
     bytec 17 // "akita_royalty_amount"
     // smart_contracts/pool/contract.algo.ts:186
     // this.akitaRoyaltyAmount.value = amount
-    frame_dig 16
+    frame_dig 13
     app_global_put
     // smart_contracts/pool/contract.algo.ts:189
     // if (asset === 0) {
-    frame_dig 17
+    frame_dig 14
     bnz disburseRewards_else_body@109
     // smart_contracts/pool/contract.algo.ts:190-195
     // itxn
@@ -4301,7 +4286,7 @@ disburseRewards_after_if_else@107:
     // smart_contracts/pool/contract.algo.ts:192
     // receiver: Global.zeroAddress,
     global ZeroAddress
-    frame_dig 16
+    frame_dig 13
     itxn_field Amount
     itxn_field Receiver
     // smart_contracts/pool/contract.algo.ts:190-194
@@ -4330,7 +4315,7 @@ disburseRewards_else_body@109:
     // smart_contracts/pool/contract.algo.ts:197
     // assert(Global.zeroAddress.isOptedIn(Asset(asset)), ERR_DAO_NOT_OPTED_IN)
     global ZeroAddress
-    frame_dig 17
+    frame_dig 14
     dup
     cover 2
     asset_holding_get AssetBalance
@@ -4350,7 +4335,7 @@ disburseRewards_else_body@109:
     global ZeroAddress
     swap
     itxn_field XferAsset
-    frame_dig 16
+    frame_dig 13
     itxn_field AssetAmount
     itxn_field AssetReceiver
     // smart_contracts/pool/contract.algo.ts:199-204
@@ -4385,42 +4370,39 @@ disburseRewards_else_body@106:
     // smart_contracts/utils/functions.ts:74
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
-    intc 5 // 100000
+    intc 4 // 100000
     <=
     assert // Invalid percentage
     // smart_contracts/utils/functions.ts:75
     // return op.divw(...op.mulw(a, p), DIVISOR)
-    frame_dig 36
+    frame_dig 33
     mulw
-    intc 5 // 100000
+    intc 4 // 100000
     divw
-    frame_bury 16
+    frame_bury 13
     b disburseRewards_after_if_else@107
 
 disburseRewards_else_body@110:
     // smart_contracts/pool/contract.algo.ts:258
     // this.rewards(rewardID).value.disbursementCursor += iterationAmount
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
-    dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     frame_dig -1
     +
     itob
-    replace2 92
-    dig 1
-    box_del
-    pop
-    box_put
+    intc_3 // 92
+    swap
+    box_replace
     retsub
 
 disburseRewards_else_body@6:
     // smart_contracts/pool/contract.algo.ts:1013
     // case DistributionTypePercentage: {
-    frame_dig 47
+    frame_dig 44
     bytec 5 // 0x0a
     ==
     // smart_contracts/pool/contract.algo.ts:1013-1016
@@ -4431,30 +4413,38 @@ disburseRewards_else_body@6:
     bz disburseRewards_after_if_else@9
     // smart_contracts/pool/contract.algo.ts:269
     // } = this.rewards(rewardID).value
-    frame_dig 45
-    box_get
-    assert // Box must have value
+    frame_dig 42
     dup
     intc_0 // 0
-    extract_uint64
-    frame_bury 17
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 14
     dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 27
+    frame_bury 24
     dup
     pushint 100 // 100
-    extract_uint64
-    frame_bury 12
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 9
     dup
     pushint 41 // 41
-    extract_uint64
-    frame_bury 33
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 30
     pushint 9 // 9
-    extract_uint64
-    frame_bury 16
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 13
     // smart_contracts/pool/contract.algo.ts:271
     // if ((disbursementCursor + iterationAmount) > this.entryID.value) {
     frame_dig -1
@@ -4477,7 +4467,7 @@ disburseRewards_else_body@6:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:272
     // iterationAmount = this.entryID.value - disbursementCursor
-    frame_dig 27
+    frame_dig 24
     -
     frame_bury -1
 
@@ -4490,34 +4480,34 @@ disburseRewards_after_if_else@73:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:275
     // const actualAmount: uint64 = amount - this.akitaRoyaltyAmount.value
-    frame_dig 16
+    frame_dig 13
     swap
     -
-    frame_bury 13
+    frame_bury 10
     // smart_contracts/pool/contract.algo.ts:276
     // let allocations: UserAllocation[] = []
     intc_0 // 0
     itob
-    frame_bury 2
+    frame_bury 1
     bytec 7 // 0x0000
-    frame_bury 6
+    frame_bury 5
     // smart_contracts/pool/contract.algo.ts:277
     // let sum: uint64 = 0
     intc_0 // 0
-    frame_bury 39
-    frame_dig 27
-    frame_bury 31
+    frame_bury 36
+    frame_dig 24
+    frame_bury 28
 
 disburseRewards_while_top@74:
     // smart_contracts/pool/contract.algo.ts:279
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     frame_dig -1
     <
     bz disburseRewards_after_while@79
     // smart_contracts/pool/contract.algo.ts:280
     // const { disqualified, quantity, address } = this.entries(id).value
-    frame_dig 31
+    frame_dig 28
     itob
     // smart_contracts/pool/contract.algo.ts:153
     // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
@@ -4526,47 +4516,52 @@ disburseRewards_while_top@74:
     concat
     // smart_contracts/pool/contract.algo.ts:280
     // const { disqualified, quantity, address } = this.entries(id).value
-    box_get
-    assert // Box must have value
     dup
-    intc 4 // 400
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
     getbit
     dig 1
     pushint 40 // 40
-    extract_uint64
-    frame_bury 35
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 32
     swap
-    extract 0 32
+    intc_0 // 0
+    pushint 32 // 32
+    box_extract
     frame_bury 0
     // smart_contracts/pool/contract.algo.ts:281
     // if (disqualified) {
     bnz disburseRewards_block@78
     // smart_contracts/utils/functions.ts:79
     // assert(a < b, ERR_INVALID_PERCENTAGE_OF_ARGS)
-    frame_dig 35
+    frame_dig 32
     dup
-    frame_dig 33
+    frame_dig 30
     dup
     cover 3
     <
     assert // Invalid percentage of args
     // smart_contracts/utils/functions.ts:80
     // return op.divw(...op.mulw(a, DIVISOR), b)
-    intc 5 // 100000
+    intc 4 // 100000
     mulw
     uncover 2
     divw
     // smart_contracts/utils/functions.ts:74
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
-    intc 5 // 100000
+    intc 4 // 100000
     <=
     assert // Invalid percentage
     // smart_contracts/utils/functions.ts:75
     // return op.divw(...op.mulw(a, p), DIVISOR)
-    frame_dig 13
+    frame_dig 10
     mulw
-    intc 5 // 100000
+    intc 4 // 100000
     divw
     // smart_contracts/pool/contract.algo.ts:286
     // allocations.push({ address, amount: individualAmount })
@@ -4575,7 +4570,7 @@ disburseRewards_while_top@74:
     frame_dig 0
     swap
     concat
-    frame_dig 6
+    frame_dig 5
     dup
     uncover 2
     concat // on error: max array length exceeded
@@ -4587,46 +4582,43 @@ disburseRewards_while_top@74:
     itob
     extract 6 2
     replace2 0
-    frame_bury 6
+    frame_bury 5
     // smart_contracts/pool/contract.algo.ts:287
     // sum += individualAmount
-    frame_dig 39
+    frame_dig 36
     +
-    frame_bury 39
+    frame_bury 36
 
 disburseRewards_block@78:
     // smart_contracts/pool/contract.algo.ts:279
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     intc_1 // 1
     +
-    frame_bury 31
+    frame_bury 28
     b disburseRewards_while_top@74
 
 disburseRewards_after_while@79:
     // smart_contracts/pool/contract.algo.ts:290
     // this.rewards(rewardID).value.disbursementCursor += iterationAmount
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
-    dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     frame_dig -1
     +
     itob
-    replace2 92
-    dig 1
-    box_del
-    pop
-    box_put
+    intc_3 // 92
+    swap
+    box_replace
     // smart_contracts/pool/contract.algo.ts:292
     // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
-    frame_dig 12
-    frame_dig 17
-    frame_dig 6
-    frame_dig 39
+    frame_dig 9
+    frame_dig 14
+    frame_dig 5
+    frame_dig 36
     callsub createRewardAllocations
     pop
     // smart_contracts/pool/contract.algo.ts:121
@@ -4637,38 +4629,29 @@ disburseRewards_after_while@79:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:294
     // if (this.entryID.value === (disbursementCursor + iterationAmount)) {
-    frame_dig 27
+    frame_dig 24
     frame_dig -1
     +
     ==
     bz disburseRewards_after_if_else@24
     // smart_contracts/pool/contract.algo.ts:295
     // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
+    pushint 91 // 91
     bytec 12 // 0x1e
-    replace2 91
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:296
     // this.rewards(rewardID).value.disbursementCursor = 0
-    frame_dig 2
-    replace2 92
-    dig 1
-    box_del
-    pop
-    box_put
+    intc_3 // 92
+    frame_dig 1
+    box_replace
     retsub
 
 disburseRewards_after_if_else@9:
     // smart_contracts/pool/contract.algo.ts:1017
     // case DistributionTypeFlat: {
-    frame_dig 47
+    frame_dig 44
     bytec 9 // 0x14
     ==
     // smart_contracts/pool/contract.algo.ts:1017-1020
@@ -4679,31 +4662,39 @@ disburseRewards_after_if_else@9:
     bz disburseRewards_after_if_else@12
     // smart_contracts/pool/contract.algo.ts:307
     // } = this.rewards(rewardID).value
-    frame_dig 45
-    box_get
-    assert // Box must have value
+    frame_dig 42
     dup
     pushint 100 // 100
-    extract_uint64
-    frame_bury 12
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 9
     dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 27
+    frame_bury 24
     dup
     pushint 33 // 33
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     dig 1
     pushint 9 // 9
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     uncover 2
     intc_0 // 0
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 3
-    frame_bury 17
+    frame_bury 14
     // smart_contracts/pool/contract.algo.ts:309
     // const total: uint64 = (qualifiedStakers * amount) - this.akitaRoyaltyAmount.value
     swap
@@ -4727,21 +4718,21 @@ disburseRewards_after_if_else@9:
     // smart_contracts/utils/functions.ts:74
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
-    intc 5 // 100000
+    intc 4 // 100000
     <=
     assert // Invalid percentage
     // smart_contracts/utils/functions.ts:75
     // return op.divw(...op.mulw(a, p), DIVISOR)
     dig 2
     mulw
-    intc 5 // 100000
+    intc 4 // 100000
     divw
     // smart_contracts/pool/contract.algo.ts:311
     // const adjustedAmount: uint64 = amount - percentageAkitaFee
     uncover 2
     swap
     -
-    frame_bury 15
+    frame_bury 12
     // smart_contracts/pool/contract.algo.ts:312
     // const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
     global CurrentApplicationAddress
@@ -4774,7 +4765,7 @@ disburseRewards_after_if_else@9:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:317
     // iterationAmount = this.entryID.value - disbursementCursor
-    frame_dig 27
+    frame_dig 24
     -
     frame_bury -1
 
@@ -4783,26 +4774,26 @@ disburseRewards_after_if_else@61:
     // let allocations: UserAllocation[] = []
     intc_0 // 0
     itob
-    frame_bury 3
+    frame_bury 2
     bytec 7 // 0x0000
-    frame_bury 6
+    frame_bury 5
     // smart_contracts/pool/contract.algo.ts:321
     // let sum: uint64 = 0
     intc_0 // 0
-    frame_bury 39
-    frame_dig 27
-    frame_bury 31
+    frame_bury 36
+    frame_dig 24
+    frame_bury 28
 
 disburseRewards_while_top@62:
     // smart_contracts/pool/contract.algo.ts:323
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     frame_dig -1
     <
     bz disburseRewards_after_while@67
     // smart_contracts/pool/contract.algo.ts:324
     // const { disqualified, address } = this.entries(id).value
-    frame_dig 31
+    frame_dig 28
     itob
     // smart_contracts/pool/contract.algo.ts:153
     // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
@@ -4811,26 +4802,29 @@ disburseRewards_while_top@62:
     concat
     // smart_contracts/pool/contract.algo.ts:324
     // const { disqualified, address } = this.entries(id).value
-    box_get
-    assert // Box must have value
     dup
-    intc 4 // 400
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
     getbit
     swap
-    extract 0 32
+    intc_0 // 0
+    pushint 32 // 32
+    box_extract
     frame_bury 0
     // smart_contracts/pool/contract.algo.ts:325
     // if (disqualified) {
     bnz disburseRewards_block@66
     // smart_contracts/pool/contract.algo.ts:329
     // allocations.push({ address, amount: adjustedAmount })
-    frame_dig 15
+    frame_dig 12
     dup
     itob
     frame_dig 0
     swap
     concat
-    frame_dig 6
+    frame_dig 5
     dup
     uncover 2
     concat // on error: max array length exceeded
@@ -4842,50 +4836,42 @@ disburseRewards_while_top@62:
     itob
     extract 6 2
     replace2 0
-    frame_bury 6
+    frame_bury 5
     // smart_contracts/pool/contract.algo.ts:330
     // sum += adjustedAmount
-    frame_dig 39
+    frame_dig 36
     +
-    frame_bury 39
+    frame_bury 36
 
 disburseRewards_block@66:
     // smart_contracts/pool/contract.algo.ts:323
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     intc_1 // 1
     +
-    frame_bury 31
+    frame_bury 28
     b disburseRewards_while_top@62
 
 disburseRewards_after_while@67:
     // smart_contracts/pool/contract.algo.ts:333
     // const newCursorValue: uint64 = disbursementCursor + iterationAmount
-    frame_dig 27
+    frame_dig 24
     frame_dig -1
     +
     // smart_contracts/pool/contract.algo.ts:334
     // this.rewards(rewardID).value.disbursementCursor = newCursorValue
-    frame_dig 45
     dup
-    cover 2
-    box_get
-    assert // Box must have value
-    dig 1
     itob
-    replace2 92
-    dig 2
-    box_del
-    pop
+    frame_dig 42
+    intc_3 // 92
     uncover 2
-    swap
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:335
     // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
-    frame_dig 12
-    frame_dig 17
-    frame_dig 6
-    frame_dig 39
+    frame_dig 9
+    frame_dig 14
+    frame_dig 5
+    frame_dig 36
     callsub createRewardAllocations
     pop
     // smart_contracts/pool/contract.algo.ts:121
@@ -4900,31 +4886,22 @@ disburseRewards_after_while@67:
     bz disburseRewards_after_if_else@24
     // smart_contracts/pool/contract.algo.ts:338
     // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
+    pushint 91 // 91
     bytec 12 // 0x1e
-    replace2 91
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:339
     // this.rewards(rewardID).value.disbursementCursor = 0
-    frame_dig 3
-    replace2 92
-    dig 1
-    box_del
-    pop
-    box_put
+    intc_3 // 92
+    frame_dig 2
+    box_replace
     retsub
 
 disburseRewards_after_if_else@12:
     // smart_contracts/pool/contract.algo.ts:1021
     // case DistributionTypeEven: {
-    frame_dig 47
+    frame_dig 44
     bytec 12 // 0x1e
     ==
     // smart_contracts/pool/contract.algo.ts:1021-1024
@@ -4935,34 +4912,42 @@ disburseRewards_after_if_else@12:
     bz disburseRewards_after_if_else@15
     // smart_contracts/pool/contract.algo.ts:350
     // } = this.rewards(rewardID).value
-    frame_dig 45
-    box_get
-    assert // Box must have value
+    frame_dig 42
     dup
     pushint 100 // 100
-    extract_uint64
-    frame_bury 12
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 9
     dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 27
+    frame_bury 24
     dup
     pushint 33 // 33
-    extract_uint64
-    frame_bury 34
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 31
     dup
     intc_0 // 0
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 17
+    frame_bury 14
     pushint 9 // 9
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 39
+    frame_bury 36
     // smart_contracts/pool/contract.algo.ts:352
     // const balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
     global CurrentApplicationAddress
@@ -4981,7 +4966,7 @@ disburseRewards_after_if_else@12:
     swap
     -
     dup
-    frame_bury 14
+    frame_bury 11
     // smart_contracts/pool/contract.algo.ts:354
     // assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
     >=
@@ -5008,37 +4993,37 @@ disburseRewards_after_if_else@12:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:357
     // iterationAmount = this.entryID.value - disbursementCursor
-    frame_dig 27
+    frame_dig 24
     -
     frame_bury -1
 
 disburseRewards_after_if_else@49:
     // smart_contracts/pool/contract.algo.ts:360
     // const amount: uint64 = actualSum / qualifiedStakers
-    frame_dig 14
-    frame_dig 34
+    frame_dig 11
+    frame_dig 31
     /
-    frame_bury 16
+    frame_bury 13
     // smart_contracts/pool/contract.algo.ts:361
     // let allocations: UserAllocation[] = []
     intc_0 // 0
     itob
-    frame_bury 4
+    frame_bury 3
     bytec 7 // 0x0000
-    frame_bury 6
-    frame_dig 27
-    frame_bury 31
+    frame_bury 5
+    frame_dig 24
+    frame_bury 28
 
 disburseRewards_while_top@50:
     // smart_contracts/pool/contract.algo.ts:362
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     frame_dig -1
     <
     bz disburseRewards_after_while@55
     // smart_contracts/pool/contract.algo.ts:363
     // const { disqualified, address } = this.entries(id).value
-    frame_dig 31
+    frame_dig 28
     itob
     // smart_contracts/pool/contract.algo.ts:153
     // entries = BoxMap<uint64, EntryData>({ keyPrefix: PoolBoxPrefixEntries })
@@ -5047,25 +5032,28 @@ disburseRewards_while_top@50:
     concat
     // smart_contracts/pool/contract.algo.ts:363
     // const { disqualified, address } = this.entries(id).value
-    box_get
-    assert // Box must have value
     dup
-    intc 4 // 400
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
     getbit
     swap
-    extract 0 32
+    intc_0 // 0
+    pushint 32 // 32
+    box_extract
     frame_bury 0
     // smart_contracts/pool/contract.algo.ts:364
     // if (disqualified) {
     bnz disburseRewards_block@54
     // smart_contracts/pool/contract.algo.ts:368
     // allocations.push({ address, amount })
-    frame_dig 16
+    frame_dig 13
     itob
     frame_dig 0
     swap
     concat
-    frame_dig 6
+    frame_dig 5
     dup
     uncover 2
     concat // on error: max array length exceeded
@@ -5077,45 +5065,37 @@ disburseRewards_while_top@50:
     itob
     extract 6 2
     replace2 0
-    frame_bury 6
+    frame_bury 5
 
 disburseRewards_block@54:
     // smart_contracts/pool/contract.algo.ts:362
     // for (let id = disbursementCursor; id < iterationAmount; id++) {
-    frame_dig 31
+    frame_dig 28
     intc_1 // 1
     +
-    frame_bury 31
+    frame_bury 28
     b disburseRewards_while_top@50
 
 disburseRewards_after_while@55:
     // smart_contracts/pool/contract.algo.ts:371
     // const newCursorValue: uint64 = disbursementCursor + iterationAmount
-    frame_dig 27
+    frame_dig 24
     frame_dig -1
     +
     // smart_contracts/pool/contract.algo.ts:372
     // this.rewards(rewardID).value.disbursementCursor = newCursorValue
-    frame_dig 45
     dup
-    cover 2
-    box_get
-    assert // Box must have value
-    dig 1
     itob
-    replace2 92
-    dig 2
-    box_del
-    pop
+    frame_dig 42
+    intc_3 // 92
     uncover 2
-    swap
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:373
     // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
-    frame_dig 12
-    frame_dig 17
-    frame_dig 6
-    frame_dig 39
+    frame_dig 9
+    frame_dig 14
+    frame_dig 5
+    frame_dig 36
     callsub createRewardAllocations
     pop
     // smart_contracts/pool/contract.algo.ts:121
@@ -5130,31 +5110,22 @@ disburseRewards_after_while@55:
     bz disburseRewards_after_if_else@24
     // smart_contracts/pool/contract.algo.ts:376
     // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
+    pushint 91 // 91
     bytec 12 // 0x1e
-    replace2 91
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:377
     // this.rewards(rewardID).value.disbursementCursor = 0
-    frame_dig 4
-    replace2 92
-    dig 1
-    box_del
-    pop
-    box_put
+    intc_3 // 92
+    frame_dig 3
+    box_replace
     retsub
 
 disburseRewards_after_if_else@15:
     // smart_contracts/pool/contract.algo.ts:1025
     // case DistributionTypeShuffle: {
-    frame_dig 47
+    frame_dig 44
     pushbytes 0x28
     ==
     // smart_contracts/pool/contract.algo.ts:1025-1032
@@ -5167,11 +5138,14 @@ disburseRewards_after_if_else@15:
     //   break
     // }
     assert // unknown reward rate type
+    // smart_contracts/pool/contract.algo.ts:1001
+    // const { phase, distribution, winningTickets } = clone(this.rewards(rewardID).value)
+    frame_dig 42
+    pushints 124 2 // 124, 2
+    box_extract
+    btoi
     // smart_contracts/pool/contract.algo.ts:1026
     // if (winningTickets.length === 0) {
-    frame_dig 48
-    intc_0 // 0
-    extract_uint16
     bnz disburseRewards_else_body@19
     // smart_contracts/pool/contract.algo.ts:1027
     // this.raffle(rewardID)
@@ -5182,46 +5156,42 @@ disburseRewards_after_if_else@15:
 disburseRewards_else_body@19:
     // smart_contracts/pool/contract.algo.ts:390
     // } = clone(this.rewards(rewardID).value)
-    frame_dig 45
-    box_get
-    assert // Box must have value
+    frame_dig 42
     dup
     pushint 100 // 100
-    extract_uint64
-    frame_bury 12
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 9
     dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 27
+    frame_bury 24
     dup
     pushint 49 // 49
-    extract_uint64
-    frame_bury 44
-    dup
-    pushint 57 // 57
-    extract_uint16
-    dig 1
-    len
-    dig 2
-    cover 2
-    substring3
-    frame_bury 11
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 41
     dup
     intc_0 // 0
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     dup
     cover 2
-    frame_bury 17
-    dup
+    frame_bury 14
     pushint 9 // 9
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     dup
-    cover 3
-    frame_bury 39
-    extract 59 24
-    frame_bury 10
+    cover 2
+    frame_bury 36
     // smart_contracts/pool/contract.algo.ts:392
     // const balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
     global CurrentApplicationAddress
@@ -5240,7 +5210,7 @@ disburseRewards_else_body@19:
     swap
     -
     dup
-    frame_bury 14
+    frame_bury 11
     // smart_contracts/pool/contract.algo.ts:394
     // assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
     >=
@@ -5267,75 +5237,96 @@ disburseRewards_else_body@19:
     assert // check GlobalState exists
     // smart_contracts/pool/contract.algo.ts:397
     // iterationAmount = this.entryID.value - disbursementCursor
-    frame_dig 27
+    frame_dig 24
     -
     frame_bury -1
 
 disburseRewards_after_if_else@27:
-    frame_dig 14
-    frame_bury 16
+    frame_dig 11
+    frame_bury 13
     // smart_contracts/pool/contract.algo.ts:401
     // if (winnerCount > 0) {
-    frame_dig 44
+    frame_dig 41
     bz disburseRewards_after_if_else@29
     // smart_contracts/pool/contract.algo.ts:402
     // amount = actualSum / winnerCount
-    frame_dig 14
-    frame_dig 44
+    frame_dig 11
+    frame_dig 41
     /
-    frame_bury 16
+    frame_bury 13
 
 disburseRewards_after_if_else@29:
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
+    frame_dig 42
+    dup
+    pushints 59 24 // 59, 24
+    box_extract
     // smart_contracts/pool/contract.algo.ts:405
     // let { stake, ticket, disbursed } = raffleCursor
-    frame_dig 10
     dup
-    intc_3 // 8
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
+    intc_2 // 8
+    // smart_contracts/pool/contract.algo.ts:405
+    // let { stake, ticket, disbursed } = raffleCursor
     extract_uint64
     dig 1
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
     intc_0 // 0
+    // smart_contracts/pool/contract.algo.ts:405
+    // let { stake, ticket, disbursed } = raffleCursor
     extract_uint64
     dup
     cover 2
-    frame_bury 40
+    frame_bury 37
     uncover 2
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
     pushint 16 // 16
+    // smart_contracts/pool/contract.algo.ts:405
+    // let { stake, ticket, disbursed } = raffleCursor
     extract_uint64
-    frame_bury 25
+    frame_bury 22
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
+    swap
+    intc_2 // 8
+    *
+    pushint 126 // 126
+    +
+    uncover 2
+    swap
+    intc_2 // 8
+    box_extract
     // smart_contracts/pool/contract.algo.ts:406
     // let currentTicket = tickets[ticket]
-    frame_dig 11
-    extract 2 0
-    dup
-    frame_bury 1
-    uncover 2
-    intc_3 // 8
-    *
-    extract_uint64
-    frame_bury 23
+    btoi
+    frame_bury 20
     // smart_contracts/pool/contract.algo.ts:410
     // let allocations: UserAllocation[] = []
     intc_0 // 0
     itob
-    frame_bury 5
+    frame_bury 4
     bytec 7 // 0x0000
-    frame_bury 6
+    frame_bury 5
     dup
-    frame_bury 22
-    frame_bury 37
-    frame_dig 27
-    frame_bury 29
+    frame_bury 19
+    frame_bury 34
+    frame_dig 24
+    frame_bury 26
 
 disburseRewards_while_top@30:
     // smart_contracts/pool/contract.algo.ts:411
     // for (let i = disbursementCursor; i < iterationAmount; i++) {
-    frame_dig 29
+    frame_dig 26
     frame_dig -1
     <
     bz disburseRewards_block@42
     // smart_contracts/pool/contract.algo.ts:412
     // const { disqualified, address, asset, quantity } = this.entries(i).value
-    frame_dig 29
+    frame_dig 26
     dup
     itob
     // smart_contracts/pool/contract.algo.ts:153
@@ -5345,92 +5336,99 @@ disburseRewards_while_top@30:
     concat
     // smart_contracts/pool/contract.algo.ts:412
     // const { disqualified, address, asset, quantity } = this.entries(i).value
-    box_get
-    assert // Box must have value
     dup
-    intc 4 // 400
+    pushint 50 // 50
+    intc_1 // 1
+    box_extract
+    intc_0 // 0
     getbit
-    frame_bury 28
+    frame_bury 25
     dup
-    extract 0 32
+    intc_0 // 0
+    pushint 32 // 32
+    box_extract
     frame_bury 0
     dup
     pushint 32 // 32
-    extract_uint64
-    frame_bury 18
+    intc_2 // 8
+    box_extract
+    btoi
+    frame_bury 15
     pushint 40 // 40
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    btoi
     // smart_contracts/pool/contract.algo.ts:414
     // currentRangeEnd = currentRangeStart + quantity
-    frame_dig 22
+    frame_dig 19
     dup
     uncover 2
     +
     dup
     cover 2
-    frame_bury 20
+    frame_bury 17
     // smart_contracts/pool/contract.algo.ts:415
     // if (currentTicket >= currentRangeStart && currentTicket <= currentRangeEnd) {
-    frame_dig 23
+    frame_dig 20
     dup
     uncover 2
     >=
+    frame_dig 34
+    frame_bury 35
     frame_dig 37
     frame_bury 38
-    frame_dig 40
-    frame_bury 41
-    frame_dig 25
-    frame_bury 26
-    frame_dig 6
-    frame_bury 7
-    swap
-    frame_bury 24
-    frame_dig -1
-    frame_bury 32
-    uncover 2
-    frame_bury 30
+    frame_dig 22
+    frame_bury 23
+    frame_dig 5
+    frame_bury 6
     swap
     frame_bury 21
+    frame_dig -1
+    frame_bury 29
+    uncover 2
+    frame_bury 27
+    swap
+    frame_bury 18
     bz disburseRewards_after_if_else@40
-    frame_dig 23
-    dup
     frame_dig 20
+    dup
+    frame_dig 17
     dup
     cover 3
     <=
+    frame_dig 34
+    frame_bury 35
     frame_dig 37
     frame_bury 38
-    frame_dig 40
-    frame_bury 41
-    frame_dig 25
-    frame_bury 26
-    frame_dig 6
-    frame_bury 7
-    swap
-    frame_bury 24
-    frame_dig -1
-    frame_bury 32
-    frame_dig 29
-    frame_bury 30
+    frame_dig 22
+    frame_bury 23
+    frame_dig 5
+    frame_bury 6
     swap
     frame_bury 21
+    frame_dig -1
+    frame_bury 29
+    frame_dig 26
+    frame_bury 27
+    swap
+    frame_bury 18
     bz disburseRewards_after_if_else@40
-    frame_dig 6
-    frame_bury 7
-    frame_dig 25
-    frame_bury 26
+    frame_dig 5
+    frame_bury 6
+    frame_dig 22
+    frame_bury 23
     // smart_contracts/pool/contract.algo.ts:416
     // if (!disqualified) {
-    frame_dig 28
+    frame_dig 25
     bnz disburseRewards_after_if_else@35
     // smart_contracts/pool/contract.algo.ts:417
     // allocations.push({ address, amount })
-    frame_dig 16
+    frame_dig 13
     itob
     frame_dig 0
     swap
     concat
-    frame_dig 6
+    frame_dig 5
     dup
     uncover 2
     concat // on error: max array length exceeded
@@ -5444,61 +5442,58 @@ disburseRewards_while_top@30:
     replace2 0
     // smart_contracts/pool/contract.algo.ts:418
     // disbursed++
-    frame_dig 25
+    frame_dig 22
     intc_1 // 1
     +
-    frame_bury 26
-    frame_bury 7
+    frame_bury 23
+    frame_bury 6
 
 disburseRewards_after_if_else@35:
-    frame_dig 7
-    frame_bury 6
-    frame_dig 26
-    frame_bury 25
+    frame_dig 6
+    frame_bury 5
+    frame_dig 23
+    frame_bury 22
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
+    frame_dig 42
+    pushints 124 2 // 124, 2
+    box_extract
+    btoi
     // smart_contracts/pool/contract.algo.ts:421
     // if (ticket === tickets.length - 1) {
-    frame_dig 11
-    intc_0 // 0
-    extract_uint16
     intc_1 // 1
     -
-    frame_dig 40
+    frame_dig 37
     ==
     bz disburseRewards_after_if_else@39
     // smart_contracts/pool/contract.algo.ts:423
     // if (winnerCount !== disbursed) {
-    frame_dig 44
-    frame_dig 25
+    frame_dig 41
+    frame_dig 22
     !=
     bz disburseRewards_block@42
     // smart_contracts/pool/contract.algo.ts:424
     // this.rewards(rewardID).value.disbursementCursor = 0
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
-    frame_dig 5
-    replace2 92
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    intc_3 // 92
+    frame_dig 4
+    box_replace
     // smart_contracts/pool/contract.algo.ts:425-429
     // this.rewards(rewardID).value.raffleCursor = {
     //   ticket: 0,
     //   stake: 0,
     //   disbursed: 0,
     // }
+    dup
+    pushint 59 // 59
     bytec 32 // 0x000000000000000000000000000000000000000000000000
-    replace2 59
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:430
     // this.rewards(rewardID).value.winningTickets = []
+    dup
+    box_get
+    pop
     dup
     pushint 57 // 57
     extract_uint16
@@ -5513,10 +5508,10 @@ disburseRewards_after_if_else@35:
     box_put
     // smart_contracts/pool/contract.algo.ts:431
     // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
-    frame_dig 12
-    frame_dig 18
-    frame_dig 6
-    frame_dig 39
+    frame_dig 9
+    frame_dig 15
+    frame_dig 5
+    frame_dig 36
     callsub createRewardAllocations
     pop
     retsub
@@ -5524,55 +5519,46 @@ disburseRewards_after_if_else@35:
 disburseRewards_block@42:
     // smart_contracts/pool/contract.algo.ts:448
     // this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
-    frame_dig 12
-    frame_dig 17
-    frame_dig 6
-    frame_dig 39
+    frame_dig 9
+    frame_dig 14
+    frame_dig 5
+    frame_dig 36
     callsub createRewardAllocations
     pop
     // smart_contracts/pool/contract.algo.ts:450
     // if (winnerCount === disbursed) {
-    frame_dig 44
-    frame_dig 25
+    frame_dig 41
+    frame_dig 22
     ==
     bz disburseRewards_else_body@44
     // smart_contracts/pool/contract.algo.ts:451
     // this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
+    pushint 91 // 91
     bytec 12 // 0x1e
-    replace2 91
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:452
     // this.rewards(rewardID).value.disbursementCursor = 0
-    frame_dig 5
-    replace2 92
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    dup
+    intc_3 // 92
+    frame_dig 4
+    box_replace
     // smart_contracts/pool/contract.algo.ts:453-457
     // this.rewards(rewardID).value.raffleCursor = {
     //   ticket: 0,
     //   stake: 0,
     //   disbursed: 0,
     // }
+    dup
+    pushint 59 // 59
     bytec 32 // 0x000000000000000000000000000000000000000000000000
-    replace2 59
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:458
     // this.rewards(rewardID).value.winningTickets = []
+    dup
+    box_get
+    pop
     dup
     pushint 57 // 57
     extract_uint16
@@ -5590,71 +5576,67 @@ disburseRewards_block@42:
 disburseRewards_else_body@44:
     // smart_contracts/pool/contract.algo.ts:460
     // this.rewards(rewardID).value.disbursementCursor += iterationAmount
-    frame_dig 45
+    frame_dig 42
     dup
-    box_get
-    assert // Box must have value
-    dup
-    pushint 92 // 92
-    extract_uint64
+    intc_3 // 92
+    intc_2 // 8
+    box_extract
+    btoi
     frame_dig -1
     +
     itob
-    replace2 92
     dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    intc_3 // 92
+    uncover 2
+    box_replace
     // smart_contracts/pool/contract.algo.ts:461
     // this.rewards(rewardID).value.raffleCursor = { ticket, stake, disbursed }
-    frame_dig 40
-    itob
     frame_dig 37
     itob
-    concat
-    frame_dig 25
+    frame_dig 34
     itob
     concat
-    replace2 59
-    dig 1
-    box_del
-    pop
-    box_put
+    frame_dig 22
+    itob
+    concat
+    pushint 59 // 59
+    swap
+    box_replace
     retsub
 
 disburseRewards_after_if_else@39:
     // smart_contracts/pool/contract.algo.ts:437
     // iterationAmount -= i
     frame_dig -1
-    frame_dig 29
+    frame_dig 26
     -
     frame_bury -1
     // smart_contracts/pool/contract.algo.ts:438
     // ticket++
-    frame_dig 40
+    frame_dig 37
     intc_1 // 1
     +
+    // smart_contracts/pool/contract.algo.ts:390
+    // } = clone(this.rewards(rewardID).value)
+    dup
+    intc_2 // 8
+    *
+    pushint 126 // 126
+    +
+    frame_dig 42
+    dup
+    uncover 2
+    intc_2 // 8
+    box_extract
     // smart_contracts/pool/contract.algo.ts:439
     // currentTicket = tickets[ticket]
-    dup
-    intc_3 // 8
-    *
-    frame_dig 1
-    swap
-    extract_uint64
+    btoi
     // smart_contracts/pool/contract.algo.ts:440
     // this.rewards(rewardID).value.disbursementCursor = 0
-    frame_dig 45
-    dup
-    box_get
-    assert // Box must have value
-    frame_dig 5
-    replace2 92
-    dig 1
-    box_del
-    pop
-    box_put
+    swap
+    intc_3 // 92
+    frame_dig 4
+    box_replace
     // smart_contracts/pool/contract.algo.ts:441
     // i = 0
     intc_0 // 0
@@ -5662,45 +5644,45 @@ disburseRewards_after_if_else@39:
     // stake = 0
     // currentRangeEnd = 0
     dupn 2
-    frame_bury 38
+    frame_bury 35
     uncover 3
-    frame_bury 41
-    frame_dig 25
-    frame_bury 26
-    frame_dig 6
-    frame_bury 7
+    frame_bury 38
+    frame_dig 22
+    frame_bury 23
+    frame_dig 5
+    frame_bury 6
     uncover 2
-    frame_bury 24
-    frame_dig -1
-    frame_bury 32
     frame_bury 21
-    frame_bury 30
+    frame_dig -1
+    frame_bury 29
+    frame_bury 18
+    frame_bury 27
 
 disburseRewards_after_if_else@40:
+    frame_dig 35
+    frame_bury 34
     frame_dig 38
     frame_bury 37
-    frame_dig 41
-    frame_bury 40
-    frame_dig 26
-    frame_bury 25
-    frame_dig 7
-    frame_bury 6
-    frame_dig 24
-    frame_bury 23
-    frame_dig 32
-    frame_bury -1
-    frame_dig 30
+    frame_dig 23
+    frame_bury 22
+    frame_dig 6
+    frame_bury 5
     frame_dig 21
+    frame_bury 20
+    frame_dig 29
+    frame_bury -1
+    frame_dig 27
+    frame_dig 18
     // smart_contracts/pool/contract.algo.ts:445
     // currentRangeStart = currentRangeEnd + 1
     intc_1 // 1
     +
-    frame_bury 22
+    frame_bury 19
     // smart_contracts/pool/contract.algo.ts:411
     // for (let i = disbursementCursor; i < iterationAmount; i++) {
     intc_1 // 1
     +
-    frame_bury 29
+    frame_bury 26
     b disburseRewards_while_top@30
 
 disburseRewards_bool_false@3:
@@ -5731,15 +5713,15 @@ finalizeDistribution:
     // smart_contracts/pool/contract.algo.ts:1042
     // const { phase, activeDisbursementID } = this.rewards(rewardID).value
     dup
-    box_get
-    pop
-    dup
-    extract 91 1
+    pushint 91 // 91
+    intc_1 // 1
+    box_extract
     dig 1
-    extract 100 8
-    uncover 2
     pushint 100 // 100
-    extract_uint64
+    intc_2 // 8
+    box_extract
+    dup
+    btoi
     // smart_contracts/pool/contract.algo.ts:1043
     // assert(phase === DisbursementPhaseFinalization, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION)
     uncover 2
@@ -5756,7 +5738,7 @@ finalizeDistribution:
     pop
     // smart_contracts/pool/contract.algo.ts:623
     // const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
-    intc_3 // 8
+    intc_2 // 8
     extract_uint64
     // smart_contracts/pool/contract.algo.ts:625-631
     // abiCall(
@@ -5772,7 +5754,7 @@ finalizeDistribution:
     uncover 2
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -5793,66 +5775,40 @@ finalizeDistribution:
     // smart_contracts/pool/contract.algo.ts:1049
     // this.rewards(rewardID).value.phase = DisbursementPhaseIdle
     dup
-    box_get
-    pop
+    pushint 91 // 91
     bytec_2 // 0x00
-    replace2 91
-    dig 1
-    box_del
-    pop
-    dup2
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:1050
     // this.rewards(rewardID).value.activeDisbursementID = 0
     intc_0 // 0
     itob
-    swap
     dig 1
-    replace2 100
+    pushint 100 // 100
     dig 2
-    box_del
-    pop
-    dig 2
-    dig 1
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:1051
     // this.rewards(rewardID).value.activeDisbursementRoundStart = 0
     dig 1
-    replace2 108
+    pushint 108 // 108
     dig 2
-    box_del
-    pop
-    dig 2
-    dig 1
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:1052
     // this.rewards(rewardID).value.disbursementCursor = 0
     dig 1
-    replace2 92
+    intc_3 // 92
     dig 2
-    box_del
-    pop
-    dig 2
-    dig 1
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:1053
     // this.rewards(rewardID).value.qualifiedStakers = 0
     dig 1
-    replace2 33
+    pushint 33 // 33
     dig 2
-    box_del
-    pop
-    dig 2
-    dig 1
-    box_put
+    box_replace
     // smart_contracts/pool/contract.algo.ts:1054
     // this.rewards(rewardID).value.qualifiedStake = 0
+    pushint 41 // 41
     swap
-    replace2 41
-    dig 1
-    box_del
-    pop
-    box_put
+    box_replace
     retsub
 
 
@@ -6241,7 +6197,7 @@ mbr:
     proto 1 1
     // smart_contracts/pool/base.ts:9
     // return MinPoolRewardsMBR + (BoxCostPerByte * winningTickets)
-    intc 4 // 400
+    intc 6 // 400
     frame_dig -1
     *
     // smart_contracts/pool/base.ts:15-21
@@ -6374,7 +6330,7 @@ optAkitaEscrowInAndSend:
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_2 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee

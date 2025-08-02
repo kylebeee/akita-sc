@@ -1,5 +1,5 @@
-import { Account, Application, assert, assertMatch, BoxMap, Bytes, bytes, Contract, Global, GlobalState, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { abimethod, Address, compileArc4, DynamicArray, DynamicBytes, StaticBytes } from "@algorandfoundation/algorand-typescript/arc4";
+import { Account, Application, assert, assertMatch, BoxMap, Bytes, bytes, Contract, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Address, compileArc4, DynamicArray, DynamicBytes } from "@algorandfoundation/algorand-typescript/arc4";
 import { Escrow } from "./contract.algo";
 import { btoi, itob } from "@algorandfoundation/algorand-typescript/op";
 import { ERR_ALREADY_REGISTERED, ERR_FORBIDDEN } from "./errors";

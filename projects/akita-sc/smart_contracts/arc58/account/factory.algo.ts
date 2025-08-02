@@ -45,8 +45,21 @@ export class AbstractedAccountFactory extends FactoryContract {
     this.revocation.value = Application(app)
   }
 
-  mint(payment: gtxn.PaymentTxn, controlledAddress: Address, admin: Address, nickname: string): uint64 {
-    
+  @abimethod({ readonly: true })
+  costNew(): uint64 {
+    const abstractedAccount = compileArc4(AbstractedAccount)
+
+    return (
+      MAX_PROGRAM_PAGES +
+      (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
+      (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
+      Global.minBalance +
+      ARC58WalletIDsByAccountsMbr
+    )
+  }
+
+  new(payment: gtxn.PaymentTxn, controlledAddress: Address, admin: Address, nickname: string): uint64 {
+
     const abstractedAccount = compileArc4(AbstractedAccount)
 
     const childMBR: uint64 = (

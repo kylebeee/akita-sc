@@ -64,7 +64,7 @@ import { CID } from '../utils/types/base'
 import { BaseSubscriptions } from './base'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { classes } from 'polytype'
-import { AkitaDAOEscrowAccountSubscriptions } from '../dao/constants'
+import { AkitaDAOEscrowAccountSubscriptions } from '../arc58/dao/constants'
 import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { calcPercent, gateCheck, getSubscriptionFees, getWalletIDUsingAkitaDAO, originOrTxnSender } from '../utils/functions'
 import { ERR_HAS_GATE } from '../social/errors'
@@ -119,10 +119,7 @@ export class Subscriptions extends classes(
 
     if (sub.lastPayment < lastWindowStart) {
       // reset the streak
-      this.subscriptions(subKey).value = {
-        ...this.subscriptions(subKey).value,
-        streak: elseStreak
-      }
+      this.subscriptions(subKey).value.streak = elseStreak
       return
     }
 
@@ -130,10 +127,7 @@ export class Subscriptions extends classes(
     // after a payment was made in the last window
     // but not during the current window
     if (sub.lastPayment >= lastWindowStart && !(sub.lastPayment >= currentWindowStart)) {
-      this.subscriptions(subKey).value = {
-        ...this.subscriptions(subKey).value,
-        streak: (sub.streak + 1)
-      }
+      this.subscriptions(subKey).value.streak += 1
     }
   }
 
@@ -476,10 +470,7 @@ export class Subscriptions extends classes(
     // ensure the service isn't already shutdown
     assert(this.services(boxKey).value.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
 
-    this.services(boxKey).value = {
-      ...this.services(boxKey).value,
-      status: ServiceStatusPaused,
-    }
+    this.services(boxKey).value.status = ServiceStatusPaused
   }
 
   /**
@@ -495,10 +486,7 @@ export class Subscriptions extends classes(
     // ensure the service is currently paused
     assert(this.services(boxKey).value.status === ServiceStatusPaused, ERR_SERVICE_IS_NOT_PAUSED)
 
-    this.services(boxKey).value = {
-      ...this.services(boxKey).value,
-      status: ServiceStatusActive,
-    }
+    this.services(boxKey).value.status = ServiceStatusActive
   }
 
   /**
@@ -513,10 +501,7 @@ export class Subscriptions extends classes(
     // ensure the service isn't already shutdown
     assert(this.services(boxKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
 
-    this.services(boxKey).value = {
-      ...this.services(boxKey).value,
-      status: ServiceStatusShutdown,
-    }
+    this.services(boxKey).value.status = ServiceStatusShutdown
   }
 
   /**
@@ -685,14 +670,13 @@ export class Subscriptions extends classes(
 
     assert(sub.asset === 0, ERR_ASA_MISMATCH)
 
-    assert(payment.receiver === Global.currentApplicationAddress, 'invalid payment receiver')
+    assertMatch(
+      payment,
+      { receiver: Global.currentApplicationAddress },
+      ERR_INVALID_PAYMENT
+    )
 
-    const newEscrowedAmount: uint64 = sub.escrowed + payment.amount
-
-    this.subscriptions(subKey).value = {
-      ...this.subscriptions(subKey).value,
-      escrowed: newEscrowedAmount
-    }
+    this.subscriptions(subKey).value.escrowed += payment.amount
   }
 
   depositAsa(assetXfer: gtxn.AssetTransferTxn, id: SubscriptionID): void {
@@ -735,12 +719,7 @@ export class Subscriptions extends classes(
         .submit()
     }
 
-    const newEscrowAmount: uint64 = sub.escrowed - amount
-
-    this.subscriptions(subKey).value = {
-      ...this.subscriptions(subKey).value,
-      escrowed: newEscrowAmount
-    }
+    this.subscriptions(subKey).value.escrowed -= amount
   }
 
   gatedTriggerPayment(gateTxn: gtxn.ApplicationCallTxn, address: Address, id: SubscriptionID): void {

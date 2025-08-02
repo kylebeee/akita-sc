@@ -1,10 +1,10 @@
 import { Account, Application, assert, Asset, Bytes, Global, gtxn, itxn, itxnCompose, OnCompleteAction, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees } from "../dao/types"
+import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees } from "../arc58/dao/types"
 import { abiCall, Address, decodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees } from "../arc58/dao/constants"
 import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
 import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR } from "./constants"
-import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
+import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrowID, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 
 import { GateArgs, GateInterface } from "./types/gates"
 import { AssetInbox } from "./types/asset-inbox"
@@ -208,6 +208,36 @@ export function getSpendingAccount(wallet: Application): Account {
   return Account(Bytes(spendingAddressBytes))
 }
 
+export function getEscrowID(wallet: Application): uint64 {
+  const [escrowIDBytes] = op.AppGlobal.getExBytes(
+    wallet,
+    Bytes(AbstractAccountGlobalStateKeysCurrentEscrowID)
+  )
+  return btoi(escrowIDBytes)
+}
+
+export function getRekeyIndex(wallet: Application): uint64 {
+  const [rekeyIndexBytes] = op.AppGlobal.getExUint64(
+    wallet,
+    Bytes(AbstractAccountGlobalStateKeysRekeyIndex)
+  )
+  return rekeyIndexBytes
+}
+
+export function rekeyBackIfNecessary(rekeyBack: boolean, wallet: Application): void {
+  if (rekeyBack) {
+    const sender = getSpendingAccount(wallet)
+    itxn
+      .payment({
+        sender,
+        receiver: sender,
+        amount: 0,
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
+      .submit()
+  }
+}
+
 export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
   if (!rekeyBack) {
     return Global.zeroAddress
@@ -303,7 +333,7 @@ export function arc58OptInAndSend(akitaDAO: Application, recipientWalletID: uint
   }
 
   itxnCompose.next(
-    AbstractedAccountInterface.prototype.arc58_verifyAuthAddr,
+    AbstractedAccountInterface.prototype.arc58_verifyAuthAddress,
     { appId: recipientWalletID }
   )
 
@@ -374,7 +404,7 @@ export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64
     ],
   }).returnValue
 
-  if (info.expiration <= Global.latestTimestamp) { 
+  if (info.expiration <= Global.latestTimestamp) {
     return 0
   }
 

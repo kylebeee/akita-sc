@@ -3,31 +3,31 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 4 6 100000
-    bytecblock "payment_asset" "akita_dao" "seller" "prize" "price" "expiration" "reserved_for" "marketplace" 0x151f7c75 "is_prize_box" "creator_royalty" "marketplace_royalties" 0xadf92ae4 "gate_id" "nft_fees" "version"
-    // smart_contracts/marketplace/listing.algo.ts:15
+    intcblock 0 1 4 16 100000
+    bytecblock "payment_asset" "akita_dao" "seller" "prize" "price" "expiration" "reserved_for" "marketplace" "is_prize_box" 0x151f7c75 "creator_royalty" "marketplace_royalties" 0x24cb311e "nft_fees" "version"
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txn NumAppArgs
     bz main_after_if_else@16
-    pushbytess 0x3e992927 0xef0078a9 0xb8a7cc09 0x68e86343 0x19396c4a 0xea9180dd 0x33e92c94 0x3ea11832 // method "create(uint64,bool,uint64,uint64,uint64,address,address,uint64,uint64,address,string,uint64)void", method "purchase(pay,address,address,byte[][])void", method "purchaseAsa(axfer,address,address,byte[][])void", method "delist(address)void", method "changePrice(uint64)void", method "update(string)void", method "updateAkitaDAO(uint64)void", method "optin(pay,uint64)void"
+    pushbytess 0x3e992927 0x6a16393d 0x171c9f88 0x68e86343 0x19396c4a 0xea9180dd 0x33e92c94 0x3ea11832 // method "create(uint64,bool,uint64,uint64,uint64,address,address,uint64,uint64,address,string,uint64)void", method "purchase(pay,address,address)void", method "purchaseAsa(axfer,address,address)void", method "delist(address)void", method "changePrice(uint64)void", method "update(string)void", method "updateAkitaDAO(uint64)void", method "optin(pay,uint64)void"
     txna ApplicationArgs 0
     match main_create_route@5 main_purchase_route@6 main_purchaseAsa_route@7 main_delist_route@8 main_changePrice_route@9 main_update_route@10 main_updateAkitaDAO_route@11 main_optin_route@12
 
 main_after_if_else@16:
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     intc_0 // 0
     return
 
 main_optin_route@12:
-    // smart_contracts/utils/base-contracts/optin.ts:51
+    // smart_contracts/utils/base-contracts/optin.ts:50
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txn GroupIndex
     intc_1 // 1
@@ -39,32 +39,32 @@ main_optin_route@12:
     assert // transaction type is pay
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/optin.ts:51
+    // smart_contracts/utils/base-contracts/optin.ts:50
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     callsub optin
     intc_1 // 1
     return
 
 main_updateAkitaDAO_route@11:
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     callsub updateAkitaDAO
     intc_1 // 1
     return
 
 main_update_route@10:
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     intc_2 // UpdateApplication
@@ -72,36 +72,36 @@ main_update_route@10:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub update
     intc_1 // 1
     return
 
 main_changePrice_route@9:
-    // smart_contracts/marketplace/listing.algo.ts:409
+    // smart_contracts/marketplace/listing.algo.ts:387
     // changePrice(price: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/marketplace/listing.algo.ts:409
+    // smart_contracts/marketplace/listing.algo.ts:387
     // changePrice(price: uint64): void {
     callsub changePrice
     intc_1 // 1
     return
 
 main_delist_route@8:
-    // smart_contracts/marketplace/listing.algo.ts:355
+    // smart_contracts/marketplace/listing.algo.ts:338
     // @abimethod({ allowActions: 'DeleteApplication' })
     txn OnCompletion
     pushint 5 // DeleteApplication
@@ -109,24 +109,24 @@ main_delist_route@8:
     assert // OnCompletion is not DeleteApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txna ApplicationArgs 1
-    // smart_contracts/marketplace/listing.algo.ts:355
+    // smart_contracts/marketplace/listing.algo.ts:338
     // @abimethod({ allowActions: 'DeleteApplication' })
     callsub delist
     intc_1 // 1
     return
 
 main_purchaseAsa_route@7:
-    // smart_contracts/marketplace/listing.algo.ts:324
+    // smart_contracts/marketplace/listing.algo.ts:310
     // @abimethod({ OnCompleteAction: 'DeleteApplication' })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txn GroupIndex
     intc_1 // 1
@@ -138,15 +138,14 @@ main_purchaseAsa_route@7:
     assert // transaction type is axfer
     txna ApplicationArgs 1
     txna ApplicationArgs 2
-    txna ApplicationArgs 3
-    // smart_contracts/marketplace/listing.algo.ts:324
+    // smart_contracts/marketplace/listing.algo.ts:310
     // @abimethod({ OnCompleteAction: 'DeleteApplication' })
     callsub purchaseAsa
     intc_1 // 1
     return
 
 main_purchase_route@6:
-    // smart_contracts/marketplace/listing.algo.ts:286
+    // smart_contracts/marketplace/listing.algo.ts:274
     // @abimethod({ allowActions: 'DeleteApplication' })
     txn OnCompletion
     pushint 5 // DeleteApplication
@@ -154,7 +153,7 @@ main_purchase_route@6:
     assert // OnCompletion is not DeleteApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txn GroupIndex
     intc_1 // 1
@@ -166,15 +165,14 @@ main_purchase_route@6:
     assert // transaction type is pay
     txna ApplicationArgs 1
     txna ApplicationArgs 2
-    txna ApplicationArgs 3
-    // smart_contracts/marketplace/listing.algo.ts:286
+    // smart_contracts/marketplace/listing.algo.ts:274
     // @abimethod({ allowActions: 'DeleteApplication' })
     callsub purchase
     intc_1 // 1
     return
 
 main_create_route@5:
-    // smart_contracts/marketplace/listing.algo.ts:240
+    // smart_contracts/marketplace/listing.algo.ts:228
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -182,7 +180,7 @@ main_create_route@5:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/marketplace/listing.algo.ts:15
+    // smart_contracts/marketplace/listing.algo.ts:13
     // export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
     txna ApplicationArgs 1
     btoi
@@ -206,96 +204,16 @@ main_create_route@5:
     extract 2 0
     txna ApplicationArgs 12
     btoi
-    // smart_contracts/marketplace/listing.algo.ts:240
+    // smart_contracts/marketplace/listing.algo.ts:228
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_1 // 1
     return
 
 
-// smart_contracts/utils/functions.ts::gateCheck(akitaDAO: uint64, caller: bytes, id: uint64, args: bytes) -> uint64:
-gateCheck:
-    // smart_contracts/utils/functions.ts:143
-    // export function gateCheck(akitaDAO: Application, caller: Address, id: uint64, args: GateArgs): boolean {
-    proto 4 1
-    // smart_contracts/utils/functions.ts:144
-    // if (id === 0) {
-    frame_dig -2
-    bnz gateCheck_after_if_else@2
-    // smart_contracts/utils/functions.ts:145
-    // return true
-    intc_1 // 1
-    retsub
-
-gateCheck_after_if_else@2:
-    // smart_contracts/utils/functions.ts:148-152
-    // return abiCall(GateInterface.prototype.check, {
-    //   appId: getAkitaAppList(akitaDAO).gate,
-    //   args: [caller, id, args],
-    //   fee: 0,
-    // }).returnValue
-    itxn_begin
-    // smart_contracts/utils/functions.ts:25
-    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
-    frame_dig -4
-    // smart_contracts/dao/constants.ts:7
-    // export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
-    pushbytes "akita_al"
-    // smart_contracts/utils/functions.ts:25
-    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/functions.ts:26
-    // return decodeArc4<AkitaAppList>(appListBytes)
-    pushint 40 // 40
-    extract_uint64
-    // smart_contracts/utils/functions.ts:150
-    // args: [caller, id, args],
-    frame_dig -2
-    itob
-    // smart_contracts/utils/functions.ts:148-152
-    // return abiCall(GateInterface.prototype.check, {
-    //   appId: getAkitaAppList(akitaDAO).gate,
-    //   args: [caller, id, args],
-    //   fee: 0,
-    // }).returnValue
-    pushbytes 0x200f7421 // method "check(address,uint64,byte[][])bool"
-    itxn_field ApplicationArgs
-    frame_dig -3
-    itxn_field ApplicationArgs
-    itxn_field ApplicationArgs
-    frame_dig -1
-    itxn_field ApplicationArgs
-    itxn_field ApplicationID
-    intc_3 // appl
-    itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:151
-    // fee: 0,
-    intc_0 // 0
-    itxn_field Fee
-    // smart_contracts/utils/functions.ts:148-152
-    // return abiCall(GateInterface.prototype.check, {
-    //   appId: getAkitaAppList(akitaDAO).gate,
-    //   args: [caller, id, args],
-    //   fee: 0,
-    // }).returnValue
-    itxn_submit
-    itxn LastLog
-    dup
-    extract 4 0
-    swap
-    extract 0 4
-    bytec 8 // 0x151f7c75
-    ==
-    assert // Bytes has valid prefix
-    intc_0 // 0
-    getbit
-    retsub
-
-
 // smart_contracts/utils/functions.ts::arc59OptInAndSend(akitaDAO: uint64, recipient: bytes, asset: uint64, amount: uint64, closeOut: uint64) -> void:
 arc59OptInAndSend:
-    // smart_contracts/utils/functions.ts:187
+    // smart_contracts/utils/functions.ts:249
     // export function arc59OptInAndSend(akitaDAO: Application, recipient: Address, asset: uint64, amount: uint64, closeOut: boolean): void {
     proto 5 0
     pushbytes ""
@@ -304,149 +222,121 @@ arc59OptInAndSend:
     // smart_contracts/utils/functions.ts:35
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     frame_dig -5
-    // smart_contracts/dao/constants.ts:9
-    // export const AkitaDAOGlobalStateKeysOtherAppList = 'other_al'
     pushbytes "other_al"
-    // smart_contracts/utils/functions.ts:35
-    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:36
-    // return decodeArc4<OtherAppList>(otherAppListBytes)
-    pushint 16 // 16
+    // smart_contracts/utils/functions.ts:250
+    // const assetInbox = getOtherAppList(akitaDAO).assetInbox
+    intc_3 // 16
     extract_uint64
     dupn 2
-    // smart_contracts/utils/functions.ts:189
+    // smart_contracts/utils/functions.ts:251
     // const inboxAddress = Application(assetInbox).address
     app_params_get AppAddress
     swap
     cover 2
     assert // application exists
-    // smart_contracts/utils/functions.ts:191-198
+    // smart_contracts/utils/functions.ts:253-259
     // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
     //   AssetInbox.prototype.arc59_getSendAssetInfo,
     //   {
     //     appId: assetInbox,
-    //     args: [recipient, asset],
-    //     fee: 0,
+    //     args: [recipient, asset]
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/utils/functions.ts:195
-    // args: [recipient, asset],
+    // smart_contracts/utils/functions.ts:257
+    // args: [recipient, asset]
     frame_dig -3
     itob
     dup
     cover 2
-    // smart_contracts/utils/functions.ts:191-198
+    // smart_contracts/utils/functions.ts:253-259
     // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
     //   AssetInbox.prototype.arc59_getSendAssetInfo,
     //   {
     //     appId: assetInbox,
-    //     args: [recipient, asset],
-    //     fee: 0,
+    //     args: [recipient, asset]
     //   }
     // ).returnValue
-    pushbytes 0xcaa8daa5 // method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
+    pushbytes 0x27da7b45 // method "arc59_getSendAssetInfo(byte[32],uint64)(uint64,uint64,bool,bool,uint64)"
     itxn_field ApplicationArgs
     frame_dig -4
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:196
-    // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:191-198
-    // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
-    //   AssetInbox.prototype.arc59_getSendAssetInfo,
-    //   {
-    //     appId: assetInbox,
-    //     args: [recipient, asset],
-    //     fee: 0,
-    //   }
-    // ).returnValue
     itxn_submit
     itxn LastLog
     dup
     extract 4 0
     dig 1
     extract 0 4
-    bytec 8 // 0x151f7c75
+    bytec 9 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
+    // smart_contracts/utils/functions.ts:259
+    // ).returnValue
     dig 1
     pushint 12 // 12
     extract_uint64
     dup
-    cover 3
+    cover 2
     cover 3
     pushint 128 // 128
     getbit
-    pushbytes 0x00
-    intc_0 // 0
-    uncover 2
-    setbit
-    intc_0 // 0
-    getbit
     cover 2
+    dig 1
+    extract 21 8
+    cover 2
+    swap
     pushint 21 // 21
     extract_uint64
     swap
-    // smart_contracts/utils/functions.ts:200
+    // smart_contracts/utils/functions.ts:261
     // if (mbr || receiverAlgoNeededForClaim) {
     bnz arc59OptInAndSend_if_body@3
-    frame_dig 9
+    frame_dig 10
     bz arc59OptInAndSend_after_if_else@5
 
 arc59OptInAndSend_if_body@3:
-    // smart_contracts/utils/functions.ts:201-205
+    // smart_contracts/utils/functions.ts:262-265
     // itxn.payment({
     //   receiver: inboxAddress,
-    //   amount: mbr + receiverAlgoNeededForClaim,
-    //   fee: 0,
+    //   amount: mbr + receiverAlgoNeededForClaim
     // }).submit()
     itxn_begin
-    // smart_contracts/utils/functions.ts:203
-    // amount: mbr + receiverAlgoNeededForClaim,
+    // smart_contracts/utils/functions.ts:264
+    // amount: mbr + receiverAlgoNeededForClaim
     frame_dig 7
-    frame_dig 9
+    frame_dig 10
     +
     itxn_field Amount
     frame_dig 5
     itxn_field Receiver
-    // smart_contracts/utils/functions.ts:201-205
+    // smart_contracts/utils/functions.ts:262-265
     // itxn.payment({
     //   receiver: inboxAddress,
-    //   amount: mbr + receiverAlgoNeededForClaim,
-    //   fee: 0,
+    //   amount: mbr + receiverAlgoNeededForClaim
     // }).submit()
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:204
-    // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:201-205
-    // itxn.payment({
-    //   receiver: inboxAddress,
-    //   amount: mbr + receiverAlgoNeededForClaim,
-    //   fee: 0,
-    // }).submit()
     itxn_submit
 
 arc59OptInAndSend_after_if_else@5:
-    // smart_contracts/utils/functions.ts:208
+    // smart_contracts/utils/functions.ts:268
     // if (!routerOptedIn) {
     frame_dig 8
     bnz arc59OptInAndSend_after_if_else@8
-    // smart_contracts/utils/functions.ts:209-213
+    // smart_contracts/utils/functions.ts:269-272
     // abiCall(AssetInbox.prototype.arc59_optRouterIn, {
     //   appId: assetInbox,
-    //   args: [asset],
-    //   fee: 0,
+    //   args: [asset]
     // })
     itxn_begin
     pushbytes 0xe8540810 // method "arc59_optRouterIn(uint64)void"
@@ -455,42 +345,34 @@ arc59OptInAndSend_after_if_else@5:
     itxn_field ApplicationArgs
     frame_dig 4
     itxn_field ApplicationID
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:212
-    // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:209-213
-    // abiCall(AssetInbox.prototype.arc59_optRouterIn, {
-    //   appId: assetInbox,
-    //   args: [asset],
-    //   fee: 0,
-    // })
     itxn_submit
 
 arc59OptInAndSend_after_if_else@8:
-    // smart_contracts/utils/functions.ts:217
+    // smart_contracts/utils/functions.ts:276
     // assetReceiver: inboxAddress,
     intc_1 // 1
     frame_bury 2
-    // smart_contracts/utils/functions.ts:218
+    // smart_contracts/utils/functions.ts:277
     // assetAmount: amount,
     intc_1 // 1
     frame_bury 0
-    // smart_contracts/utils/functions.ts:216
+    // smart_contracts/utils/functions.ts:275
     // let xferTxn = itxn.assetTransfer({
     intc_0 // 0
     frame_bury 1
-    // smart_contracts/utils/functions.ts:223
+    // smart_contracts/utils/functions.ts:281
     // if (closeOut) {
     frame_dig -1
     bz arc59OptInAndSend_after_if_else@10
-    // smart_contracts/utils/functions.ts:226
-    // assetCloseTo: inboxAddress,
+    // smart_contracts/utils/functions.ts:284
+    // assetCloseTo: inboxAddress
     intc_1 // 1
     frame_bury 1
-    // smart_contracts/utils/functions.ts:224
+    // smart_contracts/utils/functions.ts:282
     // xferTxn = itxn.assetTransfer({
     intc_0 // 0
     frame_bury 0
@@ -500,15 +382,14 @@ arc59OptInAndSend_after_if_else@8:
     frame_bury 3
 
 arc59OptInAndSend_after_if_else@10:
-    // smart_contracts/utils/functions.ts:231-235
+    // smart_contracts/utils/functions.ts:288-291
     // abiCall(AssetInbox.prototype.arc59_sendAsset, {
     //   appId: assetInbox,
-    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
-    //   fee: 0,
+    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     // })
     itxn_begin
-    // smart_contracts/utils/functions.ts:233
-    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    // smart_contracts/utils/functions.ts:290
+    // args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     frame_dig 1
     bz arc59OptInAndSend_next_field@12
     frame_dig 3
@@ -517,133 +398,104 @@ arc59OptInAndSend_after_if_else@10:
 arc59OptInAndSend_next_field@12:
     frame_dig -3
     itxn_field XferAsset
-    // smart_contracts/utils/functions.ts:233
-    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    // smart_contracts/utils/functions.ts:290
+    // args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     frame_dig 0
     bz arc59OptInAndSend_next_field@14
     frame_dig -2
     itxn_field AssetAmount
 
 arc59OptInAndSend_next_field@14:
-    // smart_contracts/utils/functions.ts:233
-    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
+    // smart_contracts/utils/functions.ts:290
+    // args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     frame_dig 2
     bz arc59OptInAndSend_next_field@16
     frame_dig 5
     itxn_field AssetReceiver
 
 arc59OptInAndSend_next_field@16:
-    // smart_contracts/utils/functions.ts:216-221
+    // smart_contracts/utils/functions.ts:275-279
     // let xferTxn = itxn.assetTransfer({
     //   assetReceiver: inboxAddress,
     //   assetAmount: amount,
-    //   xferAsset: asset,
-    //   fee: 0,
+    //   xferAsset: asset
     // })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:220
-    // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:231-235
+    // smart_contracts/utils/functions.ts:288-291
     // abiCall(AssetInbox.prototype.arc59_sendAsset, {
     //   appId: assetInbox,
-    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
-    //   fee: 0,
+    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     // })
     itxn_next
-    // smart_contracts/utils/functions.ts:233
-    // args: [xferTxn, recipient, receiverAlgoNeededForClaim],
-    frame_dig 9
-    itob
-    // smart_contracts/utils/functions.ts:231-235
-    // abiCall(AssetInbox.prototype.arc59_sendAsset, {
-    //   appId: assetInbox,
-    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
-    //   fee: 0,
-    // })
-    pushbytes 0x08531ed7 // method "arc59_sendAsset(axfer,address,uint64)address"
+    pushbytes 0xfd9c16f7 // method "arc59_sendAsset(axfer,byte[32],uint64)byte[32]"
     itxn_field ApplicationArgs
     frame_dig -4
     itxn_field ApplicationArgs
+    frame_dig 9
     itxn_field ApplicationArgs
     frame_dig 4
     itxn_field ApplicationID
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:234
-    // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:231-235
-    // abiCall(AssetInbox.prototype.arc59_sendAsset, {
-    //   appId: assetInbox,
-    //   args: [xferTxn, recipient, receiverAlgoNeededForClaim],
-    //   fee: 0,
-    // })
     itxn_submit
     gitxn 1 LastLog
     extract 0 4
-    bytec 8 // 0x151f7c75
+    bytec 9 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     retsub
 
 
-// smart_contracts/marketplace/listing.algo.ts::Listing.getAmounts(amount: uint64) -> uint64, uint64, uint64, uint64:
+// smart_contracts/marketplace/listing.algo.ts::Listing.getAmounts(amount: uint64) -> bytes:
 getAmounts:
-    // smart_contracts/marketplace/listing.algo.ts:53
+    // smart_contracts/marketplace/listing.algo.ts:51
     // private getAmounts(amount: uint64): RoyaltyAmounts {
-    proto 1 4
+    proto 1 1
     pushbytes ""
     dupn 6
-    // smart_contracts/marketplace/constants.ts:7
-    // export const ListingGlobalStateKeyCreatorRoyalty = 'creator_royalty'
+    // smart_contracts/marketplace/listing.algo.ts:32
+    // creatorRoyalty = GlobalState<uint64>({ key: ListingGlobalStateKeyCreatorRoyalty })
     intc_0 // 0
     bytec 10 // "creator_royalty"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:70
+    // smart_contracts/utils/functions.ts:74
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
-    // smart_contracts/utils/constants.ts:18
-    // export const DIVISOR: uint64 = 100_000 // 100%
     intc 4 // 100000
-    // smart_contracts/utils/functions.ts:70
-    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     <=
     assert // Invalid percentage
-    // smart_contracts/utils/functions.ts:71
+    // smart_contracts/utils/functions.ts:75
     // return op.divw(...op.mulw(a, p), DIVISOR)
     frame_dig -1
     mulw
-    // smart_contracts/utils/constants.ts:18
-    // export const DIVISOR: uint64 = 100_000 // 100%
     intc 4 // 100000
-    // smart_contracts/utils/functions.ts:71
-    // return op.divw(...op.mulw(a, p), DIVISOR)
     divw
     dupn 2
-    // smart_contracts/marketplace/listing.algo.ts:55
+    // smart_contracts/marketplace/listing.algo.ts:53
     // if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
     bnz getAmounts_after_if_else@4
-    // smart_contracts/marketplace/constants.ts:7
-    // export const ListingGlobalStateKeyCreatorRoyalty = 'creator_royalty'
+    // smart_contracts/marketplace/listing.algo.ts:32
+    // creatorRoyalty = GlobalState<uint64>({ key: ListingGlobalStateKeyCreatorRoyalty })
     intc_0 // 0
     bytec 10 // "creator_royalty"
     app_global_get_ex
     assert // check GlobalState exists
     frame_dig 7
     frame_bury 8
-    // smart_contracts/marketplace/listing.algo.ts:55
+    // smart_contracts/marketplace/listing.algo.ts:53
     // if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
     bz getAmounts_after_if_else@4
     frame_dig 7
     frame_bury 8
     frame_dig -1
     bz getAmounts_after_if_else@4
-    // smart_contracts/marketplace/listing.algo.ts:56
+    // smart_contracts/marketplace/listing.algo.ts:54
     // creatorAmount = 1
     intc_1 // 1
     frame_bury 8
@@ -651,24 +503,20 @@ getAmounts:
 getAmounts_after_if_else@4:
     frame_dig 8
     frame_bury 7
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:60
+    // smart_contracts/utils/functions.ts:64
     // const [nftFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysNFTFees))
     dup
-    // smart_contracts/dao/constants.ts:14
-    // export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
-    bytec 14 // "nft_fees"
-    // smart_contracts/utils/functions.ts:60
-    // const [nftFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysNFTFees))
+    bytec 13 // "nft_fees"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:61
-    // return decodeArc4<NFTFees>(nftFeesBytes)
+    // smart_contracts/marketplace/listing.algo.ts:57
+    // const { marketplaceSalePercentageMin: min, marketplaceSalePercentageMax: max } = getNFTFees(this.akitaDAO.value)
     dup
     intc_0 // 0
     extract_uint64
@@ -676,77 +524,60 @@ getAmounts_after_if_else@4:
     pushint 8 // 8
     extract_uint64
     frame_bury 5
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:98-105
+    // smart_contracts/utils/functions.ts:102-108
     // return abiCall(
     //   AkitaSocialImpactInterface.prototype.getUserImpact,
     //   {
-    //     appId: getPluginAppList(akitaDAO).impact,
-    //     args: [new Address(account)],
-    //     fee: 0,
+    //     appId: getAkitaAppList(akitaDAO).impact,
+    //     args: [new Address(account)]
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/utils/functions.ts:30
-    // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
-    // smart_contracts/dao/constants.ts:8
-    // export const AkitaDAOGlobalStateKeysPluginAppList = 'plugn_al'
-    pushbytes "plugn_al"
-    // smart_contracts/utils/functions.ts:30
-    // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
+    pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:31
-    // return decodeArc4<PluginAppList>(pluginAppListBytes)
-    pushint 16 // 16
+    // smart_contracts/utils/functions.ts:105
+    // appId: getAkitaAppList(akitaDAO).impact,
+    pushint 104 // 104
     extract_uint64
-    // smart_contracts/utils/functions.ts:98-105
+    // smart_contracts/utils/functions.ts:102-108
     // return abiCall(
     //   AkitaSocialImpactInterface.prototype.getUserImpact,
     //   {
-    //     appId: getPluginAppList(akitaDAO).impact,
-    //     args: [new Address(account)],
-    //     fee: 0,
+    //     appId: getAkitaAppList(akitaDAO).impact,
+    //     args: [new Address(account)]
     //   }
     // ).returnValue
-    pushbytes 0xd574bb10 // method "getUserImpact(address)uint64"
+    pushbytes 0x0a59370d // method "getUserImpact(byte[32])uint64"
     itxn_field ApplicationArgs
     itxn_field ApplicationID
     itxn_field ApplicationArgs
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:103
-    // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:98-105
-    // return abiCall(
-    //   AkitaSocialImpactInterface.prototype.getUserImpact,
-    //   {
-    //     appId: getPluginAppList(akitaDAO).impact,
-    //     args: [new Address(account)],
-    //     fee: 0,
-    //   }
-    // ).returnValue
     itxn_submit
     itxn LastLog
     dup
     extract 4 0
     swap
     extract 0 4
-    bytec 8 // 0x151f7c75
+    bytec 9 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     btoi
     dup
     frame_bury 2
-    // smart_contracts/utils/functions.ts:93
+    // smart_contracts/utils/functions.ts:97
     // const minImpact: uint64 = (impact > 1) ? impact - 1 : 1
     intc_1 // 1
     >
@@ -756,7 +587,7 @@ getAmounts_after_if_else@4:
     -
 
 getAmounts_ternary_merge@17:
-    // smart_contracts/utils/functions.ts:94
+    // smart_contracts/utils/functions.ts:98
     // return max - (((max - min) * minImpact) / IMPACT_DIVISOR)
     frame_dig 5
     dup
@@ -764,45 +595,33 @@ getAmounts_ternary_merge@17:
     -
     uncover 2
     *
-    // smart_contracts/utils/constants.ts:15
-    // export const MAX_IMPACT: uint64 = 1_000
     pushint 1000 // 1000
-    // smart_contracts/utils/functions.ts:94
-    // return max - (((max - min) * minImpact) / IMPACT_DIVISOR)
     /
     -
-    // smart_contracts/utils/functions.ts:70
+    // smart_contracts/utils/functions.ts:74
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
-    // smart_contracts/utils/constants.ts:18
-    // export const DIVISOR: uint64 = 100_000 // 100%
     intc 4 // 100000
-    // smart_contracts/utils/functions.ts:70
-    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     <=
     assert // Invalid percentage
-    // smart_contracts/utils/functions.ts:71
+    // smart_contracts/utils/functions.ts:75
     // return op.divw(...op.mulw(a, p), DIVISOR)
     frame_dig -1
     mulw
-    // smart_contracts/utils/constants.ts:18
-    // export const DIVISOR: uint64 = 100_000 // 100%
     intc 4 // 100000
-    // smart_contracts/utils/functions.ts:71
-    // return op.divw(...op.mulw(a, p), DIVISOR)
     divw
     dup
     frame_bury 0
     dup
     frame_bury 1
-    // smart_contracts/marketplace/listing.algo.ts:64
+    // smart_contracts/marketplace/listing.algo.ts:62
     // if (akitaAmount === 0 && amount > 0) {
     bnz getAmounts_after_if_else@7
     frame_dig 0
     frame_bury 1
     frame_dig -1
     bz getAmounts_after_if_else@7
-    // smart_contracts/marketplace/listing.algo.ts:65
+    // smart_contracts/marketplace/listing.algo.ts:63
     // akitaAmount = 1
     intc_1 // 1
     frame_bury 1
@@ -810,62 +629,54 @@ getAmounts_ternary_merge@17:
 getAmounts_after_if_else@7:
     frame_dig 1
     frame_bury 0
-    // smart_contracts/marketplace/constants.ts:8
-    // export const ListingGlobalStateKeyMarketplaceRoyalties = 'marketplace_royalties'
+    // smart_contracts/marketplace/listing.algo.ts:47
+    // marketplaceRoyalties = GlobalState<uint64>({ key: ListingGlobalStateKeyMarketplaceRoyalties })
     intc_0 // 0
     bytec 11 // "marketplace_royalties"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:70
+    // smart_contracts/utils/functions.ts:74
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
-    // smart_contracts/utils/constants.ts:18
-    // export const DIVISOR: uint64 = 100_000 // 100%
     intc 4 // 100000
-    // smart_contracts/utils/functions.ts:70
-    // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     <=
     assert // Invalid percentage
-    // smart_contracts/utils/functions.ts:71
+    // smart_contracts/utils/functions.ts:75
     // return op.divw(...op.mulw(a, p), DIVISOR)
     frame_dig -1
     mulw
-    // smart_contracts/utils/constants.ts:18
-    // export const DIVISOR: uint64 = 100_000 // 100%
     intc 4 // 100000
-    // smart_contracts/utils/functions.ts:71
-    // return op.divw(...op.mulw(a, p), DIVISOR)
     divw
     dup
     frame_bury 3
     dup
     frame_bury 4
-    // smart_contracts/marketplace/listing.algo.ts:69
+    // smart_contracts/marketplace/listing.algo.ts:67
     // if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
     bnz getAmounts_after_if_else@11
-    // smart_contracts/marketplace/constants.ts:8
-    // export const ListingGlobalStateKeyMarketplaceRoyalties = 'marketplace_royalties'
+    // smart_contracts/marketplace/listing.algo.ts:47
+    // marketplaceRoyalties = GlobalState<uint64>({ key: ListingGlobalStateKeyMarketplaceRoyalties })
     intc_0 // 0
     bytec 11 // "marketplace_royalties"
     app_global_get_ex
     assert // check GlobalState exists
     frame_dig 3
     frame_bury 4
-    // smart_contracts/marketplace/listing.algo.ts:69
+    // smart_contracts/marketplace/listing.algo.ts:67
     // if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
     bz getAmounts_after_if_else@11
     frame_dig 3
     frame_bury 4
     frame_dig -1
     bz getAmounts_after_if_else@11
-    // smart_contracts/marketplace/listing.algo.ts:70
+    // smart_contracts/marketplace/listing.algo.ts:68
     // marketplaceAmount = 1
     intc_1 // 1
     frame_bury 4
 
 getAmounts_after_if_else@11:
     frame_dig 4
-    // smart_contracts/marketplace/listing.algo.ts:73
+    // smart_contracts/marketplace/listing.algo.ts:71
     // const sellerAmount: uint64 = amount - (creatorAmount + akitaAmount + (2 * marketplaceAmount))
     frame_dig 7
     dup
@@ -881,7 +692,7 @@ getAmounts_after_if_else@11:
     frame_dig -1
     swap
     -
-    // smart_contracts/marketplace/listing.algo.ts:75-80
+    // smart_contracts/marketplace/listing.algo.ts:73-78
     // return {
     //   creator: creatorAmount,
     //   akita: akitaAmount,
@@ -889,15 +700,21 @@ getAmounts_after_if_else@11:
     //   seller: sellerAmount,
     // }
     uncover 2
-    cover 3
-    frame_bury 3
-    frame_bury 2
-    frame_bury 1
+    itob
+    uncover 3
+    itob
+    concat
+    uncover 2
+    itob
+    concat
+    swap
+    itob
+    concat
     frame_bury 0
     retsub
 
 getAmounts_ternary_false@16:
-    // smart_contracts/utils/functions.ts:93
+    // smart_contracts/utils/functions.ts:97
     // const minImpact: uint64 = (impact > 1) ? impact - 1 : 1
     intc_1 // 1
     b getAmounts_ternary_merge@17
@@ -905,71 +722,58 @@ getAmounts_ternary_false@16:
 
 // smart_contracts/marketplace/listing.algo.ts::Listing.transferPurchaseToBuyer(buyer: bytes) -> void:
 transferPurchaseToBuyer:
-    // smart_contracts/marketplace/listing.algo.ts:83
+    // smart_contracts/marketplace/listing.algo.ts:81
     // private transferPurchaseToBuyer(buyer: Account): void {
     proto 1 0
-    // smart_contracts/marketplace/constants.ts:2
-    // export const ListingGlobalStateKeyIsPrizeBox = 'is_prize_box'
+    // smart_contracts/marketplace/listing.algo.ts:20
+    // isPrizeBox = GlobalState<boolean>({ key: ListingGlobalStateKeyIsPrizeBox })
     intc_0 // 0
-    bytec 9 // "is_prize_box"
+    bytec 8 // "is_prize_box"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:84
+    // smart_contracts/marketplace/listing.algo.ts:82
     // if (this.isPrizeBox.value) {
     bz transferPurchaseToBuyer_after_if_else@3
-    // smart_contracts/marketplace/listing.algo.ts:85-92
+    // smart_contracts/marketplace/listing.algo.ts:83-89
     // abiCall(
     //   PrizeBox.prototype.transfer,
     //   {
     //     appId: this.prize.value,
     //     args: [new Address(buyer)],
-    //     fee,
     //   }
     // )
     itxn_begin
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     intc_0 // 0
     bytec_3 // "prize"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:85-92
+    // smart_contracts/marketplace/listing.algo.ts:83-89
     // abiCall(
     //   PrizeBox.prototype.transfer,
     //   {
     //     appId: this.prize.value,
     //     args: [new Address(buyer)],
-    //     fee,
     //   }
     // )
-    bytec 12 // method "transfer(address)void"
+    bytec 12 // method "transfer(byte[32])void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:85-92
-    // abiCall(
-    //   PrizeBox.prototype.transfer,
-    //   {
-    //     appId: this.prize.value,
-    //     args: [new Address(buyer)],
-    //     fee,
-    //   }
-    // )
     itxn_submit
-    // smart_contracts/marketplace/listing.algo.ts:93
+    // smart_contracts/marketplace/listing.algo.ts:90
     // return
     retsub
 
 transferPurchaseToBuyer_after_if_else@3:
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     intc_0 // 0
     bytec_3 // "prize"
     app_global_get_ex
@@ -977,18 +781,17 @@ transferPurchaseToBuyer_after_if_else@3:
     dup
     uncover 2
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:98
+    // smart_contracts/marketplace/listing.algo.ts:95
     // if (buyer.isOptedIn(prizeAsset)) {
     frame_dig -1
     swap
     asset_holding_get AssetBalance
     bury 1
     bz transferPurchaseToBuyer_else_body@6
-    // smart_contracts/marketplace/listing.algo.ts:100-104
+    // smart_contracts/marketplace/listing.algo.ts:97-100
     // itxn.assetTransfer({
     //   assetCloseTo: buyer,
     //   xferAsset: prizeAsset,
-    //   fee,
     // }).submit()
     itxn_begin
     itxn_field XferAsset
@@ -996,27 +799,19 @@ transferPurchaseToBuyer_after_if_else@3:
     itxn_field AssetCloseTo
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:100-104
-    // itxn.assetTransfer({
-    //   assetCloseTo: buyer,
-    //   xferAsset: prizeAsset,
-    //   fee,
-    // }).submit()
     itxn_submit
     retsub
 
 transferPurchaseToBuyer_else_body@6:
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:110
+    // smart_contracts/marketplace/listing.algo.ts:106
     // prizeAsset.balance(Global.currentApplicationAddress),
     global CurrentApplicationAddress
     uncover 2
@@ -1024,7 +819,7 @@ transferPurchaseToBuyer_else_body@6:
     cover 2
     asset_holding_get AssetBalance
     assert // account opted into asset
-    // smart_contracts/marketplace/listing.algo.ts:106-112
+    // smart_contracts/marketplace/listing.algo.ts:102-108
     // arc59OptInAndSend(
     //   this.akitaDAO.value,
     //   new Address(buyer),
@@ -1036,10 +831,10 @@ transferPurchaseToBuyer_else_body@6:
     frame_dig -1
     uncover 3
     uncover 3
-    // smart_contracts/marketplace/listing.algo.ts:111
+    // smart_contracts/marketplace/listing.algo.ts:107
     // true
     intc_1 // 1
-    // smart_contracts/marketplace/listing.algo.ts:106-112
+    // smart_contracts/marketplace/listing.algo.ts:102-108
     // arc59OptInAndSend(
     //   this.akitaDAO.value,
     //   new Address(buyer),
@@ -1053,7 +848,7 @@ transferPurchaseToBuyer_else_body@6:
 
 // smart_contracts/marketplace/listing.algo.ts::Listing.create(prize: uint64, isPrizeBox: uint64, price: uint64, paymentAsset: uint64, expiration: uint64, seller: bytes, reservedFor: bytes, creatorRoyalty: uint64, gateID: uint64, marketplace: bytes, version: bytes, akitaDAO: uint64) -> void:
 create:
-    // smart_contracts/marketplace/listing.algo.ts:240-254
+    // smart_contracts/marketplace/listing.algo.ts:228-242
     // @abimethod({ onCreate: 'require' })
     // create(
     //   prize: uint64,
@@ -1070,39 +865,39 @@ create:
     //   akitaDAO: uint64
     // ): void {
     proto 12 0
-    // smart_contracts/marketplace/listing.algo.ts:255
+    // smart_contracts/marketplace/listing.algo.ts:243
     // assert(Global.callerApplicationId !== 0, ERR_MUST_BE_CALLED_FROM_FACTORY)
     global CallerApplicationID
     assert // must be called from the factory
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     bytec_3 // "prize"
-    // smart_contracts/marketplace/listing.algo.ts:257
+    // smart_contracts/marketplace/listing.algo.ts:245
     // this.prize.value = prize
     frame_dig -12
     app_global_put
-    // smart_contracts/marketplace/constants.ts:2
-    // export const ListingGlobalStateKeyIsPrizeBox = 'is_prize_box'
-    bytec 9 // "is_prize_box"
-    // smart_contracts/marketplace/listing.algo.ts:258
+    // smart_contracts/marketplace/listing.algo.ts:20
+    // isPrizeBox = GlobalState<boolean>({ key: ListingGlobalStateKeyIsPrizeBox })
+    bytec 8 // "is_prize_box"
+    // smart_contracts/marketplace/listing.algo.ts:246
     // this.isPrizeBox.value = isPrizeBox
     frame_dig -11
     app_global_put
-    // smart_contracts/marketplace/constants.ts:3
-    // export const ListingGlobalStateKeyPrice = 'price'
+    // smart_contracts/marketplace/listing.algo.ts:22
+    // price = GlobalState<uint64>({ key: ListingGlobalStateKeyPrice })
     bytec 4 // "price"
-    // smart_contracts/marketplace/listing.algo.ts:259
+    // smart_contracts/marketplace/listing.algo.ts:247
     // this.price.value = price
     frame_dig -10
     app_global_put
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     bytec_0 // "payment_asset"
-    // smart_contracts/marketplace/listing.algo.ts:260
+    // smart_contracts/marketplace/listing.algo.ts:248
     // this.paymentAsset.value = Asset(paymentAsset)
     frame_dig -9
     app_global_put
-    // smart_contracts/marketplace/listing.algo.ts:261
+    // smart_contracts/marketplace/listing.algo.ts:249
     // assert(expiration === 0 || expiration > Global.latestTimestamp, ERR_INVALID_EXPIRATION)
     frame_dig -8
     bz create_bool_true@2
@@ -1115,83 +910,79 @@ create_bool_true@2:
     intc_1 // 1
 
 create_bool_merge@4:
-    // smart_contracts/marketplace/listing.algo.ts:261
+    // smart_contracts/marketplace/listing.algo.ts:249
     // assert(expiration === 0 || expiration > Global.latestTimestamp, ERR_INVALID_EXPIRATION)
     assert // invalid expiration
-    // smart_contracts/marketplace/constants.ts:9
-    // export const ListingGlobalStateKeyExpiration = 'expiration'
+    // smart_contracts/marketplace/listing.algo.ts:26
+    // expiration = GlobalState<uint64>({ key: ListingGlobalStateKeyExpiration })
     bytec 5 // "expiration"
-    // smart_contracts/marketplace/listing.algo.ts:262
+    // smart_contracts/marketplace/listing.algo.ts:250
     // this.expiration.value = expiration
     frame_dig -8
     app_global_put
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     bytec_2 // "seller"
-    // smart_contracts/marketplace/listing.algo.ts:263
+    // smart_contracts/marketplace/listing.algo.ts:251
     // this.seller.value = seller.native
     frame_dig -7
     app_global_put
-    // smart_contracts/marketplace/constants.ts:10
-    // export const ListingGlobalStateKeyReservedFor = 'reserved_for'
+    // smart_contracts/marketplace/listing.algo.ts:30
+    // reservedFor = GlobalState<Address>({ key: ListingGlobalStateKeyReservedFor })
     bytec 6 // "reserved_for"
-    // smart_contracts/marketplace/listing.algo.ts:264
+    // smart_contracts/marketplace/listing.algo.ts:252
     // this.reservedFor.value = reservedFor
     frame_dig -6
     app_global_put
-    // smart_contracts/marketplace/constants.ts:7
-    // export const ListingGlobalStateKeyCreatorRoyalty = 'creator_royalty'
+    // smart_contracts/marketplace/listing.algo.ts:32
+    // creatorRoyalty = GlobalState<uint64>({ key: ListingGlobalStateKeyCreatorRoyalty })
     bytec 10 // "creator_royalty"
-    // smart_contracts/marketplace/listing.algo.ts:265
+    // smart_contracts/marketplace/listing.algo.ts:253
     // this.creatorRoyalty.value = creatorRoyalty
     frame_dig -5
     app_global_put
-    // smart_contracts/marketplace/constants.ts:11
-    // export const ListingGlobalStateKeyGateID = 'gate_id'
-    bytec 13 // "gate_id"
-    // smart_contracts/marketplace/listing.algo.ts:266
+    // smart_contracts/marketplace/listing.algo.ts:34
+    // gateID = GlobalState<uint64>({ key: ListingGlobalStateKeyGateID })
+    pushbytes "gate_id"
+    // smart_contracts/marketplace/listing.algo.ts:254
     // this.gateID.value = gateID
     frame_dig -4
     app_global_put
-    // smart_contracts/marketplace/constants.ts:6
-    // export const ListingGlobalStateKeyMarketplace = 'marketplace'
+    // smart_contracts/marketplace/listing.algo.ts:45
+    // marketplace = GlobalState<Account>({ key: ListingGlobalStateKeyMarketplace })
     bytec 7 // "marketplace"
-    // smart_contracts/marketplace/listing.algo.ts:267
+    // smart_contracts/marketplace/listing.algo.ts:255
     // this.marketplace.value = marketplace.native
     frame_dig -3
     app_global_put
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
-    bytec 15 // "version"
-    // smart_contracts/marketplace/listing.algo.ts:268
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec 14 // "version"
+    // smart_contracts/marketplace/listing.algo.ts:256
     // this.version.value = version
     frame_dig -2
     app_global_put
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/marketplace/listing.algo.ts:269
+    // smart_contracts/marketplace/listing.algo.ts:257
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -1
     app_global_put
-    // smart_contracts/utils/functions.ts:60
+    // smart_contracts/utils/functions.ts:64
     // const [nftFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysNFTFees))
     frame_dig -1
-    // smart_contracts/dao/constants.ts:14
-    // export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
-    bytec 14 // "nft_fees"
-    // smart_contracts/utils/functions.ts:60
-    // const [nftFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysNFTFees))
+    bytec 13 // "nft_fees"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:61
-    // return decodeArc4<NFTFees>(nftFeesBytes)
-    pushint 16 // 16
+    // smart_contracts/marketplace/listing.algo.ts:260
+    // this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).marketplaceComposablePercentage
+    intc_3 // 16
     extract_uint64
-    // smart_contracts/marketplace/constants.ts:8
-    // export const ListingGlobalStateKeyMarketplaceRoyalties = 'marketplace_royalties'
+    // smart_contracts/marketplace/listing.algo.ts:47
+    // marketplaceRoyalties = GlobalState<uint64>({ key: ListingGlobalStateKeyMarketplaceRoyalties })
     bytec 11 // "marketplace_royalties"
-    // smart_contracts/marketplace/listing.algo.ts:272
+    // smart_contracts/marketplace/listing.algo.ts:260
     // this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).marketplaceComposablePercentage
     swap
     app_global_put
@@ -1202,49 +993,48 @@ create_bool_false@3:
     b create_bool_merge@4
 
 
-// smart_contracts/marketplace/listing.algo.ts::Listing.purchase(payment: uint64, buyer: bytes, marketplace: bytes, args: bytes) -> void:
+// smart_contracts/marketplace/listing.algo.ts::Listing.purchase(payment: uint64, buyer: bytes, marketplace: bytes) -> void:
 purchase:
-    // smart_contracts/marketplace/listing.algo.ts:286-292
+    // smart_contracts/marketplace/listing.algo.ts:274-279
     // @abimethod({ allowActions: 'DeleteApplication' })
     // purchase(
     //   payment: gtxn.PaymentTxn,
     //   buyer: Address,
-    //   marketplace: Address,
-    //   args: GateArgs
+    //   marketplace: Address
     // ): void {
-    proto 4 0
-    // smart_contracts/marketplace/listing.algo.ts:293
+    proto 3 0
+    // smart_contracts/marketplace/listing.algo.ts:280
     // assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
     txn Sender
     global CreatorAddress
     ==
     assert // must be called from the factory
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:294
+    // smart_contracts/marketplace/listing.algo.ts:281
     // assert(this.paymentAsset.value.id === 0, ERR_PAYMENT_ASSET_MUST_BE_ALGO)
     !
     assert // payment asset must be algo
-    // smart_contracts/marketplace/constants.ts:9
-    // export const ListingGlobalStateKeyExpiration = 'expiration'
+    // smart_contracts/marketplace/listing.algo.ts:26
+    // expiration = GlobalState<uint64>({ key: ListingGlobalStateKeyExpiration })
     intc_0 // 0
     bytec 5 // "expiration"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:295
+    // smart_contracts/marketplace/listing.algo.ts:282
     // assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
     bz purchase_bool_true@2
-    // smart_contracts/marketplace/constants.ts:9
-    // export const ListingGlobalStateKeyExpiration = 'expiration'
+    // smart_contracts/marketplace/listing.algo.ts:26
+    // expiration = GlobalState<uint64>({ key: ListingGlobalStateKeyExpiration })
     intc_0 // 0
     bytec 5 // "expiration"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:295
+    // smart_contracts/marketplace/listing.algo.ts:282
     // assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
     global LatestTimestamp
     >
@@ -1254,53 +1044,34 @@ purchase_bool_true@2:
     intc_1 // 1
 
 purchase_bool_merge@4:
-    // smart_contracts/marketplace/listing.algo.ts:295
+    // smart_contracts/marketplace/listing.algo.ts:282
     // assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
     assert // listing expired
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:11
-    // export const ListingGlobalStateKeyGateID = 'gate_id'
-    intc_0 // 0
-    bytec 13 // "gate_id"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:296
-    // assert(gateCheck(this.akitaDAO.value, buyer, this.gateID.value, args), ERR_FAILED_GATE)
-    frame_dig -3
-    swap
-    frame_dig -1
-    callsub gateCheck
-    assert // Gate check failed
-    // smart_contracts/marketplace/constants.ts:10
-    // export const ListingGlobalStateKeyReservedFor = 'reserved_for'
+    // smart_contracts/marketplace/listing.algo.ts:30
+    // reservedFor = GlobalState<Address>({ key: ListingGlobalStateKeyReservedFor })
     intc_0 // 0
     bytec 6 // "reserved_for"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:298
+    // smart_contracts/marketplace/listing.algo.ts:284
     // if (this.reservedFor.value.native !== Global.zeroAddress) {
     global ZeroAddress
     !=
     bz purchase_after_if_else@6
-    // smart_contracts/marketplace/constants.ts:10
-    // export const ListingGlobalStateKeyReservedFor = 'reserved_for'
+    // smart_contracts/marketplace/listing.algo.ts:30
+    // reservedFor = GlobalState<Address>({ key: ListingGlobalStateKeyReservedFor })
     intc_0 // 0
     bytec 6 // "reserved_for"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:299
+    // smart_contracts/marketplace/listing.algo.ts:285
     // assert(buyer === this.reservedFor.value, ERR_RESERVED_FOR_DIFFERENT_ADDRESS)
-    frame_dig -3
+    frame_dig -2
     ==
     assert // reserved for different address
 
 purchase_after_if_else@6:
-    // smart_contracts/marketplace/listing.algo.ts:302-310
+    // smart_contracts/marketplace/listing.algo.ts:288-296
     // assertMatch(
     //   payment,
     //   {
@@ -1310,12 +1081,12 @@ purchase_after_if_else@6:
     //   },
     //   ERR_INVALID_PAYMENT
     // )
-    frame_dig -4
+    frame_dig -3
     gtxns Sender
-    // smart_contracts/marketplace/listing.algo.ts:305
+    // smart_contracts/marketplace/listing.algo.ts:291
     // sender: Global.creatorAddress,
     global CreatorAddress
-    // smart_contracts/marketplace/listing.algo.ts:302-310
+    // smart_contracts/marketplace/listing.algo.ts:288-296
     // assertMatch(
     //   payment,
     //   {
@@ -1326,13 +1097,12 @@ purchase_after_if_else@6:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz purchase_bool_false@10
-    frame_dig -4
+    frame_dig -3
     gtxns Receiver
-    // smart_contracts/marketplace/listing.algo.ts:306
+    // smart_contracts/marketplace/listing.algo.ts:292
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/marketplace/listing.algo.ts:302-310
+    // smart_contracts/marketplace/listing.algo.ts:288-296
     // assertMatch(
     //   payment,
     //   {
@@ -1343,213 +1113,194 @@ purchase_after_if_else@6:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz purchase_bool_false@10
-    frame_dig -4
-    gtxns Amount
-    // smart_contracts/marketplace/constants.ts:3
-    // export const ListingGlobalStateKeyPrice = 'price'
-    intc_0 // 0
-    bytec 4 // "price"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:302-310
-    // assertMatch(
-    //   payment,
-    //   {
-    //     sender: Global.creatorAddress,
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: this.price.value,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    ==
-    bz purchase_bool_false@10
-    intc_1 // 1
-
-purchase_bool_merge@11:
-    // smart_contracts/marketplace/listing.algo.ts:302-310
-    // assertMatch(
-    //   payment,
-    //   {
-    //     sender: Global.creatorAddress,
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: this.price.value,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    assert // Invalid payment
-    // smart_contracts/marketplace/listing.algo.ts:312
-    // this.transferPurchaseToBuyer(buyer.native)
+    &&
     frame_dig -3
-    callsub transferPurchaseToBuyer
-    // smart_contracts/marketplace/constants.ts:3
-    // export const ListingGlobalStateKeyPrice = 'price'
+    gtxns Amount
+    // smart_contracts/marketplace/listing.algo.ts:22
+    // price = GlobalState<uint64>({ key: ListingGlobalStateKeyPrice })
     intc_0 // 0
     bytec 4 // "price"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:118
+    // smart_contracts/marketplace/listing.algo.ts:288-296
+    // assertMatch(
+    //   payment,
+    //   {
+    //     sender: Global.creatorAddress,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.price.value,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    &&
+    assert // Invalid payment
+    // smart_contracts/marketplace/listing.algo.ts:298
+    // this.transferPurchaseToBuyer(buyer.native)
+    frame_dig -2
+    callsub transferPurchaseToBuyer
+    // smart_contracts/marketplace/listing.algo.ts:22
+    // price = GlobalState<uint64>({ key: ListingGlobalStateKeyPrice })
+    intc_0 // 0
+    bytec 4 // "price"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/marketplace/listing.algo.ts:114
     // const amounts = this.getAmounts(this.price.value)
     callsub getAmounts
-    cover 3
-    cover 2
-    pop
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     intc_0 // 0
     bytec_3 // "prize"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:124
+    // smart_contracts/marketplace/listing.algo.ts:119
+    // amount: amounts.creator,
+    dig 1
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:120
     // receiver: assetPrize.creator,
-    dup
+    dig 1
     asset_params_get AssetCreator
     assert // asset exists
-    // smart_contracts/marketplace/constants.ts:6
-    // export const ListingGlobalStateKeyMarketplace = 'marketplace'
+    // smart_contracts/marketplace/listing.algo.ts:125
+    // amount: amounts.marketplace,
+    dig 3
+    intc_3 // 16
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:45
+    // marketplace = GlobalState<Account>({ key: ListingGlobalStateKeyMarketplace })
     intc_0 // 0
     bytec 7 // "marketplace"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:146
+    // smart_contracts/marketplace/listing.algo.ts:137
+    // amount: amounts.seller,
+    uncover 5
+    pushint 24 // 24
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:138
     // note: String(assetPrize.name) + ' Sold',
-    uncover 2
+    uncover 5
     asset_params_get AssetName
     assert // asset exists
     pushbytes " Sold"
     concat
-    // smart_contracts/marketplace/listing.algo.ts:149
+    // smart_contracts/marketplace/listing.algo.ts:141
     // itxn.submitGroup(creatorPay, marketplacePay, buyingMarketplacePay, sellerPay)
     itxn_begin
-    uncover 2
+    uncover 4
     itxn_field Receiver
-    uncover 2
+    uncover 4
     itxn_field Amount
-    // smart_contracts/marketplace/listing.algo.ts:122-126
+    // smart_contracts/marketplace/listing.algo.ts:118-121
     // const creatorPay = itxn.payment({
     //   amount: amounts.creator,
     //   receiver: assetPrize.creator,
-    //   fee,
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:149
+    // smart_contracts/marketplace/listing.algo.ts:141
     // itxn.submitGroup(creatorPay, marketplacePay, buyingMarketplacePay, sellerPay)
     itxn_next
-    swap
+    uncover 2
     itxn_field Receiver
-    dig 1
+    dig 2
     itxn_field Amount
-    // smart_contracts/marketplace/listing.algo.ts:129-133
+    // smart_contracts/marketplace/listing.algo.ts:124-127
     // const marketplacePay = itxn.payment({
     //   amount: amounts.marketplace,
     //   receiver: this.marketplace.value,
-    //   fee,
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:149
+    // smart_contracts/marketplace/listing.algo.ts:141
     // itxn.submitGroup(creatorPay, marketplacePay, buyingMarketplacePay, sellerPay)
     itxn_next
-    frame_dig -2
+    frame_dig -1
     itxn_field Receiver
-    swap
+    uncover 2
     itxn_field Amount
-    // smart_contracts/marketplace/listing.algo.ts:136-140
+    // smart_contracts/marketplace/listing.algo.ts:130-133
     // const buyingMarketplacePay = itxn.payment({
     //   amount: amounts.marketplace,
     //   receiver: marketplace.native,
-    //   fee,
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:149
+    // smart_contracts/marketplace/listing.algo.ts:141
     // itxn.submitGroup(creatorPay, marketplacePay, buyingMarketplacePay, sellerPay)
     itxn_next
     itxn_field Note
     itxn_field Amount
-    // smart_contracts/marketplace/listing.algo.ts:143-147
+    // smart_contracts/marketplace/listing.algo.ts:136-139
     // const sellerPay = itxn.payment({
     //   amount: amounts.seller,
-    //   fee,
     //   note: String(assetPrize.name) + ' Sold',
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:149
+    // smart_contracts/marketplace/listing.algo.ts:141
     // itxn.submitGroup(creatorPay, marketplacePay, buyingMarketplacePay, sellerPay)
     itxn_submit
     retsub
-
-purchase_bool_false@10:
-    intc_0 // 0
-    b purchase_bool_merge@11
 
 purchase_bool_false@3:
     intc_0 // 0
     b purchase_bool_merge@4
 
 
-// smart_contracts/marketplace/listing.algo.ts::Listing.purchaseAsa(assetXfer: uint64, buyer: bytes, marketplace: bytes, args: bytes) -> void:
+// smart_contracts/marketplace/listing.algo.ts::Listing.purchaseAsa(assetXfer: uint64, buyer: bytes, marketplace: bytes) -> void:
 purchaseAsa:
-    // smart_contracts/marketplace/listing.algo.ts:324-330
+    // smart_contracts/marketplace/listing.algo.ts:310-315
     // @abimethod({ OnCompleteAction: 'DeleteApplication' })
     // purchaseAsa(
     //   assetXfer: gtxn.AssetTransferTxn,
     //   buyer: Address,
-    //   marketplace: Address,
-    //   args: GateArgs
+    //   marketplace: Address
     // ): void {
-    proto 4 0
-    pushbytes ""
-    dup
-    // smart_contracts/marketplace/listing.algo.ts:331
+    proto 3 0
+    intc_0 // 0
+    // smart_contracts/marketplace/listing.algo.ts:316
     // assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
     txn Sender
     global CreatorAddress
     ==
     assert // must be called from the factory
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:332
+    // smart_contracts/marketplace/listing.algo.ts:317
     // assert(this.paymentAsset.value.id !== 0, ERR_PAYMENT_ASSET_MUST_NOT_BE_ALGO)
     assert // payment asset must not be algo
-    // smart_contracts/marketplace/constants.ts:9
-    // export const ListingGlobalStateKeyExpiration = 'expiration'
+    // smart_contracts/marketplace/listing.algo.ts:26
+    // expiration = GlobalState<uint64>({ key: ListingGlobalStateKeyExpiration })
     intc_0 // 0
     bytec 5 // "expiration"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:333
+    // smart_contracts/marketplace/listing.algo.ts:318
     // assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
     bz purchaseAsa_bool_true@2
-    // smart_contracts/marketplace/constants.ts:9
-    // export const ListingGlobalStateKeyExpiration = 'expiration'
+    // smart_contracts/marketplace/listing.algo.ts:26
+    // expiration = GlobalState<uint64>({ key: ListingGlobalStateKeyExpiration })
     intc_0 // 0
     bytec 5 // "expiration"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:333
+    // smart_contracts/marketplace/listing.algo.ts:318
     // assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
     global LatestTimestamp
     >
@@ -1559,446 +1310,378 @@ purchaseAsa_bool_true@2:
     intc_1 // 1
 
 purchaseAsa_bool_merge@4:
-    // smart_contracts/marketplace/listing.algo.ts:333
+    // smart_contracts/marketplace/listing.algo.ts:318
     // assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
     assert // listing expired
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:11
-    // export const ListingGlobalStateKeyGateID = 'gate_id'
-    intc_0 // 0
-    bytec 13 // "gate_id"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:334
-    // assert(gateCheck(this.akitaDAO.value, buyer, this.gateID.value, args), ERR_FAILED_GATE)
-    frame_dig -3
-    swap
-    frame_dig -1
-    callsub gateCheck
-    assert // Gate check failed
-    // smart_contracts/marketplace/constants.ts:10
-    // export const ListingGlobalStateKeyReservedFor = 'reserved_for'
+    // smart_contracts/marketplace/listing.algo.ts:30
+    // reservedFor = GlobalState<Address>({ key: ListingGlobalStateKeyReservedFor })
     intc_0 // 0
     bytec 6 // "reserved_for"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:336
+    // smart_contracts/marketplace/listing.algo.ts:320
     // if (this.reservedFor.value.native !== Global.zeroAddress) {
     global ZeroAddress
     !=
     bz purchaseAsa_after_if_else@6
-    // smart_contracts/marketplace/constants.ts:10
-    // export const ListingGlobalStateKeyReservedFor = 'reserved_for'
+    // smart_contracts/marketplace/listing.algo.ts:30
+    // reservedFor = GlobalState<Address>({ key: ListingGlobalStateKeyReservedFor })
     intc_0 // 0
     bytec 6 // "reserved_for"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:337
+    // smart_contracts/marketplace/listing.algo.ts:321
     // assert(buyer === this.reservedFor.value, ERR_RESERVED_FOR_DIFFERENT_ADDRESS)
-    frame_dig -3
+    frame_dig -2
     ==
     assert // reserved for different address
 
 purchaseAsa_after_if_else@6:
-    // smart_contracts/marketplace/listing.algo.ts:340-348
+    // smart_contracts/marketplace/listing.algo.ts:324-331
     // assertMatch(
     //   assetXfer,
     //   {
-    //     sender: Global.creatorAddress,
     //     assetReceiver: Global.currentApplicationAddress,
     //     assetAmount: this.price.value,
     //   },
     //   ERR_INVALID_TRANSFER
     // )
-    frame_dig -4
-    gtxns Sender
-    // smart_contracts/marketplace/listing.algo.ts:343
-    // sender: Global.creatorAddress,
-    global CreatorAddress
-    // smart_contracts/marketplace/listing.algo.ts:340-348
-    // assertMatch(
-    //   assetXfer,
-    //   {
-    //     sender: Global.creatorAddress,
-    //     assetReceiver: Global.currentApplicationAddress,
-    //     assetAmount: this.price.value,
-    //   },
-    //   ERR_INVALID_TRANSFER
-    // )
-    ==
-    bz purchaseAsa_bool_false@10
-    frame_dig -4
+    frame_dig -3
     gtxns AssetReceiver
-    // smart_contracts/marketplace/listing.algo.ts:344
+    // smart_contracts/marketplace/listing.algo.ts:327
     // assetReceiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/marketplace/listing.algo.ts:340-348
+    // smart_contracts/marketplace/listing.algo.ts:324-331
     // assertMatch(
     //   assetXfer,
     //   {
-    //     sender: Global.creatorAddress,
     //     assetReceiver: Global.currentApplicationAddress,
     //     assetAmount: this.price.value,
     //   },
     //   ERR_INVALID_TRANSFER
     // )
     ==
-    bz purchaseAsa_bool_false@10
-    frame_dig -4
-    gtxns AssetAmount
-    // smart_contracts/marketplace/constants.ts:3
-    // export const ListingGlobalStateKeyPrice = 'price'
-    intc_0 // 0
-    bytec 4 // "price"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:340-348
-    // assertMatch(
-    //   assetXfer,
-    //   {
-    //     sender: Global.creatorAddress,
-    //     assetReceiver: Global.currentApplicationAddress,
-    //     assetAmount: this.price.value,
-    //   },
-    //   ERR_INVALID_TRANSFER
-    // )
-    ==
-    bz purchaseAsa_bool_false@10
-    intc_1 // 1
-
-purchaseAsa_bool_merge@11:
-    // smart_contracts/marketplace/listing.algo.ts:340-348
-    // assertMatch(
-    //   assetXfer,
-    //   {
-    //     sender: Global.creatorAddress,
-    //     assetReceiver: Global.currentApplicationAddress,
-    //     assetAmount: this.price.value,
-    //   },
-    //   ERR_INVALID_TRANSFER
-    // )
-    assert // Invalid transfer
-    // smart_contracts/marketplace/listing.algo.ts:350
-    // this.transferPurchaseToBuyer(buyer.native)
     frame_dig -3
-    callsub transferPurchaseToBuyer
-    // smart_contracts/marketplace/constants.ts:3
-    // export const ListingGlobalStateKeyPrice = 'price'
+    gtxns AssetAmount
+    // smart_contracts/marketplace/listing.algo.ts:22
+    // price = GlobalState<uint64>({ key: ListingGlobalStateKeyPrice })
     intc_0 // 0
     bytec 4 // "price"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:154
+    // smart_contracts/marketplace/listing.algo.ts:324-331
+    // assertMatch(
+    //   assetXfer,
+    //   {
+    //     assetReceiver: Global.currentApplicationAddress,
+    //     assetAmount: this.price.value,
+    //   },
+    //   ERR_INVALID_TRANSFER
+    // )
+    ==
+    &&
+    assert // Invalid transfer
+    // smart_contracts/marketplace/listing.algo.ts:333
+    // this.transferPurchaseToBuyer(buyer.native)
+    frame_dig -2
+    callsub transferPurchaseToBuyer
+    // smart_contracts/marketplace/listing.algo.ts:22
+    // price = GlobalState<uint64>({ key: ListingGlobalStateKeyPrice })
+    intc_0 // 0
+    bytec 4 // "price"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/marketplace/listing.algo.ts:146
     // const amounts = this.getAmounts(this.price.value)
     callsub getAmounts
-    frame_bury 1
     frame_bury 0
-    pop
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     intc_0 // 0
     bytec_3 // "prize"
     app_global_get_ex
     swap
     dup
-    cover 2
-    cover 3
+    uncover 2
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:158
+    // smart_contracts/marketplace/listing.algo.ts:150
     // if (assetPrize.creator.isOptedIn(this.paymentAsset.value)) {
     asset_params_get AssetCreator
     assert // asset exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:158
+    // smart_contracts/marketplace/listing.algo.ts:150
     // if (assetPrize.creator.isOptedIn(this.paymentAsset.value)) {
     asset_holding_get AssetBalance
     bury 1
-    bz purchaseAsa_else_body@14
-    // smart_contracts/marketplace/listing.algo.ts:159-166
+    bz purchaseAsa_else_body@9
+    // smart_contracts/marketplace/listing.algo.ts:151-157
     // itxn
     //   .assetTransfer({
     //     assetReceiver: assetPrize.creator,
     //     assetAmount: amounts.creator,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/marketplace/listing.algo.ts:161
+    // smart_contracts/marketplace/listing.algo.ts:153
     // assetReceiver: assetPrize.creator,
-    swap
     asset_params_get AssetCreator
     assert // asset exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:154
+    // assetAmount: amounts.creator,
+    frame_dig 0
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
-    itxn_field AssetReceiver
     itxn_field AssetAmount
-    // smart_contracts/marketplace/listing.algo.ts:159-165
+    itxn_field AssetReceiver
+    // smart_contracts/marketplace/listing.algo.ts:151-156
     // itxn
     //   .assetTransfer({
     //     assetReceiver: assetPrize.creator,
     //     assetAmount: amounts.creator,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:159-166
+    // smart_contracts/marketplace/listing.algo.ts:151-157
     // itxn
     //   .assetTransfer({
     //     assetReceiver: assetPrize.creator,
     //     assetAmount: amounts.creator,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_submit
 
-purchaseAsa_after_if_else@15:
-    // smart_contracts/marketplace/constants.ts:6
-    // export const ListingGlobalStateKeyMarketplace = 'marketplace'
+purchaseAsa_after_if_else@10:
+    // smart_contracts/marketplace/listing.algo.ts:45
+    // marketplace = GlobalState<Account>({ key: ListingGlobalStateKeyMarketplace })
     intc_0 // 0
     bytec 7 // "marketplace"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:178
+    // smart_contracts/marketplace/listing.algo.ts:169
     // if (this.marketplace.value.isOptedIn(this.paymentAsset.value)) {
     asset_holding_get AssetBalance
     bury 1
-    bz purchaseAsa_else_body@17
-    // smart_contracts/marketplace/listing.algo.ts:179-186
+    bz purchaseAsa_else_body@12
+    // smart_contracts/marketplace/listing.algo.ts:170-176
     // itxn
     //   .assetTransfer({
     //     assetReceiver: this.marketplace.value,
     //     assetAmount: amounts.marketplace,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/marketplace/constants.ts:6
-    // export const ListingGlobalStateKeyMarketplace = 'marketplace'
+    // smart_contracts/marketplace/listing.algo.ts:45
+    // marketplace = GlobalState<Account>({ key: ListingGlobalStateKeyMarketplace })
     intc_0 // 0
     bytec 7 // "marketplace"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:173
+    // assetAmount: amounts.marketplace,
+    frame_dig 0
+    intc_3 // 16
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
-    frame_dig 0
     itxn_field AssetAmount
     itxn_field AssetReceiver
-    // smart_contracts/marketplace/listing.algo.ts:179-185
+    // smart_contracts/marketplace/listing.algo.ts:170-175
     // itxn
     //   .assetTransfer({
     //     assetReceiver: this.marketplace.value,
     //     assetAmount: amounts.marketplace,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:179-186
+    // smart_contracts/marketplace/listing.algo.ts:170-176
     // itxn
     //   .assetTransfer({
     //     assetReceiver: this.marketplace.value,
     //     assetAmount: amounts.marketplace,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_submit
 
-purchaseAsa_after_if_else@18:
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+purchaseAsa_after_if_else@13:
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:198
+    // smart_contracts/marketplace/listing.algo.ts:188
     // if (marketplace.native.isOptedIn(this.paymentAsset.value)) {
-    frame_dig -2
+    frame_dig -1
     swap
     asset_holding_get AssetBalance
     bury 1
-    bz purchaseAsa_else_body@20
-    // smart_contracts/marketplace/listing.algo.ts:199-206
+    bz purchaseAsa_else_body@15
+    // smart_contracts/marketplace/listing.algo.ts:189-195
     // itxn
     //   .assetTransfer({
     //     assetReceiver: marketplace.native,
     //     assetAmount: amounts.marketplace,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:192
+    // assetAmount: amounts.marketplace,
+    frame_dig 0
+    intc_3 // 16
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
-    frame_dig 0
     itxn_field AssetAmount
-    frame_dig -2
+    frame_dig -1
     itxn_field AssetReceiver
-    // smart_contracts/marketplace/listing.algo.ts:199-205
+    // smart_contracts/marketplace/listing.algo.ts:189-194
     // itxn
     //   .assetTransfer({
     //     assetReceiver: marketplace.native,
     //     assetAmount: amounts.marketplace,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:199-206
+    // smart_contracts/marketplace/listing.algo.ts:189-195
     // itxn
     //   .assetTransfer({
     //     assetReceiver: marketplace.native,
     //     assetAmount: amounts.marketplace,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_submit
 
-purchaseAsa_after_if_else@21:
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+purchaseAsa_after_if_else@16:
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:218
+    // smart_contracts/marketplace/listing.algo.ts:207
     // if (this.seller.value.isOptedIn(this.paymentAsset.value)) {
     asset_holding_get AssetBalance
     bury 1
-    bz purchaseAsa_else_body@23
-    // smart_contracts/marketplace/listing.algo.ts:219-225
+    bz purchaseAsa_else_body@18
+    // smart_contracts/marketplace/listing.algo.ts:208-213
     // itxn
     //   .assetTransfer({
     //     assetCloseTo: this.seller.value,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
     itxn_field AssetCloseTo
-    // smart_contracts/marketplace/listing.algo.ts:219-224
+    // smart_contracts/marketplace/listing.algo.ts:208-212
     // itxn
     //   .assetTransfer({
     //     assetCloseTo: this.seller.value,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:219-225
+    // smart_contracts/marketplace/listing.algo.ts:208-213
     // itxn
     //   .assetTransfer({
     //     assetCloseTo: this.seller.value,
     //     xferAsset: this.paymentAsset.value,
-    //     fee,
     //   })
     //   .submit()
     itxn_submit
     retsub
 
-purchaseAsa_else_body@23:
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+purchaseAsa_else_body@18:
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:227-233
-    // arc59OptInAndSend(
-    //   this.akitaDAO.value,
-    //   new Address(this.seller.value),
-    //   this.paymentAsset.value.id,
-    //   amounts.seller,
-    //   true
-    // )
-    frame_dig 1
-    // smart_contracts/marketplace/listing.algo.ts:232
+    // smart_contracts/marketplace/listing.algo.ts:219
+    // amounts.seller,
+    frame_dig 0
+    pushint 24 // 24
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:220
     // true
     intc_1 // 1
-    // smart_contracts/marketplace/listing.algo.ts:227-233
+    // smart_contracts/marketplace/listing.algo.ts:215-221
     // arc59OptInAndSend(
     //   this.akitaDAO.value,
     //   new Address(this.seller.value),
@@ -2009,20 +1692,25 @@ purchaseAsa_else_body@23:
     callsub arc59OptInAndSend
     retsub
 
-purchaseAsa_else_body@20:
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+purchaseAsa_else_body@15:
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:208-214
+    // smart_contracts/marketplace/listing.algo.ts:201
+    // amounts.marketplace,
+    frame_dig 0
+    intc_3 // 16
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:197-203
     // arc59OptInAndSend(
     //   this.akitaDAO.value,
     //   marketplace,
@@ -2030,13 +1718,14 @@ purchaseAsa_else_body@20:
     //   amounts.marketplace,
     //   false
     // )
-    frame_dig -2
-    swap
-    frame_dig 0
-    // smart_contracts/marketplace/listing.algo.ts:213
+    uncover 2
+    frame_dig -1
+    uncover 3
+    uncover 3
+    // smart_contracts/marketplace/listing.algo.ts:202
     // false
     intc_0 // 0
-    // smart_contracts/marketplace/listing.algo.ts:208-214
+    // smart_contracts/marketplace/listing.algo.ts:197-203
     // arc59OptInAndSend(
     //   this.akitaDAO.value,
     //   marketplace,
@@ -2045,40 +1734,36 @@ purchaseAsa_else_body@20:
     //   false
     // )
     callsub arc59OptInAndSend
-    b purchaseAsa_after_if_else@21
+    b purchaseAsa_after_if_else@16
 
-purchaseAsa_else_body@17:
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+purchaseAsa_else_body@12:
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:6
-    // export const ListingGlobalStateKeyMarketplace = 'marketplace'
+    // smart_contracts/marketplace/listing.algo.ts:45
+    // marketplace = GlobalState<Account>({ key: ListingGlobalStateKeyMarketplace })
     intc_0 // 0
     bytec 7 // "marketplace"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:188-194
-    // arc59OptInAndSend(
-    //   this.akitaDAO.value,
-    //   new Address(this.marketplace.value),
-    //   this.paymentAsset.value.id,
-    //   amounts.marketplace,
-    //   false
-    // )
+    // smart_contracts/marketplace/listing.algo.ts:182
+    // amounts.marketplace,
     frame_dig 0
-    // smart_contracts/marketplace/listing.algo.ts:193
+    intc_3 // 16
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:183
     // false
     intc_0 // 0
-    // smart_contracts/marketplace/listing.algo.ts:188-194
+    // smart_contracts/marketplace/listing.algo.ts:178-184
     // arc59OptInAndSend(
     //   this.akitaDAO.value,
     //   new Address(this.marketplace.value),
@@ -2087,39 +1772,35 @@ purchaseAsa_else_body@17:
     //   false
     // )
     callsub arc59OptInAndSend
-    b purchaseAsa_after_if_else@18
+    b purchaseAsa_after_if_else@13
 
-purchaseAsa_else_body@14:
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+purchaseAsa_else_body@9:
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:170
+    // smart_contracts/marketplace/listing.algo.ts:161
     // new Address(assetPrize.creator),
-    uncover 2
+    swap
     asset_params_get AssetCreator
     assert // asset exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:168-174
-    // arc59OptInAndSend(
-    //   this.akitaDAO.value,
-    //   new Address(assetPrize.creator),
-    //   this.paymentAsset.value.id,
-    //   amounts.creator,
-    //   false
-    // )
-    uncover 3
-    // smart_contracts/marketplace/listing.algo.ts:173
+    // smart_contracts/marketplace/listing.algo.ts:163
+    // amounts.creator,
+    frame_dig 0
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/marketplace/listing.algo.ts:164
     // false
     intc_0 // 0
-    // smart_contracts/marketplace/listing.algo.ts:168-174
+    // smart_contracts/marketplace/listing.algo.ts:159-165
     // arc59OptInAndSend(
     //   this.akitaDAO.value,
     //   new Address(assetPrize.creator),
@@ -2128,11 +1809,7 @@ purchaseAsa_else_body@14:
     //   false
     // )
     callsub arc59OptInAndSend
-    b purchaseAsa_after_if_else@15
-
-purchaseAsa_bool_false@10:
-    intc_0 // 0
-    b purchaseAsa_bool_merge@11
+    b purchaseAsa_after_if_else@10
 
 purchaseAsa_bool_false@3:
     intc_0 // 0
@@ -2141,18 +1818,18 @@ purchaseAsa_bool_false@3:
 
 // smart_contracts/marketplace/listing.algo.ts::Listing.delist(caller: bytes) -> void:
 delist:
-    // smart_contracts/marketplace/listing.algo.ts:355-356
+    // smart_contracts/marketplace/listing.algo.ts:338-339
     // @abimethod({ allowActions: 'DeleteApplication' })
     // delist(caller: Address): void {
     proto 1 0
-    // smart_contracts/marketplace/listing.algo.ts:357
+    // smart_contracts/marketplace/listing.algo.ts:340
     // assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
     txn Sender
     global CreatorAddress
     ==
     assert // must be called from the factory
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
@@ -2160,140 +1837,121 @@ delist:
     dup
     uncover 2
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:358
+    // smart_contracts/marketplace/listing.algo.ts:341
     // assert(this.seller.value === caller.native, ERR_ONLY_SELLER_CAN_DELIST)
     frame_dig -1
     ==
     assert // only the seller can delist
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     intc_0 // 0
     bytec_3 // "prize"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:371
+    // smart_contracts/marketplace/listing.algo.ts:352
     // if (!(this.paymentAsset.value.id === 0)) {
     bz delist_else_body@11
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:4
-    // export const ListingGlobalStateKeyPaymentAsset = 'payment_asset'
+    // smart_contracts/marketplace/listing.algo.ts:24
+    // paymentAsset = GlobalState<Asset>({ key: ListingGlobalStateKeyPaymentAsset })
     intc_0 // 0
     bytec_0 // "payment_asset"
     app_global_get_ex
     swap
     cover 2
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:2
-    // export const ListingGlobalStateKeyIsPrizeBox = 'is_prize_box'
+    // smart_contracts/marketplace/listing.algo.ts:20
+    // isPrizeBox = GlobalState<boolean>({ key: ListingGlobalStateKeyIsPrizeBox })
     intc_0 // 0
-    bytec 9 // "is_prize_box"
+    bytec 8 // "is_prize_box"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:379
+    // smart_contracts/marketplace/listing.algo.ts:359
     // if (this.isPrizeBox.value) {
     bz delist_else_body@6
-    // smart_contracts/marketplace/listing.algo.ts:380-387
+    // smart_contracts/marketplace/listing.algo.ts:360-366
     // abiCall(
     //   PrizeBox.prototype.transfer,
     //   {
     //     appId: this.prize.value,
     //     args: [new Address(this.seller.value)],
-    //     fee,
     //   }
     // )
     itxn_begin
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     intc_0 // 0
     bytec_3 // "prize"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:380-387
+    // smart_contracts/marketplace/listing.algo.ts:360-366
     // abiCall(
     //   PrizeBox.prototype.transfer,
     //   {
     //     appId: this.prize.value,
     //     args: [new Address(this.seller.value)],
-    //     fee,
     //   }
     // )
-    bytec 12 // method "transfer(address)void"
+    bytec 12 // method "transfer(byte[32])void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:380-387
-    // abiCall(
-    //   PrizeBox.prototype.transfer,
-    //   {
-    //     appId: this.prize.value,
-    //     args: [new Address(this.seller.value)],
-    //     fee,
-    //   }
-    // )
     itxn_submit
-    // smart_contracts/marketplace/listing.algo.ts:388
+    // smart_contracts/marketplace/listing.algo.ts:367
     // itxn.submitGroup(paymentAssetTransfer, payment)
     itxn_begin
     itxn_field AssetCloseTo
     itxn_field XferAsset
-    // smart_contracts/marketplace/listing.algo.ts:373-377
+    // smart_contracts/marketplace/listing.algo.ts:354-357
     // const paymentAssetTransfer = itxn.assetTransfer({
     //   assetCloseTo: this.seller.value,
     //   xferAsset: this.paymentAsset.value,
-    //   fee,
     // })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:388
+    // smart_contracts/marketplace/listing.algo.ts:367
     // itxn.submitGroup(paymentAssetTransfer, payment)
     itxn_next
     frame_dig 0
     itxn_field CloseRemainderTo
-    // smart_contracts/marketplace/listing.algo.ts:366-369
+    // smart_contracts/marketplace/listing.algo.ts:348-350
     // const payment = itxn.payment({
     //   closeRemainderTo: this.seller.value,
-    //   fee,
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:388
+    // smart_contracts/marketplace/listing.algo.ts:367
     // itxn.submitGroup(paymentAssetTransfer, payment)
     itxn_submit
     retsub
 
 delist_else_body@6:
-    // smart_contracts/marketplace/listing.algo.ts:390
+    // smart_contracts/marketplace/listing.algo.ts:369
     // itxn.submitGroup(assetTransfer, paymentAssetTransfer, payment)
     itxn_begin
     frame_dig 1
@@ -2301,141 +1959,116 @@ delist_else_body@6:
     frame_dig 0
     dup
     itxn_field AssetCloseTo
-    // smart_contracts/marketplace/listing.algo.ts:360-364
+    // smart_contracts/marketplace/listing.algo.ts:343-346
     // const assetTransfer = itxn.assetTransfer({
     //   assetCloseTo: this.seller.value,
     //   xferAsset: this.prize.value,
-    //   fee,
     // })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:390
+    // smart_contracts/marketplace/listing.algo.ts:369
     // itxn.submitGroup(assetTransfer, paymentAssetTransfer, payment)
     itxn_next
     uncover 2
     itxn_field XferAsset
     swap
     itxn_field AssetCloseTo
-    // smart_contracts/marketplace/listing.algo.ts:373-377
+    // smart_contracts/marketplace/listing.algo.ts:354-357
     // const paymentAssetTransfer = itxn.assetTransfer({
     //   assetCloseTo: this.seller.value,
     //   xferAsset: this.paymentAsset.value,
-    //   fee,
     // })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:390
+    // smart_contracts/marketplace/listing.algo.ts:369
     // itxn.submitGroup(assetTransfer, paymentAssetTransfer, payment)
     itxn_next
     itxn_field CloseRemainderTo
-    // smart_contracts/marketplace/listing.algo.ts:366-369
+    // smart_contracts/marketplace/listing.algo.ts:348-350
     // const payment = itxn.payment({
     //   closeRemainderTo: this.seller.value,
-    //   fee,
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:390
+    // smart_contracts/marketplace/listing.algo.ts:369
     // itxn.submitGroup(assetTransfer, paymentAssetTransfer, payment)
     itxn_submit
     retsub
 
 delist_else_body@11:
-    // smart_contracts/marketplace/constants.ts:2
-    // export const ListingGlobalStateKeyIsPrizeBox = 'is_prize_box'
+    // smart_contracts/marketplace/listing.algo.ts:20
+    // isPrizeBox = GlobalState<boolean>({ key: ListingGlobalStateKeyIsPrizeBox })
     intc_0 // 0
-    bytec 9 // "is_prize_box"
+    bytec 8 // "is_prize_box"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:393
+    // smart_contracts/marketplace/listing.algo.ts:372
     // if (this.isPrizeBox.value) {
     bz delist_else_body@15
-    // smart_contracts/marketplace/listing.algo.ts:394-401
+    // smart_contracts/marketplace/listing.algo.ts:373-379
     // abiCall(
     //   PrizeBox.prototype.transfer,
     //   {
     //     appId: this.prize.value,
     //     args: [new Address(this.seller.value)],
-    //     fee,
     //   }
     // )
     itxn_begin
-    // smart_contracts/marketplace/constants.ts:1
-    // export const ListingGlobalStateKeyPrize = 'prize'
+    // smart_contracts/marketplace/listing.algo.ts:18
+    // prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
     intc_0 // 0
     bytec_3 // "prize"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:394-401
+    // smart_contracts/marketplace/listing.algo.ts:373-379
     // abiCall(
     //   PrizeBox.prototype.transfer,
     //   {
     //     appId: this.prize.value,
     //     args: [new Address(this.seller.value)],
-    //     fee,
     //   }
     // )
-    bytec 12 // method "transfer(address)void"
+    bytec 12 // method "transfer(byte[32])void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:394-401
-    // abiCall(
-    //   PrizeBox.prototype.transfer,
-    //   {
-    //     appId: this.prize.value,
-    //     args: [new Address(this.seller.value)],
-    //     fee,
-    //   }
-    // )
     itxn_submit
-    // smart_contracts/marketplace/listing.algo.ts:402
+    // smart_contracts/marketplace/listing.algo.ts:380
     // payment.submit()
     itxn_begin
     frame_dig 0
     itxn_field CloseRemainderTo
-    // smart_contracts/marketplace/listing.algo.ts:366-369
+    // smart_contracts/marketplace/listing.algo.ts:348-350
     // const payment = itxn.payment({
     //   closeRemainderTo: this.seller.value,
-    //   fee,
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:402
+    // smart_contracts/marketplace/listing.algo.ts:380
     // payment.submit()
     itxn_submit
     retsub
 
 delist_else_body@15:
-    // smart_contracts/marketplace/listing.algo.ts:404
+    // smart_contracts/marketplace/listing.algo.ts:382
     // itxn.submitGroup(assetTransfer, payment)
     itxn_begin
     frame_dig 1
@@ -2443,34 +2076,28 @@ delist_else_body@15:
     frame_dig 0
     dup
     itxn_field AssetCloseTo
-    // smart_contracts/marketplace/listing.algo.ts:360-364
+    // smart_contracts/marketplace/listing.algo.ts:343-346
     // const assetTransfer = itxn.assetTransfer({
     //   assetCloseTo: this.seller.value,
     //   xferAsset: this.prize.value,
-    //   fee,
     // })
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:404
+    // smart_contracts/marketplace/listing.algo.ts:382
     // itxn.submitGroup(assetTransfer, payment)
     itxn_next
     itxn_field CloseRemainderTo
-    // smart_contracts/marketplace/listing.algo.ts:366-369
+    // smart_contracts/marketplace/listing.algo.ts:348-350
     // const payment = itxn.payment({
     //   closeRemainderTo: this.seller.value,
-    //   fee,
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/marketplace/listing.algo.ts:404
+    // smart_contracts/marketplace/listing.algo.ts:382
     // itxn.submitGroup(assetTransfer, payment)
     itxn_submit
     retsub
@@ -2478,26 +2105,26 @@ delist_else_body@15:
 
 // smart_contracts/marketplace/listing.algo.ts::Listing.changePrice(price: uint64) -> void:
 changePrice:
-    // smart_contracts/marketplace/listing.algo.ts:409
+    // smart_contracts/marketplace/listing.algo.ts:387
     // changePrice(price: uint64): void {
     proto 1 0
-    // smart_contracts/marketplace/listing.algo.ts:410
+    // smart_contracts/marketplace/listing.algo.ts:388
     // assert(Txn.sender === this.seller.value, ERR_MUST_BE_SELLER)
     txn Sender
-    // smart_contracts/marketplace/constants.ts:5
-    // export const ListingGlobalStateKeySeller = 'seller'
+    // smart_contracts/marketplace/listing.algo.ts:28
+    // seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
     intc_0 // 0
     bytec_2 // "seller"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/marketplace/listing.algo.ts:410
+    // smart_contracts/marketplace/listing.algo.ts:388
     // assert(Txn.sender === this.seller.value, ERR_MUST_BE_SELLER)
     ==
     assert // must be the seller
-    // smart_contracts/marketplace/constants.ts:3
-    // export const ListingGlobalStateKeyPrice = 'price'
+    // smart_contracts/marketplace/listing.algo.ts:22
+    // price = GlobalState<uint64>({ key: ListingGlobalStateKeyPrice })
     bytec 4 // "price"
-    // smart_contracts/marketplace/listing.algo.ts:411
+    // smart_contracts/marketplace/listing.algo.ts:389
     // this.price.value = price
     frame_dig -1
     app_global_put
@@ -2506,29 +2133,29 @@ changePrice:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:20-21
+    // smart_contracts/utils/base-contracts/base.ts:18-19
     // @abimethod({ allowActions: ['UpdateApplication'] })
     // update(newVersion: string): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:22
+    // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:22
+    // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
-    bytec 15 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:23
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec 14 // "version"
+    // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
     frame_dig -1
     app_global_put
@@ -2537,28 +2164,28 @@ update:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:29
+    // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
     bytec_1 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:29
+    // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
     frame_dig -1
     app_global_put
@@ -2567,16 +2194,16 @@ updateAkitaDAO:
 
 // smart_contracts/utils/base-contracts/optin.ts::ContractWithCreatorOnlyOptIn.optin(payment: uint64, asset: uint64) -> void:
 optin:
-    // smart_contracts/utils/base-contracts/optin.ts:51
+    // smart_contracts/utils/base-contracts/optin.ts:50
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     proto 2 0
-    // smart_contracts/utils/base-contracts/optin.ts:52
+    // smart_contracts/utils/base-contracts/optin.ts:51
     // assert(Txn.sender === Global.creatorAddress)
     txn Sender
     global CreatorAddress
     ==
     assert
-    // smart_contracts/utils/base-contracts/optin.ts:54-61
+    // smart_contracts/utils/base-contracts/optin.ts:53-60
     // assertMatch(
     //   payment,
     //   {
@@ -2587,10 +2214,10 @@ optin:
     // )
     frame_dig -2
     gtxns Receiver
-    // smart_contracts/utils/base-contracts/optin.ts:57
+    // smart_contracts/utils/base-contracts/optin.ts:56
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/utils/base-contracts/optin.ts:54-61
+    // smart_contracts/utils/base-contracts/optin.ts:53-60
     // assertMatch(
     //   payment,
     //   {
@@ -2600,13 +2227,12 @@ optin:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz optin_bool_false@3
     frame_dig -2
     gtxns Amount
-    // smart_contracts/utils/base-contracts/optin.ts:58
+    // smart_contracts/utils/base-contracts/optin.ts:57
     // amount: Global.assetOptInMinBalance,
     global AssetOptInMinBalance
-    // smart_contracts/utils/base-contracts/optin.ts:54-61
+    // smart_contracts/utils/base-contracts/optin.ts:53-60
     // assertMatch(
     //   payment,
     //   {
@@ -2616,61 +2242,34 @@ optin:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz optin_bool_false@3
-    intc_1 // 1
-
-optin_bool_merge@4:
-    // smart_contracts/utils/base-contracts/optin.ts:54-61
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: Global.assetOptInMinBalance,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
+    &&
     assert // Invalid payment
-    // smart_contracts/utils/base-contracts/optin.ts:63-68
+    // smart_contracts/utils/base-contracts/optin.ts:62-66
     // itxn.assetTransfer({
     //   assetReceiver: Global.currentApplicationAddress,
     //   assetAmount: 0,
-    //   xferAsset: asset,
-    //   fee: 0,
+    //   xferAsset: asset
     // }).submit()
     itxn_begin
-    // smart_contracts/utils/base-contracts/optin.ts:64
+    // smart_contracts/utils/base-contracts/optin.ts:63
     // assetReceiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
     frame_dig -1
     itxn_field XferAsset
-    // smart_contracts/utils/base-contracts/optin.ts:65
+    // smart_contracts/utils/base-contracts/optin.ts:64
     // assetAmount: 0,
     intc_0 // 0
     itxn_field AssetAmount
     itxn_field AssetReceiver
-    // smart_contracts/utils/base-contracts/optin.ts:63-68
+    // smart_contracts/utils/base-contracts/optin.ts:62-66
     // itxn.assetTransfer({
     //   assetReceiver: Global.currentApplicationAddress,
     //   assetAmount: 0,
-    //   xferAsset: asset,
-    //   fee: 0,
+    //   xferAsset: asset
     // }).submit()
     intc_2 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/base-contracts/optin.ts:67
-    // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/optin.ts:63-68
-    // itxn.assetTransfer({
-    //   assetReceiver: Global.currentApplicationAddress,
-    //   assetAmount: 0,
-    //   xferAsset: asset,
-    //   fee: 0,
-    // }).submit()
     itxn_submit
     retsub
-
-optin_bool_false@3:
-    intc_0 // 0
-    b optin_bool_merge@4

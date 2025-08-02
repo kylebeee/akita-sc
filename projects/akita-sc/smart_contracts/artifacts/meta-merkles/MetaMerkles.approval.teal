@@ -3,9 +3,9 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 1 0 16 20 TMPL_ESCROW_FACTORY 400
+    intcblock 1 0 16 20 400
     bytecblock "" 0x151f7c75 0x0014 "d" 0x0022 "r" "types_id" 0x00066c2e74797065 0x068101
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txn NumAppArgs
     bz main_after_if_else@19
@@ -14,25 +14,25 @@ main:
     match main_create_route@3 main_addRoot_route@4 main_deleteRoot_route@5 main_updateRoot_route@6 main_addData_route@7 main_deleteData_route@8 main_verify_route@9 main_read_route@10 main_verifiedRead_route@11 main_verifiedMustRead_route@12 main_addType_route@13 main_rootCosts_route@14 main_dataCosts_route@15
 
 main_after_if_else@19:
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     intc_1 // 0
     return
 
 main_dataCosts_route@15:
-    // smart_contracts/meta-merkles/contract.algo.ts:479
+    // smart_contracts/meta-merkles/contract.algo.ts:472
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     txna ApplicationArgs 3
-    // smart_contracts/meta-merkles/contract.algo.ts:479
+    // smart_contracts/meta-merkles/contract.algo.ts:472
     // @abimethod({ readonly: true })
     callsub dataCosts
     itob
@@ -44,18 +44,18 @@ main_dataCosts_route@15:
     return
 
 main_rootCosts_route@14:
-    // smart_contracts/meta-merkles/contract.algo.ts:473
+    // smart_contracts/meta-merkles/contract.algo.ts:466
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:473
+    // smart_contracts/meta-merkles/contract.algo.ts:466
     // @abimethod({ readonly: true })
     callsub rootCosts
     itob
@@ -67,14 +67,14 @@ main_rootCosts_route@14:
     return
 
 main_addType_route@13:
-    // smart_contracts/meta-merkles/contract.algo.ts:397
+    // smart_contracts/meta-merkles/contract.algo.ts:390
     // addType(payment: gtxn.PaymentTxn, description: string, schemaList: SchemaList): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txn GroupIndex
     intc_0 // 1
@@ -87,14 +87,14 @@ main_addType_route@13:
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
-    // smart_contracts/meta-merkles/contract.algo.ts:397
+    // smart_contracts/meta-merkles/contract.algo.ts:390
     // addType(payment: gtxn.PaymentTxn, description: string, schemaList: SchemaList): void {
     callsub addType
     intc_0 // 1
     return
 
 main_verifiedMustRead_route@12:
-    // smart_contracts/meta-merkles/contract.algo.ts:385-392
+    // smart_contracts/meta-merkles/contract.algo.ts:378-385
     // verifiedMustRead(
     //   address: Address,
     //   name: string,
@@ -108,7 +108,7 @@ main_verifiedMustRead_route@12:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -119,7 +119,7 @@ main_verifiedMustRead_route@12:
     btoi
     txna ApplicationArgs 6
     extract 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:385-392
+    // smart_contracts/meta-merkles/contract.algo.ts:378-385
     // verifiedMustRead(
     //   address: Address,
     //   name: string,
@@ -143,14 +143,14 @@ main_verifiedMustRead_route@12:
     return
 
 main_verifiedRead_route@11:
-    // smart_contracts/meta-merkles/contract.algo.ts:358
+    // smart_contracts/meta-merkles/contract.algo.ts:351
     // verifiedRead(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64, key: string): string {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -161,7 +161,7 @@ main_verifiedRead_route@11:
     btoi
     txna ApplicationArgs 6
     extract 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:358
+    // smart_contracts/meta-merkles/contract.algo.ts:351
     // verifiedRead(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64, key: string): string {
     callsub verifiedRead
     dup
@@ -178,21 +178,21 @@ main_verifiedRead_route@11:
     return
 
 main_read_route@10:
-    // smart_contracts/meta-merkles/contract.algo.ts:333
+    // smart_contracts/meta-merkles/contract.algo.ts:326
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     extract 2 0
     txna ApplicationArgs 3
     extract 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:333
+    // smart_contracts/meta-merkles/contract.algo.ts:326
     // @abimethod({ readonly: true })
     callsub read
     dup
@@ -209,14 +209,14 @@ main_read_route@10:
     return
 
 main_verify_route@9:
-    // smart_contracts/meta-merkles/contract.algo.ts:300
+    // smart_contracts/meta-merkles/contract.algo.ts:293
     // verify(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64): boolean {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -225,9 +225,10 @@ main_verify_route@9:
     txna ApplicationArgs 4
     txna ApplicationArgs 5
     btoi
-    // smart_contracts/meta-merkles/contract.algo.ts:300
+    // smart_contracts/meta-merkles/contract.algo.ts:293
     // verify(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64): boolean {
     callsub verify
+    pop
     pushbytes 0x00
     intc_1 // 0
     uncover 2
@@ -240,34 +241,34 @@ main_verify_route@9:
     return
 
 main_deleteData_route@8:
-    // smart_contracts/meta-merkles/contract.algo.ts:269
+    // smart_contracts/meta-merkles/contract.algo.ts:264
     // deleteData(name: string, key: string): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:269
+    // smart_contracts/meta-merkles/contract.algo.ts:264
     // deleteData(name: string, key: string): void {
     callsub deleteData
     intc_0 // 1
     return
 
 main_addData_route@7:
-    // smart_contracts/meta-merkles/contract.algo.ts:233
+    // smart_contracts/meta-merkles/contract.algo.ts:229
     // addData(payment: gtxn.PaymentTxn, name: string, key: string, value: string): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txn GroupIndex
     intc_0 // 1
@@ -283,51 +284,51 @@ main_addData_route@7:
     extract 2 0
     txna ApplicationArgs 3
     extract 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:233
+    // smart_contracts/meta-merkles/contract.algo.ts:229
     // addData(payment: gtxn.PaymentTxn, name: string, key: string, value: string): void {
     callsub addData
     intc_0 // 1
     return
 
 main_updateRoot_route@6:
-    // smart_contracts/meta-merkles/contract.algo.ts:217
+    // smart_contracts/meta-merkles/contract.algo.ts:214
     // updateRoot(name: string, newRoot: bytes<32>): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
-    // smart_contracts/meta-merkles/contract.algo.ts:217
+    // smart_contracts/meta-merkles/contract.algo.ts:214
     // updateRoot(name: string, newRoot: bytes<32>): void {
     callsub updateRoot
     intc_0 // 1
     return
 
 main_deleteRoot_route@5:
-    // smart_contracts/meta-merkles/contract.algo.ts:191
+    // smart_contracts/meta-merkles/contract.algo.ts:188
     // deleteRoot(name: string): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:191
+    // smart_contracts/meta-merkles/contract.algo.ts:188
     // deleteRoot(name: string): void {
     callsub deleteRoot
     intc_0 // 1
     return
 
 main_addRoot_route@4:
-    // smart_contracts/meta-merkles/contract.algo.ts:155-160
+    // smart_contracts/meta-merkles/contract.algo.ts:153-158
     // addRoot(
     //   payment: gtxn.PaymentTxn,
     //   name: string,
@@ -339,7 +340,7 @@ main_addRoot_route@4:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/meta-merkles/contract.algo.ts:87
+    // smart_contracts/meta-merkles/contract.algo.ts:85
     // export class MetaMerkles extends Contract implements MetaMerklesInterface {
     txn GroupIndex
     intc_0 // 1
@@ -354,7 +355,7 @@ main_addRoot_route@4:
     txna ApplicationArgs 2
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/meta-merkles/contract.algo.ts:155-160
+    // smart_contracts/meta-merkles/contract.algo.ts:153-158
     // addRoot(
     //   payment: gtxn.PaymentTxn,
     //   name: string,
@@ -366,7 +367,7 @@ main_addRoot_route@4:
     return
 
 main_create_route@3:
-    // smart_contracts/meta-merkles/contract.algo.ts:138
+    // smart_contracts/meta-merkles/contract.algo.ts:136
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -381,10 +382,10 @@ main_create_route@3:
 
 // smart_contracts/utils/types/base.ts::bytes16(v: bytes) -> bytes:
 bytes16:
-    // smart_contracts/utils/types/base.ts:8
+    // smart_contracts/utils/types/base.ts:7
     // export function bytes16(v: bytes) {
     proto 1 1
-    // smart_contracts/utils/types/base.ts:9
+    // smart_contracts/utils/types/base.ts:8
     // return v.slice(0, 16).toFixed({ length: 16 })
     frame_dig -1
     len
@@ -413,126 +414,9 @@ bytes16:
     retsub
 
 
-// smart_contracts/utils/functions.ts::getOrigin(escrowFactory: uint64) -> bytes:
-getOrigin:
-    // smart_contracts/utils/functions.ts:133
-    // export function getOrigin(escrowFactory: uint64): Account {
-    proto 1 1
-    bytec_0 // ""
-    // smart_contracts/utils/functions.ts:117-124
-    // const data = abiCall(
-    //   EscrowFactoryInterface.prototype.get,
-    //   {
-    //     appId: escrowFactory,
-    //     args: [new Address(Txn.sender)],
-    //     fee: 0,
-    //   }
-    // ).returnValue
-    itxn_begin
-    // smart_contracts/utils/functions.ts:121
-    // args: [new Address(Txn.sender)],
-    txn Sender
-    // smart_contracts/utils/functions.ts:117-124
-    // const data = abiCall(
-    //   EscrowFactoryInterface.prototype.get,
-    //   {
-    //     appId: escrowFactory,
-    //     args: [new Address(Txn.sender)],
-    //     fee: 0,
-    //   }
-    // ).returnValue
-    pushbytes 0x3c1a6f33 // method "get(address)byte[]"
-    itxn_field ApplicationArgs
-    itxn_field ApplicationArgs
-    frame_dig -1
-    itxn_field ApplicationID
-    pushint 6 // appl
-    itxn_field TypeEnum
-    // smart_contracts/utils/functions.ts:122
-    // fee: 0,
-    intc_1 // 0
-    itxn_field Fee
-    // smart_contracts/utils/functions.ts:117-124
-    // const data = abiCall(
-    //   EscrowFactoryInterface.prototype.get,
-    //   {
-    //     appId: escrowFactory,
-    //     args: [new Address(Txn.sender)],
-    //     fee: 0,
-    //   }
-    // ).returnValue
-    itxn_submit
-    itxn LastLog
-    dup
-    extract 0 4
-    bytec_1 // 0x151f7c75
-    ==
-    assert // Bytes has valid prefix
-    extract 6 0
-    dup
-    // smart_contracts/utils/functions.ts:126
-    // if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
-    len
-    dup
-    bz getOrigin_if_body@7
-    frame_dig 2
-    pushint 8 // 8
-    !=
-    bz getOrigin_after_if_else@8
-
-getOrigin_if_body@7:
-    // smart_contracts/utils/functions.ts:127
-    // return 0
-    intc_1 // 0
-    frame_bury 0
-
-getOrigin_after_inlined_smart_contracts/utils/functions.ts::walletID@9:
-    // smart_contracts/utils/functions.ts:136
-    // if (wallet === 0) {
-    frame_dig 0
-    bnz getOrigin_after_if_else@2
-    // smart_contracts/utils/functions.ts:137
-    // return Txn.sender
-    txn Sender
-    frame_bury 0
-    retsub
-
-getOrigin_after_if_else@2:
-    // smart_contracts/utils/functions.ts:109-112
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    frame_dig 0
-    // smart_contracts/arc58/account/constants.ts:4
-    // export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
-    pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:109-112
-    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
-    //   walletID,
-    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
-    // )
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/functions.ts:140
-    // return getOriginAccount(Application(wallet))
-    frame_bury 0
-    retsub
-
-getOrigin_after_if_else@8:
-    // smart_contracts/utils/functions.ts:130
-    // return btoi(data)
-    frame_dig 1
-    btoi
-    frame_bury 0
-    // smart_contracts/utils/functions.ts:134
-    // const wallet = walletID(escrowFactory)
-    b getOrigin_after_inlined_smart_contracts/utils/functions.ts::walletID@9
-
-
-// smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr(typeDescription: bytes, schema: bytes, rootName: bytes, dataKey: bytes, dataValue: bytes) -> uint64, uint64, uint64:
+// smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.mbr(typeDescription: bytes, schema: bytes, rootName: bytes, dataKey: bytes, dataValue: bytes) -> bytes:
 mbr:
-    // smart_contracts/meta-merkles/contract.algo.ts:109-115
+    // smart_contracts/meta-merkles/contract.algo.ts:107-113
     // private mbr(
     //   typeDescription: string,
     //   schema: string,
@@ -540,29 +424,29 @@ mbr:
     //   dataKey: string,
     //   dataValue: string
     // ): MetaMerklesMBRData {
-    proto 5 3
-    // smart_contracts/meta-merkles/contract.algo.ts:117
-    // types: 6_100 + (400 * Bytes(typeDescription).length + Bytes(schema).length),
+    proto 5 1
+    // smart_contracts/meta-merkles/contract.algo.ts:115
+    // types: MinTypesMBR + (BoxCostPerByte * Bytes(typeDescription).length + Bytes(schema).length),
     frame_dig -5
     len
-    intc 5 // 400
+    intc 4 // 400
     *
     frame_dig -4
     len
     +
-    pushint 6100 // 6100
+    pushint 9300 // 9300
     +
-    // smart_contracts/meta-merkles/contract.algo.ts:118
-    // roots: 28_500 + (400 * Bytes(rootName).length),
+    // smart_contracts/meta-merkles/contract.algo.ts:116
+    // roots: MinRootsMBR + (BoxCostPerByte * Bytes(rootName).length),
     frame_dig -3
     len
-    intc 5 // 400
+    intc 4 // 400
     dig 1
     *
-    pushint 28500 // 28500
+    pushint 30100 // 30100
     +
-    // smart_contracts/meta-merkles/contract.algo.ts:119
-    // data: 9_300 + (400 * (Bytes(rootName).length + Bytes(dataKey).length + Bytes(dataValue).length)),
+    // smart_contracts/meta-merkles/contract.algo.ts:117
+    // data: MinDataMBR + (BoxCostPerByte * (Bytes(rootName).length + Bytes(dataKey).length + Bytes(dataValue).length)),
     frame_dig -2
     len
     uncover 2
@@ -570,25 +454,33 @@ mbr:
     frame_dig -1
     len
     +
-    intc 5 // 400
+    intc 4 // 400
     *
-    pushint 9300 // 9300
+    pushint 12500 // 12500
     +
-    // smart_contracts/meta-merkles/contract.algo.ts:116-120
+    // smart_contracts/meta-merkles/contract.algo.ts:114-118
     // return {
-    //   types: 6_100 + (400 * Bytes(typeDescription).length + Bytes(schema).length),
-    //   roots: 28_500 + (400 * Bytes(rootName).length),
-    //   data: 9_300 + (400 * (Bytes(rootName).length + Bytes(dataKey).length + Bytes(dataValue).length)),
+    //   types: MinTypesMBR + (BoxCostPerByte * Bytes(typeDescription).length + Bytes(schema).length),
+    //   roots: MinRootsMBR + (BoxCostPerByte * Bytes(rootName).length),
+    //   data: MinDataMBR + (BoxCostPerByte * (Bytes(rootName).length + Bytes(dataKey).length + Bytes(dataValue).length)),
     // }
+    uncover 2
+    itob
+    uncover 2
+    itob
+    concat
+    swap
+    itob
+    concat
     retsub
 
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.create() -> void:
 create:
-    // smart_contracts/meta-merkles/constants.ts:6
-    // export const MetaMerklesGlobalStateKeyTypesID = 'types_id'
+    // smart_contracts/meta-merkles/contract.algo.ts:93
+    // typesID = GlobalState<uint64>({ key: MetaMerklesGlobalStateKeyTypesID })
     bytec 6 // "types_id"
-    // smart_contracts/meta-merkles/contract.algo.ts:140
+    // smart_contracts/meta-merkles/contract.algo.ts:138
     // this.typesID.value = 0
     intc_1 // 0
     app_global_put
@@ -597,7 +489,7 @@ create:
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addRoot(payment: uint64, name: bytes, root: bytes, type: uint64) -> void:
 addRoot:
-    // smart_contracts/meta-merkles/contract.algo.ts:155-160
+    // smart_contracts/meta-merkles/contract.algo.ts:153-158
     // addRoot(
     //   payment: gtxn.PaymentTxn,
     //   name: string,
@@ -605,7 +497,7 @@ addRoot:
     //   type: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/meta-merkles/contract.algo.ts:161
+    // smart_contracts/meta-merkles/contract.algo.ts:159
     // assert(Bytes(name).length <= 31, 'Cannot add root with name longer than 31 bytes')
     frame_dig -3
     len
@@ -613,101 +505,83 @@ addRoot:
     pushint 31 // 31
     <=
     assert // Cannot add root with name longer than 31 bytes
-    // smart_contracts/meta-merkles/contract.algo.ts:162
+    // smart_contracts/meta-merkles/contract.algo.ts:160
     // assert(this.types(type).exists, ERR_NO_TREE_TYPE)
     frame_dig -1
     itob
-    dup
-    cover 2
-    // smart_contracts/meta-merkles/constants.ts:8
-    // export const MetaMerklesBoxPrefixTypes = 't'
+    // smart_contracts/meta-merkles/contract.algo.ts:98
+    // types = BoxMap<uint64, TypesValue>({ keyPrefix: MetaMerklesBoxPrefixTypes })
     pushbytes "t"
-    swap
+    dig 1
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:162
+    // smart_contracts/meta-merkles/contract.algo.ts:160
     // assert(this.types(type).exists, ERR_NO_TREE_TYPE)
     box_len
     bury 1
     assert // tree type does not exist
-    // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
-    intc 4 // TMPL_ESCROW_FACTORY
-    // smart_contracts/meta-merkles/contract.algo.ts:164
-    // const origin = getOrigin(escrowFactory.id)
-    callsub getOrigin
-    // smart_contracts/meta-merkles/contract.algo.ts:165
-    // const truncatedAddress = bytes16(origin.bytes)
-    dup
+    // smart_contracts/meta-merkles/contract.algo.ts:162
+    // const truncatedAddress = bytes16(Txn.sender.bytes)
+    txn Sender
     callsub bytes16
-    // smart_contracts/meta-merkles/contract.algo.ts:167
-    // const rootKey: RootKey = { address: new Address(origin), name }
-    uncover 2
+    // smart_contracts/meta-merkles/contract.algo.ts:164
+    // const rootKey: RootKey = { address: new Address(Txn.sender), name }
+    txn Sender
+    uncover 3
     itob
     extract 6 2
     frame_dig -3
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:170
-    // assert(!this.roots(rootKey).exists, ERR_NAME_TAKEN)
-    uncover 2
+    swap
     bytec 4 // 0x0022
     concat
     dig 1
-    len
-    swap
-    dig 2
     concat
-    // smart_contracts/meta-merkles/constants.ts:9
-    // export const MetaMerklesBoxPrefixRoots = 'r'
-    bytec 5 // "r"
-    swap
-    concat
-    dup
-    cover 4
-    // smart_contracts/meta-merkles/contract.algo.ts:170
-    // assert(!this.roots(rootKey).exists, ERR_NAME_TAKEN)
-    box_len
-    bury 1
-    !
-    assert // this name is already in use
-    // smart_contracts/meta-merkles/contract.algo.ts:168
+    // smart_contracts/meta-merkles/contract.algo.ts:165
     // const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
     dig 2
     len
     intc_2 // 16
     ==
     assert // invalid size
-    // smart_contracts/meta-merkles/contract.algo.ts:171
-    // assert(!this.data(typeKey).exists, ERR_TREE_TYPE_KEY_ALREADY_EXISTS)
     uncover 2
     bytec_2 // 0x0014
     concat
+    dig 2
+    len
     intc_3 // 20
-    uncover 2
     +
     itob
     extract 6 2
     concat
-    swap
+    uncover 2
+    concat
+    bytec 7 // 0x00066c2e74797065
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:100
+    // roots = BoxMap<RootKey, bytes<32>>({ keyPrefix: MetaMerklesBoxPrefixRoots })
+    bytec 5 // "r"
+    uncover 2
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:167
+    // assert(!this.roots(rootKey).exists, ERR_NAME_TAKEN)
+    dup
+    box_len
+    bury 1
+    !
+    assert // this name is already in use
+    // smart_contracts/meta-merkles/contract.algo.ts:102
+    // data = BoxMap<DataKey, string>({ keyPrefix: MetaMerklesBoxPrefixData })
+    bytec_3 // "d"
+    uncover 2
     concat
     // smart_contracts/meta-merkles/contract.algo.ts:168
-    // const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
-    bytec 7 // 0x00066c2e74797065
-    // smart_contracts/meta-merkles/contract.algo.ts:171
     // assert(!this.data(typeKey).exists, ERR_TREE_TYPE_KEY_ALREADY_EXISTS)
-    concat
-    // smart_contracts/meta-merkles/constants.ts:10
-    // export const MetaMerklesBoxPrefixData = 'd'
-    bytec_3 // "d"
-    swap
-    concat
     dup
-    // smart_contracts/meta-merkles/contract.algo.ts:171
-    // assert(!this.data(typeKey).exists, ERR_TREE_TYPE_KEY_ALREADY_EXISTS)
     box_len
     bury 1
     !
     assert // tree type key already exists for this root
-    // smart_contracts/meta-merkles/contract.algo.ts:173-180
+    // smart_contracts/meta-merkles/contract.algo.ts:170-177
     // assertMatch(
     //   payment,
     //   {
@@ -718,10 +592,10 @@ addRoot:
     // )
     frame_dig -4
     gtxns Receiver
-    // smart_contracts/meta-merkles/contract.algo.ts:176
+    // smart_contracts/meta-merkles/contract.algo.ts:173
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/meta-merkles/contract.algo.ts:173-180
+    // smart_contracts/meta-merkles/contract.algo.ts:170-177
     // assertMatch(
     //   payment,
     //   {
@@ -731,14 +605,13 @@ addRoot:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz addRoot_bool_false@3
     frame_dig -4
     gtxns Amount
-    // smart_contracts/meta-merkles/contract.algo.ts:177
+    // smart_contracts/meta-merkles/contract.algo.ts:174
     // amount: this.rootCosts(name),
     frame_dig -3
     callsub rootCosts
-    // smart_contracts/meta-merkles/contract.algo.ts:173-180
+    // smart_contracts/meta-merkles/contract.algo.ts:170-177
     // assertMatch(
     //   payment,
     //   {
@@ -748,196 +621,160 @@ addRoot:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz addRoot_bool_false@3
-    intc_0 // 1
-
-addRoot_bool_merge@4:
-    // smart_contracts/meta-merkles/contract.algo.ts:173-180
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: this.rootCosts(name),
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
+    &&
     assert // Invalid payment
-    // smart_contracts/meta-merkles/contract.algo.ts:182
+    // smart_contracts/meta-merkles/contract.algo.ts:179
     // this.roots(rootKey).value = root
-    frame_dig 1
+    swap
     frame_dig -2
     box_put
-    // smart_contracts/meta-merkles/contract.algo.ts:183
+    // smart_contracts/meta-merkles/contract.algo.ts:180
     // this.data(typeKey).value = String(itob(type))
-    frame_dig 2
     dup
     box_del
     pop
-    frame_dig 0
+    swap
     box_put
     retsub
-
-addRoot_bool_false@3:
-    intc_1 // 0
-    b addRoot_bool_merge@4
 
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.deleteRoot(name: bytes) -> void:
 deleteRoot:
-    // smart_contracts/meta-merkles/contract.algo.ts:191
+    // smart_contracts/meta-merkles/contract.algo.ts:188
     // deleteRoot(name: string): void {
     proto 1 0
-    // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
-    intc 4 // TMPL_ESCROW_FACTORY
-    // smart_contracts/meta-merkles/contract.algo.ts:192
-    // const origin = getOrigin(escrowFactory.id)
-    callsub getOrigin
-    // smart_contracts/meta-merkles/contract.algo.ts:193
-    // const truncatedAddress = bytes16(origin.bytes)
-    dup
+    // smart_contracts/meta-merkles/contract.algo.ts:189
+    // const truncatedAddress = bytes16(Txn.sender.bytes)
+    txn Sender
     callsub bytes16
-    // smart_contracts/meta-merkles/contract.algo.ts:195
-    // const rootKey: RootKey = { address: new Address(origin), name }
+    // smart_contracts/meta-merkles/contract.algo.ts:191
+    // const rootKey: RootKey = { address: new Address(Txn.sender), name }
+    txn Sender
     frame_dig -1
     len
     itob
     extract 6 2
     frame_dig -1
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:198
-    // assert(this.roots(rootKey).exists, ERR_NO_NAME)
-    dig 2
+    swap
     bytec 4 // 0x0022
     concat
     dig 1
-    len
-    swap
-    dig 2
     concat
-    // smart_contracts/meta-merkles/constants.ts:9
-    // export const MetaMerklesBoxPrefixRoots = 'r'
-    bytec 5 // "r"
-    swap
-    concat
-    // smart_contracts/meta-merkles/contract.algo.ts:198
-    // assert(this.roots(rootKey).exists, ERR_NO_NAME)
-    dup
-    box_len
-    bury 1
-    assert // a root with this name does not exist
-    // smart_contracts/meta-merkles/contract.algo.ts:200
-    // this.roots(rootKey).delete()
-    box_del
-    pop
-    // smart_contracts/meta-merkles/contract.algo.ts:196
+    // smart_contracts/meta-merkles/contract.algo.ts:192
     // const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
     dig 2
     len
     intc_2 // 16
     ==
     assert // invalid size
-    // smart_contracts/meta-merkles/contract.algo.ts:201
-    // this.data(typeKey).delete()
     uncover 2
     bytec_2 // 0x0014
     concat
+    dig 2
+    len
     intc_3 // 20
-    uncover 2
     +
     itob
     extract 6 2
     concat
-    swap
+    uncover 2
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:196
-    // const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
     bytec 7 // 0x00066c2e74797065
-    // smart_contracts/meta-merkles/contract.algo.ts:201
-    // this.data(typeKey).delete()
     concat
-    // smart_contracts/meta-merkles/constants.ts:10
-    // export const MetaMerklesBoxPrefixData = 'd'
+    // smart_contracts/meta-merkles/contract.algo.ts:100
+    // roots = BoxMap<RootKey, bytes<32>>({ keyPrefix: MetaMerklesBoxPrefixRoots })
+    bytec 5 // "r"
+    uncover 2
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:194
+    // assert(this.roots(rootKey).exists, ERR_NO_NAME)
+    dup
+    box_len
+    bury 1
+    assert // a root with this name does not exist
+    // smart_contracts/meta-merkles/contract.algo.ts:196
+    // this.roots(rootKey).delete()
+    box_del
+    pop
+    // smart_contracts/meta-merkles/contract.algo.ts:102
+    // data = BoxMap<DataKey, string>({ keyPrefix: MetaMerklesBoxPrefixData })
     bytec_3 // "d"
     swap
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:201
+    // smart_contracts/meta-merkles/contract.algo.ts:197
     // this.data(typeKey).delete()
     box_del
     pop
-    // smart_contracts/meta-merkles/contract.algo.ts:204-208
-    // itxn.payment({
-    //   receiver: origin,
-    //   amount: this.rootCosts(name),
-    //   fee,
-    // }).submit()
+    // smart_contracts/meta-merkles/contract.algo.ts:200-205
+    // itxn
+    //   .payment({
+    //     receiver: Txn.sender,
+    //     amount: this.rootCosts(name),
+    //   })
+    //   .submit()
     itxn_begin
-    // smart_contracts/meta-merkles/contract.algo.ts:206
+    // smart_contracts/meta-merkles/contract.algo.ts:202
+    // receiver: Txn.sender,
+    txn Sender
+    // smart_contracts/meta-merkles/contract.algo.ts:203
     // amount: this.rootCosts(name),
     frame_dig -1
     callsub rootCosts
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/meta-merkles/contract.algo.ts:204-208
-    // itxn.payment({
-    //   receiver: origin,
-    //   amount: this.rootCosts(name),
-    //   fee,
-    // }).submit()
+    // smart_contracts/meta-merkles/contract.algo.ts:200-204
+    // itxn
+    //   .payment({
+    //     receiver: Txn.sender,
+    //     amount: this.rootCosts(name),
+    //   })
     intc_0 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_1 // 0
     itxn_field Fee
-    // smart_contracts/meta-merkles/contract.algo.ts:204-208
-    // itxn.payment({
-    //   receiver: origin,
-    //   amount: this.rootCosts(name),
-    //   fee,
-    // }).submit()
+    // smart_contracts/meta-merkles/contract.algo.ts:200-205
+    // itxn
+    //   .payment({
+    //     receiver: Txn.sender,
+    //     amount: this.rootCosts(name),
+    //   })
+    //   .submit()
     itxn_submit
     retsub
 
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.updateRoot(name: bytes, newRoot: bytes) -> void:
 updateRoot:
-    // smart_contracts/meta-merkles/contract.algo.ts:217
+    // smart_contracts/meta-merkles/contract.algo.ts:214
     // updateRoot(name: string, newRoot: bytes<32>): void {
     proto 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
-    intc 4 // TMPL_ESCROW_FACTORY
-    // smart_contracts/meta-merkles/contract.algo.ts:218
-    // const origin = getOrigin(escrowFactory.id)
-    callsub getOrigin
-    // smart_contracts/meta-merkles/contract.algo.ts:219
-    // const key: RootKey = { address: new Address(origin), name }
+    // smart_contracts/meta-merkles/contract.algo.ts:215
+    // const key: RootKey = { address: new Address(Txn.sender), name }
+    txn Sender
     frame_dig -2
     len
     itob
     extract 6 2
     frame_dig -2
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:220
-    // assert(this.roots(key).exists, ERR_NO_NAME)
     swap
     bytec 4 // 0x0022
     concat
     swap
     concat
-    // smart_contracts/meta-merkles/constants.ts:9
-    // export const MetaMerklesBoxPrefixRoots = 'r'
+    // smart_contracts/meta-merkles/contract.algo.ts:100
+    // roots = BoxMap<RootKey, bytes<32>>({ keyPrefix: MetaMerklesBoxPrefixRoots })
     bytec 5 // "r"
     swap
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:220
+    // smart_contracts/meta-merkles/contract.algo.ts:216
     // assert(this.roots(key).exists, ERR_NO_NAME)
     dup
     box_len
     bury 1
     assert // a root with this name does not exist
-    // smart_contracts/meta-merkles/contract.algo.ts:221
+    // smart_contracts/meta-merkles/contract.algo.ts:217
     // this.roots(key).value = newRoot
     frame_dig -1
     box_put
@@ -946,48 +783,46 @@ updateRoot:
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addData(payment: uint64, name: bytes, key: bytes, value: bytes) -> void:
 addData:
-    // smart_contracts/meta-merkles/contract.algo.ts:233
+    // smart_contracts/meta-merkles/contract.algo.ts:229
     // addData(payment: gtxn.PaymentTxn, name: string, key: string, value: string): void {
     proto 4 0
-    intc_1 // 0
-    bytec_0 // ""
+    // smart_contracts/meta-merkles/contract.algo.ts:230
+    // const rootKey: RootKey = { address: new Address(Txn.sender), name }
+    txn Sender
+    frame_dig -3
+    len
+    itob
+    extract 6 2
+    frame_dig -3
+    concat
     dup
-    // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
-    intc 4 // TMPL_ESCROW_FACTORY
-    // smart_contracts/meta-merkles/contract.algo.ts:234
-    // const origin = getOrigin(escrowFactory.id)
-    callsub getOrigin
-    // smart_contracts/meta-merkles/contract.algo.ts:238
+    uncover 2
+    bytec 4 // 0x0022
+    concat
+    swap
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:233
     // assert(keyBytes.length <= maxDataKeyLength, ERR_KEY_TOO_LONG)
     frame_dig -2
     len
     dupn 2
-    // smart_contracts/meta-merkles/constants.ts:12
-    // export const maxDataKeyLength: uint64 = 15
     pushint 15 // 15
-    // smart_contracts/meta-merkles/contract.algo.ts:238
-    // assert(keyBytes.length <= maxDataKeyLength, ERR_KEY_TOO_LONG)
     <=
     assert // max key length is 32 bytes
-    // smart_contracts/meta-merkles/contract.algo.ts:239
+    // smart_contracts/meta-merkles/contract.algo.ts:234
     // assert(Bytes(value).length <= maxDataLength, ERR_DATA_TOO_LONG)
     frame_dig -1
     len
-    // smart_contracts/meta-merkles/constants.ts:13
-    // export const maxDataLength: uint64 = 1024
     pushint 1024 // 1024
-    // smart_contracts/meta-merkles/contract.algo.ts:239
-    // assert(Bytes(value).length <= maxDataLength, ERR_DATA_TOO_LONG)
     <=
     assert // max data length is 1024 bytes
-    // smart_contracts/meta-merkles/contract.algo.ts:241
+    // smart_contracts/meta-merkles/contract.algo.ts:236
     // keyBytes.length < 2 || !(keyBytes.slice(0, 2) === Bytes(reservedDataKeyPrefix)),
     pushint 2 // 2
     <
     bnz addData_bool_true@2
     intc_1 // 0
-    frame_dig 4
+    frame_dig 2
     dup
     cover 2
     >=
@@ -1005,11 +840,7 @@ addData:
     frame_dig -2
     cover 2
     substring3
-    // smart_contracts/meta-merkles/constants.ts:15
-    // export const reservedDataKeyPrefix: string = 'l.'
     pushbytes "l."
-    // smart_contracts/meta-merkles/contract.algo.ts:241
-    // keyBytes.length < 2 || !(keyBytes.slice(0, 2) === Bytes(reservedDataKeyPrefix)),
     ==
     bnz addData_bool_false@3
 
@@ -1017,43 +848,23 @@ addData_bool_true@2:
     intc_0 // 1
 
 addData_bool_merge@4:
-    // smart_contracts/meta-merkles/contract.algo.ts:240-243
+    // smart_contracts/meta-merkles/contract.algo.ts:235-238
     // assert(
     //   keyBytes.length < 2 || !(keyBytes.slice(0, 2) === Bytes(reservedDataKeyPrefix)),
     //   ERR_RESERVED_KEY_PREFIX
     // )
     assert // l. is reserved for internals
-    // smart_contracts/meta-merkles/contract.algo.ts:235
-    // const rootKey: RootKey = { address: new Address(origin), name }
-    frame_dig -3
-    len
-    itob
-    extract 6 2
-    frame_dig -3
-    concat
-    dup
-    frame_bury 0
-    // smart_contracts/meta-merkles/contract.algo.ts:244
-    // assert(this.roots(rootKey).exists, ERR_NO_ROOT_FOR_DATA)
-    frame_dig 3
-    bytec 4 // 0x0022
-    concat
-    dig 1
-    len
-    frame_bury 2
-    swap
-    concat
-    // smart_contracts/meta-merkles/constants.ts:9
-    // export const MetaMerklesBoxPrefixRoots = 'r'
+    // smart_contracts/meta-merkles/contract.algo.ts:100
+    // roots = BoxMap<RootKey, bytes<32>>({ keyPrefix: MetaMerklesBoxPrefixRoots })
     bytec 5 // "r"
-    swap
+    frame_dig 1
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:244
+    // smart_contracts/meta-merkles/contract.algo.ts:239
     // assert(this.roots(rootKey).exists, ERR_NO_ROOT_FOR_DATA)
     box_len
     bury 1
     assert // there must be a root to associate the data to
-    // smart_contracts/meta-merkles/contract.algo.ts:246
+    // smart_contracts/meta-merkles/contract.algo.ts:241
     // const costs = this.mbr('', '', name, key, value)
     bytec_0 // ""
     dup
@@ -1061,9 +872,7 @@ addData_bool_merge@4:
     frame_dig -2
     frame_dig -1
     callsub mbr
-    frame_bury 1
-    popn 2
-    // smart_contracts/meta-merkles/contract.algo.ts:248-255
+    // smart_contracts/meta-merkles/contract.algo.ts:243-250
     // assertMatch(
     //   payment,
     //   {
@@ -1074,10 +883,10 @@ addData_bool_merge@4:
     // )
     frame_dig -4
     gtxns Receiver
-    // smart_contracts/meta-merkles/contract.algo.ts:251
+    // smart_contracts/meta-merkles/contract.algo.ts:246
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/meta-merkles/contract.algo.ts:248-255
+    // smart_contracts/meta-merkles/contract.algo.ts:243-250
     // assertMatch(
     //   payment,
     //   {
@@ -1087,16 +896,14 @@ addData_bool_merge@4:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz addData_bool_false@7
     frame_dig -4
     gtxns Amount
-    frame_dig 1
-    ==
-    bz addData_bool_false@7
-    intc_0 // 1
-
-addData_bool_merge@8:
-    // smart_contracts/meta-merkles/contract.algo.ts:248-255
+    // smart_contracts/meta-merkles/contract.algo.ts:247
+    // amount: costs.data,
+    uncover 2
+    intc_2 // 16
+    extract_uint64
+    // smart_contracts/meta-merkles/contract.algo.ts:243-250
     // assertMatch(
     //   payment,
     //   {
@@ -1105,44 +912,49 @@ addData_bool_merge@8:
     //   },
     //   ERR_INVALID_PAYMENT
     // )
+    ==
+    &&
     assert // Invalid payment
-    // smart_contracts/meta-merkles/contract.algo.ts:257
-    // const truncatedAddress = bytes16(origin.bytes)
-    frame_dig 3
+    // smart_contracts/meta-merkles/contract.algo.ts:252
+    // const truncatedAddress = bytes16(Txn.sender.bytes)
+    txn Sender
     callsub bytes16
-    // smart_contracts/meta-merkles/contract.algo.ts:258
+    // smart_contracts/meta-merkles/contract.algo.ts:253
     // const dataKey: DataKey = { address: truncatedAddress, name, key }
     dup
     len
     intc_2 // 16
     ==
     assert // invalid size
-    frame_dig 4
+    bytec_2 // 0x0014
+    concat
+    frame_dig 0
+    dup
+    cover 2
+    len
+    intc_3 // 20
+    +
+    frame_dig 2
     itob
     extract 6 2
     frame_dig -2
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:260
-    // this.data(dataKey).value = value
     swap
-    bytec_2 // 0x0014
-    concat
-    intc_3 // 20
-    frame_dig 2
-    +
     itob
     extract 6 2
+    uncover 2
+    swap
     concat
-    frame_dig 0
+    uncover 2
     concat
     swap
     concat
-    // smart_contracts/meta-merkles/constants.ts:10
-    // export const MetaMerklesBoxPrefixData = 'd'
+    // smart_contracts/meta-merkles/contract.algo.ts:102
+    // data = BoxMap<DataKey, string>({ keyPrefix: MetaMerklesBoxPrefixData })
     bytec_3 // "d"
     swap
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:260
+    // smart_contracts/meta-merkles/contract.algo.ts:255
     // this.data(dataKey).value = value
     dup
     box_del
@@ -1151,10 +963,6 @@ addData_bool_merge@8:
     box_put
     retsub
 
-addData_bool_false@7:
-    intc_1 // 0
-    b addData_bool_merge@8
-
 addData_bool_false@3:
     intc_1 // 0
     b addData_bool_merge@4
@@ -1162,20 +970,14 @@ addData_bool_false@3:
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.deleteData(name: bytes, key: bytes) -> void:
 deleteData:
-    // smart_contracts/meta-merkles/contract.algo.ts:269
+    // smart_contracts/meta-merkles/contract.algo.ts:264
     // deleteData(name: string, key: string): void {
     proto 2 0
-    // smart_contracts/meta-merkles/contract.algo.ts:85
-    // const escrowFactory = TemplateVar<Application>('ESCROW_FACTORY')
-    intc 4 // TMPL_ESCROW_FACTORY
-    // smart_contracts/meta-merkles/contract.algo.ts:270
-    // const origin = getOrigin(escrowFactory.id)
-    callsub getOrigin
-    // smart_contracts/meta-merkles/contract.algo.ts:271
-    // const truncatedAddress = bytes16(origin.bytes)
-    dup
+    // smart_contracts/meta-merkles/contract.algo.ts:265
+    // const truncatedAddress = bytes16(Txn.sender.bytes)
+    txn Sender
     callsub bytes16
-    // smart_contracts/meta-merkles/contract.algo.ts:272
+    // smart_contracts/meta-merkles/contract.algo.ts:266
     // const dataKey: DataKey = { address: truncatedAddress, name, key }
     dup
     len
@@ -1188,14 +990,127 @@ deleteData:
     extract 6 2
     frame_dig -2
     concat
+    swap
+    bytec_2 // 0x0014
+    concat
+    dig 1
+    len
+    intc_3 // 20
+    +
     frame_dig -1
     len
     itob
     extract 6 2
     frame_dig -1
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:274
+    swap
+    itob
+    extract 6 2
+    uncover 2
+    swap
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:102
+    // data = BoxMap<DataKey, string>({ keyPrefix: MetaMerklesBoxPrefixData })
+    bytec_3 // "d"
+    swap
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:268
     // assert(this.data(dataKey).exists, ERR_NO_DATA)
+    dup
+    box_len
+    bury 1
+    assert // data does not exist
+    // smart_contracts/meta-merkles/contract.algo.ts:270
+    // this.data(dataKey).delete()
+    dup
+    box_del
+    pop
+    // smart_contracts/meta-merkles/contract.algo.ts:272
+    // const costs = this.mbr('', '', name, key, this.data(dataKey).value)
+    box_get
+    assert // Box must have value
+    bytec_0 // ""
+    dup
+    frame_dig -2
+    frame_dig -1
+    uncover 4
+    callsub mbr
+    // smart_contracts/meta-merkles/contract.algo.ts:274-279
+    // itxn
+    //   .payment({
+    //     receiver: Txn.sender,
+    //     amount: costs.data,
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/meta-merkles/contract.algo.ts:276
+    // receiver: Txn.sender,
+    txn Sender
+    // smart_contracts/meta-merkles/contract.algo.ts:277
+    // amount: costs.data,
+    swap
+    intc_2 // 16
+    extract_uint64
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/meta-merkles/contract.algo.ts:274-278
+    // itxn
+    //   .payment({
+    //     receiver: Txn.sender,
+    //     amount: costs.data,
+    //   })
+    intc_0 // 1
+    itxn_field TypeEnum
+    intc_1 // 0
+    itxn_field Fee
+    // smart_contracts/meta-merkles/contract.algo.ts:274-279
+    // itxn
+    //   .payment({
+    //     receiver: Txn.sender,
+    //     amount: costs.data,
+    //   })
+    //   .submit()
+    itxn_submit
+    retsub
+
+
+// smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verify(address: bytes, name: bytes, leaf: bytes, proof: bytes, type: uint64) -> uint64, bytes:
+verify:
+    // smart_contracts/meta-merkles/contract.algo.ts:293
+    // verify(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64): boolean {
+    proto 5 2
+    intc_1 // 0
+    dup
+    bytec_0 // ""
+    dupn 3
+    // smart_contracts/meta-merkles/contract.algo.ts:294
+    // const truncatedAddress = bytes16(address.bytes)
+    frame_dig -5
+    callsub bytes16
+    // smart_contracts/meta-merkles/contract.algo.ts:296
+    // const rootKey: RootKey = { address, name }
+    frame_dig -4
+    len
+    itob
+    extract 6 2
+    frame_dig -4
+    concat
+    frame_dig -5
+    bytec 4 // 0x0022
+    concat
+    dig 1
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:297
+    // const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
+    dig 2
+    len
+    intc_2 // 16
+    ==
+    assert // invalid size
     uncover 2
     bytec_2 // 0x0014
     concat
@@ -1208,170 +1123,51 @@ deleteData:
     concat
     uncover 2
     concat
+    bytec 7 // 0x00066c2e74797065
+    concat
     swap
-    concat
-    // smart_contracts/meta-merkles/constants.ts:10
-    // export const MetaMerklesBoxPrefixData = 'd'
-    bytec_3 // "d"
-    swap
-    concat
-    // smart_contracts/meta-merkles/contract.algo.ts:274
-    // assert(this.data(dataKey).exists, ERR_NO_DATA)
-    dup
-    box_len
-    bury 1
-    assert // data does not exist
-    // smart_contracts/meta-merkles/contract.algo.ts:276
-    // this.data(dataKey).delete()
-    dup
-    box_del
-    pop
-    // smart_contracts/meta-merkles/contract.algo.ts:278
-    // const costs = this.mbr('', '', name, key, this.data(dataKey).value)
-    box_get
-    assert // Box must have value
-    bytec_0 // ""
-    dup
-    frame_dig -2
-    frame_dig -1
-    uncover 4
-    callsub mbr
-    cover 2
-    popn 2
-    // smart_contracts/meta-merkles/contract.algo.ts:280-286
-    // itxn
-    //   .payment({
-    //     receiver: origin,
-    //     amount: costs.data,
-    //     fee,
-    //   })
-    //   .submit()
-    itxn_begin
-    itxn_field Amount
-    itxn_field Receiver
-    // smart_contracts/meta-merkles/contract.algo.ts:280-285
-    // itxn
-    //   .payment({
-    //     receiver: origin,
-    //     amount: costs.data,
-    //     fee,
-    //   })
-    intc_0 // 1
-    itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
-    intc_1 // 0
-    itxn_field Fee
-    // smart_contracts/meta-merkles/contract.algo.ts:280-286
-    // itxn
-    //   .payment({
-    //     receiver: origin,
-    //     amount: costs.data,
-    //     fee,
-    //   })
-    //   .submit()
-    itxn_submit
-    retsub
-
-
-// smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verify(address: bytes, name: bytes, leaf: bytes, proof: bytes, type: uint64) -> uint64:
-verify:
-    // smart_contracts/meta-merkles/contract.algo.ts:300
-    // verify(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64): boolean {
-    proto 5 1
-    intc_1 // 0
-    dup
-    bytec_0 // ""
-    dupn 3
-    // smart_contracts/meta-merkles/contract.algo.ts:301
-    // const truncatedAddress = bytes16(address.bytes)
-    frame_dig -5
-    callsub bytes16
-    // smart_contracts/meta-merkles/contract.algo.ts:303
-    // const rootKey: RootKey = { address, name }
-    frame_dig -4
-    len
-    itob
-    extract 6 2
-    frame_dig -4
-    concat
-    dup
-    // smart_contracts/meta-merkles/contract.algo.ts:306
-    // if (!this.roots(rootKey).exists || !this.data(typeKey).exists) {
-    frame_dig -5
-    bytec 4 // 0x0022
-    concat
-    dig 1
-    len
-    cover 2
-    swap
-    concat
-    // smart_contracts/meta-merkles/constants.ts:9
-    // export const MetaMerklesBoxPrefixRoots = 'r'
+    // smart_contracts/meta-merkles/contract.algo.ts:100
+    // roots = BoxMap<RootKey, bytes<32>>({ keyPrefix: MetaMerklesBoxPrefixRoots })
     bytec 5 // "r"
     swap
     concat
     dup
-    // smart_contracts/meta-merkles/contract.algo.ts:306
+    // smart_contracts/meta-merkles/contract.algo.ts:299
     // if (!this.roots(rootKey).exists || !this.data(typeKey).exists) {
     box_len
     bury 1
     bz verify_if_body@2
-    // smart_contracts/meta-merkles/contract.algo.ts:304
-    // const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
-    frame_dig 6
-    dup
-    len
-    intc_2 // 16
-    ==
-    assert // invalid size
-    // smart_contracts/meta-merkles/contract.algo.ts:306
-    // if (!this.roots(rootKey).exists || !this.data(typeKey).exists) {
-    bytec_2 // 0x0014
-    concat
-    intc_3 // 20
-    frame_dig 8
-    +
-    itob
-    extract 6 2
-    concat
-    frame_dig 7
-    concat
-    // smart_contracts/meta-merkles/contract.algo.ts:304
-    // const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
-    bytec 7 // 0x00066c2e74797065
-    // smart_contracts/meta-merkles/contract.algo.ts:306
-    // if (!this.roots(rootKey).exists || !this.data(typeKey).exists) {
-    concat
-    // smart_contracts/meta-merkles/constants.ts:10
-    // export const MetaMerklesBoxPrefixData = 'd'
+    // smart_contracts/meta-merkles/contract.algo.ts:102
+    // data = BoxMap<DataKey, string>({ keyPrefix: MetaMerklesBoxPrefixData })
     bytec_3 // "d"
-    swap
+    frame_dig 6
     concat
     dup
     frame_bury 0
-    // smart_contracts/meta-merkles/contract.algo.ts:306
+    // smart_contracts/meta-merkles/contract.algo.ts:299
     // if (!this.roots(rootKey).exists || !this.data(typeKey).exists) {
     box_len
     bury 1
     bnz verify_after_if_else@3
 
 verify_if_body@2:
-    // smart_contracts/meta-merkles/contract.algo.ts:307
+    // smart_contracts/meta-merkles/contract.algo.ts:300
     // return false
     intc_1 // 0
+    frame_dig -2
+    frame_bury 1
     frame_bury 0
     retsub
 
 verify_after_if_else@3:
-    // smart_contracts/meta-merkles/contract.algo.ts:310
+    // smart_contracts/meta-merkles/contract.algo.ts:303
     // const treeType = btoi(Bytes(this.data(typeKey).value))
     frame_dig 0
     box_get
     assert // Box must have value
     btoi
     frame_bury 5
-    // smart_contracts/meta-merkles/contract.algo.ts:311
+    // smart_contracts/meta-merkles/contract.algo.ts:304
     // if (type !== MerkleTreeTypeUnspecified && treeType !== type) {
     frame_dig -1
     bz verify_after_if_else@6
@@ -1379,28 +1175,30 @@ verify_after_if_else@3:
     frame_dig -1
     !=
     bz verify_after_if_else@6
-    // smart_contracts/meta-merkles/contract.algo.ts:312
+    // smart_contracts/meta-merkles/contract.algo.ts:305
     // return false
     intc_1 // 0
+    frame_dig -2
+    frame_bury 1
     frame_bury 0
     retsub
 
 verify_after_if_else@6:
-    // smart_contracts/meta-merkles/contract.algo.ts:315
+    // smart_contracts/meta-merkles/contract.algo.ts:308
     // ensureBudget(proof.length * 50)
     frame_dig -2
     intc_1 // 0
     extract_uint16
     dup
-    frame_bury 4
+    frame_bury 2
     pushint 50 // 50
     *
     pushint 10 // 10
     +
-    frame_bury 3
+    frame_bury 4
 
 verify_while_top@15:
-    frame_dig 3
+    frame_dig 4
     global OpcodeBudget
     >
     bz verify_after_while@20
@@ -1419,36 +1217,36 @@ verify_while_top@15:
     b verify_while_top@15
 
 verify_after_while@20:
-    // smart_contracts/meta-merkles/contract.algo.ts:318
+    // smart_contracts/meta-merkles/contract.algo.ts:311
     // for (let i: uint64 = 0; i < proof.length; i += 1) {
     intc_1 // 0
-    frame_bury 2
+    frame_bury 3
     frame_dig -3
     frame_bury 1
 
 verify_while_top@7:
-    // smart_contracts/meta-merkles/contract.algo.ts:318
+    // smart_contracts/meta-merkles/contract.algo.ts:311
     // for (let i: uint64 = 0; i < proof.length; i += 1) {
+    frame_dig 3
     frame_dig 2
-    frame_dig 4
     <
     bz verify_after_while@9
-    // smart_contracts/meta-merkles/contract.algo.ts:319
+    // smart_contracts/meta-merkles/contract.algo.ts:312
     // hash = this.hash(proof[i], hash)
     frame_dig -2
     extract 2 0
-    frame_dig 2
+    frame_dig 3
     pushint 32 // 32
     *
     pushint 32 // 32
-    extract3 // on error: Index access is out of bounds
+    extract3 // on error: index access is out of bounds
     dup
-    // smart_contracts/meta-merkles/contract.algo.ts:130
+    // smart_contracts/meta-merkles/contract.algo.ts:128
     // if (BigUint(a) > BigUint(b)) {
     frame_dig 1
     b>
     bz verify_after_if_else@12
-    // smart_contracts/meta-merkles/contract.algo.ts:131
+    // smart_contracts/meta-merkles/contract.algo.ts:129
     // return sha256(b.concat(a))
     frame_dig 1
     swap
@@ -1457,48 +1255,50 @@ verify_while_top@7:
     frame_bury 1
 
 verify_after_inlined_smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.hash@13:
-    // smart_contracts/meta-merkles/contract.algo.ts:318
+    // smart_contracts/meta-merkles/contract.algo.ts:311
     // for (let i: uint64 = 0; i < proof.length; i += 1) {
-    frame_dig 2
+    frame_dig 3
     intc_0 // 1
     +
-    frame_bury 2
+    frame_bury 3
     b verify_while_top@7
 
 verify_after_if_else@12:
-    // smart_contracts/meta-merkles/contract.algo.ts:133
+    // smart_contracts/meta-merkles/contract.algo.ts:131
     // return sha256(a.concat(b))
     frame_dig 1
     concat
     sha256
     frame_bury 1
-    // smart_contracts/meta-merkles/contract.algo.ts:319
+    // smart_contracts/meta-merkles/contract.algo.ts:312
     // hash = this.hash(proof[i], hash)
     b verify_after_inlined_smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.hash@13
 
 verify_after_while@9:
-    // smart_contracts/meta-merkles/contract.algo.ts:322
+    // smart_contracts/meta-merkles/contract.algo.ts:315
     // return hash === this.roots(rootKey).value
-    frame_dig 9
+    frame_dig 7
     box_get
     assert // Box must have value
     frame_dig 1
     ==
+    frame_dig -2
+    frame_bury 1
     frame_bury 0
     retsub
 
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.read(address: bytes, name: bytes, key: bytes) -> bytes:
 read:
-    // smart_contracts/meta-merkles/contract.algo.ts:333-334
+    // smart_contracts/meta-merkles/contract.algo.ts:326-327
     // @abimethod({ readonly: true })
     // read(address: Address, name: string, key: string): string {
     proto 3 1
-    // smart_contracts/meta-merkles/contract.algo.ts:335
+    // smart_contracts/meta-merkles/contract.algo.ts:328
     // const truncatedAddress = bytes16(address.bytes)
     frame_dig -3
     callsub bytes16
-    // smart_contracts/meta-merkles/contract.algo.ts:336
+    // smart_contracts/meta-merkles/contract.algo.ts:329
     // return this.data({ address: truncatedAddress, name, key }).value
     dup
     len
@@ -1511,32 +1311,35 @@ read:
     extract 6 2
     frame_dig -2
     concat
-    frame_dig -1
-    len
-    itob
-    extract 6 2
-    frame_dig -1
-    concat
-    uncover 2
+    swap
     bytec_2 // 0x0014
     concat
-    dig 2
+    dig 1
     len
     intc_3 // 20
     +
+    frame_dig -1
+    len
     itob
     extract 6 2
+    frame_dig -1
+    concat
+    swap
+    itob
+    extract 6 2
+    uncover 2
+    swap
     concat
     uncover 2
     concat
     swap
     concat
-    // smart_contracts/meta-merkles/constants.ts:10
-    // export const MetaMerklesBoxPrefixData = 'd'
+    // smart_contracts/meta-merkles/contract.algo.ts:102
+    // data = BoxMap<DataKey, string>({ keyPrefix: MetaMerklesBoxPrefixData })
     bytec_3 // "d"
     swap
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:336
+    // smart_contracts/meta-merkles/contract.algo.ts:329
     // return this.data({ address: truncatedAddress, name, key }).value
     box_get
     assert // Box must have value
@@ -1545,10 +1348,10 @@ read:
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verifiedRead(address: bytes, name: bytes, leaf: bytes, proof: bytes, type: uint64, key: bytes) -> bytes:
 verifiedRead:
-    // smart_contracts/meta-merkles/contract.algo.ts:358
+    // smart_contracts/meta-merkles/contract.algo.ts:351
     // verifiedRead(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64, key: string): string {
     proto 6 1
-    // smart_contracts/meta-merkles/contract.algo.ts:359
+    // smart_contracts/meta-merkles/contract.algo.ts:352
     // const verified = this.verify(address, name, leaf, proof, type)
     frame_dig -6
     frame_dig -5
@@ -1556,16 +1359,17 @@ verifiedRead:
     frame_dig -3
     frame_dig -2
     callsub verify
-    // smart_contracts/meta-merkles/contract.algo.ts:360
+    frame_bury -3
+    // smart_contracts/meta-merkles/contract.algo.ts:353
     // if (!verified) {
     bnz verifiedRead_after_if_else@2
-    // smart_contracts/meta-merkles/contract.algo.ts:361
+    // smart_contracts/meta-merkles/contract.algo.ts:354
     // return ''
     bytec_0 // ""
     retsub
 
 verifiedRead_after_if_else@2:
-    // smart_contracts/meta-merkles/contract.algo.ts:363
+    // smart_contracts/meta-merkles/contract.algo.ts:356
     // return this.read(address, name, key)
     frame_dig -6
     frame_dig -5
@@ -1576,7 +1380,7 @@ verifiedRead_after_if_else@2:
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.verifiedMustRead(address: bytes, name: bytes, leaf: bytes, proof: bytes, type: uint64, key: bytes) -> bytes:
 verifiedMustRead:
-    // smart_contracts/meta-merkles/contract.algo.ts:385-392
+    // smart_contracts/meta-merkles/contract.algo.ts:378-385
     // verifiedMustRead(
     //   address: Address,
     //   name: string,
@@ -1586,7 +1390,7 @@ verifiedMustRead:
     //   key: string
     // ): string {
     proto 6 1
-    // smart_contracts/meta-merkles/contract.algo.ts:393
+    // smart_contracts/meta-merkles/contract.algo.ts:386
     // assert(this.verify(address, name, leaf, proof, type), ERR_FAILED_TO_VERIFY_INCLUSION)
     frame_dig -6
     frame_dig -5
@@ -1594,8 +1398,9 @@ verifiedMustRead:
     frame_dig -3
     frame_dig -2
     callsub verify
+    frame_bury -3
     assert // failed to verify inclusion
-    // smart_contracts/meta-merkles/contract.algo.ts:394
+    // smart_contracts/meta-merkles/contract.algo.ts:387
     // return this.read(address, name, key)
     frame_dig -6
     frame_dig -5
@@ -1606,27 +1411,27 @@ verifiedMustRead:
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.addType(payment: uint64, description: bytes, schemaList: bytes) -> void:
 addType:
-    // smart_contracts/meta-merkles/contract.algo.ts:397
+    // smart_contracts/meta-merkles/contract.algo.ts:390
     // addType(payment: gtxn.PaymentTxn, description: string, schemaList: SchemaList): void {
     proto 3 0
     intc_1 // 0
     dup
     bytec_0 // ""
-    // smart_contracts/meta-merkles/contract.algo.ts:398
+    // smart_contracts/meta-merkles/contract.algo.ts:391
     // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     frame_dig -3
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Invalid payment receiver
-    // smart_contracts/meta-merkles/contract.algo.ts:399
+    // smart_contracts/meta-merkles/contract.algo.ts:392
     // assert(payment.amount === 100_000_000, ERR_INVALID_PAYMENT_AMOUNT)
     frame_dig -3
     gtxns Amount
     pushint 100000000 // 100000000
     ==
     assert // Invalid payment amount
-    // smart_contracts/meta-merkles/contract.algo.ts:400
+    // smart_contracts/meta-merkles/contract.algo.ts:393
     // assert(Bytes(description).length <= 800, ERR_DATA_TOO_LONG)
     frame_dig -2
     len
@@ -1634,15 +1439,15 @@ addType:
     pushint 800 // 800
     <=
     assert // max data length is 1024 bytes
-    // smart_contracts/meta-merkles/contract.algo.ts:402
+    // smart_contracts/meta-merkles/contract.algo.ts:395
     // let schema: string = ''
     bytec_0 // ""
-    // smart_contracts/meta-merkles/contract.algo.ts:403
+    // smart_contracts/meta-merkles/contract.algo.ts:396
     // for (let i: uint64 = 0; i < schemaList.length; i += 1) {
     intc_1 // 0
 
 addType_while_top@1:
-    // smart_contracts/meta-merkles/contract.algo.ts:403
+    // smart_contracts/meta-merkles/contract.algo.ts:396
     // for (let i: uint64 = 0; i < schemaList.length; i += 1) {
     frame_dig -1
     intc_1 // 0
@@ -1652,39 +1457,35 @@ addType_while_top@1:
     frame_dig 5
     >
     bz addType_after_while@58
-    // smart_contracts/meta-merkles/contract.algo.ts:404
+    // smart_contracts/meta-merkles/contract.algo.ts:397
     // switch (schemaList[i]) {
     frame_dig -1
     extract 2 0
     frame_dig 5
     intc_0 // 1
-    extract3 // on error: Index access is out of bounds
+    extract3 // on error: index access is out of bounds
     dup
     frame_bury 0
-    // smart_contracts/meta-merkles/constants.ts:18
-    // export const SchemaPartUint8: SchemaPart = new UintN8(10)
+    // smart_contracts/meta-merkles/contract.algo.ts:398
+    // case SchemaPartUint8:
     pushbytes 0x0a
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:405-407
+    // smart_contracts/meta-merkles/contract.algo.ts:398-400
     // case SchemaPartUint8:
     //   schema += SchemaPartUint8String
     //   break
     bz addType_after_if_else@5
-    // smart_contracts/meta-merkles/contract.algo.ts:406
+    // smart_contracts/meta-merkles/contract.algo.ts:399
     // schema += SchemaPartUint8String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:36
-    // export const SchemaPartUint8String: string = 'uint8'
     pushbytes "uint8"
-    // smart_contracts/meta-merkles/contract.algo.ts:406
-    // schema += SchemaPartUint8String
     concat
     frame_bury 4
 
 addType_block@54:
     frame_dig 4
     frame_bury 1
-    // smart_contracts/meta-merkles/contract.algo.ts:458
+    // smart_contracts/meta-merkles/contract.algo.ts:451
     // if (schemaList.length > 0 && i !== schemaList.length - 1) {
     frame_dig 2
     bz addType_after_if_else@57
@@ -1696,7 +1497,7 @@ addType_block@54:
     frame_dig 4
     frame_bury 1
     bz addType_after_if_else@57
-    // smart_contracts/meta-merkles/contract.algo.ts:459
+    // smart_contracts/meta-merkles/contract.algo.ts:452
     // schema += ','
     frame_dig 4
     pushbytes ","
@@ -1706,7 +1507,7 @@ addType_block@54:
 addType_after_if_else@57:
     frame_dig 1
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:403
+    // smart_contracts/meta-merkles/contract.algo.ts:396
     // for (let i: uint64 = 0; i < schemaList.length; i += 1) {
     frame_dig 5
     intc_0 // 1
@@ -1715,462 +1516,382 @@ addType_after_if_else@57:
     b addType_while_top@1
 
 addType_after_if_else@5:
-    // smart_contracts/meta-merkles/constants.ts:19
-    // export const SchemaPartUint16: SchemaPart = new UintN8(11)
+    // smart_contracts/meta-merkles/contract.algo.ts:401
+    // case SchemaPartUint16:
     frame_dig 0
     pushbytes 0x0b
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:408-410
+    // smart_contracts/meta-merkles/contract.algo.ts:401-403
     // case SchemaPartUint16:
     //   schema += SchemaPartUint16String
     //   break
     bz addType_after_if_else@8
-    // smart_contracts/meta-merkles/contract.algo.ts:409
+    // smart_contracts/meta-merkles/contract.algo.ts:402
     // schema += SchemaPartUint16String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:37
-    // export const SchemaPartUint16String: string = 'uint16'
     pushbytes "uint16"
-    // smart_contracts/meta-merkles/contract.algo.ts:409
-    // schema += SchemaPartUint16String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:410
+    // smart_contracts/meta-merkles/contract.algo.ts:403
     // break
     b addType_block@54
 
 addType_after_if_else@8:
-    // smart_contracts/meta-merkles/constants.ts:20
-    // export const SchemaPartUint32: SchemaPart = new UintN8(12)
+    // smart_contracts/meta-merkles/contract.algo.ts:404
+    // case SchemaPartUint32:
     frame_dig 0
     pushbytes 0x0c
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:411-413
+    // smart_contracts/meta-merkles/contract.algo.ts:404-406
     // case SchemaPartUint32:
     //   schema += SchemaPartUint32String
     //   break
     bz addType_after_if_else@11
-    // smart_contracts/meta-merkles/contract.algo.ts:412
+    // smart_contracts/meta-merkles/contract.algo.ts:405
     // schema += SchemaPartUint32String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:38
-    // export const SchemaPartUint32String: string = 'uint32'
     pushbytes "uint32"
-    // smart_contracts/meta-merkles/contract.algo.ts:412
-    // schema += SchemaPartUint32String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:413
+    // smart_contracts/meta-merkles/contract.algo.ts:406
     // break
     b addType_block@54
 
 addType_after_if_else@11:
-    // smart_contracts/meta-merkles/constants.ts:21
-    // export const SchemaPartUint64: SchemaPart = new UintN8(13)
+    // smart_contracts/meta-merkles/contract.algo.ts:407
+    // case SchemaPartUint64:
     frame_dig 0
     pushbytes 0x0d
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:414-416
+    // smart_contracts/meta-merkles/contract.algo.ts:407-409
     // case SchemaPartUint64:
     //   schema += SchemaPartUint64String
     //   break
     bz addType_after_if_else@14
-    // smart_contracts/meta-merkles/contract.algo.ts:415
+    // smart_contracts/meta-merkles/contract.algo.ts:408
     // schema += SchemaPartUint64String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:39
-    // export const SchemaPartUint64String: string = 'uint64'
     pushbytes "uint64"
-    // smart_contracts/meta-merkles/contract.algo.ts:415
-    // schema += SchemaPartUint64String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:416
+    // smart_contracts/meta-merkles/contract.algo.ts:409
     // break
     b addType_block@54
 
 addType_after_if_else@14:
-    // smart_contracts/meta-merkles/constants.ts:22
-    // export const SchemaPartUint128: SchemaPart = new UintN8(14)
+    // smart_contracts/meta-merkles/contract.algo.ts:410
+    // case SchemaPartUint128:
     frame_dig 0
     pushbytes 0x0e
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:417-419
+    // smart_contracts/meta-merkles/contract.algo.ts:410-412
     // case SchemaPartUint128:
     //   schema += SchemaPartUint128String
     //   break
     bz addType_after_if_else@17
-    // smart_contracts/meta-merkles/contract.algo.ts:418
+    // smart_contracts/meta-merkles/contract.algo.ts:411
     // schema += SchemaPartUint128String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:40
-    // export const SchemaPartUint128String: string = 'uint128'
     pushbytes "uint128"
-    // smart_contracts/meta-merkles/contract.algo.ts:418
-    // schema += SchemaPartUint128String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:419
+    // smart_contracts/meta-merkles/contract.algo.ts:412
     // break
     b addType_block@54
 
 addType_after_if_else@17:
-    // smart_contracts/meta-merkles/constants.ts:23
-    // export const SchemaPartUint256: SchemaPart = new UintN8(15)
+    // smart_contracts/meta-merkles/contract.algo.ts:413
+    // case SchemaPartUint256:
     frame_dig 0
     pushbytes 0x0f
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:420-422
+    // smart_contracts/meta-merkles/contract.algo.ts:413-415
     // case SchemaPartUint256:
     //   schema += SchemaPartUint256String
     //   break
     bz addType_after_if_else@20
-    // smart_contracts/meta-merkles/contract.algo.ts:421
+    // smart_contracts/meta-merkles/contract.algo.ts:414
     // schema += SchemaPartUint256String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:41
-    // export const SchemaPartUint256String: string = 'uint256'
     pushbytes "uint256"
-    // smart_contracts/meta-merkles/contract.algo.ts:421
-    // schema += SchemaPartUint256String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:422
+    // smart_contracts/meta-merkles/contract.algo.ts:415
     // break
     b addType_block@54
 
 addType_after_if_else@20:
-    // smart_contracts/meta-merkles/constants.ts:24
-    // export const SchemaPartUint512: SchemaPart = new UintN8(16)
+    // smart_contracts/meta-merkles/contract.algo.ts:416
+    // case SchemaPartUint512:
     frame_dig 0
     pushbytes 0x10
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:423-425
+    // smart_contracts/meta-merkles/contract.algo.ts:416-418
     // case SchemaPartUint512:
     //   schema += SchemaPartUint512String
     //   break
     bz addType_after_if_else@23
-    // smart_contracts/meta-merkles/contract.algo.ts:424
+    // smart_contracts/meta-merkles/contract.algo.ts:417
     // schema += SchemaPartUint512String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:42
-    // export const SchemaPartUint512String: string = 'uint512'
     pushbytes "uint512"
-    // smart_contracts/meta-merkles/contract.algo.ts:424
-    // schema += SchemaPartUint512String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:425
+    // smart_contracts/meta-merkles/contract.algo.ts:418
     // break
     b addType_block@54
 
 addType_after_if_else@23:
-    // smart_contracts/meta-merkles/constants.ts:25
-    // export const SchemaPartBytes4: SchemaPart = new UintN8(20)
+    // smart_contracts/meta-merkles/contract.algo.ts:419
+    // case SchemaPartBytes4:
     frame_dig 0
     pushbytes 0x14
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:426-428
+    // smart_contracts/meta-merkles/contract.algo.ts:419-421
     // case SchemaPartBytes4:
     //   schema += SchemaPartBytes4String
     //   break
     bz addType_after_if_else@26
-    // smart_contracts/meta-merkles/contract.algo.ts:427
+    // smart_contracts/meta-merkles/contract.algo.ts:420
     // schema += SchemaPartBytes4String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:43
-    // export const SchemaPartBytes4String: string = 'bytes4'
     pushbytes "bytes4"
-    // smart_contracts/meta-merkles/contract.algo.ts:427
-    // schema += SchemaPartBytes4String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:428
+    // smart_contracts/meta-merkles/contract.algo.ts:421
     // break
     b addType_block@54
 
 addType_after_if_else@26:
-    // smart_contracts/meta-merkles/constants.ts:26
-    // export const SchemaPartBytes8: SchemaPart = new UintN8(21)
+    // smart_contracts/meta-merkles/contract.algo.ts:422
+    // case SchemaPartBytes8:
     frame_dig 0
     pushbytes 0x15
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:429-431
+    // smart_contracts/meta-merkles/contract.algo.ts:422-424
     // case SchemaPartBytes8:
     //   schema += SchemaPartBytes8String
     //   break
     bz addType_after_if_else@29
-    // smart_contracts/meta-merkles/contract.algo.ts:430
+    // smart_contracts/meta-merkles/contract.algo.ts:423
     // schema += SchemaPartBytes8String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:44
-    // export const SchemaPartBytes8String: string = 'bytes8'
     pushbytes "bytes8"
-    // smart_contracts/meta-merkles/contract.algo.ts:430
-    // schema += SchemaPartBytes8String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:431
+    // smart_contracts/meta-merkles/contract.algo.ts:424
     // break
     b addType_block@54
 
 addType_after_if_else@29:
-    // smart_contracts/meta-merkles/constants.ts:27
-    // export const SchemaPartBytes16: SchemaPart = new UintN8(22)
+    // smart_contracts/meta-merkles/contract.algo.ts:425
+    // case SchemaPartBytes16:
     frame_dig 0
     pushbytes 0x16
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:432-434
+    // smart_contracts/meta-merkles/contract.algo.ts:425-427
     // case SchemaPartBytes16:
     //   schema += SchemaPartBytes16String
     //   break
     bz addType_after_if_else@32
-    // smart_contracts/meta-merkles/contract.algo.ts:433
+    // smart_contracts/meta-merkles/contract.algo.ts:426
     // schema += SchemaPartBytes16String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:45
-    // export const SchemaPartBytes16String: string = 'bytes16'
     pushbytes "bytes16"
-    // smart_contracts/meta-merkles/contract.algo.ts:433
-    // schema += SchemaPartBytes16String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:434
+    // smart_contracts/meta-merkles/contract.algo.ts:427
     // break
     b addType_block@54
 
 addType_after_if_else@32:
-    // smart_contracts/meta-merkles/constants.ts:28
-    // export const SchemaPartBytes32: SchemaPart = new UintN8(23)
+    // smart_contracts/meta-merkles/contract.algo.ts:428
+    // case SchemaPartBytes32:
     frame_dig 0
     pushbytes 0x17
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:435-437
+    // smart_contracts/meta-merkles/contract.algo.ts:428-430
     // case SchemaPartBytes32:
     //   schema += SchemaPartBytes32String
     //   break
     bz addType_after_if_else@35
-    // smart_contracts/meta-merkles/contract.algo.ts:436
+    // smart_contracts/meta-merkles/contract.algo.ts:429
     // schema += SchemaPartBytes32String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:46
-    // export const SchemaPartBytes32String: string = 'bytes32'
     pushbytes "bytes32"
-    // smart_contracts/meta-merkles/contract.algo.ts:436
-    // schema += SchemaPartBytes32String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:437
+    // smart_contracts/meta-merkles/contract.algo.ts:430
     // break
     b addType_block@54
 
 addType_after_if_else@35:
-    // smart_contracts/meta-merkles/constants.ts:29
-    // export const SchemaPartBytes64: SchemaPart = new UintN8(24)
+    // smart_contracts/meta-merkles/contract.algo.ts:431
+    // case SchemaPartBytes64:
     frame_dig 0
     pushbytes 0x18
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:438-440
+    // smart_contracts/meta-merkles/contract.algo.ts:431-433
     // case SchemaPartBytes64:
     //   schema += SchemaPartBytes64String
     //   break
     bz addType_after_if_else@38
-    // smart_contracts/meta-merkles/contract.algo.ts:439
+    // smart_contracts/meta-merkles/contract.algo.ts:432
     // schema += SchemaPartBytes64String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:47
-    // export const SchemaPartBytes64String: string = 'bytes64'
     pushbytes "bytes64"
-    // smart_contracts/meta-merkles/contract.algo.ts:439
-    // schema += SchemaPartBytes64String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:440
+    // smart_contracts/meta-merkles/contract.algo.ts:433
     // break
     b addType_block@54
 
 addType_after_if_else@38:
-    // smart_contracts/meta-merkles/constants.ts:30
-    // export const SchemaPartBytes128: SchemaPart = new UintN8(25)
+    // smart_contracts/meta-merkles/contract.algo.ts:434
+    // case SchemaPartBytes128:
     frame_dig 0
     pushbytes 0x19
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:441-443
+    // smart_contracts/meta-merkles/contract.algo.ts:434-436
     // case SchemaPartBytes128:
     //   schema += SchemaPartBytes128String
     //   break
     bz addType_after_if_else@41
-    // smart_contracts/meta-merkles/contract.algo.ts:442
+    // smart_contracts/meta-merkles/contract.algo.ts:435
     // schema += SchemaPartBytes128String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:48
-    // export const SchemaPartBytes128String: string = 'bytes128'
     pushbytes "bytes128"
-    // smart_contracts/meta-merkles/contract.algo.ts:442
-    // schema += SchemaPartBytes128String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:443
+    // smart_contracts/meta-merkles/contract.algo.ts:436
     // break
     b addType_block@54
 
 addType_after_if_else@41:
-    // smart_contracts/meta-merkles/constants.ts:31
-    // export const SchemaPartBytes256: SchemaPart = new UintN8(26)
+    // smart_contracts/meta-merkles/contract.algo.ts:437
+    // case SchemaPartBytes256:
     frame_dig 0
     pushbytes 0x1a
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:444-446
+    // smart_contracts/meta-merkles/contract.algo.ts:437-439
     // case SchemaPartBytes256:
     //   schema += SchemaPartBytes256String
     //   break
     bz addType_after_if_else@44
-    // smart_contracts/meta-merkles/contract.algo.ts:445
+    // smart_contracts/meta-merkles/contract.algo.ts:438
     // schema += SchemaPartBytes256String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:49
-    // export const SchemaPartBytes256String: string = 'bytes256'
     pushbytes "bytes256"
-    // smart_contracts/meta-merkles/contract.algo.ts:445
-    // schema += SchemaPartBytes256String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:446
+    // smart_contracts/meta-merkles/contract.algo.ts:439
     // break
     b addType_block@54
 
 addType_after_if_else@44:
-    // smart_contracts/meta-merkles/constants.ts:32
-    // export const SchemaPartBytes512: SchemaPart = new UintN8(27)
+    // smart_contracts/meta-merkles/contract.algo.ts:440
+    // case SchemaPartBytes512:
     frame_dig 0
     pushbytes 0x1b
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:447-449
+    // smart_contracts/meta-merkles/contract.algo.ts:440-442
     // case SchemaPartBytes512:
     //   schema += SchemaPartBytes512String
     //   break
     bz addType_after_if_else@47
-    // smart_contracts/meta-merkles/contract.algo.ts:448
+    // smart_contracts/meta-merkles/contract.algo.ts:441
     // schema += SchemaPartBytes512String
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:50
-    // export const SchemaPartBytes512String: string = 'bytes512'
     pushbytes "bytes512"
-    // smart_contracts/meta-merkles/contract.algo.ts:448
-    // schema += SchemaPartBytes512String
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:449
+    // smart_contracts/meta-merkles/contract.algo.ts:442
     // break
     b addType_block@54
 
 addType_after_if_else@47:
-    // smart_contracts/meta-merkles/constants.ts:33
-    // export const SchemaPartString: SchemaPart = new UintN8(30)
+    // smart_contracts/meta-merkles/contract.algo.ts:443
+    // case SchemaPartString:
     frame_dig 0
     pushbytes 0x1e
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:450-452
+    // smart_contracts/meta-merkles/contract.algo.ts:443-445
     // case SchemaPartString:
     //   schema += SchemaPartStringString
     //   break
     bz addType_after_if_else@50
-    // smart_contracts/meta-merkles/contract.algo.ts:451
+    // smart_contracts/meta-merkles/contract.algo.ts:444
     // schema += SchemaPartStringString
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:51
-    // export const SchemaPartStringString: string = 'string'
     pushbytes "string"
-    // smart_contracts/meta-merkles/contract.algo.ts:451
-    // schema += SchemaPartStringString
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:452
+    // smart_contracts/meta-merkles/contract.algo.ts:445
     // break
     b addType_block@54
 
 addType_after_if_else@50:
-    // smart_contracts/meta-merkles/constants.ts:34
-    // export const SchemaPartAddress: SchemaPart = new UintN8(40)
+    // smart_contracts/meta-merkles/contract.algo.ts:446
+    // case SchemaPartAddress:
     frame_dig 0
     pushbytes 0x28
     ==
-    // smart_contracts/meta-merkles/contract.algo.ts:453-455
+    // smart_contracts/meta-merkles/contract.algo.ts:446-448
     // case SchemaPartAddress:
     //   schema += SchemaPartAddressString
     //   break
     bz addType_block@54
-    // smart_contracts/meta-merkles/contract.algo.ts:454
+    // smart_contracts/meta-merkles/contract.algo.ts:447
     // schema += SchemaPartAddressString
     frame_dig 4
-    // smart_contracts/meta-merkles/constants.ts:52
-    // export const SchemaPartAddressString: string = 'address'
     pushbytes "address"
-    // smart_contracts/meta-merkles/contract.algo.ts:454
-    // schema += SchemaPartAddressString
     concat
     frame_bury 4
-    // smart_contracts/meta-merkles/contract.algo.ts:455
+    // smart_contracts/meta-merkles/contract.algo.ts:448
     // break
     b addType_block@54
 
 addType_after_while@58:
-    // smart_contracts/meta-merkles/constants.ts:6
-    // export const MetaMerklesGlobalStateKeyTypesID = 'types_id'
+    // smart_contracts/meta-merkles/contract.algo.ts:93
+    // typesID = GlobalState<uint64>({ key: MetaMerklesGlobalStateKeyTypesID })
     intc_1 // 0
     bytec 6 // "types_id"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/meta-merkles/contract.algo.ts:125
+    // smart_contracts/meta-merkles/contract.algo.ts:123
     // this.typesID.value += 1
     dup
     intc_0 // 1
     +
-    // smart_contracts/meta-merkles/constants.ts:6
-    // export const MetaMerklesGlobalStateKeyTypesID = 'types_id'
+    // smart_contracts/meta-merkles/contract.algo.ts:93
+    // typesID = GlobalState<uint64>({ key: MetaMerklesGlobalStateKeyTypesID })
     bytec 6 // "types_id"
-    // smart_contracts/meta-merkles/contract.algo.ts:125
+    // smart_contracts/meta-merkles/contract.algo.ts:123
     // this.typesID.value += 1
     swap
     app_global_put
-    // smart_contracts/meta-merkles/contract.algo.ts:465
-    // this.types(id).value = {
-    itob
-    // smart_contracts/meta-merkles/constants.ts:8
-    // export const MetaMerklesBoxPrefixTypes = 't'
-    pushbytes "t"
-    swap
-    concat
-    // smart_contracts/meta-merkles/contract.algo.ts:465-468
+    // smart_contracts/meta-merkles/contract.algo.ts:458-461
     // this.types(id).value = {
     //   description: description,
     //   schema,
     // }
+    frame_dig 4
     dup
-    box_del
-    pop
-    // smart_contracts/meta-merkles/contract.algo.ts:466
-    // description: description,
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    dup
+    len
+    pushint 4 // 4
+    +
     frame_dig 3
     itob
     extract 6 2
     frame_dig -2
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:467
-    // schema,
-    frame_dig 4
-    dup
-    len
-    itob
-    extract 6 2
     swap
-    concat
-    // smart_contracts/meta-merkles/contract.algo.ts:465
-    // this.types(id).value = {
-    dig 1
-    len
-    pushint 4 // 4
-    +
     itob
     extract 6 2
     pushbytes 0x0004
@@ -2180,50 +1901,63 @@ addType_after_while@58:
     concat
     swap
     concat
-    // smart_contracts/meta-merkles/contract.algo.ts:465-468
+    // smart_contracts/meta-merkles/contract.algo.ts:458
+    // this.types(id).value = {
+    swap
+    itob
+    // smart_contracts/meta-merkles/contract.algo.ts:98
+    // types = BoxMap<uint64, TypesValue>({ keyPrefix: MetaMerklesBoxPrefixTypes })
+    pushbytes "t"
+    swap
+    concat
+    // smart_contracts/meta-merkles/contract.algo.ts:458-461
     // this.types(id).value = {
     //   description: description,
     //   schema,
     // }
+    dup
+    box_del
+    pop
+    swap
     box_put
     retsub
 
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.rootCosts(name: bytes) -> uint64:
 rootCosts:
-    // smart_contracts/meta-merkles/contract.algo.ts:473-474
+    // smart_contracts/meta-merkles/contract.algo.ts:466-467
     // @abimethod({ readonly: true })
     // rootCosts(name: string): uint64 {
     proto 1 1
-    // smart_contracts/meta-merkles/contract.algo.ts:475
+    // smart_contracts/meta-merkles/contract.algo.ts:468
     // const costs = this.mbr('', '', name, treeTypeKey, String(itob(0)))
     intc_1 // 0
     itob
     bytec_0 // ""
     dup
     frame_dig -1
-    // smart_contracts/meta-merkles/constants.ts:16
-    // export const treeTypeKey: string = 'l.type'
     pushbytes "l.type"
-    // smart_contracts/meta-merkles/contract.algo.ts:475
-    // const costs = this.mbr('', '', name, treeTypeKey, String(itob(0)))
     uncover 4
     callsub mbr
-    cover 2
-    bury 1
-    // smart_contracts/meta-merkles/contract.algo.ts:476
+    // smart_contracts/meta-merkles/contract.algo.ts:469
     // return costs.roots + costs.data
+    dup
+    pushint 8 // 8
+    extract_uint64
+    swap
+    intc_2 // 16
+    extract_uint64
     +
     retsub
 
 
 // smart_contracts/meta-merkles/contract.algo.ts::MetaMerkles.dataCosts(name: bytes, key: bytes, value: bytes) -> uint64:
 dataCosts:
-    // smart_contracts/meta-merkles/contract.algo.ts:479-480
+    // smart_contracts/meta-merkles/contract.algo.ts:472-473
     // @abimethod({ readonly: true })
     // dataCosts(name: arc4.Str, key: arc4.Str, value: arc4.Str): uint64 {
     proto 3 1
-    // smart_contracts/meta-merkles/contract.algo.ts:481
+    // smart_contracts/meta-merkles/contract.algo.ts:474
     // const costs = this.mbr('', '', name.native, key.native, value.native)
     frame_dig -3
     extract 2 0
@@ -2236,8 +1970,8 @@ dataCosts:
     cover 4
     cover 4
     callsub mbr
-    cover 2
-    popn 2
-    // smart_contracts/meta-merkles/contract.algo.ts:482
+    // smart_contracts/meta-merkles/contract.algo.ts:475
     // return costs.data
+    intc_2 // 16
+    extract_uint64
     retsub

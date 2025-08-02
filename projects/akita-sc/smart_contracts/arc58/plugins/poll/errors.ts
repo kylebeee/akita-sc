@@ -1,0 +1,1 @@
+export const ERR_CREATOR_NOT_POLL_FACTORY = 'Creator is not the Poll Factory'

@@ -1,0 +1,234 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1
+    bytecblock "recipient"
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:6
+    // export class PaySiloPlugin extends Contract {
+    txn NumAppArgs
+    bz main_after_if_else@8
+    pushbytess 0xcc694eaa 0xdd21c80d // method "create(address)void", method "pay(uint64,bool,uint64,uint64)void"
+    txna ApplicationArgs 0
+    match main_create_route@3 main_pay_route@4
+
+main_after_if_else@8:
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:6
+    // export class PaySiloPlugin extends Contract {
+    intc_0 // 0
+    return
+
+main_pay_route@4:
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:15
+    // pay(walletID: uint64, rekeyBack: boolean, asset: uint64, amount: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:6
+    // export class PaySiloPlugin extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    btoi
+    txna ApplicationArgs 4
+    btoi
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:15
+    // pay(walletID: uint64, rekeyBack: boolean, asset: uint64, amount: uint64): void {
+    callsub pay
+    intc_1 // 1
+    return
+
+main_create_route@3:
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:10
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:6
+    // export class PaySiloPlugin extends Contract {
+    txna ApplicationArgs 1
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:10
+    // @abimethod({ onCreate: 'require' })
+    callsub create
+    intc_1 // 1
+    return
+
+
+// smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
+rekeyAddress:
+    // smart_contracts/utils/functions.ts:241
+    // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
+    proto 2 1
+    // smart_contracts/utils/functions.ts:242
+    // if (!rekeyBack) {
+    frame_dig -2
+    bnz rekeyAddress_after_if_else@2
+    // smart_contracts/utils/functions.ts:243
+    // return Global.zeroAddress
+    global ZeroAddress
+    retsub
+
+rekeyAddress_after_if_else@2:
+    // smart_contracts/utils/functions.ts:246
+    // return wallet.address
+    frame_dig -1
+    app_params_get AppAddress
+    assert // application exists
+    retsub
+
+
+// smart_contracts/arc58/plugins/pay-silo/contract.algo.ts::PaySiloPlugin.create(recipient: bytes) -> void:
+create:
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:10-11
+    // @abimethod({ onCreate: 'require' })
+    // create(recipient: Address): void {
+    proto 1 0
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:8
+    // recipient = GlobalState<Account>({ key: PaySiloPluginGlobalStateKeyRecipient })
+    bytec_0 // "recipient"
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:12
+    // this.recipient.value = recipient.native
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/plugins/pay-silo/contract.algo.ts::PaySiloPlugin.pay(walletID: uint64, rekeyBack: uint64, asset: uint64, amount: uint64) -> void:
+pay:
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:15
+    // pay(walletID: uint64, rekeyBack: boolean, asset: uint64, amount: uint64): void {
+    proto 4 0
+    // smart_contracts/utils/functions.ts:204-207
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    frame_dig -4
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    pushbytes "spending_address"
+    // smart_contracts/utils/functions.ts:204-207
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:19
+    // if (asset === 0) {
+    frame_dig -2
+    bnz pay_else_body@3
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:20-27
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver: this.recipient.value,
+    //     amount,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:8
+    // recipient = GlobalState<Account>({ key: PaySiloPluginGlobalStateKeyRecipient })
+    intc_0 // 0
+    bytec_0 // "recipient"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:25
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
+    frame_dig -3
+    frame_dig -4
+    callsub rekeyAddress
+    itxn_field RekeyTo
+    frame_dig -1
+    itxn_field Amount
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:20-26
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver: this.recipient.value,
+    //     amount,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:20-27
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver: this.recipient.value,
+    //     amount,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_submit
+    retsub
+
+pay_else_body@3:
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:29-37
+    // itxn
+    //   .assetTransfer({
+    //     sender,
+    //     assetReceiver: this.recipient.value,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:8
+    // recipient = GlobalState<Account>({ key: PaySiloPluginGlobalStateKeyRecipient })
+    intc_0 // 0
+    bytec_0 // "recipient"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:35
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
+    frame_dig -3
+    frame_dig -4
+    callsub rekeyAddress
+    itxn_field RekeyTo
+    frame_dig -2
+    itxn_field XferAsset
+    frame_dig -1
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:29-36
+    // itxn
+    //   .assetTransfer({
+    //     sender,
+    //     assetReceiver: this.recipient.value,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/pay-silo/contract.algo.ts:29-37
+    // itxn
+    //   .assetTransfer({
+    //     sender,
+    //     assetReceiver: this.recipient.value,
+    //     assetAmount: amount,
+    //     xferAsset: asset,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_submit
+    retsub

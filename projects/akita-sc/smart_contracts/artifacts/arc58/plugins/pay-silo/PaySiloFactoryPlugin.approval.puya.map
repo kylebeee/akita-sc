@@ -1,0 +1,660 @@
+{
+  "version": 3,
+  "sources": [
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/arc58/plugins/pay-silo/factory.algo.ts",
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/utils/functions.ts"
+  ],
+  "mappings": ";;;;;AAcA;;AAAA;;;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;;AAEE;;AAAA;AAAA;AAAA;;AAAA;AAFF;;;AAAA;AAAA;;;AAAA;AAAA;AAAA;;;AAEE;;;AAAA;AAAA;;;;;;AAAA;AAAA;AAAA;AAAA;;AAFF;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAEE;;;AC2L+B;;AAEvB;;;;;;;;;;;;;;;;;;AAFuB;AAAA;ADjLd;ACuNb;;AAAA;;;AACY;;ADxNC;;;;;;;;;;;;AAFC;;;AAAA;;;AAAA;;;AAAA;;;AAAA;;;AAAA;;;;;;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAED;;;;;;;;;AAAA;;;;AAAA;;;AAAA;;;AAMf;AAAA;ACqNY;;AAAA;;AAAA;ADxND",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "@algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1"
+    },
+    "5": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "7": {
+      "op": "bz main_bare_routing@6",
+      "stack_out": []
+    },
+    "10": {
+      "op": "pushbytes 0x0d9b6c5e // method \"mint(uint64,bool,address)uint64\"",
+      "defined_out": [
+        "Method(mint(uint64,bool,address)uint64)"
+      ],
+      "stack_out": [
+        "Method(mint(uint64,bool,address)uint64)"
+      ]
+    },
+    "16": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(mint(uint64,bool,address)uint64)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(mint(uint64,bool,address)uint64)",
+        "tmp%2#0"
+      ]
+    },
+    "19": {
+      "op": "match main_mint_route@3",
+      "stack_out": []
+    },
+    "23": {
+      "block": "main_after_if_else@10",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "24": {
+      "op": "return",
+      "stack_out": []
+    },
+    "25": {
+      "block": "main_mint_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "27": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "28": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "29": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "31": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "32": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_Encoded(uint64)%0#0"
+      ],
+      "stack_out": [
+        "reinterpret_Encoded(uint64)%0#0"
+      ]
+    },
+    "35": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "36": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "reinterpret_Encoded(bool8)%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "reinterpret_Encoded(bool8)%0#0"
+      ]
+    },
+    "39": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "reinterpret_Encoded(bool8)%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "reinterpret_Encoded(bool8)%0#0",
+        "0"
+      ]
+    },
+    "40": {
+      "op": "getbit",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0"
+      ]
+    },
+    "41": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(uint8[32])%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(uint8[32])%0#0"
+      ]
+    },
+    "44": {
+      "callsub": "smart_contracts/arc58/plugins/pay-silo/factory.algo.ts::PaySiloFactoryPlugin.mint",
+      "op": "callsub mint",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "47": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "48": {
+      "op": "pushbytes 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "54": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "55": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "56": {
+      "op": "log",
+      "stack_out": []
+    },
+    "57": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "58": {
+      "op": "return",
+      "stack_out": []
+    },
+    "59": {
+      "block": "main_bare_routing@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "61": {
+      "op": "bnz main_after_if_else@10",
+      "stack_out": []
+    },
+    "64": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "66": {
+      "op": "!",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "67": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "68": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "69": {
+      "op": "return",
+      "stack_out": []
+    },
+    "70": {
+      "subroutine": "smart_contracts/arc58/plugins/pay-silo/factory.algo.ts::PaySiloFactoryPlugin.mint",
+      "params": {
+        "walletID#0": "uint64",
+        "rekeyBack#0": "uint64",
+        "recipient#0": "bytes"
+      },
+      "block": "mint",
+      "stack_in": [],
+      "op": "proto 3 1"
+    },
+    "73": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "walletID#0 (copy)"
+      ],
+      "stack_out": [
+        "walletID#0 (copy)"
+      ]
+    },
+    "75": {
+      "op": "pushbytes \"spending_address\"",
+      "defined_out": [
+        "\"spending_address\"",
+        "walletID#0 (copy)"
+      ],
+      "stack_out": [
+        "walletID#0 (copy)",
+        "\"spending_address\""
+      ]
+    },
+    "93": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "awst_tmp%1#0",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "awst_tmp%1#0"
+      ]
+    },
+    "94": {
+      "op": "pop",
+      "defined_out": [
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0"
+      ]
+    },
+    "95": {
+      "op": "itxn_begin"
+    },
+    "96": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "rekeyBack#0 (copy)",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "rekeyBack#0 (copy)"
+      ]
+    },
+    "98": {
+      "op": "bnz mint_after_if_else@6",
+      "stack_out": [
+        "spendingAddressBytes#0"
+      ]
+    },
+    "101": {
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "103": {
+      "block": "mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7",
+      "stack_in": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ],
+      "op": "pushbytes 0x8424203b // method \"create(byte[32])void\"",
+      "defined_out": [
+        "Method(create(byte[32])void)"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "Method(create(byte[32])void)"
+      ]
+    },
+    "109": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "111": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "recipient#0 (copy)"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "recipient#0 (copy)"
+      ]
+    },
+    "113": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "115": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "0"
+      ]
+    },
+    "116": {
+      "op": "itxn_field ExtraProgramPages",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "118": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "0"
+      ]
+    },
+    "119": {
+      "op": "itxn_field LocalNumUint",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "121": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "0"
+      ]
+    },
+    "122": {
+      "op": "itxn_field LocalNumByteSlice",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "124": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "1"
+      ]
+    },
+    "125": {
+      "op": "itxn_field GlobalNumByteSlice",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "127": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "0"
+      ]
+    },
+    "128": {
+      "op": "itxn_field GlobalNumUint",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "130": {
+      "op": "pushbytes base64(CoEBQw==)",
+      "defined_out": [
+        "CoEBQw=="
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "CoEBQw=="
+      ]
+    },
+    "136": {
+      "op": "itxn_field ClearStateProgramPages",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "138": {
+      "op": "pushbytes base64(CiACAAEmAQlyZWNpcGllbnQxG0EAFYICBMxpTqoE3SHIDTYaAI4CAB8AAiJDMRkURDEYRDYaARc2GgIiUzYaAxc2GgQXiAArI0MxGRREMRgURDYaAYgAEyNDigIBi/5AAAMyA4mL/3IIRImKAQAoi/9niYoEAIv8gBBzcGVuZGluZ19hZGRyZXNzZUiL/kAAHrEiKGVEi/2L/Ij/vbIgi/+yCLIHsgAjshAisgGzibEiKGVEi/2L/Ij/n7Igi/6yEYv/shKyFLIAgQSyECKyAbOJ)",
+      "defined_out": [
+        "CiACAAEmAQlyZWNpcGllbnQxG0EAFYICBMxpTqoE3SHIDTYaAI4CAB8AAiJDMRkURDEYRDYaARc2GgIiUzYaAxc2GgQXiAArI0MxGRREMRgURDYaAYgAEyNDigIBi/5AAAMyA4mL/3IIRImKAQAoi/9niYoEAIv8gBBzcGVuZGluZ19hZGRyZXNzZUiL/kAAHrEiKGVEi/2L/Ij/vbIgi/+yCLIHsgAjshAisgGzibEiKGVEi/2L/Ij/n7Igi/6yEYv/shKyFLIAgQSyECKyAbOJ"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "CiACAAEmAQlyZWNpcGllbnQxG0EAFYICBMxpTqoE3SHIDTYaAI4CAB8AAiJDMRkURDEYRDYaARc2GgIiUzYaAxc2GgQXiAArI0MxGRREMRgURDYaAYgAEyNDigIBi/5AAAMyA4mL/3IIRImKAQAoi/9niYoEAIv8gBBzcGVuZGluZ19hZGRyZXNzZUiL/kAAHrEiKGVEi/2L/Ij/vbIgi/+yCLIHsgAjshAisgGzibEiKGVEi/2L/Ij/n7Igi/6yEYv/shKyFLIAgQSyECKyAbOJ"
+      ]
+    },
+    "351": {
+      "op": "itxn_field ApprovalProgramPages",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "353": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0",
+        "0"
+      ]
+    },
+    "354": {
+      "op": "itxn_field OnCompletion",
+      "defined_out": [
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "356": {
+      "op": "itxn_field RekeyTo",
+      "stack_out": [
+        "spendingAddressBytes#0"
+      ]
+    },
+    "358": {
+      "op": "frame_dig 0",
+      "defined_out": [
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "spendingAddressBytes#0"
+      ]
+    },
+    "360": {
+      "op": "itxn_field Sender",
+      "stack_out": [
+        "spendingAddressBytes#0"
+      ]
+    },
+    "362": {
+      "op": "pushint 6 // appl",
+      "defined_out": [
+        "appl",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "appl"
+      ]
+    },
+    "364": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "spendingAddressBytes#0"
+      ]
+    },
+    "366": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "0"
+      ]
+    },
+    "367": {
+      "op": "itxn_field Fee",
+      "stack_out": [
+        "spendingAddressBytes#0"
+      ]
+    },
+    "369": {
+      "op": "itxn_submit"
+    },
+    "370": {
+      "op": "itxn CreatedApplicationID",
+      "defined_out": [
+        "result.itxn.CreatedApplicationID#0",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "result.itxn.CreatedApplicationID#0"
+      ]
+    },
+    "372": {
+      "op": "swap"
+    },
+    "373": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "374": {
+      "block": "mint_after_if_else@6",
+      "stack_in": [
+        "spendingAddressBytes#0"
+      ],
+      "op": "frame_dig -3",
+      "defined_out": [
+        "walletID#0 (copy)"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "walletID#0 (copy)"
+      ]
+    },
+    "376": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "378": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "defined_out": [
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ],
+      "stack_out": [
+        "spendingAddressBytes#0",
+        "inner_txn_params%0%%param_RekeyTo_idx_0#0"
+      ]
+    },
+    "379": {
+      "op": "b mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7"
+    }
+  }
+}

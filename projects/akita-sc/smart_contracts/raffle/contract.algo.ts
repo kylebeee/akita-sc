@@ -90,7 +90,7 @@ import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { arc59OptInAndSend, calcPercent, gateCall, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender } from '../utils/functions'
 import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { RoyaltyAmounts } from '../utils/types/royalties'
-import { AkitaDAOEscrowAccountRaffles } from '../dao/constants'
+import { AkitaDAOEscrowAccountRaffles } from '../arc58/dao/constants'
 
 export class Raffle extends classes(
   BaseRaffle,

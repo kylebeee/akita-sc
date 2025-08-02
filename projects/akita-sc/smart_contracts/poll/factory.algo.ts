@@ -1,4 +1,4 @@
-import { assertMatch, Global, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { assertMatch, Global, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { FactoryContract } from '../utils/base-contracts/factory'
 import { Poll } from './contract.algo'
@@ -7,7 +7,8 @@ import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 
 export class PollFactory extends FactoryContract {
-  mint(
+
+  new(
     payment: gtxn.PaymentTxn,
     type: PollType,
     endTime: uint64,
@@ -47,8 +48,14 @@ export class PollFactory extends FactoryContract {
       })
       .itxn
       .createdApp
-      .id
 
-    return mint
+    itxn
+      .payment({
+        receiver: mint.address,
+        amount: Global.minBalance
+      })
+      .submit()
+
+    return mint.id
   }
 }

@@ -50,10 +50,10 @@ export const ERR_INVALID_PAYMENT = 'invalid payment'
 export const ERR_ONLY_APPS = 'Only applications can create spending accounts'
 export const ERR_FORBIDDEN = 'only the creator wallet can delete a spending account'
 
+export const ERR_ESCROW_LOCKED = 'Escrow is locked'
 export const ERR_ESCROW_ALREADY_EXISTS = 'Escrow already exists'
+export const ERR_ESCROW_DOES_NOT_EXIST = 'Escrow does not exist'
 
 export const ERR_ONLY_WALLET_OR_PLUGIN = 'Only the wallet or plugin can opt in'
 export const ERR_ONLY_FACTORY_CAN_DELETE = 'Only the factory can delete the application'
 export const ERR_ALLOWANCE_EXCEEDED = 'Allowance exceeded'
-
-export const ERR_NOT_USING_ESCROW = 'Not using escrow for this plugin'

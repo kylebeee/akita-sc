@@ -3,9 +3,9 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 16 32 28900 31536000 99000
-    bytecblock "s" 0x151f7c75 0x03 "" 0x00 0x02 "h" 0x0000000000000000000000000000000000000000000000000000000000000000 "akita_dao" "e" "version" 0x0000
-    // smart_contracts/staking/contract.algo.ts:75
+    intcblock 0 1 32 2 28900 31536000 99000
+    bytecblock "s" 0x151f7c75 0x28 "" 0x1e "h" 0x0a "akita_dao" 0x00 "version" 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 0x000000000000000000000000000000000000000000000000 0x0000
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txn NumAppArgs
     bz main_after_if_else@29
@@ -14,31 +14,31 @@ main:
     match main_create_route@5 main_stake_route@6 main_stakeAsa_route@7 main_withdraw_route@8 main_createHeartbeat_route@9 main_softCheck_route@10 main_updateSettings_route@11 main_getTimeLeft_route@12 main_mustGetTimeLeft_route@13 main_getInfo_route@14 main_mustGetInfo_route@15 main_getEscrowInfo_route@16 main_getHeartbeat_route@17 main_mustGetHeartbeat_route@18 main_getHeartbeatAverage_route@19 main_mustGetHeartbeatAverage_route@20 main_getInfoList_route@21 main_mustGetInfoList_route@22 main_stakeCheck_route@23 main_update_route@24 main_updateAkitaDAO_route@25
 
 main_after_if_else@29:
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     intc_0 // 0
     return
 
 main_updateAkitaDAO_route@25:
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     callsub updateAkitaDAO
     intc_1 // 1
     return
 
 main_update_route@24:
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -46,25 +46,25 @@ main_update_route@24:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub update
     intc_1 // 1
     return
 
 main_stakeCheck_route@23:
-    // smart_contracts/staking/contract.algo.ts:671
+    // smart_contracts/staking/contract.algo.ts:654
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -72,10 +72,10 @@ main_stakeCheck_route@23:
     txna ApplicationArgs 4
     intc_0 // 0
     getbit
-    // smart_contracts/staking/contract.algo.ts:671
+    // smart_contracts/staking/contract.algo.ts:654
     // @abimethod({ readonly: true })
     callsub stakeCheck
-    bytec 4 // 0x00
+    bytec 8 // 0x00
     intc_0 // 0
     uncover 2
     setbit
@@ -87,19 +87,19 @@ main_stakeCheck_route@23:
     return
 
 main_mustGetInfoList_route@22:
-    // smart_contracts/staking/contract.algo.ts:656
+    // smart_contracts/staking/contract.algo.ts:643
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     txna ApplicationArgs 3
-    // smart_contracts/staking/contract.algo.ts:656
+    // smart_contracts/staking/contract.algo.ts:643
     // @abimethod({ readonly: true })
     callsub mustGetInfoList
     bytec_1 // 0x151f7c75
@@ -110,19 +110,19 @@ main_mustGetInfoList_route@22:
     return
 
 main_getInfoList_route@21:
-    // smart_contracts/staking/contract.algo.ts:631
+    // smart_contracts/staking/contract.algo.ts:621
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     txna ApplicationArgs 3
-    // smart_contracts/staking/contract.algo.ts:631
+    // smart_contracts/staking/contract.algo.ts:621
     // @abimethod({ readonly: true })
     callsub getInfoList
     bytec_1 // 0x151f7c75
@@ -133,14 +133,14 @@ main_getInfoList_route@21:
     return
 
 main_mustGetHeartbeatAverage_route@20:
-    // smart_contracts/staking/contract.algo.ts:612
+    // smart_contracts/staking/contract.algo.ts:602
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -148,7 +148,7 @@ main_mustGetHeartbeatAverage_route@20:
     txna ApplicationArgs 3
     intc_0 // 0
     getbit
-    // smart_contracts/staking/contract.algo.ts:612
+    // smart_contracts/staking/contract.algo.ts:602
     // @abimethod({ readonly: true })
     callsub mustGetHeartbeatAverage
     itob
@@ -160,14 +160,14 @@ main_mustGetHeartbeatAverage_route@20:
     return
 
 main_getHeartbeatAverage_route@19:
-    // smart_contracts/staking/contract.algo.ts:590
+    // smart_contracts/staking/contract.algo.ts:580
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -175,7 +175,7 @@ main_getHeartbeatAverage_route@19:
     txna ApplicationArgs 3
     intc_0 // 0
     getbit
-    // smart_contracts/staking/contract.algo.ts:590
+    // smart_contracts/staking/contract.algo.ts:580
     // @abimethod({ readonly: true })
     callsub getHeartbeatAverage
     itob
@@ -187,19 +187,19 @@ main_getHeartbeatAverage_route@19:
     return
 
 main_mustGetHeartbeat_route@18:
-    // smart_contracts/staking/contract.algo.ts:583
+    // smart_contracts/staking/contract.algo.ts:573
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:583
+    // smart_contracts/staking/contract.algo.ts:573
     // @abimethod({ readonly: true })
     callsub mustGetHeartbeat
     bytec_1 // 0x151f7c75
@@ -210,19 +210,19 @@ main_mustGetHeartbeat_route@18:
     return
 
 main_getHeartbeat_route@17:
-    // smart_contracts/staking/contract.algo.ts:565
+    // smart_contracts/staking/contract.algo.ts:555
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:565
+    // smart_contracts/staking/contract.algo.ts:555
     // @abimethod({ readonly: true })
     callsub getHeartbeat
     bytec_1 // 0x151f7c75
@@ -233,26 +233,21 @@ main_getHeartbeat_route@17:
     return
 
 main_getEscrowInfo_route@16:
-    // smart_contracts/staking/contract.algo.ts:547
+    // smart_contracts/staking/contract.algo.ts:537
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:547
+    // smart_contracts/staking/contract.algo.ts:537
     // @abimethod({ readonly: true })
     callsub getEscrowInfo
-    swap
-    itob
-    swap
-    itob
-    concat
     bytec_1 // 0x151f7c75
     swap
     concat
@@ -261,35 +256,20 @@ main_getEscrowInfo_route@16:
     return
 
 main_mustGetInfo_route@15:
-    // smart_contracts/staking/contract.algo.ts:539
+    // smart_contracts/staking/contract.algo.ts:529
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
-    dup
-    intc_0 // 0
-    extract_uint64
-    swap
-    extract 8 1 // on error: Index access is out of bounds
-    // smart_contracts/staking/contract.algo.ts:539
+    // smart_contracts/staking/contract.algo.ts:529
     // @abimethod({ readonly: true })
     callsub mustGetInfo
-    uncover 2
-    itob
-    uncover 2
-    itob
-    uncover 2
-    itob
-    cover 2
-    concat
-    swap
-    concat
     bytec_1 // 0x151f7c75
     swap
     concat
@@ -298,35 +278,20 @@ main_mustGetInfo_route@15:
     return
 
 main_getInfo_route@14:
-    // smart_contracts/staking/contract.algo.ts:529
+    // smart_contracts/staking/contract.algo.ts:519
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
-    dup
-    intc_0 // 0
-    extract_uint64
-    swap
-    extract 8 1 // on error: Index access is out of bounds
-    // smart_contracts/staking/contract.algo.ts:529
+    // smart_contracts/staking/contract.algo.ts:519
     // @abimethod({ readonly: true })
     callsub getInfo
-    uncover 2
-    itob
-    uncover 2
-    itob
-    uncover 2
-    itob
-    cover 2
-    concat
-    swap
-    concat
     bytec_1 // 0x151f7c75
     swap
     concat
@@ -335,19 +300,19 @@ main_getInfo_route@14:
     return
 
 main_mustGetTimeLeft_route@13:
-    // smart_contracts/staking/contract.algo.ts:521
+    // smart_contracts/staking/contract.algo.ts:511
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:521
+    // smart_contracts/staking/contract.algo.ts:511
     // @abimethod({ readonly: true })
     callsub mustGetTimeLeft
     itob
@@ -359,19 +324,19 @@ main_mustGetTimeLeft_route@13:
     return
 
 main_getTimeLeft_route@12:
-    // smart_contracts/staking/contract.algo.ts:510
+    // smart_contracts/staking/contract.algo.ts:500
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:510
+    // smart_contracts/staking/contract.algo.ts:500
     // @abimethod({ readonly: true })
     callsub getTimeLeft
     itob
@@ -383,14 +348,14 @@ main_getTimeLeft_route@12:
     return
 
 main_updateSettings_route@11:
-    // smart_contracts/staking/contract.algo.ts:493
+    // smart_contracts/staking/contract.algo.ts:483
     // updateSettings(payment: gtxn.PaymentTxn, asset: uint64, value: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txn GroupIndex
     intc_1 // 1
@@ -404,35 +369,28 @@ main_updateSettings_route@11:
     btoi
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:493
+    // smart_contracts/staking/contract.algo.ts:483
     // updateSettings(payment: gtxn.PaymentTxn, asset: uint64, value: uint64): void {
     callsub updateSettings
     intc_1 // 1
     return
 
 main_softCheck_route@10:
-    // smart_contracts/staking/contract.algo.ts:460
+    // smart_contracts/staking/contract.algo.ts:450
     // softCheck(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:460
+    // smart_contracts/staking/contract.algo.ts:450
     // softCheck(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
     callsub softCheck
-    bytec 4 // 0x00
-    intc_0 // 0
-    uncover 3
-    setbit
-    swap
-    itob
-    concat
     bytec_1 // 0x151f7c75
     swap
     concat
@@ -441,45 +399,45 @@ main_softCheck_route@10:
     return
 
 main_createHeartbeat_route@9:
-    // smart_contracts/staking/contract.algo.ts:403
+    // smart_contracts/staking/contract.algo.ts:393
     // createHeartbeat(address: Address, asset: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:403
+    // smart_contracts/staking/contract.algo.ts:393
     // createHeartbeat(address: Address, asset: uint64): void {
     callsub createHeartbeat
     intc_1 // 1
     return
 
 main_withdraw_route@8:
-    // smart_contracts/staking/contract.algo.ts:370
+    // smart_contracts/staking/contract.algo.ts:362
     // withdraw(asset: uint64, type: StakingType): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
-    // smart_contracts/staking/contract.algo.ts:370
+    // smart_contracts/staking/contract.algo.ts:362
     // withdraw(asset: uint64, type: StakingType): void {
     callsub withdraw
     intc_1 // 1
     return
 
 main_stakeAsa_route@7:
-    // smart_contracts/staking/contract.algo.ts:236-242
+    // smart_contracts/staking/contract.algo.ts:230-236
     // stakeAsa(
     //   payment: gtxn.PaymentTxn,
     //   assetXfer: gtxn.AssetTransferTxn,
@@ -492,10 +450,10 @@ main_stakeAsa_route@7:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txn GroupIndex
-    pushint 2 // 2
+    intc_3 // 2
     -
     dup
     gtxns TypeEnum
@@ -515,7 +473,7 @@ main_stakeAsa_route@7:
     btoi
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/staking/contract.algo.ts:236-242
+    // smart_contracts/staking/contract.algo.ts:230-236
     // stakeAsa(
     //   payment: gtxn.PaymentTxn,
     //   assetXfer: gtxn.AssetTransferTxn,
@@ -528,14 +486,14 @@ main_stakeAsa_route@7:
     return
 
 main_stake_route@6:
-    // smart_contracts/staking/contract.algo.ts:103
+    // smart_contracts/staking/contract.algo.ts:97
     // stake(payment: gtxn.PaymentTxn, type: StakingType, amount: uint64, expiration: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txn GroupIndex
     intc_1 // 1
@@ -550,14 +508,14 @@ main_stake_route@6:
     btoi
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/staking/contract.algo.ts:103
+    // smart_contracts/staking/contract.algo.ts:97
     // stake(payment: gtxn.PaymentTxn, type: StakingType, amount: uint64, expiration: uint64): void {
     callsub stake
     intc_1 // 1
     return
 
 main_create_route@5:
-    // smart_contracts/staking/contract.algo.ts:95
+    // smart_contracts/staking/contract.algo.ts:89
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -565,13 +523,13 @@ main_create_route@5:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/staking/contract.algo.ts:75
+    // smart_contracts/staking/contract.algo.ts:69
     // export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/staking/contract.algo.ts:95
+    // smart_contracts/staking/contract.algo.ts:89
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_1 // 1
@@ -580,21 +538,21 @@ main_create_route@5:
 
 // smart_contracts/staking/contract.algo.ts::Staking.create(version: bytes, akitaDAO: uint64) -> void:
 create:
-    // smart_contracts/staking/contract.algo.ts:95-96
+    // smart_contracts/staking/contract.algo.ts:89-90
     // @abimethod({ onCreate: 'require' })
     // create(version: string, akitaDAO: uint64): void {
     proto 2 0
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
-    bytec 10 // "version"
-    // smart_contracts/staking/contract.algo.ts:97
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec 9 // "version"
+    // smart_contracts/staking/contract.algo.ts:91
     // this.version.value = version
     frame_dig -2
     app_global_put
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    bytec 8 // "akita_dao"
-    // smart_contracts/staking/contract.algo.ts:98
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec 7 // "akita_dao"
+    // smart_contracts/staking/contract.algo.ts:92
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -1
     app_global_put
@@ -603,54 +561,38 @@ create:
 
 // smart_contracts/staking/contract.algo.ts::Staking.stake(payment: uint64, type: bytes, amount: uint64, expiration: uint64) -> void:
 stake:
-    // smart_contracts/staking/contract.algo.ts:103
+    // smart_contracts/staking/contract.algo.ts:97
     // stake(payment: gtxn.PaymentTxn, type: StakingType, amount: uint64, expiration: uint64): void {
     proto 4 0
     intc_0 // 0
     dupn 5
     bytec_3 // ""
     dupn 4
-    // smart_contracts/staking/contract.algo.ts:104
+    // smart_contracts/staking/contract.algo.ts:98
     // const inTheFuture = expiration > Global.latestTimestamp
     frame_dig -1
     global LatestTimestamp
     >
-    // smart_contracts/staking/contract.algo.ts:105
+    // smart_contracts/staking/contract.algo.ts:99
     // const lessThanOneYearInTheFuture = expiration <= Global.latestTimestamp + ONE_YEAR
     global LatestTimestamp
-    // smart_contracts/staking/constants.ts:9
-    // export const ONE_YEAR: uint64 = 31_536_000 // 365 days * 24 hours * 60 minutes * 60 seconds
     intc 5 // 31536000
-    // smart_contracts/staking/contract.algo.ts:105
-    // const lessThanOneYearInTheFuture = expiration <= Global.latestTimestamp + ONE_YEAR
     +
     frame_dig -1
     >=
-    // smart_contracts/staking/contract.algo.ts:106
+    // smart_contracts/staking/contract.algo.ts:100
     // const locked = type !== STAKING_TYPE_LOCK
     frame_dig -3
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:106
-    // const locked = type !== STAKING_TYPE_LOCK
+    bytec_2 // 0x28
     !=
-    // smart_contracts/staking/contract.algo.ts:107
+    // smart_contracts/staking/contract.algo.ts:101
     // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
     frame_dig -3
-    // smart_contracts/staking/types.ts:23
-    // export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
-    bytec 5 // 0x02
-    // smart_contracts/staking/contract.algo.ts:107
-    // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
+    bytec 4 // 0x1e
     ==
     bnz stake_bool_true@2
     frame_dig -3
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:107
-    // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
+    bytec_2 // 0x28
     ==
     bz stake_bool_false@3
 
@@ -659,11 +601,11 @@ stake_bool_true@2:
     frame_bury 8
 
 stake_bool_merge@4:
-    // smart_contracts/staking/contract.algo.ts:108
+    // smart_contracts/staking/contract.algo.ts:102
     // const timestamp = Global.latestTimestamp
     global LatestTimestamp
     frame_bury 10
-    // smart_contracts/staking/contract.algo.ts:110
+    // smart_contracts/staking/contract.algo.ts:104
     // assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION)
     frame_dig 11
     bz stake_or_contd@6
@@ -671,7 +613,7 @@ stake_bool_merge@4:
     bnz stake_bool_true@7
 
 stake_or_contd@6:
-    // smart_contracts/staking/contract.algo.ts:110
+    // smart_contracts/staking/contract.algo.ts:104
     // assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION)
     frame_dig 13
     bnz stake_bool_false@8
@@ -680,229 +622,212 @@ stake_bool_true@7:
     intc_1 // 1
 
 stake_bool_merge@9:
-    // smart_contracts/staking/contract.algo.ts:110
+    // smart_contracts/staking/contract.algo.ts:104
     // assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION)
     assert // Expiration must be in the future or hardlock disabled
-    // smart_contracts/staking/contract.algo.ts:112
+    // smart_contracts/staking/contract.algo.ts:106
     // const arc4Sender = new Address(Txn.sender)
     txn Sender
-    // smart_contracts/staking/contract.algo.ts:115
+    // smart_contracts/staking/contract.algo.ts:109
     // asset: 0,
     intc_0 // 0
-    // smart_contracts/staking/contract.algo.ts:113
+    // smart_contracts/staking/contract.algo.ts:107-111
     // const sk: StakeKey = {
+    //   address: arc4Sender,
+    //   asset: 0,
+    //   type,
+    // }
     itob
     dup
-    frame_bury 5
-    // smart_contracts/staking/contract.algo.ts:119
-    // const isUpdate = this.stakes(sk).exists
-    concat
-    dup
-    frame_bury 3
-    frame_dig -3
-    concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
-    bytec_0 // "s"
-    swap
+    frame_bury 1
     concat
     dup
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:119
-    // const isUpdate = this.stakes(sk).exists
-    box_len
-    bury 1
-    // smart_contracts/staking/contract.algo.ts:121
-    // if (!isUpdate) {
-    bnz stake_else_body@33
-    // smart_contracts/staking/contract.algo.ts:125
-    // if (isEscrow) {
-    frame_dig 8
-    bz stake_else_body@16
-    // smart_contracts/staking/contract.algo.ts:126-133
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: amount + costs.stakes,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    frame_dig -4
-    gtxns Receiver
-    // smart_contracts/staking/contract.algo.ts:129
-    // receiver: Global.currentApplicationAddress,
-    global CurrentApplicationAddress
-    // smart_contracts/staking/contract.algo.ts:126-133
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: amount + costs.stakes,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    ==
-    bz stake_bool_false@14
-    frame_dig -4
-    gtxns Amount
-    // smart_contracts/staking/contract.algo.ts:130
-    // amount: amount + costs.stakes,
-    frame_dig -2
-    // smart_contracts/staking/base.ts:7
-    // stakes: 28_900,
-    intc 4 // 28900
-    // smart_contracts/staking/contract.algo.ts:130
-    // amount: amount + costs.stakes,
-    +
-    // smart_contracts/staking/contract.algo.ts:126-133
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: amount + costs.stakes,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    ==
-    bz stake_bool_false@14
-    intc_1 // 1
-
-stake_bool_merge@15:
-    // smart_contracts/staking/contract.algo.ts:126-133
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: amount + costs.stakes,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    assert // Invalid payment
-
-stake_after_if_else@32:
-    // smart_contracts/staking/contract.algo.ts:210
-    // amount,
-    frame_dig -2
-    itob
-    // smart_contracts/staking/contract.algo.ts:211
-    // lastUpdate: timestamp,
-    frame_dig 10
-    itob
-    // smart_contracts/staking/contract.algo.ts:212
-    // expiration,
-    frame_dig -1
-    itob
-    // smart_contracts/staking/contract.algo.ts:209
-    // this.stakes(sk).value = {
-    cover 2
-    concat
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:209-213
-    // this.stakes(sk).value = {
-    //   amount,
-    //   lastUpdate: timestamp,
-    //   expiration,
-    // }
-    frame_dig 0
-    swap
-    box_put
-    retsub
-
-stake_bool_false@14:
-    intc_0 // 0
-    b stake_bool_merge@15
-
-stake_else_body@16:
-    // smart_contracts/staking/contract.algo.ts:134
-    // } else if (type === STAKING_TYPE_HEARTBEAT) {
     frame_dig -3
-    // smart_contracts/staking/types.ts:11
-    // export const STAKING_TYPE_HEARTBEAT: StakingType = new arc4.UintN8(0)
-    bytec 4 // 0x00
-    // smart_contracts/staking/contract.algo.ts:134
-    // } else if (type === STAKING_TYPE_HEARTBEAT) {
-    ==
-    bz stake_else_body@26
-    // smart_contracts/staking/contract.algo.ts:137
-    // const held = new UintN64(Txn.sender.balance)
-    txn Sender
-    acct_params_get AcctBalance
-    assert // account funded
-    itob
-    frame_bury 4
-    // smart_contracts/staking/contract.algo.ts:138
-    // let hard: uint64 = 0
-    intc_0 // 0
-    frame_bury 7
-    // smart_contracts/staking/contract.algo.ts:139
-    // let lock: uint64 = 0
-    intc_0 // 0
-    frame_bury 9
-    // smart_contracts/staking/contract.algo.ts:147
-    // if (this.stakes(hardStakeKey).exists) {
-    frame_dig 3
-    // smart_contracts/staking/types.ts:23
-    // export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
-    bytec 5 // 0x02
-    // smart_contracts/staking/contract.algo.ts:147
-    // if (this.stakes(hardStakeKey).exists) {
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
-    bytec_0 // "s"
-    swap
-    concat
-    dup
-    frame_bury 1
-    // smart_contracts/staking/contract.algo.ts:147
-    // if (this.stakes(hardStakeKey).exists) {
-    box_len
-    bury 1
-    bz stake_after_if_else@19
-    // smart_contracts/staking/contract.algo.ts:148
-    // hard = this.stakes(hardStakeKey).value.amount
-    frame_dig 1
-    box_get
-    assert // Box must have value
-    intc_0 // 0
-    extract_uint64
-    frame_bury 7
-
-stake_after_if_else@19:
-    // smart_contracts/staking/contract.algo.ts:157
-    // if (this.stakes(lockStakeKey).exists) {
-    frame_dig 3
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:157
-    // if (this.stakes(lockStakeKey).exists) {
-    concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 2
-    // smart_contracts/staking/contract.algo.ts:157
+    // smart_contracts/staking/contract.algo.ts:113
+    // const isUpdate = this.stakes(sk).exists
+    box_len
+    bury 1
+    // smart_contracts/staking/contract.algo.ts:115
+    // if (!isUpdate) {
+    bnz stake_else_body@21
+    // smart_contracts/staking/contract.algo.ts:119
+    // if (isEscrow) {
+    frame_dig 8
+    bz stake_else_body@12
+    // smart_contracts/staking/contract.algo.ts:120-127
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: amount + costs.stakes,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -4
+    gtxns Receiver
+    // smart_contracts/staking/contract.algo.ts:123
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/staking/contract.algo.ts:120-127
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: amount + costs.stakes,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    frame_dig -4
+    gtxns Amount
+    // smart_contracts/staking/contract.algo.ts:124
+    // amount: amount + costs.stakes,
+    frame_dig -2
+    intc 4 // 28900
+    +
+    // smart_contracts/staking/contract.algo.ts:120-127
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: amount + costs.stakes,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    &&
+    assert // Invalid payment
+
+stake_after_if_else@20:
+    // smart_contracts/staking/contract.algo.ts:203-207
+    // this.stakes(sk).value = {
+    //   amount,
+    //   lastUpdate: timestamp,
+    //   expiration,
+    // }
+    frame_dig -2
+    itob
+    frame_dig 10
+    itob
+    concat
+    frame_dig -1
+    itob
+    concat
+    frame_dig 2
+    swap
+    box_put
+    retsub
+
+stake_else_body@12:
+    // smart_contracts/staking/contract.algo.ts:128
+    // } else if (type === STAKING_TYPE_HEARTBEAT) {
+    frame_dig -3
+    bytec 6 // 0x0a
+    ==
+    bz stake_else_body@18
+    // smart_contracts/staking/contract.algo.ts:131
+    // const held = new Uint64(Txn.sender.balance)
+    txn Sender
+    acct_params_get AcctBalance
+    assert // account funded
+    itob
+    frame_bury 5
+    // smart_contracts/staking/contract.algo.ts:132
+    // let hard: uint64 = 0
+    intc_0 // 0
+    frame_bury 7
+    // smart_contracts/staking/contract.algo.ts:133
+    // let lock: uint64 = 0
+    intc_0 // 0
+    frame_bury 9
+    // smart_contracts/staking/contract.algo.ts:135-139
+    // const hardStakeKey: StakeKey = {
+    //   address: arc4Sender,
+    //   asset: 0,
+    //   type: STAKING_TYPE_HARD,
+    // }
+    frame_dig 0
+    // smart_contracts/staking/contract.algo.ts:138
+    // type: STAKING_TYPE_HARD,
+    bytec 4 // 0x1e
+    // smart_contracts/staking/contract.algo.ts:135-139
+    // const hardStakeKey: StakeKey = {
+    //   address: arc4Sender,
+    //   asset: 0,
+    //   type: STAKING_TYPE_HARD,
+    // }
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
+    bytec_0 // "s"
+    swap
+    concat
+    dup
+    frame_bury 3
+    // smart_contracts/staking/contract.algo.ts:141
+    // if (this.stakes(hardStakeKey).exists) {
+    box_len
+    bury 1
+    bz stake_after_if_else@15
+    // smart_contracts/staking/contract.algo.ts:142
+    // hard = this.stakes(hardStakeKey).value.amount
+    frame_dig 3
+    box_get
+    assert // Box must have value
+    intc_0 // 0
+    extract_uint64
+    frame_bury 7
+
+stake_after_if_else@15:
+    // smart_contracts/staking/contract.algo.ts:145-149
+    // const lockStakeKey: StakeKey = {
+    //   address: arc4Sender,
+    //   asset: 0,
+    //   type: STAKING_TYPE_LOCK,
+    // }
+    frame_dig 0
+    // smart_contracts/staking/contract.algo.ts:148
+    // type: STAKING_TYPE_LOCK,
+    bytec_2 // 0x28
+    // smart_contracts/staking/contract.algo.ts:145-149
+    // const lockStakeKey: StakeKey = {
+    //   address: arc4Sender,
+    //   asset: 0,
+    //   type: STAKING_TYPE_LOCK,
+    // }
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
+    bytec_0 // "s"
+    swap
+    concat
+    dup
+    frame_bury 4
+    // smart_contracts/staking/contract.algo.ts:151
     // if (this.stakes(lockStakeKey).exists) {
     box_len
     bury 1
-    bz stake_after_if_else@21
-    // smart_contracts/staking/contract.algo.ts:158
+    bz stake_after_if_else@17
+    // smart_contracts/staking/contract.algo.ts:152
     // lock = this.stakes(lockStakeKey).value.amount
-    frame_dig 2
+    frame_dig 4
     box_get
     assert // Box must have value
     intc_0 // 0
     extract_uint64
     frame_bury 9
 
-stake_after_if_else@21:
-    // smart_contracts/staking/contract.algo.ts:161-168
+stake_after_if_else@17:
+    // smart_contracts/staking/contract.algo.ts:155-162
     // assertMatch(
     //   payment,
     //   {
@@ -913,10 +838,10 @@ stake_after_if_else@21:
     // )
     frame_dig -4
     gtxns Receiver
-    // smart_contracts/staking/contract.algo.ts:164
+    // smart_contracts/staking/contract.algo.ts:158
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/staking/contract.algo.ts:161-168
+    // smart_contracts/staking/contract.algo.ts:155-162
     // assertMatch(
     //   payment,
     //   {
@@ -926,13 +851,12 @@ stake_after_if_else@21:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz stake_bool_false@24
     frame_dig -4
     gtxns Amount
-    // smart_contracts/staking/contract.algo.ts:165
+    // smart_contracts/staking/contract.algo.ts:159
     // amount: costs.stakes + costs.heartbeats,
     intc 6 // 99000
-    // smart_contracts/staking/contract.algo.ts:161-168
+    // smart_contracts/staking/contract.algo.ts:155-162
     // assertMatch(
     //   payment,
     //   {
@@ -942,119 +866,66 @@ stake_after_if_else@21:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz stake_bool_false@24
-    intc_1 // 1
-
-stake_bool_merge@25:
-    // smart_contracts/staking/contract.algo.ts:161-168
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: costs.stakes + costs.heartbeats,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
+    &&
     assert // Invalid payment
-    // smart_contracts/staking/contract.algo.ts:171
+    // smart_contracts/staking/contract.algo.ts:165
     // address: new Address(Txn.sender),
     txn Sender
-    // smart_contracts/staking/contract.algo.ts:177
-    // hard: new UintN64(hard),
+    // smart_contracts/staking/contract.algo.ts:164-167
+    // const heartbeatKey: HeartbeatKey = {
+    //   address: new Address(Txn.sender),
+    //   asset: 0,
+    // }
+    frame_dig 1
+    concat
+    // smart_contracts/staking/contract.algo.ts:171
+    // hard: new Uint64(hard),
     frame_dig 7
     itob
-    // smart_contracts/staking/contract.algo.ts:178
-    // lock: new UintN64(lock),
+    // smart_contracts/staking/contract.algo.ts:172
+    // lock: new Uint64(lock),
     frame_dig 9
     itob
-    // smart_contracts/staking/contract.algo.ts:179
-    // timestamp: new UintN64(timestamp),
+    // smart_contracts/staking/contract.algo.ts:173
+    // timestamp: new Uint64(timestamp),
     frame_dig 10
     itob
-    // smart_contracts/staking/contract.algo.ts:175-180
+    // smart_contracts/staking/contract.algo.ts:169-174
     // const hbv = new arc4Heartbeat({
     //   held,
-    //   hard: new UintN64(hard),
-    //   lock: new UintN64(lock),
-    //   timestamp: new UintN64(timestamp),
+    //   hard: new Uint64(hard),
+    //   lock: new Uint64(lock),
+    //   timestamp: new Uint64(timestamp),
     // })
-    frame_dig 4
+    frame_dig 5
     uncover 3
     concat
     uncover 2
     concat
     swap
     concat
-    // smart_contracts/staking/contract.algo.ts:182-187
-    // const ehbv = new arc4Heartbeat({
-    //   held: arc4Zero,
-    //   hard: arc4Zero,
-    //   lock: arc4Zero,
-    //   timestamp: arc4Zero,
-    // })
-    bytec 7 // 0x0000000000000000000000000000000000000000000000000000000000000000
-    // smart_contracts/staking/contract.algo.ts:189-194
+    // smart_contracts/staking/contract.algo.ts:183-188
     // const heartbeats = new StaticArray<arc4Heartbeat, 4>(
-    //   hbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy()
+    //   clone(hbv),
+    //   clone(ehbv),
+    //   clone(ehbv),
+    //   clone(ehbv)
     // )
+    bytec 10 // 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
     concat
-    // smart_contracts/staking/contract.algo.ts:182-187
-    // const ehbv = new arc4Heartbeat({
-    //   held: arc4Zero,
-    //   hard: arc4Zero,
-    //   lock: arc4Zero,
-    //   timestamp: arc4Zero,
-    // })
-    bytec 7 // 0x0000000000000000000000000000000000000000000000000000000000000000
-    // smart_contracts/staking/contract.algo.ts:189-194
-    // const heartbeats = new StaticArray<arc4Heartbeat, 4>(
-    //   hbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy()
-    // )
+    // smart_contracts/staking/contract.algo.ts:82
+    // keyPrefix: StakingBoxPrefixHeartbeats,
+    bytec 5 // "h"
+    uncover 2
     concat
-    // smart_contracts/staking/contract.algo.ts:182-187
-    // const ehbv = new arc4Heartbeat({
-    //   held: arc4Zero,
-    //   hard: arc4Zero,
-    //   lock: arc4Zero,
-    //   timestamp: arc4Zero,
-    // })
-    bytec 7 // 0x0000000000000000000000000000000000000000000000000000000000000000
-    // smart_contracts/staking/contract.algo.ts:189-194
-    // const heartbeats = new StaticArray<arc4Heartbeat, 4>(
-    //   hbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy()
-    // )
-    concat
-    // smart_contracts/staking/contract.algo.ts:196
-    // this.heartbeats(heartbeatKey).value = heartbeats.copy()
-    swap
-    frame_dig 5
-    concat
-    // smart_contracts/staking/constants.ts:6
-    // export const StakingBoxPrefixHeartbeats = 'h'
-    bytec 6 // "h"
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:196
-    // this.heartbeats(heartbeatKey).value = heartbeats.copy()
+    // smart_contracts/staking/contract.algo.ts:190
+    // this.heartbeats(heartbeatKey).value = clone(heartbeats)
     swap
     box_put
-    b stake_after_if_else@32
+    b stake_after_if_else@20
 
-stake_bool_false@24:
-    intc_0 // 0
-    b stake_bool_merge@25
-
-stake_else_body@26:
-    // smart_contracts/staking/contract.algo.ts:198
+stake_else_body@18:
+    // smart_contracts/staking/contract.algo.ts:192
     // assert(Txn.sender.balance >= amount, ERR_INSUFFICIENT_BALANCE)
     txn Sender
     acct_params_get AcctBalance
@@ -1062,7 +933,7 @@ stake_else_body@26:
     frame_dig -2
     >=
     assert // Insufficient balance
-    // smart_contracts/staking/contract.algo.ts:199-206
+    // smart_contracts/staking/contract.algo.ts:193-200
     // assertMatch(
     //   payment,
     //   {
@@ -1073,10 +944,10 @@ stake_else_body@26:
     // )
     frame_dig -4
     gtxns Receiver
-    // smart_contracts/staking/contract.algo.ts:202
+    // smart_contracts/staking/contract.algo.ts:196
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/staking/contract.algo.ts:199-206
+    // smart_contracts/staking/contract.algo.ts:193-200
     // assertMatch(
     //   payment,
     //   {
@@ -1086,13 +957,12 @@ stake_else_body@26:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz stake_bool_false@29
     frame_dig -4
     gtxns Amount
-    // smart_contracts/staking/base.ts:7
-    // stakes: 28_900,
+    // smart_contracts/staking/contract.algo.ts:197
+    // amount: costs.stakes,
     intc 4 // 28900
-    // smart_contracts/staking/contract.algo.ts:199-206
+    // smart_contracts/staking/contract.algo.ts:193-200
     // assertMatch(
     //   payment,
     //   {
@@ -1102,75 +972,56 @@ stake_else_body@26:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz stake_bool_false@29
-    intc_1 // 1
-
-stake_bool_merge@30:
-    // smart_contracts/staking/contract.algo.ts:199-206
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: costs.stakes,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
+    &&
     assert // Invalid payment
-    b stake_after_if_else@32
+    b stake_after_if_else@20
 
-stake_bool_false@29:
-    intc_0 // 0
-    b stake_bool_merge@30
-
-stake_else_body@33:
-    // smart_contracts/staking/contract.algo.ts:215
+stake_else_body@21:
+    // smart_contracts/staking/contract.algo.ts:209
     // assert(type !== STAKING_TYPE_HEARTBEAT, ERR_HEARTBEAT_CANNOT_UPDATE)
     frame_dig -3
-    // smart_contracts/staking/types.ts:11
-    // export const STAKING_TYPE_HEARTBEAT: StakingType = new arc4.UintN8(0)
-    bytec 4 // 0x00
-    // smart_contracts/staking/contract.algo.ts:215
-    // assert(type !== STAKING_TYPE_HEARTBEAT, ERR_HEARTBEAT_CANNOT_UPDATE)
+    bytec 6 // 0x0a
     !=
     assert // Heartbeat stakes cannot be updated
-    // smart_contracts/staking/contract.algo.ts:216
-    // const currentStake = this.stakes(sk).value
-    frame_dig 0
+    // smart_contracts/staking/contract.algo.ts:210
+    // const { expiration: currentStakeExpiration, amount: currentStakeAmount } = this.stakes(sk).value
+    frame_dig 2
     box_get
     assert // Box must have value
     dup
+    pushint 16 // 16
+    extract_uint64
+    swap
     intc_0 // 0
     extract_uint64
     frame_bury 6
-    intc_2 // 16
-    extract_uint64
-    // smart_contracts/staking/contract.algo.ts:217
-    // assert(expiration >= currentStake.expiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
+    // smart_contracts/staking/contract.algo.ts:211
+    // assert(expiration >= currentStakeExpiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
     frame_dig -1
     <=
-    bnz stake_bool_true@35
+    bnz stake_bool_true@23
     frame_dig 13
-    bnz stake_bool_false@36
+    bnz stake_bool_false@24
 
-stake_bool_true@35:
+stake_bool_true@23:
     intc_1 // 1
 
-stake_bool_merge@37:
-    // smart_contracts/staking/contract.algo.ts:217
-    // assert(expiration >= currentStake.expiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
+stake_bool_merge@25:
+    // smart_contracts/staking/contract.algo.ts:211
+    // assert(expiration >= currentStakeExpiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
     assert // Expiration must be greater than or equal to the current unlock time or hardlock disabled
-    // smart_contracts/staking/contract.algo.ts:219
+    // smart_contracts/staking/contract.algo.ts:213
     // if (isEscrow) {
     frame_dig 8
-    bz stake_else_body@39
-    // smart_contracts/staking/contract.algo.ts:220
+    bz stake_else_body@27
+    // smart_contracts/staking/contract.algo.ts:214
     // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     frame_dig -4
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Invalid payment receiver
-    // smart_contracts/staking/contract.algo.ts:221
+    // smart_contracts/staking/contract.algo.ts:215
     // assert(payment.amount === amount, ERR_INVALID_PAYMENT_AMOUNT)
     frame_dig -4
     gtxns Amount
@@ -1178,43 +1029,33 @@ stake_bool_merge@37:
     ==
     assert // Invalid payment amount
 
-stake_after_if_else@40:
-    // smart_contracts/staking/contract.algo.ts:226
-    // const newAmount: uint64 = currentStake.amount + amount
+stake_after_if_else@28:
+    // smart_contracts/staking/contract.algo.ts:220
+    // const newAmount: uint64 = currentStakeAmount + amount
     frame_dig 6
     frame_dig -2
     +
-    // smart_contracts/staking/contract.algo.ts:229
-    // amount: newAmount,
-    itob
-    // smart_contracts/staking/contract.algo.ts:230
-    // lastUpdate: timestamp,
-    frame_dig 10
-    itob
-    // smart_contracts/staking/contract.algo.ts:231
-    // expiration
-    frame_dig -1
-    itob
-    // smart_contracts/staking/contract.algo.ts:228
-    // this.stakes(sk).value = {
-    cover 2
-    concat
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:228-232
+    // smart_contracts/staking/contract.algo.ts:222-226
     // this.stakes(sk).value = {
     //   amount: newAmount,
     //   lastUpdate: timestamp,
     //   expiration
     // }
-    frame_dig 0
+    itob
+    frame_dig 10
+    itob
+    concat
+    frame_dig -1
+    itob
+    concat
+    frame_dig 2
     swap
     box_put
     retsub
 
-stake_else_body@39:
-    // smart_contracts/staking/contract.algo.ts:223
-    // assert(Txn.sender.balance >= currentStake.amount + amount, ERR_INSUFFICIENT_BALANCE)
+stake_else_body@27:
+    // smart_contracts/staking/contract.algo.ts:217
+    // assert(Txn.sender.balance >= currentStakeAmount + amount, ERR_INSUFFICIENT_BALANCE)
     txn Sender
     acct_params_get AcctBalance
     assert // account funded
@@ -1223,11 +1064,11 @@ stake_else_body@39:
     +
     >=
     assert // Insufficient balance
-    b stake_after_if_else@40
+    b stake_after_if_else@28
 
-stake_bool_false@36:
+stake_bool_false@24:
     intc_0 // 0
-    b stake_bool_merge@37
+    b stake_bool_merge@25
 
 stake_bool_false@8:
     intc_0 // 0
@@ -1241,7 +1082,7 @@ stake_bool_false@3:
 
 // smart_contracts/staking/contract.algo.ts::Staking.stakeAsa(payment: uint64, assetXfer: uint64, type: bytes, amount: uint64, expiration: uint64) -> void:
 stakeAsa:
-    // smart_contracts/staking/contract.algo.ts:236-242
+    // smart_contracts/staking/contract.algo.ts:230-236
     // stakeAsa(
     //   payment: gtxn.PaymentTxn,
     //   assetXfer: gtxn.AssetTransferTxn,
@@ -1254,41 +1095,37 @@ stakeAsa:
     dupn 4
     bytec_3 // ""
     dupn 5
-    // smart_contracts/staking/contract.algo.ts:243
+    // smart_contracts/staking/contract.algo.ts:237
     // const inTheFuture = expiration > Global.latestTimestamp
     frame_dig -1
     global LatestTimestamp
     >
-    // smart_contracts/staking/contract.algo.ts:244
+    // smart_contracts/staking/contract.algo.ts:238
     // let lessThanMaxLockup = expiration <= Global.latestTimestamp + ONE_YEAR
     global LatestTimestamp
-    // smart_contracts/staking/constants.ts:9
-    // export const ONE_YEAR: uint64 = 31_536_000 // 365 days * 24 hours * 60 minutes * 60 seconds
     intc 5 // 31536000
-    // smart_contracts/staking/contract.algo.ts:244
-    // let lessThanMaxLockup = expiration <= Global.latestTimestamp + ONE_YEAR
     +
     frame_dig -1
     >=
-    // smart_contracts/staking/contract.algo.ts:245
+    // smart_contracts/staking/contract.algo.ts:239
     // if (this.settings(assetXfer.xferAsset.id).exists) {
     frame_dig -4
     gtxns XferAsset
     dup
     itob
     dup
-    // smart_contracts/staking/constants.ts:7
-    // export const StakingBoxPrefixSettings = 'e'
-    bytec 9 // "e"
+    // smart_contracts/staking/contract.algo.ts:85
+    // settings = BoxMap<uint64, uint64>({ keyPrefix: StakingBoxPrefixSettings })
+    pushbytes "e"
     swap
     concat
     dup
-    // smart_contracts/staking/contract.algo.ts:245
+    // smart_contracts/staking/contract.algo.ts:239
     // if (this.settings(assetXfer.xferAsset.id).exists) {
     box_len
     bury 1
     bz stakeAsa_after_if_else@2
-    // smart_contracts/staking/contract.algo.ts:246
+    // smart_contracts/staking/contract.algo.ts:240
     // lessThanMaxLockup = expiration <= Global.latestTimestamp + this.settings(assetXfer.xferAsset.id).value
     global LatestTimestamp
     frame_dig 15
@@ -1301,32 +1138,20 @@ stakeAsa:
     frame_bury 12
 
 stakeAsa_after_if_else@2:
-    // smart_contracts/staking/contract.algo.ts:248
+    // smart_contracts/staking/contract.algo.ts:242
     // const locked = type !== STAKING_TYPE_LOCK
     frame_dig -3
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:248
-    // const locked = type !== STAKING_TYPE_LOCK
+    bytec_2 // 0x28
     !=
     frame_bury 9
-    // smart_contracts/staking/contract.algo.ts:249
+    // smart_contracts/staking/contract.algo.ts:243
     // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
     frame_dig -3
-    // smart_contracts/staking/types.ts:23
-    // export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
-    bytec 5 // 0x02
-    // smart_contracts/staking/contract.algo.ts:249
-    // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
+    bytec 4 // 0x1e
     ==
     bnz stakeAsa_bool_true@4
     frame_dig -3
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:249
-    // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
+    bytec_2 // 0x28
     ==
     bz stakeAsa_bool_false@5
 
@@ -1335,11 +1160,11 @@ stakeAsa_bool_true@4:
     frame_bury 7
 
 stakeAsa_bool_merge@6:
-    // smart_contracts/staking/contract.algo.ts:250
+    // smart_contracts/staking/contract.algo.ts:244
     // const timestamp = Global.latestTimestamp
     global LatestTimestamp
     frame_bury 10
-    // smart_contracts/staking/contract.algo.ts:252
+    // smart_contracts/staking/contract.algo.ts:246
     // assert((inTheFuture && lessThanMaxLockup) || !locked, ERR_BAD_EXPIRATION)
     frame_dig 11
     bz stakeAsa_or_contd@8
@@ -1347,7 +1172,7 @@ stakeAsa_bool_merge@6:
     bnz stakeAsa_bool_true@9
 
 stakeAsa_or_contd@8:
-    // smart_contracts/staking/contract.algo.ts:252
+    // smart_contracts/staking/contract.algo.ts:246
     // assert((inTheFuture && lessThanMaxLockup) || !locked, ERR_BAD_EXPIRATION)
     frame_dig 9
     bnz stakeAsa_bool_false@10
@@ -1356,64 +1181,60 @@ stakeAsa_bool_true@9:
     intc_1 // 1
 
 stakeAsa_bool_merge@11:
-    // smart_contracts/staking/contract.algo.ts:252
+    // smart_contracts/staking/contract.algo.ts:246
     // assert((inTheFuture && lessThanMaxLockup) || !locked, ERR_BAD_EXPIRATION)
     assert // Expiration must be in the future or hardlock disabled
-    // smart_contracts/staking/contract.algo.ts:255
+    // smart_contracts/staking/contract.algo.ts:249
     // const arc4Sender = new Address(Txn.sender)
     txn Sender
-    // smart_contracts/staking/contract.algo.ts:259
-    // const isUpdate = this.stakes(sk).exists
+    // smart_contracts/staking/contract.algo.ts:251
+    // const sk: StakeKey = { address: arc4Sender, asset, type }
     frame_dig 14
     concat
     dup
     frame_bury 3
     frame_dig -3
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:259
+    // smart_contracts/staking/contract.algo.ts:253
     // const isUpdate = this.stakes(sk).exists
     box_len
     bury 1
-    // smart_contracts/staking/contract.algo.ts:261
+    // smart_contracts/staking/contract.algo.ts:255
     // if (!isUpdate) {
     bnz stakeAsa_else_body@23
-    // smart_contracts/staking/contract.algo.ts:265
+    // smart_contracts/staking/contract.algo.ts:259
     // if (isEscrow) {
     frame_dig 7
     bz stakeAsa_else_body@14
-    // smart_contracts/staking/contract.algo.ts:266
+    // smart_contracts/staking/contract.algo.ts:260
     // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     frame_dig -5
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Invalid payment receiver
-    // smart_contracts/staking/contract.algo.ts:267
+    // smart_contracts/staking/contract.algo.ts:261
     // assert(payment.amount === costs.stakes, ERR_INVALID_PAYMENT_AMOUNT)
     frame_dig -5
     gtxns Amount
-    // smart_contracts/staking/base.ts:7
-    // stakes: 28_900,
     intc 4 // 28900
-    // smart_contracts/staking/contract.algo.ts:267
-    // assert(payment.amount === costs.stakes, ERR_INVALID_PAYMENT_AMOUNT)
     ==
     assert // Invalid payment amount
-    // smart_contracts/staking/contract.algo.ts:269
+    // smart_contracts/staking/contract.algo.ts:263
     // assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
     frame_dig -4
     gtxns AssetReceiver
     global CurrentApplicationAddress
     ==
     assert // Invalid asset amount
-    // smart_contracts/staking/contract.algo.ts:270
+    // smart_contracts/staking/contract.algo.ts:264
     // assert(assetXfer.assetAmount === amount, ERR_INVALID_ASSET_AMOUNT)
     frame_dig -4
     gtxns AssetAmount
@@ -1422,88 +1243,70 @@ stakeAsa_bool_merge@11:
     assert // Invalid asset amount
 
 stakeAsa_after_if_else@22:
-    // smart_contracts/staking/contract.algo.ts:336
-    // amount,
-    frame_dig -2
-    itob
-    // smart_contracts/staking/contract.algo.ts:337
-    // lastUpdate: timestamp,
-    frame_dig 10
-    itob
-    // smart_contracts/staking/contract.algo.ts:338
-    // expiration,
-    frame_dig -1
-    itob
-    // smart_contracts/staking/contract.algo.ts:335
-    // this.stakes(sk).value = {
-    cover 2
-    concat
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:335-339
+    // smart_contracts/staking/contract.algo.ts:327-331
     // this.stakes(sk).value = {
     //   amount,
     //   lastUpdate: timestamp,
     //   expiration,
     // }
+    frame_dig -2
+    itob
+    frame_dig 10
+    itob
+    concat
+    frame_dig -1
+    itob
+    concat
     frame_dig 0
     swap
     box_put
     retsub
 
 stakeAsa_else_body@14:
-    // smart_contracts/staking/contract.algo.ts:271
+    // smart_contracts/staking/contract.algo.ts:265
     // } else if (type === STAKING_TYPE_HEARTBEAT) {
     frame_dig -3
-    // smart_contracts/staking/types.ts:11
-    // export const STAKING_TYPE_HEARTBEAT: StakingType = new arc4.UintN8(0)
-    bytec 4 // 0x00
-    // smart_contracts/staking/contract.algo.ts:271
-    // } else if (type === STAKING_TYPE_HEARTBEAT) {
+    bytec 6 // 0x0a
     ==
     bz stakeAsa_else_body@20
-    // smart_contracts/staking/contract.algo.ts:272
+    // smart_contracts/staking/contract.algo.ts:266
     // const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset)
     txn Sender
     frame_dig 13
     asset_holding_get AssetBalance
-    // smart_contracts/staking/contract.algo.ts:274
+    // smart_contracts/staking/contract.algo.ts:268
     // assert(optedIn, ERR_NOT_OPTED_IN)
     assert // Not opted in
-    // smart_contracts/staking/contract.algo.ts:275
+    // smart_contracts/staking/contract.algo.ts:269
     // assert(holdingAmount > 0, ERR_INVALID_ASSET_AMOUNT)
     dup
     assert // Invalid asset amount
-    // smart_contracts/staking/contract.algo.ts:277
-    // const held = new UintN64(holdingAmount)
+    // smart_contracts/staking/contract.algo.ts:271
+    // const held = new Uint64(holdingAmount)
     itob
     frame_bury 4
-    // smart_contracts/staking/contract.algo.ts:281
+    // smart_contracts/staking/contract.algo.ts:273
+    // const hardStakeKey: StakeKey = { address: arc4Sender, asset, type: STAKING_TYPE_HARD }
+    frame_dig 3
+    bytec 4 // 0x1e
+    concat
+    // smart_contracts/staking/contract.algo.ts:275
     // let hard: uint64 = 0
     intc_0 // 0
     frame_bury 6
-    // smart_contracts/staking/contract.algo.ts:282
-    // if (this.stakes(hardStakeKey).exists) {
-    frame_dig 3
-    // smart_contracts/staking/types.ts:23
-    // export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
-    bytec 5 // 0x02
-    // smart_contracts/staking/contract.algo.ts:282
-    // if (this.stakes(hardStakeKey).exists) {
-    concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 1
-    // smart_contracts/staking/contract.algo.ts:282
+    // smart_contracts/staking/contract.algo.ts:276
     // if (this.stakes(hardStakeKey).exists) {
     box_len
     bury 1
     bz stakeAsa_after_if_else@17
-    // smart_contracts/staking/contract.algo.ts:283
+    // smart_contracts/staking/contract.algo.ts:277
     // hard = this.stakes(hardStakeKey).value.amount
     frame_dig 1
     box_get
@@ -1513,32 +1316,28 @@ stakeAsa_else_body@14:
     frame_bury 6
 
 stakeAsa_after_if_else@17:
-    // smart_contracts/staking/contract.algo.ts:288
+    // smart_contracts/staking/contract.algo.ts:280
+    // const lockStakeKey: StakeKey = { address: arc4Sender, asset, type: STAKING_TYPE_LOCK }
+    frame_dig 3
+    bytec_2 // 0x28
+    concat
+    // smart_contracts/staking/contract.algo.ts:282
     // let lock: uint64 = 0
     intc_0 // 0
     frame_bury 8
-    // smart_contracts/staking/contract.algo.ts:289
-    // if (this.stakes(lockStakeKey).exists) {
-    frame_dig 3
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:289
-    // if (this.stakes(lockStakeKey).exists) {
-    concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 2
-    // smart_contracts/staking/contract.algo.ts:289
+    // smart_contracts/staking/contract.algo.ts:283
     // if (this.stakes(lockStakeKey).exists) {
     box_len
     bury 1
     bz stakeAsa_after_if_else@19
-    // smart_contracts/staking/contract.algo.ts:290
+    // smart_contracts/staking/contract.algo.ts:284
     // lock = this.stakes(lockStakeKey).value.amount
     frame_dig 2
     box_get
@@ -1548,44 +1347,44 @@ stakeAsa_after_if_else@17:
     frame_bury 8
 
 stakeAsa_after_if_else@19:
-    // smart_contracts/staking/contract.algo.ts:293
+    // smart_contracts/staking/contract.algo.ts:287
     // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     frame_dig -5
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Invalid payment receiver
-    // smart_contracts/staking/contract.algo.ts:294
+    // smart_contracts/staking/contract.algo.ts:288
     // assert(payment.amount === (costs.stakes + costs.heartbeats), ERR_INVALID_PAYMENT_AMOUNT)
     frame_dig -5
     gtxns Amount
     intc 6 // 99000
     ==
     assert // Invalid payment amount
-    // smart_contracts/staking/contract.algo.ts:297
+    // smart_contracts/staking/contract.algo.ts:291
     // assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
     frame_dig -4
     gtxns AssetAmount
     !
     assert // Invalid asset amount
-    // smart_contracts/staking/contract.algo.ts:303
-    // hard: new UintN64(hard),
+    // smart_contracts/staking/contract.algo.ts:297
+    // hard: new Uint64(hard),
     frame_dig 6
     itob
-    // smart_contracts/staking/contract.algo.ts:304
-    // lock: new UintN64(lock),
+    // smart_contracts/staking/contract.algo.ts:298
+    // lock: new Uint64(lock),
     frame_dig 8
     itob
-    // smart_contracts/staking/contract.algo.ts:305
-    // timestamp: new UintN64(timestamp),
+    // smart_contracts/staking/contract.algo.ts:299
+    // timestamp: new Uint64(timestamp),
     frame_dig 10
     itob
-    // smart_contracts/staking/contract.algo.ts:301-306
+    // smart_contracts/staking/contract.algo.ts:295-300
     // const hbv = new arc4Heartbeat({
     //   held,
-    //   hard: new UintN64(hard),
-    //   lock: new UintN64(lock),
-    //   timestamp: new UintN64(timestamp),
+    //   hard: new Uint64(hard),
+    //   lock: new Uint64(lock),
+    //   timestamp: new Uint64(timestamp),
     // })
     frame_dig 4
     uncover 3
@@ -1594,98 +1393,60 @@ stakeAsa_after_if_else@19:
     concat
     swap
     concat
-    // smart_contracts/staking/contract.algo.ts:308-313
-    // const ehbv = new arc4Heartbeat({
-    //   held: arc4Zero,
-    //   hard: arc4Zero,
-    //   lock: arc4Zero,
-    //   timestamp: arc4Zero,
-    // })
-    bytec 7 // 0x0000000000000000000000000000000000000000000000000000000000000000
-    // smart_contracts/staking/contract.algo.ts:315-320
-    // const heartbeats = new arc4.StaticArray<arc4Heartbeat, 4>(
-    //   hbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy()
+    // smart_contracts/staking/contract.algo.ts:309-314
+    // this.heartbeats(heartbeatKey).value = new arc4.StaticArray<arc4Heartbeat, 4>(
+    //   clone(hbv),
+    //   clone(ehbv),
+    //   clone(ehbv),
+    //   clone(ehbv)
     // )
+    bytec 10 // 0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
     concat
-    // smart_contracts/staking/contract.algo.ts:308-313
-    // const ehbv = new arc4Heartbeat({
-    //   held: arc4Zero,
-    //   hard: arc4Zero,
-    //   lock: arc4Zero,
-    //   timestamp: arc4Zero,
-    // })
-    bytec 7 // 0x0000000000000000000000000000000000000000000000000000000000000000
-    // smart_contracts/staking/contract.algo.ts:315-320
-    // const heartbeats = new arc4.StaticArray<arc4Heartbeat, 4>(
-    //   hbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy()
-    // )
-    concat
-    // smart_contracts/staking/contract.algo.ts:308-313
-    // const ehbv = new arc4Heartbeat({
-    //   held: arc4Zero,
-    //   hard: arc4Zero,
-    //   lock: arc4Zero,
-    //   timestamp: arc4Zero,
-    // })
-    bytec 7 // 0x0000000000000000000000000000000000000000000000000000000000000000
-    // smart_contracts/staking/contract.algo.ts:315-320
-    // const heartbeats = new arc4.StaticArray<arc4Heartbeat, 4>(
-    //   hbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy(),
-    //   ehbv.copy()
-    // )
-    concat
-    // smart_contracts/staking/constants.ts:6
-    // export const StakingBoxPrefixHeartbeats = 'h'
-    bytec 6 // "h"
+    // smart_contracts/staking/contract.algo.ts:82
+    // keyPrefix: StakingBoxPrefixHeartbeats,
+    bytec 5 // "h"
     frame_dig 3
     concat
-    // smart_contracts/staking/contract.algo.ts:322
-    // this.heartbeats(heartbeatKey).value = heartbeats.copy()
+    // smart_contracts/staking/contract.algo.ts:309-314
+    // this.heartbeats(heartbeatKey).value = new arc4.StaticArray<arc4Heartbeat, 4>(
+    //   clone(hbv),
+    //   clone(ehbv),
+    //   clone(ehbv),
+    //   clone(ehbv)
+    // )
     swap
     box_put
     b stakeAsa_after_if_else@22
 
 stakeAsa_else_body@20:
-    // smart_contracts/staking/contract.algo.ts:324
+    // smart_contracts/staking/contract.algo.ts:316
     // const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset)
     txn Sender
     frame_dig 13
     asset_holding_get AssetBalance
-    // smart_contracts/staking/contract.algo.ts:325
+    // smart_contracts/staking/contract.algo.ts:317
     // assert(optedIn, ERR_NOT_OPTED_IN)
     assert // Not opted in
-    // smart_contracts/staking/contract.algo.ts:326
+    // smart_contracts/staking/contract.algo.ts:318
     // assert(holdingAmount >= amount, ERR_INSUFFICIENT_BALANCE)
     frame_dig -2
     >=
     assert // Insufficient balance
-    // smart_contracts/staking/contract.algo.ts:328
+    // smart_contracts/staking/contract.algo.ts:320
     // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     frame_dig -5
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Invalid payment receiver
-    // smart_contracts/staking/contract.algo.ts:329
+    // smart_contracts/staking/contract.algo.ts:321
     // assert(payment.amount === costs.stakes, ERR_INVALID_PAYMENT_AMOUNT)
     frame_dig -5
     gtxns Amount
-    // smart_contracts/staking/base.ts:7
-    // stakes: 28_900,
     intc 4 // 28900
-    // smart_contracts/staking/contract.algo.ts:329
-    // assert(payment.amount === costs.stakes, ERR_INVALID_PAYMENT_AMOUNT)
     ==
     assert // Invalid payment amount
-    // smart_contracts/staking/contract.algo.ts:332
+    // smart_contracts/staking/contract.algo.ts:324
     // assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
     frame_dig -4
     gtxns AssetAmount
@@ -1694,29 +1455,26 @@ stakeAsa_else_body@20:
     b stakeAsa_after_if_else@22
 
 stakeAsa_else_body@23:
-    // smart_contracts/staking/contract.algo.ts:341
+    // smart_contracts/staking/contract.algo.ts:333
     // assert(type !== STAKING_TYPE_HEARTBEAT, ERR_HEARTBEAT_CANNOT_UPDATE)
     frame_dig -3
-    // smart_contracts/staking/types.ts:11
-    // export const STAKING_TYPE_HEARTBEAT: StakingType = new arc4.UintN8(0)
-    bytec 4 // 0x00
-    // smart_contracts/staking/contract.algo.ts:341
-    // assert(type !== STAKING_TYPE_HEARTBEAT, ERR_HEARTBEAT_CANNOT_UPDATE)
+    bytec 6 // 0x0a
     !=
     assert // Heartbeat stakes cannot be updated
-    // smart_contracts/staking/contract.algo.ts:342
-    // const currentStake = this.stakes(sk).value
+    // smart_contracts/staking/contract.algo.ts:334
+    // const { expiration: currentStakeExpiration, amount: currentStakeAmount } = this.stakes(sk).value
     frame_dig 0
     box_get
     assert // Box must have value
     dup
+    pushint 16 // 16
+    extract_uint64
+    swap
     intc_0 // 0
     extract_uint64
     frame_bury 5
-    intc_2 // 16
-    extract_uint64
-    // smart_contracts/staking/contract.algo.ts:343
-    // assert(expiration >= currentStake.expiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
+    // smart_contracts/staking/contract.algo.ts:335
+    // assert(expiration >= currentStakeExpiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
     frame_dig -1
     <=
     bnz stakeAsa_bool_true@25
@@ -1727,34 +1485,34 @@ stakeAsa_bool_true@25:
     intc_1 // 1
 
 stakeAsa_bool_merge@27:
-    // smart_contracts/staking/contract.algo.ts:343
-    // assert(expiration >= currentStake.expiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
+    // smart_contracts/staking/contract.algo.ts:335
+    // assert(expiration >= currentStakeExpiration || !locked, ERR_BAD_EXPIRATION_UPDATE)
     assert // Expiration must be greater than or equal to the current unlock time or hardlock disabled
-    // smart_contracts/staking/contract.algo.ts:346
+    // smart_contracts/staking/contract.algo.ts:338
     // assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
     frame_dig -5
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Invalid payment receiver
-    // smart_contracts/staking/contract.algo.ts:347
+    // smart_contracts/staking/contract.algo.ts:339
     // assert(payment.amount === 0, ERR_INVALID_PAYMENT_AMOUNT)
     frame_dig -5
     gtxns Amount
     !
     assert // Invalid payment amount
-    // smart_contracts/staking/contract.algo.ts:349
+    // smart_contracts/staking/contract.algo.ts:341
     // if (isEscrow) {
     frame_dig 7
     bz stakeAsa_else_body@29
-    // smart_contracts/staking/contract.algo.ts:350
+    // smart_contracts/staking/contract.algo.ts:342
     // assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
     frame_dig -4
     gtxns AssetReceiver
     global CurrentApplicationAddress
     ==
     assert // Invalid asset amount
-    // smart_contracts/staking/contract.algo.ts:351
+    // smart_contracts/staking/contract.algo.ts:343
     // assert(assetXfer.assetAmount === amount, ERR_INVALID_ASSET_AMOUNT)
     frame_dig -4
     gtxns AssetAmount
@@ -1763,56 +1521,46 @@ stakeAsa_bool_merge@27:
     assert // Invalid asset amount
 
 stakeAsa_after_if_else@30:
-    // smart_contracts/staking/contract.algo.ts:360
-    // const newAmount: uint64 = currentStake.amount + amount
+    // smart_contracts/staking/contract.algo.ts:352
+    // const newAmount: uint64 = currentStakeAmount + amount
     frame_dig 5
     frame_dig -2
     +
-    // smart_contracts/staking/contract.algo.ts:363
-    // amount: newAmount,
-    itob
-    // smart_contracts/staking/contract.algo.ts:364
-    // lastUpdate: timestamp,
-    frame_dig 10
-    itob
-    // smart_contracts/staking/contract.algo.ts:365
-    // expiration,
-    frame_dig -1
-    itob
-    // smart_contracts/staking/contract.algo.ts:362
-    // this.stakes(sk).value = {
-    cover 2
-    concat
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:362-366
+    // smart_contracts/staking/contract.algo.ts:354-358
     // this.stakes(sk).value = {
     //   amount: newAmount,
     //   lastUpdate: timestamp,
     //   expiration,
     // }
+    itob
+    frame_dig 10
+    itob
+    concat
+    frame_dig -1
+    itob
+    concat
     frame_dig 0
     swap
     box_put
     retsub
 
 stakeAsa_else_body@29:
-    // smart_contracts/staking/contract.algo.ts:353
+    // smart_contracts/staking/contract.algo.ts:345
     // const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset)
     txn Sender
     frame_dig 13
     asset_holding_get AssetBalance
-    // smart_contracts/staking/contract.algo.ts:354
+    // smart_contracts/staking/contract.algo.ts:346
     // assert(optedIn, ERR_NOT_OPTED_IN)
     assert // Not opted in
-    // smart_contracts/staking/contract.algo.ts:355
-    // assert(holdingAmount >= currentStake.amount + amount, ERR_INSUFFICIENT_BALANCE)
+    // smart_contracts/staking/contract.algo.ts:347
+    // assert(holdingAmount >= currentStakeAmount + amount, ERR_INSUFFICIENT_BALANCE)
     frame_dig 5
     frame_dig -2
     +
     >=
     assert // Insufficient balance
-    // smart_contracts/staking/contract.algo.ts:357
+    // smart_contracts/staking/contract.algo.ts:349
     // assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
     frame_dig -4
     gtxns AssetAmount
@@ -1836,28 +1584,20 @@ stakeAsa_bool_false@5:
 
 // smart_contracts/staking/contract.algo.ts::Staking.withdraw(asset: uint64, type: bytes) -> void:
 withdraw:
-    // smart_contracts/staking/contract.algo.ts:370
+    // smart_contracts/staking/contract.algo.ts:362
     // withdraw(asset: uint64, type: StakingType): void {
     proto 2 0
     intc_0 // 0
     bytec_3 // ""
     dup
-    // smart_contracts/staking/contract.algo.ts:372
+    // smart_contracts/staking/contract.algo.ts:364
     // type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK,
     frame_dig -1
-    // smart_contracts/staking/types.ts:23
-    // export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
-    bytec 5 // 0x02
-    // smart_contracts/staking/contract.algo.ts:372
-    // type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK,
+    bytec 4 // 0x1e
     ==
     bnz withdraw_bool_true@2
     frame_dig -1
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:372
-    // type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK,
+    bytec_2 // 0x28
     ==
     bz withdraw_bool_false@3
 
@@ -1865,56 +1605,66 @@ withdraw_bool_true@2:
     intc_1 // 1
 
 withdraw_bool_merge@4:
-    // smart_contracts/staking/contract.algo.ts:371-374
+    // smart_contracts/staking/contract.algo.ts:363-366
     // assert(
     //   type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK,
     //   ERR_WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK
     // )
     assert // Withdraw is only for hard or lock
-    // smart_contracts/staking/contract.algo.ts:375
+    // smart_contracts/staking/contract.algo.ts:367
     // const arc4Sender = new Address(Txn.sender)
     txn Sender
-    // smart_contracts/staking/contract.algo.ts:376
+    // smart_contracts/staking/contract.algo.ts:368
     // const sk = { address: arc4Sender, asset, type }
     frame_dig -2
     itob
-    // smart_contracts/staking/contract.algo.ts:377
-    // assert(this.stakes(sk).exists, ERR_NO_LOCK)
     concat
     frame_dig -1
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:369
+    // assert(this.stakes(sk).exists, ERR_NO_LOCK)
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:377
+    // smart_contracts/staking/contract.algo.ts:369
     // assert(this.stakes(sk).exists, ERR_NO_LOCK)
     dup
     box_len
     bury 1
     assert // Lock not found
-    // smart_contracts/staking/contract.algo.ts:379
-    // const currentStake = this.stakes(sk).value
+    // smart_contracts/staking/contract.algo.ts:371
+    // const { expiration, amount } = this.stakes(sk).value
     box_get
-    assert // Box must have value
+    pop
     dup
+    pushint 16 // 16
+    extract_uint64
+    frame_bury 2
     intc_0 // 0
     extract_uint64
     frame_bury 1
-    intc_2 // 16
-    extract_uint64
-    frame_bury 2
-    // smart_contracts/staking/contract.algo.ts:380
-    // assert(type !== STAKING_TYPE_LOCK || currentStake.expiration < Global.latestTimestamp, ERR_LOCKED)
+    // smart_contracts/staking/contract.algo.ts:372
+    // assert(type !== STAKING_TYPE_LOCK || expiration < Global.latestTimestamp, ERR_LOCKED)
     frame_dig -1
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:380
-    // assert(type !== STAKING_TYPE_LOCK || currentStake.expiration < Global.latestTimestamp, ERR_LOCKED)
+    bytec_2 // 0x28
     !=
     bnz withdraw_bool_true@6
     frame_dig 2
@@ -1926,53 +1676,48 @@ withdraw_bool_true@6:
     intc_1 // 1
 
 withdraw_bool_merge@8:
-    // smart_contracts/staking/contract.algo.ts:380
-    // assert(type !== STAKING_TYPE_LOCK || currentStake.expiration < Global.latestTimestamp, ERR_LOCKED)
+    // smart_contracts/staking/contract.algo.ts:372
+    // assert(type !== STAKING_TYPE_LOCK || expiration < Global.latestTimestamp, ERR_LOCKED)
     assert // This asset is still locked
-    // smart_contracts/staking/contract.algo.ts:382
+    // smart_contracts/staking/contract.algo.ts:374
     // if (asset === 0) {
     frame_dig -2
     bnz withdraw_else_body@11
-    // smart_contracts/staking/contract.algo.ts:383-389
+    // smart_contracts/staking/contract.algo.ts:375-380
     // itxn
     //   .payment({
     //     receiver: Txn.sender,
-    //     amount: currentStake.amount,
-    //     fee,
+    //     amount: amount
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/staking/contract.algo.ts:385
+    // smart_contracts/staking/contract.algo.ts:377
     // receiver: Txn.sender,
     txn Sender
     frame_dig 1
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/staking/contract.algo.ts:383-388
+    // smart_contracts/staking/contract.algo.ts:375-379
     // itxn
     //   .payment({
     //     receiver: Txn.sender,
-    //     amount: currentStake.amount,
-    //     fee,
+    //     amount: amount
     //   })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/staking/contract.algo.ts:383-389
+    // smart_contracts/staking/contract.algo.ts:375-380
     // itxn
     //   .payment({
     //     receiver: Txn.sender,
-    //     amount: currentStake.amount,
-    //     fee,
+    //     amount: amount
     //   })
     //   .submit()
     itxn_submit
 
 withdraw_after_if_else@13:
-    // smart_contracts/staking/contract.algo.ts:400
+    // smart_contracts/staking/contract.algo.ts:390
     // this.stakes(sk).delete()
     frame_dig 0
     box_del
@@ -1980,17 +1725,16 @@ withdraw_after_if_else@13:
     retsub
 
 withdraw_else_body@11:
-    // smart_contracts/staking/contract.algo.ts:391-398
+    // smart_contracts/staking/contract.algo.ts:382-388
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Txn.sender,
-    //     assetAmount: currentStake.amount,
-    //     xferAsset: asset,
-    //     fee,
+    //     assetAmount: amount,
+    //     xferAsset: asset
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/staking/contract.algo.ts:393
+    // smart_contracts/staking/contract.algo.ts:384
     // assetReceiver: Txn.sender,
     txn Sender
     frame_dig -2
@@ -1998,27 +1742,23 @@ withdraw_else_body@11:
     frame_dig 1
     itxn_field AssetAmount
     itxn_field AssetReceiver
-    // smart_contracts/staking/contract.algo.ts:391-397
+    // smart_contracts/staking/contract.algo.ts:382-387
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Txn.sender,
-    //     assetAmount: currentStake.amount,
-    //     xferAsset: asset,
-    //     fee,
+    //     assetAmount: amount,
+    //     xferAsset: asset
     //   })
     pushint 4 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/staking/contract.algo.ts:391-398
+    // smart_contracts/staking/contract.algo.ts:382-388
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Txn.sender,
-    //     assetAmount: currentStake.amount,
-    //     xferAsset: asset,
-    //     fee,
+    //     assetAmount: amount,
+    //     xferAsset: asset
     //   })
     //   .submit()
     itxn_submit
@@ -2035,126 +1775,169 @@ withdraw_bool_false@3:
 
 // smart_contracts/staking/contract.algo.ts::Staking.createHeartbeat(address: bytes, asset: uint64) -> void:
 createHeartbeat:
-    // smart_contracts/staking/contract.algo.ts:403
+    // smart_contracts/staking/contract.algo.ts:393
     // createHeartbeat(address: Address, asset: uint64): void {
     proto 2 0
     intc_0 // 0
     bytec_3 // ""
     dupn 3
-    // smart_contracts/staking/contract.algo.ts:404
+    // smart_contracts/staking/contract.algo.ts:394
     // assert(Txn.sender === this.heartbeatManagerAddress.value.native, ERR_NOT_HEARTBEAT_MANAGER)
     txn Sender
-    // smart_contracts/staking/constants.ts:3
-    // export const StakingGlobalStateKeyHeartbeatManagerAddress = 'heartbeat_manager_address'
+    // smart_contracts/staking/contract.algo.ts:73
+    // heartbeatManagerAddress = GlobalState<Address>({ key: StakingGlobalStateKeyHeartbeatManagerAddress })
     intc_0 // 0
     pushbytes "heartbeat_manager_address"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/staking/contract.algo.ts:404
+    // smart_contracts/staking/contract.algo.ts:394
     // assert(Txn.sender === this.heartbeatManagerAddress.value.native, ERR_NOT_HEARTBEAT_MANAGER)
     ==
     assert // Only the heartbeat manager can call this method
-    // smart_contracts/staking/contract.algo.ts:406
+    // smart_contracts/staking/contract.algo.ts:396
     // const hbk = { address, asset }
     frame_dig -1
     itob
-    // smart_contracts/staking/contract.algo.ts:407
-    // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     frame_dig -2
     swap
     concat
-    dup
-    // smart_contracts/staking/constants.ts:6
-    // export const StakingBoxPrefixHeartbeats = 'h'
-    bytec 6 // "h"
+    dupn 2
+    // smart_contracts/staking/contract.algo.ts:397
+    // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
+    extract 0 32
     dig 1
+    intc_2 // 32
+    extract_uint64
+    itob
+    concat
+    // smart_contracts/staking/contract.algo.ts:82
+    // keyPrefix: StakingBoxPrefixHeartbeats,
+    bytec 5 // "h"
+    swap
     concat
     dup
     cover 2
-    // smart_contracts/staking/contract.algo.ts:407
+    // smart_contracts/staking/contract.algo.ts:397
     // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
-    dup
     box_len
     bury 1
     assert // Heartbeat not found
-    // smart_contracts/staking/contract.algo.ts:409
-    // const timestamp = new UintN64(Global.latestTimestamp)
+    // smart_contracts/staking/contract.algo.ts:399
+    // const timestamp = new Uint64(Global.latestTimestamp)
     global LatestTimestamp
     itob
-    cover 2
-    // smart_contracts/staking/contract.algo.ts:410
-    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
-    box_get
     swap
-    cover 2
-    assert // Box must have value
-    // smart_contracts/staking/contract.algo.ts:412
+    // smart_contracts/staking/contract.algo.ts:402
     // const [holdings] = AssetHolding.assetBalance(address.native, asset)
     frame_dig -2
     frame_dig -1
     asset_holding_get AssetBalance
     pop
-    // smart_contracts/staking/contract.algo.ts:413
-    // const held = new UintN64(holdings)
+    // smart_contracts/staking/contract.algo.ts:403
+    // const held = new Uint64(holdings)
     itob
     swap
-    // smart_contracts/staking/contract.algo.ts:421
+    // smart_contracts/staking/contract.algo.ts:408
+    // type: STAKING_TYPE_HARD
+    bytec 4 // 0x1e
+    // smart_contracts/staking/contract.algo.ts:405-409
+    // const hardStakeKey = {
+    //   address,
+    //   asset,
+    //   type: STAKING_TYPE_HARD
+    // }
+    concat
+    // smart_contracts/staking/contract.algo.ts:411
     // let hard: uint64 = 0
     intc_0 // 0
     swap
-    // smart_contracts/staking/types.ts:23
-    // export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
-    bytec 5 // 0x02
-    // smart_contracts/staking/contract.algo.ts:422
+    // smart_contracts/staking/contract.algo.ts:412
     // if (this.stakes(hardStakeKey).exists) {
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
-    // smart_contracts/staking/contract.algo.ts:422
+    // smart_contracts/staking/contract.algo.ts:412
     // if (this.stakes(hardStakeKey).exists) {
     box_len
     bury 1
     bz createHeartbeat_after_if_else@2
-    // smart_contracts/staking/contract.algo.ts:423
+    // smart_contracts/staking/contract.algo.ts:413
     // hard = this.stakes(hardStakeKey).value.amount
-    frame_dig 11
+    frame_dig 10
     box_get
     assert // Box must have value
     intc_0 // 0
     extract_uint64
-    frame_bury 10
+    frame_bury 9
 
 createHeartbeat_after_if_else@2:
-    // smart_contracts/staking/contract.algo.ts:432
+    // smart_contracts/staking/contract.algo.ts:416-420
+    // const lockStakeKey = {
+    //   address,
+    //   asset,
+    //   type: STAKING_TYPE_LOCK
+    // }
+    frame_dig 5
+    // smart_contracts/staking/contract.algo.ts:419
+    // type: STAKING_TYPE_LOCK
+    bytec_2 // 0x28
+    // smart_contracts/staking/contract.algo.ts:416-420
+    // const lockStakeKey = {
+    //   address,
+    //   asset,
+    //   type: STAKING_TYPE_LOCK
+    // }
+    concat
+    // smart_contracts/staking/contract.algo.ts:422
     // let lock: uint64 = 0
     intc_0 // 0
     frame_bury 3
-    // smart_contracts/staking/contract.algo.ts:433
+    // smart_contracts/staking/contract.algo.ts:423
     // if (this.stakes(lockStakeKey).exists) {
-    frame_dig 5
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:433
-    // if (this.stakes(lockStakeKey).exists) {
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:433
+    // smart_contracts/staking/contract.algo.ts:423
     // if (this.stakes(lockStakeKey).exists) {
     box_len
     bury 1
     bz createHeartbeat_after_if_else@4
-    // smart_contracts/staking/contract.algo.ts:434
+    // smart_contracts/staking/contract.algo.ts:424
     // lock = this.stakes(lockStakeKey).value.amount
     frame_dig 0
     box_get
@@ -2164,123 +1947,115 @@ createHeartbeat_after_if_else@2:
     frame_bury 3
 
 createHeartbeat_after_if_else@4:
-    // smart_contracts/staking/contract.algo.ts:443
+    // smart_contracts/staking/contract.algo.ts:433
     // for (let i: uint64 = 0; i < 4; i += 1) {
     intc_0 // 0
     frame_bury 1
 
 createHeartbeat_while_top@5:
-    // smart_contracts/staking/contract.algo.ts:443
+    // smart_contracts/staking/contract.algo.ts:433
     // for (let i: uint64 = 0; i < 4; i += 1) {
     frame_dig 1
     pushint 4 // 4
     <
     bz createHeartbeat_after_while@13
-    // smart_contracts/staking/contract.algo.ts:445
+    // smart_contracts/staking/contract.algo.ts:435
     // i === 3 ||
     frame_dig 1
     pushint 3 // 3
     ==
     dup
     frame_bury 4
-    // smart_contracts/staking/contract.algo.ts:445-446
+    // smart_contracts/staking/contract.algo.ts:435-436
     // i === 3 ||
     // heartbeats[i].timestamp > heartbeats[i + 1].timestamp
     bnz createHeartbeat_if_body@8
-    // smart_contracts/staking/contract.algo.ts:446
-    // heartbeats[i].timestamp > heartbeats[i + 1].timestamp
-    frame_dig 8
-    extract 2 0
+    // smart_contracts/staking/contract.algo.ts:400
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     frame_dig 1
     dup
-    cover 2
-    intc_3 // 32
+    intc_2 // 32
     *
-    dig 1
+    intc_3 // 2
+    +
+    frame_dig 6
+    dup
+    cover 3
     swap
-    intc_3 // 32
-    extract3 // on error: Index access is out of bounds
+    intc_2 // 32
+    box_extract
     pushint 24 // 24
+    // smart_contracts/staking/contract.algo.ts:436
+    // heartbeats[i].timestamp > heartbeats[i + 1].timestamp
     extract_uint64
-    uncover 2
+    swap
     intc_1 // 1
     +
     dup
     frame_bury 2
-    intc_3 // 32
+    // smart_contracts/staking/contract.algo.ts:400
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    intc_2 // 32
     *
+    intc_3 // 2
+    +
     uncover 2
     swap
-    intc_3 // 32
-    extract3 // on error: Index access is out of bounds
+    intc_2 // 32
+    box_extract
     pushint 24 // 24
+    // smart_contracts/staking/contract.algo.ts:436
+    // heartbeats[i].timestamp > heartbeats[i + 1].timestamp
     extract_uint64
     >
-    // smart_contracts/staking/contract.algo.ts:445-446
+    // smart_contracts/staking/contract.algo.ts:435-436
     // i === 3 ||
     // heartbeats[i].timestamp > heartbeats[i + 1].timestamp
     bz createHeartbeat_after_if_else@12
 
 createHeartbeat_if_body@8:
-    // smart_contracts/staking/contract.algo.ts:448
+    // smart_contracts/staking/contract.algo.ts:438
     // const indexToModify: uint64 = i === 3 ? 0 : i + 1
     frame_dig 4
     bz createHeartbeat_ternary_false@10
     intc_0 // 0
 
 createHeartbeat_ternary_merge@11:
-    // smart_contracts/staking/contract.algo.ts:451
-    // hard: new UintN64(hard),
-    frame_dig 10
+    // smart_contracts/staking/contract.algo.ts:441
+    // hard: new Uint64(hard),
+    frame_dig 9
     itob
-    // smart_contracts/staking/contract.algo.ts:452
-    // lock: new UintN64(lock),
+    // smart_contracts/staking/contract.algo.ts:442
+    // lock: new Uint64(lock),
     frame_dig 3
     itob
-    // smart_contracts/staking/contract.algo.ts:449-454
+    // smart_contracts/staking/contract.algo.ts:439-444
     // this.heartbeats(hbk).value[indexToModify] = new arc4Heartbeat({
     //   held,
-    //   hard: new UintN64(hard),
-    //   lock: new UintN64(lock),
+    //   hard: new Uint64(hard),
+    //   lock: new Uint64(lock),
     //   timestamp,
     // })
-    frame_dig 9
+    frame_dig 8
     uncover 2
     concat
     swap
     concat
     frame_dig 7
     concat
-    // smart_contracts/staking/contract.algo.ts:449
-    // this.heartbeats(hbk).value[indexToModify] = new arc4Heartbeat({
-    frame_dig 6
-    dup
-    cover 2
-    box_get
-    assert // Box must have value
-    // smart_contracts/staking/contract.algo.ts:449-454
-    // this.heartbeats(hbk).value[indexToModify] = new arc4Heartbeat({
-    //   held,
-    //   hard: new UintN64(hard),
-    //   lock: new UintN64(lock),
-    //   timestamp,
-    // })
-    uncover 3
-    dup
-    pushint 4 // 4
-    <
-    assert // Index access is out of bounds
-    intc_3 // 32
+    swap
+    intc_2 // 32
     *
+    frame_dig 6
+    swap
     uncover 2
-    replace3
-    box_put
-    // smart_contracts/staking/contract.algo.ts:455
+    box_replace
+    // smart_contracts/staking/contract.algo.ts:445
     // return
     retsub
 
 createHeartbeat_ternary_false@10:
-    // smart_contracts/staking/contract.algo.ts:448
+    // smart_contracts/staking/contract.algo.ts:438
     // const indexToModify: uint64 = i === 3 ? 0 : i + 1
     frame_dig 1
     intc_1 // 1
@@ -2296,107 +2071,122 @@ createHeartbeat_after_while@13:
     retsub
 
 
-// smart_contracts/staking/contract.algo.ts::Staking.softCheck(address: bytes, asset: uint64) -> uint64, uint64:
+// smart_contracts/staking/contract.algo.ts::Staking.softCheck(address: bytes, asset: uint64) -> bytes:
 softCheck:
-    // smart_contracts/staking/contract.algo.ts:460
+    // smart_contracts/staking/contract.algo.ts:450
     // softCheck(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
-    proto 2 2
+    proto 2 1
     bytec_3 // ""
     dupn 2
-    // smart_contracts/staking/contract.algo.ts:461
+    // smart_contracts/staking/contract.algo.ts:451
     // const sk = { address, asset, type: STAKING_TYPE_SOFT }
     frame_dig -1
     itob
-    // smart_contracts/staking/contract.algo.ts:462
-    // assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
     frame_dig -2
     swap
     concat
-    // smart_contracts/staking/types.ts:17
-    // export const STAKING_TYPE_SOFT: StakingType = new arc4.UintN8(1)
-    pushbytes 0x01
-    // smart_contracts/staking/contract.algo.ts:462
-    // assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
+    pushbytes 0x14
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:452
+    // assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dupn 2
-    // smart_contracts/staking/contract.algo.ts:462
+    // smart_contracts/staking/contract.algo.ts:452
     // assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
     box_len
     bury 1
     assert // Stake does not exist
-    // smart_contracts/staking/contract.algo.ts:464
-    // const stake = this.stakes(sk).value
+    // smart_contracts/staking/contract.algo.ts:454
+    // const { amount } = this.stakes(sk).value
     box_get
-    assert // Box must have value
+    pop
     intc_0 // 0
     extract_uint64
-    // smart_contracts/staking/contract.algo.ts:465
+    // smart_contracts/staking/contract.algo.ts:455
     // const lastUpdate = Global.latestTimestamp
     global LatestTimestamp
     swap
-    // smart_contracts/staking/contract.algo.ts:467
+    // smart_contracts/staking/contract.algo.ts:457
     // if (asset === 0) {
     frame_dig -1
     bnz softCheck_after_if_else@4
-    // smart_contracts/staking/contract.algo.ts:468
-    // const valid = address.native.balance >= stake.amount
+    // smart_contracts/staking/contract.algo.ts:458
+    // const valid = address.native.balance >= amount
     frame_dig -2
     acct_params_get AcctBalance
     assert // account funded
     <=
     dup
     frame_bury 1
-    // smart_contracts/staking/contract.algo.ts:469
+    // smart_contracts/staking/contract.algo.ts:459
     // if (!valid) {
     bnz softCheck_after_if_else@3
-    // smart_contracts/staking/contract.algo.ts:471
+    // smart_contracts/staking/contract.algo.ts:461
     // amount: address.native.balance,
     frame_dig -2
     acct_params_get AcctBalance
     assert // account funded
-    itob
-    // smart_contracts/staking/contract.algo.ts:472
-    // lastUpdate,
-    frame_dig 4
-    itob
-    // smart_contracts/staking/contract.algo.ts:473
-    // expiration: 0,
-    intc_0 // 0
-    itob
-    // smart_contracts/staking/contract.algo.ts:470
-    // this.stakes(sk).value = {
-    cover 2
-    concat
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:470-474
+    // smart_contracts/staking/contract.algo.ts:460-464
     // this.stakes(sk).value = {
     //   amount: address.native.balance,
     //   lastUpdate,
     //   expiration: 0,
     // }
+    itob
+    frame_dig 4
+    itob
+    concat
+    // smart_contracts/staking/contract.algo.ts:463
+    // expiration: 0,
+    intc_0 // 0
+    // smart_contracts/staking/contract.algo.ts:460-464
+    // this.stakes(sk).value = {
+    //   amount: address.native.balance,
+    //   lastUpdate,
+    //   expiration: 0,
+    // }
+    itob
+    concat
     frame_dig 3
     swap
     box_put
 
 softCheck_after_if_else@3:
-    // smart_contracts/staking/contract.algo.ts:476
+    // smart_contracts/staking/contract.algo.ts:466
     // return { valid, balance: address.native.balance }
     frame_dig -2
     acct_params_get AcctBalance
     assert // account funded
+    bytec 8 // 0x00
+    intc_0 // 0
     frame_dig 1
+    setbit
+    swap
+    itob
+    concat
     frame_bury 0
-    frame_bury 1
     retsub
 
 softCheck_after_if_else@4:
-    // smart_contracts/staking/contract.algo.ts:479
+    // smart_contracts/staking/contract.algo.ts:469
     // const [holdingAmount, optedIn] = AssetHolding.assetBalance(address.native, asset)
     frame_dig -2
     frame_dig -1
@@ -2405,62 +2195,63 @@ softCheck_after_if_else@4:
     dup
     cover 2
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:480
+    // smart_contracts/staking/contract.algo.ts:470
     // assert(optedIn, ERR_NOT_OPTED_IN)
     assert // Not opted in
-    // smart_contracts/staking/contract.algo.ts:481
-    // const valid = holdingAmount >= stake.amount
+    // smart_contracts/staking/contract.algo.ts:471
+    // const valid = holdingAmount >= amount
     <=
     dup
     frame_bury 2
-    // smart_contracts/staking/contract.algo.ts:482
+    // smart_contracts/staking/contract.algo.ts:472
     // if (!valid) {
     bnz softCheck_after_if_else@6
-    // smart_contracts/staking/contract.algo.ts:484
-    // amount: holdingAmount,
-    frame_dig 0
-    itob
-    // smart_contracts/staking/contract.algo.ts:485
-    // lastUpdate,
-    frame_dig 4
-    itob
-    // smart_contracts/staking/contract.algo.ts:486
-    // expiration: 0,
-    intc_0 // 0
-    itob
-    // smart_contracts/staking/contract.algo.ts:483
-    // this.stakes(sk).value = {
-    cover 2
-    concat
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:483-487
+    // smart_contracts/staking/contract.algo.ts:473-477
     // this.stakes(sk).value = {
     //   amount: holdingAmount,
     //   lastUpdate,
     //   expiration: 0,
     // }
+    frame_dig 0
+    itob
+    frame_dig 4
+    itob
+    concat
+    // smart_contracts/staking/contract.algo.ts:476
+    // expiration: 0,
+    intc_0 // 0
+    // smart_contracts/staking/contract.algo.ts:473-477
+    // this.stakes(sk).value = {
+    //   amount: holdingAmount,
+    //   lastUpdate,
+    //   expiration: 0,
+    // }
+    itob
+    concat
     frame_dig 3
     swap
     box_put
 
 softCheck_after_if_else@6:
-    // smart_contracts/staking/contract.algo.ts:490
+    // smart_contracts/staking/contract.algo.ts:480
     // return { valid, balance: holdingAmount }
+    bytec 8 // 0x00
+    intc_0 // 0
     frame_dig 2
+    setbit
     frame_dig 0
-    frame_bury 1
+    itob
+    concat
     frame_bury 0
     retsub
 
 
 // smart_contracts/staking/contract.algo.ts::Staking.updateSettings(payment: uint64, asset: uint64, value: uint64) -> void:
 updateSettings:
-    // smart_contracts/staking/contract.algo.ts:493
+    // smart_contracts/staking/contract.algo.ts:483
     // updateSettings(payment: gtxn.PaymentTxn, asset: uint64, value: uint64): void {
     proto 3 0
-    bytec_3 // ""
-    // smart_contracts/staking/contract.algo.ts:494
+    // smart_contracts/staking/contract.algo.ts:484
     // assert(Txn.sender === Asset(asset).creator, ERR_NOT_ASSET_CREATOR)
     txn Sender
     frame_dig -2
@@ -2468,7 +2259,7 @@ updateSettings:
     assert // asset exists
     ==
     assert // Only the asset creator can call this method
-    // smart_contracts/staking/contract.algo.ts:495-502
+    // smart_contracts/staking/contract.algo.ts:485-492
     // assertMatch(
     //   payment,
     //   {
@@ -2479,10 +2270,10 @@ updateSettings:
     // )
     frame_dig -3
     gtxns Receiver
-    // smart_contracts/staking/contract.algo.ts:498
+    // smart_contracts/staking/contract.algo.ts:488
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/staking/contract.algo.ts:495-502
+    // smart_contracts/staking/contract.algo.ts:485-492
     // assertMatch(
     //   payment,
     //   {
@@ -2492,28 +2283,27 @@ updateSettings:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    bz updateSettings_bool_false@6
     frame_dig -3
     gtxns Amount
-    frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:499
+    // smart_contracts/staking/contract.algo.ts:489
     // amount: this.settings(asset).exists ? 0 : this.mbr().settings,
     frame_dig -2
     itob
-    // smart_contracts/staking/constants.ts:7
-    // export const StakingBoxPrefixSettings = 'e'
-    bytec 9 // "e"
+    // smart_contracts/staking/contract.algo.ts:85
+    // settings = BoxMap<uint64, uint64>({ keyPrefix: StakingBoxPrefixSettings })
+    pushbytes "e"
     swap
     concat
-    // smart_contracts/staking/contract.algo.ts:499
+    dup
+    // smart_contracts/staking/contract.algo.ts:489
     // amount: this.settings(asset).exists ? 0 : this.mbr().settings,
     box_len
     bury 1
-    bz updateSettings_ternary_false@3
+    bz updateSettings_ternary_false@2
     intc_0 // 0
 
-updateSettings_ternary_merge@4:
-    // smart_contracts/staking/contract.algo.ts:495-502
+updateSettings_ternary_merge@3:
+    // smart_contracts/staking/contract.algo.ts:485-492
     // assertMatch(
     //   payment,
     //   {
@@ -2522,77 +2312,65 @@ updateSettings_ternary_merge@4:
     //   },
     //   ERR_INVALID_PAYMENT
     // )
-    frame_dig 0
+    frame_dig 1
     ==
-    bz updateSettings_bool_false@6
-    intc_1 // 1
-
-updateSettings_bool_merge@7:
-    // smart_contracts/staking/contract.algo.ts:495-502
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: this.settings(asset).exists ? 0 : this.mbr().settings,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
+    frame_dig 0
+    &&
     assert // Invalid payment
-    // smart_contracts/staking/contract.algo.ts:504
-    // this.settings(asset).value = value
-    frame_dig -2
-    itob
-    // smart_contracts/staking/constants.ts:7
-    // export const StakingBoxPrefixSettings = 'e'
-    bytec 9 // "e"
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:504
+    // smart_contracts/staking/contract.algo.ts:494
     // this.settings(asset).value = value
     frame_dig -1
     itob
+    frame_dig 2
+    swap
     box_put
     retsub
 
-updateSettings_bool_false@6:
-    intc_0 // 0
-    b updateSettings_bool_merge@7
-
-updateSettings_ternary_false@3:
-    // smart_contracts/staking/base.ts:9
-    // settings: 9_300
+updateSettings_ternary_false@2:
+    // smart_contracts/staking/contract.algo.ts:489
+    // amount: this.settings(asset).exists ? 0 : this.mbr().settings,
     pushint 9300 // 9300
-    b updateSettings_ternary_merge@4
+    b updateSettings_ternary_merge@3
 
 
 // smart_contracts/staking/contract.algo.ts::Staking.getTimeLeft(address: bytes, asset: uint64) -> uint64:
 getTimeLeft:
-    // smart_contracts/staking/contract.algo.ts:510-511
+    // smart_contracts/staking/contract.algo.ts:500-501
     // @abimethod({ readonly: true })
     // getTimeLeft(address: Address, asset: uint64): uint64 {
     proto 2 1
-    // smart_contracts/staking/contract.algo.ts:512
+    // smart_contracts/staking/contract.algo.ts:502
     // const sk = { address, asset, type: STAKING_TYPE_LOCK }
     frame_dig -1
     itob
-    // smart_contracts/staking/contract.algo.ts:514
-    // if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration) {
     frame_dig -2
     swap
     concat
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:514
-    // if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration) {
+    bytec_2 // 0x28
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:504
+    // if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration) {
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
-    // smart_contracts/staking/contract.algo.ts:514
+    // smart_contracts/staking/contract.algo.ts:504
     // if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration) {
     box_len
     bury 1
@@ -2601,25 +2379,25 @@ getTimeLeft:
     frame_dig 0
     box_get
     assert // Box must have value
-    intc_2 // 16
+    pushint 16 // 16
     extract_uint64
     >=
     bz getTimeLeft_after_if_else@3
 
 getTimeLeft_if_body@2:
-    // smart_contracts/staking/contract.algo.ts:515
+    // smart_contracts/staking/contract.algo.ts:505
     // return 0
     intc_0 // 0
     swap
     retsub
 
 getTimeLeft_after_if_else@3:
-    // smart_contracts/staking/contract.algo.ts:518
+    // smart_contracts/staking/contract.algo.ts:508
     // return this.stakes(sk).value.expiration - Global.latestTimestamp
     frame_dig 0
     box_get
     assert // Box must have value
-    intc_2 // 16
+    pushint 16 // 16
     extract_uint64
     global LatestTimestamp
     -
@@ -2629,227 +2407,279 @@ getTimeLeft_after_if_else@3:
 
 // smart_contracts/staking/contract.algo.ts::Staking.mustGetTimeLeft(address: bytes, asset: uint64) -> uint64:
 mustGetTimeLeft:
-    // smart_contracts/staking/contract.algo.ts:521-522
+    // smart_contracts/staking/contract.algo.ts:511-512
     // @abimethod({ readonly: true })
     // mustGetTimeLeft(address: Address, asset: uint64): uint64 {
     proto 2 1
-    // smart_contracts/staking/contract.algo.ts:523
+    // smart_contracts/staking/contract.algo.ts:513
     // const sk = { address, asset, type: STAKING_TYPE_LOCK }
     frame_dig -1
     itob
-    // smart_contracts/staking/contract.algo.ts:524
-    // assert(this.stakes(sk).exists, ERR_NO_LOCK)
     frame_dig -2
     swap
     concat
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:524
-    // assert(this.stakes(sk).exists, ERR_NO_LOCK)
+    bytec_2 // 0x28
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:514
+    // assert(this.stakes(sk).exists, ERR_NO_LOCK)
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
-    // smart_contracts/staking/contract.algo.ts:524
+    // smart_contracts/staking/contract.algo.ts:514
     // assert(this.stakes(sk).exists, ERR_NO_LOCK)
     dup
     box_len
     bury 1
     assert // Lock not found
-    // smart_contracts/staking/contract.algo.ts:525
+    // smart_contracts/staking/contract.algo.ts:515
     // assert(Global.latestTimestamp < this.stakes(sk).value.expiration, ERR_LOCKED)
     global LatestTimestamp
     swap
     box_get
-    assert // Box must have value
-    intc_2 // 16
+    pop
+    pushint 16 // 16
     extract_uint64
     swap
     dig 1
     <
     assert // This asset is still locked
-    // smart_contracts/staking/contract.algo.ts:526
+    // smart_contracts/staking/contract.algo.ts:516
     // return this.stakes(sk).value.expiration - Global.latestTimestamp
     global LatestTimestamp
     -
     retsub
 
 
-// smart_contracts/staking/contract.algo.ts::Staking.getInfo(address: bytes, stake.asset: uint64, stake.type: bytes) -> uint64, uint64, uint64:
+// smart_contracts/staking/contract.algo.ts::Staking.getInfo(address: bytes, stake: bytes) -> bytes:
 getInfo:
-    // smart_contracts/staking/contract.algo.ts:529-530
+    // smart_contracts/staking/contract.algo.ts:519-520
     // @abimethod({ readonly: true })
     // getInfo(address: Address, stake: StakeInfo): Stake {
-    proto 3 3
-    // smart_contracts/staking/contract.algo.ts:531
+    proto 2 1
+    // smart_contracts/staking/contract.algo.ts:521
     // const sk = { address, ...stake }
-    frame_dig -2
+    frame_dig -1
+    intc_0 // 0
+    extract_uint64
+    frame_dig -1
+    extract 8 1
+    swap
     itob
-    // smart_contracts/staking/contract.algo.ts:532
-    // if (!this.stakes(sk).exists) {
-    frame_dig -3
     swap
     concat
-    frame_dig -1
+    frame_dig -2
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:522
+    // if (!this.stakes(sk).exists) {
+    dup
+    extract 9 32
+    dig 1
+    intc_0 // 0
+    extract_uint64
+    uncover 2
+    extract 8 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
-    // smart_contracts/staking/contract.algo.ts:532
+    // smart_contracts/staking/contract.algo.ts:522
     // if (!this.stakes(sk).exists) {
     box_len
     bury 1
     bnz getInfo_after_if_else@2
-    // smart_contracts/staking/contract.algo.ts:533
+    // smart_contracts/staking/contract.algo.ts:523
     // return { amount: 0, lastUpdate: 0, expiration: 0 }
-    intc_0 // 0
-    dupn 2
-    uncover 3
+    bytec 11 // 0x000000000000000000000000000000000000000000000000
+    swap
     retsub
 
 getInfo_after_if_else@2:
-    // smart_contracts/staking/contract.algo.ts:536
+    // smart_contracts/staking/contract.algo.ts:526
     // return this.stakes(sk).value
     frame_dig 0
     box_get
     assert // Box must have value
-    dup
-    intc_0 // 0
-    extract_uint64
-    dig 1
-    pushint 8 // 8
-    extract_uint64
-    uncover 2
-    intc_2 // 16
-    extract_uint64
-    uncover 3
+    swap
     retsub
 
 
-// smart_contracts/staking/contract.algo.ts::Staking.mustGetInfo(address: bytes, stake.asset: uint64, stake.type: bytes) -> uint64, uint64, uint64:
+// smart_contracts/staking/contract.algo.ts::Staking.mustGetInfo(address: bytes, stake: bytes) -> bytes:
 mustGetInfo:
-    // smart_contracts/staking/contract.algo.ts:539-540
+    // smart_contracts/staking/contract.algo.ts:529-530
     // @abimethod({ readonly: true })
     // mustGetInfo(address: Address, stake: StakeInfo): Stake {
-    proto 3 3
-    // smart_contracts/staking/contract.algo.ts:541
+    proto 2 1
+    // smart_contracts/staking/contract.algo.ts:531
     // const sk = { address, ...stake }
-    frame_dig -2
+    frame_dig -1
+    intc_0 // 0
+    extract_uint64
+    frame_dig -1
+    extract 8 1
+    swap
     itob
-    // smart_contracts/staking/contract.algo.ts:542
-    // assert(this.stakes(sk).exists, ERR_NO_LOCK)
-    frame_dig -3
     swap
     concat
-    frame_dig -1
+    frame_dig -2
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:532
+    // assert(this.stakes(sk).exists, ERR_NO_LOCK)
+    dup
+    extract 9 32
+    dig 1
+    intc_0 // 0
+    extract_uint64
+    uncover 2
+    extract 8 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
-    // smart_contracts/staking/contract.algo.ts:542
+    // smart_contracts/staking/contract.algo.ts:532
     // assert(this.stakes(sk).exists, ERR_NO_LOCK)
     dup
     box_len
     bury 1
     assert // Lock not found
-    // smart_contracts/staking/contract.algo.ts:544
+    // smart_contracts/staking/contract.algo.ts:534
     // return this.stakes(sk).value
     box_get
-    assert // Box must have value
-    dup
-    intc_0 // 0
-    extract_uint64
-    dig 1
-    pushint 8 // 8
-    extract_uint64
-    uncover 2
-    intc_2 // 16
-    extract_uint64
+    pop
     retsub
 
 
-// smart_contracts/staking/contract.algo.ts::Staking.getEscrowInfo(address: bytes, asset: uint64) -> uint64, uint64:
+// smart_contracts/staking/contract.algo.ts::Staking.getEscrowInfo(address: bytes, asset: uint64) -> bytes:
 getEscrowInfo:
-    // smart_contracts/staking/contract.algo.ts:547-548
+    // smart_contracts/staking/contract.algo.ts:537-538
     // @abimethod({ readonly: true })
     // getEscrowInfo(address: Address, asset: uint64): Escrow {
-    proto 2 2
+    proto 2 1
     intc_0 // 0
     bytec_3 // ""
-    // smart_contracts/staking/contract.algo.ts:552
-    // let hard: uint64 = 0
-    intc_0 // 0
-    // smart_contracts/staking/contract.algo.ts:549
+    // smart_contracts/staking/contract.algo.ts:539
     // const sk = { address, asset, type: STAKING_TYPE_HARD }
     frame_dig -1
     itob
-    // smart_contracts/staking/contract.algo.ts:553
-    // if (this.stakes(sk).exists) {
     frame_dig -2
     swap
     concat
     dup
-    // smart_contracts/staking/types.ts:23
-    // export const STAKING_TYPE_HARD: StakingType = new arc4.UintN8(2)
-    bytec 5 // 0x02
-    // smart_contracts/staking/contract.algo.ts:553
-    // if (this.stakes(sk).exists) {
+    bytec 4 // 0x1e
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:540
+    // const lk = { address, asset, type: STAKING_TYPE_LOCK }
+    swap
+    bytec_2 // 0x28
+    concat
+    swap
+    // smart_contracts/staking/contract.algo.ts:542
+    // let hard: uint64 = 0
+    intc_0 // 0
+    swap
+    // smart_contracts/staking/contract.algo.ts:543
+    // if (this.stakes(sk).exists) {
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
-    // smart_contracts/staking/contract.algo.ts:553
+    // smart_contracts/staking/contract.algo.ts:543
     // if (this.stakes(sk).exists) {
     box_len
     bury 1
     bz getEscrowInfo_after_if_else@2
-    // smart_contracts/staking/contract.algo.ts:554
+    // smart_contracts/staking/contract.algo.ts:544
     // hard = this.stakes(sk).value.amount
     frame_dig 4
     box_get
     assert // Box must have value
     intc_0 // 0
     extract_uint64
-    frame_bury 2
+    frame_bury 3
 
 getEscrowInfo_after_if_else@2:
-    // smart_contracts/staking/contract.algo.ts:557
+    // smart_contracts/staking/contract.algo.ts:547
     // let lock: uint64 = 0
     intc_0 // 0
     frame_bury 1
-    // smart_contracts/staking/contract.algo.ts:558
+    // smart_contracts/staking/contract.algo.ts:548
     // if (this.stakes(lk).exists) {
-    frame_dig 3
-    // smart_contracts/staking/types.ts:30
-    // export const STAKING_TYPE_LOCK: StakingType = new arc4.UintN8(3)
-    bytec_2 // 0x03
-    // smart_contracts/staking/contract.algo.ts:558
-    // if (this.stakes(lk).exists) {
+    frame_dig 2
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:558
+    // smart_contracts/staking/contract.algo.ts:548
     // if (this.stakes(lk).exists) {
     box_len
     bury 1
     bz getEscrowInfo_after_if_else@4
-    // smart_contracts/staking/contract.algo.ts:559
+    // smart_contracts/staking/contract.algo.ts:549
     // lock = this.stakes(lk).value.amount
     frame_dig 0
     box_get
@@ -2859,47 +2689,58 @@ getEscrowInfo_after_if_else@2:
     frame_bury 1
 
 getEscrowInfo_after_if_else@4:
-    // smart_contracts/staking/contract.algo.ts:562
+    // smart_contracts/staking/contract.algo.ts:552
     // return { hard, lock }
-    frame_dig 2
+    frame_dig 3
+    itob
+    frame_dig 1
+    itob
+    concat
     frame_bury 0
     retsub
 
 
 // smart_contracts/staking/contract.algo.ts::Staking.getHeartbeat(address: bytes, asset: uint64) -> bytes:
 getHeartbeat:
-    // smart_contracts/staking/contract.algo.ts:565-566
+    // smart_contracts/staking/contract.algo.ts:555-556
     // @abimethod({ readonly: true })
     // getHeartbeat(address: Address, asset: uint64): Heartbeats {
     proto 2 1
-    // smart_contracts/staking/contract.algo.ts:567
+    // smart_contracts/staking/contract.algo.ts:557
     // const hbk = { address, asset }
     frame_dig -1
     itob
-    // smart_contracts/staking/contract.algo.ts:568
-    // if (!this.heartbeats(hbk).exists) {
     frame_dig -2
     swap
     concat
-    // smart_contracts/staking/constants.ts:6
-    // export const StakingBoxPrefixHeartbeats = 'h'
-    bytec 6 // "h"
+    // smart_contracts/staking/contract.algo.ts:558
+    // if (!this.heartbeats(hbk).exists) {
+    dup
+    extract 0 32
+    swap
+    intc_2 // 32
+    extract_uint64
+    itob
+    concat
+    // smart_contracts/staking/contract.algo.ts:82
+    // keyPrefix: StakingBoxPrefixHeartbeats,
+    bytec 5 // "h"
     swap
     concat
     dup
-    // smart_contracts/staking/contract.algo.ts:568
+    // smart_contracts/staking/contract.algo.ts:558
     // if (!this.heartbeats(hbk).exists) {
     box_len
     bury 1
     bnz getHeartbeat_after_if_else@2
-    // smart_contracts/staking/contract.algo.ts:577
+    // smart_contracts/staking/contract.algo.ts:567
     // return [ehbv, ehbv, ehbv, ehbv]
     pushbytes 0x00040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
     swap
     retsub
 
 getHeartbeat_after_if_else@2:
-    // smart_contracts/staking/contract.algo.ts:580
+    // smart_contracts/staking/contract.algo.ts:570
     // return decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     frame_dig 0
     box_get
@@ -2910,159 +2751,194 @@ getHeartbeat_after_if_else@2:
 
 // smart_contracts/staking/contract.algo.ts::Staking.mustGetHeartbeat(address: bytes, asset: uint64) -> bytes:
 mustGetHeartbeat:
-    // smart_contracts/staking/contract.algo.ts:583-584
+    // smart_contracts/staking/contract.algo.ts:573-574
     // @abimethod({ readonly: true })
     // mustGetHeartbeat(address: Address, asset: uint64): Heartbeats {
     proto 2 1
-    // smart_contracts/staking/contract.algo.ts:585
+    // smart_contracts/staking/contract.algo.ts:575
     // const hbk = { address, asset }
     frame_dig -1
     itob
-    // smart_contracts/staking/contract.algo.ts:586
-    // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     frame_dig -2
     swap
     concat
-    // smart_contracts/staking/constants.ts:6
-    // export const StakingBoxPrefixHeartbeats = 'h'
-    bytec 6 // "h"
+    // smart_contracts/staking/contract.algo.ts:576
+    // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
+    dup
+    extract 0 32
+    swap
+    intc_2 // 32
+    extract_uint64
+    itob
+    concat
+    // smart_contracts/staking/contract.algo.ts:82
+    // keyPrefix: StakingBoxPrefixHeartbeats,
+    bytec 5 // "h"
     swap
     concat
-    // smart_contracts/staking/contract.algo.ts:586
+    // smart_contracts/staking/contract.algo.ts:576
     // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     dup
     box_len
     bury 1
     assert // Heartbeat not found
-    // smart_contracts/staking/contract.algo.ts:587
+    // smart_contracts/staking/contract.algo.ts:577
     // return decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     box_get
-    assert // Box must have value
+    pop
     retsub
 
 
 // smart_contracts/staking/contract.algo.ts::Staking.getHeartbeatAverage(address: bytes, asset: uint64, includeStaked: uint64) -> uint64:
 getHeartbeatAverage:
-    // smart_contracts/staking/contract.algo.ts:590-591
+    // smart_contracts/staking/contract.algo.ts:580-581
     // @abimethod({ readonly: true })
     // getHeartbeatAverage(address: Address, asset: uint64, includeStaked: boolean): uint64 {
     proto 3 1
-    intc_0 // 0
     bytec_3 // ""
-    dupn 2
-    // smart_contracts/staking/contract.algo.ts:592
+    dup
+    // smart_contracts/staking/contract.algo.ts:582
     // const hbk = { address, asset }
     frame_dig -2
     itob
-    // smart_contracts/staking/contract.algo.ts:594
-    // if (!this.heartbeats(hbk).exists) {
     frame_dig -3
     swap
     concat
-    // smart_contracts/staking/constants.ts:6
-    // export const StakingBoxPrefixHeartbeats = 'h'
-    bytec 6 // "h"
+    // smart_contracts/staking/contract.algo.ts:584
+    // if (!this.heartbeats(hbk).exists) {
+    dup
+    extract 0 32
+    swap
+    intc_2 // 32
+    extract_uint64
+    itob
+    concat
+    // smart_contracts/staking/contract.algo.ts:82
+    // keyPrefix: StakingBoxPrefixHeartbeats,
+    bytec 5 // "h"
     swap
     concat
     dup
-    // smart_contracts/staking/contract.algo.ts:594
+    // smart_contracts/staking/contract.algo.ts:584
     // if (!this.heartbeats(hbk).exists) {
     box_len
     bury 1
     bnz getHeartbeatAverage_after_if_else@2
-    // smart_contracts/staking/contract.algo.ts:595
+    // smart_contracts/staking/contract.algo.ts:585
     // return 0
     intc_0 // 0
     frame_bury 0
     retsub
 
 getHeartbeatAverage_after_if_else@2:
-    // smart_contracts/staking/contract.algo.ts:598
-    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
-    frame_dig 4
-    box_get
-    swap
-    frame_bury 0
-    assert // Box must have value
-    // smart_contracts/staking/contract.algo.ts:600
+    // smart_contracts/staking/contract.algo.ts:590
     // let total: uint64 = 0
     intc_0 // 0
-    frame_bury 3
-    // smart_contracts/staking/contract.algo.ts:601
+    frame_bury 1
+    // smart_contracts/staking/contract.algo.ts:591
     // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
     intc_0 // 0
-    frame_bury 1
+    frame_bury 0
 
 getHeartbeatAverage_while_top@3:
-    // smart_contracts/staking/contract.algo.ts:601
+    // smart_contracts/staking/contract.algo.ts:588
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    frame_dig 2
+    intc_0 // 0
+    intc_3 // 2
+    box_extract
+    btoi
+    // smart_contracts/staking/contract.algo.ts:591
     // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
     frame_dig 0
-    intc_0 // 0
-    extract_uint16
-    dup
-    frame_bury 2
-    frame_dig 1
     >
     bz getHeartbeatAverage_after_while@8
-    // smart_contracts/staking/contract.algo.ts:602
+    // smart_contracts/staking/contract.algo.ts:592
     // if (includeStaked) {
     frame_dig -1
     bz getHeartbeatAverage_else_body@6
-    // smart_contracts/staking/contract.algo.ts:603
-    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
+    // smart_contracts/staking/contract.algo.ts:588
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     frame_dig 0
-    extract 2 0
-    frame_dig 1
-    intc_3 // 32
+    intc_2 // 32
     *
-    intc_3 // 32
-    extract3 // on error: Index access is out of bounds
+    intc_3 // 2
+    +
+    frame_dig 2
+    swap
+    intc_2 // 32
+    box_extract
+    // smart_contracts/staking/contract.algo.ts:593
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     dup
+    // smart_contracts/staking/contract.algo.ts:588
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     intc_0 // 0
+    // smart_contracts/staking/contract.algo.ts:593
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     extract_uint64
     dig 1
+    // smart_contracts/staking/contract.algo.ts:588
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     pushint 8 // 8
+    // smart_contracts/staking/contract.algo.ts:593
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     extract_uint64
     +
     swap
-    intc_2 // 16
+    // smart_contracts/staking/contract.algo.ts:588
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    pushint 16 // 16
+    // smart_contracts/staking/contract.algo.ts:593
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     extract_uint64
     +
-    frame_dig 3
-    +
-    frame_bury 3
-
-getHeartbeatAverage_after_if_else@7:
-    // smart_contracts/staking/contract.algo.ts:601
-    // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
     frame_dig 1
-    intc_1 // 1
     +
     frame_bury 1
+
+getHeartbeatAverage_after_if_else@7:
+    // smart_contracts/staking/contract.algo.ts:591
+    // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
+    frame_dig 0
+    intc_1 // 1
+    +
+    frame_bury 0
     b getHeartbeatAverage_while_top@3
 
 getHeartbeatAverage_else_body@6:
-    // smart_contracts/staking/contract.algo.ts:605
-    // total += heartbeats[i].held
+    // smart_contracts/staking/contract.algo.ts:588
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     frame_dig 0
-    extract 2 0
-    frame_dig 1
-    intc_3 // 32
+    intc_2 // 32
     *
-    intc_3 // 32
-    extract3 // on error: Index access is out of bounds
-    intc_0 // 0
-    extract_uint64
-    frame_dig 3
+    intc_3 // 2
     +
-    frame_bury 3
+    frame_dig 2
+    swap
+    intc_2 // 32
+    box_extract
+    intc_0 // 0
+    // smart_contracts/staking/contract.algo.ts:595
+    // total += heartbeats[i].held
+    extract_uint64
+    frame_dig 1
+    +
+    frame_bury 1
     b getHeartbeatAverage_after_if_else@7
 
 getHeartbeatAverage_after_while@8:
-    // smart_contracts/staking/contract.algo.ts:609
-    // return total / heartbeats.length
-    frame_dig 3
+    // smart_contracts/staking/contract.algo.ts:588
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     frame_dig 2
+    intc_0 // 0
+    intc_3 // 2
+    box_extract
+    btoi
+    // smart_contracts/staking/contract.algo.ts:599
+    // return total / heartbeats.length
+    frame_dig 1
+    swap
     /
     frame_bury 0
     retsub
@@ -3070,112 +2946,143 @@ getHeartbeatAverage_after_while@8:
 
 // smart_contracts/staking/contract.algo.ts::Staking.mustGetHeartbeatAverage(address: bytes, asset: uint64, includeStaked: uint64) -> uint64:
 mustGetHeartbeatAverage:
-    // smart_contracts/staking/contract.algo.ts:612-613
+    // smart_contracts/staking/contract.algo.ts:602-603
     // @abimethod({ readonly: true })
     // mustGetHeartbeatAverage(address: Address, asset: uint64, includeStaked: boolean): uint64 {
     proto 3 1
-    bytec_3 // ""
-    // smart_contracts/staking/contract.algo.ts:614
+    // smart_contracts/staking/contract.algo.ts:604
     // const hbk = { address, asset }
     frame_dig -2
     itob
-    // smart_contracts/staking/contract.algo.ts:615
-    // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     frame_dig -3
     swap
     concat
-    // smart_contracts/staking/constants.ts:6
-    // export const StakingBoxPrefixHeartbeats = 'h'
-    bytec 6 // "h"
-    swap
-    concat
-    // smart_contracts/staking/contract.algo.ts:615
+    // smart_contracts/staking/contract.algo.ts:605
     // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     dup
+    extract 0 32
+    swap
+    intc_2 // 32
+    extract_uint64
+    itob
+    concat
+    // smart_contracts/staking/contract.algo.ts:82
+    // keyPrefix: StakingBoxPrefixHeartbeats,
+    bytec 5 // "h"
+    swap
+    concat
+    dup
+    // smart_contracts/staking/contract.algo.ts:605
+    // assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     box_len
     bury 1
     assert // Heartbeat not found
-    // smart_contracts/staking/contract.algo.ts:617
-    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
-    box_get
-    assert // Box must have value
-    // smart_contracts/staking/contract.algo.ts:619
+    // smart_contracts/staking/contract.algo.ts:609
     // let total: uint64 = 0
     intc_0 // 0
-    // smart_contracts/staking/contract.algo.ts:620
+    // smart_contracts/staking/contract.algo.ts:610
     // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
     dup
 
 mustGetHeartbeatAverage_while_top@1:
-    // smart_contracts/staking/contract.algo.ts:620
-    // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
-    frame_dig 1
+    // smart_contracts/staking/contract.algo.ts:607
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    frame_dig 0
     intc_0 // 0
-    extract_uint16
-    dup
-    frame_bury 0
-    frame_dig 3
+    intc_3 // 2
+    box_extract
+    btoi
+    // smart_contracts/staking/contract.algo.ts:610
+    // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
+    frame_dig 2
     >
     bz mustGetHeartbeatAverage_after_while@6
-    // smart_contracts/staking/contract.algo.ts:621
+    // smart_contracts/staking/contract.algo.ts:611
     // if (includeStaked) {
     frame_dig -1
     bz mustGetHeartbeatAverage_else_body@4
-    // smart_contracts/staking/contract.algo.ts:622
-    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
-    frame_dig 1
-    extract 2 0
-    frame_dig 3
-    intc_3 // 32
+    // smart_contracts/staking/contract.algo.ts:607
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    frame_dig 2
+    intc_2 // 32
     *
-    intc_3 // 32
-    extract3 // on error: Index access is out of bounds
+    intc_3 // 2
+    +
+    frame_dig 0
+    swap
+    intc_2 // 32
+    box_extract
+    // smart_contracts/staking/contract.algo.ts:612
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     dup
+    // smart_contracts/staking/contract.algo.ts:607
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     intc_0 // 0
+    // smart_contracts/staking/contract.algo.ts:612
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     extract_uint64
     dig 1
+    // smart_contracts/staking/contract.algo.ts:607
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     pushint 8 // 8
+    // smart_contracts/staking/contract.algo.ts:612
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     extract_uint64
     +
     swap
-    intc_2 // 16
+    // smart_contracts/staking/contract.algo.ts:607
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    pushint 16 // 16
+    // smart_contracts/staking/contract.algo.ts:612
+    // total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
     extract_uint64
     +
-    frame_dig 2
+    frame_dig 1
     +
-    frame_bury 2
+    frame_bury 1
 
 mustGetHeartbeatAverage_after_if_else@5:
-    // smart_contracts/staking/contract.algo.ts:620
+    // smart_contracts/staking/contract.algo.ts:610
     // for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
-    frame_dig 3
+    frame_dig 2
     intc_1 // 1
     +
-    frame_bury 3
+    frame_bury 2
     b mustGetHeartbeatAverage_while_top@1
 
 mustGetHeartbeatAverage_else_body@4:
-    // smart_contracts/staking/contract.algo.ts:624
-    // total += heartbeats[i].held
-    frame_dig 1
-    extract 2 0
-    frame_dig 3
-    intc_3 // 32
-    *
-    intc_3 // 32
-    extract3 // on error: Index access is out of bounds
-    intc_0 // 0
-    extract_uint64
+    // smart_contracts/staking/contract.algo.ts:607
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     frame_dig 2
+    intc_2 // 32
+    *
+    intc_3 // 2
     +
-    frame_bury 2
+    frame_dig 0
+    swap
+    intc_2 // 32
+    box_extract
+    intc_0 // 0
+    // smart_contracts/staking/contract.algo.ts:614
+    // total += heartbeats[i].held
+    extract_uint64
+    frame_dig 1
+    +
+    frame_bury 1
     b mustGetHeartbeatAverage_after_if_else@5
 
 mustGetHeartbeatAverage_after_while@6:
-    // smart_contracts/staking/contract.algo.ts:628
-    // return total / heartbeats.length
-    frame_dig 2
+    // smart_contracts/staking/contract.algo.ts:607
+    // const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
     frame_dig 0
+    intc_0 // 0
+    intc_3 // 2
+    box_extract
+    btoi
+    // smart_contracts/staking/contract.algo.ts:618
+    // return total / heartbeats.length
+    frame_dig 1
+    swap
     /
     frame_bury 0
     retsub
@@ -3183,20 +3090,20 @@ mustGetHeartbeatAverage_after_while@6:
 
 // smart_contracts/staking/contract.algo.ts::Staking.getInfoList(address: bytes, type: bytes, assets: bytes) -> bytes:
 getInfoList:
-    // smart_contracts/staking/contract.algo.ts:631-632
+    // smart_contracts/staking/contract.algo.ts:621-622
     // @abimethod({ readonly: true })
     // getInfoList(address: Address, type: StakingType, assets: uint64[]): Stake[] {
     proto 3 1
     intc_0 // 0
-    // smart_contracts/staking/contract.algo.ts:633
+    // smart_contracts/staking/contract.algo.ts:623
     // let results: Stake[] = []
-    bytec 11 // 0x0000
-    // smart_contracts/staking/contract.algo.ts:634
+    bytec 12 // 0x0000
+    // smart_contracts/staking/contract.algo.ts:624
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     intc_0 // 0
 
 getInfoList_while_top@1:
-    // smart_contracts/staking/contract.algo.ts:634
+    // smart_contracts/staking/contract.algo.ts:624
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     frame_dig -1
     intc_0 // 0
@@ -3204,7 +3111,7 @@ getInfoList_while_top@1:
     frame_dig 2
     >
     bz getInfoList_after_while@6
-    // smart_contracts/staking/contract.algo.ts:635
+    // smart_contracts/staking/contract.algo.ts:625
     // const sk = { address, asset: assets[i], type }
     frame_dig -1
     extract 2 0
@@ -3213,43 +3120,65 @@ getInfoList_while_top@1:
     *
     extract_uint64
     itob
-    // smart_contracts/staking/contract.algo.ts:636
-    // if (!this.stakes(sk).exists) {
     frame_dig -3
     swap
     concat
     frame_dig -2
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:626
+    // if (!this.stakes(sk).exists) {
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:636
+    // smart_contracts/staking/contract.algo.ts:626
     // if (!this.stakes(sk).exists) {
     box_len
     bury 1
     bnz getInfoList_after_if_else@4
-    // smart_contracts/staking/contract.algo.ts:644
-    // results = [...results, emptyStake]
+    // smart_contracts/staking/contract.algo.ts:634
+    // results.push(emptyStake)
     frame_dig 1
-    extract 2 0
-    pushbytes 0x000000000000000000000000000000000000000000000000
-    concat
     dup
-    len
-    pushint 24 // 24
-    /
+    // smart_contracts/staking/contract.algo.ts:628-632
+    // const emptyStake: Stake = {
+    //   amount: 0,
+    //   lastUpdate: 0,
+    //   expiration: 0,
+    // }
+    bytec 11 // 0x000000000000000000000000000000000000000000000000
+    // smart_contracts/staking/contract.algo.ts:634
+    // results.push(emptyStake)
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
     itob
     extract 6 2
-    swap
-    concat
+    replace2 0
     frame_bury 1
 
 getInfoList_block@5:
-    // smart_contracts/staking/contract.algo.ts:634
+    // smart_contracts/staking/contract.algo.ts:624
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     frame_dig 2
     intc_1 // 1
@@ -3258,63 +3187,28 @@ getInfoList_block@5:
     b getInfoList_while_top@1
 
 getInfoList_after_if_else@4:
-    // smart_contracts/staking/contract.algo.ts:648-651
-    // results = [
-    //   ...results,
-    //   this.stakes(sk).value,
-    // ]
-    frame_dig 1
-    extract 2 0
-    // smart_contracts/staking/contract.algo.ts:650
-    // this.stakes(sk).value,
+    // smart_contracts/staking/contract.algo.ts:638
+    // results.push(this.stakes(sk).value)
     frame_dig 0
     box_get
     assert // Box must have value
+    frame_dig 1
     dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
     intc_0 // 0
-    extract_uint64
-    dig 1
-    pushint 8 // 8
-    extract_uint64
-    uncover 2
-    intc_2 // 16
-    extract_uint64
-    uncover 2
-    itob
-    uncover 2
-    itob
-    concat
-    swap
-    itob
-    concat
-    // smart_contracts/staking/contract.algo.ts:648-651
-    // results = [
-    //   ...results,
-    //   this.stakes(sk).value,
-    // ]
-    dup
-    len
-    pushint 24 // 24
-    /
+    extract_uint16
+    intc_1 // 1
+    +
     itob
     extract 6 2
-    swap
-    concat
-    extract 2 0
-    concat
-    dup
-    len
-    pushint 24 // 24
-    /
-    itob
-    extract 6 2
-    swap
-    concat
+    replace2 0
     frame_bury 1
     b getInfoList_block@5
 
 getInfoList_after_while@6:
-    // smart_contracts/staking/contract.algo.ts:653
+    // smart_contracts/staking/contract.algo.ts:640
     // return results
     frame_dig 1
     frame_bury 0
@@ -3323,19 +3217,19 @@ getInfoList_after_while@6:
 
 // smart_contracts/staking/contract.algo.ts::Staking.mustGetInfoList(address: bytes, type: bytes, assets: bytes) -> bytes:
 mustGetInfoList:
-    // smart_contracts/staking/contract.algo.ts:656-657
+    // smart_contracts/staking/contract.algo.ts:643-644
     // @abimethod({ readonly: true })
     // mustGetInfoList(address: Address, type: StakingType, assets: uint64[]): Stake[] {
     proto 3 1
-    // smart_contracts/staking/contract.algo.ts:658
+    // smart_contracts/staking/contract.algo.ts:645
     // let results: Stake[] = []
-    bytec 11 // 0x0000
-    // smart_contracts/staking/contract.algo.ts:659
+    bytec 12 // 0x0000
+    // smart_contracts/staking/contract.algo.ts:646
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     intc_0 // 0
 
 mustGetInfoList_while_top@1:
-    // smart_contracts/staking/contract.algo.ts:659
+    // smart_contracts/staking/contract.algo.ts:646
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     frame_dig -1
     intc_0 // 0
@@ -3343,7 +3237,7 @@ mustGetInfoList_while_top@1:
     frame_dig 1
     >
     bz mustGetInfoList_after_while@3
-    // smart_contracts/staking/contract.algo.ts:660
+    // smart_contracts/staking/contract.algo.ts:647
     // const sk = { address, asset: assets[i], type }
     frame_dig -1
     extract 2 0
@@ -3354,78 +3248,56 @@ mustGetInfoList_while_top@1:
     *
     extract_uint64
     itob
-    // smart_contracts/staking/contract.algo.ts:661
-    // assert(this.stakes(sk).exists, ERR_STAKE_NOT_FOUND)
     frame_dig -3
     swap
     concat
     frame_dig -2
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:648
+    // assert(this.stakes(sk).exists, ERR_STAKE_NOT_FOUND)
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
-    // smart_contracts/staking/contract.algo.ts:661
+    // smart_contracts/staking/contract.algo.ts:648
     // assert(this.stakes(sk).exists, ERR_STAKE_NOT_FOUND)
     dup
     box_len
     bury 1
     assert // Stake not found
-    // smart_contracts/staking/contract.algo.ts:663-666
-    // results = [
-    //   ...results,
-    //   this.stakes(sk).value,
-    // ]
-    frame_dig 0
-    extract 2 0
-    // smart_contracts/staking/contract.algo.ts:665
-    // this.stakes(sk).value,
-    swap
+    // smart_contracts/staking/contract.algo.ts:649
+    // results.push(this.stakes(sk).value)
     box_get
-    assert // Box must have value
+    pop
+    frame_dig 0
     dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
     intc_0 // 0
-    extract_uint64
-    dig 1
-    pushint 8 // 8
-    extract_uint64
-    uncover 2
-    intc_2 // 16
-    extract_uint64
-    uncover 2
-    itob
-    uncover 2
-    itob
-    concat
-    swap
-    itob
-    concat
-    // smart_contracts/staking/contract.algo.ts:663-666
-    // results = [
-    //   ...results,
-    //   this.stakes(sk).value,
-    // ]
-    dup
-    len
-    pushint 24 // 24
-    /
+    extract_uint16
+    intc_1 // 1
+    +
     itob
     extract 6 2
-    swap
-    concat
-    extract 2 0
-    concat
-    dup
-    len
-    pushint 24 // 24
-    /
-    itob
-    extract 6 2
-    swap
-    concat
+    replace2 0
     frame_bury 0
-    // smart_contracts/staking/contract.algo.ts:659
+    // smart_contracts/staking/contract.algo.ts:646
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     intc_1 // 1
     +
@@ -3433,14 +3305,14 @@ mustGetInfoList_while_top@1:
     b mustGetInfoList_while_top@1
 
 mustGetInfoList_after_while@3:
-    // smart_contracts/staking/contract.algo.ts:668
+    // smart_contracts/staking/contract.algo.ts:651
     // return results
     retsub
 
 
 // smart_contracts/staking/contract.algo.ts::Staking.stakeCheck(address: bytes, checks: bytes, type: bytes, includeStaked: uint64) -> uint64:
 stakeCheck:
-    // smart_contracts/staking/contract.algo.ts:671-672
+    // smart_contracts/staking/contract.algo.ts:654-655
     // @abimethod({ readonly: true })
     // stakeCheck(address: Address, checks: AssetCheck[], type: StakingType, includeStaked: boolean): boolean {
     proto 4 1
@@ -3448,12 +3320,12 @@ stakeCheck:
     dup
     bytec_3 // ""
     dup
-    // smart_contracts/staking/contract.algo.ts:673
+    // smart_contracts/staking/contract.algo.ts:656
     // for (let i: uint64 = 0; i < checks.length; i += 1) {
     intc_0 // 0
 
 stakeCheck_while_top@1:
-    // smart_contracts/staking/contract.algo.ts:673
+    // smart_contracts/staking/contract.algo.ts:656
     // for (let i: uint64 = 0; i < checks.length; i += 1) {
     frame_dig -3
     intc_0 // 0
@@ -3461,15 +3333,15 @@ stakeCheck_while_top@1:
     frame_dig 4
     >
     bz stakeCheck_after_while@9
-    // smart_contracts/staking/contract.algo.ts:674
+    // smart_contracts/staking/contract.algo.ts:657
     // const sk = { address, asset: checks[i].asset, type }
     frame_dig -3
     extract 2 0
     frame_dig 4
-    intc_2 // 16
+    pushint 16 // 16
     *
-    intc_2 // 16
-    extract3 // on error: Index access is out of bounds
+    pushint 16 // 16
+    extract3 // on error: index access is out of bounds
     dup
     frame_bury 0
     intc_0 // 0
@@ -3477,52 +3349,61 @@ stakeCheck_while_top@1:
     dup
     frame_bury 3
     itob
-    // smart_contracts/staking/contract.algo.ts:675
-    // if (!this.stakes(sk).exists) {
     frame_dig -4
     swap
     concat
     frame_dig -2
     concat
-    // smart_contracts/staking/constants.ts:5
-    // export const StakingBoxPrefixStakes = 's'
+    // smart_contracts/staking/contract.algo.ts:658
+    // if (!this.stakes(sk).exists) {
+    dup
+    extract 0 32
+    dig 1
+    intc_2 // 32
+    extract_uint64
+    uncover 2
+    extract 40 1
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    concat
+    // smart_contracts/staking/contract.algo.ts:78
+    // stakes = BoxMap<StakeKey, Stake>({ keyPrefix: StakingBoxPrefixStakes })
     bytec_0 // "s"
     swap
     concat
     dup
     frame_bury 1
-    // smart_contracts/staking/contract.algo.ts:675
+    // smart_contracts/staking/contract.algo.ts:658
     // if (!this.stakes(sk).exists) {
     box_len
     bury 1
     bnz stakeCheck_after_if_else@4
-    // smart_contracts/staking/contract.algo.ts:676
+    // smart_contracts/staking/contract.algo.ts:659
     // return false
     intc_0 // 0
     frame_bury 0
     retsub
 
 stakeCheck_after_if_else@4:
-    // smart_contracts/staking/contract.algo.ts:679
-    // const stake = this.stakes(sk).value
+    // smart_contracts/staking/contract.algo.ts:662
+    // let amountToCheck: uint64 = this.stakes(sk).value.amount
     frame_dig 1
     box_get
     assert // Box must have value
     intc_0 // 0
     extract_uint64
-    // smart_contracts/staking/contract.algo.ts:682
+    frame_bury 2
+    // smart_contracts/staking/contract.algo.ts:663
     // if (type === STAKING_TYPE_HEARTBEAT) {
     frame_dig -2
-    // smart_contracts/staking/types.ts:11
-    // export const STAKING_TYPE_HEARTBEAT: StakingType = new arc4.UintN8(0)
-    bytec 4 // 0x00
-    // smart_contracts/staking/contract.algo.ts:682
-    // if (type === STAKING_TYPE_HEARTBEAT) {
+    bytec 6 // 0x0a
     ==
-    swap
-    frame_bury 2
     bz stakeCheck_after_if_else@6
-    // smart_contracts/staking/contract.algo.ts:683
+    // smart_contracts/staking/contract.algo.ts:664
     // amountToCheck = this.getHeartbeatAverage(address, checks[i].asset, includeStaked)
     frame_dig -4
     frame_dig 3
@@ -3531,7 +3412,7 @@ stakeCheck_after_if_else@4:
     frame_bury 2
 
 stakeCheck_after_if_else@6:
-    // smart_contracts/staking/contract.algo.ts:686
+    // smart_contracts/staking/contract.algo.ts:667
     // if (checks[i].amount >= amountToCheck) {
     frame_dig 0
     pushint 8 // 8
@@ -3539,14 +3420,14 @@ stakeCheck_after_if_else@6:
     frame_dig 2
     >=
     bz stakeCheck_after_if_else@8
-    // smart_contracts/staking/contract.algo.ts:687
+    // smart_contracts/staking/contract.algo.ts:668
     // return false
     intc_0 // 0
     frame_bury 0
     retsub
 
 stakeCheck_after_if_else@8:
-    // smart_contracts/staking/contract.algo.ts:673
+    // smart_contracts/staking/contract.algo.ts:656
     // for (let i: uint64 = 0; i < checks.length; i += 1) {
     frame_dig 4
     intc_1 // 1
@@ -3555,7 +3436,7 @@ stakeCheck_after_if_else@8:
     b stakeCheck_while_top@1
 
 stakeCheck_after_while@9:
-    // smart_contracts/staking/contract.algo.ts:691
+    // smart_contracts/staking/contract.algo.ts:672
     // return true
     intc_1 // 1
     frame_bury 0
@@ -3564,29 +3445,29 @@ stakeCheck_after_while@9:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:20-21
+    // smart_contracts/utils/base-contracts/base.ts:18-19
     // @abimethod({ allowActions: ['UpdateApplication'] })
     // update(newVersion: string): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:22
+    // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
-    bytec 8 // "akita_dao"
+    bytec 7 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:22
+    // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
-    bytec 10 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:23
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec 9 // "version"
+    // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
     frame_dig -1
     app_global_put
@@ -3595,28 +3476,28 @@ update:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:29
+    // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
-    bytec 8 // "akita_dao"
+    bytec 7 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:29
+    // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    bytec 8 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec 7 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
     frame_dig -1
     app_global_put

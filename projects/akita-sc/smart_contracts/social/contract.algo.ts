@@ -4,7 +4,7 @@ import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typesc
 import { MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, ImpactMetaValue, FollowsKey, BlockListKey, VoteListKey, ReactionsKey, ReactionListKey, Action, TipAction, ReactionMeta, PostMeta } from './types'
 import { CID } from '../utils/types/base'
 import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA, AmendmentMBR, TipSendTypeDirect, TipSendTypeARC59, TipSendTypeARC58, TipActionPost, TipActionReact, ImpactMetaMBR, SubscriptionStateModifierMBR } from './constants'
-import { AbstractedAccount } from '../arc58/account/contract.algo'
+
 import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAS_GATE, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_NFD, ERR_INVALID_REF_LENGTH, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NFD_CHANGED, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_A_SUBSCRIPTION, ERR_NOT_AN_AKITA_NFT, ERR_NOT_AN_NFD, ERR_NOT_DAO, ERR_NOT_FLAGGED, ERR_NOT_SOCIAL, ERR_NOT_YOUR_POST_TO_EDIT, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFD, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
 import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
@@ -21,6 +21,7 @@ import { Subscriptions } from '../subscriptions/contract.algo'
 import { AkitaSocialImpactInterface, AkitaSocialInterface } from '../utils/types/social'
 import { classes } from 'polytype'
 import { BaseSocial } from './base'
+import { AbstractedAccountInterface } from '../utils/abstract-account'
 
 export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements AkitaSocialInterface {
 
@@ -161,7 +162,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     itxnCompose.begin(
-      AbstractedAccount.prototype.arc58_rekeyToPlugin,
+      AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
       {
         appId: wallet,
         args: [
@@ -175,7 +176,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     )
 
     itxnCompose.next(
-      OptInPlugin.prototype.optInToAsset,
+      OptInPlugin.prototype.optin,
       {
         appId: getPluginAppList(this.akitaDAO.value).optin,
         args: [
@@ -191,7 +192,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     )
 
     itxnCompose.next(
-      AbstractedAccount.prototype.arc58_verifyAuthAddr,
+      AbstractedAccountInterface.prototype.arc58_verifyAuthAddress,
       { appId: wallet }
     )
 
@@ -1425,11 +1426,8 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
 
     assert(this.meta(origin).exists, ERR_META_DOESNT_EXIST)
 
-    this.meta(origin).value = {
-      ...this.meta(origin).value,
-      followGateID,
-      addressGateID
-    }
+    this.meta(origin).value.followGateID = followGateID
+    this.meta(origin).value.addressGateID = addressGateID
 
     const impact = getAkitaAppList(this.akitaDAO.value).impact
     abiCall(

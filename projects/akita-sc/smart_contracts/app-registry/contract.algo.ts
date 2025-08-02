@@ -48,10 +48,7 @@ export class AppRegistry extends Contract {
         ERR_INVALID_PAYMENT
       )
 
-      this.apps(key).value = [
-        ...this.apps(key).value,
-        app,
-      ]
+      this.apps(key).value.push(app)
     }
   }
 

@@ -1,7 +1,6 @@
 import {
   Account,
   Application,
-  arc4,
   assert,
   assertMatch,
   BoxMap,
@@ -11,7 +10,7 @@ import {
   itxn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, DynamicArray, Str, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abimethod, Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Global, Txn } from '@algorandfoundation/algorand-typescript/op'
 import {
   PollGlobalStateKeyBoxCount,
@@ -183,20 +182,23 @@ export class Poll extends AkitaBaseContract {
     }
   }
 
-  deleteBoxes(address: Address): void {
+  deleteBoxes(addresses: Address[]): void {
     assert(Global.latestTimestamp > this.endTime.value, ERR_POLL_ACTIVE)
 
-    this.votes(address.native).delete()
+    for (let i: uint64 = 0; i < addresses.length; i += 1) {
 
-    itxn
-      .payment({
-        receiver: address.native,
-        amount: votesMBR,
-        note: 'MBR refund for poll vote',
-      })
-      .submit()
+      this.votes(addresses[i].native).delete()
 
-    this.boxCount.value -= 1
+      itxn
+        .payment({
+          receiver: addresses[i].native,
+          amount: votesMBR,
+          note: 'MBR refund for poll vote',
+        })
+        .submit()
+
+      this.boxCount.value -= 1
+    }
   }
 
   // POLL METHODS --------------------------------------------------------------------------------

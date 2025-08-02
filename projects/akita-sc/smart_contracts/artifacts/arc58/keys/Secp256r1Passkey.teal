@@ -4,32 +4,32 @@
 // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts::program() -> uint64:
 main:
     bytecblock TMPL_X TMPL_Y
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:15
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:14
     // const sSig = op.arg(4).toFixed({ length: 32 })
     arg 4
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:13
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:12
     // const cdTwo = op.arg(2)
     arg 2
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:11
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:10
     // const authData = op.arg(0)
     arg 0
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:12
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:11
     // const cdOne = op.arg(1)
     arg 1
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:13
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:12
     // const cdTwo = op.arg(2)
     arg 2
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:14
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:13
     // const cdThree = op.arg(3)
     arg 3
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:15
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:14
     // const sSig = op.arg(4).toFixed({ length: 32 })
     arg 4
     len
     pushint 32 // 32
     ==
     assert // Length must be 32
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:16
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:15
     // const rSig = op.arg(5).toFixed({ length: 32 })
     arg 5
     dup
@@ -38,7 +38,7 @@ main:
     pushint 32 // 32
     ==
     assert // Length must be 32
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:18
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:17
     // const h = sha256(authData.concat(sha256(cdOne.concat(cdTwo).concat(cdThree))))
     cover 2
     concat
@@ -48,13 +48,13 @@ main:
     concat
     sha256
     swap
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:20
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:19
     // if (Global.groupSize > 1) {
     global GroupSize
     pushint 1 // 1
     >
     bz main_else_body@2
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:21
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:20
     // assert(Global.groupId === base64Decode(op.Base64.URLEncoding, cdTwo))
     global GroupID
     swap
@@ -63,24 +63,18 @@ main:
     assert
 
 main_after_if_else@3:
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:26
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:25
     // return ecdsaVerify(op.Ecdsa.Secp256r1, h, sSig, rSig, X, Y)
     dup
     dig 3
     dig 3
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:5
-    // const X = TemplateVar<bytes<32>>('X')
     bytec_0 // TMPL_X
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:6
-    // const Y = TemplateVar<bytes<32>>('Y')
     bytec_1 // TMPL_Y
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:26
-    // return ecdsaVerify(op.Ecdsa.Secp256r1, h, sSig, rSig, X, Y)
     ecdsa_verify Secp256r1
     return
 
 main_else_body@2:
-    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:23
+    // smart_contracts/arc58/keys/secp256r1_passkey.algo.ts:22
     // assert(Txn.txId === base64Decode(op.Base64.URLEncoding, cdTwo))
     txn TxID
     swap

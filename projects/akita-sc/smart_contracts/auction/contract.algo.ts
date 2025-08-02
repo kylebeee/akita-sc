@@ -14,7 +14,7 @@ import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { PrizeBox } from '../prize-box/contract.algo'
 import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender } from '../utils/functions'
-import { AkitaDAOEscrowAccountAuctions } from '../dao/constants'
+import { AkitaDAOEscrowAccountAuctions } from '../arc58/dao/constants'
 import { ERR_HAS_GATE } from '../social/errors'
 
 export class Auction extends classes(

@@ -1,0 +1,370 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1
+    bytecblock "akita_dao" "version"
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:6
+    // export class TokenMintPlugin extends AkitaBaseContract {
+    txn NumAppArgs
+    bz main_after_if_else@10
+    pushbytess 0x6f9817f6 0x52a0b0fd 0xea9180dd 0x33e92c94 // method "create(uint64,string)void", method "mint(uint64,bool,string,string,uint64,uint64,address,address,address,address,bool,string)uint64", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    txna ApplicationArgs 0
+    match main_create_route@3 main_mint_route@4 main_update_route@5 main_updateAkitaDAO_route@6
+
+main_after_if_else@10:
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:6
+    // export class TokenMintPlugin extends AkitaBaseContract {
+    intc_0 // 0
+    return
+
+main_updateAkitaDAO_route@6:
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:6
+    // export class TokenMintPlugin extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_update_route@5:
+    // smart_contracts/utils/base-contracts/base.ts:18
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:6
+    // export class TokenMintPlugin extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/utils/base-contracts/base.ts:18
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
+    intc_1 // 1
+    return
+
+main_mint_route@4:
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:18-31
+    // mint(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   assetName: string,
+    //   unitName: string,
+    //   total: uint64,
+    //   decimals: uint64,
+    //   manager: Address,
+    //   reserve: Address,
+    //   freeze: Address,
+    //   clawback: Address,
+    //   defaultFrozen: boolean,
+    //   url: string
+    // ): uint64 {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:6
+    // export class TokenMintPlugin extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    extract 2 0
+    txna ApplicationArgs 4
+    extract 2 0
+    txna ApplicationArgs 5
+    btoi
+    txna ApplicationArgs 6
+    btoi
+    txna ApplicationArgs 7
+    txna ApplicationArgs 8
+    txna ApplicationArgs 9
+    txna ApplicationArgs 10
+    txna ApplicationArgs 11
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 12
+    extract 2 0
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:18-31
+    // mint(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   assetName: string,
+    //   unitName: string,
+    //   total: uint64,
+    //   decimals: uint64,
+    //   manager: Address,
+    //   reserve: Address,
+    //   freeze: Address,
+    //   clawback: Address,
+    //   defaultFrozen: boolean,
+    //   url: string
+    // ): uint64 {
+    callsub mint
+    itob
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_create_route@3:
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:10
+    // @abimethod({ onCreate: 'require' })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:6
+    // export class TokenMintPlugin extends AkitaBaseContract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    extract 2 0
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:10
+    // @abimethod({ onCreate: 'require' })
+    callsub create
+    intc_1 // 1
+    return
+
+
+// smart_contracts/arc58/plugins/token-mint/contract.algo.ts::TokenMintPlugin.create(akitaDAO: uint64, version: bytes) -> void:
+create:
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:10-11
+    // @abimethod({ onCreate: 'require' })
+    // create(akitaDAO: uint64, version: string): void {
+    proto 2 0
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec_1 // "version"
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:12
+    // this.version.value = version
+    frame_dig -1
+    app_global_put
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:13
+    // this.akitaDAO.value = Application(akitaDAO)
+    frame_dig -2
+    app_global_put
+    retsub
+
+
+// smart_contracts/arc58/plugins/token-mint/contract.algo.ts::TokenMintPlugin.mint(walletID: uint64, rekeyBack: uint64, assetName: bytes, unitName: bytes, total: uint64, decimals: uint64, manager: bytes, reserve: bytes, freeze: bytes, clawback: bytes, defaultFrozen: uint64, url: bytes) -> uint64:
+mint:
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:18-31
+    // mint(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   assetName: string,
+    //   unitName: string,
+    //   total: uint64,
+    //   decimals: uint64,
+    //   manager: Address,
+    //   reserve: Address,
+    //   freeze: Address,
+    //   clawback: Address,
+    //   defaultFrozen: boolean,
+    //   url: string
+    // ): uint64 {
+    proto 12 1
+    // smart_contracts/utils/functions.ts:204-207
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    frame_dig -12
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    pushbytes "spending_address"
+    // smart_contracts/utils/functions.ts:204-207
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:35-50
+    // const bonesCreateTxn = itxn
+    //   .assetConfig({
+    //     sender,
+    //     assetName,
+    //     unitName,
+    //     total,
+    //     decimals,
+    //     manager: manager.native,
+    //     reserve: reserve.native,
+    //     freeze: freeze.native,
+    //     clawback: clawback.native,
+    //     defaultFrozen,
+    //     url,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/utils/functions.ts:242
+    // if (!rekeyBack) {
+    frame_dig -11
+    bnz mint_after_if_else@6
+    // smart_contracts/utils/functions.ts:243
+    // return Global.zeroAddress
+    global ZeroAddress
+
+mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7:
+    itxn_field RekeyTo
+    frame_dig -1
+    itxn_field ConfigAssetURL
+    frame_dig -2
+    itxn_field ConfigAssetDefaultFrozen
+    frame_dig -3
+    itxn_field ConfigAssetClawback
+    frame_dig -4
+    itxn_field ConfigAssetFreeze
+    frame_dig -5
+    itxn_field ConfigAssetReserve
+    frame_dig -6
+    itxn_field ConfigAssetManager
+    frame_dig -7
+    itxn_field ConfigAssetDecimals
+    frame_dig -8
+    itxn_field ConfigAssetTotal
+    frame_dig -9
+    itxn_field ConfigAssetUnitName
+    frame_dig -10
+    itxn_field ConfigAssetName
+    frame_dig 0
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:35-49
+    // const bonesCreateTxn = itxn
+    //   .assetConfig({
+    //     sender,
+    //     assetName,
+    //     unitName,
+    //     total,
+    //     decimals,
+    //     manager: manager.native,
+    //     reserve: reserve.native,
+    //     freeze: freeze.native,
+    //     clawback: clawback.native,
+    //     defaultFrozen,
+    //     url,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    pushint 3 // 3
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:35-50
+    // const bonesCreateTxn = itxn
+    //   .assetConfig({
+    //     sender,
+    //     assetName,
+    //     unitName,
+    //     total,
+    //     decimals,
+    //     manager: manager.native,
+    //     reserve: reserve.native,
+    //     freeze: freeze.native,
+    //     clawback: clawback.native,
+    //     defaultFrozen,
+    //     url,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_submit
+    itxn CreatedAssetID
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:52
+    // return bonesCreateTxn.createdAsset.id
+    swap
+    retsub
+
+mint_after_if_else@6:
+    // smart_contracts/utils/functions.ts:246
+    // return wallet.address
+    frame_dig -12
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/arc58/plugins/token-mint/contract.algo.ts:48
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
+    b mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/base.ts:18-19
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(newVersion: string): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:20
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:20
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec_1 // "version"
+    // smart_contracts/utils/base-contracts/base.ts:21
+    // this.version.value = newVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec_0 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:28
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub

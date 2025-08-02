@@ -4,8 +4,8 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 6 4
-    bytecblock "auction_factory" "spending_address" 0x151f7c75 "akita_dao" "version" 0x3ea11832
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    bytecblock "auction_factory" "spending_address" "akita_dao" 0x151f7c75 "version" 0x3ea11832 "akita_al" "gate_id" 0x9c81af74
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txn NumAppArgs
     bz main_after_if_else@22
@@ -14,31 +14,31 @@ main:
     match main_create_route@5 main_new_route@6 main_clearWeightsBoxes_route@7 main_deleteAuctionApp_route@8 main_bid_route@9 main_refundBid_route@10 main_claimPrize_route@11 main_claimRafflePrize_route@12 main_raffle_route@13 main_findWinner_route@14 main_deleteApplication_route@15 main_cancel_route@16 main_update_route@17 main_updateAkitaDAO_route@18
 
 main_after_if_else@22:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     intc_0 // 0
     return
 
 main_updateAkitaDAO_route@18:
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     callsub updateAkitaDAO
     intc_1 // 1
     return
 
 main_update_route@17:
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     intc_3 // UpdateApplication
@@ -46,18 +46,18 @@ main_update_route@17:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub update
     intc_1 // 1
     return
 
 main_cancel_route@16:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:424-428
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:460-464
     // cancel(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -68,7 +68,7 @@ main_cancel_route@16:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -77,7 +77,7 @@ main_cancel_route@16:
     getbit
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:424-428
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:460-464
     // cancel(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -88,7 +88,7 @@ main_cancel_route@16:
     return
 
 main_deleteApplication_route@15:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:403-407
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:440-444
     // deleteApplication(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -100,7 +100,7 @@ main_deleteApplication_route@15:
     assert // OnCompletion is not DeleteApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -109,7 +109,7 @@ main_deleteApplication_route@15:
     getbit
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:403-407
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:440-444
     // deleteApplication(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -120,7 +120,7 @@ main_deleteApplication_route@15:
     return
 
 main_findWinner_route@14:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:380-385
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:418-423
     // findWinner(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -132,7 +132,7 @@ main_findWinner_route@14:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -143,7 +143,7 @@ main_findWinner_route@14:
     btoi
     txna ApplicationArgs 4
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:380-385
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:418-423
     // findWinner(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -155,7 +155,7 @@ main_findWinner_route@14:
     return
 
 main_raffle_route@13:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:360-364
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:399-403
     // raffle(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -166,7 +166,7 @@ main_raffle_route@13:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -175,7 +175,7 @@ main_raffle_route@13:
     getbit
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:360-364
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:399-403
     // raffle(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -186,7 +186,7 @@ main_raffle_route@13:
     return
 
 main_claimRafflePrize_route@12:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:339-343
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:379-383
     // claimRafflePrize(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -197,7 +197,7 @@ main_claimRafflePrize_route@12:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -206,7 +206,7 @@ main_claimRafflePrize_route@12:
     getbit
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:339-343
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:379-383
     // claimRafflePrize(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -217,7 +217,7 @@ main_claimRafflePrize_route@12:
     return
 
 main_claimPrize_route@11:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:318-322
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:359-363
     // claimPrize(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -228,7 +228,7 @@ main_claimPrize_route@11:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -237,7 +237,7 @@ main_claimPrize_route@11:
     getbit
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:318-322
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:359-363
     // claimPrize(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -248,7 +248,7 @@ main_claimPrize_route@11:
     return
 
 main_refundBid_route@10:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:295-300
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:337-342
     // refundBid(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -260,7 +260,7 @@ main_refundBid_route@10:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -271,7 +271,7 @@ main_refundBid_route@10:
     btoi
     txna ApplicationArgs 4
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:295-300
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:337-342
     // refundBid(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -283,7 +283,7 @@ main_refundBid_route@10:
     return
 
 main_bid_route@9:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:207-214
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:197-204
     // bid(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -297,7 +297,7 @@ main_bid_route@9:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -310,7 +310,7 @@ main_bid_route@9:
     btoi
     txna ApplicationArgs 5
     txna ApplicationArgs 6
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:207-214
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:197-204
     // bid(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -324,7 +324,7 @@ main_bid_route@9:
     return
 
 main_deleteAuctionApp_route@8:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:184-189
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:175-180
     // deleteAuctionApp(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -336,7 +336,7 @@ main_deleteAuctionApp_route@8:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -346,7 +346,7 @@ main_deleteAuctionApp_route@8:
     txna ApplicationArgs 3
     txna ApplicationArgs 4
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:184-189
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:175-180
     // deleteAuctionApp(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -358,7 +358,7 @@ main_deleteAuctionApp_route@8:
     return
 
 main_clearWeightsBoxes_route@7:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:162-167
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:154-159
     // clearWeightsBoxes(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -370,7 +370,7 @@ main_clearWeightsBoxes_route@7:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -381,7 +381,7 @@ main_clearWeightsBoxes_route@7:
     btoi
     txna ApplicationArgs 4
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:162-167
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:154-159
     // clearWeightsBoxes(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -393,7 +393,7 @@ main_clearWeightsBoxes_route@7:
     return
 
 main_new_route@6:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:35-51
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:34-50
     // new(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -416,7 +416,7 @@ main_new_route@6:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     btoi
@@ -447,7 +447,7 @@ main_new_route@6:
     txna ApplicationArgs 14
     txna ApplicationArgs 15
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:35-51
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:34-50
     // new(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -467,7 +467,7 @@ main_new_route@6:
     // ): uint64 {
     callsub new
     itob
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     swap
     concat
     log
@@ -475,7 +475,7 @@ main_new_route@6:
     return
 
 main_create_route@5:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:26
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:25
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -483,7 +483,7 @@ main_create_route@5:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:18
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txna ApplicationArgs 1
     extract 2 0
@@ -491,7 +491,7 @@ main_create_route@5:
     btoi
     txna ApplicationArgs 3
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:26
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:25
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_1 // 1
@@ -500,20 +500,20 @@ main_create_route@5:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:179
+    // smart_contracts/utils/functions.ts:241
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:180
+    // smart_contracts/utils/functions.ts:242
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:181
+    // smart_contracts/utils/functions.ts:243
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:184
+    // smart_contracts/utils/functions.ts:246
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -523,28 +523,28 @@ rekeyAddress_after_if_else@2:
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.create(version: bytes, factory: uint64, akitaDAO: uint64) -> void:
 create:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:26-27
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:25-26
     // @abimethod({ onCreate: 'require' })
     // create(version: string, factory: uint64, akitaDAO: uint64): void {
     proto 3 0
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec 4 // "version"
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:28
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:27
     // this.version.value = version
     frame_dig -3
     app_global_put
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     bytec_0 // "auction_factory"
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:29
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:28
     // this.factory.value = Application(factory)
     frame_dig -2
     app_global_put
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    bytec_3 // "akita_dao"
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:29
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -1
     app_global_put
@@ -553,7 +553,7 @@ create:
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.new(walletID: uint64, rekeyBack: uint64, prizeID: uint64, prizeAmount: uint64, name: bytes, proof: bytes, bidAssetID: uint64, bidFee: uint64, startingBid: uint64, bidMinimumIncrease: uint64, startTimestamp: uint64, endtimestamp: uint64, gateID: uint64, marketplace: bytes, weightsListCount: uint64) -> uint64:
 new:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:35-51
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:34-50
     // new(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -572,16 +572,16 @@ new:
     //   weightsListCount: uint64,
     // ): uint64 {
     proto 15 1
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -15
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -589,27 +589,27 @@ new:
     app_global_get_ex
     pop
     dup
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:55
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:54
     // assert(prizeID !== 0, ERR_AUCTION_PRIZE_CANNOT_BE_ALGO)
     frame_dig -13
     assert // auction prize cannot be algo
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:56
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:55
     // const senderPrizeBalance = AssetHolding.assetBalance(sender, prizeID)[0]
     frame_dig -13
     asset_holding_get AssetBalance
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:57
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:56
     // assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
     frame_dig -12
     >=
     assert // Not enough asset
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:59
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:58
     // if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
     app_params_get AppAddress
     assert // application exists
@@ -617,7 +617,7 @@ new:
     asset_holding_get AssetBalance
     bury 1
     bnz new_after_if_else@4
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:60-76
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:59-73
     // abiCall(
     //   AuctionFactory.prototype.optin,
     //   {
@@ -627,48 +627,43 @@ new:
     //       itxn.payment({
     //         sender,
     //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
+    //         amount: Global.assetOptInMinBalance
     //       }),
     //       prizeID,
-    //     ],
-    //     fee,
+    //     ]
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:68
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:67
     // receiver: this.factory.value.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:69
-    // amount: Global.assetOptInMinBalance,
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:68
+    // amount: Global.assetOptInMinBalance
     global AssetOptInMinBalance
     itxn_field Amount
     itxn_field Receiver
     frame_dig 0
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:66-71
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:65-69
     // itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
-    //   amount: Global.assetOptInMinBalance,
-    //   fee,
+    //   amount: Global.assetOptInMinBalance
     // }),
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:60-76
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:59-73
     // abiCall(
     //   AuctionFactory.prototype.optin,
     //   {
@@ -678,20 +673,18 @@ new:
     //       itxn.payment({
     //         sender,
     //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
+    //         amount: Global.assetOptInMinBalance
     //       }),
     //       prizeID,
-    //     ],
-    //     fee,
+    //     ]
     //   }
     // )
     itxn_next
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:72
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:70
     // prizeID,
     frame_dig -13
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:60-76
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:59-73
     // abiCall(
     //   AuctionFactory.prototype.optin,
     //   {
@@ -701,12 +694,10 @@ new:
     //       itxn.payment({
     //         sender,
     //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
+    //         amount: Global.assetOptInMinBalance
     //       }),
     //       prizeID,
-    //     ],
-    //     fee,
+    //     ]
     //   }
     // )
     bytec 5 // method "optin(pay,uint64)void"
@@ -716,38 +707,18 @@ new:
     itxn_field ApplicationID
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:60-76
-    // abiCall(
-    //   AuctionFactory.prototype.optin,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
-    //       }),
-    //       prizeID,
-    //     ],
-    //     fee,
-    //   }
-    // )
     itxn_submit
 
 new_after_if_else@4:
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:79
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:76
     // if (!this.factory.value.address.isOptedIn(Asset(bidAssetID))) {
     app_params_get AppAddress
     assert // application exists
@@ -755,7 +726,7 @@ new_after_if_else@4:
     asset_holding_get AssetBalance
     bury 1
     bnz new_after_if_else@8
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:80-96
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:77-91
     // abiCall(
     //   AuctionFactory.prototype.optin,
     //   {
@@ -765,48 +736,43 @@ new_after_if_else@4:
     //       itxn.payment({
     //         sender,
     //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
+    //         amount: Global.assetOptInMinBalance
     //       }),
     //       bidAssetID,
-    //     ],
-    //     fee,
+    //     ]
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:88
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:85
     // receiver: this.factory.value.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:89
-    // amount: Global.assetOptInMinBalance,
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:86
+    // amount: Global.assetOptInMinBalance
     global AssetOptInMinBalance
     itxn_field Amount
     itxn_field Receiver
     frame_dig 0
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:86-91
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:83-87
     // itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
-    //   amount: Global.assetOptInMinBalance,
-    //   fee,
+    //   amount: Global.assetOptInMinBalance
     // }),
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:80-96
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:77-91
     // abiCall(
     //   AuctionFactory.prototype.optin,
     //   {
@@ -816,20 +782,18 @@ new_after_if_else@4:
     //       itxn.payment({
     //         sender,
     //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
+    //         amount: Global.assetOptInMinBalance
     //       }),
     //       bidAssetID,
-    //     ],
-    //     fee,
+    //     ]
     //   }
     // )
     itxn_next
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:92
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:88
     // bidAssetID,
     frame_dig -9
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:80-96
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:77-91
     // abiCall(
     //   AuctionFactory.prototype.optin,
     //   {
@@ -839,12 +803,10 @@ new_after_if_else@4:
     //       itxn.payment({
     //         sender,
     //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
+    //         amount: Global.assetOptInMinBalance
     //       }),
     //       bidAssetID,
-    //     ],
-    //     fee,
+    //     ]
     //   }
     // )
     bytec 5 // method "optin(pay,uint64)void"
@@ -854,101 +816,85 @@ new_after_if_else@4:
     itxn_field ApplicationID
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:80-96
-    // abiCall(
-    //   AuctionFactory.prototype.optin,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: this.factory.value.address,
-    //         amount: Global.assetOptInMinBalance,
-    //         fee,
-    //       }),
-    //       bidAssetID,
-    //     ],
-    //     fee,
-    //   }
-    // )
     itxn_submit
 
 new_after_if_else@8:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:100-102
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:95-97
     // const optinMBR: uint64 = isAlgoBid
     //   ? Global.assetOptInMinBalance
     //   : Global.assetOptInMinBalance * 2
     frame_dig -9
     bnz new_ternary_false@10
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:101
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:96
     // ? Global.assetOptInMinBalance
     global AssetOptInMinBalance
 
 new_ternary_merge@11:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:110-113
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:105-107
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
-    // AccountMinimumBalance +
-    pushint 1612500 // 1612500
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:110-114
+    pushint 1512500 // 1512500
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:108
+    // Global.minBalance +
+    global MinBalance
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:105-108
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
-    // AccountMinimumBalance +
+    // Global.minBalance +
+    +
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:105-109
+    // MAX_PROGRAM_PAGES +
+    // (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
+    // (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
+    // Global.minBalance +
     // optinMBR +
     +
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:115
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:110
     // (weightsListCount * costs.weights) +
     frame_dig -1
-    // smart_contracts/auction/base.ts:9
-    // weights: 13_113_300,
     pushint 13113300 // 13113300
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:115
-    // (weightsListCount * costs.weights) +
     *
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:110-115
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:105-110
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
-    // AccountMinimumBalance +
+    // Global.minBalance +
     // optinMBR +
     // (weightsListCount * costs.weights) +
     +
-    // smart_contracts/utils/functions.ts:338
-    // appCreators: 21_700
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:111
+    // fcosts.appCreators
     pushint 21700 // 21700
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:110-116
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:105-111
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
-    // AccountMinimumBalance +
+    // Global.minBalance +
     // optinMBR +
     // (weightsListCount * costs.weights) +
     // fcosts.appCreators
     +
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:121
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:116
     // receiver: this.factory.value.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:128
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:122
     // assetReceiver: this.factory.value.address,
     dig 1
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:134-157
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:127-149
     // const newAuction = abiCall(
     //   AuctionFactory.prototype.newAuction,
     //   {
@@ -969,8 +915,7 @@ new_ternary_merge@11:
     //       marketplace,
     //       weightsListCount
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // ).returnValue
     itxn_begin
@@ -981,20 +926,17 @@ new_ternary_merge@11:
     frame_dig 0
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:119-124
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:114-118
     // const mbrTxn = itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
-    //   amount: childContractMBR,
-    //   fee,
+    //   amount: childContractMBR
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:141
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:134
     // prizeTxn,
     itxn_next
     frame_dig -13
@@ -1005,21 +947,18 @@ new_ternary_merge@11:
     itxn_field AssetReceiver
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:126-132
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:120-125
     // const prizeTxn = itxn.assetTransfer({
     //   sender,
     //   assetReceiver: this.factory.value.address,
     //   assetAmount: prizeAmount,
-    //   xferAsset: Asset(prizeID),
-    //   fee,
+    //   xferAsset: Asset(prizeID)
     // })
     intc_3 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:134-157
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:127-149
     // const newAuction = abiCall(
     //   AuctionFactory.prototype.newAuction,
     //   {
@@ -1040,17 +979,16 @@ new_ternary_merge@11:
     //       marketplace,
     //       weightsListCount
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // ).returnValue
     itxn_next
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:154
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:147
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -14
     frame_dig -15
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:142
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:135
     // name,
     frame_dig -11
     len
@@ -1058,39 +996,39 @@ new_ternary_merge@11:
     extract 6 2
     frame_dig -11
     concat
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:144
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:137
     // bidAssetID,
     frame_dig -9
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:145
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:138
     // bidFee,
     frame_dig -8
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:146
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:139
     // startingBid,
     frame_dig -7
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:147
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:140
     // bidMinimumIncrease,
     frame_dig -6
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:148
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:141
     // startTimestamp,
     frame_dig -5
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:149
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:142
     // endtimestamp,
     frame_dig -4
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:150
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:143
     // gateID,
     frame_dig -3
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:152
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:145
     // weightsListCount
     frame_dig -1
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:134-157
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:127-149
     // const newAuction = abiCall(
     //   AuctionFactory.prototype.newAuction,
     //   {
@@ -1111,11 +1049,10 @@ new_ternary_merge@11:
     //       marketplace,
     //       weightsListCount
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // ).returnValue
-    pushbytes 0xd1548fff // method "newAuction(pay,axfer,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64)uint64"
+    pushbytes 0x3c7bd4f9 // method "newAuction(pay,axfer,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,byte[32],uint64)uint64"
     itxn_field ApplicationArgs
     uncover 8
     itxn_field ApplicationArgs
@@ -1143,52 +1080,25 @@ new_ternary_merge@11:
     itxn_field ApplicationID
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:134-157
-    // const newAuction = abiCall(
-    //   AuctionFactory.prototype.newAuction,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [
-    //       mbrTxn,
-    //       prizeTxn,
-    //       name,
-    //       proof,
-    //       bidAssetID,
-    //       bidFee,
-    //       startingBid,
-    //       bidMinimumIncrease,
-    //       startTimestamp,
-    //       endtimestamp,
-    //       gateID,
-    //       marketplace,
-    //       weightsListCount
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee
-    //   }
-    // ).returnValue
     itxn_submit
     gitxn 2 LastLog
     dup
     extract 4 0
     swap
     extract 0 4
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:159
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:151
     // return newAuction
     swap
     retsub
 
 new_ternary_false@10:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:102
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:97
     // : Global.assetOptInMinBalance * 2
     global AssetOptInMinBalance
     pushint 2 // 2
@@ -1198,7 +1108,7 @@ new_ternary_false@10:
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.clearWeightsBoxes(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64, iterationAmount: uint64) -> void:
 clearWeightsBoxes:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:162-167
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:154-159
     // clearWeightsBoxes(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -1206,18 +1116,18 @@ clearWeightsBoxes:
     //   iterationAmount: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:168
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:160
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:168
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:160
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     dup
     app_params_get AppAddress
@@ -1225,52 +1135,50 @@ clearWeightsBoxes:
     uncover 2
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:172-181
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:164-172
     // abiCall(
     //   Auction.prototype.clearWeightsBoxes,
     //   {
     //     sender,
     //     appId: this.factory.value,
     //     args: [iterationAmount],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:178
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:170
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -3
     frame_dig -4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:177
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:169
     // args: [iterationAmount],
     frame_dig -1
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:172-181
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:164-172
     // abiCall(
     //   Auction.prototype.clearWeightsBoxes,
     //   {
     //     sender,
     //     appId: this.factory.value,
     //     args: [iterationAmount],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0x05e5de4d // method "clearWeightsBoxes(uint64)uint64"
@@ -1281,25 +1189,12 @@ clearWeightsBoxes:
     itxn_field ApplicationID
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:172-181
-    // abiCall(
-    //   Auction.prototype.clearWeightsBoxes,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [iterationAmount],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     itxn LastLog
     extract 0 4
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     retsub
@@ -1307,7 +1202,7 @@ clearWeightsBoxes:
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.deleteAuctionApp(walletID: uint64, rekeyBack: uint64, creator: bytes, auctionAppID: uint64) -> void:
 deleteAuctionApp:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:184-189
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:175-180
     // deleteAuctionApp(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -1315,34 +1210,34 @@ deleteAuctionApp:
     //   auctionAppID: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:193
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:184
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:193
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:184
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     dup
     app_params_get AppAddress
@@ -1350,36 +1245,34 @@ deleteAuctionApp:
     uncover 2
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:195-204
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:186-194
     // abiCall(
     //   AuctionFactory.prototype.deleteAuctionApp,
     //   {
     //     sender,
     //     appId: this.factory.value,
     //     args: [auctionAppID],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:201
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:192
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -3
     frame_dig -4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:200
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:191
     // args: [auctionAppID],
     frame_dig -1
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:195-204
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:186-194
     // abiCall(
     //   AuctionFactory.prototype.deleteAuctionApp,
     //   {
     //     sender,
     //     appId: this.factory.value,
     //     args: [auctionAppID],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0x1714da65 // method "deleteAuctionApp(uint64)void"
@@ -1390,28 +1283,15 @@ deleteAuctionApp:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:195-204
-    // abiCall(
-    //   AuctionFactory.prototype.deleteAuctionApp,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [auctionAppID],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.bid(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64, amount: uint64, args: bytes, marketplace: bytes) -> void:
 bid:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:207-214
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:197-204
     // bid(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -1421,91 +1301,121 @@ bid:
     //   marketplace: Address
     // ): void {
     proto 6 0
+    intc_0 // 0
     pushbytes ""
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:123-126
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    frame_dig -6
+    // smart_contracts/utils/functions.ts:125
+    // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    pushbytes "controlled_address"
+    // smart_contracts/utils/functions.ts:123-126
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -6
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:218
+    // smart_contracts/utils/functions.ts:197
+    // walletAddress: wallet.address,
+    frame_dig -6
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/utils/functions.ts:196-200
+    // return {
+    //   walletAddress: wallet.address,
+    //   origin,
+    //   sender,
+    // }
+    uncover 2
+    concat
+    swap
+    concat
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:206
+    // const { origin, sender } = getAccounts(wallet)
+    dup
+    extract 32 32
+    swap
+    extract 64 32
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:208
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -4
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:218
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:208
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/auction/base.ts:8
-    // bids: 34_900,
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:210
+    // const { bids, bidsByAddress, locations } = this.mbr()
     pushint 34900 // 34900
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:221
-    // let mbr = bids
     dup
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:222
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:212
     // const bidFee = btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidFee))[0])
     frame_dig -4
-    // smart_contracts/auction/constants.ts:21
-    // export const AuctionGlobalStateKeyBidFee = 'bid_fee'
     pushbytes "bid_fee"
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:222
-    // const bidFee = btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidFee))[0])
     app_global_get_ex
     pop
     btoi
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:223
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:213
     // if (bidFee > 0) {
     bz bid_after_if_else@5
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:224-233
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:214-222
     // const hasBid = abiCall(
     //   Auction.prototype.hasBid,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [new Address(sender)],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:230
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:220
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -5
     frame_dig -6
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:224-233
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:214-222
     // const hasBid = abiCall(
     //   Auction.prototype.hasBid,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [new Address(sender)],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // ).returnValue
-    pushbytes 0x6082303c // method "hasBid(address)bool"
+    pushbytes 0x6c86f1ea // method "hasBid(byte[32])bool"
     itxn_field ApplicationArgs
-    frame_dig 1
+    frame_dig 3
     dup
     cover 2
     itxn_field ApplicationArgs
@@ -1515,161 +1425,218 @@ bid:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:224-233
-    // const hasBid = abiCall(
-    //   Auction.prototype.hasBid,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     args: [new Address(sender)],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // ).returnValue
     itxn_submit
     itxn LastLog
     dup
     extract 4 0
     swap
     extract 0 4
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     intc_0 // 0
     getbit
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:235
+    frame_dig 4
+    frame_bury 5
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:224
     // if (!hasBid) {
-    bnz bid_after_if_else@4
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:236
+    bnz bid_after_if_else@5
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:225
     // mbr += (bidsByAddress + locations)
     pushint 72300 // 72300
-    frame_bury 2
-
-bid_after_if_else@4:
-    frame_dig 2
-    frame_bury 3
+    frame_bury 5
 
 bid_after_if_else@5:
-    frame_dig 3
-    frame_bury 2
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:240
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:229
     // const bidAsset = Asset(btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidAsset))[0]))
     frame_dig -4
-    // smart_contracts/auction/constants.ts:20
-    // export const AuctionGlobalStateKeyBidAsset = 'bid_asset'
     pushbytes "bid_asset"
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:240
-    // const bidAsset = Asset(btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidAsset))[0]))
     app_global_get_ex
     pop
     btoi
     dup
-    frame_bury 0
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:241
+    frame_bury 1
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:230
     // if (bidAsset.id === 0) {
-    bnz bid_else_body@9
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:242-260
-    // abiCall(
-    //   Auction.prototype.bid,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(auctionAppID).address,
-    //         amount: amount + mbr,
-    //         fee,
-    //       }),
-    //       args,
-    //       marketplace,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
-    itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:250
+    bnz bid_else_body@15
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:234
     // receiver: Application(auctionAppID).address,
     frame_dig -4
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:251
-    // amount: amount + mbr,
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:235
+    // amount: amount + mbr
     frame_dig -3
-    frame_dig 2
+    frame_dig 5
     +
-    itxn_field Amount
-    itxn_field Receiver
-    frame_dig 1
-    dup
-    itxn_field Sender
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:248-253
-    // itxn.payment({
-    //   sender,
-    //   receiver: Application(auctionAppID).address,
-    //   amount: amount + mbr,
-    //   fee,
-    // }),
-    intc_1 // 1
-    itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
+    swap
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:238
+    // if (args.length > 0) {
+    frame_dig -2
     intc_0 // 0
-    itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:242-260
+    extract_uint16
+    bz bid_else_body@11
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec_2 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec 6 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:239
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:240
+    // const gateID = op.AppGlobal.getExUint64(auctionAppID, Bytes(AuctionGlobalStateKeyGateID))[0]
+    frame_dig -4
+    bytec 7 // "gate_id"
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:242-263
     // abiCall(
-    //   Auction.prototype.bid,
+    //   Auction.prototype.gatedBid,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [
-    //       itxn.payment({
+    //       mbrPayment,
+    //       itxn.applicationCall({
     //         sender,
-    //         receiver: Application(auctionAppID).address,
-    //         amount: amount + mbr,
-    //         fee,
+    //         appId: gate,
+    //         appArgs: [
+    //           methodSelector(GateInterface.prototype.mustCheck),
+    //           new Address(origin),
+    //           gateID,
+    //           encodeArc4(args)
+    //         ]
     //       }),
-    //       args,
     //       marketplace,
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   }
+    // )
+    itxn_begin
+    uncover 3
+    itxn_field Amount
+    uncover 2
+    itxn_field Receiver
+    frame_dig 3
+    dup
+    cover 2
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:232-236
+    // const mbrPayment = itxn.payment({
+    //   sender,
+    //   receiver: Application(auctionAppID).address,
+    //   amount: amount + mbr
+    // })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:249-258
+    // itxn.applicationCall({
+    //   sender,
+    //   appId: gate,
+    //   appArgs: [
+    //     methodSelector(GateInterface.prototype.mustCheck),
+    //     new Address(origin),
+    //     gateID,
+    //     encodeArc4(args)
+    //   ]
+    // }),
+    itxn_next
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:255
+    // gateID,
+    itob
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:253
+    // methodSelector(GateInterface.prototype.mustCheck),
+    bytec 8 // method "mustCheck(byte[32],uint64,byte[][])void"
+    itxn_field ApplicationArgs
+    frame_dig 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig -2
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationID
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:249-258
+    // itxn.applicationCall({
+    //   sender,
+    //   appId: gate,
+    //   appArgs: [
+    //     methodSelector(GateInterface.prototype.mustCheck),
+    //     new Address(origin),
+    //     gateID,
+    //     encodeArc4(args)
+    //   ]
+    // }),
+    intc_2 // 6
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:242-263
+    // abiCall(
+    //   Auction.prototype.gatedBid,
+    //   {
+    //     sender,
+    //     appId: auctionAppID,
+    //     args: [
+    //       mbrPayment,
+    //       itxn.applicationCall({
+    //         sender,
+    //         appId: gate,
+    //         appArgs: [
+    //           methodSelector(GateInterface.prototype.mustCheck),
+    //           new Address(origin),
+    //           gateID,
+    //           encodeArc4(args)
+    //         ]
+    //       }),
+    //       marketplace,
+    //     ],
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_next
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:257
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:261
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -5
     frame_dig -6
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:242-260
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:242-263
     // abiCall(
-    //   Auction.prototype.bid,
+    //   Auction.prototype.gatedBid,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [
-    //       itxn.payment({
+    //       mbrPayment,
+    //       itxn.applicationCall({
     //         sender,
-    //         receiver: Application(auctionAppID).address,
-    //         amount: amount + mbr,
-    //         fee,
+    //         appId: gate,
+    //         appArgs: [
+    //           methodSelector(GateInterface.prototype.mustCheck),
+    //           new Address(origin),
+    //           gateID,
+    //           encodeArc4(args)
+    //         ]
     //       }),
-    //       args,
     //       marketplace,
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0xed605729 // method "bid(pay,byte[][],address)void"
-    itxn_field ApplicationArgs
-    frame_dig -2
+    pushbytes 0x2e8e521e // method "gatedBid(pay,appl,byte[32])void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -1679,45 +1646,307 @@ bid_after_if_else@5:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:242-260
+    itxn_submit
+    retsub
+
+bid_else_body@11:
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:265-276
     // abiCall(
     //   Auction.prototype.bid,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(auctionAppID).address,
-    //         amount: amount + mbr,
-    //         fee,
-    //       }),
-    //       args,
+    //       mbrPayment,
     //       marketplace,
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
+    itxn_begin
+    itxn_field Receiver
+    itxn_field Amount
+    frame_dig 3
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:232-236
+    // const mbrPayment = itxn.payment({
+    //   sender,
+    //   receiver: Application(auctionAppID).address,
+    //   amount: amount + mbr
+    // })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:265-276
+    // abiCall(
+    //   Auction.prototype.bid,
+    //   {
+    //     sender,
+    //     appId: auctionAppID,
+    //     args: [
+    //       mbrPayment,
+    //       marketplace,
+    //     ],
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   }
+    // )
+    itxn_next
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:274
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
+    frame_dig -5
+    frame_dig -6
+    callsub rekeyAddress
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:265-276
+    // abiCall(
+    //   Auction.prototype.bid,
+    //   {
+    //     sender,
+    //     appId: auctionAppID,
+    //     args: [
+    //       mbrPayment,
+    //       marketplace,
+    //     ],
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   }
+    // )
+    pushbytes 0x95a812c2 // method "bid(pay,byte[32])void"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field RekeyTo
+    frame_dig -4
+    itxn_field ApplicationID
+    itxn_field Sender
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
     itxn_submit
     retsub
 
-bid_else_body@9:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:264
+bid_else_body@15:
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:281
     // receiver: Application(auctionAppID).address,
     frame_dig -4
     app_params_get AppAddress
+    swap
+    frame_bury 0
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:271
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:287
     // assetReceiver: Application(auctionAppID).address,
     frame_dig -4
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:277-291
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:292
+    // if (args.length > 0) {
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16
+    bz bid_else_body@21
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    intc_0 // 0
+    bytec_2 // "akita_dao"
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:25
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    bytec 6 // "akita_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:293
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:294
+    // const gateID = op.AppGlobal.getExUint64(auctionAppID, Bytes(AuctionGlobalStateKeyGateID))[0]
+    frame_dig -4
+    bytec 7 // "gate_id"
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:296-318
+    // abiCall(
+    //   Auction.prototype.gatedBidAsa,
+    //   {
+    //     sender,
+    //     appId: auctionAppID,
+    //     args: [
+    //       mbrTxn,
+    //       xferTxn,
+    //       itxn.applicationCall({
+    //         sender,
+    //         appId: gate,
+    //         appArgs: [
+    //           methodSelector(GateInterface.prototype.mustCheck),
+    //           new Address(origin),
+    //           gateID,
+    //           encodeArc4(args)
+    //         ]
+    //       }),
+    //       marketplace,
+    //     ],
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   }
+    // )
+    itxn_begin
+    frame_dig 5
+    itxn_field Amount
+    frame_dig 0
+    itxn_field Receiver
+    frame_dig 3
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:279-283
+    // const mbrTxn = itxn.payment({
+    //   sender,
+    //   receiver: Application(auctionAppID).address,
+    //   amount: mbr
+    // })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:303
+    // xferTxn,
+    itxn_next
+    frame_dig 1
+    itxn_field XferAsset
+    frame_dig -3
+    itxn_field AssetAmount
+    uncover 3
+    itxn_field AssetReceiver
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:285-290
+    // const xferTxn = itxn.assetTransfer({
+    //   sender,
+    //   assetReceiver: Application(auctionAppID).address,
+    //   assetAmount: amount,
+    //   xferAsset: bidAsset
+    // })
+    intc_3 // 4
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:304-313
+    // itxn.applicationCall({
+    //   sender,
+    //   appId: gate,
+    //   appArgs: [
+    //     methodSelector(GateInterface.prototype.mustCheck),
+    //     new Address(origin),
+    //     gateID,
+    //     encodeArc4(args)
+    //   ]
+    // }),
+    itxn_next
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:310
+    // gateID,
+    swap
+    itob
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:308
+    // methodSelector(GateInterface.prototype.mustCheck),
+    bytec 8 // method "mustCheck(byte[32],uint64,byte[][])void"
+    itxn_field ApplicationArgs
+    frame_dig 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    frame_dig -2
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationID
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:304-313
+    // itxn.applicationCall({
+    //   sender,
+    //   appId: gate,
+    //   appArgs: [
+    //     methodSelector(GateInterface.prototype.mustCheck),
+    //     new Address(origin),
+    //     gateID,
+    //     encodeArc4(args)
+    //   ]
+    // }),
+    intc_2 // 6
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:296-318
+    // abiCall(
+    //   Auction.prototype.gatedBidAsa,
+    //   {
+    //     sender,
+    //     appId: auctionAppID,
+    //     args: [
+    //       mbrTxn,
+    //       xferTxn,
+    //       itxn.applicationCall({
+    //         sender,
+    //         appId: gate,
+    //         appArgs: [
+    //           methodSelector(GateInterface.prototype.mustCheck),
+    //           new Address(origin),
+    //           gateID,
+    //           encodeArc4(args)
+    //         ]
+    //       }),
+    //       marketplace,
+    //     ],
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   }
+    // )
+    itxn_next
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:316
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
+    frame_dig -5
+    frame_dig -6
+    callsub rekeyAddress
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:296-318
+    // abiCall(
+    //   Auction.prototype.gatedBidAsa,
+    //   {
+    //     sender,
+    //     appId: auctionAppID,
+    //     args: [
+    //       mbrTxn,
+    //       xferTxn,
+    //       itxn.applicationCall({
+    //         sender,
+    //         appId: gate,
+    //         appArgs: [
+    //           methodSelector(GateInterface.prototype.mustCheck),
+    //           new Address(origin),
+    //           gateID,
+    //           encodeArc4(args)
+    //         ]
+    //       }),
+    //       marketplace,
+    //     ],
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //   }
+    // )
+    pushbytes 0x586b820f // method "gatedBidAsa(pay,axfer,appl,byte[32])void"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field RekeyTo
+    frame_dig -4
+    itxn_field ApplicationID
+    itxn_field Sender
+    intc_2 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    retsub
+
+bid_else_body@21:
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:320-332
     // abiCall(
     //   Auction.prototype.bidAsa,
     //   {
@@ -1726,38 +1955,33 @@ bid_else_body@9:
     //     args: [
     //       mbrTxn,
     //       xferTxn,
-    //       args,
     //       marketplace,
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    frame_dig 2
+    frame_dig 5
     itxn_field Amount
-    swap
+    frame_dig 0
     itxn_field Receiver
-    frame_dig 1
+    frame_dig 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:262-267
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:279-283
     // const mbrTxn = itxn.payment({
     //   sender,
     //   receiver: Application(auctionAppID).address,
-    //   amount: mbr,
-    //   fee,
+    //   amount: mbr
     // })
     intc_1 // 1
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:284
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:327
     // xferTxn,
     itxn_next
-    frame_dig 0
+    frame_dig 1
     itxn_field XferAsset
     frame_dig -3
     itxn_field AssetAmount
@@ -1765,21 +1989,18 @@ bid_else_body@9:
     itxn_field AssetReceiver
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:269-275
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:285-290
     // const xferTxn = itxn.assetTransfer({
     //   sender,
     //   assetReceiver: Application(auctionAppID).address,
     //   assetAmount: amount,
-    //   xferAsset: bidAsset,
-    //   fee,
+    //   xferAsset: bidAsset
     // })
     intc_3 // 4
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:277-291
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:320-332
     // abiCall(
     //   Auction.prototype.bidAsa,
     //   {
@@ -1788,20 +2009,18 @@ bid_else_body@9:
     //     args: [
     //       mbrTxn,
     //       xferTxn,
-    //       args,
     //       marketplace,
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_next
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:288
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:330
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -5
     frame_dig -6
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:277-291
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:320-332
     // abiCall(
     //   Auction.prototype.bidAsa,
     //   {
@@ -1810,16 +2029,12 @@ bid_else_body@9:
     //     args: [
     //       mbrTxn,
     //       xferTxn,
-    //       args,
     //       marketplace,
     //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0xd7550068 // method "bidAsa(pay,axfer,byte[][],address)void"
-    itxn_field ApplicationArgs
-    frame_dig -2
+    pushbytes 0x8bb0f722 // method "bidAsa(pay,axfer,byte[32])void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -1829,33 +2044,15 @@ bid_else_body@9:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:277-291
-    // abiCall(
-    //   Auction.prototype.bidAsa,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     args: [
-    //       mbrTxn,
-    //       xferTxn,
-    //       args,
-    //       marketplace,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.refundBid(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64, id: uint64) -> void:
 refundBid:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:295-300
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:337-342
     // refundBid(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -1863,69 +2060,67 @@ refundBid:
     //   id: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:304
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:346
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:304
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:346
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:306-315
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:348-356
     // abiCall(
     //   Auction.prototype.refundBid,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [id],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:312
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:354
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -3
     frame_dig -4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:311
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:353
     // args: [id],
     frame_dig -1
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:306-315
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:348-356
     // abiCall(
     //   Auction.prototype.refundBid,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [id],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0xb9e39c5c // method "refundBid(uint64)void"
@@ -1937,91 +2132,76 @@ refundBid:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:306-315
-    // abiCall(
-    //   Auction.prototype.refundBid,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     args: [id],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.claimPrize(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64) -> void:
 claimPrize:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:318-322
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:359-363
     // claimPrize(
     //   walletID: uint64,
     //   rekeyBack: boolean,
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:326
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:367
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:326
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:367
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:328-336
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:369-376
     // abiCall(
     //   Auction.prototype.claimPrize,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:333
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:374
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -2
     frame_dig -3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:328-336
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:369-376
     // abiCall(
     //   Auction.prototype.claimPrize,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0x9daf050a // method "claimPrize()void"
@@ -2032,90 +2212,76 @@ claimPrize:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:328-336
-    // abiCall(
-    //   Auction.prototype.claimPrize,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.claimRafflePrize(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64) -> void:
 claimRafflePrize:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:339-343
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:379-383
     // claimRafflePrize(
     //   walletID: uint64,
     //   rekeyBack: boolean,
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:347
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:387
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:347
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:387
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:349-357
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:389-396
     // abiCall(
     //   Auction.prototype.claimRafflePrize,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:354
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:394
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -2
     frame_dig -3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:349-357
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:389-396
     // abiCall(
     //   Auction.prototype.claimRafflePrize,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0x65fca98b // method "claimRafflePrize()void"
@@ -2126,90 +2292,76 @@ claimRafflePrize:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:349-357
-    // abiCall(
-    //   Auction.prototype.claimRafflePrize,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.raffle(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64) -> void:
 raffle:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:360-364
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:399-403
     // raffle(
     //   walletID: uint64,
     //   rekeyBack: boolean,
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:365
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:404
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:365
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:404
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:369-377
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:408-415
     // abiCall(
     //   Auction.prototype.raffle,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:374
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:413
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -2
     frame_dig -3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:369-377
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:408-415
     // abiCall(
     //   Auction.prototype.raffle,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0x696501de // method "raffle()void"
@@ -2220,27 +2372,15 @@ raffle:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:369-377
-    // abiCall(
-    //   Auction.prototype.raffle,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.findWinner(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64, iterationAmount: uint64) -> void:
 findWinner:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:380-385
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:418-423
     // findWinner(
     //   walletID: uint64,
     //   rekeyBack: boolean,
@@ -2248,69 +2388,67 @@ findWinner:
     //   iterationAmount: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:389
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:427
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:389
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:427
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:391-400
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:429-437
     // abiCall(
     //   Auction.prototype.findWinner,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [iterationAmount],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:397
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:435
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -3
     frame_dig -4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:396
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:434
     // args: [iterationAmount],
     frame_dig -1
     itob
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:391-400
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:429-437
     // abiCall(
     //   Auction.prototype.findWinner,
     //   {
     //     sender,
     //     appId: auctionAppID,
     //     args: [iterationAmount],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0xbd1b27d1 // method "findWinner(uint64)void"
@@ -2322,91 +2460,76 @@ findWinner:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:391-400
-    // abiCall(
-    //   Auction.prototype.findWinner,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     args: [iterationAmount],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.deleteApplication(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64) -> void:
 deleteApplication:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:403-407
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:440-444
     // deleteApplication(
     //   walletID: uint64,
     //   rekeyBack: boolean,
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:411
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:448
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:411
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:448
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:413-421
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:450-457
     // abiCall(
     //   Auction.prototype.deleteApplication,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:418
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:455
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -2
     frame_dig -3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:413-421
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:450-457
     // abiCall(
     //   Auction.prototype.deleteApplication,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0x2487c32c // method "deleteApplication()void"
@@ -2417,90 +2540,76 @@ deleteApplication:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:413-421
-    // abiCall(
-    //   Auction.prototype.deleteApplication,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/arc58/plugins/auction/contract.algo.ts::AuctionPlugin.cancel(walletID: uint64, rekeyBack: uint64, auctionAppID: uint64) -> void:
 cancel:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:424-428
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:460-464
     // cancel(
     //   walletID: uint64,
     //   rekeyBack: boolean,
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/arc58/account/constants.ts:11
-    // export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
+    // smart_contracts/utils/functions.ts:206
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:172-175
+    // smart_contracts/utils/functions.ts:204-207
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:432
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:468
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/arc58/plugins/auction/constants.ts:1
-    // export const AuctionPluginGlobalStateKeyFactory = 'auction_factory'
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
     intc_0 // 0
     bytec_0 // "auction_factory"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:432
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:468
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:434-442
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:470-477
     // abiCall(
     //   Auction.prototype.cancel,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:439
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:475
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
     frame_dig -2
     frame_dig -3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:434-442
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:470-477
     // abiCall(
     //   Auction.prototype.cancel,
     //   {
     //     sender,
     //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
     pushbytes 0x31f26a9b // method "cancel()void"
@@ -2511,49 +2620,37 @@ cancel:
     itxn_field Sender
     intc_2 // appl
     itxn_field TypeEnum
-    // smart_contracts/utils/constants.ts:4
-    // export const fee: uint64 = 0
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:434-442
-    // abiCall(
-    //   Auction.prototype.cancel,
-    //   {
-    //     sender,
-    //     appId: auctionAppID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //     fee,
-    //   }
-    // )
     itxn_submit
     retsub
 
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:20-21
+    // smart_contracts/utils/base-contracts/base.ts:18-19
     // @abimethod({ allowActions: ['UpdateApplication'] })
     // update(newVersion: string): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:22
+    // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
-    bytec_3 // "akita_dao"
+    bytec_2 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:22
+    // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:3
-    // export const GlobalStateKeyVersion = 'version'
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec 4 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:23
+    // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
     frame_dig -1
     app_global_put
@@ -2562,28 +2659,28 @@ update:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:29
+    // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
-    bytec_3 // "akita_dao"
+    bytec_2 // "akita_dao"
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:29
+    // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/constants.ts:1
-    // export const GlobalStateKeyAkitaDAO = 'akita_dao'
-    bytec_3 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
     frame_dig -1
     app_global_put

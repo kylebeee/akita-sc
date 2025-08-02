@@ -10,14 +10,12 @@ export const AkitaDAOGlobalStateKeysMinRewardsImpact = 'min_rewards_impact'
 export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
 export const AkitaDAOGlobalStateKeysPluginAppList = 'plugn_al'
 export const AkitaDAOGlobalStateKeysOtherAppList = 'other_al'
+export const AkitaDAOGlobalStateKeysWalletFees = 'wallet_fees'
 export const AkitaDAOGlobalStateKeysSocialFees = 'social_fees'
 export const AkitaDAOGlobalStateKeysStakingFees = 'staking_fees'
 export const AkitaDAOGlobalStateKeysSubscriptionFees = 'subscription_fees'
 export const AkitaDAOGlobalStateKeysSwapFees = 'swap_fees'
 export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
-export const AkitaDAOGlobalStateKeysKrbyPercentage = 'krby_percentage'
-export const AkitaDAOGlobalStateKeysModeratorPercentage = 'mod_percentage'
-export const AkitaDAOGlobalStateKeysProposalFee = 'proposal_fee'
 
 export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
 export const AkitaDAOGlobalStateKeysUpgradeAppProposalSettings = 'upgrade_app_ps'
@@ -34,19 +32,15 @@ export const AkitaDAOGlobalStateKeysRevocationAddress = 'revocation_address'
 export const AkitaDAOGlobalStateKeysProposalID = 'proposal_id'
 export const AkitaDAOGlobalStateKeysDisbursementCursor = 'disbursement_cursor'
 
-export const AkitDAOBoxPrefixEscrows = 'e'
-export const AkitaDAOBoxPrefixReceiveEscrows = 'r'
-export const AkitaDAOBoxPrefixReceiveAssets = 's'
-export const AkitaDAOBoxPrefixPayoutEscrows = 'p' 
 export const AkitaDAOBoxPrefixProposals = 'l'
 export const AkitaDAOBoxPrefixProposalVotes = 'v'
 export const AkitaDAOBoxPrefixExecutions = 'x'
 
-// payout escrows
+// escrows - for payouts
 export const AkitaDAOEscrowAccountKrby = 'krby'
 export const AkitaDAOEscrowAccountModerators = 'moderators'
 export const AkitaDAOEscrowAccountGovernors = 'governors'
-// receive escrows
+// escrows - for receives
 export const AkitaDAOEscrowAccountSocial = 'social'
 export const AkitaDAOEscrowAccountStakingPools = 'staking_pools'
 export const AkitaDAOEscrowAccountSubscriptions = 'subscriptions'
@@ -69,11 +63,6 @@ export const DAOExecutionsMBR: uint64 = 0
 
 export const DAOPayoutEscrowIndividualByteLength: uint64 = 32
 export const DAOPayoutEscrowGroupByteLength: uint64 = 8
-
-export const EscrowDisbursementPhaseIdle = new Uint8(0)
-export const EscrowDisbursementPhasePreparation = new Uint8(10)
-export const EscrowDisbursementPhaseAllocation = new Uint8(20)
-export const EscrowDisbursementPhaseFinalization = new Uint8(30)
 
 export const PayoutEscrowTypeIndividual: PayoutEscrowType = new Uint8(10)
 export const PayoutEscrowTypeGroup: PayoutEscrowType = new Uint8(20)

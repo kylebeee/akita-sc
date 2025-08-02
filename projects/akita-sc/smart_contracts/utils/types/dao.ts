@@ -1,5 +1,5 @@
 import { bytes, Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { ProposalAction } from "../../dao/types";
+import { ProposalAction } from "../../arc58/dao/types";
 import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 import { CID } from "./base";
 import { FundsRequest } from "../../arc58/account/types";

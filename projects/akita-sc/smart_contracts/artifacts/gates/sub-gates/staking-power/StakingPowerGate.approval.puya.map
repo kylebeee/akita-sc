@@ -1,0 +1,4079 @@
+{
+  "version": 3,
+  "sources": [
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/gates/sub-gates/staking-power/contract.algo.ts",
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/utils/base-contracts/base.ts",
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/utils/functions.ts"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAwBA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;;ACCE;;AAAA;AAAA;AAAA;;AAAA;ADDF;;;AAAA;ACCE;;;AAAA;;AARC;;AAAA;AAAA;AAAA;AAAA;;AAAA;ADOH;;;AAAA;;;ACPG;;;AAAA;;ADuFD;;AAAA;AAAA;AAAA;;AAAA;AAhFF;;;AAAA;;;AAgFE;;;AAAA;;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAlBA;;AAAA;AAAA;AAAA;;AAAA;AA9DF;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;;;AA8DE;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;;;AAAA;AAAA;;AATC;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAjDH;;;AAAA;;;AAAA;;;AAAA;AAiDG;;;AAAA;;AESH;;;AACS;;AAAA;AAAA;AAAA;AAAA;;;AAAuB;;AAAA;AAAA;AAAvB;;;;AAAP;AACoD;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAX;AAAsC;;AAAA;AAAA;AAAX;;AAAA;AAAzC;AAAA;;AAAA;AACpB;AAAP;AACA;AAAA;;;;;AFbA;;;AC9DqC;ADgEnC;;AAAA;AC9DyC;AD+DzC;;AAAA;AAhD0C;AAiDd;AAA5B;;AASF;;;AACc;;AAAA;AAAW;;AAAhB;AAAP;AACA;;AAAA;;AAGqB;;AAHrB;AAAA;;AAAA;;AAIY;;;AAJZ;AAAA;AAAA;AAUiB;;AAAH;AAAG;AAAU;;AAApB;AAAP;AAtE0C;AAAA;AAAA;AAAA;AAU1C;AAA6B;AAA7B;AAV0C;AAU1C;AAAA;AA8Dc;AAAA;AAAd;;AAAA;AACA;AAGF;;;;;;AACc;;AAAA;AAAU;;AAAf;AAAP;AAEwC;;AAAA;;AAAA;AAAA;AAAY;AAAA;AAE3C;;AAAA;;;AACF;;AAAA;;;AAAA;;AACA;;AAAA;AAAA;AACA;;AAAA;;AAAA;AAAA;;ACnGkC;AAAA;AAAA;AAAA;ACWoB;;;;;;;;;;AAAxC;AAAA;AFoBkB;AAAA;AE+V5B;AAIT;AAAA;AAEQ;;;AAFR;AAJS;;;;;;;;;;;;;;;;AAAA;;;;AAAA;;;AAAA;AAAA;;AAAA;;AAAA;;;AAAA;AAAA;AAAA;;;AAWJ;AAAA;AAAqB;;AAA1B;AAAJ;;;AACS;;;AFtWH;;AAAO;;;AAAP;AAAJ;;;AACS;;AAAA;;AAAA;AA0DT;;AAAA;AAxDI;;AAAO;;;AAAP;AAAJ;;;AACS;;AAAA;;AAAA;AAuDF;;;AArDH;;AAAO;;;AAAP;AAAJ;;;AACS;;AAAA;;AAAA;AAoDF;;;AAlDH;;AAAO;;;AAAP;AAAJ;;;AACS;;AAAA;;AAAA;AAiDF;;;AA/CH;;AAAO;;;AAAP;AAAJ;;;AACS;;AAAA;;AAAA;AA8CF;;;AA5CH;;AAAO;;;AAAP;AAAJ;;;AACS;;AAAA;;AAAA;AA2CF;;;AAxCA;AAwCA;;;AE8SqB;;AAAyB;;AAAzB;AAAA;AAAA;;AAEV;;;;AAAhB;AAAJ;;;AACS;;;AFlXW;;;AEqXU;;AAAgB;;;;AAAhB;AACY;;;AAAA;AAAN;AAAc;;AAAd;AAAA;AAAV;AAAoC;;AAApC;;;AAAR;;AAAA;AAAA;AAAA;;AAA4C;;AAApC;;;AAAR;AAAA;;AAA4F;;AAAvG;;;AFtXa;;;AC1BpB;;;AAEa;;AAN8B;AAAA;AAAA;AAAA;AAMC;;AAAA;AAAnC;AAAP;AARmC;AASnC;;AAAA;;AAKF;;;AACa;;AAb8B;AAAA;AAAA;AAAA;AAaC;;AAAA;AAAnC;AAAP;AAbyC;AAczC;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "@algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1 8 4 1000000"
+    },
+    "10": {
+      "op": "bytecblock \"akita_dao\" 0x151f7c75 \"registry_cursor\" \"version\" 0x000000000000016d00000000000f4240"
+    },
+    "68": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "70": {
+      "op": "bz main_after_if_else@12",
+      "stack_out": []
+    },
+    "73": {
+      "op": "pushbytess 0xcd9ad67e 0x329f04ee 0x77bb79b9 0xc61c862b 0xea9180dd 0x33e92c94 // method \"create(string,uint64)void\", method \"cost(byte[])uint64\", method \"register(pay,byte[])uint64\", method \"check(byte[])bool\", method \"update(string)void\", method \"updateAkitaDAO(uint64)void\"",
+      "defined_out": [
+        "Method(check(byte[])bool)",
+        "Method(cost(byte[])uint64)",
+        "Method(create(string,uint64)void)",
+        "Method(register(pay,byte[])uint64)",
+        "Method(update(string)void)",
+        "Method(updateAkitaDAO(uint64)void)"
+      ],
+      "stack_out": [
+        "Method(create(string,uint64)void)",
+        "Method(cost(byte[])uint64)",
+        "Method(register(pay,byte[])uint64)",
+        "Method(check(byte[])bool)",
+        "Method(update(string)void)",
+        "Method(updateAkitaDAO(uint64)void)"
+      ]
+    },
+    "105": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(check(byte[])bool)",
+        "Method(cost(byte[])uint64)",
+        "Method(create(string,uint64)void)",
+        "Method(register(pay,byte[])uint64)",
+        "Method(update(string)void)",
+        "Method(updateAkitaDAO(uint64)void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(create(string,uint64)void)",
+        "Method(cost(byte[])uint64)",
+        "Method(register(pay,byte[])uint64)",
+        "Method(check(byte[])bool)",
+        "Method(update(string)void)",
+        "Method(updateAkitaDAO(uint64)void)",
+        "tmp%2#0"
+      ]
+    },
+    "108": {
+      "op": "match main_create_route@3 main_cost_route@4 main_register_route@5 main_check_route@6 main_update_route@7 main_updateAkitaDAO_route@8",
+      "stack_out": []
+    },
+    "122": {
+      "block": "main_after_if_else@12",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "123": {
+      "op": "return",
+      "stack_out": []
+    },
+    "124": {
+      "block": "main_updateAkitaDAO_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%39#0"
+      ],
+      "stack_out": [
+        "tmp%39#0"
+      ]
+    },
+    "126": {
+      "op": "!",
+      "defined_out": [
+        "tmp%40#0"
+      ],
+      "stack_out": [
+        "tmp%40#0"
+      ]
+    },
+    "127": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "128": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%41#0"
+      ],
+      "stack_out": [
+        "tmp%41#0"
+      ]
+    },
+    "130": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "131": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_Encoded(uint64)%1#0"
+      ],
+      "stack_out": [
+        "reinterpret_Encoded(uint64)%1#0"
+      ]
+    },
+    "134": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%43#0"
+      ],
+      "stack_out": [
+        "tmp%43#0"
+      ]
+    },
+    "135": {
+      "callsub": "smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO",
+      "op": "callsub updateAkitaDAO",
+      "stack_out": []
+    },
+    "138": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "139": {
+      "op": "return",
+      "stack_out": []
+    },
+    "140": {
+      "block": "main_update_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%34#0"
+      ]
+    },
+    "142": {
+      "op": "intc_3 // UpdateApplication",
+      "defined_out": [
+        "UpdateApplication",
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%34#0",
+        "UpdateApplication"
+      ]
+    },
+    "143": {
+      "op": "==",
+      "defined_out": [
+        "tmp%35#0"
+      ],
+      "stack_out": [
+        "tmp%35#0"
+      ]
+    },
+    "144": {
+      "error": "OnCompletion is not UpdateApplication",
+      "op": "assert // OnCompletion is not UpdateApplication",
+      "stack_out": []
+    },
+    "145": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%36#0"
+      ],
+      "stack_out": [
+        "tmp%36#0"
+      ]
+    },
+    "147": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "148": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_Encoded(len+utf8[])%1#0"
+      ],
+      "stack_out": [
+        "reinterpret_Encoded(len+utf8[])%1#0"
+      ]
+    },
+    "151": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%38#0"
+      ],
+      "stack_out": [
+        "tmp%38#0"
+      ]
+    },
+    "154": {
+      "callsub": "smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update",
+      "op": "callsub update",
+      "stack_out": []
+    },
+    "157": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "158": {
+      "op": "return",
+      "stack_out": []
+    },
+    "159": {
+      "block": "main_check_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0"
+      ]
+    },
+    "161": {
+      "op": "!",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "162": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "163": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "165": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "166": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_Encoded(len+uint8[])%2#0"
+      ],
+      "stack_out": [
+        "reinterpret_Encoded(len+uint8[])%2#0"
+      ]
+    },
+    "169": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%30#0"
+      ],
+      "stack_out": [
+        "tmp%30#0"
+      ]
+    },
+    "172": {
+      "callsub": "smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.check",
+      "op": "callsub check",
+      "defined_out": [
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0"
+      ]
+    },
+    "175": {
+      "op": "pushbytes 0x00",
+      "defined_out": [
+        "0x00",
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0",
+        "0x00"
+      ]
+    },
+    "178": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "0x00",
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0",
+        "0x00",
+        "0"
+      ]
+    },
+    "179": {
+      "op": "uncover 2",
+      "stack_out": [
+        "0x00",
+        "0",
+        "tmp%31#0"
+      ]
+    },
+    "181": {
+      "op": "setbit",
+      "defined_out": [
+        "aggregate%encoded_bool%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_bool%0#0"
+      ]
+    },
+    "182": {
+      "op": "bytec_1 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%encoded_bool%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_bool%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "183": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%encoded_bool%0#0"
+      ]
+    },
+    "184": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%33#0"
+      ]
+    },
+    "185": {
+      "op": "log",
+      "stack_out": []
+    },
+    "186": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "187": {
+      "op": "return",
+      "stack_out": []
+    },
+    "188": {
+      "block": "main_register_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "190": {
+      "op": "!",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "191": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "192": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "194": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "195": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "197": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0",
+        "1"
+      ]
+    },
+    "198": {
+      "op": "-",
+      "defined_out": [
+        "gtxn_idx%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0"
+      ]
+    },
+    "199": {
+      "op": "dup",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ]
+    },
+    "200": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ]
+    },
+    "202": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ]
+    },
+    "203": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "204": {
+      "error": "transaction type is pay",
+      "op": "assert // transaction type is pay",
+      "stack_out": [
+        "gtxn_idx%0#0"
+      ]
+    },
+    "205": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "reinterpret_Encoded(len+uint8[])%1#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "reinterpret_Encoded(len+uint8[])%1#0"
+      ]
+    },
+    "208": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "tmp%22#0"
+      ],
+      "stack_out": [
+        "gtxn_idx%0#0",
+        "tmp%22#0"
+      ]
+    },
+    "211": {
+      "callsub": "smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.register",
+      "op": "callsub register",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "214": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%1#0"
+      ]
+    },
+    "215": {
+      "op": "bytec_1 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%1#0",
+        "0x151f7c75"
+      ]
+    },
+    "216": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%1#0"
+      ]
+    },
+    "217": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%25#0"
+      ]
+    },
+    "218": {
+      "op": "log",
+      "stack_out": []
+    },
+    "219": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "220": {
+      "op": "return",
+      "stack_out": []
+    },
+    "221": {
+      "block": "main_cost_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "223": {
+      "op": "!",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "224": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "225": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "227": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "228": {
+      "op": "pushbytes 0x151f7c7500000000000030d4",
+      "defined_out": [
+        "0x151f7c7500000000000030d4"
+      ],
+      "stack_out": [
+        "0x151f7c7500000000000030d4"
+      ]
+    },
+    "242": {
+      "op": "log",
+      "stack_out": []
+    },
+    "243": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "244": {
+      "op": "return",
+      "stack_out": []
+    },
+    "245": {
+      "block": "main_create_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "247": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "248": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "249": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "251": {
+      "op": "!",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "252": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "253": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_Encoded(len+utf8[])%0#0"
+      ],
+      "stack_out": [
+        "reinterpret_Encoded(len+utf8[])%0#0"
+      ]
+    },
+    "256": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "259": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "reinterpret_Encoded(uint64)%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "reinterpret_Encoded(uint64)%0#0"
+      ]
+    },
+    "262": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%7#0",
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "tmp%8#0"
+      ]
+    },
+    "263": {
+      "callsub": "smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.create",
+      "op": "callsub create",
+      "stack_out": []
+    },
+    "266": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "267": {
+      "op": "return",
+      "stack_out": []
+    },
+    "268": {
+      "subroutine": "smart_contracts/utils/functions.ts::wideRatio",
+      "params": {
+        "numerators#0": "bytes",
+        "denominators#0": "bytes"
+      },
+      "block": "wideRatio",
+      "stack_in": [],
+      "op": "proto 2 1"
+    },
+    "271": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "denominators#0 (copy)"
+      ],
+      "stack_out": [
+        "denominators#0 (copy)"
+      ]
+    },
+    "273": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "denominators#0 (copy)"
+      ],
+      "stack_out": [
+        "denominators#0 (copy)",
+        "0"
+      ]
+    },
+    "274": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "values%0#0"
+      ],
+      "stack_out": [
+        "values%0#0"
+      ]
+    },
+    "275": {
+      "op": "dup",
+      "defined_out": [
+        "values%0#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "values%0#0"
+      ]
+    },
+    "276": {
+      "op": "bz wideRatio_bool_false@3",
+      "stack_out": [
+        "values%0#0"
+      ]
+    },
+    "279": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "values%0#0",
+        "denominators#0 (copy)"
+      ]
+    },
+    "281": {
+      "op": "intc_2 // 8",
+      "defined_out": [
+        "8",
+        "denominators#0 (copy)",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "denominators#0 (copy)",
+        "8"
+      ]
+    },
+    "282": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "values%0#0",
+        "values%1#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "values%1#0"
+      ]
+    },
+    "283": {
+      "op": "bz wideRatio_bool_false@3",
+      "stack_out": [
+        "values%0#0"
+      ]
+    },
+    "286": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "and_result%0#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "and_result%0#0"
+      ]
+    },
+    "287": {
+      "block": "wideRatio_bool_merge@4",
+      "stack_in": [
+        "values%0#0",
+        "and_result%0#0"
+      ],
+      "error": "Invalid percentage",
+      "op": "assert // Invalid percentage",
+      "defined_out": [],
+      "stack_out": [
+        "values%0#0"
+      ]
+    },
+    "288": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "numerators#0 (copy)"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "numerators#0 (copy)"
+      ]
+    },
+    "290": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "numerators#0 (copy)"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "numerators#0 (copy)",
+        "0"
+      ]
+    },
+    "291": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "values%2#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "values%2#0"
+      ]
+    },
+    "292": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "values%0#0",
+        "values%2#0",
+        "numerators#0 (copy)"
+      ]
+    },
+    "294": {
+      "op": "intc_2 // 8",
+      "defined_out": [
+        "8",
+        "numerators#0 (copy)",
+        "values%2#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "values%2#0",
+        "numerators#0 (copy)",
+        "8"
+      ]
+    },
+    "295": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "values%2#0",
+        "values%3#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "values%2#0",
+        "values%3#0"
+      ]
+    },
+    "296": {
+      "op": "mulw",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "tmp%2#0",
+        "tmp%3#0"
+      ]
+    },
+    "297": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "denominators#0 (copy)",
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "denominators#0 (copy)"
+      ]
+    },
+    "299": {
+      "op": "intc_2 // 8",
+      "stack_out": [
+        "values%0#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "denominators#0 (copy)",
+        "8"
+      ]
+    },
+    "300": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0",
+        "values%7#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "values%7#0"
+      ]
+    },
+    "301": {
+      "op": "frame_dig 0",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0",
+        "values%0#0",
+        "values%7#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "values%7#0",
+        "values%0#0"
+      ]
+    },
+    "303": {
+      "op": "mulw",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%6#0",
+        "tmp%7#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%6#0",
+        "tmp%7#0"
+      ]
+    },
+    "304": {
+      "op": "divmodw",
+      "defined_out": [
+        "awst_tmp%2#0",
+        "awst_tmp%3#0",
+        "overflow#0",
+        "result#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "overflow#0",
+        "result#0",
+        "awst_tmp%2#0",
+        "awst_tmp%3#0"
+      ]
+    },
+    "305": {
+      "op": "popn 2",
+      "stack_out": [
+        "values%0#0",
+        "overflow#0",
+        "result#0"
+      ]
+    },
+    "307": {
+      "op": "swap",
+      "stack_out": [
+        "values%0#0",
+        "result#0",
+        "overflow#0"
+      ]
+    },
+    "308": {
+      "op": "!",
+      "defined_out": [
+        "result#0",
+        "tmp%10#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "result#0",
+        "tmp%10#0"
+      ]
+    },
+    "309": {
+      "error": "Invalid percentage",
+      "op": "assert // Invalid percentage",
+      "stack_out": [
+        "values%0#0",
+        "result#0"
+      ]
+    },
+    "310": {
+      "op": "swap"
+    },
+    "311": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "312": {
+      "block": "wideRatio_bool_false@3",
+      "stack_in": [
+        "values%0#0"
+      ],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "and_result%0#0"
+      ],
+      "stack_out": [
+        "values%0#0",
+        "and_result%0#0"
+      ]
+    },
+    "313": {
+      "op": "b wideRatio_bool_merge@4"
+    },
+    "316": {
+      "subroutine": "smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.create",
+      "params": {
+        "version#0": "bytes",
+        "akitaDAO#0": "uint64"
+      },
+      "block": "create",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "319": {
+      "op": "bytec_3 // \"version\"",
+      "defined_out": [
+        "\"version\""
+      ],
+      "stack_out": [
+        "\"version\""
+      ]
+    },
+    "320": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "\"version\"",
+        "version#0 (copy)"
+      ],
+      "stack_out": [
+        "\"version\"",
+        "version#0 (copy)"
+      ]
+    },
+    "322": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "323": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "defined_out": [
+        "\"akita_dao\""
+      ],
+      "stack_out": [
+        "\"akita_dao\""
+      ]
+    },
+    "324": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"akita_dao\"",
+        "akitaDAO#0 (copy)"
+      ],
+      "stack_out": [
+        "\"akita_dao\"",
+        "akitaDAO#0 (copy)"
+      ]
+    },
+    "326": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "327": {
+      "op": "bytec_2 // \"registry_cursor\"",
+      "defined_out": [
+        "\"registry_cursor\""
+      ],
+      "stack_out": [
+        "\"registry_cursor\""
+      ]
+    },
+    "328": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"registry_cursor\"",
+        "0"
+      ],
+      "stack_out": [
+        "\"registry_cursor\"",
+        "0"
+      ]
+    },
+    "329": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "330": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "331": {
+      "subroutine": "smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.register",
+      "params": {
+        "mbrPayment#0": "uint64",
+        "args#0": "bytes"
+      },
+      "block": "register",
+      "stack_in": [],
+      "op": "proto 2 1"
+    },
+    "334": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "args#0 (copy)"
+      ],
+      "stack_out": [
+        "args#0 (copy)"
+      ]
+    },
+    "336": {
+      "op": "len",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "337": {
+      "op": "pushint 17 // 17",
+      "defined_out": [
+        "17",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "17"
+      ]
+    },
+    "339": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "340": {
+      "error": "Invalid number of arguments",
+      "op": "assert // Invalid number of arguments",
+      "stack_out": []
+    },
+    "341": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "mbrPayment#0 (copy)"
+      ],
+      "stack_out": [
+        "mbrPayment#0 (copy)"
+      ]
+    },
+    "343": {
+      "op": "gtxns Receiver",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "345": {
+      "op": "global CurrentApplicationAddress",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ]
+    },
+    "347": {
+      "op": "==",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "348": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "tmp%4#0",
+        "mbrPayment#0 (copy)"
+      ]
+    },
+    "350": {
+      "op": "gtxns Amount",
+      "defined_out": [
+        "tmp%4#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%4#0",
+        "tmp%5#0"
+      ]
+    },
+    "352": {
+      "op": "pushint 12500 // 12500",
+      "defined_out": [
+        "12500",
+        "tmp%4#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%4#0",
+        "tmp%5#0",
+        "12500"
+      ]
+    },
+    "355": {
+      "op": "==",
+      "defined_out": [
+        "tmp%4#0",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%4#0",
+        "tmp%6#0"
+      ]
+    },
+    "356": {
+      "op": "&&",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "357": {
+      "error": "Invalid payment",
+      "op": "assert // Invalid payment",
+      "stack_out": []
+    },
+    "358": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "args#0 (copy)"
+      ]
+    },
+    "360": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "args#0 (copy)"
+      ],
+      "stack_out": [
+        "args#0 (copy)",
+        "0"
+      ]
+    },
+    "361": {
+      "op": "getbyte",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "362": {
+      "op": "pushint 6 // 6",
+      "defined_out": [
+        "6",
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0",
+        "6"
+      ]
+    },
+    "364": {
+      "op": "<=",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "365": {
+      "error": "bad operation check",
+      "op": "assert // bad operation check",
+      "stack_out": []
+    },
+    "366": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "367": {
+      "op": "bytec_2 // \"registry_cursor\"",
+      "defined_out": [
+        "\"registry_cursor\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"registry_cursor\""
+      ]
+    },
+    "368": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "id#1",
+        "maybe_exists%0#0"
+      ],
+      "stack_out": [
+        "id#1",
+        "maybe_exists%0#0"
+      ]
+    },
+    "369": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "id#1"
+      ]
+    },
+    "370": {
+      "op": "dup",
+      "defined_out": [
+        "id#1",
+        "id#1 (copy)"
+      ],
+      "stack_out": [
+        "id#1",
+        "id#1 (copy)"
+      ]
+    },
+    "371": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "id#1",
+        "id#1 (copy)"
+      ],
+      "stack_out": [
+        "id#1",
+        "id#1 (copy)",
+        "1"
+      ]
+    },
+    "372": {
+      "op": "+",
+      "stack_out": [
+        "id#1",
+        "tmp%0#0"
+      ]
+    },
+    "373": {
+      "op": "bytec_2 // \"registry_cursor\"",
+      "stack_out": [
+        "id#1",
+        "tmp%0#0",
+        "\"registry_cursor\""
+      ]
+    },
+    "374": {
+      "op": "swap",
+      "stack_out": [
+        "id#1",
+        "\"registry_cursor\"",
+        "tmp%0#0"
+      ]
+    },
+    "375": {
+      "op": "app_global_put",
+      "stack_out": [
+        "id#1"
+      ]
+    },
+    "376": {
+      "op": "dup",
+      "stack_out": [
+        "id#1",
+        "id#1 (copy)"
+      ]
+    },
+    "377": {
+      "op": "itob",
+      "defined_out": [
+        "encoded_value%0#0",
+        "id#1"
+      ],
+      "stack_out": [
+        "id#1",
+        "encoded_value%0#0"
+      ]
+    },
+    "378": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "id#1",
+        "encoded_value%0#0",
+        "args#0 (copy)"
+      ]
+    },
+    "380": {
+      "op": "box_put",
+      "stack_out": [
+        "id#1"
+      ]
+    },
+    "381": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "382": {
+      "subroutine": "smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.check",
+      "params": {
+        "args#0": "bytes"
+      },
+      "block": "check",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "385": {
+      "op": "pushbytes \"\"",
+      "stack_out": [
+        "remainingTime#0"
+      ]
+    },
+    "387": {
+      "op": "dup",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0"
+      ]
+    },
+    "388": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "args#0 (copy)"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "args#0 (copy)"
+      ]
+    },
+    "390": {
+      "op": "len",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "tmp%0#0"
+      ]
+    },
+    "391": {
+      "op": "pushint 40 // 40",
+      "defined_out": [
+        "40",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "tmp%0#0",
+        "40"
+      ]
+    },
+    "393": {
+      "op": ">=",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "tmp%1#0"
+      ]
+    },
+    "394": {
+      "error": "Invalid number of arguments",
+      "op": "assert // Invalid number of arguments",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0"
+      ]
+    },
+    "395": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "args#0 (copy)"
+      ]
+    },
+    "397": {
+      "op": "pushint 32 // 32",
+      "defined_out": [
+        "32",
+        "args#0 (copy)"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "args#0 (copy)",
+        "32"
+      ]
+    },
+    "399": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "values%0#0"
+      ]
+    },
+    "400": {
+      "op": "itob",
+      "defined_out": [
+        "encoded_value%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "encoded_value%0#0"
+      ]
+    },
+    "401": {
+      "op": "box_get",
+      "defined_out": [
+        "aggregate%box_get%1#0",
+        "info#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "info#0",
+        "aggregate%box_get%1#0"
+      ]
+    },
+    "402": {
+      "error": "Box must have value",
+      "op": "assert // Box must have value",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "info#0"
+      ]
+    },
+    "403": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "info#0",
+        "args#0 (copy)"
+      ]
+    },
+    "405": {
+      "op": "extract 0 32",
+      "defined_out": [
+        "info#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "info#0",
+        "user#0"
+      ]
+    },
+    "408": {
+      "op": "dig 1",
+      "defined_out": [
+        "info#0",
+        "info#0 (copy)",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "info#0",
+        "user#0",
+        "info#0 (copy)"
+      ]
+    },
+    "410": {
+      "op": "extract 0 1",
+      "defined_out": [
+        "info#0",
+        "op#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "info#0",
+        "user#0",
+        "op#0"
+      ]
+    },
+    "413": {
+      "op": "cover 2",
+      "defined_out": [
+        "info#0",
+        "op#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "info#0",
+        "user#0"
+      ]
+    },
+    "415": {
+      "op": "dig 1",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "info#0",
+        "user#0",
+        "info#0 (copy)"
+      ]
+    },
+    "417": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "info#0",
+        "info#0 (copy)",
+        "op#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "info#0",
+        "user#0",
+        "info#0 (copy)",
+        "1"
+      ]
+    },
+    "418": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "asset#0",
+        "info#0",
+        "op#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "info#0",
+        "user#0",
+        "asset#0"
+      ]
+    },
+    "419": {
+      "op": "uncover 2",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "user#0",
+        "asset#0",
+        "info#0"
+      ]
+    },
+    "421": {
+      "op": "pushint 9 // 9",
+      "defined_out": [
+        "9",
+        "asset#0",
+        "info#0",
+        "op#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "user#0",
+        "asset#0",
+        "info#0",
+        "9"
+      ]
+    },
+    "423": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "asset#0",
+        "op#0",
+        "power#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "user#0",
+        "asset#0",
+        "power#0"
+      ]
+    },
+    "424": {
+      "op": "cover 2",
+      "defined_out": [
+        "asset#0",
+        "op#0",
+        "power#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0"
+      ]
+    },
+    "426": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "0"
+      ]
+    },
+    "427": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "defined_out": [
+        "\"akita_dao\"",
+        "0",
+        "asset#0",
+        "op#0",
+        "power#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "0",
+        "\"akita_dao\""
+      ]
+    },
+    "428": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "akitaDAO#0",
+        "asset#0",
+        "maybe_exists%0#0",
+        "op#0",
+        "power#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "akitaDAO#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "429": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "akitaDAO#0"
+      ]
+    },
+    "430": {
+      "op": "pushbytes \"akita_al\"",
+      "defined_out": [
+        "\"akita_al\"",
+        "akitaDAO#0",
+        "asset#0",
+        "op#0",
+        "power#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "akitaDAO#0",
+        "\"akita_al\""
+      ]
+    },
+    "440": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "appListBytes#0",
+        "asset#0",
+        "awst_tmp%1#0",
+        "op#0",
+        "power#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "appListBytes#0",
+        "awst_tmp%1#0"
+      ]
+    },
+    "441": {
+      "op": "pop",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "appListBytes#0"
+      ]
+    },
+    "442": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "appListBytes#0",
+        "0"
+      ]
+    },
+    "443": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "asset#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "asset#0",
+        "stakingApp#0"
+      ]
+    },
+    "444": {
+      "op": "itxn_begin"
+    },
+    "445": {
+      "op": "swap",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "stakingApp#0",
+        "asset#0"
+      ]
+    },
+    "446": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "stakingApp#0",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "447": {
+      "op": "pushbytes 0x28",
+      "defined_out": [
+        "0x28",
+        "aggregate%val_as_bytes%0#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "stakingApp#0",
+        "aggregate%val_as_bytes%0#0",
+        "0x28"
+      ]
+    },
+    "450": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%head%1#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "stakingApp#0",
+        "aggregate%head%1#0"
+      ]
+    },
+    "451": {
+      "op": "pushbytes 0x40e914e6 // method \"getInfo(byte[32],(uint64,uint8))(uint64,uint64,uint64)\"",
+      "defined_out": [
+        "Method(getInfo(byte[32],(uint64,uint8))(uint64,uint64,uint64))",
+        "aggregate%head%1#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0",
+        "user#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "stakingApp#0",
+        "aggregate%head%1#0",
+        "Method(getInfo(byte[32],(uint64,uint8))(uint64,uint64,uint64))"
+      ]
+    },
+    "457": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "user#0",
+        "stakingApp#0",
+        "aggregate%head%1#0"
+      ]
+    },
+    "459": {
+      "op": "uncover 2",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0",
+        "aggregate%head%1#0",
+        "user#0"
+      ]
+    },
+    "461": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0",
+        "aggregate%head%1#0"
+      ]
+    },
+    "463": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "stakingApp#0"
+      ]
+    },
+    "465": {
+      "op": "itxn_field ApplicationID",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0"
+      ]
+    },
+    "467": {
+      "op": "pushint 6 // appl",
+      "defined_out": [
+        "appl",
+        "op#0",
+        "power#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "appl"
+      ]
+    },
+    "469": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0"
+      ]
+    },
+    "471": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "0"
+      ]
+    },
+    "472": {
+      "op": "itxn_field Fee",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0"
+      ]
+    },
+    "474": {
+      "op": "itxn_submit"
+    },
+    "475": {
+      "op": "itxn LastLog"
+    },
+    "477": {
+      "op": "dupn 2",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "awst_tmp%0#0 (copy)",
+        "op#0",
+        "power#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "awst_tmp%0#0",
+        "awst_tmp%0#0 (copy)"
+      ]
+    },
+    "479": {
+      "op": "extract 0 4",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "tmp%2#2"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "awst_tmp%0#0",
+        "tmp%2#2"
+      ]
+    },
+    "482": {
+      "op": "bytec_1 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "tmp%2#2"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "awst_tmp%0#0",
+        "tmp%2#2",
+        "0x151f7c75"
+      ]
+    },
+    "483": {
+      "op": "==",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "awst_tmp%0#0",
+        "tmp%3#0"
+      ]
+    },
+    "484": {
+      "error": "Bytes has valid prefix",
+      "op": "assert // Bytes has valid prefix",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "awst_tmp%0#0"
+      ]
+    },
+    "485": {
+      "op": "pushint 20 // 20",
+      "defined_out": [
+        "20",
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "awst_tmp%0#0",
+        "20"
+      ]
+    },
+    "487": {
+      "op": "extract_uint64",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "488": {
+      "op": "dup",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "values%0#0"
+      ]
+    },
+    "489": {
+      "op": "global LatestTimestamp",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "tmp%4#1",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "values%0#0",
+        "tmp%4#1"
+      ]
+    },
+    "491": {
+      "op": "<=",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "tmp%5#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%5#0"
+      ]
+    },
+    "492": {
+      "op": "bz check_after_if_else@3",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "495": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "userPower#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "496": {
+      "op": "frame_bury 1",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "op#0",
+        "power#0",
+        "userPower#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "498": {
+      "block": "check_after_inlined_smart_contracts/utils/functions.ts::getStakingPower@6",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 2",
+      "defined_out": [
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0"
+      ]
+    },
+    "500": {
+      "op": "pushbytes 0x0a",
+      "defined_out": [
+        "0x0a",
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0",
+        "0x0a"
+      ]
+    },
+    "503": {
+      "op": "==",
+      "defined_out": [
+        "op#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "504": {
+      "op": "bz check_after_if_else@8",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "507": {
+      "op": "frame_dig 1",
+      "defined_out": [
+        "op#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "509": {
+      "op": "frame_dig 3",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0",
+        "power#0"
+      ]
+    },
+    "511": {
+      "op": "==",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "tmp%2#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "512": {
+      "block": "check_after_inlined_smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@19",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ],
+      "op": "frame_bury 0",
+      "defined_out": [
+        "tmp%2#0"
+      ]
+    },
+    "514": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "515": {
+      "block": "check_after_if_else@8",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 2",
+      "defined_out": [
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0"
+      ]
+    },
+    "517": {
+      "op": "pushbytes 0x14",
+      "defined_out": [
+        "0x14",
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0",
+        "0x14"
+      ]
+    },
+    "520": {
+      "op": "==",
+      "defined_out": [
+        "op#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%4#0"
+      ]
+    },
+    "521": {
+      "op": "bz check_after_if_else@10",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "524": {
+      "op": "frame_dig 1",
+      "defined_out": [
+        "op#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "526": {
+      "op": "frame_dig 3",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0",
+        "power#0"
+      ]
+    },
+    "528": {
+      "op": "!=",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "tmp%2#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "529": {
+      "op": "b check_after_inlined_smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@19"
+    },
+    "532": {
+      "block": "check_after_if_else@10",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 2",
+      "defined_out": [
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0"
+      ]
+    },
+    "534": {
+      "op": "pushbytes 0x1e",
+      "defined_out": [
+        "0x1e",
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0",
+        "0x1e"
+      ]
+    },
+    "537": {
+      "op": "==",
+      "defined_out": [
+        "op#0",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%6#0"
+      ]
+    },
+    "538": {
+      "op": "bz check_after_if_else@12",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "541": {
+      "op": "frame_dig 1",
+      "defined_out": [
+        "op#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "543": {
+      "op": "frame_dig 3",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0",
+        "power#0"
+      ]
+    },
+    "545": {
+      "op": "<",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "tmp%2#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "546": {
+      "op": "b check_after_inlined_smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@19"
+    },
+    "549": {
+      "block": "check_after_if_else@12",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 2",
+      "defined_out": [
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0"
+      ]
+    },
+    "551": {
+      "op": "pushbytes 0x28",
+      "defined_out": [
+        "0x28",
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0",
+        "0x28"
+      ]
+    },
+    "554": {
+      "op": "==",
+      "defined_out": [
+        "op#0",
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%8#0"
+      ]
+    },
+    "555": {
+      "op": "bz check_after_if_else@14",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "558": {
+      "op": "frame_dig 1",
+      "defined_out": [
+        "op#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "560": {
+      "op": "frame_dig 3",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0",
+        "power#0"
+      ]
+    },
+    "562": {
+      "op": "<=",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "tmp%2#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "563": {
+      "op": "b check_after_inlined_smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@19"
+    },
+    "566": {
+      "block": "check_after_if_else@14",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 2",
+      "defined_out": [
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0"
+      ]
+    },
+    "568": {
+      "op": "pushbytes 0x32",
+      "defined_out": [
+        "0x32",
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0",
+        "0x32"
+      ]
+    },
+    "571": {
+      "op": "==",
+      "defined_out": [
+        "op#0",
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%10#0"
+      ]
+    },
+    "572": {
+      "op": "bz check_after_if_else@16",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "575": {
+      "op": "frame_dig 1",
+      "defined_out": [
+        "op#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "577": {
+      "op": "frame_dig 3",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0",
+        "power#0"
+      ]
+    },
+    "579": {
+      "op": ">",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "tmp%2#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "580": {
+      "op": "b check_after_inlined_smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@19"
+    },
+    "583": {
+      "block": "check_after_if_else@16",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 2",
+      "defined_out": [
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0"
+      ]
+    },
+    "585": {
+      "op": "pushbytes 0x3c",
+      "defined_out": [
+        "0x3c",
+        "op#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "op#0",
+        "0x3c"
+      ]
+    },
+    "588": {
+      "op": "==",
+      "defined_out": [
+        "op#0",
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%12#0"
+      ]
+    },
+    "589": {
+      "op": "bz check_after_if_else@18",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "592": {
+      "op": "frame_dig 1",
+      "defined_out": [
+        "op#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "594": {
+      "op": "frame_dig 3",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0",
+        "power#0"
+      ]
+    },
+    "596": {
+      "op": ">=",
+      "defined_out": [
+        "op#0",
+        "power#0",
+        "tmp%2#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "597": {
+      "op": "b check_after_inlined_smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@19"
+    },
+    "600": {
+      "block": "check_after_if_else@18",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "601": {
+      "op": "b check_after_inlined_smart_contracts/gates/sub-gates/staking-power/contract.algo.ts::StakingPowerGate.stakingPowerGate@19"
+    },
+    "604": {
+      "block": "check_after_if_else@3",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 5",
+      "defined_out": [
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "values%0#0"
+      ]
+    },
+    "606": {
+      "op": "global LatestTimestamp",
+      "defined_out": [
+        "tmp%6#1",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "values%0#0",
+        "tmp%6#1"
+      ]
+    },
+    "608": {
+      "op": "-",
+      "defined_out": [
+        "remainingTime#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingTime#0"
+      ]
+    },
+    "609": {
+      "op": "dup",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingTime#0",
+        "remainingTime#0"
+      ]
+    },
+    "610": {
+      "op": "frame_bury 0",
+      "defined_out": [
+        "remainingTime#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingTime#0"
+      ]
+    },
+    "612": {
+      "op": "pushint 604800 // 604800",
+      "defined_out": [
+        "604800",
+        "remainingTime#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingTime#0",
+        "604800"
+      ]
+    },
+    "616": {
+      "op": "<",
+      "defined_out": [
+        "remainingTime#0",
+        "tmp%8#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%8#0"
+      ]
+    },
+    "617": {
+      "op": "bz check_after_if_else@5",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "620": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "621": {
+      "op": "frame_bury 1",
+      "defined_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "values%0#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "623": {
+      "op": "b check_after_inlined_smart_contracts/utils/functions.ts::getStakingPower@6"
+    },
+    "626": {
+      "block": "check_after_if_else@5",
+      "stack_in": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ],
+      "op": "frame_dig 0",
+      "defined_out": [
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingTime#0"
+      ]
+    },
+    "628": {
+      "op": "pushint 86400 // 86400",
+      "defined_out": [
+        "86400",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingTime#0",
+        "86400"
+      ]
+    },
+    "632": {
+      "op": "/",
+      "defined_out": [
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0"
+      ]
+    },
+    "633": {
+      "op": "frame_dig 4",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "awst_tmp%0#0"
+      ]
+    },
+    "635": {
+      "op": "intc_3 // 4",
+      "defined_out": [
+        "4",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "awst_tmp%0#0",
+        "4"
+      ]
+    },
+    "636": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0",
+        "values%2#1"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "values%2#1"
+      ]
+    },
+    "637": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%1#0",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%val_as_bytes%1#0"
+      ]
+    },
+    "638": {
+      "op": "intc 4 // 1000000",
+      "defined_out": [
+        "1000000",
+        "aggregate%val_as_bytes%1#0",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%val_as_bytes%1#0",
+        "1000000"
+      ]
+    },
+    "640": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ]
+    },
+    "641": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%head%3#0",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%head%3#0"
+      ]
+    },
+    "642": {
+      "op": "dup",
+      "defined_out": [
+        "aggregate%head%3#0",
+        "aggregate%head%3#0 (copy)",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%head%3#0",
+        "aggregate%head%3#0 (copy)"
+      ]
+    },
+    "643": {
+      "op": "bytec 4 // 0x000000000000016d00000000000f4240",
+      "defined_out": [
+        "0x000000000000016d00000000000f4240",
+        "aggregate%head%3#0",
+        "aggregate%head%3#0 (copy)",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%head%3#0",
+        "aggregate%head%3#0 (copy)",
+        "0x000000000000016d00000000000f4240"
+      ]
+    },
+    "645": {
+      "callsub": "smart_contracts/utils/functions.ts::wideRatio",
+      "op": "callsub wideRatio",
+      "defined_out": [
+        "aggregate%head%3#0",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0",
+        "tmp%12#1"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%head%3#0",
+        "tmp%12#1"
+      ]
+    },
+    "648": {
+      "op": "dig 2",
+      "defined_out": [
+        "aggregate%head%3#0",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingDays#0 (copy)",
+        "remainingTime#0",
+        "tmp%12#1"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%head%3#0",
+        "tmp%12#1",
+        "remainingDays#0 (copy)"
+      ]
+    },
+    "650": {
+      "op": "mulw",
+      "defined_out": [
+        "aggregate%head%3#0",
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0",
+        "tmp%13#1",
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%head%3#0",
+        "tmp%13#1",
+        "tmp%14#0"
+      ]
+    },
+    "651": {
+      "op": "pop",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "remainingDays#0",
+        "aggregate%head%3#0",
+        "tmp%13#1"
+      ]
+    },
+    "652": {
+      "op": "cover 2",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%13#1",
+        "remainingDays#0",
+        "aggregate%head%3#0"
+      ]
+    },
+    "654": {
+      "op": "bytec 4 // 0x000000000000016d00000000000f4240",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%13#1",
+        "remainingDays#0",
+        "aggregate%head%3#0",
+        "0x000000000000016d00000000000f4240"
+      ]
+    },
+    "656": {
+      "callsub": "smart_contracts/utils/functions.ts::wideRatio",
+      "op": "callsub wideRatio",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "remainingDays#0",
+        "remainingTime#0",
+        "tmp%13#1",
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%13#1",
+        "remainingDays#0",
+        "tmp%17#0"
+      ]
+    },
+    "659": {
+      "op": "mulw",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "remainingTime#0",
+        "tmp%13#1",
+        "tmp%18#0",
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%13#1",
+        "tmp%18#0",
+        "tmp%19#0"
+      ]
+    },
+    "660": {
+      "op": "bury 1",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%13#1",
+        "tmp%19#0"
+      ]
+    },
+    "662": {
+      "op": "intc 4 // 1000000",
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "tmp%13#1",
+        "tmp%19#0",
+        "1000000"
+      ]
+    },
+    "664": {
+      "op": "divw",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "remainingTime#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0",
+        "userPower#0"
+      ]
+    },
+    "665": {
+      "op": "frame_bury 1",
+      "defined_out": [
+        "awst_tmp%0#0",
+        "remainingTime#0",
+        "userPower#0"
+      ],
+      "stack_out": [
+        "remainingTime#0",
+        "userPower#0",
+        "op#0",
+        "power#0",
+        "awst_tmp%0#0",
+        "values%0#0"
+      ]
+    },
+    "667": {
+      "op": "b check_after_inlined_smart_contracts/utils/functions.ts::getStakingPower@6"
+    },
+    "670": {
+      "subroutine": "smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update",
+      "params": {
+        "newVersion#0": "bytes"
+      },
+      "block": "update",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "673": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "675": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "676": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "defined_out": [
+        "\"akita_dao\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0",
+        "\"akita_dao\""
+      ]
+    },
+    "677": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "678": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "679": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "tmp%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "681": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0"
+      ]
+    },
+    "682": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "683": {
+      "error": "Only the Akita DAO can call this function",
+      "op": "assert // Only the Akita DAO can call this function",
+      "stack_out": []
+    },
+    "684": {
+      "op": "bytec_3 // \"version\"",
+      "defined_out": [
+        "\"version\""
+      ],
+      "stack_out": [
+        "\"version\""
+      ]
+    },
+    "685": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"version\"",
+        "newVersion#0 (copy)"
+      ],
+      "stack_out": [
+        "\"version\"",
+        "newVersion#0 (copy)"
+      ]
+    },
+    "687": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "688": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "689": {
+      "subroutine": "smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO",
+      "params": {
+        "app#0": "uint64"
+      },
+      "block": "updateAkitaDAO",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "692": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "694": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "695": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "defined_out": [
+        "\"akita_dao\"",
+        "0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "0",
+        "\"akita_dao\""
+      ]
+    },
+    "696": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "697": {
+      "error": "check GlobalState exists",
+      "op": "assert // check GlobalState exists",
+      "stack_out": [
+        "tmp%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "698": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "tmp%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "700": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "tmp%0#0",
+        "value%0#0"
+      ]
+    },
+    "701": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "702": {
+      "error": "Only the Akita DAO can call this function",
+      "op": "assert // Only the Akita DAO can call this function",
+      "stack_out": []
+    },
+    "703": {
+      "op": "bytec_0 // \"akita_dao\"",
+      "stack_out": [
+        "\"akita_dao\""
+      ]
+    },
+    "704": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "\"akita_dao\"",
+        "app#0 (copy)"
+      ],
+      "stack_out": [
+        "\"akita_dao\"",
+        "app#0 (copy)"
+      ]
+    },
+    "706": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "707": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

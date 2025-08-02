@@ -30,11 +30,13 @@ import {
   AbstractAccountGlobalStateKeysBanner,
   AbstractAccountGlobalStateKeysBio,
   AbstractAccountGlobalStateKeysControlledAddress,
+  AbstractAccountGlobalStateKeysCurrentEscrowID,
   AbstractAccountGlobalStateKeysEscrowFactory,
   AbstractAccountGlobalStateKeysFactoryApp,
   AbstractAccountGlobalStateKeysLastChange,
   AbstractAccountGlobalStateKeysLastUserInteraction,
   AbstractAccountGlobalStateKeysNickname,
+  AbstractAccountGlobalStateKeysRekeyIndex,
   AbstractAccountGlobalStateKeysSpendingAddress,
   AllowanceMBR,
   EscrowsMBR,
@@ -54,6 +56,8 @@ import {
   ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY,
   ERR_DOES_NOT_HOLD_ASSET,
   ERR_ESCROW_ALREADY_EXISTS,
+  ERR_ESCROW_DOES_NOT_EXIST,
+  ERR_ESCROW_LOCKED,
   ERR_ESCROW_REQUIRED_TO_BE_SET_AS_DEFAULT,
   ERR_EXECUTION_KEY_ALREADY_EXISTS,
   ERR_EXECUTION_KEY_DOES_NOT_EXIST,
@@ -67,7 +71,6 @@ import {
   ERR_MALFORMED_OFFSETS,
   ERR_METHOD_ON_COOLDOWN,
   ERR_MISSING_REKEY_BACK,
-  ERR_NOT_USING_ESCROW,
   ERR_ONLY_ADMIN_CAN_ADD_PLUGIN,
   ERR_ONLY_ADMIN_CAN_CHANGE_ADMIN,
   ERR_ONLY_ADMIN_CAN_CHANGE_NICKNAME,
@@ -83,13 +86,12 @@ import {
 } from './errors'
 
 import { Staking } from '../../staking/contract.algo'
-import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, EscrowReclaim, ExecutionKey, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
+import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, EscrowInfo, EscrowReclaim, ExecutionKey, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
 import { AkitaDomain, BoxCostPerByte } from '../../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyRevocation, GlobalStateKeyVersion } from '../../constants'
 import { getAkitaAppList } from '../../utils/functions'
 import { AbstractedAccountInterface } from '../../utils/abstract-account'
 import { EscrowFactory } from '../../escrow/factory.algo'
-import { ERR_ESCROW_DOES_NOT_EXIST, ERR_ESCROW_LOCKED } from '../../dao/errors'
 import { ARC58WalletIDsByAccountsMbr, NewCostForARC58 } from '../../escrow/constants'
 
 export class AbstractedAccount extends Contract implements AbstractedAccountInterface {
@@ -118,6 +120,10 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   lastChange = GlobalState<uint64>({ key: AbstractAccountGlobalStateKeysLastChange })
   /** [TEMPORARY STATE FIELD] The spending address for the currently active plugin */
   spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
+  /** [TEMPORARY STATE FIELD] The current escrow ID in use for the account */
+  currentEscrowID = GlobalState<uint64>({ initialValue: 0, key: AbstractAccountGlobalStateKeysCurrentEscrowID, })
+  /** [TEMPORARY STATE FIELD] The index of the transaction that created the rekey sandwich */
+  rekeyIndex = GlobalState<uint64>({ initialValue: 0, key: AbstractAccountGlobalStateKeysRekeyIndex })
   /** the spending account factory to use for allowances */
   escrowFactory = GlobalState<Application>({ key: AbstractAccountGlobalStateKeysEscrowFactory })
   /** the application ID for the contract that deployed this wallet */
@@ -725,9 +731,11 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   /**
    * Verify the abstracted account is rekeyed to this app
   */
-  arc58_verifyAuthAddr(): void {
+  arc58_verifyAuthAddress(): void {
     assert(this.spendingAddress.value.authAddress === this.getAuthAddr());
     this.spendingAddress.value = Global.zeroAddress
+    this.currentEscrowID.value = 0
+    this.rekeyIndex.value = 0
   }
 
   /**
@@ -803,6 +811,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       const escrowID = this.namedEscrows(escrow).value
       const spendingApp = Application(escrowID)
       this.spendingAddress.value = spendingApp.address
+      this.currentEscrowID.value = escrowID
       this.transferFunds(key, escrowID, fundsRequest)
     } else {
       this.spendingAddress.value = this.controlledAddress.value
@@ -818,6 +827,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         note: 'rekeying to plugin app'
       })
       .submit();
+
+    /** track the index of the transaction that triggered the rekey */
+    this.rekeyIndex.value = Txn.groupIndex
 
     if (this.plugins(key).value.delegationType === DelegationTypeSelf) {
       this.updateLastUserInteraction();
@@ -1366,17 +1378,25 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   }
 
   @abimethod({ readonly: true })
-  arc58_getEscrow(name: string): uint64 {
-    if (this.namedEscrows(name).exists) {
-      return this.namedEscrows(name).value
-    }
-    return 0
+  arc58_getPlugin(name: string): PluginInfo {
+    return this.plugins(this.namedPlugins(name).value).value
   }
 
   @abimethod({ readonly: true })
-  arc58_mustGetEscrow(name: string): uint64 {
+  arc58_getEscrow(name: string): EscrowInfo {
+    if (this.namedEscrows(name).exists) {
+      const id = this.namedEscrows(name).value
+      return { id, locked: this.escrows(id).value }
+    }
+    return { id: 0, locked: false }
+  }
+
+  @abimethod({ readonly: true })
+  arc58_mustGetEscrow(name: string): EscrowInfo {
     assert(this.namedEscrows(name).exists, ERR_ESCROW_DOES_NOT_EXIST);
-    return this.namedEscrows(name).value
+    const id = this.namedEscrows(name).value
+    assert(this.escrows(id).exists, ERR_ESCROW_DOES_NOT_EXIST);
+    return { id, locked: this.escrows(id).value }
   }
 
   @abimethod({ readonly: true })
@@ -1413,13 +1433,16 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         }
       }
 
-      const escrowInfo = abiCall(Staking.prototype.getEscrowInfo, {
-        appId: getAkitaAppList(this.akitaDAO.value).staking,
-        args: [
-          new Address(this.controlledAddress.value),
-          asset.id
-        ]
-      }).returnValue
+      const escrowInfo = abiCall(
+        Staking.prototype.getEscrowInfo,
+        {
+          appId: getAkitaAppList(this.akitaDAO.value).staking,
+          args: [
+            new Address(this.controlledAddress.value),
+            asset.id
+          ]
+        }
+      ).returnValue
 
       amounts = [...amounts, (amount + escrowInfo.hard + escrowInfo.lock)]
     }
