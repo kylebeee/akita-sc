@@ -1,7 +1,8 @@
-import { abimethod, Application, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Application, assertMatch, Global, gtxn, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { AkitaBaseContract } from "../../../utils/base-contracts/base";
 import { Address } from "@algorandfoundation/algorand-typescript/arc4";
 import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
+import { ERR_INVALID_PAYMENT } from "../../account/errors";
 
 export class TokenMintPlugin extends AkitaBaseContract {
 
@@ -27,12 +28,22 @@ export class TokenMintPlugin extends AkitaBaseContract {
     freeze: Address,
     clawback: Address,
     defaultFrozen: boolean,
-    url: string
+    url: string,
+    mbrPayment: gtxn.PaymentTxn
   ): uint64 {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    const bonesCreateTxn = itxn
+    assertMatch(
+      mbrPayment,
+      {
+        receiver: sender,
+        amount: Global.assetCreateMinBalance
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    const createTxn = itxn
       .assetConfig({
         sender,
         assetName,
@@ -49,6 +60,6 @@ export class TokenMintPlugin extends AkitaBaseContract {
       })
       .submit()
 
-    return bonesCreateTxn.createdAsset.id
+    return createTxn.createdAsset.id
   }
 }

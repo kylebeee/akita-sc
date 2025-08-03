@@ -1,14 +1,8 @@
 import algosdk from "algosdk";
-import { WalletSDK } from ".";
-import { GlobalKeysState, PluginInfo as ClientPluginInfo, AbstractedAccountClient, AbstractedAccountArgs } from "../generated/AbstractedAccountClient";
-import { WithSigner } from "../types";
+import { GlobalKeysState, PluginInfo as ClientPluginInfo, AbstractedAccountArgs } from "../generated/AbstractedAccountClient";
+import { WithSigner, SDKClient, AkitaSDK, PluginMethodSpecifier, PluginSDKReturn } from "../types";
 
 export type ContractArgs = AbstractedAccountArgs["obj"];
-
-export type ClientAndSDK = {
-  client: AbstractedAccountClient;
-  sdk: WalletSDK;
-}
 
 export type WalletGlobalState = GlobalKeysState;
 
@@ -41,24 +35,19 @@ export type RekeyArgs = {
   fundsRequest: [number | bigint, number | bigint][]
 }
 
-export type WalletPluginParams<T> = (
-  Omit<ContractArgs['arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void'], 'plugin' | 'methodOffsets' | 'fundsRequest'> &
+// Updated plugin parameters to support fluent transaction API
+export type WalletUsePluginParams<TClient extends SDKClient> = (
+  Omit<ContractArgs['arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void'], 'plugin' | 'escrow' | 'methodOffsets' | 'fundsRequest'> &
   {
     name?: string
-    client: T
+    escrow?: string
+    client: AkitaSDK<TClient>
     fundsRequest?: FundsRequest[]
-    txns: algosdk.Transaction[][]
+    calls: PluginSDKReturn[]
   }
 ) & WithSigner;
 
-type MethodNames<T> = {
-  [K in keyof T]: T[K] extends (...args: any[]) => any ? K : never;
-}[keyof T];
-
-type MethodSignatures<T> = {
-  [K in keyof T]: T[K] extends (...args: any[]) => any ? T[K] : never;
-}[keyof T];
-
+// Default values for addPlugin method
 export const AddPluginDefaults = {
   escrow: '',
   name: '',
@@ -68,15 +57,48 @@ export const AddPluginDefaults = {
   delegationType: 0n,
 }
 
-export type WalletAddPluginParams<T> = (
-  Omit<ContractArgs['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'], 'methods'> &
+// Enhanced method specification that supports method references directly
+export type PluginMethodDefinition = {
+  name: PluginMethodSpecifier;
+  cooldown: bigint;
+};
+
+type BaseWalletAddPluginParams<TClient extends SDKClient> =
+  Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'], 'methods'>> &
   WithSigner &
   {
-    name?: string
-    client: T
-    methods: {
-      name: MethodNames<T> | MethodSignatures<T> | Uint8Array
-      cooldown: bigint
-    }[]
+    client: AkitaSDK<TClient>
+    methods?: PluginMethodDefinition[]
   }
-)
+
+export type WalletAddPluginParams<TClient extends SDKClient> =
+  BaseWalletAddPluginParams<TClient> & (
+    | { global: true }
+    | { global?: false | undefined; caller: string }
+  )
+
+/**
+ * Type guard to check if an object is a valid AkitaSDK instance for use with plugins
+ */
+export function isValidPluginSDK<TClient extends SDKClient>(
+  sdk: any
+): sdk is AkitaSDK<TClient> {
+  return (
+    sdk &&
+    typeof sdk === 'object' &&
+    typeof sdk.appId === 'bigint' &&
+    sdk.client &&
+    typeof sdk.client.appId === 'bigint' &&
+    typeof sdk.client.appAddress === 'string' &&
+    sdk.algorand
+  );
+}
+
+/**
+ * Extract the app ID from a plugin SDK instance in a type-safe way
+ */
+export function getPluginAppId<TClient extends SDKClient>(
+  plugin: AkitaSDK<TClient>
+): bigint {
+  return plugin.appId;
+}

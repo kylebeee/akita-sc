@@ -1,5 +1,8 @@
 import { uint64 } from "@algorandfoundation/algorand-typescript"
 
+export const AbstractAccountNumGlobalBytes: uint64 = 54
+export const AbstractAccountNumGlobalUints: uint64 = 10
+
 export const AbstractAccountGlobalStateKeysAdmin = 'admin'
 export const AbstractAccountGlobalStateKeysControlledAddress = 'controlled_address'
 export const AbstractAccountGlobalStateKeysNickname = 'nickname'

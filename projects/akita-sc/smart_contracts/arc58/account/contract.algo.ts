@@ -15,6 +15,7 @@ import {
   bytes,
   assertMatch,
   clone,
+  contract,
 } from '@algorandfoundation/algorand-typescript'
 import { AssetHolding, btoi, Global, len, Txn } from '@algorandfoundation/algorand-typescript/op'
 import { abiCall, Address, Contract, methodSelector, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
@@ -94,6 +95,7 @@ import { AbstractedAccountInterface } from '../../utils/abstract-account'
 import { EscrowFactory } from '../../escrow/factory.algo'
 import { ARC58WalletIDsByAccountsMbr, NewCostForARC58 } from '../../escrow/constants'
 
+@contract({ stateTotals: { globalBytes: 54, globalUints: 10 } })
 export class AbstractedAccount extends Contract implements AbstractedAccountInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
@@ -1018,7 +1020,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     useExecutionKey: boolean,
     defaultToEscrow: boolean
   ): void {
-    assert(Txn.sender === this.admin.value, ERR_ADMIN_ONLY);
+    assert(this.isAdmin(), ERR_ADMIN_ONLY);
     assert(!this.namedPlugins(name).exists);
 
     let escrowKey: string = escrow

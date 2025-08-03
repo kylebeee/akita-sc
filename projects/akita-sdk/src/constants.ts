@@ -1,7 +1,7 @@
 import { SendParams } from "@algorandfoundation/algokit-utils/types/transaction";
 import { makeEmptyTransactionSigner } from "algosdk";
 
-export const DEFAULT_READER = "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA"
+export const DEFAULT_READER: string = "A7NMWS3NT3IUDMLVO26ULGXGIIOUQ3ND2TXSER6EBGRZNOBOUIQXHIBGDE" // "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA"
 
 export const emptySigner = makeEmptyTransactionSigner();
 

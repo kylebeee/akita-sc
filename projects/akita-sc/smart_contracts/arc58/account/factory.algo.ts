@@ -17,6 +17,7 @@ import { ERR_INVALID_PAYMENT } from '../../utils/errors'
 import { FactoryContract } from '../../utils/base-contracts/factory'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
 import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
+import { AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints } from './constants'
 
 export class AbstractedAccountFactory extends FactoryContract {
 
@@ -43,19 +44,6 @@ export class AbstractedAccountFactory extends FactoryContract {
   updateRevocationApp(app: uint64): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     this.revocation.value = Application(app)
-  }
-
-  @abimethod({ readonly: true })
-  costNew(): uint64 {
-    const abstractedAccount = compileArc4(AbstractedAccount)
-
-    return (
-      MAX_PROGRAM_PAGES +
-      (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 228_000
-      (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 300_000
-      Global.minBalance +
-      ARC58WalletIDsByAccountsMbr
-    )
   }
 
   new(payment: gtxn.PaymentTxn, controlledAddress: Address, admin: Address, nickname: string): uint64 {
@@ -103,5 +91,18 @@ export class AbstractedAccountFactory extends FactoryContract {
       .submit()
 
     return walletID
+  }
+
+  @abimethod({ readonly: true })
+  cost(): uint64 {
+    // const abstractedAccount = compileArc4(AbstractedAccount)
+
+    return (
+      MAX_PROGRAM_PAGES +
+      (GLOBAL_STATE_KEY_UINT_COST * AbstractAccountNumGlobalUints) +
+      (GLOBAL_STATE_KEY_BYTES_COST * AbstractAccountNumGlobalBytes) +
+      Global.minBalance +
+      ARC58WalletIDsByAccountsMbr
+    )
   }
 }

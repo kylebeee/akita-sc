@@ -65,9 +65,9 @@ export type PluginKey = {
   escrow: string;
 }
 
+export const DelegationTypeOther = new Uint8(0)
 export const DelegationTypeSelf = new Uint8(1)
 export const DelegationTypeAgent = new Uint8(2)
-export const DelegationTypeOther = new Uint8(3)
 
 export class arc4PluginInfo extends Struct<{
   /** Whether the plugin has permissions to change the admin account */

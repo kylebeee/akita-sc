@@ -1,13 +1,14 @@
 import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AbstractedAccountFactory, EscrowInfo, PluginKey, type AbstractedAccountClient } from '../generated/AbstractedAccountClient'
-import { MbrParams, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletPluginParams } from './types';
-import { NewContractSDKParams, WithSigner } from '../types';
+import { MbrParams, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
+import { isPluginSDKReturn, NewContractSDKParams, SDKClient } from '../types';
 import { BaseSDK } from '../base';
-import algosdk from 'algosdk';
+import algosdk, { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
 import { ABIReturn } from '@algorandfoundation/algokit-utils/types/app';
 
 export * from "./types";
 export * from './factory';
-export * from './optin';
+export * from './plugins';
+
 
 type ContractArgs = AbstractedAccountArgs["obj"];
 
@@ -63,16 +64,16 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     return await this.client.send.arc58CanCall({ args, ...this.sendParams }) as unknown as boolean;
   }
 
-  async usePlugin<T>({
+  async usePlugin<TClient extends SDKClient>({
     sender,
     signer,
     name = '',
     global,
-    escrow,
+    escrow = '',
     fundsRequest = [],
     client,
-    txns
-  }: WalletPluginParams<T>): Promise<{
+    calls
+  }: WalletUsePluginParams<TClient>): Promise<{
     groupId: string;
     txIds: string[];
     returns: ABIReturn[] & [];
@@ -80,8 +81,15 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     transactions: algosdk.Transaction[];
   }> {
 
-    // @ts-ignore , TODO: type this properly
-    const plugin = client.appId
+    // Get the plugin app ID from the SDK client
+    const plugin = client.appId;
+
+    // call the functions provided by the plugin SDK to
+    // inject our wallet ID and get back the transactions
+    let txns: algosdk.Transaction[] = []
+    for (const call of calls) {
+      txns.push(...(await call.getTxns({ walletId: this.client.appId })))
+    }
 
     // calculate method offsets
     const methods = (await this.getPluginByKey({ plugin, caller: sender, escrow })).methods
@@ -92,16 +100,14 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         methodSignatures.set(methods[i].name, i);
       }
 
-      for (const innerTxns of txns) {
-        for (const txn of innerTxns) {
-          if (
-            txn.applicationCall?.appIndex === plugin &&
-            methods.length > 0
-          ) {
-            const sig = txn.applicationCall?.appArgs[0]
-            if (sig && methodSignatures.has(sig)) {
-              methodOffsets.push(methodSignatures.get(sig)!)
-            }
+      for (const txn of txns) {
+        if (
+          txn.applicationCall?.appIndex === plugin &&
+          methods.length > 0
+        ) {
+          const sig = txn.applicationCall?.appArgs[0]
+          if (sig && methodSignatures.has(sig)) {
+            methodOffsets.push(methodSignatures.get(sig)!)
           }
         }
       }
@@ -122,28 +128,115 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       group.arc58RekeyToPlugin({ args: { plugin, ...rekeyArgs } })
     }
 
-    for (const innerTxns of txns) {
-      for (const txn of innerTxns) {
-        group.addTransaction(txn)
-      }
+    for (const txn of txns) {
+      group.addTransaction(txn)
     }
 
     group.arc58VerifyAuthAddress({ args: {}, sender, signer })
 
-    const comp = await group.composer()
-    comp
-
     return await group.send({ ...this.sendParams });
   }
 
-  async addPlugin<T>({
+  /**
+   * Add a plugin to this wallet with type-safe method configuration.
+   * Supports method references directly from the plugin SDK.
+   * 
+   * @param params - Plugin configuration including the plugin SDK client and method definitions
+   * @returns Promise with transaction result
+   * 
+   * @example
+   * ```typescript
+   * // New preferred API with method references
+   * await walletSDK.addPlugin({
+   *   sender: userAddress,
+   *   signer: transactionSigner,
+   *   client: myPluginSDK,
+   *   methods: [
+   *     { name: myPluginSDK.execute, cooldown: 100n },  // Direct method reference!
+   *     { name: 'methodName', cooldown: 50n }           // String names still work
+   *   ],
+   *   admin: true,
+   *   escrow: 'my_escrow'
+   * });
+   * ```
+   */
+  async addPlugin<TClient extends SDKClient>({
     sender,
     signer,
     name = '',
-    escrow,
     client,
-  }: WalletAddPluginParams<T>): Promise<any> {
-    
+    caller,
+    global = false,
+    methods = [],
+    escrow = '',
+    admin = false,
+    delegationType = 0n,
+    lastValid = 0n,
+    cooldown = 0n,
+    useRounds = false,
+    useExecutionKey = false,
+    defaultToEscrow = false,
+  }: WalletAddPluginParams<TClient>): Promise<any> {
+
+    // Get the plugin app ID from the SDK client
+    const plugin = client.appId;
+
+    if (global) {
+      caller = ALGORAND_ZERO_ADDRESS_STRING
+    }
+
+    let transformedMethods: [Uint8Array<ArrayBufferLike>, number | bigint][] = [];
+    if (methods.length > 0) {
+      transformedMethods = methods.map((method) => {
+        const selector = isPluginSDKReturn(method.name)
+          ? method.name().selector
+          : method.name;
+
+        return [selector, method.cooldown];
+      });
+    }
+
+    if (name !== '') {
+      return await this.client.send.arc58AddNamedPlugin({
+        sender,
+        signer,
+        args: {
+          name,
+          plugin,
+          caller: caller!,
+          escrow,
+          admin,
+          delegationType,
+          lastValid,
+          cooldown,
+          methods: transformedMethods,
+          useRounds,
+          useExecutionKey,
+          defaultToEscrow
+        },
+        ...this.sendParams
+      });
+    }
+
+    // Call the contract method with properly typed parameters
+    return await this.client.send.arc58AddPlugin({
+      sender,
+      signer,
+      args: {
+        plugin,
+        caller: caller!,
+        escrow,
+        admin,
+        delegationType,
+        lastValid,
+        cooldown,
+        methods: transformedMethods,
+        useRounds,
+        useExecutionKey,
+        defaultToEscrow
+      },
+      ...this.sendParams
+    });
   }
 
   async getGlobalState(): Promise<WalletGlobalState> {

@@ -1,4 +1,4 @@
-import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryClient, AbstractedAccountFactoryFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountFactoryClient'
+import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountFactoryClient'
 import { EscrowFactoryClient } from '../../smart_contracts/artifacts/escrow/EscrowFactoryClient';
 import { FixtureAndAccount } from '../types';
 import { WalletFactorySDK } from 'akita-sdk'
@@ -30,7 +30,7 @@ export const deployAbstractedAccountFactory = async ({ fixture, sender, signer, 
 
   await client.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
 
-  return new WalletFactorySDK({ algorand, appId: client.appId });
+  return new WalletFactorySDK({ algorand, factoryParams: { appId: client.appId } });
 };
 
 export const deployAbstractedAccountFactoryAndEscrowFactory = async ({ fixture, sender, signer }: Omit<DeployParams, 'args'>): Promise<{ aaFactory: WalletFactorySDK; eFactory: EscrowFactoryClient }> => {

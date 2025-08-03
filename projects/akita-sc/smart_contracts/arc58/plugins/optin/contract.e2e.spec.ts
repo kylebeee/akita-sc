@@ -1,17 +1,17 @@
 import { Config } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { Account, Address } from 'algosdk'
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { Address, ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk'
+import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { OptInPluginFactory } from '../../../artifacts/arc58/plugins/optin/OptInPluginClient'
 import { newWallet, OptinPluginSDK, WalletFactorySDK } from 'akita-sdk'
 import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
+import { deployTokenMintPlugin} from '../../../../tests/fixtures/plugins/token-mint'
 
 describe('Optin plugin contract', () => {
   const localnet = algorandFixture();
   
-  let aaFactory: WalletFactorySDK;
+  // let aaFactory: WalletFactorySDK;
 
   beforeAll(async () => {
     Config.configure({
@@ -19,11 +19,6 @@ describe('Optin plugin contract', () => {
       // traceAll: true,
     })
     registerDebugEventHandlers()
-    const { algorand, context: { testAccount } } = localnet
-    const sender = testAccount.toString()
-    const signer = testAccount.signer;
-
-    ({ aaFactory } = await deployAbstractedAccountFactoryAndEscrowFactory({ fixture: localnet, sender, signer }));
   })
 
   beforeEach(localnet.newScope)
@@ -39,9 +34,7 @@ describe('Optin plugin contract', () => {
       onSchemaBreak: 'append',
     })
 
-    const sdk = new OptinPluginSDK({ algorand, appId: client.appId })
-
-    return { client, sdk }
+    return new OptinPluginSDK({ algorand, factoryParams: { appId: client.appId } })
   }
 
   describe('Optin', () => {
@@ -50,19 +43,69 @@ describe('Optin plugin contract', () => {
       const sender = testAccount.toString()
       const signer = testAccount.signer
 
-      const wallet = await newWallet({ factoryId: aaFactory.appId, algorand, nickname: 'test_wallet', sender, signer })
-      const { sdk: pluginSdk } = await deploy(testAccount)
+      const { aaFactory } = await deployAbstractedAccountFactoryAndEscrowFactory({ fixture: localnet, sender, signer });
+      const wallet = await newWallet({ factoryParams: { appId: aaFactory.appId, defaultSender: sender, defaultSigner: signer }, readerAccount: sender, algorand, nickname: 'test_wallet', sender, signer })
+      const tokenMintSdk = await deployTokenMintPlugin({ fixture: localnet, sender, signer })
+      // const optinSdk = await deploy(testAccount)
 
-      wallet.addPlugin()
+      await wallet.addPlugin({
+        sender,
+        signer,
+        client: tokenMintSdk,
+        global: true,
+      })
 
-      await pluginSdk.optIn({ sender, signer })
+      const { returns } = await wallet.usePlugin({
+        sender,
+        signer,
+        client: tokenMintSdk,
+        global: true,
+        calls: [
+          tokenMintSdk.mint({
+            sender,
+            signer,
+            assetName: 'Test Akita',
+            unitName: 'TAKTA',
+            total: 1_000_000_000_000n,
+            decimals: 6n,
+            manager: sender,
+            reserve: sender,
+            freeze: ALGORAND_ZERO_ADDRESS_STRING,
+            clawback: ALGORAND_ZERO_ADDRESS_STRING,
+            defaultFrozen: false,
+            url: 'https://akita.community',
+          })
+        ]
+      })
 
-      const quests = await sdk.getQuests()
-      expect(quests.size).toBe(1)
-      expect(quests.get(questId)?.challengeId).toBe(challengeId)
+      const akta = returns[2]
+      console.log('returns 2:', akta)
 
-      const quest = await sdk.getQuestById(questId)
-      expect(quest?.challengeId).toBe(challengeId)
+      // await wallet.addPlugin({
+      //   sender,
+      //   signer,
+      //   client: optinSdk,
+      //   global: true,
+      // })
+
+      // await wallet.usePlugin({
+      //   sender,
+      //   signer,
+      //   client: optinSdk,
+      //   global: true,
+      //   calls: [
+      //     optinSdk.optin({
+      //       sender,
+      //       signer,
+      //       assets: [akta]
+      //     })
+      //   ]
+      // })
+
+      expect(returns.length).toBe(4)
+      // expect that our plugin list is now 2 instead of 1
+      // expect that the account has 100_000 more microalgos      
+      // expect its opted into our test asset
     })
   })
 })
