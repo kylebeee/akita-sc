@@ -52,6 +52,7 @@ export const ERR_FORBIDDEN = 'only the creator wallet can delete a spending acco
 
 export const ERR_ESCROW_LOCKED = 'Escrow is locked'
 export const ERR_ESCROW_ALREADY_EXISTS = 'Escrow already exists'
+export const ERR_ESCROW_NAME_REQUIRED = 'Escrow name is required'
 export const ERR_ESCROW_DOES_NOT_EXIST = 'Escrow does not exist'
 
 export const ERR_ONLY_WALLET_OR_PLUGIN = 'Only the wallet or plugin can opt in'

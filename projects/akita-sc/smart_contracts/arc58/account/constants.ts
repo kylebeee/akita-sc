@@ -26,7 +26,7 @@ export const AbstractAccountBoxPrefixExecutions = 'x'
 
 export const MethodRestrictionByteLength: uint64 = 20
 
-export const MinPluginMBR: uint64 = 42_900
+export const MinPluginMBR: uint64 = 39_700
 export const MinNamedPluginMBR: uint64 = 18_900
 export const EscrowsMBR: uint64 = 6_500
 export const MinNamedEscrowsMBR: uint64 = 6_100

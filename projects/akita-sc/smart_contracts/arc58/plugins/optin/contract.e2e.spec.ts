@@ -1,12 +1,13 @@
 import { Config } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { Address, ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk'
+import algosdk, { Address, ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk'
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
 import { OptInPluginFactory } from '../../../artifacts/arc58/plugins/optin/OptInPluginClient'
 import { newWallet, OptinPluginSDK, WalletFactorySDK } from 'akita-sdk'
 import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
 import { deployTokenMintPlugin} from '../../../../tests/fixtures/plugins/token-mint'
+import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
 
 describe('Optin plugin contract', () => {
   const localnet = algorandFixture();
@@ -48,22 +49,35 @@ describe('Optin plugin contract', () => {
       const tokenMintSdk = await deployTokenMintPlugin({ fixture: localnet, sender, signer })
       // const optinSdk = await deploy(testAccount)
 
+      const mbr = await wallet.getMbr({ escrow: '', methodCount: 1n, plugin: '' })
+
+      console.log('mbr:', mbr)
+
+      let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
+
+      await wallet.client.appClient.fundAppAccount({ amount: new AlgoAmount({ microAlgo: mbr.plugins }) })
+
       await wallet.addPlugin({
-        sender,
-        signer,
         client: tokenMintSdk,
         global: true,
-      })
+        methods: [
+          { name: tokenMintSdk.mint(), cooldown: 0n }
+        ]
+      });
+
+      // const plugins = await wallet.client.algorand.client.algod.getApplicationBoxes(wallet.appId).do()
+      // const plugin = await wallet.client.algorand.client.algod.getApplicationBoxByName(wallet.appId, plugins.boxes[0].name).do()
+      const plugins = await wallet.getPlugins()
+      console.log('plugins:', plugins)
+
+      // walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
+      // expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
       const { returns } = await wallet.usePlugin({
-        sender,
-        signer,
-        client: tokenMintSdk,
         global: true,
         calls: [
           tokenMintSdk.mint({
-            sender,
-            signer,
             assetName: 'Test Akita',
             unitName: 'TAKTA',
             total: 1_000_000_000_000n,
@@ -74,7 +88,7 @@ describe('Optin plugin contract', () => {
             clawback: ALGORAND_ZERO_ADDRESS_STRING,
             defaultFrozen: false,
             url: 'https://akita.community',
-          })
+          }),
         ]
       })
 

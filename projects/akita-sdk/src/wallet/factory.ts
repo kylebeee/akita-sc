@@ -1,15 +1,16 @@
 import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory, type AbstractedAccountFactoryClient } from '../generated/AbstractedAccountFactoryClient';
-import { NewContractSDKParams, WithSigner } from '../types';
+import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from '../types';
 import { WalletSDK } from './index';
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
 import { BaseSDK } from '../base';
-import { emptySigner, SIMULATE_PARAMS } from '../constants';
+import { emptySigner } from '../constants';
+import { ALGORAND_ZERO_ADDRESS_STRING, Address } from 'algosdk';
 
 export type FactoryContractArgs = AbstractedAccountFactoryArgs["obj"];
 
 export type NewParams = (
   Omit<FactoryContractArgs['new(pay,address,address,string)uint64'], 'payment' | 'controlledAddress' | 'admin'> &
-  WithSigner &
+  MaybeSigner &
   Partial<Pick<FactoryContractArgs['new(pay,address,address,string)uint64'], 'controlledAddress' | 'admin'>>
 )
 
@@ -22,42 +23,70 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
   async new({
     sender,
     signer,
-    controlledAddress,
-    admin,
+    controlledAddress = '',
+    admin = '',
     nickname,
   }: NewParams): Promise<WalletSDK> {
 
-    if (!admin) {
-      admin = sender;
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
     }
 
-    const amount = this.localCost();
+    if (!hasSenderSigner(sendParams)) {
+      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
+    }
 
     const payment = await this.client.algorand.createTransaction.payment({
-      sender,
-      signer,
+      ...sendParams,
       receiver: this.client.appAddress,
-      amount,
+      amount: await this.cost(),
     })
 
+    if (!admin) {
+      admin = sendParams.sender instanceof Address
+        ? sendParams.sender.toString()
+        : sendParams.sender;
+    }
+
+    if (!controlledAddress) {
+      controlledAddress = ALGORAND_ZERO_ADDRESS_STRING;
+    }
+
     const { return: appId } = await this.client.send.new({
+      ...sendParams,
       args: {
         payment,
         controlledAddress: controlledAddress!,
         admin: admin!,
         nickname
-      },
+      }
     })
 
     if (!appId) {
       throw new Error('Failed to create new wallet');
     }
 
-    return new WalletSDK({ algorand: this.algorand, factoryParams: { appId } })
+    return new WalletSDK({
+      algorand: this.algorand,
+      factoryParams: {
+        appId,
+        defaultSender: sendParams.sender,
+        defaultSigner: sendParams.signer
+      }
+    })
   }
 
   async get(appId: bigint): Promise<WalletSDK> {
-    return new WalletSDK({ algorand: this.algorand, factoryParams: { appId } })
+    return new WalletSDK({
+      algorand: this.algorand,
+      factoryParams: {
+        appId,
+        defaultSender: this.sendParams.sender,
+        defaultSigner: this.sendParams.signer
+      }
+    })
   }
 
   localCost(): AlgoAmount {
@@ -73,14 +102,8 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
   }
 
   async cost(): Promise<AlgoAmount> {
-    // return new AlgoAmount({ microAlgos: await this.client.send.cost({ args: {}, sender: this.readerAccount, signer: emptySigner }) as unknown as bigint })
-    const {
-      returns: [retVal],
-    } = await this.client
-      .newGroup()
-      .cost({ args: {}, sender: this.readerAccount, signer: emptySigner })
-      .simulate(SIMULATE_PARAMS);
-    return new AlgoAmount({ microAlgos: retVal ?? 0n });
+    const { return: result } = await this.client.send.cost({ args: {}, sender: this.readerAccount, signer: emptySigner })
+    return new AlgoAmount({ microAlgos: result ?? 0n });
   }
 }
 
@@ -96,5 +119,7 @@ export async function newWallet({
   nickname,
 }: NewContractSDKParams & NewParams): Promise<WalletSDK> {
   const factory = new WalletFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
-  return await factory.new({ sender, signer, controlledAddress, admin, nickname });
+  const sdk = await factory.new({ sender, signer, controlledAddress, admin, nickname });
+  await sdk.init()
+  return sdk;
 }

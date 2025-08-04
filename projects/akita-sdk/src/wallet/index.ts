@@ -1,9 +1,8 @@
-import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AbstractedAccountFactory, EscrowInfo, PluginKey, type AbstractedAccountClient } from '../generated/AbstractedAccountClient'
-import { MbrParams, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
-import { isPluginSDKReturn, NewContractSDKParams, SDKClient } from '../types';
+import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AbstractedAccountFactory, AbstractedAccountReturns, EscrowInfo, PluginKey, type AbstractedAccountClient } from '../generated/AbstractedAccountClient'
+import { AddPluginReturn, MbrParams, PluginInfo, RekeyArgs, UsePluginReturn, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
+import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient } from '../types';
 import { BaseSDK } from '../base';
-import algosdk, { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
-import { ABIReturn } from '@algorandfoundation/algokit-utils/types/app';
+import algosdk, { Address, ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
 
 export * from "./types";
 export * from './factory';
@@ -24,75 +23,198 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     super({ factory: AbstractedAccountFactory, ...params });
   }
 
-  async init(): Promise<void> {
-    await this.client.send.init({ args: {}, ...this.sendParams });
+  async init(): Promise<void>;
+  async init(args?: MaybeSigner): Promise<void> {
+
+    const { sender, signer } = args || {};
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    console.log('init', this.client.appId, sendParams);
+
+    await this.client.send.init({
+      ...sendParams,
+      args: {}
+    });
   }
 
-  async changeRevocationApp(newRevocationApp: bigint): Promise<void> {
-    await this.client.send.changeRevocationApp({ args: { newRevocationApp }, ...this.sendParams });
+  async changeRevocationApp({ sender, signer, newRevocationApp }: MaybeSigner & { newRevocationApp: bigint }): Promise<void> {
+    
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    await this.client.send.changeRevocationApp({
+      ...sendParams,
+      args: { newRevocationApp },
+    });
   }
 
-  async setNickname(nickname: string): Promise<void> {
-    await this.client.send.setNickname({ args: { nickname }, ...this.sendParams });
+  async setNickname({ sender, signer, nickname }: MaybeSigner & { nickname: string }): Promise<void> {
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    await this.client.send.setNickname({
+      ...sendParams,
+      args: { nickname }
+    });
   }
 
-  async setAvatar(avatar: bigint): Promise<void> {
-    await this.client.send.setAvatar({ args: { avatar }, ...this.sendParams });
+  async setAvatar({ sender, signer, avatar }: MaybeSigner & { avatar: bigint }): Promise<void> {
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    await this.client.send.setAvatar({
+      ...sendParams,
+      args: { avatar }
+    });
   }
 
-  async setBanner(banner: bigint): Promise<void> {
-    await this.client.send.setBanner({ args: { banner }, ...this.sendParams });
+  async setBanner({ sender, signer, banner }: MaybeSigner & { banner: bigint }): Promise<void> {
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    await this.client.send.setBanner({
+      ...sendParams,
+      args: { banner }
+    });
   }
 
-  async setBio(bio: string): Promise<void> {
-    await this.client.send.setBio({ args: { bio }, ...this.sendParams });
+  async setBio({ sender, signer, bio }: MaybeSigner & { bio: string }): Promise<void> {
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    await this.client.send.setBio({
+      ...sendParams,
+      args: { bio }
+    });
   }
 
-  async changeAdmin(newAdmin: string): Promise<void> {
-    await this.client.send.arc58ChangeAdmin({ args: { newAdmin }, ...this.sendParams });
+  async changeAdmin({ sender, signer, newAdmin }: MaybeSigner & { newAdmin: string }): Promise<void> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    };
+
+    await this.client.send.arc58ChangeAdmin({
+      ...sendParams,
+      args: { newAdmin }
+    });
   }
 
-  async verifyAuthAddress(): Promise<void> {
-    await this.client.send.arc58VerifyAuthAddress({ args: {}, ...this.sendParams });
+  async verifyAuthAddress({ sender, signer }: MaybeSigner): Promise<void> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    };
+
+    await this.client.send.arc58VerifyAuthAddress({
+      ...sendParams,
+      args: {}
+    });
   }
 
-  async rekeyTo(args: ContractArgs['arc58_rekeyTo(address,bool)void']): Promise<void> {
-    await this.client.send.arc58RekeyTo({ args, ...this.sendParams });
+  async rekeyTo(rekeyToArgs: MaybeSigner & ContractArgs['arc58_rekeyTo(address,bool)void']): Promise<void> {
+
+    const {
+      sender,
+      signer,
+      ...args
+    } = rekeyToArgs;
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    await this.client.send.arc58RekeyTo({ ...sendParams, args });
   }
 
-  async canCall(args: ContractArgs['arc58_canCall(uint64,bool,address,string,byte[4])bool']): Promise<boolean> {
-    return await this.client.send.arc58CanCall({ args, ...this.sendParams }) as unknown as boolean;
+  async canCall(canCallArgs: MaybeSigner & ContractArgs['arc58_canCall(uint64,bool,address,string,byte[4])bool']): Promise<boolean> {
+    
+    const {
+      sender,
+      signer,
+      ...args
+    } = canCallArgs;
+    
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    };
+
+    return await this.client.send.arc58CanCall({ ...sendParams, args }) as unknown as boolean;
   }
 
-  async usePlugin<TClient extends SDKClient>({
+  async usePlugin({
     sender,
     signer,
     name = '',
     global,
     escrow = '',
     fundsRequest = [],
-    client,
     calls
-  }: WalletUsePluginParams<TClient>): Promise<{
-    groupId: string;
-    txIds: string[];
-    returns: ABIReturn[] & [];
-    confirmations: algosdk.modelsv2.PendingTransactionResponse[];
-    transactions: algosdk.Transaction[];
-  }> {
+  }: WalletUsePluginParams): Promise<UsePluginReturn> {
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    };
 
     // Get the plugin app ID from the SDK client
-    const plugin = client.appId;
+    const plugin = calls[0]().appId;
 
     // call the functions provided by the plugin SDK to
     // inject our wallet ID and get back the transactions
     let txns: algosdk.Transaction[] = []
     for (const call of calls) {
-      txns.push(...(await call.getTxns({ walletId: this.client.appId })))
+      if (call().appId !== plugin) {
+        throw new Error(`All calls must be to the same plugin app ID: ${plugin}, but got ${call().appId}`);
+      }
+
+      txns.push(...(await call().getTxns({ walletId: this.client.appId })))
+    }
+
+    let caller = ''
+    if (global) {
+      caller = ALGORAND_ZERO_ADDRESS_STRING
+    } else if (sendParams.sender !== undefined) {
+      caller = sendParams.sender instanceof Address
+        ? sendParams.sender.toString()
+        : sendParams.sender;
+    } else {
+      throw new Error('Sender must be provided for non-global plugin calls');
     }
 
     // calculate method offsets
-    const methods = (await this.getPluginByKey({ plugin, caller: sender, escrow })).methods
+    const methods = (await this.getPluginByKey({ plugin, caller, escrow })).methods
     const methodOffsets: number[] = []
     const methodSignatures = new Map<Uint8Array, number>();
     if (methods.length > 0) {
@@ -123,43 +245,33 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     const group = this.client.newGroup()
 
     if (name) {
-      group.arc58RekeyToNamedPlugin({ args: { name, ...rekeyArgs } })
+      group.arc58RekeyToNamedPlugin({
+        ...sendParams,
+        args: {
+          name,
+          ...rekeyArgs
+        }
+      });
     } else {
-      group.arc58RekeyToPlugin({ args: { plugin, ...rekeyArgs } })
+      group.arc58RekeyToPlugin({
+        ...sendParams,
+        args: {
+          plugin,
+          ...rekeyArgs
+        }
+      });
     }
 
     for (const txn of txns) {
+      console.log('TXN: ', txn)
       group.addTransaction(txn)
     }
 
-    group.arc58VerifyAuthAddress({ args: {}, sender, signer })
+    group.arc58VerifyAuthAddress({ ...sendParams, args: {} })
 
-    return await group.send({ ...this.sendParams });
+    return await group.send({ ...sendParams });
   }
 
-  /**
-   * Add a plugin to this wallet with type-safe method configuration.
-   * Supports method references directly from the plugin SDK.
-   * 
-   * @param params - Plugin configuration including the plugin SDK client and method definitions
-   * @returns Promise with transaction result
-   * 
-   * @example
-   * ```typescript
-   * // New preferred API with method references
-   * await walletSDK.addPlugin({
-   *   sender: userAddress,
-   *   signer: transactionSigner,
-   *   client: myPluginSDK,
-   *   methods: [
-   *     { name: myPluginSDK.execute, cooldown: 100n },  // Direct method reference!
-   *     { name: 'methodName', cooldown: 50n }           // String names still work
-   *   ],
-   *   admin: true,
-   *   escrow: 'my_escrow'
-   * });
-   * ```
-   */
   async addPlugin<TClient extends SDKClient>({
     sender,
     signer,
@@ -176,7 +288,13 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     useRounds = false,
     useExecutionKey = false,
     defaultToEscrow = false,
-  }: WalletAddPluginParams<TClient>): Promise<any> {
+  }: WalletAddPluginParams<TClient>): Promise<AddPluginReturn> {
+
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    };
 
     // Get the plugin app ID from the SDK client
     const plugin = client.appId;
@@ -198,8 +316,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
     if (name !== '') {
       return await this.client.send.arc58AddNamedPlugin({
-        sender,
-        signer,
+        ...sendParams,
         args: {
           name,
           plugin,
@@ -213,15 +330,13 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
           useRounds,
           useExecutionKey,
           defaultToEscrow
-        },
-        ...this.sendParams
+        }
       });
     }
 
     // Call the contract method with properly typed parameters
     return await this.client.send.arc58AddPlugin({
-      sender,
-      signer,
+      ...sendParams,
       args: {
         plugin,
         caller: caller!,
@@ -234,8 +349,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         useRounds,
         useExecutionKey,
         defaultToEscrow
-      },
-      ...this.sendParams
+      }
     });
   }
 
@@ -292,14 +406,14 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
   }
 
   async getEscrow(name: string): Promise<EscrowInfo> {
-    return await this.client.send.arc58GetEscrow({ args: { name } }) as unknown as EscrowInfo;
+    return (await this.client.send.arc58GetEscrow({ args: { name } })).return as unknown as EscrowInfo;
   }
 
-  async getMbr(args: MbrParams): Promise<any> {
-    return await this.client.send.mbr({ args }) as unknown as AbstractAccountBoxMbrData;
+  async getMbr(args: MbrParams): Promise<AbstractAccountBoxMbrData> {
+    return (await this.client.send.mbr({ args })).return as unknown as AbstractAccountBoxMbrData;
   }
 
   async balance(assets: bigint[]): Promise<bigint[]> {
-    return await this.client.send.balance({ args: { assets } }) as unknown as bigint[];
+    return (await this.client.send.balance({ args: { assets } })).return as unknown as bigint[];
   }
 }

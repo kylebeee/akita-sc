@@ -59,6 +59,7 @@ import {
   ERR_ESCROW_ALREADY_EXISTS,
   ERR_ESCROW_DOES_NOT_EXIST,
   ERR_ESCROW_LOCKED,
+  ERR_ESCROW_NAME_REQUIRED,
   ERR_ESCROW_REQUIRED_TO_BE_SET_AS_DEFAULT,
   ERR_EXECUTION_KEY_ALREADY_EXISTS,
   ERR_EXECUTION_KEY_DOES_NOT_EXIST,
@@ -1105,6 +1106,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   arc58_newEscrow(escrow: string): uint64 {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
     assert(!this.namedEscrows(escrow).exists, ERR_ESCROW_ALREADY_EXISTS);
+    assert(escrow !== '', ERR_ESCROW_NAME_REQUIRED);
     return this.newEscrow(escrow);
   }
 
@@ -1405,16 +1407,16 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   mbr(
     escrow: string,
     methodCount: uint64,
-    pluginName: string,
-    escrowName: string
+    plugin: string,
   ): AbstractAccountBoxMBRData {
     return {
       plugins: this.pluginsMbr(escrow, methodCount),
-      namedPlugins: this.namedPluginsMbr(pluginName),
+      namedPlugins: this.namedPluginsMbr(plugin),
       escrows: this.escrowsMbr(),
-      namedEscrows: this.namedEscrowsMbr(escrowName),
+      namedEscrows: this.namedEscrowsMbr(escrow),
       allowances: this.allowancesMbr(),
-      domainKeys: this.domainKeysMbr(pluginName),
+      domainKeys: this.domainKeysMbr(plugin),
+      escrowExists: this.namedEscrows(escrow).exists,
     }
   }
 

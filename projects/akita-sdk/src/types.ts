@@ -1,10 +1,14 @@
 import { AlgorandClient } from "@algorandfoundation/algokit-utils/types/algorand-client";
+import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
+import { TransactionSignerAccount } from "@algorandfoundation/algokit-utils/types/account";
 import { SendParams } from "@algorandfoundation/algokit-utils/types/transaction";
-import algosdk, { TransactionSigner } from "algosdk";
+import algosdk, { Address, TransactionSigner } from "algosdk";
 import { AppFactoryAppClientParams } from "@algorandfoundation/algokit-utils/types/app-factory";
 
-export type WithSigner = { sender: string; signer: TransactionSigner };
-export type MaybeSigner = Partial<WithSigner>;
+export type MaybeSigner = {
+  sender?: Address | string;
+  signer?: TransactionSigner;
+};
 
 type ClientFactory<T> = new (params: { algorand: AlgorandClient }) => {
   getAppClientById(params: AppFactoryAppClientParams): T;
@@ -13,6 +17,23 @@ type ClientFactory<T> = new (params: { algorand: AlgorandClient }) => {
 export interface SDKClient {
   appId: bigint;
   algorand: AlgorandClient;
+}
+
+export type ExpandedSendParams = SendParams & {
+  maxFee?: AlgoAmount;
+  sender?: Address | string;
+  signer?: TransactionSigner;
+};
+
+
+export type ExpandedSendParamsWithSigner = ExpandedSendParams & {
+  sender: Address | string;
+  signer: TransactionSigner;
+};
+
+// Type guard function
+export function hasSenderSigner(params: ExpandedSendParams): params is ExpandedSendParamsWithSigner {
+  return params.sender !== undefined && params.signer !== undefined;
 }
 
 // Generic type for SDK instances that extend BaseSDK
@@ -61,17 +82,18 @@ export type PluginHookParams = {
   walletId: bigint;
 }
 
-export type PluginSDKReturn = {
+export type PluginSDKReturn = () => {
+  appId: bigint;
   selector: Uint8Array;
   getTxns: (params: PluginHookParams) => Promise<algosdk.Transaction[]>
 }
 
-export function isPluginSDKReturn(value: unknown): value is (() => PluginSDKReturn) {
+export function isPluginSDKReturn(value: unknown): value is PluginSDKReturn {
   return typeof value === 'function';
 }
 
 // Helper type for plugin method specifications that allows both string names and method references
-export type PluginMethodSpecifier = (() => PluginSDKReturn) | Uint8Array;
+export type PluginMethodSpecifier = PluginSDKReturn | Uint8Array;
 
 // Type for SDK constructor parameters with proper client factory typing
 export type SDKConstructorParams<TClient extends SDKClient> = NewContractSDKParams & {
@@ -89,6 +111,6 @@ export interface PluginCallParams {
   appId: bigint;
   method: string;
   args?: any[];
-  sendParams?: any;
+  sendParams?: ExpandedSendParams;
   readerAccount?: string;
 }

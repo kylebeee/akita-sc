@@ -1,6 +1,8 @@
+import { GlobalKeysState, PluginInfo as ClientPluginInfo, AbstractedAccountArgs, AbstractedAccountReturns } from "../generated/AbstractedAccountClient";
+import { MaybeSigner, SDKClient, AkitaSDK, PluginMethodSpecifier, PluginSDKReturn } from "../types";
+import { ABIReturn, AppReturn } from "@algorandfoundation/algokit-utils/types/app";
+import { ABIStruct } from "@algorandfoundation/algokit-utils/types/app-arc56";
 import algosdk from "algosdk";
-import { GlobalKeysState, PluginInfo as ClientPluginInfo, AbstractedAccountArgs } from "../generated/AbstractedAccountClient";
-import { WithSigner, SDKClient, AkitaSDK, PluginMethodSpecifier, PluginSDKReturn } from "../types";
 
 export type ContractArgs = AbstractedAccountArgs["obj"];
 
@@ -22,10 +24,9 @@ export type PluginInfo = Omit<ClientPluginInfo, 'methods'> & {
 }
 
 export type MbrParams = {
-  escrow: string,
-  methodCount: number
-  pluginName: string
-  escrowName: string
+  escrow: string
+  methodCount: bigint | number
+  plugin: string
 }
 
 export type RekeyArgs = {
@@ -36,16 +37,15 @@ export type RekeyArgs = {
 }
 
 // Updated plugin parameters to support fluent transaction API
-export type WalletUsePluginParams<TClient extends SDKClient> = (
+export type WalletUsePluginParams = (
   Omit<ContractArgs['arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void'], 'plugin' | 'escrow' | 'methodOffsets' | 'fundsRequest'> &
   {
     name?: string
     escrow?: string
-    client: AkitaSDK<TClient>
     fundsRequest?: FundsRequest[]
     calls: PluginSDKReturn[]
   }
-) & WithSigner;
+) & MaybeSigner;
 
 // Default values for addPlugin method
 export const AddPluginDefaults = {
@@ -65,7 +65,7 @@ export type PluginMethodDefinition = {
 
 type BaseWalletAddPluginParams<TClient extends SDKClient> =
   Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'], 'methods'>> &
-  WithSigner &
+  MaybeSigner &
   {
     client: AkitaSDK<TClient>
     methods?: PluginMethodDefinition[]
@@ -102,3 +102,26 @@ export function getPluginAppId<TClient extends SDKClient>(
 ): bigint {
   return plugin.appId;
 }
+
+export type UsePluginReturn = {
+  groupId: string;
+  txIds: string[];
+  returns: ABIReturn[] & [];
+  confirmations: algosdk.modelsv2.PendingTransactionResponse[];
+  transactions: algosdk.Transaction[];
+}
+
+export type AddPluginReturn = Omit<{
+  groupId: string;
+  txIds: string[];
+  returns?: ABIReturn[] | undefined;
+  confirmations: algosdk.modelsv2.PendingTransactionResponse[];
+  transactions: algosdk.Transaction[];
+  confirmation: algosdk.modelsv2.PendingTransactionResponse;
+  transaction: algosdk.Transaction;
+  return?: ABIReturn | undefined;
+}, "return"> & AppReturn<(
+  undefined |
+  AbstractedAccountReturns['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] |
+  AbstractedAccountReturns['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void']
+)>

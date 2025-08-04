@@ -158,4 +158,5 @@ export type AbstractAccountBoxMBRData = {
   namedEscrows: uint64;
   allowances: uint64;
   domainKeys: uint64;
+  escrowExists: boolean;
 }
