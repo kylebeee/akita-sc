@@ -90,11 +90,11 @@ export class arc4PluginInfo extends Struct<{
 
 export type PluginInfo = {
   escrow: uint64;
-  admin: boolean;
   delegationType: Uint8;
   lastValid: uint64;
   cooldown: uint64;
   methods: MethodInfo[];
+  admin: boolean;
   useRounds: boolean;
   useExecutionKey: boolean;
   lastCalled: uint64;
@@ -155,8 +155,8 @@ export type AbstractAccountBoxMBRData = {
   plugins: uint64;
   namedPlugins: uint64;
   escrows: uint64;
-  namedEscrows: uint64;
   allowances: uint64;
   domainKeys: uint64;
   escrowExists: boolean;
+  newEscrowMintCost: uint64
 }

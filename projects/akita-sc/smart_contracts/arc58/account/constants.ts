@@ -1,6 +1,6 @@
 import { uint64 } from "@algorandfoundation/algorand-typescript"
 
-export const AbstractAccountNumGlobalBytes: uint64 = 54
+export const AbstractAccountNumGlobalBytes: uint64 = 16
 export const AbstractAccountNumGlobalUints: uint64 = 10
 
 export const AbstractAccountGlobalStateKeysAdmin = 'admin'
@@ -12,7 +12,7 @@ export const AbstractAccountGlobalStateKeysBio = 'bio'
 export const AbstractAccountGlobalStateKeysLastUserInteraction = 'last_user_interaction'
 export const AbstractAccountGlobalStateKeysLastChange = 'last_change'
 export const AbstractAccountGlobalStateKeysSpendingAddress = 'spending_address'
-export const AbstractAccountGlobalStateKeysCurrentEscrowID = 'current_escrow_id'
+export const AbstractAccountGlobalStateKeysCurrentEscrow = 'current_escrow'
 export const AbstractAccountGlobalStateKeysRekeyIndex = 'rekey_index'
 export const AbstractAccountGlobalStateKeysEscrowFactory = 'escrow_factory'
 export const AbstractAccountGlobalStateKeysFactoryApp = 'factory_app'
@@ -26,10 +26,9 @@ export const AbstractAccountBoxPrefixExecutions = 'x'
 
 export const MethodRestrictionByteLength: uint64 = 20
 
-export const MinPluginMBR: uint64 = 39_700
+export const MinPluginMBR: uint64 = 38_900
 export const MinNamedPluginMBR: uint64 = 18_900
-export const EscrowsMBR: uint64 = 6_500
-export const MinNamedEscrowsMBR: uint64 = 6_100
+export const MinEscrowsMBR: uint64 = 6_500
 export const AllowanceMBR: uint64 = 29_300
 export const MinDomainKeysMBR: uint64 = 15_700
 

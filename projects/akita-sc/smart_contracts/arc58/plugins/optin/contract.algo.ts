@@ -5,7 +5,7 @@ import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
 
 export class OptInPlugin extends Contract {
 
-  optin(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+  optIn(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
@@ -27,7 +27,7 @@ export class OptInPlugin extends Contract {
           assetReceiver: sender,
           assetAmount: 0,
           xferAsset: Asset(assets[i]),
-          rekeyTo: rekeyAddress(rekeyBack, wallet)
+          rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
         })
         .submit();
     }

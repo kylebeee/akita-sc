@@ -11,7 +11,7 @@ export class AbstractedAccountInterface extends Contract {
     revocationApp: uint64, 
     nickname: string
   ): void { }
-  init(): void { }
+  register(escrow: string): void { }
   update(version: string): void { }
   changeRevocationApp(newRevocationApp: uint64): void { }
   setNickname(nickname: string): void { }
@@ -56,7 +56,7 @@ export class AbstractedAccountInterface extends Contract {
   ): void { }
   arc58_removeNamedPlugin(name: string): void { }
   arc58_newEscrow(escrow: string): uint64 { return 0 }
-  arc58_toggleEscrowLock(escrow: string): boolean { return false; }
+  arc58_toggleEscrowLock(escrow: string): EscrowInfo { return { id: 0, locked: false }; }
   arc58_reclaim(escrow: string, reclaims: EscrowReclaim[]): void { }
   arc58_optinEscrow(escrow: string, assets: uint64[]): void { }
   arc58_pluginOptinEscrow(

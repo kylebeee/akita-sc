@@ -1,0 +1,376 @@
+#pragma version 10
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 2
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:7
+    // export class AsaMintPlugin extends Contract {
+    txn NumAppArgs
+    bz main_bare_routing@6
+    pushbytes 0x0da39939 // method "mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[]"
+    txna ApplicationArgs 0
+    match main_mint_route@3
+
+main_after_if_else@10:
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:7
+    // export class AsaMintPlugin extends Contract {
+    intc_0 // 0
+    return
+
+main_mint_route@3:
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:9-14
+    // mint(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   assets: CreateAssetParams[],
+    //   mbrPayment: gtxn.PaymentTxn
+    // ): uint64[] {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:7
+    // export class AsaMintPlugin extends Contract {
+    txna ApplicationArgs 1
+    btoi
+    txna ApplicationArgs 2
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:9-14
+    // mint(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   assets: CreateAssetParams[],
+    //   mbrPayment: gtxn.PaymentTxn
+    // ): uint64[] {
+    callsub mint
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_bare_routing@6:
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:7
+    // export class AsaMintPlugin extends Contract {
+    txn OnCompletion
+    bnz main_after_if_else@10
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    intc_1 // 1
+    return
+
+
+// smart_contracts/arc58/plugins/asa-mint/contract.algo.ts::AsaMintPlugin.mint(walletID: uint64, rekeyBack: uint64, assets: bytes, mbrPayment: uint64) -> bytes:
+mint:
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:9-14
+    // mint(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   assets: CreateAssetParams[],
+    //   mbrPayment: gtxn.PaymentTxn
+    // ): uint64[] {
+    proto 4 1
+    intc_0 // 0
+    dupn 6
+    pushbytes ""
+    dupn 3
+    // smart_contracts/utils/functions.ts:205-208
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    frame_dig -4
+    // smart_contracts/utils/functions.ts:207
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    pushbytes "spending_address"
+    // smart_contracts/utils/functions.ts:205-208
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    app_global_get_ex
+    pop
+    dup
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:18-25
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: sender,
+    //     amount: Global.assetCreateMinBalance * assets.length
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -1
+    gtxns Receiver
+    ==
+    frame_dig -1
+    gtxns Amount
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:22
+    // amount: Global.assetCreateMinBalance * assets.length
+    global AssetCreateMinBalance
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16
+    dup
+    cover 4
+    *
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:18-25
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: sender,
+    //     amount: Global.assetCreateMinBalance * assets.length
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    &&
+    assert // invalid payment
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:27
+    // let assetsCreated: uint64[] = [];
+    pushbytes 0x0000
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:28
+    // for (let i: uint64 = 0; i < assets.length; i++) {
+    intc_0 // 0
+
+mint_while_top@1:
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:28
+    // for (let i: uint64 = 0; i < assets.length; i++) {
+    frame_dig 14
+    frame_dig 12
+    <
+    bz mint_after_while@7
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:40
+    // } = assets[i];
+    frame_dig -2
+    extract 2 0
+    frame_dig 14
+    dup
+    cover 2
+    intc_2 // 2
+    *
+    dig 1
+    swap
+    extract_uint16
+    dig 2
+    intc_1 // 1
+    +
+    dup
+    frame_bury 9
+    frame_dig 12
+    dup
+    cover 4
+    dig 1
+    - // on error: index access is out of bounds
+    dig 3
+    len
+    uncover 2
+    intc_2 // 2
+    *
+    dig 4
+    swap
+    extract_uint16
+    uncover 2
+    select
+    substring3
+    dup
+    intc_0 // 0
+    extract_uint16
+    dig 1
+    intc_2 // 2
+    extract_uint16
+    dig 2
+    uncover 2
+    dig 2
+    substring3
+    extract 2 0
+    frame_bury 0
+    dig 1
+    pushint 149 // 149
+    extract_uint16
+    dig 2
+    uncover 2
+    dig 2
+    substring3
+    extract 2 0
+    frame_bury 5
+    dig 1
+    pushint 4 // 4
+    extract_uint64
+    frame_bury 10
+    dig 1
+    pushint 12 // 12
+    extract_uint64
+    frame_bury 7
+    dig 1
+    extract 20 32
+    frame_bury 3
+    dig 1
+    extract 52 32
+    frame_bury 4
+    dig 1
+    extract 84 32
+    frame_bury 2
+    dig 1
+    extract 116 32
+    frame_bury 1
+    dig 1
+    pushint 1184 // 1184
+    getbit
+    frame_bury 8
+    dig 1
+    len
+    substring3
+    extract 2 0
+    frame_bury 6
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:42-57
+    // const createTxn = itxn
+    //   .assetConfig({
+    //     sender,
+    //     assetName,
+    //     unitName,
+    //     total,
+    //     decimals,
+    //     manager: manager.native,
+    //     reserve: reserve.native,
+    //     freeze: freeze.native,
+    //     clawback: clawback.native,
+    //     defaultFrozen,
+    //     url,
+    //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:55
+    // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    intc_1 // 1
+    -
+    <
+    bz mint_ternary_false@4
+    global ZeroAddress
+
+mint_ternary_merge@5:
+    itxn_field RekeyTo
+    frame_dig 6
+    itxn_field ConfigAssetURL
+    frame_dig 8
+    itxn_field ConfigAssetDefaultFrozen
+    frame_dig 1
+    itxn_field ConfigAssetClawback
+    frame_dig 2
+    itxn_field ConfigAssetFreeze
+    frame_dig 4
+    itxn_field ConfigAssetReserve
+    frame_dig 3
+    itxn_field ConfigAssetManager
+    frame_dig 7
+    itxn_field ConfigAssetDecimals
+    frame_dig 10
+    itxn_field ConfigAssetTotal
+    frame_dig 5
+    itxn_field ConfigAssetUnitName
+    frame_dig 0
+    itxn_field ConfigAssetName
+    frame_dig 11
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:42-56
+    // const createTxn = itxn
+    //   .assetConfig({
+    //     sender,
+    //     assetName,
+    //     unitName,
+    //     total,
+    //     decimals,
+    //     manager: manager.native,
+    //     reserve: reserve.native,
+    //     freeze: freeze.native,
+    //     clawback: clawback.native,
+    //     defaultFrozen,
+    //     url,
+    //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    //   })
+    pushint 3 // 3
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:42-57
+    // const createTxn = itxn
+    //   .assetConfig({
+    //     sender,
+    //     assetName,
+    //     unitName,
+    //     total,
+    //     decimals,
+    //     manager: manager.native,
+    //     reserve: reserve.native,
+    //     freeze: freeze.native,
+    //     clawback: clawback.native,
+    //     defaultFrozen,
+    //     url,
+    //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    //   })
+    //   .submit()
+    itxn_submit
+    itxn CreatedAssetID
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:59
+    // assetsCreated.push(createTxn.createdAsset.id);
+    itob
+    frame_dig 13
+    dup
+    uncover 2
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
+    itob
+    extract 6 2
+    replace2 0
+    frame_bury 13
+    frame_dig 9
+    frame_bury 14
+    b mint_while_top@1
+
+mint_ternary_false@4:
+    // smart_contracts/utils/functions.ts:254
+    // if (!rekeyBack) {
+    frame_dig -3
+    bnz mint_after_if_else@10
+    // smart_contracts/utils/functions.ts:255
+    // return Global.zeroAddress
+    global ZeroAddress
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:55
+    // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    b mint_ternary_merge@5
+
+mint_after_if_else@10:
+    // smart_contracts/utils/functions.ts:258
+    // return wallet.address
+    frame_dig -4
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:55
+    // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    b mint_ternary_merge@5
+
+mint_after_while@7:
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:62
+    // return assetsCreated
+    frame_dig 13
+    frame_bury 0
+    retsub

@@ -1,6 +1,6 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, clone, Global, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
-import { calcPercent, getEscrowID, getRekeyIndex, getSpendingAccount, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
+import { calcPercent, getEscrowInfo, getRekeyIndex, getSpendingAccount, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
 import { AkitaBaseContract } from "../../../utils/base-contracts/base";
 import { ERR_INVALID_PAYMENT } from "../../../utils/errors";
 import { ERR_ALREADY_OPTED_IN } from "../optin/errors";
@@ -153,40 +153,40 @@ export class RevenueStreamer extends AkitaBaseContract {
 
   startEscrowDisbursement(walletID: uint64, rekeyBack: boolean): void {
     const wallet = Application(walletID)
-    const escrowID = getEscrowID(wallet)
+    const escrow = getEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
     assert(this.controls(sender), ERR_FORBIDDEN)
 
-    assert(this.escrows(escrowID).exists, ERR_ESCROW_DOES_NOT_EXIST)
+    assert(this.escrows(escrow.id).exists, ERR_ESCROW_DOES_NOT_EXIST)
     // validate the time window of the last escrow payout
-    const { phase, allocatable, lastDisbursement, creationDate } = this.escrows(escrowID).value
+    const { phase, allocatable, lastDisbursement, creationDate } = this.escrows(escrow.id).value
     assert(phase === EscrowDisbursementPhaseIdle, ERR_ESCROW_NOT_IDLE)
     assert(allocatable, ERR_ESCROW_NOT_ALLOCATABLE)
 
     const latestWindow: uint64 = Global.latestTimestamp - ((Global.latestTimestamp - creationDate) % ONE_DAY)
     assert(latestWindow >= lastDisbursement, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT)
 
-    this.escrows(escrowID).value.phase = EscrowDisbursementPhaseAllocation
-    this.escrows(escrowID).value.lastDisbursement = latestWindow
+    this.escrows(escrow.id).value.phase = EscrowDisbursementPhaseAllocation
+    this.escrows(escrow.id).value.lastDisbursement = latestWindow
 
     rekeyBackIfNecessary(rekeyBack, wallet)
   }
 
   processEscrowAllocation(walletID: uint64, rekeyBack: boolean, ids: uint64[]): void {
     const wallet = Application(walletID)
-    const escrowID = getEscrowID(wallet)
+    const escrow = getEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
 
-    const { phase, optinCount, allocationCounter } = this.escrows(escrowID).value
+    const { phase, optinCount, allocationCounter } = this.escrows(escrow.id).value
     assert(phase === EscrowDisbursementPhaseAllocation, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE)
 
     const totalAssetsToProcess: uint64 = optinCount + 1 // + 1 to include algo
 
-    const splits = clone(this.splits(escrowID).value)
+    const splits = clone(this.splits(escrow.id).value)
 
     for (let i: uint64 = 0; i < ids.length; i += 1) {
       const asset = ids[i]
-      assert(!this.receiveAssets({ escrow: escrowID, asset }).exists, ERR_ASSET_ALREADY_ALLOCATED)
+      assert(!this.receiveAssets({ escrow: escrow.id, asset }).exists, ERR_ASSET_ALREADY_ALLOCATED)
       assert(sender.isOptedIn(Asset(asset)), ERR_ESCROW_NOT_OPTED_IN)
 
       const balance: uint64 = asset === 0
@@ -231,12 +231,12 @@ export class RevenueStreamer extends AkitaBaseContract {
         }
       }
 
-      this.receiveAssets({ escrow: escrowID, asset }).create()
+      this.receiveAssets({ escrow: escrow.id, asset }).create()
     }
 
-    this.escrows(escrowID).value.allocationCounter += ids.length
+    this.escrows(escrow.id).value.allocationCounter += ids.length
     if ((allocationCounter + ids.length) === totalAssetsToProcess) {
-      this.escrows(escrowID).value.phase = EscrowDisbursementPhaseFinalization
+      this.escrows(escrow.id).value.phase = EscrowDisbursementPhaseFinalization
     }
     
     rekeyBackIfNecessary(rekeyBack, wallet)

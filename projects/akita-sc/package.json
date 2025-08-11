@@ -11,6 +11,7 @@
     "build-dao": "algokit compile ts smart_contracts/arc58/dao --puya-path=puya --output-source-map --out-dir ../../artifacts/arc58/dao --log-level debug && algokit generate client smart_contracts/artifacts/arc58/dao --output {app_spec_dir}/{contract_name}Client.ts",
     "build-keys": "algokit compile ts smart_contracts/arc58/keys --puya-path=puya --output-source-map --out-dir ../../artifacts/arc58/keys --log-level debug && algokit generate client smart_contracts/artifacts/arc58/keys --output {app_spec_dir}/{contract_name}Client.ts",
     "build-arc58-plugins": "algokit compile ts smart_contracts/arc58/plugins --puya-path=puya --output-source-map --out-dir ../../artifacts/arc58/plugins --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins --output {app_spec_dir}/{contract_name}Client.ts",
+    "build-plugin-asamint": "algokit compile ts smart_contracts/arc58/plugins/asa-mint --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/asa-mint --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/asa-mint --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-auction": "algokit compile ts smart_contracts/arc58/plugins/auction --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/auction --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/auction --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-dualstake": "algokit compile ts smart_contracts/arc58/plugins/dual-stake --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/dual-stake --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/dual-stake --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-gate": "algokit compile ts smart_contracts/arc58/plugins/gate --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/gate --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/gate --output {app_spec_dir}/{contract_name}Client.ts",
@@ -18,6 +19,7 @@
     "build-plugin-marketplace": "algokit compile ts smart_contracts/arc58/plugins/marketplace --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/marketplace --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/marketplace --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-nfd": "algokit compile ts smart_contracts/arc58/plugins/nfd --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/nfd --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/nfd --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-optin": "algokit compile ts smart_contracts/arc58/plugins/optin --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/optin --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/optin --output {app_spec_dir}/{contract_name}Client.ts",
+    "build-plugin-pay": "algokit compile ts smart_contracts/arc58/plugins/pay --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/pay --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/pay --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-pay-silo": "algokit compile ts smart_contracts/arc58/plugins/pay-silo --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/pay-silo --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/pay-silo --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-poll": "algokit compile ts smart_contracts/arc58/plugins/poll --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/poll --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/poll --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-pool": "algokit compile ts smart_contracts/arc58/plugins/pool --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/pool --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/pool --output {app_spec_dir}/{contract_name}Client.ts",
@@ -27,7 +29,6 @@
     "build-plugin-social": "algokit compile ts smart_contracts/arc58/plugins/social --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/social --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/social --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-staking": "algokit compile ts smart_contracts/arc58/plugins/staking --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/staking --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/staking --output {app_spec_dir}/{contract_name}Client.ts",
     "build-plugin-subscriptions": "algokit compile ts smart_contracts/arc58/plugins/subscriptions --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/subscriptions --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/subscriptions --output {app_spec_dir}/{contract_name}Client.ts",
-    "build-plugin-tokenmint": "algokit compile ts smart_contracts/arc58/plugins/token-mint --puya-path=puya --output-source-map --out-dir ../../../artifacts/arc58/plugins/token-mint --log-level debug && algokit generate client smart_contracts/artifacts/arc58/plugins/token-mint --output {app_spec_dir}/{contract_name}Client.ts",
     "build-auction": "algokit compile ts smart_contracts/auction --puya-path=puya --output-source-map  --out-dir ../artifacts/auction --log-level debug && algokit generate client smart_contracts/artifacts/auction --output {app_spec_dir}/{contract_name}Client.ts",
     "build-escrow": "algokit compile ts smart_contracts/escrow --puya-path=puya --output-source-map --out-dir ../artifacts/escrow --log-level debug && algokit generate client smart_contracts/artifacts/escrow --output {app_spec_dir}/{contract_name}Client.ts",
     "build-gates": "algokit compile ts smart_contracts/gates --puya-path=puya --output-source-map --out-dir ../artifacts/gates --log-level debug && algokit generate client smart_contracts/artifacts/gates --output {app_spec_dir}/{contract_name}Client.ts",
@@ -47,10 +48,12 @@
     "lint:fix": "eslint smart_contracts --fix",
     "audit": "better-npm-audit audit",
     "format": "prettier --write .",
-    "test-optin": "jest smart_contracts/arc58/plugins/optin/contract.e2e.spec.ts",
     "test-vitest": "vitest run --coverage",
     "test": "npm run build && jest",
     "test:watch": "vitest watch",
+    "test-arc58-account": "jest smart_contracts/arc58/account/contract.e2e.spec.ts",
+    "test-optin": "jest smart_contracts/arc58/plugins/optin/contract.e2e.spec.ts",
+    "test-tokenmint": "jest smart_contracts/arc58/plugins/token-mint/contract.e2e.spec.ts",
     "check-types": "tsc --noEmit"
   },
   "engines": {
@@ -63,7 +66,6 @@
     "akita-sdk": "file:../akita-sdk"
   },
   "devDependencies": {
-    "@algorandfoundation/algokit-client-generator": "^5.0.0",
     "@algorandfoundation/algokit-utils": "^9.1.2",
     "@algorandfoundation/algokit-utils-debug": "^1.0.4",
     "@algorandfoundation/algorand-typescript-testing": "^1.0.0-beta.35",

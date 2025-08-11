@@ -8,9 +8,9 @@ main:
     // export class OptInPlugin extends Contract {
     txn NumAppArgs
     bz main_bare_routing@6
-    pushbytes 0x2d2f922b // method "optin(uint64,bool,uint64[],pay)void"
+    pushbytes 0x6835e3bc // method "optIn(uint64,bool,uint64[],pay)void"
     txna ApplicationArgs 0
-    match main_optin_route@3
+    match main_optIn_route@3
 
 main_after_if_else@10:
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:6
@@ -18,9 +18,9 @@ main_after_if_else@10:
     intc_0 // 0
     return
 
-main_optin_route@3:
+main_optIn_route@3:
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:8
-    // optin(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+    // optIn(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
@@ -43,8 +43,8 @@ main_optin_route@3:
     ==
     assert // transaction type is pay
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:8
-    // optin(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
-    callsub optin
+    // optIn(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+    callsub optIn
     intc_1 // 1
     return
 
@@ -60,22 +60,22 @@ main_bare_routing@6:
     return
 
 
-// smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.optin(walletID: uint64, rekeyBack: uint64, assets: bytes, mbrPayment: uint64) -> void:
-optin:
+// smart_contracts/arc58/plugins/optin/contract.algo.ts::OptInPlugin.optIn(walletID: uint64, rekeyBack: uint64, assets: bytes, mbrPayment: uint64) -> void:
+optIn:
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:8
-    // optin(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+    // optIn(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     proto 4 0
     pushbytes ""
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:205-208
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:207
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:205-208
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -122,18 +122,20 @@ optin:
     // for (let i: uint64 = 0; i < assets.length; i++) {
     intc_0 // 0
 
-optin_while_top@1:
+optIn_while_top@1:
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:21
     // for (let i: uint64 = 0; i < assets.length; i++) {
     frame_dig 3
     frame_dig 2
     <
-    bz optin_after_while@4
+    bz optIn_after_while@7
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:22
     // assert(!sender.isOptedIn(Asset(assets[i])), ERR_ALREADY_OPTED_IN)
     frame_dig -2
     extract 2 0
     frame_dig 3
+    dup
+    cover 2
     pushint 8 // 8
     *
     extract_uint64
@@ -152,19 +154,20 @@ optin_while_top@1:
     //     assetReceiver: sender,
     //     assetAmount: 0,
     //     xferAsset: Asset(assets[i]),
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     //   })
     //   .submit();
     itxn_begin
-    // smart_contracts/utils/functions.ts:242
-    // if (!rekeyBack) {
-    frame_dig -3
-    bnz optin_after_if_else@7
-    // smart_contracts/utils/functions.ts:243
-    // return Global.zeroAddress
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:30
+    // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    frame_dig 2
+    intc_1 // 1
+    -
+    <
+    bz optIn_ternary_false@4
     global ZeroAddress
 
-optin_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8:
+optIn_ternary_merge@5:
     itxn_field RekeyTo
     frame_dig 0
     itxn_field XferAsset
@@ -183,7 +186,7 @@ optin_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8:
     //     assetReceiver: sender,
     //     assetAmount: 0,
     //     xferAsset: Asset(assets[i]),
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     //   })
     pushint 4 // 4
     itxn_field TypeEnum
@@ -196,7 +199,7 @@ optin_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8:
     //     assetReceiver: sender,
     //     assetAmount: 0,
     //     xferAsset: Asset(assets[i]),
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
+    //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     //   })
     //   .submit();
     itxn_submit
@@ -206,17 +209,29 @@ optin_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8:
     intc_1 // 1
     +
     frame_bury 3
-    b optin_while_top@1
+    b optIn_while_top@1
 
-optin_after_if_else@7:
-    // smart_contracts/utils/functions.ts:246
+optIn_ternary_false@4:
+    // smart_contracts/utils/functions.ts:254
+    // if (!rekeyBack) {
+    frame_dig -3
+    bnz optIn_after_if_else@10
+    // smart_contracts/utils/functions.ts:255
+    // return Global.zeroAddress
+    global ZeroAddress
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:30
+    // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    b optIn_ternary_merge@5
+
+optIn_after_if_else@10:
+    // smart_contracts/utils/functions.ts:258
     // return wallet.address
     frame_dig -4
     app_params_get AppAddress
     assert // application exists
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:30
-    // rekeyTo: rekeyAddress(rekeyBack, wallet)
-    b optin_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@8
+    // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
+    b optIn_ternary_merge@5
 
-optin_after_while@4:
+optIn_after_while@7:
     retsub

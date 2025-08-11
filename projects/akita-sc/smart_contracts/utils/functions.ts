@@ -4,7 +4,7 @@ import { abiCall, Address, decodeArc4, methodSelector } from "@algorandfoundatio
 import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees } from "../arc58/dao/constants"
 import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
 import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR } from "./constants"
-import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrowID, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
+import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 
 import { GateArgs, GateInterface } from "./types/gates"
 import { AssetInbox } from "./types/asset-inbox"
@@ -20,6 +20,7 @@ import { EscrowFactoryInterface } from "./types/escrows"
 import { AbstractedAccountInterface } from "./abstract-account"
 import { OptInPluginInterface } from "./types/plugins/optin"
 import { StakingInterface } from "./types/staking"
+import { EscrowInfo } from "../arc58/account/types"
 
 export function getAkitaAppList(akitaDAO: Application): AkitaAppList {
   const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
@@ -208,12 +209,23 @@ export function getSpendingAccount(wallet: Application): Account {
   return Account(Bytes(spendingAddressBytes))
 }
 
-export function getEscrowID(wallet: Application): uint64 {
-  const [escrowIDBytes] = op.AppGlobal.getExBytes(
+export function getEscrow(wallet: Application): string {
+  const [escrowBytes] = op.AppGlobal.getExBytes(
     wallet,
-    Bytes(AbstractAccountGlobalStateKeysCurrentEscrowID)
+    Bytes(AbstractAccountGlobalStateKeysCurrentEscrow)
   )
-  return btoi(escrowIDBytes)
+  return String(escrowBytes)
+}
+
+export function getEscrowInfo(wallet: Application): EscrowInfo {
+  const escrow = getEscrow(wallet)
+  return abiCall(
+    AbstractedAccountInterface.prototype.arc58_mustGetEscrow,
+    {
+      appId: wallet.id,
+      args: [escrow]
+    }
+  ).returnValue
 }
 
 export function getRekeyIndex(wallet: Application): uint64 {

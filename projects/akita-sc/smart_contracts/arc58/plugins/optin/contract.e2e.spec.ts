@@ -1,18 +1,17 @@
 import { Config } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import algosdk, { Address, ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk'
+import { Address, ALGORAND_ZERO_ADDRESS_STRING, decodeUint64, getApplicationAddress } from 'algosdk'
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { OptInPluginFactory } from '../../../artifacts/arc58/plugins/optin/OptInPluginClient'
-import { newWallet, OptinPluginSDK, WalletFactorySDK } from 'akita-sdk'
+
+import { newWallet, OptInPluginSDK } from 'akita-sdk'
 import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
-import { deployTokenMintPlugin} from '../../../../tests/fixtures/plugins/token-mint'
+import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint'
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
+import { OptInPluginFactory } from '../../../artifacts/arc58/plugins/optin/OptInPluginClient';
 
 describe('Optin plugin contract', () => {
   const localnet = algorandFixture();
-  
-  // let aaFactory: WalletFactorySDK;
 
   beforeAll(async () => {
     Config.configure({
@@ -35,7 +34,7 @@ describe('Optin plugin contract', () => {
       onSchemaBreak: 'append',
     })
 
-    return new OptinPluginSDK({ algorand, factoryParams: { appId: client.appId } })
+    return new OptInPluginSDK({ algorand, factoryParams: { appId: client.appId } })
   }
 
   describe('Optin', () => {
@@ -46,80 +45,83 @@ describe('Optin plugin contract', () => {
 
       const { aaFactory } = await deployAbstractedAccountFactoryAndEscrowFactory({ fixture: localnet, sender, signer });
       const wallet = await newWallet({ factoryParams: { appId: aaFactory.appId, defaultSender: sender, defaultSigner: signer }, readerAccount: sender, algorand, nickname: 'test_wallet', sender, signer })
-      const tokenMintSdk = await deployTokenMintPlugin({ fixture: localnet, sender, signer })
-      // const optinSdk = await deploy(testAccount)
+      const asaMintSdk = await deployAsaMintPlugin({ fixture: localnet, sender, signer })
 
-      const mbr = await wallet.getMbr({ escrow: '', methodCount: 1n, plugin: '' })
-
-      console.log('mbr:', mbr)
+      const escrow = 'mint_account'
+      let mbr = await wallet.getMbr({ escrow, methodCount: 0n, plugin: '' })
 
       let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
-      await wallet.client.appClient.fundAppAccount({ amount: new AlgoAmount({ microAlgo: mbr.plugins }) })
+      const fundAmount = (
+        mbr.plugins +
+        mbr.newEscrowMintCost
+      )
+
+      console.log('funding wallet with:', fundAmount, 'microAlgos')
+
+      await wallet.client.appClient.fundAppAccount({
+        amount: new AlgoAmount({
+          microAlgo: fundAmount
+        })
+      })
 
       await wallet.addPlugin({
-        client: tokenMintSdk,
+        client: asaMintSdk,
         global: true,
-        methods: [
-          { name: tokenMintSdk.mint(), cooldown: 0n }
-        ]
+        escrow
       });
 
-      // const plugins = await wallet.client.algorand.client.algod.getApplicationBoxes(wallet.appId).do()
-      // const plugin = await wallet.client.algorand.client.algod.getApplicationBoxByName(wallet.appId, plugins.boxes[0].name).do()
-      const plugins = await wallet.getPlugins()
-      console.log('plugins:', plugins)
+      walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
-      // walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      // expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
+      const escrowInfo = await wallet.getEscrow(escrow)
+      const escrowAddress = getApplicationAddress(escrowInfo.id).toString()
 
-      const { returns } = await wallet.usePlugin({
+      const results = await wallet.usePlugin({
+        escrow,
         global: true,
         calls: [
-          tokenMintSdk.mint({
-            assetName: 'Test Akita',
-            unitName: 'TAKTA',
-            total: 1_000_000_000_000n,
-            decimals: 6n,
-            manager: sender,
-            reserve: sender,
-            freeze: ALGORAND_ZERO_ADDRESS_STRING,
-            clawback: ALGORAND_ZERO_ADDRESS_STRING,
-            defaultFrozen: false,
-            url: 'https://akita.community',
+          asaMintSdk.mint({
+            assets: [{
+              assetName: 'Test Akita',
+              unitName: 'TAKTA',
+              total: 1_000_000_000_000n,
+              decimals: 6n,
+              manager: escrowAddress,
+              reserve: escrowAddress,
+              freeze: ALGORAND_ZERO_ADDRESS_STRING,
+              clawback: ALGORAND_ZERO_ADDRESS_STRING,
+              defaultFrozen: false,
+              url: 'https://akita.community',
+            }]
           }),
         ]
       })
 
-      const akta = returns[2]
-      console.log('returns 2:', akta)
+      const takta = decodeUint64(results.confirmations[2].logs![0].slice(4))
+      console.log('created asset:', takta)
 
-      // await wallet.addPlugin({
-      //   sender,
-      //   signer,
-      //   client: optinSdk,
-      //   global: true,
-      // })
+      const optinSdk = await deploy(testAccount)
 
-      // await wallet.usePlugin({
-      //   sender,
-      //   signer,
-      //   client: optinSdk,
-      //   global: true,
-      //   calls: [
-      //     optinSdk.optin({
-      //       sender,
-      //       signer,
-      //       assets: [akta]
-      //     })
-      //   ]
-      // })
+      mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
 
-      expect(returns.length).toBe(4)
-      // expect that our plugin list is now 2 instead of 1
-      // expect that the account has 100_000 more microalgos      
-      // expect its opted into our test asset
+      await wallet.client.appClient.fundAppAccount({ amount: new AlgoAmount({ microAlgo: mbr.plugins }) })
+
+      await wallet.addPlugin({ client: optinSdk, global: true })
+
+      await wallet.usePlugin({
+        global: true,
+        calls: [optinSdk.optin({ assets: [takta] })]
+      })
+
+      expect(results.txIds.length).toBe(4)
+
+      const plugins = await wallet.getPlugins()
+      expect(plugins.size).toBe(2)
+
+      walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
+      expect(walletInfo?.assets?.length).toBe(1)
     })
   })
 })

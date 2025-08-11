@@ -1,0 +1,5253 @@
+{
+  "version": 3,
+  "sources": [
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/arc58/plugins/asa-mint/contract.algo.ts",
+    "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/utils/functions.ts"
+  ],
+  "mappings": ";;;;;;AAMA;;AAAA;;;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;;AAEE;;AAAA;AAAA;AAAA;;AAAA;AAFF;;;AAAA;AAAA;;;AAAA;AAAA;AAAA;;;AAAA;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAEE;;;AAAA;;;;;;AAAA;AAAA;AAAA;AAAA;;AAFF;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAEE;;;;;;;;;;ACoM+B;;AAEvB;;;;;;;;;;;;;;;;;;AAFuB;AAAA;AAAA;AD3L7B;;AAAA;;AAAA;AAAA;;AAAA;;AAImB;;AAA+B;;AAAA;AAAA;AAAA;AAAA;;AAAtC;AAJZ;AAAA;AAAA;AAS8B;;;;AACT;AAAG;;AAAA;;AAAA;AAAxB;;;AAYM;;AAAA;;;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;AAAA;;AAAA;AAAA;;AAAA;;AAAA;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;;AAAA;;AAAA;;AAAA;AAAA;;;AAAA;;AAAA;;AAAA;;;AAAA;AAAA;;AAAA;;AAAA;;AAAA;AAAA;;;AAAA;;AAAA;;AAAA;;AAAA;AAAA;;AAAA;;AAAA;;AAAA;AAAA;;AAAA;;AAAA;;;AAAA;;AAAA;;AAAA;;;AAAA;;AAAA;;AAAA;;;AAAA;;AAAA;;AAAA;;;AAAA;;AAAA;;AAAA;;;AAAA;AAAA;;AAAA;;AAAA;AAAA;AAAA;;;AAAA;;AAEc;AAagB;AAAhB;AAAL;AAAA;;;AAAiC;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAb5B;;;;AAAA;;;AAAA;;;AAiBlB;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;;AAAA;;;;;;;;;ACmMA;;AAAA;;;AACY;;ADxMgD;;;AC2MlD;;AAAA;;AAAA;AD3MkD;;;AAO9D;;AAAA;;AAAA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "@algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1 2"
+    },
+    "6": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "8": {
+      "op": "bz main_bare_routing@6",
+      "stack_out": []
+    },
+    "11": {
+      "op": "pushbytes 0x0da39939 // method \"mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[]\"",
+      "defined_out": [
+        "Method(mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[])"
+      ],
+      "stack_out": [
+        "Method(mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[])"
+      ]
+    },
+    "17": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[])",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[])",
+        "tmp%2#0"
+      ]
+    },
+    "20": {
+      "op": "match main_mint_route@3",
+      "stack_out": []
+    },
+    "24": {
+      "block": "main_after_if_else@10",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "25": {
+      "op": "return",
+      "stack_out": []
+    },
+    "26": {
+      "block": "main_mint_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "28": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "29": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "30": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "32": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "33": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "reinterpret_Encoded(uint64)%0#0"
+      ],
+      "stack_out": [
+        "reinterpret_Encoded(uint64)%0#0"
+      ]
+    },
+    "36": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "37": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "reinterpret_Encoded(bool8)%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "reinterpret_Encoded(bool8)%0#0"
+      ]
+    },
+    "40": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "reinterpret_Encoded(bool8)%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "reinterpret_Encoded(bool8)%0#0",
+        "0"
+      ]
+    },
+    "41": {
+      "op": "getbit",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0"
+      ]
+    },
+    "42": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0"
+      ]
+    },
+    "45": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0",
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%9#0"
+      ]
+    },
+    "47": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0",
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%9#0",
+        "1"
+      ]
+    },
+    "48": {
+      "op": "-",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "gtxn_idx%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "gtxn_idx%0#0"
+      ]
+    },
+    "49": {
+      "op": "dup",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ]
+    },
+    "50": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ]
+    },
+    "52": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ]
+    },
+    "53": {
+      "op": "==",
+      "defined_out": [
+        "aggregate%get_bit%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "54": {
+      "error": "transaction type is pay",
+      "op": "assert // transaction type is pay",
+      "stack_out": [
+        "tmp%7#0",
+        "aggregate%get_bit%0#0",
+        "reinterpret_Encoded(len+((len+utf8[]),(len+utf8[]),uint64,uint64,uint8[32],uint8[32],uint8[32],uint8[32],bool1,(len+utf8[]))[])%0#0",
+        "gtxn_idx%0#0"
+      ]
+    },
+    "55": {
+      "callsub": "smart_contracts/arc58/plugins/asa-mint/contract.algo.ts::AsaMintPlugin.mint",
+      "op": "callsub mint",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "58": {
+      "op": "pushbytes 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0",
+        "0x151f7c75"
+      ]
+    },
+    "64": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%10#0"
+      ]
+    },
+    "65": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "66": {
+      "op": "log",
+      "stack_out": []
+    },
+    "67": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "68": {
+      "op": "return",
+      "stack_out": []
+    },
+    "69": {
+      "block": "main_bare_routing@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "71": {
+      "op": "bnz main_after_if_else@10",
+      "stack_out": []
+    },
+    "74": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "76": {
+      "op": "!",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "77": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "78": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "79": {
+      "op": "return",
+      "stack_out": []
+    },
+    "80": {
+      "subroutine": "smart_contracts/arc58/plugins/asa-mint/contract.algo.ts::AsaMintPlugin.mint",
+      "params": {
+        "walletID#0": "uint64",
+        "rekeyBack#0": "uint64",
+        "assets#0": "bytes",
+        "mbrPayment#0": "uint64"
+      },
+      "block": "mint",
+      "stack_in": [],
+      "op": "proto 4 1"
+    },
+    "83": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "assetName#0"
+      ]
+    },
+    "84": {
+      "op": "dupn 6",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0"
+      ]
+    },
+    "86": {
+      "op": "pushbytes \"\"",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0"
+      ]
+    },
+    "88": {
+      "op": "dupn 3",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0"
+      ]
+    },
+    "90": {
+      "op": "frame_dig -4",
+      "defined_out": [
+        "walletID#0 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "walletID#0 (copy)"
+      ]
+    },
+    "92": {
+      "op": "pushbytes \"spending_address\"",
+      "defined_out": [
+        "\"spending_address\"",
+        "walletID#0 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "walletID#0 (copy)",
+        "\"spending_address\""
+      ]
+    },
+    "110": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "awst_tmp%1#0",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "awst_tmp%1#0"
+      ]
+    },
+    "111": {
+      "op": "pop",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0"
+      ]
+    },
+    "112": {
+      "op": "dup",
+      "defined_out": [
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "spendingAddressBytes#0"
+      ]
+    },
+    "113": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "mbrPayment#0 (copy)",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "spendingAddressBytes#0",
+        "mbrPayment#0 (copy)"
+      ]
+    },
+    "115": {
+      "op": "gtxns Receiver",
+      "defined_out": [
+        "spendingAddressBytes#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "spendingAddressBytes#0",
+        "tmp%1#0"
+      ]
+    },
+    "117": {
+      "op": "==",
+      "defined_out": [
+        "spendingAddressBytes#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0"
+      ]
+    },
+    "118": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "mbrPayment#0 (copy)"
+      ]
+    },
+    "120": {
+      "op": "gtxns Amount",
+      "defined_out": [
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0"
+      ]
+    },
+    "122": {
+      "op": "global AssetCreateMinBalance",
+      "defined_out": [
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0"
+      ]
+    },
+    "124": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "assets#0 (copy)",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0",
+        "assets#0 (copy)"
+      ]
+    },
+    "126": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0",
+        "assets#0 (copy)",
+        "0"
+      ]
+    },
+    "127": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "128": {
+      "op": "dup",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "129": {
+      "op": "cover 4",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%4#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "131": {
+      "op": "*",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "tmp%2#0",
+        "tmp%3#0",
+        "tmp%6#0"
+      ]
+    },
+    "132": {
+      "op": "==",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "spendingAddressBytes#0",
+        "tmp%2#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "tmp%2#0",
+        "tmp%7#0"
+      ]
+    },
+    "133": {
+      "op": "&&",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "spendingAddressBytes#0",
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "tmp%8#0"
+      ]
+    },
+    "134": {
+      "error": "invalid payment",
+      "op": "assert // invalid payment",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "135": {
+      "op": "pushbytes 0x0000"
+    },
+    "139": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "spendingAddressBytes#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "140": {
+      "block": "mint_while_top@1",
+      "stack_in": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ],
+      "op": "frame_dig 14",
+      "defined_out": [
+        "i#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0"
+      ]
+    },
+    "142": {
+      "op": "frame_dig 12",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "i#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "144": {
+      "op": "<",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "i#0",
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "tmp%10#0"
+      ]
+    },
+    "145": {
+      "op": "bz mint_after_while@7",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "148": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "assets#0 (copy)",
+        "i#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "assets#0 (copy)"
+      ]
+    },
+    "150": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "i#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0"
+      ]
+    },
+    "153": {
+      "op": "frame_dig 14",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "i#0"
+      ]
+    },
+    "155": {
+      "op": "dup",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "i#0",
+        "i#0 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "i#0 (copy)",
+        "i#0 (copy)"
+      ]
+    },
+    "156": {
+      "op": "cover 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "i#0 (copy)"
+      ]
+    },
+    "158": {
+      "op": "intc_2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "i#0",
+        "i#0 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "i#0 (copy)",
+        "2"
+      ]
+    },
+    "159": {
+      "op": "*",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%item_offset_offset%0#0",
+        "i#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset_offset%0#0"
+      ]
+    },
+    "160": {
+      "op": "dig 1",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_head_and_tail%0#0 (copy)",
+        "aggregate%array_length%0#0",
+        "aggregate%item_offset_offset%0#0",
+        "i#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset_offset%0#0",
+        "aggregate%array_head_and_tail%0#0 (copy)"
+      ]
+    },
+    "162": {
+      "op": "swap",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_head_and_tail%0#0 (copy)",
+        "aggregate%item_offset_offset%0#0"
+      ]
+    },
+    "163": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0"
+      ]
+    },
+    "164": {
+      "op": "dig 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0 (copy)"
+      ]
+    },
+    "166": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#0 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0 (copy)",
+        "1"
+      ]
+    },
+    "167": {
+      "op": "+",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3"
+      ]
+    },
+    "168": {
+      "op": "dup",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "i#3"
+      ]
+    },
+    "169": {
+      "op": "frame_bury 9",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3"
+      ]
+    },
+    "171": {
+      "op": "frame_dig 12",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "173": {
+      "op": "dup",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_length%0#0 (copy)",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "aggregate%array_length%0#0 (copy)",
+        "aggregate%array_length%0#0 (copy)"
+      ]
+    },
+    "174": {
+      "op": "cover 4",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "aggregate%array_length%0#0 (copy)"
+      ]
+    },
+    "176": {
+      "op": "dig 1",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_length%0#0 (copy)",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#3",
+        "i#3 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "aggregate%array_length%0#0 (copy)",
+        "i#3 (copy)"
+      ]
+    },
+    "178": {
+      "error": "index access is out of bounds",
+      "op": "- // on error: index access is out of bounds",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "aggregate%has_next%0#0"
+      ]
+    },
+    "179": {
+      "op": "dig 3",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "aggregate%has_next%0#0",
+        "aggregate%array_head_and_tail%0#0 (copy)"
+      ]
+    },
+    "181": {
+      "op": "len",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "i#3",
+        "aggregate%has_next%0#0",
+        "aggregate%end_of_array%0#0"
+      ]
+    },
+    "182": {
+      "op": "uncover 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%end_of_array%0#0",
+        "i#3"
+      ]
+    },
+    "184": {
+      "op": "intc_2 // 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%end_of_array%0#0",
+        "i#3",
+        "2"
+      ]
+    },
+    "185": {
+      "op": "*",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%next_item_offset_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%next_item_offset_offset%0#0"
+      ]
+    },
+    "186": {
+      "op": "dig 4",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%next_item_offset_offset%0#0",
+        "aggregate%array_head_and_tail%0#0 (copy)"
+      ]
+    },
+    "188": {
+      "op": "swap",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%array_head_and_tail%0#0 (copy)",
+        "aggregate%next_item_offset_offset%0#0"
+      ]
+    },
+    "189": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%next_item_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%has_next%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%next_item_offset%0#0"
+      ]
+    },
+    "190": {
+      "op": "uncover 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%end_of_array%0#0",
+        "aggregate%next_item_offset%0#0",
+        "aggregate%has_next%0#0"
+      ]
+    },
+    "192": {
+      "op": "select",
+      "defined_out": [
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%array_length%0#0",
+        "aggregate%end_offset%0#0",
+        "aggregate%item_offset%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%array_head_and_tail%0#0",
+        "aggregate%item_offset%0#0",
+        "aggregate%end_offset%0#0"
+      ]
+    },
+    "193": {
+      "op": "substring3",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0"
+      ]
+    },
+    "194": {
+      "op": "dup",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "195": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "0"
+      ]
+    },
+    "196": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%substring3%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%0#0"
+      ]
+    },
+    "197": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "199": {
+      "op": "intc_2 // 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "2"
+      ]
+    },
+    "200": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%extract_uint16%1#0"
+      ]
+    },
+    "201": {
+      "op": "dig 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "203": {
+      "op": "uncover 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0 (copy)",
+        "aggregate%extract_uint16%0#0"
+      ]
+    },
+    "205": {
+      "op": "dig 2",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%extract_uint16%1#0 (copy)",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0 (copy)",
+        "aggregate%extract_uint16%0#0",
+        "aggregate%extract_uint16%1#0 (copy)"
+      ]
+    },
+    "207": {
+      "op": "substring3",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%1#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%1#0"
+      ]
+    },
+    "208": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "assetName#0"
+      ]
+    },
+    "211": {
+      "op": "frame_bury 0",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0"
+      ]
+    },
+    "213": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "215": {
+      "op": "pushint 149 // 149",
+      "defined_out": [
+        "149",
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "assetName#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%substring3%0#0 (copy)",
+        "149"
+      ]
+    },
+    "218": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "219": {
+      "op": "dig 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "221": {
+      "op": "uncover 2",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)",
+        "aggregate%extract_uint16%1#0"
+      ]
+    },
+    "223": {
+      "op": "dig 2",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%extract_uint16%3#0 (copy)",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "assetName#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)",
+        "aggregate%extract_uint16%1#0",
+        "aggregate%extract_uint16%3#0 (copy)"
+      ]
+    },
+    "225": {
+      "op": "substring3",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%3#0",
+        "assetName#0",
+        "i#0",
+        "i#3"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%3#0"
+      ]
+    },
+    "226": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "i#0",
+        "i#3",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "unitName#0"
+      ]
+    },
+    "229": {
+      "op": "frame_bury 5",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "i#0",
+        "i#3",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "231": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "233": {
+      "op": "pushint 4 // 4",
+      "defined_out": [
+        "4",
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "assetName#0",
+        "i#0",
+        "i#3",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)",
+        "4"
+      ]
+    },
+    "235": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "i#0",
+        "i#3",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "total#0"
+      ]
+    },
+    "236": {
+      "op": "frame_bury 10",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "i#0",
+        "i#3",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "238": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "240": {
+      "op": "pushint 12 // 12",
+      "defined_out": [
+        "12",
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "assetName#0",
+        "i#0",
+        "i#3",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)",
+        "12"
+      ]
+    },
+    "242": {
+      "op": "extract_uint64",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "i#0",
+        "i#3",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "decimals#0"
+      ]
+    },
+    "243": {
+      "op": "frame_bury 7",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "i#0",
+        "i#3",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "245": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "247": {
+      "op": "extract 20 32",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "manager#0"
+      ]
+    },
+    "250": {
+      "op": "frame_bury 3",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "252": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "254": {
+      "op": "extract 52 32",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "reserve#0"
+      ]
+    },
+    "257": {
+      "op": "frame_bury 4",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "259": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "261": {
+      "op": "extract 84 32",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "freeze#0"
+      ]
+    },
+    "264": {
+      "op": "frame_bury 2",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "decimals#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "266": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "268": {
+      "op": "extract 116 32",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "clawback#0"
+      ]
+    },
+    "271": {
+      "op": "frame_bury 1",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "273": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "275": {
+      "op": "pushint 1184 // 1184",
+      "defined_out": [
+        "1184",
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "aggregate%substring3%0#0 (copy)",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)",
+        "1184"
+      ]
+    },
+    "278": {
+      "op": "getbit",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "defaultFrozen#0"
+      ]
+    },
+    "279": {
+      "op": "frame_bury 8",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0"
+      ]
+    },
+    "281": {
+      "op": "dig 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%substring3%0#0 (copy)"
+      ]
+    },
+    "283": {
+      "op": "len",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%len%0#0",
+        "aggregate%substring3%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%0#0",
+        "aggregate%extract_uint16%3#0",
+        "aggregate%len%0#0"
+      ]
+    },
+    "284": {
+      "op": "substring3",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%12#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "aggregate%substring3%12#0"
+      ]
+    },
+    "285": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "url#0"
+      ]
+    },
+    "288": {
+      "op": "frame_bury 6",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "290": {
+      "op": "itxn_begin"
+    },
+    "291": {
+      "op": "intc_1 // 1",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "aggregate%array_length%0#0",
+        "1"
+      ]
+    },
+    "292": {
+      "op": "-",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "tmp%12#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0",
+        "tmp%12#0"
+      ]
+    },
+    "293": {
+      "op": "<",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "tmp%13#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "tmp%13#0"
+      ]
+    },
+    "294": {
+      "op": "bz mint_ternary_false@4",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "297": {
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "i#3",
+        "manager#0",
+        "reserve#0",
+        "ternary_result%0#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "ternary_result%0#0"
+      ]
+    },
+    "299": {
+      "block": "mint_ternary_merge@5",
+      "stack_in": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "ternary_result%0#0"
+      ],
+      "op": "itxn_field RekeyTo",
+      "defined_out": [],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "301": {
+      "op": "frame_dig 6",
+      "defined_out": [
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "url#0"
+      ]
+    },
+    "303": {
+      "op": "itxn_field ConfigAssetURL",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "305": {
+      "op": "frame_dig 8",
+      "defined_out": [
+        "defaultFrozen#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "defaultFrozen#0"
+      ]
+    },
+    "307": {
+      "op": "itxn_field ConfigAssetDefaultFrozen",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "309": {
+      "op": "frame_dig 1",
+      "defined_out": [
+        "clawback#0",
+        "defaultFrozen#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "clawback#0"
+      ]
+    },
+    "311": {
+      "op": "itxn_field ConfigAssetClawback",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "313": {
+      "op": "frame_dig 2",
+      "defined_out": [
+        "clawback#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "freeze#0"
+      ]
+    },
+    "315": {
+      "op": "itxn_field ConfigAssetFreeze",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "317": {
+      "op": "frame_dig 4",
+      "defined_out": [
+        "clawback#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "reserve#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "reserve#0"
+      ]
+    },
+    "319": {
+      "op": "itxn_field ConfigAssetReserve",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "321": {
+      "op": "frame_dig 3",
+      "defined_out": [
+        "clawback#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "manager#0"
+      ]
+    },
+    "323": {
+      "op": "itxn_field ConfigAssetManager",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "325": {
+      "op": "frame_dig 7",
+      "defined_out": [
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "decimals#0"
+      ]
+    },
+    "327": {
+      "op": "itxn_field ConfigAssetDecimals",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "329": {
+      "op": "frame_dig 10",
+      "defined_out": [
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "total#0"
+      ]
+    },
+    "331": {
+      "op": "itxn_field ConfigAssetTotal",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "333": {
+      "op": "frame_dig 5",
+      "defined_out": [
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "unitName#0"
+      ]
+    },
+    "335": {
+      "op": "itxn_field ConfigAssetUnitName",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "337": {
+      "op": "frame_dig 0",
+      "defined_out": [
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "assetName#0"
+      ]
+    },
+    "339": {
+      "op": "itxn_field ConfigAssetName",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "341": {
+      "op": "frame_dig 11",
+      "defined_out": [
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "spendingAddressBytes#0"
+      ]
+    },
+    "343": {
+      "op": "itxn_field Sender",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "345": {
+      "op": "pushint 3 // 3",
+      "defined_out": [
+        "3",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "3"
+      ]
+    },
+    "347": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "349": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "0"
+      ]
+    },
+    "350": {
+      "op": "itxn_field Fee",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "352": {
+      "op": "itxn_submit"
+    },
+    "353": {
+      "op": "itxn CreatedAssetID",
+      "defined_out": [
+        "assetName#0",
+        "clawback#0",
+        "createTxn.CreatedAssetID#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "createTxn.CreatedAssetID#0"
+      ]
+    },
+    "355": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "assetName#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "356": {
+      "op": "frame_dig 13",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "aggregate%val_as_bytes%0#0",
+        "assetsCreated#0"
+      ]
+    },
+    "358": {
+      "op": "dup"
+    },
+    "359": {
+      "op": "uncover 2",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "assetName#0",
+        "assetsCreated#0",
+        "assetsCreated#0 (copy)",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "assetsCreated#0",
+        "assetsCreated#0 (copy)",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "361": {
+      "error": "max array length exceeded",
+      "op": "concat // on error: max array length exceeded",
+      "defined_out": [
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "concat%0#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "assetsCreated#0",
+        "concat%0#0"
+      ]
+    },
+    "362": {
+      "op": "swap",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "concat%0#0",
+        "assetsCreated#0"
+      ]
+    },
+    "363": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "concat%0#0",
+        "assetsCreated#0",
+        "0"
+      ]
+    },
+    "364": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "concat%0#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "extract_uint16%0#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "concat%0#0",
+        "extract_uint16%0#0"
+      ]
+    },
+    "365": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "concat%0#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "extract_uint16%0#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "concat%0#0",
+        "extract_uint16%0#0",
+        "1"
+      ]
+    },
+    "366": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "concat%0#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "concat%0#0",
+        "add%0#0"
+      ]
+    },
+    "367": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%0#0",
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "concat%0#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "concat%0#0",
+        "as_bytes%0#0"
+      ]
+    },
+    "368": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "as_u16_bytes%0#0",
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "concat%0#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "concat%0#0",
+        "as_u16_bytes%0#0"
+      ]
+    },
+    "371": {
+      "op": "replace2 0",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "assetsCreated#0"
+      ]
+    },
+    "373": {
+      "op": "frame_bury 13",
+      "defined_out": [
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "375": {
+      "op": "frame_dig 9",
+      "defined_out": [
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "i#0"
+      ]
+    },
+    "377": {
+      "op": "frame_bury 14",
+      "defined_out": [
+        "assetName#0",
+        "assetsCreated#0",
+        "clawback#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "freeze#0",
+        "i#0",
+        "manager#0",
+        "reserve#0",
+        "spendingAddressBytes#0",
+        "total#0",
+        "unitName#0",
+        "url#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "379": {
+      "op": "b mint_while_top@1"
+    },
+    "382": {
+      "block": "mint_ternary_false@4",
+      "stack_in": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ],
+      "op": "frame_dig -3",
+      "defined_out": [
+        "rekeyBack#0 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "rekeyBack#0 (copy)"
+      ]
+    },
+    "384": {
+      "op": "bnz mint_after_if_else@10",
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ]
+    },
+    "387": {
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "ternary_result%0#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "ternary_result%0#0"
+      ]
+    },
+    "389": {
+      "op": "b mint_ternary_merge@5"
+    },
+    "392": {
+      "block": "mint_after_if_else@10",
+      "stack_in": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ],
+      "op": "frame_dig -4",
+      "defined_out": [
+        "walletID#0 (copy)"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "walletID#0 (copy)"
+      ]
+    },
+    "394": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "396": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "defined_out": [
+        "ternary_result%0#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "ternary_result%0#0"
+      ]
+    },
+    "397": {
+      "op": "b mint_ternary_merge@5"
+    },
+    "400": {
+      "block": "mint_after_while@7",
+      "stack_in": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0"
+      ],
+      "op": "frame_dig 13",
+      "defined_out": [
+        "assetsCreated#0"
+      ],
+      "stack_out": [
+        "assetName#0",
+        "clawback#0",
+        "freeze#0",
+        "manager#0",
+        "reserve#0",
+        "unitName#0",
+        "url#0",
+        "decimals#0",
+        "defaultFrozen#0",
+        "i#3",
+        "total#0",
+        "spendingAddressBytes#0",
+        "aggregate%array_length%0#0",
+        "assetsCreated#0",
+        "i#0",
+        "assetsCreated#0"
+      ]
+    },
+    "402": {
+      "op": "frame_bury 0"
+    },
+    "404": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

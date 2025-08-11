@@ -74,16 +74,16 @@ mint:
     //   recipient: Address
     // ): uint64 {
     proto 3 1
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:205-208
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:207
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:205-208
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -97,11 +97,11 @@ mint:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:254
     // if (!rekeyBack) {
     frame_dig -2
     bnz mint_after_if_else@6
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:255
     // return Global.zeroAddress
     global ZeroAddress
 
@@ -112,7 +112,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7:
     //   args: [recipient],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
-    pushbytes 0x8424203b // method "create(byte[32])void"
+    pushbytes 0xcc694eaa // method "create(address)void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -130,7 +130,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7:
     itxn_field GlobalNumUint
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(CiACAAEmAQlyZWNpcGllbnQxG0EAFYICBMxpTqoE3SHIDTYaAI4CAB8AAiJDMRkURDEYRDYaARc2GgIiUzYaAxc2GgQXiAArI0MxGRREMRgURDYaAYgAEyNDigIBi/5AAAMyA4mL/3IIRImKAQAoi/9niYoEAIv8gBBzcGVuZGluZ19hZGRyZXNzZUiL/kAAHrEiKGVEi/2L/Ij/vbIgi/+yCLIHsgAjshAisgGzibEiKGVEi/2L/Ij/n7Igi/6yEYv/shKyFLIAgQSyECKyAbOJ)
+    pushbytes base64(CiADAAEQJgEJcmVjaXBpZW50MRtBABWCAgTMaU6qBOBHUmI2GgCOAgAaAAIiQzEZFEQxGEQ2GgEXNhoCIlM2GgOIACsjQzEZFEQxGBRENhoBiAATI0OKAgGL/kAAAzIDiYv/cghEiYoBACiL/2eJigMAIkmAAEcCi/2AEHNwZW5kaW5nX2FkZHJlc3NlSCKL/yJZSYwCiwYNQQCSi/9XAgCLBiQLJFhJIltJTgKMBIEIW4wDQAA8sSIoZUyMAESLAiMJiwYNQQAgMgOyIIsDsgiLALIHiwWyACOyECKyAbOLBiMIjAZC/6aL/ov9iP9mQv/YsSIoZUyMAUSLAiMJiwYNQQAfMgOyIIsEshGLA7ISiwGyFIsFsgCBBLIQIrIBs0L/vIv+i/2I/ytC/9mJ)
     itxn_field ApprovalProgramPages
     // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:27-31
     // const result = paySilo.call.create({
@@ -155,7 +155,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7:
     retsub
 
 mint_after_if_else@6:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:258
     // return wallet.address
     frame_dig -3
     app_params_get AppAddress
