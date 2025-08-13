@@ -1,6 +1,6 @@
 import { bytes, Contract, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
-import { AddAllowanceInfo, EscrowInfo, EscrowReclaim, ExecutionKey, FundsRequest, MethodRestriction } from "../arc58/account/types";
+import { AddAllowanceInfo, EscrowInfo, EscrowReclaim, FundsRequest, MethodRestriction } from "../arc58/account/types";
 
 export class AbstractedAccountInterface extends Contract {
   create(
@@ -68,8 +68,8 @@ export class AbstractedAccountInterface extends Contract {
   ): void { }
   arc58_addAllowances(escrow: string, allowances: AddAllowanceInfo[]): void { }
   arc58_removeAllowances(escrow: string, assets: uint64[]): void { }
-  arc58_addExecutionKey(key: ExecutionKey, lastValidRound: uint64): void { }
-  arc58_removeExecutionKey(key: ExecutionKey): void { }
+  arc58_addExecutionKey(key: bytes<32>, groups: bytes<32>[], expiration: uint64): void { }
+  arc58_removeExecutionKey(key: bytes<32>): void { }
   arc58_getAdmin(): Address { return new Address(Txn.sender); }
   arc58_getEscrow(name: string): EscrowInfo { return { id: 0, locked: false }; }
   arc58_mustGetEscrow(name: string): EscrowInfo { return { id: 0, locked: false }; }

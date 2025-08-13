@@ -1,4 +1,4 @@
-import { Application, Asset, Global, gtxn, itxn, abimethod, assertMatch, uint64, assert, Contract } from "@algorandfoundation/algorand-typescript";
+import { Application, Asset, Global, gtxn, itxn, assertMatch, uint64, assert, Contract } from "@algorandfoundation/algorand-typescript";
 import { ERR_INVALID_PAYMENT } from "../../../utils/errors";
 import { ERR_ALREADY_OPTED_IN } from "./errors";
 import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";

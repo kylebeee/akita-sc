@@ -1,6 +1,6 @@
 import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Struct, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AddAllowanceInfo, ExecutionKey, MethodRestriction } from '../account/types';
+import { Address, Struct, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { AddAllowanceInfo, MethodRestriction } from '../account/types';
 import { CID } from '../../utils/types/base';
 
 
@@ -11,8 +11,9 @@ export type PayoutEscrowType = Uint8
 
 export type ProposalUpgradeApp = {
   app: uint64
-  executionKey: ExecutionKey
-  lastValidRound: uint64
+  executionKey: bytes<32>
+  groups: bytes<32>[]
+  expiration: uint64
 }
 
 export type ProposalAddPlugin = {
@@ -60,8 +61,9 @@ export type ProposalExecutePlugin = {
   plugin: uint64
   caller: Address
   escrow: string
-  executionKey: ExecutionKey
-  lastValidRound: uint64
+  executionKey: bytes<32>
+  groups: bytes<32>[]
+  expiration: uint64
 }
 
 export type ProposalExecuteNamedPlugin = {
@@ -69,11 +71,13 @@ export type ProposalExecuteNamedPlugin = {
   plugin: uint64
   caller: Address
   escrow: string
-  executionKey: ExecutionKey
+  executionKey: bytes<32>
+  groups: bytes<32>[]
+  expiration: uint64
 }
 
 export type ProposalRemoveExecutePlugin = {
-  executionKey: ExecutionKey
+  executionKey: bytes<32>
 }
 
 export type ProposalRemovePlugin = {

@@ -31,8 +31,11 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
 
   @abimethod({ readonly: true })
   newCost(): uint64 {
-    const creator = this.getCreator()
-    return (MinPages + this.mbr(creator.length) + Global.minBalance)
+    return (
+      MinPages +
+      GLOBAL_STATE_KEY_BYTES_COST +
+      Global.minBalance
+    )
   }
 
   new(payment: gtxn.PaymentTxn): uint64 {
@@ -87,13 +90,13 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
 
     let creator = Bytes('')
     if (Application(app).creator === Global.currentApplicationAddress) {
-      [creator] = op.AppGlobal.getExBytes(Global.callerApplicationId, Bytes(EscrowGlobalStateKeysCreator))
+      creator = op.AppGlobal.getExBytes(app, Bytes(EscrowGlobalStateKeysCreator))[0]
       assert(btoi(creator) === Global.callerApplicationId, ERR_INVALID_CREATOR)
     } else {
       creator = Bytes(itob(Global.callerApplicationId))
       app = Global.callerApplicationId
     }
-    
+
     const appAddress = bytes16(Application(app).address)
     assert(!this.walletIDsByAccounts(appAddress).exists, ERR_ALREADY_REGISTERED)
 
@@ -137,13 +140,16 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
       .submit()
   }
 
-  // @ts-ignore
+  @abimethod({ readonly: true })
+  registerCost(): uint64 {
+    return this.mbr(8)
+  }
+
   @abimethod({ readonly: true })
   exists(address: Address): boolean {
     return this.walletIDsByAccounts(bytes16(address.native)).exists
   }
 
-  // @ts-ignore
   @abimethod({ readonly: true })
   get(address: Address): bytes {
     if (!this.walletIDsByAccounts(bytes16(address.native)).exists) {
@@ -152,14 +158,12 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
     return this.walletIDsByAccounts(bytes16(address.native)).value
   }
 
-  // @ts-ignore
   @abimethod({ readonly: true })
   mustGet(address: Address): bytes {
     assert(this.walletIDsByAccounts(bytes16(address.native)).exists, 'Account not found')
     return this.walletIDsByAccounts(bytes16(address.native)).value
   }
 
-  // @ts-ignore
   @abimethod({ readonly: true })
   getList(addresses: DynamicArray<Address>): DynamicArray<DynamicBytes> {
     const apps = new DynamicArray<DynamicBytes>()
@@ -174,7 +178,6 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
     return apps
   }
 
-  // @ts-ignore
   @abimethod({ readonly: true })
   mustGetList(addresses: DynamicArray<Address>): DynamicArray<DynamicBytes> {
     const apps = new DynamicArray<DynamicBytes>()

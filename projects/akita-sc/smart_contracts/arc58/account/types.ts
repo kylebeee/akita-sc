@@ -1,7 +1,12 @@
 import { Account, arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Bool, DynamicArray, StaticBytes, Struct, Uint64, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
 
-export type ExecutionKey = bytes<32>
+export type ExecutionInfo = {
+  /** the group id of the execution */
+  groups: bytes<32>[];
+  /** the escrow account to use for the execution */
+  expiration: uint64;
+}
 
 export type EscrowInfo = {
   /** the app id of the escrow account */
@@ -11,10 +16,10 @@ export type EscrowInfo = {
 }
 
 export type AllowanceKey = {
-  /** the id of the escrow account to apply the allowance to */
-  escrow: uint64;
   /** the asset id the allowance pertains to */
   asset: uint64;
+  /** the id of the escrow account to apply the allowance to */
+  escrow: string;
 }
 
 export type SpendAllowanceType = Uint8
@@ -29,7 +34,7 @@ export type AllowanceInfo = {
   /** the maximum size of the bucket if using drip */
   max: uint64
   /** the amount of the asset the plugin is allowed to access or per window */
-  allowed: uint64
+  amount: uint64
   /** the amount spent during the current or last interacted window */
   spent: uint64
   /** the rate the allowance should be expanded */
@@ -45,7 +50,7 @@ export type AllowanceInfo = {
 export type AddAllowanceInfo = {
   asset: uint64;
   type: SpendAllowanceType;
-  allowed: uint64;
+  amount: uint64;
   max: uint64;
   interval: uint64;
   useRounds: boolean;
@@ -121,28 +126,22 @@ export class arc4MethodInfo extends arc4.Struct<{
 export type PluginValidation = {
   exists: boolean;
   expired: boolean;
-  hasCooldown: boolean;
   onCooldown: boolean;
   hasMethodRestrictions: boolean;
-  valid: boolean;
 }
 
 export type MethodValidation = {
   methodAllowed: boolean;
-  methodHasCooldown: boolean;
   methodOnCooldown: boolean;
 }
 
 export type FullPluginValidation = {
   exists: boolean
   expired: boolean
-  hasCooldown: boolean
   onCooldown: boolean
   hasMethodRestrictions: boolean
   methodAllowed: boolean
-  methodHasCooldown: boolean
   methodOnCooldown: boolean
-  valid: boolean
 }
 
 export type EscrowReclaim = {
@@ -156,6 +155,7 @@ export type AbstractAccountBoxMBRData = {
   namedPlugins: uint64;
   escrows: uint64;
   allowances: uint64;
+  executions: uint64;
   domainKeys: uint64;
   escrowExists: boolean;
   newEscrowMintCost: uint64

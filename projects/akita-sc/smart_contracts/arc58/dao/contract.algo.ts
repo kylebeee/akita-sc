@@ -1,7 +1,7 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, clone, Contract, GlobalState, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
 import { ProposalActionType, ProposalVoteType, AkitaAppList, AkitaAssets, AkitaDAOApps, AkitaDAOFees, DAOPluginKey, NFTFees, OtherAppList, PluginAppList, ProposalAction, ProposalAddAllowances, ProposalAddNamedPlugin, ProposalAddPlugin, ProposalDetails, ProposalExecutePlugin, ProposalNewEscrow, ProposalRemoveAllowances, ProposalRemoveNamedPlugin, ProposalRemovePlugin, ProposalSettings, ProposalToggleEscrowLock, ProposalUpdateField, ProposalUpgradeApp, ProposalVoteInfo, ProposalVoteKey, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees, ProposalRemoveExecutePlugin } from "./types";
 import { AbstractAccountBoxPrefixPlugins, ABSTRACTED_ACCOUNT_MINT_PAYMENT } from "../account/constants";
-import { AddAllowanceInfo, EscrowInfo, ExecutionKey } from "../account/types";
+import { AddAllowanceInfo, EscrowInfo } from "../account/types";
 import { GlobalStateKeyVersion } from "../../constants";
 import { CID } from "../../utils/types/base";
 import { AkitaDAOGlobalStateKeysInitialized, AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOGlobalStateKeysAddAllowanceProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalActionLimit, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowanceProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, AkitaDAOGlobalStateKeysWalletID, DAOProposalVotesMBR, DAOReceiveAssetsMBR, DAOReceiveEscrowsMBR, MinDAOPayoutEscrowsMBR, PayoutEscrowTypeGroup, ProposalActionTypeAddAllowance, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecuteNamedPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveAllowance, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject, AkitaDAOGlobalStateKeysWalletFees, ProposalActionTypeRemoveExecutePlugin } from "./constants";
@@ -474,17 +474,17 @@ export class AkitaDAO extends Contract {
     }
   }
 
-  private newExecution(key: ExecutionKey, lastValidRound: uint64): void {
+  private newExecution(key: bytes<32>, groups: bytes<32>[], expiration: uint64): void {
     abiCall(
       AbstractedAccountInterface.prototype.arc58_addExecutionKey,
       {
         appId: this.walletID.value,
-        args: [key, lastValidRound]
+        args: [key, groups, expiration]
       }
     )
   }
 
-  private removeExecution(key: ExecutionKey): void {
+  private removeExecution(key: bytes<32>): void {
     abiCall(
       AbstractedAccountInterface.prototype.arc58_removeExecutionKey,
       {
@@ -646,12 +646,12 @@ export class AkitaDAO extends Contract {
     ).returnValue
   }
 
-  init(): void {
+  register(): void {
     assert(Txn.sender === Global.creatorAddress, ERR_FORBIDDEN)
 
     abiCall(
-      AbstractedAccountInterface.prototype.init,
-      { appId: this.walletID.value }
+      AbstractedAccountInterface.prototype.register,
+      { appId: this.walletID.value, args: [''] }
     )
 
     this.initialized.value = true
@@ -874,8 +874,8 @@ export class AkitaDAO extends Contract {
         case ProposalActionTypeUpgradeApp:
         case ProposalActionTypeExecutePlugin:
         case ProposalActionTypeExecuteNamedPlugin: {
-          const { executionKey, lastValidRound } = decodeArc4<ProposalExecutePlugin>(data)
-          this.newExecution(executionKey, lastValidRound)
+          const { executionKey, groups, expiration } = decodeArc4<ProposalExecutePlugin>(data)
+          this.newExecution(executionKey, groups, expiration)
           break
         }
         case ProposalActionTypeRemoveExecutePlugin: {

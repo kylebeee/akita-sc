@@ -39,10 +39,11 @@ import {
   AbstractAccountGlobalStateKeysNickname,
   AbstractAccountGlobalStateKeysRekeyIndex,
   AbstractAccountGlobalStateKeysSpendingAddress,
-  AllowanceMBR,
   MethodRestrictionByteLength,
+  MinAllowanceMBR,
   MinDomainKeysMBR,
   MinEscrowsMBR,
+  MinExecutionsMBR,
   MinNamedPluginMBR,
   MinPluginMBR,
 } from './constants'
@@ -63,10 +64,10 @@ import {
   ERR_EXECUTION_KEY_ALREADY_EXISTS,
   ERR_EXECUTION_KEY_DOES_NOT_EXIST,
   ERR_FORBIDDEN,
+  ERR_GROUP_NOT_FOUND,
   ERR_INVALID_METHOD_SIGNATURE_LENGTH,
   ERR_INVALID_ONCOMPLETE,
   ERR_INVALID_PAYMENT,
-  ERR_INVALID_PLUGIN_CALL,
   ERR_INVALID_SENDER_ARG,
   ERR_INVALID_SENDER_VALUE,
   ERR_MALFORMED_OFFSETS,
@@ -87,7 +88,7 @@ import {
 } from './errors'
 
 import { Staking } from '../../staking/contract.algo'
-import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, EscrowInfo, EscrowReclaim, ExecutionKey, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
+import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, EscrowInfo, EscrowReclaim, ExecutionInfo, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
 import { AkitaDomain, BoxCostPerByte } from '../../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyRevocation, GlobalStateKeyVersion } from '../../constants'
 import { getAkitaAppList } from '../../utils/functions'
@@ -144,7 +145,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   /** The Allowances for plugins installed on the smart contract with useAllowance set to true */
   allowances = BoxMap<AllowanceKey, AllowanceInfo>({ keyPrefix: AbstractAccountBoxPrefixAllowances }) // 38_500
   /** execution keys */
-  executions = BoxMap<ExecutionKey, uint64>({ keyPrefix: AbstractAccountBoxPrefixExecutions })
+  executions = BoxMap<bytes<32>, ExecutionInfo>({ keyPrefix: AbstractAccountBoxPrefixExecutions })
 
   /**
    * Passkeys on the account and their corresponding domain names
@@ -177,12 +178,16 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     return MinNamedPluginMBR + (BoxCostPerByte * Bytes(name).length);
   }
 
-  private escrowsMbr(name: string): uint64 {
-    return MinEscrowsMBR + (BoxCostPerByte * Bytes(name).length);
+  private escrowsMbr(escrow: string): uint64 {
+    return MinEscrowsMBR + (BoxCostPerByte * Bytes(escrow).length);
   }
 
-  private allowancesMbr(): uint64 {
-    return AllowanceMBR;
+  private allowancesMbr(escrow: string): uint64 {
+    return MinAllowanceMBR + (BoxCostPerByte * Bytes(escrow).length);
+  }
+
+  private executionsMbr(groups: uint64): uint64 {
+    return MinExecutionsMBR + (BoxCostPerByte * (groups * 32));
   }
 
   private domainKeysMbr(domain: string): uint64 {
@@ -250,7 +255,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       return false;
     }
 
-    const { methods, useRounds, lastCalled, cooldown, useExecutionKey } = clone(this.plugins(key).value)
+    const { methods, useRounds, lastCalled, cooldown, useExecutionKey } = this.plugins(key).value as Readonly<PluginInfo>
 
     if (useExecutionKey) {
       return false
@@ -312,30 +317,19 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       return {
         exists: false,
         expired: true,
-        hasCooldown: true,
         onCooldown: true,
         hasMethodRestrictions: false,
-        valid: false
       }
     }
 
-    const { useRounds, lastValid, cooldown, lastCalled, methods } = clone(this.plugins(key).value)
+    const { useRounds, lastValid, cooldown, lastCalled, methods } = this.plugins(key).value as Readonly<PluginInfo>
     const epochRef = useRounds ? Global.round : Global.latestTimestamp;
-
-    const expired = epochRef > lastValid;
-    const hasCooldown = cooldown > 0;
-    const onCooldown = hasCooldown && ((epochRef - lastCalled) < cooldown);
-    const hasMethodRestrictions = methods.length > 0;
-
-    const valid = exists && !expired && !onCooldown;
 
     return {
       exists,
-      expired,
-      hasCooldown,
-      onCooldown,
-      hasMethodRestrictions,
-      valid
+      expired: epochRef > lastValid,
+      onCooldown: (epochRef - lastCalled) < cooldown,
+      hasMethodRestrictions: methods.length > 0,
     }
   }
 
@@ -355,10 +349,22 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     if (useExecutionKey) {
       assert(
-        this.executions(Global.groupId).exists &&
-        epochRef < this.executions(Global.groupId).value,
+        this.executions(Txn.lease).exists &&
+        epochRef < this.executions(Txn.lease).value.expiration,
         ERR_BAD_EXECUTION_KEY
       )
+
+      const groups = this.executions(Txn.lease).value.groups as Readonly<bytes<32>[]>;
+
+      let foundGroup = false;
+      for (let i: uint64 = 0; i < groups.length; i += 1) {
+        if (groups[i] === Global.groupId) {
+          foundGroup = true;
+        }
+      }
+
+      assert(foundGroup, ERR_GROUP_NOT_FOUND);
+      this.executions(Txn.lease).delete();
     }
 
     const initialCheck = this.pluginCheck(key);
@@ -389,9 +395,10 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       assert(txn.numAppArgs > 1, ERR_INVALID_SENDER_ARG);
       assert(Application(btoi(txn.appArgs(1))) === Global.currentApplicationId, ERR_INVALID_SENDER_VALUE);
 
-      const { hasMethodRestrictions, valid } = this.pluginCheck(key);
+      const { expired, onCooldown, hasMethodRestrictions } = this.pluginCheck(key);
 
-      assert(valid, ERR_INVALID_PLUGIN_CALL);
+      assert(!expired, ERR_PLUGIN_EXPIRED);
+      assert(!onCooldown, ERR_PLUGIN_ON_COOLDOWN);
 
       if (hasMethodRestrictions) {
         assert(methodIndex < methodOffsets.length, ERR_MALFORMED_OFFSETS);
@@ -425,9 +432,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     const hasCooldown = cooldown > 0
 
     const epochRef = useRounds ? Global.round : Global.latestTimestamp
-    const onCooldown = (epochRef - lastCalled) < cooldown
+    const methodOnCooldown = (epochRef - lastCalled) < cooldown
 
-    if (selector === selectorArg && (!hasCooldown || !onCooldown)) {
+    if (selector === selectorArg && (!hasCooldown || !methodOnCooldown)) {
       // update the last called round for the method
       if (hasCooldown) {
         const lastCalled = useRounds ? Global.round : Global.latestTimestamp;
@@ -436,23 +443,24 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
       return {
         methodAllowed: true,
-        methodHasCooldown: hasCooldown,
-        methodOnCooldown: onCooldown
+        methodOnCooldown
       }
     }
 
     return {
       methodAllowed: false,
-      methodHasCooldown: true,
       methodOnCooldown: true
     }
   }
 
-  private transferFunds(key: PluginKey, escrowID: uint64, fundsRequests: FundsRequest[]): void {
+  private transferFunds(escrow: string, fundsRequests: FundsRequest[]): void {
+    const escrowID = this.escrows(escrow).value.id;
+    const escrowAddress = Application(escrowID).address;
+
     for (let i: uint64 = 0; i < fundsRequests.length; i += 1) {
 
       const allowanceKey: AllowanceKey = {
-        escrow: escrowID,
+        escrow,
         asset: fundsRequests[i].asset
       }
 
@@ -462,7 +470,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         itxn
           .assetTransfer({
             sender: this.controlledAddress.value,
-            assetReceiver: this.spendingAddress.value,
+            assetReceiver: escrowAddress,
             assetAmount: fundsRequests[i].amount,
             xferAsset: fundsRequests[i].asset
           })
@@ -471,7 +479,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         itxn
           .payment({
             sender: this.controlledAddress.value,
-            receiver: this.spendingAddress.value,
+            receiver: escrowAddress,
             amount: fundsRequests[i].amount
           })
           .submit();
@@ -481,61 +489,38 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
   private verifyAllowance(key: AllowanceKey, fundRequest: FundsRequest): void {
     assert(this.allowances(key).exists, ERR_ALLOWANCE_DOES_NOT_EXIST);
-    const { type, spent, allowed, last, max, interval, start, useRounds } = this.allowances(key).value
+    const { type, spent, amount, last, max, interval, start, useRounds } = this.allowances(key).value
     const newLast = useRounds ? Global.round : Global.latestTimestamp;
 
     if (type === SpendAllowanceTypeFlat) {
-      const leftover: uint64 = allowed - spent;
-
+      const leftover: uint64 = amount - spent;
       assert(leftover >= fundRequest.amount, ERR_ALLOWANCE_EXCEEDED);
-
-      this.allowances(key).value = {
-        ...this.allowances(key).value,
-        spent: (spent + fundRequest.amount)
-      }
+      this.allowances(key).value.spent += fundRequest.amount
     } else if (type === SpendAllowanceTypeWindow) {
       const currentWindowStart = this.getLatestWindowStart(useRounds, start, interval)
 
       if (currentWindowStart > last) {
-        assert(allowed >= fundRequest.amount, ERR_ALLOWANCE_EXCEEDED);
-
-        this.allowances(key).value = {
-          ...this.allowances(key).value,
-          spent: fundRequest.amount,
-          last: newLast
-        }
+        assert(amount >= fundRequest.amount, ERR_ALLOWANCE_EXCEEDED);
+        this.allowances(key).value.spent = fundRequest.amount
       } else {
         // calc the remaining amount available in the current window
-        const leftover: uint64 = allowed - spent;
+        const leftover: uint64 = amount - spent;
         assert(leftover >= fundRequest.amount, ERR_ALLOWANCE_EXCEEDED);
-
-        this.allowances(key).value = {
-          ...this.allowances(key).value,
-          spent: (spent + fundRequest.amount),
-          last: newLast
-        }
+        this.allowances(key).value.spent += fundRequest.amount
       }
-
     } else if (type === SpendAllowanceTypeDrip) {
       const epochRef = useRounds ? Global.round : Global.latestTimestamp;
-
-      const amount = fundRequest.amount
-      const accrualRate = allowed
-      const lastLeftover = spent
-
       const passed: uint64 = epochRef - last
-      const accrued: uint64 = lastLeftover + ((passed / interval) * accrualRate)
-
+      // in this context:
+      // amount represents our accrual rate
+      // spent represents the last leftover amount available
+      const accrued: uint64 = spent + ((passed / interval) * amount)
       const available: uint64 = accrued > max ? max : accrued
 
-      assert(available >= amount, ERR_ALLOWANCE_EXCEEDED);
-
-      this.allowances(key).value = {
-        ...this.allowances(key).value,
-        spent: (available - amount),
-        last: newLast
-      }
+      assert(available >= fundRequest.amount, ERR_ALLOWANCE_EXCEEDED);
+      this.allowances(key).value.spent = (available - fundRequest.amount)
     }
+    this.allowances(key).value.last = newLast
   }
 
   private getLatestWindowStart(useRounds: boolean, start: uint64, interval: uint64): uint64 {
@@ -811,7 +796,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       const spendingApp = Application(escrowID)
       this.spendingAddress.value = spendingApp.address
       this.currentEscrow.value = escrow
-      this.transferFunds(key, escrowID, fundsRequest)
+      this.transferFunds(escrow, fundsRequest)
     } else {
       this.spendingAddress.value = this.controlledAddress.value
     }
@@ -1187,7 +1172,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     for (let i: uint64 = 0; i < assets.length; i += 1) {
       assert(
-        this.allowances({ escrow: escrowID, asset: assets[i] }).exists,
+        this.allowances({ escrow, asset: assets[i] }).exists,
         ERR_ALLOWANCE_DOES_NOT_EXIST
       );
 
@@ -1253,7 +1238,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     for (let i: uint64 = 0; i < assets.length; i += 1) {
       assert(
-        this.allowances({ escrow: escrowID, asset: assets[i] }).exists,
+        this.allowances({ escrow, asset: assets[i] }).exists,
         ERR_ALLOWANCE_DOES_NOT_EXIST
       );
 
@@ -1284,22 +1269,21 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .payment({
           sender: this.controlledAddress.value,
           receiver: Global.currentApplicationAddress,
-          amount: this.allowancesMbr() * allowances.length
+          amount: this.allowancesMbr(escrow) * allowances.length
         })
         .submit()
     }
 
-    const escrowID = this.escrows(escrow).value.id;
     for (let i: uint64 = 0; i < allowances.length; i += 1) {
-      const { asset, type, allowed, max, interval, useRounds } = allowances[i];
-      const key: AllowanceKey = { escrow: escrowID, asset }
+      const { asset, type, amount, max, interval, useRounds } = allowances[i];
+      const key: AllowanceKey = { escrow, asset }
       assert(!this.allowances(key).exists, ERR_ALLOWANCE_ALREADY_EXISTS);
       const start = useRounds ? Global.round : Global.latestTimestamp;
 
       this.allowances(key).value = {
         type,
         spent: 0,
-        allowed,
+        amount,
         last: 0,
         max,
         interval,
@@ -1327,15 +1311,14 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       itxn
         .payment({
           receiver: this.controlledAddress.value,
-          amount: this.allowancesMbr() * assets.length
+          amount: this.allowancesMbr(escrow) * assets.length
         })
         .submit()
     }
 
-    const escrowID = this.escrows(escrow).value.id;
     for (let i: uint64 = 0; i < assets.length; i += 1) {
       const key: AllowanceKey = {
-        escrow: escrowID,
+        escrow,
         asset: assets[i]
       }
       assert(this.allowances(key).exists, ERR_ALLOWANCE_DOES_NOT_EXIST)
@@ -1346,19 +1329,23 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     this.updateLastChange()
   }
 
-  arc58_addExecutionKey(key: ExecutionKey, lastValidRound: uint64): void {
+  arc58_addExecutionKey(key: bytes<32>, groups: bytes<32>[], expiration: uint64): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY)
     assert(!this.executions(key).exists, ERR_EXECUTION_KEY_ALREADY_EXISTS)
 
-    this.executions(key).value = lastValidRound
+    this.executions(key).value = {
+      groups: clone(groups),
+      expiration
+    }
 
     this.updateLastUserInteraction()
     this.updateLastChange()
   }
 
-  arc58_removeExecutionKey(key: ExecutionKey): void {
-    assert(this.isAdmin(), ERR_ADMIN_ONLY)
+  arc58_removeExecutionKey(key: bytes<32>): void {
     assert(this.executions(key).exists, ERR_EXECUTION_KEY_DOES_NOT_EXIST)
+    assert(this.isAdmin() || this.executions(key).value.expiration < Global.round, ERR_ADMIN_ONLY)
+
     this.executions(key).delete()
 
     this.updateLastUserInteraction()
@@ -1400,6 +1387,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     escrow: string,
     methodCount: uint64,
     plugin: string,
+    groups: uint64,
   ): AbstractAccountBoxMBRData {
     const escrows = this.escrowsMbr(escrow)
 
@@ -1407,8 +1395,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       plugins: this.pluginsMbr(escrow, methodCount),
       namedPlugins: this.namedPluginsMbr(plugin),
       escrows,
-      allowances: this.allowancesMbr(),
+      allowances: this.allowancesMbr(escrow),
       domainKeys: this.domainKeysMbr(plugin),
+      executions: this.executionsMbr(groups),
       escrowExists: this.escrows(escrow).exists,
       newEscrowMintCost: (
         NewCostForARC58 +

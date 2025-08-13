@@ -1,4 +1,4 @@
-import { Config } from '@algorandfoundation/algokit-utils'
+import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { Address, ALGORAND_ZERO_ADDRESS_STRING, decodeUint64, getApplicationAddress } from 'algosdk'
@@ -58,12 +58,8 @@ describe('Optin plugin contract', () => {
         mbr.newEscrowMintCost
       )
 
-      console.log('funding wallet with:', fundAmount, 'microAlgos')
-
       await wallet.client.appClient.fundAppAccount({
-        amount: new AlgoAmount({
-          microAlgo: fundAmount
-        })
+        amount: microAlgo(fundAmount)
       })
 
       await wallet.addPlugin({
@@ -106,13 +102,13 @@ describe('Optin plugin contract', () => {
 
       mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
 
-      await wallet.client.appClient.fundAppAccount({ amount: new AlgoAmount({ microAlgo: mbr.plugins }) })
+      await wallet.client.appClient.fundAppAccount({ amount: microAlgo(mbr.plugins) })
 
       await wallet.addPlugin({ client: optinSdk, global: true })
 
       await wallet.usePlugin({
         global: true,
-        calls: [optinSdk.optin({ assets: [takta] })]
+        calls: [optinSdk.optIn({ assets: [takta] })]
       })
 
       expect(results.txIds.length).toBe(4)

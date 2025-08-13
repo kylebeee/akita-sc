@@ -29,7 +29,8 @@ export const MethodRestrictionByteLength: uint64 = 20
 export const MinPluginMBR: uint64 = 38_900
 export const MinNamedPluginMBR: uint64 = 18_900
 export const MinEscrowsMBR: uint64 = 6_500
-export const AllowanceMBR: uint64 = 29_300
+export const MinAllowanceMBR: uint64 = 27_700
+export const MinExecutionsMBR: uint64 = 20_500
 export const MinDomainKeysMBR: uint64 = 15_700
 
 export const ABSTRACTED_ACCOUNT_MINT_PAYMENT: uint64 = 1_028_000 + 12_100 // 1_028_000 for the account, 12_100 for the escrow factory

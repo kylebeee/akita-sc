@@ -1,4 +1,4 @@
-import { Config } from '@algorandfoundation/algokit-utils'
+import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { Address, ALGORAND_ZERO_ADDRESS_STRING, decodeUint64 } from 'algosdk'
@@ -56,9 +56,7 @@ describe('Asa Mint plugin contract', () => {
       console.log('funding wallet with:', fundAmount, 'microAlgos')
 
       await wallet.client.appClient.fundAppAccount({
-        amount: new AlgoAmount({
-          microAlgo: fundAmount
-        })
+        amount: microAlgo(fundAmount)
       })
 
       await wallet.addPlugin({
