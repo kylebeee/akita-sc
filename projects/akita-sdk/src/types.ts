@@ -1,16 +1,17 @@
 import { AlgorandClient } from "@algorandfoundation/algokit-utils/types/algorand-client";
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
-import { TransactionSignerAccount } from "@algorandfoundation/algokit-utils/types/account";
 import { SendParams } from "@algorandfoundation/algokit-utils/types/transaction";
-import algosdk, { Address, TransactionSigner } from "algosdk";
+import { Address, modelsv2, Transaction, TransactionSigner } from "algosdk";
 import { AppFactoryAppClientParams } from "@algorandfoundation/algokit-utils/types/app-factory";
+import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
+import { ABIReturn, AppReturn } from "@algorandfoundation/algokit-utils/types/app";
 
 export type MaybeSigner = {
   sender?: Address | string;
   signer?: TransactionSigner;
 };
 
-type ClientFactory<T> = new (params: { algorand: AlgorandClient }) => {
+export type ClientFactory<T> = new (params: { algorand: AlgorandClient }) => {
   getAppClientById(params: AppFactoryAppClientParams): T;
 };
 
@@ -24,7 +25,6 @@ export type ExpandedSendParams = SendParams & {
   sender?: Address | string;
   signer?: TransactionSigner;
 };
-
 
 export type ExpandedSendParamsWithSigner = ExpandedSendParams & {
   sender: Address | string;
@@ -82,10 +82,10 @@ export type PluginHookParams = {
   walletId: bigint;
 }
 
-export type PluginSDKReturn = () => {
+export type PluginSDKReturn = (spendingAddress?: Address | string) => {
   appId: bigint;
   selector: Uint8Array;
-  getTxns: (params: PluginHookParams) => Promise<algosdk.Transaction[]>
+  getTxns: (params: PluginHookParams) => Promise<Txn>
 }
 
 export function isPluginSDKReturn(value: unknown): value is PluginSDKReturn {
@@ -113,4 +113,23 @@ export interface PluginCallParams {
   args?: any[];
   sendParams?: ExpandedSendParams;
   readerAccount?: string;
+}
+
+export type TxnReturn<T> = Omit<{
+  groupId: string;
+  txIds: string[];
+  returns?: ABIReturn[] | undefined;
+  confirmations: modelsv2.PendingTransactionResponse[];
+  transactions: Transaction[];
+  confirmation: modelsv2.PendingTransactionResponse;
+  transaction: Transaction;
+  return?: ABIReturn | undefined;
+}, "return"> & AppReturn<T>
+
+export type GroupReturn = {
+  groupId: string;
+  txIds: string[];
+  returns: ABIReturn[] & [];
+  confirmations: modelsv2.PendingTransactionResponse[];
+  transactions: Transaction[];
 }

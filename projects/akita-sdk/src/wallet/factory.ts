@@ -1,10 +1,10 @@
 import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory, type AbstractedAccountFactoryClient } from '../generated/AbstractedAccountFactoryClient';
 import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from '../types';
 import { WalletSDK } from './index';
-import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
 import { BaseSDK } from '../base';
 import { emptySigner } from '../constants';
 import { ALGORAND_ZERO_ADDRESS_STRING, Address } from 'algosdk';
+import { microAlgo } from '@algorandfoundation/algokit-utils';
 
 export type FactoryContractArgs = AbstractedAccountFactoryArgs["obj"];
 
@@ -38,10 +38,12 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
       throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
     }
 
+    const cost = await this.cost()
+
     const payment = await this.client.algorand.createTransaction.payment({
       ...sendParams,
       receiver: this.client.appAddress,
-      amount: await this.cost(),
+      amount: microAlgo(cost),
     })
 
     if (!admin) {
@@ -78,7 +80,7 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
     })
   }
 
-  async get(appId: bigint): Promise<WalletSDK> {
+  async get({ appId }: { appId: bigint }): Promise<WalletSDK> {
     return new WalletSDK({
       algorand: this.algorand,
       factoryParams: {
@@ -89,21 +91,31 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
     })
   }
 
-  localCost(): AlgoAmount {
-    return new AlgoAmount({
-      microAlgo: (
-        300_000 + // max pages
-        (28_500 * 10) + // global uints
-        (50_000 * 54) + // global bytes
-        100_000 + // min account balance
-        12_100 // registry box entry
-      )
-    })
-  }
+  async cost(params?: MaybeSigner): Promise<bigint> {
 
-  async cost(): Promise<AlgoAmount> {
-    const { return: result } = await this.client.send.cost({ args: {}, sender: this.readerAccount, signer: emptySigner })
-    return new AlgoAmount({ microAlgos: result ?? 0n });
+    const defaultParams = {
+      ...this.sendParams,
+      sender: this.readerAccount,
+      signer: emptySigner
+    }
+
+    const { sender, signer } = params || {};
+    const sendParams = {
+      ...defaultParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+
+    const { return: cost } = await this.client.send.cost({
+      ...sendParams,
+      args: {}
+    })
+
+    if (cost === undefined) {
+      throw new Error('Failed to get cost for wallet creation');
+    }
+
+    return cost;
   }
 }
 
@@ -120,6 +132,6 @@ export async function newWallet({
 }: NewContractSDKParams & NewParams): Promise<WalletSDK> {
   const factory = new WalletFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
   const sdk = await factory.new({ sender, signer, controlledAddress, admin, nickname });
-  await sdk.init()
+  await sdk.register({ escrow: '' })
   return sdk;
 }

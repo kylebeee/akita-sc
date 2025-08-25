@@ -1,10 +1,9 @@
 import { GlobalKeysState, PluginInfo as ClientPluginInfo, AbstractedAccountArgs, AbstractedAccountReturns } from "../generated/AbstractedAccountClient";
 import { MaybeSigner, SDKClient, AkitaSDK, PluginMethodSpecifier, PluginSDKReturn } from "../types";
 import { ABIReturn, AppReturn } from "@algorandfoundation/algokit-utils/types/app";
-import { ABIStruct } from "@algorandfoundation/algokit-utils/types/app-arc56";
-import algosdk from "algosdk";
+import algosdk, { modelsv2, Transaction } from "algosdk";
 
-export type ContractArgs = AbstractedAccountArgs["obj"];
+type ContractArgs = AbstractedAccountArgs["obj"];
 
 export type WalletGlobalState = GlobalKeysState;
 
@@ -27,6 +26,7 @@ export type MbrParams = {
   escrow: string
   methodCount: bigint | number
   plugin: string
+  groups: bigint | number
 }
 
 export type RekeyArgs = {
@@ -36,16 +36,38 @@ export type RekeyArgs = {
   fundsRequest: [number | bigint, number | bigint][]
 }
 
+export type AddPluginArgs = Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'], 'name'>
+
 // Updated plugin parameters to support fluent transaction API
 export type WalletUsePluginParams = (
-  Omit<ContractArgs['arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void'], 'plugin' | 'escrow' | 'methodOffsets' | 'fundsRequest'> &
+  Omit<ContractArgs['arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void'], 'plugin' | 'global' | 'escrow' | 'methodOffsets' | 'fundsRequest'> &
   {
     name?: string
+    global?: boolean
     escrow?: string
     fundsRequest?: FundsRequest[]
     calls: PluginSDKReturn[]
+    lease?: string
   }
 ) & MaybeSigner;
+
+export type BuildWalletUsePluginParams = (
+  WalletUsePluginParams
+  & {
+    lease: string,
+    firstValid?: bigint,
+    windowSize: bigint
+  }
+)
+
+export type ExecutionBuildGroup = {
+  lease: Uint8Array
+  firstValid: bigint
+  lastValid: bigint
+  useRounds: boolean
+  ids: Uint8Array[]
+  atcs: algosdk.AtomicTransactionComposer[]
+}
 
 // Default values for addPlugin method
 export const AddPluginDefaults = {
@@ -57,11 +79,81 @@ export const AddPluginDefaults = {
   delegationType: 0n,
 }
 
+export type CanCallParams = (
+  Omit<ContractArgs['arc58_canCall(uint64,bool,address,string,byte[4])bool'], 'method'>
+  & {
+    method: PluginMethodSpecifier
+  }
+  & MaybeSigner
+)
+
 // Enhanced method specification that supports method references directly
 export type PluginMethodDefinition = {
   name: PluginMethodSpecifier;
   cooldown: bigint;
 };
+
+export type SpendAllowanceType = 'flat' | 'window' | 'drip';
+
+export type AddAllowanceArgs = {
+  asset: bigint;
+  useRounds?: boolean;
+} & (
+    | {
+      type: 'flat';
+      amount: bigint;
+    }
+    | {
+      type: 'window';
+      amount: bigint;
+      interval: bigint;
+    }
+    | {
+      type: 'drip';
+      rate: bigint;
+      max: bigint;
+      interval: bigint;
+    }
+  );
+
+// AllowanceInfo
+export type AllowanceInfo = {
+  last: bigint,
+  start: bigint,
+  useRounds: boolean
+} & (
+    | {
+      type: 'flat',
+      spent: bigint,
+      amount: bigint,
+    }
+    | {
+      type: 'window',
+      spent: bigint,
+      amount: bigint,
+      interval: bigint,
+    }
+    | {
+      type: 'drip',
+      max: bigint,
+      lastLeftover: bigint,
+      rate: bigint,
+      interval: bigint,
+    }
+  )
+
+// allowance info type guards
+export function isFlatAllowance(info: AllowanceInfo): info is Extract<AllowanceInfo, { type: 'flat' }> {
+  return info.type === 'flat';
+}
+
+export function isWindowAllowance(info: AllowanceInfo): info is Extract<AllowanceInfo, { type: 'window' }> {
+  return info.type === 'window';
+}
+
+export function isDripAllowance(info: AllowanceInfo): info is Extract<AllowanceInfo, { type: 'drip' }> {
+  return info.type === 'drip';
+}
 
 type BaseWalletAddPluginParams<TClient extends SDKClient> =
   Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'], 'methods'>> &
@@ -69,6 +161,7 @@ type BaseWalletAddPluginParams<TClient extends SDKClient> =
   {
     client: AkitaSDK<TClient>
     methods?: PluginMethodDefinition[]
+    allowances?: AddAllowanceArgs[]
   }
 
 export type WalletAddPluginParams<TClient extends SDKClient> =
@@ -102,26 +195,3 @@ export function getPluginAppId<TClient extends SDKClient>(
 ): bigint {
   return plugin.appId;
 }
-
-export type UsePluginReturn = {
-  groupId: string;
-  txIds: string[];
-  returns: ABIReturn[] & [];
-  confirmations: algosdk.modelsv2.PendingTransactionResponse[];
-  transactions: algosdk.Transaction[];
-}
-
-export type AddPluginReturn = Omit<{
-  groupId: string;
-  txIds: string[];
-  returns?: ABIReturn[] | undefined;
-  confirmations: algosdk.modelsv2.PendingTransactionResponse[];
-  transactions: algosdk.Transaction[];
-  confirmation: algosdk.modelsv2.PendingTransactionResponse;
-  transaction: algosdk.Transaction;
-  return?: ABIReturn | undefined;
-}, "return"> & AppReturn<(
-  undefined |
-  AbstractedAccountReturns['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] |
-  AbstractedAccountReturns['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void']
-)>
