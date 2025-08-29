@@ -335,20 +335,20 @@ main_bare_routing@16:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:288
+    // smart_contracts/utils/functions.ts:289
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:289
+    // smart_contracts/utils/functions.ts:290
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:291
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:293
+    // smart_contracts/utils/functions.ts:294
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -369,16 +369,16 @@ offer:
     //   expiration: uint64
     // ) {
     proto 7 0
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -7
-    // smart_contracts/utils/functions.ts:236
+    // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -395,7 +395,7 @@ offer:
     // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
@@ -554,16 +554,16 @@ accept:
     //   proof: Proof
     // ) {
     proto 4 0
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:236
+    // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -580,7 +580,7 @@ accept:
     // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
@@ -704,16 +704,16 @@ escrow:
     //   proof: Proof
     // ) {
     proto 6 0
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -6
-    // smart_contracts/utils/functions.ts:236
+    // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -730,7 +730,7 @@ escrow:
     // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
@@ -873,16 +873,16 @@ escrowAsa:
     proto 7 0
     pushbytes ""
     dupn 2
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -7
-    // smart_contracts/utils/functions.ts:236
+    // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -910,7 +910,7 @@ escrowAsa:
     // const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:38
+    // smart_contracts/utils/functions.ts:39
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     pushbytes "other_al"
     app_global_get_ex
@@ -1008,7 +1008,7 @@ escrowAsa_after_if_else@6:
     // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
@@ -1231,16 +1231,16 @@ disburse:
     dup
     pushbytes ""
     dupn 2
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -7
-    // smart_contracts/utils/functions.ts:236
+    // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1293,7 +1293,7 @@ disburse:
     // getPluginAppList(this.akitaDAO.value).optin,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:33
+    // smart_contracts/utils/functions.ts:34
     // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
     bytec 6 // "plugn_al"
     app_global_get_ex
@@ -1388,7 +1388,7 @@ disburse:
     concat
     dup
     frame_bury 0
-    // smart_contracts/utils/functions.ts:342
+    // smart_contracts/utils/functions.ts:343
     // assert(assets.length === amounts.length, ERR_ASSETS_AND_AMOUNTS_MISMATCH)
     dup
     intc_0 // 0
@@ -1397,29 +1397,29 @@ disburse:
     intc_1 // 1
     ==
     assert // Assets and amounts mismatch
-    // smart_contracts/utils/functions.ts:33
+    // smart_contracts/utils/functions.ts:34
     // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
     uncover 2
     bytec 6 // "plugn_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:343
+    // smart_contracts/utils/functions.ts:344
     // const optinPlugin = getPluginAppList(akitaDAO).optin
     dup
     extract 0 8
     swap
     intc_0 // 0
     extract_uint64
-    // smart_contracts/utils/functions.ts:142-145
+    // smart_contracts/utils/functions.ts:143-146
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:144
+    // smart_contracts/utils/functions.ts:145
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:142-145
+    // smart_contracts/utils/functions.ts:143-146
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
@@ -1429,7 +1429,7 @@ disburse:
     dup
     cover 2
     frame_bury 1
-    // smart_contracts/utils/functions.ts:346-352
+    // smart_contracts/utils/functions.ts:347-353
     // itxnCompose.begin(
     //   AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
     //   {
@@ -1450,7 +1450,7 @@ disburse:
     // '',
     bytec_3 // 0x0000
     itxn_field ApplicationArgs
-    // smart_contracts/utils/functions.ts:350
+    // smart_contracts/utils/functions.ts:351
     // args: [optinPlugin, true, escrow, [], []]
     bytec_3 // 0x0000
     itxn_field ApplicationArgs
@@ -1458,7 +1458,7 @@ disburse:
     itxn_field ApplicationArgs
     frame_dig -4
     itxn_field ApplicationID
-    // smart_contracts/utils/functions.ts:346-352
+    // smart_contracts/utils/functions.ts:347-353
     // itxnCompose.begin(
     //   AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
     //   {
@@ -1470,7 +1470,7 @@ disburse:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:354-368
+    // smart_contracts/utils/functions.ts:355-369
     // itxnCompose.next(
     //   OptInPluginInterface.prototype.optInToAsset,
     //   {
@@ -1487,7 +1487,7 @@ disburse:
     //   }
     // )
     itxn_next
-    // smart_contracts/utils/functions.ts:364
+    // smart_contracts/utils/functions.ts:365
     // amount: Global.assetOptInMinBalance * assets.length
     global AssetOptInMinBalance
     uncover 3
@@ -1495,7 +1495,7 @@ disburse:
     itxn_field Amount
     swap
     itxn_field Receiver
-    // smart_contracts/utils/functions.ts:362-365
+    // smart_contracts/utils/functions.ts:363-366
     // itxn.payment({
     //   receiver: origin,
     //   amount: Global.assetOptInMinBalance * assets.length
@@ -1504,7 +1504,7 @@ disburse:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:354-368
+    // smart_contracts/utils/functions.ts:355-369
     // itxnCompose.next(
     //   OptInPluginInterface.prototype.optInToAsset,
     //   {
@@ -1521,11 +1521,11 @@ disburse:
     //   }
     // )
     itxn_next
-    // smart_contracts/utils/functions.ts:359
+    // smart_contracts/utils/functions.ts:360
     // recipientWalletID,
     frame_dig -4
     itob
-    // smart_contracts/utils/functions.ts:354-368
+    // smart_contracts/utils/functions.ts:355-369
     // itxnCompose.next(
     //   OptInPluginInterface.prototype.optInToAsset,
     //   {
@@ -1550,7 +1550,7 @@ disburse:
     itxn_field ApplicationArgs
     itxn_field ApplicationID
     itxn_field ApplicationArgs
-    // smart_contracts/utils/functions.ts:354-368
+    // smart_contracts/utils/functions.ts:355-369
     // itxnCompose.next(
     //   OptInPluginInterface.prototype.optInToAsset,
     //   {
@@ -1570,19 +1570,19 @@ disburse:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:370
+    // smart_contracts/utils/functions.ts:371
     // for (let i: uint64 = 0; i < amounts.length; i++) {
     intc_0 // 0
     frame_bury 3
 
 disburse_while_top@9:
-    // smart_contracts/utils/functions.ts:370
+    // smart_contracts/utils/functions.ts:371
     // for (let i: uint64 = 0; i < amounts.length; i++) {
     frame_dig 3
     intc_1 // 1
     <
     bz disburse_after_while@13
-    // smart_contracts/utils/functions.ts:371
+    // smart_contracts/utils/functions.ts:372
     // if (amounts[i] > 0) {
     frame_dig 3
     pushint 8 // 8
@@ -1595,7 +1595,7 @@ disburse_while_top@9:
     dup
     frame_bury 4
     bz disburse_after_if_else@12
-    // smart_contracts/utils/functions.ts:372-378
+    // smart_contracts/utils/functions.ts:373-379
     // itxnCompose.next(
     //   itxn.assetTransfer({
     //     assetAmount: amounts[i],
@@ -1604,7 +1604,7 @@ disburse_while_top@9:
     //   })
     // )
     itxn_next
-    // smart_contracts/utils/functions.ts:376
+    // smart_contracts/utils/functions.ts:377
     // xferAsset: assets[i]
     frame_dig 0
     extract 2 0
@@ -1615,7 +1615,7 @@ disburse_while_top@9:
     itxn_field AssetReceiver
     frame_dig 4
     itxn_field AssetAmount
-    // smart_contracts/utils/functions.ts:373-377
+    // smart_contracts/utils/functions.ts:374-378
     // itxn.assetTransfer({
     //   assetAmount: amounts[i],
     //   assetReceiver: origin,
@@ -1627,7 +1627,7 @@ disburse_while_top@9:
     itxn_field Fee
 
 disburse_after_if_else@12:
-    // smart_contracts/utils/functions.ts:370
+    // smart_contracts/utils/functions.ts:371
     // for (let i: uint64 = 0; i < amounts.length; i++) {
     frame_dig 3
     intc_1 // 1
@@ -1636,7 +1636,7 @@ disburse_after_if_else@12:
     b disburse_while_top@9
 
 disburse_after_while@13:
-    // smart_contracts/utils/functions.ts:382-385
+    // smart_contracts/utils/functions.ts:383-386
     // itxnCompose.next(
     //   AbstractedAccountInterface.prototype.arc58_verifyAuthAddress,
     //   { appId: recipientWalletID }
@@ -1650,7 +1650,7 @@ disburse_after_while@13:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:387
+    // smart_contracts/utils/functions.ts:388
     // itxnCompose.submit()
     itxn_submit
 
@@ -1681,7 +1681,7 @@ disburse_after_if_else@6:
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
@@ -1753,16 +1753,16 @@ cancel:
     //   proof: Proof
     // ) {
     proto 4 0
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:236
+    // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:234-237
+    // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1790,7 +1790,7 @@ cancel:
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex

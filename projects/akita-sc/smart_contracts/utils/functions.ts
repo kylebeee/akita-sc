@@ -3,7 +3,7 @@ import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, Social
 import { abiCall, Address, decodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysWalletFees } from "../arc58/dao/constants"
 import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
-import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR } from "./constants"
+import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR, TWENTY_FIVE_PERCENT } from "./constants"
 import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 
 import { GateArgs, GateInterface } from "./types/gates"
@@ -23,6 +23,7 @@ import { ERR_ESCROW_DOES_NOT_EXIST } from "../arc58/account/errors"
 import { RewardsInterface } from "./types/rewards"
 import { UserAllocation } from "../rewards/types"
 import { MinDisbursementsMBR, UserAllocationMBR } from "../rewards/constants"
+import { ReferralPaymentInfo } from "./types/referral"
 
 export function getAkitaAppList(akitaDAO: Application): AkitaAppList {
   const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
@@ -527,4 +528,31 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
   }
 
   return { id, cost }
+}
+
+export function sendReferralPayment(akitaDAO: Application, referrer: Account, asset: uint64, amount: uint64): ReferralPaymentInfo {
+  let referralFee: uint64 = 0
+  if (
+    amount > 0 &&
+    referrer !== Global.zeroAddress &&
+    referrer.isOptedIn(Asset(asset))
+  ) {
+    referralFee = calcPercent(amount, TWENTY_FIVE_PERCENT)
+    if (referralFee === 0 && amount > 0) {
+      referralFee = 1
+    }
+
+    const { cost } = createInstantDisbursement(
+      akitaDAO,
+      asset,
+      Global.latestTimestamp,
+      (Global.latestTimestamp + ONE_WEEK),
+      [{ address: new Address(referrer), amount: referralFee }],
+      referralFee
+    )
+
+    return { leftover: (amount - referralFee), cost }
+  }
+
+  return { leftover: amount, cost: 0 }
 }

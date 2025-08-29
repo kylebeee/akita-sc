@@ -9,9 +9,9 @@ import { microAlgo } from '@algorandfoundation/algokit-utils';
 export type FactoryContractArgs = AbstractedAccountFactoryArgs["obj"];
 
 export type NewParams = (
-  Omit<FactoryContractArgs['new(pay,address,address,string)uint64'], 'payment' | 'controlledAddress' | 'admin'> &
+  Omit<FactoryContractArgs['new(pay,address,address,string,address)uint64'], 'payment' | 'controlledAddress' | 'admin' | 'referrer'> &
   MaybeSigner &
-  Partial<Pick<FactoryContractArgs['new(pay,address,address,string)uint64'], 'controlledAddress' | 'admin'>>
+  Partial<Pick<FactoryContractArgs['new(pay,address,address,string,address)uint64'], 'controlledAddress' | 'admin' | 'referrer'>>
 )
 
 export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
@@ -23,9 +23,10 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
   async new({
     sender,
     signer,
-    controlledAddress = '',
+    controlledAddress = ALGORAND_ZERO_ADDRESS_STRING,
     admin = '',
     nickname,
+    referrer = ALGORAND_ZERO_ADDRESS_STRING
   }: NewParams): Promise<WalletSDK> {
 
     const sendParams = {
@@ -52,17 +53,14 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
         : sendParams.sender;
     }
 
-    if (!controlledAddress) {
-      controlledAddress = ALGORAND_ZERO_ADDRESS_STRING;
-    }
-
     const { return: appId } = await this.client.send.new({
       ...sendParams,
       args: {
         payment,
-        controlledAddress: controlledAddress!,
-        admin: admin!,
-        nickname
+        controlledAddress,
+        admin,
+        nickname,
+        referrer
       }
     })
 

@@ -426,7 +426,7 @@ createChildApp_ternary_merge@3:
     // const fees = getNFTFees(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:72
+    // smart_contracts/utils/functions.ts:73
     // const [nftFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysNFTFees))
     dup
     pushbytes "nft_fees"
@@ -908,16 +908,16 @@ newRaffle:
     assert // check GlobalState exists
     frame_dig -10
     gtxns XferAsset
-    // smart_contracts/utils/functions.ts:391
+    // smart_contracts/utils/functions.ts:392
     // let creatorRoyalty: uint64 = 0
     intc_0 // 0
-    // smart_contracts/utils/functions.ts:393
+    // smart_contracts/utils/functions.ts:394
     // if (!(proof.length > 0)) {
     frame_dig -1
     intc_0 // 0
     extract_uint16
     bnz newRaffle_after_if_else@6
-    // smart_contracts/utils/functions.ts:394
+    // smart_contracts/utils/functions.ts:395
     // return CreatorRoyaltyDefault
     pushint 5000 // 5000
     frame_bury 4
@@ -1068,7 +1068,7 @@ newRaffle_after_inlined_smart_contracts/utils/functions.ts::royalties@11:
     retsub
 
 newRaffle_after_if_else@6:
-    // smart_contracts/utils/functions.ts:398-411
+    // smart_contracts/utils/functions.ts:399-412
     // const creatorRoyaltyString = abiCall(
     //   MetaMerklesInterface.prototype.verifiedRead,
     //   {
@@ -1084,23 +1084,23 @@ newRaffle_after_if_else@6:
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     frame_dig 2
     bytec 7 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:401
+    // smart_contracts/utils/functions.ts:402
     // appId: getAkitaAppList(akitaDAO).metaMerkles,
     pushint 72 // 72
     extract_uint64
-    // smart_contracts/utils/functions.ts:403
+    // smart_contracts/utils/functions.ts:404
     // new Address(asset.creator),
     frame_dig 3
     dup
     asset_params_get AssetCreator
     assert // asset exists
-    // smart_contracts/utils/functions.ts:404
+    // smart_contracts/utils/functions.ts:405
     // name,
     frame_dig -2
     len
@@ -1108,17 +1108,17 @@ newRaffle_after_if_else@6:
     extract 6 2
     frame_dig -2
     concat
-    // smart_contracts/utils/functions.ts:405
+    // smart_contracts/utils/functions.ts:406
     // sha256(sha256(itob(asset.id))),
     uncover 2
     itob
     sha256
     sha256
-    // smart_contracts/utils/functions.ts:407
+    // smart_contracts/utils/functions.ts:408
     // 1,
     intc_1 // 1
     itob
-    // smart_contracts/utils/functions.ts:398-411
+    // smart_contracts/utils/functions.ts:399-412
     // const creatorRoyaltyString = abiCall(
     //   MetaMerklesInterface.prototype.verifiedRead,
     //   {
@@ -1144,12 +1144,12 @@ newRaffle_after_if_else@6:
     frame_dig -1
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
-    // smart_contracts/utils/functions.ts:408
+    // smart_contracts/utils/functions.ts:409
     // 'royalty',
     pushbytes 0x0007726f79616c7479
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/utils/functions.ts:398-411
+    // smart_contracts/utils/functions.ts:399-412
     // const creatorRoyaltyString = abiCall(
     //   MetaMerklesInterface.prototype.verifiedRead,
     //   {
@@ -1178,24 +1178,24 @@ newRaffle_after_if_else@6:
     extract 6 0
     dup
     frame_bury 0
-    // smart_contracts/utils/functions.ts:413
+    // smart_contracts/utils/functions.ts:414
     // if (Bytes(creatorRoyaltyString).length > 0) {
     len
     bz newRaffle_after_if_else@8
-    // smart_contracts/utils/functions.ts:414
+    // smart_contracts/utils/functions.ts:415
     // creatorRoyalty = btoi(Bytes(creatorRoyaltyString))
     frame_dig 0
     btoi
     frame_bury 4
 
 newRaffle_after_if_else@8:
-    // smart_contracts/utils/functions.ts:417
+    // smart_contracts/utils/functions.ts:418
     // if (creatorRoyalty > CreatorRoyaltyMaximumSingle) {
     frame_dig 4
     intc 4 // 50000
     >
     bz newRaffle_after_inlined_smart_contracts/utils/functions.ts::royalties@11
-    // smart_contracts/utils/functions.ts:418
+    // smart_contracts/utils/functions.ts:419
     // return CreatorRoyaltyMaximumSingle
     intc 4 // 50000
     frame_bury 4
@@ -1229,18 +1229,18 @@ newPrizeBoxRaffle:
     // assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === Global.currentApplicationAddress, ERR_NOT_PRIZE_BOX_OWNER)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:425
+    // smart_contracts/utils/functions.ts:426
     // assert(prizeBox.creator === Application(getAkitaAppList(akitaDAO).prizeBox).address, ERR_NOT_A_PRIZE_BOX)
     frame_dig -8
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
     bytec 7 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:425
+    // smart_contracts/utils/functions.ts:426
     // assert(prizeBox.creator === Application(getAkitaAppList(akitaDAO).prizeBox).address, ERR_NOT_A_PRIZE_BOX)
     pushint 24 // 24
     extract_uint64
@@ -1248,7 +1248,7 @@ newPrizeBoxRaffle:
     assert // application exists
     ==
     assert // Not a prize box
-    // smart_contracts/utils/functions.ts:426
+    // smart_contracts/utils/functions.ts:427
     // const [ownerBytes] = op.AppGlobal.getExBytes(prizeBox, Bytes(PrizeBoxGlobalStateKeyOwner))
     frame_dig -8
     pushbytes "owner"

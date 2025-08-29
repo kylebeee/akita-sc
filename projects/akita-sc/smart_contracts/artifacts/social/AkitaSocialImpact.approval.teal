@@ -5,7 +5,7 @@
 main:
     intcblock 0 1 6 32 1000000000000 200000000000 31536000 10000000000
     bytecblock "akita_dao" 0x151f7c75 "akita_al" "m" "akita_assets" "i.timeChanged" base32(AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLQ) 0x6c13ede4 "version" "other_al"
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txn NumAppArgs
     bz main_after_if_else@14
@@ -14,7 +14,7 @@ main:
     match main_create_route@3 main_cacheMeta_route@4 main_updateSubscriptionStateModifier_route@5 main_getUserImpactWithoutSocial_route@6 main_getUserImpact_route@7 main_getMeta_route@8 main_update_route@9 main_updateAkitaDAO_route@10
 
 main_after_if_else@14:
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     intc_0 // 0
     return
@@ -27,7 +27,7 @@ main_updateAkitaDAO_route@10:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txna ApplicationArgs 1
     btoi
@@ -46,7 +46,7 @@ main_update_route@9:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txna ApplicationArgs 1
     extract 2 0
@@ -57,17 +57,17 @@ main_update_route@9:
     return
 
 main_getMeta_route@8:
-    // smart_contracts/social/contract.algo.ts:1982
+    // smart_contracts/social/contract.algo.ts:1959
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txna ApplicationArgs 1
-    // smart_contracts/social/contract.algo.ts:1982
+    // smart_contracts/social/contract.algo.ts:1959
     // @abimethod({ readonly: true })
     callsub getMeta
     bytec_1 // 0x151f7c75
@@ -78,17 +78,17 @@ main_getMeta_route@8:
     return
 
 main_getUserImpact_route@7:
-    // smart_contracts/social/contract.algo.ts:1977
+    // smart_contracts/social/contract.algo.ts:1954
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txna ApplicationArgs 1
-    // smart_contracts/social/contract.algo.ts:1977
+    // smart_contracts/social/contract.algo.ts:1954
     // @abimethod({ readonly: true })
     callsub getUserImpact
     itob
@@ -100,17 +100,17 @@ main_getUserImpact_route@7:
     return
 
 main_getUserImpactWithoutSocial_route@6:
-    // smart_contracts/social/contract.algo.ts:1972
+    // smart_contracts/social/contract.algo.ts:1949
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txna ApplicationArgs 1
-    // smart_contracts/social/contract.algo.ts:1972
+    // smart_contracts/social/contract.algo.ts:1949
     // @abimethod({ readonly: true })
     callsub getUserImpactWithoutSocial
     itob
@@ -122,14 +122,14 @@ main_getUserImpactWithoutSocial_route@6:
     return
 
 main_updateSubscriptionStateModifier_route@5:
-    // smart_contracts/social/contract.algo.ts:1954
+    // smart_contracts/social/contract.algo.ts:1931
     // updateSubscriptionStateModifier(payment: gtxn.PaymentTxn, subscriptionIndex: uint64, newModifier: uint64): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txn GroupIndex
     intc_1 // 1
@@ -143,21 +143,21 @@ main_updateSubscriptionStateModifier_route@5:
     btoi
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/social/contract.algo.ts:1954
+    // smart_contracts/social/contract.algo.ts:1931
     // updateSubscriptionStateModifier(payment: gtxn.PaymentTxn, subscriptionIndex: uint64, newModifier: uint64): void {
     callsub updateSubscriptionStateModifier
     intc_1 // 1
     return
 
 main_cacheMeta_route@4:
-    // smart_contracts/social/contract.algo.ts:1919
+    // smart_contracts/social/contract.algo.ts:1896
     // cacheMeta(address: Address, subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64): uint64 {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -166,7 +166,7 @@ main_cacheMeta_route@4:
     btoi
     txna ApplicationArgs 4
     btoi
-    // smart_contracts/social/contract.algo.ts:1919
+    // smart_contracts/social/contract.algo.ts:1896
     // cacheMeta(address: Address, subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64): uint64 {
     callsub cacheMeta
     itob
@@ -178,7 +178,7 @@ main_cacheMeta_route@4:
     return
 
 main_create_route@3:
-    // smart_contracts/social/contract.algo.ts:1911
+    // smart_contracts/social/contract.algo.ts:1888
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -186,13 +186,13 @@ main_create_route@3:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/social/contract.algo.ts:1634
+    // smart_contracts/social/contract.algo.ts:1611
     // export class AkitaSocialImpact extends AkitaBaseContract implements AkitaSocialImpactInterface {
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     extract 2 0
-    // smart_contracts/social/contract.algo.ts:1911
+    // smart_contracts/social/contract.algo.ts:1888
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_1 // 1
@@ -201,10 +201,10 @@ main_create_route@3:
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.isSubscribed(account: bytes, index: uint64) -> bytes:
 isSubscribed:
-    // smart_contracts/social/contract.algo.ts:1656
+    // smart_contracts/social/contract.algo.ts:1633
     // private isSubscribed(account: Account, index: uint64): { active: boolean; serviceID: uint64; streak: uint64 } {
     proto 2 1
-    // smart_contracts/social/contract.algo.ts:1657-1663
+    // smart_contracts/social/contract.algo.ts:1634-1640
     // const info = abiCall(
     //   Subscriptions.prototype.getSubscriptionInfo,
     //   {
@@ -213,31 +213,31 @@ isSubscribed:
     //   },
     // ).returnValue
     itxn_begin
-    // smart_contracts/social/contract.algo.ts:1660
+    // smart_contracts/social/contract.algo.ts:1637
     // appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1660
+    // smart_contracts/social/contract.algo.ts:1637
     // appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     dup
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1660
+    // smart_contracts/social/contract.algo.ts:1637
     // appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
     intc_3 // 32
     extract_uint64
-    // smart_contracts/social/contract.algo.ts:1661
+    // smart_contracts/social/contract.algo.ts:1638
     // args: [new Address(account), index]
     frame_dig -1
     itob
-    // smart_contracts/social/contract.algo.ts:1657-1663
+    // smart_contracts/social/contract.algo.ts:1634-1640
     // const info = abiCall(
     //   Subscriptions.prototype.getSubscriptionInfo,
     //   {
@@ -262,7 +262,7 @@ isSubscribed:
     bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/social/contract.algo.ts:1666
+    // smart_contracts/social/contract.algo.ts:1643
     // const toAkita = info.recipient.native === this.akitaDAO.value.address
     dup
     extract 4 32
@@ -270,7 +270,7 @@ isSubscribed:
     app_params_get AppAddress
     assert // application exists
     ==
-    // smart_contracts/social/contract.algo.ts:1670
+    // smart_contracts/social/contract.algo.ts:1647
     // const notDonating = info.serviceID !== 0
     dig 1
     pushint 36 // 36
@@ -278,7 +278,7 @@ isSubscribed:
     dup
     intc_0 // 0
     !=
-    // smart_contracts/social/contract.algo.ts:1672
+    // smart_contracts/social/contract.algo.ts:1649
     // const lastWindowStart: uint64 = Global.latestTimestamp - (((Global.latestTimestamp - info.startDate) % info.interval) + info.interval)
     global LatestTimestamp
     dup
@@ -294,23 +294,23 @@ isSubscribed:
     %
     +
     -
-    // smart_contracts/social/contract.algo.ts:1676
+    // smart_contracts/social/contract.algo.ts:1653
     // const notStale = info.lastPayment > lastWindowStart
     dig 4
     pushint 84 // 84
     extract_uint64
     <
-    // smart_contracts/social/contract.algo.ts:1679
+    // smart_contracts/social/contract.algo.ts:1656
     // active: toAkita && notDonating && notStale,
     uncover 3
     uncover 2
     &&
     &&
-    // smart_contracts/social/contract.algo.ts:1681
+    // smart_contracts/social/contract.algo.ts:1658
     // streak: info.streak,
     uncover 2
     extract 92 8
-    // smart_contracts/social/contract.algo.ts:1678-1682
+    // smart_contracts/social/contract.algo.ts:1655-1659
     // return {
     //   active: toAkita && notDonating && notStale,
     //   serviceID: info.serviceID,
@@ -330,20 +330,20 @@ isSubscribed:
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.userImpact(account: bytes, includeSocial: uint64) -> uint64:
 userImpact:
-    // smart_contracts/social/contract.algo.ts:1724
+    // smart_contracts/social/contract.algo.ts:1701
     // private userImpact(account: Account, includeSocial: boolean): uint64 {
     proto 2 1
     intc_0 // 0
     dup
     pushbytes ""
     dupn 7
-    // smart_contracts/social/contract.algo.ts:1639
+    // smart_contracts/social/contract.algo.ts:1616
     // meta = BoxMap<Account, ImpactMetaValue>({ keyPrefix: ImpactBoxPrefixMeta })
     bytec_3 // "m"
     frame_dig -2
     concat
     dup
-    // smart_contracts/social/contract.algo.ts:1725
+    // smart_contracts/social/contract.algo.ts:1702
     // const { subscriptionIndex, NFD, akitaNFT } = this.meta(account).value
     box_get
     assert // Box must have value
@@ -357,26 +357,26 @@ userImpact:
     swap
     intc_3 // 32
     extract_uint64
-    // smart_contracts/social/contract.algo.ts:1744
+    // smart_contracts/social/contract.algo.ts:1721
     // const akta = getAkitaAssets(this.akitaDAO.value).akta
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1744
+    // smart_contracts/social/contract.algo.ts:1721
     // const akta = getAkitaAssets(this.akitaDAO.value).akta
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:77
+    // smart_contracts/utils/functions.ts:78
     // const akitaAssetsBytes = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAssets))[0]
     dup
     bytec 4 // "akita_assets"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1744
+    // smart_contracts/social/contract.algo.ts:1721
     // const akta = getAkitaAssets(this.akitaDAO.value).akta
     extract 0 8
-    // smart_contracts/social/contract.algo.ts:1746-1758
+    // smart_contracts/social/contract.algo.ts:1723-1735
     // const info = abiCall(
     //   Staking.prototype.getInfo,
     //   {
@@ -391,32 +391,32 @@ userImpact:
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1749
+    // smart_contracts/social/contract.algo.ts:1726
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     intc_0 // 0
     extract_uint64
-    // smart_contracts/social/contract.algo.ts:1752-1755
+    // smart_contracts/social/contract.algo.ts:1729-1732
     // {
     //   asset: akta,
     //   type: STAKING_TYPE_SOFT,
     // }
     swap
-    // smart_contracts/social/contract.algo.ts:1754
+    // smart_contracts/social/contract.algo.ts:1731
     // type: STAKING_TYPE_SOFT,
     pushbytes 0x14
-    // smart_contracts/social/contract.algo.ts:1752-1755
+    // smart_contracts/social/contract.algo.ts:1729-1732
     // {
     //   asset: akta,
     //   type: STAKING_TYPE_SOFT,
     // }
     concat
-    // smart_contracts/social/contract.algo.ts:1746-1758
+    // smart_contracts/social/contract.algo.ts:1723-1735
     // const info = abiCall(
     //   Staking.prototype.getInfo,
     //   {
@@ -447,7 +447,7 @@ userImpact:
     bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/social/contract.algo.ts:1760
+    // smart_contracts/social/contract.algo.ts:1737
     // const elapsed: uint64 = Global.latestTimestamp - info.lastUpdate
     global LatestTimestamp
     dig 1
@@ -456,7 +456,7 @@ userImpact:
     -
     swap
     pushint 4 // 4
-    // smart_contracts/social/contract.algo.ts:1763
+    // smart_contracts/social/contract.algo.ts:1740
     // if (info.amount < TEN_THOUSAND_AKITA || elapsed < THIRTY_DAYS) {
     extract_uint64
     dup
@@ -469,45 +469,45 @@ userImpact:
     bz userImpact_after_if_else@28
 
 userImpact_if_body@27:
-    // smart_contracts/social/contract.algo.ts:1764
+    // smart_contracts/social/contract.algo.ts:1741
     // return 0
     intc_0 // 0
     frame_bury 6
 
 userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getStakingImpactScore@32:
-    // smart_contracts/social/contract.algo.ts:1793
+    // smart_contracts/social/contract.algo.ts:1770
     // let subscriberImpact: uint64 = 0
     intc_0 // 0
     frame_bury 7
-    // smart_contracts/social/contract.algo.ts:1795
+    // smart_contracts/social/contract.algo.ts:1772
     // const subscriptionState = this.isSubscribed(account, subscriptionIndex)
     frame_dig -2
     frame_dig 11
     callsub isSubscribed
     dup
     frame_bury 1
-    // smart_contracts/social/contract.algo.ts:1797
+    // smart_contracts/social/contract.algo.ts:1774
     // if (!subscriptionState.active) {
     intc_0 // 0
     getbit
     bz userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getSubscriberImpactScore@39
-    // smart_contracts/social/contract.algo.ts:1801
+    // smart_contracts/social/contract.algo.ts:1778
     // const modifier = this.subscriptionStateModifier(subscriptionState.serviceID).value
     frame_dig 1
     dup
     extract 1 8
-    // smart_contracts/social/contract.algo.ts:1641
+    // smart_contracts/social/contract.algo.ts:1618
     // subscriptionStateModifier = BoxMap<uint64, uint64>({ keyPrefix: ImpactBoxPrefixSubscriptionStateModifier })
     pushbytes "s"
     swap
     concat
-    // smart_contracts/social/contract.algo.ts:1801
+    // smart_contracts/social/contract.algo.ts:1778
     // const modifier = this.subscriptionStateModifier(subscriptionState.serviceID).value
     box_get
     assert // Box must have value
     btoi
     swap
-    // smart_contracts/social/contract.algo.ts:1804
+    // smart_contracts/social/contract.algo.ts:1781
     // if (subscriptionState.streak >= 12) {
     pushint 9 // 9
     extract_uint64
@@ -516,7 +516,7 @@ userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImp
     pushint 12 // 12
     >=
     bz userImpact_else_body@37
-    // smart_contracts/social/contract.algo.ts:1805
+    // smart_contracts/social/contract.algo.ts:1782
     // subscriberImpact += 250 / modifier
     pushint 250 // 250
     swap
@@ -524,11 +524,11 @@ userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImp
     frame_bury 7
 
 userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getSubscriberImpactScore@39:
-    // smart_contracts/social/contract.algo.ts:1729
+    // smart_contracts/social/contract.algo.ts:1706
     // const socialImpact = includeSocial ? this.getSocialImpactScore(account) : Uint64(0) // Social Activity | up to 250
     frame_dig -1
     bz userImpact_ternary_false@2
-    // smart_contracts/social/contract.algo.ts:1814-1820
+    // smart_contracts/social/contract.algo.ts:1791-1797
     // return abiCall(
     //   AkitaSocial.prototype.getUserSocialImpact,
     //   {
@@ -537,26 +537,26 @@ userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImp
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/social/contract.algo.ts:1817
+    // smart_contracts/social/contract.algo.ts:1794
     // appId: getAkitaAppList(this.akitaDAO.value).social,
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1817
+    // smart_contracts/social/contract.algo.ts:1794
     // appId: getAkitaAppList(this.akitaDAO.value).social,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1817
+    // smart_contracts/social/contract.algo.ts:1794
     // appId: getAkitaAppList(this.akitaDAO.value).social,
     pushint 96 // 96
     extract_uint64
-    // smart_contracts/social/contract.algo.ts:1814-1820
+    // smart_contracts/social/contract.algo.ts:1791-1797
     // return abiCall(
     //   AkitaSocial.prototype.getUserSocialImpact,
     //   {
@@ -586,7 +586,7 @@ userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImp
     frame_bury 5
 
 userImpact_ternary_merge@3:
-    // smart_contracts/social/contract.algo.ts:1886
+    // smart_contracts/social/contract.algo.ts:1863
     // const { NFD, nfdTimeChanged, nfdImpact } = this.meta(account).value
     frame_dig 10
     box_get
@@ -601,43 +601,43 @@ userImpact_ternary_merge@3:
     pushint 24 // 24
     extract_uint64
     frame_bury 4
-    // smart_contracts/social/contract.algo.ts:1887
+    // smart_contracts/social/contract.algo.ts:1864
     // const timeChanged = btoi(op.AppGlobal.getExBytes(NFD, Bytes(NFDGlobalStateKeysTimeChanged))[0])
     dig 1
     bytec 5 // "i.timeChanged"
     app_global_get_ex
     pop
     btoi
-    // smart_contracts/social/contract.algo.ts:1889
+    // smart_contracts/social/contract.algo.ts:1866
     // assert(NFDApp.id === Application(NFD).id, ERR_INVALID_NFD)
     frame_dig 12
     uncover 3
     ==
     assert // Invalid NFD
-    // smart_contracts/social/contract.algo.ts:1890
+    // smart_contracts/social/contract.algo.ts:1867
     // assert(nfdTimeChanged === timeChanged, ERR_NFD_CHANGED)
     ==
     assert // NFD changed since impact last calculated
-    // smart_contracts/social/contract.algo.ts:1780
+    // smart_contracts/social/contract.algo.ts:1757
     // const akta = getAkitaAssets(this.akitaDAO.value).akta
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1780
+    // smart_contracts/social/contract.algo.ts:1757
     // const akta = getAkitaAssets(this.akitaDAO.value).akta
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:77
+    // smart_contracts/utils/functions.ts:78
     // const akitaAssetsBytes = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAssets))[0]
     bytec 4 // "akita_assets"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1780
+    // smart_contracts/social/contract.algo.ts:1757
     // const akta = getAkitaAssets(this.akitaDAO.value).akta
     intc_0 // 0
     extract_uint64
-    // smart_contracts/social/contract.algo.ts:1781
+    // smart_contracts/social/contract.algo.ts:1758
     // const balance = AssetHolding.assetBalance(account, akta)[0]
     frame_dig -2
     swap
@@ -645,18 +645,18 @@ userImpact_ternary_merge@3:
     pop
     dup
     frame_bury 2
-    // smart_contracts/social/contract.algo.ts:1784
+    // smart_contracts/social/contract.algo.ts:1761
     // if (balance < TEN_THOUSAND_AKITA) {
     intc 7 // 10000000000
     <
     bz userImpact_after_if_else@10
-    // smart_contracts/social/contract.algo.ts:1785
+    // smart_contracts/social/contract.algo.ts:1762
     // return 0
     intc_0 // 0
     frame_bury 3
 
 userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getHeldAktaImpactScore@11:
-    // smart_contracts/social/contract.algo.ts:1896
+    // smart_contracts/social/contract.algo.ts:1873
     // const prefix = asset.unitName.slice(0, 3)
     frame_dig 13
     dup
@@ -680,14 +680,14 @@ userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImp
     select
     substring3
     frame_bury 0
-    // smart_contracts/social/contract.algo.ts:1897
+    // smart_contracts/social/contract.algo.ts:1874
     // const balance = AssetHolding.assetBalance(account, asset)[0]
     frame_dig -2
     dig 1
     asset_holding_get AssetBalance
     pop
     frame_bury 2
-    // smart_contracts/social/contract.algo.ts:1898
+    // smart_contracts/social/contract.algo.ts:1875
     // if (asset.creator === Account(AkitaNFTCreatorAddress) && balance > 0) {
     asset_params_get AssetCreator
     assert // asset exists
@@ -696,18 +696,18 @@ userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImp
     bz userImpact_after_if_else@19
     frame_dig 2
     bz userImpact_after_if_else@19
-    // smart_contracts/social/contract.algo.ts:1899
+    // smart_contracts/social/contract.algo.ts:1876
     // if (prefix === Bytes(AkitaCollectionsPrefixAKC)) {
     frame_dig 0
     pushbytes "AKC"
     ==
     bz userImpact_after_if_else@16
-    // smart_contracts/social/contract.algo.ts:1900
+    // smart_contracts/social/contract.algo.ts:1877
     // return 50
     pushint 50 // 50
 
 userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore@20:
-    // smart_contracts/social/contract.algo.ts:1734
+    // smart_contracts/social/contract.algo.ts:1711
     // const total: uint64 = stakedAktaImpact + subscriberImpact + socialImpact + nfdScore + heldAkitaImpact + nftImpact
     frame_dig 6
     frame_dig 7
@@ -721,46 +721,46 @@ userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImp
     +
     dup
     frame_bury 8
-    // smart_contracts/social/contract.algo.ts:1735
+    // smart_contracts/social/contract.algo.ts:1712
     // if (total === 0) {
     bnz userImpact_after_if_else@5
-    // smart_contracts/social/contract.algo.ts:1736
+    // smart_contracts/social/contract.algo.ts:1713
     // return 1
     intc_1 // 1
     frame_bury 0
     retsub
 
 userImpact_after_if_else@5:
-    // smart_contracts/social/contract.algo.ts:1739
+    // smart_contracts/social/contract.algo.ts:1716
     // return total
     frame_dig 8
     frame_bury 0
     retsub
 
 userImpact_after_if_else@16:
-    // smart_contracts/social/contract.algo.ts:1902
+    // smart_contracts/social/contract.algo.ts:1879
     // if (prefix === Bytes(AkitaCollectionsPrefixAOG)) {
     frame_dig 0
     pushbytes "AOG"
     ==
     bz userImpact_after_if_else@19
-    // smart_contracts/social/contract.algo.ts:1903
+    // smart_contracts/social/contract.algo.ts:1880
     // return 25
     pushint 25 // 25
-    // smart_contracts/social/contract.algo.ts:1732
+    // smart_contracts/social/contract.algo.ts:1709
     // const nftImpact = this.getNFTImpactScore(account, Asset(akitaNFT)) // Holds AKC/Omnigem | 50
     b userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore@20
 
 userImpact_after_if_else@19:
-    // smart_contracts/social/contract.algo.ts:1906
+    // smart_contracts/social/contract.algo.ts:1883
     // return 0
     intc_0 // 0
-    // smart_contracts/social/contract.algo.ts:1732
+    // smart_contracts/social/contract.algo.ts:1709
     // const nftImpact = this.getNFTImpactScore(account, Asset(akitaNFT)) // Holds AKC/Omnigem | 50
     b userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getNFTImpactScore@20
 
 userImpact_after_if_else@10:
-    // smart_contracts/social/contract.algo.ts:1788
+    // smart_contracts/social/contract.algo.ts:1765
     // const capped = balance >= ONE_MILLION_AKITA ? ONE_MILLION_AKITA : balance
     frame_dig 2
     dup
@@ -769,26 +769,26 @@ userImpact_after_if_else@10:
     intc 4 // 1000000000000
     swap
     select
-    // smart_contracts/social/contract.algo.ts:1789
+    // smart_contracts/social/contract.algo.ts:1766
     // return (capped * 50) / ONE_MILLION_AKITA
     pushint 50 // 50
     *
     intc 4 // 1000000000000
     /
     frame_bury 3
-    // smart_contracts/social/contract.algo.ts:1731
+    // smart_contracts/social/contract.algo.ts:1708
     // const heldAkitaImpact = this.getHeldAktaImpactScore(account) // Held AKTA | up to 50
     b userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getHeldAktaImpactScore@11
 
 userImpact_ternary_false@2:
-    // smart_contracts/social/contract.algo.ts:1729
+    // smart_contracts/social/contract.algo.ts:1706
     // const socialImpact = includeSocial ? this.getSocialImpactScore(account) : Uint64(0) // Social Activity | up to 250
     intc_0 // 0
     frame_bury 5
     b userImpact_ternary_merge@3
 
 userImpact_else_body@37:
-    // smart_contracts/social/contract.algo.ts:1807
+    // smart_contracts/social/contract.algo.ts:1784
     // subscriberImpact += (subscriptionState.streak * 20) / modifier
     frame_dig 9
     pushint 20 // 20
@@ -799,7 +799,7 @@ userImpact_else_body@37:
     b userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getSubscriberImpactScore@39
 
 userImpact_after_if_else@28:
-    // smart_contracts/social/contract.algo.ts:1768
+    // smart_contracts/social/contract.algo.ts:1745
     // const amtCapped = info.amount >= TWO_HUNDRED_THOUSAND_AKITA ? TWO_HUNDRED_THOUSAND_AKITA : info.amount
     frame_dig 15
     intc 5 // 200000000000
@@ -808,13 +808,13 @@ userImpact_after_if_else@28:
     intc 5 // 200000000000
 
 userImpact_ternary_merge@31:
-    // smart_contracts/social/contract.algo.ts:1771
+    // smart_contracts/social/contract.algo.ts:1748
     // const maxScore: uint64 = (amtCapped * 250) / TWO_HUNDRED_THOUSAND_AKITA
     pushint 250 // 250
     *
     intc 5 // 200000000000
     /
-    // smart_contracts/social/contract.algo.ts:1774
+    // smart_contracts/social/contract.algo.ts:1751
     // const timeCapped = elapsed >= ONE_YEAR ? ONE_YEAR : elapsed
     frame_dig 14
     dup
@@ -823,13 +823,13 @@ userImpact_ternary_merge@31:
     intc 6 // 31536000
     swap
     select
-    // smart_contracts/social/contract.algo.ts:1776
+    // smart_contracts/social/contract.algo.ts:1753
     // return (timeCapped * maxScore) / ONE_YEAR
     *
     intc 6 // 31536000
     /
     frame_bury 6
-    // smart_contracts/social/contract.algo.ts:1727
+    // smart_contracts/social/contract.algo.ts:1704
     // const stakedAktaImpact = this.getStakingImpactScore(account) // Staked AKTA | up to 250
     b userImpact_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getStakingImpactScore@32
 
@@ -840,10 +840,10 @@ userImpact_ternary_false@30:
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.nfdReadField(NFDApp: uint64, field: bytes) -> bytes:
 nfdReadField:
-    // smart_contracts/social/contract.algo.ts:1823
+    // smart_contracts/social/contract.algo.ts:1800
     // private nfdReadField(NFDApp: Application, field: string): bytes {
     proto 2 1
-    // smart_contracts/social/contract.algo.ts:1824-1830
+    // smart_contracts/social/contract.algo.ts:1801-1807
     // const fieldBytes = abiCall(
     //   NFD.prototype.readField,
     //   {
@@ -852,7 +852,7 @@ nfdReadField:
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/social/contract.algo.ts:1828
+    // smart_contracts/social/contract.algo.ts:1805
     // args: [Bytes(field)]
     frame_dig -1
     len
@@ -860,7 +860,7 @@ nfdReadField:
     extract 6 2
     frame_dig -1
     concat
-    // smart_contracts/social/contract.algo.ts:1824-1830
+    // smart_contracts/social/contract.algo.ts:1801-1807
     // const fieldBytes = abiCall(
     //   NFD.prototype.readField,
     //   {
@@ -885,28 +885,28 @@ nfdReadField:
     ==
     assert // Bytes has valid prefix
     extract 6 0
-    // smart_contracts/social/contract.algo.ts:1832
+    // smart_contracts/social/contract.algo.ts:1809
     // return fieldBytes
     retsub
 
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.create(akitaDAO: uint64, version: bytes) -> void:
 create:
-    // smart_contracts/social/contract.algo.ts:1911-1912
+    // smart_contracts/social/contract.algo.ts:1888-1889
     // @abimethod({ onCreate: 'require' })
     // create(akitaDAO: uint64, version: string): void {
     proto 2 0
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec 8 // "version"
-    // smart_contracts/social/contract.algo.ts:1913
+    // smart_contracts/social/contract.algo.ts:1890
     // this.version.value = version
     frame_dig -1
     app_global_put
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1914
+    // smart_contracts/social/contract.algo.ts:1891
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -2
     app_global_put
@@ -915,30 +915,30 @@ create:
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.cacheMeta(address: bytes, subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64) -> uint64:
 cacheMeta:
-    // smart_contracts/social/contract.algo.ts:1919
+    // smart_contracts/social/contract.algo.ts:1896
     // cacheMeta(address: Address, subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64): uint64 {
     proto 4 1
     intc_0 // 0
     dupn 5
     pushbytes ""
     dupn 4
-    // smart_contracts/social/contract.algo.ts:1920
+    // smart_contracts/social/contract.algo.ts:1897
     // assert(Txn.sender === Application(getAkitaAppList(this.akitaDAO.value).social).address, ERR_NOT_SOCIAL)
     txn Sender
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1920
+    // smart_contracts/social/contract.algo.ts:1897
     // assert(Txn.sender === Application(getAkitaAppList(this.akitaDAO.value).social).address, ERR_NOT_SOCIAL)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:28
+    // smart_contracts/utils/functions.ts:29
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1920
+    // smart_contracts/social/contract.algo.ts:1897
     // assert(Txn.sender === Application(getAkitaAppList(this.akitaDAO.value).social).address, ERR_NOT_SOCIAL)
     pushint 96 // 96
     extract_uint64
@@ -946,11 +946,11 @@ cacheMeta:
     assert // application exists
     ==
     assert // Not a social plugin
-    // smart_contracts/social/contract.algo.ts:1922
+    // smart_contracts/social/contract.algo.ts:1899
     // if (subscriptionIndex !== 0) {
     frame_dig -3
     bz cacheMeta_after_if_else@2
-    // smart_contracts/social/contract.algo.ts:1923
+    // smart_contracts/social/contract.algo.ts:1900
     // assert(this.isSubscribed(address.native, subscriptionIndex).active, ERR_NOT_A_SUBSCRIPTION)
     frame_dig -4
     frame_dig -3
@@ -960,25 +960,25 @@ cacheMeta:
     assert // Not an akita subscription contract
 
 cacheMeta_after_if_else@2:
-    // smart_contracts/social/contract.algo.ts:1926
+    // smart_contracts/social/contract.algo.ts:1903
     // let nfdTimeChanged: uint64 = 0
     intc_0 // 0
     frame_bury 9
-    // smart_contracts/social/contract.algo.ts:1927
+    // smart_contracts/social/contract.algo.ts:1904
     // let nfdImpact: uint64 = 0
     intc_0 // 0
     frame_bury 7
-    // smart_contracts/social/contract.algo.ts:1928
+    // smart_contracts/social/contract.algo.ts:1905
     // if (NFDAppID !== 0) {
     frame_dig -2
     bz cacheMeta_after_if_else@4
-    // smart_contracts/social/contract.algo.ts:1686
+    // smart_contracts/social/contract.algo.ts:1663
     // const [nfdNameBytes] = op.AppGlobal.getExBytes(NFDApp, Bytes(NFDGlobalStateKeysName))
     frame_dig -2
     pushbytes "i.name"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1688-1694
+    // smart_contracts/social/contract.algo.ts:1665-1671
     // return abiCall(
     //   NFDRegistry.prototype.isValidNfdAppId,
     //   {
@@ -987,26 +987,26 @@ cacheMeta_after_if_else@2:
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/social/contract.algo.ts:1691
+    // smart_contracts/social/contract.algo.ts:1668
     // appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1691
+    // smart_contracts/social/contract.algo.ts:1668
     // appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:38
+    // smart_contracts/utils/functions.ts:39
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     bytec 9 // "other_al"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1691
+    // smart_contracts/social/contract.algo.ts:1668
     // appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
     pushint 8 // 8
     extract_uint64
-    // smart_contracts/social/contract.algo.ts:1692
+    // smart_contracts/social/contract.algo.ts:1669
     // args: [String(nfdNameBytes), NFDApp.id]
     dig 1
     len
@@ -1016,7 +1016,7 @@ cacheMeta_after_if_else@2:
     concat
     frame_dig -2
     itob
-    // smart_contracts/social/contract.algo.ts:1688-1694
+    // smart_contracts/social/contract.algo.ts:1665-1671
     // return abiCall(
     //   NFDRegistry.prototype.isValidNfdAppId,
     //   {
@@ -1045,10 +1045,10 @@ cacheMeta_after_if_else@2:
     assert // Bytes has valid prefix
     intc_0 // 0
     getbit
-    // smart_contracts/social/contract.algo.ts:1930
+    // smart_contracts/social/contract.algo.ts:1907
     // assert(this.isNFD(nfdApp), ERR_NOT_AN_NFD)
     assert // Not an NFD
-    // smart_contracts/social/contract.algo.ts:1699-1708
+    // smart_contracts/social/contract.algo.ts:1676-1685
     // const caAlgoData = abiCall(
     //   NFD.prototype.readField,
     //   {
@@ -1062,13 +1062,13 @@ cacheMeta_after_if_else@2:
     itxn_begin
     bytec 7 // method "readField(byte[])byte[]"
     itxn_field ApplicationArgs
-    // smart_contracts/social/contract.algo.ts:1704
+    // smart_contracts/social/contract.algo.ts:1681
     // Bytes(NFDMetaKeyVerifiedAddresses)
     pushbytes 0x000d762e6361416c676f2e302e6173
     itxn_field ApplicationArgs
     frame_dig -2
     itxn_field ApplicationID
-    // smart_contracts/social/contract.algo.ts:1699-1708
+    // smart_contracts/social/contract.algo.ts:1676-1685
     // const caAlgoData = abiCall(
     //   NFD.prototype.readField,
     //   {
@@ -1092,13 +1092,13 @@ cacheMeta_after_if_else@2:
     assert // Bytes has valid prefix
     extract 6 0
     frame_bury 1
-    // smart_contracts/social/contract.algo.ts:1710
+    // smart_contracts/social/contract.algo.ts:1687
     // for (let i: uint64 = 0; i < caAlgoData.length; i += 32) {
     intc_0 // 0
     frame_bury 6
 
 cacheMeta_while_top@14:
-    // smart_contracts/social/contract.algo.ts:1710
+    // smart_contracts/social/contract.algo.ts:1687
     // for (let i: uint64 = 0; i < caAlgoData.length; i += 32) {
     frame_dig 1
     len
@@ -1107,7 +1107,7 @@ cacheMeta_while_top@14:
     frame_dig 6
     >
     bz cacheMeta_after_while@19
-    // smart_contracts/social/contract.algo.ts:1711
+    // smart_contracts/social/contract.algo.ts:1688
     // const addr = caAlgoData.slice(i, i + 32)
     frame_dig 6
     dup
@@ -1142,7 +1142,7 @@ cacheMeta_while_top@14:
     substring3
     dup
     frame_bury 0
-    // smart_contracts/social/contract.algo.ts:1712
+    // smart_contracts/social/contract.algo.ts:1689
     // if (addr !== Global.zeroAddress.bytes && addr === account.bytes) {
     global ZeroAddress
     !=
@@ -1151,30 +1151,30 @@ cacheMeta_while_top@14:
     frame_dig -4
     ==
     bz cacheMeta_while_top@14
-    // smart_contracts/social/contract.algo.ts:1713
+    // smart_contracts/social/contract.algo.ts:1690
     // return true
     intc_1 // 1
 
 cacheMeta_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.addressVerifiedOnNFD@20:
-    // smart_contracts/social/contract.algo.ts:1931
+    // smart_contracts/social/contract.algo.ts:1908
     // assert(this.addressVerifiedOnNFD(address.native, nfdApp), ERR_USER_DOES_NOT_OWN_NFD)
     assert // User does not own this NFD
-    // smart_contracts/social/contract.algo.ts:1932
+    // smart_contracts/social/contract.algo.ts:1909
     // const [timeChangedBytes] = op.AppGlobal.getExBytes(nfdApp, Bytes(NFDGlobalStateKeysTimeChanged))
     frame_dig -2
     bytec 5 // "i.timeChanged"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1933
+    // smart_contracts/social/contract.algo.ts:1910
     // nfdTimeChanged = btoi(timeChangedBytes)
     btoi
     frame_bury 9
-    // smart_contracts/social/contract.algo.ts:1846
+    // smart_contracts/social/contract.algo.ts:1823
     // let nfdImpact: uint64 = 50
     pushint 50 // 50
     dup
     frame_bury 7
-    // smart_contracts/social/contract.algo.ts:1848
+    // smart_contracts/social/contract.algo.ts:1825
     // const [parentAppIDBytes, parentAppIDBytesExist] = op.AppGlobal.getExBytes(NFDApp, Bytes(NFDGlobalStateKeysParentAppID))
     frame_dig -2
     pushbytes "i.parentAppID"
@@ -1183,7 +1183,7 @@ cacheMeta_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpa
     frame_bury 3
     swap
     frame_bury 8
-    // smart_contracts/social/contract.algo.ts:1850
+    // smart_contracts/social/contract.algo.ts:1827
     // if (parentAppIDBytesExist && btoi(parentAppIDBytes) === getOtherAppList(this.akitaDAO.value).akitaNfd) {
     bz cacheMeta_after_if_else@24
     frame_dig 3
@@ -1192,16 +1192,16 @@ cacheMeta_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpa
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1850
+    // smart_contracts/social/contract.algo.ts:1827
     // if (parentAppIDBytesExist && btoi(parentAppIDBytes) === getOtherAppList(this.akitaDAO.value).akitaNfd) {
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:38
+    // smart_contracts/utils/functions.ts:39
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     bytec 9 // "other_al"
     app_global_get_ex
     pop
-    // smart_contracts/social/contract.algo.ts:1850
+    // smart_contracts/social/contract.algo.ts:1827
     // if (parentAppIDBytesExist && btoi(parentAppIDBytes) === getOtherAppList(this.akitaDAO.value).akitaNfd) {
     intc_3 // 32
     extract_uint64
@@ -1209,7 +1209,7 @@ cacheMeta_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpa
     frame_dig 7
     frame_bury 8
     bz cacheMeta_after_if_else@24
-    // smart_contracts/social/contract.algo.ts:1851
+    // smart_contracts/social/contract.algo.ts:1828
     // nfdImpact += 50
     pushint 100 // 100
     frame_bury 8
@@ -1217,7 +1217,7 @@ cacheMeta_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpa
 cacheMeta_after_if_else@24:
     frame_dig 8
     frame_bury 7
-    // smart_contracts/social/contract.algo.ts:1854
+    // smart_contracts/social/contract.algo.ts:1831
     // const version = op.AppGlobal.getExBytes(NFDApp, Bytes(NFDGlobalStateKeysVersion))[0].slice(0, 2)
     frame_dig -2
     pushbytes "i.ver"
@@ -1240,32 +1240,32 @@ cacheMeta_after_if_else@24:
     uncover 2
     select
     substring3
-    // smart_contracts/social/contract.algo.ts:1856
+    // smart_contracts/social/contract.algo.ts:1833
     // if (version !== Bytes('3.')) {
     pushbytes "3."
     !=
     bnz cacheMeta_after_if_else@4
-    // smart_contracts/social/contract.algo.ts:1836
+    // smart_contracts/social/contract.algo.ts:1813
     // const domain = this.nfdReadField(NFDApp, NFDMetaKeyVerifiedDomain)
     frame_dig -2
     pushbytes "v.domain"
     callsub nfdReadField
-    // smart_contracts/social/contract.algo.ts:1837
+    // smart_contracts/social/contract.algo.ts:1814
     // const twitter = this.nfdReadField(NFDApp, NFDMetaKeyVerifiedTwitter)
     frame_dig -2
     pushbytes "v.twitter"
     callsub nfdReadField
-    // smart_contracts/social/contract.algo.ts:1838
+    // smart_contracts/social/contract.algo.ts:1815
     // const discord = this.nfdReadField(NFDApp, NFDMetaKeyVerifiedDiscord)
     frame_dig -2
     pushbytes "v.discord"
     callsub nfdReadField
-    // smart_contracts/social/contract.algo.ts:1839
+    // smart_contracts/social/contract.algo.ts:1816
     // const telegram = this.nfdReadField(NFDApp, NFDMetaKeyVerifiedTelegram)
     frame_dig -2
     pushbytes "v.telegram"
     callsub nfdReadField
-    // smart_contracts/social/contract.algo.ts:1841
+    // smart_contracts/social/contract.algo.ts:1818
     // return { domain, twitter, discord, telegram }
     dig 3
     len
@@ -1329,7 +1329,7 @@ cacheMeta_after_if_else@24:
     concat
     swap
     concat
-    // smart_contracts/social/contract.algo.ts:1860
+    // smart_contracts/social/contract.algo.ts:1837
     // const { domain, twitter, discord, telegram } = this.getNFDSocialFields(NFDApp)
     dup
     intc_0 // 0
@@ -1367,13 +1367,13 @@ cacheMeta_after_if_else@24:
     substring3
     extract 2 0
     frame_bury 4
-    // smart_contracts/social/contract.algo.ts:1863
+    // smart_contracts/social/contract.algo.ts:1840
     // if (domain.length > 0) {
     len
     frame_dig 7
     frame_bury 8
     bz cacheMeta_after_if_else@28
-    // smart_contracts/social/contract.algo.ts:1864
+    // smart_contracts/social/contract.algo.ts:1841
     // nfdImpact += 10
     frame_dig 7
     pushint 10 // 10
@@ -1384,14 +1384,14 @@ cacheMeta_after_if_else@28:
     frame_dig 8
     dup
     frame_bury 7
-    // smart_contracts/social/contract.algo.ts:1868
+    // smart_contracts/social/contract.algo.ts:1845
     // if (twitter.length > 0) {
     frame_dig 5
     len
     swap
     frame_bury 8
     bz cacheMeta_after_if_else@30
-    // smart_contracts/social/contract.algo.ts:1869
+    // smart_contracts/social/contract.algo.ts:1846
     // nfdImpact += 20
     frame_dig 7
     pushint 20 // 20
@@ -1402,14 +1402,14 @@ cacheMeta_after_if_else@30:
     frame_dig 8
     dup
     frame_bury 7
-    // smart_contracts/social/contract.algo.ts:1873
+    // smart_contracts/social/contract.algo.ts:1850
     // if (discord.length > 0) {
     frame_dig 2
     len
     swap
     frame_bury 8
     bz cacheMeta_after_if_else@32
-    // smart_contracts/social/contract.algo.ts:1874
+    // smart_contracts/social/contract.algo.ts:1851
     // nfdImpact += 10
     frame_dig 7
     pushint 10 // 10
@@ -1420,14 +1420,14 @@ cacheMeta_after_if_else@32:
     frame_dig 8
     dup
     frame_bury 7
-    // smart_contracts/social/contract.algo.ts:1878
+    // smart_contracts/social/contract.algo.ts:1855
     // if (telegram.length > 0) {
     frame_dig 4
     len
     swap
     frame_bury 8
     bz cacheMeta_after_if_else@34
-    // smart_contracts/social/contract.algo.ts:1879
+    // smart_contracts/social/contract.algo.ts:1856
     // nfdImpact += 10
     frame_dig 7
     pushint 10 // 10
@@ -1439,32 +1439,32 @@ cacheMeta_after_if_else@34:
     frame_bury 7
 
 cacheMeta_after_if_else@4:
-    // smart_contracts/social/contract.algo.ts:1937
+    // smart_contracts/social/contract.algo.ts:1914
     // if (akitaAssetID !== 0) {
     frame_dig -1
     bz cacheMeta_after_if_else@6
-    // smart_contracts/social/contract.algo.ts:1721
+    // smart_contracts/social/contract.algo.ts:1698
     // return akitaNFT.creator === Account(AkitaNFTCreatorAddress)
     frame_dig -1
     asset_params_get AssetCreator
     assert // asset exists
     bytec 6 // addr AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI
     ==
-    // smart_contracts/social/contract.algo.ts:1939
+    // smart_contracts/social/contract.algo.ts:1916
     // assert(this.isAkitaNFT(akitaNFT), ERR_NOT_AN_AKITA_NFT)
     assert // Not an akita NFT
-    // smart_contracts/social/contract.algo.ts:1653
+    // smart_contracts/social/contract.algo.ts:1630
     // return AssetHolding.assetBalance(account, NFT)[0] > 0
     frame_dig -4
     frame_dig -1
     asset_holding_get AssetBalance
     pop
-    // smart_contracts/social/contract.algo.ts:1940
+    // smart_contracts/social/contract.algo.ts:1917
     // assert(this.userHolds(address.native, akitaNFT), ERR_USER_DOES_NOT_OWN_NFT)
     assert // User does not own this NFT
 
 cacheMeta_after_if_else@6:
-    // smart_contracts/social/contract.algo.ts:1943-1949
+    // smart_contracts/social/contract.algo.ts:1920-1926
     // this.meta(address.native).value = {
     //   subscriptionIndex,
     //   NFD: NFDAppID,
@@ -1488,12 +1488,12 @@ cacheMeta_after_if_else@6:
     frame_dig -1
     itob
     concat
-    // smart_contracts/social/contract.algo.ts:1639
+    // smart_contracts/social/contract.algo.ts:1616
     // meta = BoxMap<Account, ImpactMetaValue>({ keyPrefix: ImpactBoxPrefixMeta })
     bytec_3 // "m"
     frame_dig -4
     concat
-    // smart_contracts/social/contract.algo.ts:1943-1949
+    // smart_contracts/social/contract.algo.ts:1920-1926
     // this.meta(address.native).value = {
     //   subscriptionIndex,
     //   NFD: NFDAppID,
@@ -1503,33 +1503,33 @@ cacheMeta_after_if_else@6:
     // }
     swap
     box_put
-    // smart_contracts/social/contract.algo.ts:1951
+    // smart_contracts/social/contract.algo.ts:1928
     // return nfdImpact
     frame_bury 0
     retsub
 
 cacheMeta_after_while@19:
-    // smart_contracts/social/contract.algo.ts:1717
+    // smart_contracts/social/contract.algo.ts:1694
     // return false
     intc_0 // 0
-    // smart_contracts/social/contract.algo.ts:1931
+    // smart_contracts/social/contract.algo.ts:1908
     // assert(this.addressVerifiedOnNFD(address.native, nfdApp), ERR_USER_DOES_NOT_OWN_NFD)
     b cacheMeta_after_inlined_smart_contracts/social/contract.algo.ts::AkitaSocialImpact.addressVerifiedOnNFD@20
 
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.updateSubscriptionStateModifier(payment: uint64, subscriptionIndex: uint64, newModifier: uint64) -> void:
 updateSubscriptionStateModifier:
-    // smart_contracts/social/contract.algo.ts:1954
+    // smart_contracts/social/contract.algo.ts:1931
     // updateSubscriptionStateModifier(payment: gtxn.PaymentTxn, subscriptionIndex: uint64, newModifier: uint64): void {
     proto 3 0
-    // smart_contracts/social/contract.algo.ts:1955
+    // smart_contracts/social/contract.algo.ts:1932
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_DAO)
     txn Sender
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/social/contract.algo.ts:1955
+    // smart_contracts/social/contract.algo.ts:1932
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1537,21 +1537,21 @@ updateSubscriptionStateModifier:
     assert // application exists
     ==
     assert // Not the DAO
-    // smart_contracts/social/contract.algo.ts:1957
+    // smart_contracts/social/contract.algo.ts:1934
     // this.subscriptionStateModifier(subscriptionIndex).value = newModifier
     frame_dig -2
     itob
-    // smart_contracts/social/contract.algo.ts:1641
+    // smart_contracts/social/contract.algo.ts:1618
     // subscriptionStateModifier = BoxMap<uint64, uint64>({ keyPrefix: ImpactBoxPrefixSubscriptionStateModifier })
     pushbytes "s"
     swap
     concat
-    // smart_contracts/social/contract.algo.ts:1957
+    // smart_contracts/social/contract.algo.ts:1934
     // this.subscriptionStateModifier(subscriptionIndex).value = newModifier
     frame_dig -1
     itob
     box_put
-    // smart_contracts/social/contract.algo.ts:1959-1966
+    // smart_contracts/social/contract.algo.ts:1936-1943
     // assertMatch(
     //   payment,
     //   {
@@ -1562,10 +1562,10 @@ updateSubscriptionStateModifier:
     // )
     frame_dig -3
     gtxns Receiver
-    // smart_contracts/social/contract.algo.ts:1962
+    // smart_contracts/social/contract.algo.ts:1939
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/social/contract.algo.ts:1959-1966
+    // smart_contracts/social/contract.algo.ts:1936-1943
     // assertMatch(
     //   payment,
     //   {
@@ -1577,10 +1577,10 @@ updateSubscriptionStateModifier:
     ==
     frame_dig -3
     gtxns Amount
-    // smart_contracts/social/contract.algo.ts:1963
+    // smart_contracts/social/contract.algo.ts:1940
     // amount: this.mbr().subscriptionStateModifier
     pushint 9300 // 9300
-    // smart_contracts/social/contract.algo.ts:1959-1966
+    // smart_contracts/social/contract.algo.ts:1936-1943
     // assertMatch(
     //   payment,
     //   {
@@ -1597,11 +1597,11 @@ updateSubscriptionStateModifier:
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getUserImpactWithoutSocial(address: bytes) -> uint64:
 getUserImpactWithoutSocial:
-    // smart_contracts/social/contract.algo.ts:1972-1973
+    // smart_contracts/social/contract.algo.ts:1949-1950
     // @abimethod({ readonly: true })
     // getUserImpactWithoutSocial(address: Address): uint64 {
     proto 1 1
-    // smart_contracts/social/contract.algo.ts:1974
+    // smart_contracts/social/contract.algo.ts:1951
     // return this.userImpact(address.native, false)
     frame_dig -1
     intc_0 // 0
@@ -1611,11 +1611,11 @@ getUserImpactWithoutSocial:
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getUserImpact(address: bytes) -> uint64:
 getUserImpact:
-    // smart_contracts/social/contract.algo.ts:1977-1978
+    // smart_contracts/social/contract.algo.ts:1954-1955
     // @abimethod({ readonly: true })
     // getUserImpact(address: Address): uint64 {
     proto 1 1
-    // smart_contracts/social/contract.algo.ts:1979
+    // smart_contracts/social/contract.algo.ts:1956
     // return this.userImpact(address.native, true)
     frame_dig -1
     intc_1 // 1
@@ -1625,16 +1625,16 @@ getUserImpact:
 
 // smart_contracts/social/contract.algo.ts::AkitaSocialImpact.getMeta(user: bytes) -> bytes:
 getMeta:
-    // smart_contracts/social/contract.algo.ts:1982-1983
+    // smart_contracts/social/contract.algo.ts:1959-1960
     // @abimethod({ readonly: true })
     // getMeta(user: Address): ImpactMetaValue {
     proto 1 1
-    // smart_contracts/social/contract.algo.ts:1639
+    // smart_contracts/social/contract.algo.ts:1616
     // meta = BoxMap<Account, ImpactMetaValue>({ keyPrefix: ImpactBoxPrefixMeta })
     bytec_3 // "m"
     frame_dig -1
     concat
-    // smart_contracts/social/contract.algo.ts:1984
+    // smart_contracts/social/contract.algo.ts:1961
     // return this.meta(user.native).value
     box_get
     assert // Box must have value

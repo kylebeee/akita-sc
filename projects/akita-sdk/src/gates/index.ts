@@ -1,38 +1,34 @@
 import { BaseSDK } from "../base";
 import { TxnReturn } from '../types'
-import { GateArgs, GateClient, GateFactory } from '../generated/GateClient'
+import { GateArgs, GateClient, GateFactory, GateFilterEntryWithArgsFromTuple } from '../generated/GateClient'
 import { hasSenderSigner, MaybeSigner, NewContractSDKParams } from "../types";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { emptySigner } from "../constants";
-import { GateCheckArg, GateRegistrationArg, GateType, LogicalOperator } from "./types";
-import { getABIEncodedValue, StructField } from "@algorandfoundation/algokit-utils/types/app-arc56";
-import { APP_SPEC as AssetAppSpec } from '../generated/AssetGateClient'
-import { APP_SPEC as MerkleAddressAppSpec } from '../generated/MerkleAddressGateClient'
-import { APP_SPEC as MerkleAssetAppSpec } from '../generated/MerkleAssetGateClient'
+import { GateCheckArg, GateEncodingInfo, GateRegistrationArg, GateRegistrationFilterAndArg, GateRegistryConfig, GateType } from "./types";
+import { getABIDecodedValue, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";
+import { encodeUint64 } from "algosdk";
+import { APP_SPEC as AssetAppSpec, AssetGateRegistryInfo } from '../generated/AssetGateClient'
+import { APP_SPEC as MerkleAddressAppSpec, MerkleAddressGateRegistryInfo } from '../generated/MerkleAddressGateClient'
+import { APP_SPEC as MerkleAssetAppSpec, MerkleAssetGateRegistryInfo } from '../generated/MerkleAssetGateClient'
 import { APP_SPEC as NFDAppSpec } from '../generated/NFDGateClient'
 import { APP_SPEC as NFDRootAppSpec } from '../generated/NFDGateClient'
-import { APP_SPEC as SocialActivityAppSpec } from '../generated/SocialActivityGateClient'
+import { OperatorAndValue, APP_SPEC as SocialActivityAppSpec } from '../generated/SocialActivityGateClient'
 import { APP_SPEC as SocialFollowerCountAppSpec } from '../generated/SocialFollowerCountGateClient'
-import { APP_SPEC as SocialFollowerIndexGateAppSpec } from '../generated/SocialFollowerIndexGateClient'
+import { APP_SPEC as SocialFollowerIndexGateAppSpec, SocialFollowerIndexGateRegistryInfo } from '../generated/SocialFollowerIndexGateClient'
 import { APP_SPEC as SocialImpactGateAppSpec } from '../generated/SocialImpactGateClient'
 import { APP_SPEC as SocialModeratorGateAppSpec } from '../generated/SocialModeratorGateClient'
-import { APP_SPEC as StakingAmountGateAppSpec } from '../generated/StakingAmountGateClient'
-import { APP_SPEC as StakingPowerGateAppSpec } from '../generated/StakingPowerGateClient'
-import { APP_SPEC as SubscriptionGateAppSpec } from '../generated/SubscriptionGateClient'
-import { APP_SPEC as SubscriptionStreakGateAppSpec } from '../generated/SubscriptionStreakGateClient'
-import { encodeUint64 } from "algosdk";
+import { APP_SPEC as StakingAmountGateAppSpec, StakingAmountGateRegistryInfo } from '../generated/StakingAmountGateClient'
+import { APP_SPEC as StakingPowerGateAppSpec, StakingPowerGateRegistryInfo } from '../generated/StakingPowerGateClient'
+import { APP_SPEC as SubscriptionGateAppSpec, SubscriptionGateRegistryInfo } from '../generated/SubscriptionGateClient'
+import { APP_SPEC as SubscriptionStreakGateAppSpec, SubscriptionStreakGateRegistryInfo } from '../generated/SubscriptionStreakGateClient'
 
 type ContractArgs = GateArgs["obj"];
 
-type GateEncodingInfo<T extends Record<string, StructField[]> = Record<string, StructField[]>> = {
-  registerShape: keyof T
-  checkShape: keyof T
-  structs: T
-}
-
 export class GateSDK extends BaseSDK<GateClient> {
 
-  gateEncodings: { [K in GateType]: GateEncodingInfo } = {
+  private contractIdToType: Map<bigint, GateType> = new Map();
+
+  private gateEncodings: { [K in GateType]: GateEncodingInfo } = {
     asset: {
       registerShape: 'AssetGateRegistryInfo',
       checkShape: 'None',
@@ -105,11 +101,24 @@ export class GateSDK extends BaseSDK<GateClient> {
     }
   }
 
-  constructor(params: NewContractSDKParams) {
+  constructor(params: NewContractSDKParams & { gateRegistry: GateRegistryConfig }) {
     super({ factory: GateFactory, ...params });
+    Object.entries(params.gateRegistry).forEach(([type, contractId]) => {
+      if (contractId !== undefined) {
+        this.contractIdToType.set(contractId, type as GateType);
+      }
+    });
   }
 
-  private async buildRegistryArgs(args: GateRegistrationArg[]): Promise<{ filters: [bigint | number, bigint | number, bigint | number][]; args: Uint8Array[]; }> {
+  private getGateTypeFromContractId(contractId: bigint): GateType {
+    const gateType = this.contractIdToType.get(contractId);
+    if (!gateType) {
+      throw new Error(`Unknown contract ID: ${contractId}`);
+    }
+    return gateType;
+  }
+
+  private async encodeGateRegistryArgs(args: GateRegistrationFilterAndArg[]): Promise<{ filters: [bigint | number, bigint | number, bigint | number][]; args: Uint8Array[]; }> {
 
     let filters: [bigint | number, bigint | number, bigint | number][] = [];
     let preppedArgs: Uint8Array[] = [];
@@ -131,7 +140,15 @@ export class GateSDK extends BaseSDK<GateClient> {
       }
 
       switch (type) {
-        case 'asset':
+        case 'asset': {
+          const { asset, op, value } = arg;
+          data = getABIEncodedValue(
+            { asset, op, value },
+            name,
+            this.gateEncodings[type].structs
+          );
+          break;
+        }
         case 'social_activity':
         case 'social_follower_count':
         case 'social_impact':
@@ -156,11 +173,7 @@ export class GateSDK extends BaseSDK<GateClient> {
         }
         case 'nfd_root': {
           const { root } = arg;
-          data = getABIEncodedValue(
-            { root },
-            name,
-            this.gateEncodings[type].structs
-          );
+          data = Buffer.from(root)
           break;
         }
         case 'social_follower_index': {
@@ -173,9 +186,9 @@ export class GateSDK extends BaseSDK<GateClient> {
           break;
         }
         case 'staking_amount': {
-          const { op, asset, stakingType, amount, includeStaked } = arg;
+          const { op, asset, stakingType, amount, includeEscrowed } = arg;
           data = getABIEncodedValue(
-            { op, asset, stakingType, amount, includeStaked },
+            { op, asset, stakingType, amount, includeEscrowed },
             name,
             this.gateEncodings[type].structs
           );
@@ -219,7 +232,65 @@ export class GateSDK extends BaseSDK<GateClient> {
     return { filters, args: preppedArgs };
   }
 
-  private async buildCheckArgs(args: GateCheckArg[]): Promise<Uint8Array[]> {
+  private decodeGateArgs(type: GateType, encoded: Uint8Array): GateRegistrationArg {
+    
+    const registrationName = this.gateEncodings[type].registerShape;
+    if (registrationName === 'None') {
+      return { type } as GateRegistrationArg;
+    }
+
+    const structs = this.gateEncodings[type].structs;
+
+    switch (type) {
+      case 'asset': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as AssetGateRegistryInfo
+        return { type, ...decoded }
+      }
+      case 'merkle_address': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as MerkleAddressGateRegistryInfo
+        return { type, ...decoded }
+      }
+      case 'merkle_asset': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as MerkleAssetGateRegistryInfo
+        return { type, ...decoded }
+      }
+      case 'nfd_root': {
+        return { type, root: encoded.toString() };
+      }
+      case 'social_activity':
+      case 'social_follower_count':
+      case 'social_impact':
+      case 'social_moderator': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as OperatorAndValue
+        return { type, ...decoded }
+      }
+      case 'social_follower_index': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as SocialFollowerIndexGateRegistryInfo
+        return { type, ...decoded }
+      }
+      case 'staking_amount': {
+        const { type: stakingType, ...decoded } = getABIDecodedValue(encoded, registrationName, structs) as StakingAmountGateRegistryInfo
+        return { type, stakingType, ...decoded }
+      }
+      case 'staking_power': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as StakingPowerGateRegistryInfo
+        return { type, ...decoded }
+      }
+      case 'subscription': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as SubscriptionGateRegistryInfo
+        return { type, ...decoded }
+      }
+      case 'subscription_streak': {
+        const decoded = getABIDecodedValue(encoded, registrationName, structs) as SubscriptionStreakGateRegistryInfo
+        return { type, ...decoded }
+      }
+      default: {
+        throw new Error(`Unsupported gate type: ${type}`);
+      }
+    }
+  }
+
+  private async encodeGateCheckArgs(args: GateCheckArg[]): Promise<Uint8Array[]> {
 
     let preppedArgs: Uint8Array[] = [];
     let data: Uint8Array = new Uint8Array();
@@ -278,7 +349,7 @@ export class GateSDK extends BaseSDK<GateClient> {
     return preppedArgs;
   }
 
-  async register({ sender, signer, args }: { args: GateRegistrationArg[] } & MaybeSigner): Promise<TxnReturn<bigint>> {
+  async register({ sender, signer, args }: { args: GateRegistrationFilterAndArg[] } & MaybeSigner): Promise<TxnReturn<bigint>> {
 
     const sendParams = {
       ...this.sendParams,
@@ -290,10 +361,10 @@ export class GateSDK extends BaseSDK<GateClient> {
       throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
     }
 
-    const preppedArgs = await this.buildRegistryArgs(args);
+    const encodedArgs = await this.encodeGateRegistryArgs(args);
 
     // figure out cost
-    const cost = await this.cost(preppedArgs)
+    const cost = await this.cost(encodedArgs)
 
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
@@ -303,7 +374,7 @@ export class GateSDK extends BaseSDK<GateClient> {
 
     return this.client.send.register({
       ...sendParams,
-      args: { payment, ...preppedArgs }
+      args: { payment, ...encodedArgs }
     });
   }
 
@@ -319,7 +390,7 @@ export class GateSDK extends BaseSDK<GateClient> {
       throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
     }
 
-    const preppedArgs = await this.buildCheckArgs(args);
+    const preppedArgs = await this.encodeGateCheckArgs(args);
 
     return this.client.send.check({
       ...sendParams,
@@ -339,12 +410,42 @@ export class GateSDK extends BaseSDK<GateClient> {
       throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
     }
 
-    const preppedArgs = await this.buildCheckArgs(args);
+    const preppedArgs = await this.encodeGateCheckArgs(args);
 
     return this.client.send.mustCheck({
       ...sendParams,
       args: { caller, gateId, args: preppedArgs }
     });
+  }
+
+  async getGate({ sender, signer, gateId }: ContractArgs['getGate(uint64)(uint64,uint64,uint64,uint8,byte[])[]'] & MaybeSigner): Promise<any> {
+    const defaultParams = {
+      ...this.sendParams,
+      sender: this.readerAccount,
+      signer: emptySigner
+    }
+
+    const sendParams = {
+      ...defaultParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    };
+
+    const { return: gates } = await this.client.send.getGate({ ...sendParams, args: { gateId } });
+
+    if (gates === undefined) {
+      throw new Error('Failed to get gate info');
+    }
+
+    // decode the resulting args into a GateRegistrationArg[]
+
+    const decodedGates = gates.map(gate => {
+      const obj = GateFilterEntryWithArgsFromTuple(gate)
+      const gateType = this.getGateTypeFromContractId(obj.app);
+      return this.decodeGateArgs(gateType, obj.args);
+    });
+
+    return decodedGates;
   }
 
   async cost({ sender, signer, ...args }: ContractArgs['cost((uint64,uint64,uint8)[],byte[][])uint64'] & MaybeSigner): Promise<bigint> {

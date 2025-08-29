@@ -9,7 +9,7 @@ import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR
 import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { OptInPlugin } from '../arc58/plugins/optin/contract.algo'
-import { akitaSocialFee, gateCheck, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, impactRange, getWalletIDUsingAkitaDAO, originOrTxnSender, originOr, referrerOrZeroAddress, calcPercent, createInstantDisbursement } from '../utils/functions'
+import { akitaSocialFee, gateCheck, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, impactRange, getWalletIDUsingAkitaDAO, originOrTxnSender, originOr, referrerOrZeroAddress, calcPercent, createInstantDisbursement, sendReferralPayment } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { NFDRegistry } from '../utils/types/nfd-registry'
@@ -158,38 +158,15 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   private sendPostPayment(referrer: Account) {
     const akta = getAkitaAssets(this.akitaDAO.value).akta
     const { postFee } = getSocialFees(this.akitaDAO.value)
-    const { tax } = this.sendReferralPayment(referrer, akta, postFee)
+    const { leftover } = sendReferralPayment(this.akitaDAO.value, referrer, akta, postFee)
 
     itxn
       .assetTransfer({
         assetReceiver: this.akitaDAOEscrow.value.address,
-        assetAmount: tax,
+        assetAmount: leftover,
         xferAsset: akta
       })
       .submit()
-  }
-
-  private sendReferralPayment(referrer: Account, asset: uint64, preReferralTax: uint64): { tax: uint64, cost: uint64 } {
-    let referralFee: uint64 = 0
-    if (referrer !== Global.zeroAddress && referrer.isOptedIn(Asset(asset))) {
-      referralFee = calcPercent(preReferralTax, TWENTY_FIVE_PERCENT)
-      if (referralFee === 0 && preReferralTax > 0) {
-        referralFee = 1
-      }
-
-      const { cost } = createInstantDisbursement(
-        this.akitaDAO.value,
-        asset,
-        Global.latestTimestamp,
-        (Global.latestTimestamp + ONE_WEEK),
-        [{ address: new Address(referrer), amount: referralFee }],
-        referralFee
-      )
-      
-      return { tax: (preReferralTax - referralFee), cost }
-    }
-
-    return { tax: preReferralTax, cost: 0 }
   }
 
   private arc58SendReactionPayments(walletID: uint64, asset: uint64, tax: uint64, remainder: uint64): void {
@@ -318,23 +295,23 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     let extraAmount: uint64 = 0
     
     const akta = getAkitaAssets(this.akitaDAO.value).akta
-    const { tax, cost } = this.sendReferralPayment(referrer, akta, preReferralTax)
+    const { leftover, cost } = sendReferralPayment(this.akitaDAO.value, referrer, akta, preReferralTax)
     extraAmount += cost
     const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     switch (type) {
       case TipSendTypeDirect: {
-        this.sendDirectReactionPayments(receiver, akta, tax, (reactFee - preReferralTax))
+        this.sendDirectReactionPayments(receiver, akta, leftover, (reactFee - preReferralTax))
         break
       }
       case TipSendTypeARC59: {
         extraAmount = (arc59.mbr + arc59.receiverAlgoNeededForClaim)
-        this.arc59SendReactionPayments(receiver, akta, tax, (reactFee - preReferralTax), arc59)
+        this.arc59SendReactionPayments(receiver, akta, leftover, (reactFee - preReferralTax), arc59)
         break
       }
       case TipSendTypeARC58: {
         extraAmount = arc58
-        this.arc58SendReactionPayments(wallet, akta, tax, (reactFee - preReferralTax))
+        this.arc58SendReactionPayments(wallet, akta, leftover, (reactFee - preReferralTax))
         break
       }
     }

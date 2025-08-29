@@ -19,7 +19,7 @@ import { FactoryContract } from '../../utils/base-contracts/factory'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
 import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
 import { AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints, AbstractedAccountFactoryGlobalStateKeyDomain } from './constants'
-import { getWalletFees } from '../../utils/functions'
+import { createInstantDisbursement, getWalletFees, getWalletIDUsingAkitaDAO, referrerOrZeroAddress, sendReferralPayment } from '../../utils/functions'
 import { AbstractedAccountFactoryInterface } from '../../utils/abstract-account'
 
 export class AbstractedAccountFactory extends FactoryContract implements AbstractedAccountFactoryInterface {
@@ -69,20 +69,30 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
 
     const abstractedAccount = compileArc4(AbstractedAccount)
 
+    const creationFee = getWalletFees(this.akitaDAO.value).createFee
+
     const childMBR: uint64 = (
       MAX_PROGRAM_PAGES + // 300_000
       (GLOBAL_STATE_KEY_UINT_COST * abstractedAccount.globalUints) + // 256_500
       (GLOBAL_STATE_KEY_BYTES_COST * abstractedAccount.globalBytes) + // 850_000
       Global.minBalance + // 100_000
       ARC58WalletIDsByAccountsMbr + // 12_100
-      getWalletFees(this.akitaDAO.value).createFee // ???
+      creationFee
     )
+
+    let leftover: uint64 = creationFee
+    let referralCost: uint64 = 0
+    if (creationFee > 0) {
+      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+      const referrer = referrerOrZeroAddress(wallet);
+      ({ leftover, cost: referralCost } = sendReferralPayment(this.akitaDAO.value, referrer, 0, creationFee))
+    }
 
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: childMBR,
+        amount: childMBR + referralCost,
       },
       ERR_INVALID_PAYMENT
     )
@@ -111,6 +121,15 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
         amount: Global.minBalance + ARC58WalletIDsByAccountsMbr
       })
       .submit()
+
+    if (leftover > 0) {
+      itxn
+        .payment({
+          receiver: this.akitaDAOEscrow.value.address,
+          amount: leftover,
+        })
+        .submit()
+    }
 
     return walletID
   }

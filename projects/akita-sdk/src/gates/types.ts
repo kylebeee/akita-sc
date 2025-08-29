@@ -1,7 +1,31 @@
 import { Address } from "cluster"
 import { StakingType } from "../staking/types"
+import { StructField } from "@algorandfoundation/algokit-utils/types/app-arc56";
 
 export type GateType = 'asset' | 'merkle_address' | 'merkle_asset' | 'nfd' | 'nfd_root' | 'social_activity' | 'social_follower_count' | 'social_follower_index' | 'social_impact' | 'social_moderator' | 'staking_amount' | 'staking_power' | 'subscription' | 'subscription_streak'
+
+export interface GateRegistryConfig {
+  asset?: bigint;
+  merkle_address?: bigint;
+  merkle_asset?: bigint;
+  nfd?: bigint;
+  nfd_root?: bigint;
+  social_activity?: bigint;
+  social_follower_count?: bigint;
+  social_follower_index?: bigint;
+  social_impact?: bigint;
+  social_moderator?: bigint;
+  staking_amount?: bigint;
+  staking_power?: bigint;
+  subscription?: bigint;
+  subscription_streak?: bigint;
+}
+
+export type GateEncodingInfo<T extends Record<string, StructField[]> = Record<string, StructField[]>> = {
+  registerShape: keyof T
+  checkShape: keyof T
+  structs: T
+}
 
 export enum Operator {
   Equal = 10,
@@ -21,59 +45,67 @@ export enum LogicalOperator {
   Or = 20,
 }
 
-export type GateRegistrationArg = {
+export type GateRegistrationFilterAndArg = GateRegistrationArg & {
   layer: bigint
   appId: bigint,
   logicalOperator: LogicalOperator
-} & (
-    | {
-      type: 'asset' | 'social_activity' | 'social_follower_count' | 'social_impact' | 'social_moderator',
-      op: Operator,
-      value: bigint | number
-    }
-    | {
-      type: 'merkle_address' | 'merkle_asset',
-      creator: string,
-      name: string
-    }
-    | { type: 'nfd' }
-    | {
-      type: 'nfd_root',
-      root: string
-    }
-    | {
-      type: 'social_follower_index',
-      user: string,
-      op: Operator,
-      value: bigint | number
-    }
-    | {
-      type: 'staking_amount'
-      op: Operator
-      asset: bigint | number
-      stakingType: StakingType
-      amount: bigint | number
-      includeStaked: boolean
-    }
-    | {
-      type: 'staking_power'
-      op: Operator
-      asset: bigint | number
-      power: bigint | number
-    }
-    | {
-      type: 'subscription'
-      merchant: string
-      id: bigint | number
-    }
-    | {
-      type: 'subscription_streak'
-      merchant: string
-      id: bigint | number
-      op: Operator
-      streak: bigint | number
-    }
-  )
+}
+
+export type GateRegistrationArg = (
+  | {
+    type: 'asset'
+    asset: bigint | number
+    op: Operator,
+    value: bigint | number
+  }
+  | {
+    type: 'merkle_address' | 'merkle_asset',
+    creator: string,
+    name: string
+  }
+  | { type: 'nfd' }
+  | {
+    type: 'nfd_root',
+    root: string
+  }
+  | {
+    type: 'social_activity' | 'social_follower_count' | 'social_impact' | 'social_moderator',
+    op: Operator,
+    value: bigint | number
+  }
+  | {
+    type: 'social_follower_index',
+    user: string,
+    op: Operator,
+    value: bigint | number
+  }
+  | {
+    type: 'staking_amount'
+    op: Operator
+    asset: bigint | number
+    stakingType: StakingType
+    amount: bigint | number
+    includeEscrowed: boolean
+  }
+  | {
+    type: 'staking_power'
+    op: Operator
+    asset: bigint | number
+    power: bigint | number
+  }
+  | {
+    type: 'subscription'
+    merchant: string
+    id: bigint | number
+  }
+  | {
+    type: 'subscription_streak'
+    merchant: string
+    id: bigint | number
+    op: Operator
+    streak: bigint | number
+  }
+)
 
 export type GateCheckArg = (
   | { type: 'asset' }
