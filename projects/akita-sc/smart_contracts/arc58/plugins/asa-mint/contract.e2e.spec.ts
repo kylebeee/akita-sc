@@ -1,16 +1,20 @@
 import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { Address, ALGORAND_ZERO_ADDRESS_STRING, decodeUint64 } from 'algosdk'
+import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk'
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { OptInPluginFactory } from '../../../artifacts/arc58/plugins/optin/OptInPluginClient'
-import { newWallet, OptInPluginSDK } from 'akita-sdk'
+import { newWallet, WalletFactorySDK, WalletSDK } from 'akita-sdk'
 import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
 import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint'
-import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
+import { deployAkitaDAO } from '../../../../tests/fixtures/dao';
 
 describe('Asa Mint plugin contract', () => {
   const localnet = algorandFixture();
+
+  /** the wallet factory contract sdk */
+  let walletFactory: WalletFactorySDK;
+  /** the wallet sdk */
+  let wallet: WalletSDK;
 
   beforeAll(async () => {
     Config.configure({
@@ -18,23 +22,44 @@ describe('Asa Mint plugin contract', () => {
       // traceAll: true,
     })
     registerDebugEventHandlers()
+
+    await localnet.newScope();
+    const { algorand, context: { testAccount } } = localnet
+    const sender = testAccount.toString()
+    const signer = testAccount.signer
+
+    const dao = await deployAkitaDAO({
+      fixture: localnet,
+      sender,
+      signer,
+      apps: {}
+    })
+
+    walletFactory = (
+      await deployAbstractedAccountFactoryAndEscrowFactory({
+        fixture: localnet,
+        sender,
+        signer,
+        args: {
+          akitaDao: dao.appId,
+        }
+      })
+    ).abstractAccountFactory;
+
+    wallet = await newWallet({
+      algorand,
+      factoryParams: {
+        appId: walletFactory.appId,
+        defaultSender: sender,
+        defaultSigner: signer,
+      },
+      sender,
+      signer,
+      nickname: 'Test Wallet',
+    })
   })
 
   beforeEach(localnet.newScope)
-
-  const deploy = async (account: Address) => {
-    const { algorand } = localnet
-    const factory = algorand.client.getTypedAppFactory(OptInPluginFactory, {
-      defaultSender: account,
-    })
-
-    const { appClient: client } = await factory.deploy({
-      onUpdate: 'append',
-      onSchemaBreak: 'append',
-    })
-
-    return new OptInPluginSDK({ algorand, factoryParams: { appId: client.appId } })
-  }
 
   describe('AsaMint', () => {
     test('mint OK', async () => {
@@ -42,11 +67,9 @@ describe('Asa Mint plugin contract', () => {
       const sender = testAccount.toString()
       const signer = testAccount.signer
 
-      const { aaFactory } = await deployAbstractedAccountFactoryAndEscrowFactory({ fixture: localnet, sender, signer });
-      const wallet = await newWallet({ factoryParams: { appId: aaFactory.appId, defaultSender: sender, defaultSigner: signer }, readerAccount: sender, algorand, nickname: 'test_wallet', sender, signer })
       const asaMintSdk = await deployAsaMintPlugin({ fixture: localnet, sender, signer })
 
-      const mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      const mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
 
       let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
@@ -66,9 +89,6 @@ describe('Asa Mint plugin contract', () => {
 
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
-
-      //   const escrowInfo = await wallet.getEscrow(escrow)
-      //   const escrowAddress = getApplicationAddress(escrowInfo.id).toString()
 
       const results = await wallet.usePlugin({
         global: true,
@@ -90,8 +110,7 @@ describe('Asa Mint plugin contract', () => {
         ]
       })
 
-      const takta = decodeUint64(results.confirmations[2].logs![0].slice(4))
-      console.log('created asset:', takta)
+      const takta = results.returns[1][0]
 
       expect(takta).toBeGreaterThan(0n)
 

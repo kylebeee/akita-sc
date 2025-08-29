@@ -1,9 +1,8 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { ImpactGateCheckParams, ImpactRegistryInfo } from './types'
-import { GateGlobalStateKeyRegistryCursor, OperatorValueRegistryMBR } from '../../constants'
-import { Operator } from '../../types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
+import { Operator, OperatorAndValue } from '../../types'
 import {
   Equal,
   GreaterThan,
@@ -22,11 +21,15 @@ export class SocialImpactGate extends AkitaBaseContract implements SubGateInterf
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, ImpactRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, OperatorAndValue>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -46,63 +49,60 @@ export class SocialImpactGate extends AkitaBaseContract implements SubGateInterf
       }
     ).returnValue
 
-    if (op === Equal) {
-      return impact === value
+    switch (op) {
+      case Equal: return impact === value
+      case NotEqual: return impact !== value
+      case LessThan: return impact < value
+      case LessThanOrEqualTo: return impact <= value
+      case GreaterThan: return impact > value
+      case GreaterThanOrEqualTo: return impact >= value
+      default: return false
     }
-    if (op === NotEqual) {
-      return impact !== value
-    }
-    if (op === LessThan) {
-      return impact < value
-    }
-    if (op === LessThanOrEqualTo) {
-      return impact <= value
-    }
-    if (op === GreaterThan) {
-      return impact > value
-    }
-    if (op === GreaterThanOrEqualTo) {
-      return impact >= value
-    }
-
-    return false
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
-  
+
   @abimethod({ onCreate: 'require' })
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // IMPACT GATE METHODS --------------------------------------------------------------------------
 
   cost(args: bytes): uint64 {
-    return OperatorValueRegistryMBR
+    return OperatorAndValueRegistryMBR
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === 16, ERR_INVALID_ARG_COUNT)
+    assert(args.length === OperatorAndValueByteLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: OperatorValueRegistryMBR
+        amount: OperatorAndValueRegistryMBR
       },
       ERR_INVALID_PAYMENT
     )
 
     const id = this.newRegistryID()
-    this.registry(id).value = decodeArc4<ImpactRegistryInfo>(args)
+    this.registry(id).value = decodeArc4<OperatorAndValue>(args)
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length === 40, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<ImpactGateCheckParams>(args)
-    const info = clone(this.registry(params.registryID).value)
-    return this.impactGate(params.user, info.op, info.value)
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === 0, ERR_INVALID_ARG_COUNT)
+    const { op, value } = clone(this.registry(registryID).value)
+    return this.impactGate(caller, op, value)
+  }
+
+  @abimethod({ readonly: true })
+  getRegistrationShape(shape: OperatorAndValue): OperatorAndValue {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

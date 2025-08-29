@@ -29,15 +29,6 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
       : Bytes(itob(Global.callerApplicationId))
   }
 
-  @abimethod({ readonly: true })
-  newCost(): uint64 {
-    return (
-      MinPages +
-      GLOBAL_STATE_KEY_BYTES_COST +
-      Global.minBalance
-    )
-  }
-
   new(payment: gtxn.PaymentTxn): uint64 {
     const nonAppCaller = Global.callerApplicationId === 0
     const creator = this.getCreator()
@@ -126,11 +117,12 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
 
     const spendingAccount = compileArc4(Escrow);
 
-    const childAppMBR: uint64 = Global.minBalance + this.mbr(creator.length)
+    const childAppMBR: uint64 = (
+      MinPages +
+      GLOBAL_STATE_KEY_BYTES_COST
+    )
 
     spendingAccount.call.delete({ appId: id })
-
-    this.walletIDsByAccounts(key).delete()
 
     itxn
       .payment({
@@ -138,6 +130,15 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
         amount: childAppMBR
       })
       .submit()
+  }
+
+  @abimethod({ readonly: true })
+  cost(): uint64 {
+    return (
+      MinPages +
+      GLOBAL_STATE_KEY_BYTES_COST +
+      Global.minBalance
+    )
   }
 
   @abimethod({ readonly: true })

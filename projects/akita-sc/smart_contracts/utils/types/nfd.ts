@@ -2,73 +2,73 @@ import { arc4, Bytes, bytes, Contract, Global, gtxn, uint64 } from '@algorandfou
 import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export interface PayoutInfo {
-    amountToSeller: uint64
-    commissionAddress: Address
-    amountToCommission: uint64
-    segmentRootOwner: Address
-    amountToSegmentRoot: uint64
+  amountToSeller: uint64
+  commissionAddress: Address
+  amountToCommission: uint64
+  segmentRootOwner: Address
+  amountToSegmentRoot: uint64
 }
 
 export class NFD extends Contract {
-    updateApplication(versionNum: string): void {}
+  updateApplication(versionNum: string): void { }
 
-    gas(): void {}
+  gas(): void { }
 
-    mintAsa(nfdName: string, url: string): void {}
+  mintAsa(nfdName: string, url: string): void { }
 
-    deleteFields(fieldNames: bytes[]): void {}
+  deleteFields(fieldNames: bytes[]): void { }
 
-    updateSegmentCount(childNfdName: string, childNfdAppID: uint64): void {}
+  updateSegmentCount(childNfdName: string, childNfdAppID: uint64): void { }
 
-    getFieldUpdateCost(fieldAndVals: uint64[]): uint64 {
-        return 0
+  getFieldUpdateCost(fieldAndVals: uint64[]): uint64 {
+    return 0
+  }
+
+  updateFields(fieldAndVals: bytes[]): void { }
+
+  readField(fieldName: bytes): bytes {
+    return Bytes('')
+  }
+
+  offerForSale(sellAmount: uint64, reservedFor: Address): void { }
+
+  cancelSale(): void { }
+
+  postOffer(offer: uint64, note: string): void { }
+
+  mintPayout(oneYearPrice: uint64, segmentPlatformCostInAlgo: uint64): PayoutInfo {
+    return {
+      amountToSeller: 0,
+      commissionAddress: new Address(Global.zeroAddress),
+      amountToCommission: 0,
+      segmentRootOwner: new Address(Global.zeroAddress),
+      amountToSegmentRoot: 0,
     }
+  }
 
-    updateFields(fieldAndVals: bytes[]): void {}
+  purchase(payment: gtxn.PaymentTxn): void { }
 
-    readField(fieldName: bytes): bytes {
-        return Bytes('')
-    }
+  isAddressInField(fieldName: string, address: Address): boolean {
+    return false
+  }
 
-    offerForSale(sellAmount: uint64, reservedFor: Address): void {}
+  getRenewPrice(): uint64 {
+    return 0
+  }
 
-    cancelSale(): void {}
+  updateHash(hash: bytes): void { }
 
-    postOffer(offer: uint64, note: string): void {}
+  contractLock(lock: boolean): void { }
 
-    mintPayout(oneYearPrice: uint64, segmentPlatformCostInAlgo: uint64): PayoutInfo {
-        return {
-            amountToSeller: 0,
-            commissionAddress: new Address(Global.zeroAddress),
-            amountToCommission: 0,
-            segmentRootOwner: new Address(Global.zeroAddress),
-            amountToSegmentRoot: 0,
-        }
-    }
+  segmentLock(lock: boolean, usdPrice: uint64): void { }
 
-    purchase(payment: gtxn.PaymentTxn): void {}
+  vaultOptInLock(lock: boolean): void { }
 
-    isAddressInField(fieldName: string, address: Address): boolean {
-        return false
-    }
+  vaultOptIn(assets: uint64[]): void { }
 
-    getRenewPrice(): uint64 {
-        return 0
-    }
+  vaultSend(amount: uint64, receiver: Address, note: string, asset: uint64, otherAssets: uint64[]): void { }
 
-    updateHash(hash: bytes): void {}
+  renew(payment: gtxn.PaymentTxn): void { }
 
-    contractLock(lock: boolean): void {}
-
-    segmentLock(lock: boolean, usdPrice: uint64): void {}
-
-    vaultOptInLock(lock: boolean): void {}
-
-    vaultOptIn(assets: uint64[]): void {}
-
-    vaultSend(amount: uint64, receiver: Address, note: string, asset: uint64, otherAssets: uint64[]): void {}
-
-    renew(payment: gtxn.PaymentTxn): void {}
-
-    setPrimaryAddress(fieldName: string, address: Address): void {}
+  setPrimaryAddress(fieldName: string, address: Address): void { }
 }

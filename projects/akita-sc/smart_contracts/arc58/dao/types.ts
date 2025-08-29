@@ -3,7 +3,6 @@ import { Address, Struct, Uint8 } from '@algorandfoundation/algorand-typescript/
 import { AddAllowanceInfo, MethodRestriction } from '../account/types';
 import { CID } from '../../utils/types/base';
 
-
 export type ProposalStatus = Uint8
 export type ProposalActionType = Uint8
 export type ProposalVoteType = Uint8
@@ -13,7 +12,8 @@ export type ProposalUpgradeApp = {
   app: uint64
   executionKey: bytes<32>
   groups: bytes<32>[]
-  expiration: uint64
+  firstValid: uint64
+  lastValid: uint64
 }
 
 export type ProposalAddPlugin = {
@@ -59,21 +59,19 @@ export type ProposalAddNamedPlugin = {
 
 export type ProposalExecutePlugin = {
   plugin: uint64
-  caller: Address
   escrow: string
   executionKey: bytes<32>
   groups: bytes<32>[]
-  expiration: uint64
+  firstValid: uint64
+  lastValid: uint64
 }
 
 export type ProposalExecuteNamedPlugin = {
   name: string
-  plugin: uint64
-  caller: Address
-  escrow: string
   executionKey: bytes<32>
   groups: bytes<32>[]
-  expiration: uint64
+  firstValid: uint64
+  lastValid: uint64
 }
 
 export type ProposalRemoveExecutePlugin = {
@@ -103,11 +101,11 @@ export type ProposalRemoveAllowances = {
   assets: uint64[]
 }
 
-export type EscrowType = Uint8
+// export type EscrowType = Uint8
 
-export const EscrowTypeDefault: EscrowType = new Uint8(0)
-export const EscrowTypeReceive: EscrowType = new Uint8(10)
-export const EscrowTypePayout: EscrowType = new Uint8(20)
+// export const EscrowTypeDefault: EscrowType = new Uint8(0)
+// export const EscrowTypeReceive: EscrowType = new Uint8(10)
+// export const EscrowTypePayout: EscrowType = new Uint8(20)
 
 export type ProposalNewEscrow = {
   escrow: string

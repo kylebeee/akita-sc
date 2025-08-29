@@ -1,0 +1,1 @@
+export const AkitaDAOPluginGlobalStateKeysDAOAppID = "dao_id";

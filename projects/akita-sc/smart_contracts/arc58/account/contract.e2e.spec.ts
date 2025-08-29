@@ -1,16 +1,17 @@
-import { Config, microAlgo, sendGroupOfTransactions } from '@algorandfoundation/algokit-utils'
+import { algo, Config, microAlgo } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { AsaMintPluginSDK, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK, ARC58EscrowRegisterFee, isFlatAllowance, isWindowAllowance, isDripAllowance } from 'akita-sdk'
+import { AsaMintPluginSDK, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK, isFlatAllowance, isWindowAllowance, isDripAllowance } from 'akita-sdk'
 import { TimeWarp } from '../../../tests/utils/time'
 import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../tests/fixtures/abstracted-account'
 import { deployPayPlugin } from '../../../tests/fixtures/plugins/pay'
 import { deployOptInPlugin } from '../../../tests/fixtures/plugins/optin'
 import { deployAsaMintPlugin } from '../../../tests/fixtures/plugins/asa-mint'
-import { ERR_ALLOWANCE_EXCEEDED, ERR_BAD_EXECUTION_KEY, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY, ERR_MALFORMED_OFFSETS, ERR_METHOD_ON_COOLDOWN, ERR_PLUGIN_DOES_NOT_EXIST, ERR_PLUGIN_EXPIRED, ERR_PLUGIN_ON_COOLDOWN } from './errors';
-import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
+import { ERR_ALLOWANCE_EXCEEDED, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY, ERR_EXECUTION_KEY_NOT_FOUND, ERR_MALFORMED_OFFSETS, ERR_METHOD_ON_COOLDOWN, ERR_PLUGIN_DOES_NOT_EXIST, ERR_PLUGIN_EXPIRED, ERR_PLUGIN_ON_COOLDOWN } from './errors';
+import { AppCallMethodCall } from '@algorandfoundation/algokit-utils/types/composer';
+import { deployAkitaDAO } from '../../../tests/fixtures/dao';
 
 describe('ARC58 Plugin Permissions', () => {
   const localnet = algorandFixture();
@@ -43,9 +44,23 @@ describe('ARC58 Plugin Permissions', () => {
 
     timeWarp = new TimeWarp(algorand);
 
+    const dao = await deployAkitaDAO({
+      fixture: localnet,
+      sender,
+      signer,
+      apps: {}
+    })
+
     walletFactory = (
-      await deployAbstractedAccountFactoryAndEscrowFactory({ fixture: localnet, sender, signer })
-    ).aaFactory;
+      await deployAbstractedAccountFactoryAndEscrowFactory({
+        fixture: localnet,
+        sender,
+        signer,
+        args: {
+          akitaDao: dao.appId,
+        }
+      })
+    ).abstractAccountFactory;
 
     payPluginSdk = await deployPayPlugin({ fixture: localnet, sender, signer });
     optinPluginSdk = await deployOptInPlugin({ fixture: localnet, sender, signer });
@@ -78,7 +93,7 @@ describe('ARC58 Plugin Permissions', () => {
       const { algorand, context: { testAccount } } = localnet
       const sender = testAccount.toString()
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
 
       const paymentAmount = 1_000_000n
       const fundAmount = (mbr.plugins * 2n) + paymentAmount
@@ -111,12 +126,13 @@ describe('ARC58 Plugin Permissions', () => {
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
       // expect last used to be updated on the global plugin
-      const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}`)!;
+      // const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}`)!;
+      const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
 
       // expect last used to not be updated on the sender plugin
-      const localPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${sender}`)!;
+      const localPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, caller: sender })!;
       expect(localPluginInfo).toBeDefined();
       expect(localPluginInfo.lastCalled).toBe(0n);
     })
@@ -125,7 +141,7 @@ describe('ARC58 Plugin Permissions', () => {
       const { algorand, context: { testAccount } } = localnet
       const sender = testAccount.toString()
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
 
       const paymentAmount = 1_000_000n
       const fundAmount = mbr.plugins + paymentAmount
@@ -157,7 +173,7 @@ describe('ARC58 Plugin Permissions', () => {
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
       // expect last used to be updated on the global plugin
-      const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}`)!;
+      const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
     })
@@ -169,7 +185,7 @@ describe('ARC58 Plugin Permissions', () => {
       const sender = testAccount.toString()
       const signer = testAccount.signer
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
 
       const paymentAmount = 1_000_000n
       const fundAmount = mbr.plugins + paymentAmount
@@ -202,7 +218,7 @@ describe('ARC58 Plugin Permissions', () => {
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
       // expect last used to not be updated on the sender plugin
-      const localPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${sender}`)!;
+      const localPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, caller: sender })!;
       expect(localPluginInfo).toBeDefined();
       expect(localPluginInfo.lastCalled).toBeGreaterThan(0n);
     })
@@ -211,7 +227,7 @@ describe('ARC58 Plugin Permissions', () => {
       const { algorand, context: { testAccount } } = localnet
       const sender = testAccount.toString()
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
 
       const paymentAmount = 1_000_000n
       const fundAmount = mbr.plugins + paymentAmount
@@ -247,7 +263,7 @@ describe('ARC58 Plugin Permissions', () => {
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
       // expect last used to be updated on the global plugin
-      const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}`)!;
+      const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
 
@@ -302,7 +318,7 @@ describe('ARC58 Plugin Permissions', () => {
       const { algorand, context: { testAccount } } = localnet
       const sender = testAccount.toString()
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
 
       const paymentAmount = 1_000_000n
       const fundAmount = mbr.plugins + paymentAmount
@@ -321,7 +337,7 @@ describe('ARC58 Plugin Permissions', () => {
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + paymentAmount)
 
       await wallet.getPlugins();
-      console.log(wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}`)!);
+      console.log(wallet.plugins.get({ plugin: payPluginSdk.appId })!);
 
       let error = 'no error thrown'
       try {
@@ -348,7 +364,7 @@ describe('ARC58 Plugin Permissions', () => {
       const { algorand, context: { testAccount } } = localnet
       const sender = testAccount.toString()
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
 
       const paymentAmount = 1_000_000n
       const fundAmount = (mbr.plugins * 2n) + paymentAmount
@@ -381,43 +397,45 @@ describe('ARC58 Plugin Permissions', () => {
         extraFee: microAlgo(1_000n),
       });
 
-      const txns = [
-        ...(
-          await payPluginSdk
-            .pay({
-              payments: [{
-                receiver: sender,
-                amount: paymentAmount,
-                asset: 0,
-              }]
-            })
-            .call('') // unnecesary because we're using the default controlled account
-            .getTxns({ walletId: wallet.client.appId })
-        ),
-        ...(
-          await asaMintPluginSdk
-            .mint({
-              assets: [{
-                assetName: 'Test Akita',
-                unitName: 'TAKTA',
-                total: 1_000_000_000_000n,
-                decimals: 6n,
-                manager: wallet.client.appAddress.toString(),
-                reserve: wallet.client.appAddress.toString(),
-                freeze: ALGORAND_ZERO_ADDRESS_STRING,
-                clawback: ALGORAND_ZERO_ADDRESS_STRING,
-                defaultFrozen: false,
-                url: 'https://akita.community',
-              }]
-            })
-            .call('') // unnecesary because we're using the default controlled account
-            .getTxns({ walletId: wallet.client.appId })
-        )
-      ]
+      const composer = await group.composer()
 
-      for (const txn of txns) {
-        group.addTransaction(txn)
-      }
+      const payPluginTxn = (
+        await payPluginSdk
+          .pay({
+            payments: [{
+              receiver: sender,
+              amount: paymentAmount,
+              asset: 0,
+            }]
+          })
+          .call('') // unnecesary because we're using the default controlled account
+          .getTxns({ walletId: wallet.client.appId })
+      ) as AppCallMethodCall
+
+
+      composer.addAppCallMethodCall(payPluginTxn)
+
+      const assaMintTxn = (
+        await asaMintPluginSdk
+          .mint({
+            assets: [{
+              assetName: 'Test Akita',
+              unitName: 'TAKTA',
+              total: 1_000_000_000_000n,
+              decimals: 6n,
+              manager: wallet.client.appAddress.toString(),
+              reserve: wallet.client.appAddress.toString(),
+              freeze: ALGORAND_ZERO_ADDRESS_STRING,
+              clawback: ALGORAND_ZERO_ADDRESS_STRING,
+              defaultFrozen: false,
+              url: 'https://akita.community',
+            }]
+          })
+          .call('') // unnecesary because we're using the default controlled account
+          .getTxns({ walletId: wallet.client.appId })
+      ) as AppCallMethodCall
+
+      composer.addAppCallMethodCall(assaMintTxn)
 
       group.arc58VerifyAuthAddress()
 
@@ -440,7 +458,8 @@ describe('ARC58 Plugin Permissions', () => {
       let mbr = await wallet.getMbr({
         escrow: '',
         methodCount: 1n,
-        plugin: ''
+        plugin: '',
+        groups: 0n
       })
 
       const paymentAmount = 1_000_000n
@@ -478,7 +497,7 @@ describe('ARC58 Plugin Permissions', () => {
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
       // expect last used to not be updated on the sender plugin
-      const localPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${sender}`)!;
+      const localPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, caller: sender })!;
       expect(localPluginInfo).toBeDefined();
       expect(localPluginInfo.lastCalled).toBeGreaterThan(0n);
     })
@@ -490,7 +509,8 @@ describe('ARC58 Plugin Permissions', () => {
       let mbr = await wallet.getMbr({
         escrow: '',
         methodCount: 1n,
-        plugin: ''
+        plugin: '',
+        groups: 0n
       })
 
       const paymentAmount = 1_000_000n
@@ -528,7 +548,7 @@ describe('ARC58 Plugin Permissions', () => {
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
 
       // expect last used to not be updated on the sender plugin
-      const localPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${sender}`)!;
+      const localPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, caller: sender })!;
       expect(localPluginInfo).toBeDefined();
       expect(localPluginInfo.lastCalled).toBeGreaterThan(0n);
 
@@ -559,7 +579,8 @@ describe('ARC58 Plugin Permissions', () => {
       let mbr = await wallet.getMbr({
         escrow: '',
         methodCount: 1n,
-        plugin: ''
+        plugin: '',
+        groups: 0n
       })
 
       const paymentAmount = 1_000_000n
@@ -611,7 +632,7 @@ describe('ARC58 Plugin Permissions', () => {
       const { algorand, context: { testAccount } } = localnet
       const sender = testAccount.toString()
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 1n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 1n, plugin: '', groups: 0n })
 
       const paymentAmount = 1_000_000n
       const fundAmount = mbr.plugins + paymentAmount
@@ -649,24 +670,22 @@ describe('ARC58 Plugin Permissions', () => {
         extraFee: microAlgo(1_000n),
       });
 
-      const txns = [
-        ...(
-          await payPluginSdk
-            .pay({
-              payments: [{
-                receiver: sender,
-                amount: paymentAmount,
-                asset: 0,
-              }]
-            })
-            .call('') // unnecesary because we're using the default controlled account
-            .getTxns({ walletId: wallet.client.appId })
-        )
-      ]
+      const composer = await group.composer()
 
-      for (const txn of txns) {
-        group.addTransaction(txn)
-      }
+      const payPluginTxn = (
+        await payPluginSdk
+          .pay({
+            payments: [{
+              receiver: sender,
+              amount: paymentAmount,
+              asset: 0,
+            }]
+          })
+          .call('') // unnecesary because we're using the default controlled account
+          .getTxns({ walletId: wallet.client.appId })
+      ) as AppCallMethodCall
+
+      composer.addAppCallMethodCall(payPluginTxn)
 
       group.arc58VerifyAuthAddress()
 
@@ -687,7 +706,7 @@ describe('ARC58 Plugin Permissions', () => {
       const sender = testAccount.toString()
 
       const escrow = 'flat_allowance'
-      let mbr = await wallet.getMbr({ escrow, methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow, methodCount: 0n, plugin: '', groups: 0n })
 
       let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
@@ -718,7 +737,7 @@ describe('ARC58 Plugin Permissions', () => {
       });
 
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + (allowed - ARC58EscrowRegisterFee))
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + allowed)
 
       await wallet.usePlugin({
         escrow,
@@ -733,14 +752,14 @@ describe('ARC58 Plugin Permissions', () => {
 
       // expect the payment was successful
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + ((allowed - amount) - ARC58EscrowRegisterFee))
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + (allowed - amount))
 
       // expect last used to be updated on the global plugin
-      const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}${escrow}`)!;
+      const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, escrow })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
 
-      const allowanceInfo = wallet.allowances.get(`${asset}${escrow}`)!;
+      const allowanceInfo = wallet.allowances.get({ asset, escrow })!;
       expect(allowanceInfo).toBeDefined();
 
       if (!isFlatAllowance(allowanceInfo)) {
@@ -773,7 +792,7 @@ describe('ARC58 Plugin Permissions', () => {
       const sender = testAccount.toString()
 
       const escrow = 'window_allowance'
-      let mbr = await wallet.getMbr({ escrow, methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow, methodCount: 0n, plugin: '', groups: 0n })
 
       let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
@@ -805,7 +824,7 @@ describe('ARC58 Plugin Permissions', () => {
       });
 
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + ((allowed * 2n) - ARC58EscrowRegisterFee))
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + (allowed * 2n))
 
       await wallet.usePlugin({
         escrow,
@@ -820,14 +839,14 @@ describe('ARC58 Plugin Permissions', () => {
 
       // expect the payment was successful
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + (((allowed * 2n) - amount) - ARC58EscrowRegisterFee))
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + ((allowed * 2n) - amount))
 
       // expect last used to be updated on the global plugin
-      const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}${escrow}`)!;
+      const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, escrow })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
 
-      let allowanceInfo = wallet.allowances.get(`${asset}${escrow}`)!;
+      let allowanceInfo = wallet.allowances.get({ asset, escrow })!;
       expect(allowanceInfo).toBeDefined();
 
       if (!isWindowAllowance(allowanceInfo)) {
@@ -867,7 +886,7 @@ describe('ARC58 Plugin Permissions', () => {
         fundsRequest: [{ amount, asset }]
       })
 
-      allowanceInfo = wallet.allowances.get(`${asset}${escrow}`)!;
+      allowanceInfo = wallet.allowances.get({ asset, escrow })!;
       expect(allowanceInfo).toBeDefined();
 
       if (!isWindowAllowance(allowanceInfo)) {
@@ -882,7 +901,7 @@ describe('ARC58 Plugin Permissions', () => {
       const sender = testAccount.toString()
 
       const escrow = 'drip_allowance'
-      let mbr = await wallet.getMbr({ escrow, methodCount: 0n, plugin: '' })
+      let mbr = await wallet.getMbr({ escrow, methodCount: 0n, plugin: '', groups: 0n })
 
       let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
       expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
@@ -915,7 +934,7 @@ describe('ARC58 Plugin Permissions', () => {
       });
 
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + ((max * 2n) - ARC58EscrowRegisterFee))
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + (max * 2n))
 
       await wallet.usePlugin({
         escrow,
@@ -930,14 +949,14 @@ describe('ARC58 Plugin Permissions', () => {
 
       // expect the payment was successful
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + (((max * 2n) - amount) - ARC58EscrowRegisterFee))
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + ((max * 2n) - amount))
 
       // expect last used to be updated on the global plugin
-      const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}${escrow}`)!;
+      const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, escrow })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
 
-      let allowanceInfo = wallet.allowances.get(`${asset}${escrow}`)!;
+      let allowanceInfo = wallet.allowances.get({ asset, escrow })!;
       expect(allowanceInfo).toBeDefined();
 
       if (!isDripAllowance(allowanceInfo)) {
@@ -977,7 +996,7 @@ describe('ARC58 Plugin Permissions', () => {
         fundsRequest: [{ amount, asset }]
       })
 
-      allowanceInfo = wallet.allowances.get(`${asset}${escrow}`)!;
+      allowanceInfo = wallet.allowances.get({ asset, escrow })!;
       expect(allowanceInfo).toBeDefined();
 
       if (!isDripAllowance(allowanceInfo)) {
@@ -1019,7 +1038,7 @@ describe('ARC58 Plugin Permissions', () => {
         fundsRequest: [{ amount: 1_000_000n, asset }]
       })
 
-      allowanceInfo = wallet.allowances.get(`${asset}${escrow}`)!;
+      allowanceInfo = wallet.allowances.get({ asset, escrow })!;
       expect(allowanceInfo).toBeDefined();
 
       if (!isDripAllowance(allowanceInfo)) {
@@ -1032,13 +1051,19 @@ describe('ARC58 Plugin Permissions', () => {
 
   describe('Execution Keys', () => {
     test('execution key - valid', async () => {
-      const { algorand, context: { testAccount } } = localnet
-      const sender = testAccount.toString()
+      const { algorand } = localnet
+      const dispenser = await algorand.account.dispenserFromEnvironment();
 
-      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '' })
+      const senderAcc = algorand.account.random()
+      const sender = senderAcc.toString()
+      const signer = senderAcc.signer
+
+      await algorand.account.ensureFunded(sender, dispenser, algo(4));
+
+      let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 2n })
 
       const paymentAmount = 1_000_000n
-      const fundAmount = mbr.plugins + paymentAmount
+      const fundAmount = mbr.plugins + mbr.executions + paymentAmount
 
       await wallet.client.appClient.fundAppAccount({
         amount: fundAmount.microAlgo()
@@ -1048,14 +1073,17 @@ describe('ARC58 Plugin Permissions', () => {
         client: payPluginSdk,
         global: true,
         useExecutionKey: true,
+        useRounds: true
       });
 
       let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + paymentAmount)
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + (paymentAmount + mbr.executions))
 
       let error = 'no error thrown'
       try {
         await wallet.usePlugin({
+          sender,
+          signer,
           global: true,
           calls: [
             payPluginSdk.pay({
@@ -1071,10 +1099,13 @@ describe('ARC58 Plugin Permissions', () => {
         error = e.message;
       }
 
-      expect(error).toContain(ERR_BAD_EXECUTION_KEY);
+      expect(error).toContain(ERR_EXECUTION_KEY_NOT_FOUND);
 
-      const composer = await wallet.build.usePlugin({
+      const { lease, firstValid, lastValid, ids: groups, atcs } = await wallet.build.usePlugin({
+        sender,
+        signer,
         lease: 'my_lease',
+        windowSize: 2000n,
         global: true,
         calls: [
           payPluginSdk.pay({
@@ -1087,33 +1118,19 @@ describe('ARC58 Plugin Permissions', () => {
         ]
       })
 
-      const built = await composer.build()
+      await wallet.addExecutionKey({ lease, groups, firstValid, lastValid });
 
-      const key = built.transactions[0].txn.lease
-      const group = built.transactions[0].txn.group
-      const expiration = built.transactions[0].txn.lastValid;
-      
-      if (!key) {
-        throw new Error('Expected execution key to be defined');
-      }
-
-      if (!group) {
-        throw new Error('Expected group to be defined');
-      }
-
-      await wallet.addExecutionKey({ key, groups: [group], expiration });
-
-      await composer.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: false })
+      await atcs[0].submit(wallet.client.algorand.client.algod)
 
       // expect the payment was successful
       walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos + mbr.executions)
 
       // manually refresh our cache
       await wallet.getPlugins();
 
       // expect last used to be updated on the global plugin
-      const globalPluginInfo = wallet.plugins.get(`${payPluginSdk.appId}${ALGORAND_ZERO_ADDRESS_STRING}`)!;
+      const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
     })

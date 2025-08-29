@@ -5,6 +5,8 @@ export class EscrowFactoryInterface extends Contract {
 
   new(payment: gtxn.PaymentTxn): uint64 { return 0 }
 
+  cost(): uint64 { return 0 }
+
   delete(id: uint64): void {}
 
   exists(address: Address): boolean { return false }

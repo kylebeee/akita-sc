@@ -16,6 +16,7 @@ export enum Operator {
 }
 
 export enum LogicalOperator {
+  None = 0,
   And = 10,
   Or = 20,
 }
@@ -23,7 +24,7 @@ export enum LogicalOperator {
 export type GateRegistrationArg = {
   layer: bigint
   appId: bigint,
-  logicalOperator: 'and' | 'or'
+  logicalOperator: LogicalOperator
 } & (
     | {
       type: 'asset' | 'social_activity' | 'social_follower_count' | 'social_impact' | 'social_moderator',
@@ -75,48 +76,36 @@ export type GateRegistrationArg = {
   )
 
 export type GateCheckArg = (
-  | {
-    type: 'asset'
-    asset: bigint | number
-  }
+  | { type: 'asset' }
   | {
     type: 'merkle_address',
-    proof: 
+    proof: Uint8Array<ArrayBufferLike>[]
   }
   | {
     type: 'merkle_asset'
+    asset: bigint | number
+    proof: Uint8Array<ArrayBufferLike>[]
   }
-  | { type: 'nfd' }
+  | {
+    type: 'nfd'
+    appId: bigint | number
+  }
   | {
     type: 'nfd_root',
+    root: string
   }
-  | {
-    type: 'social_activity',
-  }
-  | {
-    type: 'social_follower_count'
-  }
-  | {
-    type: 'social_impact'
-  }
-  | {
-    type: 'social_moderator'
-  }
+  | { type: 'social_activity' }
+  | { type: 'social_follower_count' }
   | {
     type: 'social_follower_index',
+    index: bigint | number
   }
-  | {
-    type: 'staking_amount'
-  }
-  | {
-    type: 'staking_power'
-  }
-  | {
-    type: 'subscription'
-  }
-  | {
-    type: 'subscription_streak'
-  }
+  | { type: 'social_impact' }
+  | { type: 'social_moderator' }
+  | { type: 'staking_amount' }
+  | { type: 'staking_power' }
+  | { type: 'subscription' }
+  | { type: 'subscription_streak' }
 )
 
 // export type GateFilter = {

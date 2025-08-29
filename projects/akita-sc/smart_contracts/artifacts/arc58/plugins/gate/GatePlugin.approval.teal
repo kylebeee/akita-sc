@@ -98,16 +98,16 @@ register:
     //   args: GateArgs
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -134,18 +134,20 @@ register:
     //   }
     // )
     itxn_begin
+    // smart_contracts/arc58/plugins/gate/contract.algo.ts:43
+    // receiver: this.gateAppID.value.address,
+    intc_0 // 0
     // smart_contracts/arc58/plugins/gate/contract.algo.ts:15
     // gateAppID = GlobalState<Application>({ key: GatePluginGlobalStateKeyGateAppID })
-    intc_0 // 0
     bytec_0 // "gate_app_id"
+    // smart_contracts/arc58/plugins/gate/contract.algo.ts:43
+    // receiver: this.gateAppID.value.address,
     app_global_get_ex
     swap
     dup
     cover 2
     cover 3
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/gate/contract.algo.ts:43
-    // receiver: this.gateAppID.value.address,
     app_params_get AppAddress
     assert // application exists
     // smart_contracts/arc58/plugins/gate/contract.algo.ts:44
@@ -207,11 +209,11 @@ register:
     //   }
     // )
     itxn_next
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -3
     bnz register_after_if_else@5
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
 
@@ -258,7 +260,7 @@ register_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
     retsub
 
 register_after_if_else@5:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -4
     app_params_get AppAddress

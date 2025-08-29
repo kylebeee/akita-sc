@@ -1,11 +1,25 @@
 import { Account, arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Bool, DynamicArray, StaticBytes, Struct, Uint64, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
 
+// 33 bytes for key
+// 16 bytes for first & last valid
+// 4 bytes for offset + length of groups
+export const ExecutionGroupMaxInASingleCall: uint64 = 62 // 4 bytes for selector + 16 bytes for first & last valid + 32 bytes for lease key
+// app calls required to fill: 16.5
+// if we force a 'start' of the add Execution method we could avoid providing the lease key more than once
+export const ExecutionGroupSubsequentMaxInASingleCall: uint64 = 63
+// app calls required to fill w/ lease key only provided once: 1007
+
+export const ExecutionGroupMaxLength: uint64 = 1023
+// 32,768
+
 export type ExecutionInfo = {
   /** the group id of the execution */
   groups: bytes<32>[];
-  /** the escrow account to use for the execution */
-  expiration: uint64;
+  /** the first round or timestamp the execution is allowed */
+  firstValid: uint64;
+  /** the last round or timestamp the execution is allowed */
+  lastValid: uint64;
 }
 
 export type EscrowInfo = {

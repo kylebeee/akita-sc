@@ -6,6 +6,8 @@ export const ERR_EMPTY_ACTION_LIST = 'Action list cannot be empty'
 export const ERR_TOO_MANY_ACTIONS = 'Too many actions in the proposal'
 
 export const ERR_PLUGIN_DOES_NOT_EXIST = 'Plugin does not exist'
+export const ERR_ALLOWANCE_LIST_EMPTY = 'Allowance list cannot be empty'
+export const ERR_NOT_EXECUTABLE_PLUGIN = 'Plugin is not executable'
 export const ERR_PLUGIN_EXPIRED = 'Plugin has expired'
 export const ERR_PLUGIN_ON_COOLDOWN = 'Plugin is on cooldown'
 export const ERR_METHOD_NOT_ALLOWED = 'Method not allowed'
@@ -52,6 +54,8 @@ export const ERR_BAD_DAO_DELEGATION_TYPE = 'Bad DAO delegation type'
 
 export const ERR_INVALID_CONTENT_POLICY = 'Invalid content policy'
 export const ERR_INVALID_MINIMUM_REWARDS_IMPACT = 'Invalid minimum rewards impact'
+export const ERR_MIN_REWARDS_IMPACT_MUST_BE_GREATER_THAN_ZERO = 'Minimum rewards impact must be greater than zero'
+export const ERR_MIN_REWARDS_IMPACT_MUST_BE_LESS_THAN_OR_EQUAL_TO_1000s = 'Minimum rewards impact must be less than or equal to 1000'
 
 export const ERR_INVALID_POST_FEE = 'Invalid post fee'
 export const ERR_INVALID_REACT_FEE = 'Invalid react fee'
@@ -92,3 +96,15 @@ export const ERR_INVALID_PROPOSAL_STATUS = 'Invalid proposal status'
 
 export const ERR_INVALID_PROPOSAL_ACTION = 'Invalid proposal action'
 export const ERR_INSUFFICIENT_PROPOSAL_THRESHOLD = 'Insufficient proposal threshold'
+export const ERR_PLUGIN_ALREADY_EXISTS = 'Plugin already exists'
+
+export const ERR_INVALID_CID = 'Invalid CID'
+export const ERR_INVALID_PROPOSAL_ACTION_LIMIT = 'Invalid proposal action limit'
+export const ERR_ACTION_LIMIT_MUST_BE_GREATER_THAN_ZERO = 'Action limit must be greater than zero'
+
+export const ERR_INVALID_MIN_APPROVAL = 'Invalid minimum approval percentage'
+export const ERR_INVALID_MAX_APPROVAL = 'Invalid maximum approval percentage'
+export const ERR_INVALID_MAX_PARTICIPATION = 'Invalid maximum participation percentage'
+export const ERR_INVALID_DURATION = 'Invalid duration'
+export const ERR_INVALID_MIN_POWER = 'Invalid minimum power'
+export const ERR_INVALID_MAX_POWER = 'Invalid maximum power'

@@ -74,16 +74,16 @@ mint:
     //   recipient: Address
     // ): uint64 {
     proto 3 1
-    // smart_contracts/utils/functions.ts:205-208
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:207
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:205-208
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -97,11 +97,11 @@ mint:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/utils/functions.ts:254
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -2
     bnz mint_after_if_else@6
-    // smart_contracts/utils/functions.ts:255
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
 
@@ -155,7 +155,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@7:
     retsub
 
 mint_after_if_else@6:
-    // smart_contracts/utils/functions.ts:258
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -3
     app_params_get AppAddress

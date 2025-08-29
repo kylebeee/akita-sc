@@ -6,7 +6,7 @@ import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_NOT_AN_NFD } from './errors'
 import { NFDGlobalStateKeySaleAmountKey, NFDPluginGlobalStateKeyRegistry } from './constants'
 import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
-import { NFDGlobalStateKeysName } from '../social/constants'
+import { NFDGlobalStateKeysName } from '../../../utils/constants/nfd'
 
 export class NFDPlugin extends Contract {
 

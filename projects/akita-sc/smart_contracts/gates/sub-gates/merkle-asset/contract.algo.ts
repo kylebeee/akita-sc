@@ -1,27 +1,44 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, Global, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
-import { MerkleAssetGateCheckParams } from './types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { MetaMerkles } from '../../../meta-merkles/contract.algo'
-import { MerkleAssetRegistryInfo } from './types'
 import { MerkleTreeTypeCollection } from '../../../meta-merkles/constants'
 import { getAkitaAppList } from '../../../utils/functions'
 import { SubGateInterface } from '../../../utils/types/gates'
 import { BoxCostPerBox } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { Proof } from '../../../utils/types/merkles'
+
+type MerkleAssetGateRegistryInfo = {
+  creator: Address
+  name: string
+}
+
+type MerkleAssetGateCheckParams = {
+  asset: uint64
+  proof: Proof
+}
+
+const MinRegisterArgsLength: uint64 = 35
+/** [asset: 8][proof: 2+(32*length)] */
+const MinCheckArgsLength: uint64 = 74
 
 export class MerkleAssetGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(address,string)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: '(uint64,byte[32][])', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, MerkleAssetRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, MerkleAssetGateRegistryInfo>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -37,21 +54,17 @@ export class MerkleAssetGate extends AkitaBaseContract implements SubGateInterfa
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // MERKLE ASSET GATE METHODS --------------------------------------------------------------------
 
   cost(args: bytes): uint64 {
-   assert(args.length >= 33, ERR_INVALID_ARG_COUNT)
-   return MinMetaMerkleRegistryMBR + (BoxCostPerBox * (args.length - 32))
+    assert(args.length >= MinRegisterArgsLength, ERR_INVALID_ARG_COUNT)
+    return MinMetaMerkleRegistryMBR + (BoxCostPerBox * (args.length - 32))
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    // arc4MerkleAssetRegistryInfo contains a dynamic string
-    // so we need to check that the length of the arguments is at least the length of the static part
-    // of the struct plus 1 byte (the smallest length of a string)
-    assert(args.length >= 33, ERR_INVALID_ARG_COUNT)
+    assert(args.length >= MinRegisterArgsLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
@@ -62,33 +75,43 @@ export class MerkleAssetGate extends AkitaBaseContract implements SubGateInterfa
     )
 
     const id = this.newRegistryID()
-    this.registry(id).value = decodeArc4<MerkleAssetRegistryInfo>(args)
+    this.registry(id).value = decodeArc4<MerkleAssetGateRegistryInfo>(args)
     return id
   }
 
-  check(args: bytes): boolean {
-    // arc4MerkleAssetGateCheckParams contains a dynamic array of proofs
-    // so we need to check that the length of the arguments is at least the length of the static part
-    // of the struct plus 64 bytes (the smallest length of a single proof)
-    assert(args.length >= 112, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<MerkleAssetGateCheckParams>(args)
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length >= MinCheckArgsLength, ERR_INVALID_ARG_COUNT)
+    const { asset, proof } = decodeArc4<MerkleAssetGateCheckParams>(args)
 
-    const [holdings, optedIn] = AssetHolding.assetBalance(params.user.native, params.asset)
+    const [holdings, optedIn] = AssetHolding.assetBalance(caller.native, asset)
     if (!optedIn || holdings === 0) {
       return false
     }
 
-    const registryInfo = clone(this.registry(params.registryID).value)
+    const { creator, name } = clone(this.registry(registryID).value)
 
     return abiCall(MetaMerkles.prototype.verify, {
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
-        registryInfo.creator,
-        registryInfo.name,
-        sha256(sha256(itob(params.asset))),
-        params.proof,
+        creator,
+        name,
+        sha256(sha256(itob(asset))),
+        proof,
         MerkleTreeTypeCollection,
       ],
     }).returnValue
+  }
+
+  getRegistrationShape(shape: MerkleAssetGateRegistryInfo): MerkleAssetGateRegistryInfo {
+    return shape
+  }
+
+  getCheckShape(shape: MerkleAssetGateCheckParams): MerkleAssetGateCheckParams {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

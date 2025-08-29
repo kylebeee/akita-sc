@@ -89,20 +89,20 @@ main_create_route@3:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:241
+    // smart_contracts/utils/functions.ts:288
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -133,16 +133,16 @@ mint:
     proto 4 0
     pushbytes ""
     dupn 2
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -150,14 +150,16 @@ mint:
     app_global_get_ex
     pop
     dup
-    // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:12
-    // registry = GlobalState<Application>({ key: DualStakePluginGlobalStateKey })
-    intc_0 // 0
-    bytec_0 // "registry"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:29
     // assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:12
+    // registry = GlobalState<Application>({ key: DualStakePluginGlobalStateKey })
+    bytec_0 // "registry"
+    // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:29
+    // assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -2
@@ -377,30 +379,32 @@ redeem:
     // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:86
     // redeem(walletID: uint64, rekeyBack: boolean, dsAppID: uint64): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:12
-    // registry = GlobalState<Application>({ key: DualStakePluginGlobalStateKey })
-    intc_0 // 0
-    bytec_0 // "registry"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:92
     // assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:12
+    // registry = GlobalState<Application>({ key: DualStakePluginGlobalStateKey })
+    bytec_0 // "registry"
+    // smart_contracts/arc58/plugins/dual-stake/contract.algo.ts:92
+    // assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -1

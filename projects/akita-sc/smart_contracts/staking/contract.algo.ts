@@ -578,7 +578,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) implements 
   }
 
   @abimethod({ readonly: true })
-  getHeartbeatAverage(address: Address, asset: uint64, includeStaked: boolean): uint64 {
+  getHeartbeatAverage(address: Address, asset: uint64, includeEscrowed: boolean): uint64 {
     const hbk = { address, asset }
 
     if (!this.heartbeats(hbk).exists) {
@@ -589,7 +589,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) implements 
 
     let total: uint64 = 0
     for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
-      if (includeStaked) {
+      if (includeEscrowed) {
         total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
       } else {
         total += heartbeats[i].held
@@ -600,7 +600,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) implements 
   }
 
   @abimethod({ readonly: true })
-  mustGetHeartbeatAverage(address: Address, asset: uint64, includeStaked: boolean): uint64 {
+  mustGetHeartbeatAverage(address: Address, asset: uint64, includeEscrowed: boolean): uint64 {
     const hbk = { address, asset }
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
 
@@ -608,7 +608,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) implements 
 
     let total: uint64 = 0
     for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
-      if (includeStaked) {
+      if (includeEscrowed) {
         total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
       } else {
         total += heartbeats[i].held
@@ -652,7 +652,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) implements 
   }
 
   @abimethod({ readonly: true })
-  stakeCheck(address: Address, checks: AssetCheck[], type: StakingType, includeStaked: boolean): boolean {
+  stakeCheck(address: Address, checks: AssetCheck[], type: StakingType, includeEscrowed: boolean): boolean {
     for (let i: uint64 = 0; i < checks.length; i += 1) {
       const sk = { address, asset: checks[i].asset, type }
       if (!this.stakes(sk).exists) {
@@ -661,7 +661,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) implements 
 
       let amountToCheck: uint64 = this.stakes(sk).value.amount
       if (type === STAKING_TYPE_HEARTBEAT) {
-        amountToCheck = this.getHeartbeatAverage(address, checks[i].asset, includeStaked)
+        amountToCheck = this.getHeartbeatAverage(address, checks[i].asset, includeEscrowed)
       }
 
       if (checks[i].amount >= amountToCheck) {

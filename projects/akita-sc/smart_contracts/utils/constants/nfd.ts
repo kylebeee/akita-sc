@@ -1,0 +1,10 @@
+export const NFDGlobalStateKeysName = 'i.name'
+export const NFDGlobalStateKeysParentAppID = 'i.parentAppID'
+export const NFDGlobalStateKeysVersion = 'i.ver'
+export const NFDGlobalStateKeysTimeChanged = 'i.timeChanged'
+
+export const NFDMetaKeyVerifiedAddresses = 'v.caAlgo.0.as'
+export const NFDMetaKeyVerifiedDomain = 'v.domain'
+export const NFDMetaKeyVerifiedTwitter = 'v.twitter'
+export const NFDMetaKeyVerifiedDiscord = 'v.discord'
+export const NFDMetaKeyVerifiedTelegram = 'v.telegram'

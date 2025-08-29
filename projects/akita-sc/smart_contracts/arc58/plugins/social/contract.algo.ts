@@ -1,4 +1,4 @@
-import { Application, Asset, Bytes, bytes, gtxn, itxn, itxnCompose, OnCompleteAction, op, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, Asset, Bytes, bytes, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, encodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { CID } from '../../../utils/types/base'
 
@@ -1861,7 +1861,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const sender = getSpendingAccount(wallet)
 
     const { social } = getAkitaAppList(this.akitaDAO.value)
-    
+
     abiCall(
       AkitaSocial.prototype.removeAction,
       {

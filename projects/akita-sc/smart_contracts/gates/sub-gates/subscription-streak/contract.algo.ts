@@ -1,8 +1,8 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, encodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { SubscriptionStreakGateCheckParams, SubscriptionStreakRegistryInfo } from './types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
+import { SubscriptionStreakGateRegistryInfo } from './types'
 import { Subscriptions } from '../../../subscriptions/contract.algo'
 import {
   Equal,
@@ -18,15 +18,22 @@ import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { SubscriptionStreakGateRegistryMBR } from './constants'
 
+/** [merchant:32][id:8][op:1][streak:8] */
+const RegisterByteLength: uint64 = 49
+
 export class SubscriptionStreakGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(address,uint64,uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, SubscriptionStreakRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, SubscriptionStreakGateRegistryInfo>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -62,26 +69,15 @@ export class SubscriptionStreakGate extends AkitaBaseContract implements SubGate
       return false
     }
 
-    if (op === Equal) {
-      return info.streak === streak
+    switch (op) {
+      case Equal: return info.streak === streak
+      case NotEqual: return info.streak !== streak
+      case LessThan: return info.streak < streak
+      case LessThanOrEqualTo: return info.streak <= streak
+      case GreaterThan: return info.streak > streak
+      case GreaterThanOrEqualTo: return info.streak >= streak
+      default: return false
     }
-    if (op === NotEqual) {
-      return info.streak !== streak
-    }
-    if (op === LessThan) {
-      return info.streak < streak
-    }
-    if (op === LessThanOrEqualTo) {
-      return info.streak <= streak
-    }
-    if (op === GreaterThan) {
-      return info.streak > streak
-    }
-    if (op === GreaterThanOrEqualTo) {
-      return info.streak >= streak
-    }
-
-    return false
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -90,7 +86,6 @@ export class SubscriptionStreakGate extends AkitaBaseContract implements SubGate
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // SUBSCRIPTION STREAK GATE METHODS -------------------------------------------------------------
@@ -100,7 +95,7 @@ export class SubscriptionStreakGate extends AkitaBaseContract implements SubGate
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === 49, ERR_INVALID_ARG_COUNT)
+    assert(args.length === RegisterByteLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
@@ -111,20 +106,29 @@ export class SubscriptionStreakGate extends AkitaBaseContract implements SubGate
     )
 
     const id = this.newRegistryID()
-    this.registry(id).value = decodeArc4<SubscriptionStreakRegistryInfo>(args)
+    this.registry(id).value = decodeArc4<SubscriptionStreakGateRegistryInfo>(args)
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length === 40, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<SubscriptionStreakGateCheckParams>(args)
-    const info = clone(this.registry(params.registryID).value)
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === 0, ERR_INVALID_ARG_COUNT)
+    const { merchant, id, op, streak } = clone(this.registry(registryID).value)
     return this.subscriptionStreakGate(
-      params.user,
-      info.merchant,
-      info.id,
-      info.op,
-      info.streak
+      caller,
+      merchant,
+      id,
+      op,
+      streak
     )
+  }
+
+  @abimethod({ readonly: true })
+  getRegistrationShape(shape: SubscriptionStreakGateRegistryInfo): SubscriptionStreakGateRegistryInfo {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

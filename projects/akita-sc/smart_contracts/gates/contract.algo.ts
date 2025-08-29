@@ -9,11 +9,13 @@ import {
   Global,
   GlobalState,
   gtxn,
+  itxn,
+  Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
-import { GateBoxPrefixAppRegistry, GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
-import { GateFilter, GateFilterEntry, AND, OR } from './types'
+import { GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
+import { GateFilter, GateFilterEntry, AND, OR, GateFilterEntryWithArgs } from './types'
 import { GateArgs, GateInterface } from '../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { MockGate } from './mock-gate'
@@ -31,7 +33,7 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  appRegistry = BoxMap<uint64, bytes<0>>({ keyPrefix: GateBoxPrefixAppRegistry })
+  // appRegistry = BoxMap<uint64, SubGateShapes>({ keyPrefix: GateBoxPrefixAppRegistry })
 
   gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ keyPrefix: GateBoxPrefixGateRegistry })
 
@@ -85,13 +87,11 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
   }
 
   private evaluateFilter(caller: Address, filter: GateFilterEntry, args: bytes): boolean {
-    const argsWithCaller = caller.bytes.concat(args)
-
     return abiCall(
       MockGate.prototype.check,
       {
         appId: filter.app,
-        args: [argsWithCaller]
+        args: [caller, filter.registryEntry, args],
       }
     ).returnValue
   }
@@ -113,41 +113,71 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.gateCursor.value = 0
+    this.gateCursor.value = 1
   }
 
   // GATE METHODS ---------------------------------------------------------------------------------
 
+  // addApp(appID: uint64): void {
+  //   assert(Txn.sender === this.akitaDAO.value.address, ERR_FORBIDDEN)
+  //   assert(appID !== 0, ERR_INVALID_APP_ID)
+  //   assert(!this.appRegistry(appID).exists, ERR_APP_ALREADY_EXISTS)
+  //   this.appRegistry(appID).create()
+  // }
+
+  // removeApp(appID: uint64): void {
+  //   assert(Txn.sender === this.akitaDAO.value.address, ERR_FORBIDDEN)
+  //   assert(this.appRegistry(appID).exists, ERR_INVALID_APP_ID)
+  //   this.appRegistry(appID).delete()
+  // }
+
   register(payment: gtxn.PaymentTxn, filters: GateFilter[], args: GateArgs): uint64 {
 
-    const costs = this.mbr(filters.length)
-
-    assertMatch(
-      payment,
-      {
-        receiver: Global.currentApplicationAddress,
-        amount: costs.gateRegistry,
-      },
-      ERR_INVALID_PAYMENT
-    )
-
+    const mbrCosts = this.mbr(filters.length)
+    // let requiredCosts = mbrCosts.appRegistry
+    let requiredCosts: uint64 = 0
     let entries: GateFilterEntry[] = []
     let lastFilterLayer: uint64 = 0
+
     for (let i: uint64 = 0; i < filters.length; i += 1) {
-      assert(this.appRegistry(filters[i].app).exists)
+      // assert(this.appRegistry(filters[i].app).exists)
       assert(filters[i].layer >= lastFilterLayer)
       lastFilterLayer = filters[i].layer
 
-      const registryEntry = abiCall(
-        MockGate.prototype.register,
+      const cost = abiCall(
+        MockGate.prototype.cost,
         {
           appId: filters[i].app,
           args: [args[i]],
         }
       ).returnValue
 
+      requiredCosts += cost
+
+      const payment = itxn.payment({
+        receiver: Application(filters[i].app).address,
+        amount: cost
+      })
+
+      const registryEntry = abiCall(
+        MockGate.prototype.register,
+        {
+          appId: filters[i].app,
+          args: [payment, args[i]],
+        }
+      ).returnValue
+
       entries.push({ ...filters[i], registryEntry })
     }
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: requiredCosts,
+      },
+      ERR_INVALID_PAYMENT
+    )
 
     const id = this.newGateID()
     this.gateRegistry(id).value = clone(entries)
@@ -167,8 +197,54 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
   // READ ONLY METHODS ----------------------------------------------------------------------------
 
   @abimethod({ readonly: true })
+  cost(filters: GateFilter[], args: GateArgs): uint64 {
+    const mbrCosts = this.mbr(filters.length)
+    // let requiredCosts = mbrCosts.appRegistry
+    let requiredCosts: uint64 = 0
+    for (let i: uint64 = 0; i < filters.length; i += 1) {
+      const cost = abiCall(
+        MockGate.prototype.cost,
+        {
+          appId: filters[i].app,
+          args: [args[i]],
+        }
+      ).returnValue
+
+      requiredCosts += cost
+    }
+    return requiredCosts
+  }
+
+  @abimethod({ readonly: true })
   size(gateID: uint64): uint64 {
     assert(this.gateRegistry(gateID).exists)
     return this.gateRegistry(gateID).value.length
+  }
+
+  @abimethod({ readonly: true })
+  getGate(gateID: uint64): GateFilterEntryWithArgs[] {
+    assert(this.gateRegistry(gateID).exists)
+
+    const entries = clone(this.gateRegistry(gateID).value)
+
+    let entriesWithArgs: GateFilterEntryWithArgs[] = []
+    for (let i: uint64 = 0; i < entries.length; i += 1) {
+      const args = abiCall(
+          MockGate.prototype.getEntry,
+          {
+            appId: entries[i].app,
+            args: [entries[i].registryEntry],
+          }
+        ).returnValue
+
+      entriesWithArgs.push({ ...entries[i], args })
+    }
+
+    return entriesWithArgs
+  }
+
+  @abimethod({ readonly: true })
+  gateFilterEntryWithArgsShape(shape: GateFilterEntryWithArgs): GateFilterEntryWithArgs {
+    return shape;
   }
 }

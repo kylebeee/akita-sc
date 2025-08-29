@@ -185,20 +185,20 @@ main_create_route@3:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:241
+    // smart_contracts/utils/functions.ts:288
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -250,16 +250,16 @@ new:
     //   gateID: uint64,
     // ): uint64 {
     proto 8 1
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -8
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -280,14 +280,16 @@ new:
     // (GLOBAL_STATE_KEY_BYTES_COST * poll.globalBytes) +
     // Global.minBalance
     +
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:18
-    // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_1 // "poll_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:54
     // receiver: Application(this.factory.value.id).address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:18
+    // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
+    bytec_1 // "poll_factory"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:54
+    // receiver: Application(this.factory.value.id).address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -422,16 +424,16 @@ deleteBoxes:
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:77
     // deleteBoxes(walletID: uint64, rekeyBack: boolean, pollAppID: uint64, addresses: Address[]): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -443,14 +445,14 @@ deleteBoxes:
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:18
     // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_1 // "poll_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:81
     // assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -481,7 +483,7 @@ deleteBoxes:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   }
     // )
-    pushbytes 0x68b84d3d // method "deleteBoxes(byte[32][])void"
+    pushbytes 0xe1419080 // method "deleteBoxes(address[])void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -502,49 +504,68 @@ vote:
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:94
     // vote(walletID: uint64, rekeyBack: boolean, pollAppID: uint64, votes: uint64[], args: GateArgs): void {
     proto 5 0
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     frame_dig -5
-    // smart_contracts/utils/functions.ts:125
+    // smart_contracts/utils/functions.ts:144
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:197
+    // smart_contracts/utils/functions.ts:150-153
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    frame_dig -5
+    // smart_contracts/utils/functions.ts:152
+    // Bytes(AbstractAccountGlobalStateKeysReferrer)
+    pushbytes "referrer"
+    // smart_contracts/utils/functions.ts:150-153
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:226
     // walletAddress: wallet.address,
     frame_dig -5
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/utils/functions.ts:196-200
+    // smart_contracts/utils/functions.ts:225-230
     // return {
     //   walletAddress: wallet.address,
     //   origin,
     //   sender,
+    //   referrer
     // }
+    uncover 3
+    concat
     uncover 2
     concat
     swap
@@ -560,14 +581,14 @@ vote:
     frame_dig -3
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:18
     // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_1 // "poll_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:98
     // assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -585,13 +606,17 @@ vote:
     intc_0 // 0
     extract_uint16
     bz vote_else_body@5
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:107
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:107
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
@@ -667,7 +692,7 @@ vote:
     itob
     // smart_contracts/arc58/plugins/poll/contract.algo.ts:121
     // methodSelector(GateInterface.prototype.mustCheck),
-    pushbytes 0x9c81af74 // method "mustCheck(byte[32],uint64,byte[][])void"
+    pushbytes 0x43922655 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
     frame_dig 0
     itxn_field ApplicationArgs
@@ -841,14 +866,14 @@ update:
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -871,14 +896,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==

@@ -1,26 +1,33 @@
 import { Application, assert, assertMatch, BoxMap, Bytes, bytes, Global, GlobalState, gtxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { NFDRootGateCheckParams } from '../nfd/types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { MinNFDRootGateRegistryMBR, NFD_NAME_KEY, NFD_PARENT_APP_KEY, NFD_VERIFIED_ADDRESSES_PROPERTY_NAME } from './constants'
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { NFD } from '../../../utils/types/nfd'
 import { getOtherAppList } from '../../../utils/functions'
 import { SubGateInterface } from '../../../utils/types/gates'
-import { BoxCostPerBox } from '../../../utils/constants'
+import { BoxCostPerBox, Uint64ByteLength } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { btoi } from '@algorandfoundation/algorand-typescript/op'
+import { NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDMetaKeyVerifiedAddresses } from '../../../utils/constants/nfd'
 
-export class NFDGate extends AkitaBaseContract implements SubGateInterface {
+const MinNFDRootGateRegistryMBR: uint64 = 5_700
+
+export class NFDRootGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: 'string', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: 'uint64', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, bytes>({ keyPrefix: '' })
+  registry = BoxMap<uint64, string>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -30,11 +37,18 @@ export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     return id
   }
 
-  private nfdGate(user: Address, appID: uint64, root: bytes): boolean {
-    const [nfdName] = op.AppGlobal.getExBytes(appID, Bytes(NFD_NAME_KEY))
-    const [_, parentExists] = op.AppGlobal.getExBytes(appID, Bytes(NFD_PARENT_APP_KEY))
+  private nfdGate(user: Address, appID: uint64, root: string): boolean {
+    const nfdName = op.AppGlobal.getExBytes(appID, Bytes(NFDGlobalStateKeysName))[0]
+    const parentExists = op.AppGlobal.getExBytes(appID, Bytes(NFDGlobalStateKeysParentAppID))[1]
 
-    if (parentExists && root !== nfdName.slice(nfdName.length - (root.length + 5), nfdName.length - 5)) {
+    const rootBytes = Bytes(root)
+    if (
+      parentExists &&
+      rootBytes !== nfdName.slice(
+        nfdName.length - (rootBytes.length + 5),
+        nfdName.length - 5
+      )
+    ) {
       return false
     }
 
@@ -54,7 +68,7 @@ export class NFDGate extends AkitaBaseContract implements SubGateInterface {
       NFD.prototype.readField,
       {
         appId: appID,
-        args: [Bytes(NFD_VERIFIED_ADDRESSES_PROPERTY_NAME)],
+        args: [Bytes(NFDMetaKeyVerifiedAddresses)],
       }
     ).returnValue
 
@@ -75,7 +89,6 @@ export class NFDGate extends AkitaBaseContract implements SubGateInterface {
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // NFD ROOT GATE METHODS ------------------------------------------------------------------------
@@ -96,15 +109,18 @@ export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     )
 
     const id = this.newRegistryID()
-    this.registry(id).value = args
+    this.registry(id).value = String(args)
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length === 48, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<NFDRootGateCheckParams>(args)
-    const root = this.registry(params.registryID).value
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === Uint64ByteLength, ERR_INVALID_ARG_COUNT)
+    const root = this.registry(registryID).value
+    return this.nfdGate(caller, btoi(args), root)
+  }
 
-    return this.nfdGate(params.user, params.NFD, root)
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return Bytes(this.registry(registryID).value)
   }
 }

@@ -1,8 +1,7 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { FollowerIndexGateCheckParams, FollowerIndexRegistryInfo } from './types'
-import { GateGlobalStateKeyRegistryCursor, UserOperatorValueRegistryMBR } from '../../constants'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, UserOperatorValueRegistryMBR } from '../../constants'
 import { Operator } from '../../types'
 import {
   Equal,
@@ -17,16 +16,31 @@ import { getAkitaAppList } from '../../../utils/functions'
 import { AkitaSocial } from '../../../social/contract.algo'
 import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { btoi } from '@algorandfoundation/algorand-typescript/op'
+import { Uint64ByteLength } from '../../../utils/constants'
+
+type SocialFollowerIndexGateRegistryInfo = {
+  user: Address
+  op: Operator
+  value: uint64
+}
+
+/** [user: 32][op: 1][value: 8] */
+const RegisterByteLength = 41
 
 export class SocialFollowerIndexGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(address,uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: 'uint64', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, FollowerIndexRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, SocialFollowerIndexGateRegistryInfo>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -49,35 +63,26 @@ export class SocialFollowerIndexGate extends AkitaBaseContract implements SubGat
       return false
     }
 
-    if (op === Equal) {
-      return index === value
+    switch (op) {
+      case Equal: return index === value
+      case NotEqual: return index !== value
+      case LessThan: return index < value
+      case LessThanOrEqualTo: return index <= value
+      case GreaterThan: return index > value
+      case GreaterThanOrEqualTo: return index >= value
+      default: return false
     }
-    if (op === NotEqual) {
-      return index !== value
-    }
-    if (op === LessThan) {
-      return index < value
-    }
-    if (op === LessThanOrEqualTo) {
-      return index <= value
-    }
-    if (op === GreaterThan) {
-      return index > value
-    }
-    if (op === GreaterThanOrEqualTo) {
-      return index >= value
-    }
-
-    return false
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, akitaDAO: uint64): void {
+  create(version: string, akitaDAO: uint64, registrationShape: string, checkShape: string): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
+    this.registryCursor.value = 1
+    this.registrationShape.value = registrationShape
+    this.checkShape.value = checkShape
   }
 
   // FOLLOWER INDEX GATE --------------------------------------------------------------------------
@@ -87,7 +92,7 @@ export class SocialFollowerIndexGate extends AkitaBaseContract implements SubGat
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === 41, ERR_INVALID_ARG_COUNT)
+    assert(args.length === RegisterByteLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
@@ -98,20 +103,28 @@ export class SocialFollowerIndexGate extends AkitaBaseContract implements SubGat
     )
 
     const id = this.newRegistryID()
-    this.registry(id).value = decodeArc4<FollowerIndexRegistryInfo>(args)
+    this.registry(id).value = decodeArc4<SocialFollowerIndexGateRegistryInfo>(args)
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length === 48, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<FollowerIndexGateCheckParams>(args)
-    const info = clone(this.registry(params.registryID).value)
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === Uint64ByteLength, ERR_INVALID_ARG_COUNT)
+    const { user, op, value } = clone(this.registry(registryID).value)
     return this.followerIndexGate(
-      info.user,
-      params.index,
-      params.follower,
-      info.op,
-      info.value
+      user,
+      btoi(args),
+      caller,
+      op,
+      value
     )
+  }
+
+  getRegistrationShape(shape: SocialFollowerIndexGateRegistryInfo): SocialFollowerIndexGateRegistryInfo {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

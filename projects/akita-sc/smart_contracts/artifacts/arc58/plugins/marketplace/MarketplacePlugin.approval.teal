@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 6 4
-    bytecblock "factory" "akita_dao" "spending_address" 0x151f7c75 "version" 0x3ea11832 "akita_al" "gate_id" 0x9c81af74
+    bytecblock "factory" "akita_dao" "spending_address" 0x151f7c75 "version" 0x3ea11832 "akita_al" "gate_id" 0x43922655
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:15
     // export class MarketplacePlugin extends AkitaBaseContract {
     txn NumAppArgs
@@ -254,20 +254,20 @@ main_createApplication_route@3:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:241
+    // smart_contracts/utils/functions.ts:288
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -323,16 +323,16 @@ list:
     //   proof: Proof,
     // ): uint64 {
     proto 12 1
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -12
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -348,14 +348,16 @@ list:
     frame_dig -9
     >=
     assert // Not enough asset
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:51
     // if (!this.factory.value.address.isOptedIn(Asset(asset))) {
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:51
+    // if (!this.factory.value.address.isOptedIn(Asset(asset))) {
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -10
@@ -379,14 +381,16 @@ list:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:60
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:60
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -457,14 +461,16 @@ list:
     itxn_submit
 
 list_after_if_else@4:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:69
     // if (!this.factory.value.address.isOptedIn(Asset(paymentAsset))) {
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:69
+    // if (!this.factory.value.address.isOptedIn(Asset(paymentAsset))) {
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -7
@@ -488,14 +494,16 @@ list_after_if_else@4:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:78
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:78
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -626,14 +634,16 @@ list_ternary_merge@11:
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:107
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:107
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -777,7 +787,7 @@ list_ternary_merge@11:
     //     fee: 0,
     //   }
     // ).returnValue
-    pushbytes 0xeff3e9a3 // method "list(pay,axfer,uint64,uint64,uint64,byte[32],uint64,byte[32],string,byte[32][])uint64"
+    pushbytes 0xe2fa9e21 // method "list(pay,axfer,uint64,uint64,uint64,address,uint64,address,string,byte[32][])uint64"
     itxn_field ApplicationArgs
     uncover 4
     itxn_field ApplicationArgs
@@ -867,49 +877,68 @@ purchase:
     //   args: GateArgs
     // ): void {
     proto 5 0
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     frame_dig -5
-    // smart_contracts/utils/functions.ts:125
+    // smart_contracts/utils/functions.ts:144
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:197
+    // smart_contracts/utils/functions.ts:150-153
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    frame_dig -5
+    // smart_contracts/utils/functions.ts:152
+    // Bytes(AbstractAccountGlobalStateKeysReferrer)
+    pushbytes "referrer"
+    // smart_contracts/utils/functions.ts:150-153
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:226
     // walletAddress: wallet.address,
     frame_dig -5
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/utils/functions.ts:196-200
+    // smart_contracts/utils/functions.ts:225-230
     // return {
     //   walletAddress: wallet.address,
     //   origin,
     //   sender,
+    //   referrer
     // }
+    uncover 3
+    concat
     uncover 2
     concat
     swap
@@ -925,14 +954,14 @@ purchase:
     frame_dig -3
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:141
     // assert(Application(listingID).creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -959,13 +988,17 @@ purchase:
     intc_0 // 0
     extract_uint16
     bz purchase_else_body@6
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:148
+    // const { gate } = getAkitaAppList(this.akitaDAO.value)
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:148
+    // const { gate } = getAkitaAppList(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec 6 // "akita_al"
     app_global_get_ex
@@ -1003,14 +1036,16 @@ purchase:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:169
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:169
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -1036,7 +1071,7 @@ purchase:
     itxn_next
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:154
     // methodSelector(GateInterface.prototype.mustCheck),
-    bytec 8 // method "mustCheck(byte[32],uint64,byte[][])void"
+    bytec 8 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
     frame_dig 0
     itxn_field ApplicationArgs
@@ -1108,7 +1143,7 @@ purchase:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0xc8305b04 // method "gatedPurchase(pay,appl,uint64,byte[32])void"
+    pushbytes 0x6e9035cc // method "gatedPurchase(pay,appl,uint64,address)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     frame_dig -2
@@ -1143,14 +1178,16 @@ purchase_else_body@6:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:188
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:188
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -1216,7 +1253,7 @@ purchase_else_body@6:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x7d171d00 // method "purchase(pay,uint64,byte[32])void"
+    pushbytes 0x5d7a6177 // method "purchase(pay,uint64,address)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     frame_dig -2
@@ -1238,13 +1275,17 @@ purchase_else_body@10:
     intc_0 // 0
     extract_uint16
     bz purchase_else_body@15
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:200
+    // const { gate } = getAkitaAppList(this.akitaDAO.value)
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:200
+    // const { gate } = getAkitaAppList(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec 6 // "akita_al"
     app_global_get_ex
@@ -1283,14 +1324,16 @@ purchase_else_body@10:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:221
     // assetReceiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:221
+    // assetReceiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -1319,7 +1362,7 @@ purchase_else_body@10:
     itxn_next
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:206
     // methodSelector(GateInterface.prototype.mustCheck),
-    bytec 8 // method "mustCheck(byte[32],uint64,byte[][])void"
+    bytec 8 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
     frame_dig 0
     itxn_field ApplicationArgs
@@ -1393,7 +1436,7 @@ purchase_else_body@10:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x01114619 // method "gatedPurchaseAsa(axfer,appl,uint64,byte[32])void"
+    pushbytes 0xdaa97516 // method "gatedPurchaseAsa(axfer,appl,uint64,address)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     frame_dig -2
@@ -1429,14 +1472,16 @@ purchase_else_body@15:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
-    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:241
     // assetReceiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
+    // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
+    bytec_0 // "factory"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:241
+    // assetReceiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -1507,7 +1552,7 @@ purchase_else_body@15:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x02a83201 // method "purchaseAsa(axfer,uint64,byte[32])void"
+    pushbytes 0x02cfb1cf // method "purchaseAsa(axfer,uint64,address)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     frame_dig -2
@@ -1533,16 +1578,16 @@ changePrice:
     //   price: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1554,14 +1599,14 @@ changePrice:
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:264
     // assert(Application(listingID).creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1635,16 +1680,16 @@ delist:
     //   listingID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1656,14 +1701,14 @@ delist:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:286
     // assert(Application(listingID).creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1694,7 +1739,7 @@ delist:
     //     fee: 0,
     //   }
     // )
-    pushbytes 0x3b22e71b // method "delist(byte[32])void"
+    pushbytes 0x68e86343 // method "delist(address)void"
     itxn_field ApplicationArgs
     itxn_field RekeyTo
     itxn_field ApplicationArgs
@@ -1729,14 +1774,14 @@ update:
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1759,14 +1804,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==

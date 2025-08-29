@@ -1,3 +1,6 @@
 export const ERR_NOT_AKITA_DAO = 'Only the Akita DAO can call this function'
 export const ERR_INVALID_ARG_COUNT = 'Invalid number of arguments'
+export const ERR_INVALID_REGISTRY_ARG = 'Invalid registry ID for this gate'
 export const ERR_GATE_FAILED = 'Gate check failed'
+export const ERR_APP_ALREADY_EXISTS = 'App already registered'
+export const ERR_BAD_OPERATION = 'bad operation check'

@@ -1,8 +1,8 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { SubscriptionGateCheckParams, SubscriptionRegistryInfo } from './types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
+import { SubscriptionGateRegistryInfo } from './types'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { Subscriptions } from '../../../subscriptions/contract.algo'
 import { getAkitaAppList } from '../../../utils/functions'
@@ -10,15 +10,22 @@ import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { SubscriptionGateRegistryMBR } from './constants'
 
+/** [merchant:32][id:8] */
+const RegisterArgsByteLength: uint64 = 40
+
 export class SubscriptionGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(address,uint64)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, SubscriptionRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, SubscriptionGateRegistryInfo>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -56,7 +63,6 @@ export class SubscriptionGate extends AkitaBaseContract implements SubGateInterf
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // SUBSCRIPTION GATE METHODS --------------------------------------------------------------------
@@ -66,7 +72,7 @@ export class SubscriptionGate extends AkitaBaseContract implements SubGateInterf
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === 40, ERR_INVALID_ARG_COUNT)
+    assert(args.length === RegisterArgsByteLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
@@ -77,18 +83,23 @@ export class SubscriptionGate extends AkitaBaseContract implements SubGateInterf
     )
 
     const id = this.newRegistryID()
-    this.registry(id).value = decodeArc4<SubscriptionRegistryInfo>(args)
+    this.registry(id).value = decodeArc4<SubscriptionGateRegistryInfo>(args)
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length === 40, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<SubscriptionGateCheckParams>(args)
-    const info = clone(this.registry(params.registryID).value)
-    return this.subscriptionGate(
-      params.user,
-      info.merchant,
-      info.id
-    )
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === 0, ERR_INVALID_ARG_COUNT)
+    const { merchant, id } = clone(this.registry(registryID).value)
+    return this.subscriptionGate(caller, merchant, id)
+  }
+
+  @abimethod({ readonly: true })
+  getRegistrationShape(shape: SubscriptionGateRegistryInfo): SubscriptionGateRegistryInfo {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

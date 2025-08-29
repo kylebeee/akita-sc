@@ -1,9 +1,9 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
-import { GateGlobalStateKeyRegistryCursor, OperatorValueRegistryMBR } from '../../constants'
-import { Operator } from '../../types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueRegistryMBR } from '../../constants'
+import { Operator, OperatorAndValue } from '../../types'
 import {
   Equal,
   GreaterThan,
@@ -14,20 +14,26 @@ import {
 } from '../../../utils/operators'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getAkitaAppList } from '../../../utils/functions'
-import { ActivityGateCheckParams, ActivityRegistryInfo } from './types'
 import { AkitaSocial } from '../../../social/contract.algo'
 import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+
+/** [op: 1][value: 8] */
+const RegisterByteLength = 9
 
 export class SocialActivityGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, ActivityRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, OperatorAndValue>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -48,26 +54,15 @@ export class SocialActivityGate extends AkitaBaseContract implements SubGateInte
 
     const since: uint64 = Global.latestTimestamp - value
 
-    if (op === Equal) {
-      return lastActive === since
+    switch (op) {
+      case Equal: return lastActive === since
+      case NotEqual: return lastActive !== since
+      case LessThan: return lastActive < since
+      case LessThanOrEqualTo: return lastActive <= since
+      case GreaterThan: return lastActive > since
+      case GreaterThanOrEqualTo: return lastActive >= since
+      default: return false
     }
-    if (op === NotEqual) {
-      return lastActive !== since
-    }
-    if (op === LessThan) {
-      return lastActive < since
-    }
-    if (op === LessThanOrEqualTo) {
-      return lastActive <= since
-    }
-    if (op === GreaterThan) {
-      return lastActive > since
-    }
-    if (op === GreaterThanOrEqualTo) {
-      return lastActive >= since
-    }
-
-    return false
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -76,39 +71,43 @@ export class SocialActivityGate extends AkitaBaseContract implements SubGateInte
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // SOCIAL ACTIVITY GATE --------------------------------------------------------------------------
 
   cost(args: bytes): uint64 {
-    return OperatorValueRegistryMBR
+    return OperatorAndValueRegistryMBR
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === 9, ERR_INVALID_ARG_COUNT)
+    assert(args.length === RegisterByteLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: OperatorValueRegistryMBR
+        amount: OperatorAndValueRegistryMBR
       },
       ERR_INVALID_PAYMENT
     )
 
     const id = this.newRegistryID()
-    this.registry(id).value = decodeArc4<ActivityRegistryInfo>(args)
+    this.registry(id).value = decodeArc4<OperatorAndValue>(args)
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length === 40, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<ActivityGateCheckParams>(args)
-    const info = clone(this.registry(params.registryID).value)
-    return this.activityGate(
-      params.user,
-      info.op,
-      info.value
-    )
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === 0, ERR_INVALID_ARG_COUNT)
+    const { op, value } = clone(this.registry(registryID).value)
+    return this.activityGate(caller, op, value)
+  }
+
+  @abimethod({ readonly: true })
+  getRegistrationShape(shape: OperatorAndValue): OperatorAndValue {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

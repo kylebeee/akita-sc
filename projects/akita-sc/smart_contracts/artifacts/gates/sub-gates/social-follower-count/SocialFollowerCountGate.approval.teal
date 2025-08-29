@@ -4,22 +4,39 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 1 0 45
-    bytecblock "akita_dao" 0x151f7c75 "registry_cursor" "version"
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:21
+    bytecblock 0x151f7c75 "akita_dao" "registry_cursor" "version"
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:27
+    // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+    bytec_2 // "registry_cursor"
+    intc_0 // 1
+    app_global_put
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:30
+    // registrationShape = GlobalState<string>({ initialValue: '(uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
+    pushbytess "registration_shape" "(uint8,uint64)" // "registration_shape", "(uint8,uint64)"
+    app_global_put
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:32
+    // checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
+    pushbytess "check_shape" "" // "check_shape", ""
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
     // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
     txn NumAppArgs
-    bz main_after_if_else@12
-    pushbytess 0xcd9ad67e 0x329f04ee 0x77bb79b9 0xc61c862b 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(byte[])bool", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    bz main_after_if_else@16
+    pushbytess 0xcd9ad67e 0x329f04ee 0x77bb79b9 0x6e03f50a 0x81f16543 0x90d4fa5d 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((uint8,uint64))(uint8,uint64)", method "getEntry(uint64)byte[]", method "update(string)void", method "updateAkitaDAO(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@3 main_cost_route@4 main_register_route@5 main_check_route@6 main_update_route@7 main_updateAkitaDAO_route@8
+    match main_create_route@5 main_cost_route@6 main_register_route@7 main_check_route@8 main_getRegistrationShape_route@9 main_getEntry_route@10 main_update_route@11 main_updateAkitaDAO_route@12
 
-main_after_if_else@12:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:21
+main_after_if_else@16:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
     // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
     intc_1 // 0
     return
 
-main_updateAkitaDAO_route@8:
+main_updateAkitaDAO_route@12:
     // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
@@ -27,7 +44,7 @@ main_updateAkitaDAO_route@8:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
     // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     btoi
@@ -37,7 +54,7 @@ main_updateAkitaDAO_route@8:
     intc_0 // 1
     return
 
-main_update_route@7:
+main_update_route@11:
     // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
@@ -46,7 +63,7 @@ main_update_route@7:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
     // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     extract 2 0
@@ -56,41 +73,91 @@ main_update_route@7:
     intc_0 // 1
     return
 
-main_check_route@6:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:102
-    // check(args: bytes): boolean {
+main_getEntry_route@10:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:107
+    // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
     // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
-    extract 2 0
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:102
-    // check(args: bytes): boolean {
-    callsub check
-    pushbytes 0x00
-    intc_1 // 0
-    uncover 2
-    setbit
-    bytec_1 // 0x151f7c75
+    btoi
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:107
+    // @abimethod({ readonly: true })
+    callsub getEntry
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
     intc_0 // 1
     return
 
-main_register_route@5:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:86
+main_getRegistrationShape_route@9:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:103
+    // getRegistrationShape(shape: OperatorAndValue): OperatorAndValue {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    bytec_0 // 0x151f7c75
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
+    // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
+    txna ApplicationArgs 1
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:103
+    // getRegistrationShape(shape: OperatorAndValue): OperatorAndValue {
+    concat
+    log
+    intc_0 // 1
+    return
+
+main_check_route@8:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:97
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
+    // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    extract 2 0
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:97
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    callsub check
+    pushbytes 0x00
+    intc_1 // 0
+    uncover 2
+    setbit
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+main_register_route@7:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:81
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
     // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
     txn GroupIndex
     intc_0 // 1
@@ -102,19 +169,19 @@ main_register_route@5:
     assert // transaction type is pay
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:86
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:81
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     callsub register
     itob
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
     intc_0 // 1
     return
 
-main_cost_route@4:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:82
+main_cost_route@6:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:77
     // cost(args: bytes): uint64 {
     txn OnCompletion
     !
@@ -126,8 +193,8 @@ main_cost_route@4:
     intc_0 // 1
     return
 
-main_create_route@3:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:73
+main_create_route@5:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:69
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -135,13 +202,13 @@ main_create_route@3:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:23
     // export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:73
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:69
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_0 // 1
@@ -150,149 +217,138 @@ main_create_route@3:
 
 // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.create(version: bytes, akitaDAO: uint64) -> void:
 create:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:73-74
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:69-70
     // @abimethod({ onCreate: 'require' })
     // create(version: string, akitaDAO: uint64): void {
     proto 2 0
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:75
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:71
     // this.version.value = version
     frame_dig -2
     app_global_put
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:76
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:72
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -1
-    app_global_put
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:25
-    // registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
-    bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:77
-    // this.registryCursor.value = 0
-    intc_1 // 0
     app_global_put
     retsub
 
 
 // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.register(mbrPayment: uint64, args: bytes) -> uint64:
 register:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:86
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:81
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     proto 2 1
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:87
-    // assert(args.length === 9, ERR_INVALID_ARG_COUNT)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:82
+    // assert(args.length === RegisterByteLength, ERR_INVALID_ARG_COUNT)
     frame_dig -1
     len
     pushint 9 // 9
     ==
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:88-95
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:83-90
     // assertMatch(
     //   mbrPayment,
     //   {
     //     receiver: Global.currentApplicationAddress,
-    //     amount: OperatorValueRegistryMBR
+    //     amount: OperatorAndValueRegistryMBR
     //   },
     //   ERR_INVALID_PAYMENT
     // )
     frame_dig -2
     gtxns Receiver
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:91
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:86
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:88-95
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:83-90
     // assertMatch(
     //   mbrPayment,
     //   {
     //     receiver: Global.currentApplicationAddress,
-    //     amount: OperatorValueRegistryMBR
+    //     amount: OperatorAndValueRegistryMBR
     //   },
     //   ERR_INVALID_PAYMENT
     // )
     ==
     frame_dig -2
     gtxns Amount
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:92
-    // amount: OperatorValueRegistryMBR
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:87
+    // amount: OperatorAndValueRegistryMBR
     pushint 9300 // 9300
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:88-95
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:83-90
     // assertMatch(
     //   mbrPayment,
     //   {
     //     receiver: Global.currentApplicationAddress,
-    //     amount: OperatorValueRegistryMBR
+    //     amount: OperatorAndValueRegistryMBR
     //   },
     //   ERR_INVALID_PAYMENT
     // )
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:25
-    // registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:41
+    // const id = this.registryCursor.value
     intc_1 // 0
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:27
+    // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:41
+    // const id = this.registryCursor.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:35
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:42
     // this.registryCursor.value += 1
     dup
     intc_0 // 1
     +
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:25
-    // registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:27
+    // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:35
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:42
     // this.registryCursor.value += 1
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:98
-    // this.registry(id).value = decodeArc4<FollowerCountRegistryInfo>(args)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:93
+    // this.registry(id).value = decodeArc4<OperatorAndValue>(args)
     dup
     itob
     frame_dig -1
     box_put
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:99
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:94
     // return id
     retsub
 
 
-// smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.check(args: bytes) -> uint64:
+// smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.check(caller: bytes, registryID: uint64, args: bytes) -> uint64:
 check:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:102
-    // check(args: bytes): boolean {
-    proto 1 1
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:103
-    // assert(args.length === 40, ERR_INVALID_ARG_COUNT)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:97
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    proto 3 1
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:98
+    // assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     frame_dig -1
     len
-    pushint 40 // 40
-    ==
+    !
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:105
-    // const info = clone(this.registry(params.registryID).value)
-    frame_dig -1
-    pushint 32 // 32
-    extract_uint64
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:99
+    // const { op, value } = clone(this.registry(registryID).value)
+    frame_dig -2
     itob
     box_get
     assert // Box must have value
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
-    frame_dig -1
-    extract 0 32
-    dig 1
+    dup
     extract 0 1
     dup
     uncover 2
-    uncover 3
     intc_0 // 1
     extract_uint64
-    cover 2
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:41-47
+    swap
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:48-54
     // const meta = abiCall(
     //   AkitaSocial.prototype.getMeta,
     //   {
@@ -301,22 +357,26 @@ check:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:51
+    // appId: getAkitaAppList(this.akitaDAO.value).impact,
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_1 // 0
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:51
+    // appId: getAkitaAppList(this.akitaDAO.value).impact,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:44
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:51
     // appId: getAkitaAppList(this.akitaDAO.value).impact,
     pushint 104 // 104
     extract_uint64
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:41-47
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:48-54
     // const meta = abiCall(
     //   AkitaSocial.prototype.getMeta,
     //   {
@@ -324,10 +384,11 @@ check:
     //     args: [user],
     //   }
     // ).returnValue
-    pushbytes 0x457a6c8a // method "getMeta(byte[32])(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)"
+    pushbytes 0x6dc226b4 // method "getMeta(address)(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64)"
+    itxn_field ApplicationArgs
+    frame_dig -3
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
     intc_1 // 0
@@ -337,16 +398,14 @@ check:
     dup
     cover 2
     extract 0 4
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:49
-    // if (op === Equal) {
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:57
+    // case Equal: return meta.followerCount === value
     pushbytes 0x0a
     ==
     bz check_after_if_else@3
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:50
-    // return meta.followerCount === value
     frame_dig 2
     intc_2 // 45
     extract_uint64
@@ -354,108 +413,113 @@ check:
     ==
 
 check_after_inlined_smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.followerCountGate@14:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:100
+    // return this.followerCountGate(caller, op, value)
     frame_bury 0
     retsub
 
 check_after_if_else@3:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:52
-    // if (op === NotEqual) {
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:58
+    // case NotEqual: return meta.followerCount !== value
     frame_dig 0
     pushbytes 0x14
     ==
     bz check_after_if_else@5
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:53
-    // return meta.followerCount !== value
     frame_dig 2
     intc_2 // 45
     extract_uint64
     frame_dig 1
     !=
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:100
+    // return this.followerCountGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.followerCountGate@14
 
 check_after_if_else@5:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:55
-    // if (op === LessThan) {
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:59
+    // case LessThan: return meta.followerCount < value
     frame_dig 0
     pushbytes 0x1e
     ==
     bz check_after_if_else@7
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:56
-    // return meta.followerCount < value
     frame_dig 2
     intc_2 // 45
     extract_uint64
     frame_dig 1
     <
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:100
+    // return this.followerCountGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.followerCountGate@14
 
 check_after_if_else@7:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:58
-    // if (op === LessThanOrEqualTo) {
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:60
+    // case LessThanOrEqualTo: return meta.followerCount <= value
     frame_dig 0
     pushbytes 0x28
     ==
     bz check_after_if_else@9
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:59
-    // return meta.followerCount <= value
     frame_dig 2
     intc_2 // 45
     extract_uint64
     frame_dig 1
     <=
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:100
+    // return this.followerCountGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.followerCountGate@14
 
 check_after_if_else@9:
     // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:61
-    // if (op === GreaterThan) {
+    // case GreaterThan: return meta.followerCount > value
     frame_dig 0
     pushbytes 0x32
     ==
     bz check_after_if_else@11
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:62
-    // return meta.followerCount > value
     frame_dig 2
     intc_2 // 45
     extract_uint64
     frame_dig 1
     >
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:100
+    // return this.followerCountGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.followerCountGate@14
 
 check_after_if_else@11:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:64
-    // if (op === GreaterThanOrEqualTo) {
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:62
+    // case GreaterThanOrEqualTo: return meta.followerCount >= value
     frame_dig 0
     pushbytes 0x3c
     ==
     bz check_after_if_else@13
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:65
-    // return meta.followerCount >= value
     frame_dig 2
     intc_2 // 45
     extract_uint64
     frame_dig 1
     >=
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:100
+    // return this.followerCountGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.followerCountGate@14
 
 check_after_if_else@13:
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:68
-    // return false
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:63
+    // default: return false
     intc_1 // 0
-    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:106
-    // return this.followerCountGate(params.user, info.op, info.value)
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:100
+    // return this.followerCountGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.followerCountGate@14
+
+
+// smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts::SocialFollowerCountGate.getEntry(registryID: uint64) -> bytes:
+getEntry:
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:107-108
+    // @abimethod({ readonly: true })
+    // getEntry(registryID: uint64): bytes {
+    proto 1 1
+    // smart_contracts/gates/sub-gates/social-follower-count/contract.algo.ts:109
+    // return encodeArc4(this.registry(registryID).value)
+    frame_dig -1
+    itob
+    box_get
+    assert // Box must have value
+    retsub
 
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
@@ -467,14 +531,14 @@ update:
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_1 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -497,21 +561,21 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_1 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
     frame_dig -1

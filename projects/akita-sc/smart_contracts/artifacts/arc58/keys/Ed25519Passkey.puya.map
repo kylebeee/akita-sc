@@ -3,28 +3,28 @@
   "sources": [
     "/Users/kylebreeding/akita/akita-sc/projects/akita-sc/smart_contracts/arc58/keys/ed25519_passkey.algo.ts"
   ],
-  "mappings": "AAYoB;;AAFE;;AAFG;;AACH;;AACA;;AACE;;AACJ;;AAAA;AAAA;;AAAA;AAAA;AAE4B;;AAAA;AAAA;AAAA;AAAP;AAAhB;AAAP;AAAA;AAEC;;AAAY;;AAAnB;AAAJ;;;AACkB;;AAAY;AAAA;;AAAnB;AAAP;AAKG;AAAA;;AAAsB;AAAtB;AAAP;AAHe;;AAAS;AAAA;;AAAb;AAAP;",
+  "mappings": "AAYoB;;AAFE;AAFG;AACH;AACA;AACE;AACJ;;AAAA;AAAA;;AAAA;AAAA;AAE4B;;AAAA;AAAA;AAAA;AAAP;AAAhB;AAAP;AAAA;AAEC;;AAAY;;AAAnB;AAAJ;;;AACkB;;AAAY;AAAA;;AAAnB;AAAP;AAKG;AAAA;;AAAsB;AAAtB;AAAP;AAHe;;AAAS;AAAA;;AAAb;AAAP;",
   "op_pc_offset": 1,
   "pc_events": {
     "0": {
       "op": "arg 4"
     },
     "2": {
-      "op": "arg 2"
+      "op": "arg_2"
+    },
+    "3": {
+      "op": "arg_0"
     },
     "4": {
-      "op": "arg 0"
+      "op": "arg_1"
+    },
+    "5": {
+      "op": "arg_2"
     },
     "6": {
-      "op": "arg 1"
+      "op": "arg_3"
     },
-    "8": {
-      "op": "arg 2"
-    },
-    "10": {
-      "op": "arg 3"
-    },
-    "12": {
+    "7": {
       "op": "arg 4",
       "defined_out": [
         "authData#0",
@@ -43,7 +43,7 @@
         "sig#0"
       ]
     },
-    "14": {
+    "9": {
       "op": "len",
       "defined_out": [
         "authData#0",
@@ -63,7 +63,7 @@
         "tmp%4#0"
       ]
     },
-    "15": {
+    "10": {
       "op": "pushint 64 // 64",
       "defined_out": [
         "64",
@@ -85,7 +85,7 @@
         "64"
       ]
     },
-    "17": {
+    "12": {
       "op": "==",
       "defined_out": [
         "authData#0",
@@ -105,7 +105,7 @@
         "tmp%5#0"
       ]
     },
-    "18": {
+    "13": {
       "error": "Length must be 64",
       "op": "assert // Length must be 64",
       "stack_out": [
@@ -117,7 +117,7 @@
         "cdThree#0"
       ]
     },
-    "19": {
+    "14": {
       "op": "cover 2",
       "stack_out": [
         "sig#0",
@@ -128,7 +128,7 @@
         "cdTwo#0"
       ]
     },
-    "21": {
+    "16": {
       "op": "concat",
       "defined_out": [
         "authData#0",
@@ -145,7 +145,7 @@
         "tmp%6#0"
       ]
     },
-    "22": {
+    "17": {
       "op": "swap",
       "stack_out": [
         "sig#0",
@@ -155,7 +155,7 @@
         "cdThree#0"
       ]
     },
-    "23": {
+    "18": {
       "op": "concat",
       "defined_out": [
         "authData#0",
@@ -170,7 +170,7 @@
         "tmp%7#0"
       ]
     },
-    "24": {
+    "19": {
       "op": "sha256",
       "defined_out": [
         "authData#0",
@@ -185,7 +185,7 @@
         "tmp%8#0"
       ]
     },
-    "25": {
+    "20": {
       "op": "concat",
       "defined_out": [
         "cdTwo#0",
@@ -198,7 +198,7 @@
         "tmp%9#0"
       ]
     },
-    "26": {
+    "21": {
       "op": "sha256",
       "defined_out": [
         "cdTwo#0",
@@ -211,7 +211,7 @@
         "h#0"
       ]
     },
-    "27": {
+    "22": {
       "op": "swap",
       "defined_out": [
         "cdTwo#0",
@@ -224,7 +224,7 @@
         "cdTwo#0"
       ]
     },
-    "28": {
+    "23": {
       "op": "global GroupSize",
       "defined_out": [
         "cdTwo#0",
@@ -239,7 +239,7 @@
         "tmp%11#0"
       ]
     },
-    "30": {
+    "25": {
       "op": "pushint 1 // 1",
       "defined_out": [
         "1",
@@ -256,7 +256,7 @@
         "1"
       ]
     },
-    "32": {
+    "27": {
       "op": ">",
       "defined_out": [
         "cdTwo#0",
@@ -271,7 +271,7 @@
         "tmp%12#0"
       ]
     },
-    "33": {
+    "28": {
       "op": "bz main_else_body@2",
       "stack_out": [
         "sig#0",
@@ -279,7 +279,7 @@
         "cdTwo#0"
       ]
     },
-    "36": {
+    "31": {
       "op": "global GroupID",
       "defined_out": [
         "cdTwo#0",
@@ -294,7 +294,7 @@
         "tmp%13#0"
       ]
     },
-    "38": {
+    "33": {
       "op": "swap",
       "stack_out": [
         "sig#0",
@@ -303,7 +303,7 @@
         "cdTwo#0"
       ]
     },
-    "39": {
+    "34": {
       "op": "base64_decode URLEncoding",
       "defined_out": [
         "h#0",
@@ -318,7 +318,7 @@
         "tmp%14#0"
       ]
     },
-    "41": {
+    "36": {
       "op": "==",
       "defined_out": [
         "h#0",
@@ -331,14 +331,14 @@
         "tmp%15#0"
       ]
     },
-    "42": {
+    "37": {
       "op": "assert",
       "stack_out": [
         "sig#0",
         "h#0"
       ]
     },
-    "43": {
+    "38": {
       "block": "main_after_if_else@3",
       "stack_in": [
         "sig#0",
@@ -354,7 +354,7 @@
         "h#0"
       ]
     },
-    "44": {
+    "39": {
       "op": "dig 2",
       "defined_out": [
         "h#0",
@@ -367,7 +367,7 @@
         "sig#0"
       ]
     },
-    "46": {
+    "41": {
       "op": "bytec_0 // TMPL_PK",
       "defined_out": [
         "TMPL_PK",
@@ -382,7 +382,7 @@
         "TMPL_PK"
       ]
     },
-    "47": {
+    "42": {
       "op": "ed25519verify",
       "defined_out": [
         "h#0",
@@ -395,14 +395,14 @@
         "tmp%19#0"
       ]
     },
-    "48": {
+    "43": {
       "op": "return",
       "stack_out": [
         "sig#0",
         "h#0"
       ]
     },
-    "49": {
+    "44": {
       "block": "main_else_body@2",
       "stack_in": [
         "sig#0",
@@ -420,7 +420,7 @@
         "tmp%16#0"
       ]
     },
-    "51": {
+    "46": {
       "op": "swap",
       "defined_out": [
         "cdTwo#0",
@@ -433,7 +433,7 @@
         "cdTwo#0"
       ]
     },
-    "52": {
+    "47": {
       "op": "base64_decode URLEncoding",
       "defined_out": [
         "tmp%16#0",
@@ -446,7 +446,7 @@
         "tmp%17#0"
       ]
     },
-    "54": {
+    "49": {
       "op": "==",
       "defined_out": [
         "tmp%18#0"
@@ -457,14 +457,14 @@
         "tmp%18#0"
       ]
     },
-    "55": {
+    "50": {
       "op": "assert",
       "stack_out": [
         "sig#0",
         "h#0"
       ]
     },
-    "56": {
+    "51": {
       "op": "b main_after_if_else@3"
     }
   }

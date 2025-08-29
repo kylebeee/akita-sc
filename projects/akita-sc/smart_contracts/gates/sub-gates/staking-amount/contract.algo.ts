@@ -1,8 +1,7 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, Address, decodeArc4, encodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { StakingAmountGateCheckParams, StakingAmountRegistryInfo } from './types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { Operator } from '../../types'
 import {
   Equal,
@@ -12,24 +11,40 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
-import { STAKING_TYPE_HEARTBEAT } from '../../../staking/types'
+import { STAKING_TYPE_HEARTBEAT, StakingType } from '../../../staking/types'
 import { Staking } from '../../../staking/contract.algo'
-import { ERR_INVALID_ARG_COUNT } from './errors'
-import { ERR_BAD_OPERATION } from '../staking-power/errors'
 import { getAkitaAppList } from '../../../utils/functions'
 import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { StakingAmountGateRegistryMBR } from './constants'
+import { ERR_BAD_OPERATION } from '../../errors'
+
+const ERR_INVALID_ARG_COUNT = 'Invalid number of arguments'
+
+type StakingAmountGateRegistryInfo = {
+  op: Operator
+  asset: uint64
+  type: StakingType
+  amount: uint64
+  includeEscrowed: boolean
+}
+
+const StakingAmountGateRegistryMBR: uint64 = 13_300
+/** [op:1][asset:8][type:1][amount:8][includeEscrowed:1] */
+const RegisterByteLength: uint64 = 19
 
 export class StakingAmountGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(uint8,uint64,uint8,uint64,bool)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, StakingAmountRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, StakingAmountGateRegistryInfo>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -45,7 +60,7 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
     asset: uint64,
     amount: uint64,
     type: Uint8,
-    includeStaked: boolean
+    includeEscrowed: boolean
   ): boolean {
     let staked: uint64 = 0
 
@@ -54,7 +69,7 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
         Staking.prototype.getHeartbeatAverage,
         {
           appId: getAkitaAppList(this.akitaDAO.value).staking,
-          args: [user, asset, includeStaked],
+          args: [user, asset, includeEscrowed],
         }
       ).returnValue
     } else {
@@ -69,26 +84,15 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
       staked = info.amount
     }
 
-    if (op === Equal) {
-      return staked === amount
+    switch (op) {
+      case Equal: return staked === amount
+      case NotEqual: return staked !== amount
+      case LessThan: return staked < amount
+      case LessThanOrEqualTo: return staked <= amount
+      case GreaterThan: return staked > amount
+      case GreaterThanOrEqualTo: return staked >= amount
+      default: return false
     }
-    if (op === NotEqual) {
-      return staked !== amount
-    }
-    if (op === LessThan) {
-      return staked < amount
-    }
-    if (op === LessThanOrEqualTo) {
-      return staked <= amount
-    }
-    if (op === GreaterThan) {
-      return staked > amount
-    }
-    if (op === GreaterThanOrEqualTo) {
-      return staked >= amount
-    }
-
-    return false
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -97,7 +101,6 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // STAKING AMOUNT GATE METHODS ------------------------------------------------------------------
@@ -107,7 +110,7 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === 19, ERR_INVALID_ARG_COUNT)
+    assert(args.length === RegisterByteLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
@@ -117,7 +120,7 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
       ERR_INVALID_PAYMENT
     )
 
-    const params = decodeArc4<StakingAmountRegistryInfo>(args)
+    const params = decodeArc4<StakingAmountGateRegistryInfo>(args)
     // dont include the list operators includes & not includes
     assert(params.op.native <= 6, ERR_BAD_OPERATION)
     const id = this.newRegistryID()
@@ -125,17 +128,26 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length === 40, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<StakingAmountGateCheckParams>(args)
-    const info = clone(this.registry(params.registryID).value)
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === 0, ERR_INVALID_ARG_COUNT)
+    const { op, asset, amount, type, includeEscrowed } = clone(this.registry(registryID).value)
     return this.stakingAmountGate(
-      params.user,
-      info.op,
-      info.asset,
-      info.amount,
-      info.type,
-      info.includeStaked
+      caller,
+      op,
+      asset,
+      amount,
+      type,
+      includeEscrowed
     )
+  }
+
+  @abimethod({ readonly: true })
+  getRegistrationShape(shape: StakingAmountGateRegistryInfo): StakingAmountGateRegistryInfo {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

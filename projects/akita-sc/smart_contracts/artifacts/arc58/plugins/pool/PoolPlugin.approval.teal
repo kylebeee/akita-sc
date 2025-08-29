@@ -9,9 +9,9 @@ main:
     // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
     txn NumAppArgs
     bz main_after_if_else@19
-    pushbytess 0xcd9ad67e 0xba789a25 0x26c0c31c 0x2552d89a 0xe7439919 0x26747a7a 0x8875f467 0xa4b3e789 0x23cf4fef 0x33e92c94 0x1ead20a9 // method "create(string,uint64)void", method "newPool(uint64,bool,string,uint8,address,(address,string),uint64,uint64,uint64)void", method "initPool(uint64,bool,uint64)void", method "deletePool(uint64,bool,uint64)void", method "addReward(uint64,bool,uint64,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64),uint64)void", method "finalizePool(uint64,bool,uint64,uint64,uint64,uint64)void", method "enter(uint64,bool,uint64,(uint64,uint64,byte[32][])[],byte[][])void", method "mbr(uint64)(uint64,uint64,uint64,uint64,uint64)", method "update(string,string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void"
+    pushbytess 0xcd9ad67e 0xba789a25 0x26c0c31c 0x2552d89a 0xe7439919 0x26747a7a 0x8875f467 0x23cf4fef 0x33e92c94 0x1ead20a9 0xa4b3e789 // method "create(string,uint64)void", method "newPool(uint64,bool,string,uint8,address,(address,string),uint64,uint64,uint64)void", method "initPool(uint64,bool,uint64)void", method "deletePool(uint64,bool,uint64)void", method "addReward(uint64,bool,uint64,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64),uint64)void", method "finalizePool(uint64,bool,uint64,uint64,uint64,uint64)void", method "enter(uint64,bool,uint64,(uint64,uint64,byte[32][])[],byte[][])void", method "update(string,string)void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void", method "mbr(uint64)(uint64,uint64,uint64,uint64,uint64)"
     txna ApplicationArgs 0
-    match main_create_route@5 main_newPool_route@6 main_initPool_route@7 main_deletePool_route@8 main_addReward_route@9 main_finalizePool_route@10 main_enter_route@11 main_mbr_route@12 main_update_route@13 main_updateAkitaDAO_route@14 main_updateAkitaDAOEscrow_route@15
+    match main_create_route@5 main_newPool_route@6 main_initPool_route@7 main_deletePool_route@8 main_addReward_route@9 main_finalizePool_route@10 main_enter_route@11 main_update_route@12 main_updateAkitaDAO_route@13 main_updateAkitaDAOEscrow_route@14 main_mbr_route@15
 
 main_after_if_else@19:
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
@@ -19,64 +19,7 @@ main_after_if_else@19:
     intc_0 // 0
     return
 
-main_updateAkitaDAOEscrow_route@15:
-    // smart_contracts/utils/base-contracts/factory.ts:85
-    // updateAkitaDAOEscrow(app: uint64): void {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
-    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/utils/base-contracts/factory.ts:85
-    // updateAkitaDAOEscrow(app: uint64): void {
-    callsub updateAkitaDAOEscrow
-    intc_1 // 1
-    return
-
-main_updateAkitaDAO_route@14:
-    // smart_contracts/utils/base-contracts/factory.ts:80
-    // updateAkitaDAO(app: uint64): void {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
-    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/utils/base-contracts/factory.ts:80
-    // updateAkitaDAO(app: uint64): void {
-    callsub updateAkitaDAO
-    intc_1 // 1
-    return
-
-main_update_route@13:
-    // smart_contracts/utils/base-contracts/factory.ts:71
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txn OnCompletion
-    intc_3 // UpdateApplication
-    ==
-    assert // OnCompletion is not UpdateApplication
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
-    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
-    txna ApplicationArgs 1
-    extract 2 0
-    txna ApplicationArgs 2
-    extract 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:71
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    callsub update
-    intc_1 // 1
-    return
-
-main_mbr_route@12:
+main_mbr_route@15:
     // smart_contracts/pool/base.ts:13
     // @abimethod({ readonly: true })
     txn OnCompletion
@@ -95,6 +38,63 @@ main_mbr_route@12:
     swap
     concat
     log
+    intc_1 // 1
+    return
+
+main_updateAkitaDAOEscrow_route@14:
+    // smart_contracts/utils/base-contracts/factory.ts:85
+    // updateAkitaDAOEscrow(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
+    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/factory.ts:85
+    // updateAkitaDAOEscrow(app: uint64): void {
+    callsub updateAkitaDAOEscrow
+    intc_1 // 1
+    return
+
+main_updateAkitaDAO_route@13:
+    // smart_contracts/utils/base-contracts/factory.ts:80
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
+    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/factory.ts:80
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_update_route@12:
+    // smart_contracts/utils/base-contracts/factory.ts:71
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    intc_3 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
+    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    extract 2 0
+    // smart_contracts/utils/base-contracts/factory.ts:71
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
     intc_1 // 1
     return
 
@@ -354,20 +354,20 @@ main_create_route@5:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:241
+    // smart_contracts/utils/functions.ts:288
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -413,29 +413,33 @@ newPool:
     //   maxEntries: uint64,
     // ): void {
     proto 9 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -9
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:51
+    // const fees = getStakingFees(this.akitaDAO.value)
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/factory.ts:34
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:51
+    // const fees = getStakingFees(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:49
+    // smart_contracts/utils/functions.ts:57
     // const [stakingFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysStakingFees))
     pushbytes "staking_fees"
     app_global_get_ex
@@ -472,14 +476,16 @@ newPool:
     // Global.minBalance +
     // fcosts.appCreators
     +
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
-    // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "pool_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:66
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
+    // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
+    bytec_0 // "pool_factory"
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:66
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -582,7 +588,7 @@ newPool:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x5cbac95f // method "newPool(pay,string,uint8,byte[32],(byte[32],string),uint64,uint64,uint64)uint64"
+    pushbytes 0xf1e10b67 // method "newPool(pay,string,uint8,address,(address,string),uint64,uint64,uint64)uint64"
     itxn_field ApplicationArgs
     uncover 3
     itxn_field ApplicationArgs
@@ -627,28 +633,28 @@ initPool:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "pool_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:95
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -707,30 +713,30 @@ deletePool:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "pool_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:115
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
     uncover 2
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -797,28 +803,28 @@ addReward:
     frame_dig -3
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "pool_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:138
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -950,14 +956,16 @@ addReward_else_body@4:
     asset_holding_get AssetBalance
     bury 1
     bnz addReward_after_if_else@8
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
-    // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "pool_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:165
     // const escrowBytes = op.AppGlobal.getExBytes(this.factory.value, Bytes(GlobalStateKeyAkitaEscrow))[0]
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
+    // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
+    bytec_0 // "pool_factory"
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:165
+    // const escrowBytes = op.AppGlobal.getExBytes(this.factory.value, Bytes(GlobalStateKeyAkitaEscrow))[0]
+    app_global_get_ex
+    assert // check GlobalState exists
     bytec 5 // "akita_escrow"
     app_global_get_ex
     pop
@@ -1231,28 +1239,28 @@ finalizePool:
     frame_dig -4
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "pool_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:223
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -6
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1340,28 +1348,28 @@ enter:
     frame_dig -3
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "pool_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:250
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1388,7 +1396,7 @@ enter:
     //   }
     // ).returnValue
     itxn_begin
-    pushbytes 0x95d7aa94 // method "isEntered(byte[32])bool"
+    pushbytes 0xe3377342 // method "isEntered(address)bool"
     itxn_field ApplicationArgs
     dup
     itxn_field ApplicationArgs
@@ -1509,6 +1517,104 @@ enter_after_if_else@3:
     retsub
 
 
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.update(newVersion: bytes, newChildVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/factory.ts:71-72
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(newVersion: string, newChildVersion: string): void {
+    proto 2 0
+    // smart_contracts/utils/base-contracts/factory.ts:73
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/factory.ts:73
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/factory.ts:32
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec 4 // "version"
+    // smart_contracts/utils/base-contracts/factory.ts:74
+    // this.version.value = newVersion
+    frame_dig -2
+    app_global_put
+    // smart_contracts/utils/base-contracts/factory.ts:38
+    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
+    pushbytes "child_contract_version"
+    // smart_contracts/utils/base-contracts/factory.ts:75
+    // this.childContractVersion.value = newChildVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/factory.ts:80
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/factory.ts:81
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/factory.ts:81
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/factory.ts:82
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow(app: uint64) -> void:
+updateAkitaDAOEscrow:
+    // smart_contracts/utils/base-contracts/factory.ts:85
+    // updateAkitaDAOEscrow(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/factory.ts:86
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:34
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/factory.ts:86
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/factory.ts:36
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+    bytec 5 // "akita_escrow"
+    // smart_contracts/utils/base-contracts/factory.ts:87
+    // this.akitaDAOEscrow.value = Application(app)
+    frame_dig -1
+    app_global_put
+    retsub
+
+
 // smart_contracts/pool/base.ts::BasePool.mbr(winningTickets: uint64) -> bytes:
 mbr:
     // smart_contracts/pool/base.ts:13-14
@@ -1545,102 +1651,4 @@ mbr:
     // }
     itob
     concat
-    retsub
-
-
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.update(newVersion: bytes, newChildVersion: bytes) -> void:
-update:
-    // smart_contracts/utils/base-contracts/factory.ts:71-72
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    // update(newVersion: string, newChildVersion: string): void {
-    proto 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:73
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/factory.ts:34
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:73
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:32
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
-    // smart_contracts/utils/base-contracts/factory.ts:74
-    // this.version.value = newVersion
-    frame_dig -2
-    app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:38
-    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
-    pushbytes "child_contract_version"
-    // smart_contracts/utils/base-contracts/factory.ts:75
-    // this.childContractVersion.value = newChildVersion
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO(app: uint64) -> void:
-updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/factory.ts:80
-    // updateAkitaDAO(app: uint64): void {
-    proto 1 0
-    // smart_contracts/utils/base-contracts/factory.ts:81
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/factory.ts:34
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:81
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:34
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:82
-    // this.akitaDAO.value = Application(app)
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow(app: uint64) -> void:
-updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/factory.ts:85
-    // updateAkitaDAOEscrow(app: uint64): void {
-    proto 1 0
-    // smart_contracts/utils/base-contracts/factory.ts:86
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/factory.ts:34
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/factory.ts:86
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:36
-    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    bytec 5 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/factory.ts:87
-    // this.akitaDAOEscrow.value = Application(app)
-    frame_dig -1
-    app_global_put
     retsub

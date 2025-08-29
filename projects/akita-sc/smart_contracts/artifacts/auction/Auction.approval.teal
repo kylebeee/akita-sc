@@ -704,58 +704,58 @@ __pcg32Output:
 
 // smart_contracts/utils/functions.ts::originOrTxnSender(walletID: uint64) -> bytes:
 originOrTxnSender:
-    // smart_contracts/utils/functions.ts:118
+    // smart_contracts/utils/functions.ts:126
     // export function originOrTxnSender(walletID: Application): Account {
     proto 1 1
-    // smart_contracts/utils/functions.ts:119
+    // smart_contracts/utils/functions.ts:127
     // return originOr(walletID, Txn.sender)
     txn Sender
-    // smart_contracts/utils/functions.ts:112
+    // smart_contracts/utils/functions.ts:120
     // if (walletID.id === 0) {
     frame_dig -1
     bnz originOrTxnSender_after_if_else@3
     frame_dig 0
 
 originOrTxnSender_after_inlined_smart_contracts/utils/functions.ts::originOr@4:
-    // smart_contracts/utils/functions.ts:119
+    // smart_contracts/utils/functions.ts:127
     // return originOr(walletID, Txn.sender)
     swap
     retsub
 
 originOrTxnSender_after_if_else@3:
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     frame_dig -1
-    // smart_contracts/utils/functions.ts:125
+    // smart_contracts/utils/functions.ts:144
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:119
+    // smart_contracts/utils/functions.ts:127
     // return originOr(walletID, Txn.sender)
     b originOrTxnSender_after_inlined_smart_contracts/utils/functions.ts::originOr@4
 
 
 // smart_contracts/utils/functions.ts::getWalletIDUsingAkitaDAO(akitaDAO: uint64, address: bytes) -> uint64:
 getWalletIDUsingAkitaDAO:
-    // smart_contracts/utils/functions.ts:130
+    // smart_contracts/utils/functions.ts:157
     // export function getWalletIDUsingAkitaDAO(akitaDAO: Application, address: Account): Application {
     proto 2 1
-    // smart_contracts/utils/functions.ts:40
+    // smart_contracts/utils/functions.ts:43
     // return op.AppGlobal.getExUint64(akitaDAO, Bytes(AbstractAccountGlobalStateKeysEscrowFactory))[0]
     frame_dig -2
     pushbytes "escrow_factory"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:136-142
+    // smart_contracts/utils/functions.ts:163-169
     // const data = abiCall(
     //   EscrowFactoryInterface.prototype.get,
     //   {
@@ -764,7 +764,7 @@ getWalletIDUsingAkitaDAO:
     //   }
     // ).returnValue
     itxn_begin
-    pushbytes 0x79345adc // method "get(byte[32])byte[]"
+    pushbytes 0x3c1a6f33 // method "get(address)byte[]"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -782,7 +782,7 @@ getWalletIDUsingAkitaDAO:
     assert // Bytes has valid prefix
     extract 6 0
     dup
-    // smart_contracts/utils/functions.ts:144
+    // smart_contracts/utils/functions.ts:171
     // if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
     len
     dup
@@ -793,103 +793,103 @@ getWalletIDUsingAkitaDAO:
     bz getWalletIDUsingAkitaDAO_after_if_else@7
 
 getWalletIDUsingAkitaDAO_if_body@6:
-    // smart_contracts/utils/functions.ts:145
+    // smart_contracts/utils/functions.ts:172
     // return 0
     intc_0 // 0
 
 getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8:
-    // smart_contracts/utils/functions.ts:132
+    // smart_contracts/utils/functions.ts:159
     // return Application(getWalletID(escrowFactory, address))
     frame_bury 0
     retsub
 
 getWalletIDUsingAkitaDAO_after_if_else@7:
-    // smart_contracts/utils/functions.ts:148
+    // smart_contracts/utils/functions.ts:175
     // return btoi(data)
     frame_dig 0
     btoi
-    // smart_contracts/utils/functions.ts:132
+    // smart_contracts/utils/functions.ts:159
     // return Application(getWalletID(escrowFactory, address))
     b getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8
 
 
 // smart_contracts/utils/functions.ts::gateCheck(gateTxn: uint64, akitaDAO: uint64, caller: bytes, id: uint64) -> uint64:
 gateCheck:
-    // smart_contracts/utils/functions.ts:175
+    // smart_contracts/utils/functions.ts:202
     // export function gateCheck(gateTxn: gtxn.ApplicationCallTxn, akitaDAO: Application, caller: Account, id: uint64): boolean {
     proto 4 1
-    // smart_contracts/utils/functions.ts:177
+    // smart_contracts/utils/functions.ts:204
     // gateTxn.sender === Txn.sender &&
     frame_dig -4
     gtxns Sender
     txn Sender
     ==
-    // smart_contracts/utils/functions.ts:177-178
+    // smart_contracts/utils/functions.ts:204-205
     // gateTxn.sender === Txn.sender &&
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     bz gateCheck_bool_false@8
-    // smart_contracts/utils/functions.ts:178
+    // smart_contracts/utils/functions.ts:205
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     frame_dig -4
     gtxns ApplicationID
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     frame_dig -3
     bytec 35 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:178
+    // smart_contracts/utils/functions.ts:205
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     pushint 40 // 40
     extract_uint64
     ==
-    // smart_contracts/utils/functions.ts:177-178
+    // smart_contracts/utils/functions.ts:204-205
     // gateTxn.sender === Txn.sender &&
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     bz gateCheck_bool_false@8
-    // smart_contracts/utils/functions.ts:179
+    // smart_contracts/utils/functions.ts:206
     // gateTxn.onCompletion === OnCompleteAction.NoOp &&
     frame_dig -4
     gtxns OnCompletion
-    // smart_contracts/utils/functions.ts:177-179
+    // smart_contracts/utils/functions.ts:204-206
     // gateTxn.sender === Txn.sender &&
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     // gateTxn.onCompletion === OnCompleteAction.NoOp &&
     bnz gateCheck_bool_false@8
-    // smart_contracts/utils/functions.ts:180
+    // smart_contracts/utils/functions.ts:207
     // gateTxn.numAppArgs === 4 &&
     frame_dig -4
     gtxns NumAppArgs
     intc_2 // 4
     ==
-    // smart_contracts/utils/functions.ts:177-180
+    // smart_contracts/utils/functions.ts:204-207
     // gateTxn.sender === Txn.sender &&
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     // gateTxn.onCompletion === OnCompleteAction.NoOp &&
     // gateTxn.numAppArgs === 4 &&
     bz gateCheck_bool_false@8
-    // smart_contracts/utils/functions.ts:181
+    // smart_contracts/utils/functions.ts:208
     // gateTxn.appArgs(0) === methodSelector(GateInterface.prototype.mustCheck) &&
     frame_dig -4
     intc_0 // 0
     gtxnsas ApplicationArgs
-    pushbytes 0x9c81af74 // method "mustCheck(byte[32],uint64,byte[][])void"
+    pushbytes 0x43922655 // method "mustCheck(address,uint64,byte[][])void"
     ==
-    // smart_contracts/utils/functions.ts:177-181
+    // smart_contracts/utils/functions.ts:204-208
     // gateTxn.sender === Txn.sender &&
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     // gateTxn.onCompletion === OnCompleteAction.NoOp &&
     // gateTxn.numAppArgs === 4 &&
     // gateTxn.appArgs(0) === methodSelector(GateInterface.prototype.mustCheck) &&
     bz gateCheck_bool_false@8
-    // smart_contracts/utils/functions.ts:182
+    // smart_contracts/utils/functions.ts:209
     // gateTxn.appArgs(1) === new Address(caller).bytes &&
     frame_dig -4
     intc_1 // 1
     gtxnsas ApplicationArgs
     frame_dig -2
     ==
-    // smart_contracts/utils/functions.ts:177-182
+    // smart_contracts/utils/functions.ts:204-209
     // gateTxn.sender === Txn.sender &&
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     // gateTxn.onCompletion === OnCompleteAction.NoOp &&
@@ -897,7 +897,7 @@ gateCheck:
     // gateTxn.appArgs(0) === methodSelector(GateInterface.prototype.mustCheck) &&
     // gateTxn.appArgs(1) === new Address(caller).bytes &&
     bz gateCheck_bool_false@8
-    // smart_contracts/utils/functions.ts:183
+    // smart_contracts/utils/functions.ts:210
     // gateTxn.appArgs(2) === itob(id)
     frame_dig -4
     pushint 2 // 2
@@ -905,7 +905,7 @@ gateCheck:
     frame_dig -1
     itob
     ==
-    // smart_contracts/utils/functions.ts:177-183
+    // smart_contracts/utils/functions.ts:204-210
     // gateTxn.sender === Txn.sender &&
     // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     // gateTxn.onCompletion === OnCompleteAction.NoOp &&
@@ -915,7 +915,7 @@ gateCheck:
     // gateTxn.appArgs(2) === itob(id)
     bz gateCheck_bool_false@8
     intc_1 // 1
-    // smart_contracts/utils/functions.ts:176-184
+    // smart_contracts/utils/functions.ts:203-211
     // return (
     //   gateTxn.sender === Txn.sender &&
     //   gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
@@ -929,7 +929,7 @@ gateCheck:
 
 gateCheck_bool_false@8:
     intc_0 // 0
-    // smart_contracts/utils/functions.ts:176-184
+    // smart_contracts/utils/functions.ts:203-211
     // return (
     //   gateTxn.sender === Txn.sender &&
     //   gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
@@ -944,30 +944,30 @@ gateCheck_bool_false@8:
 
 // smart_contracts/utils/functions.ts::arc59OptInAndSend(akitaDAO: uint64, recipient: bytes, asset: uint64, amount: uint64, closeOut: uint64) -> void:
 arc59OptInAndSend:
-    // smart_contracts/utils/functions.ts:249
+    // smart_contracts/utils/functions.ts:296
     // export function arc59OptInAndSend(akitaDAO: Application, recipient: Address, asset: uint64, amount: uint64, closeOut: boolean): void {
     proto 5 0
     pushbytes ""
     dupn 2
     intc_0 // 0
-    // smart_contracts/utils/functions.ts:35
+    // smart_contracts/utils/functions.ts:38
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     frame_dig -5
     bytec 36 // "other_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:250
+    // smart_contracts/utils/functions.ts:297
     // const assetInbox = getOtherAppList(akitaDAO).assetInbox
     pushint 16 // 16
     extract_uint64
     dupn 2
-    // smart_contracts/utils/functions.ts:251
+    // smart_contracts/utils/functions.ts:298
     // const inboxAddress = Application(assetInbox).address
     app_params_get AppAddress
     swap
     cover 2
     assert // application exists
-    // smart_contracts/utils/functions.ts:253-259
+    // smart_contracts/utils/functions.ts:300-306
     // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
     //   AssetInbox.prototype.arc59_getSendAssetInfo,
     //   {
@@ -976,13 +976,13 @@ arc59OptInAndSend:
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/utils/functions.ts:257
+    // smart_contracts/utils/functions.ts:304
     // args: [recipient, asset]
     frame_dig -3
     itob
     dup
     cover 2
-    // smart_contracts/utils/functions.ts:253-259
+    // smart_contracts/utils/functions.ts:300-306
     // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
     //   AssetInbox.prototype.arc59_getSendAssetInfo,
     //   {
@@ -990,7 +990,7 @@ arc59OptInAndSend:
     //     args: [recipient, asset]
     //   }
     // ).returnValue
-    pushbytes 0x27da7b45 // method "arc59_getSendAssetInfo(byte[32],uint64)(uint64,uint64,bool,bool,uint64)"
+    pushbytes 0xcaa8daa5 // method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
     itxn_field ApplicationArgs
     frame_dig -4
     itxn_field ApplicationArgs
@@ -1009,7 +1009,7 @@ arc59OptInAndSend:
     bytec 6 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/utils/functions.ts:259
+    // smart_contracts/utils/functions.ts:306
     // ).returnValue
     dig 1
     pushint 12 // 12
@@ -1027,20 +1027,20 @@ arc59OptInAndSend:
     pushint 21 // 21
     extract_uint64
     swap
-    // smart_contracts/utils/functions.ts:261
+    // smart_contracts/utils/functions.ts:308
     // if (mbr || receiverAlgoNeededForClaim) {
     bnz arc59OptInAndSend_if_body@3
     frame_dig 10
     bz arc59OptInAndSend_after_if_else@5
 
 arc59OptInAndSend_if_body@3:
-    // smart_contracts/utils/functions.ts:262-265
+    // smart_contracts/utils/functions.ts:309-312
     // itxn.payment({
     //   receiver: inboxAddress,
     //   amount: mbr + receiverAlgoNeededForClaim
     // }).submit()
     itxn_begin
-    // smart_contracts/utils/functions.ts:264
+    // smart_contracts/utils/functions.ts:311
     // amount: mbr + receiverAlgoNeededForClaim
     frame_dig 7
     frame_dig 10
@@ -1048,7 +1048,7 @@ arc59OptInAndSend_if_body@3:
     itxn_field Amount
     frame_dig 5
     itxn_field Receiver
-    // smart_contracts/utils/functions.ts:262-265
+    // smart_contracts/utils/functions.ts:309-312
     // itxn.payment({
     //   receiver: inboxAddress,
     //   amount: mbr + receiverAlgoNeededForClaim
@@ -1060,11 +1060,11 @@ arc59OptInAndSend_if_body@3:
     itxn_submit
 
 arc59OptInAndSend_after_if_else@5:
-    // smart_contracts/utils/functions.ts:268
+    // smart_contracts/utils/functions.ts:315
     // if (!routerOptedIn) {
     frame_dig 8
     bnz arc59OptInAndSend_after_if_else@8
-    // smart_contracts/utils/functions.ts:269-272
+    // smart_contracts/utils/functions.ts:316-319
     // abiCall(AssetInbox.prototype.arc59_optRouterIn, {
     //   appId: assetInbox,
     //   args: [asset]
@@ -1083,27 +1083,27 @@ arc59OptInAndSend_after_if_else@5:
     itxn_submit
 
 arc59OptInAndSend_after_if_else@8:
-    // smart_contracts/utils/functions.ts:276
+    // smart_contracts/utils/functions.ts:323
     // assetReceiver: inboxAddress,
     intc_1 // 1
     frame_bury 2
-    // smart_contracts/utils/functions.ts:277
+    // smart_contracts/utils/functions.ts:324
     // assetAmount: amount,
     intc_1 // 1
     frame_bury 0
-    // smart_contracts/utils/functions.ts:275
+    // smart_contracts/utils/functions.ts:322
     // let xferTxn = itxn.assetTransfer({
     intc_0 // 0
     frame_bury 1
-    // smart_contracts/utils/functions.ts:281
+    // smart_contracts/utils/functions.ts:328
     // if (closeOut) {
     frame_dig -1
     bz arc59OptInAndSend_after_if_else@10
-    // smart_contracts/utils/functions.ts:284
+    // smart_contracts/utils/functions.ts:331
     // assetCloseTo: inboxAddress
     intc_1 // 1
     frame_bury 1
-    // smart_contracts/utils/functions.ts:282
+    // smart_contracts/utils/functions.ts:329
     // xferTxn = itxn.assetTransfer({
     intc_0 // 0
     frame_bury 0
@@ -1113,13 +1113,13 @@ arc59OptInAndSend_after_if_else@8:
     frame_bury 3
 
 arc59OptInAndSend_after_if_else@10:
-    // smart_contracts/utils/functions.ts:288-291
+    // smart_contracts/utils/functions.ts:335-338
     // abiCall(AssetInbox.prototype.arc59_sendAsset, {
     //   appId: assetInbox,
     //   args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     // })
     itxn_begin
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:337
     // args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     frame_dig 1
     bz arc59OptInAndSend_next_field@12
@@ -1129,7 +1129,7 @@ arc59OptInAndSend_after_if_else@10:
 arc59OptInAndSend_next_field@12:
     frame_dig -3
     itxn_field XferAsset
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:337
     // args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     frame_dig 0
     bz arc59OptInAndSend_next_field@14
@@ -1137,7 +1137,7 @@ arc59OptInAndSend_next_field@12:
     itxn_field AssetAmount
 
 arc59OptInAndSend_next_field@14:
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:337
     // args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     frame_dig 2
     bz arc59OptInAndSend_next_field@16
@@ -1145,7 +1145,7 @@ arc59OptInAndSend_next_field@14:
     itxn_field AssetReceiver
 
 arc59OptInAndSend_next_field@16:
-    // smart_contracts/utils/functions.ts:275-279
+    // smart_contracts/utils/functions.ts:322-326
     // let xferTxn = itxn.assetTransfer({
     //   assetReceiver: inboxAddress,
     //   assetAmount: amount,
@@ -1155,13 +1155,13 @@ arc59OptInAndSend_next_field@16:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:288-291
+    // smart_contracts/utils/functions.ts:335-338
     // abiCall(AssetInbox.prototype.arc59_sendAsset, {
     //   appId: assetInbox,
     //   args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     // })
     itxn_next
-    pushbytes 0xfd9c16f7 // method "arc59_sendAsset(axfer,byte[32],uint64)byte[32]"
+    pushbytes 0x08531ed7 // method "arc59_sendAsset(axfer,address,uint64)address"
     itxn_field ApplicationArgs
     frame_dig -4
     itxn_field ApplicationArgs
@@ -1184,10 +1184,14 @@ arc59OptInAndSend_next_field@16:
 
 // smart_contracts/auction/contract.algo.ts::Auction.newBidID() -> uint64:
 newBidID:
+    // smart_contracts/auction/contract.algo.ts:127
+    // const id = this.bidID.value
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:75
     // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
-    intc_0 // 0
     bytec 10 // "bid_id"
+    // smart_contracts/auction/contract.algo.ts:127
+    // const id = this.bidID.value
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:128
@@ -1209,41 +1213,49 @@ newBidID:
 
 // smart_contracts/auction/contract.algo.ts::Auction.getMinimumBidAmount() -> uint64:
 getMinimumBidAmount:
-    // smart_contracts/auction/contract.algo.ts:73
-    // highestBid = GlobalState<uint64>({ key: AuctionGlobalStateKeyHighestBid })
-    intc_0 // 0
-    bytec 15 // "highest_bid"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:133
     // if (this.highestBid.value > 0) {
-    bz getMinimumBidAmount_after_if_else@2
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:73
     // highestBid = GlobalState<uint64>({ key: AuctionGlobalStateKeyHighestBid })
-    intc_0 // 0
     bytec 15 // "highest_bid"
+    // smart_contracts/auction/contract.algo.ts:133
+    // if (this.highestBid.value > 0) {
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:41
-    // bidMinimumIncrease = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidMinimumIncrease })
-    intc_0 // 0
-    bytec 37 // "bid_minimum_increase"
-    app_global_get_ex
-    assert // check GlobalState exists
+    bz getMinimumBidAmount_after_if_else@2
     // smart_contracts/auction/contract.algo.ts:134
     // return this.highestBid.value + this.bidMinimumIncrease.value
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:73
+    // highestBid = GlobalState<uint64>({ key: AuctionGlobalStateKeyHighestBid })
+    bytec 15 // "highest_bid"
+    // smart_contracts/auction/contract.algo.ts:134
+    // return this.highestBid.value + this.bidMinimumIncrease.value
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:41
+    // bidMinimumIncrease = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidMinimumIncrease })
+    bytec 37 // "bid_minimum_increase"
+    // smart_contracts/auction/contract.algo.ts:134
+    // return this.highestBid.value + this.bidMinimumIncrease.value
+    app_global_get_ex
+    assert // check GlobalState exists
     +
     retsub
 
 getMinimumBidAmount_after_if_else@2:
-    // smart_contracts/auction/contract.algo.ts:39
-    // startingBid = GlobalState<uint64>({ key: AuctionGlobalStateKeyStartingBid })
-    intc_0 // 0
-    bytec 38 // "starting_bid"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:136
     // return this.startingBid.value
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:39
+    // startingBid = GlobalState<uint64>({ key: AuctionGlobalStateKeyStartingBid })
+    bytec 38 // "starting_bid"
+    // smart_contracts/auction/contract.algo.ts:136
+    // return this.startingBid.value
+    app_global_get_ex
+    assert // check GlobalState exists
     retsub
 
 
@@ -1289,14 +1301,16 @@ setNewBid:
     // }
     swap
     box_put
-    // smart_contracts/auction/contract.algo.ts:37
-    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
-    bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:147
     // if (this.bidFee.value > 0) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:37
+    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
+    bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:147
+    // if (this.bidFee.value > 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bz setNewBid_after_if_else@5
     // smart_contracts/auction/contract.algo.ts:118
     // bidsByAddress = BoxMap<Account, WeightLocation>({ keyPrefix: AuctionBoxPrefixBidsByAddress })
@@ -1354,28 +1368,32 @@ setNewBid:
     frame_dig -2
     swap
     -
-    // smart_contracts/auction/contract.algo.ts:88
-    // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
-    intc_0 // 0
-    bytec 7 // "w_totals"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:152
     // const lastWeightedTotal = this.weightTotals.value[loc / ChunkSize].native
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:88
+    // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
+    bytec 7 // "w_totals"
+    // smart_contracts/auction/contract.algo.ts:152
+    // const lastWeightedTotal = this.weightTotals.value[loc / ChunkSize].native
+    app_global_get_ex
+    assert // check GlobalState exists
     uncover 4
     intc_3 // 8
     *
     swap
     dig 1
     extract_uint64
-    // smart_contracts/auction/contract.algo.ts:71
-    // weightedBidTotal = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightedBidTotal })
-    intc_0 // 0
-    bytec 16 // "weighted_bid_total"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:154
     // this.weightedBidTotal.value += difference
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:71
+    // weightedBidTotal = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightedBidTotal })
+    bytec 16 // "weighted_bid_total"
+    // smart_contracts/auction/contract.algo.ts:154
+    // this.weightedBidTotal.value += difference
+    app_global_get_ex
+    assert // check GlobalState exists
     dig 3
     +
     // smart_contracts/auction/contract.algo.ts:71
@@ -1396,14 +1414,14 @@ setNewBid:
     uncover 2
     +
     itob
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:88
     // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
-    intc_0 // 0
     bytec 7 // "w_totals"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:156
     // this.weightTotals.value[loc / ChunkSize] = new Uint64(lastWeightedTotal + difference)
+    app_global_get_ex
+    assert // check GlobalState exists
     cover 2
     replace3
     // smart_contracts/auction/contract.algo.ts:88
@@ -1418,33 +1436,41 @@ setNewBid_after_if_else@5:
     retsub
 
 setNewBid_else_body@3:
+    // smart_contracts/auction/contract.algo.ts:158
+    // const loc = this.uniqueAddressCount.value
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:84
     // uniqueAddressCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyUniqueAddressCount })
-    intc_0 // 0
     bytec 19 // "unique_address_count"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:86
-    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
-    intc_0 // 0
-    bytec 8 // "weights_box_count"
+    // smart_contracts/auction/contract.algo.ts:158
+    // const loc = this.uniqueAddressCount.value
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:159
     // assert(loc < ChunkSize * this.weightsBoxCount.value, ERR_TOO_MANY_PARTICIPANTS)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:86
+    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
+    bytec 8 // "weights_box_count"
+    // smart_contracts/auction/contract.algo.ts:159
+    // assert(loc < ChunkSize * this.weightsBoxCount.value, ERR_TOO_MANY_PARTICIPANTS)
+    app_global_get_ex
+    assert // check GlobalState exists
     intc 5 // 4096
     *
     dig 1
     >
     assert // too many participants
-    // smart_contracts/auction/contract.algo.ts:88
-    // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
-    intc_0 // 0
-    bytec 7 // "w_totals"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:160
     // const lastWeightedTotal = this.weightTotals.value[loc / ChunkSize].native
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:88
+    // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
+    bytec 7 // "w_totals"
+    // smart_contracts/auction/contract.algo.ts:160
+    // const lastWeightedTotal = this.weightTotals.value[loc / ChunkSize].native
+    app_global_get_ex
+    assert // check GlobalState exists
     dig 1
     intc 5 // 4096
     /
@@ -1454,14 +1480,16 @@ setNewBid_else_body@3:
     uncover 2
     dig 1
     extract_uint64
-    // smart_contracts/auction/contract.algo.ts:71
-    // weightedBidTotal = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightedBidTotal })
-    intc_0 // 0
-    bytec 16 // "weighted_bid_total"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:162
     // this.weightedBidTotal.value += bidAmount
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:71
+    // weightedBidTotal = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightedBidTotal })
+    bytec 16 // "weighted_bid_total"
+    // smart_contracts/auction/contract.algo.ts:162
+    // this.weightedBidTotal.value += bidAmount
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig -2
     +
     // smart_contracts/auction/contract.algo.ts:71
@@ -1511,14 +1539,14 @@ setNewBid_else_body@3:
     frame_dig -2
     +
     itob
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:88
     // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
-    intc_0 // 0
     bytec 7 // "w_totals"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:165
     // this.weightTotals.value[loc / ChunkSize] = new Uint64(lastWeightedTotal + bidAmount)
+    app_global_get_ex
+    assert // check GlobalState exists
     uncover 3
     uncover 2
     replace3
@@ -1541,14 +1569,16 @@ setNewBid_else_body@3:
     // this.locations(loc).value = new Address(Txn.sender)
     swap
     box_put
-    // smart_contracts/auction/contract.algo.ts:84
-    // uniqueAddressCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyUniqueAddressCount })
-    intc_0 // 0
-    bytec 19 // "unique_address_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:167
     // this.uniqueAddressCount.value += 1
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:84
+    // uniqueAddressCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyUniqueAddressCount })
+    bytec 19 // "unique_address_count"
+    // smart_contracts/auction/contract.algo.ts:167
+    // this.uniqueAddressCount.value += 1
+    app_global_get_ex
+    assert // check GlobalState exists
     intc_1 // 1
     +
     // smart_contracts/auction/contract.algo.ts:84
@@ -1566,19 +1596,23 @@ getBidFee:
     // smart_contracts/auction/contract.algo.ts:172
     // private getBidFee(amount: uint64): uint64 {
     proto 1 1
+    // smart_contracts/auction/contract.algo.ts:173
+    // const fee = calcPercent(amount, this.bidFee.value)
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:37
     // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
     bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:173
+    // const fee = calcPercent(amount, this.bidFee.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:74
+    // smart_contracts/utils/functions.ts:82
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
     intc 4 // 100000
     <=
     assert // Invalid percentage
-    // smart_contracts/utils/functions.ts:75
+    // smart_contracts/utils/functions.ts:83
     // return op.divw(...op.mulw(a, p), DIVISOR)
     frame_dig -1
     mulw
@@ -1588,14 +1622,14 @@ getBidFee:
     // smart_contracts/auction/contract.algo.ts:174
     // if (fee === 0 && this.bidFee.value > 0 && amount > 0) {
     bnz getBidFee_after_if_else@4
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:37
     // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
     bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:174
     // if (fee === 0 && this.bidFee.value > 0 && amount > 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bz getBidFee_after_if_else@4
     frame_dig -1
     bz getBidFee_after_if_else@4
@@ -1623,28 +1657,34 @@ getAmounts:
     // smart_contracts/auction/contract.algo.ts:182
     // let creatorAmount: uint64 = 0
     intc_0 // 0
-    // smart_contracts/auction/contract.algo.ts:49
-    // creatorRoyalty = GlobalState<uint64>({ key: AuctionGlobalStateKeyCreatorRoyalty })
-    dup
-    bytec 27 // "creator_royalty"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:183
     // if (this.creatorRoyalty.value > 0) {
-    bz getAmounts_after_if_else@6
+    dup
     // smart_contracts/auction/contract.algo.ts:49
     // creatorRoyalty = GlobalState<uint64>({ key: AuctionGlobalStateKeyCreatorRoyalty })
-    intc_0 // 0
     bytec 27 // "creator_royalty"
+    // smart_contracts/auction/contract.algo.ts:183
+    // if (this.creatorRoyalty.value > 0) {
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:74
+    bz getAmounts_after_if_else@6
+    // smart_contracts/auction/contract.algo.ts:184
+    // creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:49
+    // creatorRoyalty = GlobalState<uint64>({ key: AuctionGlobalStateKeyCreatorRoyalty })
+    bytec 27 // "creator_royalty"
+    // smart_contracts/auction/contract.algo.ts:184
+    // creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:82
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
     intc 4 // 100000
     <=
     assert // Invalid percentage
-    // smart_contracts/utils/functions.ts:75
+    // smart_contracts/utils/functions.ts:83
     // return op.divw(...op.mulw(a, p), DIVISOR)
     frame_dig -1
     mulw
@@ -1657,16 +1697,16 @@ getAmounts:
     // smart_contracts/auction/contract.algo.ts:185
     // if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
     bnz getAmounts_after_if_else@5
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:49
     // creatorRoyalty = GlobalState<uint64>({ key: AuctionGlobalStateKeyCreatorRoyalty })
-    intc_0 // 0
     bytec 27 // "creator_royalty"
+    // smart_contracts/auction/contract.algo.ts:185
+    // if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
     app_global_get_ex
     assert // check GlobalState exists
     frame_dig 8
     frame_bury 2
-    // smart_contracts/auction/contract.algo.ts:185
-    // if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
     bz getAmounts_after_if_else@5
     frame_dig 8
     frame_bury 2
@@ -1682,13 +1722,17 @@ getAmounts_after_if_else@5:
     frame_bury 8
 
 getAmounts_after_if_else@6:
+    // smart_contracts/auction/contract.algo.ts:190
+    // const { auctionSaleImpactTaxMin: min, auctionSaleImpactTaxMax: max } = getNFTFees(this.akitaDAO.value)
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:190
+    // const { auctionSaleImpactTaxMin: min, auctionSaleImpactTaxMax: max } = getNFTFees(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:64
+    // smart_contracts/utils/functions.ts:72
     // const [nftFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysNFTFees))
     bytec 39 // "nft_fees"
     app_global_get_ex
@@ -1710,19 +1754,25 @@ getAmounts_after_if_else@6:
     // smart_contracts/auction/contract.algo.ts:192
     // if (max > 0) {
     bz getAmounts_after_if_else@11
+    // smart_contracts/auction/contract.algo.ts:193
+    // const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:193
+    // const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
     app_global_get_ex
     assert // check GlobalState exists
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:47
     // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
-    intc_0 // 0
     bytec 12 // "seller"
+    // smart_contracts/auction/contract.algo.ts:193
+    // const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:102-108
+    // smart_contracts/utils/functions.ts:110-116
     // return abiCall(
     //   AkitaSocialImpactInterface.prototype.getUserImpact,
     //   {
@@ -1731,17 +1781,17 @@ getAmounts_after_if_else@6:
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
     bytec 35 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:105
+    // smart_contracts/utils/functions.ts:113
     // appId: getAkitaAppList(akitaDAO).impact,
     pushint 104 // 104
     extract_uint64
-    // smart_contracts/utils/functions.ts:102-108
+    // smart_contracts/utils/functions.ts:110-116
     // return abiCall(
     //   AkitaSocialImpactInterface.prototype.getUserImpact,
     //   {
@@ -1749,7 +1799,7 @@ getAmounts_after_if_else@6:
     //     args: [new Address(account)]
     //   }
     // ).returnValue
-    pushbytes 0x0a59370d // method "getUserImpact(byte[32])uint64"
+    pushbytes 0xd574bb10 // method "getUserImpact(address)uint64"
     itxn_field ApplicationArgs
     itxn_field ApplicationID
     itxn_field ApplicationArgs
@@ -1769,7 +1819,7 @@ getAmounts_after_if_else@6:
     btoi
     dup
     frame_bury 3
-    // smart_contracts/utils/functions.ts:97
+    // smart_contracts/utils/functions.ts:105
     // const minImpact: uint64 = (impact > 1) ? impact - 1 : 1
     intc_1 // 1
     >
@@ -1779,7 +1829,7 @@ getAmounts_after_if_else@6:
     -
 
 getAmounts_ternary_merge@23:
-    // smart_contracts/utils/functions.ts:98
+    // smart_contracts/utils/functions.ts:106
     // return max - (((max - min) * minImpact) / IMPACT_DIVISOR)
     frame_dig 6
     dup
@@ -1790,13 +1840,13 @@ getAmounts_ternary_merge@23:
     pushint 1000 // 1000
     /
     -
-    // smart_contracts/utils/functions.ts:74
+    // smart_contracts/utils/functions.ts:82
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
     intc 4 // 100000
     <=
     assert // Invalid percentage
-    // smart_contracts/utils/functions.ts:75
+    // smart_contracts/utils/functions.ts:83
     // return op.divw(...op.mulw(a, p), DIVISOR)
     frame_dig -1
     mulw
@@ -1827,28 +1877,34 @@ getAmounts_after_if_else@11:
     // let marketplaceAmount: uint64 = 0
     intc_0 // 0
     frame_bury 4
-    // smart_contracts/auction/contract.algo.ts:61
-    // marketplaceRoyalties = GlobalState<uint64>({ key: AuctionGlobalStateKeyMarketplaceRoyalties })
-    intc_0 // 0
-    bytec 28 // "marketplace_royalties"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:203
     // if (this.marketplaceRoyalties.value > 0) {
-    bz getAmounts_after_if_else@17
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:61
     // marketplaceRoyalties = GlobalState<uint64>({ key: AuctionGlobalStateKeyMarketplaceRoyalties })
-    intc_0 // 0
     bytec 28 // "marketplace_royalties"
+    // smart_contracts/auction/contract.algo.ts:203
+    // if (this.marketplaceRoyalties.value > 0) {
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:74
+    bz getAmounts_after_if_else@17
+    // smart_contracts/auction/contract.algo.ts:204
+    // marketplaceAmount = calcPercent(amount, this.marketplaceRoyalties.value)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:61
+    // marketplaceRoyalties = GlobalState<uint64>({ key: AuctionGlobalStateKeyMarketplaceRoyalties })
+    bytec 28 // "marketplace_royalties"
+    // smart_contracts/auction/contract.algo.ts:204
+    // marketplaceAmount = calcPercent(amount, this.marketplaceRoyalties.value)
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:82
     // assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
     dup
     intc 4 // 100000
     <=
     assert // Invalid percentage
-    // smart_contracts/utils/functions.ts:75
+    // smart_contracts/utils/functions.ts:83
     // return op.divw(...op.mulw(a, p), DIVISOR)
     frame_dig -1
     mulw
@@ -1861,16 +1917,16 @@ getAmounts_after_if_else@11:
     // smart_contracts/auction/contract.algo.ts:205
     // if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
     bnz getAmounts_after_if_else@16
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:61
     // marketplaceRoyalties = GlobalState<uint64>({ key: AuctionGlobalStateKeyMarketplaceRoyalties })
-    intc_0 // 0
     bytec 28 // "marketplace_royalties"
+    // smart_contracts/auction/contract.algo.ts:205
+    // if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
     app_global_get_ex
     assert // check GlobalState exists
     frame_dig 4
     frame_bury 5
-    // smart_contracts/auction/contract.algo.ts:205
-    // if (marketplaceAmount === 0 && this.marketplaceRoyalties.value > 0 && amount > 0) {
     bz getAmounts_after_if_else@16
     frame_dig 4
     frame_bury 5
@@ -1925,7 +1981,7 @@ getAmounts_after_if_else@17:
     retsub
 
 getAmounts_ternary_false@22:
-    // smart_contracts/utils/functions.ts:97
+    // smart_contracts/utils/functions.ts:105
     // const minImpact: uint64 = (impact > 1) ? impact - 1 : 1
     intc_1 // 1
     b getAmounts_ternary_merge@23
@@ -1944,14 +2000,16 @@ createBid:
     // const { bids, bidsByAddress, locations } = this.mbr()
     intc 7 // 34900
     dup
-    // smart_contracts/auction/contract.algo.ts:37
-    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
-    bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:409
     // if (this.bidFee.value > 0 && !this.bidsByAddress(Txn.sender).exists) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:37
+    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
+    bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:409
+    // if (this.bidFee.value > 0 && !this.bidsByAddress(Txn.sender).exists) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bz createBid_after_if_else@3
     // smart_contracts/auction/contract.algo.ts:118
     // bidsByAddress = BoxMap<Account, WeightLocation>({ keyPrefix: AuctionBoxPrefixBidsByAddress })
@@ -2041,26 +2099,28 @@ createBid_after_if_else@3:
     // smart_contracts/auction/contract.algo.ts:427
     // if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:45
     // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
     bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:427
     // if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     pushint 120 // 120
     -
     >
     bz createBid_after_if_else@5
-    // smart_contracts/auction/contract.algo.ts:45
-    // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
-    bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:428
     // this.endTimestamp.value += SNIPE_EXTENSION
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:45
+    // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
+    bytec_2 // "end_timestamp"
+    // smart_contracts/auction/contract.algo.ts:428
+    // this.endTimestamp.value += SNIPE_EXTENSION
+    app_global_get_ex
+    assert // check GlobalState exists
     pushint 300 // 300
     +
     // smart_contracts/auction/contract.algo.ts:45
@@ -2072,27 +2132,31 @@ createBid_after_if_else@3:
     app_global_put
 
 createBid_after_if_else@5:
-    // smart_contracts/auction/contract.algo.ts:37
-    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
-    bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:431
     // if (this.bidFee.value > 0) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:37
+    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
+    bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:431
+    // if (this.bidFee.value > 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bz createBid_after_if_else@7
     // smart_contracts/auction/contract.algo.ts:432
     // const bidFee = this.getBidFee(bidAmount)
     frame_dig 0
     callsub getBidFee
-    // smart_contracts/auction/contract.algo.ts:77
-    // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
-    intc_0 // 0
-    bytec 9 // "raffle_amount"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:433
     // this.raffleAmount.value += bidFee
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:77
+    // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
+    bytec 9 // "raffle_amount"
+    // smart_contracts/auction/contract.algo.ts:433
+    // this.raffleAmount.value += bidFee
+    app_global_get_ex
+    assert // check GlobalState exists
     +
     // smart_contracts/auction/contract.algo.ts:77
     // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
@@ -2130,14 +2194,16 @@ createBidAsa:
     // const { bids, bidsByAddress, locations } = this.mbr()
     intc 7 // 34900
     dup
-    // smart_contracts/auction/contract.algo.ts:37
-    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
-    bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:448
     // if (this.bidFee.value > 0) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:37
+    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
+    bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:448
+    // if (this.bidFee.value > 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bz createBidAsa_after_if_else@4
     // smart_contracts/auction/contract.algo.ts:118
     // bidsByAddress = BoxMap<Account, WeightLocation>({ keyPrefix: AuctionBoxPrefixBidsByAddress })
@@ -2230,10 +2296,14 @@ createBidAsa_after_if_else@4:
     &&
     frame_dig -2
     gtxns XferAsset
+    // smart_contracts/auction/contract.algo.ts:471
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:471
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:466-473
@@ -2257,26 +2327,28 @@ createBidAsa_after_if_else@4:
     // smart_contracts/auction/contract.algo.ts:478
     // if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:45
     // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
     bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:478
     // if (Global.latestTimestamp > (this.endTimestamp.value - SNIPE_RANGE)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     pushint 120 // 120
     -
     >
     bz createBidAsa_after_if_else@6
-    // smart_contracts/auction/contract.algo.ts:45
-    // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
-    bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:479
     // this.endTimestamp.value += SNIPE_EXTENSION
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:45
+    // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
+    bytec_2 // "end_timestamp"
+    // smart_contracts/auction/contract.algo.ts:479
+    // this.endTimestamp.value += SNIPE_EXTENSION
+    app_global_get_ex
+    assert // check GlobalState exists
     pushint 300 // 300
     +
     // smart_contracts/auction/contract.algo.ts:45
@@ -2288,27 +2360,31 @@ createBidAsa_after_if_else@4:
     app_global_put
 
 createBidAsa_after_if_else@6:
-    // smart_contracts/auction/contract.algo.ts:37
-    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
-    bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:482
     // if (this.bidFee.value > 0) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:37
+    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
+    bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:482
+    // if (this.bidFee.value > 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bz createBidAsa_after_if_else@8
     // smart_contracts/auction/contract.algo.ts:483
     // const bidFee = this.getBidFee(bidAmount)
     frame_dig 0
     callsub getBidFee
-    // smart_contracts/auction/contract.algo.ts:77
-    // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
-    intc_0 // 0
-    bytec 9 // "raffle_amount"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:484
     // this.raffleAmount.value += bidFee
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:77
+    // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
+    bytec 9 // "raffle_amount"
+    // smart_contracts/auction/contract.algo.ts:484
+    // this.raffleAmount.value += bidFee
+    app_global_get_ex
+    assert // check GlobalState exists
     +
     // smart_contracts/auction/contract.algo.ts:77
     // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
@@ -2582,15 +2658,19 @@ create:
     // this.salt.value = Txn.txId
     txn TxID
     app_global_put
+    // smart_contracts/auction/contract.algo.ts:546
+    // this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).auctionComposablePercentage
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:546
+    // this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).auctionComposablePercentage
     app_global_get_ex
     swap
     frame_bury -2
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:64
+    // smart_contracts/utils/functions.ts:72
     // const [nftFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysNFTFees))
     frame_dig -2
     bytec 39 // "nft_fees"
@@ -2622,14 +2702,16 @@ init:
     global CreatorAddress
     ==
     assert // must be called from the factory
-    // smart_contracts/auction/contract.algo.ts:37
-    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
-    bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:551
     // assert(this.bidFee.value > 0, ERR_NOT_APPLICABLE_TO_THIS_AUCTION)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:37
+    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
+    bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:551
+    // assert(this.bidFee.value > 0, ERR_NOT_APPLICABLE_TO_THIS_AUCTION)
+    app_global_get_ex
+    assert // check GlobalState exists
     assert // not applicable to this auction
     // smart_contracts/auction/contract.algo.ts:552
     // assert(weightListLength >= 3, ERR_MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS)
@@ -2637,10 +2719,14 @@ init:
     pushint 3 // 3
     >=
     assert // must allocate at least three highest bids chunks
+    // smart_contracts/auction/contract.algo.ts:554
+    // const isAlgoBid = this.bidAsset.value.id === 0
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:554
+    // const isAlgoBid = this.bidAsset.value.id === 0
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:555-557
@@ -2752,64 +2838,76 @@ deleteApplication:
     global CreatorAddress
     ==
     assert // must be called from the factory
-    // smart_contracts/auction/contract.algo.ts:67
-    // refundCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundCount })
-    intc_0 // 0
-    bytec 29 // "refund_count"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:75
-    // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
-    intc_0 // 0
-    bytec 10 // "bid_id"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:579
     // assert(this.refundCount.value === this.bidID.value + 1)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:67
+    // refundCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundCount })
+    bytec 29 // "refund_count"
+    // smart_contracts/auction/contract.algo.ts:579
+    // assert(this.refundCount.value === this.bidID.value + 1)
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:75
+    // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
+    bytec 10 // "bid_id"
+    // smart_contracts/auction/contract.algo.ts:579
+    // assert(this.refundCount.value === this.bidID.value + 1)
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     intc_1 // 1
     +
     uncover 2
     ==
     assert
-    // smart_contracts/auction/contract.algo.ts:33
-    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
-    intc_0 // 0
-    bytec 17 // "prize_claimed"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:580
     // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
-    assert // prize not claimed
-    // smart_contracts/auction/contract.algo.ts:79
-    // rafflePrizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyRafflePrizeClaimed })
     intc_0 // 0
-    bytec 24 // "raffle_prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:33
+    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
+    bytec 17 // "prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:580
+    // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
     app_global_get_ex
     assert // check GlobalState exists
+    assert // prize not claimed
     // smart_contracts/auction/contract.algo.ts:581
     // assert(this.rafflePrizeClaimed.value, ERR_RAFFLE_WINNER_HAS_NOT_CLAIMED)
-    assert // raffle winner has not claimed
-    // smart_contracts/auction/contract.algo.ts:96
-    // refundMBRCursor = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundMBRCursor })
     intc_0 // 0
-    bytec 25 // "refund_mbr_cursor"
+    // smart_contracts/auction/contract.algo.ts:79
+    // rafflePrizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyRafflePrizeClaimed })
+    bytec 24 // "raffle_prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:581
+    // assert(this.rafflePrizeClaimed.value, ERR_RAFFLE_WINNER_HAS_NOT_CLAIMED)
     app_global_get_ex
     assert // check GlobalState exists
+    assert // raffle winner has not claimed
     // smart_contracts/auction/contract.algo.ts:582
     // const refundsComplete = this.bidID.value === this.refundMBRCursor.value
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:96
+    // refundMBRCursor = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundMBRCursor })
+    bytec 25 // "refund_mbr_cursor"
+    // smart_contracts/auction/contract.algo.ts:582
+    // const refundsComplete = this.bidID.value === this.refundMBRCursor.value
+    app_global_get_ex
+    assert // check GlobalState exists
     ==
     // smart_contracts/auction/contract.algo.ts:583
     // assert(refundsComplete, ERR_NOT_ALL_REFUNDS_COMPLETE)
     assert // not all refunds complete
-    // smart_contracts/auction/contract.algo.ts:86
-    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
-    intc_0 // 0
-    bytec 8 // "weights_box_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:584
     // assert(this.weightsBoxCount.value === 0, ERR_STILL_HAS_HIGHEST_BIDS_BOXES)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:86
+    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
+    bytec 8 // "weights_box_count"
+    // smart_contracts/auction/contract.algo.ts:584
+    // assert(this.weightsBoxCount.value === 0, ERR_STILL_HAS_HIGHEST_BIDS_BOXES)
+    app_global_get_ex
+    assert // check GlobalState exists
     !
     assert // still has highest bids boxes
     retsub
@@ -2826,36 +2924,46 @@ cancel:
     // smart_contracts/auction/contract.algo.ts:594
     // assert(Global.latestTimestamp < this.startTimestamp.value)
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:43
     // startTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyStartTimestamp })
-    intc_0 // 0
     bytec 32 // "start_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:594
     // assert(Global.latestTimestamp < this.startTimestamp.value)
+    app_global_get_ex
+    assert // check GlobalState exists
     <
     assert
-    // smart_contracts/auction/contract.algo.ts:86
-    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
-    intc_0 // 0
-    bytec 8 // "weights_box_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:595
     // assert(this.weightsBoxCount.value === 0, ERR_STILL_HAS_HIGHEST_BIDS_BOXES)
-    !
-    assert // still has highest bids boxes
-    // smart_contracts/auction/contract.algo.ts:47
-    // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
     intc_0 // 0
-    bytec 12 // "seller"
+    // smart_contracts/auction/contract.algo.ts:86
+    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
+    bytec 8 // "weights_box_count"
+    // smart_contracts/auction/contract.algo.ts:595
+    // assert(this.weightsBoxCount.value === 0, ERR_STILL_HAS_HIGHEST_BIDS_BOXES)
     app_global_get_ex
     assert // check GlobalState exists
+    !
+    assert // still has highest bids boxes
+    // smart_contracts/auction/contract.algo.ts:598
+    // assetCloseTo: this.seller.value,
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:47
+    // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
+    bytec 12 // "seller"
+    // smart_contracts/auction/contract.algo.ts:598
+    // assetCloseTo: this.seller.value,
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:599
+    // xferAsset: this.prize.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:29
     // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
     bytec 4 // "prize"
+    // smart_contracts/auction/contract.algo.ts:599
+    // xferAsset: this.prize.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:608
@@ -2908,14 +3016,16 @@ gatedBid:
     //   marketplace: Address,
     // ): void {
     proto 3 0
-    // smart_contracts/utils/base-contracts/escrow.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:618
     // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:618
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    app_global_get_ex
+    assert // check GlobalState exists
     txn Sender
     callsub getWalletIDUsingAkitaDAO
     // smart_contracts/auction/contract.algo.ts:619
@@ -2925,20 +3035,24 @@ gatedBid:
     // assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
     callsub isLive
     assert // auction is not live
-    // smart_contracts/utils/base-contracts/escrow.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:63
-    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
-    intc_0 // 0
-    bytec 20 // "gate_id"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:622
     // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:622
+    // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:63
+    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
+    bytec 20 // "gate_id"
+    // smart_contracts/auction/contract.algo.ts:622
+    // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig -2
     uncover 2
     uncover 3
@@ -2962,14 +3076,16 @@ bid:
     // assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
     callsub isLive
     assert // auction is not live
-    // smart_contracts/auction/contract.algo.ts:63
-    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
-    intc_0 // 0
-    bytec 20 // "gate_id"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:629
     // assert(this.gateID.value === 0, ERR_HAS_GATE)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:63
+    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
+    bytec 20 // "gate_id"
+    // smart_contracts/auction/contract.algo.ts:629
+    // assert(this.gateID.value === 0, ERR_HAS_GATE)
+    app_global_get_ex
+    assert // check GlobalState exists
     !
     assert // This has a gate
     // smart_contracts/auction/contract.algo.ts:631
@@ -2990,14 +3106,16 @@ gatedBidAsa:
     //   marketplace: Address
     // ): void {
     proto 4 0
-    // smart_contracts/utils/base-contracts/escrow.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:640
     // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:640
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    app_global_get_ex
+    assert // check GlobalState exists
     txn Sender
     callsub getWalletIDUsingAkitaDAO
     // smart_contracts/auction/contract.algo.ts:641
@@ -3007,20 +3125,24 @@ gatedBidAsa:
     // assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
     callsub isLive
     assert // auction is not live
-    // smart_contracts/utils/base-contracts/escrow.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:63
-    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
-    intc_0 // 0
-    bytec 20 // "gate_id"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:644
     // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:644
+    // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:63
+    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
+    bytec 20 // "gate_id"
+    // smart_contracts/auction/contract.algo.ts:644
+    // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig -2
     uncover 2
     uncover 3
@@ -3049,14 +3171,16 @@ bidAsa:
     // assert(this.isLive(), ERR_AUCTION_NOT_LIVE)
     callsub isLive
     assert // auction is not live
-    // smart_contracts/auction/contract.algo.ts:63
-    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
-    intc_0 // 0
-    bytec 20 // "gate_id"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:655
     // assert(this.gateID.value === 0, ERR_HAS_GATE)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:63
+    // gateID = GlobalState<uint64>({ key: AuctionGlobalStateKeyGateID })
+    bytec 20 // "gate_id"
+    // smart_contracts/auction/contract.algo.ts:655
+    // assert(this.gateID.value === 0, ERR_HAS_GATE)
+    app_global_get_ex
+    assert // check GlobalState exists
     !
     assert // This has a gate
     // smart_contracts/auction/contract.algo.ts:657
@@ -3073,14 +3197,16 @@ refundBid:
     // smart_contracts/auction/contract.algo.ts:660
     // refundBid(id: uint64): void {
     proto 1 0
-    // smart_contracts/auction/contract.algo.ts:75
-    // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
-    intc_0 // 0
-    bytec 10 // "bid_id"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:662
     // assert(id < this.bidID.value, ERR_CANNOT_REFUND_MOST_RECENT_BID)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:75
+    // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
+    bytec 10 // "bid_id"
+    // smart_contracts/auction/contract.algo.ts:662
+    // assert(id < this.bidID.value, ERR_CANNOT_REFUND_MOST_RECENT_BID)
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig -1
     >
     assert // cannot refund most recent bid
@@ -3138,14 +3264,16 @@ refundBid:
     // smart_contracts/auction/contract.algo.ts:674
     // const returnAmount: uint64 = amount - bidFee
     -
-    // smart_contracts/auction/contract.algo.ts:35
-    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
-    bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:676
     // if (this.bidAsset.value.id === 0) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:35
+    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
+    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:676
+    // if (this.bidAsset.value.id === 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bnz refundBid_else_body@3
     // smart_contracts/auction/contract.algo.ts:678-681
     // itxn.payment({
@@ -3163,14 +3291,16 @@ refundBid:
     itxn_submit
 
 refundBid_after_if_else@5:
-    // smart_contracts/auction/contract.algo.ts:67
-    // refundCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundCount })
-    intc_0 // 0
-    bytec 29 // "refund_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:690
     // this.refundCount.value += 1
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:67
+    // refundCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundCount })
+    bytec 29 // "refund_count"
+    // smart_contracts/auction/contract.algo.ts:690
+    // this.refundCount.value += 1
+    app_global_get_ex
+    assert // check GlobalState exists
     intc_1 // 1
     +
     // smart_contracts/auction/contract.algo.ts:67
@@ -3190,10 +3320,14 @@ refundBid_else_body@3:
     //   xferAsset: this.bidAsset.value,
     // }).submit()
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:686
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:686
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -3223,24 +3357,26 @@ raffle:
     dupn 2
     pushbytes ""
     dupn 8
+    // smart_contracts/auction/contract.algo.ts:694
+    // const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:45
     // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
     bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:694
     // const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
+    app_global_get_ex
+    assert // check GlobalState exists
     intc_1 // 1
     +
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:65
     // vrfFailureCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyVRFFailureCount })
-    intc_0 // 0
     bytec 23 // "vrf_failure_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:694
     // const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
+    app_global_get_ex
+    assert // check GlobalState exists
     intc_2 // 4
     *
     +
@@ -3252,14 +3388,16 @@ raffle:
     +
     >=
     assert // not enough time has passed
-    // smart_contracts/auction/contract.algo.ts:102
-    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
-    intc_0 // 0
-    bytec 14 // "winning_ticket"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:696
     // assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:102
+    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
+    bytec 14 // "winning_ticket"
+    // smart_contracts/auction/contract.algo.ts:696
+    // assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
+    app_global_get_ex
+    assert // check GlobalState exists
     !
     assert // winner already drawn
     // smart_contracts/auction/contract.algo.ts:698-704
@@ -3271,13 +3409,17 @@ raffle:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:701
+    // appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:701
+    // appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:35
+    // smart_contracts/utils/functions.ts:38
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     bytec 36 // "other_al"
     app_global_get_ex
@@ -3290,10 +3432,12 @@ raffle:
     // args: [roundToUse, this.salt.value],
     swap
     itob
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:106
     // salt = GlobalState<bytes<32>>({ key: AuctionGlobalStateKeySalt })
-    intc_0 // 0
     bytec 41 // "salt"
+    // smart_contracts/auction/contract.algo.ts:702
+    // args: [roundToUse, this.salt.value],
     app_global_get_ex
     assert // check GlobalState exists
     dup
@@ -3334,14 +3478,16 @@ raffle:
     len
     dup
     bnz raffle_after_if_else@3
-    // smart_contracts/auction/contract.algo.ts:65
-    // vrfFailureCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyVRFFailureCount })
-    intc_0 // 0
-    bytec 23 // "vrf_failure_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:707
     // this.vrfFailureCount.value += 1
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:65
+    // vrfFailureCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyVRFFailureCount })
+    bytec 23 // "vrf_failure_count"
+    // smart_contracts/auction/contract.algo.ts:707
+    // this.vrfFailureCount.value += 1
+    app_global_get_ex
+    assert // check GlobalState exists
     intc_1 // 1
     +
     // smart_contracts/auction/contract.algo.ts:65
@@ -3467,10 +3613,14 @@ raffle_after_if_else@3:
     itob
     concat
     frame_bury 1
+    // smart_contracts/auction/contract.algo.ts:714
+    // let upperBound = this.weightedBidTotal.value
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:71
     // weightedBidTotal = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightedBidTotal })
-    intc_0 // 0
     bytec 16 // "weighted_bid_total"
+    // smart_contracts/auction/contract.algo.ts:714
+    // let upperBound = this.weightedBidTotal.value
     app_global_get_ex
     swap
     dup
@@ -3727,52 +3877,62 @@ findWinner:
     intc_0 // 0
     pushbytes ""
     dup
-    // smart_contracts/auction/contract.algo.ts:37
-    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
-    bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:725
     // assert(this.bidFee.value > 0, ERR_NOT_APPLICABLE_TO_THIS_AUCTION)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:37
+    // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
+    bytec_3 // "bid_fee"
+    // smart_contracts/auction/contract.algo.ts:725
+    // assert(this.bidFee.value > 0, ERR_NOT_APPLICABLE_TO_THIS_AUCTION)
+    app_global_get_ex
+    assert // check GlobalState exists
     assert // not applicable to this auction
     // smart_contracts/auction/contract.algo.ts:726
     // assert(Global.latestTimestamp < this.endTimestamp.value, ERR_AUCTION_HAS_NOT_ENDED)
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:45
     // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
     bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:726
     // assert(Global.latestTimestamp < this.endTimestamp.value, ERR_AUCTION_HAS_NOT_ENDED)
+    app_global_get_ex
+    assert // check GlobalState exists
     <
     assert // auction has not ended
-    // smart_contracts/auction/contract.algo.ts:102
-    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
-    intc_0 // 0
-    bytec 14 // "winning_ticket"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:727
     // assert(this.winningTicket.value !== 0, ERR_WINNING_NUMBER_NOT_FOUND)
-    assert // winning number not found
-    // smart_contracts/auction/contract.algo.ts:104
-    // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
     intc_0 // 0
-    bytec 5 // "raffle_winner"
+    // smart_contracts/auction/contract.algo.ts:102
+    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
+    bytec 14 // "winning_ticket"
+    // smart_contracts/auction/contract.algo.ts:727
+    // assert(this.winningTicket.value !== 0, ERR_WINNING_NUMBER_NOT_FOUND)
     app_global_get_ex
     assert // check GlobalState exists
+    assert // winning number not found
     // smart_contracts/auction/contract.algo.ts:728
     // assert(this.raffleWinner.value === Global.zeroAddress, ERR_WINNER_ALREADY_FOUND)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:104
+    // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
+    bytec 5 // "raffle_winner"
+    // smart_contracts/auction/contract.algo.ts:728
+    // assert(this.raffleWinner.value === Global.zeroAddress, ERR_WINNER_ALREADY_FOUND)
+    app_global_get_ex
+    assert // check GlobalState exists
     global ZeroAddress
     ==
     assert // winner already found
+    // smart_contracts/auction/contract.algo.ts:389
+    // let { startingIndex, currentRangeStart } = this.findWinnerCursors.value
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:94
     // findWinnerCursors = GlobalState<FindWinnerCursors>({ key: AuctionGlobalStateKeyFindWinnerCursors })
-    intc_0 // 0
     bytec 33 // "find_winner_cursors"
+    // smart_contracts/auction/contract.algo.ts:389
+    // let { startingIndex, currentRangeStart } = this.findWinnerCursors.value
     app_global_get_ex
     assert // check GlobalState exists
     dup
@@ -3786,39 +3946,45 @@ findWinner:
     intc_0 // 0
 
 findWinner_while_top@11:
-    // smart_contracts/auction/contract.algo.ts:86
-    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
-    intc_0 // 0
-    bytec 8 // "weights_box_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:391
     // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:86
+    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
+    bytec 8 // "weights_box_count"
+    // smart_contracts/auction/contract.algo.ts:391
+    // for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig 5
     >
     bz findWinner_after_while@15
-    // smart_contracts/auction/contract.algo.ts:88
-    // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
-    intc_0 // 0
-    bytec 7 // "w_totals"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:392
     // const boxStake = this.weightTotals.value[i].native
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:88
+    // weightTotals = GlobalState<StaticArray<Uint64, 15>>({ key: AuctionGlobalStateKeyWeightTotals })
+    bytec 7 // "w_totals"
+    // smart_contracts/auction/contract.algo.ts:392
+    // const boxStake = this.weightTotals.value[i].native
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig 5
     intc_3 // 8
     *
     extract_uint64
     dup
     frame_bury 1
-    // smart_contracts/auction/contract.algo.ts:102
-    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
-    intc_0 // 0
-    bytec 14 // "winning_ticket"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:393
     // if (this.winningTicket.value < currentRangeStart + boxStake) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:102
+    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
+    bytec 14 // "winning_ticket"
+    // smart_contracts/auction/contract.algo.ts:393
+    // if (this.winningTicket.value < currentRangeStart + boxStake) {
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig 4
     uncover 2
     +
@@ -3846,14 +4012,16 @@ findWinner_after_inlined_smart_contracts/auction/contract.algo.ts::Auction.getWi
     intc_3 // 8
     extract_uint64
     frame_bury 4
-    // smart_contracts/auction/contract.algo.ts:84
-    // uniqueAddressCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyUniqueAddressCount })
-    intc_0 // 0
-    bytec 19 // "unique_address_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:740
     // const remainder: uint64 = (this.uniqueAddressCount.value - 2) - startingIndex
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:84
+    // uniqueAddressCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyUniqueAddressCount })
+    bytec 19 // "unique_address_count"
+    // smart_contracts/auction/contract.algo.ts:740
+    // const remainder: uint64 = (this.uniqueAddressCount.value - 2) - startingIndex
+    app_global_get_ex
+    assert // check GlobalState exists
     pushint 2 // 2
     -
     dig 1
@@ -3910,14 +4078,16 @@ findWinner_while_top@1:
     // const amount = weight[i].native
     btoi
     dup
-    // smart_contracts/auction/contract.algo.ts:73
-    // highestBid = GlobalState<uint64>({ key: AuctionGlobalStateKeyHighestBid })
-    intc_0 // 0
-    bytec 15 // "highest_bid"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:749
     // if (amount === this.highestBid.value) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:73
+    // highestBid = GlobalState<uint64>({ key: AuctionGlobalStateKeyHighestBid })
+    bytec 15 // "highest_bid"
+    // smart_contracts/auction/contract.algo.ts:749
+    // if (amount === this.highestBid.value) {
+    app_global_get_ex
+    assert // check GlobalState exists
     ==
     bz findWinner_after_if_else@4
     // smart_contracts/auction/contract.algo.ts:750
@@ -3947,24 +4117,26 @@ findWinner_after_if_else@4:
     uncover 2
     +
     frame_bury 2
-    // smart_contracts/auction/contract.algo.ts:102
-    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
-    intc_0 // 0
-    bytec 14 // "winning_ticket"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:756
     // if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:102
+    // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
+    bytec 14 // "winning_ticket"
+    // smart_contracts/auction/contract.algo.ts:756
+    // if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
+    app_global_get_ex
+    assert // check GlobalState exists
     <=
     bz findWinner_after_if_else@7
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:102
     // winningTicket = GlobalState<uint64>({ key: AuctionGlobalStateKeyWinningTicket })
-    intc_0 // 0
     bytec 14 // "winning_ticket"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:756
     // if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig 2
     <=
     bz findWinner_after_if_else@7
@@ -4074,32 +4246,36 @@ refundMBR:
     dupn 2
     pushbytes ""
     dupn 3
-    // smart_contracts/auction/contract.algo.ts:33
-    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
-    intc_0 // 0
-    bytec 17 // "prize_claimed"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:769
     // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:33
+    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
+    bytec 17 // "prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:769
+    // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
+    app_global_get_ex
+    assert // check GlobalState exists
     assert // prize not claimed
+    // smart_contracts/auction/contract.algo.ts:771
+    // assert(this.bidFee.value === 0 || this.raffleWinner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:37
     // bidFee = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidFee })
-    intc_0 // 0
     bytec_3 // "bid_fee"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:771
     // assert(this.bidFee.value === 0 || this.raffleWinner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    app_global_get_ex
+    assert // check GlobalState exists
     bz refundMBR_bool_true@2
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:104
     // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
-    intc_0 // 0
     bytec 5 // "raffle_winner"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:771
     // assert(this.bidFee.value === 0 || this.raffleWinner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    app_global_get_ex
+    assert // check GlobalState exists
     global ZeroAddress
     !=
     bz refundMBR_bool_false@3
@@ -4111,20 +4287,24 @@ refundMBR_bool_merge@4:
     // smart_contracts/auction/contract.algo.ts:771
     // assert(this.bidFee.value === 0 || this.raffleWinner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
     assert // winner not found
-    // smart_contracts/auction/contract.algo.ts:75
-    // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
-    intc_0 // 0
-    bytec 10 // "bid_id"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:96
-    // refundMBRCursor = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundMBRCursor })
-    intc_0 // 0
-    bytec 25 // "refund_mbr_cursor"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:773
     // assert(this.bidID.value !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:75
+    // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
+    bytec 10 // "bid_id"
+    // smart_contracts/auction/contract.algo.ts:773
+    // assert(this.bidID.value !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:96
+    // refundMBRCursor = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundMBRCursor })
+    bytec 25 // "refund_mbr_cursor"
+    // smart_contracts/auction/contract.algo.ts:773
+    // assert(this.bidID.value !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
+    app_global_get_ex
+    assert // check GlobalState exists
     dup2
     !=
     assert // all refunds complete
@@ -4282,14 +4462,16 @@ refundMBR_after_if_else@10:
     b refundMBR_while_top@5
 
 refundMBR_after_while@12:
-    // smart_contracts/auction/contract.algo.ts:96
-    // refundMBRCursor = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundMBRCursor })
-    intc_0 // 0
-    bytec 25 // "refund_mbr_cursor"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:809
     // this.refundMBRCursor.value += iterationAmount
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:96
+    // refundMBRCursor = GlobalState<uint64>({ key: AuctionGlobalStateKeyRefundMBRCursor })
+    bytec 25 // "refund_mbr_cursor"
+    // smart_contracts/auction/contract.algo.ts:809
+    // this.refundMBRCursor.value += iterationAmount
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig -1
     +
     // smart_contracts/auction/contract.algo.ts:96
@@ -4318,30 +4500,36 @@ claimPrize:
     // smart_contracts/auction/contract.algo.ts:814
     // assert(Global.latestTimestamp > this.endTimestamp.value, ERR_AUCTION_HAS_NOT_ENDED)
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:45
     // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
     bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:814
     // assert(Global.latestTimestamp > this.endTimestamp.value, ERR_AUCTION_HAS_NOT_ENDED)
-    >
-    assert // auction has not ended
-    // smart_contracts/auction/contract.algo.ts:33
-    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
-    intc_0 // 0
-    bytec 17 // "prize_claimed"
     app_global_get_ex
     assert // check GlobalState exists
+    >
+    assert // auction has not ended
     // smart_contracts/auction/contract.algo.ts:815
     // assert(!this.prizeClaimed.value, ERR_PRIZE_ALREADY_CLAIMED)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:33
+    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
+    bytec 17 // "prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:815
+    // assert(!this.prizeClaimed.value, ERR_PRIZE_ALREADY_CLAIMED)
+    app_global_get_ex
+    assert // check GlobalState exists
     !
     assert // prize already claimed
+    // smart_contracts/auction/contract.algo.ts:818
+    // const { address, amount, marketplace } = this.bids(this.bidID.value).value
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:75
     // bidID = GlobalState<uint64>({ key: AuctionGlobalStateKeyBidID })
-    intc_0 // 0
     bytec 10 // "bid_id"
+    // smart_contracts/auction/contract.algo.ts:818
+    // const { address, amount, marketplace } = this.bids(this.bidID.value).value
     app_global_get_ex
     assert // check GlobalState exists
     itob
@@ -4362,14 +4550,16 @@ claimPrize:
     extract_uint64
     swap
     extract 40 32
-    // smart_contracts/auction/contract.algo.ts:31
-    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
-    intc_0 // 0
-    bytec 13 // "is_prize_box"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:221
     // if (this.isPrizeBox.value) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:31
+    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
+    bytec 13 // "is_prize_box"
+    // smart_contracts/auction/contract.algo.ts:221
+    // if (this.isPrizeBox.value) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bz claimPrize_after_if_else@35
     // smart_contracts/auction/contract.algo.ts:222-228
     // abiCall(
@@ -4380,10 +4570,14 @@ claimPrize:
     //   }
     // )
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:225
+    // appId: this.prize.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:29
     // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
     bytec 4 // "prize"
+    // smart_contracts/auction/contract.algo.ts:225
+    // appId: this.prize.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:222-228
@@ -4394,7 +4588,7 @@ claimPrize:
     //     args: [new Address(buyer)],
     //   }
     // )
-    pushbytes 0x24cb311e // method "transfer(byte[32])void"
+    pushbytes 0xadf92ae4 // method "transfer(address)void"
     itxn_field ApplicationArgs
     frame_dig 10
     itxn_field ApplicationArgs
@@ -4406,14 +4600,16 @@ claimPrize:
     itxn_submit
 
 claimPrize_after_inlined_smart_contracts/auction/contract.algo.ts::Auction.transferPurchaseToBuyer@39:
-    // smart_contracts/auction/contract.algo.ts:35
-    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
-    bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:822
     // if (this.bidAsset.value.id === 0) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:35
+    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
+    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:822
+    // if (this.bidAsset.value.id === 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bnz claimPrize_else_body@2
     // smart_contracts/auction/contract.algo.ts:254
     // const { creator, akita, marketplace, seller } = this.getAmounts(amount)
@@ -4434,52 +4630,66 @@ claimPrize_after_inlined_smart_contracts/auction/contract.algo.ts::Auction.trans
     pushint 24 // 24
     extract_uint64
     frame_bury 9
-    // smart_contracts/auction/contract.algo.ts:29
-    // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
-    bytec 4 // "prize"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:258
     // receiver: Asset(this.prize.value).creator,
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:29
+    // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
+    bytec 4 // "prize"
+    // smart_contracts/auction/contract.algo.ts:258
+    // receiver: Asset(this.prize.value).creator,
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_params_get AssetCreator
     swap
     frame_bury 2
     assert // asset exists
-    // smart_contracts/utils/base-contracts/escrow.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:263
     // receiver: this.akitaDAO.value.address,
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:263
+    // receiver: this.akitaDAO.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
+    // smart_contracts/auction/contract.algo.ts:269
+    // receiver: this.marketplace.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:59
     // marketplace = GlobalState<Account>({ key: AuctionGlobalStateKeyMarketplace })
-    intc_0 // 0
     bytec 21 // "marketplace"
+    // smart_contracts/auction/contract.algo.ts:269
+    // receiver: this.marketplace.value,
     app_global_get_ex
     swap
     frame_bury 0
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:281
+    // receiver: this.seller.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:47
     // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
-    intc_0 // 0
     bytec 12 // "seller"
+    // smart_contracts/auction/contract.algo.ts:281
+    // receiver: this.seller.value,
     app_global_get_ex
     swap
     frame_bury 1
     assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:31
-    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
-    intc_0 // 0
-    bytec 13 // "is_prize_box"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:285
     // if (!this.isPrizeBox.value) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:31
+    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
+    bytec 13 // "is_prize_box"
+    // smart_contracts/auction/contract.algo.ts:285
+    // if (!this.isPrizeBox.value) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bnz claimPrize_after_if_else@31
     // smart_contracts/auction/contract.algo.ts:286
     // akitaTxn.set({ amount: (akita + creator) })
@@ -4669,33 +4879,35 @@ claimPrize_else_body@2:
     pushint 24 // 24
     extract_uint64
     frame_bury 9
+    // smart_contracts/auction/contract.algo.ts:299
+    // if (!this.isPrizeBox.value && Asset(this.prize.value).creator.isOptedIn(this.bidAsset.value)) {
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:31
     // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
-    intc_0 // 0
     bytec 13 // "is_prize_box"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:299
     // if (!this.isPrizeBox.value && Asset(this.prize.value).creator.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bnz claimPrize_else_body@7
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:29
     // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
     bytec 4 // "prize"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:299
     // if (!this.isPrizeBox.value && Asset(this.prize.value).creator.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_params_get AssetCreator
     assert // asset exists
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:299
     // if (!this.isPrizeBox.value && Asset(this.prize.value).creator.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_holding_get AssetBalance
     bury 1
     bz claimPrize_else_body@7
@@ -4708,20 +4920,26 @@ claimPrize_else_body@2:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/auction/contract.algo.ts:29
-    // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
-    bytec 4 // "prize"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:302
     // assetReceiver: Asset(this.prize.value).creator,
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:29
+    // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
+    bytec 4 // "prize"
+    // smart_contracts/auction/contract.algo.ts:302
+    // assetReceiver: Asset(this.prize.value).creator,
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_params_get AssetCreator
     assert // asset exists
+    // smart_contracts/auction/contract.algo.ts:304
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:304
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -4750,24 +4968,26 @@ claimPrize_else_body@2:
     itxn_submit
 
 claimPrize_after_if_else@9:
+    // smart_contracts/auction/contract.algo.ts:317
+    // if (this.akitaDAOEscrow.value.address.isOptedIn(this.bidAsset.value)) {
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:16
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    intc_0 // 0
     bytec 22 // "akita_escrow"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:317
     // if (this.akitaDAOEscrow.value.address.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:317
     // if (this.akitaDAOEscrow.value.address.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_holding_get AssetBalance
     bury 1
     bz claimPrize_else_body@14
@@ -4780,34 +5000,42 @@ claimPrize_after_if_else@9:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/utils/base-contracts/escrow.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:320
     // assetReceiver: this.akitaDAO.value.address,
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:320
+    // assetReceiver: this.akitaDAO.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     swap
     frame_bury 3
     assert // application exists
-    // smart_contracts/auction/contract.algo.ts:31
-    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
-    intc_0 // 0
-    bytec 13 // "is_prize_box"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:321
     // assetAmount: !this.isPrizeBox.value ? akita : (akita + creator),
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:31
+    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
+    bytec 13 // "is_prize_box"
+    // smart_contracts/auction/contract.algo.ts:321
+    // assetAmount: !this.isPrizeBox.value ? akita : (akita + creator),
+    app_global_get_ex
+    assert // check GlobalState exists
     bnz claimPrize_ternary_false@12
     frame_dig 4
 
 claimPrize_ternary_merge@13:
+    // smart_contracts/auction/contract.algo.ts:322
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:322
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -4836,20 +5064,24 @@ claimPrize_ternary_merge@13:
     itxn_submit
 
 claimPrize_after_if_else@18:
-    // smart_contracts/auction/contract.algo.ts:59
-    // marketplace = GlobalState<Account>({ key: AuctionGlobalStateKeyMarketplace })
-    intc_0 // 0
-    bytec 21 // "marketplace"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:35
-    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
-    bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:334
     // if (this.marketplace.value.isOptedIn(this.bidAsset.value)) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:59
+    // marketplace = GlobalState<Account>({ key: AuctionGlobalStateKeyMarketplace })
+    bytec 21 // "marketplace"
+    // smart_contracts/auction/contract.algo.ts:334
+    // if (this.marketplace.value.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:35
+    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
+    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:334
+    // if (this.marketplace.value.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_holding_get AssetBalance
     bury 1
     bz claimPrize_else_body@20
@@ -4862,16 +5094,24 @@ claimPrize_after_if_else@18:
     //   })
     //   .submit()
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:337
+    // assetReceiver: this.marketplace.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:59
     // marketplace = GlobalState<Account>({ key: AuctionGlobalStateKeyMarketplace })
-    intc_0 // 0
     bytec 21 // "marketplace"
+    // smart_contracts/auction/contract.algo.ts:337
+    // assetReceiver: this.marketplace.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:339
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:339
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -4900,14 +5140,16 @@ claimPrize_after_if_else@18:
     itxn_submit
 
 claimPrize_after_if_else@21:
-    // smart_contracts/auction/contract.algo.ts:35
-    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
-    bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:352
     // if (buySideMarketplace.isOptedIn(this.bidAsset.value)) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:35
+    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
+    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:352
+    // if (buySideMarketplace.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig 12
     swap
     asset_holding_get AssetBalance
@@ -4922,10 +5164,14 @@ claimPrize_after_if_else@21:
     //   })
     //   .submit()
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:357
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:357
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -4955,20 +5201,24 @@ claimPrize_after_if_else@21:
     itxn_submit
 
 claimPrize_after_if_else@24:
-    // smart_contracts/auction/contract.algo.ts:47
-    // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
-    intc_0 // 0
-    bytec 12 // "seller"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:35
-    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
-    bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:370
     // if (this.seller.value.isOptedIn(this.bidAsset.value)) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:47
+    // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
+    bytec 12 // "seller"
+    // smart_contracts/auction/contract.algo.ts:370
+    // if (this.seller.value.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:35
+    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
+    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:370
+    // if (this.seller.value.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_holding_get AssetBalance
     bury 1
     bz claimPrize_else_body@26
@@ -4981,16 +5231,24 @@ claimPrize_after_if_else@24:
     //   })
     //   .submit()
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:373
+    // assetReceiver: this.seller.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:47
     // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
-    intc_0 // 0
     bytec 12 // "seller"
+    // smart_contracts/auction/contract.algo.ts:373
+    // assetReceiver: this.seller.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:375
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:375
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -5020,22 +5278,34 @@ claimPrize_after_if_else@24:
     b claimPrize_after_if_else@3
 
 claimPrize_else_body@26:
+    // smart_contracts/auction/contract.algo.ts:379
+    // arc59OptInAndSend(this.akitaDAO.value,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:379
+    // arc59OptInAndSend(this.akitaDAO.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:380
+    // new Address(this.seller.value),
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:47
     // seller = GlobalState<Account>({ key: AuctionGlobalStateKeySeller })
-    intc_0 // 0
     bytec 12 // "seller"
+    // smart_contracts/auction/contract.algo.ts:380
+    // new Address(this.seller.value),
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:381
+    // this.bidAsset.value.id,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:381
+    // this.bidAsset.value.id,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:379-384
@@ -5060,16 +5330,24 @@ claimPrize_else_body@26:
     b claimPrize_after_if_else@3
 
 claimPrize_else_body@23:
+    // smart_contracts/auction/contract.algo.ts:361
+    // arc59OptInAndSend(this.akitaDAO.value,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:361
+    // arc59OptInAndSend(this.akitaDAO.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:363
+    // this.bidAsset.value.id,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:363
+    // this.bidAsset.value.id,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:361-366
@@ -5096,22 +5374,34 @@ claimPrize_else_body@23:
     b claimPrize_after_if_else@24
 
 claimPrize_else_body@20:
+    // smart_contracts/auction/contract.algo.ts:343
+    // arc59OptInAndSend(this.akitaDAO.value,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:343
+    // arc59OptInAndSend(this.akitaDAO.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:344
+    // new Address(this.marketplace.value),
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:59
     // marketplace = GlobalState<Account>({ key: AuctionGlobalStateKeyMarketplace })
-    intc_0 // 0
     bytec 21 // "marketplace"
+    // smart_contracts/auction/contract.algo.ts:344
+    // new Address(this.marketplace.value),
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:345
+    // this.bidAsset.value.id,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:345
+    // this.bidAsset.value.id,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:343-348
@@ -5144,22 +5434,28 @@ claimPrize_ternary_false@12:
     b claimPrize_ternary_merge@13
 
 claimPrize_else_body@14:
+    // smart_contracts/auction/contract.algo.ts:328
+    // this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:328
+    // this.bidAsset.value,
     app_global_get_ex
     swap
     frame_bury 7
     assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:31
-    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
-    intc_0 // 0
-    bytec 13 // "is_prize_box"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:329
     // !this.isPrizeBox.value ? akita : (akita + creator)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:31
+    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
+    bytec 13 // "is_prize_box"
+    // smart_contracts/auction/contract.algo.ts:329
+    // !this.isPrizeBox.value ? akita : (akita + creator)
+    app_global_get_ex
+    assert // check GlobalState exists
     bnz claimPrize_ternary_false@16
     frame_dig 4
 
@@ -5187,35 +5483,47 @@ claimPrize_ternary_false@16:
     b claimPrize_ternary_merge@17
 
 claimPrize_else_body@7:
-    // smart_contracts/auction/contract.algo.ts:31
-    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
-    intc_0 // 0
-    bytec 13 // "is_prize_box"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:307
     // } else if (!this.isPrizeBox.value) {
-    bnz claimPrize_after_if_else@9
-    // smart_contracts/utils/base-contracts/escrow.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     intc_0 // 0
-    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:31
+    // isPrizeBox = GlobalState<boolean>({ key: AuctionGlobalStateKeyIsPrizeBox })
+    bytec 13 // "is_prize_box"
+    // smart_contracts/auction/contract.algo.ts:307
+    // } else if (!this.isPrizeBox.value) {
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:29
-    // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
+    bnz claimPrize_after_if_else@9
+    // smart_contracts/auction/contract.algo.ts:308
+    // arc59OptInAndSend(this.akitaDAO.value,
     intc_0 // 0
-    bytec 4 // "prize"
+    // smart_contracts/utils/base-contracts/escrow.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:308
+    // arc59OptInAndSend(this.akitaDAO.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:309
     // new Address(Asset(this.prize.value).creator),
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:29
+    // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
+    bytec 4 // "prize"
+    // smart_contracts/auction/contract.algo.ts:309
+    // new Address(Asset(this.prize.value).creator),
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_params_get AssetCreator
     assert // asset exists
+    // smart_contracts/auction/contract.algo.ts:310
+    // this.bidAsset.value.id,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:310
+    // this.bidAsset.value.id,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:308-313
@@ -5243,14 +5551,14 @@ claimPrize_after_if_else@35:
     // smart_contracts/auction/contract.algo.ts:232
     // const prizeAmount = op.AssetHolding.assetBalance(Global.currentApplicationAddress, this.prize.value)[0]
     global CurrentApplicationAddress
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:29
     // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
     bytec 4 // "prize"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:232
     // const prizeAmount = op.AssetHolding.assetBalance(Global.currentApplicationAddress, this.prize.value)[0]
+    app_global_get_ex
+    assert // check GlobalState exists
     swap
     dig 1
     asset_holding_get AssetBalance
@@ -5271,10 +5579,14 @@ claimPrize_after_if_else@35:
     //   })
     //   .submit()
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:238
+    // xferAsset: this.prize.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:29
     // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
     bytec 4 // "prize"
+    // smart_contracts/auction/contract.algo.ts:238
+    // xferAsset: this.prize.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -5301,16 +5613,24 @@ claimPrize_after_if_else@35:
     b claimPrize_after_inlined_smart_contracts/auction/contract.algo.ts::Auction.transferPurchaseToBuyer@39
 
 claimPrize_else_body@37:
+    // smart_contracts/auction/contract.algo.ts:243
+    // this.akitaDAO.value,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:243
+    // this.akitaDAO.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:245
+    // this.prize.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:29
     // prize = GlobalState<uint64>({ key: AuctionGlobalStateKeyPrize })
-    intc_0 // 0
     bytec 4 // "prize"
+    // smart_contracts/auction/contract.algo.ts:245
+    // this.prize.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:242-248
@@ -5341,35 +5661,41 @@ claimPrize_else_body@37:
 
 // smart_contracts/auction/contract.algo.ts::Auction.claimRafflePrize() -> void:
 claimRafflePrize:
-    // smart_contracts/auction/contract.algo.ts:104
-    // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
-    intc_0 // 0
-    bytec 5 // "raffle_winner"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:832
     // assert(this.raffleWinner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:104
+    // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
+    bytec 5 // "raffle_winner"
+    // smart_contracts/auction/contract.algo.ts:832
+    // assert(this.raffleWinner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
+    app_global_get_ex
+    assert // check GlobalState exists
     global ZeroAddress
     !=
     assert // winner not found
-    // smart_contracts/auction/contract.algo.ts:79
-    // rafflePrizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyRafflePrizeClaimed })
-    intc_0 // 0
-    bytec 24 // "raffle_prize_claimed"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:833
     // assert(!this.rafflePrizeClaimed.value, ERR_RAFFLE_ALREADY_PRIZE_CLAIMED)
-    !
-    assert // raffle prize already claimed
-    // smart_contracts/auction/contract.algo.ts:35
-    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
     intc_0 // 0
-    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:79
+    // rafflePrizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyRafflePrizeClaimed })
+    bytec 24 // "raffle_prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:833
+    // assert(!this.rafflePrizeClaimed.value, ERR_RAFFLE_ALREADY_PRIZE_CLAIMED)
     app_global_get_ex
     assert // check GlobalState exists
+    !
+    assert // raffle prize already claimed
     // smart_contracts/auction/contract.algo.ts:835
     // if (this.bidAsset.value.id === 0) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:35
+    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
+    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:835
+    // if (this.bidAsset.value.id === 0) {
+    app_global_get_ex
+    assert // check GlobalState exists
     bnz claimRafflePrize_else_body@3
     // smart_contracts/auction/contract.algo.ts:836-841
     // itxn
@@ -5379,16 +5705,24 @@ claimRafflePrize:
     //   })
     //   .submit()
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:838
+    // receiver: this.raffleWinner.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:104
     // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
-    intc_0 // 0
     bytec 5 // "raffle_winner"
+    // smart_contracts/auction/contract.algo.ts:838
+    // receiver: this.raffleWinner.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:839
+    // amount: this.raffleAmount.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:77
     // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
-    intc_0 // 0
     bytec 9 // "raffle_amount"
+    // smart_contracts/auction/contract.algo.ts:839
+    // amount: this.raffleAmount.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field Amount
@@ -5423,20 +5757,24 @@ claimRafflePrize_after_if_else@8:
     retsub
 
 claimRafflePrize_else_body@3:
-    // smart_contracts/auction/contract.algo.ts:104
-    // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
-    intc_0 // 0
-    bytec 5 // "raffle_winner"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/auction/contract.algo.ts:35
-    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
-    bytec_0 // "bid_asset"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:842
     // } else if (this.raffleWinner.value.isOptedIn(this.bidAsset.value)) {
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:104
+    // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
+    bytec 5 // "raffle_winner"
+    // smart_contracts/auction/contract.algo.ts:842
+    // } else if (this.raffleWinner.value.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:35
+    // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
+    bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:842
+    // } else if (this.raffleWinner.value.isOptedIn(this.bidAsset.value)) {
+    app_global_get_ex
+    assert // check GlobalState exists
     asset_holding_get AssetBalance
     bury 1
     bz claimRafflePrize_else_body@6
@@ -5449,22 +5787,34 @@ claimRafflePrize_else_body@3:
     //   })
     //   .submit()
     itxn_begin
+    // smart_contracts/auction/contract.algo.ts:845
+    // assetReceiver: this.raffleWinner.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:104
     // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
-    intc_0 // 0
     bytec 5 // "raffle_winner"
+    // smart_contracts/auction/contract.algo.ts:845
+    // assetReceiver: this.raffleWinner.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:846
+    // assetAmount: this.raffleAmount.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:77
     // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
-    intc_0 // 0
     bytec 9 // "raffle_amount"
+    // smart_contracts/auction/contract.algo.ts:846
+    // assetAmount: this.raffleAmount.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:847
+    // xferAsset: this.bidAsset.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:847
+    // xferAsset: this.bidAsset.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field XferAsset
@@ -5493,28 +5843,44 @@ claimRafflePrize_else_body@3:
     b claimRafflePrize_after_if_else@8
 
 claimRafflePrize_else_body@6:
+    // smart_contracts/auction/contract.algo.ts:851
+    // arc59OptInAndSend(this.akitaDAO.value,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/auction/contract.algo.ts:851
+    // arc59OptInAndSend(this.akitaDAO.value,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:852
+    // new Address(this.raffleWinner.value),
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:104
     // raffleWinner = GlobalState<Account>({ key: AuctionGlobalStateKeyRaffleWinner })
-    intc_0 // 0
     bytec 5 // "raffle_winner"
+    // smart_contracts/auction/contract.algo.ts:852
+    // new Address(this.raffleWinner.value),
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:853
+    // this.bidAsset.value.id,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:35
     // bidAsset = GlobalState<Asset>({ key: AuctionGlobalStateKeyBidAsset })
-    intc_0 // 0
     bytec_0 // "bid_asset"
+    // smart_contracts/auction/contract.algo.ts:853
+    // this.bidAsset.value.id,
     app_global_get_ex
     assert // check GlobalState exists
+    // smart_contracts/auction/contract.algo.ts:854
+    // this.raffleAmount.value,
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:77
     // raffleAmount = GlobalState<uint64>({ key: AuctionGlobalStateKeyRaffleAmount })
-    intc_0 // 0
     bytec 9 // "raffle_amount"
+    // smart_contracts/auction/contract.algo.ts:854
+    // this.raffleAmount.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:855
@@ -5539,33 +5905,37 @@ clearWeightsBoxes:
     // smart_contracts/auction/contract.algo.ts:863
     // assert(Global.latestTimestamp > this.endTimestamp.value, ERR_AUCTION_HAS_NOT_ENDED)
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:45
     // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
     bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:863
     // assert(Global.latestTimestamp > this.endTimestamp.value, ERR_AUCTION_HAS_NOT_ENDED)
+    app_global_get_ex
+    assert // check GlobalState exists
     >
     assert // auction has not ended
-    // smart_contracts/auction/contract.algo.ts:33
-    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
-    intc_0 // 0
-    bytec 17 // "prize_claimed"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:864
     // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
-    assert // prize not claimed
-    // smart_contracts/auction/contract.algo.ts:79
-    // rafflePrizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyRafflePrizeClaimed })
     intc_0 // 0
-    bytec 24 // "raffle_prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:33
+    // prizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyPrizeClaimed })
+    bytec 17 // "prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:864
+    // assert(this.prizeClaimed.value, ERR_PRIZE_NOT_CLAIMED)
     app_global_get_ex
     assert // check GlobalState exists
+    assert // prize not claimed
     // smart_contracts/auction/contract.algo.ts:865
     // assert(this.rafflePrizeClaimed.value, ERR_RAFFLE_NOT_PRIZE_CLAIMED)
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:79
+    // rafflePrizeClaimed = GlobalState<boolean>({ key: AuctionGlobalStateKeyRafflePrizeClaimed })
+    bytec 24 // "raffle_prize_claimed"
+    // smart_contracts/auction/contract.algo.ts:865
+    // assert(this.rafflePrizeClaimed.value, ERR_RAFFLE_NOT_PRIZE_CLAIMED)
+    app_global_get_ex
+    assert // check GlobalState exists
     assert // raffle not prize claimed
     // smart_contracts/auction/contract.algo.ts:867
     // ensureBudget((iterationAmount * 30))
@@ -5585,14 +5955,16 @@ clearWeightsBoxes_while_top@1:
     frame_dig -1
     <
     bz clearWeightsBoxes_after_while@3
-    // smart_contracts/auction/contract.algo.ts:86
-    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
-    intc_0 // 0
-    bytec 8 // "weights_box_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:870
     // const ri: uint64 = (this.weightsBoxCount.value - 1) - i
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:86
+    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
+    bytec 8 // "weights_box_count"
+    // smart_contracts/auction/contract.algo.ts:870
+    // const ri: uint64 = (this.weightsBoxCount.value - 1) - i
+    app_global_get_ex
+    assert // check GlobalState exists
     intc_1 // 1
     -
     frame_dig 0
@@ -5619,14 +5991,16 @@ clearWeightsBoxes_while_top@1:
     b clearWeightsBoxes_while_top@1
 
 clearWeightsBoxes_after_while@3:
-    // smart_contracts/auction/contract.algo.ts:86
-    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
-    intc_0 // 0
-    bytec 8 // "weights_box_count"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:874
     // this.weightsBoxCount.value -= iterationAmount
+    intc_0 // 0
+    // smart_contracts/auction/contract.algo.ts:86
+    // weightsBoxCount = GlobalState<uint64>({ key: AuctionGlobalStateKeyWeightsBoxCount })
+    bytec 8 // "weights_box_count"
+    // smart_contracts/auction/contract.algo.ts:874
+    // this.weightsBoxCount.value -= iterationAmount
+    app_global_get_ex
+    assert // check GlobalState exists
     frame_dig -1
     -
     // smart_contracts/auction/contract.algo.ts:86
@@ -5684,14 +6058,14 @@ isLive:
     // smart_contracts/auction/contract.algo.ts:894
     // Global.latestTimestamp <= this.startTimestamp.value &&
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:43
     // startTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyStartTimestamp })
-    intc_0 // 0
     bytec 32 // "start_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:894
     // Global.latestTimestamp <= this.startTimestamp.value &&
+    app_global_get_ex
+    assert // check GlobalState exists
     <=
     // smart_contracts/auction/contract.algo.ts:894-895
     // Global.latestTimestamp <= this.startTimestamp.value &&
@@ -5700,14 +6074,14 @@ isLive:
     // smart_contracts/auction/contract.algo.ts:895
     // Global.latestTimestamp >= this.endTimestamp.value
     global LatestTimestamp
+    intc_0 // 0
     // smart_contracts/auction/contract.algo.ts:45
     // endTimestamp = GlobalState<uint64>({ key: AuctionGlobalStateKeyEndTimestamp })
-    intc_0 // 0
     bytec_2 // "end_timestamp"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/auction/contract.algo.ts:895
     // Global.latestTimestamp >= this.endTimestamp.value
+    app_global_get_ex
+    assert // check GlobalState exists
     >=
     // smart_contracts/auction/contract.algo.ts:894-895
     // Global.latestTimestamp <= this.startTimestamp.value &&
@@ -5770,14 +6144,16 @@ optAkitaEscrowInAndSend:
     //   },
     // )
     itxn_begin
-    // smart_contracts/utils/base-contracts/escrow.ts:16
-    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    intc_0 // 0
-    bytec 22 // "akita_escrow"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/escrow.ts:27
     // receiver: this.akitaDAOEscrow.value.address,
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:16
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+    bytec 22 // "akita_escrow"
+    // smart_contracts/utils/base-contracts/escrow.ts:27
+    // receiver: this.akitaDAOEscrow.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     // smart_contracts/utils/base-contracts/escrow.ts:28
@@ -5812,10 +6188,14 @@ optAkitaEscrowInAndSend:
     //   },
     // )
     itxn_next
+    // smart_contracts/utils/base-contracts/escrow.ts:24
+    // appId: this.akitaDAO.value,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
+    // smart_contracts/utils/base-contracts/escrow.ts:24
+    // appId: this.akitaDAO.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/escrow.ts:30
@@ -5869,14 +6249,16 @@ optAkitaEscrowInAndSend:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/utils/base-contracts/escrow.ts:16
-    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    intc_0 // 0
-    bytec 22 // "akita_escrow"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/escrow.ts:39
     // assetReceiver: this.akitaDAOEscrow.value.address,
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/escrow.ts:16
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+    bytec 22 // "akita_escrow"
+    // smart_contracts/utils/base-contracts/escrow.ts:39
+    // assetReceiver: this.akitaDAOEscrow.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -2
@@ -5918,14 +6300,14 @@ update:
     // smart_contracts/utils/base-contracts/escrow.ts:51
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/escrow.ts:51
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -5948,14 +6330,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/escrow.ts:58
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/escrow.ts:58
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -5978,14 +6360,14 @@ updateAkitaDAOEscrow:
     // smart_contracts/utils/base-contracts/escrow.ts:63
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/escrow.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/escrow.ts:63
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==

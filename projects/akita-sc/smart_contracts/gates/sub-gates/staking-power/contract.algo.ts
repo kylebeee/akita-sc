@@ -2,11 +2,11 @@ import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalS
 import {
   abimethod,
   Address,
-  decodeArc4
+  decodeArc4,
+  encodeArc4
 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { StakingPowerGateCheckParams, StakingPowerRegistryInfo } from './types'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import {
   Equal,
   GreaterThan,
@@ -15,22 +15,35 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
-import { ERR_BAD_OPERATION, ERR_INVALID_ARG_COUNT } from './errors'
 import { getAkitaAppList, getStakingPower } from '../../../utils/functions'
 import { Operator } from '../../types'
 import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { StakingPowerGateRegistryMBR } from './constants'
+import { ERR_BAD_OPERATION, ERR_INVALID_ARG_COUNT } from '../../errors'
+
+type StakingPowerGateRegistryInfo = {
+  op: Operator
+  asset: uint64
+  power: uint64
+}
+
+const StakingPowerGateRegistryMBR: uint64 = 12_500
+/** [op:1][asset:8][power:8] */
+const CheckArgsBytesLength: uint64 = 17
 
 export class StakingPowerGate extends AkitaBaseContract implements SubGateInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+  registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+  /** the abi string for the register args */
+  registrationShape = GlobalState<string>({ initialValue: '(uint8,uint64,uint64)', key: GateGlobalStateKeyRegistrationShape })
+  /** the abi string for the check args */
+  checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  registry = BoxMap<uint64, StakingPowerRegistryInfo>({ keyPrefix: '' })
+  registry = BoxMap<uint64, StakingPowerGateRegistryInfo>({ keyPrefix: '' })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -47,26 +60,15 @@ export class StakingPowerGate extends AkitaBaseContract implements SubGateInterf
       asset
     )
 
-    if (op === Equal) {
-      return userPower === power
+    switch (op) {
+      case Equal: return userPower === power
+      case NotEqual: return userPower !== power
+      case LessThan: return userPower < power
+      case LessThanOrEqualTo: return userPower <= power
+      case GreaterThan: return userPower > power
+      case GreaterThanOrEqualTo: return userPower >= power
+      default: return false
     }
-    if (op === NotEqual) {
-      return userPower !== power
-    }
-    if (op === LessThan) {
-      return userPower < power
-    }
-    if (op === LessThanOrEqualTo) {
-      return userPower <= power
-    }
-    if (op === GreaterThan) {
-      return userPower > power
-    }
-    if (op === GreaterThanOrEqualTo) {
-      return userPower >= power
-    }
-
-    return false
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -75,7 +77,6 @@ export class StakingPowerGate extends AkitaBaseContract implements SubGateInterf
   create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
-    this.registryCursor.value = 0
   }
 
   // STAKING POWER GATE METHODS -------------------------------------------------------------------
@@ -85,7 +86,7 @@ export class StakingPowerGate extends AkitaBaseContract implements SubGateInterf
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === 17, ERR_INVALID_ARG_COUNT)
+    assert(args.length === CheckArgsBytesLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
@@ -95,22 +96,26 @@ export class StakingPowerGate extends AkitaBaseContract implements SubGateInterf
       ERR_INVALID_PAYMENT
     )
 
-    const params = decodeArc4<StakingPowerRegistryInfo>(args)
+    const params = decodeArc4<StakingPowerGateRegistryInfo>(args)
     assert(params.op.native <= 6, ERR_BAD_OPERATION)
     const id = this.newRegistryID()
     this.registry(id).value = clone(params)
     return id
   }
 
-  check(args: bytes): boolean {
-    assert(args.length >= 40, ERR_INVALID_ARG_COUNT)
-    const params = decodeArc4<StakingPowerGateCheckParams>(args)
-    const info = clone(this.registry(params.registryID).value)
-    return this.stakingPowerGate(
-      params.user,
-      info.op,
-      info.asset,
-      info.power
-    )
+  check(caller: Address, registryID: uint64, args: bytes): boolean {
+    assert(args.length === 0, ERR_INVALID_ARG_COUNT)
+    const { op, asset, power } = clone(this.registry(registryID).value)
+    return this.stakingPowerGate(caller, op, asset, power)
+  }
+
+  @abimethod({ readonly: true })
+  getRegistrationShape(shape: StakingPowerGateRegistryInfo): StakingPowerGateRegistryInfo {
+    return shape
+  }
+
+  @abimethod({ readonly: true })
+  getEntry(registryID: uint64): bytes {
+    return encodeArc4(this.registry(registryID).value)
   }
 }

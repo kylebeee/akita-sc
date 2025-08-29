@@ -17,17 +17,6 @@ export const AkitaSocialBoxPrefixActions = 'a'
 export const ImpactBoxPrefixMeta = 'm'
 export const ImpactBoxPrefixSubscriptionStateModifier = 's'
 
-export const NFDGlobalStateKeysName = 'i.name'
-export const NFDGlobalStateKeysParentAppID = 'i.parentAppID'
-export const NFDGlobalStateKeysVersion = 'i.ver'
-export const NFDGlobalStateKeysTimeChanged = 'i.timeChanged'
-
-export const NFDMetaKeyVerifiedAddresses = 'v.caAlgo.0.as'
-export const NFDMetaKeyVerifiedDomain = 'v.domain'
-export const NFDMetaKeyVerifiedTwitter = 'v.twitter'
-export const NFDMetaKeyVerifiedDiscord = 'v.discord'
-export const NFDMetaKeyVerifiedTelegram = 'v.telegram'
-
 export const FollowsMBR: uint64 = 31_700
 export const BlocksMBR: uint64 = 15_700
 export const MinPostsMBR: uint64 = 36_500 // + (400 * ref.length),

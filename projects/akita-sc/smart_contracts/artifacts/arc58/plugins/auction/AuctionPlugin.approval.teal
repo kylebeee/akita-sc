@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 6 4
-    bytecblock "auction_factory" "spending_address" "akita_dao" 0x151f7c75 "version" 0x3ea11832 "akita_al" "gate_id" 0x9c81af74
+    bytecblock "auction_factory" "spending_address" "akita_dao" 0x151f7c75 "version" 0x3ea11832 "akita_al" "gate_id" 0x43922655
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:17
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     txn NumAppArgs
@@ -500,20 +500,20 @@ main_create_route@5:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:241
+    // smart_contracts/utils/functions.ts:288
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -572,16 +572,16 @@ new:
     //   weightsListCount: uint64,
     // ): uint64 {
     proto 15 1
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -15
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -603,14 +603,16 @@ new:
     frame_dig -12
     >=
     assert // Not enough asset
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
-    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:58
     // if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
+    bytec_0 // "auction_factory"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:58
+    // if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -13
@@ -634,14 +636,16 @@ new:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
-    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:67
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
+    bytec_0 // "auction_factory"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:67
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -712,14 +716,16 @@ new:
     itxn_submit
 
 new_after_if_else@4:
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
-    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:76
     // if (!this.factory.value.address.isOptedIn(Asset(bidAssetID))) {
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
+    bytec_0 // "auction_factory"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:76
+    // if (!this.factory.value.address.isOptedIn(Asset(bidAssetID))) {
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -9
@@ -743,14 +749,16 @@ new_after_if_else@4:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
-    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:85
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
+    bytec_0 // "auction_factory"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:85
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -878,14 +886,16 @@ new_ternary_merge@11:
     // (weightsListCount * costs.weights) +
     // fcosts.appCreators
     +
-    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
-    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:116
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
+    // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
+    bytec_0 // "auction_factory"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:116
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -1052,7 +1062,7 @@ new_ternary_merge@11:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // ).returnValue
-    pushbytes 0x3c7bd4f9 // method "newAuction(pay,axfer,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,byte[32],uint64)uint64"
+    pushbytes 0xd1548fff // method "newAuction(pay,axfer,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64)uint64"
     itxn_field ApplicationArgs
     uncover 8
     itxn_field ApplicationArgs
@@ -1121,30 +1131,30 @@ clearWeightsBoxes:
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:160
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
     uncover 2
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1210,16 +1220,16 @@ deleteAuctionApp:
     //   auctionAppID: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1231,14 +1241,14 @@ deleteAuctionApp:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:184
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -1303,49 +1313,68 @@ bid:
     proto 6 0
     intc_0 // 0
     pushbytes ""
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     frame_dig -6
-    // smart_contracts/utils/functions.ts:125
+    // smart_contracts/utils/functions.ts:144
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:123-126
+    // smart_contracts/utils/functions.ts:142-145
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -6
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:197
+    // smart_contracts/utils/functions.ts:150-153
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    frame_dig -6
+    // smart_contracts/utils/functions.ts:152
+    // Bytes(AbstractAccountGlobalStateKeysReferrer)
+    pushbytes "referrer"
+    // smart_contracts/utils/functions.ts:150-153
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:226
     // walletAddress: wallet.address,
     frame_dig -6
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/utils/functions.ts:196-200
+    // smart_contracts/utils/functions.ts:225-230
     // return {
     //   walletAddress: wallet.address,
     //   origin,
     //   sender,
+    //   referrer
     // }
+    uncover 3
+    concat
     uncover 2
     concat
     swap
@@ -1361,14 +1390,14 @@ bid:
     frame_dig -4
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:208
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1413,7 +1442,7 @@ bid:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // ).returnValue
-    pushbytes 0x6c86f1ea // method "hasBid(byte[32])bool"
+    pushbytes 0x6082303c // method "hasBid(address)bool"
     itxn_field ApplicationArgs
     frame_dig 3
     dup
@@ -1478,13 +1507,17 @@ bid_after_if_else@5:
     intc_0 // 0
     extract_uint16
     bz bid_else_body@11
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:239
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:239
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec 6 // "akita_al"
     app_global_get_ex
@@ -1558,7 +1591,7 @@ bid_after_if_else@5:
     itob
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:253
     // methodSelector(GateInterface.prototype.mustCheck),
-    bytec 8 // method "mustCheck(byte[32],uint64,byte[][])void"
+    bytec 8 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
     frame_dig 2
     itxn_field ApplicationArgs
@@ -1636,7 +1669,7 @@ bid_after_if_else@5:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x2e8e521e // method "gatedBid(pay,appl,byte[32])void"
+    pushbytes 0x9836c89f // method "gatedBid(pay,appl,address)void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -1713,7 +1746,7 @@ bid_else_body@11:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x95a812c2 // method "bid(pay,byte[32])void"
+    pushbytes 0x4d585697 // method "bid(pay,address)void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -1747,13 +1780,17 @@ bid_else_body@15:
     intc_0 // 0
     extract_uint16
     bz bid_else_body@21
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:293
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/auction/contract.algo.ts:293
+    // const gate = getAkitaAppList(this.akitaDAO.value).gate
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec 6 // "akita_al"
     app_global_get_ex
@@ -1850,7 +1887,7 @@ bid_else_body@15:
     itob
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:308
     // methodSelector(GateInterface.prototype.mustCheck),
-    bytec 8 // method "mustCheck(byte[32],uint64,byte[][])void"
+    bytec 8 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
     frame_dig 2
     itxn_field ApplicationArgs
@@ -1930,7 +1967,7 @@ bid_else_body@15:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x586b820f // method "gatedBidAsa(pay,axfer,appl,byte[32])void"
+    pushbytes 0xd9f4f03a // method "gatedBidAsa(pay,axfer,appl,address)void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -2034,7 +2071,7 @@ bid_else_body@21:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet)
     //   }
     // )
-    pushbytes 0x8bb0f722 // method "bidAsa(pay,axfer,byte[32])void"
+    pushbytes 0x76952931 // method "bidAsa(pay,axfer,address)void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
@@ -2060,16 +2097,16 @@ refundBid:
     //   id: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2081,14 +2118,14 @@ refundBid:
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:346
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2147,16 +2184,16 @@ claimPrize:
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2168,14 +2205,14 @@ claimPrize:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:367
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2227,16 +2264,16 @@ claimRafflePrize:
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2248,14 +2285,14 @@ claimRafflePrize:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:387
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2312,28 +2349,28 @@ raffle:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:404
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Creator is not the auction factory
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2388,16 +2425,16 @@ findWinner:
     //   iterationAmount: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2409,14 +2446,14 @@ findWinner:
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:427
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2475,16 +2512,16 @@ deleteApplication:
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2496,14 +2533,14 @@ deleteApplication:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:448
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2555,16 +2592,16 @@ cancel:
     //   auctionAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2576,14 +2613,14 @@ cancel:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // factory = GlobalState<Application>({ key: AuctionPluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "auction_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:468
     // assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2635,14 +2672,14 @@ update:
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2665,14 +2702,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==

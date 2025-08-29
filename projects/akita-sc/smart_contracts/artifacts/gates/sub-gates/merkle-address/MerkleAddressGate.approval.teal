@@ -3,23 +3,42 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 32 33
-    bytecblock "akita_dao" 0x151f7c75 "registry_cursor" "version"
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+    intcblock 1 0 32 35
+    bytecblock 0x151f7c75 "akita_dao" "registry_cursor" "registration_shape" "check_shape" "version"
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:29
+    // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
+    bytec_2 // "registry_cursor"
+    intc_0 // 1
+    app_global_put
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:31
+    // registrationShape = GlobalState<string>({ initialValue: '(address,string)', key: GateGlobalStateKeyRegistrationShape })
+    bytec_3 // "registration_shape"
+    pushbytes "(address,string)"
+    app_global_put
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:33
+    // checkShape = GlobalState<string>({ initialValue: 'byte[32][]', key: GateGlobalStateKeyCheckShape })
+    bytec 4 // "check_shape"
+    pushbytes "byte[32][]"
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
     txn NumAppArgs
-    bz main_after_if_else@12
-    pushbytess 0xcd9ad67e 0x329f04ee 0x77bb79b9 0xc61c862b 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(byte[])bool", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    bz main_after_if_else@17
+    pushbytess 0x7cb1cd38 0x329f04ee 0x77bb79b9 0x6e03f50a 0xbbb8a2ac 0xb455b05e 0x90d4fa5d 0xea9180dd 0x33e92c94 // method "create(string,uint64,string,string)void", method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((address,string))(address,string)", method "getCheckShape(byte[32][])byte[32][]", method "getEntry(uint64)byte[]", method "update(string)void", method "updateAkitaDAO(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@3 main_cost_route@4 main_register_route@5 main_check_route@6 main_update_route@7 main_updateAkitaDAO_route@8
+    match main_create_route@5 main_cost_route@6 main_register_route@7 main_check_route@8 main_getRegistrationShape_route@9 main_getCheckShape_route@10 main_getEntry_route@11 main_update_route@12 main_updateAkitaDAO_route@13
 
-main_after_if_else@12:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+main_after_if_else@17:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
-    intc_0 // 0
+    intc_1 // 0
     return
 
-main_updateAkitaDAO_route@8:
+main_updateAkitaDAO_route@13:
     // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
@@ -27,17 +46,17 @@ main_updateAkitaDAO_route@8:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     btoi
     // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     callsub updateAkitaDAO
-    intc_1 // 1
+    intc_0 // 1
     return
 
-main_update_route@7:
+main_update_route@12:
     // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
@@ -46,98 +65,167 @@ main_update_route@7:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     extract 2 0
     // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     callsub update
-    intc_1 // 1
+    intc_0 // 1
     return
 
-main_check_route@6:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:68
-    // check(args: bytes): boolean {
+main_getEntry_route@11:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:109
+    // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
-    extract 2 0
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:68
-    // check(args: bytes): boolean {
-    callsub check
-    pushbytes 0x00
-    intc_0 // 0
-    uncover 2
-    setbit
-    bytec_1 // 0x151f7c75
+    btoi
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:109
+    // @abimethod({ readonly: true })
+    callsub getEntry
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
-main_register_route@5:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:49
+main_getCheckShape_route@10:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:105
+    // getCheckShape(shape: Proof): Proof {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    bytec_0 // 0x151f7c75
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
+    // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
+    txna ApplicationArgs 1
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:105
+    // getCheckShape(shape: Proof): Proof {
+    concat
+    log
+    intc_0 // 1
+    return
+
+main_getRegistrationShape_route@9:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:101
+    // getRegistrationShape(shape: MerkleAddressGateRegistryInfo): MerkleAddressGateRegistryInfo {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    bytec_0 // 0x151f7c75
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
+    // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
+    txna ApplicationArgs 1
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:101
+    // getRegistrationShape(shape: MerkleAddressGateRegistryInfo): MerkleAddressGateRegistryInfo {
+    concat
+    log
+    intc_0 // 1
+    return
+
+main_check_route@8:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:81
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
+    // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    extract 2 0
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:81
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    callsub check
+    pushbytes 0x00
+    intc_1 // 0
+    uncover 2
+    setbit
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+main_register_route@7:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:65
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
     txn GroupIndex
-    intc_1 // 1
+    intc_0 // 1
     -
     dup
     gtxns TypeEnum
-    intc_1 // pay
+    intc_0 // pay
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:49
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:65
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     callsub register
     itob
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
-main_cost_route@4:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:44
+main_cost_route@6:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:60
     // cost(args: bytes): uint64 {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:44
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:60
     // cost(args: bytes): uint64 {
     callsub cost
     itob
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
-main_create_route@3:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:35
+main_create_route@5:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:49
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -145,63 +233,81 @@ main_create_route@3:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:15
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:25
     // export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:35
+    txna ApplicationArgs 3
+    extract 2 0
+    txna ApplicationArgs 4
+    extract 2 0
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:49
     // @abimethod({ onCreate: 'require' })
     callsub create
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
-// smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts::MerkleAddressGate.create(version: bytes, akitaDAO: uint64) -> void:
+// smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts::MerkleAddressGate.create(version: bytes, akitaDAO: uint64, registrationShape: bytes, checkShape: bytes) -> void:
 create:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:35-36
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:49-50
     // @abimethod({ onCreate: 'require' })
-    // create(version: string, akitaDAO: uint64): void {
-    proto 2 0
+    // create(version: string, akitaDAO: uint64, registrationShape: string, checkShape: string): void {
+    proto 4 0
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:37
+    bytec 5 // "version"
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:51
     // this.version.value = version
-    frame_dig -2
+    frame_dig -4
     app_global_put
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:38
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:52
     // this.akitaDAO.value = Application(akitaDAO)
-    frame_dig -1
+    frame_dig -3
     app_global_put
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:19
-    // registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:29
+    // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:39
-    // this.registryCursor.value = 0
-    intc_0 // 0
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:53
+    // this.registryCursor.value = 1
+    intc_0 // 1
+    app_global_put
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:31
+    // registrationShape = GlobalState<string>({ initialValue: '(address,string)', key: GateGlobalStateKeyRegistrationShape })
+    bytec_3 // "registration_shape"
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:54
+    // this.registrationShape.value = registrationShape
+    frame_dig -2
+    app_global_put
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:33
+    // checkShape = GlobalState<string>({ initialValue: 'byte[32][]', key: GateGlobalStateKeyCheckShape })
+    bytec 4 // "check_shape"
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:55
+    // this.checkShape.value = checkShape
+    frame_dig -1
     app_global_put
     retsub
 
 
-// smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts::MerkleAddressGate.cost(args: bytes) -> uint64:
+// smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts::MerkleAddressGate.cost(args: bytes) -> uint64:
 cost:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:44
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:60
     // cost(args: bytes): uint64 {
     proto 1 1
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:45
-    // assert(args.length >= 33, ERR_INVALID_ARG_COUNT)
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:61
+    // assert(args.length >= MinRegisterArgsLength, ERR_INVALID_ARG_COUNT)
     frame_dig -1
     len
     dup
-    intc_3 // 33
+    intc_3 // 35
     >=
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:46
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:62
     // return MinMetaMerkleRegistryMBR + (BoxCostPerBox * (args.length - 32))
     intc_2 // 32
     -
@@ -212,19 +318,19 @@ cost:
     retsub
 
 
-// smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts::MerkleAddressGate.register(mbrPayment: uint64, args: bytes) -> uint64:
+// smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts::MerkleAddressGate.register(mbrPayment: uint64, args: bytes) -> uint64:
 register:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:49
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:65
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     proto 2 1
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:53
-    // assert(args.length >= 33, ERR_INVALID_ARG_COUNT)
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:66
+    // assert(args.length >= MinRegisterArgsLength, ERR_INVALID_ARG_COUNT)
     frame_dig -1
     len
-    intc_3 // 33
+    intc_3 // 35
     >=
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:54-61
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:67-74
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -235,10 +341,10 @@ register:
     // )
     frame_dig -2
     gtxns Receiver
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:57
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:70
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:54-61
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:67-74
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -250,11 +356,11 @@ register:
     ==
     frame_dig -2
     gtxns Amount
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:58
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:71
     // amount: this.cost(args)
     frame_dig -1
     callsub cost
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:54-61
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:67-74
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -266,26 +372,30 @@ register:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:19
-    // registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
-    intc_0 // 0
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:42
+    // const id = this.registryCursor.value
+    intc_1 // 0
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:29
+    // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:42
+    // const id = this.registryCursor.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:29
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:43
     // this.registryCursor.value += 1
     dup
-    intc_1 // 1
+    intc_0 // 1
     +
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:19
-    // registryCursor = GlobalState<uint64>({ key: GateGlobalStateKeyRegistryCursor })
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:29
+    // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:29
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:43
     // this.registryCursor.value += 1
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:64
-    // this.registry(id).value = decodeArc4<MerkleAddressRegistryInfo>(args)
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:77
+    // this.registry(id).value = decodeArc4<MerkleAddressGateRegistryInfo>(args)
     dup
     itob
     dup
@@ -293,127 +403,114 @@ register:
     pop
     frame_dig -1
     box_put
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:65
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:78
     // return id
     retsub
 
 
-// smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts::MerkleAddressGate.check(args: bytes) -> uint64:
+// smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts::MerkleAddressGate.check(caller: bytes, registryID: uint64, args: bytes) -> uint64:
 check:
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:68
-    // check(args: bytes): boolean {
-    proto 1 1
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:72
-    // assert(args.length >= 104, ERR_INVALID_ARG_COUNT)
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:81
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    proto 3 1
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:82
+    // assert(args.length >= MinCheckArgsLength, ERR_INVALID_ARG_COUNT)
     frame_dig -1
     len
-    dup
-    pushint 104 // 104
+    pushint 66 // 66
     >=
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:74
-    // const registryInfo = clone(this.registry(params.registryID).value)
-    frame_dig -1
-    intc_2 // 32
-    extract_uint64
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:84
+    // const { creator, name } = clone(this.registry(registryID).value)
+    frame_dig -2
     itob
     dup
     box_get
     assert // Box must have value
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:76-88
+    swap
+    intc_1 // 0
+    intc_2 // 32
+    box_extract
+    dig 1
+    intc_2 // 32
+    extract_uint16
+    dig 2
+    len
+    uncover 3
+    cover 2
+    substring3
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:86-98
     // return abiCall(
     //   MetaMerkles.prototype.verify,
     //   {
     //     appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     //     args: [
-    //       registryInfo.creator,
-    //       registryInfo.name,
-    //       sha256(sha256(params.user.bytes)),
-    //       params.proof,
+    //       creator,
+    //       name,
+    //       sha256(sha256(caller.bytes)),
+    //       proof,
     //       MerkleTreeTypeUnspecified,
     //     ],
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:89
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:89
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:79
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:89
     // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     pushint 72 // 72
     extract_uint64
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:74
-    // const registryInfo = clone(this.registry(params.registryID).value)
-    uncover 2
-    intc_0 // 0
-    intc_2 // 32
-    box_extract
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:82
-    // registryInfo.name,
-    dig 2
-    intc_2 // 32
-    extract_uint16
-    dig 3
-    len
-    uncover 4
-    cover 2
-    substring3
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:83
-    // sha256(sha256(params.user.bytes)),
-    frame_dig -1
-    extract 0 32
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:93
+    // sha256(sha256(caller.bytes)),
+    frame_dig -3
     sha256
     sha256
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:84
-    // params.proof,
-    frame_dig -1
-    pushint 40 // 40
-    extract_uint16
-    frame_dig -1
-    swap
-    uncover 6
-    substring3
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:85
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:95
     // MerkleTreeTypeUnspecified,
-    intc_0 // 0
+    intc_1 // 0
     itob
-    // smart_contracts/gates/sub-gates/merkle-address/merkle_address.algo.ts:76-88
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:86-98
     // return abiCall(
     //   MetaMerkles.prototype.verify,
     //   {
     //     appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     //     args: [
-    //       registryInfo.creator,
-    //       registryInfo.name,
-    //       sha256(sha256(params.user.bytes)),
-    //       params.proof,
+    //       creator,
+    //       name,
+    //       sha256(sha256(caller.bytes)),
+    //       proof,
     //       MerkleTreeTypeUnspecified,
     //     ],
     //   }
     // ).returnValue
-    pushbytes 0xc948969b // method "verify(byte[32],string,byte[32],byte[32][],uint64)bool"
+    pushbytes 0x2bf3cc5a // method "verify(address,string,byte[32],byte[32][],uint64)bool"
     itxn_field ApplicationArgs
     uncover 4
     itxn_field ApplicationArgs
     uncover 3
     itxn_field ApplicationArgs
-    uncover 2
-    itxn_field ApplicationArgs
     swap
+    itxn_field ApplicationArgs
+    frame_dig -1
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
     pushint 6 // appl
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
     itxn_submit
     itxn LastLog
@@ -421,11 +518,26 @@ check:
     extract 4 0
     swap
     extract 0 4
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    intc_0 // 0
+    intc_1 // 0
     getbit
+    retsub
+
+
+// smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts::MerkleAddressGate.getEntry(registryID: uint64) -> bytes:
+getEntry:
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:109-110
+    // @abimethod({ readonly: true })
+    // getEntry(registryID: uint64): bytes {
+    proto 1 1
+    // smart_contracts/gates/sub-gates/merkle-address/contract.algo.ts:111
+    // return encodeArc4(this.registry(registryID).value)
+    frame_dig -1
+    itob
+    box_get
+    assert // Box must have value
     retsub
 
 
@@ -438,21 +550,21 @@ update:
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
+    bytec 5 // "version"
     // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
     frame_dig -1
@@ -468,21 +580,21 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
     frame_dig -1

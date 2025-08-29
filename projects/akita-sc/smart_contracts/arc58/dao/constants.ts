@@ -2,6 +2,9 @@ import { uint64 } from '@algorandfoundation/algorand-typescript'
 import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ProposalActionType, ProposalStatus, PayoutEscrowType, ProposalVoteType } from './types'
 
+export const AkitaDAONumGlobalBytes = 59
+export const AkitaDAONumGlobalUints = 5
+
 export const AkitaDAOGlobalStateKeysInitialized = 'initialized'
 export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
 export const AkitaDAOGlobalStateKeysWalletID = 'wallet_id'
@@ -22,8 +25,8 @@ export const AkitaDAOGlobalStateKeysUpgradeAppProposalSettings = 'upgrade_app_ps
 export const AkitaDAOGlobalStateKeysAddPluginProposalSettings = 'add_plugin_ps'
 export const AkitaDAOGlobalStateKeysRemovePluginProposalSettings = 'remove_plugin_ps'
 export const AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings = 'remove_execute_plugin_ps'
-export const AkitaDAOGlobalStateKeysAddAllowanceProposalSettings = 'add_allowance_ps'
-export const AkitaDAOGlobalStateKeysRemoveAllowanceProposalSettings = 'remove_allowance_ps'
+export const AkitaDAOGlobalStateKeysAddAllowancesProposalSettings = 'add_allowance_ps'
+export const AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings = 'remove_allowance_ps'
 export const AkitaDAOGlobalStateKeysNewEscrowProposalSettings = 'new_escrow_ps'
 export const AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings = 'toggle_escrow_lock_ps'
 export const AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings = 'update_fields_ps'
@@ -50,16 +53,20 @@ export const AkitaDAOEscrowAccountRaffles = 'raffles'
 
 export const MethodRestrictionByteLength: uint64 = 20
 
-export const MinDAOPluginMBR: uint64 = 50_500
-export const MinDAONamedPluginMBR: uint64 = 18_900
-export const MinDAOEscrowMBR: uint64 = 6_100
-export const DAOReceiveEscrowsMBR: uint64 = 32_900
-export const DAOReceiveAssetsMBR: uint64 = 9_300
-export const MinDAOPayoutEscrowsMBR: uint64 = 8_100
-export const DAOAllowanceMBR: uint64 = 29_300
-export const MinDAOProposalsMBR: uint64 = 42_100
+// export const MinDAOPluginMBR: uint64 = 50_500
+// export const MinDAONamedPluginMBR: uint64 = 18_900
+// export const MinDAOEscrowMBR: uint64 = 6_100
+// export const DAOReceiveEscrowsMBR: uint64 = 32_900
+// export const DAOReceiveAssetsMBR: uint64 = 9_300
+// export const MinDAOPayoutEscrowsMBR: uint64 = 8_100
+// export const DAOAllowanceMBR: uint64 = 29_300
+// export const MinDAOProposalsMBR: uint64 = 42_100
+export const MinDAOPluginMBR: uint64 = 23_700
+export const MinDAOProposalMBR: uint64 = 54_500
+export const MinDAOProposalActionMbr: uint64 = 5
 export const DAOProposalVotesMBR: uint64 = 22_500
-export const DAOExecutionsMBR: uint64 = 0
+
+// export const DAOExecutionsMBR: uint64 = 0
 
 export const DAOPayoutEscrowIndividualByteLength: uint64 = 32
 export const DAOPayoutEscrowGroupByteLength: uint64 = 8
@@ -84,8 +91,8 @@ export const ProposalActionTypeExecuteNamedPlugin: ProposalActionType = new Uint
 export const ProposalActionTypeRemoveExecutePlugin: ProposalActionType = new Uint8(32)
 export const ProposalActionTypeRemovePlugin: ProposalActionType = new Uint8(40)
 export const ProposalActionTypeRemoveNamedPlugin: ProposalActionType = new Uint8(41)
-export const ProposalActionTypeAddAllowance: ProposalActionType = new Uint8(50)
-export const ProposalActionTypeRemoveAllowance: ProposalActionType = new Uint8(60)
+export const ProposalActionTypeAddAllowances: ProposalActionType = new Uint8(50)
+export const ProposalActionTypeRemoveAllowances: ProposalActionType = new Uint8(60)
 export const ProposalActionTypeNewEscrow: ProposalActionType = new Uint8(70)
 export const ProposalActionTypeToggleEscrowLock: ProposalActionType = new Uint8(71)
 export const ProposalActionTypeNewReceiveEscrow: ProposalActionType = new Uint8(72)

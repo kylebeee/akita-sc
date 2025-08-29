@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 6 41 34900 222200 68200
-    bytecblock "akita_dao" 0x151f7c75 "o" "akita_al" 0xc948969b "p" 0x14 "h" 0x0a 0x1e "version" 0xa24c067c "offer_cursor" "other_al" 0x27da7b45
+    bytecblock "akita_dao" 0x151f7c75 "o" "akita_al" 0x2bf3cc5a "p" 0x14 "h" 0x0a 0x1e "version" 0xa24c067c "offer_cursor" "other_al" 0xcaa8daa5
     // smart_contracts/hyper-swap/contract.algo.ts:20-24
     // export class HyperSwap extends classes(
     //   BaseHyperSwap,
@@ -13,9 +13,9 @@ main:
     // ) {
     txn NumAppArgs
     bz main_bare_routing@18
-    pushbytess 0xcd9ad67e 0x0db3a44b 0xbde1a11e 0xd85febdd 0x466f871a 0x5bac4ce3 0x0c7ab42e 0x0631868b 0xea9180dd 0x33e92c94 0x3ea11832 // method "create(string,uint64)void", method "offer(pay,byte[32],uint64,byte[32],uint64,uint64)void", method "accept(pay,uint64,byte[32][])void", method "escrow(pay,uint64,address,uint64,byte[32][])void", method "escrowAsa(pay,axfer,uint64,address,uint64,uint64,byte[32][])void", method "disburse(uint64,address,uint64,uint64)void", method "cancel(uint64,byte[32][])void", method "withdraw(uint64,address,uint64,uint64,byte[32][])void", method "update(string)void", method "updateAkitaDAO(uint64)void", method "optin(pay,uint64)void"
+    pushbytess 0xcd9ad67e 0x0db3a44b 0xbde1a11e 0xd85febdd 0x466f871a 0x5bac4ce3 0x0c7ab42e 0x0631868b 0x3ea11832 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "offer(pay,byte[32],uint64,byte[32],uint64,uint64)void", method "accept(pay,uint64,byte[32][])void", method "escrow(pay,uint64,address,uint64,byte[32][])void", method "escrowAsa(pay,axfer,uint64,address,uint64,uint64,byte[32][])void", method "disburse(uint64,address,uint64,uint64)void", method "cancel(uint64,byte[32][])void", method "withdraw(uint64,address,uint64,uint64,byte[32][])void", method "optin(pay,uint64)void", method "update(string)void", method "updateAkitaDAO(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_offer_route@6 main_accept_route@7 main_escrow_route@8 main_escrowAsa_route@9 main_disburse_route@10 main_cancel_route@11 main_withdraw_route@12 main_update_route@13 main_updateAkitaDAO_route@14 main_optin_route@15
+    match main_create_route@5 main_offer_route@6 main_accept_route@7 main_escrow_route@8 main_escrowAsa_route@9 main_disburse_route@10 main_cancel_route@11 main_withdraw_route@12 main_optin_route@13 main_update_route@14 main_updateAkitaDAO_route@15
 
 main_after_if_else@22:
     // smart_contracts/hyper-swap/contract.algo.ts:20-24
@@ -27,7 +27,52 @@ main_after_if_else@22:
     intc_0 // 0
     return
 
-main_optin_route@15:
+main_updateAkitaDAO_route@15:
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/hyper-swap/contract.algo.ts:20-24
+    // export class HyperSwap extends classes(
+    //   BaseHyperSwap,
+    //   AkitaBaseContract,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    callsub updateAkitaDAO
+    intc_1 // 1
+    return
+
+main_update_route@14:
+    // smart_contracts/utils/base-contracts/base.ts:18
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txn OnCompletion
+    pushint 4 // UpdateApplication
+    ==
+    assert // OnCompletion is not UpdateApplication
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/hyper-swap/contract.algo.ts:20-24
+    // export class HyperSwap extends classes(
+    //   BaseHyperSwap,
+    //   AkitaBaseContract,
+    //   ContractWithOptIn
+    // ) {
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/utils/base-contracts/base.ts:18
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    callsub update
+    intc_1 // 1
+    return
+
+main_optin_route@13:
     // smart_contracts/utils/base-contracts/optin.ts:22
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     txn OnCompletion
@@ -54,51 +99,6 @@ main_optin_route@15:
     // smart_contracts/utils/base-contracts/optin.ts:22
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     callsub optin
-    intc_1 // 1
-    return
-
-main_updateAkitaDAO_route@14:
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/hyper-swap/contract.algo.ts:20-24
-    // export class HyperSwap extends classes(
-    //   BaseHyperSwap,
-    //   AkitaBaseContract,
-    //   ContractWithOptIn
-    // ) {
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
-    callsub updateAkitaDAO
-    intc_1 // 1
-    return
-
-main_update_route@13:
-    // smart_contracts/utils/base-contracts/base.ts:18
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txn OnCompletion
-    pushint 4 // UpdateApplication
-    ==
-    assert // OnCompletion is not UpdateApplication
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/hyper-swap/contract.algo.ts:20-24
-    // export class HyperSwap extends classes(
-    //   BaseHyperSwap,
-    //   AkitaBaseContract,
-    //   ContractWithOptIn
-    // ) {
-    txna ApplicationArgs 1
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:18
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    callsub update
     intc_1 // 1
     return
 
@@ -489,13 +489,17 @@ offer:
     ==
     &&
     assert // Invalid payment
+    // smart_contracts/hyper-swap/contract.algo.ts:98
+    // const metaMerklesAppID = getAkitaAppList(this.akitaDAO.value).metaMerkles
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:98
+    // const metaMerklesAppID = getAkitaAppList(this.akitaDAO.value).metaMerkles
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_3 // "akita_al"
     app_global_get_ex
@@ -703,10 +707,14 @@ offer:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
+    // smart_contracts/hyper-swap/contract.algo.ts:45
+    // const id = this.offerCursor.value
+    intc_0 // 0
     // smart_contracts/hyper-swap/contract.algo.ts:29
     // offerCursor = GlobalState<uint64>({ key: HyperSwapGlobalStateKeyOfferCursor })
-    intc_0 // 0
     bytec 12 // "offer_cursor"
+    // smart_contracts/hyper-swap/contract.algo.ts:45
+    // const id = this.offerCursor.value
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/hyper-swap/contract.algo.ts:46
@@ -891,13 +899,17 @@ accept:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/hyper-swap/contract.algo.ts:169
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:169
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_3 // "akita_al"
     app_global_get_ex
@@ -940,7 +952,7 @@ accept:
     //     ],
     //   }
     // ).returnValue
-    bytec 4 // method "verify(byte[32],string,byte[32],byte[32][],uint64)bool"
+    bytec 4 // method "verify(address,string,byte[32],byte[32][],uint64)bool"
     itxn_field ApplicationArgs
     uncover 3
     itxn_field ApplicationArgs
@@ -979,13 +991,9 @@ accept:
     // smart_contracts/hyper-swap/contract.algo.ts:184
     // assert(!this.participants(senderParticipantKey).exists)
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8
     swap
     extract 8 32
-    swap
-    itob
-    swap
     concat
     // smart_contracts/hyper-swap/contract.algo.ts:38
     // participants = BoxMap<ParticipantKey, RefundValue>({ keyPrefix: HyperSwapBoxPrefixParticipants })
@@ -1134,13 +1142,9 @@ escrow:
     // smart_contracts/hyper-swap/contract.algo.ts:229
     // assert(this.participants(senderParticipantKey).exists)
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8
     swap
     extract 8 32
-    swap
-    itob
-    swap
     concat
     // smart_contracts/hyper-swap/contract.algo.ts:38
     // participants = BoxMap<ParticipantKey, RefundValue>({ keyPrefix: HyperSwapBoxPrefixParticipants })
@@ -1197,13 +1201,17 @@ escrow:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/hyper-swap/contract.algo.ts:238
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:238
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_3 // "akita_al"
     app_global_get_ex
@@ -1241,7 +1249,7 @@ escrow:
     //     ],
     //   }
     // ).returnValue
-    bytec 4 // method "verify(byte[32],string,byte[32],byte[32][],uint64)bool"
+    bytec 4 // method "verify(address,string,byte[32],byte[32][],uint64)bool"
     itxn_field ApplicationArgs
     uncover 2
     itxn_field ApplicationArgs
@@ -1417,13 +1425,9 @@ escrowAsa:
     // smart_contracts/hyper-swap/contract.algo.ts:301
     // assert(this.participants(senderParticipantKey).exists)
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8
     swap
     extract 8 32
-    swap
-    itob
-    swap
     concat
     // smart_contracts/hyper-swap/contract.algo.ts:38
     // participants = BoxMap<ParticipantKey, RefundValue>({ keyPrefix: HyperSwapBoxPrefixParticipants })
@@ -1483,13 +1487,17 @@ escrowAsa:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/hyper-swap/contract.algo.ts:310
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:310
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_3 // "akita_al"
     app_global_get_ex
@@ -1527,7 +1535,7 @@ escrowAsa:
     //     ],
     //   }
     // ).returnValue
-    bytec 4 // method "verify(byte[32],string,byte[32],byte[32][],uint64)bool"
+    bytec 4 // method "verify(address,string,byte[32],byte[32][],uint64)bool"
     itxn_field ApplicationArgs
     uncover 2
     itxn_field ApplicationArgs
@@ -1568,13 +1576,17 @@ escrowAsa:
     asset_holding_get AssetBalance
     bury 1
     bnz escrowAsa_after_if_else@7
+    // smart_contracts/hyper-swap/contract.algo.ts:329
+    // const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:329
+    // const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:35
+    // smart_contracts/utils/functions.ts:38
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     bytec 13 // "other_al"
     app_global_get_ex
@@ -1592,7 +1604,7 @@ escrowAsa:
     //   }
     // ).returnValue
     itxn_begin
-    bytec 14 // method "arc59_getSendAssetInfo(byte[32],uint64)(uint64,uint64,bool,bool,uint64)"
+    bytec 14 // method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
     itxn_field ApplicationArgs
     frame_dig -4
     itxn_field ApplicationArgs
@@ -1928,31 +1940,35 @@ disburse_else_body@4:
     asset_holding_get AssetBalance
     bury 1
     bnz disburse_else_body@7
+    // smart_contracts/hyper-swap/contract.algo.ts:416
+    // arc59OptInAndSend(this.akitaDAO.value, receiver, asset, amount, false)
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:416
+    // arc59OptInAndSend(this.akitaDAO.value, receiver, asset, amount, false)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:35
+    // smart_contracts/utils/functions.ts:38
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     bytec 13 // "other_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:250
+    // smart_contracts/utils/functions.ts:297
     // const assetInbox = getOtherAppList(akitaDAO).assetInbox
     pushint 16 // 16
     extract_uint64
     dup
     frame_bury 2
-    // smart_contracts/utils/functions.ts:251
+    // smart_contracts/utils/functions.ts:298
     // const inboxAddress = Application(assetInbox).address
     dup
     app_params_get AppAddress
     swap
     frame_bury 1
     assert // application exists
-    // smart_contracts/utils/functions.ts:253-259
+    // smart_contracts/utils/functions.ts:300-306
     // const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall(
     //   AssetInbox.prototype.arc59_getSendAssetInfo,
     //   {
@@ -1961,7 +1977,7 @@ disburse_else_body@4:
     //   }
     // ).returnValue
     itxn_begin
-    bytec 14 // method "arc59_getSendAssetInfo(byte[32],uint64)(uint64,uint64,bool,bool,uint64)"
+    bytec 14 // method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
     itxn_field ApplicationArgs
     frame_dig -3
     itxn_field ApplicationArgs
@@ -1981,7 +1997,7 @@ disburse_else_body@4:
     bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/utils/functions.ts:259
+    // smart_contracts/utils/functions.ts:306
     // ).returnValue
     dig 1
     pushint 12 // 12
@@ -1999,20 +2015,20 @@ disburse_else_body@4:
     pushint 21 // 21
     extract_uint64
     frame_bury 4
-    // smart_contracts/utils/functions.ts:261
+    // smart_contracts/utils/functions.ts:308
     // if (mbr || receiverAlgoNeededForClaim) {
     bnz disburse_if_body@16
     frame_dig 4
     bz disburse_after_if_else@17
 
 disburse_if_body@16:
-    // smart_contracts/utils/functions.ts:262-265
+    // smart_contracts/utils/functions.ts:309-312
     // itxn.payment({
     //   receiver: inboxAddress,
     //   amount: mbr + receiverAlgoNeededForClaim
     // }).submit()
     itxn_begin
-    // smart_contracts/utils/functions.ts:264
+    // smart_contracts/utils/functions.ts:311
     // amount: mbr + receiverAlgoNeededForClaim
     frame_dig 3
     frame_dig 4
@@ -2020,7 +2036,7 @@ disburse_if_body@16:
     itxn_field Amount
     frame_dig 1
     itxn_field Receiver
-    // smart_contracts/utils/functions.ts:262-265
+    // smart_contracts/utils/functions.ts:309-312
     // itxn.payment({
     //   receiver: inboxAddress,
     //   amount: mbr + receiverAlgoNeededForClaim
@@ -2032,11 +2048,11 @@ disburse_if_body@16:
     itxn_submit
 
 disburse_after_if_else@17:
-    // smart_contracts/utils/functions.ts:268
+    // smart_contracts/utils/functions.ts:315
     // if (!routerOptedIn) {
     frame_dig 5
     bnz disburse_after_if_else@19
-    // smart_contracts/utils/functions.ts:269-272
+    // smart_contracts/utils/functions.ts:316-319
     // abiCall(AssetInbox.prototype.arc59_optRouterIn, {
     //   appId: assetInbox,
     //   args: [asset]
@@ -2055,7 +2071,7 @@ disburse_after_if_else@17:
     itxn_submit
 
 disburse_after_if_else@19:
-    // smart_contracts/utils/functions.ts:288-291
+    // smart_contracts/utils/functions.ts:335-338
     // abiCall(AssetInbox.prototype.arc59_sendAsset, {
     //   appId: assetInbox,
     //   args: [xferTxn, recipient, receiverAlgoNeededForClaim]
@@ -2067,7 +2083,7 @@ disburse_after_if_else@19:
     itxn_field AssetAmount
     frame_dig 1
     itxn_field AssetReceiver
-    // smart_contracts/utils/functions.ts:275-279
+    // smart_contracts/utils/functions.ts:322-326
     // let xferTxn = itxn.assetTransfer({
     //   assetReceiver: inboxAddress,
     //   assetAmount: amount,
@@ -2077,13 +2093,13 @@ disburse_after_if_else@19:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:288-291
+    // smart_contracts/utils/functions.ts:335-338
     // abiCall(AssetInbox.prototype.arc59_sendAsset, {
     //   appId: assetInbox,
     //   args: [xferTxn, recipient, receiverAlgoNeededForClaim]
     // })
     itxn_next
-    pushbytes 0xfd9c16f7 // method "arc59_sendAsset(axfer,byte[32],uint64)byte[32]"
+    pushbytes 0x08531ed7 // method "arc59_sendAsset(axfer,address,uint64)address"
     itxn_field ApplicationArgs
     frame_dig -3
     itxn_field ApplicationArgs
@@ -2264,13 +2280,17 @@ cancel_bool_merge@4:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/hyper-swap/contract.algo.ts:466
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:466
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_3 // "akita_al"
     app_global_get_ex
@@ -2314,7 +2334,7 @@ cancel_bool_merge@4:
     //     ],
     //   }
     // ).returnValue
-    bytec 4 // method "verify(byte[32],string,byte[32],byte[32][],uint64)bool"
+    bytec 4 // method "verify(address,string,byte[32],byte[32][],uint64)bool"
     itxn_field ApplicationArgs
     uncover 3
     itxn_field ApplicationArgs
@@ -2447,13 +2467,17 @@ withdraw:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/hyper-swap/contract.algo.ts:509
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_0 // "akita_dao"
+    // smart_contracts/hyper-swap/contract.algo.ts:509
+    // appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_3 // "akita_al"
     app_global_get_ex
@@ -2491,7 +2515,7 @@ withdraw:
     //     ],
     //   }
     // ).returnValue
-    bytec 4 // method "verify(byte[32],string,byte[32],byte[32][],uint64)bool"
+    bytec 4 // method "verify(address,string,byte[32],byte[32][],uint64)bool"
     itxn_field ApplicationArgs
     uncover 2
     itxn_field ApplicationArgs
@@ -2680,67 +2704,6 @@ withdraw_else_body@4:
     b withdraw_after_if_else@6
 
 
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
-update:
-    // smart_contracts/utils/base-contracts/base.ts:18-19
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    // update(newVersion: string): void {
-    proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:20
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:20
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:12
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 10 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:21
-    // this.version.value = newVersion
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
-updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
-    proto 1 0
-    // smart_contracts/utils/base-contracts/base.ts:27
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/utils/base-contracts/base.ts:27
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:28
-    // this.akitaDAO.value = Application(app)
-    frame_dig -1
-    app_global_put
-    retsub
-
-
 // smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin(payment: uint64, asset: uint64) -> void:
 optin:
     // smart_contracts/utils/base-contracts/optin.ts:22
@@ -2815,4 +2778,65 @@ optin:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+update:
+    // smart_contracts/utils/base-contracts/base.ts:18-19
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    // update(newVersion: string): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:20
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:20
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec 10 // "version"
+    // smart_contracts/utils/base-contracts/base.ts:21
+    // this.version.value = newVersion
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    proto 1 0
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:28
+    // this.akitaDAO.value = Application(app)
+    frame_dig -1
+    app_global_put
     retsub

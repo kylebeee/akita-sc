@@ -3,23 +3,23 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 25 2
-    bytecblock 0x151f7c75 "akita_dao" "gate_cursor" "g" 0x068101 "version"
-    // smart_contracts/gates/contract.algo.ts:25
+    intcblock 0 1 2 25
+    bytecblock 0x151f7c75 "akita_dao" "g" 0x "gate_cursor" 0x068101 "version" 0x0000 0x329f04ee
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txn NumAppArgs
-    bz main_after_if_else@15
-    pushbytess 0xcd9ad67e 0xc21c7ba0 0x200f7421 0x43922655 0xdf56b01e 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "register(pay,(uint64,uint64,uint8)[],byte[][])uint64", method "check(address,uint64,byte[][])bool", method "mustCheck(address,uint64,byte[][])void", method "size(uint64)uint64", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    bz main_after_if_else@18
+    pushbytess 0xcd9ad67e 0xc21c7ba0 0x200f7421 0x43922655 0xc5c91f8f 0xdf56b01e 0x61ddc165 0xda6cdef4 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "register(pay,(uint64,uint64,uint8)[],byte[][])uint64", method "check(address,uint64,byte[][])bool", method "mustCheck(address,uint64,byte[][])void", method "cost((uint64,uint64,uint8)[],byte[][])uint64", method "size(uint64)uint64", method "getGate(uint64)(uint64,uint64,uint64,uint8,byte[])[]", method "gateFilterEntryWithArgsShape((uint64,uint64,uint64,uint8,byte[]))(uint64,uint64,uint64,uint8,byte[])", method "update(string)void", method "updateAkitaDAO(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_register_route@6 main_check_route@7 main_mustCheck_route@8 main_size_route@9 main_update_route@10 main_updateAkitaDAO_route@11
+    match main_create_route@5 main_register_route@6 main_check_route@7 main_mustCheck_route@8 main_cost_route@9 main_size_route@10 main_getGate_route@11 main_gateFilterEntryWithArgsShape_route@12 main_update_route@13 main_updateAkitaDAO_route@14
 
-main_after_if_else@15:
-    // smart_contracts/gates/contract.algo.ts:25
+main_after_if_else@18:
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     intc_0 // 0
     return
 
-main_updateAkitaDAO_route@11:
+main_updateAkitaDAO_route@14:
     // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
@@ -27,7 +27,7 @@ main_updateAkitaDAO_route@11:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/contract.algo.ts:25
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txna ApplicationArgs 1
     btoi
@@ -37,7 +37,7 @@ main_updateAkitaDAO_route@11:
     intc_1 // 1
     return
 
-main_update_route@10:
+main_update_route@13:
     // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
@@ -46,7 +46,7 @@ main_update_route@10:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/contract.algo.ts:25
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txna ApplicationArgs 1
     extract 2 0
@@ -56,19 +56,60 @@ main_update_route@10:
     intc_1 // 1
     return
 
-main_size_route@9:
-    // smart_contracts/gates/contract.algo.ts:169
+main_gateFilterEntryWithArgsShape_route@12:
+    // smart_contracts/gates/contract.algo.ts:246
     // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/contract.algo.ts:25
+    bytec_0 // 0x151f7c75
+    // smart_contracts/gates/contract.algo.ts:27
+    // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
+    txna ApplicationArgs 1
+    // smart_contracts/gates/contract.algo.ts:246
+    // @abimethod({ readonly: true })
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_getGate_route@11:
+    // smart_contracts/gates/contract.algo.ts:224
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/gates/contract.algo.ts:169
+    // smart_contracts/gates/contract.algo.ts:224
+    // @abimethod({ readonly: true })
+    callsub getGate
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_size_route@10:
+    // smart_contracts/gates/contract.algo.ts:218
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/contract.algo.ts:27
+    // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/gates/contract.algo.ts:218
     // @abimethod({ readonly: true })
     callsub size
     itob
@@ -79,41 +120,64 @@ main_size_route@9:
     intc_1 // 1
     return
 
+main_cost_route@9:
+    // smart_contracts/gates/contract.algo.ts:199
+    // @abimethod({ readonly: true })
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/contract.algo.ts:27
+    // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    // smart_contracts/gates/contract.algo.ts:199
+    // @abimethod({ readonly: true })
+    callsub cost
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
 main_mustCheck_route@8:
-    // smart_contracts/gates/contract.algo.ts:163
+    // smart_contracts/gates/contract.algo.ts:193
     // mustCheck(caller: Address, gateID: uint64, args: GateArgs): void {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/contract.algo.ts:25
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
     txna ApplicationArgs 3
-    // smart_contracts/gates/contract.algo.ts:163
+    // smart_contracts/gates/contract.algo.ts:193
     // mustCheck(caller: Address, gateID: uint64, args: GateArgs): void {
     callsub mustCheck
     intc_1 // 1
     return
 
 main_check_route@7:
-    // smart_contracts/gates/contract.algo.ts:157
+    // smart_contracts/gates/contract.algo.ts:187
     // check(caller: Address, gateID: uint64, args: GateArgs): boolean {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/contract.algo.ts:25
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
     txna ApplicationArgs 3
-    // smart_contracts/gates/contract.algo.ts:157
+    // smart_contracts/gates/contract.algo.ts:187
     // check(caller: Address, gateID: uint64, args: GateArgs): boolean {
     callsub check
     pop
@@ -129,14 +193,14 @@ main_check_route@7:
     return
 
 main_register_route@6:
-    // smart_contracts/gates/contract.algo.ts:121
+    // smart_contracts/gates/contract.algo.ts:134
     // register(payment: gtxn.PaymentTxn, filters: GateFilter[], args: GateArgs): uint64 {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/contract.algo.ts:25
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txn GroupIndex
     intc_1 // 1
@@ -148,7 +212,7 @@ main_register_route@6:
     assert // transaction type is pay
     txna ApplicationArgs 1
     txna ApplicationArgs 2
-    // smart_contracts/gates/contract.algo.ts:121
+    // smart_contracts/gates/contract.algo.ts:134
     // register(payment: gtxn.PaymentTxn, filters: GateFilter[], args: GateArgs): uint64 {
     callsub register
     itob
@@ -168,7 +232,7 @@ main_create_route@5:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/gates/contract.algo.ts:25
+    // smart_contracts/gates/contract.algo.ts:27
     // export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
     txna ApplicationArgs 1
     extract 2 0
@@ -183,7 +247,7 @@ main_create_route@5:
 
 // smart_contracts/gates/contract.algo.ts::Gate.evaluate(caller: bytes, filters: bytes, start: uint64, end: uint64, args: bytes) -> uint64, bytes, bytes:
 evaluate:
-    // smart_contracts/gates/contract.algo.ts:46-52
+    // smart_contracts/gates/contract.algo.ts:48-54
     // private evaluate(
     //   caller: Address,
     //   filters: GateFilterEntry[],
@@ -194,9 +258,9 @@ evaluate:
     proto 5 3
     intc_0 // 0
     dupn 4
-    pushbytes ""
+    bytec_3 // ""
     dupn 10
-    // smart_contracts/gates/contract.algo.ts:53
+    // smart_contracts/gates/contract.algo.ts:55
     // if (start > end) return true
     frame_dig -3
     frame_dig -2
@@ -211,14 +275,14 @@ evaluate:
     retsub
 
 evaluate_after_if_else@2:
-    // smart_contracts/gates/contract.algo.ts:55
+    // smart_contracts/gates/contract.algo.ts:57
     // let result = this.evaluateFilter(caller, filters[start], args[start])
     frame_dig -4
     extract 2 0
     frame_dig -3
-    intc_2 // 25
+    intc_3 // 25
     *
-    intc_2 // 25
+    intc_3 // 25
     extract3 // on error: index access is out of bounds
     frame_dig -1
     extract 2 0
@@ -229,14 +293,14 @@ evaluate_after_if_else@2:
     >
     assert // index access is out of bounds
     frame_dig -3
-    intc_3 // 2
+    intc_2 // 2
     *
     dig 1
     swap
     extract_uint16
     dup2
     extract_uint16
-    intc_3 // 2
+    intc_2 // 2
     +
     extract3
     extract 2 0
@@ -245,7 +309,7 @@ evaluate_after_if_else@2:
     callsub evaluateFilter
     pop
     frame_bury 12
-    // smart_contracts/gates/contract.algo.ts:57
+    // smart_contracts/gates/contract.algo.ts:59
     // ensureBudget(100 * (end - start))
     frame_dig -2
     frame_dig -3
@@ -266,9 +330,9 @@ evaluate_while_top@34:
     itxn_field TypeEnum
     pushint 5 // DeleteApplication
     itxn_field OnCompletion
-    bytec 4 // 0x068101
+    bytec 5 // 0x068101
     itxn_field ApprovalProgram
-    bytec 4 // 0x068101
+    bytec 5 // 0x068101
     itxn_field ClearStateProgram
     intc_0 // 0
     itxn_field Fee
@@ -280,13 +344,13 @@ evaluate_after_while@39:
     frame_bury 6
 
 evaluate_while_top@3:
-    // smart_contracts/gates/contract.algo.ts:59
+    // smart_contracts/gates/contract.algo.ts:61
     // for (let i = start; i < end; i += 1) {
     frame_dig 6
     frame_dig -2
     <
     bz evaluate_after_while@24
-    // smart_contracts/gates/contract.algo.ts:60
+    // smart_contracts/gates/contract.algo.ts:62
     // const currentOperator = filters[i].logicalOperator
     frame_dig -4
     extract 2 0
@@ -295,17 +359,17 @@ evaluate_while_top@3:
     frame_dig 6
     dup
     cover 2
-    intc_2 // 25
+    intc_3 // 25
     *
     dig 1
     swap
-    intc_2 // 25
+    intc_3 // 25
     extract3 // on error: index access is out of bounds
     extract 24 1
     dup
     cover 3
     frame_bury 3
-    // smart_contracts/gates/contract.algo.ts:61
+    // smart_contracts/gates/contract.algo.ts:63
     // const nextResult = this.evaluateFilter(caller, filters[i + 1], args[i + 1])
     swap
     intc_1 // 1
@@ -313,11 +377,11 @@ evaluate_while_top@3:
     dup
     frame_bury 14
     dup
-    intc_2 // 25
+    intc_3 // 25
     *
     uncover 2
     swap
-    intc_2 // 25
+    intc_3 // 25
     extract3 // on error: index access is out of bounds
     dup
     cover 2
@@ -331,14 +395,14 @@ evaluate_while_top@3:
     >
     assert // index access is out of bounds
     swap
-    intc_3 // 2
+    intc_2 // 2
     *
     dig 1
     swap
     extract_uint16
     dup2
     extract_uint16
-    intc_3 // 2
+    intc_2 // 2
     +
     extract3
     extract 2 0
@@ -347,14 +411,14 @@ evaluate_while_top@3:
     callsub evaluateFilter
     pop
     frame_bury 10
-    // smart_contracts/gates/contract.algo.ts:63
+    // smart_contracts/gates/contract.algo.ts:65
     // if (currentOperator === AND) {
     pushbytes 0x0a
     ==
     dup
     frame_bury 15
     bz evaluate_else_body@6
-    // smart_contracts/gates/contract.algo.ts:64
+    // smart_contracts/gates/contract.algo.ts:66
     // result = result && nextResult
     frame_dig 12
     frame_dig 10
@@ -362,7 +426,7 @@ evaluate_while_top@3:
     frame_bury 12
 
 evaluate_after_if_else@9:
-    // smart_contracts/gates/contract.algo.ts:70
+    // smart_contracts/gates/contract.algo.ts:72
     // if (i + 1 < end && filters[i + 2].layer > filters[i + 1].layer) {
     frame_dig 14
     frame_dig -2
@@ -378,15 +442,15 @@ evaluate_after_if_else@9:
     bz evaluate_after_if_else@23
     frame_dig 6
     dup
-    intc_3 // 2
+    intc_2 // 2
     +
     dup
     frame_bury -3
-    intc_2 // 25
+    intc_3 // 25
     *
     frame_dig 0
     swap
-    intc_2 // 25
+    intc_3 // 25
     extract3 // on error: index access is out of bounds
     intc_0 // 0
     extract_uint64
@@ -422,11 +486,11 @@ evaluate_while_top@26:
     // smart_contracts/gates/contract.algo.ts:102
     // if (filters[i].layer < layer) {
     frame_dig 6
-    intc_2 // 25
+    intc_3 // 25
     *
     frame_dig 0
     swap
-    intc_2 // 25
+    intc_3 // 25
     extract3 // on error: index access is out of bounds
     intc_0 // 0
     extract_uint64
@@ -444,7 +508,7 @@ evaluate_while_top@26:
     b evaluate_while_top@26
 
 evaluate_block@31:
-    // smart_contracts/gates/contract.algo.ts:72
+    // smart_contracts/gates/contract.algo.ts:74
     // const nestedResult = this.evaluate(caller, filters, i + 2, nestedEnd, args)
     frame_dig -5
     frame_dig -4
@@ -455,11 +519,11 @@ evaluate_block@31:
     frame_bury -1
     frame_bury -4
     frame_bury 9
-    // smart_contracts/gates/contract.algo.ts:74
+    // smart_contracts/gates/contract.algo.ts:76
     // if (currentOperator === AND) {
     frame_dig 15
     bz evaluate_else_body@19
-    // smart_contracts/gates/contract.algo.ts:75
+    // smart_contracts/gates/contract.algo.ts:77
     // result = result && nestedResult
     frame_dig 12
     frame_dig 9
@@ -484,7 +548,7 @@ evaluate_after_if_else@23:
     frame_dig 4
     frame_bury -4
     frame_dig 7
-    // smart_contracts/gates/contract.algo.ts:59
+    // smart_contracts/gates/contract.algo.ts:61
     // for (let i = start; i < end; i += 1) {
     intc_1 // 1
     +
@@ -492,7 +556,7 @@ evaluate_after_if_else@23:
     b evaluate_while_top@3
 
 evaluate_else_body@19:
-    // smart_contracts/gates/contract.algo.ts:76
+    // smart_contracts/gates/contract.algo.ts:78
     // } else if (currentOperator === OR) {
     frame_dig 3
     pushbytes 0x14
@@ -500,7 +564,7 @@ evaluate_else_body@19:
     frame_dig 12
     frame_bury 13
     bz evaluate_after_if_else@21
-    // smart_contracts/gates/contract.algo.ts:77
+    // smart_contracts/gates/contract.algo.ts:79
     // result = result || nestedResult
     frame_dig 12
     frame_dig 9
@@ -513,7 +577,7 @@ evaluate_after_if_else@21:
     b evaluate_after_if_else@22
 
 evaluate_else_body@6:
-    // smart_contracts/gates/contract.algo.ts:65
+    // smart_contracts/gates/contract.algo.ts:67
     // } else if (currentOperator === OR) {
     frame_dig 3
     pushbytes 0x14
@@ -521,7 +585,7 @@ evaluate_else_body@6:
     frame_dig 12
     frame_bury 13
     bz evaluate_after_if_else@8
-    // smart_contracts/gates/contract.algo.ts:66
+    // smart_contracts/gates/contract.algo.ts:68
     // result = result || nextResult
     frame_dig 12
     frame_dig 10
@@ -534,7 +598,7 @@ evaluate_after_if_else@8:
     b evaluate_after_if_else@9
 
 evaluate_after_while@24:
-    // smart_contracts/gates/contract.algo.ts:84
+    // smart_contracts/gates/contract.algo.ts:86
     // return result
     frame_dig 12
     frame_dig -4
@@ -547,20 +611,15 @@ evaluate_after_while@24:
 
 // smart_contracts/gates/contract.algo.ts::Gate.evaluateFilter(caller: bytes, filter: bytes, args: bytes) -> uint64, bytes:
 evaluateFilter:
-    // smart_contracts/gates/contract.algo.ts:87
+    // smart_contracts/gates/contract.algo.ts:89
     // private evaluateFilter(caller: Address, filter: GateFilterEntry, args: bytes): boolean {
     proto 3 2
-    // smart_contracts/gates/contract.algo.ts:88
-    // const argsWithCaller = caller.bytes.concat(args)
-    frame_dig -3
-    frame_dig -1
-    concat
     // smart_contracts/gates/contract.algo.ts:90-96
     // return abiCall(
     //   MockGate.prototype.check,
     //   {
     //     appId: filter.app,
-    //     args: [argsWithCaller]
+    //     args: [caller, filter.registryEntry, args],
     //   }
     // ).returnValue
     itxn_begin
@@ -570,22 +629,28 @@ evaluateFilter:
     pushint 8 // 8
     extract_uint64
     // smart_contracts/gates/contract.algo.ts:94
-    // args: [argsWithCaller]
-    dig 1
+    // args: [caller, filter.registryEntry, args],
+    frame_dig -2
+    extract 16 8
+    frame_dig -1
     len
     itob
     extract 6 2
-    uncover 2
+    frame_dig -1
     concat
     // smart_contracts/gates/contract.algo.ts:90-96
     // return abiCall(
     //   MockGate.prototype.check,
     //   {
     //     appId: filter.app,
-    //     args: [argsWithCaller]
+    //     args: [caller, filter.registryEntry, args],
     //   }
     // ).returnValue
-    pushbytes 0xc61c862b // method "check(byte[])bool"
+    pushbytes 0x6e03f50a // method "check(address,uint64,byte[])bool"
+    itxn_field ApplicationArgs
+    frame_dig -3
+    itxn_field ApplicationArgs
+    swap
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
@@ -616,7 +681,7 @@ create:
     proto 2 0
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 5 // "version"
+    bytec 6 // "version"
     // smart_contracts/gates/contract.algo.ts:114
     // this.version.value = version
     frame_dig -2
@@ -628,110 +693,54 @@ create:
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -1
     app_global_put
-    // smart_contracts/gates/contract.algo.ts:30
+    // smart_contracts/gates/contract.algo.ts:32
     // gateCursor = GlobalState<uint64>({ key: GateGlobalStateKeyCursor })
-    bytec_2 // "gate_cursor"
+    bytec 4 // "gate_cursor"
     // smart_contracts/gates/contract.algo.ts:116
-    // this.gateCursor.value = 0
-    intc_0 // 0
+    // this.gateCursor.value = 1
+    intc_1 // 1
     app_global_put
     retsub
 
 
 // smart_contracts/gates/contract.algo.ts::Gate.register(payment: uint64, filters: bytes, args: bytes) -> uint64:
 register:
-    // smart_contracts/gates/contract.algo.ts:121
+    // smart_contracts/gates/contract.algo.ts:134
     // register(payment: gtxn.PaymentTxn, filters: GateFilter[], args: GateArgs): uint64 {
     proto 3 1
-    // smart_contracts/gates/contract.algo.ts:123
-    // const costs = this.mbr(filters.length)
+    // smart_contracts/gates/contract.algo.ts:136
+    // const mbrCosts = this.mbr(filters.length)
     frame_dig -2
     intc_0 // 0
     extract_uint16
     dup
-    // smart_contracts/gates/base.ts:8
-    // gateRegistry: 6_100 + (400 * (32 * length)),
-    pushint 12800 // 12800
-    *
-    pushint 6100 // 6100
-    +
-    // smart_contracts/gates/base.ts:7
-    // appRegistry: 6_100,
-    pushint 6100 // 6100
-    // smart_contracts/gates/base.ts:6-9
-    // return {
-    //   appRegistry: 6_100,
-    //   gateRegistry: 6_100 + (400 * (32 * length)),
-    // }
-    itob
-    swap
-    itob
-    concat
-    // smart_contracts/gates/contract.algo.ts:125-132
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: costs.gateRegistry,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    frame_dig -3
-    gtxns Receiver
-    // smart_contracts/gates/contract.algo.ts:128
-    // receiver: Global.currentApplicationAddress,
-    global CurrentApplicationAddress
-    // smart_contracts/gates/contract.algo.ts:125-132
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: costs.gateRegistry,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    ==
-    frame_dig -3
-    gtxns Amount
-    // smart_contracts/gates/contract.algo.ts:129
-    // amount: costs.gateRegistry,
-    uncover 2
-    pushint 8 // 8
-    extract_uint64
-    // smart_contracts/gates/contract.algo.ts:125-132
-    // assertMatch(
-    //   payment,
-    //   {
-    //     receiver: Global.currentApplicationAddress,
-    //     amount: costs.gateRegistry,
-    //   },
-    //   ERR_INVALID_PAYMENT
-    // )
-    ==
-    &&
-    assert // Invalid payment
-    // smart_contracts/gates/contract.algo.ts:134
+    callsub mbr
+    pop
+    // smart_contracts/gates/contract.algo.ts:138
+    // let requiredCosts: uint64 = 0
+    intc_0 // 0
+    // smart_contracts/gates/contract.algo.ts:139
     // let entries: GateFilterEntry[] = []
-    pushbytes 0x0000
-    // smart_contracts/gates/contract.algo.ts:135
+    bytec 7 // 0x0000
+    // smart_contracts/gates/contract.algo.ts:140
     // let lastFilterLayer: uint64 = 0
     intc_0 // 0
-    // smart_contracts/gates/contract.algo.ts:136
+    // smart_contracts/gates/contract.algo.ts:142
     // for (let i: uint64 = 0; i < filters.length; i += 1) {
     dup
 
 register_while_top@1:
-    // smart_contracts/gates/contract.algo.ts:136
+    // smart_contracts/gates/contract.algo.ts:142
     // for (let i: uint64 = 0; i < filters.length; i += 1) {
-    frame_dig 3
+    frame_dig 4
     frame_dig 0
     <
-    bz register_after_while@4
-    // smart_contracts/gates/contract.algo.ts:137
-    // assert(this.appRegistry(filters[i].app).exists)
+    bz register_after_while@6
+    // smart_contracts/gates/contract.algo.ts:144
+    // assert(filters[i].layer >= lastFilterLayer)
     frame_dig -2
     extract 2 0
-    frame_dig 3
+    frame_dig 4
     dup
     cover 2
     pushint 17 // 17
@@ -739,76 +748,60 @@ register_while_top@1:
     pushint 17 // 17
     extract3 // on error: index access is out of bounds
     dup
-    pushint 8 // 8
-    extract_uint64
-    dup
-    itob
-    // smart_contracts/gates/contract.algo.ts:34
-    // appRegistry = BoxMap<uint64, bytes<0>>({ keyPrefix: GateBoxPrefixAppRegistry })
-    pushbytes "a"
-    dig 1
-    concat
-    // smart_contracts/gates/contract.algo.ts:137
-    // assert(this.appRegistry(filters[i].app).exists)
-    box_len
-    bury 1
-    assert
-    // smart_contracts/gates/contract.algo.ts:138
-    // assert(filters[i].layer >= lastFilterLayer)
-    dig 2
-    // smart_contracts/gates/contract.algo.ts:137-138
-    // assert(this.appRegistry(filters[i].app).exists)
-    // assert(filters[i].layer >= lastFilterLayer)
     intc_0 // 0
-    // smart_contracts/gates/contract.algo.ts:138
-    // assert(filters[i].layer >= lastFilterLayer)
     extract_uint64
     dup
-    frame_dig 2
+    frame_dig 3
     >=
     assert
-    // smart_contracts/gates/contract.algo.ts:141-147
-    // const registryEntry = abiCall(
-    //   MockGate.prototype.register,
+    // smart_contracts/gates/contract.algo.ts:147-153
+    // const cost = abiCall(
+    //   MockGate.prototype.cost,
     //   {
     //     appId: filters[i].app,
     //     args: [args[i]],
     //   }
     // ).returnValue
     itxn_begin
-    // smart_contracts/gates/contract.algo.ts:145
+    // smart_contracts/gates/contract.algo.ts:150
+    // appId: filters[i].app,
+    dig 1
+    pushint 8 // 8
+    extract_uint64
+    // smart_contracts/gates/contract.algo.ts:151
     // args: [args[i]],
     frame_dig -1
     extract 2 0
     frame_dig -1
     intc_0 // 0
     extract_uint16
-    dig 6
+    dig 5
     >
     assert // index access is out of bounds
-    dig 5
-    intc_3 // 2
+    dig 4
+    intc_2 // 2
     *
     dig 1
     swap
     extract_uint16
     dup2
     extract_uint16
-    intc_3 // 2
+    intc_2 // 2
     +
     extract3
-    // smart_contracts/gates/contract.algo.ts:141-147
-    // const registryEntry = abiCall(
-    //   MockGate.prototype.register,
+    // smart_contracts/gates/contract.algo.ts:147-153
+    // const cost = abiCall(
+    //   MockGate.prototype.cost,
     //   {
     //     appId: filters[i].app,
     //     args: [args[i]],
     //   }
     // ).returnValue
-    pushbytes 0x6bcd3953 // method "register(byte[])uint64"
+    bytec 8 // method "cost(byte[])uint64"
     itxn_field ApplicationArgs
+    dup
     itxn_field ApplicationArgs
-    uncover 2
+    dig 1
     itxn_field ApplicationID
     pushint 6 // appl
     itxn_field TypeEnum
@@ -824,20 +817,80 @@ register_while_top@1:
     ==
     assert // Bytes has valid prefix
     btoi
-    // smart_contracts/gates/contract.algo.ts:149
+    // smart_contracts/gates/contract.algo.ts:155
+    // requiredCosts += cost
+    frame_dig 1
+    dig 1
+    +
+    frame_bury 1
+    // smart_contracts/gates/contract.algo.ts:158
+    // receiver: Application(filters[i].app).address,
+    dig 2
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/gates/contract.algo.ts:162-168
+    // const registryEntry = abiCall(
+    //   MockGate.prototype.register,
+    //   {
+    //     appId: filters[i].app,
+    //     args: [payment, args[i]],
+    //   }
+    // ).returnValue
+    itxn_begin
+    itxn_field Receiver
+    itxn_field Amount
+    // smart_contracts/gates/contract.algo.ts:157-160
+    // const payment = itxn.payment({
+    //   receiver: Application(filters[i].app).address,
+    //   amount: cost
+    // })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/gates/contract.algo.ts:162-168
+    // const registryEntry = abiCall(
+    //   MockGate.prototype.register,
+    //   {
+    //     appId: filters[i].app,
+    //     args: [payment, args[i]],
+    //   }
+    // ).returnValue
+    itxn_next
+    pushbytes 0x77bb79b9 // method "register(pay,byte[])uint64"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    dup
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    gitxn 1 LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_0 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    // smart_contracts/gates/contract.algo.ts:170
     // entries.push({ ...filters[i], registryEntry })
     uncover 3
     extract 16 1
-    dig 2
+    dig 3
     itob
-    uncover 4
+    uncover 3
+    itob
     concat
     uncover 2
     itob
     concat
     swap
     concat
-    frame_dig 1
+    frame_dig 2
     dup
     uncover 2
     concat // on error: max array length exceeded
@@ -849,52 +902,86 @@ register_while_top@1:
     itob
     extract 6 2
     replace2 0
-    frame_bury 1
-    // smart_contracts/gates/contract.algo.ts:136
+    frame_bury 2
+    // smart_contracts/gates/contract.algo.ts:142
     // for (let i: uint64 = 0; i < filters.length; i += 1) {
     swap
     intc_1 // 1
     +
+    frame_bury 4
     frame_bury 3
-    frame_bury 2
     b register_while_top@1
 
-register_after_while@4:
-    // smart_contracts/gates/contract.algo.ts:30
-    // gateCursor = GlobalState<uint64>({ key: GateGlobalStateKeyCursor })
+register_after_while@6:
+    // smart_contracts/gates/contract.algo.ts:173-180
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: requiredCosts,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    frame_dig -3
+    gtxns Receiver
+    // smart_contracts/gates/contract.algo.ts:176
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/gates/contract.algo.ts:173-180
+    // assertMatch(
+    //   payment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: requiredCosts,
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    frame_dig -3
+    gtxns Amount
+    frame_dig 1
+    ==
+    &&
+    assert // Invalid payment
+    // smart_contracts/gates/contract.algo.ts:43
+    // const id = this.gateCursor.value
     intc_0 // 0
-    bytec_2 // "gate_cursor"
+    // smart_contracts/gates/contract.algo.ts:32
+    // gateCursor = GlobalState<uint64>({ key: GateGlobalStateKeyCursor })
+    bytec 4 // "gate_cursor"
+    // smart_contracts/gates/contract.algo.ts:43
+    // const id = this.gateCursor.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/gates/contract.algo.ts:42
+    // smart_contracts/gates/contract.algo.ts:44
     // this.gateCursor.value += 1
     dup
     intc_1 // 1
     +
-    // smart_contracts/gates/contract.algo.ts:30
+    // smart_contracts/gates/contract.algo.ts:32
     // gateCursor = GlobalState<uint64>({ key: GateGlobalStateKeyCursor })
-    bytec_2 // "gate_cursor"
-    // smart_contracts/gates/contract.algo.ts:42
+    bytec 4 // "gate_cursor"
+    // smart_contracts/gates/contract.algo.ts:44
     // this.gateCursor.value += 1
     swap
     app_global_put
-    // smart_contracts/gates/contract.algo.ts:153
+    // smart_contracts/gates/contract.algo.ts:183
     // this.gateRegistry(id).value = clone(entries)
     dup
     itob
-    // smart_contracts/gates/contract.algo.ts:36
+    // smart_contracts/gates/contract.algo.ts:38
     // gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ keyPrefix: GateBoxPrefixGateRegistry })
-    bytec_3 // "g"
+    bytec_2 // "g"
     swap
     concat
-    // smart_contracts/gates/contract.algo.ts:153
+    // smart_contracts/gates/contract.algo.ts:183
     // this.gateRegistry(id).value = clone(entries)
     dup
     box_del
     pop
-    frame_dig 1
+    frame_dig 2
     box_put
-    // smart_contracts/gates/contract.algo.ts:154
+    // smart_contracts/gates/contract.algo.ts:184
     // return id
     frame_bury 0
     retsub
@@ -902,38 +989,38 @@ register_after_while@4:
 
 // smart_contracts/gates/contract.algo.ts::Gate.check(caller: bytes, gateID: uint64, args: bytes) -> uint64, bytes:
 check:
-    // smart_contracts/gates/contract.algo.ts:157
+    // smart_contracts/gates/contract.algo.ts:187
     // check(caller: Address, gateID: uint64, args: GateArgs): boolean {
     proto 3 2
-    // smart_contracts/gates/contract.algo.ts:158
+    // smart_contracts/gates/contract.algo.ts:188
     // assert(this.gateRegistry(gateID).exists)
     frame_dig -2
     itob
-    // smart_contracts/gates/contract.algo.ts:36
+    // smart_contracts/gates/contract.algo.ts:38
     // gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ keyPrefix: GateBoxPrefixGateRegistry })
-    bytec_3 // "g"
+    bytec_2 // "g"
     swap
     concat
-    // smart_contracts/gates/contract.algo.ts:158
+    // smart_contracts/gates/contract.algo.ts:188
     // assert(this.gateRegistry(gateID).exists)
     dup
     box_len
     bury 1
     assert
-    // smart_contracts/gates/contract.algo.ts:159
+    // smart_contracts/gates/contract.algo.ts:189
     // const filters = clone(this.gateRegistry(gateID).value)
     dup
     box_get
     pop
     swap
-    // smart_contracts/gates/contract.algo.ts:159-160
+    // smart_contracts/gates/contract.algo.ts:189-190
     // const filters = clone(this.gateRegistry(gateID).value)
     // return this.evaluate(caller, filters, 0, filters.length - 1, args)
     intc_0 // 0
-    intc_3 // 2
+    intc_2 // 2
     box_extract
     btoi
-    // smart_contracts/gates/contract.algo.ts:160
+    // smart_contracts/gates/contract.algo.ts:190
     // return this.evaluate(caller, filters, 0, filters.length - 1, args)
     intc_1 // 1
     -
@@ -951,10 +1038,10 @@ check:
 
 // smart_contracts/gates/contract.algo.ts::Gate.mustCheck(caller: bytes, gateID: uint64, args: bytes) -> void:
 mustCheck:
-    // smart_contracts/gates/contract.algo.ts:163
+    // smart_contracts/gates/contract.algo.ts:193
     // mustCheck(caller: Address, gateID: uint64, args: GateArgs): void {
     proto 3 0
-    // smart_contracts/gates/contract.algo.ts:164
+    // smart_contracts/gates/contract.algo.ts:194
     // assert(this.check(caller, gateID, args), ERR_GATE_FAILED)
     frame_dig -3
     frame_dig -2
@@ -965,33 +1052,391 @@ mustCheck:
     retsub
 
 
+// smart_contracts/gates/contract.algo.ts::Gate.cost(filters: bytes, args: bytes) -> uint64:
+cost:
+    // smart_contracts/gates/contract.algo.ts:199-200
+    // @abimethod({ readonly: true })
+    // cost(filters: GateFilter[], args: GateArgs): uint64 {
+    proto 2 1
+    // smart_contracts/gates/contract.algo.ts:201
+    // const mbrCosts = this.mbr(filters.length)
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16
+    dup
+    callsub mbr
+    pop
+    // smart_contracts/gates/contract.algo.ts:203
+    // let requiredCosts: uint64 = 0
+    intc_0 // 0
+    // smart_contracts/gates/contract.algo.ts:204
+    // for (let i: uint64 = 0; i < filters.length; i += 1) {
+    dup
+
+cost_while_top@1:
+    // smart_contracts/gates/contract.algo.ts:204
+    // for (let i: uint64 = 0; i < filters.length; i += 1) {
+    frame_dig 2
+    frame_dig 0
+    <
+    bz cost_after_while@4
+    // smart_contracts/gates/contract.algo.ts:205-211
+    // const cost = abiCall(
+    //   MockGate.prototype.cost,
+    //   {
+    //     appId: filters[i].app,
+    //     args: [args[i]],
+    //   }
+    // ).returnValue
+    itxn_begin
+    // smart_contracts/gates/contract.algo.ts:208
+    // appId: filters[i].app,
+    frame_dig -2
+    extract 2 0
+    frame_dig 2
+    dup
+    cover 2
+    pushint 17 // 17
+    *
+    pushint 17 // 17
+    extract3 // on error: index access is out of bounds
+    pushint 8 // 8
+    extract_uint64
+    // smart_contracts/gates/contract.algo.ts:209
+    // args: [args[i]],
+    frame_dig -1
+    extract 2 0
+    frame_dig -1
+    intc_0 // 0
+    extract_uint16
+    dig 3
+    >
+    assert // index access is out of bounds
+    dig 2
+    intc_2 // 2
+    *
+    dig 1
+    swap
+    extract_uint16
+    dup2
+    extract_uint16
+    intc_2 // 2
+    +
+    extract3
+    // smart_contracts/gates/contract.algo.ts:205-211
+    // const cost = abiCall(
+    //   MockGate.prototype.cost,
+    //   {
+    //     appId: filters[i].app,
+    //     args: [args[i]],
+    //   }
+    // ).returnValue
+    bytec 8 // method "cost(byte[])uint64"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_0 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    btoi
+    // smart_contracts/gates/contract.algo.ts:213
+    // requiredCosts += cost
+    frame_dig 1
+    +
+    frame_bury 1
+    // smart_contracts/gates/contract.algo.ts:204
+    // for (let i: uint64 = 0; i < filters.length; i += 1) {
+    intc_1 // 1
+    +
+    frame_bury 2
+    b cost_while_top@1
+
+cost_after_while@4:
+    // smart_contracts/gates/contract.algo.ts:215
+    // return requiredCosts
+    frame_dig 1
+    frame_bury 0
+    retsub
+
+
 // smart_contracts/gates/contract.algo.ts::Gate.size(gateID: uint64) -> uint64:
 size:
-    // smart_contracts/gates/contract.algo.ts:169-170
+    // smart_contracts/gates/contract.algo.ts:218-219
     // @abimethod({ readonly: true })
     // size(gateID: uint64): uint64 {
     proto 1 1
-    // smart_contracts/gates/contract.algo.ts:171
+    // smart_contracts/gates/contract.algo.ts:220
     // assert(this.gateRegistry(gateID).exists)
     frame_dig -1
     itob
-    // smart_contracts/gates/contract.algo.ts:36
+    // smart_contracts/gates/contract.algo.ts:38
     // gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ keyPrefix: GateBoxPrefixGateRegistry })
-    bytec_3 // "g"
+    bytec_2 // "g"
     swap
     concat
-    // smart_contracts/gates/contract.algo.ts:171
+    // smart_contracts/gates/contract.algo.ts:220
     // assert(this.gateRegistry(gateID).exists)
     dup
     box_len
     bury 1
     assert
-    // smart_contracts/gates/contract.algo.ts:172
+    // smart_contracts/gates/contract.algo.ts:221
     // return this.gateRegistry(gateID).value.length
     intc_0 // 0
-    intc_3 // 2
+    intc_2 // 2
     box_extract
     btoi
+    retsub
+
+
+// smart_contracts/gates/contract.algo.ts::Gate.getGate(gateID: uint64) -> bytes:
+getGate:
+    // smart_contracts/gates/contract.algo.ts:224-225
+    // @abimethod({ readonly: true })
+    // getGate(gateID: uint64): GateFilterEntryWithArgs[] {
+    proto 1 1
+    intc_0 // 0
+    dupn 2
+    bytec_3 // ""
+    dupn 3
+    // smart_contracts/gates/contract.algo.ts:226
+    // assert(this.gateRegistry(gateID).exists)
+    frame_dig -1
+    itob
+    // smart_contracts/gates/contract.algo.ts:38
+    // gateRegistry = BoxMap<uint64, GateFilterEntry[]>({ keyPrefix: GateBoxPrefixGateRegistry })
+    bytec_2 // "g"
+    swap
+    concat
+    dup
+    // smart_contracts/gates/contract.algo.ts:226
+    // assert(this.gateRegistry(gateID).exists)
+    box_len
+    bury 1
+    assert
+    // smart_contracts/gates/contract.algo.ts:230
+    // let entriesWithArgs: GateFilterEntryWithArgs[] = []
+    bytec 7 // 0x0000
+    // smart_contracts/gates/contract.algo.ts:231
+    // for (let i: uint64 = 0; i < entries.length; i += 1) {
+    intc_0 // 0
+
+getGate_while_top@1:
+    // smart_contracts/gates/contract.algo.ts:228
+    // const entries = clone(this.gateRegistry(gateID).value)
+    frame_dig 7
+    intc_0 // 0
+    intc_2 // 2
+    box_extract
+    btoi
+    // smart_contracts/gates/contract.algo.ts:231
+    // for (let i: uint64 = 0; i < entries.length; i += 1) {
+    frame_dig 9
+    >
+    bz getGate_after_while@4
+    // smart_contracts/gates/contract.algo.ts:232-238
+    // const args = abiCall(
+    //     MockGate.prototype.getEntry,
+    //     {
+    //       appId: entries[i].app,
+    //       args: [entries[i].registryEntry],
+    //     }
+    //   ).returnValue
+    itxn_begin
+    // smart_contracts/gates/contract.algo.ts:228
+    // const entries = clone(this.gateRegistry(gateID).value)
+    frame_dig 9
+    intc_3 // 25
+    *
+    intc_2 // 2
+    +
+    frame_dig 7
+    swap
+    intc_3 // 25
+    box_extract
+    // smart_contracts/gates/contract.algo.ts:235
+    // appId: entries[i].app,
+    dup
+    // smart_contracts/gates/contract.algo.ts:228
+    // const entries = clone(this.gateRegistry(gateID).value)
+    pushint 8 // 8
+    // smart_contracts/gates/contract.algo.ts:235
+    // appId: entries[i].app,
+    extract_uint64
+    // smart_contracts/gates/contract.algo.ts:228
+    // const entries = clone(this.gateRegistry(gateID).value)
+    dig 1
+    extract 16 8
+    // smart_contracts/gates/contract.algo.ts:232-238
+    // const args = abiCall(
+    //     MockGate.prototype.getEntry,
+    //     {
+    //       appId: entries[i].app,
+    //       args: [entries[i].registryEntry],
+    //     }
+    //   ).returnValue
+    pushbytes 0x90d4fa5d // method "getEntry(uint64)byte[]"
+    itxn_field ApplicationArgs
+    dup
+    itxn_field ApplicationArgs
+    dig 1
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 0 4
+    bytec_0 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    extract 6 0
+    // smart_contracts/gates/contract.algo.ts:228
+    // const entries = clone(this.gateRegistry(gateID).value)
+    dig 3
+    extract 0 8
+    uncover 4
+    extract 24 1
+    // smart_contracts/gates/contract.algo.ts:240
+    // entriesWithArgs.push({ ...entries[i], args })
+    uncover 4
+    itob
+    uncover 2
+    swap
+    concat
+    uncover 3
+    concat
+    swap
+    concat
+    dig 1
+    len
+    itob
+    extract 6 2
+    uncover 2
+    concat
+    swap
+    pushbytes 0x001b
+    concat
+    swap
+    concat
+    frame_dig 8
+    dup
+    intc_0 // 0
+    extract_uint16
+    dup
+    cover 3
+    frame_bury 3
+    extract 2 0
+    frame_bury 0
+    pushbytes 0x0002
+    swap
+    concat
+    frame_bury 2
+    bytec_3 // 0x
+    frame_bury 1
+    intc_2 // 2
+    *
+    frame_bury 6
+    intc_0 // 0
+    frame_bury 4
+
+getGate_for_header@6:
+    frame_dig 4
+    frame_dig 6
+    <
+    bz getGate_after_for@8
+    frame_dig 0
+    frame_dig 4
+    dup
+    cover 2
+    extract_uint16
+    intc_2 // 2
+    +
+    itob
+    extract 6 2
+    frame_dig 1
+    swap
+    concat
+    frame_bury 1
+    intc_2 // 2
+    +
+    frame_bury 4
+    b getGate_for_header@6
+
+getGate_after_for@8:
+    frame_dig 0
+    len
+    frame_bury 5
+    intc_0 // 0
+    frame_bury 4
+
+getGate_for_header@9:
+    frame_dig 4
+    intc_2 // 2
+    <
+    bz getGate_after_for@11
+    frame_dig 2
+    frame_dig 4
+    dup
+    cover 2
+    extract_uint16
+    frame_dig 5
+    +
+    itob
+    extract 6 2
+    frame_dig 1
+    swap
+    concat
+    frame_bury 1
+    intc_2 // 2
+    +
+    frame_bury 4
+    b getGate_for_header@9
+
+getGate_after_for@11:
+    frame_dig 3
+    // smart_contracts/gates/contract.algo.ts:240
+    // entriesWithArgs.push({ ...entries[i], args })
+    intc_1 // 1
+    +
+    itob
+    extract 6 2
+    frame_dig 1
+    concat
+    frame_dig 0
+    frame_dig 6
+    frame_dig 5
+    substring3
+    concat
+    frame_dig 2
+    extract 2 0
+    concat
+    frame_bury 8
+    // smart_contracts/gates/contract.algo.ts:231
+    // for (let i: uint64 = 0; i < entries.length; i += 1) {
+    frame_dig 9
+    intc_1 // 1
+    +
+    frame_bury 9
+    b getGate_while_top@1
+
+getGate_after_while@4:
+    // smart_contracts/gates/contract.algo.ts:243
+    // return entriesWithArgs
+    frame_dig 8
+    frame_bury 0
     retsub
 
 
@@ -1004,21 +1449,21 @@ update:
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 5 // "version"
+    bytec 6 // "version"
     // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
     frame_dig -1
@@ -1034,14 +1479,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_1 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1053,4 +1498,31 @@ updateAkitaDAO:
     // this.akitaDAO.value = Application(app)
     frame_dig -1
     app_global_put
+    retsub
+
+
+// smart_contracts/gates/base.ts::BaseGate.mbr(length: uint64) -> bytes:
+mbr:
+    // smart_contracts/gates/base.ts:5
+    // protected mbr(length: uint64): GateMBRData {
+    proto 1 1
+    // smart_contracts/gates/base.ts:8
+    // gateRegistry: 6_100 + (400 * (32 * length)),
+    frame_dig -1
+    pushint 12800 // 12800
+    *
+    pushint 6100 // 6100
+    +
+    // smart_contracts/gates/base.ts:7
+    // appRegistry: 6_100,
+    pushint 6100 // 6100
+    // smart_contracts/gates/base.ts:6-9
+    // return {
+    //   appRegistry: 6_100,
+    //   gateRegistry: 6_100 + (400 * (32 * length)),
+    // }
+    itob
+    swap
+    itob
+    concat
     retsub

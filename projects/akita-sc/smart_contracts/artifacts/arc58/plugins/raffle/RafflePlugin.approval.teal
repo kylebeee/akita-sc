@@ -444,20 +444,20 @@ main_create_route@5:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:241
+    // smart_contracts/utils/functions.ts:288
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:242
+    // smart_contracts/utils/functions.ts:289
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:243
+    // smart_contracts/utils/functions.ts:290
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:246
+    // smart_contracts/utils/functions.ts:293
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -509,16 +509,16 @@ newRaffle:
     proto 13 1
     pushbytes ""
     dup
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -13
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -536,14 +536,16 @@ newRaffle:
     frame_dig -10
     >=
     assert // not enough asset
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
-    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:59
     // if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:59
+    // if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     frame_dig -11
@@ -567,14 +569,16 @@ newRaffle:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
-    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:68
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:68
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -706,14 +710,16 @@ newRaffle_after_if_else@8:
     // optinMBR +
     // fcosts.appCreators
     +
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
-    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:103
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:103
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -866,7 +872,7 @@ newRaffle_after_if_else@8:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   }
     // ).returnValue
-    pushbytes 0x615055de // method "newRaffle(pay,axfer,uint64,uint64,uint64,uint64,uint64,uint64,byte[32],string,byte[32][])uint64"
+    pushbytes 0x5080d7da // method "newRaffle(pay,axfer,uint64,uint64,uint64,uint64,uint64,uint64,address,string,byte[32][])uint64"
     itxn_field ApplicationArgs
     uncover 6
     itxn_field ApplicationArgs
@@ -924,16 +930,16 @@ newPrizeBoxRaffle:
     //   marketplace: Address,
     // ): uint64 {
     proto 10 1
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -10
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -941,24 +947,28 @@ newPrizeBoxRaffle:
     app_global_get_ex
     pop
     dup
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:154
+    // assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === sender, ERR_NOT_PRIZE_BOX_OWNER)
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/factory.ts:34
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:154
+    // assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === sender, ERR_NOT_PRIZE_BOX_OWNER)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:378
+    // smart_contracts/utils/functions.ts:425
     // assert(prizeBox.creator === Application(getAkitaAppList(akitaDAO).prizeBox).address, ERR_NOT_A_PRIZE_BOX)
     frame_dig -8
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/utils/functions.ts:25
+    // smart_contracts/utils/functions.ts:28
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:378
+    // smart_contracts/utils/functions.ts:425
     // assert(prizeBox.creator === Application(getAkitaAppList(akitaDAO).prizeBox).address, ERR_NOT_A_PRIZE_BOX)
     pushint 24 // 24
     extract_uint64
@@ -966,7 +976,7 @@ newPrizeBoxRaffle:
     assert // application exists
     ==
     assert // Not a prize box
-    // smart_contracts/utils/functions.ts:379
+    // smart_contracts/utils/functions.ts:426
     // const [ownerBytes] = op.AppGlobal.getExBytes(prizeBox, Bytes(PrizeBoxGlobalStateKeyOwner))
     frame_dig -8
     pushbytes "owner"
@@ -987,14 +997,16 @@ newPrizeBoxRaffle:
     //   }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
-    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:161
     // args: [new Address(this.factory.value.address)],
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:161
+    // args: [new Address(this.factory.value.address)],
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:156-163
@@ -1006,7 +1018,7 @@ newPrizeBoxRaffle:
     //     args: [new Address(this.factory.value.address)],
     //   }
     // )
-    pushbytes 0x24cb311e // method "transfer(byte[32])void"
+    pushbytes 0xadf92ae4 // method "transfer(address)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     frame_dig -8
@@ -1063,14 +1075,16 @@ newPrizeBoxRaffle_after_if_else@3:
     // optinMBR +
     // fcosts.appCreators
     +
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
-    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
-    bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:186
     // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:186
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
@@ -1185,7 +1199,7 @@ newPrizeBoxRaffle_after_if_else@3:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   }
     // ).returnValue
-    pushbytes 0x0dcb179c // method "newPrizeBoxRaffle(pay,uint64,uint64,uint64,uint64,uint64,uint64,uint64,byte[32])uint64"
+    pushbytes 0x063c0ca5 // method "newPrizeBoxRaffle(pay,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address)uint64"
     itxn_field ApplicationArgs
     uncover 6
     itxn_field ApplicationArgs
@@ -1237,16 +1251,16 @@ enter:
     //   args: GateArgs
     // ): void {
     proto 6 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -6
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1258,14 +1272,14 @@ enter:
     frame_dig -4
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:224
     // assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1371,7 +1385,7 @@ enter:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   }
     // )
-    pushbytes 0x6153fcfa // method "enter(pay,byte[32],byte[][])void"
+    pushbytes 0x9739cbb6 // method "enter(pay,address,byte[][])void"
     itxn_field ApplicationArgs
     frame_dig -2
     itxn_field ApplicationArgs
@@ -1521,7 +1535,7 @@ enter_else_body@4:
     //     rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   }
     // )
-    pushbytes 0x559bd985 // method "enterAsa(pay,axfer,byte[32],byte[][])void"
+    pushbytes 0xe3a21d52 // method "enterAsa(pay,axfer,address,byte[][])void"
     itxn_field ApplicationArgs
     frame_dig -2
     itxn_field ApplicationArgs
@@ -1550,16 +1564,16 @@ add:
     //   args: GateArgs
     // ): void {
     proto 5 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -5
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1571,14 +1585,14 @@ add:
     frame_dig -3
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:285
     // assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1798,16 +1812,16 @@ raffle:
     //   raffleAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1819,14 +1833,14 @@ raffle:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:334
     // assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1879,16 +1893,16 @@ findWinner:
     //   iterationAmount: uint64
     // ): void {
     proto 4 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -4
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1900,14 +1914,14 @@ findWinner:
     frame_dig -2
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:355
     // assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1966,16 +1980,16 @@ claimRafflePrize:
     //   raffleAppID: uint64,
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1987,14 +2001,14 @@ claimRafflePrize:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:376
     // assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2046,16 +2060,16 @@ deleteRaffleApplication:
     //   raffleAppID: uint64
     // ): void {
     proto 3 0
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     frame_dig -3
-    // smart_contracts/utils/functions.ts:206
+    // smart_contracts/utils/functions.ts:236
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:204-207
+    // smart_contracts/utils/functions.ts:234-237
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -2067,14 +2081,14 @@ deleteRaffleApplication:
     frame_dig -1
     app_params_get AppCreator
     assert // application exists
+    intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:27
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
-    intc_0 // 0
     bytec_0 // "raffle_factory"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:396
     // assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2126,14 +2140,14 @@ update:
     // smart_contracts/utils/base-contracts/factory.ts:73
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/factory.ts:34
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/factory.ts:73
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2163,14 +2177,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/factory.ts:81
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/factory.ts:34
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/factory.ts:81
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
@@ -2193,14 +2207,14 @@ updateAkitaDAOEscrow:
     // smart_contracts/utils/base-contracts/factory.ts:86
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/factory.ts:34
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
     bytec_2 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
     // smart_contracts/utils/base-contracts/factory.ts:86
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==

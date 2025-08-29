@@ -1,13 +1,13 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, clone, Global, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
-import { calcPercent, getEscrowInfo, getRekeyIndex, getSpendingAccount, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
+import { calcPercent, getEscrowInfo, getRekeyIndex, getSpendingAccount, mustGetEscrowInfo, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
 import { AkitaBaseContract } from "../../../utils/base-contracts/base";
 import { ERR_INVALID_PAYMENT } from "../../../utils/errors";
 import { ERR_ALREADY_OPTED_IN } from "../optin/errors";
 import { ERR_ESCROW_DOES_NOT_EXIST, ERR_FORBIDDEN } from "../../account/errors";
 import { ERR_ASSET_ALREADY_ALLOCATED, ERR_ESCROW_NOT_ALLOCATABLE, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN, ERR_ESCROW_NOT_IDLE, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE, ERR_ESCROW_NOT_OPTED_IN, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT, ERR_INVALID_SPLIT_TYPE, ERR_OVER_ALLOCATION, ERR_RECEIVE_ESCROW_DOES_NOT_EXIST, ERR_REMAINDER_MUST_BE_LAST, ERR_SPLIT_VALUE_MUST_BE_POSITIVE_OR_REMAINDER, ERR_SPLITS_CANNOT_BE_EMPTY, ERR_SPLITS_CANNOT_BE_MORE_THAN_10 } from "./errors";
 import { RevenueStreamerBoxPrefixEscrows, RevenueStreamerBoxPrefixReceiveAssets, RevenueStreamerBoxPrefixSplits } from "./constants";
-import { ONE_DAY } from "../social/constants";
+import { ONE_DAY } from "../../../social/constants";
 import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
 
 /**
@@ -153,7 +153,7 @@ export class RevenueStreamer extends AkitaBaseContract {
 
   startEscrowDisbursement(walletID: uint64, rekeyBack: boolean): void {
     const wallet = Application(walletID)
-    const escrow = getEscrowInfo(wallet)
+    const escrow = mustGetEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
     assert(this.controls(sender), ERR_FORBIDDEN)
 
@@ -174,7 +174,7 @@ export class RevenueStreamer extends AkitaBaseContract {
 
   processEscrowAllocation(walletID: uint64, rekeyBack: boolean, ids: uint64[]): void {
     const wallet = Application(walletID)
-    const escrow = getEscrowInfo(wallet)
+    const escrow = mustGetEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
 
     const { phase, optinCount, allocationCounter } = this.escrows(escrow.id).value

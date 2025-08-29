@@ -3,23 +3,36 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 32 6
-    bytecblock "akita_dao" 0x151f7c75 "version"
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:16
+    intcblock 0 1 32 8
+    bytecblock 0x151f7c75 "akita_dao" "" "version"
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:20
+    // registrationShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyRegistrationShape })
+    pushbytes "registration_shape"
+    bytec_2 // ""
+    app_global_put
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:22
+    // checkShape = GlobalState<string>({ initialValue: 'uint64', key: GateGlobalStateKeyCheckShape })
+    pushbytess "check_shape" "uint64" // "check_shape", "uint64"
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
     // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     txn NumAppArgs
-    bz main_after_if_else@12
-    pushbytess 0xcd9ad67e 0x329f04ee 0x77bb79b9 0xc61c862b 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(byte[])bool", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    bz main_after_if_else@16
+    pushbytess 0xcd9ad67e 0x329f04ee 0x77bb79b9 0x6e03f50a 0x8ab8d371 0x90d4fa5d 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getCheckShape(uint64)uint64", method "getEntry(uint64)byte[]", method "update(string)void", method "updateAkitaDAO(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@3 main_cost_route@4 main_register_route@5 main_check_route@6 main_update_route@7 main_updateAkitaDAO_route@8
+    match main_create_route@5 main_cost_route@6 main_register_route@7 main_check_route@8 main_getCheckShape_route@9 main_getEntry_route@10 main_update_route@11 main_updateAkitaDAO_route@12
 
-main_after_if_else@12:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:16
+main_after_if_else@16:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
     // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     intc_0 // 0
     return
 
-main_updateAkitaDAO_route@8:
+main_updateAkitaDAO_route@12:
     // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
@@ -27,7 +40,7 @@ main_updateAkitaDAO_route@8:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:16
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
     // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     btoi
@@ -37,7 +50,7 @@ main_updateAkitaDAO_route@8:
     intc_1 // 1
     return
 
-main_update_route@7:
+main_update_route@11:
     // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
@@ -46,7 +59,7 @@ main_update_route@7:
     assert // OnCompletion is not UpdateApplication
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:16
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
     // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     extract 2 0
@@ -56,41 +69,91 @@ main_update_route@7:
     intc_1 // 1
     return
 
-main_check_route@6:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:81
-    // check(args: bytes): boolean {
+main_getEntry_route@10:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:98
+    // @abimethod({ readonly: true })
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:16
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
     // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
-    extract 2 0
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:81
-    // check(args: bytes): boolean {
-    callsub check
-    pushbytes 0x00
-    intc_0 // 0
-    uncover 2
-    setbit
-    bytec_1 // 0x151f7c75
+    btoi
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:98
+    // @abimethod({ readonly: true })
+    callsub getEntry
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
     intc_1 // 1
     return
 
-main_register_route@5:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:68
+main_getCheckShape_route@9:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:94
+    // getCheckShape(shape: uint64): uint64 {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    bytec_0 // 0x151f7c75
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
+    // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
+    txna ApplicationArgs 1
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:94
+    // getCheckShape(shape: uint64): uint64 {
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_check_route@8:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:88
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
+    // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    extract 2 0
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:88
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    callsub check
+    pushbytes 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+main_register_route@7:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:74
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:16
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
     // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     txn GroupIndex
     intc_1 // 1
@@ -102,19 +165,19 @@ main_register_route@5:
     assert // transaction type is pay
     txna ApplicationArgs 1
     extract 2 0
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:68
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:74
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     callsub register
     itob
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
     intc_1 // 1
     return
 
-main_cost_route@4:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:64
+main_cost_route@6:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:70
     // cost(args: bytes): uint64 {
     txn OnCompletion
     !
@@ -126,8 +189,8 @@ main_cost_route@4:
     intc_1 // 1
     return
 
-main_create_route@3:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:56
+main_create_route@5:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:62
     // @abimethod({ onCreate: 'require' })
     txn OnCompletion
     !
@@ -135,13 +198,13 @@ main_create_route@3:
     txn ApplicationID
     !
     assert // can only call when creating
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:16
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:15
     // export class NFDGate extends AkitaBaseContract implements SubGateInterface {
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:56
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:62
     // @abimethod({ onCreate: 'require' })
     callsub create
     intc_1 // 1
@@ -150,21 +213,21 @@ main_create_route@3:
 
 // smart_contracts/gates/sub-gates/nfd/contract.algo.ts::NFDGate.create(version: bytes, akitaDAO: uint64) -> void:
 create:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:56-57
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:62-63
     // @abimethod({ onCreate: 'require' })
     // create(version: string, akitaDAO: uint64): void {
     proto 2 0
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_2 // "version"
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:58
+    bytec_3 // "version"
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:64
     // this.version.value = version
     frame_dig -2
     app_global_put
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:59
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:65
     // this.akitaDAO.value = Application(akitaDAO)
     frame_dig -1
     app_global_put
@@ -173,10 +236,10 @@ create:
 
 // smart_contracts/gates/sub-gates/nfd/contract.algo.ts::NFDGate.register(mbrPayment: uint64, args: bytes) -> uint64:
 register:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:68
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:74
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     proto 2 1
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:69-76
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:75-82
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -187,10 +250,10 @@ register:
     // )
     frame_dig -2
     gtxns Receiver
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:72
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:78
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:69-76
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:75-82
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -205,44 +268,49 @@ register:
     !
     &&
     assert // Invalid payment
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:78
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:83
+    // assert(args.length === 0, ERR_INVALID_ARG_COUNT)
+    frame_dig -1
+    len
+    !
+    assert // Invalid number of arguments
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:85
     // return 0
     intc_0 // 0
     retsub
 
 
-// smart_contracts/gates/sub-gates/nfd/contract.algo.ts::NFDGate.check(args: bytes) -> uint64:
+// smart_contracts/gates/sub-gates/nfd/contract.algo.ts::NFDGate.check(caller: bytes, registryID: uint64, args: bytes) -> uint64:
 check:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:81
-    // check(args: bytes): boolean {
-    proto 1 1
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:88
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    proto 3 1
     intc_0 // 0
-    pushbytes ""
+    bytec_2 // ""
     dupn 2
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:82
-    // assert(args.length === 40, ERR_INVALID_ARG_COUNT)
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:89
+    // assert(args.length === Uint64ByteLength, ERR_INVALID_ARG_COUNT)
     frame_dig -1
     len
-    pushint 40 // 40
+    intc_3 // 8
     ==
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:84
-    // return this.nfdGate(params.user, params.NFD)
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:90
+    // assert(registryID === 0, ERR_INVALID_REGISTRY_ARG)
+    frame_dig -2
+    !
+    assert // Invalid registry ID for this gate
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:91
+    // return this.nfdGate(caller, btoi(args))
     frame_dig -1
-    extract 0 32
-    frame_dig -1
-    extract 32 8
-    frame_dig -1
-    intc_2 // 32
-    extract_uint64
-    dup
-    cover 2
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:21
-    // const [nfdName] = op.AppGlobal.getExBytes(appID, Bytes(NFD_NAME_KEY))
+    btoi
+    dupn 2
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:27
+    // const [nfdName] = op.AppGlobal.getExBytes(appID, Bytes(NFDGlobalStateKeysName))
     pushbytes "i.name"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:23-29
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:29-35
     // const verified = abiCall(
     //   NFDRegistry.prototype.isValidNfdAppId,
     //   {
@@ -251,22 +319,26 @@ check:
     //   }
     // ).returnValue
     itxn_begin
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:32
+    // appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:32
+    // appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:35
+    // smart_contracts/utils/functions.ts:38
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     pushbytes "other_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:26
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:32
     // appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
-    pushint 8 // 8
+    intc_3 // 8
     extract_uint64
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:27
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:33
     // args: [String(nfdName), appID],
     dig 1
     len
@@ -274,7 +346,9 @@ check:
     extract 6 2
     uncover 2
     concat
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:23-29
+    uncover 2
+    itob
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:29-35
     // const verified = abiCall(
     //   NFDRegistry.prototype.isValidNfdAppId,
     //   {
@@ -284,10 +358,11 @@ check:
     // ).returnValue
     pushbytes 0x4be22fc6 // method "isValidNfdAppId(string,uint64)bool"
     itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    itxn_field ApplicationArgs
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -297,51 +372,51 @@ check:
     extract 4 0
     swap
     extract 0 4
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     intc_0 // 0
     getbit
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:31
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:37
     // if (!verified) {
     bnz check_after_if_else@3
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:32
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:38
     // return false
     intc_0 // 0
 
 check_after_inlined_smart_contracts/gates/sub-gates/nfd/contract.algo.ts::NFDGate.nfdGate@9:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:84
-    // return this.nfdGate(params.user, params.NFD)
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:91
+    // return this.nfdGate(caller, btoi(args))
     frame_bury 0
     retsub
 
 check_after_if_else@3:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:35-41
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:41-47
     // const caAlgoData = abiCall(
     //   NFD.prototype.readField,
     //   {
     //     appId: appID,
-    //     args: [Bytes(NFD_VERIFIED_ADDRESSES_PROPERTY_NAME)],
+    //     args: [Bytes(NFDMetaKeyVerifiedAddresses)],
     //   }
     // ).returnValue
     itxn_begin
     pushbytes 0x6c13ede4 // method "readField(byte[])byte[]"
     itxn_field ApplicationArgs
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:39
-    // args: [Bytes(NFD_VERIFIED_ADDRESSES_PROPERTY_NAME)],
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:45
+    // args: [Bytes(NFDMetaKeyVerifiedAddresses)],
     pushbytes 0x000d762e6361416c676f2e302e6173
     itxn_field ApplicationArgs
-    frame_dig 5
+    frame_dig 4
     itxn_field ApplicationID
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:35-41
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:41-47
     // const caAlgoData = abiCall(
     //   NFD.prototype.readField,
     //   {
     //     appId: appID,
-    //     args: [Bytes(NFD_VERIFIED_ADDRESSES_PROPERTY_NAME)],
+    //     args: [Bytes(NFDMetaKeyVerifiedAddresses)],
     //   }
     // ).returnValue
-    intc_3 // appl
+    pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -349,22 +424,22 @@ check_after_if_else@3:
     itxn LastLog
     dup
     extract 0 4
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     extract 6 0
     frame_bury 0
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:43
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:49
     // let exists: boolean = false
     intc_0 // 0
     frame_bury 1
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:44
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:50
     // for (let i: uint64 = 0; i < caAlgoData.length; i += 32) {
     intc_0 // 0
     frame_bury 2
 
 check_while_top@4:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:44
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:50
     // for (let i: uint64 = 0; i < caAlgoData.length; i += 32) {
     frame_dig 0
     len
@@ -373,7 +448,7 @@ check_while_top@4:
     frame_dig 2
     >
     bz check_after_while@8
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:45
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:51
     // const addr = caAlgoData.slice(i, 32)
     frame_dig 2
     dup
@@ -400,18 +475,18 @@ check_while_top@4:
     frame_dig 0
     cover 2
     substring3
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:46
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:52
     // if (addr === user.bytes) {
-    frame_dig 4
+    frame_dig -3
     ==
     bz check_after_if_else@7
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:47
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:53
     // exists = true
     intc_1 // 1
     frame_bury 1
 
 check_after_if_else@7:
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:44
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:50
     // for (let i: uint64 = 0; i < caAlgoData.length; i += 32) {
     frame_dig 2
     intc_2 // 32
@@ -421,9 +496,22 @@ check_after_if_else@7:
 
 check_after_while@8:
     frame_dig 1
-    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:84
-    // return this.nfdGate(params.user, params.NFD)
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:91
+    // return this.nfdGate(caller, btoi(args))
     b check_after_inlined_smart_contracts/gates/sub-gates/nfd/contract.algo.ts::NFDGate.nfdGate@9
+
+
+// smart_contracts/gates/sub-gates/nfd/contract.algo.ts::NFDGate.getEntry(registryID: uint64) -> bytes:
+getEntry:
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:98-99
+    // @abimethod({ readonly: true })
+    // getEntry(registryID: uint64): bytes {
+    proto 1 1
+    // smart_contracts/gates/sub-gates/nfd/contract.algo.ts:100
+    // return op.bzero(0)
+    intc_0 // 0
+    bzero
+    retsub
 
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
@@ -435,21 +523,21 @@ update:
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_2 // "version"
+    bytec_3 // "version"
     // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
     frame_dig -1
@@ -465,21 +553,21 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
+    intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    intc_0 // 0
-    bytec_0 // "akita_dao"
-    app_global_get_ex
-    assert // check GlobalState exists
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
     frame_dig -1

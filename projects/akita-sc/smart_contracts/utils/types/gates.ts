@@ -1,5 +1,5 @@
-import { bytes, Contract, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { GateFilter } from '../../gates/types'
+import { Bytes, bytes, Contract, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { GateFilter, GateFilterEntryWithArgs } from '../../gates/types'
 import { Address } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type GateArgs = bytes[]
@@ -12,10 +12,12 @@ export class GateInterface extends Contract {
   check(caller: Address, gateID: uint64, args: GateArgs): boolean { return false }
   mustCheck(caller: Address, gateID: uint64, args: GateArgs): void { }
   size(gateID: uint64): uint64 { return 0 }
+  getGate(gateID: uint64): GateFilterEntryWithArgs[] { return [] }
 }
 
 export class SubGateInterface extends Contract {
   cost(args: bytes): uint64 { return 0 }
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 { return 0 }
-  check(args: bytes): boolean { return false }
+  check(caller: Address, registryID: uint64, args: bytes): boolean { return false }
+  getEntry(registryID: uint64): bytes { return Bytes('') }
 }

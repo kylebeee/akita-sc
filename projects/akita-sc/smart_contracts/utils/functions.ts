@@ -1,10 +1,10 @@
 import { Account, Application, assert, Asset, Bytes, Global, gtxn, itxn, itxnCompose, OnCompleteAction, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees } from "../arc58/dao/types"
+import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../arc58/dao/types"
 import { abiCall, Address, decodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
-import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees } from "../arc58/dao/constants"
+import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysWalletFees } from "../arc58/dao/constants"
 import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
 import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR } from "./constants"
-import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
+import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 
 import { GateArgs, GateInterface } from "./types/gates"
 import { AssetInbox } from "./types/asset-inbox"
@@ -12,15 +12,17 @@ import { btoi, itob, sha256 } from "@algorandfoundation/algorand-typescript/op"
 import { MetaMerklesInterface, Proof } from "./types/merkles"
 import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
 import { STAKING_TYPE_LOCK } from "../staking/types"
-import { ONE_YEAR_IN_DAYS } from "../gates/sub-gates/staking-power/constants"
-import { ONE_DAY, ONE_WEEK } from "../arc58/plugins/social/constants"
-
+import { ONE_YEAR_IN_DAYS, ONE_DAY, ONE_WEEK } from './constants'
 import { AkitaSocialImpactInterface } from "./types/social"
 import { EscrowFactoryInterface } from "./types/escrows"
 import { AbstractedAccountInterface } from "./abstract-account"
 import { OptInPluginInterface } from "./types/plugins/optin"
 import { StakingInterface } from "./types/staking"
 import { EscrowInfo } from "../arc58/account/types"
+import { ERR_ESCROW_DOES_NOT_EXIST } from "../arc58/account/errors"
+import { RewardsInterface } from "./types/rewards"
+import { UserAllocation } from "../rewards/types"
+import { MinDisbursementsMBR, UserAllocationMBR } from "../rewards/constants"
 
 export function getAkitaAppList(akitaDAO: Application): AkitaAppList {
   const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
@@ -39,6 +41,11 @@ export function getOtherAppList(akitaDAO: Application): OtherAppList {
 
 export function getEscrowFactory(akitaDAO: Application): uint64 {
   return op.AppGlobal.getExUint64(akitaDAO, Bytes(AbstractAccountGlobalStateKeysEscrowFactory))[0]
+}
+
+export function getWalletFees(akitaDAO: Application): WalletFees {
+  const [walletFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysWalletFees))
+  return decodeArc4<WalletFees>(walletFeesBytes)
 }
 
 export function getSocialFees(akitaDAO: Application): SocialFees {
@@ -120,12 +127,31 @@ export function originOrTxnSender(walletID: Application): Account {
   return originOr(walletID, Txn.sender)
 }
 
+export function referrerOr(walletID: Application, or: Account): Account {
+  if (walletID.id === 0) {
+    return or
+  }
+  return getReferrerAccount(walletID)
+}
+
+export function referrerOrZeroAddress(walletID: Application): Account {
+  return referrerOr(walletID, Global.zeroAddress)
+}
+
 export function getOriginAccount(walletID: Application): Account {
   const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     walletID,
     Bytes(AbstractAccountGlobalStateKeysControlledAddress)
   )
   return Account(Bytes(controlledAccountBytes))
+}
+
+export function getReferrerAccount(walletID: Application): Account {
+  const [referrerBytes] = op.AppGlobal.getExBytes(
+    walletID,
+    Bytes(AbstractAccountGlobalStateKeysReferrer)
+  )
+  return Account(Bytes(referrerBytes))
 }
 
 export function getWalletIDUsingAkitaDAO(akitaDAO: Application, address: Account): Application {
@@ -189,15 +215,18 @@ export type Arc58Accounts = {
   walletAddress: Account;
   origin: Account;
   sender: Account;
+  referrer: Account;
 };
 
 export function getAccounts(wallet: Application): Arc58Accounts {
   const origin = getOriginAccount(wallet)
   const sender = getSpendingAccount(wallet)
+  const referrer = getReferrerAccount(wallet)
   return {
     walletAddress: wallet.address,
     origin,
     sender,
+    referrer
   }
 }
 
@@ -220,12 +249,18 @@ export function getEscrow(wallet: Application): string {
 export function getEscrowInfo(wallet: Application): EscrowInfo {
   const escrow = getEscrow(wallet)
   return abiCall(
-    AbstractedAccountInterface.prototype.arc58_mustGetEscrow,
+    AbstractedAccountInterface.prototype.arc58_getEscrows,
     {
       appId: wallet.id,
-      args: [escrow]
+      args: [[escrow]]
     }
-  ).returnValue
+  ).returnValue[0]
+}
+
+export function mustGetEscrowInfo(wallet: Application): EscrowInfo {
+  const info = getEscrowInfo(wallet)
+  assert(info.id > 0, ERR_ESCROW_DOES_NOT_EXIST)
+  return info
 }
 
 export function getRekeyIndex(wallet: Application): uint64 {
@@ -428,4 +463,68 @@ export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64
 
   const remainingDays: uint64 = remainingTime / ONE_DAY
   return op.divw(...op.mulw(wideRatio([info.amount, 1_000_000], [ONE_YEAR_IN_DAYS, 1_000_000]), remainingDays), 1_000_000)
+}
+
+export function createInstantDisbursement(akitaDAO: Application, asset: uint64, timeToUnlock: uint64, expiration: uint64, allocations: UserAllocation[], sum: uint64): { id: uint64, cost: uint64 } {
+  const rewardsApp = getAkitaAppList(akitaDAO).rewards
+
+  let id: uint64 = 0
+  let cost: uint64 = MinDisbursementsMBR + (UserAllocationMBR * allocations.length)
+  if (asset === 0) {
+    id = abiCall(
+      RewardsInterface.prototype.createInstantDisbursement,
+      {
+        appId: rewardsApp,
+        args: [
+          itxn.payment({
+            receiver: Application(rewardsApp).address,
+            amount: MinDisbursementsMBR + (UserAllocationMBR * allocations.length) + sum
+          }),
+          timeToUnlock,
+          expiration,
+          allocations
+        ]
+      }
+    ).returnValue
+  } else {
+    if (!Application(rewardsApp).address.isOptedIn(Asset(asset))) {
+      cost += Global.assetOptInMinBalance
+      abiCall(
+        RewardsInterface.prototype.optin,
+        {
+          appId: rewardsApp,
+          args: [
+            itxn.payment({
+              receiver: Application(rewardsApp).address,
+              amount: Global.assetOptInMinBalance
+            }),
+            asset
+          ]
+        }
+      )
+    }
+
+    id = abiCall(
+      RewardsInterface.prototype.createInstantAsaDisbursement,
+      {
+        appId: rewardsApp,
+        args: [
+          itxn.payment({
+            receiver: Application(rewardsApp).address,
+            amount: MinDisbursementsMBR + (UserAllocationMBR * allocations.length)
+          }),
+          itxn.assetTransfer({
+            assetReceiver: Application(rewardsApp).address,
+            assetAmount: sum,
+            xferAsset: asset
+          }),
+          timeToUnlock,
+          expiration,
+          allocations
+        ]
+      }
+    ).returnValue
+  }
+
+  return { id, cost }
 }

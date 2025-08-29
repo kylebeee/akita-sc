@@ -3,18 +3,18 @@ import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes,
 import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, ImpactMetaValue, FollowsKey, BlockListKey, VoteListKey, ReactionsKey, ReactionListKey, Action, TipAction, ReactionMeta, PostMeta } from './types'
 import { CID } from '../utils/types/base'
-import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA, AmendmentMBR, TipSendTypeDirect, TipSendTypeARC59, TipSendTypeARC58, TipActionPost, TipActionReact, ImpactMetaMBR, SubscriptionStateModifierMBR } from './constants'
-
+import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA, AmendmentMBR, TipSendTypeDirect, TipSendTypeARC59, TipSendTypeARC58, TipActionPost, TipActionReact, ImpactMetaMBR, SubscriptionStateModifierMBR } from './constants'
+import { NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter } from '../utils/constants/nfd'
 import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAS_GATE, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_NFD, ERR_INVALID_REF_LENGTH, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NFD_CHANGED, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_A_SUBSCRIPTION, ERR_NOT_AN_AKITA_NFT, ERR_NOT_AN_NFD, ERR_NOT_DAO, ERR_NOT_FLAGGED, ERR_NOT_SOCIAL, ERR_NOT_YOUR_POST_TO_EDIT, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFD, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
 import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescript/op'
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { OptInPlugin } from '../arc58/plugins/optin/contract.algo'
-import { akitaSocialFee, gateCheck, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, getSpendingAccount, impactRange, getWalletIDUsingAkitaDAO, originOrTxnSender, originOr } from '../utils/functions'
+import { akitaSocialFee, gateCheck, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, impactRange, getWalletIDUsingAkitaDAO, originOrTxnSender, originOr, referrerOrZeroAddress, calcPercent, createInstantDisbursement } from '../utils/functions'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { NFDRegistry } from '../utils/types/nfd-registry'
 import { NFD } from '../utils/types/nfd'
-import { AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress } from '../utils/constants'
+import { AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress, ONE_WEEK, TWENTY_FIVE_PERCENT } from '../utils/constants'
 import { Staking } from '../staking/contract.algo'
 import { STAKING_TYPE_SOFT } from '../staking/types'
 import { Subscriptions } from '../subscriptions/contract.algo'
@@ -155,11 +155,46 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     return impact + this.getSocialImpactScore(account)
   }
 
-  private arc58SendReactionPayments(walletID: uint64, tax: uint64): void {
+  private sendPostPayment(referrer: Account) {
     const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const { postFee } = getSocialFees(this.akitaDAO.value)
+    const { tax } = this.sendReferralPayment(referrer, akta, postFee)
+
+    itxn
+      .assetTransfer({
+        assetReceiver: this.akitaDAOEscrow.value.address,
+        assetAmount: tax,
+        xferAsset: akta
+      })
+      .submit()
+  }
+
+  private sendReferralPayment(referrer: Account, asset: uint64, preReferralTax: uint64): { tax: uint64, cost: uint64 } {
+    let referralFee: uint64 = 0
+    if (referrer !== Global.zeroAddress && referrer.isOptedIn(Asset(asset))) {
+      referralFee = calcPercent(preReferralTax, TWENTY_FIVE_PERCENT)
+      if (referralFee === 0 && preReferralTax > 0) {
+        referralFee = 1
+      }
+
+      const { cost } = createInstantDisbursement(
+        this.akitaDAO.value,
+        asset,
+        Global.latestTimestamp,
+        (Global.latestTimestamp + ONE_WEEK),
+        [{ address: new Address(referrer), amount: referralFee }],
+        referralFee
+      )
+      
+      return { tax: (preReferralTax - referralFee), cost }
+    }
+
+    return { tax: preReferralTax, cost: 0 }
+  }
+
+  private arc58SendReactionPayments(walletID: uint64, asset: uint64, tax: uint64, remainder: uint64): void {
     const wallet = Application(walletID)
     const origin = getOriginAccount(wallet)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     itxnCompose.begin(
       AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
@@ -176,13 +211,13 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     )
 
     itxnCompose.next(
-      OptInPlugin.prototype.optin,
+      OptInPlugin.prototype.optIn,
       {
         appId: getPluginAppList(this.akitaDAO.value).optin,
         args: [
           walletID,
           true, // rekey back immediately
-          [akta],
+          [asset],
           itxn.payment({
             amount: Global.assetOptInMinBalance,
             receiver: origin
@@ -200,27 +235,25 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
       itxn.assetTransfer({
         assetReceiver: this.akitaDAOEscrow.value.address,
         assetAmount: tax,
-        xferAsset: akta
+        xferAsset: asset
       })
     )
 
     itxnCompose.next(
       itxn.assetTransfer({
         assetReceiver: origin,
-        assetAmount: reactFee - tax,
-        xferAsset: akta
+        assetAmount: remainder,
+        xferAsset: asset
       })
     )
 
     itxnCompose.submit()
   }
 
-  private arc59SendReactionPayments(creator: Account, tax: uint64, arc59: arc59GetSendAssetInfoResponse): void {
+  private arc59SendReactionPayments(creator: Account, asset: uint64, tax: uint64, remainder: uint64, arc59: arc59GetSendAssetInfoResponse): void {
     const { routerOptedIn, mbr, receiverAlgoNeededForClaim } = arc59
     const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
     const inboxAddress = Application(assetInbox).address
-    const akta = getAkitaAssets(this.akitaDAO.value).akta
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     if (mbr || receiverAlgoNeededForClaim) {
       itxn
@@ -234,7 +267,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     if (!routerOptedIn) {
       abiCall(AssetInbox.prototype.arc59_optRouterIn, {
         appId: assetInbox,
-        args: [akta]
+        args: [asset]
       })
     }
 
@@ -242,7 +275,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
       .assetTransfer({
         assetReceiver: this.akitaDAOEscrow.value.address,
         assetAmount: tax,
-        xferAsset: akta
+        xferAsset: asset
       })
       .submit()
 
@@ -253,8 +286,8 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
         args: [
           itxn.assetTransfer({
             assetReceiver: inboxAddress,
-            assetAmount: reactFee - tax,
-            xferAsset: akta
+            assetAmount: remainder,
+            xferAsset: asset
           }),
           new Address(creator),
           receiverAlgoNeededForClaim
@@ -263,42 +296,45 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     )
   }
 
-  private sendDirectReactionPayments(creator: Account, tax: uint64): void {
-    const akta = getAkitaAssets(this.akitaDAO.value).akta
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
+  private sendDirectReactionPayments(creator: Account, asset: uint64, tax: uint64, remainder: uint64): void {
 
     const taxTxn = itxn.assetTransfer({
       assetReceiver: this.akitaDAOEscrow.value.address,
       assetAmount: tax,
-      xferAsset: akta
+      xferAsset: asset
     })
 
     const xferTxn = itxn.assetTransfer({
       assetReceiver: creator,
-      assetAmount: reactFee - tax,
-      xferAsset: akta
+      assetAmount: remainder,
+      xferAsset: asset
     })
 
     itxn.submitGroup(taxTxn, xferTxn)
   }
 
-  private sendReactionPayments(creator: Account, wallet: uint64, tax: uint64): uint64 {
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, wallet)
+  private sendReactionPayments(receiver: Account, wallet: uint64, referrer: Account, preReferralTax: uint64): uint64 {
+    const { type, arc59, arc58 } = this.checkTipMbrRequirements(this.akitaDAO.value, receiver, wallet)
     let extraAmount: uint64 = 0
+    
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const { tax, cost } = this.sendReferralPayment(referrer, akta, preReferralTax)
+    extraAmount += cost
+    const { reactFee } = getSocialFees(this.akitaDAO.value)
 
-    switch (tipInfo.type) {
+    switch (type) {
       case TipSendTypeDirect: {
-        this.sendDirectReactionPayments(creator, tax)
+        this.sendDirectReactionPayments(receiver, akta, tax, (reactFee - preReferralTax))
         break
       }
       case TipSendTypeARC59: {
-        extraAmount = (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        this.arc59SendReactionPayments(creator, tax, tipInfo.arc59)
+        extraAmount = (arc59.mbr + arc59.receiverAlgoNeededForClaim)
+        this.arc59SendReactionPayments(receiver, akta, tax, (reactFee - preReferralTax), arc59)
         break
       }
       case TipSendTypeARC58: {
-        extraAmount = tipInfo.arc58
-        this.arc58SendReactionPayments(wallet, tax)
+        extraAmount = arc58
+        this.arc58SendReactionPayments(wallet, akta, tax, (reactFee - preReferralTax))
         break
       }
     }
@@ -356,13 +392,22 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
 
   private calcVotes(ref: bytes<32>, isUp: boolean, impact: uint64): { newCount: uint64; isNegative: boolean } {
     if (!this.votes(ref).exists) {
-      return { newCount: impact, isNegative: false }
+      return { newCount: impact, isNegative: !isUp }
     }
 
     const { isNegative, voteCount } = this.votes(ref).value
     // differingDirections means that the direction this vote will move the vote count
     // is the opposite of the current vote count
     const differingDirections = (isUp && isNegative) || (!isUp && !isNegative)
+
+    if (voteCount === 0) {
+      return { newCount: impact, isNegative: !isUp }
+    }
+
+    if (impact === voteCount && differingDirections) {
+      return { newCount: 0, isNegative: false }
+    }
+
     // flip indicates that this vote will move the vote count from negative to positive
     // or vice versa
     const flip = impact > voteCount && differingDirections
@@ -387,10 +432,11 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
 
   private createPost(
     origin: Account,
+    referrer: Account,
     mbrPayment: gtxn.PaymentTxn,
     cid: CID,
     gateID: uint64,
-    isAmendment: boolean
+    isAmendment: boolean,
   ): void {
     assert(!this.isBanned(origin), ERR_BANNED)
 
@@ -413,10 +459,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     }
     this.updateVotes(postID, true, impact)
     this.createVoteList(postID, true, origin, impact)
+    this.sendPostPayment(referrer)
   }
 
   private createReply(
     origin: Account,
+    referrer: Account,
     mbrPayment: gtxn.PaymentTxn,
     mbrNeeded: uint64,
     cid: CID,
@@ -427,7 +475,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     assert(!this.isBanned(origin), ERR_BANNED)
     const { creator } = this.posts(ref).value
     assert(!this.isBlocked(creator.native, origin), ERR_BLOCKED)
-    
+
     // update streak before we measure impact
     // this way we guarantee the box exists
     this.updateStreak(origin)
@@ -438,7 +486,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const tax = akitaSocialFee(this.akitaDAO.value, creatorImpact)
 
     let extra = mbrNeeded
-    extra += this.sendReactionPayments(creator.native, wallet, tax)
+    extra += this.sendReactionPayments(creator.native, wallet, referrer, tax)
     // validate after we send payments, annoying but saves us compute
     this.validatePostPayment(mbrPayment, cid, isAmendment, extra)
 
@@ -460,6 +508,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
 
   private createVote(
     origin: Account,
+    referrer: Account,
     mbrPayment: gtxn.PaymentTxn,
     mbrNeeded: uint64,
     ref: bytes<32>,
@@ -491,7 +540,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
       const recipientImpact = this.getUserImpact(creator.native)
       const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
 
-      const extra = this.sendReactionPayments(creator.native, wallet, tax)
+      const extra = this.sendReactionPayments(creator.native, wallet, referrer, tax)
       // validate after we send payments, annoying but saves us compute
       assertMatch(
         mbrPayment,
@@ -528,6 +577,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
 
   private createReaction(
     origin: Account,
+    referrer: Account,
     mbrPayment: gtxn.PaymentTxn,
     mbrNeeded: uint64,
     ref: bytes<32>,
@@ -556,7 +606,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const reactionExists = this.reactions(reactionKey).exists
 
     let extra = mbrNeeded
-    extra += this.sendReactionPayments(creator.native, wallet, tax)
+    extra += this.sendReactionPayments(creator.native, wallet, referrer, tax)
     // validate after we send payments, annoying but saves us compute
     this.validateReactPayment(mbrPayment, reactionExists, extra)
 
@@ -657,9 +707,10 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     this.validateTip(tip, TipActionPost)
-    this.createPost(origin, mbrPayment, cid, gateID, false)
+    this.createPost(origin, referrer, mbrPayment, cid, gateID, false)
   }
 
   editPost(
@@ -671,6 +722,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(amendment).exists, ERR_POST_NOT_FOUND)
     const { creator, ref } = this.posts(amendment).value
@@ -681,7 +733,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     this.posts(amendment).value.ref = ref.concat(Bytes('a').concat(Txn.txId))
 
     this.validateTip(tip, TipActionPost)
-    this.createPost(origin, mbrPayment, cid, gateID, true)
+    this.createPost(origin, referrer, mbrPayment, cid, gateID, true)
   }
 
   gatedReplyPost(
@@ -694,13 +746,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { gateID: postGateID } = this.posts(ref).value
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, postGateID), ERR_FAILED_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, 0, cid, ref, gateID, false)
+    this.createReply(origin, referrer, mbrPayment, 0, cid, ref, gateID, false)
   }
 
   replyPost(
@@ -712,13 +765,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { gateID: postGateID } = this.posts(ref).value
     assert(postGateID === 0, ERR_HAS_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, 0, cid, ref, gateID, false)
+    this.createReply(origin, referrer, mbrPayment, 0, cid, ref, gateID, false)
   }
 
   replyAsset(
@@ -730,6 +784,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(ref !== 0, ERR_INVALID_ASSET)
     assert(Asset(ref).total > 0, ERR_INVALID_ASSET)
@@ -737,7 +792,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, addedMbr, cid, paddedRef, gateID, false)
+    this.createReply(origin, referrer, mbrPayment, addedMbr, cid, paddedRef, gateID, false)
   }
 
   gatedReplyAddress(
@@ -750,6 +805,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     // if meta doesn't exist they aren't gated
     assert(this.meta(ref.native).exists, ERR_META_DOESNT_EXIST)
@@ -760,7 +816,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, addedMbr, cid, r, gateID, false)
+    this.createReply(origin, referrer, mbrPayment, addedMbr, cid, r, gateID, false)
   }
 
   replyAddress(
@@ -772,6 +828,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     if (this.meta(ref.native).exists) {
       const { addressGateID } = this.meta(ref.native).value
@@ -782,7 +839,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, addedMbr, cid, r, gateID, false)
+    this.createReply(origin, referrer, mbrPayment, addedMbr, cid, r, gateID, false)
   }
 
   replyApp(
@@ -794,6 +851,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(ref !== 0, ERR_INVALID_APP)
     assert(Application(ref).approvalProgram.length > 0, ERR_INVALID_APP)
@@ -801,7 +859,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, addedMbr, cid, paddedRef, gateID, false)
+    this.createReply(origin, referrer, mbrPayment, addedMbr, cid, paddedRef, gateID, false)
   }
 
   gatedEditReply(
@@ -814,6 +872,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(amendment).exists, ERR_REPLY_NOT_FOUND)
     const { creator, ref } = this.posts(amendment).value
@@ -828,7 +887,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, ogPostGateID), ERR_FAILED_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, 0, cid, originalPostRef, gateID, true)
+    this.createReply(origin, referrer, mbrPayment, 0, cid, originalPostRef, gateID, true)
   }
 
   editReply(
@@ -840,6 +899,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(amendment).exists, ERR_REPLY_NOT_FOUND)
     const { creator, ref } = this.posts(amendment).value
@@ -854,7 +914,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     assert(ogPostGateID === 0, ERR_HAS_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReply(origin, mbrPayment, 0, cid, originalPostRef, gateID, true)
+    this.createReply(origin, referrer, mbrPayment, 0, cid, originalPostRef, gateID, true)
   }
 
   votePost(
@@ -865,10 +925,11 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     this.validateTip(tip, TipActionReact)
     const mbrNeeded = this.mbr(Bytes('')).votelist
-    this.createVote(origin, mbrPayment, mbrNeeded, ref, isUp)
+    this.createVote(origin, referrer, mbrPayment, mbrNeeded, ref, isUp)
   }
 
   voteAsset(
@@ -879,6 +940,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(ref !== 0, ERR_INVALID_ASSET)
     assert(Asset(ref).total > 0, ERR_INVALID_ASSET)
@@ -887,7 +949,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(paddedRef, Asset(ref).creator)
 
     this.validateTip(tip, TipActionReact)
-    this.createVote(origin, mbrPayment, (mbrNeeded + addedMbr), paddedRef, isUp)
+    this.createVote(origin, referrer, mbrPayment, (mbrNeeded + addedMbr), paddedRef, isUp)
   }
 
   voteAddress(
@@ -898,13 +960,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     const r = ref.native.bytes
     const mbrNeeded = this.mbr(Bytes('')).votelist
     const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
 
     this.validateTip(tip, TipActionReact)
-    this.createVote(origin, mbrPayment, (mbrNeeded + addedMbr), r, isUp)
+    this.createVote(origin, referrer, mbrPayment, (mbrNeeded + addedMbr), r, isUp)
   }
 
   voteApp(
@@ -915,6 +978,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(ref !== 0, ERR_INVALID_APP)
     assert(Application(ref).approvalProgram.length > 0, ERR_INVALID_APP)
@@ -923,7 +987,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
 
     this.validateTip(tip, TipActionReact)
-    this.createVote(origin, mbrPayment, (mbrNeeded + addedMbr), paddedRef, isUp)
+    this.createVote(origin, referrer, mbrPayment, (mbrNeeded + addedMbr), paddedRef, isUp)
   }
 
   editVote(
@@ -934,6 +998,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     const voteListKey = this.vlk(origin, ref)
     assert(this.votelist(voteListKey).exists, ERR_HAVENT_VOTED)
@@ -960,7 +1025,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
 
     // if the user wants to flip their vote, vote again but the opposite way
     this.validateTip(tip, TipActionReact)
-    this.createVote(origin, mbrPayment, 0, ref, !isUp)
+    this.createVote(origin, referrer, mbrPayment, 0, ref, !isUp)
   }
 
   gatedReactPost(
@@ -972,13 +1037,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { gateID } = this.posts(ref).value
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, gateID), ERR_FAILED_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, 0, ref, NFT)
+    this.createReaction(origin, referrer, mbrPayment, 0, ref, NFT)
   }
 
   reactPost(
@@ -989,13 +1055,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { gateID: postGateID } = this.posts(ref).value
     assert(postGateID === 0, ERR_HAS_GATE)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, 0, ref, NFT)
+    this.createReaction(origin, referrer, mbrPayment, 0, ref, NFT)
   }
 
   reactAsset(
@@ -1006,6 +1073,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(ref !== 0, ERR_INVALID_ASSET)
     assert(Asset(ref).total > 0, ERR_INVALID_ASSET)
@@ -1013,7 +1081,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(paddedRef, Asset(ref).creator)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, addedMbr, paddedRef, NFT)
+    this.createReaction(origin, referrer, mbrPayment, addedMbr, paddedRef, NFT)
   }
 
   gatedReactAddress(
@@ -1025,6 +1093,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     if (this.meta(ref.native).exists) {
       const { addressGateID } = this.meta(ref.native).value
@@ -1035,7 +1104,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, addedMbr, r, NFT)
+    this.createReaction(origin, referrer, mbrPayment, addedMbr, r, NFT)
   }
 
   reactAddress(
@@ -1046,6 +1115,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     if (this.meta(ref.native).exists) {
       const { addressGateID } = this.meta(ref.native).value
@@ -1056,7 +1126,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     let addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, addedMbr, r, NFT)
+    this.createReaction(origin, referrer, mbrPayment, addedMbr, r, NFT)
   }
 
   reactApp(
@@ -1067,6 +1137,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
+    const referrer = referrerOrZeroAddress(wallet)
 
     assert(ref !== 0, ERR_INVALID_APP)
     assert(Application(ref).approvalProgram.length > 0, ERR_INVALID_APP)
@@ -1074,7 +1145,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseEscrow) implements
     const addedMbr = this.createEmptyPostIfNecessary(paddedRef, Application(ref).creator)
 
     this.validateTip(tip, TipActionReact)
-    this.createReaction(origin, mbrPayment, addedMbr, paddedRef, NFT)
+    this.createReaction(origin, referrer, mbrPayment, addedMbr, paddedRef, NFT)
   }
 
   deleteReaction(ref: bytes<32>, NFT: uint64): void {

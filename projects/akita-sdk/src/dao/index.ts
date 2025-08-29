@@ -1,7 +1,7 @@
 import { AkitaDaoArgs, AkitaDaoClient, AkitaDaoFactory } from '../generated/AkitaDAOClient'
 import { BaseSDK } from "../base";
-import { hasSenderSigner, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient } from "../types";
-import { AddPluginArgs, TxnReturn, WalletSDK } from "../wallet";
+import { hasSenderSigner, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
+import { AddPluginArgs, WalletSDK } from "../wallet";
 import { AkitaDaoGlobalState, EditProposalParams, NewProposalParams, ProposalAction } from "./types";
 import { DAOProposalVotesMBR, ProposalActionEnum } from "./constants";
 import { ABIStruct, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";

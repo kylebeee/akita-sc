@@ -42,12 +42,14 @@ import {
   RewardsBoxPrefixDisbursements,
   RewardsBoxPrefixUserAllocations,
   RewardsGlobalStateKeyDisbursementID,
+  MinDisbursementsMBR,
 } from './constants'
 import { BaseRewards } from './base'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { RewardsInterface } from '../utils/types/rewards'
 
-export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWithOptIn) {
+export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWithOptIn) implements RewardsInterface {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -56,7 +58,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
 
   // BOXES ----------------------------------------------------------------------------------------
 
-  /** the disbursement map of the bones token
+  /** the disbursement map of tokens
    *
    * the key is the uint64 id of the disbursement
    * the value is the details of the disbursement
@@ -66,7 +68,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
   /** the user allocations of disbursements
    *
    * the key is the address of the qualified account with the uint64 id of the disbursement
-   * the value is the asset and amount they are owed
+   * the value is the amount they are owed
    */
   userAllocations = BoxMap<UserAllocationsKey, uint64>({ keyPrefix: RewardsBoxPrefixUserAllocations })
 
@@ -170,7 +172,6 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
       sum += allocations[i].amount
     }
 
-    // each user allocation box raises the MBR by 24,900 microAlgo
     const costs = this.mbr(title, note)
     const mbrAmount: uint64 = costs.userAllocations * allocations.length
 
@@ -255,12 +256,114 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
     this.disbursements(id).value.finalized = true
   }
 
+  createInstantDisbursement(
+    mbrPayment: gtxn.PaymentTxn,
+    timeToUnlock: uint64,
+    expiration: uint64,
+    allocations: UserAllocation[]
+  ): uint64 {
+    const id = this.newDisbursementID()
+
+    const mbrAmount: uint64 = MinDisbursementsMBR + (UserAllocationMBR * allocations.length)
+
+    let sum: uint64 = 0
+    for (let i: uint64 = 0; i < allocations.length; i += 1) {
+      const userAllocationsKey: UserAllocationsKey = {
+        disbursementID: id,
+        address: allocations[i].address,
+        asset: 0,
+      }
+
+      this.userAllocations(userAllocationsKey).value = allocations[i].amount
+      sum += allocations[i].amount
+    }
+
+    assertMatch(
+      mbrPayment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: mbrAmount + sum,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    this.disbursements(id).value = {
+      creator: new Address(Txn.sender),
+      finalized: true,
+      title: '',
+      amount: sum,
+      timeToUnlock,
+      expiration,
+      allocations: allocations.length,
+      distributed: 0,
+      note: '',
+    }
+
+    return id
+  }
+
+  createInstantAsaDisbursement(
+    mbrPayment: gtxn.PaymentTxn,
+    assetXfer: gtxn.AssetTransferTxn,
+    timeToUnlock: uint64,
+    expiration: uint64,
+    allocations: UserAllocation[]
+  ): uint64 {
+    const id = this.newDisbursementID()
+
+    const mbrAmount: uint64 = MinDisbursementsMBR + (UserAllocationMBR * allocations.length)
+
+    let sum: uint64 = 0
+    for (let i: uint64 = 0; i < allocations.length; i += 1) {
+      const userAllocationsKey: UserAllocationsKey = {
+        disbursementID: id,
+        address: allocations[i].address,
+        asset: assetXfer.xferAsset.id,
+      }
+
+      this.userAllocations(userAllocationsKey).value = allocations[i].amount
+      sum += allocations[i].amount
+    }
+
+    assertMatch(
+      mbrPayment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: mbrAmount,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    assertMatch(
+      assetXfer,
+      {
+        assetReceiver: Global.currentApplicationAddress,
+        assetAmount: sum,
+      },
+      ERR_INVALID_TRANSFER
+    )
+
+    this.disbursements(id).value = {
+      creator: new Address(Txn.sender),
+      finalized: true,
+      title: '',
+      amount: sum,
+      timeToUnlock,
+      expiration,
+      allocations: allocations.length,
+      distributed: 0,
+      note: '',
+    }
+
+    return id 
+  }
+
   claimRewards(rewards: ClaimDetails[]): void {
     for (let i: uint64 = 0; i < rewards.length; i += 1) {
       assert(this.disbursements(rewards[i].id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
 
       const { timeToUnlock, expiration, amount, distributed, creator, note } = this.disbursements(rewards[i].id).value
-      assert(timeToUnlock <= Global.latestTimestamp - 60, ERR_DISBURSEMENT_LOCKED)
+      assert(timeToUnlock <= Global.latestTimestamp, ERR_DISBURSEMENT_LOCKED)
       assert(expiration >= Global.latestTimestamp, ERR_DISBURSEMENT_LOCKED)
       assert(amount > distributed, ERR_DISBURSEMENT_FULLY_DISTRIBUTED)
 
@@ -278,7 +381,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
 
       const creatorMBRRefund = itxn.payment({
         receiver: creator.native,
-        amount: 24_900,
+        amount: UserAllocationMBR,
       })
 
       const isAlgo = rewards[i].asset === 0
