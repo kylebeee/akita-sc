@@ -19,7 +19,7 @@ import { FactoryContract } from '../../utils/base-contracts/factory'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
 import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
 import { AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints, AbstractedAccountFactoryGlobalStateKeyDomain } from './constants'
-import { createInstantDisbursement, getWalletFees, getWalletIDUsingAkitaDAO, referrerOrZeroAddress, sendReferralPayment } from '../../utils/functions'
+import { costInstantDisbursement, getWalletFees, getWalletIDUsingAkitaDAO, referrerOrZeroAddress, sendReferralPayment } from '../../utils/functions'
 import { AbstractedAccountFactoryInterface } from '../../utils/abstract-account'
 
 export class AbstractedAccountFactory extends FactoryContract implements AbstractedAccountFactoryInterface {
@@ -136,13 +136,25 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
 
   @abimethod({ readonly: true })
   cost(): uint64 {
+
+    const creationFee = getWalletFees(this.akitaDAO.value).createFee
+
+    let referralCost: uint64 = 0
+    if (creationFee > 0) {
+      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+      if (wallet.id > 0) {
+        referralCost = costInstantDisbursement(this.akitaDAO.value, 0, 1)
+      }
+    }
+
     return (
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * AbstractAccountNumGlobalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * AbstractAccountNumGlobalBytes) +
       Global.minBalance +
       ARC58WalletIDsByAccountsMbr +
-      getWalletFees(this.akitaDAO.value).createFee
+      creationFee + 
+      referralCost
     )
   }
 }

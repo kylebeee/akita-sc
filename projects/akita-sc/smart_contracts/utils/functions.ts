@@ -466,6 +466,17 @@ export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64
   return op.divw(...op.mulw(wideRatio([info.amount, 1_000_000], [ONE_YEAR_IN_DAYS, 1_000_000]), remainingDays), 1_000_000)
 }
 
+export function costInstantDisbursement(akitaDAO: Application, asset: uint64, allocationsLength: uint64): uint64 {
+  const rewardsApp = getAkitaAppList(akitaDAO).rewards
+  let cost: uint64 = MinDisbursementsMBR + (UserAllocationMBR * allocationsLength)
+
+  if (asset !== 0 && !Application(rewardsApp).address.isOptedIn(Asset(asset))) {
+    cost += Global.assetOptInMinBalance
+  }
+
+  return cost
+}
+
 export function createInstantDisbursement(akitaDAO: Application, asset: uint64, timeToUnlock: uint64, expiration: uint64, allocations: UserAllocation[], sum: uint64): { id: uint64, cost: uint64 } {
   const rewardsApp = getAkitaAppList(akitaDAO).rewards
 

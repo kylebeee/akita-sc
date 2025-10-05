@@ -32,7 +32,6 @@ import {
   AbstractAccountGlobalStateKeysBio,
   AbstractAccountGlobalStateKeysControlledAddress,
   AbstractAccountGlobalStateKeysReferrer,
-  AbstractAccountGlobalStateKeysCurrentEscrow,
   AbstractAccountGlobalStateKeysDomain,
   AbstractAccountGlobalStateKeysEscrowFactory,
   AbstractAccountGlobalStateKeysFactoryApp,
@@ -50,9 +49,11 @@ import {
   MinExecutionsMBR,
   MinNamedPluginMBR,
   MinPluginMBR,
+  AbstractAccountGlobalStateKeysCurrentPlugin,
 } from './constants'
 import {
   ERR_ADMIN_ONLY,
+  ERR_ADMIN_PLUGINS_CANNOT_USE_ESCROWS,
   ERR_ALLOWANCE_ALREADY_EXISTS,
   ERR_ALLOWANCE_DOES_NOT_EXIST,
   ERR_ALLOWANCE_EXCEEDED,
@@ -139,8 +140,8 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   lastChange = GlobalState<uint64>({ key: AbstractAccountGlobalStateKeysLastChange })
   /** [TEMPORARY STATE FIELD] The spending address for the currently active plugin */
   spendingAddress = GlobalState<Account>({ key: AbstractAccountGlobalStateKeysSpendingAddress })
-  /** [TEMPORARY STATE FIELD] The current escrow ID in use for the account */
-  currentEscrow = GlobalState<string>({ initialValue: '', key: AbstractAccountGlobalStateKeysCurrentEscrow, })
+  /** [TEMPORARY STATE FIELD] The current plugin key being used */
+  currentPlugin = GlobalState<PluginKey>({ key: AbstractAccountGlobalStateKeysCurrentPlugin })
   /** [TEMPORARY STATE FIELD] The index of the transaction that created the rekey sandwich */
   rekeyIndex = GlobalState<uint64>({ initialValue: 0, key: AbstractAccountGlobalStateKeysRekeyIndex })
   /** the spending account factory to use for allowances */
@@ -711,19 +712,19 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   /**
    * Attempt to change the admin via plugin.
    *
-   * @param plugin The app calling the plugin
-   * @param caller The address that triggered the plugin
    * @param newAdmin The new admin
    *
   */
-  arc58_pluginChangeAdmin(plugin: uint64, caller: Address, newAdmin: Address): void {
+  arc58_pluginChangeAdmin(newAdmin: Address): void {
+    const key = clone(this.currentPlugin.value)
+    const { plugin, escrow } = key
+
+    assert(escrow === '', ERR_ADMIN_PLUGINS_CANNOT_USE_ESCROWS);
     assert(Txn.sender === Application(plugin).address, ERR_SENDER_MUST_BE_ADMIN_PLUGIN);
     assert(
       this.controlledAddress.value.authAddress === Application(plugin).address,
       'This plugin is not in control of the account'
     );
-
-    const key: PluginKey = { plugin, caller: caller.native, escrow: '' };
 
     assert(
       this.plugins(key).exists && this.plugins(key).value.admin,
@@ -743,7 +744,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   arc58_verifyAuthAddress(): void {
     assert(this.spendingAddress.value.authAddress === this.getAuthAddress());
     this.spendingAddress.value = Global.zeroAddress
-    this.currentEscrow.value = ''
+    this.currentPlugin.value = { plugin: 0, caller: Global.currentApplicationAddress, escrow: '' }
     this.rekeyIndex.value = 0
   }
 
@@ -814,13 +815,13 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     const key: PluginKey = { plugin, caller, escrow }
 
     assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST)
+    this.currentPlugin.value = clone(key)
 
     if (escrow !== '') {
       assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
       const escrowID = this.escrows(escrow).value.id
       const spendingApp = Application(escrowID)
       this.spendingAddress.value = spendingApp.address
-      this.currentEscrow.value = escrow
       this.transferFunds(escrow, fundsRequest)
     } else {
       this.spendingAddress.value = this.controlledAddress.value

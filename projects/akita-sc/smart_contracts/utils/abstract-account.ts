@@ -24,7 +24,7 @@ export class AbstractedAccountInterface extends Contract {
   setBanner(banner: uint64): void { }
   setBio(bio: string): void { }
   arc58_changeAdmin(newAdmin: Address): void { }
-  arc58_pluginChangeAdmin(plugin: uint64, caller: Address, newAdmin: Address): void { }
+  arc58_pluginChangeAdmin(newAdmin: Address): void { }
   arc58_verifyAuthAddress(): void { }
   arc58_rekeyTo(address: Address, flash: boolean): void { }
   arc58_canCall(plugin: uint64, global: boolean, address: Address, escrow: string, method: bytes<4>): boolean { return false; }

@@ -1,5 +1,25 @@
 # akita-sc
 
+Requirements
+
+- algokit ( + algorand localnet instance )
+- npm
+- Puya compiler 5
+
+currently:
+```bash
+pipx install --force git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.5
+```
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------
+
 Welcome to your new AlgoKit project!
 
 This is your workspace root. A `workspace` in AlgoKit is an orchestrated collection of standalone projects (backends, smart contracts, frontend apps and etc).

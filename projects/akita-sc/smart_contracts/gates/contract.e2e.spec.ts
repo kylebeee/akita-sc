@@ -10,7 +10,7 @@ import { deployAsaMintPlugin } from '../../tests/fixtures/plugins/asa-mint';
 import { deployGate } from '../../tests/fixtures/gates/gate';
 import { deployAssetGate } from '../../tests/fixtures/gates/sub-gates/asset';
 import { AssetGateClient } from '../artifacts/gates/sub-gates/asset/AssetGateClient';
-import { LogicalOperator, Operator } from 'akita-sdk/dist/esm/gates/types';
+import { LogicalOperator, Operator } from 'akita-sdk';
 
 describe('Asa Mint plugin contract', () => {
   const localnet = algorandFixture();
@@ -156,20 +156,29 @@ describe('Asa Mint plugin contract', () => {
       // const sender = testAccount.toString()
       // const signer = testAccount.signer
 
-      await gateSDK.register({
+      const { return: gateId } = await gateSDK.register({
         args: [
           {
             layer: 0n,
             appId: assetGate.appId,
             logicalOperator: LogicalOperator.None,
             type: 'asset',
+            asset: takta,
             op: Operator.GreaterThanOrEqualTo,
             value: 100_000n,
           }
         ]
       })
 
-      await gateSDK.getGates()
+      expect(gateId).toBeGreaterThan(0)
+
+      if (!gateId) throw new Error('no gateId')
+
+      const info = await gateSDK.getGate({ gateId })
+
+      expect(info).toBeDefined()
+
+      console.log('gate info:', info)
     })
   })
 })

@@ -24,6 +24,8 @@ import { APP_SPEC as SubscriptionStreakGateAppSpec, SubscriptionStreakGateRegist
 
 type ContractArgs = GateArgs["obj"];
 
+export * from './types'
+
 export class GateSDK extends BaseSDK<GateClient> {
 
   private contractIdToType: Map<bigint, GateType> = new Map();
