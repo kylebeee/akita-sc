@@ -1,4 +1,5 @@
 import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountFactoryClient'
+import { AbstractedAccountFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountClient'
 import { EscrowFactoryClient } from '../../smart_contracts/artifacts/escrow/EscrowFactoryClient';
 import { FixtureAndAccount } from '../types';
 import { WalletFactorySDK } from 'akita-sdk'
@@ -41,7 +42,50 @@ export const deployAbstractedAccountFactory = async ({
     }
   })
 
-  await client.appClient.fundAppAccount({ amount: (100_000).microAlgos() });
+  const fundAmount = (
+    100_000 + // min balance
+    3_280_100 // boxed contract storage
+  )
+
+  await client.appClient.fundAppAccount({ amount: fundAmount.microAlgos() });
+
+  const abstractedAccountFactory = algorand.client.getTypedAppFactory(
+    AbstractedAccountFactory,
+    {
+      defaultSender: sender,
+      defaultSigner: signer,
+    }
+  )
+
+  const compiledAbstractedAccount = await abstractedAccountFactory.appFactory.compile();
+  const size = compiledAbstractedAccount.approvalProgram.length;
+  const perTxn = (
+    2048 // max args
+    - 4 // selector
+    - 8 // offset
+    - 4 // dynamic byte array header
+  );
+  const uploadCount = 1 + Math.floor(size / perTxn);
+
+  const initParams = await client.params.initBoxedContract({ args: { size } });
+  let loadParams = []
+  for (let i = 0; i < uploadCount; i++) {
+    const chunk = compiledAbstractedAccount.approvalProgram.slice(
+      i * perTxn,
+      (i + 1) * perTxn,
+    );
+
+    loadParams.push(await client.params.loadBoxedContract({ args: { offset: (i * perTxn), data: chunk } }));
+  }
+
+  const composer = await client.newGroup().composer()
+
+  composer.addAppCallMethodCall(initParams)
+  for (let i = 0; i < loadParams.length; i++) {
+    composer.addAppCallMethodCall(loadParams[i])
+  }
+
+  await composer.send()
 
   return new WalletFactorySDK({
     algorand,

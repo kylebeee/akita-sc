@@ -1,4 +1,6 @@
 export const ERR_INVALID_PAYMENT = 'Invalid payment'
+export const ERR_CONTRACT_NOT_SET = 'Contract not set'
+export const ERR_INVALID_CALL_ORDER = 'Invalid call order'
 export const ERR_INVALID_TRANSFER = 'Invalid transfer'
 export const ERR_INVALID_APP = 'Invalid app'
 export const ERR_INVALID_ASSET = 'Invalid asset'

@@ -819,7 +819,8 @@ describe('ARC58 Plugin Permissions', () => {
           type: 'window',
           asset,
           amount: allowed,
-          interval: 1n
+          interval: 100n,
+          useRounds: true
         }]
       });
 
@@ -873,7 +874,7 @@ describe('ARC58 Plugin Permissions', () => {
 
       expect(error).toContain(ERR_ALLOWANCE_EXCEEDED);
 
-      await timeWarp.timeWarp(1n);
+      await timeWarp.warpForwardRounds(101n);
 
       await wallet.usePlugin({
         escrow,
@@ -929,7 +930,8 @@ describe('ARC58 Plugin Permissions', () => {
           asset,
           rate: 1_000_000n,
           interval: 10n,
-          max
+          max,
+          useRounds: true
         }]
       });
 
@@ -983,7 +985,28 @@ describe('ARC58 Plugin Permissions', () => {
 
       expect(error).toContain(ERR_ALLOWANCE_EXCEEDED);
 
-      await timeWarp.timeWarp(20n);
+      await timeWarp.warpForwardRounds(20n);
+
+      // calculate how much we should have available now
+      // we waited 21 rounds, with a rate of 1_000_000 every 10 rounds
+      // so we should have 2_000_000 drip back
+      // we had 4_000_000 left after our first payment
+      // so we should have 6_000_000 available now
+      allowanceInfo = wallet.allowances.get({ asset, escrow })!;
+
+      if (!isDripAllowance(allowanceInfo)) {
+        throw new Error('Expected allowance to be drip');
+      }
+
+      const lastRound = (await algorand.client.algod.status().do()).lastRound;
+
+      expect(allowanceInfo.last).toBe(lastRound - 20n);
+      expect(
+        allowanceInfo.lastLeftover + (
+          (20n / allowanceInfo.interval) *
+          allowanceInfo.rate
+        )
+      ).toEqual(amount);
 
       await wallet.usePlugin({
         escrow,
@@ -1005,7 +1028,7 @@ describe('ARC58 Plugin Permissions', () => {
 
       expect(allowanceInfo.lastLeftover).toEqual(0n);
 
-      await timeWarp.timeWarp(40n);
+      await timeWarp.warpForwardRounds(40n);
 
       error = 'no error thrown'
       try {
@@ -1025,7 +1048,7 @@ describe('ARC58 Plugin Permissions', () => {
 
       expect(error).toContain(ERR_ALLOWANCE_EXCEEDED);
 
-      await timeWarp.timeWarp(60n);
+      await timeWarp.warpForwardRounds(60n);
 
       await wallet.usePlugin({
         escrow,

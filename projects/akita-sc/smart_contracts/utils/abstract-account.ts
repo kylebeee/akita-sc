@@ -99,7 +99,7 @@ export class AbstractedAccountFactoryInterface extends Contract {
   updateAkitaDAO(app: uint64): void { }
   updateAkitaDAOEscrow(app: uint64): void { }
   updateRevocationApp(app: uint64): void { }
-  new(
+  newAccount(
     payment: gtxn.PaymentTxn,
     controlledAddress: Address,
     admin: Address,

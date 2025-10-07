@@ -18,6 +18,21 @@ export class TimeWarp {
     return block.block.header.timestamp;
   }
 
+  async warpForwardRounds(rounds: bigint): Promise<void> {
+    this.algorand.setSuggestedParamsCacheTimeout(0);
+    const dispenser = await this.algorand.account.dispenserFromEnvironment();
+    for (let i = 0; i < rounds; i++) {
+      await this.algorand.send.payment({
+        sender: dispenser.addr,
+        signer: dispenser.signer,
+        receiver: dispenser.addr,
+        amount: (0).microAlgo(),
+        // adding a random note to avoid transaction duplicates
+        note: new Uint8Array(crypto.randomBytes(16)),
+      });
+    }
+  }
+
   async roundWarp(rounds: bigint = 0n): Promise<void> {
     this.algorand.setSuggestedParamsCacheTimeout(0);
     const dispenser = await this.algorand.account.dispenserFromEnvironment();
@@ -26,7 +41,7 @@ export class TimeWarp {
       const lastRound = await this.getLastRound();
 
       if (rounds < lastRound) {
-        throw new Error(`Cannot warp to the past: ${rounds} < ${lastRound}`);
+        throw new Error(`Cannot warp to a previous round. Current: ${lastRound}, Target: ${rounds}`);
       }
 
       nRounds = rounds - lastRound;

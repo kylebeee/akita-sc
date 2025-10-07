@@ -44,4 +44,6 @@ export const MinDomainKeysMBR: uint64 = 15_700
 
 export const AbstractedAccountFactoryGlobalStateKeyDomain = 'domain'
 
+export const AbstractAccountFactoryBoxKeyCompiledContract = 'c' // holds the compiled contract
+
 export const ABSTRACTED_ACCOUNT_MINT_PAYMENT: uint64 = 1_028_000 + 12_100 // 1_028_000 for the account, 12_100 for the escrow factory

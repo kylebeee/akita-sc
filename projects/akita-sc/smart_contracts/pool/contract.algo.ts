@@ -245,7 +245,7 @@ export class Pool extends classes(
     }
 
     this.rewards(rewardID).value.qualifiedStakers += count 
-    this.rewards(rewardID).value.qualifiedStake += total 
+    this.rewards(rewardID).value.qualifiedStake += total
 
     if (this.entryID.value === disbursementCursor) {
       // end the phase & payout royalties
@@ -683,8 +683,9 @@ export class Pool extends classes(
     this.minimumStakeAmount.value = minimumStakeAmount
     this.gateID.value = gateID
     this.maxEntries.value = maxEntries
-    // Global.currentApplicationId = Application(akitaDAO)
+
     this.salt.value = Txn.txId
+    this.akitaDAO.value = Application(akitaDAO)
 
     const fees = getStakingFees(Global.currentApplicationId)
     const impact = getUserImpact(Global.currentApplicationId, this.creator.value)

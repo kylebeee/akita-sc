@@ -888,7 +888,7 @@ export class AkitaDAO extends Contract {
     const cost = this.setupCost()
 
     this.walletID.value = abiCall(
-      AbstractedAccountFactoryInterface.prototype.new,
+      AbstractedAccountFactoryInterface.prototype.newAccount,
       {
         appId: walletFactory,
         args: [
@@ -1337,4 +1337,6 @@ export class AkitaDAO extends Contract {
   proposalUpdateFieldShape(shape: ProposalUpdateField): ProposalUpdateField {
     return shape
   }
+
+  opUp(): void {}
 }

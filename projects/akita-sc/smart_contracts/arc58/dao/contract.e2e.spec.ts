@@ -48,8 +48,12 @@ describe('ARC58 Plugin Permissions', () => {
 
     await localnet.newScope();
     const { algorand, context: { testAccount } } = localnet
+    
     const sender = testAccount.toString()
     const signer = testAccount.signer
+
+    const dispenser = await algorand.account.dispenserFromEnvironment();
+    await algorand.account.ensureFunded(sender, dispenser, (100).algos());
 
     timeWarp = new TimeWarp(algorand);
 
@@ -180,7 +184,11 @@ describe('ARC58 Plugin Permissions', () => {
 
       console.log('funded amount:', fundAmount)
 
-      const { return: walletID } = await dao.setup({})
+      const { returns } = await dao.setup({})
+
+      console.log('setup returns', returns)
+
+      const [walletID] = returns as unknown as bigint[]
 
       expect(walletID).toBeDefined();
       expect(walletID).toBeGreaterThan(0n);

@@ -28,6 +28,9 @@ describe('Asa Mint plugin contract', () => {
     const sender = testAccount.toString()
     const signer = testAccount.signer
 
+    const dispenser = await algorand.account.dispenserFromEnvironment();
+    await algorand.account.ensureFunded(sender, dispenser, (100).algos());
+
     const dao = await deployAkitaDAO({
       fixture: localnet,
       sender,
