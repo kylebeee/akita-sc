@@ -1,6 +1,6 @@
 import { AkitaDaoArgs, AkitaDaoClient, AkitaDaoFactory } from '../generated/AkitaDAOClient'
 import { BaseSDK } from "../base";
-import { hasSenderSigner, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
+import { GroupReturn, hasSenderSigner, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
 import { AddPluginArgs, WalletSDK } from "../wallet";
 import { AkitaDaoGlobalState, EditProposalParams, NewProposalParams, ProposalAction } from "./types";
 import { DAOProposalVotesMBR, ProposalActionEnum } from "./constants";
@@ -462,7 +462,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     return preppedActions;
   }
 
-  async setup(params?: MaybeSigner): Promise<TxnReturn<bigint>> {
+  async setup(params?: MaybeSigner): Promise<GroupReturn> {
 
     const { sender, signer } = params || {};
     const sendParams = {
@@ -471,19 +471,26 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
       ...(signer !== undefined && { signer })
     };
 
-    const result = await this.client.send.setup({
-      ...sendParams,
-      args: {}
-    });
+    const group = this.client.newGroup()
 
-    if (result.return === undefined) {
+    group.setup({
+      ...sendParams,
+      args: {},
+      maxFee: (6_000).microAlgo()
+    })
+
+    group.opUp({ args: {}, maxFee: (1_000).microAlgos() })
+
+    const result = await group.send({ ...sendParams })
+
+    if (result.returns === undefined) {
       throw new Error('Failed to setup Akita DAO');
     }
 
     this.wallet = new WalletSDK({
       algorand: this.algorand,
       factoryParams: {
-        appId: result.return,
+        appId: result.returns[0] as bigint,
         defaultSender: sendParams.sender,
         defaultSigner: sendParams.signer
       }
@@ -746,7 +753,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
   }
 
   async proposalCost<TClient extends SDKClient>({ sender, signer, actions }: { actions: ProposalAction<TClient>[] } & MaybeSigner): Promise<bigint> {
-    
+
     const defaultParams = {
       ...this.sendParams,
       sender: this.readerAccount,
@@ -758,7 +765,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
       ...(sender !== undefined && { sender }),
       ...(signer !== undefined && { signer })
     };
-    
+
     const { return: requirements } = await this.client.send.proposalCost({
       ...sendParams,
       args: { actions: await this.prepProposalActions(actions) },

@@ -9,9 +9,9 @@ import { microAlgo } from '@algorandfoundation/algokit-utils';
 export type FactoryContractArgs = AbstractedAccountFactoryArgs["obj"];
 
 export type NewParams = (
-  Omit<FactoryContractArgs['new(pay,address,address,string,address)uint64'], 'payment' | 'controlledAddress' | 'admin' | 'referrer'> &
+  Omit<FactoryContractArgs['newAccount(pay,address,address,string,address)uint64'], 'payment' | 'controlledAddress' | 'admin' | 'referrer'> &
   MaybeSigner &
-  Partial<Pick<FactoryContractArgs['new(pay,address,address,string,address)uint64'], 'controlledAddress' | 'admin' | 'referrer'>>
+  Partial<Pick<FactoryContractArgs['newAccount(pay,address,address,string,address)uint64'], 'controlledAddress' | 'admin' | 'referrer'>>
 )
 
 export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
@@ -53,16 +53,24 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
         : sendParams.sender;
     }
 
-    const { return: appId } = await this.client.send.new({
-      ...sendParams,
-      args: {
-        payment,
-        controlledAddress,
-        admin,
-        nickname,
-        referrer
-      }
-    })
+    const group = this.client.newGroup()
+
+    const results = await group
+      .newAccount({
+        ...sendParams,
+        args: {
+          payment,
+          controlledAddress,
+          admin,
+          nickname,
+          referrer
+        },
+        maxFee: (5_000).microAlgos()
+      })
+      .opUp({ args: {}, maxFee: (1_000).microAlgos() })
+      .send({ ...sendParams })
+
+    const appId = results.returns[0];
 
     if (!appId) {
       throw new Error('Failed to create new wallet');
@@ -124,12 +132,13 @@ export async function newWallet({
   sendParams,
   sender,
   signer,
-  controlledAddress = '',
+  controlledAddress = ALGORAND_ZERO_ADDRESS_STRING,
   admin = '',
   nickname,
+  referrer = ALGORAND_ZERO_ADDRESS_STRING
 }: NewContractSDKParams & NewParams): Promise<WalletSDK> {
   const factory = new WalletFactorySDK({ factoryParams, algorand, readerAccount, sendParams });
-  const sdk = await factory.new({ sender, signer, controlledAddress, admin, nickname });
+  const sdk = await factory.new({ sender, signer, controlledAddress, admin, nickname, referrer });
   await sdk.register({ escrow: '' })
   return sdk;
 }
