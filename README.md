@@ -4,11 +4,11 @@ Requirements
 
 - algokit ( + algorand localnet instance )
 - npm
-- Puya compiler 5
+- Puya compiler 5.2
 
 currently:
 ```bash
-pipx install --force git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.5
+pipx install puyapy
 ```
 
 
