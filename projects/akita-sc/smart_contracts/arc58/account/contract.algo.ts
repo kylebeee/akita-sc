@@ -1255,7 +1255,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST)
     assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
-    assert(this.escrows(escrow).value.locked, ERR_ESCROW_LOCKED)
+    assert(!this.escrows(escrow).value.locked, ERR_ESCROW_LOCKED)
 
     const escrowID = this.escrows(escrow).value.id
 

@@ -85,7 +85,7 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
       assert(btoi(creator) === Global.callerApplicationId, ERR_INVALID_CREATOR)
     } else {
       creator = Bytes(itob(Global.callerApplicationId))
-      app = Global.callerApplicationId
+      assert(app === Global.callerApplicationId, ERR_INVALID_APP)
     }
 
     const appAddress = bytes16(Application(app).address)
@@ -117,17 +117,20 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
 
     const spendingAccount = compileArc4(Escrow);
 
-    const childAppMBR: uint64 = (
+    const refundAmount: uint64 = (
       MinPages +
-      GLOBAL_STATE_KEY_BYTES_COST
+      GLOBAL_STATE_KEY_BYTES_COST +
+      this.mbr(creator.length)
     )
 
     spendingAccount.call.delete({ appId: id })
 
+    this.walletIDsByAccounts(key).delete()
+
     itxn
       .payment({
         receiver: creator.length === 8 ? Global.callerApplicationAddress : Txn.sender,
-        amount: childAppMBR
+        amount: refundAmount
       })
       .submit()
   }

@@ -1,0 +1,61 @@
+- app registry
+- abstracted account (arc58)
+- abstracted account factory
+- infinity dao
+- ed25519 passkey lsig
+- secp256r1 passkey lsig
+- asa mint arc58 plugin
+- auction arc58 plugin
+- infinity dao arc58 plugin
+- dual stake arc58 plugin
+- gate arc58 plugin
+- hyper swap arc58 plugin
+- marketplace arc58 plugin
+- nfd arc58 plugin
+- optin arc58 pluigin
+- pay arc58 plugin
+- pay silo arc58 plugin
+- poll arc58 plugin
+- staking pool arc58 plugin
+- raffle arc58 plugin
+- revenue streamer arc58 plugin
+- rewards arc58 plugin
+- akita social arc58 plugin
+- staking arc58 plugin
+- subscriptions arc58 plugin
+- auction (crack auction, option to use bid fees for VRF raffle for losers)
+- auction factory
+- escrow
+- escrow factory
+- gate
+- asset subgate
+- merkle address subgate
+- merkle asset subgate
+- nfd subgate
+- nfd root subgate
+- social activity subgate
+- social follower count subgate
+- social follower index subgate
+- social impact subgate
+- social moderator subgate
+- staking amount subgate
+- staking power subgate
+- subscription subgate
+- subscription streak subgate
+- hyper swap ( limitless atomic swaps via merkle trees )
+- marketplace ( listing factory )
+- listing
+- meta merkles ( onchain verifiable metadata for asset groups )
+- poll
+- poll factory
+- staking pool
+- staking pool factory
+- prize box
+- prize box factory
+- raffle
+- raffle factory
+- rewards
+- akita social
+- akita social impact
+- staking
+- subscriptions

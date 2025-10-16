@@ -3,228 +3,45 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 6 4 28900
+    intcblock 0 1 8 6 28900
     bytecblock "akita_dao" "spending_address" "akita_al" "version"
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
     // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txn NumAppArgs
-    bz main_after_if_else@15
-    pushbytess 0x6f9817f6 0xbb9d8749 0x2a78e2ee 0xb6fc76cf 0xfdbf8960 0xea9180dd 0x33e92c94 // method "create(uint64,string)void", method "stake(uint64,bool,uint64,uint8,uint64,uint64,bool)void", method "withdraw(uint64,bool,uint64,uint8)void", method "createHeartbeat(uint64,bool,address,uint64)void", method "softCheck(uint64,bool,address,uint64)void", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    pushbytes 0xea9180dd // method "update(string)void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_stake_route@6 main_withdraw_route@7 main_createHeartbeat_route@8 main_softCheck_route@9 main_update_route@10 main_updateAkitaDAO_route@11
+    match main_update_route@4
 
-main_after_if_else@15:
+main_switch_case_next@5:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
     // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    intc_0 // 0
-    return
-
-main_updateAkitaDAO_route@11:
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion must be NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    bz main_create_NoOp@13
+    pushbytess 0xbb9d8749 0x2a78e2ee 0xb6fc76cf 0xfdbf8960 0x33e92c94 // method "stake(uint64,bool,uint64,uint8,uint64,uint64,bool)void", method "withdraw(uint64,bool,uint64,uint8)void", method "createHeartbeat(uint64,bool,address,uint64)void", method "softCheck(uint64,bool,address,uint64)void", method "updateAkitaDAO(uint64)void"
+    txna ApplicationArgs 0
+    match stake withdraw createHeartbeat softCheck updateAkitaDAO
+    err
+
+main_create_NoOp@13:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
     // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
-    callsub updateAkitaDAO
-    intc_1 // 1
-    return
+    pushbytes 0x6f9817f6 // method "create(uint64,string)void"
+    txna ApplicationArgs 0
+    match create
+    err
 
-main_update_route@10:
+main_update_route@4:
     // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
-    intc_3 // UpdateApplication
+    pushint 4 // UpdateApplication
     ==
-    assert // OnCompletion is not UpdateApplication
     txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
-    // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txna ApplicationArgs 1
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:18
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    callsub update
-    intc_1 // 1
-    return
-
-main_softCheck_route@9:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:141-146
-    // softCheck(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   address: Address,
-    //   asset: uint64
-    // ): void {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
-    // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txna ApplicationArgs 1
-    btoi
-    txna ApplicationArgs 2
-    intc_0 // 0
-    getbit
-    txna ApplicationArgs 3
-    txna ApplicationArgs 4
-    btoi
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:141-146
-    // softCheck(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   address: Address,
-    //   asset: uint64
-    // ): void {
-    callsub softCheck
-    intc_1 // 1
-    return
-
-main_createHeartbeat_route@8:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:121-126
-    // createHeartbeat(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   address: Address,
-    //   asset: uint64
-    // ): void {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
-    // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txna ApplicationArgs 1
-    btoi
-    txna ApplicationArgs 2
-    intc_0 // 0
-    getbit
-    txna ApplicationArgs 3
-    txna ApplicationArgs 4
-    btoi
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:121-126
-    // createHeartbeat(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   address: Address,
-    //   asset: uint64
-    // ): void {
-    callsub createHeartbeat
-    intc_1 // 1
-    return
-
-main_withdraw_route@7:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:101-106
-    // withdraw(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   asset: uint64,
-    //   type: StakingType
-    // ): void {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
-    // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txna ApplicationArgs 1
-    btoi
-    txna ApplicationArgs 2
-    intc_0 // 0
-    getbit
-    txna ApplicationArgs 3
-    btoi
-    txna ApplicationArgs 4
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:101-106
-    // withdraw(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   asset: uint64,
-    //   type: StakingType
-    // ): void {
-    callsub withdraw
-    intc_1 // 1
-    return
-
-main_stake_route@6:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:22-30
-    // stake(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   assetID: uint64,
-    //   type: StakingType,
-    //   amount: uint64,
-    //   expiration: uint64,
-    //   isUpdate: boolean
-    // ): void {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
-    // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txna ApplicationArgs 1
-    btoi
-    txna ApplicationArgs 2
-    intc_0 // 0
-    getbit
-    txna ApplicationArgs 3
-    btoi
-    txna ApplicationArgs 4
-    txna ApplicationArgs 5
-    btoi
-    txna ApplicationArgs 6
-    btoi
-    txna ApplicationArgs 7
-    intc_0 // 0
-    getbit
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:22-30
-    // stake(
-    //   walletID: uint64,
-    //   rekeyBack: boolean,
-    //   assetID: uint64,
-    //   type: StakingType,
-    //   amount: uint64,
-    //   expiration: uint64,
-    //   isUpdate: boolean
-    // ): void {
-    callsub stake
-    intc_1 // 1
-    return
-
-main_create_route@5:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:14
-    // @abimethod({ onCreate: 'require' })
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    !
-    assert // can only call when creating
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
-    // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
-    txna ApplicationArgs 1
-    btoi
-    txna ApplicationArgs 2
-    extract 2 0
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:14
-    // @abimethod({ onCreate: 'require' })
-    callsub create
-    intc_1 // 1
-    return
+    &&
+    assert // OnCompletion must be UpdateApplication && can only call when not creating
+    b update
 
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
@@ -250,31 +67,52 @@ rekeyAddress_after_if_else@2:
     retsub
 
 
-// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.create(akitaDAO: uint64, version: bytes) -> void:
+// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.create[routing]() -> void:
 create:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:14-15
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:14
     // @abimethod({ onCreate: 'require' })
-    // create(akitaDAO: uint64, version: string): void {
-    proto 2 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+utf8[])
+    extract 2 0
     // smart_contracts/utils/base-contracts/base.ts:12
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:16
     // this.version.value = version
-    frame_dig -1
+    swap
     app_global_put
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:17
     // this.akitaDAO.value = Application(akitaDAO)
-    frame_dig -2
+    swap
     app_global_put
-    retsub
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:14
+    // @abimethod({ onCreate: 'require' })
+    intc_1 // 1
+    return
 
 
-// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.stake(walletID: uint64, rekeyBack: uint64, assetID: uint64, type: bytes, amount: uint64, expiration: uint64, isUpdate: uint64) -> void:
+// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.stake[routing]() -> void:
 stake:
+    pushbytes ""
+    dup
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:22-30
     // stake(
     //   walletID: uint64,
@@ -285,15 +123,71 @@ stake:
     //   expiration: uint64,
     //   isUpdate: boolean
     // ): void {
-    proto 7 0
-    pushbytes ""
-    dupn 2
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    dup
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    swap
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    swap
+    txna ApplicationArgs 4
+    dup
+    cover 2
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for uint8
+    txna ApplicationArgs 5
+    dup
+    cover 3
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    cover 2
+    txna ApplicationArgs 6
+    dup
+    cover 3
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    txna ApplicationArgs 7
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    cover 2
     // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
-    frame_dig -7
+    swap
     // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
@@ -304,6 +198,7 @@ stake:
     // )
     app_global_get_ex
     pop
+    swap
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:33
     // const stakingAppID = getAkitaAppList(this.akitaDAO.value).staking
     intc_0 // 0
@@ -323,48 +218,48 @@ stake:
     // const stakingAppID = getAkitaAppList(this.akitaDAO.value).staking
     intc_0 // 0
     extract_uint64
+    swap
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:36
     // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
-    frame_dig -4
     pushbytes 0x1e
     ==
-    bnz stake_bool_true@2
-    frame_dig -4
+    bnz stake_bool_true@3
+    dig 6
     pushbytes 0x28
     ==
-    bz stake_bool_false@3
+    bz stake_bool_false@4
 
-stake_bool_true@2:
+stake_bool_true@3:
     intc_1 // 1
-    frame_bury 0
+    bury 12
 
-stake_bool_merge@4:
+stake_bool_merge@5:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:41
     // let sendAmount: uint64 = 0
     intc_0 // 0
-    frame_bury 1
+    bury 11
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:42
     // if (!isUpdate) {
-    frame_dig -1
-    bnz stake_else_body@13
+    dig 2
+    bnz stake_else_body@14
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:43
     // if (isEscrow && isAlgo) {
-    frame_dig 0
-    bz stake_else_body@8
-    frame_dig -5
-    bnz stake_else_body@8
+    dig 11
+    bz stake_else_body@9
+    dig 7
+    bnz stake_else_body@9
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:44
     // sendAmount = amount + costs.stakes
-    frame_dig -3
+    dig 4
     intc 4 // 28900
     +
-    frame_bury 1
+    bury 11
 
-stake_after_if_else@17:
+stake_after_if_else@18:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:54
     // if (isAlgo) {
-    frame_dig -5
-    bnz stake_else_body@21
+    dig 7
+    bnz stake_else_body@22
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:55-72
     // abiCall(
     //   Staking.prototype.stake,
@@ -387,14 +282,13 @@ stake_after_if_else@17:
     itxn_begin
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:63
     // receiver: stakingApp.address,
-    frame_dig 4
-    dup
+    dupn 2
     app_params_get AppAddress
     assert // application exists
-    frame_dig 1
+    dig 12
     itxn_field Amount
     itxn_field Receiver
-    frame_dig 3
+    dig 2
     dup
     itxn_field Sender
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:61-65
@@ -429,17 +323,9 @@ stake_after_if_else@17:
     itxn_next
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:70
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    frame_dig -6
-    frame_dig -7
+    dig 10
+    dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:67
-    // amount,
-    frame_dig -3
-    itob
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:68
-    // expiration,
-    frame_dig -2
-    itob
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:55-72
     // abiCall(
     //   Staking.prototype.stake,
@@ -461,22 +347,36 @@ stake_after_if_else@17:
     // )
     pushbytes 0x8256cf19 // method "stake(pay,uint8,uint64,uint64)void"
     itxn_field ApplicationArgs
-    frame_dig -4
+    dig 9
     itxn_field ApplicationArgs
-    swap
+    dig 8
     itxn_field ApplicationArgs
+    dig 6
     itxn_field ApplicationArgs
     itxn_field RekeyTo
     itxn_field Sender
     itxn_field ApplicationID
-    intc_2 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    retsub
 
-stake_else_body@21:
+stake_after_if_else@26:
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:22-30
+    // stake(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   assetID: uint64,
+    //   type: StakingType,
+    //   amount: uint64,
+    //   expiration: uint64,
+    //   isUpdate: boolean
+    // ): void {
+    intc_1 // 1
+    return
+
+stake_else_body@22:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:74-97
     // abiCall(
     //   Staking.prototype.stakeAsa,
@@ -505,14 +405,13 @@ stake_else_body@21:
     itxn_begin
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:82
     // receiver: stakingApp.address,
-    frame_dig 4
-    dup
+    dupn 2
     app_params_get AppAddress
     assert // application exists
-    frame_dig 1
+    dig 12
     itxn_field Amount
     itxn_field Receiver
-    frame_dig 3
+    dig 2
     dup
     cover 2
     itxn_field Sender
@@ -539,9 +438,9 @@ stake_else_body@21:
     dup
     app_params_get AppAddress
     assert // application exists
-    frame_dig -5
+    dig 10
     itxn_field XferAsset
-    frame_dig -3
+    dig 7
     itxn_field AssetAmount
     itxn_field AssetReceiver
     dig 1
@@ -553,7 +452,7 @@ stake_else_body@21:
     //   assetAmount: amount,
     //   xferAsset: assetID,
     // }),
-    intc_3 // 4
+    pushint 4 // 4
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -585,17 +484,9 @@ stake_else_body@21:
     itxn_next
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:95
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    frame_dig -6
-    frame_dig -7
+    dig 10
+    dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:92
-    // amount,
-    frame_dig -3
-    itob
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:93
-    // expiration,
-    frame_dig -2
-    itob
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:74-97
     // abiCall(
     //   Staking.prototype.stakeAsa,
@@ -623,67 +514,60 @@ stake_else_body@21:
     // )
     pushbytes 0x20467b93 // method "stakeAsa(pay,axfer,uint8,uint64,uint64)void"
     itxn_field ApplicationArgs
-    frame_dig -4
+    dig 9
     itxn_field ApplicationArgs
-    swap
+    dig 8
     itxn_field ApplicationArgs
+    dig 6
     itxn_field ApplicationArgs
     itxn_field RekeyTo
     itxn_field ApplicationID
     itxn_field Sender
-    intc_2 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    retsub
+    b stake_after_if_else@26
 
-stake_else_body@8:
+stake_else_body@9:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:45
     // } else if (type === STAKING_TYPE_HEARTBEAT) {
-    frame_dig -4
+    dig 6
     pushbytes 0x0a
     ==
-    bz stake_else_body@10
+    bz stake_else_body@11
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:46
     // sendAmount = (costs.stakes + costs.heartbeats)
     pushint 99000 // 99000
-    frame_bury 1
-    b stake_after_if_else@17
+    bury 11
+    b stake_after_if_else@18
 
-stake_else_body@10:
+stake_else_body@11:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:48
     // sendAmount = costs.stakes
     intc 4 // 28900
-    frame_bury 1
-    b stake_after_if_else@17
+    bury 11
+    b stake_after_if_else@18
 
-stake_else_body@13:
-    frame_dig 1
-    frame_bury 2
+stake_else_body@14:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:50
     // } else if (isEscrow && isAlgo) {
-    frame_dig 0
-    bz stake_after_if_else@16
-    frame_dig 1
-    frame_bury 2
-    frame_dig -5
-    bnz stake_after_if_else@16
-    frame_dig -3
-    frame_bury 2
+    dig 11
+    bz stake_after_if_else@18
+    dig 7
+    bnz stake_after_if_else@18
+    dig 4
+    bury 11
+    b stake_after_if_else@18
 
-stake_after_if_else@16:
-    frame_dig 2
-    frame_bury 1
-    b stake_after_if_else@17
-
-stake_bool_false@3:
+stake_bool_false@4:
     intc_0 // 0
-    frame_bury 0
-    b stake_bool_merge@4
+    bury 12
+    b stake_bool_merge@5
 
 
-// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.withdraw(walletID: uint64, rekeyBack: uint64, asset: uint64, type: bytes) -> void:
+// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.withdraw[routing]() -> void:
 withdraw:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:101-106
     // withdraw(
@@ -692,13 +576,39 @@ withdraw:
     //   asset: uint64,
     //   type: StakingType
     // ): void {
-    proto 4 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    txna ApplicationArgs 4
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for uint8
     // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
-    frame_dig -4
+    dig 3
     // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
@@ -709,6 +619,7 @@ withdraw:
     // )
     app_global_get_ex
     pop
+    swap
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:110-118
     // abiCall(
     //   Staking.prototype.withdraw,
@@ -741,13 +652,9 @@ withdraw:
     extract_uint64
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:116
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    frame_dig -3
-    frame_dig -4
+    uncover 4
+    uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:115
-    // args: [asset, type],
-    frame_dig -2
-    itob
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:110-118
     // abiCall(
     //   Staking.prototype.withdraw,
@@ -760,21 +667,30 @@ withdraw:
     // )
     pushbytes 0x830480f3 // method "withdraw(uint64,uint8)void"
     itxn_field ApplicationArgs
+    uncover 4
     itxn_field ApplicationArgs
-    frame_dig -1
+    uncover 2
     itxn_field ApplicationArgs
     itxn_field RekeyTo
     itxn_field ApplicationID
     itxn_field Sender
-    intc_2 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    retsub
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:101-106
+    // withdraw(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   asset: uint64,
+    //   type: StakingType
+    // ): void {
+    intc_1 // 1
+    return
 
 
-// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.createHeartbeat(walletID: uint64, rekeyBack: uint64, address: bytes, asset: uint64) -> void:
+// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.createHeartbeat[routing]() -> void:
 createHeartbeat:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:121-126
     // createHeartbeat(
@@ -783,13 +699,39 @@ createHeartbeat:
     //   address: Address,
     //   asset: uint64
     // ): void {
-    proto 4 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    dup
+    len
+    pushint 32 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 4
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
     // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
-    frame_dig -4
+    dig 3
     // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
@@ -800,6 +742,7 @@ createHeartbeat:
     // )
     app_global_get_ex
     pop
+    swap
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:130-138
     // abiCall(
     //   Staking.prototype.createHeartbeat,
@@ -832,13 +775,9 @@ createHeartbeat:
     extract_uint64
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:136
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    frame_dig -3
-    frame_dig -4
+    uncover 4
+    uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:135
-    // args: [address, asset],
-    frame_dig -1
-    itob
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:130-138
     // abiCall(
     //   Staking.prototype.createHeartbeat,
@@ -851,21 +790,30 @@ createHeartbeat:
     // )
     pushbytes 0xc8173ca1 // method "createHeartbeat(address,uint64)void"
     itxn_field ApplicationArgs
-    frame_dig -2
+    uncover 4
     itxn_field ApplicationArgs
+    uncover 2
     itxn_field ApplicationArgs
     itxn_field RekeyTo
     itxn_field ApplicationID
     itxn_field Sender
-    intc_2 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    retsub
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:121-126
+    // createHeartbeat(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   address: Address,
+    //   asset: uint64
+    // ): void {
+    intc_1 // 1
+    return
 
 
-// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.softCheck(walletID: uint64, rekeyBack: uint64, address: bytes, asset: uint64) -> void:
+// smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.softCheck[routing]() -> void:
 softCheck:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:141-146
     // softCheck(
@@ -874,13 +822,39 @@ softCheck:
     //   address: Address,
     //   asset: uint64
     // ): void {
-    proto 4 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    txna ApplicationArgs 3
+    dup
+    len
+    pushint 32 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 4
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
     // smart_contracts/utils/functions.ts:235-238
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
-    frame_dig -4
+    dig 3
     // smart_contracts/utils/functions.ts:237
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
@@ -891,6 +865,7 @@ softCheck:
     // )
     app_global_get_ex
     pop
+    swap
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:150-158
     // abiCall(
     //   Staking.prototype.softCheck,
@@ -923,13 +898,9 @@ softCheck:
     extract_uint64
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:156
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    frame_dig -3
-    frame_dig -4
+    uncover 4
+    uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:155
-    // args: [address, asset],
-    frame_dig -1
-    itob
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:150-158
     // abiCall(
     //   Staking.prototype.softCheck,
@@ -942,13 +913,14 @@ softCheck:
     // )
     pushbytes 0x48716f1a // method "softCheck(address,uint64)(bool,uint64)"
     itxn_field ApplicationArgs
-    frame_dig -2
+    uncover 4
     itxn_field ApplicationArgs
+    uncover 2
     itxn_field ApplicationArgs
     itxn_field RekeyTo
     itxn_field ApplicationID
     itxn_field Sender
-    intc_2 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -957,16 +929,31 @@ softCheck:
     extract 0 4
     pushbytes 0x151f7c75
     ==
-    assert // Bytes has valid prefix
-    retsub
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:141-146
+    // softCheck(
+    //   walletID: uint64,
+    //   rekeyBack: boolean,
+    //   address: Address,
+    //   asset: uint64
+    // ): void {
+    return // on error: Bytes has valid prefix
 
 
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:18-19
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
-    // update(newVersion: string): void {
-    proto 1 0
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+utf8[])
+    extract 2 0
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
@@ -987,16 +974,25 @@ update:
     bytec_3 // "version"
     // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
-    frame_dig -1
+    swap
     app_global_put
-    retsub
+    // smart_contracts/utils/base-contracts/base.ts:18
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    intc_1 // 1
+    return
 
 
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
-    proto 1 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
@@ -1017,6 +1013,9 @@ updateAkitaDAO:
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
-    frame_dig -1
+    swap
     app_global_put
-    retsub
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    intc_1 // 1
+    return

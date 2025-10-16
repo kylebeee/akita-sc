@@ -3,8 +3,8 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 1 0 9
-    bytecblock 0x151f7c75 "akita_dao" "registry_cursor" "version"
+    intcblock 1 0 2 8
+    bytecblock "akita_dao" 0x151f7c75 "registry_cursor" "version"
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:29
@@ -24,141 +24,109 @@ main:
 main_after_if_else@2:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
     // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
-    txn NumAppArgs
-    bz main_after_if_else@16
-    pushbytess 0xcd9ad67e 0x329f04ee 0x77bb79b9 0x6e03f50a 0xb4d41672 0x90d4fa5d 0xea9180dd 0x33e92c94 // method "create(string,uint64)void", method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((uint64,uint8,uint64))(uint64,uint8,uint64)", method "getEntry(uint64)byte[]", method "update(string)void", method "updateAkitaDAO(uint64)void"
+    pushbytes 0xea9180dd // method "update(string)void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_cost_route@6 main_register_route@7 main_check_route@8 main_getRegistrationShape_route@9 main_getEntry_route@10 main_update_route@11 main_updateAkitaDAO_route@12
+    match main_update_route@4
 
-main_after_if_else@16:
+main_switch_case_next@5:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
     // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
-    intc_1 // 0
-    return
-
-main_updateAkitaDAO_route@12:
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion must be NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    bz main_create_NoOp@14
+    pushbytess 0x329f04ee 0x77bb79b9 0x6e03f50a 0xb4d41672 0x90d4fa5d 0x33e92c94 // method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((uint64,uint8,uint64))(uint64,uint8,uint64)", method "getEntry(uint64)byte[]", method "updateAkitaDAO(uint64)void"
+    txna ApplicationArgs 0
+    match cost register check getRegistrationShape getEntry updateAkitaDAO
+    err
+
+main_create_NoOp@14:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
     // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
-    callsub updateAkitaDAO
-    intc_0 // 1
-    return
+    pushbytes 0xcd9ad67e // method "create(string,uint64)void"
+    txna ApplicationArgs 0
+    match create
+    err
 
-main_update_route@11:
+main_update_route@4:
     // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
     ==
-    assert // OnCompletion is not UpdateApplication
     txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
-    // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
-    txna ApplicationArgs 1
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:18
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    callsub update
-    intc_0 // 1
-    return
+    &&
+    assert // OnCompletion must be UpdateApplication && can only call when not creating
+    b update
 
-main_getEntry_route@10:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:107
-    // @abimethod({ readonly: true })
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
-    // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
+
+// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.create[routing]() -> void:
+create:
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:69
+    // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
-    btoi
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:107
-    // @abimethod({ readonly: true })
-    callsub getEntry
+    dup
+    intc_1 // 0
+    extract_uint16
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+utf8[])
+    extract 2 0
+    txna ApplicationArgs 2
     dup
     len
-    itob
-    extract 6 2
-    swap
-    concat
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_getRegistrationShape_route@9:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:103
-    // getRegistrationShape(shape: AssetGateRegistryInfo): AssetGateRegistryInfo {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    bytec_0 // 0x151f7c75
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
-    // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
-    txna ApplicationArgs 1
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:103
-    // getRegistrationShape(shape: AssetGateRegistryInfo): AssetGateRegistryInfo {
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_check_route@8:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:97
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
-    // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
-    txna ApplicationArgs 1
-    txna ApplicationArgs 2
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
     btoi
-    txna ApplicationArgs 3
-    extract 2 0
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:97
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
-    callsub check
-    pushbytes 0x00
-    intc_1 // 0
+    // smart_contracts/utils/base-contracts/base.ts:12
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec_3 // "version"
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:71
+    // this.version.value = version
     uncover 2
-    setbit
-    bytec_0 // 0x151f7c75
+    app_global_put
+    // smart_contracts/utils/base-contracts/base.ts:14
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:72
+    // this.akitaDAO.value = Application(akitaDAO)
     swap
-    concat
+    app_global_put
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:69
+    // @abimethod({ onCreate: 'require' })
+    intc_0 // 1
+    return
+
+
+// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.cost[routing]() -> void:
+cost:
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:77
+    // cost(args: bytes): uint64 {
+    txna ApplicationArgs 1
+    dup
+    intc_1 // 0
+    extract_uint16
+    intc_2 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
+    pushbytes 0x151f7c750000000000002454
     log
     intc_0 // 1
     return
 
-main_register_route@7:
+
+// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.register[routing]() -> void:
+register:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:81
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
-    // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
     txn GroupIndex
     intc_0 // 1
     -
@@ -168,86 +136,21 @@ main_register_route@7:
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
+    dup
+    intc_1 // 0
+    extract_uint16
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:81
-    // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    callsub register
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_cost_route@6:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:77
-    // cost(args: bytes): uint64 {
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    pushbytes 0x151f7c750000000000002454
-    log
-    intc_0 // 1
-    return
-
-main_create_route@5:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:69
-    // @abimethod({ onCreate: 'require' })
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    !
-    assert // can only call when creating
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:25
-    // export class AssetGate extends AkitaBaseContract implements SubGateInterface {
-    txna ApplicationArgs 1
-    extract 2 0
-    txna ApplicationArgs 2
-    btoi
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:69
-    // @abimethod({ onCreate: 'require' })
-    callsub create
-    intc_0 // 1
-    return
-
-
-// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.create(version: bytes, akitaDAO: uint64) -> void:
-create:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:69-70
-    // @abimethod({ onCreate: 'require' })
-    // create(version: string, akitaDAO: uint64): void {
-    proto 2 0
-    // smart_contracts/utils/base-contracts/base.ts:12
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:71
-    // this.version.value = version
-    frame_dig -2
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_1 // "akita_dao"
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:72
-    // this.akitaDAO.value = Application(akitaDAO)
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.register(mbrPayment: uint64, args: bytes) -> uint64:
-register:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:81
-    // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    proto 2 1
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:82
     // assert(args.length === OperatorAndValueByteLength, ERR_INVALID_ARG_COUNT)
-    frame_dig -1
+    dup
     len
-    intc_2 // 9
+    pushint 9 // 9
     ==
     assert // Invalid number of arguments
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:83-90
@@ -259,7 +162,7 @@ register:
     //   },
     //   ERR_INVALID_PAYMENT
     // )
-    frame_dig -2
+    dig 1
     gtxns Receiver
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:86
     // receiver: Global.currentApplicationAddress,
@@ -274,7 +177,7 @@ register:
     //   ERR_INVALID_PAYMENT
     // )
     ==
-    frame_dig -2
+    uncover 2
     gtxns Amount
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:87
     // amount: OperatorAndValueRegistryMBR
@@ -315,29 +218,55 @@ register:
     app_global_put
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:93
     // this.registry(id).value = decodeArc4<AssetGateRegistryInfo>(args)
-    dup
     itob
-    frame_dig -1
+    dup
+    uncover 2
     box_put
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:94
-    // return id
-    retsub
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:81
+    // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.check(caller: bytes, registryID: uint64, args: bytes) -> uint64:
+// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.check[routing]() -> void:
 check:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:97
     // check(caller: Address, registryID: uint64, args: bytes): boolean {
-    proto 3 1
+    txna ApplicationArgs 1
+    dup
+    len
+    pushint 32 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 3
+    dup
+    intc_1 // 0
+    extract_uint16
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
+    extract 2 0
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:98
     // assert(args.length === 0, ERR_INVALID_ARG_COUNT)
-    frame_dig -1
     len
     !
     assert // Invalid number of arguments
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:99
     // const { asset, op, value } = clone(this.registry(registryID).value)
-    frame_dig -2
     itob
     box_get
     assert // Box must have value
@@ -346,15 +275,13 @@ check:
     extract_uint64
     dig 1
     extract 8 1
-    cover 2
+    cover 3
     swap
-    intc_2 // 9
+    pushint 9 // 9
     extract_uint64
-    swap
+    cover 2
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:50
     // const [balance, optedIn] = AssetHolding.assetBalance(user.native, asset)
-    frame_dig -3
-    swap
     asset_holding_get AssetBalance
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:52
     // if (!optedIn) {
@@ -364,20 +291,28 @@ check:
     intc_1 // 0
 
 check_after_inlined_smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.assetGate@16:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:100
-    // return this.assetGate(caller, asset, op, value)
-    frame_bury 0
-    retsub
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:97
+    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    pushbytes 0x00
+    intc_1 // 0
+    uncover 2
+    setbit
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 check_after_if_else@3:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:57
     // case Equal: return balance === value
-    frame_dig 0
+    dig 2
     pushbytes 0x0a
     ==
     bz check_after_if_else@5
-    frame_dig 2
-    frame_dig 1
+    dup
+    dig 2
     ==
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:100
     // return this.assetGate(caller, asset, op, value)
@@ -386,12 +321,12 @@ check_after_if_else@3:
 check_after_if_else@5:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:58
     // case NotEqual: return balance !== value
-    frame_dig 0
+    dig 2
     pushbytes 0x14
     ==
     bz check_after_if_else@7
-    frame_dig 2
-    frame_dig 1
+    dup
+    dig 2
     !=
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:100
     // return this.assetGate(caller, asset, op, value)
@@ -400,12 +335,12 @@ check_after_if_else@5:
 check_after_if_else@7:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:59
     // case LessThan: return balance < value
-    frame_dig 0
+    dig 2
     pushbytes 0x1e
     ==
     bz check_after_if_else@9
-    frame_dig 2
-    frame_dig 1
+    dup
+    dig 2
     <
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:100
     // return this.assetGate(caller, asset, op, value)
@@ -414,12 +349,12 @@ check_after_if_else@7:
 check_after_if_else@9:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:60
     // case LessThanOrEqualTo: return balance <= value
-    frame_dig 0
+    dig 2
     pushbytes 0x28
     ==
     bz check_after_if_else@11
-    frame_dig 2
-    frame_dig 1
+    dup
+    dig 2
     <=
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:100
     // return this.assetGate(caller, asset, op, value)
@@ -428,12 +363,12 @@ check_after_if_else@9:
 check_after_if_else@11:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:61
     // case GreaterThan: return balance > value
-    frame_dig 0
+    dig 2
     pushbytes 0x32
     ==
     bz check_after_if_else@13
-    frame_dig 2
-    frame_dig 1
+    dup
+    dig 2
     >
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:100
     // return this.assetGate(caller, asset, op, value)
@@ -442,12 +377,12 @@ check_after_if_else@11:
 check_after_if_else@13:
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:62
     // case GreaterThanOrEqualTo: return balance >= value
-    frame_dig 0
+    dig 2
     pushbytes 0x3c
     ==
     bz check_after_if_else@15
-    frame_dig 2
-    frame_dig 1
+    dup
+    dig 2
     >=
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:100
     // return this.assetGate(caller, asset, op, value)
@@ -462,34 +397,78 @@ check_after_if_else@15:
     b check_after_inlined_smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.assetGate@16
 
 
-// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.getEntry(registryID: uint64) -> bytes:
+// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.getRegistrationShape[routing]() -> void:
+getRegistrationShape:
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:103
+    // getRegistrationShape(shape: AssetGateRegistryInfo): AssetGateRegistryInfo {
+    txna ApplicationArgs 1
+    dup
+    len
+    pushint 17 // 17
+    ==
+    assert // invalid number of bytes for (uint64,uint8,uint64)
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// smart_contracts/gates/sub-gates/asset/contract.algo.ts::AssetGate.getEntry[routing]() -> void:
 getEntry:
-    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:107-108
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:107
     // @abimethod({ readonly: true })
-    // getEntry(registryID: uint64): bytes {
-    proto 1 1
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
     // smart_contracts/gates/sub-gates/asset/contract.algo.ts:109
     // return encodeArc4(this.registry(registryID).value)
-    frame_dig -1
     itob
     box_get
     assert // Box must have value
-    retsub
+    // smart_contracts/gates/sub-gates/asset/contract.algo.ts:107
+    // @abimethod({ readonly: true })
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update(newVersion: bytes) -> void:
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:18-19
+    // smart_contracts/utils/base-contracts/base.ts:18
     // @abimethod({ allowActions: ['UpdateApplication'] })
-    // update(newVersion: string): void {
-    proto 1 0
+    txna ApplicationArgs 1
+    dup
+    intc_1 // 0
+    extract_uint16
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+utf8[])
+    extract 2 0
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_1 // "akita_dao"
+    bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:20
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
@@ -503,23 +482,32 @@ update:
     bytec_3 // "version"
     // smart_contracts/utils/base-contracts/base.ts:21
     // this.version.value = newVersion
-    frame_dig -1
+    swap
     app_global_put
-    retsub
+    // smart_contracts/utils/base-contracts/base.ts:18
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    intc_0 // 1
+    return
 
 
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO(app: uint64) -> void:
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:26
     // updateAkitaDAO(app: uint64): void {
-    proto 1 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_1 // 0
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_1 // "akita_dao"
+    bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:27
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
@@ -530,9 +518,12 @@ updateAkitaDAO:
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:14
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_1 // "akita_dao"
+    bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:28
     // this.akitaDAO.value = Application(app)
-    frame_dig -1
+    swap
     app_global_put
-    retsub
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // updateAkitaDAO(app: uint64): void {
+    intc_0 // 1
+    return
