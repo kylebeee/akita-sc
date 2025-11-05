@@ -84,7 +84,7 @@ describe('ARC58 Plugin Permissions', () => {
       args: {
         akitaDao: dao.appId,
         version: '0.0.1',
-        escrowFactoryApp: escrowFactory.appId,
+        escrowFactory: escrowFactory.appId,
       }
     })
 

@@ -1,4 +1,4 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
@@ -18,13 +18,19 @@ main_switch_case_next@5:
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@13
-    pushbytess 0xbb9d8749 0x2a78e2ee 0xb6fc76cf 0xfdbf8960 0x33e92c94 // method "stake(uint64,bool,uint64,uint8,uint64,uint64,bool)void", method "withdraw(uint64,bool,uint64,uint8)void", method "createHeartbeat(uint64,bool,address,uint64)void", method "softCheck(uint64,bool,address,uint64)void", method "updateAkitaDAO(uint64)void"
+    bz main_create_NoOp@14
+    pushbytess 0xbb9d8749 0x2a78e2ee 0xb6fc76cf 0xfdbf8960 0x33e92c94 0x854dede0 // method "stake(uint64,bool,uint64,uint8,uint64,uint64,bool)void", method "withdraw(uint64,bool,uint64,uint8)void", method "createHeartbeat(uint64,bool,address,uint64)void", method "softCheck(uint64,bool,address,uint64)void", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match stake withdraw createHeartbeat softCheck updateAkitaDAO
+    match stake withdraw createHeartbeat softCheck updateAkitaDAO main_opUp_route@12
     err
 
-main_create_NoOp@13:
+main_opUp_route@12:
+    // smart_contracts/utils/base-contracts/base.ts:36
+    // opUp(): void { }
+    intc_1 // 1
+    return
+
+main_create_NoOp@14:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:10
     // export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
     pushbytes 0x6f9817f6 // method "create(uint64,string)void"
@@ -33,7 +39,7 @@ main_create_NoOp@13:
     err
 
 main_update_route@4:
-    // smart_contracts/utils/base-contracts/base.ts:18
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -89,14 +95,14 @@ create:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:12
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:16
     // this.version.value = version
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:17
@@ -115,7 +121,7 @@ stake:
     dup
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:22-30
     // stake(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   assetID: uint64,
     //   type: StakingType,
@@ -182,16 +188,16 @@ stake:
     intc_0 // 0
     getbit
     cover 2
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -199,27 +205,27 @@ stake:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:33
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:32
     // const stakingAppID = getAkitaAppList(this.akitaDAO.value).staking
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:33
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:32
     // const stakingAppID = getAkitaAppList(this.akitaDAO.value).staking
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:33
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:32
     // const stakingAppID = getAkitaAppList(this.akitaDAO.value).staking
     intc_0 // 0
     extract_uint64
     swap
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:36
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:35
     // const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
     pushbytes 0x1e
     ==
@@ -234,21 +240,21 @@ stake_bool_true@3:
     bury 12
 
 stake_bool_merge@5:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:41
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:40
     // let sendAmount: uint64 = 0
     intc_0 // 0
     bury 11
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:42
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:41
     // if (!isUpdate) {
     dig 2
     bnz stake_else_body@14
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:43
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:42
     // if (isEscrow && isAlgo) {
     dig 11
     bz stake_else_body@9
     dig 7
     bnz stake_else_body@9
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:44
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:43
     // sendAmount = amount + costs.stakes
     dig 4
     intc 4 // 28900
@@ -256,31 +262,28 @@ stake_bool_merge@5:
     bury 11
 
 stake_after_if_else@18:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:54
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:53
     // if (isAlgo) {
     dig 7
     bnz stake_else_body@22
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:55-72
-    // abiCall(
-    //   Staking.prototype.stake,
-    //   {
-    //     sender,
-    //     appId: stakingAppID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: stakingApp.address,
-    //         amount: sendAmount,
-    //       }),
-    //       type,
-    //       amount,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:54-68
+    // abiCall<typeof Staking.prototype.stake>({
+    //   sender,
+    //   appId: stakingAppID,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: stakingApp.address,
+    //       amount: sendAmount,
+    //     }),
+    //     type,
+    //     amount,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:63
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:60
     // receiver: stakingApp.address,
     dupn 2
     app_params_get AppAddress
@@ -291,7 +294,7 @@ stake_after_if_else@18:
     dig 2
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:61-65
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:58-62
     // itxn.payment({
     //   sender,
     //   receiver: stakingApp.address,
@@ -301,50 +304,44 @@ stake_after_if_else@18:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:55-72
-    // abiCall(
-    //   Staking.prototype.stake,
-    //   {
-    //     sender,
-    //     appId: stakingAppID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: stakingApp.address,
-    //         amount: sendAmount,
-    //       }),
-    //       type,
-    //       amount,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:54-68
+    // abiCall<typeof Staking.prototype.stake>({
+    //   sender,
+    //   appId: stakingAppID,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: stakingApp.address,
+    //       amount: sendAmount,
+    //     }),
+    //     type,
+    //     amount,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:70
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:67
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     dig 10
     dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:55-72
-    // abiCall(
-    //   Staking.prototype.stake,
-    //   {
-    //     sender,
-    //     appId: stakingAppID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: stakingApp.address,
-    //         amount: sendAmount,
-    //       }),
-    //       type,
-    //       amount,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:54-68
+    // abiCall<typeof Staking.prototype.stake>({
+    //   sender,
+    //   appId: stakingAppID,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: stakingApp.address,
+    //       amount: sendAmount,
+    //     }),
+    //     type,
+    //     amount,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     pushbytes 0x8256cf19 // method "stake(pay,uint8,uint64,uint64)void"
     itxn_field ApplicationArgs
     dig 9
@@ -365,7 +362,7 @@ stake_after_if_else@18:
 stake_after_if_else@26:
     // smart_contracts/arc58/plugins/staking/contract.algo.ts:22-30
     // stake(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   assetID: uint64,
     //   type: StakingType,
@@ -377,33 +374,30 @@ stake_after_if_else@26:
     return
 
 stake_else_body@22:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:74-97
-    // abiCall(
-    //   Staking.prototype.stakeAsa,
-    //   {
-    //     sender,
-    //     appId: stakingAppID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: stakingApp.address,
-    //         amount: sendAmount,
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: stakingApp.address,
-    //         assetAmount: amount,
-    //         xferAsset: assetID,
-    //       }),
-    //       type,
-    //       amount,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:70-90
+    // abiCall<typeof Staking.prototype.stakeAsa>({
+    //   sender,
+    //   appId: stakingAppID,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: stakingApp.address,
+    //       amount: sendAmount,
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: stakingApp.address,
+    //       assetAmount: amount,
+    //       xferAsset: assetID,
+    //     }),
+    //     type,
+    //     amount,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:82
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:76
     // receiver: stakingApp.address,
     dupn 2
     app_params_get AppAddress
@@ -415,7 +409,7 @@ stake_else_body@22:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:80-84
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:74-78
     // itxn.payment({
     //   sender,
     //   receiver: stakingApp.address,
@@ -425,7 +419,7 @@ stake_else_body@22:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:85-90
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:79-84
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: stakingApp.address,
@@ -433,7 +427,7 @@ stake_else_body@22:
     //   xferAsset: assetID,
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:87
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:81
     // assetReceiver: stakingApp.address,
     dup
     app_params_get AppAddress
@@ -445,7 +439,7 @@ stake_else_body@22:
     itxn_field AssetReceiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:85-90
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:79-84
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: stakingApp.address,
@@ -456,62 +450,56 @@ stake_else_body@22:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:74-97
-    // abiCall(
-    //   Staking.prototype.stakeAsa,
-    //   {
-    //     sender,
-    //     appId: stakingAppID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: stakingApp.address,
-    //         amount: sendAmount,
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: stakingApp.address,
-    //         assetAmount: amount,
-    //         xferAsset: assetID,
-    //       }),
-    //       type,
-    //       amount,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:70-90
+    // abiCall<typeof Staking.prototype.stakeAsa>({
+    //   sender,
+    //   appId: stakingAppID,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: stakingApp.address,
+    //       amount: sendAmount,
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: stakingApp.address,
+    //       assetAmount: amount,
+    //       xferAsset: assetID,
+    //     }),
+    //     type,
+    //     amount,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:95
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:89
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     dig 10
     dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:74-97
-    // abiCall(
-    //   Staking.prototype.stakeAsa,
-    //   {
-    //     sender,
-    //     appId: stakingAppID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: stakingApp.address,
-    //         amount: sendAmount,
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: stakingApp.address,
-    //         assetAmount: amount,
-    //         xferAsset: assetID,
-    //       }),
-    //       type,
-    //       amount,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:70-90
+    // abiCall<typeof Staking.prototype.stakeAsa>({
+    //   sender,
+    //   appId: stakingAppID,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: stakingApp.address,
+    //       amount: sendAmount,
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: stakingApp.address,
+    //       assetAmount: amount,
+    //       xferAsset: assetID,
+    //     }),
+    //     type,
+    //     amount,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     pushbytes 0x20467b93 // method "stakeAsa(pay,axfer,uint8,uint64,uint64)void"
     itxn_field ApplicationArgs
     dig 9
@@ -531,27 +519,27 @@ stake_else_body@22:
     b stake_after_if_else@26
 
 stake_else_body@9:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:45
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:44
     // } else if (type === STAKING_TYPE_HEARTBEAT) {
     dig 6
     pushbytes 0x0a
     ==
     bz stake_else_body@11
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:46
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:45
     // sendAmount = (costs.stakes + costs.heartbeats)
     pushint 99000 // 99000
     bury 11
     b stake_after_if_else@18
 
 stake_else_body@11:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:48
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:47
     // sendAmount = costs.stakes
     intc 4 // 28900
     bury 11
     b stake_after_if_else@18
 
 stake_else_body@14:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:50
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:49
     // } else if (isEscrow && isAlgo) {
     dig 11
     bz stake_after_if_else@18
@@ -569,9 +557,9 @@ stake_bool_false@4:
 
 // smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.withdraw[routing]() -> void:
 withdraw:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:101-106
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:94-99
     // withdraw(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   asset: uint64,
     //   type: StakingType
@@ -603,16 +591,16 @@ withdraw:
     intc_1 // 1
     ==
     assert // invalid number of bytes for uint8
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -620,51 +608,45 @@ withdraw:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:110-118
-    // abiCall(
-    //   Staking.prototype.withdraw,
-    //   {
-    //     sender,
-    //     appId: getAkitaAppList(this.akitaDAO.value).staking,
-    //     args: [asset, type],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:102-107
+    // abiCall<typeof Staking.prototype.withdraw>({
+    //   sender,
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [asset, type],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:114
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:104
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:114
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:104
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:114
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:104
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:116
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:106
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 4
     uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:110-118
-    // abiCall(
-    //   Staking.prototype.withdraw,
-    //   {
-    //     sender,
-    //     appId: getAkitaAppList(this.akitaDAO.value).staking,
-    //     args: [asset, type],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:102-107
+    // abiCall<typeof Staking.prototype.withdraw>({
+    //   sender,
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [asset, type],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     pushbytes 0x830480f3 // method "withdraw(uint64,uint8)void"
     itxn_field ApplicationArgs
     uncover 4
@@ -679,9 +661,9 @@ withdraw:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:101-106
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:94-99
     // withdraw(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   asset: uint64,
     //   type: StakingType
@@ -692,9 +674,9 @@ withdraw:
 
 // smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.createHeartbeat[routing]() -> void:
 createHeartbeat:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:121-126
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:110-115
     // createHeartbeat(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   address: Address,
     //   asset: uint64
@@ -726,16 +708,16 @@ createHeartbeat:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -743,51 +725,45 @@ createHeartbeat:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:130-138
-    // abiCall(
-    //   Staking.prototype.createHeartbeat,
-    //   {
-    //     sender,
-    //     appId: getAkitaAppList(this.akitaDAO.value).staking,
-    //     args: [address, asset],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:118-123
+    // abiCall<typeof Staking.prototype.createHeartbeat>({
+    //   sender,
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [address, asset],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:134
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:120
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:134
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:120
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:134
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:120
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:136
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:122
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 4
     uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:130-138
-    // abiCall(
-    //   Staking.prototype.createHeartbeat,
-    //   {
-    //     sender,
-    //     appId: getAkitaAppList(this.akitaDAO.value).staking,
-    //     args: [address, asset],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:118-123
+    // abiCall<typeof Staking.prototype.createHeartbeat>({
+    //   sender,
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [address, asset],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     pushbytes 0xc8173ca1 // method "createHeartbeat(address,uint64)void"
     itxn_field ApplicationArgs
     uncover 4
@@ -802,9 +778,9 @@ createHeartbeat:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:121-126
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:110-115
     // createHeartbeat(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   address: Address,
     //   asset: uint64
@@ -815,9 +791,9 @@ createHeartbeat:
 
 // smart_contracts/arc58/plugins/staking/contract.algo.ts::StakingPlugin.softCheck[routing]() -> void:
 softCheck:
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:141-146
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:126-131
     // softCheck(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   address: Address,
     //   asset: uint64
@@ -849,16 +825,16 @@ softCheck:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -866,51 +842,45 @@ softCheck:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:150-158
-    // abiCall(
-    //   Staking.prototype.softCheck,
-    //   {
-    //     sender,
-    //     appId: getAkitaAppList(this.akitaDAO.value).staking,
-    //     args: [address, asset],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:134-139
+    // abiCall<typeof Staking.prototype.softCheck>({
+    //   sender,
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [address, asset],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:154
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:136
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:154
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:136
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:154
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:136
     // appId: getAkitaAppList(this.akitaDAO.value).staking,
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:156
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:138
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 4
     uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:150-158
-    // abiCall(
-    //   Staking.prototype.softCheck,
-    //   {
-    //     sender,
-    //     appId: getAkitaAppList(this.akitaDAO.value).staking,
-    //     args: [address, asset],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:134-139
+    // abiCall<typeof Staking.prototype.softCheck>({
+    //   sender,
+    //   appId: getAkitaAppList(this.akitaDAO.value).staking,
+    //   args: [address, asset],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
+    // })
     pushbytes 0x48716f1a // method "softCheck(address,uint64)(bool,uint64)"
     itxn_field ApplicationArgs
     uncover 4
@@ -926,22 +896,29 @@ softCheck:
     itxn_field Fee
     itxn_submit
     itxn LastLog
+    dup
+    extract 4 0
+    swap
     extract 0 4
     pushbytes 0x151f7c75
     ==
-    // smart_contracts/arc58/plugins/staking/contract.algo.ts:141-146
+    assert // Bytes has valid prefix
+    len
+    pushint 9 // 9
+    ==
+    // smart_contracts/arc58/plugins/staking/contract.algo.ts:126-131
     // softCheck(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   address: Address,
     //   asset: uint64
     // ): void {
-    return // on error: Bytes has valid prefix
+    return // on error: invalid number of bytes for (bool1,uint64)
 
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:18
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txna ApplicationArgs 1
     dup
@@ -954,14 +931,14 @@ update:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -969,14 +946,14 @@ update:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:12
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:21
+    // smart_contracts/utils/base-contracts/base.ts:26
     // this.version.value = newVersion
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:18
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_1 // 1
     return
@@ -984,8 +961,8 @@ update:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
     len
@@ -993,14 +970,14 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1008,14 +985,14 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:28
-    // this.akitaDAO.value = Application(app)
+    // smart_contracts/utils/base-contracts/base.ts:33
+    // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
     intc_1 // 1
     return

@@ -6,14 +6,13 @@ import { ERR_ALREADY_REGISTERED, ERR_FORBIDDEN, ERR_INVALID_APP, ERR_INVALID_CRE
 import { ERR_DOESNT_EXIST } from './errors'
 import { BoxCostPerByte, GLOBAL_STATE_KEY_BYTES_COST } from "../utils/constants";
 import { ERR_INVALID_PAYMENT } from "../utils/errors";
-import { EscrowFactoryInterface } from "../utils/types/escrows";
 import { EscrowGlobalStateKeysCreator, MinPages, MinWalletIDsByAccountsMbr } from "./constants";
 
 function bytes16(acc: Account): bytes<16> {
   return acc.bytes.slice(0, 16).toFixed({ length: 16 })
 }
 
-export class EscrowFactory extends Contract implements EscrowFactoryInterface {
+export class EscrowFactory extends Contract {
 
   // 8 or 16 bytes
   walletIDsByAccounts = BoxMap<bytes<16>, bytes>({ keyPrefix: '' })
@@ -85,7 +84,7 @@ export class EscrowFactory extends Contract implements EscrowFactoryInterface {
       assert(btoi(creator) === Global.callerApplicationId, ERR_INVALID_CREATOR)
     } else {
       creator = Bytes(itob(Global.callerApplicationId))
-      assert(app === Global.callerApplicationId, ERR_INVALID_APP)
+      app = Global.callerApplicationId
     }
 
     const appAddress = bytes16(Application(app).address)

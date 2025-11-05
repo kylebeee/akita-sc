@@ -15,13 +15,12 @@ import {
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getAkitaAppList } from '../../../utils/functions'
 import { AkitaSocial } from '../../../social/contract.algo'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 
 /** [op: 1][value: 8] */
 const RegisterByteLength = 9
 
-export class SocialActivityGate extends AkitaBaseContract implements SubGateInterface {
+export class SocialActivityGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -44,13 +43,10 @@ export class SocialActivityGate extends AkitaBaseContract implements SubGateInte
   }
 
   private activityGate(user: Address, op: Operator, value: uint64): boolean {
-    const { lastActive } = abiCall(
-      AkitaSocial.prototype.getMeta,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).social,
-        args: [user],
-      }
-    ).returnValue
+    const { lastActive } = abiCall<typeof AkitaSocial.prototype.getMeta>({
+      appId: getAkitaAppList(this.akitaDAO.value).social,
+      args: [user],
+    }).returnValue
 
     const since: uint64 = Global.latestTimestamp - value
 

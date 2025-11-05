@@ -4,7 +4,7 @@ import { AbstractAccountBoxPrefixPlugins, ABSTRACTED_ACCOUNT_MINT_PAYMENT } from
 import { AddAllowanceInfo, EscrowInfo, PluginInfo, PluginKey } from "../account/types";
 import { GlobalStateKeyVersion } from "../../constants";
 import { CID, uint8 } from "../../utils/types/base";
-import { AkitaDAOGlobalStateKeysInitialized, AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOGlobalStateKeysAddAllowancesProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalActionLimit, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, AkitaDAOGlobalStateKeysWalletID, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecuteNamedPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject, AkitaDAOGlobalStateKeysWalletFees, ProposalActionTypeRemoveExecutePlugin, AkitaDAONumGlobalBytes, AkitaDAONumGlobalUints, ProposalActionTypeAddAllowances, ProposalActionTypeRemoveAllowances, DAOProposalVotesMBR, MinDAOPluginMBR, MinDAOProposalActionMbr, MinDAOProposalMBR } from "./constants";
+import { AkitaDAOGlobalStateKeysInitialized, AkitaDAOGlobalStateKeysContentPolicy, AkitaDAOBoxPrefixProposals, AkitaDAOBoxPrefixProposalVotes, AkitaDAOGlobalStateKeysAddAllowancesProposalSettings, AkitaDAOGlobalStateKeysAddPluginProposalSettings, AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysMinRewardsImpact, AkitaDAOGlobalStateKeysNewEscrowProposalSettings, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysProposalActionLimit, AkitaDAOGlobalStateKeysProposalID, AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings, AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings, AkitaDAOGlobalStateKeysRemovePluginProposalSettings, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings, AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings, AkitaDAOGlobalStateKeysUpgradeAppProposalSettings, ProposalActionTypeAddNamedPlugin, ProposalActionTypeAddPlugin, ProposalActionTypeExecuteNamedPlugin, ProposalActionTypeExecutePlugin, ProposalActionTypeNewEscrow, ProposalActionTypeRemoveNamedPlugin, ProposalActionTypeRemovePlugin, ProposalActionTypeToggleEscrowLock, ProposalActionTypeUpdateFields, ProposalActionTypeUpgradeApp, ProposalStatusApproved, ProposalStatusDraft, ProposalStatusExecuted, ProposalStatusRejected, ProposalStatusVoting, ProposalVoteTypeAbstain, ProposalVoteTypeApprove, ProposalVoteTypeReject, AkitaDAOGlobalStateKeysWalletFees, ProposalActionTypeRemoveExecutePlugin, AkitaDAONumGlobalBytes, AkitaDAONumGlobalUints, ProposalActionTypeAddAllowances, ProposalActionTypeRemoveAllowances, DAOProposalVotesMBR, MinDAOPluginMBR, MinDAOProposalActionMbr, MinDAOProposalMBR, AkitaDAOGlobalStateKeysWallet } from "./constants";
 import { BoxCostPerByte } from "../../utils/constants";
 import { abiCall, abimethod, Address, decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { btoi, Global, Txn } from "@algorandfoundation/algorand-typescript/op";
@@ -24,7 +24,7 @@ export class AkitaDAO extends Contract {
   /** the version number of the DAO */
   version = GlobalState<string>({ initialValue: '', key: GlobalStateKeyVersion })
   /** the arc58 wallet the DAO controls */
-  walletID = GlobalState<uint64>({ initialValue: 0, key: AkitaDAOGlobalStateKeysWalletID })
+  wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
   /** the number of actions allowed in a proposal */
   proposalActionLimit = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysProposalActionLimit })
   /** the raw 36 byte content policy of the protocol */
@@ -99,59 +99,44 @@ export class AkitaDAO extends Contract {
   }
 
   private pluginExists(key: PluginKey): boolean {
-    const info = abiCall(
-      AbstractedAccountInterface.prototype.arc58_getPlugins,
-      {
-        appId: this.walletID.value,
-        args: [[key]]
-      }
-    ).returnValue[0]
+    const info = abiCall<typeof AbstractedAccountInterface.prototype.arc58_getPlugins>({
+      appId: this.wallet.value,
+      args: [[key]]
+    }).returnValue[0]
 
     return info.start !== 0
   }
 
   private getPlugin(key: PluginKey): PluginInfo {
-    return abiCall(
-      AbstractedAccountInterface.prototype.arc58_getPlugins,
-      {
-        appId: this.walletID.value,
-        args: [[key]]
-      }
-    ).returnValue[0]
+    return abiCall<typeof AbstractedAccountInterface.prototype.arc58_getPlugins>({
+      appId: this.wallet.value,
+      args: [[key]]
+    }).returnValue[0]
   }
 
   private namedPluginExists(name: string): boolean {
-    const info = abiCall(
-      AbstractedAccountInterface.prototype.arc58_getNamedPlugins,
-      {
-        appId: this.walletID.value,
-        args: [[name]]
-      }
-    ).returnValue[0]
+    const info = abiCall<typeof AbstractedAccountInterface.prototype.arc58_getNamedPlugins>({
+      appId: this.wallet.value,
+      args: [[name]]
+    }).returnValue[0]
 
     return info.start !== 0
   }
 
   private escrowExists(escrow: string): boolean {
-    const info = abiCall(
-      AbstractedAccountInterface.prototype.arc58_getEscrows,
-      {
-        appId: this.walletID.value,
-        args: [[escrow]]
-      }
-    ).returnValue[0]
+    const info = abiCall<typeof AbstractedAccountInterface.prototype.arc58_getEscrows>({
+      appId: this.wallet.value,
+      args: [[escrow]]
+    }).returnValue[0]
 
     return info.id !== 0
   }
 
   private allowanceCheck(escrow: string, assets: uint64[]): { existences: boolean[], anyExist: boolean, allExist: boolean } {
-    const info = abiCall(
-      AbstractedAccountInterface.prototype.arc58_getAllowances,
-      {
-        appId: this.walletID.value,
-        args: [escrow, assets]
-      }
-    ).returnValue
+    const info = abiCall<typeof AbstractedAccountInterface.prototype.arc58_getAllowances>({
+      appId: this.wallet.value,
+      args: [escrow, assets]
+    }).returnValue
 
     let existences: boolean[] = []
     let anyExist: boolean = false
@@ -170,13 +155,10 @@ export class AkitaDAO extends Contract {
   }
 
   private executionExists(lease: bytes<32>): boolean {
-    const info = abiCall(
-      AbstractedAccountInterface.prototype.arc58_getExecutions,
-      {
-        appId: this.walletID.value,
-        args: [[lease]]
-      }
-    ).returnValue[0]
+    const info = abiCall<typeof AbstractedAccountInterface.prototype.arc58_getExecutions>({
+      appId: this.wallet.value,
+      args: [[lease]]
+    }).returnValue[0]
 
     return info.groups.length > 0
   }
@@ -499,46 +481,40 @@ export class AkitaDAO extends Contract {
     }
 
     if (name !== '') {
-      abiCall(
-        AbstractedAccountInterface.prototype.arc58_addNamedPlugin,
-        {
-          appId: this.walletID.value,
-          args: [
-            name,
-            plugin,
-            caller,
-            escrow,
-            false,
-            delegationType,
-            lastValid,
-            cooldown,
-            methods,
-            useRounds,
-            useExecutionKey,
-            defaultToEscrow
-          ]
-        }
-      )
+      abiCall<typeof AbstractedAccountInterface.prototype.arc58_addNamedPlugin>({
+        appId: this.wallet.value,
+        args: [
+          name,
+          plugin,
+          caller,
+          escrow,
+          false,
+          delegationType,
+          lastValid,
+          cooldown,
+          methods,
+          useRounds,
+          useExecutionKey,
+          defaultToEscrow
+        ]
+      })
     } else {
-      abiCall(
-        AbstractedAccountInterface.prototype.arc58_addPlugin,
-        {
-          appId: this.walletID.value,
-          args: [
-            plugin,
-            caller,
-            escrow,
-            false,
-            delegationType,
-            lastValid,
-            cooldown,
-            methods,
-            useRounds,
-            useExecutionKey,
-            defaultToEscrow
-          ]
-        }
-      )
+      abiCall<typeof AbstractedAccountInterface.prototype.arc58_addPlugin>({
+        appId: this.wallet.value,
+        args: [
+          plugin,
+          caller,
+          escrow,
+          false,
+          delegationType,
+          lastValid,
+          cooldown,
+          methods,
+          useRounds,
+          useExecutionKey,
+          defaultToEscrow
+        ]
+      })
     }
 
     if (escrow !== '' && allowances.length > 0) {
@@ -547,23 +523,17 @@ export class AkitaDAO extends Contract {
   }
 
   private addAllowances(escrow: string, allowances: AddAllowanceInfo[]): void {
-    abiCall(
-      AbstractedAccountInterface.prototype.arc58_addAllowances,
-      {
-        appId: this.walletID.value,
-        args: [escrow, allowances]
-      }
-    )
+    abiCall<typeof AbstractedAccountInterface.prototype.arc58_addAllowances>({
+      appId: this.wallet.value,
+      args: [escrow, allowances]
+    })
   }
 
   private removeAllowances(escrow: string, assets: uint64[]): void {
-    abiCall(
-      AbstractedAccountInterface.prototype.arc58_removeAllowances,
-      {
-        appId: this.walletID.value,
-        args: [escrow, assets]
-      }
-    )
+    abiCall<typeof AbstractedAccountInterface.prototype.arc58_removeAllowances>({
+      appId: this.wallet.value,
+      args: [escrow, assets]
+    })
   }
 
   private removePlugin(data: ProposalRemoveNamedPlugin): void {
@@ -574,43 +544,31 @@ export class AkitaDAO extends Contract {
     }
 
     if (name !== '') {
-      abiCall(
-        AbstractedAccountInterface.prototype.arc58_removeNamedPlugin,
-        {
-          appId: this.walletID.value,
-          args: [name]
-        }
-      )
+      abiCall<typeof AbstractedAccountInterface.prototype.arc58_removeNamedPlugin>({
+        appId: this.wallet.value,
+        args: [name]
+      })
       return
     }
 
-    abiCall(
-      AbstractedAccountInterface.prototype.arc58_removePlugin,
-      {
-        appId: this.walletID.value,
-        args: [plugin, caller, escrow]
-      }
-    )
+    abiCall<typeof AbstractedAccountInterface.prototype.arc58_removePlugin>({
+      appId: this.wallet.value,
+      args: [plugin, caller, escrow]
+    })
   }
 
   private newEscrow(escrow: string): uint64 {
-    return abiCall(
-      AbstractedAccountInterface.prototype.arc58_newEscrow,
-      {
-        appId: this.walletID.value,
-        args: [escrow]
-      }
-    ).returnValue
+    return abiCall<typeof AbstractedAccountInterface.prototype.arc58_newEscrow>({
+      appId: this.wallet.value,
+      args: [escrow]
+    }).returnValue
   }
 
   private toggleEscrowLock(escrow: string): EscrowInfo {
-    return abiCall(
-      AbstractedAccountInterface.prototype.arc58_toggleEscrowLock,
-      {
-        appId: this.walletID.value,
-        args: [escrow]
-      }
-    ).returnValue
+    return abiCall<typeof AbstractedAccountInterface.prototype.arc58_toggleEscrowLock>({
+      appId: this.wallet.value,
+      args: [escrow]
+    }).returnValue
   }
 
   private updateField(field: string, value: bytes): void {
@@ -715,23 +673,17 @@ export class AkitaDAO extends Contract {
   }
 
   private newExecution(key: bytes<32>, groups: bytes<32>[], firstValid: uint64, lastValid: uint64): void {
-    abiCall(
-      AbstractedAccountInterface.prototype.arc58_addExecutionKey,
-      {
-        appId: this.walletID.value,
-        args: [key, groups, firstValid, lastValid]
-      }
-    )
+    abiCall<typeof AbstractedAccountInterface.prototype.arc58_addExecutionKey>({
+      appId: this.wallet.value,
+      args: [key, groups, firstValid, lastValid]
+    })
   }
 
   private removeExecution(key: bytes<32>): void {
-    abiCall(
-      AbstractedAccountInterface.prototype.arc58_removeExecutionKey,
-      {
-        appId: this.walletID.value,
-        args: [key]
-      }
-    )
+    abiCall<typeof AbstractedAccountInterface.prototype.arc58_removeExecutionKey>({
+      appId: this.wallet.value,
+      args: [key]
+    })
   }
 
   private newProposalID(): uint64 {
@@ -766,7 +718,6 @@ export class AkitaDAO extends Contract {
 
     this.initialized.value = false
     this.version.value = version
-    this.walletID.value = 0
     this.proposalActionLimit.value = 5
     this.akitaAssets.value = { akta, bones: 0 }
     this.contentPolicy.value = contentPolicy
@@ -801,7 +752,10 @@ export class AkitaDAO extends Contract {
       akitaNfd: apps.akitaNfd,
     }
 
-    this.walletFees.value = { createFee: fees.walletCreateFee }
+    this.walletFees.value = {
+      createFee: fees.walletCreateFee,
+      referrerPercentage: fees.walletReferrerPercentage
+    }
 
     this.socialFees.value = {
       postFee: fees.postFee,
@@ -882,29 +836,28 @@ export class AkitaDAO extends Contract {
     assert(foundGroup, ERR_GROUP_NOT_FOUND)
   }
 
-  setup(): uint64 {
+  setup(nickname: string): uint64 {
     const { walletFactory } = this.akitaAppList.value
 
     const cost = this.setupCost()
 
-    this.walletID.value = abiCall(
-      AbstractedAccountFactoryInterface.prototype.newAccount,
-      {
-        appId: walletFactory,
-        args: [
-          itxn.payment({
-            receiver: Application(walletFactory).address,
-            amount: cost,
-          }),
-          new Address(Global.zeroAddress),
-          new Address(Global.currentApplicationAddress),
-          'AkitaDAO',
-          new Address(Global.zeroAddress),
-        ]
-      }
-    ).returnValue
+    const walletID = abiCall<typeof AbstractedAccountFactoryInterface.prototype.newAccount>({
+      appId: walletFactory,
+      args: [
+        itxn.payment({
+          receiver: Application(walletFactory).address,
+          amount: cost,
+        }),
+        new Address(Global.zeroAddress),
+        new Address(Global.currentApplicationAddress),
+        nickname,
+        new Address(Global.zeroAddress),
+      ]
+    }).returnValue
 
-    return this.walletID.value
+    this.wallet.value = Application(walletID)
+
+    return walletID
   }
 
   initialize(): void {
@@ -1094,7 +1047,7 @@ export class AkitaDAO extends Contract {
     assert(status === ProposalStatusVoting, ERR_INVALID_PROPOSAL_STATE)
 
     const bones = Asset(this.akitaAssets.value.bones)
-    const nonCirculatingSupply = op.AssetHolding.assetBalance(this.walletID.value, bones)[0]
+    const nonCirculatingSupply = op.AssetHolding.assetBalance(this.wallet.value.address, bones)[0]
     const circulatingSupply: uint64 = bones.total - nonCirculatingSupply
     const totalVotes: uint64 = approvals + rejections + abstains
     const approvalPercentage = percentageOf(approvals, (approvals + rejections))
@@ -1209,12 +1162,9 @@ export class AkitaDAO extends Contract {
   setupCost(): uint64 {
     const { walletFactory } = this.akitaAppList.value
 
-    return abiCall(
-      AbstractedAccountFactoryInterface.prototype.cost,
-      {
-        appId: walletFactory,
-      }
-    ).returnValue
+    return abiCall<typeof AbstractedAccountFactoryInterface.prototype.cost>({
+      appId: walletFactory,
+    }).returnValue
   }
 
   @abimethod({ readonly: true })
@@ -1338,5 +1288,5 @@ export class AkitaDAO extends Contract {
     return shape
   }
 
-  opUp(): void {}
+  opUp(): void { }
 }

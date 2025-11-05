@@ -28,7 +28,6 @@ import {
   StakeEntry,
 } from './types'
 import { RootKey } from '../meta-merkles/types'
-import { GateArgs, GateInterface } from '../utils/types/gates'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { StakingType } from '../staking/types'
 import {
@@ -79,24 +78,32 @@ import {
 } from './constants'
 import { ERR_DAO_NOT_OPTED_IN, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION, ERR_FORBIDDEN, ERR_INVALID_DISBURSEMENT_PHASE, ERR_INVALID_POOL_TYPE_FOR_CHECK, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE, ERR_MUST_BE_ASA, ERR_NOT_ALGO, ERR_NOT_ENOUGH_FUNDS, ERR_NOT_READY_TO_DISBURSE, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT, ERR_RATE_MUST_BE_GREATER_THAN_ZERO, ERR_STAKE_KEY_REQUIRED, ERR_WINNING_TICKETS_ALREADY_EXIST } from './errors'
 import { UserAllocation } from '../rewards/types'
-import { BasePool } from './base'
 import { classes } from 'polytype'
 import { RandomnessBeacon } from '../utils/types/randomness-beacon'
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { BoxCostPerByte, MAX_UINT64 } from '../utils/constants'
 import { calcPercent, gateCall, getAkitaAppList, getOtherAppList, getStakingFees, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, percentageOf } from '../utils/functions'
-import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { AkitaDAOEscrowAccountStakingPools } from '../arc58/dao/constants'
 import { MinDisbursementsMBR } from '../rewards/constants'
-import { StakingInterface } from '../utils/types/staking'
-import { RewardsInterface } from '../utils/types/rewards'
-import { MetaMerklesInterface } from '../utils/types/merkles'
+
+import { FunderInfo } from '../utils/types/mbr'
+
+// CONTRACT IMPORTS
+import { BasePool } from './base'
+import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
+import { ChildContract } from '../utils/base-contracts/child'
+import type { Staking } from '../staking/contract.algo'
+import type { Rewards } from '../rewards/contract.algo'
+import type { MetaMerkles } from '../meta-merkles/contract.algo'
+import { Gate } from '../gates/contract.algo'
+import { GateArgs } from '../gates/types'
 
 const MERKLE_TREE_TYPE_ASSET: uint64 = 1
 
 export class Pool extends classes(
   BasePool,
-  AkitaBaseEscrow
+  AkitaBaseFeeGeneratorContract,
+  ChildContract
 ) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
@@ -244,7 +251,7 @@ export class Pool extends classes(
       total += quantity
     }
 
-    this.rewards(rewardID).value.qualifiedStakers += count 
+    this.rewards(rewardID).value.qualifiedStakers += count
     this.rewards(rewardID).value.qualifiedStake += total
 
     if (this.entryID.value === disbursementCursor) {
@@ -475,31 +482,25 @@ export class Pool extends classes(
     }
 
     if (this.type.value === POOL_STAKING_TYPE_SOFT) {
-      const check = abiCall(
-        StakingInterface.prototype.softCheck,
-        {
-          appId: getAkitaAppList(Global.currentApplicationId).staking,
-          args: [address, asset],
-        }
-      ).returnValue
+      const check = abiCall<typeof Staking.prototype.softCheck>({
+        appId: getAkitaAppList(Global.currentApplicationId).staking,
+        args: [address, asset],
+      }).returnValue
 
       if (check.balance >= quantity) {
         return { valid: true, balance: check.balance }
       }
     } else {
-      const info = abiCall(
-        StakingInterface.prototype.getInfo,
-        {
-          appId: getAkitaAppList(Global.currentApplicationId).staking,
-          args: [
-            address,
-            {
-              asset: asset,
-              type: this.stakingType(),
-            },
-          ],
-        }
-      ).returnValue
+      const info = abiCall<typeof Staking.prototype.getInfo>({
+        appId: getAkitaAppList(Global.currentApplicationId).staking,
+        args: [
+          address,
+          {
+            asset: asset,
+            type: this.stakingType(),
+          },
+        ],
+      }).returnValue
 
       if (info.amount >= quantity) {
         return { valid: true, balance: info.amount }
@@ -521,7 +522,7 @@ export class Pool extends classes(
 
   private stakingType(): StakingType {
     assert(this.type.value !== POOL_STAKING_TYPE_NONE, 'pool staking type is not set')
-    return new Uint8(this.type.value.native - 1)
+    return new Uint8(this.type.value.asUint64() - 1)
   }
 
   private getStakeValue(id: uint64): { valid: boolean, balance: uint64 } {
@@ -530,13 +531,10 @@ export class Pool extends classes(
     } else if (this.type.value === POOL_STAKING_TYPE_HEARTBEAT) {
       const { address, asset } = this.entries(id).value
 
-      const avg = abiCall(
-        StakingInterface.prototype.getHeartbeatAverage,
-        {
-          appId: getAkitaAppList(Global.currentApplicationId).staking,
-          args: [address, asset, true],
-        }
-      ).returnValue
+      const avg = abiCall<typeof Staking.prototype.getHeartbeatAverage>({
+        appId: getAkitaAppList(Global.currentApplicationId).staking,
+        args: [address, asset, true],
+      }).returnValue
 
       return { valid: true, balance: avg }
     }
@@ -554,19 +552,16 @@ export class Pool extends classes(
       amount: rewardMBR,
     })
 
-    return abiCall(
-      RewardsInterface.prototype.createDisbursement,
-      {
-        appId: rewardsApp,
-        args: [
-          mbrPayment,
-          title,
-          timeToUnlock,
-          expiration,
-          '',
-        ],
-      }
-    ).returnValue
+    return abiCall<typeof Rewards.prototype.createDisbursement>({
+      appId: rewardsApp,
+      args: [
+        mbrPayment,
+        title,
+        timeToUnlock,
+        expiration,
+        '',
+      ],
+    }).returnValue
   }
 
   private createRewardAllocations(
@@ -581,54 +576,45 @@ export class Pool extends classes(
 
     if (asset === 0) {
       // ALGO allocations
-      abiCall(
-        RewardsInterface.prototype.createUserAllocations,
-        {
-          appId: rewardsApp,
-          args: [
-            itxn.payment({
-              receiver: rewardsApp.address,
-              amount: mbrAmount + sum,
-            }),
-            disbursementID,
-            allocations,
-          ],
-        }
-      )
+      abiCall<typeof Rewards.prototype.createUserAllocations>({
+        appId: rewardsApp,
+        args: [
+          itxn.payment({
+            receiver: rewardsApp.address,
+            amount: mbrAmount + sum,
+          }),
+          disbursementID,
+          allocations,
+        ],
+      })
     } else {
       // ASA allocations
-      abiCall(
-        RewardsInterface.prototype.createAsaUserAllocations,
-        {
-          appId: rewardsApp,
-          args: [
-            itxn.payment({
-              receiver: rewardsApp.address,
-              amount: mbrAmount,
-            }),
-            itxn.assetTransfer({
-              assetReceiver: rewardsApp.address,
-              xferAsset: asset,
-              assetAmount: sum,
-            }),
-            disbursementID,
-            allocations,
-          ],
-        }
-      )
+      abiCall<typeof Rewards.prototype.createAsaUserAllocations>({
+        appId: rewardsApp,
+        args: [
+          itxn.payment({
+            receiver: rewardsApp.address,
+            amount: mbrAmount,
+          }),
+          itxn.assetTransfer({
+            assetReceiver: rewardsApp.address,
+            xferAsset: asset,
+            assetAmount: sum,
+          }),
+          disbursementID,
+          allocations,
+        ],
+      })
     }
   }
 
   private finalizeRewards(disbursementID: uint64): void {
     const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
 
-    abiCall(
-      RewardsInterface.prototype.finalizeDisbursement,
-      {
-        appId: rewardsApp,
-        args: [disbursementID],
-      }
-    )
+    abiCall<typeof Rewards.prototype.finalizeDisbursement>({
+      appId: rewardsApp,
+      args: [disbursementID],
+    })
   }
 
   private validateReward(reward: Reward): void {
@@ -665,8 +651,9 @@ export class Pool extends classes(
   create(
     title: string,
     type: StakingType,
-    creator: Address,
-    marketplace: Address,
+    creator: Account,
+    funder: FunderInfo,
+    marketplace: Account,
     stakeKey: RootKey,
     minimumStakeAmount: uint64,
     gateID: uint64,
@@ -676,8 +663,9 @@ export class Pool extends classes(
     this.status.value = PoolStatusDraft
     this.title.value = title
     this.type.value = type
-    this.creator.value = creator.native
-    this.marketplace.value = marketplace.native
+    this.creator.value = creator
+    this.funder.value = clone(funder)
+    this.marketplace.value = marketplace
 
     this.stakeKey.value = clone(stakeKey)
     this.minimumStakeAmount.value = minimumStakeAmount
@@ -696,21 +684,24 @@ export class Pool extends classes(
     assert(Global.callerApplicationAddress === Global.creatorAddress, 'only the factory can init the pool')
 
     if (this.gateID.value > 0) {
-      this.gateSize.value = abiCall(
-        GateInterface.prototype.size,
-        {
-          appId: getAkitaAppList(Global.currentApplicationId).gate,
-          args: [this.gateID.value],
-        }
-      ).returnValue
+      this.gateSize.value = abiCall<typeof Gate.prototype.size>({
+        appId: getAkitaAppList(Global.currentApplicationId).gate,
+        args: [this.gateID.value],
+      }).returnValue
     }
   }
 
   @abimethod({ allowActions: 'DeleteApplication' })
-  delete(caller: Address): void {
+  delete(caller: Account): void {
     assert(Txn.sender === Global.creatorAddress, 'call must come from factory')
-    assert(caller.native === this.creator.value, 'only the creator can delete the pool')
+    assert(caller === this.creator.value, 'only the creator can delete the pool')
     assert(this.status.value === PoolStatusDraft || Global.latestTimestamp > this.endTimestamp.value, 'the pool must be in draft or ended')
+
+    // TODO: ensure weights are cleared
+
+    itxn
+      .payment({ closeRemainderTo: Global.creatorAddress })
+      .submit()
   }
 
   // POOL METHODS ---------------------------------------------------------------------------------
@@ -868,19 +859,16 @@ export class Pool extends classes(
       assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
 
       if (address.native !== Global.zeroAddress) {
-        const verified = abiCall(
-          MetaMerklesInterface.prototype.verify,
-          {
-            appId: getAkitaAppList(Global.currentApplicationId).metaMerkles,
-            args: [
-              address,
-              name,
-              sha256(sha256(itob(entries[i].asset))),
-              entries[i].proof,
-              MERKLE_TREE_TYPE_ASSET,
-            ],
-          }
-        ).returnValue
+        const verified = abiCall<typeof MetaMerkles.prototype.verify>({
+          appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+          args: [
+            address,
+            name,
+            sha256(sha256(itob(entries[i].asset))),
+            entries[i].proof,
+            MERKLE_TREE_TYPE_ASSET,
+          ],
+        }).returnValue
 
         assert(verified, 'failed to verify stake requirements')
       }
@@ -894,19 +882,16 @@ export class Pool extends classes(
         assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
       }
 
-      const stakeInfo = abiCall(
-        StakingInterface.prototype.getInfo,
-        {
-          appId: getAkitaAppList(Global.currentApplicationId).staking,
-          args: [
-            new Address(Txn.sender),
-            {
-              asset: entries[i].asset,
-              type: this.stakingType(),
-            },
-          ],
-        }
-      ).returnValue
+      const stakeInfo = abiCall<typeof Staking.prototype.getInfo>({
+        appId: getAkitaAppList(Global.currentApplicationId).staking,
+        args: [
+          new Address(Txn.sender),
+          {
+            asset: entries[i].asset,
+            type: this.stakingType(),
+          },
+        ],
+      }).returnValue
 
       assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
 
@@ -967,13 +952,10 @@ export class Pool extends classes(
 
     const roundToUse: uint64 = activeDisbursementRoundStart + 1 + (4 * vrfFailureCount)
 
-    const seed = abiCall(
-      RandomnessBeacon.prototype.get,
-      {
-        appId: getOtherAppList(Global.currentApplicationId).vrfBeacon,
-        args: [roundToUse, this.salt.value],
-      }
-    ).returnValue
+    const seed = abiCall<typeof RandomnessBeacon.prototype.get>({
+      appId: getOtherAppList(Global.currentApplicationId).vrfBeacon,
+      args: [roundToUse, this.salt.value],
+    }).returnValue
 
     if (seed.length === 0) {
       this.rewards(rewardID).value.vrfFailureCount += 1

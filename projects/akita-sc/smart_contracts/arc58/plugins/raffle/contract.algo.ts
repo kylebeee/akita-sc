@@ -1,26 +1,26 @@
-import { abimethod, Application, assert, Asset, Bytes, GlobalState, itxn, op, TemplateVar, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abimethod, Account, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
 import { classes } from "polytype"
 
-import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4"
+import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4"
 
 import { AssetHolding, btoi, Global } from "@algorandfoundation/algorand-typescript/op"
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
 
-import { ServiceFactoryContract } from "../../../utils/base-contracts/factory"
+import { FactoryContract } from "../../../utils/base-contracts/factory"
 
 import { BaseRaffle } from "../../../raffle/base"
 import { ERR_CREATOR_NOT_RAFFLE_FACTORY, ERR_NOT_ENOUGH_ASSET } from "./errors"
 import { RaffleFactory } from "../../../raffle/factory.algo"
 import { Raffle } from "../../../raffle/contract.algo"
-import { GateArgs } from "../../../utils/types/gates"
 import { RaffleGlobalStateKeyTicketAsset } from "../../../raffle/constants"
 import { ERR_NOT_PRIZE_BOX_OWNER } from "../../../utils/errors"
 import { PrizeBox } from "../../../prize-box/contract.algo"
 import { RafflePluginGlobalStateKeyFactory } from "./constants"
-import { fmbr, getPrizeBoxOwner, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { getPrizeBoxOwner, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { Proof } from "../../../utils/types/merkles"
+import { GateArgs } from "../../../gates/types"
 
-export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
+export class RafflePlugin extends classes(BaseRaffle, FactoryContract) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -37,9 +37,9 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
   // RAFFLE PLUGIN METHODS ------------------------------------------------------------------------
 
   newRaffle(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    prizeID: uint64,
+    prizeID: uint64, // 0 | Asset
     prizeAmount: uint64,
     ticketAssetID: uint64,
     startTimestamp: uint64,
@@ -47,31 +47,28 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
     name: string,
-    proof: Proof
+    proof: Proof,
+    weightsListCount: uint64
   ): uint64 {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
     const senderPrizeBalance = AssetHolding.assetBalance(sender, prizeID)[0]
     assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
 
     if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
-      abiCall(
-        RaffleFactory.prototype.optin,
-        {
-          sender,
-          appId: this.factory.value,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance,
-            }),
-            prizeID,
-          ],
-        }
-      )
+      abiCall<typeof RaffleFactory.prototype.optin>({
+        sender,
+        appId: this.factory.value,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: this.factory.value.address,
+            amount: Global.assetOptInMinBalance,
+          }),
+          prizeID,
+        ],
+      })
     }
 
     let optinMBR: uint64 = 0
@@ -85,8 +82,6 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       optinMBR += Global.assetOptInMinBalance
     }
 
-    const fcosts = fmbr()
-
     const raffle = compileArc4(Raffle)
 
     const childContractMBR: uint64 = (
@@ -94,8 +89,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
       Global.minBalance +
-      optinMBR +
-      fcosts.appCreators
+      optinMBR
     )
 
     const mbrTxn = itxn.payment({
@@ -111,64 +105,57 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       xferAsset: prizeID,
     })
 
-    const raffleApp = abiCall(
-      RaffleFactory.prototype.newRaffle,
-      {
-        sender,
-        appId: this.factory.value,
-        args: [
-          mbrTxn,
-          prizeTxn,
-          ticketAssetID,
-          startTimestamp,
-          endTimestamp,
-          minTickets,
-          maxTickets,
-          gateID,
-          marketplace,
-          name,
-          proof
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    ).returnValue
+    const raffleApp = abiCall<typeof RaffleFactory.prototype.newRaffle>({
+      sender,
+      appId: this.factory.value,
+      args: [
+        mbrTxn,
+        prizeTxn,
+        ticketAssetID,
+        startTimestamp,
+        endTimestamp,
+        minTickets,
+        maxTickets,
+        gateID,
+        marketplace,
+        name,
+        proof,
+        weightsListCount
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    }).returnValue
 
     return raffleApp
   }
 
   newPrizeBoxRaffle(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    prizeBoxID: uint64,
+    prizeBox: Application,
     ticketAssetID: uint64,
     startTimestamp: uint64,
     endTimestamp: uint64,
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
+    weightsListCount: uint64
   ): uint64 {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === sender, ERR_NOT_PRIZE_BOX_OWNER)
+    assert(getPrizeBoxOwner(this.akitaDAO.value, prizeBox) === sender, ERR_NOT_PRIZE_BOX_OWNER)
 
-    abiCall(
-      PrizeBox.prototype.transfer,
-      {
-        sender,
-        appId: prizeBoxID,
-        args: [new Address(this.factory.value.address)],
-      }
-    )
+    abiCall<typeof PrizeBox.prototype.transfer>({
+      sender,
+      appId: prizeBox,
+      args: [this.factory.value.address],
+    })
 
     let optinMBR: uint64 = 0
     const ticketAssetIsAlgo = ticketAssetID === 0
     if (ticketAssetIsAlgo) {
       optinMBR += Global.assetOptInMinBalance
     }
-
-    const fcosts = fmbr()
 
     const raffle = compileArc4(Raffle)
 
@@ -177,8 +164,7 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
       Global.minBalance +
-      optinMBR +
-      fcosts.appCreators
+      optinMBR
     )
 
     const mbrTxn = itxn.payment({
@@ -187,221 +173,189 @@ export class RafflePlugin extends classes(BaseRaffle, ServiceFactoryContract) {
       amount: childContractMBR,
     })
 
-    const raffleApp = abiCall(
-      RaffleFactory.prototype.newPrizeBoxRaffle,
-      {
-        sender,
-        appId: this.factory.value,
-        args: [
-          mbrTxn,
-          prizeBoxID,
-          ticketAssetID,
-          startTimestamp,
-          endTimestamp,
-          minTickets,
-          maxTickets,
-          gateID,
-          marketplace,
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    ).returnValue
+    const raffleApp = abiCall<typeof RaffleFactory.prototype.newPrizeBoxRaffle>({
+      sender,
+      appId: this.factory.value,
+      args: [
+        mbrTxn,
+        prizeBox,
+        ticketAssetID,
+        startTimestamp,
+        endTimestamp,
+        minTickets,
+        maxTickets,
+        gateID,
+        marketplace,
+        weightsListCount
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    }).returnValue
 
     return raffleApp
   }
 
   enter(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    raffleAppID: uint64,
+    appId: Application,
     amount: uint64,
-    marketplace: Address,
+    marketplace: Account,
     args: GateArgs
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
     const { entries, entriesByAddress } = this.mbr()
     const mbr: uint64 = entries + entriesByAddress
 
-    const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(raffleAppID, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
+    const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(appId, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
     if (ticketAsset.id === 0) {
-      abiCall(
-        Raffle.prototype.enter,
-        {
-          sender,
-          appId: raffleAppID,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: Application(raffleAppID).address,
-              amount: amount + mbr,
-            }),
-            marketplace,
-            args,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
-      )
+      abiCall<typeof Raffle.prototype.enter>({
+        sender,
+        appId,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: appId.address,
+            amount: amount + mbr,
+          }),
+          marketplace,
+          args,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
     } else {
-      abiCall(
-        Raffle.prototype.enterAsa,
-        {
-          sender,
-          appId: raffleAppID,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: Application(raffleAppID).address,
-              amount: mbr,
-            }),
-            itxn.assetTransfer({
-              sender,
-              assetReceiver: Application(raffleAppID).address,
-              assetAmount: amount,
-              xferAsset: ticketAsset,
-            }),
-            marketplace,
-            args,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
-      )
+      abiCall<typeof Raffle.prototype.enterAsa>({
+        sender,
+        appId,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: appId.address,
+            amount: mbr,
+          }),
+          itxn.assetTransfer({
+            sender,
+            assetReceiver: appId.address,
+            assetAmount: amount,
+            xferAsset: ticketAsset,
+          }),
+          marketplace,
+          args,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
     }
   }
 
   add(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    raffleAppID: uint64,
+    appId: Application,
     amount: uint64,
     args: GateArgs
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
-    const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(raffleAppID, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
+    const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(appId, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
     if (ticketAsset.id === 0) {
-      abiCall(
-        Raffle.prototype.add,
-        {
-          sender,
-          appId: raffleAppID,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: Application(raffleAppID).address,
-              amount: amount,
-            }),
-            args,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
-      )
+      abiCall<typeof Raffle.prototype.add>({
+        sender,
+        appId,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: appId.address,
+            amount: amount,
+          }),
+          args,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
     } else {
-      abiCall(
-        Raffle.prototype.addAsa,
-        {
-          sender,
-          appId: raffleAppID,
-          args: [
-            itxn.assetTransfer({
-              sender,
-              assetReceiver: Application(raffleAppID).address,
-              assetAmount: amount,
-              xferAsset: ticketAsset,
-            }),
-            args,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
-      )
+      abiCall<typeof Raffle.prototype.addAsa>({
+        sender,
+        appId,
+        args: [
+          itxn.assetTransfer({
+            sender,
+            assetReceiver: appId.address,
+            assetAmount: amount,
+            xferAsset: ticketAsset,
+          }),
+          args,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
     }
   }
 
   raffle(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    raffleAppID: uint64
+    appId: Application
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
-    abiCall(
-      Raffle.prototype.raffle,
-      {
-        sender,
-        appId: raffleAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Raffle.prototype.raffle>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   findWinner(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    raffleAppID: uint64,
+    appId: Application,
     iterationAmount: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
-    abiCall(
-      Raffle.prototype.findWinner,
-      {
-        sender,
-        appId: raffleAppID,
-        args: [iterationAmount],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Raffle.prototype.findWinner>({
+      sender,
+      appId,
+      args: [iterationAmount],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   claimRafflePrize(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    raffleAppID: uint64,
+    appId: Application,
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
-    abiCall(
-      Raffle.prototype.claimRafflePrize,
-      {
-        sender,
-        appId: raffleAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Raffle.prototype.claimRafflePrize>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   deleteRaffleApplication(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    raffleAppID: uint64
+    appId: Application
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(raffleAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
 
-    abiCall(
-      Raffle.prototype.deleteApplication,
-      {
-        sender,
-        appId: raffleAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Raffle.prototype.deleteApplication>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 }

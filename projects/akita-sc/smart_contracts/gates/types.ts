@@ -1,6 +1,7 @@
 import { bytes, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { GateArgs } from '../utils/types/gates'
+
+export type GateArgs = bytes[]
 
 export type Operator = Uint8
 export type LogicalOperator = Uint8

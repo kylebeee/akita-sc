@@ -1,6 +1,5 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, decodeArc4, encodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { Operator } from '../../types'
 import {
@@ -12,11 +11,13 @@ import {
   NotEqual,
 } from '../../../utils/operators'
 import { STAKING_TYPE_HEARTBEAT, StakingType } from '../../../staking/types'
-import { Staking } from '../../../staking/contract.algo'
 import { getAkitaAppList } from '../../../utils/functions'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { ERR_BAD_OPERATION } from '../../errors'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import type { Staking } from '../../../staking/contract.algo'
 
 const ERR_INVALID_ARG_COUNT = 'Invalid number of arguments'
 
@@ -32,7 +33,7 @@ const StakingAmountGateRegistryMBR: uint64 = 13_300
 /** [op:1][asset:8][type:1][amount:8][includeEscrowed:1] */
 const RegisterByteLength: uint64 = 19
 
-export class StakingAmountGate extends AkitaBaseContract implements SubGateInterface {
+export class StakingAmountGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -63,23 +64,18 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
     includeEscrowed: boolean
   ): boolean {
     let staked: uint64 = 0
+    const appId = getAkitaAppList(this.akitaDAO.value).staking
 
     if (type === STAKING_TYPE_HEARTBEAT) {
-      staked = abiCall(
-        Staking.prototype.getHeartbeatAverage,
-        {
-          appId: getAkitaAppList(this.akitaDAO.value).staking,
-          args: [user, asset, includeEscrowed],
-        }
-      ).returnValue
+      staked = abiCall<typeof Staking.prototype.getHeartbeatAverage>({
+        appId,
+        args: [user, asset, includeEscrowed],
+      }).returnValue
     } else {
-      const info = abiCall(
-        Staking.prototype.mustGetInfo,
-        {
-          appId: getAkitaAppList(this.akitaDAO.value).staking,
-          args: [user, { asset, type }],
-        }
-      ).returnValue
+      const info = abiCall<typeof Staking.prototype.mustGetInfo>({
+        appId,
+        args: [user, { asset, type }],
+      }).returnValue
 
       staked = info.amount
     }
@@ -122,7 +118,7 @@ export class StakingAmountGate extends AkitaBaseContract implements SubGateInter
 
     const params = decodeArc4<StakingAmountGateRegistryInfo>(args)
     // dont include the list operators includes & not includes
-    assert(params.op.native <= 6, ERR_BAD_OPERATION)
+    assert(params.op.asUint64() <= 6, ERR_BAD_OPERATION)
     const id = this.newRegistryID()
     this.registry(id).value = clone(params)
     return id

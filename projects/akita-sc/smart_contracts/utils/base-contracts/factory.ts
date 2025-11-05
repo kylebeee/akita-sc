@@ -1,97 +1,70 @@
 import {
   Account,
-  Application,
-  arc4,
   assert,
-  Asset,
-  BoxMap,
+  Box,
+  Bytes,
+  bytes,
   Global,
   GlobalState,
-  itxn,
+  gtxn,
+  OnCompleteAction,
+  TransactionType,
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Contract, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
+import { methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
-import { AkitaDAOInterface } from '../types/dao'
+import { AkitaBaseFeeGeneratorContract } from './base'
+import { ERR_CONTRACT_NOT_SET, ERR_INVALID_CALL_ORDER } from '../errors'
 
 export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
-export const BaseFactoryBoxPrefixAppCreators = 'c'
+export const BoxKeyBoxedContract = 'bc'
 
 export type AppCreatorValue = {
   creator: Account
   amount: uint64
 }
 
-export class FactoryContract extends Contract {
+export class FactoryContract extends AkitaBaseFeeGeneratorContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  /** the current version of the contract */
-  version = GlobalState<string>({ key: GlobalStateKeyVersion })
-  /** the app ID of the Akita DAO */
-  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-  /** the app ID for the akita DAO escrow to use */
-  akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
   /** the current version of the child contract */
   childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
 
-  // PRIVATE METHODS ------------------------------------------------------------------------------
+  // BOXES ----------------------------------------------------------------------------------------
 
-  protected optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
-    abiCall(
-      AkitaDAOInterface.prototype.optinReceiveEscrow,
-      {
-        appId: this.akitaDAO.value,
-        args: [
-          itxn.payment({
-            receiver: this.akitaDAOEscrow.value.address,
-            amount: Global.assetOptInMinBalance,
-          }),
-          name,
-          asset.id
-        ],
-      },
-    )
+  boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
 
-    if (amount > 0) {
-      itxn
-        .assetTransfer({
-          assetReceiver: this.akitaDAOEscrow.value.address,
-          assetAmount: amount,
-          xferAsset: asset,
-        })
-        .submit()
+  // AKITA FACTORY METHODS --------------------------------------------------------------------
+
+  initBoxedContract(version: string, size: uint64): void {
+    this.childContractVersion.value = version
+    if (!this.boxedContract.exists) {
+      assert(Txn.sender === Global.creatorAddress, ERR_NOT_AKITA_DAO)
+      this.boxedContract.create({ size })
+    } else {
+      assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+      this.boxedContract.resize(size)
     }
   }
 
-  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
-
-  @abimethod({ allowActions: ['UpdateApplication'] })
-  update(newVersion: string, newChildVersion: string): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.version.value = newVersion
-    this.childContractVersion.value = newChildVersion
+  loadBoxedContract(offset: uint64, data: bytes): void {
+    const txn = gtxn.Transaction(0)
+    assert((
+      txn.type === TransactionType.ApplicationCall
+      && txn.appId === Global.currentApplicationId
+      && txn.numAppArgs === 3
+      && txn.onCompletion === OnCompleteAction.NoOp
+      && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+      && txn.sender === Txn.sender
+    ), ERR_INVALID_CALL_ORDER)
+    assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
+    this.boxedContract.replace(offset, data)
   }
 
-  // AKITA BASE ESCROW METHODS --------------------------------------------------------------------
-
-  updateAkitaDAO(app: uint64): void {
+  deleteBoxedContract(): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAO.value = Application(app)
+    this.boxedContract.delete()
   }
-
-  updateAkitaDAOEscrow(app: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.akitaDAOEscrow.value = Application(app)
-  }
-}
-
-export class ServiceFactoryContract extends FactoryContract {
-
-  // BOXES ----------------------------------------------------------------------------------------
-
-  appCreators = BoxMap<uint64, AppCreatorValue>({ keyPrefix: BaseFactoryBoxPrefixAppCreators })
-
 }

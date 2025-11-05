@@ -61,17 +61,19 @@ import {
 } from './errors'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { CID } from '../utils/types/base'
-import { BaseSubscriptions } from './base'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { classes } from 'polytype'
 import { AkitaDAOEscrowAccountSubscriptions } from '../arc58/dao/constants'
-import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
 import { calcPercent, gateCheck, getSubscriptionFees, getWalletIDUsingAkitaDAO, originOrTxnSender } from '../utils/functions'
 import { ERR_HAS_GATE } from '../social/errors'
 
+// CONTRACT IMPORTS
+import { BaseSubscriptions } from './base'
+import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
+
 export class Subscriptions extends classes(
   BaseSubscriptions,
-  AkitaBaseEscrow,
+  AkitaBaseFeeGeneratorContract,
   ContractWithOptIn
 ) {
 

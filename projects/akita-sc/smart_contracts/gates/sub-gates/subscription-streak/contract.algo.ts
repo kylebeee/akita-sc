@@ -14,14 +14,13 @@ import {
 } from '../../../utils/operators'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getAkitaAppList } from '../../../utils/functions'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { SubscriptionStreakGateRegistryMBR } from './constants'
 
 /** [merchant:32][id:8][op:1][streak:8] */
 const RegisterByteLength: uint64 = 49
 
-export class SubscriptionStreakGate extends AkitaBaseContract implements SubGateInterface {
+export class SubscriptionStreakGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -50,13 +49,10 @@ export class SubscriptionStreakGate extends AkitaBaseContract implements SubGate
     op: Uint8,
     streak: uint64
   ): boolean {
-    const info = abiCall(
-      Subscriptions.prototype.getSubscriptionInfo,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-        args: [address, id],
-      }
-    ).returnValue
+    const info = abiCall<typeof Subscriptions.prototype.getSubscriptionInfo>({
+      appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
+      args: [address, id],
+    }).returnValue
 
     const toMerchant = info.recipient === merchant
 

@@ -15,11 +15,10 @@ import { PaySiloPlugin } from "./contract.algo";
 export class PaySiloFactoryPlugin extends Contract {
 
   mint(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     recipient: Address
   ): uint64 {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
     const paySilo = compileArc4(PaySiloPlugin)

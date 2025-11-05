@@ -22,41 +22,32 @@ export class AkitaDAOPlugin extends Contract {
 
   // GATE PLUGIN METHODS --------------------------------------------------------------------------
 
-  update(walletID: uint64, rekeyBack: boolean, proposalID: uint64, index: uint64): void {
-    const wallet = Application(walletID)
+  update(wallet: Application, rekeyBack: boolean, proposalID: uint64, index: uint64): void {
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      AkitaDAO.prototype.update,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [
-          proposalID,
-          index
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof AkitaDAO.prototype.update>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [
+        proposalID,
+        index
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
-  setup(walletID: uint64, rekeyBack: boolean): void {
-    const wallet = Application(walletID)
+  setup(wallet: Application, rekeyBack: boolean, nickname: string): void {
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      AkitaDAO.prototype.setup,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof AkitaDAO.prototype.setup>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [nickname],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
-  newProposal(walletID: uint64, rekeyBack: boolean, cid: CID, actions: ProposalAction[]): uint64 {
-    const wallet = Application(walletID)
+  newProposal(wallet: Application, rekeyBack: boolean, cid: CID, actions: ProposalAction[]): uint64 {
     const sender = getSpendingAccount(wallet)
 
     const initialized = decodeArc4<boolean>(
@@ -67,26 +58,20 @@ export class AkitaDAOPlugin extends Contract {
     )
 
     if (!initialized) {
-      return abiCall(
-        AkitaDAO.prototype.newProposalPreInitialized,
-        {
-          sender,
-          appId: this.daoAppID.value,
-          args: [cid, actions],
-          rekeyTo: rekeyAddress(rekeyBack, wallet)
-        }
-      ).returnValue
+      return abiCall<typeof AkitaDAO.prototype.newProposalPreInitialized>({
+        sender,
+        appId: this.daoAppID.value,
+        args: [cid, actions],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      }).returnValue
     } else {
 
-      const { totalFee } = abiCall(
-        AkitaDAO.prototype.proposalCost,
-        {
-          sender,
-          appId: this.daoAppID.value,
-          args: [actions],
-          rekeyTo: rekeyAddress(rekeyBack, wallet)
-        }
-      ).returnValue      
+      const { totalFee } = abiCall<typeof AkitaDAO.prototype.proposalCost>({
+        sender,
+        appId: this.daoAppID.value,
+        args: [actions],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      }).returnValue
 
       const actionsPayment = itxn.payment({
         sender,
@@ -94,45 +79,35 @@ export class AkitaDAOPlugin extends Contract {
         amount: totalFee,
       })
 
-      return abiCall(
-        AkitaDAO.prototype.newProposal,
-        {
-          sender,
-          appId: this.daoAppID.value,
-          args: [
-            actionsPayment,
-            cid,
-            actions
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet)
-        }
-      ).returnValue
+      return abiCall<typeof AkitaDAO.prototype.newProposal>({
+        sender,
+        appId: this.daoAppID.value,
+        args: [
+          actionsPayment,
+          cid,
+          actions
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      }).returnValue
     }
   }
 
-  editProposal(walletID: uint64, rekeyBack: boolean, id: uint64, cid: CID, actions: ProposalAction[]): void {
-    const wallet = Application(walletID)
+  editProposal(wallet: Application, rekeyBack: boolean, id: uint64, cid: CID, actions: ProposalAction[]): void {
     const sender = getSpendingAccount(wallet)
 
-    const { feesPaid } = abiCall(
-      AkitaDAO.prototype.mustGetProposal,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [id],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    ).returnValue
+    const { feesPaid } = abiCall<typeof AkitaDAO.prototype.mustGetProposal>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [id],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    }).returnValue
 
-    const { totalFee } = abiCall(
-      AkitaDAO.prototype.proposalCost,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [actions],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    ).returnValue
+    const { totalFee } = abiCall<typeof AkitaDAO.prototype.proposalCost>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [actions],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    }).returnValue
 
     if (feesPaid < totalFee) {
       const actionsPayment = itxn.payment({
@@ -141,54 +116,43 @@ export class AkitaDAOPlugin extends Contract {
         amount: totalFee - feesPaid,
       })
 
-      abiCall(
-        AkitaDAO.prototype.editProposalWithPayment,
-        {
-          sender,
-          appId: this.daoAppID.value,
-          args: [
-            actionsPayment,
-            id,
-            cid,
-            actions
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet)
-        }
-      )
+      abiCall<typeof AkitaDAO.prototype.editProposalWithPayment>({
+        sender,
+        appId: this.daoAppID.value,
+        args: [
+          actionsPayment,
+          id,
+          cid,
+          actions
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      })
     } else {
-      abiCall(
-        AkitaDAO.prototype.editProposal,
-        {
-          sender,
-          appId: this.daoAppID.value,
-          args: [
-            id,
-            cid,
-            actions
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet)
-        }
-      )
+      abiCall<typeof AkitaDAO.prototype.editProposal>({
+        sender,
+        appId: this.daoAppID.value,
+        args: [
+          id,
+          cid,
+          actions
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      })
     }
   }
 
-  submitProposal(walletID: uint64, rekeyBack: boolean, proposalID: uint64): void {
-    const wallet = Application(walletID)
+  submitProposal(wallet: Application, rekeyBack: boolean, proposalID: uint64): void {
     const sender = getSpendingAccount(wallet)
-    
-    abiCall(
-      AkitaDAO.prototype.submitProposal,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [proposalID],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+
+    abiCall<typeof AkitaDAO.prototype.submitProposal>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [proposalID],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
-  voteProposal(walletID: uint64, rekeyBack: boolean, proposalID: uint64, vote: ProposalVoteType): void {
-    const wallet = Application(walletID)
+  voteProposal(wallet: Application, rekeyBack: boolean, proposalID: uint64, vote: ProposalVoteType): void {
     const sender = getSpendingAccount(wallet)
 
     const mbrPayment = itxn.payment({
@@ -197,48 +161,37 @@ export class AkitaDAOPlugin extends Contract {
       amount: DAOProposalVotesMBR
     })
 
-    abiCall(
-      AkitaDAO.prototype.voteProposal,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [
-          mbrPayment,
-          proposalID,
-          vote
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof AkitaDAO.prototype.voteProposal>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [
+        mbrPayment,
+        proposalID,
+        vote
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
-  finalizeProposal(walletID: uint64, rekeyBack: boolean, proposalID: uint64): void {
-    const wallet = Application(walletID)
+  finalizeProposal(wallet: Application, rekeyBack: boolean, proposalID: uint64): void {
     const sender = getSpendingAccount(wallet)
-    
-    abiCall(
-      AkitaDAO.prototype.finalizeProposal,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [proposalID],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+
+    abiCall<typeof AkitaDAO.prototype.finalizeProposal>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [proposalID],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
-  executeProposal(walletID: uint64, rekeyBack: boolean, proposalID: uint64): void {
-    const wallet = Application(walletID)
+  executeProposal(wallet: Application, rekeyBack: boolean, proposalID: uint64): void {
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      AkitaDAO.prototype.executeProposal,
-      {
-        sender,
-        appId: this.daoAppID.value,
-        args: [proposalID],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof AkitaDAO.prototype.executeProposal>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [proposalID],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 }

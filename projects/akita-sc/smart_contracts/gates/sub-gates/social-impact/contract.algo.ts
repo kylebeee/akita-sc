@@ -13,11 +13,12 @@ import {
 } from '../../../utils/operators'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getAkitaAppList } from '../../../utils/functions'
-import { AkitaSocialImpact } from '../../../social/contract.algo'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 
-export class SocialImpactGate extends AkitaBaseContract implements SubGateInterface {
+// CONTRACT IMPORTS
+import type { AkitaSocialImpact } from '../../../social/contract.algo'
+
+export class SocialImpactGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -41,13 +42,10 @@ export class SocialImpactGate extends AkitaBaseContract implements SubGateInterf
 
   private impactGate(user: Address, op: Operator, value: uint64): boolean {
 
-    const impact = abiCall(
-      AkitaSocialImpact.prototype.getUserImpact,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).impact,
-        args: [user],
-      }
-    ).returnValue
+    const impact = abiCall<typeof AkitaSocialImpact.prototype.getUserImpact>({
+      appId: getAkitaAppList(this.akitaDAO.value).impact,
+      args: [user],
+    }).returnValue
 
     switch (op) {
       case Equal: return impact === value

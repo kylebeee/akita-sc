@@ -1,7 +1,11 @@
-import { uint64 } from "@algorandfoundation/algorand-typescript"
-import { Address } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, uint64 } from "@algorandfoundation/algorand-typescript"
+
+export type FunderInfo = {
+  account: Account
+  amount: uint64
+}
 
 export type RefundValue = {
-    amount: uint64
-    payor: Address
+  amount: uint64
+  payor: Account
 }

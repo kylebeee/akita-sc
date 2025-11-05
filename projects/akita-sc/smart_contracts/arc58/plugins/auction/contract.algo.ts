@@ -1,4 +1,4 @@
-import { abimethod, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abimethod, Account, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
 import { classes } from "polytype"
 import { Proof } from "../../../utils/types/merkles"
 import { abiCall, Address, compileArc4, encodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
@@ -9,10 +9,11 @@ import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PA
 import { BaseAuction } from "../../../auction/base"
 import { Auction } from "../../../auction/contract.algo"
 import { AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyGateID } from "../../../auction/constants"
-import { GateArgs, GateInterface } from "../../../utils/types/gates"
 import { AuctionPluginGlobalStateKeyFactory } from "./constants"
-import { fmbr, getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
+import { GateArgs } from "../../../gates/types"
+import { GateMustCheckAbiMethod } from "../../../gates/constants"
 
 export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
 
@@ -32,23 +33,22 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
   // AUCTION PLUGIN METHODS -----------------------------------------------------------------------
 
   new(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    prizeID: uint64,
+    prizeID: uint64, // 0 | Asset | Application
     prizeAmount: uint64,
     name: string,
     proof: Proof,
-    bidAssetID: uint64,
+    bidAssetID: uint64, // 0 | Asset
     bidFee: uint64,
     startingBid: uint64,
     bidMinimumIncrease: uint64,
     startTimestamp: uint64,
     endtimestamp: uint64,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
     weightsListCount: uint64,
   ): uint64 {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
     assert(prizeID !== 0, ERR_AUCTION_PRIZE_CANNOT_BE_ALGO)
@@ -56,39 +56,33 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
 
     if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
-      abiCall(
-        AuctionFactory.prototype.optin,
-        {
-          sender,
-          appId: this.factory.value,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance
-            }),
-            prizeID,
-          ]
-        }
-      )
+      abiCall<typeof AuctionFactory.prototype.optin>({
+        sender,
+        appId: this.factory.value,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: this.factory.value.address,
+            amount: Global.assetOptInMinBalance
+          }),
+          prizeID,
+        ]
+      })
     }
 
     if (!this.factory.value.address.isOptedIn(Asset(bidAssetID))) {
-      abiCall(
-        AuctionFactory.prototype.optin,
-        {
-          sender,
-          appId: this.factory.value,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: this.factory.value.address,
-              amount: Global.assetOptInMinBalance
-            }),
-            bidAssetID,
-          ]
-        }
-      )
+      abiCall<typeof AuctionFactory.prototype.optin>({
+        sender,
+        appId: this.factory.value,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: this.factory.value.address,
+            amount: Global.assetOptInMinBalance
+          }),
+          bidAssetID,
+        ]
+      })
     }
 
     const isAlgoBid = bidAssetID === 0
@@ -96,7 +90,6 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const fcosts = fmbr()
     const costs = this.mbr()
 
     const auction = compileArc4(Auction)
@@ -107,8 +100,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
       Global.minBalance +
       optinMBR +
-      (weightsListCount * costs.weights) +
-      fcosts.appCreators
+      (weightsListCount * costs.weights)
     )
 
     const mbrTxn = itxn.payment({
@@ -124,356 +116,300 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       xferAsset: Asset(prizeID)
     })
 
-    const newAuction = abiCall(
-      AuctionFactory.prototype.newAuction,
-      {
-        sender,
-        appId: this.factory.value,
-        args: [
-          mbrTxn,
-          prizeTxn,
-          name,
-          proof,
-          bidAssetID,
-          bidFee,
-          startingBid,
-          bidMinimumIncrease,
-          startTimestamp,
-          endtimestamp,
-          gateID,
-          marketplace,
-          weightsListCount
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    ).returnValue
+    const newAuction = abiCall<typeof AuctionFactory.prototype.newAuction>({
+      sender,
+      appId: this.factory.value,
+      args: [
+        mbrTxn,
+        prizeTxn,
+        name,
+        proof,
+        bidAssetID,
+        bidFee,
+        startingBid,
+        bidMinimumIncrease,
+        startTimestamp,
+        endtimestamp,
+        gateID,
+        marketplace,
+        weightsListCount
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    }).returnValue
 
     return newAuction
   }
 
   clearWeightsBoxes(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     auctionAppID: uint64,
     iterationAmount: uint64
   ): void {
     assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Auction.prototype.clearWeightsBoxes,
-      {
-        sender,
-        appId: this.factory.value,
-        args: [iterationAmount],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.clearWeightsBoxes>({
+      sender,
+      appId: this.factory.value,
+      args: [iterationAmount],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   deleteAuctionApp(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    creator: Address,
-    auctionAppID: uint64
+    appId: Application
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
-    abiCall(
-      AuctionFactory.prototype.deleteAuctionApp,
-      {
-        sender,
-        appId: this.factory.value,
-        args: [auctionAppID],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof AuctionFactory.prototype.deleteAuctionApp>({
+      sender,
+      appId: this.factory.value,
+      args: [appId],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   bid(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    auctionAppID: uint64,
+    appId: Application,
     amount: uint64,
     args: GateArgs,
-    marketplace: Address
+    marketplace: Account
   ): void {
-    const wallet = Application(walletID)
     const { origin, sender } = getAccounts(wallet)
 
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
     const { bids, bidsByAddress, locations } = this.mbr()
     let mbr = bids
-    const bidFee = btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidFee))[0])
+    const bidFee = btoi(op.AppGlobal.getExBytes(appId, Bytes(AuctionGlobalStateKeyBidFee))[0])
     if (bidFee > 0) {
-      const hasBid = abiCall(
-        Auction.prototype.hasBid,
-        {
-          sender,
-          appId: auctionAppID,
-          args: [new Address(sender)],
-          rekeyTo: rekeyAddress(rekeyBack, wallet)
-        }
-      ).returnValue
+      const hasBid = abiCall<typeof Auction.prototype.hasBid>({
+        sender,
+        appId: appId,
+        args: [new Address(sender)],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      }).returnValue
 
       if (!hasBid) {
         mbr += (bidsByAddress + locations)
       }
     }
 
-    const bidAsset = Asset(btoi(op.AppGlobal.getExBytes(auctionAppID, Bytes(AuctionGlobalStateKeyBidAsset))[0]))
+    const bidAsset = Asset(btoi(op.AppGlobal.getExBytes(appId, Bytes(AuctionGlobalStateKeyBidAsset))[0]))
     if (bidAsset.id === 0) {
 
       const mbrPayment = itxn.payment({
         sender,
-        receiver: Application(auctionAppID).address,
+        receiver: appId.address,
         amount: amount + mbr
       })
 
       if (args.length > 0) {
         const gate = getAkitaAppList(this.akitaDAO.value).gate
-        const gateID = op.AppGlobal.getExUint64(auctionAppID, Bytes(AuctionGlobalStateKeyGateID))[0]
+        const gateID = op.AppGlobal.getExUint64(appId, Bytes(AuctionGlobalStateKeyGateID))[0]
 
-        abiCall(
-          Auction.prototype.gatedBid,
-          {
-            sender,
-            appId: auctionAppID,
-            args: [
-              mbrPayment,
-              itxn.applicationCall({
-                sender,
-                appId: gate,
-                appArgs: [
-                  methodSelector(GateInterface.prototype.mustCheck),
-                  new Address(origin),
-                  gateID,
-                  encodeArc4(args)
-                ]
-              }),
-              marketplace,
-            ],
-            rekeyTo: rekeyAddress(rekeyBack, wallet)
-          }
-        )
+        abiCall<typeof Auction.prototype.gatedBid>({
+          sender,
+          appId,
+          args: [
+            mbrPayment,
+            itxn.applicationCall({
+              sender,
+              appId: gate,
+              appArgs: [
+                methodSelector(GateMustCheckAbiMethod),
+                new Address(origin),
+                gateID,
+                encodeArc4(args)
+              ]
+            }),
+            marketplace,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
+        })
       } else {
-        abiCall(
-          Auction.prototype.bid,
-          {
-            sender,
-            appId: auctionAppID,
-            args: [
-              mbrPayment,
-              marketplace,
-            ],
-            rekeyTo: rekeyAddress(rekeyBack, wallet)
-          }
-        )
+        abiCall<typeof Auction.prototype.bid>({
+          sender,
+          appId,
+          args: [
+            mbrPayment,
+            marketplace,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
+        })
       }
     } else {
       const mbrTxn = itxn.payment({
         sender,
-        receiver: Application(auctionAppID).address,
+        receiver: appId.address,
         amount: mbr
       })
 
       const xferTxn = itxn.assetTransfer({
         sender,
-        assetReceiver: Application(auctionAppID).address,
+        assetReceiver: appId.address,
         assetAmount: amount,
         xferAsset: bidAsset
       })
 
       if (args.length > 0) {
         const gate = getAkitaAppList(this.akitaDAO.value).gate
-        const gateID = op.AppGlobal.getExUint64(auctionAppID, Bytes(AuctionGlobalStateKeyGateID))[0]
+        const gateID = op.AppGlobal.getExUint64(appId, Bytes(AuctionGlobalStateKeyGateID))[0]
 
-        abiCall(
-          Auction.prototype.gatedBidAsa,
-          {
-            sender,
-            appId: auctionAppID,
-            args: [
-              mbrTxn,
-              xferTxn,
-              itxn.applicationCall({
-                sender,
-                appId: gate,
-                appArgs: [
-                  methodSelector(GateInterface.prototype.mustCheck),
-                  new Address(origin),
-                  gateID,
-                  encodeArc4(args)
-                ]
-              }),
-              marketplace,
-            ],
-            rekeyTo: rekeyAddress(rekeyBack, wallet)
-          }
-        )
+        abiCall<typeof Auction.prototype.gatedBidAsa>({
+          sender,
+          appId,
+          args: [
+            mbrTxn,
+            xferTxn,
+            itxn.applicationCall({
+              sender,
+              appId: gate,
+              appArgs: [
+                methodSelector(GateMustCheckAbiMethod),
+                new Address(origin),
+                gateID,
+                encodeArc4(args)
+              ]
+            }),
+            marketplace,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
+        })
       } else {
-        abiCall(
-          Auction.prototype.bidAsa,
-          {
-            sender,
-            appId: auctionAppID,
-            args: [
-              mbrTxn,
-              xferTxn,
-              marketplace,
-            ],
-            rekeyTo: rekeyAddress(rekeyBack, wallet)
-          }
-        )
+        abiCall<typeof Auction.prototype.bidAsa>({
+          sender,
+          appId,
+          args: [
+            mbrTxn,
+            xferTxn,
+            marketplace,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet)
+        })
       }
     }
   }
 
   refundBid(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    auctionAppID: uint64,
+    appId: Application,
     id: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
-    abiCall(
-      Auction.prototype.refundBid,
-      {
-        sender,
-        appId: auctionAppID,
-        args: [id],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.refundBid>({
+      sender,
+      appId,
+      args: [id],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   claimPrize(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    auctionAppID: uint64
+    appId: Application
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
-    abiCall(
-      Auction.prototype.claimPrize,
-      {
-        sender,
-        appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.claimPrize>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   claimRafflePrize(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    auctionAppID: uint64
+    appId: Application
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
-    abiCall(
-      Auction.prototype.claimRafflePrize,
-      {
-        sender,
-        appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.claimRafflePrize>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   raffle(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    auctionAppID: uint64
+    appId: Application
   ): void {
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
-    const wallet = Application(walletID)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Auction.prototype.raffle,
-      {
-        sender,
-        appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.raffle>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   findWinner(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     auctionAppID: uint64,
     iterationAmount: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
     assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
-    abiCall(
-      Auction.prototype.findWinner,
-      {
-        sender,
-        appId: auctionAppID,
-        args: [iterationAmount],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.findWinner>({
+      sender,
+      appId: auctionAppID,
+      args: [iterationAmount],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   deleteApplication(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    auctionAppID: uint64
+    appId: Application
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
-    abiCall(
-      Auction.prototype.deleteApplication,
-      {
-        sender,
-        appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.deleteApplication>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 
   cancel(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
-    auctionAppID: uint64
+    appId: Application
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    assert(Application(auctionAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
+    assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_AUCTION_FACTORY)
 
-    abiCall(
-      Auction.prototype.cancel,
-      {
-        sender,
-        appId: auctionAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof Auction.prototype.cancel>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 }

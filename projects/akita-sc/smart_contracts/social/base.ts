@@ -1,12 +1,14 @@
 import { Account, Application, Asset, bytes, Contract, Global, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AkitaSocialMBRData, tipMBRInfo } from "./types";
-import { ActionsMBR, BannedMBR, BlocksMBR, FollowsMBR, MetaMBR, MinPostsMBR, ModeratorsMBR, ReactionlistMBR, ReactionsMBR, TipSendTypeARC58, TipSendTypeARC59, TipSendTypeDirect, VotelistMBR, VotesMBR } from "./constants";
+import { AkitaSocialMBRData, tipMBRInfo, ViewPayWallValue } from "./types";
+import { ActionsMBR, BannedMBR, BlocksMBR, FollowsMBR, MetaMBR, MinPayWallMBR, MinPostsMBR, ModeratorsMBR, PayWallPayOptionSize, PayWallTypeOneTimePayment, ReactionlistMBR, ReactionsMBR, TipSendTypeARC58, TipSendTypeARC59, TipSendTypeDirect, VotelistMBR, VotesMBR } from "./constants";
 import { abiCall, Address, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
-import { AbstractedAccountInterface } from "../utils/abstract-account";
 import { getAkitaAssets, getOtherAppList, getPluginAppList } from "../utils/functions";
-import { OptInPluginInterface } from "../utils/types/plugins/optin";
-import { AssetInbox } from "../utils/types/asset-inbox";
 import { BoxCostPerByte } from "../utils/constants";
+
+// CONTRACT IMPORTS
+import { OptInPluginInterface } from "../utils/types/plugins/optin";
+import type { AssetInbox } from "../utils/types/asset-inbox";
+import type { AbstractedAccount } from "../arc58/account/contract.algo";
 
 export class BaseSocial extends Contract {
 
@@ -26,23 +28,28 @@ export class BaseSocial extends Contract {
     }
   }
 
-  protected canCallArc58OptIn(akitaDAO: Application, appId: Application): boolean {
-    return abiCall(
-      AbstractedAccountInterface.prototype.arc58_canCall,
-      {
-        appId,
-        args: [
-          getPluginAppList(akitaDAO).optin,
-          true,
-          new Address(Global.zeroAddress),
-          '',
-          methodSelector(OptInPluginInterface.prototype.optInToAsset)
-        ]
-      }
-    ).returnValue
+  protected payWallMbr(paywall: ViewPayWallValue): uint64 {
+    return MinPayWallMBR + (
+      BoxCostPerByte * (
+        PayWallPayOptionSize * (paywall.agentPayInfo.length + paywall.userPayInfo.length)
+      )
+    )
   }
 
-  protected checkTipMbrRequirements(akitaDAO: Application, creator: Account, wallet: uint64): tipMBRInfo {
+  protected canCallArc58OptIn(akitaDAO: Application, appId: Application): boolean {
+    return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+      appId,
+      args: [
+        getPluginAppList(akitaDAO).optin,
+        true,
+        new Address(Global.zeroAddress),
+        '',
+        methodSelector(OptInPluginInterface.prototype.optIn)
+      ]
+    }).returnValue
+  }
+
+  protected checkTipMbrRequirements(akitaDAO: Application, creator: Account, wallet: Application): tipMBRInfo {
     const akta = Asset(getAkitaAssets(akitaDAO).akta)
 
     if (creator.isOptedIn(akta)) {
@@ -59,8 +66,8 @@ export class BaseSocial extends Contract {
       }
     }
 
-    if (wallet !== 0) {
-      const canCallArc58OptIn = this.canCallArc58OptIn(akitaDAO, Application(wallet))
+    if (wallet.id !== 0) {
+      const canCallArc58OptIn = this.canCallArc58OptIn(akitaDAO, wallet)
       if (canCallArc58OptIn) {
         return {
           type: TipSendTypeARC58,
@@ -78,16 +85,13 @@ export class BaseSocial extends Contract {
 
     const assetInbox = getOtherAppList(akitaDAO).assetInbox
 
-    const arc59 = abiCall(
-      AssetInbox.prototype.arc59_getSendAssetInfo,
-      {
-        appId: assetInbox,
-        args: [
-          new Address(creator),
-          akta.id,
-        ]
-      }
-    ).returnValue
+    const arc59 = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
+      appId: assetInbox,
+      args: [
+        new Address(creator),
+        akta.id,
+      ]
+    }).returnValue
 
     return {
       type: TipSendTypeARC59,

@@ -1,20 +1,20 @@
 import { classes } from "polytype";
-import { ServiceFactoryContract } from "../utils/base-contracts/factory";
+import { FactoryContract } from "../utils/base-contracts/factory";
 import { BasePool } from "./base";
-import { abimethod, Application, assert, assertMatch, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Account, Application, assert, assertMatch, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { StakingType } from "../staking/types";
-import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
+import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { RootKey } from "../meta-merkles/types";
 import { Pool } from "./contract.algo";
-import { fmbr, getStakingFees } from "../utils/functions";
+import { getFunder, getStakingFees, getWalletIDUsingAkitaDAO, referrerOrZeroAddress, sendReferralPayment } from "../utils/functions";
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
 import { ERR_NOT_CREATOR } from "./errors";
-import { PoolFactoryInterface } from "../utils/types/pool";
+// import { MinDisbursementsMBR, UserAllocationMBR } from "../rewards/constants";
 
 export class PoolFactory extends classes(
   BasePool,
-  ServiceFactoryContract
-) implements PoolFactoryInterface {
+  FactoryContract
+) {
   // GLOBAL STATE ---------------------------------------------------------------------------------
   // BOXES ----------------------------------------------------------------------------------------
   // PRIVATE METHODS ------------------------------------------------------------------------------
@@ -38,37 +38,50 @@ export class PoolFactory extends classes(
     payment: gtxn.PaymentTxn,
     title: string,
     type: StakingType,
-    marketplace: Address,
+    marketplace: Account,
     stakeKey: RootKey,
     minimumStakeAmount: uint64,
     gateID: uint64,
     maxEntries: uint64,
   ): uint64 {
 
-    const fcosts = fmbr()
     const { creationFee } = getStakingFees(this.akitaDAO.value)
 
     const pool = compileArc4(Pool)
+
+    const childMBR: uint64 = (
+      MAX_PROGRAM_PAGES +
+      (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
+      (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
+      Global.minBalance
+    )
+
+    let leftover: uint64 = creationFee
+    let referralCost: uint64 = 0
+    if (creationFee > 0) {
+      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+      const referrer = referrerOrZeroAddress(wallet);
+      ({ leftover, cost: referralCost } = sendReferralPayment(this.akitaDAO.value, referrer, 0, creationFee))
+    }
+
+    const totalMBR: uint64 = (
+      creationFee +
+      childMBR +
+      referralCost
+    )
 
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: (
-          creationFee +
-          MAX_PROGRAM_PAGES +
-          (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
-          (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
-          Global.minBalance +
-          fcosts.appCreators
-        ),
+        amount: totalMBR,
       }
     )
 
     itxn
       .payment({
         receiver: this.akitaDAOEscrow.value.address,
-        amount: creationFee,
+        amount: leftover,
       })
       .submit()
 
@@ -77,7 +90,8 @@ export class PoolFactory extends classes(
         args: [
           title,
           type,
-          new Address(Txn.sender),
+          Txn.sender,
+          { account: payment.sender, amount: childMBR },
           marketplace,
           stakeKey,
           minimumStakeAmount,
@@ -89,19 +103,24 @@ export class PoolFactory extends classes(
       .itxn
       .createdApp
 
+    pool.call.init({ appId: newPoolApp.id })
+
     return newPoolApp.id
   }
 
-  deletePool(poolID: uint64): void {
-    assert(Application(poolID).creator === Global.currentApplicationAddress, ERR_NOT_CREATOR)
+  deletePool(appId: Application): void {
+    assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_CREATOR)
 
-    abiCall(
-      Pool.prototype.delete,
-      {
-        appId: Application(poolID),
-        args: [ new Address(Txn.sender) ],
-      }
-    )
+    const { account: receiver, amount } = getFunder(appId)
+
+    abiCall<typeof Pool.prototype.delete>({
+      appId,
+      args: [Txn.sender],
+    })
+
+    itxn
+      .payment({ receiver, amount })
+      .submit()
   }
 
   // READ ONLY METHODS ----------------------------------------------------------------------------

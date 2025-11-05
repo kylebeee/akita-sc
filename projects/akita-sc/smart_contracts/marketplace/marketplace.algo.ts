@@ -1,18 +1,18 @@
 import { abiCall, abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Proof } from '../utils/types/merkles'
 import { Listing } from './listing.algo'
-import { Application, assert, assertMatch, Bytes, Global, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, assert, assertMatch, Asset, Bytes, Global, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
-import { ServiceFactoryContract } from '../utils/base-contracts/factory'
+import { FactoryContract } from '../utils/base-contracts/factory'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { ERR_NOT_A_LISTING, ERR_PRICE_TOO_LOW } from './errors'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { fmbr, gateCheck, getWalletIDUsingAkitaDAO, originOrTxnSender, royalties } from '../utils/functions'
+import { gateCheck, getFunder, getWalletIDUsingAkitaDAO, originOrTxnSender, royalties } from '../utils/functions'
 import { ListingGlobalStateKeyGateID } from './constants'
 import { ERR_HAS_GATE } from '../social/errors'
 
-export class Marketplace extends classes(ServiceFactoryContract, ContractWithOptIn) {
+export class Marketplace extends classes(FactoryContract, ContractWithOptIn) {
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -32,11 +32,11 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
     payment: gtxn.PaymentTxn,
     assetXfer: gtxn.AssetTransferTxn,
     price: uint64,
-    paymentAsset: uint64,
+    paymentAsset: uint64, // 0 | Asset
     expiration: uint64,
-    reservedFor: Address,
+    reservedFor: Account,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
     name: string,
     proof: Proof
   ): uint64 {
@@ -48,24 +48,22 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       ? Global.assetOptInMinBalance
       : Global.assetOptInMinBalance * 2
 
-    const fcosts = fmbr()
+    const listing = compileArc4(Listing)
 
     const childAppMBR: uint64 = Global.minBalance + optinMBR
+    const totalMBR: uint64 = (
+      MIN_PROGRAM_PAGES +
+      (GLOBAL_STATE_KEY_UINT_COST * listing.globalUints) +
+      (GLOBAL_STATE_KEY_BYTES_COST * listing.globalBytes) +
+      childAppMBR
+    )
 
-    const listing = compileArc4(Listing)
-    
     // ensure they paid enough to cover the contract mint + mbr costs
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: (
-          MIN_PROGRAM_PAGES +
-          (GLOBAL_STATE_KEY_UINT_COST * listing.globalUints) +
-          (GLOBAL_STATE_KEY_BYTES_COST * listing.globalBytes) +
-          childAppMBR +
-          fcosts.appCreators
-        ),
+        amount: totalMBR
       },
       ERR_INVALID_PAYMENT
     )
@@ -91,13 +89,14 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
           price,
           paymentAsset,
           expiration,
-          new Address(Txn.sender),
+          Txn.sender,
+          { account: payment.sender, amount: totalMBR },
           reservedFor,
           creatorRoyalty,
           gateID,
           marketplace,
           this.childContractVersion.value,
-          this.akitaDAO.value.id,
+          this.akitaDAO.value,
         ],
       })
       .itxn
@@ -158,14 +157,14 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
   gatedPurchase(
     payment: gtxn.PaymentTxn,
     gateTxn: gtxn.ApplicationCallTxn,
-    listingID: uint64,
-    marketplace: Address,
+    appId: Application,
+    marketplace: Account,
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
-    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
-    const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+    assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    const gateID = op.AppGlobal.getExUint64(appId, Bytes(ListingGlobalStateKeyGateID))[0]
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, gateID))
     assertMatch(
       payment,
@@ -173,22 +172,19 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       ERR_INVALID_PAYMENT
     )
 
-    abiCall(
-      Listing.prototype.purchase,
-      {
-        appId: listingID,
-        args: [
-          itxn.payment({
-            receiver: Application(listingID).address,
-            amount: payment.amount,
-          }),
-          new Address(Txn.sender),
-          marketplace
-        ],
-      }
-    )
+    abiCall<typeof Listing.prototype.purchase>({
+      appId,
+      args: [
+        itxn.payment({
+          receiver: appId.address,
+          amount: payment.amount,
+        }),
+        Txn.sender,
+        marketplace
+      ],
+    })
 
-    const { amount, creator } = this.appCreators(listingID).value
+    const { account: creator, amount } = getFunder(appId)
 
     itxn
       .payment({
@@ -200,11 +196,11 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
 
   purchase(
     payment: gtxn.PaymentTxn,
-    listingID: uint64,
-    marketplace: Address,
+    appId: Application,
+    marketplace: Account,
   ): void {
-    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
-    const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+    assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    const gateID = op.AppGlobal.getExUint64(appId, Bytes(ListingGlobalStateKeyGateID))[0]
     assert(gateID === 0, ERR_HAS_GATE)
     assertMatch(
       payment,
@@ -212,22 +208,19 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       ERR_INVALID_PAYMENT
     )
 
-    abiCall(
-      Listing.prototype.purchase,
-      {
-        appId: listingID,
-        args: [
-          itxn.payment({
-            receiver: Application(listingID).address,
-            amount: payment.amount,
-          }),
-          new Address(Txn.sender),
-          marketplace
-        ],
-      }
-    )
+    abiCall<typeof Listing.prototype.purchase>({
+      appId,
+      args: [
+        itxn.payment({
+          receiver: appId.address,
+          amount: payment.amount,
+        }),
+        Txn.sender,
+        marketplace
+      ],
+    })
 
-    const { amount, creator } = this.appCreators(listingID).value
+    const { account: creator, amount } = getFunder(appId)
 
     itxn
       .payment({
@@ -240,19 +233,19 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
   gatedPurchaseAsa(
     assetXfer: gtxn.AssetTransferTxn,
     gateTxn: gtxn.ApplicationCallTxn,
-    listingID: uint64,
-    marketplace: Address,
+    appId: Application,
+    marketplace: Account,
   ): void {
-
+    // TODO: implement this method
   }
 
   purchaseAsa(
     assetXfer: gtxn.AssetTransferTxn,
-    listingID: uint64,
-    marketplace: Address,
+    appId: Application,
+    marketplace: Account,
   ): void {
-    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
-    const gateID = op.AppGlobal.getExUint64(listingID, Bytes(ListingGlobalStateKeyGateID))[0]
+    assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+    const gateID = op.AppGlobal.getExUint64(appId, Bytes(ListingGlobalStateKeyGateID))[0]
     assert(gateID === 0, ERR_HAS_GATE)
     assertMatch(
       assetXfer,
@@ -263,50 +256,38 @@ export class Marketplace extends classes(ServiceFactoryContract, ContractWithOpt
       ERR_INVALID_TRANSFER
     )
 
-    abiCall(
-      Listing.prototype.purchaseAsa,
-      {
-        appId: listingID,
-        args: [
-          itxn.assetTransfer({
-            assetReceiver: Application(listingID).address,
-            assetAmount: assetXfer.assetAmount,
-            xferAsset: assetXfer.xferAsset,
-          }),
-          new Address(Txn.sender),
-          marketplace
-        ],
-      }
-    )
+    abiCall<typeof Listing.prototype.purchaseAsa>({
+      appId,
+      args: [
+        itxn.assetTransfer({
+          assetReceiver: appId.address,
+          assetAmount: assetXfer.assetAmount,
+          xferAsset: assetXfer.xferAsset,
+        }),
+        Txn.sender,
+        marketplace
+      ],
+    })
 
-    const { amount, creator } = this.appCreators(listingID).value
+    const { account: receiver, amount } = getFunder(appId)
 
     itxn
-      .payment({
-        amount,
-        receiver: creator,
-      })
+      .payment({ amount, receiver })
       .submit()
   }
 
-  delist(listingID: uint64): void {
-    assert(Application(listingID).creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
+  delist(appId: Application): void {
+    assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
 
-    abiCall(
-      Listing.prototype.delist,
-      {
-        appId: listingID,
-        args: [new Address(Txn.sender)],
-      }
-    )
+    abiCall<typeof Listing.prototype.delist>({
+      appId,
+      args: [Txn.sender],
+    })
 
-    const { amount, creator } = this.appCreators(listingID).value
+    const { account: receiver, amount } = getFunder(appId)
 
     itxn
-      .payment({
-        amount,
-        receiver: creator,
-      })
+      .payment({ amount, receiver })
       .submit()
   }
 

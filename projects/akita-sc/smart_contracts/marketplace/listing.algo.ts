@@ -1,20 +1,28 @@
-import { Account, Application, assert, assertMatch, Asset, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, Application, assert, assertMatch, Asset, clone, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4'
 import { ListingGlobalStateKeyCreatorRoyalty, ListingGlobalStateKeyExpiration, ListingGlobalStateKeyGateID, ListingGlobalStateKeyIsPrizeBox, ListingGlobalStateKeyMarketplace, ListingGlobalStateKeyMarketplaceRoyalties, ListingGlobalStateKeyPaymentAsset, ListingGlobalStateKeyPrice, ListingGlobalStateKeyPrize, ListingGlobalStateKeyReservedFor, ListingGlobalStateKeySeller } from './constants'
 import { RoyaltyAmounts } from '../utils/types/royalties'
-import { PrizeBox } from '../prize-box/contract.algo'
 import { ERR_INVALID_EXPIRATION, ERR_LISTING_EXPIRED, ERR_MUST_BE_CALLED_FROM_FACTORY, ERR_MUST_BE_SELLER, ERR_ONLY_SELLER_CAN_DELIST, ERR_PAYMENT_ASSET_MUST_BE_ALGO, ERR_PAYMENT_ASSET_MUST_NOT_BE_ALGO, ERR_RESERVED_FOR_DIFFERENT_ADDRESS } from './errors'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { arc59OptInAndSend, calcPercent, getNFTFees, getUserImpact, impactRange } from '../utils/functions'
 import { classes } from 'polytype'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { FunderInfo } from '../utils/types/mbr'
 
-export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyOptIn) {
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import { ChildContract } from '../utils/base-contracts/child'
+import type { PrizeBox } from '../prize-box/contract.algo'
+
+export class Listing extends classes(
+  AkitaBaseContract,
+  ContractWithCreatorOnlyOptIn,
+  ChildContract
+) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
-  /** the asset for sale */
+  /** the asset for sale: Asset | Application ( Prize Box ) */
   prize = GlobalState<uint64>({ key: ListingGlobalStateKeyPrize })
   /** whether or not the prize is an asset or a prize box */
   isPrizeBox = GlobalState<boolean>({ key: ListingGlobalStateKeyIsPrizeBox })
@@ -27,7 +35,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
   /** the address selling the asset */
   seller = GlobalState<Account>({ key: ListingGlobalStateKeySeller })
   /** the address the sale is reserved for */
-  reservedFor = GlobalState<Address>({ key: ListingGlobalStateKeyReservedFor })
+  reservedFor = GlobalState<Account>({ key: ListingGlobalStateKeyReservedFor })
   /** the amount the creator will get for the sale */
   creatorRoyalty = GlobalState<uint64>({ key: ListingGlobalStateKeyCreatorRoyalty })
   /** the gate ID to use to check if the user is qualified to buy */
@@ -80,13 +88,10 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
 
   private transferPurchaseToBuyer(buyer: Account): void {
     if (this.isPrizeBox.value) {
-      abiCall(
-        PrizeBox.prototype.transfer,
-        {
-          appId: this.prize.value,
-          args: [new Address(buyer)],
-        }
-      )
+      abiCall<typeof PrizeBox.prototype.transfer>({
+        appId: this.prize.value,
+        args: [buyer],
+      })
       return
     }
 
@@ -101,7 +106,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     } else {
       arc59OptInAndSend(
         this.akitaDAO.value,
-        new Address(buyer),
+        buyer,
         prizeAsset.id,
         prizeAsset.balance(Global.currentApplicationAddress),
         true
@@ -109,7 +114,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     }
   }
 
-  private completeAlgoPayments(marketplace: Address): void {
+  private completeAlgoPayments(marketplace: Account): void {
     // get the royalty payment amounts
     const amounts = this.getAmounts(this.price.value)
     const assetPrize = Asset(this.prize.value)
@@ -129,7 +134,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     // pay buying marketplace
     const buyingMarketplacePay = itxn.payment({
       amount: amounts.marketplace,
-      receiver: marketplace.native,
+      receiver: marketplace,
     })
 
     // pay the seller
@@ -141,7 +146,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     itxn.submitGroup(creatorPay, marketplacePay, buyingMarketplacePay, sellerPay)
   }
 
-  private completeAsaPayments(marketplace: Address): void {
+  private completeAsaPayments(marketplace: Account): void {
     // get the royalty payment amounts
     const amounts = this.getAmounts(this.price.value)
     const assetPrize = Asset(this.prize.value)
@@ -158,7 +163,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     } else {
       arc59OptInAndSend(
         this.akitaDAO.value,
-        new Address(assetPrize.creator),
+        assetPrize.creator,
         this.paymentAsset.value.id,
         amounts.creator,
         false
@@ -177,7 +182,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     } else {
       arc59OptInAndSend(
         this.akitaDAO.value,
-        new Address(this.marketplace.value),
+        this.marketplace.value,
         this.paymentAsset.value.id,
         amounts.marketplace,
         false
@@ -185,10 +190,10 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     }
 
     // pay buying marketplace
-    if (marketplace.native.isOptedIn(this.paymentAsset.value)) {
+    if (marketplace.isOptedIn(this.paymentAsset.value)) {
       itxn
         .assetTransfer({
-          assetReceiver: marketplace.native,
+          assetReceiver: marketplace,
           assetAmount: amounts.marketplace,
           xferAsset: this.paymentAsset.value,
         })
@@ -214,7 +219,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     } else {
       arc59OptInAndSend(
         this.akitaDAO.value,
-        new Address(this.seller.value),
+        this.seller.value,
         this.paymentAsset.value.id,
         amounts.seller,
         true
@@ -232,13 +237,14 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     price: uint64,
     paymentAsset: uint64,
     expiration: uint64,
-    seller: Address,
-    reservedFor: Address,
+    seller: Account,
+    funder: FunderInfo,
+    reservedFor: Account,
     creatorRoyalty: uint64,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
     version: string,
-    akitaDAO: uint64
+    akitaDAO: Application
   ): void {
     assert(Global.callerApplicationId !== 0, ERR_MUST_BE_CALLED_FROM_FACTORY)
 
@@ -248,13 +254,14 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
     this.paymentAsset.value = Asset(paymentAsset)
     assert(expiration === 0 || expiration > Global.latestTimestamp, ERR_INVALID_EXPIRATION)
     this.expiration.value = expiration
-    this.seller.value = seller.native
+    this.seller.value = seller
+    this.funder.value = clone(funder)
     this.reservedFor.value = reservedFor
     this.creatorRoyalty.value = creatorRoyalty
     this.gateID.value = gateID
-    this.marketplace.value = marketplace.native
+    this.marketplace.value = marketplace
     this.version.value = version
-    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAO.value = akitaDAO
 
     // internal variables
     this.marketplaceRoyalties.value = getNFTFees(this.akitaDAO.value).marketplaceComposablePercentage
@@ -274,14 +281,14 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
   @abimethod({ allowActions: 'DeleteApplication' })
   purchase(
     payment: gtxn.PaymentTxn,
-    buyer: Address,
-    marketplace: Address
+    buyer: Account,
+    marketplace: Account
   ): void {
     assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
     assert(this.paymentAsset.value.id === 0, ERR_PAYMENT_ASSET_MUST_BE_ALGO)
     assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
 
-    if (this.reservedFor.value.native !== Global.zeroAddress) {
+    if (this.reservedFor.value !== Global.zeroAddress) {
       assert(buyer === this.reservedFor.value, ERR_RESERVED_FOR_DIFFERENT_ADDRESS)
     }
 
@@ -295,7 +302,7 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
       ERR_INVALID_PAYMENT
     )
 
-    this.transferPurchaseToBuyer(buyer.native)
+    this.transferPurchaseToBuyer(buyer)
     this.completeAlgoPayments(marketplace)
   }
 
@@ -310,14 +317,14 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
   @abimethod({ OnCompleteAction: 'DeleteApplication' })
   purchaseAsa(
     assetXfer: gtxn.AssetTransferTxn,
-    buyer: Address,
-    marketplace: Address
+    buyer: Account,
+    marketplace: Account
   ): void {
     assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
     assert(this.paymentAsset.value.id !== 0, ERR_PAYMENT_ASSET_MUST_NOT_BE_ALGO)
     assert(this.expiration.value === 0 || this.expiration.value > Global.latestTimestamp, ERR_LISTING_EXPIRED)
 
-    if (this.reservedFor.value.native !== Global.zeroAddress) {
+    if (this.reservedFor.value !== Global.zeroAddress) {
       assert(buyer === this.reservedFor.value, ERR_RESERVED_FOR_DIFFERENT_ADDRESS)
     }
 
@@ -330,15 +337,15 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
       ERR_INVALID_TRANSFER
     )
 
-    this.transferPurchaseToBuyer(buyer.native)
+    this.transferPurchaseToBuyer(buyer)
     this.completeAsaPayments(marketplace)
   }
 
   /** Deletes the app and returns the asset/mbr to the seller */
   @abimethod({ allowActions: 'DeleteApplication' })
-  delist(caller: Address): void {
+  delist(caller: Account): void {
     assert(Txn.sender === Global.creatorAddress, ERR_MUST_BE_CALLED_FROM_FACTORY)
-    assert(this.seller.value === caller.native, ERR_ONLY_SELLER_CAN_DELIST)
+    assert(this.seller.value === caller, ERR_ONLY_SELLER_CAN_DELIST)
 
     const assetTransfer = itxn.assetTransfer({
       assetCloseTo: this.seller.value,
@@ -357,26 +364,20 @@ export class Listing extends classes(AkitaBaseContract, ContractWithCreatorOnlyO
       })
 
       if (this.isPrizeBox.value) {
-        abiCall(
-          PrizeBox.prototype.transfer,
-          {
-            appId: this.prize.value,
-            args: [new Address(this.seller.value)],
-          }
-        )
+        abiCall<typeof PrizeBox.prototype.transfer>({
+          appId: this.prize.value,
+          args: [this.seller.value],
+        })
         itxn.submitGroup(paymentAssetTransfer, payment)
       } else {
         itxn.submitGroup(assetTransfer, paymentAssetTransfer, payment)
       }
     } else {
       if (this.isPrizeBox.value) {
-        abiCall(
-          PrizeBox.prototype.transfer,
-          {
-            appId: this.prize.value,
-            args: [new Address(this.seller.value)],
-          }
-        )
+        abiCall<typeof PrizeBox.prototype.transfer>({
+          appId: this.prize.value,
+          args: [this.seller.value],
+        })
         payment.submit()
       } else {
         itxn.submitGroup(assetTransfer, payment)

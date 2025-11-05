@@ -14,10 +14,9 @@ import {
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getAkitaAppList } from '../../../utils/functions'
 import { AkitaSocial } from '../../../social/contract.algo'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 
-export class SocialModeratorGate extends AkitaBaseContract implements SubGateInterface {
+export class SocialModeratorGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -41,13 +40,10 @@ export class SocialModeratorGate extends AkitaBaseContract implements SubGateInt
   }
 
   private moderatorGate(user: Address, op: Operator, value: uint64): boolean {
-    const { exists, lastActive } = abiCall(
-      AkitaSocial.prototype.moderatorMeta,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).social,
-        args: [user],
-      }
-    ).returnValue
+    const { exists, lastActive } = abiCall<typeof AkitaSocial.prototype.moderatorMeta>({
+      appId: getAkitaAppList(this.akitaDAO.value).social,
+      args: [user],
+    }).returnValue
 
     if (!exists) {
       return false

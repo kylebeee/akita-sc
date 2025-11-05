@@ -1,4 +1,4 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
@@ -15,7 +15,7 @@ main:
 
 main_pay_route@3:
     // smart_contracts/arc58/plugins/pay/contract.algo.ts:7
-    // pay(walletID: uint64, rekeyBack: boolean, payments: PayParams[]): void {
+    // pay(wallet: Application, rekeyBack: boolean, payments: PayParams[]): void {
     txn OnCompletion
     !
     txn ApplicationID
@@ -63,7 +63,7 @@ pay:
     pushbytes ""
     dup
     // smart_contracts/arc58/plugins/pay/contract.algo.ts:7
-    // pay(walletID: uint64, rekeyBack: boolean, payments: PayParams[]): void {
+    // pay(wallet: Application, rekeyBack: boolean, payments: PayParams[]): void {
     txna ApplicationArgs 1
     dup
     len
@@ -97,28 +97,28 @@ pay:
     len
     ==
     assert // invalid number of bytes for (len+(uint8[32],uint64,uint64)[])
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:11
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:10
     // for (let i: uint64 = 0; i < payments.length; i++) {
     intc_0 // 0
 
 pay_while_top@2:
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:11
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:10
     // for (let i: uint64 = 0; i < payments.length; i++) {
     dup
     dig 3
     <
     bz pay_after_while@15
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:12
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:11
     // const { receiver, asset, amount } = payments[i];
     dig 3
     extract 2 0
@@ -139,10 +139,10 @@ pay_while_top@2:
     pushint 40 // 40
     extract_uint64
     bury 9
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:14
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:13
     // if (asset === 0) {
     bnz pay_else_body@9
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:15-22
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:14-21
     // itxn
     //   .payment({
     //     sender,
@@ -152,7 +152,7 @@ pay_while_top@2:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:19
     // rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
     dig 2
     intc_1 // 1
@@ -170,7 +170,7 @@ pay_ternary_merge@7:
     itxn_field Receiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:15-21
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:14-20
     // itxn
     //   .payment({
     //     sender,
@@ -182,7 +182,7 @@ pay_ternary_merge@7:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:15-22
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:14-21
     // itxn
     //   .payment({
     //     sender,
@@ -194,7 +194,7 @@ pay_ternary_merge@7:
     itxn_submit
 
 pay_after_if_else@14:
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:11
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:10
     // for (let i: uint64 = 0; i < payments.length; i++) {
     dup
     intc_1 // 1
@@ -203,7 +203,7 @@ pay_after_if_else@14:
     b pay_while_top@2
 
 pay_ternary_false@6:
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:19
     // rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
     dig 4
     dig 6
@@ -211,7 +211,7 @@ pay_ternary_false@6:
     b pay_ternary_merge@7
 
 pay_else_body@9:
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:24-32
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:23-31
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -222,7 +222,7 @@ pay_else_body@9:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:30
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:29
     // rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
     dig 2
     intc_1 // 1
@@ -242,7 +242,7 @@ pay_ternary_merge@12:
     itxn_field AssetReceiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:24-31
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:23-30
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -255,7 +255,7 @@ pay_ternary_merge@12:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:24-32
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:23-31
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -269,7 +269,7 @@ pay_ternary_merge@12:
     b pay_after_if_else@14
 
 pay_ternary_false@11:
-    // smart_contracts/arc58/plugins/pay/contract.algo.ts:30
+    // smart_contracts/arc58/plugins/pay/contract.algo.ts:29
     // rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
     dig 4
     dig 6
@@ -278,6 +278,6 @@ pay_ternary_false@11:
 
 pay_after_while@15:
     // smart_contracts/arc58/plugins/pay/contract.algo.ts:7
-    // pay(walletID: uint64, rekeyBack: boolean, payments: PayParams[]): void {
+    // pay(wallet: Application, rekeyBack: boolean, payments: PayParams[]): void {
     intc_1 // 1
     return

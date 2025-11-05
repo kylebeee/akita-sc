@@ -20,36 +20,35 @@ export class DualStakePlugin extends Contract {
 
   // DUAL STAKE PLUGIN METHODS --------------------------------------------------------------------
 
-  mint(walletID: uint64, rekeyBack: boolean, dsAppID: uint64, amount: uint64): void {
-    const wallet = Application(walletID)
+  mint(
+    wallet: Application,
+    rekeyBack: boolean,
+    appId: Application,
+    amount: uint64
+  ): void {
     const sender = getSpendingAccount(wallet)
 
-    const dsApp = Application(dsAppID)
-
-    assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
+    assert(this.registry.value.address === appId.creator, ERR_NOT_A_DUALSTAKE_APP)
 
     itxnCompose.begin(
       itxn.payment({
         sender,
-        receiver: dsApp.address,
+        receiver: appId.address,
         amount: amount
       })
     )
 
-    const rate = abiCall(DualStake.prototype.get_rate, { sender }).returnValue
+    const rate = abiCall<typeof DualStake.prototype.get_rate>({ sender }).returnValue
 
     if (rate > 0) {
 
       itxnCompose.next(
         DualStake.prototype.mint,
-        {
-          sender,
-          appId: dsAppID
-        }
+        { sender, appId }
       )
 
-      const asaID = op.AppGlobal.getExUint64(dsAppID, Bytes(DualStakeGlobalStateKeyAsaID))[0]
-      const precision = op.AppGlobal.getExUint64(dsAppID, Bytes(DualStakeGlobalStateKeyRatePrecision))[0]
+      const asaID = op.AppGlobal.getExUint64(appId, Bytes(DualStakeGlobalStateKeyAsaID))[0]
+      const precision = op.AppGlobal.getExUint64(appId, Bytes(DualStakeGlobalStateKeyRatePrecision))[0]
       const asaAmount = op.divw(...op.mulw(amount, rate), precision)
 
       const [holdings, isOptedIn] = op.AssetHolding.assetBalance(sender, asaID)
@@ -58,7 +57,7 @@ export class DualStakePlugin extends Contract {
       itxnCompose.next(
         itxn.assetTransfer({
           sender,
-          assetReceiver: dsApp.address,
+          assetReceiver: appId.address,
           assetAmount: asaAmount,
           xferAsset: asaID,
           rekeyTo: rekeyAddress(rekeyBack, wallet)
@@ -75,7 +74,7 @@ export class DualStakePlugin extends Contract {
       DualStake.prototype.mint,
       {
         sender,
-        appId: dsAppID,
+        appId,
         rekeyTo: rekeyAddress(rekeyBack, wallet)
       }
     )
@@ -83,21 +82,15 @@ export class DualStakePlugin extends Contract {
     itxnCompose.submit()
   }
 
-  redeem(walletID: uint64, rekeyBack: boolean, dsAppID: uint64): void {
-    const wallet = Application(walletID)
+  redeem(wallet: Application, rekeyBack: boolean, appId: Application): void {
     const sender = getSpendingAccount(wallet)
 
-    const dsApp = Application(dsAppID)
+    assert(this.registry.value.address === appId.creator, ERR_NOT_A_DUALSTAKE_APP)
 
-    assert(this.registry.value.address === dsApp.creator, ERR_NOT_A_DUALSTAKE_APP)
-
-    abiCall(
-      DualStake.prototype.redeem,
-      {
-        sender,
-        appId: dsAppID,
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    abiCall<typeof DualStake.prototype.redeem>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
   }
 }

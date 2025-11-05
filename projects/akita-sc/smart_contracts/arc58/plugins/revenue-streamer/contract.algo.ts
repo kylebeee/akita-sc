@@ -76,8 +76,7 @@ export class RevenueStreamer extends AkitaBaseContract {
     return sender.authAddress === Global.currentApplicationAddress
   }
 
-  optin(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
-    const wallet = Application(walletID)
+  optin(wallet: Application, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     const sender = getSpendingAccount(wallet)
 
     assertMatch(
@@ -89,9 +88,9 @@ export class RevenueStreamer extends AkitaBaseContract {
       ERR_INVALID_PAYMENT
     )
 
-    assert(this.escrows(walletID).exists, ERR_RECEIVE_ESCROW_DOES_NOT_EXIST)
+    assert(this.escrows(wallet.id).exists, ERR_RECEIVE_ESCROW_DOES_NOT_EXIST)
 
-    const { source, optinAllowed } = this.escrows(walletID).value
+    const { source, optinAllowed } = this.escrows(wallet.id).value
     const initiator = gtxn.Transaction(getRekeyIndex(wallet)).sender
     assert(source.native === initiator, ERR_FORBIDDEN)
     assert(optinAllowed, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN)
@@ -110,11 +109,11 @@ export class RevenueStreamer extends AkitaBaseContract {
         .submit();
     }
 
-    this.escrows(walletID).value.optinCount += assets.length
+    this.escrows(wallet.id).value.optinCount += assets.length
   }
 
   newReceiveEscrow(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     escrowID: uint64,
     source: Address,
@@ -122,7 +121,6 @@ export class RevenueStreamer extends AkitaBaseContract {
     optinAllowed: boolean,
     splits: Split[]
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
     assert(this.controls(sender), ERR_FORBIDDEN)
     assert(splits.length > 0, ERR_SPLITS_CANNOT_BE_EMPTY)
@@ -151,8 +149,7 @@ export class RevenueStreamer extends AkitaBaseContract {
     rekeyBackIfNecessary(rekeyBack, wallet)
   }
 
-  startEscrowDisbursement(walletID: uint64, rekeyBack: boolean): void {
-    const wallet = Application(walletID)
+  startEscrowDisbursement(wallet: Application, rekeyBack: boolean): void {
     const escrow = mustGetEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
     assert(this.controls(sender), ERR_FORBIDDEN)
@@ -172,8 +169,7 @@ export class RevenueStreamer extends AkitaBaseContract {
     rekeyBackIfNecessary(rekeyBack, wallet)
   }
 
-  processEscrowAllocation(walletID: uint64, rekeyBack: boolean, ids: uint64[]): void {
-    const wallet = Application(walletID)
+  processEscrowAllocation(wallet: Application, rekeyBack: boolean, ids: uint64[]): void {
     const escrow = mustGetEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
 

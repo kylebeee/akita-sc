@@ -1,18 +1,19 @@
 import { Application, assert, assertMatch, Bytes, bytes, Global, GlobalState, gtxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_INVALID_ARG_COUNT, ERR_INVALID_REGISTRY_ARG } from '../../errors'
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { NFD } from '../../../utils/types/nfd'
 import { getOtherAppList } from '../../../utils/functions'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { Uint64ByteLength } from '../../../utils/constants'
 import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape } from '../../constants'
 import { NFDGlobalStateKeysName, NFDMetaKeyVerifiedAddresses } from '../../../utils/constants/nfd'
 
-export class NFDGate extends AkitaBaseContract implements SubGateInterface {
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
+export class NFDGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -26,25 +27,19 @@ export class NFDGate extends AkitaBaseContract implements SubGateInterface {
   private nfdGate(user: Address, appID: uint64): boolean {
     const [nfdName] = op.AppGlobal.getExBytes(appID, Bytes(NFDGlobalStateKeysName))
 
-    const verified = abiCall(
-      NFDRegistry.prototype.isValidNfdAppId,
-      {
-        appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
-        args: [String(nfdName), appID],
-      }
-    ).returnValue
+    const verified = abiCall<typeof NFDRegistry.prototype.isValidNfdAppId>({
+      appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
+      args: [String(nfdName), appID],
+    }).returnValue
 
     if (!verified) {
       return false
     }
 
-    const caAlgoData = abiCall(
-      NFD.prototype.readField,
-      {
-        appId: appID,
-        args: [Bytes(NFDMetaKeyVerifiedAddresses)],
-      }
-    ).returnValue
+    const caAlgoData = abiCall<typeof NFD.prototype.readField>({
+      appId: appID,
+      args: [Bytes(NFDMetaKeyVerifiedAddresses)],
+    }).returnValue
 
     let exists: boolean = false
     for (let i: uint64 = 0; i < caAlgoData.length; i += 32) {

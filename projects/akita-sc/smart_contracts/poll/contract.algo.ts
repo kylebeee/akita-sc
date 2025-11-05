@@ -49,8 +49,10 @@ import {
 } from './errors'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { gateCheck, getUserImpact } from '../utils/functions'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { ERR_HAS_GATE } from '../social/errors'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../utils/base-contracts/base'
 
 export class Poll extends AkitaBaseContract {
 
@@ -148,7 +150,7 @@ export class Poll extends AkitaBaseContract {
   ): void {
     assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
     assert(Global.latestTimestamp < endTime, ERR_INVALID_END_TIME)
-    assert(type.native < 4, ERR_INVALID_POLL_TYPE)
+    assert(type.asUint64() < 4, ERR_INVALID_POLL_TYPE)
 
     this.akitaDAO.value = Application(akitaDAO)
     this.type.value = type

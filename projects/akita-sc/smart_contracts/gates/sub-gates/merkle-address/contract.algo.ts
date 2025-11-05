@@ -1,16 +1,17 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Global, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
-import { MetaMerkles } from '../../../meta-merkles/contract.algo'
 import { MerkleTreeTypeUnspecified } from '../../../meta-merkles/constants'
 import { getAkitaAppList } from '../../../utils/functions'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { BoxCostPerBox } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { Proof } from '../../../utils/types/merkles'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import type { MetaMerkles } from '../../../meta-merkles/contract.algo'
 
 type MerkleAddressGateRegistryInfo = {
   creator: Address
@@ -22,7 +23,7 @@ const MinRegisterArgsLength: uint64 = 35
 /** [proof: 2+(32*length)] */
 const MinCheckArgsLength: uint64 = 66
 
-export class MerkleAddressGate extends AkitaBaseContract implements SubGateInterface {
+export class MerkleAddressGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -83,19 +84,16 @@ export class MerkleAddressGate extends AkitaBaseContract implements SubGateInter
     const proof = decodeArc4<Proof>(args)
     const { creator, name } = clone(this.registry(registryID).value)
 
-    return abiCall(
-      MetaMerkles.prototype.verify,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-        args: [
-          creator,
-          name,
-          sha256(sha256(caller.bytes)),
-          proof,
-          MerkleTreeTypeUnspecified,
-        ],
-      }
-    ).returnValue
+    return abiCall<typeof MetaMerkles.prototype.verify>({
+      appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+      args: [
+        creator,
+        name,
+        sha256(sha256(caller.bytes)),
+        proof,
+        MerkleTreeTypeUnspecified,
+      ],
+    }).returnValue
   }
 
   getRegistrationShape(shape: MerkleAddressGateRegistryInfo): MerkleAddressGateRegistryInfo {

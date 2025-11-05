@@ -1,18 +1,18 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 1 0
-    // smart_contracts/escrow/contract.algo.ts:7
-    // export class Escrow extends Contract implements EscrowInterface {
+    // smart_contracts/escrow/contract.algo.ts:6
+    // export class Escrow extends Contract {
     pushbytes 0x24378d3c // method "delete()void"
     txna ApplicationArgs 0
     match main_delete_route@2
 
 main_switch_case_next@3:
-    // smart_contracts/escrow/contract.algo.ts:7
-    // export class Escrow extends Contract implements EscrowInterface {
+    // smart_contracts/escrow/contract.algo.ts:6
+    // export class Escrow extends Contract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
@@ -24,15 +24,15 @@ main_switch_case_next@3:
     err
 
 main_create_NoOp@7:
-    // smart_contracts/escrow/contract.algo.ts:7
-    // export class Escrow extends Contract implements EscrowInterface {
+    // smart_contracts/escrow/contract.algo.ts:6
+    // export class Escrow extends Contract {
     pushbytes 0x8e79358d // method "create(byte[])void"
     txna ApplicationArgs 0
     match create
     err
 
 main_delete_route@2:
-    // smart_contracts/escrow/contract.algo.ts:28
+    // smart_contracts/escrow/contract.algo.ts:27
     // @abimethod({ allowActions: 'DeleteApplication' })
     txn OnCompletion
     pushint 5 // DeleteApplication
@@ -45,7 +45,7 @@ main_delete_route@2:
 
 // smart_contracts/escrow/contract.algo.ts::Escrow.create[routing]() -> void:
 create:
-    // smart_contracts/escrow/contract.algo.ts:11
+    // smart_contracts/escrow/contract.algo.ts:10
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -58,14 +58,14 @@ create:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/escrow/contract.algo.ts:9
+    // smart_contracts/escrow/contract.algo.ts:8
     // creator = GlobalState<bytes>({ key: EscrowGlobalStateKeysCreator })
     pushbytes "creator"
-    // smart_contracts/escrow/contract.algo.ts:13
+    // smart_contracts/escrow/contract.algo.ts:12
     // this.creator.value = creator
     swap
     app_global_put
-    // smart_contracts/escrow/contract.algo.ts:11
+    // smart_contracts/escrow/contract.algo.ts:10
     // @abimethod({ onCreate: 'require' })
     intc_0 // 1
     return
@@ -73,7 +73,7 @@ create:
 
 // smart_contracts/escrow/contract.algo.ts::Escrow.rekey[routing]() -> void:
 rekey:
-    // smart_contracts/escrow/contract.algo.ts:16
+    // smart_contracts/escrow/contract.algo.ts:15
     // rekey(rekeyTo: Account): void {
     txna ApplicationArgs 1
     dup
@@ -81,13 +81,13 @@ rekey:
     pushint 32 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/escrow/contract.algo.ts:17
+    // smart_contracts/escrow/contract.algo.ts:16
     // assert(Txn.sender === Global.creatorAddress, ERR_ONLY_CREATOR_CAN_REKEY)
     txn Sender
     global CreatorAddress
     ==
     assert // only the creator can rekey a spend contract
-    // smart_contracts/escrow/contract.algo.ts:19-25
+    // smart_contracts/escrow/contract.algo.ts:18-24
     // itxn
     //   .payment({
     //     amount: 0,
@@ -96,16 +96,16 @@ rekey:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/escrow/contract.algo.ts:22
+    // smart_contracts/escrow/contract.algo.ts:21
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
     itxn_field Receiver
     itxn_field RekeyTo
-    // smart_contracts/escrow/contract.algo.ts:21
+    // smart_contracts/escrow/contract.algo.ts:20
     // amount: 0,
     intc_1 // 0
     itxn_field Amount
-    // smart_contracts/escrow/contract.algo.ts:19-24
+    // smart_contracts/escrow/contract.algo.ts:18-23
     // itxn
     //   .payment({
     //     amount: 0,
@@ -116,7 +116,7 @@ rekey:
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // smart_contracts/escrow/contract.algo.ts:19-25
+    // smart_contracts/escrow/contract.algo.ts:18-24
     // itxn
     //   .payment({
     //     amount: 0,
@@ -125,7 +125,7 @@ rekey:
     //   })
     //   .submit()
     itxn_submit
-    // smart_contracts/escrow/contract.algo.ts:16
+    // smart_contracts/escrow/contract.algo.ts:15
     // rekey(rekeyTo: Account): void {
     intc_0 // 1
     return
@@ -133,34 +133,34 @@ rekey:
 
 // smart_contracts/escrow/contract.algo.ts::Escrow.delete[routing]() -> void:
 delete:
-    // smart_contracts/escrow/contract.algo.ts:30
+    // smart_contracts/escrow/contract.algo.ts:29
     // assert(Txn.sender === Global.creatorAddress, ERR_ONLY_FACTORY_CAN_DELETE)
     txn Sender
     global CreatorAddress
     ==
     assert // Only the factory can delete the application
-    // smart_contracts/escrow/contract.algo.ts:32-34
+    // smart_contracts/escrow/contract.algo.ts:31-33
     // itxn
     //   .payment({ closeRemainderTo: Global.creatorAddress })
     //   .submit()
     itxn_begin
-    // smart_contracts/escrow/contract.algo.ts:33
+    // smart_contracts/escrow/contract.algo.ts:32
     // .payment({ closeRemainderTo: Global.creatorAddress })
     global CreatorAddress
     itxn_field CloseRemainderTo
-    // smart_contracts/escrow/contract.algo.ts:32-33
+    // smart_contracts/escrow/contract.algo.ts:31-32
     // itxn
     //   .payment({ closeRemainderTo: Global.creatorAddress })
     intc_0 // 1
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // smart_contracts/escrow/contract.algo.ts:32-34
+    // smart_contracts/escrow/contract.algo.ts:31-33
     // itxn
     //   .payment({ closeRemainderTo: Global.creatorAddress })
     //   .submit()
     itxn_submit
-    // smart_contracts/escrow/contract.algo.ts:28
+    // smart_contracts/escrow/contract.algo.ts:27
     // @abimethod({ allowActions: 'DeleteApplication' })
     intc_0 // 1
     return

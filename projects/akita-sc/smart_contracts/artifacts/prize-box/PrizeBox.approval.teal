@@ -1,4 +1,4 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
@@ -267,7 +267,7 @@ optin:
 // smart_contracts/prize-box/contract.algo.ts::PrizeBox.transfer[routing]() -> void:
 transfer:
     // smart_contracts/prize-box/contract.algo.ts:76
-    // transfer(newOwner: Address): void {
+    // transfer(newOwner: Account): void {
     txna ApplicationArgs 1
     dup
     len
@@ -291,11 +291,11 @@ transfer:
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
     // smart_contracts/prize-box/contract.algo.ts:78
-    // this.owner.value = newOwner.native
+    // this.owner.value = newOwner
     swap
     app_global_put
     // smart_contracts/prize-box/contract.algo.ts:76
-    // transfer(newOwner: Address): void {
+    // transfer(newOwner: Account): void {
     intc_1 // 1
     return
 

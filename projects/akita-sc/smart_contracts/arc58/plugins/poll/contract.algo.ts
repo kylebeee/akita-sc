@@ -8,8 +8,11 @@ import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "
 import { Poll } from "../../../poll/contract.algo";
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from "../../../utils/constants";
 import { ERR_CREATOR_NOT_POLL_FACTORY } from "./errors";
-import { GateArgs, GateInterface } from "../../../utils/types/gates";
 import { PollGlobalStateKeyGateID, votesMBR } from "../../../poll/constants";
+import { GateArgs } from "../../../gates/types";
+import { GateMustCheckAbiMethod } from "../../../gates/constants";
+
+
 
 export class PollPluginContract extends AkitaBaseContract {
 
@@ -29,7 +32,7 @@ export class PollPluginContract extends AkitaBaseContract {
   // POLL PLUGIN METHODS -----------------------------------------------------------------------
 
   new(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     type: PollType,
     endTime: uint64,
@@ -38,7 +41,6 @@ export class PollPluginContract extends AkitaBaseContract {
     options: string[],
     gateID: uint64,
   ): uint64 {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
     const poll = compileArc4(Poll)
@@ -55,44 +57,36 @@ export class PollPluginContract extends AkitaBaseContract {
       amount: amount,
     })
 
-    return abiCall(
-      PollFactory.prototype.new,
-      {
-        sender,
-        appId: this.factory.value.id,
-        args: [
-          mbrPayment,
-          type,
-          endTime,
-          maxSelected,
-          question,
-          options,
-          gateID
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    ).returnValue
+    return abiCall<typeof PollFactory.prototype.new>({
+      sender,
+      appId: this.factory.value.id,
+      args: [
+        mbrPayment,
+        type,
+        endTime,
+        maxSelected,
+        question,
+        options,
+        gateID
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    }).returnValue
   }
 
-  deleteBoxes(walletID: uint64, rekeyBack: boolean, pollAppID: uint64, addresses: Address[]): void {
-    const wallet = Application(walletID)
+  deleteBoxes(wallet: Application, rekeyBack: boolean, pollAppID: uint64, addresses: Address[]): void {
     const sender = getSpendingAccount(wallet)
 
     assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
 
-    abiCall(
-      Poll.prototype.deleteBoxes,
-      {
-        sender,
-        appId: pollAppID,
-        args: [addresses],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Poll.prototype.deleteBoxes>({
+      sender,
+      appId: pollAppID,
+      args: [addresses],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
-  vote(walletID: uint64, rekeyBack: boolean, pollAppID: uint64, votes: uint64[], args: GateArgs): void {
-    const wallet = Application(walletID)
+  vote(wallet: Application, rekeyBack: boolean, pollAppID: uint64, votes: uint64[], args: GateArgs): void {
     const { origin, sender } = getAccounts(wallet)
 
     assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
@@ -107,38 +101,33 @@ export class PollPluginContract extends AkitaBaseContract {
       const gate = getAkitaAppList(this.akitaDAO.value).gate
       const gateID = op.AppGlobal.getExUint64(pollAppID, Bytes(PollGlobalStateKeyGateID))[0]
 
-      abiCall(
-        Poll.prototype.gatedVote,
-        {
-          sender,
-          appId: pollAppID,
-          args: [
-            mbrPayment,
-            itxn.applicationCall({
-              sender,
-              appId: gate,
-              appArgs: [
-                methodSelector(GateInterface.prototype.mustCheck),
-                new Address(origin),
-                gateID,
-                encodeArc4(args)
-              ]
-            }),
-            votes
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
+      abiCall<typeof Poll.prototype.gatedVote>({
+        sender,
+        appId: pollAppID,
+        args: [
+          mbrPayment,
+          itxn.applicationCall({
+            sender,
+            appId: gate,
+            appArgs: [
+              methodSelector(GateMustCheckAbiMethod),
+              new Address(origin),
+              gateID,
+              encodeArc4(args)
+            ]
+          }),
+          votes
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      }
       )
     } else {
-      abiCall(
-        Poll.prototype.vote,
-        {
-          sender,
-          appId: pollAppID,
-          args: [mbrPayment, votes],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
-      )
+      abiCall<typeof Poll.prototype.vote>({
+        sender,
+        appId: pollAppID,
+        args: [mbrPayment, votes],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
     }
   }
 }

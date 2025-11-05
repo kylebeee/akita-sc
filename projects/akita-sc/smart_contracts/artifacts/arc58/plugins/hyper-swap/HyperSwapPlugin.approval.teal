@@ -1,33 +1,39 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 8 1 6 34900
+    intcblock 0 1 8 6 34900
     bytecblock "akita_dao" "spending_address" "akita_al" 0x0000 0x80 0x151f7c75 "plugn_al"
     // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:12
-    // export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContract) {
+    // export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
     txn NumAppArgs
     bz main___algots__.defaultCreate@19
-    pushbytes 0x23cf4fef // method "update(string,string)void"
+    pushbytes 0xea9180dd // method "update(string)void"
     txna ApplicationArgs 0
     match main_update_route@5
 
 main_switch_case_next@6:
     // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:12
-    // export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContract) {
+    // export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
     assert
-    pushbytess 0x6cdf8431 0xf9dbd50c 0x2ef5c87a 0xf15e644b 0xb678e5b5 0x7f0ad198 0x33e92c94 0x1ead20a9 // method "offer(uint64,bool,byte[32],uint64,byte[32],uint64,uint64)void", method "accept(uint64,bool,uint64,byte[32][])void", method "escrow(uint64,bool,uint64,address,uint64,byte[32][])void", method "escrowAsa(uint64,bool,uint64,address,uint64,uint64,byte[32][])void", method "disburse(uint64,bool,uint64,uint64,address,uint64,uint64)void", method "cancel(uint64,bool,uint64,byte[32][])void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void"
+    pushbytess 0x6cdf8431 0xf9dbd50c 0x2ef5c87a 0xf15e644b 0xb678e5b5 0x7f0ad198 0x33e92c94 0x854dede0 // method "offer(uint64,bool,byte[32],uint64,byte[32],uint64,uint64)void", method "accept(uint64,bool,uint64,byte[32][])void", method "escrow(uint64,bool,uint64,address,uint64,byte[32][])void", method "escrowAsa(uint64,bool,uint64,address,uint64,uint64,byte[32][])void", method "disburse(uint64,bool,uint64,uint64,address,uint64,uint64)void", method "cancel(uint64,bool,uint64,byte[32][])void", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match offer accept escrow escrowAsa disburse cancel updateAkitaDAO updateAkitaDAOEscrow
+    match offer accept escrow escrowAsa disburse cancel updateAkitaDAO main_opUp_route@15
     err
 
+main_opUp_route@15:
+    // smart_contracts/utils/base-contracts/base.ts:36
+    // opUp(): void { }
+    intc_1 // 1
+    return
+
 main_update_route@5:
-    // smart_contracts/utils/base-contracts/factory.ts:71
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -39,7 +45,7 @@ main_update_route@5:
 
 main___algots__.defaultCreate@19:
     // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:12
-    // export class HyperSwapPlugin extends classes(BaseHyperSwap, ServiceFactoryContract) {
+    // export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
     txn OnCompletion
     !
     txn ApplicationID
@@ -73,9 +79,9 @@ rekeyAddress_after_if_else@2:
 
 // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.offer[routing]() -> void:
 offer:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:34-42
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:31-39
     // offer(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   root: bytes<32>,
     //   leaves: uint64,
@@ -86,14 +92,14 @@ offer:
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
     txna ApplicationArgs 2
     dup
     len
-    intc_2 // 1
+    intc_1 // 1
     ==
     assert // invalid number of bytes for bool8
     intc_0 // 0
@@ -107,7 +113,7 @@ offer:
     txna ApplicationArgs 4
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     txna ApplicationArgs 5
@@ -119,142 +125,133 @@ offer:
     txna ApplicationArgs 6
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     txna ApplicationArgs 7
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 6
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:49
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:45
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:49
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:45
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:49
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:45
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     pushint 56 // 56
     extract_uint64
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:51-70
-    // abiCall(
-    //   HyperSwap.prototype.offer,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: hyperSwapOfferMBRAmount
-    //       }),
-    //       root,
-    //       leaves,
-    //       participantsRoot,
-    //       participantLeaves,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:47-63
+    // abiCall<typeof HyperSwap.prototype.offer>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: hyperSwapOfferMBRAmount
+    //     }),
+    //     root,
+    //     leaves,
+    //     participantsRoot,
+    //     participantLeaves,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:59
-    // receiver: hyperSwapApp.address,
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:53
+    // receiver: appId.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:48
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:44
     // const hyperSwapOfferMBRAmount: uint64 = costs.offers + costs.participants + (metaMerklesCost * 2)
     pushint 222200 // 222200
     itxn_field Amount
     itxn_field Receiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:57-61
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:51-55
     // itxn.payment({
     //   sender,
-    //   receiver: hyperSwapApp.address,
+    //   receiver: appId.address,
     //   amount: hyperSwapOfferMBRAmount
     // }),
-    intc_2 // 1
+    intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:51-70
-    // abiCall(
-    //   HyperSwap.prototype.offer,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: hyperSwapOfferMBRAmount
-    //       }),
-    //       root,
-    //       leaves,
-    //       participantsRoot,
-    //       participantLeaves,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:47-63
+    // abiCall<typeof HyperSwap.prototype.offer>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: hyperSwapOfferMBRAmount
+    //     }),
+    //     root,
+    //     leaves,
+    //     participantsRoot,
+    //     participantLeaves,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:68
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:62
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 7
     uncover 8
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:51-70
-    // abiCall(
-    //   HyperSwap.prototype.offer,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: hyperSwapOfferMBRAmount
-    //       }),
-    //       root,
-    //       leaves,
-    //       participantsRoot,
-    //       participantLeaves,
-    //       expiration,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:47-63
+    // abiCall<typeof HyperSwap.prototype.offer>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: hyperSwapOfferMBRAmount
+    //     }),
+    //     root,
+    //     leaves,
+    //     participantsRoot,
+    //     participantLeaves,
+    //     expiration,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x0db3a44b // method "offer(pay,byte[32],uint64,byte[32],uint64,uint64)void"
     itxn_field ApplicationArgs
     uncover 7
@@ -275,9 +272,9 @@ offer:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:34-42
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:31-39
     // offer(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   root: bytes<32>,
     //   leaves: uint64,
@@ -285,15 +282,15 @@ offer:
     //   participantLeaves: uint64,
     //   expiration: uint64
     // ) {
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
 // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.accept[routing]() -> void:
 accept:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:73-78
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:66-71
     // accept(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   proof: Proof
@@ -301,14 +298,14 @@ accept:
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
     txna ApplicationArgs 2
     dup
     len
-    intc_2 // 1
+    intc_1 // 1
     ==
     assert // invalid number of bytes for bool8
     intc_0 // 0
@@ -316,7 +313,7 @@ accept:
     txna ApplicationArgs 3
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     txna ApplicationArgs 4
@@ -331,124 +328,115 @@ accept:
     len
     ==
     assert // invalid number of bytes for (len+uint8[32][])
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:82
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:74
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:82
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:74
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:82
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:74
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     pushint 56 // 56
     extract_uint64
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:84-100
-    // abiCall(
-    //   HyperSwap.prototype.accept,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: this.mbr().participants
-    //       }),
-    //       id,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:76-89
+    // abiCall<typeof HyperSwap.prototype.accept>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: this.mbr().participants
+    //     }),
+    //     id,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:92
-    // receiver: hyperSwapApp.address,
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:82
+    // receiver: appId.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:93
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:83
     // amount: this.mbr().participants
     intc 4 // 34900
     itxn_field Amount
     itxn_field Receiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:90-94
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:80-84
     // itxn.payment({
     //   sender,
-    //   receiver: hyperSwapApp.address,
+    //   receiver: appId.address,
     //   amount: this.mbr().participants
     // }),
-    intc_2 // 1
+    intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:84-100
-    // abiCall(
-    //   HyperSwap.prototype.accept,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: this.mbr().participants
-    //       }),
-    //       id,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:76-89
+    // abiCall<typeof HyperSwap.prototype.accept>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: this.mbr().participants
+    //     }),
+    //     id,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:98
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:88
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 4
     uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:84-100
-    // abiCall(
-    //   HyperSwap.prototype.accept,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: this.mbr().participants
-    //       }),
-    //       id,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:76-89
+    // abiCall<typeof HyperSwap.prototype.accept>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: this.mbr().participants
+    //     }),
+    //     id,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0xbde1a11e // method "accept(pay,uint64,byte[32][])void"
     itxn_field ApplicationArgs
     uncover 4
@@ -463,22 +451,22 @@ accept:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:73-78
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:66-71
     // accept(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   proof: Proof
     // ) {
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
 // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.escrow[routing]() -> void:
 escrow:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:103-110
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:92-99
     // escrow(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   receiver: Address,
@@ -488,14 +476,14 @@ escrow:
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
     txna ApplicationArgs 2
     dup
     len
-    intc_2 // 1
+    intc_1 // 1
     ==
     assert // invalid number of bytes for bool8
     intc_0 // 0
@@ -503,7 +491,7 @@ escrow:
     txna ApplicationArgs 3
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     txna ApplicationArgs 4
@@ -515,7 +503,7 @@ escrow:
     txna ApplicationArgs 5
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     dup
@@ -532,68 +520,65 @@ escrow:
     len
     ==
     assert // invalid number of bytes for (len+uint8[32][])
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 6
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:114
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:102
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:114
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:102
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:114
-    // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:102
+    // const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     pushint 56 // 56
     extract_uint64
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:116-134
-    // abiCall(
-    //   HyperSwap.prototype.escrow,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: amount + this.mbr().hashes
-    //       }),
-    //       id,
-    //       receiver,
-    //       amount,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:104-119
+    // abiCall<typeof HyperSwap.prototype.escrow>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: amount + this.mbr().hashes
+    //     }),
+    //     id,
+    //     receiver,
+    //     amount,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:124
-    // receiver: hyperSwapApp.address,
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:110
+    // receiver: appId.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:125
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:111
     // amount: amount + this.mbr().hashes
     uncover 4
     intc 4 // 34900
@@ -602,62 +587,56 @@ escrow:
     itxn_field Receiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:122-126
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:108-112
     // itxn.payment({
     //   sender,
-    //   receiver: hyperSwapApp.address,
+    //   receiver: appId.address,
     //   amount: amount + this.mbr().hashes
     // }),
-    intc_2 // 1
+    intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:116-134
-    // abiCall(
-    //   HyperSwap.prototype.escrow,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: amount + this.mbr().hashes
-    //       }),
-    //       id,
-    //       receiver,
-    //       amount,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:104-119
+    // abiCall<typeof HyperSwap.prototype.escrow>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: amount + this.mbr().hashes
+    //     }),
+    //     id,
+    //     receiver,
+    //     amount,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:132
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:118
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 6
     uncover 7
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:116-134
-    // abiCall(
-    //   HyperSwap.prototype.escrow,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: amount + this.mbr().hashes
-    //       }),
-    //       id,
-    //       receiver,
-    //       amount,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:104-119
+    // abiCall<typeof HyperSwap.prototype.escrow>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: amount + this.mbr().hashes
+    //     }),
+    //     id,
+    //     receiver,
+    //     amount,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0xd85febdd // method "escrow(pay,uint64,address,uint64,byte[32][])void"
     itxn_field ApplicationArgs
     uncover 6
@@ -676,16 +655,16 @@ escrow:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:103-110
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:92-99
     // escrow(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   receiver: Address,
     //   amount: uint64,
     //   proof: Proof
     // ) {
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
@@ -693,9 +672,9 @@ escrow:
 escrowAsa:
     pushbytes ""
     dupn 2
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:137-145
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:122-130
     // escrowAsa(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   receiver: Address,
@@ -706,7 +685,7 @@ escrowAsa:
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
@@ -714,7 +693,7 @@ escrowAsa:
     txna ApplicationArgs 2
     dup
     len
-    intc_2 // 1
+    intc_1 // 1
     ==
     assert // invalid number of bytes for bool8
     intc_0 // 0
@@ -724,7 +703,7 @@ escrowAsa:
     dup
     cover 2
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     txna ApplicationArgs 4
@@ -740,7 +719,7 @@ escrowAsa:
     cover 3
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
@@ -751,7 +730,7 @@ escrowAsa:
     cover 4
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
@@ -770,16 +749,16 @@ escrowAsa:
     len
     ==
     assert // invalid number of bytes for (len+uint8[32][])
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     uncover 2
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -787,42 +766,39 @@ escrowAsa:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:149
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:133
     // let mbrAmount = this.mbr().hashes
     intc 4 // 34900
     cover 2
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:151
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:135
     // if (!receiver.native.isOptedIn(Asset(asset))) {
     asset_holding_get AssetBalance
     bury 1
     bnz escrowAsa_after_if_else@7
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:152
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:136
     // const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:152
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:136
     // const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:39
+    // smart_contracts/utils/functions.ts:50
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     pushbytes "other_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:152
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:136
     // const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
     pushint 16 // 16
     extract_uint64
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:153-159
-    // const canCallData = abiCall(
-    //   AssetInbox.prototype.arc59_getSendAssetInfo,
-    //   {
-    //     appId: assetInbox,
-    //     args: [receiver, asset]
-    //   }
-    // ).returnValue
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:137-140
+    // const canCallData = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
+    //   appId: assetInbox,
+    //   args: [receiver, asset]
+    // }).returnValue
     itxn_begin
     pushbytes 0xcaa8daa5 // method "arc59_getSendAssetInfo(address,uint64)(uint64,uint64,bool,bool,uint64)"
     itxn_field ApplicationArgs
@@ -838,11 +814,17 @@ escrowAsa:
     itxn_submit
     itxn LastLog
     dup
+    extract 4 0
+    dig 1
     extract 0 4
     bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:161
+    len
+    pushint 25 // 25
+    ==
+    assert // invalid number of bytes for (uint64,uint64,bool1,bool1,uint64)
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:142
     // const mbr = canCallData.mbr
     dup
     pushint 12 // 12
@@ -851,53 +833,53 @@ escrowAsa:
     cover 2
     bury 15
     pushint 21 // 21
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:162
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:143
     // const receiverAlgoNeededForClaim = canCallData.receiverAlgoNeededForClaim
     extract_uint64
     bury 13
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:164
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:145
     // if (mbr || receiverAlgoNeededForClaim) {
     bnz escrowAsa_if_body@5
     dig 11
     bz escrowAsa_after_if_else@7
 
 escrowAsa_if_body@5:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:165
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:146
     // mbrAmount += canCallData.mbr + canCallData.receiverAlgoNeededForClaim
     dig 12
     dig 12
     +
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:149
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:133
     // let mbrAmount = this.mbr().hashes
     intc 4 // 34900
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:165
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:146
     // mbrAmount += canCallData.mbr + canCallData.receiverAlgoNeededForClaim
     +
     bury 1
 
 escrowAsa_after_if_else@7:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:169
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:150
     // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:169
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:150
     // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:169
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:150
     // const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
     pushint 56 // 56
     extract_uint64
     dup
     bury 15
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:171
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:152
     // if (!hyperSwapApp.address.isOptedIn(Asset(asset))) {
     app_params_get AppAddress
     assert // application exists
@@ -905,7 +887,7 @@ escrowAsa_after_if_else@7:
     asset_holding_get AssetBalance
     bury 1
     bnz escrowAsa_after_if_else@9
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:172
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:153
     // mbrAmount += Global.assetOptInMinBalance
     dup
     global AssetOptInMinBalance
@@ -913,35 +895,32 @@ escrowAsa_after_if_else@7:
     bury 1
 
 escrowAsa_after_if_else@9:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:175-200
-    // abiCall(
-    //   HyperSwap.prototype.escrowAsa,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: mbrAmount
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: hyperSwapApp.address,
-    //         assetAmount: amount,
-    //         xferAsset: asset
-    //       }),
-    //       id,
-    //       receiver,
-    //       asset,
-    //       amount,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:156-178
+    // abiCall<typeof HyperSwap.prototype.escrowAsa>({
+    //   sender,
+    //   appId: hyperSwapApp,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: hyperSwapApp.address,
+    //       amount: mbrAmount
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: hyperSwapApp.address,
+    //       assetAmount: amount,
+    //       xferAsset: asset
+    //     }),
+    //     id,
+    //     receiver,
+    //     asset,
+    //     amount,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:183
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:162
     // receiver: hyperSwapApp.address,
     dig 13
     dup
@@ -954,17 +933,17 @@ escrowAsa_after_if_else@9:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:181-185
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:160-164
     // itxn.payment({
     //   sender,
     //   receiver: hyperSwapApp.address,
     //   amount: mbrAmount
     // }),
-    intc_2 // 1
+    intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:186-191
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:165-170
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: hyperSwapApp.address,
@@ -972,7 +951,7 @@ escrowAsa_after_if_else@9:
     //   xferAsset: asset
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:188
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:167
     // assetReceiver: hyperSwapApp.address,
     dup
     app_params_get AppAddress
@@ -984,7 +963,7 @@ escrowAsa_after_if_else@9:
     itxn_field AssetReceiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:186-191
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:165-170
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: hyperSwapApp.address,
@@ -995,66 +974,60 @@ escrowAsa_after_if_else@9:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:175-200
-    // abiCall(
-    //   HyperSwap.prototype.escrowAsa,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: mbrAmount
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: hyperSwapApp.address,
-    //         assetAmount: amount,
-    //         xferAsset: asset
-    //       }),
-    //       id,
-    //       receiver,
-    //       asset,
-    //       amount,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:156-178
+    // abiCall<typeof HyperSwap.prototype.escrowAsa>({
+    //   sender,
+    //   appId: hyperSwapApp,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: hyperSwapApp.address,
+    //       amount: mbrAmount
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: hyperSwapApp.address,
+    //       assetAmount: amount,
+    //       xferAsset: asset
+    //     }),
+    //     id,
+    //     receiver,
+    //     asset,
+    //     amount,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:198
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:177
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 11
     dig 13
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:175-200
-    // abiCall(
-    //   HyperSwap.prototype.escrowAsa,
-    //   {
-    //     sender,
-    //     appId: hyperSwapApp,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: hyperSwapApp.address,
-    //         amount: mbrAmount
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: hyperSwapApp.address,
-    //         assetAmount: amount,
-    //         xferAsset: asset
-    //       }),
-    //       id,
-    //       receiver,
-    //       asset,
-    //       amount,
-    //       proof,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:156-178
+    // abiCall<typeof HyperSwap.prototype.escrowAsa>({
+    //   sender,
+    //   appId: hyperSwapApp,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: hyperSwapApp.address,
+    //       amount: mbrAmount
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: hyperSwapApp.address,
+    //       assetAmount: amount,
+    //       xferAsset: asset
+    //     }),
+    //     id,
+    //     receiver,
+    //     asset,
+    //     amount,
+    //     proof,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x466f871a // method "escrowAsa(pay,axfer,uint64,address,uint64,uint64,byte[32][])void"
     itxn_field ApplicationArgs
     dig 11
@@ -1075,9 +1048,9 @@ escrowAsa_after_if_else@9:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:137-145
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:122-130
     // escrowAsa(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   receiver: Address,
@@ -1085,7 +1058,7 @@ escrowAsa_after_if_else@9:
     //   amount: uint64,
     //   proof: Proof
     // ) {
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
@@ -1095,20 +1068,20 @@ disburse:
     dup
     pushbytes ""
     dupn 2
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:203-211
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:181-189
     // disburse(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
-    //   receiverAppID: uint64,
-    //   receiver: Address,
+    //   receiverWallet: Application,
+    //   receiver: Account,
     //   asset: uint64,
     //   amount: uint64
     // ) {
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
@@ -1116,7 +1089,7 @@ disburse:
     txna ApplicationArgs 2
     dup
     len
-    intc_2 // 1
+    intc_1 // 1
     ==
     assert // invalid number of bytes for bool8
     intc_0 // 0
@@ -1126,7 +1099,7 @@ disburse:
     dup
     cover 2
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     txna ApplicationArgs 4
@@ -1134,7 +1107,7 @@ disburse:
     cover 2
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
@@ -1152,7 +1125,7 @@ disburse:
     cover 3
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
@@ -1161,19 +1134,19 @@ disburse:
     dup
     cover 3
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1181,11 +1154,11 @@ disburse:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:216
-    // if (receiverAppID !== 0) {
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:193
+    // if (receiverWallet.id !== 0) {
     bz disburse_after_if_else@7
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:218
-    // assert(receiverApp.address === receiver.native, 'receiverAppID address mismatch')
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:194
+    // assert(receiverWallet.address === receiver, 'receiverAppID address mismatch')
     dig 5
     dup
     app_params_get AppAddress
@@ -1193,99 +1166,90 @@ disburse:
     dig 6
     ==
     assert // receiverAppID address mismatch
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:219
-    // if (!receiverApp.address.isOptedIn(Asset(asset))) {
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:195
+    // if (!receiverWallet.address.isOptedIn(Asset(asset))) {
     app_params_get AppAddress
     assert // application exists
     dig 3
     asset_holding_get AssetBalance
     bury 1
     bnz disburse_after_if_else@7
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:17-29
-    // return abiCall(
-    //   AbstractedAccount.prototype.arc58_canCall,
-    //   {
-    //     appId: walletAppID,
-    //     args: [
-    //       getPluginAppList(this.akitaDAO.value).optin,
-    //       true,
-    //       new Address(Global.currentApplicationAddress),
-    //       '',
-    //       op.bzero(4).toFixed({ length: 4 }),
-    //     ]
-    //   }
-    // ).returnValue
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:17-26
+    // return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+    //   appId,
+    //   args: [
+    //     getPluginAppList(this.akitaDAO.value).optin,
+    //     true,
+    //     new Address(Global.currentApplicationAddress),
+    //     '',
+    //     op.bzero(4).toFixed({ length: 4 }),
+    //   ]
+    // }).returnValue
     itxn_begin
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:22
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:20
     // getPluginAppList(this.akitaDAO.value).optin,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:22
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:20
     // getPluginAppList(this.akitaDAO.value).optin,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:34
+    // smart_contracts/utils/functions.ts:45
     // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
     bytec 6 // "plugn_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:22
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:20
     // getPluginAppList(this.akitaDAO.value).optin,
     extract 0 8
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:24
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:22
     // new Address(Global.currentApplicationAddress),
     global CurrentApplicationAddress
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:26
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:24
     // op.bzero(4).toFixed({ length: 4 }),
     pushint 4 // 4
     bzero
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:17-29
-    // return abiCall(
-    //   AbstractedAccount.prototype.arc58_canCall,
-    //   {
-    //     appId: walletAppID,
-    //     args: [
-    //       getPluginAppList(this.akitaDAO.value).optin,
-    //       true,
-    //       new Address(Global.currentApplicationAddress),
-    //       '',
-    //       op.bzero(4).toFixed({ length: 4 }),
-    //     ]
-    //   }
-    // ).returnValue
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:17-26
+    // return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+    //   appId,
+    //   args: [
+    //     getPluginAppList(this.akitaDAO.value).optin,
+    //     true,
+    //     new Address(Global.currentApplicationAddress),
+    //     '',
+    //     op.bzero(4).toFixed({ length: 4 }),
+    //   ]
+    // }).returnValue
     pushbytes 0x4727af21 // method "arc58_canCall(uint64,bool,address,string,byte[4])bool"
     itxn_field ApplicationArgs
     uncover 2
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:23
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:21
     // true,
     bytec 4 // 0x80
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:23
     // '',
     bytec_3 // 0x0000
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     dig 5
     itxn_field ApplicationID
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:17-29
-    // return abiCall(
-    //   AbstractedAccount.prototype.arc58_canCall,
-    //   {
-    //     appId: walletAppID,
-    //     args: [
-    //       getPluginAppList(this.akitaDAO.value).optin,
-    //       true,
-    //       new Address(Global.currentApplicationAddress),
-    //       '',
-    //       op.bzero(4).toFixed({ length: 4 }),
-    //     ]
-    //   }
-    // ).returnValue
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:17-26
+    // return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+    //   appId,
+    //   args: [
+    //     getPluginAppList(this.akitaDAO.value).optin,
+    //     true,
+    //     new Address(Global.currentApplicationAddress),
+    //     '',
+    //     op.bzero(4).toFixed({ length: 4 }),
+    //   ]
+    // }).returnValue
     intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
@@ -1299,19 +1263,24 @@ disburse:
     bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
     intc_0 // 0
     getbit
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:221
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:197
     // if (canCallArc58OptIn) {
     bz disburse_after_if_else@7
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:222
-    // arc58OptInAndSend(this.akitaDAO.value, receiverAppID, '', [asset], [0])
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:198
+    // arc58OptInAndSend(this.akitaDAO.value, receiverWallet, '', [asset], [0])
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:222
-    // arc58OptInAndSend(this.akitaDAO.value, receiverAppID, '', [asset], [0])
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:198
+    // arc58OptInAndSend(this.akitaDAO.value, receiverWallet, '', [asset], [0])
     app_global_get_ex
     assert // check GlobalState exists
     dig 3
@@ -1321,29 +1290,29 @@ disburse:
     concat
     dup
     bury 17
-    // smart_contracts/utils/functions.ts:343
+    // smart_contracts/utils/functions.ts:340
     // assert(assets.length === amounts.length, ERR_ASSETS_AND_AMOUNTS_MISMATCH)
     dup
     intc_0 // 0
     extract_uint16
     dup
-    intc_2 // 1
+    intc_1 // 1
     ==
     assert // Assets and amounts mismatch
-    // smart_contracts/utils/functions.ts:34
+    // smart_contracts/utils/functions.ts:45
     // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
     uncover 2
     bytec 6 // "plugn_al"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:344
+    // smart_contracts/utils/functions.ts:341
     // const optinPlugin = getPluginAppList(akitaDAO).optin
     dup
     extract 0 8
     swap
     intc_0 // 0
     extract_uint64
-    // smart_contracts/utils/functions.ts:143-146
+    // smart_contracts/utils/functions.ts:151-154
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
@@ -1351,10 +1320,10 @@ disburse:
     dig 9
     dup
     cover 2
-    // smart_contracts/utils/functions.ts:145
+    // smart_contracts/utils/functions.ts:153
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:143-146
+    // smart_contracts/utils/functions.ts:151-154
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
@@ -1364,11 +1333,11 @@ disburse:
     dup
     cover 3
     bury 20
-    // smart_contracts/utils/functions.ts:347-353
+    // smart_contracts/utils/functions.ts:344-350
     // itxnCompose.begin(
     //   AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
     //   {
-    //     appId: recipientWalletID,
+    //     appId: recipientWallet.id,
     //     args: [optinPlugin, true, escrow, [], []]
     //   }
     // )
@@ -1377,15 +1346,15 @@ disburse:
     itxn_field ApplicationArgs
     uncover 3
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:23
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:21
     // true,
     bytec 4 // 0x80
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:23
     // '',
     bytec_3 // 0x0000
     itxn_field ApplicationArgs
-    // smart_contracts/utils/functions.ts:351
+    // smart_contracts/utils/functions.ts:348
     // args: [optinPlugin, true, escrow, [], []]
     bytec_3 // 0x0000
     itxn_field ApplicationArgs
@@ -1393,11 +1362,11 @@ disburse:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationID
-    // smart_contracts/utils/functions.ts:347-353
+    // smart_contracts/utils/functions.ts:344-350
     // itxnCompose.begin(
     //   AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
     //   {
-    //     appId: recipientWalletID,
+    //     appId: recipientWallet.id,
     //     args: [optinPlugin, true, escrow, [], []]
     //   }
     // )
@@ -1405,13 +1374,13 @@ disburse:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:355-369
+    // smart_contracts/utils/functions.ts:352-366
     // itxnCompose.next(
-    //   OptInPluginInterface.prototype.optInToAsset,
+    //   OptInPluginInterface.prototype.optIn,
     //   {
     //     appId: optinPlugin,
     //     args: [
-    //       recipientWalletID,
+    //       recipientWallet,
     //       true,
     //       assets,
     //       itxn.payment({
@@ -1422,7 +1391,7 @@ disburse:
     //   }
     // )
     itxn_next
-    // smart_contracts/utils/functions.ts:365
+    // smart_contracts/utils/functions.ts:362
     // amount: Global.assetOptInMinBalance * assets.length
     global AssetOptInMinBalance
     uncover 3
@@ -1430,22 +1399,22 @@ disburse:
     itxn_field Amount
     swap
     itxn_field Receiver
-    // smart_contracts/utils/functions.ts:363-366
+    // smart_contracts/utils/functions.ts:360-363
     // itxn.payment({
     //   receiver: origin,
     //   amount: Global.assetOptInMinBalance * assets.length
     // })
-    intc_2 // 1
+    intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:355-369
+    // smart_contracts/utils/functions.ts:352-366
     // itxnCompose.next(
-    //   OptInPluginInterface.prototype.optInToAsset,
+    //   OptInPluginInterface.prototype.optIn,
     //   {
     //     appId: optinPlugin,
     //     args: [
-    //       recipientWalletID,
+    //       recipientWallet,
     //       true,
     //       assets,
     //       itxn.payment({
@@ -1456,23 +1425,23 @@ disburse:
     //   }
     // )
     itxn_next
-    pushbytes 0x27ece5e6 // method "optInToAsset(uint64,bool,uint64[],pay)void"
+    pushbytes 0x6835e3bc // method "optIn(uint64,bool,uint64[],pay)void"
     itxn_field ApplicationArgs
     dig 8
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:23
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:21
     // true,
     bytec 4 // 0x80
     itxn_field ApplicationArgs
     itxn_field ApplicationID
     itxn_field ApplicationArgs
-    // smart_contracts/utils/functions.ts:355-369
+    // smart_contracts/utils/functions.ts:352-366
     // itxnCompose.next(
-    //   OptInPluginInterface.prototype.optInToAsset,
+    //   OptInPluginInterface.prototype.optIn,
     //   {
     //     appId: optinPlugin,
     //     args: [
-    //       recipientWalletID,
+    //       recipientWallet,
     //       true,
     //       assets,
     //       itxn.payment({
@@ -1486,22 +1455,22 @@ disburse:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:371
+    // smart_contracts/utils/functions.ts:368
     // for (let i: uint64 = 0; i < amounts.length; i++) {
     intc_0 // 0
     bury 12
 
 disburse_while_top@9:
-    // smart_contracts/utils/functions.ts:371
+    // smart_contracts/utils/functions.ts:368
     // for (let i: uint64 = 0; i < amounts.length; i++) {
     dig 11
-    intc_2 // 1
+    intc_1 // 1
     <
     bz disburse_after_while@13
-    // smart_contracts/utils/functions.ts:372
+    // smart_contracts/utils/functions.ts:369
     // if (amounts[i] > 0) {
     dig 11
-    intc_1 // 8
+    intc_2 // 8
     *
     dup
     bury 14
@@ -1511,7 +1480,7 @@ disburse_while_top@9:
     dup
     bury 12
     bz disburse_after_if_else@12
-    // smart_contracts/utils/functions.ts:373-379
+    // smart_contracts/utils/functions.ts:370-376
     // itxnCompose.next(
     //   itxn.assetTransfer({
     //     assetAmount: amounts[i],
@@ -1520,7 +1489,7 @@ disburse_while_top@9:
     //   })
     // )
     itxn_next
-    // smart_contracts/utils/functions.ts:377
+    // smart_contracts/utils/functions.ts:374
     // xferAsset: assets[i]
     dig 14
     extract 2 0
@@ -1531,7 +1500,7 @@ disburse_while_top@9:
     itxn_field AssetReceiver
     dig 10
     itxn_field AssetAmount
-    // smart_contracts/utils/functions.ts:374-378
+    // smart_contracts/utils/functions.ts:371-375
     // itxn.assetTransfer({
     //   assetAmount: amounts[i],
     //   assetReceiver: origin,
@@ -1543,19 +1512,19 @@ disburse_while_top@9:
     itxn_field Fee
 
 disburse_after_if_else@12:
-    // smart_contracts/utils/functions.ts:371
+    // smart_contracts/utils/functions.ts:368
     // for (let i: uint64 = 0; i < amounts.length; i++) {
     dig 11
-    intc_2 // 1
+    intc_1 // 1
     +
     bury 12
     b disburse_while_top@9
 
 disburse_after_while@13:
-    // smart_contracts/utils/functions.ts:383-386
+    // smart_contracts/utils/functions.ts:380-383
     // itxnCompose.next(
     //   AbstractedAccountInterface.prototype.arc58_verifyAuthAddress,
-    //   { appId: recipientWalletID }
+    //   { appId: recipientWallet }
     // )
     itxn_next
     pushbytes 0x6cc3f606 // method "arc58_verifyAuthAddress()void"
@@ -1566,66 +1535,60 @@ disburse_after_while@13:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/functions.ts:388
+    // smart_contracts/utils/functions.ts:385
     // itxnCompose.submit()
     itxn_submit
 
 disburse_after_if_else@7:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:227-240
-    // abiCall(
-    //   HyperSwap.prototype.disburse,
-    //   {
-    //     sender,
-    //     appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
-    //     args: [
-    //       id,
-    //       receiver,
-    //       asset,
-    //       amount,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:203-213
+    // abiCall<typeof HyperSwap.prototype.disburse>({
+    //   sender,
+    //   appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
+    //   args: [
+    //     id,
+    //     receiver,
+    //     asset,
+    //     amount,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:231
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:205
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:231
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:205
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:231
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:205
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     pushint 56 // 56
     extract_uint64
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:238
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:212
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 9
     dig 11
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:227-240
-    // abiCall(
-    //   HyperSwap.prototype.disburse,
-    //   {
-    //     sender,
-    //     appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
-    //     args: [
-    //       id,
-    //       receiver,
-    //       asset,
-    //       amount,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:203-213
+    // abiCall<typeof HyperSwap.prototype.disburse>({
+    //   sender,
+    //   appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
+    //   args: [
+    //     id,
+    //     receiver,
+    //     asset,
+    //     amount,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x5bac4ce3 // method "disburse(uint64,address,uint64,uint64)void"
     itxn_field ApplicationArgs
     dig 9
@@ -1645,25 +1608,25 @@ disburse_after_if_else@7:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:203-211
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:181-189
     // disburse(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
-    //   receiverAppID: uint64,
-    //   receiver: Address,
+    //   receiverWallet: Application,
+    //   receiver: Account,
     //   asset: uint64,
     //   amount: uint64
     // ) {
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
 // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts::HyperSwapPlugin.cancel[routing]() -> void:
 cancel:
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:243-248
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:216-221
     // cancel(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   proof: Proof
@@ -1671,14 +1634,14 @@ cancel:
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
     txna ApplicationArgs 2
     dup
     len
-    intc_2 // 1
+    intc_1 // 1
     ==
     assert // invalid number of bytes for bool8
     intc_0 // 0
@@ -1686,7 +1649,7 @@ cancel:
     txna ApplicationArgs 3
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     txna ApplicationArgs 4
@@ -1701,16 +1664,16 @@ cancel:
     len
     ==
     assert // invalid number of bytes for (len+uint8[32][])
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1718,51 +1681,45 @@ cancel:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:252-260
-    // abiCall(
-    //   HyperSwap.prototype.cancel,
-    //   {
-    //     sender,
-    //     appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
-    //     args: [id, proof],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:224-229
+    // abiCall<typeof HyperSwap.prototype.cancel>({
+    //   sender,
+    //   appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
+    //   args: [id, proof],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:256
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:226
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:256
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:226
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     bytec_2 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:256
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:226
     // appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
     pushint 56 // 56
     extract_uint64
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:258
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:228
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 4
     uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:252-260
-    // abiCall(
-    //   HyperSwap.prototype.cancel,
-    //   {
-    //     sender,
-    //     appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
-    //     args: [id, proof],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:224-229
+    // abiCall<typeof HyperSwap.prototype.cancel>({
+    //   sender,
+    //   appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
+    //   args: [id, proof],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x0c7ab42e // method "cancel(uint64,byte[32][])void"
     itxn_field ApplicationArgs
     uncover 4
@@ -1777,20 +1734,20 @@ cancel:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:243-248
+    // smart_contracts/arc58/plugins/hyper-swap/contract.algo.ts:216-221
     // cancel(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   id: uint64,
     //   proof: Proof
     // ) {
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.update[routing]() -> void:
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
 update:
-    // smart_contracts/utils/base-contracts/factory.ts:71
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txna ApplicationArgs 1
     dup
@@ -1803,25 +1760,14 @@ update:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    txna ApplicationArgs 2
-    dup
-    intc_0 // 0
-    extract_uint16
-    pushint 2 // 2
-    +
-    dig 1
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    extract 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:73
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:73
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1829,45 +1775,38 @@ update:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:32
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     pushbytes "version"
-    // smart_contracts/utils/base-contracts/factory.ts:74
+    // smart_contracts/utils/base-contracts/base.ts:26
     // this.version.value = newVersion
-    uncover 2
-    app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:38
-    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
-    pushbytes "child_contract_version"
-    // smart_contracts/utils/base-contracts/factory.ts:75
-    // this.childContractVersion.value = newChildVersion
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:71
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO[routing]() -> void:
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/factory.ts:80
-    // updateAkitaDAO(app: uint64): void {
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/factory.ts:81
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:81
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1875,53 +1814,14 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:82
-    // this.akitaDAO.value = Application(app)
+    // smart_contracts/utils/base-contracts/base.ts:33
+    // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:80
-    // updateAkitaDAO(app: uint64): void {
-    intc_2 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow[routing]() -> void:
-updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/factory.ts:85
-    // updateAkitaDAOEscrow(app: uint64): void {
-    txna ApplicationArgs 1
-    dup
-    len
-    intc_1 // 8
-    ==
-    assert // invalid number of bytes for uint64
-    btoi
-    // smart_contracts/utils/base-contracts/factory.ts:86
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:86
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_global_get_ex
-    assert // check GlobalState exists
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:36
-    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    pushbytes "akita_escrow"
-    // smart_contracts/utils/base-contracts/factory.ts:87
-    // this.akitaDAOEscrow.value = Application(app)
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:85
-    // updateAkitaDAOEscrow(app: uint64): void {
-    intc_2 // 1
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
+    intc_1 // 1
     return

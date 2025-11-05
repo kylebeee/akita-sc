@@ -96,15 +96,18 @@ import {
   ERR_ZERO_ADDRESS_DELEGATION_TYPE,
 } from './errors'
 
-import { Staking } from '../../staking/contract.algo'
 import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, EscrowInfo, EscrowReclaim, ExecutionInfo, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
 import { BoxCostPerByte } from '../../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyRevocation, GlobalStateKeyVersion } from '../../constants'
 import { getAkitaAppList } from '../../utils/functions'
-import { AbstractedAccountInterface } from '../../utils/abstract-account'
-import { EscrowFactory } from '../../escrow/factory.algo'
 import { ARC58WalletIDsByAccountsMbr, NewCostForARC58 } from '../../escrow/constants'
 import { emptyAllowanceInfo, emptyEscrowInfo, emptyExecutionInfo, emptyPluginInfo } from './utils'
+
+// CONTRACT IMPORTS
+import { AbstractedAccountInterface } from '../../utils/abstract-account'
+import type { EscrowFactory } from '../../escrow/factory.algo'
+import type { Staking } from '../../staking/contract.algo'
+
 
 @contract({
   stateTotals: {
@@ -234,20 +237,17 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .submit()
     }
 
-    const id = abiCall(
-      EscrowFactory.prototype.new,
-      {
-        sender: this.controlledAddress.value,
-        appId: this.escrowFactory.value,
-        args: [
-          itxn.payment({
-            sender: this.controlledAddress.value,
-            amount: NewCostForARC58 + Global.minBalance,
-            receiver: this.escrowFactory.value.address
-          }),
-        ]
-      }
-    ).returnValue
+    const id = abiCall<typeof EscrowFactory.prototype.new>({
+      sender: this.controlledAddress.value,
+      appId: this.escrowFactory.value,
+      args: [
+        itxn.payment({
+          sender: this.controlledAddress.value,
+          amount: NewCostForARC58 + Global.minBalance,
+          receiver: this.escrowFactory.value.address
+        }),
+      ]
+    }).returnValue
 
     this.escrows(escrow).value = { id, locked: false }
 
@@ -614,19 +614,16 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       app = this.escrows(escrow).value.id
     }
 
-    abiCall(
-      EscrowFactory.prototype.register,
-      {
-        appId: this.escrowFactory.value,
-        args: [
-          itxn.payment({
-            receiver: this.escrowFactory.value.address,
-            amount: ARC58WalletIDsByAccountsMbr
-          }),
-          app
-        ]
-      }
-    )
+    abiCall<typeof EscrowFactory.prototype.register>({
+      appId: this.escrowFactory.value,
+      args: [
+        itxn.payment({
+          receiver: this.escrowFactory.value.address,
+          amount: ARC58WalletIDsByAccountsMbr
+        }),
+        app
+      ]
+    })
   }
 
   /** @param version the version of the wallet */
@@ -1545,16 +1542,13 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         }
       }
 
-      const escrowInfo = abiCall(
-        Staking.prototype.getEscrowInfo,
-        {
-          appId: getAkitaAppList(this.akitaDAO.value).staking,
-          args: [
-            new Address(this.controlledAddress.value),
-            asset.id
-          ]
-        }
-      ).returnValue
+      const escrowInfo = abiCall<typeof Staking.prototype.getEscrowInfo>({
+        appId: getAkitaAppList(this.akitaDAO.value).staking,
+        args: [
+          new Address(this.controlledAddress.value),
+          asset.id
+        ]
+      }).returnValue
 
       amounts = [...amounts, (amount + escrowInfo.hard + escrowInfo.lock)]
     }

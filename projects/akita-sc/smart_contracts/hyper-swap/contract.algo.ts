@@ -1,5 +1,5 @@
 import { MetaMerkles } from '../meta-merkles/contract.algo'
-import { Application, assert, assertMatch, Asset, BoxMap, bytes, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 import { HashKey, OfferValue, ParticipantKey } from './types'
 import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
@@ -84,7 +84,7 @@ export class HyperSwap extends classes(
     const costs = this.mbr()
     const metaMerklesCost: uint64 = costs.mm.root + costs.mm.data
     const hyperSwapOfferMBRAmount: uint64 = costs.offers + costs.participants + (metaMerklesCost * 2)
-    const payor = new Address(payment.sender)
+    const payor = payment.sender
 
     assertMatch(
       payment,
@@ -97,38 +97,32 @@ export class HyperSwap extends classes(
 
     const metaMerklesAppID = getAkitaAppList(this.akitaDAO.value).metaMerkles
 
-    abiCall(
-      MetaMerkles.prototype.addRoot,
-      {
-        appId: metaMerklesAppID,
-        args: [
-          itxn.payment({
-            receiver: Application(metaMerklesAppID).address,
-            amount: metaMerklesCost,
-          }),
-          String(root),
-          root,
-          MerkleTreeTypeTrade
-        ],
-      }
-    )
+    abiCall<typeof MetaMerkles.prototype.addRoot>({
+      appId: metaMerklesAppID,
+      args: [
+        itxn.payment({
+          receiver: Application(metaMerklesAppID).address,
+          amount: metaMerklesCost,
+        }),
+        String(root),
+        root,
+        MerkleTreeTypeTrade
+      ],
+    })
 
     // add the participants root to the meta merkle contract
-    abiCall(
-      MetaMerkles.prototype.addRoot,
-      {
-        appId: metaMerklesAppID,
-        args: [
-          itxn.payment({
-            receiver: Application(metaMerklesAppID).address,
-            amount: metaMerklesCost,
-          }),
-          String(participantsRoot),
-          participantsRoot,
-          MerkleTreeTypeTrade
-        ],
-      }
-    )
+    abiCall<typeof MetaMerkles.prototype.addRoot>({
+      appId: metaMerklesAppID,
+      args: [
+        itxn.payment({
+          receiver: Application(metaMerklesAppID).address,
+          amount: metaMerklesCost,
+        }),
+        String(participantsRoot),
+        participantsRoot,
+        MerkleTreeTypeTrade
+      ],
+    })
 
     const id = this.newOfferID()
 
@@ -163,19 +157,16 @@ export class HyperSwap extends classes(
     assert(state === STATE_OFFERED)
     assert(expiration > Global.latestTimestamp, ERR_OFFER_EXPIRED)
     // ensure they are a participant
-    const isParticipant = abiCall(
-      MetaMerkles.prototype.verify,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-        args: [
-          new Address(Global.currentApplicationAddress),
-          String(participantsRoot),
-          sha256(sha256(Txn.sender.bytes)),
-          proof,
-          MerkleTreeTypeTrade
-        ],
-      }
-    ).returnValue
+    const isParticipant = abiCall<typeof MetaMerkles.prototype.verify>({
+      appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+      args: [
+        new Address(Global.currentApplicationAddress),
+        String(participantsRoot),
+        sha256(sha256(Txn.sender.bytes)),
+        proof,
+        MerkleTreeTypeTrade
+      ],
+    }).returnValue
 
     assert(isParticipant, ERR_NOT_A_PARTICIPANT)
 
@@ -198,8 +189,10 @@ export class HyperSwap extends classes(
     )
 
     // flag this participant as accepted
-    const payor = new Address(mbrPayment.sender)
-    this.participants(senderParticipantKey).value = { payor, amount: costs.participants }
+    this.participants(senderParticipantKey).value = {
+      payor: mbrPayment.sender,
+      amount: costs.participants
+    }
     // if we collected all needed acceptances switch to the gathering state
     if (participantsLeaves === newAcceptances) {
       this.offers(id).value.state = STATE_ESCROWING
@@ -232,19 +225,16 @@ export class HyperSwap extends classes(
     const hashKey: HashKey = { id, hash }
     assert(!this.hashes(hashKey).exists)
     // verify the leaf
-    const verified = abiCall(
-      MetaMerkles.prototype.verify,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-        args: [
-          new Address(Global.currentApplicationAddress),
-          String(root),
-          hash,
-          proof,
-          MerkleTreeTypeTrade
-        ],
-      }
-    ).returnValue
+    const verified = abiCall<typeof MetaMerkles.prototype.verify>({
+      appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+      args: [
+        new Address(Global.currentApplicationAddress),
+        String(root),
+        hash,
+        proof,
+        MerkleTreeTypeTrade
+      ],
+    }).returnValue
 
     assert(verified, ERR_CANT_VERIFY_LEAF)
 
@@ -260,9 +250,11 @@ export class HyperSwap extends classes(
     )
 
     // add the leaf to the our escrowed list
-    const payor = new Address(payment.sender)
-    this.hashes(hashKey).value = { payor, amount: costs.hashes }
-    
+    this.hashes(hashKey).value = {
+      payor: payment.sender,
+      amount: costs.hashes
+    }
+
     const newEscrowed: uint64 = escrowed + 1
     this.offers(id).value.escrowed = newEscrowed
     // if we collected all needed assets switch to the disbursement state
@@ -304,19 +296,16 @@ export class HyperSwap extends classes(
     const hashKey: HashKey = { id, hash }
     assert(!this.hashes(hashKey).exists)
     // verify the leaf
-    const verified = abiCall(
-      MetaMerkles.prototype.verify,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-        args: [
-          new Address(Global.currentApplicationAddress),
-          String(root),
-          hash,
-          proof,
-          MerkleTreeTypeTrade
-        ],
-      }
-    ).returnValue
+    const verified = abiCall<typeof MetaMerkles.prototype.verify>({
+      appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+      args: [
+        new Address(Global.currentApplicationAddress),
+        String(root),
+        hash,
+        proof,
+        MerkleTreeTypeTrade
+      ],
+    }).returnValue
 
     assert(verified, ERR_CANT_VERIFY_LEAF)
 
@@ -327,13 +316,10 @@ export class HyperSwap extends classes(
     // take the worst case possible amount incase we fallback to arc59
     if (!receiver.native.isOptedIn(Asset(asset))) {
       const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
-      const canCallData = abiCall(
-        AssetInbox.prototype.arc59_getSendAssetInfo,
-        {
-          appId: assetInbox,
-          args: [receiver, asset],
-        }
-      ).returnValue
+      const canCallData = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
+        appId: assetInbox,
+        args: [receiver, asset],
+      }).returnValue
 
       const mbr = canCallData.mbr
       const receiverAlgoNeededForClaim = canCallData.receiverAlgoNeededForClaim
@@ -363,8 +349,10 @@ export class HyperSwap extends classes(
     )
 
     // add the leaf to the our escrowed list
-    const payor = new Address(mbrPayment.sender)
-    this.hashes(hashKey).value = { payor, amount: mbrAmount }
+    this.hashes(hashKey).value = {
+      payor: mbrPayment.sender,
+      amount: mbrAmount
+    }
     // increment our escrow count
     const newEscrowed: uint64 = escrowed + 1
     this.offers(id).value.escrowed = newEscrowed
@@ -383,7 +371,7 @@ export class HyperSwap extends classes(
    * @param asset the asset being transferred
    * @param amount the amount being transferred
    */
-  disburse(id: uint64, receiver: Address, asset: uint64, amount: uint64) {
+  disburse(id: uint64, receiver: Account, asset: uint64, amount: uint64) {
     // ensure the offer exists
     assert(this.offers(id).exists)
     const { state, escrowed } = this.offers(id).value
@@ -391,7 +379,7 @@ export class HyperSwap extends classes(
     assert(state === STATE_DISBURSING)
 
     // ensure this leaf is escrowed
-    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`))
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.bytes}${itob(asset)}${itob(amount)}`))
     const hashKey: HashKey = { id, hash }
     assert(this.hashes(hashKey).exists)
 
@@ -400,25 +388,24 @@ export class HyperSwap extends classes(
 
     // process the transfer
     if (asset === 0) {
-      itxn.payment({
-        amount: amount,
-        receiver: receiver.native,
-      }).submit()
+      itxn
+        .payment({ amount, receiver })
+        .submit()
 
       // refund the account that covered the MBR
       itxn
         .payment({
           amount: refundAmount,
-          receiver: payor.native,
+          receiver: payor,
         })
         .submit()
-    } else if (!AssetHolding.assetBalance(receiver.native, asset)[1]) {
+    } else if (!AssetHolding.assetBalance(receiver, asset)[1]) {
       arc59OptInAndSend(this.akitaDAO.value, receiver, asset, amount, false)
       // refund the account that covered the MBR
       itxn
         .payment({
           amount: refundAmount,
-          receiver: payor.native,
+          receiver: payor,
         })
         .submit()
 
@@ -427,7 +414,7 @@ export class HyperSwap extends classes(
         .assetTransfer({
           xferAsset: asset,
           assetAmount: amount,
-          assetReceiver: receiver.native,
+          assetReceiver: receiver,
         })
         .submit()
 
@@ -435,7 +422,7 @@ export class HyperSwap extends classes(
       itxn
         .payment({
           amount: refundAmount,
-          receiver: payor.native,
+          receiver: payor,
         })
         .submit()
     }
@@ -460,19 +447,16 @@ export class HyperSwap extends classes(
     assert(state === STATE_OFFERED || state === STATE_ESCROWING)
 
     // ensure they are a participant
-    const isParticipant = abiCall(
-      MetaMerkles.prototype.verify,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-        args: [
-          new Address(Global.currentApplicationAddress),
-          String(participantsRoot),
-          sha256(sha256(Txn.sender.bytes)),
-          proof,
-          MerkleTreeTypeTrade
-        ],
-      }
-    ).returnValue
+    const isParticipant = abiCall<typeof MetaMerkles.prototype.verify>({
+      appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+      args: [
+        new Address(Global.currentApplicationAddress),
+        String(participantsRoot),
+        sha256(sha256(Txn.sender.bytes)),
+        proof,
+        MerkleTreeTypeTrade
+      ],
+    }).returnValue
 
     assert(isParticipant, ERR_NOT_A_PARTICIPANT)
     // set the state to cancelled
@@ -503,19 +487,16 @@ export class HyperSwap extends classes(
     const hashKey: HashKey = { id, hash }
     assert(this.hashes(hashKey).exists)
     // verify the leaf
-    const verified = abiCall(
-      MetaMerkles.prototype.verify,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-        args: [
-          new Address(Global.currentApplicationAddress),
-          String(root),
-          hash,
-          proof,
-          MerkleTreeTypeTrade
-        ],
-      }
-    ).returnValue
+    const verified = abiCall<typeof MetaMerkles.prototype.verify>({
+      appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+      args: [
+        new Address(Global.currentApplicationAddress),
+        String(root),
+        hash,
+        proof,
+        MerkleTreeTypeTrade
+      ],
+    }).returnValue
 
     assert(verified, ERR_CANT_VERIFY_LEAF)
 
@@ -542,7 +523,7 @@ export class HyperSwap extends classes(
     itxn
       .payment({
         amount: refundAmount,
-        receiver: payor.native,
+        receiver: payor,
       })
       .submit()
 

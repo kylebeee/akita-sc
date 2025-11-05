@@ -7,7 +7,7 @@ export const AkitaDAONumGlobalUints = 5
 
 export const AkitaDAOGlobalStateKeysInitialized = 'initialized'
 export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
-export const AkitaDAOGlobalStateKeysWalletID = 'wallet_id'
+export const AkitaDAOGlobalStateKeysWallet = 'wallet'
 export const AkitaDAOGlobalStateKeysProposalActionLimit = 'proposal_action_limit'
 export const AkitaDAOGlobalStateKeysMinRewardsImpact = 'min_rewards_impact'
 export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'

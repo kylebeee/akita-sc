@@ -17,7 +17,6 @@ import {
 } from '../../../utils/operators'
 import { getAkitaAppList, getStakingPower } from '../../../utils/functions'
 import { Operator } from '../../types'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { ERR_BAD_OPERATION, ERR_INVALID_ARG_COUNT } from '../../errors'
 
@@ -31,7 +30,7 @@ const StakingPowerGateRegistryMBR: uint64 = 12_500
 /** [op:1][asset:8][power:8] */
 const CheckArgsBytesLength: uint64 = 17
 
-export class StakingPowerGate extends AkitaBaseContract implements SubGateInterface {
+export class StakingPowerGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -97,7 +96,7 @@ export class StakingPowerGate extends AkitaBaseContract implements SubGateInterf
     )
 
     const params = decodeArc4<StakingPowerGateRegistryInfo>(args)
-    assert(params.op.native <= 6, ERR_BAD_OPERATION)
+    assert(params.op.asUint64() <= 6, ERR_BAD_OPERATION)
     const id = this.newRegistryID()
     this.registry(id).value = clone(params)
     return id

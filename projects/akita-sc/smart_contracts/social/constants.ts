@@ -1,10 +1,13 @@
 import { uint64 } from "@algorandfoundation/algorand-typescript";
-import { TipAction, TipSendType } from "./types";
+import { PayWallType, TipAction, TipSendType } from "./types";
 import { Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
+
+export const AkitaSocialGlobalStateKeysPaywallID = 'paywall_id'
 
 export const AkitaSocialBoxPrefixFollows = 'f'
 export const AkitaSocialBoxPrefixBlocks = 'b'
 export const AkitaSocialBoxPrefixPosts = 'p'
+export const AkitaSocialboxPrefixPayWall = 'w'
 export const AkitaSocialBoxPrefixVotes = 'v'
 export const AkitaSocialBoxPrefixVoteList = 'o'
 export const AkitaSocialBoxPrefixReactions = 'r'
@@ -19,12 +22,13 @@ export const ImpactBoxPrefixSubscriptionStateModifier = 's'
 
 export const FollowsMBR: uint64 = 31_700
 export const BlocksMBR: uint64 = 15_700
-export const MinPostsMBR: uint64 = 36_500 // + (400 * ref.length),
+export const MinPostsMBR: uint64 = 40_100 // + (400 * ref.length),
+export const MinPayWallMBR: uint64 = 5_200 // TODO: double check
 export const VotesMBR: uint64 = 19_300
 export const VotelistMBR: uint64 = 19_300
 export const ReactionsMBR: uint64 = 22_100
 export const ReactionlistMBR: uint64 = 18_900
-export const MetaMBR: uint64 = 42_100
+export const MetaMBR: uint64 = 45_300
 export const ModeratorsMBR: uint64 = 18_900
 export const BannedMBR: uint64 = 18_900
 export const ActionsMBR: uint64 = 29_700
@@ -49,3 +53,8 @@ export const TipSendTypeARC58: TipSendType = new Uint8(30)
 
 export const TipActionPost: TipAction = new Uint8(10)
 export const TipActionReact: TipAction = new Uint8(20)
+
+export const PayWallTypeOneTimePayment: PayWallType = new Uint8(10)
+export const PayWallTypeSubscription: PayWallType = new Uint8(20)
+
+export const PayWallPayOptionSize: uint64 = 17

@@ -1,39 +1,47 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 8 6 400
-    bytecblock "pool_factory" "spending_address" "akita_dao" 0x151f7c75 "version" "akita_escrow"
+    bytecblock "pool_factory" "akita_dao" "spending_address" "bc" 0x151f7c75 0xc53b32cc "version" "akita_escrow"
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
-    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
-    pushbytes 0x23cf4fef // method "update(string,string)void"
+    // export class PoolPlugin extends classes(BasePool, FactoryContract) {
+    pushbytes 0xea9180dd // method "update(string)void"
     txna ApplicationArgs 0
     match main_update_route@4
 
 main_switch_case_next@5:
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
-    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
+    // export class PoolPlugin extends classes(BasePool, FactoryContract) {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@17
-    pushbytess 0xba789a25 0x26c0c31c 0x2552d89a 0xe7439919 0x26747a7a 0x8875f467 0x33e92c94 0x1ead20a9 0xa4b3e789 // method "newPool(uint64,bool,string,uint8,address,(address,string),uint64,uint64,uint64)void", method "initPool(uint64,bool,uint64)void", method "deletePool(uint64,bool,uint64)void", method "addReward(uint64,bool,uint64,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64),uint64)void", method "finalizePool(uint64,bool,uint64,uint64,uint64,uint64)void", method "enter(uint64,bool,uint64,(uint64,uint64,byte[32][])[],byte[][])void", method "updateAkitaDAO(uint64)void", method "updateAkitaDAOEscrow(uint64)void", method "mbr(uint64)(uint64,uint64,uint64,uint64,uint64)"
+    bz main_create_NoOp@21
+    pushbytess 0xba789a25 0x26c0c31c 0x2552d89a 0xe7439919 0x26747a7a 0x8875f467 // method "newPool(uint64,bool,string,uint8,address,(address,string),uint64,uint64,uint64)void", method "initPool(uint64,bool,uint64)void", method "deletePool(uint64,bool,uint64)void", method "addReward(uint64,bool,uint64,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64),uint64)void", method "finalizePool(uint64,bool,uint64,uint64,uint64,uint64)void", method "enter(uint64,bool,uint64,(uint64,uint64,byte[32][])[],byte[][])void"
+    bytec 5 // method "initBoxedContract(string,uint64)void"
+    pushbytess 0xdca2d862 0xd346b1a4 0x1ead20a9 0x33e92c94 0x854dede0 0xa4b3e789 // method "loadBoxedContract(uint64,byte[])void", method "deleteBoxedContract()void", method "updateAkitaDAOEscrow(uint64)void", method "updateAkitaDAO(uint64)void", method "opUp()void", method "mbr(uint64)(uint64,uint64,uint64,uint64,uint64)"
     txna ApplicationArgs 0
-    match newPool initPool deletePool addReward finalizePool enter updateAkitaDAO updateAkitaDAOEscrow mbr
+    match newPool initPool deletePool addReward finalizePool enter initBoxedContract loadBoxedContract deleteBoxedContract updateAkitaDAOEscrow updateAkitaDAO main_opUp_route@18 mbr
     err
 
-main_create_NoOp@17:
+main_opUp_route@18:
+    // smart_contracts/utils/base-contracts/base.ts:36
+    // opUp(): void { }
+    intc_1 // 1
+    return
+
+main_create_NoOp@21:
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:20
-    // export class PoolPlugin extends classes(BasePool, ServiceFactoryContract) {
+    // export class PoolPlugin extends classes(BasePool, FactoryContract) {
     pushbytes 0xcd9ad67e // method "create(string,uint64)void"
     txna ApplicationArgs 0
     match create
     err
 
 main_update_route@4:
-    // smart_contracts/utils/base-contracts/factory.ts:71
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -89,9 +97,9 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/factory.ts:32
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
+    bytec 6 // "version"
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:30
     // this.version.value = version
     uncover 2
@@ -113,11 +121,11 @@ create:
 newPool:
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:36-46
     // newPool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   title: string,
     //   type: StakingType,
-    //   marketplace: Address,
+    //   marketplace: Account,
     //   stakeKey: RootKey,
     //   minimumStakeAmount: uint64,
     //   gateID: uint64,
@@ -179,108 +187,94 @@ newPool:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 8
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:51
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:49
     // const fees = getStakingFees(this.akitaDAO.value)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:51
+    bytec_1 // "akita_dao"
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:49
     // const fees = getStakingFees(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:58
+    // smart_contracts/utils/functions.ts:69
     // const [stakingFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysStakingFees))
     pushbytes "staking_fees"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:56
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:54
     // fees.creationFee +
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:56-59
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:54-57
     // fees.creationFee +
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
-    pushint 1256000 // 1256000
+    pushint 1306000 // 1306000
     +
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:60
-    // Global.minBalance +
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:58
+    // Global.minBalance
     global MinBalance
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:56-60
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:54-58
     // fees.creationFee +
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
-    // Global.minBalance +
+    // Global.minBalance
     +
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:61
-    // fcosts.appCreators
-    pushint 21700 // 21700
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:56-61
-    // fees.creationFee +
-    // MAX_PROGRAM_PAGES +
-    // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
-    // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
-    // Global.minBalance +
-    // fcosts.appCreators
-    +
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:66
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:63
     // receiver: this.factory.value.address,
     intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:66
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:63
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:70-87
-    // abiCall(
-    //   PoolFactory.prototype.newPool,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [
-    //       mbrTxn,
-    //       title,
-    //       type,
-    //       marketplace,
-    //       stakeKey,
-    //       minimumStakeAmount,
-    //       gateID,
-    //       maxEntries,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:67-81
+    // abiCall<typeof PoolFactory.prototype.newPool>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [
+    //     mbrTxn,
+    //     title,
+    //     type,
+    //     marketplace,
+    //     stakeKey,
+    //     minimumStakeAmount,
+    //     gateID,
+    //     maxEntries,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
     uncover 2
     itxn_field Amount
     itxn_field Receiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:64-68
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:61-65
     // const mbrTxn = itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -290,50 +284,44 @@ newPool:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:70-87
-    // abiCall(
-    //   PoolFactory.prototype.newPool,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [
-    //       mbrTxn,
-    //       title,
-    //       type,
-    //       marketplace,
-    //       stakeKey,
-    //       minimumStakeAmount,
-    //       gateID,
-    //       maxEntries,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:67-81
+    // abiCall<typeof PoolFactory.prototype.newPool>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [
+    //     mbrTxn,
+    //     title,
+    //     type,
+    //     marketplace,
+    //     stakeKey,
+    //     minimumStakeAmount,
+    //     gateID,
+    //     maxEntries,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:85
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:80
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 9
     uncover 10
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:70-87
-    // abiCall(
-    //   PoolFactory.prototype.newPool,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [
-    //       mbrTxn,
-    //       title,
-    //       type,
-    //       marketplace,
-    //       stakeKey,
-    //       minimumStakeAmount,
-    //       gateID,
-    //       maxEntries,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:67-81
+    // abiCall<typeof PoolFactory.prototype.newPool>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [
+    //     mbrTxn,
+    //     title,
+    //     type,
+    //     marketplace,
+    //     stakeKey,
+    //     minimumStakeAmount,
+    //     gateID,
+    //     maxEntries,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0xf1e10b67 // method "newPool(pay,string,uint8,address,(address,string),uint64,uint64,uint64)uint64"
     itxn_field ApplicationArgs
     uncover 9
@@ -359,29 +347,36 @@ newPool:
     itxn_field Fee
     itxn_submit
     gitxn 1 LastLog
+    dup
+    extract 4 0
+    swap
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 4 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    len
+    intc_2 // 8
     ==
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:36-46
     // newPool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   title: string,
     //   type: StakingType,
-    //   marketplace: Address,
+    //   marketplace: Account,
     //   stakeKey: RootKey,
     //   minimumStakeAmount: uint64,
     //   gateID: uint64,
     //   maxEntries: uint64,
     // ): void {
-    return // on error: Bytes has valid prefix
+    return // on error: invalid number of bytes for uint64
 
 
 // smart_contracts/arc58/plugins/pool/contract.algo.ts::PoolPlugin.initPool[routing]() -> void:
 initPool:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:90-94
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:84-88
     // initPool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   poolID: uint64
     // ): void {
@@ -407,7 +402,7 @@ initPool:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:95
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:89
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     dup
     app_params_get AppCreator
@@ -416,7 +411,7 @@ initPool:
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:95
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:89
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
@@ -424,16 +419,16 @@ initPool:
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 2
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -441,30 +436,24 @@ initPool:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:100-107
-    // abiCall(
-    //   Pool.prototype.init,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:93-97
+    // abiCall<typeof Pool.prototype.init>({
+    //   sender,
+    //   appId: poolID,
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:105
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:96
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 2
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:100-107
-    // abiCall(
-    //   Pool.prototype.init,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:93-97
+    // abiCall<typeof Pool.prototype.init>({
+    //   sender,
+    //   appId: poolID,
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x83f14748 // method "init()void"
     itxn_field ApplicationArgs
     itxn_field RekeyTo
@@ -475,9 +464,9 @@ initPool:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:90-94
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:84-88
     // initPool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   poolID: uint64
     // ): void {
@@ -487,11 +476,11 @@ initPool:
 
 // smart_contracts/arc58/plugins/pool/contract.algo.ts::PoolPlugin.deletePool[routing]() -> void:
 deletePool:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:110-114
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:100-104
     // deletePool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
-    //   poolID: uint64
+    //   appId: Application
     // ): void {
     txna ApplicationArgs 1
     dup
@@ -516,16 +505,16 @@ deletePool:
     assert // invalid number of bytes for uint64
     dup
     btoi
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:115
-    // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:105
+    // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:115
-    // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:105
+    // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
     dup
@@ -534,16 +523,16 @@ deletePool:
     uncover 2
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -551,32 +540,26 @@ deletePool:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:120-128
-    // abiCall(
-    //   PoolFactory.prototype.deletePool,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [ poolID ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:109-114
+    // abiCall<typeof PoolFactory.prototype.deletePool>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [appId],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:126
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:113
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:120-128
-    // abiCall(
-    //   PoolFactory.prototype.deletePool,
-    //   {
-    //     sender,
-    //     appId: this.factory.value,
-    //     args: [ poolID ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:109-114
+    // abiCall<typeof PoolFactory.prototype.deletePool>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [appId],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0xc7478f9d // method "deletePool(uint64)void"
     itxn_field ApplicationArgs
     uncover 3
@@ -589,11 +572,11 @@ deletePool:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:110-114
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:100-104
     // deletePool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
-    //   poolID: uint64
+    //   appId: Application
     // ): void {
     intc_1 // 1
     return
@@ -601,11 +584,11 @@ deletePool:
 
 // smart_contracts/arc58/plugins/pool/contract.algo.ts::PoolPlugin.addReward[routing]() -> void:
 addReward:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:131-137
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:117-123
     // addReward(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
-    //   poolID: uint64,
+    //   appId: Application,
     //   reward: Reward,
     //   amount: uint64
     // ): void {
@@ -647,32 +630,32 @@ addReward:
     assert // invalid number of bytes for uint64
     btoi
     cover 3
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:138
-    // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:124
+    // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:138
-    // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:124
+    // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -680,7 +663,7 @@ addReward:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:143
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:128
     // if (reward.asset === 0) {
     dup
     extract 0 8
@@ -689,31 +672,28 @@ addReward:
     extract_uint64
     dup
     bnz addReward_else_body@5
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:144-159
-    // abiCall(
-    //   Pool.prototype.addReward,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: amount + this.rewardsMbr(reward.winnerCount)
-    //       }),
-    //       reward
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:129-141
+    // abiCall<typeof Pool.prototype.addReward>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: amount + this.rewardsMbr(reward.winnerCount)
+    //     }),
+    //     reward
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:152
-    // receiver: Application(poolID).address,
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:135
+    // receiver: appId.address,
     dig 5
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:153
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:136
     // amount: amount + this.rewardsMbr(reward.winnerCount)
     dig 6
     dup
@@ -724,7 +704,7 @@ addReward:
     // return MinPoolRewardsMBR + (BoxCostPerByte * winningTickets)
     intc 4 // 400
     *
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:153
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:136
     // amount: amount + this.rewardsMbr(reward.winnerCount)
     dig 7
     +
@@ -733,56 +713,50 @@ addReward:
     dig 4
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:150-154
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:133-137
     // itxn.payment({
     //   sender,
-    //   receiver: Application(poolID).address,
+    //   receiver: appId.address,
     //   amount: amount + this.rewardsMbr(reward.winnerCount)
     // }),
     intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:144-159
-    // abiCall(
-    //   Pool.prototype.addReward,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: amount + this.rewardsMbr(reward.winnerCount)
-    //       }),
-    //       reward
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:129-141
+    // abiCall<typeof Pool.prototype.addReward>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: amount + this.rewardsMbr(reward.winnerCount)
+    //     }),
+    //     reward
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:157
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:140
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 9
     dig 11
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:144-159
-    // abiCall(
-    //   Pool.prototype.addReward,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: amount + this.rewardsMbr(reward.winnerCount)
-    //       }),
-    //       reward
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:129-141
+    // abiCall<typeof Pool.prototype.addReward>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: amount + this.rewardsMbr(reward.winnerCount)
+    //     }),
+    //     reward
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x645a7bcc // method "addReward(pay,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void"
     itxn_field ApplicationArgs
     uncover 2
@@ -797,11 +771,11 @@ addReward:
     itxn_submit
 
 addReward_after_if_else@13:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:131-137
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:117-123
     // addReward(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
-    //   poolID: uint64,
+    //   appId: Application,
     //   reward: Reward,
     //   amount: uint64
     // ): void {
@@ -809,8 +783,8 @@ addReward_after_if_else@13:
     return
 
 addReward_else_body@5:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:162
-    // if (!Application(poolID).address.isOptedIn(Asset(reward.asset))) {
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:144
+    // if (!appId.address.isOptedIn(Asset(reward.asset))) {
     dig 5
     app_params_get AppAddress
     assert // application exists
@@ -818,26 +792,26 @@ addReward_else_body@5:
     asset_holding_get AssetBalance
     bury 1
     bnz addReward_after_if_else@9
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:165
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:147
     // const escrowBytes = op.AppGlobal.getExBytes(this.factory.value, Bytes(GlobalStateKeyAkitaEscrow))[0]
     intc_0 // 0
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:165
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:147
     // const escrowBytes = op.AppGlobal.getExBytes(this.factory.value, Bytes(GlobalStateKeyAkitaEscrow))[0]
     app_global_get_ex
     assert // check GlobalState exists
-    bytec 5 // "akita_escrow"
+    bytec 7 // "akita_escrow"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:166
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:148
     // const escrow = Application(btoi(escrowBytes));
     btoi
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:167
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:149
     // let optinMBR: uint64 = Global.assetOptInMinBalance * (
     global AssetOptInMinBalance
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:168
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:150
     // !escrow.address.isOptedIn(Asset(reward.asset)) ? 4 : 1
     swap
     app_params_get AppAddress
@@ -850,42 +824,39 @@ addReward_else_body@5:
     pushint 4 // 4
     uncover 2
     select
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:167-169
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:149-151
     // let optinMBR: uint64 = Global.assetOptInMinBalance * (
     //   !escrow.address.isOptedIn(Asset(reward.asset)) ? 4 : 1
     // )
     *
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:173-187
-    // abiCall(
-    //   Pool.prototype.optin,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: optinMBR + rewardsMBR
-    //       }),
-    //       reward.asset,
-    //     ]
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:155-166
+    // abiCall<typeof Pool.prototype.optin>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: optinMBR + rewardsMBR
+    //     }),
+    //     reward.asset,
+    //   ]
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:181
-    // receiver: Application(poolID).address,
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:161
+    // receiver: appId.address,
     dig 6
     dup
     cover 2
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:182
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:162
     // amount: optinMBR + rewardsMBR
     swap
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:171
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:153
     // const rewardsMBR: uint64 = this.rewardsMbr(WinnerCountCap) * 2
     pushint 8000 // 8000
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:182
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:162
     // amount: optinMBR + rewardsMBR
     +
     itxn_field Amount
@@ -893,32 +864,29 @@ addReward_else_body@5:
     dig 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:179-183
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:159-163
     // itxn.payment({
     //   sender,
-    //   receiver: Application(poolID).address,
+    //   receiver: appId.address,
     //   amount: optinMBR + rewardsMBR
     // }),
     intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:173-187
-    // abiCall(
-    //   Pool.prototype.optin,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: optinMBR + rewardsMBR
-    //       }),
-    //       reward.asset,
-    //     ]
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:155-166
+    // abiCall<typeof Pool.prototype.optin>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: optinMBR + rewardsMBR
+    //     }),
+    //     reward.asset,
+    //   ]
+    // })
     itxn_next
     pushbytes 0x3ea11832 // method "optin(pay,uint64)void"
     itxn_field ApplicationArgs
@@ -933,37 +901,34 @@ addReward_else_body@5:
     itxn_submit
 
 addReward_after_if_else@9:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:190-211
-    // abiCall(
-    //   Pool.prototype.addRewardAsa,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: this.rewardsMbr(reward.winnerCount)
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: Application(poolID).address,
-    //         assetAmount: amount,
-    //         xferAsset: reward.asset
-    //       }),
-    //       reward
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:169-187
+    // abiCall<typeof Pool.prototype.addRewardAsa>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: this.rewardsMbr(reward.winnerCount)
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: appId.address,
+    //       assetAmount: amount,
+    //       xferAsset: reward.asset
+    //     }),
+    //     reward
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:198
-    // receiver: Application(poolID).address,
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:175
+    // receiver: appId.address,
     dig 5
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:199
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:176
     // amount: this.rewardsMbr(reward.winnerCount)
     dig 6
     dup
@@ -979,26 +944,26 @@ addReward_after_if_else@9:
     dig 4
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:196-200
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:173-177
     // itxn.payment({
     //   sender,
-    //   receiver: Application(poolID).address,
+    //   receiver: appId.address,
     //   amount: this.rewardsMbr(reward.winnerCount)
     // }),
     intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:201-206
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:178-183
     // itxn.assetTransfer({
     //   sender,
-    //   assetReceiver: Application(poolID).address,
+    //   assetReceiver: appId.address,
     //   assetAmount: amount,
     //   xferAsset: reward.asset
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:203
-    // assetReceiver: Application(poolID).address,
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:180
+    // assetReceiver: appId.address,
     dig 1
     app_params_get AppAddress
     assert // application exists
@@ -1009,10 +974,10 @@ addReward_after_if_else@9:
     itxn_field AssetReceiver
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:201-206
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:178-183
     // itxn.assetTransfer({
     //   sender,
-    //   assetReceiver: Application(poolID).address,
+    //   assetReceiver: appId.address,
     //   assetAmount: amount,
     //   xferAsset: reward.asset
     // }),
@@ -1020,58 +985,52 @@ addReward_after_if_else@9:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:190-211
-    // abiCall(
-    //   Pool.prototype.addRewardAsa,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: this.rewardsMbr(reward.winnerCount)
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: Application(poolID).address,
-    //         assetAmount: amount,
-    //         xferAsset: reward.asset
-    //       }),
-    //       reward
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:169-187
+    // abiCall<typeof Pool.prototype.addRewardAsa>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: this.rewardsMbr(reward.winnerCount)
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: appId.address,
+    //       assetAmount: amount,
+    //       xferAsset: reward.asset
+    //     }),
+    //     reward
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:209
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:186
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 9
     dig 11
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:190-211
-    // abiCall(
-    //   Pool.prototype.addRewardAsa,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       itxn.payment({
-    //         sender,
-    //         receiver: Application(poolID).address,
-    //         amount: this.rewardsMbr(reward.winnerCount)
-    //       }),
-    //       itxn.assetTransfer({
-    //         sender,
-    //         assetReceiver: Application(poolID).address,
-    //         assetAmount: amount,
-    //         xferAsset: reward.asset
-    //       }),
-    //       reward
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:169-187
+    // abiCall<typeof Pool.prototype.addRewardAsa>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: appId.address,
+    //       amount: this.rewardsMbr(reward.winnerCount)
+    //     }),
+    //     itxn.assetTransfer({
+    //       sender,
+    //       assetReceiver: appId.address,
+    //       assetAmount: amount,
+    //       xferAsset: reward.asset
+    //     }),
+    //     reward
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x0f2fc312 // method "addRewardAsa(pay,axfer,(uint64,uint8,uint64,uint64,uint64,uint64,uint64,uint64,uint64[],(uint64,uint64,uint64),uint64,uint8,uint64,uint64,uint64,uint64))void"
     itxn_field ApplicationArgs
     uncover 3
@@ -1089,9 +1048,9 @@ addReward_after_if_else@9:
 
 // smart_contracts/arc58/plugins/pool/contract.algo.ts::PoolPlugin.finalizePool[routing]() -> void:
 finalizePool:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:215-222
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:191-198
     // finalizePool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   poolID: uint64,
     //   signupTimestamp: uint64,
@@ -1138,7 +1097,7 @@ finalizePool:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:223
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:199
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     dig 3
     app_params_get AppCreator
@@ -1147,7 +1106,7 @@ finalizePool:
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:223
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:199
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1155,16 +1114,16 @@ finalizePool:
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 5
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1172,40 +1131,34 @@ finalizePool:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:228-240
-    // abiCall(
-    //   Pool.prototype.finalize,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       signupTimestamp,
-    //       startTimestamp,
-    //       endTimestamp,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:203-212
+    // abiCall<typeof Pool.prototype.finalize>({
+    //   sender,
+    //   appId: poolID,
+    //   args: [
+    //     signupTimestamp,
+    //     startTimestamp,
+    //     endTimestamp,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:238
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:211
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 5
     uncover 6
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:228-240
-    // abiCall(
-    //   Pool.prototype.finalize,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       signupTimestamp,
-    //       startTimestamp,
-    //       endTimestamp,
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:203-212
+    // abiCall<typeof Pool.prototype.finalize>({
+    //   sender,
+    //   appId: poolID,
+    //   args: [
+    //     signupTimestamp,
+    //     startTimestamp,
+    //     endTimestamp,
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x181e8291 // method "finalize(uint64,uint64,uint64)void"
     itxn_field ApplicationArgs
     uncover 4
@@ -1221,9 +1174,9 @@ finalizePool:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:215-222
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:191-198
     // finalizePool(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   poolID: uint64,
     //   signupTimestamp: uint64,
@@ -1236,11 +1189,11 @@ finalizePool:
 
 // smart_contracts/arc58/plugins/pool/contract.algo.ts::PoolPlugin.enter[routing]() -> void:
 enter:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:243-249
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:215-221
     // enter(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
-    //   poolID: uint64,
+    //   appId: Application,
     //   entries: StakeEntry[],
     //   args: GateArgs
     // ): void {
@@ -1276,8 +1229,8 @@ enter:
     cover 3
     txna ApplicationArgs 5
     cover 3
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:250
-    // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:222
+    // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     dup
     app_params_get AppCreator
     assert // application exists
@@ -1285,24 +1238,24 @@ enter:
     // smart_contracts/arc58/plugins/pool/contract.algo.ts:24
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:250
-    // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:222
+    // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     uncover 2
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1311,7 +1264,7 @@ enter:
     pop
     dup
     cover 3
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:256
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:227
     // let total: uint64 = entryMBR * entries.length
     uncover 2
     intc_0 // 0
@@ -1319,15 +1272,12 @@ enter:
     pushint 50600 // 50600
     *
     cover 2
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:258-265
-    // const isEntered = abiCall(
-    //   Pool.prototype.isEntered,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [ new Address(sender) ]
-    //   }
-    // ).returnValue
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:229-233
+    // const isEntered = abiCall<typeof Pool.prototype.isEntered>({
+    //   sender,
+    //   appId,
+    //   args: [new Address(sender)]
+    // }).returnValue
     itxn_begin
     pushbytes 0xe3377342 // method "isEntered(address)bool"
     itxn_field ApplicationArgs
@@ -1345,40 +1295,42 @@ enter:
     extract 4 0
     swap
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 4 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
     intc_0 // 0
     getbit
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:267
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:235
     // if (!isEntered) {
     bnz enter_after_if_else@4
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:268
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:236
     // total += PoolUniquesMBR
     pushint 18900 // 18900
     +
 
 enter_after_if_else@4:
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:273
-    // receiver: Application(poolID).address,
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:241
+    // receiver: appId.address,
     dig 4
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:277-289
-    // abiCall(
-    //   Pool.prototype.enter,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       mbrPayment,
-    //       entries,
-    //       args
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:245-254
+    // abiCall<typeof Pool.prototype.enter>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     mbrPayment,
+    //     entries,
+    //     args
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_begin
     uncover 2
     itxn_field Amount
@@ -1386,50 +1338,44 @@ enter_after_if_else@4:
     dig 1
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:271-275
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:239-243
     // const mbrPayment = itxn.payment({
     //   sender,
-    //   receiver: Application(poolID).address,
+    //   receiver: appId.address,
     //   amount: total
     // })
     intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:277-289
-    // abiCall(
-    //   Pool.prototype.enter,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       mbrPayment,
-    //       entries,
-    //       args
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:245-254
+    // abiCall<typeof Pool.prototype.enter>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     mbrPayment,
+    //     entries,
+    //     args
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     itxn_next
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:287
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:253
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 6
     dig 8
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:277-289
-    // abiCall(
-    //   Pool.prototype.enter,
-    //   {
-    //     sender,
-    //     appId: poolID,
-    //     args: [
-    //       mbrPayment,
-    //       entries,
-    //       args
-    //     ],
-    //     rekeyTo: rekeyAddress(rekeyBack, wallet)
-    //   }
-    // )
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:245-254
+    // abiCall<typeof Pool.prototype.enter>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     mbrPayment,
+    //     entries,
+    //     args
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
     pushbytes 0x68558c70 // method "enter(pay,(uint64,uint64,byte[32][])[],byte[][])void"
     itxn_field ApplicationArgs
     dig 5
@@ -1444,11 +1390,11 @@ enter_after_if_else@4:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/pool/contract.algo.ts:243-249
+    // smart_contracts/arc58/plugins/pool/contract.algo.ts:215-221
     // enter(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
-    //   poolID: uint64,
+    //   appId: Application,
     //   entries: StakeEntry[],
     //   args: GateArgs
     // ): void {
@@ -1456,10 +1402,10 @@ enter_after_if_else@4:
     return
 
 
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.update[routing]() -> void:
-update:
-    // smart_contracts/utils/base-contracts/factory.ts:71
-    // @abimethod({ allowActions: ['UpdateApplication'] })
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.initBoxedContract[routing]() -> void:
+initBoxedContract:
+    // smart_contracts/utils/base-contracts/factory.ts:41
+    // initBoxedContract(version: string, size: uint64): void {
     txna ApplicationArgs 1
     dup
     intc_0 // 0
@@ -1473,6 +1419,291 @@ update:
     extract 2 0
     txna ApplicationArgs 2
     dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    swap
+    // smart_contracts/utils/base-contracts/factory.ts:33
+    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
+    pushbytes "child_contract_version"
+    // smart_contracts/utils/base-contracts/factory.ts:42
+    // this.childContractVersion.value = version
+    swap
+    app_global_put
+    // smart_contracts/utils/base-contracts/factory.ts:37
+    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
+    bytec_3 // "bc"
+    // smart_contracts/utils/base-contracts/factory.ts:43
+    // if (!this.boxedContract.exists) {
+    box_len
+    bury 1
+    bnz initBoxedContract_else_body@3
+    // smart_contracts/utils/base-contracts/factory.ts:44
+    // assert(Txn.sender === Global.creatorAddress, ERR_NOT_AKITA_DAO)
+    txn Sender
+    global CreatorAddress
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/factory.ts:37
+    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
+    bytec_3 // "bc"
+    // smart_contracts/utils/base-contracts/factory.ts:45
+    // this.boxedContract.create({ size })
+    swap
+    box_create
+    pop
+
+initBoxedContract_after_if_else@4:
+    // smart_contracts/utils/base-contracts/factory.ts:41
+    // initBoxedContract(version: string, size: uint64): void {
+    intc_1 // 1
+    return
+
+initBoxedContract_else_body@3:
+    // smart_contracts/utils/base-contracts/factory.ts:47
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/utils/base-contracts/factory.ts:47
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/factory.ts:37
+    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
+    bytec_3 // "bc"
+    // smart_contracts/utils/base-contracts/factory.ts:48
+    // this.boxedContract.resize(size)
+    swap
+    box_resize
+    b initBoxedContract_after_if_else@4
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.loadBoxedContract[routing]() -> void:
+loadBoxedContract:
+    // smart_contracts/utils/base-contracts/factory.ts:52
+    // loadBoxedContract(offset: uint64, data: bytes): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
+    extract 2 0
+    // smart_contracts/utils/base-contracts/factory.ts:53
+    // const txn = gtxn.Transaction(0)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:55
+    // txn.type === TransactionType.ApplicationCall
+    gtxns TypeEnum
+    intc_3 // 6
+    ==
+    // smart_contracts/utils/base-contracts/factory.ts:55-56
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz loadBoxedContract_bool_false@8
+    // smart_contracts/utils/base-contracts/factory.ts:53
+    // const txn = gtxn.Transaction(0)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:56
+    // && txn.appId === Global.currentApplicationId
+    gtxns ApplicationID
+    global CurrentApplicationID
+    ==
+    // smart_contracts/utils/base-contracts/factory.ts:55-56
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz loadBoxedContract_bool_false@8
+    // smart_contracts/utils/base-contracts/factory.ts:53
+    // const txn = gtxn.Transaction(0)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:57
+    // && txn.numAppArgs === 3
+    gtxns NumAppArgs
+    pushint 3 // 3
+    ==
+    // smart_contracts/utils/base-contracts/factory.ts:55-57
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 3
+    bz loadBoxedContract_bool_false@8
+    // smart_contracts/utils/base-contracts/factory.ts:53
+    // const txn = gtxn.Transaction(0)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:58
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    gtxns OnCompletion
+    // smart_contracts/utils/base-contracts/factory.ts:55-58
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 3
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    bnz loadBoxedContract_bool_false@8
+    // smart_contracts/utils/base-contracts/factory.ts:53
+    // const txn = gtxn.Transaction(0)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:59
+    // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    dup
+    gtxnsas ApplicationArgs
+    bytec 5 // method "initBoxedContract(string,uint64)void"
+    ==
+    // smart_contracts/utils/base-contracts/factory.ts:55-59
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 3
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    bz loadBoxedContract_bool_false@8
+    // smart_contracts/utils/base-contracts/factory.ts:53
+    // const txn = gtxn.Transaction(0)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/factory.ts:60
+    // && txn.sender === Txn.sender
+    gtxns Sender
+    txn Sender
+    ==
+    // smart_contracts/utils/base-contracts/factory.ts:55-60
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 3
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    // && txn.sender === Txn.sender
+    bz loadBoxedContract_bool_false@8
+    intc_1 // 1
+
+loadBoxedContract_bool_merge@9:
+    // smart_contracts/utils/base-contracts/factory.ts:54-61
+    // assert((
+    //   txn.type === TransactionType.ApplicationCall
+    //   && txn.appId === Global.currentApplicationId
+    //   && txn.numAppArgs === 3
+    //   && txn.onCompletion === OnCompleteAction.NoOp
+    //   && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    //   && txn.sender === Txn.sender
+    // ), ERR_INVALID_CALL_ORDER)
+    assert // Invalid call order
+    // smart_contracts/utils/base-contracts/factory.ts:37
+    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
+    bytec_3 // "bc"
+    // smart_contracts/utils/base-contracts/factory.ts:62
+    // assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
+    box_len
+    bury 1
+    assert // Contract not set
+    // smart_contracts/utils/base-contracts/factory.ts:37
+    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
+    bytec_3 // "bc"
+    // smart_contracts/utils/base-contracts/factory.ts:63
+    // this.boxedContract.replace(offset, data)
+    dig 2
+    dig 2
+    box_replace
+    // smart_contracts/utils/base-contracts/factory.ts:52
+    // loadBoxedContract(offset: uint64, data: bytes): void {
+    intc_1 // 1
+    return
+
+loadBoxedContract_bool_false@8:
+    intc_0 // 0
+    b loadBoxedContract_bool_merge@9
+
+
+// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.deleteBoxedContract[routing]() -> void:
+deleteBoxedContract:
+    // smart_contracts/utils/base-contracts/factory.ts:67
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/utils/base-contracts/factory.ts:67
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/factory.ts:37
+    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
+    bytec_3 // "bc"
+    // smart_contracts/utils/base-contracts/factory.ts:68
+    // this.boxedContract.delete()
+    box_del
+    pop
+    // smart_contracts/utils/base-contracts/factory.ts:66
+    // deleteBoxedContract(): void {
+    intc_1 // 1
+    return
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseFeeGeneratorContract.updateAkitaDAOEscrow[routing]() -> void:
+updateAkitaDAOEscrow:
+    // smart_contracts/utils/base-contracts/base.ts:94
+    // updateAkitaDAOEscrow(app: Application): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:95
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_1 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:95
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:42
+    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
+    bytec 7 // "akita_escrow"
+    // smart_contracts/utils/base-contracts/base.ts:96
+    // this.akitaDAOEscrow.value = app
+    swap
+    app_global_put
+    // smart_contracts/utils/base-contracts/base.ts:94
+    // updateAkitaDAOEscrow(app: Application): void {
+    intc_1 // 1
+    return
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
+update:
+    // smart_contracts/utils/base-contracts/base.ts:23
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txna ApplicationArgs 1
+    dup
     intc_0 // 0
     extract_uint16
     pushint 2 // 2
@@ -1482,14 +1713,14 @@ update:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    // smart_contracts/utils/base-contracts/factory.ts:73
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:73
+    bytec_1 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1497,30 +1728,23 @@ update:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:32
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
-    // smart_contracts/utils/base-contracts/factory.ts:74
+    bytec 6 // "version"
+    // smart_contracts/utils/base-contracts/base.ts:26
     // this.version.value = newVersion
-    uncover 2
-    app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:38
-    // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
-    pushbytes "child_contract_version"
-    // smart_contracts/utils/base-contracts/factory.ts:75
-    // this.childContractVersion.value = newChildVersion
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:71
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_1 // 1
     return
 
 
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAO[routing]() -> void:
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/factory.ts:80
-    // updateAkitaDAO(app: uint64): void {
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
     len
@@ -1528,14 +1752,14 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/factory.ts:81
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:81
+    bytec_1 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1543,54 +1767,15 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:34
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:82
-    // this.akitaDAO.value = Application(app)
+    bytec_1 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:33
+    // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:80
-    // updateAkitaDAO(app: uint64): void {
-    intc_1 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/factory.ts::FactoryContract.updateAkitaDAOEscrow[routing]() -> void:
-updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/factory.ts:85
-    // updateAkitaDAOEscrow(app: uint64): void {
-    txna ApplicationArgs 1
-    dup
-    len
-    intc_2 // 8
-    ==
-    assert // invalid number of bytes for uint64
-    btoi
-    // smart_contracts/utils/base-contracts/factory.ts:86
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:34
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:86
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_global_get_ex
-    assert // check GlobalState exists
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:36
-    // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    bytec 5 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/factory.ts:87
-    // this.akitaDAOEscrow.value = Application(app)
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:85
-    // updateAkitaDAOEscrow(app: uint64): void {
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
     intc_1 // 1
     return
 
@@ -1637,7 +1822,7 @@ mbr:
     concat
     // smart_contracts/pool/base.ts:13
     // @abimethod({ readonly: true })
-    bytec_3 // 0x151f7c75
+    bytec 4 // 0x151f7c75
     swap
     concat
     log

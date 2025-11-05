@@ -1,56 +1,62 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 92 2
+    intcblock 1 0 92 2
     bytecblock "akita_dao" 0x151f7c75 "registry_cursor" "version"
     txn ApplicationID
     bnz main_after_if_else@2
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:28
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:27
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    intc_1 // 1
+    intc_0 // 1
     app_global_put
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:30
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:29
     // registrationShape = GlobalState<string>({ initialValue: '(address,uint64,uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
     pushbytess "registration_shape" "(address,uint64,uint8,uint64)" // "registration_shape", "(address,uint64,uint8,uint64)"
     app_global_put
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:32
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:31
     // checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
     pushbytess "check_shape" "" // "check_shape", ""
     app_global_put
 
 main_after_if_else@2:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:24
-    // export class SubscriptionStreakGate extends AkitaBaseContract implements SubGateInterface {
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:23
+    // export class SubscriptionStreakGate extends AkitaBaseContract {
     pushbytes 0xea9180dd // method "update(string)void"
     txna ApplicationArgs 0
     match main_update_route@4
 
 main_switch_case_next@5:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:24
-    // export class SubscriptionStreakGate extends AkitaBaseContract implements SubGateInterface {
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:23
+    // export class SubscriptionStreakGate extends AkitaBaseContract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@14
-    pushbytess 0x329f04ee 0x77bb79b9 0x6e03f50a 0x2796e97b 0x90d4fa5d 0x33e92c94 // method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)", method "getEntry(uint64)byte[]", method "updateAkitaDAO(uint64)void"
+    bz main_create_NoOp@15
+    pushbytess 0x329f04ee 0x77bb79b9 0x6e03f50a 0x2796e97b 0x90d4fa5d 0x33e92c94 0x854dede0 // method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)", method "getEntry(uint64)byte[]", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match cost register check getRegistrationShape getEntry updateAkitaDAO
+    match cost register check getRegistrationShape getEntry updateAkitaDAO main_opUp_route@13
     err
 
-main_create_NoOp@14:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:24
-    // export class SubscriptionStreakGate extends AkitaBaseContract implements SubGateInterface {
+main_opUp_route@13:
+    // smart_contracts/utils/base-contracts/base.ts:36
+    // opUp(): void { }
+    intc_0 // 1
+    return
+
+main_create_NoOp@15:
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:23
+    // export class SubscriptionStreakGate extends AkitaBaseContract {
     pushbytes 0xcd9ad67e // method "create(string,uint64)void"
     txna ApplicationArgs 0
     match create
     err
 
 main_update_route@4:
-    // smart_contracts/utils/base-contracts/base.ts:18
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -63,11 +69,11 @@ main_update_route@4:
 
 // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.create[routing]() -> void:
 create:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:85
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:81
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint16
     intc_3 // 2
     +
@@ -83,33 +89,33 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:12
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:87
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:83
     // this.version.value = version
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:88
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:84
     // this.akitaDAO.value = Application(akitaDAO)
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:85
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:81
     // @abimethod({ onCreate: 'require' })
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.cost[routing]() -> void:
 cost:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:93
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:89
     // cost(args: bytes): uint64 {
     txna ApplicationArgs 1
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint16
     intc_3 // 2
     +
@@ -119,25 +125,25 @@ cost:
     assert // invalid number of bytes for (len+uint8[])
     pushbytes 0x151f7c7500000000000062d4
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.register[routing]() -> void:
 register:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:97
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:93
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     txn GroupIndex
-    intc_1 // 1
+    intc_0 // 1
     -
     dup
     gtxns TypeEnum
-    intc_1 // pay
+    intc_0 // pay
     ==
     assert // transaction type is pay
     txna ApplicationArgs 1
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint16
     intc_3 // 2
     +
@@ -146,14 +152,14 @@ register:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:94
     // assert(args.length === RegisterByteLength, ERR_INVALID_ARG_COUNT)
     dup
     len
     pushint 49 // 49
     ==
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:99-106
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:95-102
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -164,10 +170,10 @@ register:
     // )
     dig 1
     gtxns Receiver
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:102
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:98
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:99-106
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:95-102
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -179,10 +185,10 @@ register:
     ==
     uncover 2
     gtxns Amount
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:103
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:99
     // amount: SubscriptionStreakGateRegistryMBR,
     pushint 25300 // 25300
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:99-106
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:95-102
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -194,47 +200,47 @@ register:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:41
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:40
     // const id = this.registryCursor.value
-    intc_0 // 0
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:28
+    intc_1 // 0
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:27
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:41
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:40
     // const id = this.registryCursor.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:42
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:41
     // this.registryCursor.value += 1
     dup
-    intc_1 // 1
+    intc_0 // 1
     +
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:28
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:27
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:42
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:41
     // this.registryCursor.value += 1
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:109
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:105
     // this.registry(id).value = decodeArc4<SubscriptionStreakGateRegistryInfo>(args)
     itob
     dup
     uncover 2
     box_put
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:97
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:93
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     bytec_1 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.check[routing]() -> void:
 check:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:113
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:109
     // check(caller: Address, registryID: uint64, args: bytes): boolean {
     txna ApplicationArgs 1
     dup
@@ -251,7 +257,7 @@ check:
     btoi
     txna ApplicationArgs 3
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint16
     intc_3 // 2
     +
@@ -260,12 +266,12 @@ check:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:114
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:110
     // assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     len
     !
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:115
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:111
     // const { merchant, id, op, streak } = clone(this.registry(registryID).value)
     itob
     box_get
@@ -281,42 +287,36 @@ check:
     pushint 41 // 41
     extract_uint64
     cover 3
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:53-59
-    // const info = abiCall(
-    //   Subscriptions.prototype.getSubscriptionInfo,
-    //   {
-    //     appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-    //     args: [address, id],
-    //   }
-    // ).returnValue
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:52-55
+    // const info = abiCall<typeof Subscriptions.prototype.getSubscriptionInfo>({
+    //   appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
+    //   args: [address, id],
+    // }).returnValue
     itxn_begin
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:56
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:53
     // appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    intc_1 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:56
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:53
     // appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:29
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:56
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:53
     // appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
     pushint 32 // 32
     extract_uint64
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:53-59
-    // const info = abiCall(
-    //   Subscriptions.prototype.getSubscriptionInfo,
-    //   {
-    //     appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-    //     args: [address, id],
-    //   }
-    // ).returnValue
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:52-55
+    // const info = abiCall<typeof Subscriptions.prototype.getSubscriptionInfo>({
+    //   appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
+    //   args: [address, id],
+    // }).returnValue
     pushbytes 0x4015b840 // method "getSubscriptionInfo(address,uint64)(address,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address[])"
     itxn_field ApplicationArgs
     uncover 3
@@ -325,7 +325,7 @@ check:
     itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
     itxn_submit
     itxn LastLog
@@ -336,13 +336,13 @@ check:
     bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:61
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:57
     // const toMerchant = info.recipient === merchant
     dup
     extract 4 32
     uncover 2
     ==
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:64
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:60
     // Global.latestTimestamp - (((Global.latestTimestamp - info.startDate) % info.interval) + info.interval)
     global LatestTimestamp
     dup
@@ -358,40 +358,40 @@ check:
     %
     +
     -
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:66
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:62
     // const notStale = info.lastPayment > lastWindowStart
     uncover 2
     pushint 84 // 84
     extract_uint64
     <
     swap
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:68
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:64
     // if (!(toMerchant && notStale)) {
     bz check_if_body@3
     dup
     bnz check_after_if_else@4
 
 check_if_body@3:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:69
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:65
     // return false
-    intc_0 // 0
+    intc_1 // 0
 
 check_after_inlined_smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.subscriptionStreakGate@17:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:113
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:109
     // check(caller: Address, registryID: uint64, args: bytes): boolean {
     pushbytes 0x00
-    intc_0 // 0
+    intc_1 // 0
     uncover 2
     setbit
     bytec_1 // 0x151f7c75
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 check_after_if_else@4:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:73
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:69
     // case Equal: return info.streak === streak
     dig 3
     pushbytes 0x0a
@@ -402,7 +402,7 @@ check_after_if_else@4:
     extract_uint64
     dig 3
     ==
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:116-122
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:112-118
     // return this.subscriptionStreakGate(
     //   caller,
     //   merchant,
@@ -413,7 +413,7 @@ check_after_if_else@4:
     b check_after_inlined_smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.subscriptionStreakGate@17
 
 check_after_if_else@6:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:74
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:70
     // case NotEqual: return info.streak !== streak
     dig 3
     pushbytes 0x14
@@ -424,7 +424,7 @@ check_after_if_else@6:
     extract_uint64
     dig 3
     !=
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:116-122
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:112-118
     // return this.subscriptionStreakGate(
     //   caller,
     //   merchant,
@@ -435,7 +435,7 @@ check_after_if_else@6:
     b check_after_inlined_smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.subscriptionStreakGate@17
 
 check_after_if_else@8:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:75
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:71
     // case LessThan: return info.streak < streak
     dig 3
     pushbytes 0x1e
@@ -446,7 +446,7 @@ check_after_if_else@8:
     extract_uint64
     dig 3
     <
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:116-122
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:112-118
     // return this.subscriptionStreakGate(
     //   caller,
     //   merchant,
@@ -457,7 +457,7 @@ check_after_if_else@8:
     b check_after_inlined_smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.subscriptionStreakGate@17
 
 check_after_if_else@10:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:76
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:72
     // case LessThanOrEqualTo: return info.streak <= streak
     dig 3
     pushbytes 0x28
@@ -468,7 +468,7 @@ check_after_if_else@10:
     extract_uint64
     dig 3
     <=
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:116-122
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:112-118
     // return this.subscriptionStreakGate(
     //   caller,
     //   merchant,
@@ -479,7 +479,7 @@ check_after_if_else@10:
     b check_after_inlined_smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.subscriptionStreakGate@17
 
 check_after_if_else@12:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:77
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:73
     // case GreaterThan: return info.streak > streak
     dig 3
     pushbytes 0x32
@@ -490,7 +490,7 @@ check_after_if_else@12:
     extract_uint64
     dig 3
     >
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:116-122
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:112-118
     // return this.subscriptionStreakGate(
     //   caller,
     //   merchant,
@@ -501,7 +501,7 @@ check_after_if_else@12:
     b check_after_inlined_smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.subscriptionStreakGate@17
 
 check_after_if_else@14:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:78
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:74
     // case GreaterThanOrEqualTo: return info.streak >= streak
     dig 3
     pushbytes 0x3c
@@ -512,7 +512,7 @@ check_after_if_else@14:
     extract_uint64
     dig 3
     >=
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:116-122
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:112-118
     // return this.subscriptionStreakGate(
     //   caller,
     //   merchant,
@@ -523,10 +523,10 @@ check_after_if_else@14:
     b check_after_inlined_smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.subscriptionStreakGate@17
 
 check_after_if_else@16:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:79
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:75
     // default: return false
-    intc_0 // 0
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:116-122
+    intc_1 // 0
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:112-118
     // return this.subscriptionStreakGate(
     //   caller,
     //   merchant,
@@ -539,7 +539,7 @@ check_after_if_else@16:
 
 // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.getRegistrationShape[routing]() -> void:
 getRegistrationShape:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:125
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:121
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -551,13 +551,13 @@ getRegistrationShape:
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts::SubscriptionStreakGate.getEntry[routing]() -> void:
 getEntry:
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:130
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:126
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -566,12 +566,12 @@ getEntry:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:132
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:128
     // return encodeArc4(this.registry(registryID).value)
     itob
     box_get
     assert // Box must have value
-    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:130
+    // smart_contracts/gates/sub-gates/subscription-streak/contract.algo.ts:126
     // @abimethod({ readonly: true })
     dup
     len
@@ -583,17 +583,17 @@ getEntry:
     swap
     concat
     log
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:18
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txna ApplicationArgs 1
     dup
-    intc_0 // 0
+    intc_1 // 0
     extract_uint16
     intc_3 // 2
     +
@@ -602,14 +602,14 @@ update:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    intc_1 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:20
+    // smart_contracts/utils/base-contracts/base.ts:25
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -617,23 +617,23 @@ update:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:12
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec_3 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:21
+    // smart_contracts/utils/base-contracts/base.ts:26
     // this.version.value = newVersion
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:18
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
     len
@@ -641,14 +641,14 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
+    intc_1 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:32
     // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -656,14 +656,14 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:28
-    // this.akitaDAO.value = Application(app)
+    // smart_contracts/utils/base-contracts/base.ts:33
+    // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
-    intc_1 // 1
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
+    intc_0 // 1
     return

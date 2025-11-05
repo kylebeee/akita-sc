@@ -1,5 +1,6 @@
 import {
   abimethod,
+  Account,
   Application,
   assert,
   assertMatch,
@@ -12,20 +13,20 @@ import {
 } from '@algorandfoundation/algorand-typescript'
 import { classes } from 'polytype'
 import { abiCall, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ServiceFactoryContract } from '../utils/base-contracts/factory'
+import { FactoryContract } from '../utils/base-contracts/factory'
 import { Raffle } from './contract.algo'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
 import { PrizeBox } from '../prize-box/contract.algo'
 import { BaseRaffle } from './base'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
-import { fmbr, getNFTFees, getPrizeBoxOwner, royalties } from '../utils/functions'
+import { getFunder, getNFTFees, getPrizeBoxOwner, royalties } from '../utils/functions'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { ERR_APP_CREATOR_NOT_FOUND, ERR_NOT_A_RAFFLE } from './errors'
+import { ERR_NOT_A_RAFFLE } from './errors'
 import { Proof } from '../utils/types/merkles'
 
 export class RaffleFactory extends classes(
   BaseRaffle,
-  ServiceFactoryContract,
+  FactoryContract,
   ContractWithOptIn
 ) {
 
@@ -34,7 +35,7 @@ export class RaffleFactory extends classes(
   private createChildApp(
     isPrizeBox: boolean,
     payment: gtxn.PaymentTxn,
-    prizeID: uint64,
+    prizeID: uint64, // Asset or Prize Box Application
     ticketAsset: uint64,
     startTimestamp: uint64,
     endTimestamp: uint64,
@@ -42,7 +43,8 @@ export class RaffleFactory extends classes(
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
-    marketplace: Address
+    marketplace: Account,
+    weightsListCount: uint64
   ): Application {
 
     const isAlgoTicket = ticketAsset === 0
@@ -53,9 +55,9 @@ export class RaffleFactory extends classes(
       )
     )
 
-    const fcosts = fmbr()
-
+    const costs = this.mbr()
     const childAppMBR: uint64 = Global.minBalance + optinMBR
+    const weightsMBR: uint64 = (weightsListCount * costs.weights)
     const fees = getNFTFees(this.akitaDAO.value)
 
     const raffle = compileArc4(Raffle)
@@ -65,8 +67,8 @@ export class RaffleFactory extends classes(
       MAX_PROGRAM_PAGES +
       (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
       (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
-      fcosts.appCreators +
-      childAppMBR
+      childAppMBR +
+      weightsMBR
     )
 
     assertMatch(
@@ -85,7 +87,7 @@ export class RaffleFactory extends classes(
       })
       .submit()
 
-    const raffleApp = raffle.call
+    const appId = raffle.call
       .create({
         args: [
           prizeID,
@@ -94,6 +96,7 @@ export class RaffleFactory extends classes(
           startTimestamp,
           endTimestamp,
           new Address(Txn.sender),
+          { account: payment.sender, amount: totalMBR },
           creatorRoyalty,
           minTickets,
           maxTickets,
@@ -106,17 +109,12 @@ export class RaffleFactory extends classes(
       .itxn
       .createdApp
 
-    this.appCreators(raffleApp.id).value = {
-      creator: payment.sender,
-      amount: (totalMBR - fees.raffleCreationFee),
-    }
-
     if (!isAlgoTicket) {
       raffle.call.optin({
-        appId: raffleApp,
+        appId,
         args: [
           itxn.payment({
-            receiver: raffleApp.address,
+            receiver: appId.address,
             amount: Global.assetOptInMinBalance,
           }),
           ticketAsset,
@@ -124,7 +122,18 @@ export class RaffleFactory extends classes(
       })
     }
 
-    return raffleApp
+    abiCall<typeof Raffle.prototype.init>({
+      appId,
+      args: [
+        itxn.payment({
+          receiver: appId.address,
+          amount: weightsMBR,
+        }),
+        weightsListCount,
+      ],
+    })
+
+    return appId
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -148,12 +157,13 @@ export class RaffleFactory extends classes(
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
     name: string,
-    proof: Proof
+    proof: Proof,
+    weightsListCount: uint64
   ): uint64 {
 
-    // make sure they actually sent the asset they want to raffle
+    // make sure they actually sent the asset(s) they want to raffle
     assertMatch(
       assetXfer,
       {
@@ -176,7 +186,8 @@ export class RaffleFactory extends classes(
       minTickets,
       maxTickets,
       gateID,
-      marketplace
+      marketplace,
+      weightsListCount
     )
 
     const raffle = compileArc4(Raffle)
@@ -207,22 +218,23 @@ export class RaffleFactory extends classes(
 
   newPrizeBoxRaffle(
     payment: gtxn.PaymentTxn,
-    prizeBoxID: uint64,
+    prizeBox: Application,
     ticketAsset: uint64,
     startTimestamp: uint64,
     endTimestamp: uint64,
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
-    marketplace: Address
+    marketplace: Account,
+    weightsListCount: uint64
   ): uint64 {
 
-    assert(getPrizeBoxOwner(this.akitaDAO.value, Application(prizeBoxID)) === Global.currentApplicationAddress, ERR_NOT_PRIZE_BOX_OWNER)
+    assert(getPrizeBoxOwner(this.akitaDAO.value, prizeBox) === Global.currentApplicationAddress, ERR_NOT_PRIZE_BOX_OWNER)
 
     const raffleApp = this.createChildApp(
       true,
       payment,
-      prizeBoxID,
+      prizeBox.id,
       ticketAsset,
       startTimestamp,
       endTimestamp,
@@ -230,64 +242,43 @@ export class RaffleFactory extends classes(
       minTickets,
       maxTickets,
       gateID,
-      marketplace
+      marketplace,
+      weightsListCount
     )
-
-    abiCall(PrizeBox.prototype.transfer, {
-      appId: prizeBoxID,
-      args: [new Address(raffleApp.address)],
-    })
-
-    return raffleApp.id
-  }
-
-  initRaffle(payment: gtxn.PaymentTxn, raffleID: uint64, weightsListCount: uint64): void {
-    assert(Application(raffleID).creator === Global.currentApplicationAddress, ERR_NOT_A_RAFFLE)
-    assert(this.appCreators(raffleID).exists, ERR_APP_CREATOR_NOT_FOUND)
 
     const costs = this.mbr()
     const childAppMBR: uint64 = (weightsListCount * costs.weights)
 
-    assertMatch(
-      payment,
-      {
-        sender: this.appCreators(raffleID).value.creator,
-        receiver: Global.currentApplicationAddress,
-        amount: childAppMBR,
-      },
-      ERR_INVALID_PAYMENT
-    )
-
-    const raffle = compileArc4(Raffle)
-
-    raffle.call.init({
-      appId: raffleID,
+    abiCall<typeof Raffle.prototype.init>({
+      appId: raffleApp,
       args: [
         itxn.payment({
-          receiver: Application(raffleID).address,
+          receiver: raffleApp.address,
           amount: childAppMBR,
         }),
         weightsListCount,
       ],
     })
 
-    this.appCreators(raffleID).value.amount += childAppMBR
+    abiCall<typeof PrizeBox.prototype.transfer>({
+      appId: prizeBox.id,
+      args: [raffleApp.address],
+    })
+
+    return raffleApp.id
   }
 
-  deleteRaffle(raffleID: uint64): void {
+  deleteRaffle(appId: Application): void {
+    assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_A_RAFFLE)
 
-    const raffle = compileArc4(Raffle)
+    abiCall<typeof Raffle.prototype.deleteApplication>({
+      appId
+    })
 
-    raffle.call.deleteApplication({ appId: raffleID })
-
-    const { amount, creator } = this.appCreators(raffleID).value
-    this.appCreators(raffleID).delete()
+    const { account: receiver, amount } = getFunder(appId)
 
     itxn
-      .payment({
-        amount,
-        receiver: creator,
-      })
+      .payment({ amount, receiver })
       .submit()
   }
 

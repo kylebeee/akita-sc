@@ -7,12 +7,11 @@ import { CreateAssetParams } from "./types";
 export class AsaMintPlugin extends Contract {
 
   mint(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     assets: CreateAssetParams[],
     mbrPayment: gtxn.PaymentTxn
   ): uint64[] {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
     assertMatch(

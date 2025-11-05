@@ -11,16 +11,17 @@ import {
   NotEqual,
 } from '../../../utils/operators'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { AkitaSocial } from '../../../social/contract.algo'
 import { getAkitaAppList } from '../../../utils/functions'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import type { AkitaSocial } from '../../../social/contract.algo'
 
 /** [op: 1][value: 8] */
 const RegisterByteLength = 9
 
-export class SocialFollowerCountGate extends AkitaBaseContract implements SubGateInterface {
+export class SocialFollowerCountGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -45,13 +46,10 @@ export class SocialFollowerCountGate extends AkitaBaseContract implements SubGat
 
   private followerCountGate(user: Address, op: Operator, value: uint64): boolean {
 
-    const meta = abiCall(
-      AkitaSocial.prototype.getMeta,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).impact,
-        args: [user],
-      }
-    ).returnValue
+    const meta = abiCall<typeof AkitaSocial.prototype.getMeta>({
+      appId: getAkitaAppList(this.akitaDAO.value).impact,
+      args: [user],
+    }).returnValue
 
     switch (op) {
       case Equal: return meta.followerCount === value

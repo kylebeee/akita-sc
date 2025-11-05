@@ -3,7 +3,7 @@ import { Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { StakingType } from '../staking/types'
 import { RootKey } from '../meta-merkles/types'
 import { Proof } from '../utils/types/merkles'
-import { GateArgs } from '../utils/types/gates'
+import { GateArgs } from '../gates/types'
 
 export type PoolStatus = Uint8
 export type DistributionType = Uint8

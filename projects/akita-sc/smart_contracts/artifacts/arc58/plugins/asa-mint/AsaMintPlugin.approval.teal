@@ -1,4 +1,4 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
@@ -16,7 +16,7 @@ main:
 main_mint_route@3:
     // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:9-14
     // mint(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   assets: CreateAssetParams[],
     //   mbrPayment: gtxn.PaymentTxn
@@ -47,7 +47,7 @@ mint:
     dupn 3
     // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:9-14
     // mint(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   assets: CreateAssetParams[],
     //   mbrPayment: gtxn.PaymentTxn
@@ -80,16 +80,16 @@ mint:
     intc_1 // pay
     ==
     assert // transaction type is pay
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -98,7 +98,7 @@ mint:
     pop
     dup
     cover 3
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:18-25
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:17-24
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -112,7 +112,7 @@ mint:
     ==
     swap
     gtxns Amount
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:22
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:21
     // amount: Global.assetCreateMinBalance * assets.length
     global AssetCreateMinBalance
     uncover 3
@@ -121,7 +121,7 @@ mint:
     dup
     cover 4
     *
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:18-25
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:17-24
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -133,21 +133,21 @@ mint:
     ==
     &&
     assert // invalid payment
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:26
     // let assetsCreated: uint64[] = [];
     pushbytes 0x0000
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:28
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:27
     // for (let i: uint64 = 0; i < assets.length; i++) {
     intc_0 // 0
 
 mint_while_top@2:
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:28
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:27
     // for (let i: uint64 = 0; i < assets.length; i++) {
     dup
     dig 3
     <
     bz mint_after_while@8
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:40
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:39
     // } = assets[i];
     dig 4
     extract 2 0
@@ -230,7 +230,7 @@ mint_while_top@2:
     substring3
     extract 2 0
     bury 14
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:42-57
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:41-56
     // const createTxn = itxn
     //   .assetConfig({
     //     sender,
@@ -248,7 +248,7 @@ mint_while_top@2:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:55
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:54
     // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     intc_1 // 1
     -
@@ -280,7 +280,7 @@ mint_ternary_merge@6:
     itxn_field ConfigAssetName
     dig 3
     itxn_field Sender
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:42-56
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:41-55
     // const createTxn = itxn
     //   .assetConfig({
     //     sender,
@@ -300,7 +300,7 @@ mint_ternary_merge@6:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:42-57
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:41-56
     // const createTxn = itxn
     //   .assetConfig({
     //     sender,
@@ -319,7 +319,7 @@ mint_ternary_merge@6:
     //   .submit()
     itxn_submit
     itxn CreatedAssetID
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:59
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:58
     // assetsCreated.push(createTxn.createdAsset.id);
     itob
     dig 2
@@ -347,7 +347,7 @@ mint_ternary_false@5:
     // smart_contracts/utils/functions.ts:291
     // return Global.zeroAddress
     global ZeroAddress
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:55
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:54
     // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     b mint_ternary_merge@6
 
@@ -357,14 +357,14 @@ mint_after_if_else@11:
     dig 6
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:55
+    // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:54
     // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     b mint_ternary_merge@6
 
 mint_after_while@8:
     // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:9-14
     // mint(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   assets: CreateAssetParams[],
     //   mbrPayment: gtxn.PaymentTxn

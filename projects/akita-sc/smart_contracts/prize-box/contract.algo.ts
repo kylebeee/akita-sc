@@ -73,9 +73,9 @@ export class PrizeBox extends Contract {
     this.optinCount.value += 1
   }
 
-  transfer(newOwner: Address): void {
+  transfer(newOwner: Account): void {
     assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
-    this.owner.value = newOwner.native
+    this.owner.value = newOwner
   }
 
   withdraw(assets: AssetInfo[]): void {

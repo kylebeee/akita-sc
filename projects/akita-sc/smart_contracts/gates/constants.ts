@@ -1,5 +1,7 @@
 import { uint64 } from "@algorandfoundation/algorand-typescript"
 
+export const GateMustCheckAbiMethod = 'mustCheck(address,uint64,byte[][])void'
+
 export const GateGlobalStateKeyCursor = 'gate_cursor'
 export const GateGlobalStateKeyRegistryCursor = 'registry_cursor'
 

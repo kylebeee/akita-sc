@@ -1,6 +1,6 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, UserOperatorValueRegistryMBR } from '../../constants'
 import { Operator } from '../../types'
 import {
@@ -13,11 +13,13 @@ import {
 } from '../../../utils/operators'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { getAkitaAppList } from '../../../utils/functions'
-import { AkitaSocial } from '../../../social/contract.algo'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { Uint64ByteLength } from '../../../utils/constants'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import type { AkitaSocial } from '../../../social/contract.algo'
 
 type SocialFollowerIndexGateRegistryInfo = {
   user: Address
@@ -28,7 +30,7 @@ type SocialFollowerIndexGateRegistryInfo = {
 /** [user: 32][op: 1][value: 8] */
 const RegisterByteLength = 41
 
-export class SocialFollowerIndexGate extends AkitaBaseContract implements SubGateInterface {
+export class SocialFollowerIndexGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -51,13 +53,10 @@ export class SocialFollowerIndexGate extends AkitaBaseContract implements SubGat
   }
 
   private followerIndexGate(user: Address, index: uint64, follower: Address, op: Operator, value: uint64): boolean {
-    const isFollower = abiCall(
-      AkitaSocial.prototype.isFollower,
-      {
-        appId: getAkitaAppList(this.akitaDAO.value).social,
-        args: [user, index, follower],
-      }
-    ).returnValue
+    const isFollower = abiCall<typeof AkitaSocial.prototype.isFollower>({
+      appId: getAkitaAppList(this.akitaDAO.value).social,
+      args: [user, index, follower],
+    }).returnValue
 
     if (!isFollower) {
       return false

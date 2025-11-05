@@ -2,30 +2,25 @@ import {
   Application,
   assert,
   assertMatch,
-  Box,
-  bytes,
   Global,
   GlobalState,
   gtxn,
   itxn,
-  OnCompleteAction,
-  op,
-  TransactionType,
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { GlobalStateKeyEscrowFactory, GlobalStateKeyRevocation } from '../../constants'
 import { AbstractedAccount } from './contract.algo'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
-import { abimethod, Address, compileArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
-import { ERR_CONTRACT_NOT_SET, ERR_INVALID_CALL_ORDER, ERR_INVALID_PAYMENT } from '../../utils/errors'
+import { abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_INVALID_PAYMENT } from '../../utils/errors'
 import { FactoryContract } from '../../utils/base-contracts/factory'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
 import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
-import { AbstractAccountFactoryBoxKeyCompiledContract, AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints, AbstractedAccountFactoryGlobalStateKeyDomain } from './constants'
+import { AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints, AbstractedAccountFactoryGlobalStateKeyDomain } from './constants'
 import { costInstantDisbursement, getWalletFees, getWalletIDUsingAkitaDAO, referrerOrZeroAddress, sendReferralPayment } from '../../utils/functions'
 import { AbstractedAccountFactoryInterface } from '../../utils/abstract-account'
-import { GTxn } from '@algorandfoundation/algorand-typescript/op'
+
 
 export class AbstractedAccountFactory extends FactoryContract implements AbstractedAccountFactoryInterface {
 
@@ -38,63 +33,28 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
   /** domain */
   domain = GlobalState<string>({ key: AbstractedAccountFactoryGlobalStateKeyDomain })
 
-  // BOXES ----------------------------------------------------------------------------------------
-
-  boxedContract = Box<bytes>({ key: AbstractAccountFactoryBoxKeyCompiledContract })
-
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
   create(
-    akitaDAO: uint64,
+    akitaDAO: Application,
     version: string,
-    childVersion: string,
-    escrowFactoryApp: uint64,
-    revocationApp: uint64,
+    escrowFactory: Application,
+    revocation: Application,
     domain: string
   ): void {
-    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAO.value = akitaDAO
     this.version.value = version
-    this.childContractVersion.value = childVersion
-    this.escrowFactory.value = Application(escrowFactoryApp)
-    this.revocation.value = Application(revocationApp)
+    this.escrowFactory.value = escrowFactory
+    this.revocation.value = revocation
     this.domain.value = domain
-  }
-
-  initBoxedContract(size: uint64): void {
-    if (!this.boxedContract.exists) {
-      assert(Txn.sender === Global.creatorAddress, ERR_NOT_AKITA_DAO)
-      this.boxedContract.create({ size })
-    } else {
-      assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-      this.boxedContract.ref.resize(size)
-    }
-  }
-
-  loadBoxedContract(offset: uint64, data: bytes): void {
-    const txn = gtxn.Transaction(0)
-    assert((
-      txn.type === TransactionType.ApplicationCall
-      && txn.appId === Global.currentApplicationId
-      && txn.numAppArgs === 2
-      && txn.onCompletion === OnCompleteAction.NoOp
-      && txn.appArgs(0) === methodSelector('initBoxedContract(uint64)void')
-      && txn.sender === Txn.sender
-    ), ERR_INVALID_CALL_ORDER)
-    assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
-    this.boxedContract.ref.replace(offset, data)
-  }
-
-  deleteBoxedContract(): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.boxedContract.delete()
   }
 
   // ABSTRACTED ACCOUNT FACTORY METHODS -----------------------------------------------------------
 
-  updateRevocationApp(app: uint64): void {
+  updateRevocation(app: Application): void {
     assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    this.revocation.value = Application(app)
+    this.revocation.value = app
   }
 
   newAccount(
@@ -135,11 +95,9 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
       ERR_INVALID_PAYMENT
     )
 
-    assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
-    
-    const approvalOne = this.boxedContract.ref.extract(0, 4096)
-    const approvalSize = this.boxedContract.ref.length
-    const approvalTwo = this.boxedContract.ref.extract(4096, (approvalSize - 4096))
+    const approvalSize = this.boxedContract.length
+    const chunk1 = this.boxedContract.extract(0, 4096)
+    const chunk2 = this.boxedContract.extract(4096, approvalSize - 4096)
 
     const walletID = abstractedAccount.call
       .create({
@@ -153,7 +111,7 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
           nickname,
           referrer
         ],
-        approvalProgram: [approvalOne, approvalTwo],
+        approvalProgram: [chunk1, chunk2],
         clearStateProgram: abstractedAccount.clearStateProgram,
         extraProgramPages: 3
       })
@@ -203,6 +161,4 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
       referralCost
     )
   }
-
-  opUp(): void {}
 }

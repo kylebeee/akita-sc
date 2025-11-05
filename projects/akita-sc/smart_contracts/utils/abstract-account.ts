@@ -1,4 +1,4 @@
-import { bytes, Contract, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Application, bytes, Contract, gtxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
 import { AddAllowanceInfo, AllowanceInfo, EscrowInfo, EscrowReclaim, ExecutionInfo, FundsRequest, MethodRestriction, PluginInfo, PluginKey } from "../arc58/account/types";
 import { uint8 } from "./types/base";
@@ -88,17 +88,14 @@ export class AbstractedAccountInterface extends Contract {
 
 export class AbstractedAccountFactoryInterface extends Contract {
   create(
-    akitaDAO: uint64,
+    akitaDAO: Application,
     version: string,
-    childVersion: string,
-    escrowFactoryApp: uint64,
-    revocationApp: uint64,
+    escrowFactory: Application,
+    revocation: Application,
     domain: string
   ): void { }
   update(newVersion: string, newChildVersion: string): void { }
-  updateAkitaDAO(app: uint64): void { }
-  updateAkitaDAOEscrow(app: uint64): void { }
-  updateRevocationApp(app: uint64): void { }
+  updateRevocation(app: Application): void { }
   newAccount(
     payment: gtxn.PaymentTxn,
     controlledAddress: Address,

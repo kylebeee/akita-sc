@@ -60,13 +60,14 @@ import {
   ERR_INVALID_PAYMENT_RECEIVER,
   ERR_NOT_OPTED_IN,
 } from '../utils/errors'
-import { BaseStaking } from './base'
-import { StakingInterface } from '../utils/types/staking'
 import { classes } from 'polytype'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { arc4Zero } from '../utils/constants'
 
-export class Staking extends classes(BaseStaking, AkitaBaseContract) implements StakingInterface {
+// CONTRACT IMPORTS
+import { BaseStaking } from './base'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
+
+export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
   /** The address that is allowed to call the 'beat' method to create heartbeat records */

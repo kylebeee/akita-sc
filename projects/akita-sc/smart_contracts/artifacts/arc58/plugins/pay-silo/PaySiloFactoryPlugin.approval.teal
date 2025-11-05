@@ -1,4 +1,4 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
@@ -16,7 +16,7 @@ main:
 main_mint_route@3:
     // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:17-21
     // mint(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   recipient: Address
     // ): uint64 {
@@ -42,7 +42,7 @@ main___algots__.defaultCreate@5:
 mint:
     // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:17-21
     // mint(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   recipient: Address
     // ): uint64 {
@@ -69,16 +69,16 @@ mint:
     pushint 32 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -86,7 +86,7 @@ mint:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:27-31
+    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:26-30
     // const result = paySilo.call.create({
     //   sender,
     //   args: [recipient],
@@ -101,7 +101,7 @@ mint:
     global ZeroAddress
 
 mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
-    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:27-31
+    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:26-30
     // const result = paySilo.call.create({
     //   sender,
     //   args: [recipient],
@@ -111,7 +111,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
     itxn_field ApplicationArgs
     dig 2
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:25
+    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:24
     // const paySilo = compileArc4(PaySiloPlugin)
     intc_0 // 0
     itxn_field ExtraProgramPages
@@ -123,11 +123,11 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
     itxn_field GlobalNumByteSlice
     intc_0 // 0
     itxn_field GlobalNumUint
-    pushbytes base64(CoEBQw==)
+    pushbytes base64(C4EBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(CiAEAAEQCCYBCXJlY2lwaWVudDEZFEQxGEEADoAE4EdSYjYaAI4BAC4AgATMaU6qNhoAjgEAEgCKAgGL/kAAAzIDiYv/cghEiTYaAUkVgSASRChMZyNDIkmAAEk2GgFJFSUSRBdJNhoCSRUjEkQiU0w2GgNJTgJJIllJTgMkC4ECCEwVEkSAEHNwZW5kaW5nX2FkZHJlc3NlSCJJSwMMQQCQSwNXAgBLASQLJFhJIltJTgJFCSVbRQlAADuxIihlTEULREsCIwlLAQ1BAB8yA7IgSweyCEsJsgdLAbIAI7IQIrIBs0kjCEUBQv+uSwRLBoj/REL/2bEiKGVMRQpESwIjCUsBDUEAHzIDsiBLBrIRSweyEksIshRLAbIAgQSyECKyAbNC/71LBEsGiP8JQv/ZI0M=)
+    pushbytes base64(CyAEAAEQCCYBCXJlY2lwaWVudDEZFEQxGEEADoAE4EdSYjYaAI4BAC4AgATMaU6qNhoAjgEAEgCKAgGL/kAAAzIDiYv/cghEiTYaAUkVgSASRChMZyNDIkmAAEk2GgFJFSUSRBdJNhoCSRUjEkQiU0w2GgNJTgJJIllJTgMkC4ECCEwVEkSAEHNwZW5kaW5nX2FkZHJlc3NlSCJJSwMMQQCQSwNXAgBLASQLJFhJIltJTgJFCSVbRQlAADuxIihlTEULREsCIwlLAQ1BAB8yA7IgSweyCEsJsgdLAbIAI7IQIrIBs0kjCEUBQv+uSwRLBoj/REL/2bEiKGVMRQpESwIjCUsBDUEAHzIDsiBLBrIRSweyEksIshRLAbIAgQSyECKyAbNC/71LBEsGiP8JQv/ZI0M=)
     itxn_field ApprovalProgramPages
-    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:27-31
+    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:26-30
     // const result = paySilo.call.create({
     //   sender,
     //   args: [recipient],
@@ -146,7 +146,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
     itxn CreatedApplicationID
     // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:17-21
     // mint(
-    //   walletID: uint64,
+    //   wallet: Application,
     //   rekeyBack: boolean,
     //   recipient: Address
     // ): uint64 {
@@ -164,6 +164,6 @@ mint_after_if_else@5:
     dig 2
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:30
+    // smart_contracts/arc58/plugins/pay-silo/factory.algo.ts:29
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     b mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6

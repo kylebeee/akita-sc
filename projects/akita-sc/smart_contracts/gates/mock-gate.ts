@@ -1,8 +1,7 @@
 import { Bytes, bytes, Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { SubGateInterface } from "../utils/types/gates"
 import { abimethod, Address } from "@algorandfoundation/algorand-typescript/arc4"
 
-export class MockGate extends Contract implements SubGateInterface {
+export class MockGate extends Contract {
 
   cost(arg: bytes): uint64 {
     return 0

@@ -13,8 +13,7 @@ export class PaySiloPlugin extends Contract {
     this.recipient.value = recipient.native
   }
 
-  pay(walletID: uint64, rekeyBack: boolean, payments: PaySiloParams[]): void {
-    const wallet = Application(walletID)
+  pay(wallet: Application, rekeyBack: boolean, payments: PaySiloParams[]): void {
     const sender = getSpendingAccount(wallet)
 
     for (let i: uint64 = 0; i < payments.length; i++) {

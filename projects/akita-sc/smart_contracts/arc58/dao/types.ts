@@ -278,6 +278,8 @@ export type AkitaDAOApps = {
 export type WalletFees = {
   /** the fee the DAO charges for wallet creation */
   createFee: uint64
+  /** the percentage referrers receive on other fees */
+  referrerPercentage: uint64
 }
 
 export type SocialFees = {
@@ -382,6 +384,7 @@ export class arc4NFTFees extends arc4.Struct<{
 
 export type AkitaDAOFees = {
   walletCreateFee: uint64
+  walletReferrerPercentage: uint64
 
   postFee: uint64
   reactFee: uint64

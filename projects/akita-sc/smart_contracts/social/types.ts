@@ -1,5 +1,5 @@
-import { Account, arc4, bytes, uint64 } from "@algorandfoundation/algorand-typescript"
-import { Address, DynamicBytes, StaticBytes, Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, bytes, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
 import { CID } from "../utils/types/base"
 import { arc59GetSendAssetInfoResponse } from "../utils/types/asset-inbox"
 
@@ -20,6 +20,10 @@ export type PostValue = {
   timestamp: uint64
   // who's allowed to reply / react using gates
   gateID: uint64
+  // whether to use a paywall on this post at all, overrides default behavior
+  usePayWall: boolean
+  // the id of the paywall option list for users & agents to use for this post
+  payWallID: uint64
   // whether the post is in breach of the content policy
   againstContentPolicy: boolean
   // whether this post is itself an amendment to another post
@@ -31,6 +35,20 @@ export type PostValue = {
   // 69 = an amended post
   // 68 = a comment
   // 101 = an amended comment
+}
+
+export type PayWallType = Uint8 // OneTimePayment | Subscription
+
+export type ViewPayWallValue = {
+  userPayInfo: PayWallPayOption[]
+  agentPayInfo: PayWallPayOption[]
+}
+
+// 17
+export type PayWallPayOption = {
+  type: PayWallType
+  assetOrSubId: uint64 // Asset | subscription id
+  amount: uint64 // not applicable for subscription id
 }
 
 export type VotesValue = {
@@ -64,7 +82,7 @@ export type Action = { content: CID }
 export type MetaValue = {
   // whether the user has initialised their account
   initialized: boolean
-  // this lets track the user addresses plugin wallet app ID for use with other plugins
+  // this lets us track the user addresses plugin wallet app ID for use with other plugins
   wallet: uint64
   // this lets us assign impact to the consistency of their usage
   streak: uint64
@@ -82,6 +100,8 @@ export type MetaValue = {
   followGateID: uint64
   // who's allowed to post on your wall using gates
   addressGateID: uint64
+  // the default paywall to use for posts
+  defaultPayWallID: uint64
 }
 
 export type AkitaSocialMBRData = {

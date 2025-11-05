@@ -11,42 +11,38 @@ import { AllocationReclaimDetails, ClaimDetails, UserAllocation } from '../../..
 export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
 
   createDisbursement(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     title: string,
     timeToUnlock: uint64,
     expiration: uint64,
     note: string
   ): uint64 {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
     const { disbursements: mbrAmount } = this.mbr(title, note)
     const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
 
-    return abiCall(
-      Rewards.prototype.createDisbursement,
-      {
-        sender,
-        appId: rewardsID,
-        args: [
-          itxn.payment({
-            sender,
-            amount: mbrAmount,
-            receiver: Application(rewardsID).address,
-          }),
-          title,
-          timeToUnlock,
-          expiration,
-          note,
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    ).returnValue
+    return abiCall<typeof Rewards.prototype.createDisbursement>({
+      sender,
+      appId: rewardsID,
+      args: [
+        itxn.payment({
+          sender,
+          amount: mbrAmount,
+          receiver: Application(rewardsID).address,
+        }),
+        title,
+        timeToUnlock,
+        expiration,
+        note,
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    }).returnValue
   }
 
   editDisbursement(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     id: uint64,
     title: string,
@@ -54,61 +50,52 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
     expiration: uint64,
     note: string
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Rewards.prototype.editDisbursement,
-      {
-        sender,
-        appId: getAkitaAppList(this.akitaDAO.value).rewards,
-        args: [id, title, timeToUnlock, expiration, note],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Rewards.prototype.editDisbursement>({
+      sender,
+      appId: getAkitaAppList(this.akitaDAO.value).rewards,
+      args: [id, title, timeToUnlock, expiration, note],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   createUserAllocations(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     id: uint64,
     allocations: UserAllocation[],
     sum: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
     const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
 
     const mbrAmount: uint64 = this.mbr('', '').userAllocations * allocations.length
 
-    abiCall(
-      Rewards.prototype.createUserAllocations,
-      {
-        sender,
-        appId: rewardsID,
-        args: [
-          itxn.payment({
-            sender,
-            amount: mbrAmount + sum,
-            receiver: Application(rewardsID).address,
-          }),
-          id,
-          allocations,
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Rewards.prototype.createUserAllocations>({
+      sender,
+      appId: rewardsID,
+      args: [
+        itxn.payment({
+          sender,
+          amount: mbrAmount + sum,
+          receiver: Application(rewardsID).address,
+        }),
+        id,
+        allocations,
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   createAsaUserAllocations(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     id: uint64,
     assetID: uint64,
     allocations: UserAllocation[],
     sum: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
     const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     const rewardsApp = Application(rewardsID)
@@ -118,86 +105,71 @@ export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
       mbrAmount += Global.assetOptInMinBalance
     }
 
-    abiCall(
-      Rewards.prototype.createAsaUserAllocations,
-      {
-        sender,
-        appId: rewardsApp,
-        args: [
-          itxn.payment({
-            sender,
-            amount: mbrAmount,
-            receiver: rewardsApp.address,
-          }),
-          itxn.assetTransfer({
-            sender,
-            assetReceiver: rewardsApp.address,
-            assetAmount: sum,
-            xferAsset: assetID,
-          }),
-          id,
-          allocations
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Rewards.prototype.createAsaUserAllocations>({
+      sender,
+      appId: rewardsApp,
+      args: [
+        itxn.payment({
+          sender,
+          amount: mbrAmount,
+          receiver: rewardsApp.address,
+        }),
+        itxn.assetTransfer({
+          sender,
+          assetReceiver: rewardsApp.address,
+          assetAmount: sum,
+          xferAsset: assetID,
+        }),
+        id,
+        allocations
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   finalizeDisbursement(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     id: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Rewards.prototype.finalizeDisbursement,
-      {
-        sender,
-        appId: getAkitaAppList(this.akitaDAO.value).rewards,
-        args: [id],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Rewards.prototype.finalizeDisbursement>({
+      sender,
+      appId: getAkitaAppList(this.akitaDAO.value).rewards,
+      args: [id],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   claimRewards(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     rewards: ClaimDetails[]
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Rewards.prototype.claimRewards,
-      {
-        sender,
-        appId: getAkitaAppList(this.akitaDAO.value).rewards,
-        args: [rewards],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Rewards.prototype.claimRewards>({
+      sender,
+      appId: getAkitaAppList(this.akitaDAO.value).rewards,
+      args: [rewards],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   reclaimRewards(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     id: uint64,
     reclaims: AllocationReclaimDetails[]
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Rewards.prototype.reclaimRewards,
-      {
-        sender,
-        appId: getAkitaAppList(this.akitaDAO.value).rewards,
-        args: [id, reclaims],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Rewards.prototype.reclaimRewards>({
+      sender,
+      appId: getAkitaAppList(this.akitaDAO.value).rewards,
+      args: [id, reclaims],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 }

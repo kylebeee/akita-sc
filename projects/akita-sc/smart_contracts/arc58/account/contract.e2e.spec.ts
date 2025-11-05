@@ -409,7 +409,7 @@ describe('ARC58 Plugin Permissions', () => {
             }]
           })
           .call('') // unnecesary because we're using the default controlled account
-          .getTxns({ walletId: wallet.client.appId })
+          .getTxns({ wallet: wallet.client.appId })
       ) as AppCallMethodCall
 
 
@@ -432,7 +432,7 @@ describe('ARC58 Plugin Permissions', () => {
             }]
           })
           .call('') // unnecesary because we're using the default controlled account
-          .getTxns({ walletId: wallet.client.appId })
+          .getTxns({ wallet: wallet.client.appId })
       ) as AppCallMethodCall
 
       composer.addAppCallMethodCall(assaMintTxn)
@@ -682,7 +682,7 @@ describe('ARC58 Plugin Permissions', () => {
             }]
           })
           .call('') // unnecesary because we're using the default controlled account
-          .getTxns({ walletId: wallet.client.appId })
+          .getTxns({ wallet: wallet.client.appId })
       ) as AppCallMethodCall
 
       composer.addAppCallMethodCall(payPluginTxn)

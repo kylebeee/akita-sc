@@ -6,7 +6,6 @@ import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { NFDRegistry } from '../../../utils/types/nfd-registry'
 import { NFD } from '../../../utils/types/nfd'
 import { getOtherAppList } from '../../../utils/functions'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { BoxCostPerBox, Uint64ByteLength } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
@@ -14,7 +13,7 @@ import { NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDMetaKeyVerifi
 
 const MinNFDRootGateRegistryMBR: uint64 = 5_700
 
-export class NFDRootGate extends AkitaBaseContract implements SubGateInterface {
+export class NFDRootGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -52,25 +51,19 @@ export class NFDRootGate extends AkitaBaseContract implements SubGateInterface {
       return false
     }
 
-    const verified = abiCall(
-      NFDRegistry.prototype.isValidNfdAppId,
-      {
-        appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
-        args: [String(nfdName), appID],
-      }
-    ).returnValue
+    const verified = abiCall<typeof NFDRegistry.prototype.isValidNfdAppId>({
+      appId: getOtherAppList(this.akitaDAO.value).nfdRegistry,
+      args: [String(nfdName), appID],
+    }).returnValue
 
     if (!verified) {
       return false
     }
 
-    const caAlgoData = abiCall(
-      NFD.prototype.readField,
-      {
-        appId: appID,
-        args: [Bytes(NFDMetaKeyVerifiedAddresses)],
-      }
-    ).returnValue
+    const caAlgoData = abiCall<typeof NFD.prototype.readField>({
+      appId: appID,
+      args: [Bytes(NFDMetaKeyVerifiedAddresses)],
+    }).returnValue
 
     let exists: boolean = false
     for (let i: uint64 = 0; i < caAlgoData.length; i += 32) {

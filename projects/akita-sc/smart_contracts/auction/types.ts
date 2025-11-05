@@ -1,37 +1,25 @@
-import { arc4, uint64 } from "@algorandfoundation/algorand-typescript"
-import { Address, Bool, StaticArray, Uint64 } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, uint64 } from "@algorandfoundation/algorand-typescript"
+import { StaticArray, Uint64 } from "@algorandfoundation/algorand-typescript/arc4"
 
 export type WeightLocation = uint64
 
 export type BidInfo = {
-    address: Address
-    amount: uint64
-    marketplace: Address
-    refunded: boolean
+  account: Account
+  amount: uint64
+  marketplace: Account
+  refunded: boolean
 }
-
-export class arc4BidInfo extends arc4.Struct<{
-    address: Address
-    amount: Uint64
-    marketplace: Address
-    refunded: Bool
-}> {}
 
 export type FindWinnerCursors = {
-    startingIndex: uint64
-    currentRangeStart: uint64
+  startingIndex: uint64
+  currentRangeStart: uint64
 }
-
-export class arc4FindWinnerCursors extends arc4.Struct<{
-    startingIndex: Uint64
-    currentRangeStart: Uint64
-}> {}
 
 export type WeightsList = StaticArray<Uint64, 4096>
 
 export type AuctionMBRData = {
-    bids: uint64
-    weights: uint64
-    bidsByAddress: uint64
-    locations: uint64
+  bids: uint64
+  weights: uint64
+  bidsByAddress: uint64
+  locations: uint64
 }

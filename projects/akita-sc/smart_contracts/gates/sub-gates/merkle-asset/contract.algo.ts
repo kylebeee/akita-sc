@@ -1,16 +1,17 @@
 import { Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, Global, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { MetaMerkles } from '../../../meta-merkles/contract.algo'
 import { MerkleTreeTypeCollection } from '../../../meta-merkles/constants'
 import { getAkitaAppList } from '../../../utils/functions'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { BoxCostPerBox } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { Proof } from '../../../utils/types/merkles'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import type { MetaMerkles } from '../../../meta-merkles/contract.algo'
 
 type MerkleAssetGateRegistryInfo = {
   creator: Address
@@ -26,7 +27,7 @@ const MinRegisterArgsLength: uint64 = 35
 /** [asset: 8][proof: 2+(32*length)] */
 const MinCheckArgsLength: uint64 = 74
 
-export class MerkleAssetGate extends AkitaBaseContract implements SubGateInterface {
+export class MerkleAssetGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -90,7 +91,7 @@ export class MerkleAssetGate extends AkitaBaseContract implements SubGateInterfa
 
     const { creator, name } = clone(this.registry(registryID).value)
 
-    return abiCall(MetaMerkles.prototype.verify, {
+    return abiCall<typeof MetaMerkles.prototype.verify>({
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
         creator,

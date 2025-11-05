@@ -5,7 +5,7 @@ import { FixtureAndAccount } from '../types';
 import { WalletFactorySDK } from 'akita-sdk'
 import { deployEscrowFactory } from './escrow';
 
-type CreateArgs = AbstractedAccountFactoryArgs["obj"]["create(uint64,string,string,uint64,uint64,string)void"]
+type CreateArgs = AbstractedAccountFactoryArgs["obj"]['create(uint64,string,uint64,uint64,string)void']
 type DeployParams = FixtureAndAccount & { args: Partial<CreateArgs> }
 
 export const deployAbstractedAccountFactory = async ({
@@ -15,9 +15,8 @@ export const deployAbstractedAccountFactory = async ({
   args: {
     akitaDao = 0n,
     version = '0.0.1',
-    childVersion = '0.0.1',
-    escrowFactoryApp = 0n,
-    revocationApp = 0n,
+    escrowFactory = 0n,
+    revocation = 0n,
     domain = 'akita.community'
   }
 }: DeployParams): Promise<WalletFactorySDK> => {
@@ -35,9 +34,8 @@ export const deployAbstractedAccountFactory = async ({
     args: {
       akitaDao,
       version,
-      childVersion,
-      escrowFactoryApp,
-      revocationApp,
+      escrowFactory,
+      revocation,
       domain
     }
   })
@@ -67,7 +65,7 @@ export const deployAbstractedAccountFactory = async ({
   );
   const uploadCount = 1 + Math.floor(size / perTxn);
 
-  const initParams = await client.params.initBoxedContract({ args: { size } });
+  const initParams = await client.params.initBoxedContract({ args: { version: '0.0.1', size } });
   let loadParams = []
   for (let i = 0; i < uploadCount; i++) {
     const chunk = compiledAbstractedAccount.approvalProgram.slice(
@@ -106,8 +104,7 @@ export const deployAbstractedAccountFactoryAndEscrowFactory = async ({
   args: {
     akitaDao = 0n,
     version = '0.0.1',
-    childVersion = '0.0.1',
-    revocationApp = 0n,
+    revocation = 0n,
     domain = 'akita.community'
   } }: deployAbstractedAccountFactoryAndEscrowFactoryParams): Promise<{
     abstractAccountFactory: WalletFactorySDK
@@ -122,10 +119,9 @@ export const deployAbstractedAccountFactoryAndEscrowFactory = async ({
     args: {
       akitaDao,
       version,
-      childVersion,
-      revocationApp,
+      escrowFactory: escrowFactory.appId,
+      revocation,
       domain,
-      escrowFactoryApp: escrowFactory.appId
     }
   });
 

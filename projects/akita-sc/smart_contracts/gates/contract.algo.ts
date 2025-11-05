@@ -15,8 +15,7 @@ import {
 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import { GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
-import { GateFilter, GateFilterEntry, AND, OR, GateFilterEntryWithArgs } from './types'
-import { GateArgs, GateInterface } from '../utils/types/gates'
+import { GateFilter, GateFilterEntry, AND, OR, GateFilterEntryWithArgs, GateArgs } from './types'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { MockGate } from './mock-gate'
 import { BaseGate } from './base'
@@ -24,7 +23,7 @@ import { classes } from 'polytype'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { ERR_GATE_FAILED } from './errors'
 
-export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateInterface {
+export class Gate extends classes(BaseGate, AkitaBaseContract) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -87,13 +86,10 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
   }
 
   private evaluateFilter(caller: Address, filter: GateFilterEntry, args: bytes): boolean {
-    return abiCall(
-      MockGate.prototype.check,
-      {
-        appId: filter.app,
-        args: [caller, filter.registryEntry, args],
-      }
-    ).returnValue
+    return abiCall<typeof MockGate.prototype.check>({
+      appId: filter.app,
+      args: [caller, filter.registryEntry, args],
+    }).returnValue
   }
 
   private findEndOfLayer(filters: GateFilterEntry[], start: uint64, layer: uint64): uint64 {
@@ -144,13 +140,10 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
       assert(filters[i].layer >= lastFilterLayer)
       lastFilterLayer = filters[i].layer
 
-      const cost = abiCall(
-        MockGate.prototype.cost,
-        {
-          appId: filters[i].app,
-          args: [args[i]],
-        }
-      ).returnValue
+      const cost = abiCall<typeof MockGate.prototype.cost>({
+        appId: filters[i].app,
+        args: [args[i]],
+      }).returnValue
 
       requiredCosts += cost
 
@@ -159,13 +152,10 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
         amount: cost
       })
 
-      const registryEntry = abiCall(
-        MockGate.prototype.register,
-        {
-          appId: filters[i].app,
-          args: [payment, args[i]],
-        }
-      ).returnValue
+      const registryEntry = abiCall<typeof MockGate.prototype.register>({
+        appId: filters[i].app,
+        args: [payment, args[i]],
+      }).returnValue
 
       entries.push({ ...filters[i], registryEntry })
     }
@@ -202,13 +192,10 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
     // let requiredCosts = mbrCosts.appRegistry
     let requiredCosts: uint64 = 0
     for (let i: uint64 = 0; i < filters.length; i += 1) {
-      const cost = abiCall(
-        MockGate.prototype.cost,
-        {
-          appId: filters[i].app,
-          args: [args[i]],
-        }
-      ).returnValue
+      const cost = abiCall<typeof MockGate.prototype.cost>({
+        appId: filters[i].app,
+        args: [args[i]],
+      }).returnValue
 
       requiredCosts += cost
     }
@@ -229,13 +216,10 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) implements GateIn
 
     let entriesWithArgs: GateFilterEntryWithArgs[] = []
     for (let i: uint64 = 0; i < entries.length; i += 1) {
-      const args = abiCall(
-          MockGate.prototype.getEntry,
-          {
-            appId: entries[i].app,
-            args: [entries[i].registryEntry],
-          }
-        ).returnValue
+      const args = abiCall<typeof MockGate.prototype.getEntry>({
+        appId: entries[i].app,
+        args: [entries[i].registryEntry],
+      }).returnValue
 
       entriesWithArgs.push({ ...entries[i], args })
     }

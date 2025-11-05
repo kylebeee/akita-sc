@@ -1,4 +1,4 @@
-import { Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { Application, Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { AllocationReclaimDetails, ClaimDetails, UserAllocation } from "../../rewards/types";
 
 
@@ -6,7 +6,7 @@ export class RewardsInterface extends Contract {
   optin(payment: gtxn.PaymentTxn, asset: uint64): void { }
   create(version: string, akitaDAO: uint64): void { }
   update(newVersion: string): void { }
-  updateAkitaDAO(app: uint64): void { }
+  updateAkitaDAO(app: Application): void { }
   createDisbursement(
     mbrPayment: gtxn.PaymentTxn,
     title: string,

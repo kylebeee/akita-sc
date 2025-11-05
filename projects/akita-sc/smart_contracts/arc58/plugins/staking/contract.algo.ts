@@ -16,11 +16,11 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
   }
-  
+
   // STAKING PLUGIN METHODS -----------------------------------------------------------------------
 
   stake(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     assetID: uint64,
     type: StakingType,
@@ -28,7 +28,6 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
     expiration: uint64,
     isUpdate: boolean
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
     const stakingAppID = getAkitaAppList(this.akitaDAO.value).staking
     const stakingApp = Application(stakingAppID)
@@ -52,109 +51,91 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
     }
 
     if (isAlgo) {
-      abiCall(
-        Staking.prototype.stake,
-        {
-          sender,
-          appId: stakingAppID,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: stakingApp.address,
-              amount: sendAmount,
-            }),
-            type,
-            amount,
-            expiration,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
-      )
+      abiCall<typeof Staking.prototype.stake>({
+        sender,
+        appId: stakingAppID,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: stakingApp.address,
+            amount: sendAmount,
+          }),
+          type,
+          amount,
+          expiration,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
     } else {
-      abiCall(
-        Staking.prototype.stakeAsa,
-        {
-          sender,
-          appId: stakingAppID,
-          args: [
-            itxn.payment({
-              sender,
-              receiver: stakingApp.address,
-              amount: sendAmount,
-            }),
-            itxn.assetTransfer({
-              sender,
-              assetReceiver: stakingApp.address,
-              assetAmount: amount,
-              xferAsset: assetID,
-            }),
-            type,
-            amount,
-            expiration,
-          ],
-          rekeyTo: rekeyAddress(rekeyBack, wallet),
-        }
-      )
+      abiCall<typeof Staking.prototype.stakeAsa>({
+        sender,
+        appId: stakingAppID,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: stakingApp.address,
+            amount: sendAmount,
+          }),
+          itxn.assetTransfer({
+            sender,
+            assetReceiver: stakingApp.address,
+            assetAmount: amount,
+            xferAsset: assetID,
+          }),
+          type,
+          amount,
+          expiration,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet),
+      })
     }
   }
 
   withdraw(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     asset: uint64,
     type: StakingType
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Staking.prototype.withdraw,
-      {
-        sender,
-        appId: getAkitaAppList(this.akitaDAO.value).staking,
-        args: [asset, type],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Staking.prototype.withdraw>({
+      sender,
+      appId: getAkitaAppList(this.akitaDAO.value).staking,
+      args: [asset, type],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   createHeartbeat(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     address: Address,
     asset: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Staking.prototype.createHeartbeat,
-      {
-        sender,
-        appId: getAkitaAppList(this.akitaDAO.value).staking,
-        args: [address, asset],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Staking.prototype.createHeartbeat>({
+      sender,
+      appId: getAkitaAppList(this.akitaDAO.value).staking,
+      args: [address, asset],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 
   softCheck(
-    walletID: uint64,
+    wallet: Application,
     rekeyBack: boolean,
     address: Address,
     asset: uint64
   ): void {
-    const wallet = Application(walletID)
     const sender = getSpendingAccount(wallet)
 
-    abiCall(
-      Staking.prototype.softCheck,
-      {
-        sender,
-        appId: getAkitaAppList(this.akitaDAO.value).staking,
-        args: [address, asset],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      }
-    )
+    abiCall<typeof Staking.prototype.softCheck>({
+      sender,
+      appId: getAkitaAppList(this.akitaDAO.value).staking,
+      args: [address, asset],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
   }
 }

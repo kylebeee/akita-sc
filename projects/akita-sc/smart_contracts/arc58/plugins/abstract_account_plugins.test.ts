@@ -62,9 +62,9 @@ describe('Abstracted Subscription Program', () => {
       args: {
         akitaDao: 0,
         version: '1',
-        childVersion: '1',
-        escrowFactoryApp: escrowFactoryResults.appClient.appId,
-        revocationApp: 0,
+        escrowFactory: escrowFactoryResults.appClient.appId,
+        revocation: 0,
+        domain: 'akita.community',
       },
     })
 
@@ -79,7 +79,7 @@ describe('Abstracted Subscription Program', () => {
       suggestedParams,
     })
 
-    const mResults = await abstractedAccountFactoryClient.send.mint({
+    const mResults = await abstractedAccountFactoryClient.send.newAccount({
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
@@ -87,6 +87,7 @@ describe('Abstracted Subscription Program', () => {
         controlledAddress: ZERO_ADDRESS,
         admin: aliceEOA.addr.toString(),
         nickname: 'Alice',
+        referrer: ZERO_ADDRESS,
       },
       extraFee: (2_000).microAlgo(),
     })
@@ -99,7 +100,7 @@ describe('Abstracted Subscription Program', () => {
       appId: freshAbstractedAccountId,
     })
 
-    await abstractedAccountClient.send.init({ args: {}, extraFee: (3_000).microAlgo() })
+    // await abstractedAccountClient.send.in({ args: {}, extraFee: (3_000).microAlgo() })
 
     aliceAbstractedAccount = abstractedAccountClient.appAddress.toString()
 
@@ -192,10 +193,10 @@ describe('Abstracted Subscription Program', () => {
       const optInGroup = (
         await (optInPluginClient
           .createTransaction
-          .optInToAsset({
+          .optIn({
             sender: bob.addr,
             args: {
-              walletId: abstractedAccountClient.appId,
+              wallet: abstractedAccountClient.appId,
               rekeyBack: true,
               assets: [asset],
               mbrPayment

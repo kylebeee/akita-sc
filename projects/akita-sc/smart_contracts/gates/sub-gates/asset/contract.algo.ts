@@ -13,7 +13,6 @@ import {
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { SubGateInterface } from '../../../utils/types/gates'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 
 type AssetGateRegistryInfo = {
@@ -22,7 +21,7 @@ type AssetGateRegistryInfo = {
   value: uint64
 }
 
-export class AssetGate extends AkitaBaseContract implements SubGateInterface {
+export class AssetGate extends AkitaBaseContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 

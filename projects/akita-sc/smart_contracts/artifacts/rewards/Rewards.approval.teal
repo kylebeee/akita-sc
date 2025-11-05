@@ -1,4 +1,4 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
@@ -18,13 +18,19 @@ main_switch_case_next@5:
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@20
-    pushbytess 0x1c9ebbdb 0x8f49262d 0x5656acf9 0x3c60dfa0 0x5424a591 0x7b7dc5fc 0xaf1a14f2 0x3ec40aa4 0xbd3cd090 0x3ea11832 0x33e92c94 0xd54bbad9 // method "createDisbursement(pay,string,uint64,uint64,string)uint64", method "editDisbursement(uint64,string,uint64,uint64,string)void", method "createUserAllocations(pay,uint64,(address,uint64)[])void", method "createAsaUserAllocations(pay,axfer,uint64,(address,uint64)[])void", method "finalizeDisbursement(uint64)void", method "createInstantDisbursement(pay,uint64,uint64,(address,uint64)[])uint64", method "createInstantAsaDisbursement(pay,axfer,uint64,uint64,(address,uint64)[])uint64", method "claimRewards((uint64,uint64)[])void", method "reclaimRewards(uint64,(address,uint64)[])void", method "optin(pay,uint64)void", method "updateAkitaDAO(uint64)void", method "mbr(string,string)(uint64,uint64)"
+    bz main_create_NoOp@21
+    pushbytess 0x1c9ebbdb 0x8f49262d 0x5656acf9 0x3c60dfa0 0x5424a591 0x7b7dc5fc 0xaf1a14f2 0x3ec40aa4 0xbd3cd090 0x33e92c94 0x854dede0 0x3ea11832 0xd54bbad9 // method "createDisbursement(pay,string,uint64,uint64,string)uint64", method "editDisbursement(uint64,string,uint64,uint64,string)void", method "createUserAllocations(pay,uint64,(address,uint64)[])void", method "createAsaUserAllocations(pay,axfer,uint64,(address,uint64)[])void", method "finalizeDisbursement(uint64)void", method "createInstantDisbursement(pay,uint64,uint64,(address,uint64)[])uint64", method "createInstantAsaDisbursement(pay,axfer,uint64,uint64,(address,uint64)[])uint64", method "claimRewards((uint64,uint64)[])void", method "reclaimRewards(uint64,(address,uint64)[])void", method "updateAkitaDAO(uint64)void", method "opUp()void", method "optin(pay,uint64)void", method "mbr(string,string)(uint64,uint64)"
     txna ApplicationArgs 0
-    match createDisbursement editDisbursement createUserAllocations createAsaUserAllocations finalizeDisbursement createInstantDisbursement createInstantAsaDisbursement claimRewards reclaimRewards optin updateAkitaDAO mbr
+    match createDisbursement editDisbursement createUserAllocations createAsaUserAllocations finalizeDisbursement createInstantDisbursement createInstantAsaDisbursement claimRewards reclaimRewards updateAkitaDAO main_opUp_route@17 optin mbr
     err
 
-main_create_NoOp@20:
+main_opUp_route@17:
+    // smart_contracts/utils/base-contracts/base.ts:36
+    // opUp(): void { }
+    intc_1 // 1
+    return
+
+main_create_NoOp@21:
     // smart_contracts/rewards/contract.algo.ts:52
     // export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWithOptIn) implements RewardsInterface {
     pushbytes 0xcd9ad67e // method "create(string,uint64)void"
@@ -33,7 +39,7 @@ main_create_NoOp@20:
     err
 
 main_update_route@4:
-    // smart_contracts/utils/base-contracts/base.ts:18
+    // smart_contracts/utils/base-contracts/base.ts:23
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -66,14 +72,14 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:12
+    // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec 4 // "version"
     // smart_contracts/rewards/contract.algo.ts:87
     // this.version.value = version
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:14
+    // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/rewards/contract.algo.ts:88
@@ -2240,6 +2246,88 @@ reclaimRewards_after_while@10:
     return
 
 
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
+update:
+    // smart_contracts/utils/base-contracts/base.ts:23
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16
+    intc_3 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+utf8[])
+    extract 2 0
+    // smart_contracts/utils/base-contracts/base.ts:25
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:25
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:17
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    bytec 4 // "version"
+    // smart_contracts/utils/base-contracts/base.ts:26
+    // this.version.value = newVersion
+    swap
+    app_global_put
+    // smart_contracts/utils/base-contracts/base.ts:23
+    // @abimethod({ allowActions: ['UpdateApplication'] })
+    intc_1 // 1
+    return
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:32
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:32
+    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:19
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:33
+    // this.akitaDAO.value = akitaDAO
+    swap
+    app_global_put
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // updateAkitaDAO(akitaDAO: Application): void {
+    intc_1 // 1
+    return
+
+
 // smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin[routing]() -> void:
 optin:
     // smart_contracts/utils/base-contracts/optin.ts:22
@@ -2330,88 +2418,6 @@ optin:
     itxn_submit
     // smart_contracts/utils/base-contracts/optin.ts:22
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
-    intc_1 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
-update:
-    // smart_contracts/utils/base-contracts/base.ts:18
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txna ApplicationArgs 1
-    dup
-    intc_0 // 0
-    extract_uint16
-    intc_3 // 2
-    +
-    dig 1
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:20
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:20
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_global_get_ex
-    assert // check GlobalState exists
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:12
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:21
-    // this.version.value = newVersion
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:18
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    intc_1 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
-updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
-    txna ApplicationArgs 1
-    dup
-    len
-    intc_2 // 8
-    ==
-    assert // invalid number of bytes for uint64
-    btoi
-    // smart_contracts/utils/base-contracts/base.ts:27
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:27
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
-    app_global_get_ex
-    assert // check GlobalState exists
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:14
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:28
-    // this.akitaDAO.value = Application(app)
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // updateAkitaDAO(app: uint64): void {
     intc_1 // 1
     return
 

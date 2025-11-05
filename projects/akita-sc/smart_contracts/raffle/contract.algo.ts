@@ -82,20 +82,24 @@ import {
   ERR_INVALID_PAYMENT,
   ERR_INVALID_TRANSFER,
 } from '../utils/errors'
-import { GateArgs } from '../utils/types/gates'
+
 import { PrizeBox } from '../prize-box/contract.algo'
 import { classes } from 'polytype'
 import { BaseRaffle } from './base'
 import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
 import { arc59OptInAndSend, calcPercent, gateCall, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender } from '../utils/functions'
-import { AkitaBaseEscrow } from '../utils/base-contracts/escrow'
+import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
 import { RoyaltyAmounts } from '../utils/types/royalties'
 import { AkitaDAOEscrowAccountRaffles } from '../arc58/dao/constants'
+import { ChildContract } from '../utils/base-contracts/child'
+import { FunderInfo } from '../utils/types/mbr'
+import { GateArgs } from '../gates/types'
 
 export class Raffle extends classes(
   BaseRaffle,
-  AkitaBaseEscrow,
-  ContractWithCreatorOnlyOptIn
+  AkitaBaseFeeGeneratorContract,
+  ContractWithCreatorOnlyOptIn,
+  ChildContract
 ) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
@@ -131,7 +135,7 @@ export class Raffle extends classes(
   /** the gate to use for the raffle */
   gateID = GlobalState<uint64>({ key: RaffleGlobalStateKeyGateID })
   /** the address of the creation side marketplace */
-  marketplace = GlobalState<Address>({ key: RaffleGlobalStateKeyMarketplace })
+  marketplace = GlobalState<Account>({ key: RaffleGlobalStateKeyMarketplace })
   /** the amount the marketplaces will get for the sale */
   marketplaceRoyalties = GlobalState<uint64>({ key: RaffleGlobalStateKeyMarketplaceRoyalties })
   /** the minimum impact tax for the raffle */
@@ -173,7 +177,7 @@ export class Raffle extends classes(
     let currentRangeStart = this.findWinnerCursors.value.amountIndex
 
     for (let i: uint64 = 0; i < this.weightsBoxCount.value; i += 1) {
-      const boxStake = this.weightTotals.value[i].native
+      const boxStake = this.weightTotals.value[i].asUint64()
       if (this.winningTicket.value < currentRangeStart + boxStake) {
         return [startingIndex, currentRangeStart]
       }
@@ -231,11 +235,12 @@ export class Raffle extends classes(
     startTimestamp: uint64,
     endTimestamp: uint64,
     seller: Address,
-    creatorRoyalty: uint64,
+    funder: FunderInfo,
+    creatorRoyalty: uint64, // TODO: implement royalty
     minTickets: uint64,
     maxTickets: uint64,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
     akitaDAO: uint64,
     feeEscrow: uint64,
   ): void {
@@ -249,6 +254,7 @@ export class Raffle extends classes(
     assert(endTimestamp > startTimestamp && endTimestamp > Global.latestTimestamp, ERR_INVALID_ENDING_ROUND)
     this.endTimestamp.value = endTimestamp
     this.seller.value = seller.native
+    this.funder.value = clone(funder)
     this.minTickets.value = minTickets
     this.maxTickets.value = maxTickets
     this.entryCount.value = 0
@@ -319,13 +325,13 @@ export class Raffle extends classes(
     ensureBudget(opUpIterationAmount)
 
     for (let i = startingIndex; i < iterationAmount; i += 1) {
-      const { address } = this.entries(i).value
+      const { account } = this.entries(i).value
       this.entries(i).delete()
-      this.entriesByAddress(address.native).delete()
+      this.entriesByAddress(account).delete()
       itxn
         .payment({
           amount: entryTotalMBR,
-          receiver: address.native,
+          receiver: account,
         })
         .submit()
     }
@@ -364,7 +370,11 @@ export class Raffle extends classes(
 
   // RAFFLE METHODS -------------------------------------------------------------------------------
 
-  enter(payment: gtxn.PaymentTxn, marketplace: Address, args: GateArgs): void {
+  enter(
+    payment: gtxn.PaymentTxn,
+    marketplace: Account,
+    args: GateArgs
+  ): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id === 0, ERR_TICKET_ASSET_NOT_ALGO)
 
@@ -393,25 +403,30 @@ export class Raffle extends classes(
 
     const loc = this.entryCount.value
     this.entries(loc).value = {
-      address: new Address(Txn.sender),
+      account: Txn.sender,
       marketplace,
     }
     this.entriesByAddress(Txn.sender).value = this.entryCount.value
 
-    const amount = new Uint64(payment.amount - mbr)
+    const amount: uint64 = payment.amount - mbr
 
-    this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
-    const newWeight = new Uint64(this.weightTotals.value[loc / ChunkSize].native + amount.native)
+    this.weights(loc / ChunkSize).value[loc % ChunkSize] = new Uint64(amount)
+    const newWeight = new Uint64(this.weightTotals.value[loc / ChunkSize].asUint64() + amount)
     this.weightTotals.value[loc / ChunkSize] = newWeight
 
     this.entryCount.value += 1
-    this.ticketCount.value += amount.native
+    this.ticketCount.value += amount
   }
 
-  enterAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, marketplace: Address, args: GateArgs): void {
+  enterAsa(
+    payment: gtxn.PaymentTxn,
+    assetXfer: gtxn.AssetTransferTxn,
+    marketplace: Account,
+    args: GateArgs
+  ): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id !== 0, ERR_TICKET_ASSET_ALGO)
-    
+
     if (this.gateID.value !== 0) {
       const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
       const origin = originOrTxnSender(wallet)
@@ -447,18 +462,18 @@ export class Raffle extends classes(
 
     const loc = this.entryCount.value
     this.entries(loc).value = {
-      address: new Address(Txn.sender),
+      account: Txn.sender,
       marketplace
     }
     this.entriesByAddress(Txn.sender).value = loc
 
-    const amount = new Uint64(assetXfer.assetAmount)
-    this.weights(loc / ChunkSize).value[loc % ChunkSize] = amount
-    const newWeight = new Uint64(this.weightTotals.value[loc / ChunkSize].native + amount.native)
+    const amount = assetXfer.assetAmount
+    this.weights(loc / ChunkSize).value[loc % ChunkSize] = new Uint64(amount)
+    const newWeight = new Uint64(this.weightTotals.value[loc / ChunkSize].asUint64() + amount)
     this.weightTotals.value[loc / ChunkSize] = newWeight
 
     this.entryCount.value += 1
-    this.ticketCount.value += amount.native
+    this.ticketCount.value += amount
   }
 
   add(payment: gtxn.PaymentTxn, args: GateArgs): void {
@@ -481,19 +496,19 @@ export class Raffle extends classes(
       {
         receiver: Global.currentApplicationAddress,
         amount: {
-          lessThanEq: (this.maxTickets.value - amount.native)
+          lessThanEq: (this.maxTickets.value - amount.asUint64())
         }
       },
       ERR_INVALID_PAYMENT
     )
 
     const newWeights = new Uint64(
-      this.weights(loc / ChunkSize).value[loc % ChunkSize].native + payment.amount
+      this.weights(loc / ChunkSize).value[loc % ChunkSize].asUint64() + payment.amount
     )
     this.weights(loc / ChunkSize).value[loc % ChunkSize] = newWeights
-    const boxAmount = new Uint64(this.weightTotals.value[loc / ChunkSize].native + payment.amount)
+    const boxAmount = new Uint64(this.weightTotals.value[loc / ChunkSize].asUint64() + payment.amount)
     this.weightTotals.value[loc / ChunkSize] = boxAmount
-    this.ticketCount.value += amount.native
+    this.ticketCount.value += amount.asUint64()
   }
 
   addAsa(assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
@@ -505,7 +520,7 @@ export class Raffle extends classes(
       const origin = originOrTxnSender(wallet)
       assert(gateCall(this.akitaDAO.value, origin, this.gateID.value, args), ERR_FAILED_GATE)
     }
-    
+
     assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
 
     const loc = this.entriesByAddress(Txn.sender).value
@@ -517,19 +532,19 @@ export class Raffle extends classes(
         assetReceiver: Global.currentApplicationAddress,
         xferAsset: this.ticketAsset.value,
         assetAmount: {
-          lessThanEq: (this.maxTickets.value - amount.native)
+          lessThanEq: (this.maxTickets.value - amount.asUint64())
         }
       },
       ERR_INVALID_TRANSFER
     )
 
     const newWeights = new Uint64(
-      this.weights(loc / ChunkSize).value[loc % ChunkSize].native + assetXfer.assetAmount
+      this.weights(loc / ChunkSize).value[loc % ChunkSize].asUint64() + assetXfer.assetAmount
     )
     this.weights(loc / ChunkSize).value[loc % ChunkSize] = newWeights
-    const boxAmount = new Uint64(this.weightTotals.value[loc / ChunkSize].native + assetXfer.assetAmount)
+    const boxAmount = new Uint64(this.weightTotals.value[loc / ChunkSize].asUint64() + assetXfer.assetAmount)
     this.weightTotals.value[loc / ChunkSize] = boxAmount
-    this.ticketCount.value += amount.native
+    this.ticketCount.value += amount.asUint64()
   }
 
   raffle(): void {
@@ -537,13 +552,10 @@ export class Raffle extends classes(
     assert(Global.round >= roundToUse + 8, ERR_NOT_ENOUGH_TIME)
     assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
 
-    const seed = abiCall(
-      RandomnessBeacon.prototype.get,
-      {
-        appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
-        args: [roundToUse, this.salt.value],
-      }
-    ).returnValue
+    const seed = abiCall<typeof RandomnessBeacon.prototype.get>({
+      appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
+      args: [roundToUse, this.salt.value],
+    }).returnValue
 
     if (seed.length === 0) {
       this.vrfFailureCount.value += 1
@@ -559,7 +571,7 @@ export class Raffle extends classes(
     }
 
     const rngResult = pcg64Random(rngState, 1, upperBound, 1)
-    this.winningTicket.value = rngResult[1][0].native
+    this.winningTicket.value = rngResult[1][0].asUint64()
   }
 
   findWinner(iterationAmount: uint64): void {
@@ -583,9 +595,9 @@ export class Raffle extends classes(
     ensureBudget(opUpIterationAmount)
 
     for (let i: uint64 = 0; i < iterationAmount; i += 1) {
-      currentRangeEnd = currentRangeStart + weight[i].native
+      currentRangeEnd = currentRangeStart + weight[i].asUint64()
       if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
-        this.winner.value = this.entries(startingIndex + i + 1).value.address.native
+        this.winner.value = this.entries(startingIndex + i + 1).value.account
       }
       currentRangeStart = currentRangeEnd + 1
     }
@@ -600,14 +612,10 @@ export class Raffle extends classes(
 
     // give the winner the prize
     if (this.isPrizeBox.value) {
-      abiCall(
-        PrizeBox.prototype.transfer,
-        {
-          appId: this.prize.value,
-          onCompletion: OnCompleteAction.NoOp,
-          args: [new Address(this.winner.value)],
-        }
-      )
+      abiCall<typeof PrizeBox.prototype.transfer>({
+        appId: this.prize.value,
+        args: [this.winner.value],
+      })
     } else {
       const prizeAmount = op.AssetHolding.assetBalance(Global.currentApplicationAddress, this.prize.value)[0]
 
@@ -621,7 +629,7 @@ export class Raffle extends classes(
       } else {
         arc59OptInAndSend(
           this.akitaDAO.value,
-          new Address(this.winner.value),
+          this.winner.value,
           this.prize.value,
           prizeAmount,
           true
@@ -655,14 +663,14 @@ export class Raffle extends classes(
 
       itxn
         .payment({
-          receiver: this.marketplace.value.native,
+          receiver: this.marketplace.value,
           amount: amounts.marketplace,
         })
         .submit()
 
       itxn
         .payment({
-          receiver: marketplace.native,
+          receiver: marketplace,
           amount: amounts.marketplace,
         })
         .submit()
@@ -688,7 +696,7 @@ export class Raffle extends classes(
         } else {
           arc59OptInAndSend(
             this.akitaDAO.value,
-            new Address(Asset(this.prize.value).creator),
+            Asset(this.prize.value).creator,
             this.ticketAsset.value.id,
             amounts.creator,
             false
@@ -712,10 +720,10 @@ export class Raffle extends classes(
         )
       }
 
-      if (this.marketplace.value.native.isOptedIn(this.ticketAsset.value)) {
+      if (this.marketplace.value.isOptedIn(this.ticketAsset.value)) {
         itxn
           .assetTransfer({
-            assetReceiver: this.marketplace.value.native,
+            assetReceiver: this.marketplace.value,
             assetAmount: amounts.marketplace,
             xferAsset: this.ticketAsset.value,
           })
@@ -730,10 +738,10 @@ export class Raffle extends classes(
         )
       }
 
-      if (marketplace.native.isOptedIn(this.ticketAsset.value)) {
+      if (marketplace.isOptedIn(this.ticketAsset.value)) {
         itxn
           .assetTransfer({
-            assetReceiver: marketplace.native,
+            assetReceiver: marketplace,
             assetAmount: amounts.marketplace,
             xferAsset: this.ticketAsset.value,
           })
@@ -760,7 +768,7 @@ export class Raffle extends classes(
       } else {
         arc59OptInAndSend(
           this.akitaDAO.value,
-          new Address(this.seller.value),
+          this.seller.value,
           this.ticketAsset.value.id,
           this.ticketCount.value,
           true

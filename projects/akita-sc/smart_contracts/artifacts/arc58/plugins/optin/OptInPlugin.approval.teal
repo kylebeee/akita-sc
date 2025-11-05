@@ -1,4 +1,4 @@
-#pragma version 10
+#pragma version 11
 #pragma typetrack false
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
@@ -15,7 +15,7 @@ main:
 
 main_optIn_route@3:
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:8
-    // optIn(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+    // optIn(wallet: Application, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     txn OnCompletion
     !
     txn ApplicationID
@@ -38,7 +38,7 @@ main___algots__.defaultCreate@5:
 optIn:
     pushbytes ""
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:8
-    // optIn(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+    // optIn(wallet: Application, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     txna ApplicationArgs 1
     dup
     len
@@ -81,16 +81,16 @@ optIn:
     intc_0 // pay
     ==
     assert // transaction type is pay
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     uncover 2
-    // smart_contracts/utils/functions.ts:237
+    // smart_contracts/utils/functions.ts:240
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:235-238
+    // smart_contracts/utils/functions.ts:238-241
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -99,7 +99,7 @@ optIn:
     pop
     dup
     cover 3
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:12-19
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:11-18
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -113,12 +113,12 @@ optIn:
     ==
     swap
     gtxns Amount
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:16
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:15
     // amount: Global.assetOptInMinBalance * assets.length
     global AssetOptInMinBalance
     uncover 3
     *
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:12-19
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:11-18
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -130,18 +130,18 @@ optIn:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:20
     // for (let i: uint64 = 0; i < assets.length; i++) {
     intc_1 // 0
 
 optIn_while_top@2:
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:20
     // for (let i: uint64 = 0; i < assets.length; i++) {
     dup
     dig 3
     <
     bz optIn_after_while@8
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:22
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:21
     // assert(!sender.isOptedIn(Asset(assets[i])), ERR_ALREADY_OPTED_IN)
     dig 3
     extract 2 0
@@ -159,7 +159,7 @@ optIn_while_top@2:
     bury 1
     !
     assert // already opted in
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:24-32
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:23-31
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -170,7 +170,7 @@ optIn_while_top@2:
     //   })
     //   .submit();
     itxn_begin
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:30
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:29
     // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     dig 3
     intc_0 // 1
@@ -183,7 +183,7 @@ optIn_ternary_merge@6:
     itxn_field RekeyTo
     dig 6
     itxn_field XferAsset
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:28
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:27
     // assetAmount: 0,
     intc_1 // 0
     itxn_field AssetAmount
@@ -191,7 +191,7 @@ optIn_ternary_merge@6:
     dup
     itxn_field AssetReceiver
     itxn_field Sender
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:24-31
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:23-30
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -204,7 +204,7 @@ optIn_ternary_merge@6:
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:24-32
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:23-31
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -215,7 +215,7 @@ optIn_ternary_merge@6:
     //   })
     //   .submit();
     itxn_submit
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:20
     // for (let i: uint64 = 0; i < assets.length; i++) {
     dup
     intc_0 // 1
@@ -231,7 +231,7 @@ optIn_ternary_false@5:
     // smart_contracts/utils/functions.ts:291
     // return Global.zeroAddress
     global ZeroAddress
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:30
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:29
     // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     b optIn_ternary_merge@6
 
@@ -241,12 +241,12 @@ optIn_after_if_else@11:
     dig 5
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/optin/contract.algo.ts:30
+    // smart_contracts/arc58/plugins/optin/contract.algo.ts:29
     // rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
     b optIn_ternary_merge@6
 
 optIn_after_while@8:
     // smart_contracts/arc58/plugins/optin/contract.algo.ts:8
-    // optIn(walletID: uint64, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+    // optIn(wallet: Application, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     intc_0 // 1
     return

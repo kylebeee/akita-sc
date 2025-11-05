@@ -1,6 +1,5 @@
-import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, arc4, uint64 } from '@algorandfoundation/algorand-typescript'
 import { Address, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ServiceFactoryContractMBRData } from '../utils/functions'
 
 export type WeightLocation = {
   entryID: uint64
@@ -10,8 +9,8 @@ export type WeightLocation = {
 export type arc4WeightLocation = Uint64
 
 export type EntryData = {
-  address: Address
-  marketplace: Address
+  account: Account
+  marketplace: Account
 }
 
 export type arc4WeightsList = arc4.StaticArray<Uint64, 4096>
@@ -62,4 +61,4 @@ export type RaffleMBRData = {
   entriesByAddress: uint64
 }
 
-export type ExtendedRaffleMBRData = RaffleMBRData & ServiceFactoryContractMBRData
+export type ExtendedRaffleMBRData = RaffleMBRData
