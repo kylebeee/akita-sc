@@ -281,21 +281,44 @@ describe('ARC58 Plugin Permissions', () => {
       const { context: { testAccount } } = localnet
       const sender = testAccount.toString()
 
-      let error = 'no error';
-      try {
-        await wallet.usePlugin({
+      // drop down below our wallet sdk
+      // otherwise it short circuits & errors early
+
+      const group = wallet.client.newGroup()
+
+      group.arc58RekeyToPlugin({
+        args: {
+          plugin: payPluginSdk.appId,
           global: true,
-          calls: [
-            payPluginSdk.pay({
-              payments: [{
-                receiver: sender,
-                amount: 0,
-                asset: 0,
-              }]
-            })
-          ]
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          escrow: '',
+          methodOffsets: [],
+          fundsRequest: []
+        },
+        extraFee: microAlgo(1_000n),
+      });
+
+      const composer = await group.composer()
+
+      const payPluginTxn = (
+        await payPluginSdk
+          .pay({
+            payments: [{
+              receiver: sender,
+              amount: 0,
+              asset: 0,
+            }]
+          })
+          .call('') // unnecesary because we're using the default controlled account
+          .getTxns({ wallet: wallet.client.appId })
+      ) as AppCallMethodCall
+
+      composer.addAppCallMethodCall(payPluginTxn)
+      
+      group.arc58VerifyAuthAddress()
+
+      let error = 'no error thrown'
+      try {
+        await group.send();
       } catch (e: any) {
         error = e.message;
       }

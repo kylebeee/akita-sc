@@ -396,7 +396,7 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
       approval: DEFAULT_UPDATE_AKITA_DAO_APP_APPROVAL,
       sourceLink: 'https://github.com/kylebee/akita-sc',
       client: payPluginSdk,
-      // client: daoUpdatePluginSdk
+      // client: daoUpdatePluginSdk,
       global: true,
       useExecutionKey: true,
       useRounds: true
@@ -440,7 +440,7 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
         }]
       })
       // TODO: figure out why this throws a maxFee error
-      // daoUpdatePluginSDK.updateAkitaDaoEscrowForApp({
+      // daoUpdatePluginSdk.updateAkitaDaoEscrowForApp({
       //   appId: abstractAccountFactory.appId,
       //   newEscrow: revWallet.id
       // })
@@ -479,7 +479,9 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
 
   await dao.executeProposal({ proposalId })
 
-  // await atcs[0].submit(wallet.client.algorand.client.algod)
+  const executionTxnIds = await atcs[0].submit(wallet.client.algorand.client.algod)
+
+  console.log('Execution txn ids:', executionTxnIds);
 
   return { walletFactory: abstractAccountFactory, dao, };
 }

@@ -156,23 +156,26 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     let useExecutionKey = false;
     if (this.plugins.has(key)) {
       ({ methods, useRounds, useExecutionKey } = this.plugins.get(key)!);
-      const methodSignatures: string[] = []
+    } else {
+      ({ methods, useRounds, useExecutionKey } = await this.getPluginByKey(key))
+    }
 
-      if (methods.length > 0) {
-        for (let i = 0; i < methods.length; i++) {
-          methodSignatures.push(methods[i].name.toString());
-        }
+    const methodSignatures: string[] = []
 
-        for (const txn of txns) {
-          if (txn.type === 'methodCall' && 'appId' in txn && txn.appId === plugin) {
-            const selector = txn.method.getSelector()
+    if (methods.length > 0) {
+      for (let i = 0; i < methods.length; i++) {
+        methodSignatures.push(methods[i].name.toString());
+      }
 
-            if (!methodSignatures.includes(selector.toString())) {
-              throw new Error(`Transaction selector does not match any allowed method signatures`);
-            }
+      for (const txn of txns) {
+        if (txn.type === 'methodCall' && 'appId' in txn && txn.appId === plugin) {
+          const selector = txn.method.getSelector()
 
-            methodOffsets.push(methodSignatures.indexOf(selector.toString()));
+          if (!methodSignatures.includes(selector.toString())) {
+            throw new Error(`Transaction selector does not match any allowed method signatures`);
           }
+
+          methodOffsets.push(methodSignatures.indexOf(selector.toString()));
         }
       }
     }
