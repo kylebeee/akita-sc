@@ -399,7 +399,7 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
       // client: daoUpdatePluginSdk,
       global: true,
       useExecutionKey: true,
-      useRounds: true
+      // useRounds: true
     }
   ]
 
@@ -447,6 +447,8 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
     ]
   })
 
+  console.log({ firstValid, lastValid });
+
   // create an execution
   actions = [
     {
@@ -478,6 +480,8 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
   }
 
   await dao.executeProposal({ proposalId })
+
+  console.log(await wallet.getExecution(lease))
 
   const executionTxnIds = await atcs[0].submit(wallet.client.algorand.client.algod)
 
