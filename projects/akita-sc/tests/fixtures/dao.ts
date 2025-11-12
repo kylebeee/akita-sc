@@ -479,9 +479,7 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
 
   await dao.executeProposal({ proposalId })
 
-  // TODO: confirm the execution was added
-
-  await atcs[0].submit(wallet.client.algorand.client.algod)
+  // await atcs[0].submit(wallet.client.algorand.client.algod)
 
   return { walletFactory: abstractAccountFactory, dao, };
 }
