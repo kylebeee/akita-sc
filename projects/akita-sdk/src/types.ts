@@ -79,7 +79,7 @@ export type ClientMethods<TClient> = {
 }[keyof TClient];
 
 export type PluginHookParams = {
-  walletId: bigint;
+  wallet: bigint;
 }
 
 export type PluginSDKReturn = (spendingAddress?: Address | string) => {

@@ -12,7 +12,7 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
+import { Contract, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
 import { AkitaBaseFeeGeneratorContract } from './base'
 import { ERR_CONTRACT_NOT_SET, ERR_INVALID_CALL_ORDER } from '../errors'
@@ -44,13 +44,14 @@ export class FactoryContract extends AkitaBaseFeeGeneratorContract {
       assert(Txn.sender === Global.creatorAddress, ERR_NOT_AKITA_DAO)
       this.boxedContract.create({ size })
     } else {
-      assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+      assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
       this.boxedContract.resize(size)
     }
   }
 
   loadBoxedContract(offset: uint64, data: bytes): void {
-    const txn = gtxn.Transaction(0)
+    const expectedPreviousCalls: uint64 = offset / 2032
+    const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
     assert((
       txn.type === TransactionType.ApplicationCall
       && txn.appId === Global.currentApplicationId
@@ -64,7 +65,7 @@ export class FactoryContract extends AkitaBaseFeeGeneratorContract {
   }
 
   deleteBoxedContract(): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     this.boxedContract.delete()
   }
 }

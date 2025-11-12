@@ -1,6 +1,6 @@
 import { AkitaAppList, AkitaAssets, AkitaDaoArgs, GlobalKeysState, NftFees, OtherAppList, PluginAppList, ProposalSettings, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../generated/AkitaDAOClient";
 import { ProposalActionEnum } from "./constants";
-import { AddAllowanceArgs, WalletAddPluginParams } from "../wallet";
+import { AddAllowanceArgs, AddPluginArgs, WalletAddPluginParams } from "../wallet";
 import { MaybeSigner, SDKClient } from "../types";
 
 type ContractArgs = AkitaDaoArgs["obj"];
@@ -17,7 +17,7 @@ export type ProposalAction<TClient extends SDKClient> = (
     lastValid: bigint
   }
   | (
-    Omit<WalletAddPluginParams<TClient>, 'sender' | 'signer' | 'allowances'>
+    Omit<WalletAddPluginParams<TClient>, 'sender' | 'signer'>
     & {
       type: ProposalActionEnum.AddPlugin | ProposalActionEnum.AddNamedPlugin
       fee: bigint
@@ -106,11 +106,23 @@ export type NewProposalParams<TClient extends SDKClient> = (
     cid?: Uint8Array;
     actions: ProposalAction<TClient>[]
   } & MaybeSigner
-) 
+)
 
 export type EditProposalParams<TClient extends SDKClient> = (
   ContractArgs['editProposal(uint64,byte[36],(uint8,byte[])[])void']
   & {
     actions: ProposalAction<TClient>[]
   } & MaybeSigner
+)
+
+export type ProposalAddPluginArgs = (
+  AddPluginArgs & {
+    fee?: bigint;
+    power?: bigint;
+    duration?: bigint;
+    participation?: bigint;
+    approval?: bigint;
+    sourceLink: string;
+    allowances: [number | bigint, number | bigint, number | bigint, number | bigint, number | bigint, boolean][];
+  }
 )

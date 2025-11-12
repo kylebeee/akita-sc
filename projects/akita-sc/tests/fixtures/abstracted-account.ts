@@ -5,7 +5,7 @@ import { FixtureAndAccount } from '../types';
 import { WalletFactorySDK } from 'akita-sdk'
 import { deployEscrowFactory } from './escrow';
 
-type CreateArgs = AbstractedAccountFactoryArgs["obj"]['create(uint64,string,uint64,uint64,string)void']
+type CreateArgs = AbstractedAccountFactoryArgs["obj"]['create(uint64,uint64,string,uint64,uint64,string)void']
 type DeployParams = FixtureAndAccount & { args: Partial<CreateArgs> }
 
 export const deployAbstractedAccountFactory = async ({
@@ -14,6 +14,7 @@ export const deployAbstractedAccountFactory = async ({
   signer,
   args: {
     akitaDao = 0n,
+    akitaDaoEscrow = 0n,
     version = '0.0.1',
     escrowFactory = 0n,
     revocation = 0n,
@@ -33,6 +34,7 @@ export const deployAbstractedAccountFactory = async ({
   const { appClient: client } = await factory.send.create.create({
     args: {
       akitaDao,
+      akitaDaoEscrow,
       version,
       escrowFactory,
       revocation,
@@ -93,37 +95,4 @@ export const deployAbstractedAccountFactory = async ({
       defaultSigner: signer,
     }
   });
-};
-
-type deployAbstractedAccountFactoryAndEscrowFactoryParams = Omit<DeployParams, 'args'> & { args: Partial<Omit<CreateArgs, 'escrowFactoryApp'>> }
-
-export const deployAbstractedAccountFactoryAndEscrowFactory = async ({
-  fixture,
-  sender,
-  signer,
-  args: {
-    akitaDao = 0n,
-    version = '0.0.1',
-    revocation = 0n,
-    domain = 'akita.community'
-  } }: deployAbstractedAccountFactoryAndEscrowFactoryParams): Promise<{
-    abstractAccountFactory: WalletFactorySDK
-    escrowFactory: EscrowFactoryClient
-  }> => {
-
-  const escrowFactory = await deployEscrowFactory({ fixture, sender, signer });
-  const abstractAccountFactory = await deployAbstractedAccountFactory({
-    fixture,
-    sender,
-    signer,
-    args: {
-      akitaDao,
-      version,
-      escrowFactory: escrowFactory.appId,
-      revocation,
-      domain,
-    }
-  });
-
-  return { abstractAccountFactory, escrowFactory };
 };

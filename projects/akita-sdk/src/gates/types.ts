@@ -1,8 +1,7 @@
-import { Address } from "cluster"
 import { StakingType } from "../staking/types"
 import { StructField } from "@algorandfoundation/algokit-utils/types/app-arc56";
 
-export type GateType = 'asset' | 'merkle_address' | 'merkle_asset' | 'nfd' | 'nfd_root' | 'social_activity' | 'social_follower_count' | 'social_follower_index' | 'social_impact' | 'social_moderator' | 'staking_amount' | 'staking_power' | 'subscription' | 'subscription_streak'
+export type GateType = 'akita_referrer' | 'asset' | 'merkle_address' | 'merkle_asset' | 'nfd' | 'nfd_root' | 'poll' | 'social_activity' | 'social_follower_count' | 'social_follower_index' | 'social_impact' | 'social_moderator' | 'staking_amount' | 'staking_power' | 'subscription' | 'subscription_streak'
 
 export interface GateRegistryConfig {
   asset?: bigint;
@@ -53,6 +52,10 @@ export type GateRegistrationFilterAndArg = GateRegistrationArg & {
 
 export type GateRegistrationArg = (
   | {
+    type: 'akita_referrer'
+    referrer: string
+  }
+  | {
     type: 'asset'
     asset: bigint | number
     op: Operator,
@@ -67,6 +70,10 @@ export type GateRegistrationArg = (
   | {
     type: 'nfd_root',
     root: string
+  }
+  | {
+    type: 'poll'
+    poll: bigint | number
   }
   | {
     type: 'social_activity' | 'social_follower_count' | 'social_impact' | 'social_moderator',
@@ -108,6 +115,10 @@ export type GateRegistrationArg = (
 )
 
 export type GateCheckArg = (
+  | {
+    type: 'akita_referrer',
+    wallet: bigint | number
+  }
   | { type: 'asset' }
   | {
     type: 'merkle_address',
@@ -126,6 +137,7 @@ export type GateCheckArg = (
     type: 'nfd_root',
     root: string
   }
+  | { type: 'poll' }
   | { type: 'social_activity' }
   | { type: 'social_follower_count' }
   | {

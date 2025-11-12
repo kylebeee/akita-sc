@@ -28,11 +28,11 @@ export class AuctionFactory extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, childVersion: string, akitaDAO: Application, akitaDAOEscrow: Application): void {
     this.version.value = version
     this.childContractVersion.value = childVersion
-    this.akitaDAO.value = Application(akitaDAO)
-    this.akitaDAOEscrow.value = Application(escrow)
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
   }
 
   // AUCTION FACTORY METHODS ----------------------------------------------------------------------

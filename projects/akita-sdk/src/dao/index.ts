@@ -1,16 +1,17 @@
-import { AkitaDaoArgs, AkitaDaoClient, AkitaDaoFactory } from '../generated/AkitaDAOClient'
+import { AkitaDaoArgs, AkitaDaoClient, AkitaDaoComposer, AkitaDaoFactory } from '../generated/AkitaDAOClient'
 import { BaseSDK } from "../base";
 import { GroupReturn, hasSenderSigner, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
 import { AddPluginArgs, WalletSDK } from "../wallet";
-import { AkitaDaoGlobalState, EditProposalParams, NewProposalParams, ProposalAction } from "./types";
+import { AkitaDaoGlobalState, EditProposalParams, NewProposalParams, ProposalAction, ProposalAddPluginArgs } from "./types";
 import { DAOProposalVotesMBR, ProposalActionEnum } from "./constants";
 import { ABIStruct, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";
 import algosdk, { ALGORAND_ZERO_ADDRESS_STRING, encodeUint64 } from "algosdk";
 import { AppReturn } from "@algorandfoundation/algokit-utils/types/app";
-import { microAlgo } from "@algorandfoundation/algokit-utils";
+import { algo, microAlgo, prepareGroupForSending } from "@algorandfoundation/algokit-utils";
 import { emptySigner, MAX_UINT64 } from "../constants";
 import { EMPTY_CID } from "./constants"
 import { AllowancesToTuple } from '../wallet/utils';
+import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
 
 export * from './constants';
 export * from "./types";
@@ -61,7 +62,24 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             useRounds = false,
             useExecutionKey = false,
             defaultToEscrow = false,
+            fee = 0n,
+            power = 0n,
+            duration = 0n,
+            participation = 0n,
+            approval = 0n,
+            sourceLink = '',
+            allowances = []
           } = action;
+
+          if (
+            useExecutionKey && (
+              duration === 0n ||
+              participation === 0n ||
+              approval === 0n
+            )
+          ) {
+            throw new Error('Proposal Settings must be set when using execution key');
+          }
 
           const plugin = client.appId;
 
@@ -80,7 +98,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             });
           }
 
-          const args: AddPluginArgs = {
+          const args: ProposalAddPluginArgs = {
             plugin,
             caller: caller!,
             escrow,
@@ -91,7 +109,14 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             methods: transformedMethods,
             useRounds,
             useExecutionKey,
-            defaultToEscrow
+            defaultToEscrow,
+            fee,
+            power,
+            duration,
+            participation,
+            approval,
+            sourceLink,
+            allowances: AllowancesToTuple(allowances)
           }
 
           if (name) {
@@ -239,7 +264,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
                 raffle = currentApps?.raffle ?? 0n,
                 metaMerkles = currentApps?.metaMerkles ?? 0n,
                 marketplace = currentApps?.marketplace ?? 0n,
-                walletFactory = currentApps?.walletFactory ?? 0n,
+                wallet = currentApps?.wallet ?? 0n,
                 social = currentApps?.social ?? 0n,
                 impact = currentApps?.impact ?? 0n
               } = action.value;
@@ -256,7 +281,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
                 raffle,
                 metaMerkles,
                 marketplace,
-                walletFactory,
+                wallet,
                 social,
                 impact
               };
@@ -279,7 +304,8 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
                 vrfBeacon = currentApps?.vrfBeacon ?? 0n,
                 nfdRegistry = currentApps?.nfdRegistry ?? 0n,
                 assetInbox = currentApps?.assetInbox ?? 0n,
-                escrowFactory = currentApps?.escrowFactory ?? 0n,
+                escrow = currentApps?.escrow ?? 0n,
+                poll = currentApps?.poll ?? 0n,
                 akitaNfd = currentApps?.akitaNfd ?? 0n
               } = action.value;
 
@@ -287,9 +313,12 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
                 vrfBeacon,
                 nfdRegistry,
                 assetInbox,
-                escrowFactory,
+                escrow,
+                poll,
                 akitaNfd
               };
+
+              console.log('OtherAppList ABI Data:', abiData);
 
               data = getABIEncodedValue(abiData, 'OtherAppList', this.client.appClient.appSpec.structs)
               break;
@@ -475,7 +504,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
     group.setup({
       ...sendParams,
-      args: {},
+      args: { nickname: 'Akita DAO' },
       maxFee: (6_000).microAlgo()
     })
 
@@ -523,11 +552,8 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     actions
   }: NewProposalParams<TClient>): Promise<{
     groupId: string;
-    txIds: string[];
-    confirmations: algosdk.modelsv2.PendingTransactionResponse[];
-    transactions: algosdk.Transaction[];
-    confirmation: algosdk.modelsv2.PendingTransactionResponse;
-    transaction: algosdk.Transaction;
+    confirmedRound: bigint;
+    txIDs: string[];
   } & AppReturn<bigint | undefined>> {
 
     const sendParams = {
@@ -545,6 +571,8 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     // determine which call to use
     const initialized = (await this.client.state.global.initialized())! === 1n
 
+    const group = this.client.newGroup()
+
     if (initialized) {
 
       const results = await this.client.send.proposalCost(preppedActions)
@@ -556,7 +584,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
         amount: microAlgo(cost),
       })
 
-      return await this.client.send.newProposal({
+      group.newProposal({
         ...sendParams,
         args: {
           payment,
@@ -565,7 +593,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
         }
       })
     } else {
-      return await this.client.send.newProposalPreInitialized({
+      group.newProposalPreInitialized({
         ...sendParams,
         args: {
           cid,
@@ -573,6 +601,37 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
         }
       })
     }
+
+    for (let i = 0; i < actions.length; i++) {
+      group.opUp({ args: {}, note: `${i}` })
+    }
+
+    const length = await (await group.composer()).count()
+
+    const suggestedParams = await this.client.algorand.getSuggestedParams()
+    const foundation = (await (await group.composer()).build()).atc
+
+    const populatedGroup = await prepareGroupForSending(
+      foundation,
+      this.client.algorand.client.algod,
+      {
+        coverAppCallInnerTransactionFees: true,
+        populateAppCallResources: true
+      },
+      {
+        maxFees: new Map([
+          [0, algo(1)],
+          ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0)] as [number, AlgoAmount]),
+        ]),
+        suggestedParams: suggestedParams,
+      },
+    )
+
+    const groupId = populatedGroup.buildGroup()[0].txn.group!.toString()
+
+    const { methodResults, ...rest } = await populatedGroup.execute(this.client.algorand.client.algod, 10)
+
+    return { groupId, ...rest, return: methodResults ? methodResults[0].returnValue as bigint : undefined }
   }
 
   async editProposal<TClient extends SDKClient>({

@@ -134,7 +134,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         throw new Error(`All calls must be to the same plugin app ID: ${plugin}, but got ${appId}`);
       }
 
-      txns.push(await getTxns({ walletId: this.client.appId }))
+      txns.push(await getTxns({ wallet: this.client.appId }))
     }
 
     let caller = ''
@@ -673,6 +673,100 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     });
   }
 
+  readonly build = {
+
+    usePlugin: async ({ firstValid = 0n, windowSize, ...args }: BuildWalletUsePluginParams): Promise<ExecutionBuildGroup> => {
+
+      const { lease } = args;
+
+      const suggestedParams = await this.client.algorand.getSuggestedParams()
+
+      const validityPeriod = 1000n;
+      const start = firstValid !== 0n ? firstValid : BigInt(suggestedParams.firstValid);
+
+      const { useRounds, length, group } = await this.prepareUsePlugin(args);
+
+      const foundation = (await (await group.composer()).build()).atc
+
+      const admin = (await this.client.state.global.admin())!
+
+      const f1 = forceProperties(foundation, { sender: admin, signer: makeEmptyTransactionSigner() })
+
+      let numGroupsToBuild: number;
+      let endTarget: bigint;
+
+      if (useRounds) {
+        endTarget = start + windowSize;
+        numGroupsToBuild = Math.ceil(Number(windowSize) / Number(validityPeriod));
+      } else {
+        // Convert seconds to rounds (assuming ~2.7s per round)
+        const roundsNeeded = BigInt(Math.ceil(Number(windowSize) / 2.7));
+        endTarget = start + roundsNeeded;
+        numGroupsToBuild = Math.ceil(Number(roundsNeeded) / Number(validityPeriod));
+      }
+
+      const populated = await prepareGroupForSending(
+        f1,
+        this.client.algorand.client.algod,
+        {
+          coverAppCallInnerTransactionFees: true,
+          populateAppCallResources: true
+        },
+        {
+          maxFees: new Map([
+            [0, algo(1)],
+            ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0)] as [number, AlgoAmount]),
+          ]),
+          suggestedParams: suggestedParams,
+        },
+      )
+
+      let groups: ExecutionBuildGroup = {
+        lease: encodeLease(lease)!,
+        firstValid: start,
+        lastValid: endTarget,
+        useRounds,
+        ids: [],
+        atcs: []
+      }
+
+      const sendParams = {
+        ...this.sendParams,
+        ...(args.sender !== undefined && { sender: args.sender }),
+        ...(args.signer !== undefined && { signer: args.signer })
+      };
+
+      for (let i = 0; i < numGroupsToBuild; i++) {
+        const groupStartRound = start + (BigInt(i) * validityPeriod);
+        let groupEndRound: bigint;
+
+        // For the last group, ensure it ends exactly at the target expiration
+        if (i === (numGroupsToBuild - 1)) {
+          groupEndRound = endTarget - 1n;
+        } else {
+          groupEndRound = groupStartRound + validityPeriod - 1n;
+        }
+
+        console.log(`Building group ${i + 1}/${numGroupsToBuild} with start: ${groupStartRound}, end: ${groupEndRound}`);
+
+        const newAtc = forceProperties(populated, {
+          sender: sendParams.sender,
+          signer: sendParams.signer,
+          firstValid: groupStartRound,
+          lastValid: groupEndRound,
+          lease: groups.lease
+        })
+
+        const groupID = newAtc.buildGroup()[0].txn.group!
+
+        groups.ids.push(groupID);
+        groups.atcs.push(newAtc);
+      }
+
+      return groups;
+    }
+  }
+
   async getGlobalState(): Promise<WalletGlobalState> {
     return await this.client.state.global.getAll() as unknown as WalletGlobalState;
   }
@@ -775,99 +869,5 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async balance(assets: bigint[]): Promise<bigint[]> {
     return (await this.client.send.balance({ args: { assets } })).return as unknown as bigint[];
-  }
-
-  readonly build = {
-
-    usePlugin: async ({ firstValid = 0n, windowSize, ...args }: BuildWalletUsePluginParams): Promise<ExecutionBuildGroup> => {
-
-      const { lease } = args;
-
-      const suggestedParams = await this.client.algorand.getSuggestedParams()
-
-      const validityPeriod = 1000n;
-      const start = firstValid !== 0n ? firstValid : BigInt(suggestedParams.firstValid);
-
-      const { useRounds, length, group } = await this.prepareUsePlugin(args);
-
-      const foundation = (await (await group.composer()).build()).atc
-
-      const admin = (await this.client.state.global.admin())!
-
-      const f1 = forceProperties(foundation, { sender: admin, signer: makeEmptyTransactionSigner() })
-
-      let numGroupsToBuild: number;
-      let endTarget: bigint;
-
-      if (useRounds) {
-        endTarget = start + windowSize;
-        numGroupsToBuild = Math.ceil(Number(windowSize) / Number(validityPeriod));
-      } else {
-        // Convert seconds to rounds (assuming ~2.7s per round)
-        const roundsNeeded = BigInt(Math.ceil(Number(windowSize) / 2.7));
-        endTarget = start + roundsNeeded;
-        numGroupsToBuild = Math.ceil(Number(roundsNeeded) / Number(validityPeriod));
-      }
-
-      const populated = await prepareGroupForSending(
-        f1,
-        this.client.algorand.client.algod,
-        {
-          coverAppCallInnerTransactionFees: true,
-          populateAppCallResources: true
-        },
-        {
-          maxFees: new Map([
-            [0, algo(1)],
-            ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0)] as [number, AlgoAmount]),
-          ]),
-          suggestedParams: suggestedParams,
-        },
-      )
-
-      let groups: ExecutionBuildGroup = {
-        lease: encodeLease(lease)!,
-        firstValid: start,
-        lastValid: endTarget,
-        useRounds,
-        ids: [],
-        atcs: []
-      }
-
-      const sendParams = {
-        ...this.sendParams,
-        ...(args.sender !== undefined && { sender: args.sender }),
-        ...(args.signer !== undefined && { signer: args.signer })
-      };
-
-      for (let i = 0; i < numGroupsToBuild; i++) {
-        const groupStartRound = start + (BigInt(i) * validityPeriod);
-        let groupEndRound: bigint;
-
-        // For the last group, ensure it ends exactly at the target expiration
-        if (i === (numGroupsToBuild - 1)) {
-          groupEndRound = endTarget - 1n;
-        } else {
-          groupEndRound = groupStartRound + validityPeriod - 1n;
-        }
-
-        console.log(`Building group ${i + 1}/${numGroupsToBuild} with start: ${groupStartRound}, end: ${groupEndRound}`);
-
-        const newAtc = forceProperties(populated, {
-          sender: sendParams.sender,
-          signer: sendParams.signer,
-          firstValid: groupStartRound,
-          lastValid: groupEndRound,
-          lease: groups.lease
-        })
-
-        const groupID = newAtc.buildGroup()[0].txn.group!
-
-        groups.ids.push(groupID);
-        groups.atcs.push(newAtc);
-      }
-
-      return groups;
-    }
   }
 }

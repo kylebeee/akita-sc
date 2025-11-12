@@ -242,4 +242,9 @@ export class Poll extends AkitaBaseContract {
 
     this.createVote(votes)
   }
+
+  @abimethod({ readonly: true })
+  hasVoted(user: Address): boolean {
+    return this.votes(user.native).exists
+  }
 }

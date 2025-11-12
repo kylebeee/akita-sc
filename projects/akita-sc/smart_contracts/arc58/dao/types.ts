@@ -210,7 +210,7 @@ export type AkitaAppList = {
   raffle: uint64 // Akita Raffle
   metaMerkles: uint64 // Akita MetaMerkles
   marketplace: uint64 // Akita Marketplace
-  walletFactory: uint64 // abstracted account factory
+  wallet: uint64 // abstracted account factory
   social: uint64 // akita social
   impact: uint64 // akita impact
   // empty slot
@@ -238,9 +238,9 @@ export type OtherAppList = {
   vrfBeacon: uint64 // vrf beacon
   nfdRegistry: uint64 // NFD Registry
   assetInbox: uint64 // asset inbox
-  escrowFactory: uint64 // escrow factory
+  escrow: uint64 // escrow factory
+  poll: uint64 // poll factory
   akitaNfd: uint64 // akita.algo NFD
-  // empty slot
   // empty slot
   // empty slot
   // empty slot
@@ -271,8 +271,9 @@ export type AkitaDAOApps = {
   vrfBeacon: uint64 // vrf beacon
   nfdRegistry: uint64 // NFD Registry
   assetInbox: uint64 // asset inbox
-  walletFactory: uint64 // abstracted account factory
-  escrowFactory: uint64 // escrow factory
+  wallet: uint64 // abstracted account factory
+  escrow: uint64 // escrow factory
+  poll: uint64 // poll factory
 }
 
 export type WalletFees = {

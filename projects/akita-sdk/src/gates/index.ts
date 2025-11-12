@@ -6,12 +6,14 @@ import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { emptySigner } from "../constants";
 import { GateCheckArg, GateEncodingInfo, GateRegistrationArg, GateRegistrationFilterAndArg, GateRegistryConfig, GateType } from "./types";
 import { getABIDecodedValue, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";
-import { encodeUint64 } from "algosdk";
+import { ABIMethod, encodeUint64, Transaction, TransactionSigner } from "algosdk";
+import { APP_SPEC as AkitaReferrerAppSpec } from '../generated/AkitaReferrerGateClient'
 import { APP_SPEC as AssetAppSpec, AssetGateRegistryInfo } from '../generated/AssetGateClient'
 import { APP_SPEC as MerkleAddressAppSpec, MerkleAddressGateRegistryInfo } from '../generated/MerkleAddressGateClient'
 import { APP_SPEC as MerkleAssetAppSpec, MerkleAssetGateRegistryInfo } from '../generated/MerkleAssetGateClient'
 import { APP_SPEC as NFDAppSpec } from '../generated/NFDGateClient'
 import { APP_SPEC as NFDRootAppSpec } from '../generated/NFDGateClient'
+import { APP_SPEC as PollAppSpec } from '../generated/PollGateClient'
 import { OperatorAndValue, APP_SPEC as SocialActivityAppSpec } from '../generated/SocialActivityGateClient'
 import { APP_SPEC as SocialFollowerCountAppSpec } from '../generated/SocialFollowerCountGateClient'
 import { APP_SPEC as SocialFollowerIndexGateAppSpec, SocialFollowerIndexGateRegistryInfo } from '../generated/SocialFollowerIndexGateClient'
@@ -21,6 +23,7 @@ import { APP_SPEC as StakingAmountGateAppSpec, StakingAmountGateRegistryInfo } f
 import { APP_SPEC as StakingPowerGateAppSpec, StakingPowerGateRegistryInfo } from '../generated/StakingPowerGateClient'
 import { APP_SPEC as SubscriptionGateAppSpec, SubscriptionGateRegistryInfo } from '../generated/SubscriptionGateClient'
 import { APP_SPEC as SubscriptionStreakGateAppSpec, SubscriptionStreakGateRegistryInfo } from '../generated/SubscriptionStreakGateClient'
+import { AppCallMethodCall } from "@algorandfoundation/algokit-utils/types/composer";
 
 type ContractArgs = GateArgs["obj"];
 
@@ -31,6 +34,11 @@ export class GateSDK extends BaseSDK<GateClient> {
   private contractIdToType: Map<bigint, GateType> = new Map();
 
   private gateEncodings: { [K in GateType]: GateEncodingInfo } = {
+    akita_referrer: {
+      registerShape: 'AkitaReferrerGateRegistryInfo',
+      checkShape: 'uint64',
+      structs: AkitaReferrerAppSpec.structs
+    },
     asset: {
       registerShape: 'AssetGateRegistryInfo',
       checkShape: 'None',
@@ -55,6 +63,11 @@ export class GateSDK extends BaseSDK<GateClient> {
       registerShape: 'NFDRootGateRegistryInfo',
       checkShape: 'string',
       structs: NFDRootAppSpec.structs
+    },
+    poll: {
+      registerShape: 'PollGateRegistryInfo',
+      checkShape: 'None',
+      structs: PollAppSpec.structs
     },
     social_activity: {
       registerShape: 'SocialActivityGateRegistryInfo',
@@ -142,6 +155,15 @@ export class GateSDK extends BaseSDK<GateClient> {
       }
 
       switch (type) {
+        case 'akita_referrer': {
+          const { referrer } = arg;
+          data = getABIEncodedValue(
+            { referrer },
+            name,
+            this.gateEncodings[type].structs
+          );
+          break;
+        }
         case 'asset': {
           const { asset, op, value } = arg;
           data = getABIEncodedValue(
@@ -173,9 +195,27 @@ export class GateSDK extends BaseSDK<GateClient> {
           );
           break;
         }
+        case 'nfd': {
+          const { appId } = arg;
+          data = getABIEncodedValue(
+            { appId },
+            name,
+            this.gateEncodings[type].structs
+          );
+          break;
+        }
         case 'nfd_root': {
           const { root } = arg;
           data = Buffer.from(root)
+          break;
+        }
+        case 'poll': {
+          const { poll } = arg;
+          data = getABIEncodedValue(
+            { poll },
+            name,
+            this.gateEncodings[type].structs
+          );
           break;
         }
         case 'social_follower_index': {
@@ -235,7 +275,7 @@ export class GateSDK extends BaseSDK<GateClient> {
   }
 
   private decodeGateArgs(type: GateType, encoded: Uint8Array): GateRegistrationArg {
-    
+
     const registrationName = this.gateEncodings[type].registerShape;
     if (registrationName === 'None') {
       return { type } as GateRegistrationArg;
@@ -307,6 +347,11 @@ export class GateSDK extends BaseSDK<GateClient> {
       }
 
       switch (type) {
+        case 'akita_referrer': {
+          const { wallet } = arg;
+          data = encodeUint64(wallet);
+          break;
+        }
         case 'merkle_address': {
           const { proof } = arg;
           data = getABIEncodedValue(
@@ -471,5 +516,68 @@ export class GateSDK extends BaseSDK<GateClient> {
     }
 
     return cost;
+  }
+
+  readonly build = {
+
+    check: async ({
+      sender,
+      signer,
+      caller,
+      gateId,
+      args
+    }: ( 
+      Omit<ContractArgs['check(address,uint64,byte[][])bool'], 'args'>
+      & { args: GateCheckArg[] }
+      & MaybeSigner
+    )): Promise<AppCallMethodCall> => {
+
+      const sendParams = {
+        ...this.sendParams,
+        ...(sender !== undefined && { sender }),
+        ...(signer !== undefined && { signer })
+      };
+
+      if (!hasSenderSigner(sendParams)) {
+        throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
+      }
+
+      const preppedArgs = await this.encodeGateCheckArgs(args);
+
+      return await this.client.params.check({
+        ...sendParams,
+        args: { caller, gateId, args: preppedArgs }
+      });
+    },
+
+    mustCheck: async ({
+      sender,
+      signer,
+      caller,
+      gateId,
+      args
+    }: ( 
+      Omit<ContractArgs['check(address,uint64,byte[][])bool'], 'args'>
+      & { args: GateCheckArg[] }
+      & MaybeSigner
+    )): Promise<AppCallMethodCall> => {
+
+      const sendParams = {
+        ...this.sendParams,
+        ...(sender !== undefined && { sender }),
+        ...(signer !== undefined && { signer })
+      };
+
+      if (!hasSenderSigner(sendParams)) {
+        throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
+      }
+
+      const preppedArgs = await this.encodeGateCheckArgs(args);
+
+      return await this.client.params.mustCheck({
+        ...sendParams,
+        args: { caller, gateId, args: preppedArgs }
+      });
+    }
   }
 }

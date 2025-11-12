@@ -23,11 +23,6 @@ export class PrizeBoxFactory extends FactoryContract {
     this.childContractVersion.value = version
   }
 
-  @abimethod({ allowActions: 'UpdateApplication' })
-  update(): void {
-    assert(Txn.sender === Global.creatorAddress, 'Only the creator can update the application')
-  }
-
   // PRIZE BOX FACTORY METHODS --------------------------------------------------------------------
 
   mint(payment: gtxn.PaymentTxn, owner: Address): uint64 {

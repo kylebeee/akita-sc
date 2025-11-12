@@ -38,12 +38,14 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
   @abimethod({ onCreate: 'require' })
   create(
     akitaDAO: Application,
+    akitaDAOEscrow: Application,
     version: string,
     escrowFactory: Application,
     revocation: Application,
     domain: string
   ): void {
     this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
     this.version.value = version
     this.escrowFactory.value = escrowFactory
     this.revocation.value = revocation
@@ -53,7 +55,7 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
   // ABSTRACTED ACCOUNT FACTORY METHODS -----------------------------------------------------------
 
   updateRevocation(app: Application): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     this.revocation.value = app
   }
 

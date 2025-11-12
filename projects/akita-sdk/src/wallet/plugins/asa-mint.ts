@@ -24,7 +24,7 @@ type CreateAssetParams = {
 type ContractArgs = AsaMintPluginArgs["obj"];
 
 type MintArgs = (
-  Omit<ContractArgs['mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[]'], 'walletId' | 'rekeyBack' | 'assets' | 'mbrPayment'>
+  Omit<ContractArgs['mint(uint64,bool,(string,string,uint64,uint64,address,address,address,address,bool,string)[],pay)uint64[]'], 'wallet' | 'rekeyBack' | 'assets' | 'mbrPayment'>
   & MaybeSigner
   & {
     rekeyBack?: boolean
@@ -66,14 +66,14 @@ export class AsaMintPluginSDK extends BaseSDK<AsaMintPluginClient> {
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
       selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-      getTxns: async ({ walletId }: PluginHookParams) => {
+      getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
 
         const mbrPayment = this.client.algorand.createTransaction.payment({
           ...sendParams,
           amount: microAlgo(assetCreateCost * assets.length),
-          receiver: spendingAddress ? spendingAddress : algosdk.getApplicationAddress(walletId),
+          receiver: spendingAddress ? spendingAddress : algosdk.getApplicationAddress(wallet),
         })
 
         const assetsTuple = assets.map(asset => [
@@ -92,7 +92,7 @@ export class AsaMintPluginSDK extends BaseSDK<AsaMintPluginClient> {
         const params = (
           await this.client.params.mint({
             ...sendParams,
-            args: { walletId, assets: assetsTuple, rekeyBack, mbrPayment },
+            args: { wallet, assets: assetsTuple, rekeyBack, mbrPayment },
             extraFee: microAlgo(1_000 * assets.length),
           })
         )

@@ -21,10 +21,11 @@ export class PoolFactory extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, childVersion: string, akitaDAO: uint64): void {
+  create(version: string, childVersion: string, akitaDAO: Application, akitaDAOEscrow: Application): void {
     this.version.value = version
     this.childContractVersion.value = childVersion
-    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
   }
 
   setEscrow(escrow: uint64): void {
@@ -97,7 +98,8 @@ export class PoolFactory extends classes(
           minimumStakeAmount,
           gateID,
           maxEntries,
-          this.akitaDAO.value.id,
+          this.akitaDAO.value,
+          this.akitaDAOEscrow.value
         ],
       })
       .itxn

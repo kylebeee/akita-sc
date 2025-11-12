@@ -49,7 +49,7 @@ export class SubscriptionStreakGate extends AkitaBaseContract {
     op: Uint8,
     streak: uint64
   ): boolean {
-    const info = abiCall<typeof Subscriptions.prototype.getSubscriptionInfo>({
+    const info = abiCall<typeof Subscriptions.prototype.getSubscription>({
       appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
       args: [address, id],
     }).returnValue

@@ -115,14 +115,14 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
   // GATE METHODS ---------------------------------------------------------------------------------
 
   // addApp(appID: uint64): void {
-  //   assert(Txn.sender === this.akitaDAO.value.address, ERR_FORBIDDEN)
+  //   assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
   //   assert(appID !== 0, ERR_INVALID_APP_ID)
   //   assert(!this.appRegistry(appID).exists, ERR_APP_ALREADY_EXISTS)
   //   this.appRegistry(appID).create()
   // }
 
   // removeApp(appID: uint64): void {
-  //   assert(Txn.sender === this.akitaDAO.value.address, ERR_FORBIDDEN)
+  //   assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
   //   assert(this.appRegistry(appID).exists, ERR_INVALID_APP_ID)
   //   this.appRegistry(appID).delete()
   // }

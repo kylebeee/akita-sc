@@ -735,7 +735,7 @@ export class AkitaDAO extends Contract {
       raffle: apps.raffle,
       metaMerkles: apps.metaMerkles,
       marketplace: apps.marketplace,
-      walletFactory: apps.walletFactory,
+      wallet: apps.wallet,
       social: apps.social,
       impact: apps.impact
     }
@@ -748,8 +748,9 @@ export class AkitaDAO extends Contract {
       vrfBeacon: apps.vrfBeacon,
       nfdRegistry: apps.nfdRegistry,
       assetInbox: apps.assetInbox,
-      escrowFactory: apps.escrowFactory,
+      escrow: apps.escrow,
       akitaNfd: apps.akitaNfd,
+      poll: apps.poll
     }
 
     this.walletFees.value = {
@@ -837,15 +838,15 @@ export class AkitaDAO extends Contract {
   }
 
   setup(nickname: string): uint64 {
-    const { walletFactory } = this.akitaAppList.value
+    const { wallet: appId } = this.akitaAppList.value
 
     const cost = this.setupCost()
 
     const walletID = abiCall<typeof AbstractedAccountFactoryInterface.prototype.newAccount>({
-      appId: walletFactory,
+      appId,
       args: [
         itxn.payment({
-          receiver: Application(walletFactory).address,
+          receiver: Application(appId).address,
           amount: cost,
         }),
         new Address(Global.zeroAddress),
@@ -870,7 +871,7 @@ export class AkitaDAO extends Contract {
   newProposalPreInitialized(cid: CID, actions: ProposalAction[]): uint64 {
     assert(this.initialized.value === false, ERR_ALREADY_INITIALIZED)
 
-    const origin = getOrigin(this.otherAppList.value.escrowFactory, Txn.sender)
+    const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     const { powerRequired } = this.proposalCost(actions)
 
     this.validateActions(actions)
@@ -881,7 +882,7 @@ export class AkitaDAO extends Contract {
   newProposal(payment: gtxn.PaymentTxn, cid: CID, actions: ProposalAction[]): uint64 {
     assert(this.initialized.value === true, ERR_ALREADY_INITIALIZED)
 
-    const origin = getOrigin(this.otherAppList.value.escrowFactory, Txn.sender)
+    const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     const { totalFee, powerRequired } = this.proposalCost(actions)
 
     assertMatch(
@@ -905,7 +906,7 @@ export class AkitaDAO extends Contract {
     const { status, creator } = this.proposals(id).value
     assert(status === ProposalStatusDraft, ERR_INVALID_PROPOSAL_STATE)
 
-    const origin = getOrigin(this.otherAppList.value.escrowFactory, Txn.sender)
+    const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     assert(origin === creator.native, ERR_INCORRECT_SENDER)
 
     const { totalFee, powerRequired } = this.proposalCost(actions)
@@ -922,7 +923,7 @@ export class AkitaDAO extends Contract {
     const { status, creator } = this.proposals(id).value
     assert(status === ProposalStatusDraft, ERR_INVALID_PROPOSAL_STATE)
 
-    const origin = getOrigin(this.otherAppList.value.escrowFactory, Txn.sender)
+    const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     assert(origin === creator.native, ERR_INCORRECT_SENDER)
 
     const { totalFee, powerRequired } = this.proposalCost(actions)
@@ -951,7 +952,7 @@ export class AkitaDAO extends Contract {
       ERR_INVALID_PROPOSAL_STATE
     )
 
-    const origin = getOrigin(this.otherAppList.value.escrowFactory, Txn.sender)
+    const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     assert(origin === creator.native, ERR_INCORRECT_SENDER)
 
     this.proposals(proposalId).delete()
@@ -963,7 +964,7 @@ export class AkitaDAO extends Contract {
     const { status, creator } = this.proposals(proposalID).value
 
     assert(status === ProposalStatusDraft, ERR_INVALID_PROPOSAL_STATE)
-    const origin = getOrigin(this.otherAppList.value.escrowFactory, Txn.sender)
+    const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     assert(origin === creator.native, ERR_INCORRECT_SENDER)
 
     this.proposals(proposalID).value.votingTs = Global.latestTimestamp
@@ -986,7 +987,7 @@ export class AkitaDAO extends Contract {
     const { status } = this.proposals(proposalID).value
     assert(status === ProposalStatusVoting, ERR_INVALID_PROPOSAL_STATE)
 
-    const voter = new Address(getOrigin(this.otherAppList.value.escrowFactory, Txn.sender))
+    const voter = new Address(getOrigin(this.otherAppList.value.escrow, Txn.sender))
 
     if (this.proposalVotes({ proposalID, voter }).exists) {
       const { type, power: previousPower } = this.proposalVotes({ proposalID, voter }).value
@@ -1160,11 +1161,9 @@ export class AkitaDAO extends Contract {
 
   @abimethod({ readonly: true })
   setupCost(): uint64 {
-    const { walletFactory } = this.akitaAppList.value
+    const { wallet: appId } = this.akitaAppList.value
 
-    return abiCall<typeof AbstractedAccountFactoryInterface.prototype.cost>({
-      appId: walletFactory,
-    }).returnValue
+    return abiCall<typeof AbstractedAccountFactoryInterface.prototype.cost>({ appId }).returnValue
   }
 
   @abimethod({ readonly: true })

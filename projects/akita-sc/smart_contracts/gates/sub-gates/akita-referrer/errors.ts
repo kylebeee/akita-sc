@@ -1,0 +1,1 @@
+export const ERR_INVALID_WALLET_ID = 'Invalid wallet ID provided'

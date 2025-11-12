@@ -26,9 +26,9 @@ export class PoolPlugin extends classes(BasePool, FactoryContract) {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, factory: uint64): void {
+  create(version: string, factory: Application): void {
     this.version.value = version
-    this.factory.value = Application(factory)
+    this.factory.value = factory
   }
 
   // POOL PLUGIN METHODS --------------------------------------------------------------------------

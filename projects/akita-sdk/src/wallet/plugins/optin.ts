@@ -11,7 +11,7 @@ const assetOptInCost = 100_000 // This is the cost for asset opt-in, adjust as n
 type ContractArgs = OptInPluginArgs["obj"];
 
 type OptInArgs = (
-  Omit<ContractArgs['optIn(uint64,bool,uint64[],pay)void'], 'walletId' | 'rekeyBack' | 'mbrPayment'>
+  Omit<ContractArgs['optIn(uint64,bool,uint64[],pay)void'], 'wallet' | 'rekeyBack' | 'mbrPayment'>
   & MaybeSigner
   & { rekeyBack?: boolean }
 );
@@ -50,20 +50,20 @@ export class OptInPluginSDK extends BaseSDK<OptInPluginClient> {
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
       selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-      getTxns: async ({ walletId }: PluginHookParams) => {
+      getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
 
         const mbrPayment = this.client.algorand.createTransaction.payment({
           ...sendParams,
           amount: microAlgo(assetOptInCost * assets.length),
-          receiver: spendingAddress ? spendingAddress : algosdk.getApplicationAddress(walletId),
+          receiver: spendingAddress ? spendingAddress : algosdk.getApplicationAddress(wallet),
         })
 
         const params = (
           await this.client.params.optIn({
             ...sendParams,
-            args: { walletId, ...args, rekeyBack, mbrPayment },
+            args: { wallet, ...args, rekeyBack, mbrPayment },
             extraFee: microAlgo(1_000 * assets.length),
           })
         )

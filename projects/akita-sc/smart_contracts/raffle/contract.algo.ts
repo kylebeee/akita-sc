@@ -241,8 +241,8 @@ export class Raffle extends classes(
     maxTickets: uint64,
     gateID: uint64,
     marketplace: Account,
-    akitaDAO: uint64,
-    feeEscrow: uint64,
+    akitaDAO: Application,
+    akitaDAOEscrow: Application,
   ): void {
     assert(Global.callerApplicationId !== 0, ERR_MUST_BE_CALLED_FROM_FACTORY)
 
@@ -264,8 +264,8 @@ export class Raffle extends classes(
     this.prizeClaimed.value = false
     this.gateID.value = gateID
     this.marketplace.value = marketplace
-    this.akitaDAO.value = Application(akitaDAO)
-    this.akitaDAOEscrow.value = Application(feeEscrow)
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
 
     // internal variables
     const fees = getNFTFees(this.akitaDAO.value)

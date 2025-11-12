@@ -102,8 +102,8 @@ export class RaffleFactory extends classes(
           maxTickets,
           gateID,
           marketplace,
-          this.akitaDAO.value.id,
-          this.akitaDAOEscrow.value.id,
+          this.akitaDAO.value,
+          this.akitaDAOEscrow.value,
         ],
       })
       .itxn
@@ -139,11 +139,11 @@ export class RaffleFactory extends classes(
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, childVersion: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, childVersion: string, akitaDAO: Application, akitaDAOEscrow: Application): void {
     this.version.value = version
     this.childContractVersion.value = childVersion
-    this.akitaDAO.value = Application(akitaDAO)
-    this.akitaDAOEscrow.value = Application(escrow)
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
   }
 
   // RAFFLE FACTORY METHODS -----------------------------------------------------------------------

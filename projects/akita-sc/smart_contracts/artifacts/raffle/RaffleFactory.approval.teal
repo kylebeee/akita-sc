@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 8 2 50000 13113300
-    bytecblock "akita_dao" "bc" "akita_escrow" 0x3ea11832 0x151f7c75 0xc53b32cc "version" "child_contract_version" "akita_al" 0xbd7148d0
+    bytecblock "akita_dao" "bc" "wallet" "akita_escrow" 0x3ea11832 0x151f7c75 0xc53b32cc "version" "child_contract_version" "akita_al" 0xbd7148d0
     // smart_contracts/raffle/factory.algo.ts:27-31
     // export class RaffleFactory extends classes(
     //   BaseRaffle,
@@ -28,15 +28,15 @@ main_switch_case_next@5:
     txn ApplicationID
     bz main_create_NoOp@18
     pushbytess 0x18584f20 0x2924565e 0x91dd3c75 // method "newRaffle(pay,axfer,uint64,uint64,uint64,uint64,uint64,uint64,address,string,byte[32][],uint64)uint64", method "newPrizeBoxRaffle(pay,uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64)uint64", method "deleteRaffle(uint64)void"
-    bytec_3 // method "optin(pay,uint64)void"
-    bytec 5 // method "initBoxedContract(string,uint64)void"
+    bytec 4 // method "optin(pay,uint64)void"
+    bytec 6 // method "initBoxedContract(string,uint64)void"
     pushbytess 0xdca2d862 0xd346b1a4 0x1ead20a9 0x33e92c94 0x854dede0 // method "loadBoxedContract(uint64,byte[])void", method "deleteBoxedContract()void", method "updateAkitaDAOEscrow(uint64)void", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
     match newRaffle newPrizeBoxRaffle deleteRaffle optin initBoxedContract loadBoxedContract deleteBoxedContract updateAkitaDAOEscrow updateAkitaDAO main_opUp_route@16
     err
 
 main_opUp_route@16:
-    // smart_contracts/utils/base-contracts/base.ts:36
+    // smart_contracts/utils/base-contracts/base.ts:41
     // opUp(): void { }
     intc_1 // 1
     return
@@ -107,14 +107,14 @@ create:
     btoi
     // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 6 // "version"
+    bytec 7 // "version"
     // smart_contracts/raffle/factory.algo.ts:143
     // this.version.value = version
     uncover 4
     app_global_put
     // smart_contracts/utils/base-contracts/factory.ts:33
     // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
-    bytec 7 // "child_contract_version"
+    bytec 8 // "child_contract_version"
     // smart_contracts/raffle/factory.algo.ts:144
     // this.childContractVersion.value = childVersion
     uncover 3
@@ -123,14 +123,14 @@ create:
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/raffle/factory.algo.ts:145
-    // this.akitaDAO.value = Application(akitaDAO)
+    // this.akitaDAO.value = akitaDAO
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:42
+    // smart_contracts/utils/base-contracts/base.ts:47
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    bytec_2 // "akita_escrow"
+    bytec_3 // "akita_escrow"
     // smart_contracts/raffle/factory.algo.ts:146
-    // this.akitaDAOEscrow.value = Application(escrow)
+    // this.akitaDAOEscrow.value = akitaDAOEscrow
     swap
     app_global_put
     // smart_contracts/raffle/factory.algo.ts:141
@@ -411,7 +411,7 @@ newRaffle_after_inlined_smart_contracts/utils/functions.ts::royalties@8:
     //     assetXfer.xferAsset.id,
     //   ],
     // })
-    bytec_3 // method "optin(pay,uint64)void"
+    bytec 4 // method "optin(pay,uint64)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     intc_0 // 0
@@ -478,7 +478,7 @@ newRaffle_after_inlined_smart_contracts/utils/functions.ts::royalties@8:
     //   weightsListCount: uint64
     // ): uint64 {
     itob
-    bytec 4 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
@@ -502,7 +502,7 @@ newRaffle_after_if_else@3:
     // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     dig 2
-    bytec 8 // "akita_al"
+    bytec 9 // "akita_al"
     app_global_get_ex
     pop
     // smart_contracts/utils/functions.ts:397
@@ -575,7 +575,7 @@ newRaffle_after_if_else@3:
     extract 4 0
     dig 1
     extract 0 4
-    bytec 4 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -720,7 +720,7 @@ newPrizeBoxRaffle:
     // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
-    bytec 8 // "akita_al"
+    bytec 9 // "akita_al"
     app_global_get_ex
     pop
     // smart_contracts/utils/functions.ts:420
@@ -834,7 +834,7 @@ newPrizeBoxRaffle:
     //   ],
     // })
     itxn_next
-    bytec 9 // method "init(pay,uint64)void"
+    bytec 10 // method "init(pay,uint64)void"
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
@@ -885,7 +885,7 @@ newPrizeBoxRaffle:
     //   weightsListCount: uint64
     // ): uint64 {
     itob
-    bytec 4 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
@@ -1082,7 +1082,7 @@ initBoxedContract:
     swap
     // smart_contracts/utils/base-contracts/factory.ts:33
     // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
-    bytec 7 // "child_contract_version"
+    bytec 8 // "child_contract_version"
     // smart_contracts/utils/base-contracts/factory.ts:42
     // this.childContractVersion.value = version
     swap
@@ -1118,16 +1118,23 @@ initBoxedContract_after_if_else@4:
 
 initBoxedContract_else_body@3:
     // smart_contracts/utils/base-contracts/factory.ts:47
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:47
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
+    bytec_2 // "wallet"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/factory.ts:47
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1153,6 +1160,7 @@ loadBoxedContract:
     ==
     assert // invalid number of bytes for uint64
     btoi
+    dup
     txna ApplicationArgs 2
     dup
     intc_0 // 0
@@ -1164,80 +1172,80 @@ loadBoxedContract:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
+    swap
     // smart_contracts/utils/base-contracts/factory.ts:53
-    // const txn = gtxn.Transaction(0)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:55
+    // const expectedPreviousCalls: uint64 = offset / 2032
+    pushint 2032 // 2032
+    /
+    // smart_contracts/utils/base-contracts/factory.ts:54
+    // const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
+    txn GroupIndex
+    swap
+    -
+    intc_1 // 1
+    -
+    dup
+    // smart_contracts/utils/base-contracts/factory.ts:56
     // txn.type === TransactionType.ApplicationCall
     gtxns TypeEnum
     pushint 6 // 6
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:55-56
+    // smart_contracts/utils/base-contracts/factory.ts:56-57
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:53
-    // const txn = gtxn.Transaction(0)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:56
+    // smart_contracts/utils/base-contracts/factory.ts:57
     // && txn.appId === Global.currentApplicationId
+    dup
     gtxns ApplicationID
     global CurrentApplicationID
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:55-56
+    // smart_contracts/utils/base-contracts/factory.ts:56-57
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:53
-    // const txn = gtxn.Transaction(0)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:57
+    // smart_contracts/utils/base-contracts/factory.ts:58
     // && txn.numAppArgs === 3
+    dup
     gtxns NumAppArgs
     pushint 3 // 3
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:55-57
+    // smart_contracts/utils/base-contracts/factory.ts:56-58
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:53
-    // const txn = gtxn.Transaction(0)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:58
+    // smart_contracts/utils/base-contracts/factory.ts:59
     // && txn.onCompletion === OnCompleteAction.NoOp
+    dup
     gtxns OnCompletion
-    // smart_contracts/utils/base-contracts/factory.ts:55-58
+    // smart_contracts/utils/base-contracts/factory.ts:56-59
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     // && txn.onCompletion === OnCompleteAction.NoOp
     bnz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:53
-    // const txn = gtxn.Transaction(0)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:59
+    // smart_contracts/utils/base-contracts/factory.ts:60
     // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
     dup
+    intc_0 // 0
     gtxnsas ApplicationArgs
-    bytec 5 // method "initBoxedContract(string,uint64)void"
+    bytec 6 // method "initBoxedContract(string,uint64)void"
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:55-59
+    // smart_contracts/utils/base-contracts/factory.ts:56-60
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     // && txn.onCompletion === OnCompleteAction.NoOp
     // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:53
-    // const txn = gtxn.Transaction(0)
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/factory.ts:60
+    // smart_contracts/utils/base-contracts/factory.ts:61
     // && txn.sender === Txn.sender
+    dup
     gtxns Sender
     txn Sender
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:55-60
+    // smart_contracts/utils/base-contracts/factory.ts:56-61
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
@@ -1248,7 +1256,7 @@ loadBoxedContract:
     intc_1 // 1
 
 loadBoxedContract_bool_merge@9:
-    // smart_contracts/utils/base-contracts/factory.ts:54-61
+    // smart_contracts/utils/base-contracts/factory.ts:55-62
     // assert((
     //   txn.type === TransactionType.ApplicationCall
     //   && txn.appId === Global.currentApplicationId
@@ -1261,7 +1269,7 @@ loadBoxedContract_bool_merge@9:
     // smart_contracts/utils/base-contracts/factory.ts:37
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:62
+    // smart_contracts/utils/base-contracts/factory.ts:63
     // assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
     box_len
     bury 1
@@ -1269,10 +1277,10 @@ loadBoxedContract_bool_merge@9:
     // smart_contracts/utils/base-contracts/factory.ts:37
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:63
+    // smart_contracts/utils/base-contracts/factory.ts:64
     // this.boxedContract.replace(offset, data)
-    dig 2
-    dig 2
+    dig 3
+    dig 3
     box_replace
     // smart_contracts/utils/base-contracts/factory.ts:52
     // loadBoxedContract(offset: uint64, data: bytes): void {
@@ -1286,17 +1294,24 @@ loadBoxedContract_bool_false@8:
 
 // smart_contracts/utils/base-contracts/factory.ts::FactoryContract.deleteBoxedContract[routing]() -> void:
 deleteBoxedContract:
-    // smart_contracts/utils/base-contracts/factory.ts:67
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // smart_contracts/utils/base-contracts/factory.ts:68
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/factory.ts:67
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
+    bytec_2 // "wallet"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/factory.ts:68
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1304,11 +1319,11 @@ deleteBoxedContract:
     // smart_contracts/utils/base-contracts/factory.ts:37
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:68
+    // smart_contracts/utils/base-contracts/factory.ts:69
     // this.boxedContract.delete()
     box_del
     pop
-    // smart_contracts/utils/base-contracts/factory.ts:66
+    // smart_contracts/utils/base-contracts/factory.ts:67
     // deleteBoxedContract(): void {
     intc_1 // 1
     return
@@ -1326,23 +1341,30 @@ updateAkitaDAOEscrow:
     assert // invalid number of bytes for uint64
     btoi
     // smart_contracts/utils/base-contracts/base.ts:95
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:95
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
+    bytec_2 // "wallet"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/base.ts:95
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:42
+    // smart_contracts/utils/base-contracts/base.ts:47
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    bytec_2 // "akita_escrow"
+    bytec_3 // "akita_escrow"
     // smart_contracts/utils/base-contracts/base.ts:96
     // this.akitaDAOEscrow.value = app
     swap
@@ -1369,23 +1391,30 @@ update:
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
     // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
+    bytec_2 // "wallet"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/base.ts:25
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:17
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 6 // "version"
+    bytec 7 // "version"
     // smart_contracts/utils/base-contracts/base.ts:26
     // this.version.value = newVersion
     swap
@@ -1398,7 +1427,7 @@ update:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:31
+    // smart_contracts/utils/base-contracts/base.ts:36
     // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
@@ -1407,17 +1436,24 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:32
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // smart_contracts/utils/base-contracts/base.ts:37
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:32
-    // assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    // smart_contracts/utils/base-contracts/base.ts:30
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
+    bytec_2 // "wallet"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/base.ts:37
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
@@ -1425,11 +1461,11 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:19
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:33
+    // smart_contracts/utils/base-contracts/base.ts:38
     // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:31
+    // smart_contracts/utils/base-contracts/base.ts:36
     // updateAkitaDAO(akitaDAO: Application): void {
     intc_1 // 1
     return
@@ -1459,9 +1495,9 @@ createChildApp:
     // smart_contracts/raffle/factory.algo.ts:51
     // const daoEscrowNeedsToOptIn = !this.akitaDAOEscrow.value.address.isOptedIn(Asset(ticketAsset))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:42
+    // smart_contracts/utils/base-contracts/base.ts:47
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    bytec_2 // "akita_escrow"
+    bytec_3 // "akita_escrow"
     // smart_contracts/raffle/factory.algo.ts:51
     // const daoEscrowNeedsToOptIn = !this.akitaDAOEscrow.value.address.isOptedIn(Asset(ticketAsset))
     app_global_get_ex
@@ -1586,9 +1622,9 @@ createChildApp_ternary_merge@3:
     // smart_contracts/raffle/factory.algo.ts:85
     // receiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:42
+    // smart_contracts/utils/base-contracts/base.ts:47
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-    bytec_2 // "akita_escrow"
+    bytec_3 // "akita_escrow"
     // smart_contracts/raffle/factory.algo.ts:85
     // receiver: this.akitaDAOEscrow.value.address,
     app_global_get_ex
@@ -1633,8 +1669,8 @@ createChildApp_ternary_merge@3:
     //       maxTickets,
     //       gateID,
     //       marketplace,
-    //       this.akitaDAO.value.id,
-    //       this.akitaDAOEscrow.value.id,
+    //       this.akitaDAO.value,
+    //       this.akitaDAOEscrow.value,
     //     ],
     //   })
     itxn_begin
@@ -1689,11 +1725,11 @@ createChildApp_ternary_merge@3:
     frame_dig -3
     itob
     // smart_contracts/raffle/factory.algo.ts:105
-    // this.akitaDAO.value.id,
+    // this.akitaDAO.value,
     uncover 12
     itob
     // smart_contracts/raffle/factory.algo.ts:106
-    // this.akitaDAOEscrow.value.id,
+    // this.akitaDAOEscrow.value,
     uncover 12
     itob
     // smart_contracts/raffle/factory.algo.ts:90-108
@@ -1712,8 +1748,8 @@ createChildApp_ternary_merge@3:
     //       maxTickets,
     //       gateID,
     //       marketplace,
-    //       this.akitaDAO.value.id,
-    //       this.akitaDAOEscrow.value.id,
+    //       this.akitaDAO.value,
+    //       this.akitaDAOEscrow.value,
     //     ],
     //   })
     pushbytes 0xe22e0392 // method "create(uint64,bool,uint64,uint64,uint64,address,(address,uint64),uint64,uint64,uint64,uint64,address,uint64,uint64)void"
@@ -1755,9 +1791,9 @@ createChildApp_ternary_merge@3:
     itxn_field GlobalNumUint
     pushbytes base64(C4EBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(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CEQiJxdlRCJFBkAALiInG2VEQQAmIicbZURJIQUOREsHHSEFl0lFBkAAECInG2VEQQAISwZBAAMjRQUiRQgiJxllREEAHiInGWVESSEFDkRLBx0hBZdJRQlAAAhLBkEAAyNFCCJFBCInFWVEQQAmIicVZURJIQUOREsHHSEFl0lFBUAAECInFWVEQQAISwZBAAMjRQRLBElLCUlOAwiBAksHSU4FCwhLCkwJTBZPAhZQTwIWUEwWUEUKIicEZUQnCUxQvkQXFicUTFC+RFcgIEUJIihlREAAfEsJIltJRQNBABaxIicGZURxC0RLArIIsgcjshAisgGzsSInDWVEcghESwpJTgIkW7IIsgcjshAisgGzsSInE2VESwGBEFtJsghMsgcjshAisgGzsbIISwmyByOyECKyAbOxIicMZURMgRhbsgiyByOyECKyAbMnECNnI0NLCSJbSUUCQQAvIicGZURxC0QiKGVEcABFAUEB97EiJwZlRHELRCIoZUSyEUsBshKyFCWyECKyAbMiJw1lRHIIRCIoZURwAEUBQQDvsSInDWVEcghESwokWyIoZUSyEbISshQlshAisgGzIicTZUQiKGVEcABFAUEAqLEiJxNlREsKgRBbIihlRLIRshKyFCWyECKyAbMiKGVESw==)
+    pushbytes base64(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CEQiJxhlRCJFBkAALiInHGVEQQAmIiccZURJIQUOREsHHSEFl0lFBkAAECInHGVEQQAISwZBAAMjRQUiRQgiJxplREEAHiInGmVESSEFDkRLBx0hBZdJRQlAAAhLBkEAAyNFCCJFBCInFmVEQQAmIicWZURJIQUOREsHHSEFl0lFBUAAECInFmVEQQAISwZBAAMjRQRLBElLCUlOAwiBAksHSU4FCwhLCkwJTBZPAhZQTwIWUEwWUEUKIicEZUQnCUxQvkQXFicUTFC+RFcgIEUJIihlREAAfEsJIltJRQNBABaxIicGZURxC0RLArIIsgcjshAisgGzsSInDWVEcghESwpJTgIkW7IIsgcjshAisgGzsSInE2VESwGBEFtJsghMsgcjshAisgGzsbIISwmyByOyECKyAbOxIicMZURMgRhbsgiyByOyECKyAbMnECNnI0NLCSJbSUUCQQAvIicGZURxC0QiKGVEcABFAUEB97EiJwZlRHELRCIoZUSyEUsBshKyFCWyECKyAbMiJw1lRHIIRCIoZURwAEUBQQDvsSInDWVEcghESwokWyIoZUSyEbISshQlshAisgGzIicTZUQiKGVEcABFAUEAqLEiJxNlREsKgRBbIihlRLIRshKyFCWyECKyAbMiKGVESw==)
     itxn_field ApprovalProgramPages
-    pushbytes base64(CUxwAEUBQQBisUsJgRBbIihlRLIRshJLCLIUJbIQIrIBsyInDGVEIihlRHAARQFBACGxIicMZUQiKmVEIihlRLIRshJJshWyFCWyECKyAbNC/wwiKWVEIicMZUQiKGVEIiplRCOI80RC/vQiKWVEIihlREsLgRBbTwJLC08DTwMiiPMoQv+bIillRCInE2VEIihlREsMgRBbIojzD0L/WyIoZUxJTgJFCERLCiRbSU4CRQkiKWVESSchZUhMJyFlSLGABKJAPd+yGoANAAEAAgAHcmFmZmxlc7IashiBBrIQIrIBs7Q+SVcEAEsBVwAEJwUSREkiWYEJC4ECCEwVEkRXBgkiW0lEIicNZURMSwESRLFyCEQyELIIsgcjshAisgG2MggWMgpPAxaAAgABTFCABJ0/iRiyGk8CshpMshqACQAHcmFmZmxlc7IashqyGIEGshAisgGzQf5zsSInDWVEcghESwayEUsHshKyFCWyECKyAbNC/lYiKWVEIicGZURxC0QiKGVESwMiiPIdQv4MMgoiJwZlRExLAXAASEUEIicEZURMcABFAUEAGbEiJwRlRCInBmVEshGyFSWyECKyAbNC/EQiKWVEIicEZUQiJwZlREsFI4jx0UL8LYgBO4ABACJPAlQnBUxQsCNDIihlRCInGGVEIicSZUQiJwxlRCInH2VEIicPZUQiK2VEIiplRCInCmVEIicEZUQiJwZlRCInEGVEIicHZUQiJxZlRCInIGVEIicRZURPDxZPDxZQTw4WUE8NUE8MFlBPCxZQTwoWUE8JFlBPCBZQTwdQTwYWUIABACJPB1RQTwQWUE8DFlBPAhZQTBZQJwVMULAjQzYaAUkVJBJEFzEAIillRHIIRBJEJw1MZyNDNhoBSSJZgQIISwEVEkRXAgAxACIpZURyCEQSRIAHdmVyc2lvbkxnI0M2GgFJFSQSRBcxACIpZURyCEQSRClMZyNDMRYjCUk4ECMSRDYaAUkVJBJEFzEAMgkSREsBOAcyChJPAjgIMhASEESxMgpMshEishKyFCWyECKyAbMjQzIHIicYZUQOQQANMgciJxJlRA9BAAIjiSKJ)
+    pushbytes base64(CUxwAEUBQQBisUsJgRBbIihlRLIRshJLCLIUJbIQIrIBsyInDGVEIihlRHAARQFBACGxIicMZUQiKmVEIihlRLIRshJJshWyFCWyECKyAbNC/wwiKWVEIicMZUQiKGVEIiplRCOI80RC/vQiKWVEIihlREsLgRBbTwJLC08DTwMiiPMoQv+bIillRCInE2VEIihlREsMgRBbIojzD0L/WyIoZUxJTgJFCERLCiRbSU4CRQkiKWVESScVZUhMJxVlSLGABKJAPd+yGoANAAEAAgAHcmFmZmxlc7IashiBBrIQIrIBs7Q+SVcEAEsBVwAEJwUSREkiWYEJC4ECCEwVEkRXBgkiW0lEIicNZURMSwESRLFyCEQyELIIsgcjshAisgG2MggWMgpPAxaAAgABTFCABJ0/iRiyGk8CshpMshqACQAHcmFmZmxlc7IashqyGIEGshAisgGzQf5zsSInDWVEcghESwayEUsHshKyFCWyECKyAbNC/lYiKWVEIicGZURxC0QiKGVESwMiiPIdQv4MMgoiJwZlRExLAXAASEUEIicEZURMcABFAUEAGbEiJwRlRCInBmVEshGyFSWyECKyAbNC/EQiKWVEIicEZUQiJwZlREsFI4jx0UL8LYgBR4ABACJPAlQnBUxQsCNDIihlRCInGWVEIicSZUQiJwxlRCInIGVEIicPZUQiK2VEIiplRCInCmVEIicEZUQiJwZlRCInEGVEIicHZUQiJxdlRCInIWVEIicRZURPDxZPDxZQTw4WUE8NUE8MFlBPCxZQTwoWUE8JFlBPCBZQTwdQTwYWUIABACJPB1RQTwQWUE8DFlBPAhZQTBZQJwVMULAjQzYaAUkVJBJEFzEAIillRCcVZUhyCEQSRCcNTGcjQzYaAUkiWYECCEsBFRJEVwIAMQAiKWVEJxVlSHIIRBJEgAd2ZXJzaW9uTGcjQzYaAUkVJBJEFzEAIillRCcVZUhyCEQSRClMZyNDMRYjCUk4ECMSRDYaAUkVJBJEFzEAMgkSREsBOAcyChJPAjgIMhASEESxMgpMshEishKyFCWyECKyAbMjQzIHIicZZUQOQQANMgciJxJlRA9BAAIjiSKJ)
     itxn_field ApprovalProgramPages
     // smart_contracts/raffle/factory.algo.ts:90-108
     // const appId = raffle.call
@@ -1775,8 +1811,8 @@ createChildApp_ternary_merge@3:
     //       maxTickets,
     //       gateID,
     //       marketplace,
-    //       this.akitaDAO.value.id,
-    //       this.akitaDAOEscrow.value.id,
+    //       this.akitaDAO.value,
+    //       this.akitaDAOEscrow.value,
     //     ],
     //   })
     intc_0 // 0
@@ -1802,8 +1838,8 @@ createChildApp_ternary_merge@3:
     //       maxTickets,
     //       gateID,
     //       marketplace,
-    //       this.akitaDAO.value.id,
-    //       this.akitaDAOEscrow.value.id,
+    //       this.akitaDAO.value,
+    //       this.akitaDAOEscrow.value,
     //     ],
     //   })
     //   .itxn
@@ -1858,7 +1894,7 @@ createChildApp_ternary_merge@3:
     //   ],
     // })
     itxn_next
-    bytec_3 // method "optin(pay,uint64)void"
+    bytec 4 // method "optin(pay,uint64)void"
     itxn_field ApplicationArgs
     frame_dig 0
     itxn_field ApplicationArgs
@@ -1929,7 +1965,7 @@ createChildApp_after_if_else@9:
     //     weightsListCount,
     //   ],
     // })
-    bytec 9 // method "init(pay,uint64)void"
+    bytec 10 // method "init(pay,uint64)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     dup

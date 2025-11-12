@@ -22,14 +22,19 @@ export class AkitaBaseContract extends Contract {
 
   @abimethod({ allowActions: ['UpdateApplication'] })
   update(newVersion: string): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     this.version.value = newVersion
+  }
+
+  protected getAkitaDAOWallet(): Application {
+    const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
+    return Application(walletID)
   }
 
   // AKITA BASE CONTRACT METHODS ------------------------------------------------------------------
 
   updateAkitaDAO(akitaDAO: Application): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     this.akitaDAO.value = akitaDAO
   }
 
@@ -40,11 +45,6 @@ export class AkitaBaseFeeGeneratorContract extends AkitaBaseContract {
 
   /** the app ID for the akita DAO escrow to use */
   akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
-
-  protected getAkitaDAOWallet(): Application {
-    const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    return Application(walletID)
-  }
 
   protected getEscrow(name: string): EscrowInfo {
     const appId = this.getAkitaDAOWallet()
@@ -92,7 +92,7 @@ export class AkitaBaseFeeGeneratorContract extends AkitaBaseContract {
   }
 
   updateAkitaDAOEscrow(app: Application): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_AKITA_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     this.akitaDAOEscrow.value = app
   }
 }

@@ -73,7 +73,7 @@ describe('ARC58 Plugin Permissions', () => {
       signer,
       apps: {
         optin: optinPluginSdk.appId,
-        escrowFactory: escrowFactory.appId,
+        escrow: escrowFactory.appId,
       }
     })
 
@@ -133,7 +133,7 @@ describe('ARC58 Plugin Permissions', () => {
             type: ProposalActionEnum.UpdateFields,
             field: 'akita_al',
             value: {
-              walletFactory: walletFactory.appId,
+              wallet: walletFactory.appId,
               staking: staking.appId,
               rewards: rewards.appId,
               pool: pool.appId,
@@ -184,7 +184,7 @@ describe('ARC58 Plugin Permissions', () => {
 
       console.log('funded amount:', fundAmount)
 
-      const { returns } = await dao.setup({})
+      const { returns } = await dao.setup()
 
       console.log('setup returns', returns)
 

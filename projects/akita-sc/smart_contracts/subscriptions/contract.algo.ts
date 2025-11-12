@@ -183,7 +183,7 @@ export class Subscriptions extends classes(
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
-  ): void {
+  ): uint64 {
     const arc4Sender = new Address(Txn.sender)
     const blocksKey: BlockListKey = {
       address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
@@ -263,6 +263,8 @@ export class Subscriptions extends classes(
       streak: 1,
       escrowed: paymentDifference,
     }
+
+    return subscriptionID
   }
 
   private createAsaSubscription(
@@ -272,7 +274,7 @@ export class Subscriptions extends classes(
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
-  ): void {
+  ): uint64 {
     const arc4Sender = new Address(Txn.sender)
     const blocksKey: BlockListKey = {
       address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
@@ -374,15 +376,17 @@ export class Subscriptions extends classes(
       streak: 1,
       escrowed: paymentDifference,
     }
+
+    return subscriptionID
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, akitaDAO: Application, akitaDAOEscrow: Application): void {
     this.version.value = version
-    this.akitaDAO.value = Application(akitaDAO)
-    this.akitaDAOEscrow.value = Application(escrow)
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
   }
 
   // SUBSCRIPTION METHODS -------------------------------------------------------------------------
@@ -564,7 +568,7 @@ export class Subscriptions extends classes(
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
-  ): void {
+  ): uint64 {
     // ensure the amount is enough to take fees on
     assert(amount >= 3, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
@@ -578,7 +582,7 @@ export class Subscriptions extends classes(
     const origin = originOrTxnSender(wallet)
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, gateID), ERR_FAILED_GATE)
 
-    this.createSubscription(payment, recipient, amount, interval, serviceID)
+    return this.createSubscription(payment, recipient, amount, interval, serviceID)
   }
 
   subscribe(
@@ -587,7 +591,7 @@ export class Subscriptions extends classes(
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
-  ): void {
+  ): uint64 {
     // ensure the amount is enough to take fees on
     assert(amount >= 3, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
@@ -599,7 +603,7 @@ export class Subscriptions extends classes(
       assert(gateID === 0, ERR_HAS_GATE)
     }
 
-    this.createSubscription(payment, recipient, amount, interval, serviceID)
+    return this.createSubscription(payment, recipient, amount, interval, serviceID)
   }
 
   gatedSubscribeAsa(
@@ -610,7 +614,7 @@ export class Subscriptions extends classes(
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
-  ): void {
+  ): uint64 {
     // ensure the amount is enough to take fees on
     assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
@@ -624,7 +628,7 @@ export class Subscriptions extends classes(
     const origin = originOrTxnSender(wallet)
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, gateID), ERR_FAILED_GATE)
 
-    this.createAsaSubscription(
+    return this.createAsaSubscription(
       payment,
       assetXfer,
       recipient,
@@ -641,7 +645,7 @@ export class Subscriptions extends classes(
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
-  ): void {
+  ): uint64 {
     // ensure the amount is enough to take fees on
     assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
@@ -653,7 +657,7 @@ export class Subscriptions extends classes(
       assert(gateID === 0, ERR_HAS_GATE)
     }
 
-    this.createAsaSubscription(
+    return this.createAsaSubscription(
       payment,
       assetXfer,
       recipient,
@@ -901,6 +905,20 @@ export class Subscriptions extends classes(
   }
 
   @abimethod({ readonly: true })
+  getServicesByAddress(address: Address, start: uint64, windowSize: uint64): Service[] {
+    const services: Service[] = []
+    for (let i: uint64 = start; i < start + windowSize; i += 1) {
+      const key: ServicesKey = { address, id: i }
+      if (this.services(key).exists) {
+        services.push(this.services(key).value)
+      } else {
+        break
+      }
+    }
+    return services
+  }
+
+  @abimethod({ readonly: true })
   getSubscription(address: Address, id: uint64): SubscriptionInfo {
     const key: SubscriptionKey = { address, id }
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
@@ -908,7 +926,7 @@ export class Subscriptions extends classes(
   }
 
   @abimethod({ readonly: true })
-  getSubscriptionInfo(address: Address, id: uint64): SubscriptionInfoWithPasses {
+  getSubscriptionWithPasses(address: Address, id: uint64): SubscriptionInfoWithPasses {
     const key = { address, id }
 
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)

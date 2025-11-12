@@ -89,6 +89,7 @@ export class AbstractedAccountInterface extends Contract {
 export class AbstractedAccountFactoryInterface extends Contract {
   create(
     akitaDAO: Application,
+    akitaDAOEscrow: Application,
     version: string,
     escrowFactory: Application,
     revocation: Application,

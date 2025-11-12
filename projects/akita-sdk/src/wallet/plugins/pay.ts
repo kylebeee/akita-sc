@@ -15,7 +15,7 @@ type CreatePaymentParams = {
 type ContractArgs = PayPluginArgs["obj"];
 
 type PayArgs = (
-  Omit<ContractArgs['pay(uint64,bool,(address,uint64,uint64)[])void'], 'walletId' | 'rekeyBack' | 'payments'>
+  Omit<ContractArgs['pay(uint64,bool,(address,uint64,uint64)[])void'], 'wallet' | 'rekeyBack' | 'payments'>
   & MaybeSigner
   & {
     rekeyBack?: boolean
@@ -57,12 +57,12 @@ export class PayPluginSDK extends BaseSDK<PayPluginClient> {
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
       selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-      getTxns: async ({ walletId }: PluginHookParams) => {
+      getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
 
         const paymentsTuple = payments.map(payment => [
-          payment.receiver,
+          payment.receiver.toString(),
           payment.asset,
           payment.amount,
         ]) as [string, bigint | number, bigint | number][];
@@ -70,7 +70,7 @@ export class PayPluginSDK extends BaseSDK<PayPluginClient> {
         const params = (
           await this.client.params.pay({
             ...sendParams,
-            args: { walletId, payments: paymentsTuple, rekeyBack },
+            args: { wallet, payments: paymentsTuple, rekeyBack },
             extraFee: microAlgo(1_000 * payments.length),
           })
         )

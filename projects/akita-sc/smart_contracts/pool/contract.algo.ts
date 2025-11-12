@@ -658,7 +658,8 @@ export class Pool extends classes(
     minimumStakeAmount: uint64,
     gateID: uint64,
     maxEntries: uint64,
-    akitaDAO: uint64
+    akitaDAO: Application,
+    akitaDAOEscrow: Application,
   ): void {
     this.status.value = PoolStatusDraft
     this.title.value = title
@@ -673,7 +674,8 @@ export class Pool extends classes(
     this.maxEntries.value = maxEntries
 
     this.salt.value = Txn.txId
-    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
 
     const fees = getStakingFees(Global.currentApplicationId)
     const impact = getUserImpact(Global.currentApplicationId, this.creator.value)

@@ -3,19 +3,19 @@ import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-de
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
 import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { AsaMintPluginSDK, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK, isFlatAllowance, isWindowAllowance, isDripAllowance } from 'akita-sdk'
+import { AsaMintPluginSDK, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK, isFlatAllowance, isWindowAllowance, isDripAllowance, AkitaDaoSDK } from 'akita-sdk'
 import { TimeWarp } from '../../../tests/utils/time'
-import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../tests/fixtures/abstracted-account'
 import { deployPayPlugin } from '../../../tests/fixtures/plugins/pay'
 import { deployOptInPlugin } from '../../../tests/fixtures/plugins/optin'
 import { deployAsaMintPlugin } from '../../../tests/fixtures/plugins/asa-mint'
 import { ERR_ALLOWANCE_EXCEEDED, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY, ERR_EXECUTION_KEY_NOT_FOUND, ERR_MALFORMED_OFFSETS, ERR_METHOD_ON_COOLDOWN, ERR_PLUGIN_DOES_NOT_EXIST, ERR_PLUGIN_EXPIRED, ERR_PLUGIN_ON_COOLDOWN } from './errors';
 import { AppCallMethodCall } from '@algorandfoundation/algokit-utils/types/composer';
-import { deployAkitaDAO } from '../../../tests/fixtures/dao';
+import { deployAkitaDAO, deployAndSetupAkitaDAO } from '../../../tests/fixtures/dao';
 
 describe('ARC58 Plugin Permissions', () => {
   const localnet = algorandFixture();
 
+  let dao: AkitaDaoSDK;
   /** the wallet factory contract sdk */
   let walletFactory: WalletFactorySDK;
   /** the wallet sdk */
@@ -44,23 +44,12 @@ describe('ARC58 Plugin Permissions', () => {
 
     timeWarp = new TimeWarp(algorand);
 
-    const dao = await deployAkitaDAO({
+    ({ dao, walletFactory } = await deployAndSetupAkitaDAO({
       fixture: localnet,
       sender,
       signer,
       apps: {}
-    })
-
-    walletFactory = (
-      await deployAbstractedAccountFactoryAndEscrowFactory({
-        fixture: localnet,
-        sender,
-        signer,
-        args: {
-          akitaDao: dao.appId,
-        }
-      })
-    ).abstractAccountFactory;
+    }));
 
     payPluginSdk = await deployPayPlugin({ fixture: localnet, sender, signer });
     optinPluginSdk = await deployOptInPlugin({ fixture: localnet, sender, signer });

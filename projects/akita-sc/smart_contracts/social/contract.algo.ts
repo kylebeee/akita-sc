@@ -23,6 +23,7 @@ import type { AssetInbox } from '../utils/types/asset-inbox'
 import type { Staking } from '../staking/contract.algo'
 import type { Subscriptions } from '../subscriptions/contract.algo'
 import { OptInPluginInterface } from '../utils/types/plugins/optin'
+import { ERR_NOT_AKITA_DAO } from '../errors'
 
 export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContract) {
 
@@ -690,10 +691,10 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, akitaDAO: uint64, escrow: uint64): void {
+  create(version: string, akitaDAO: Application, akitaDAOEscrow: Application): void {
     this.version.value = version
-    this.akitaDAO.value = Application(akitaDAO)
-    this.akitaDAOEscrow.value = Application(escrow)
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
   }
 
   // AKITA SOCIAL PLUGIN METHODS ------------------------------------------------------------------
@@ -1288,7 +1289,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   addModerator(mbrPayment: gtxn.PaymentTxn, address: Address): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     assert(!this.moderators(address.native).exists, ERR_ALREADY_A_MODERATOR)
 
     assertMatch(
@@ -1304,7 +1305,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   removeModerator(address: Address): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     assert(this.moderators(address.native).exists, ERR_NOT_A_MODERATOR)
 
     this.moderators(address.native).delete()
@@ -1375,7 +1376,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   addAction(mbrPayment: gtxn.PaymentTxn, actionAppID: uint64, content: CID) {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     assert(!this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
 
     assertMatch(
@@ -1391,7 +1392,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   removeAction(actionAppID: uint64) {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     assert(this.actions(actionAppID).exists, ERR_ALREADY_AN_ACTION)
 
     this.actions(actionAppID).delete()
@@ -1677,7 +1678,7 @@ export class AkitaSocialImpact extends AkitaBaseContract {
   }
 
   private isSubscribed(account: Account, index: uint64): { active: boolean; serviceID: uint64; streak: uint64 } {
-    const info = abiCall<typeof Subscriptions.prototype.getSubscriptionInfo>({
+    const info = abiCall<typeof Subscriptions.prototype.getSubscription>({
       appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
       args: [new Address(account), index]
     }).returnValue
@@ -1954,7 +1955,7 @@ export class AkitaSocialImpact extends AkitaBaseContract {
   }
 
   updateSubscriptionStateModifier(payment: gtxn.PaymentTxn, subscriptionIndex: uint64, newModifier: uint64): void {
-    assert(Txn.sender === this.akitaDAO.value.address, ERR_NOT_DAO)
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
 
     this.subscriptionStateModifier(subscriptionIndex).value = newModifier
 

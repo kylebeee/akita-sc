@@ -1,5 +1,5 @@
-import { assertMatch, Global, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Application, assertMatch, Global, gtxn, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { FactoryContract } from '../utils/base-contracts/factory'
 import { Poll } from './contract.algo'
 import { PollType } from './types'
@@ -7,6 +7,14 @@ import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 
 export class PollFactory extends FactoryContract {
+
+  @abimethod({ onCreate: 'require' })
+  create(version: string, childVersion: string, akitaDAO: Application, akitaDAOEscrow: Application): void {
+    this.version.value = version
+    this.childContractVersion.value = childVersion
+    this.akitaDAO.value = akitaDAO
+    this.akitaDAOEscrow.value = akitaDAOEscrow
+  }
 
   new(
     payment: gtxn.PaymentTxn,
