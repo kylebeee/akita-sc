@@ -395,11 +395,9 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
       participation: DEFAULT_UPDATE_AKITA_DAO_PARTICIPATION,
       approval: DEFAULT_UPDATE_AKITA_DAO_APP_APPROVAL,
       sourceLink: 'https://github.com/kylebee/akita-sc',
-      client: payPluginSdk,
-      // client: daoUpdatePluginSdk,
+      client: daoUpdatePluginSdk,
       global: true,
       useExecutionKey: true,
-      // useRounds: true
     }
   ]
 
@@ -432,18 +430,10 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
     windowSize: 2000n,
     global: true,
     calls: [
-      payPluginSdk.pay({
-        payments: [{
-          receiver: getApplicationAddress(revWallet.id),
-          amount: paymentAmount,
-          asset: 0,
-        }]
+      daoUpdatePluginSdk.updateAkitaDaoEscrowForApp({
+        appId: abstractAccountFactory.appId,
+        newEscrow: revWallet.id
       })
-      // TODO: figure out why this throws a maxFee error
-      // daoUpdatePluginSdk.updateAkitaDaoEscrowForApp({
-      //   appId: abstractAccountFactory.appId,
-      //   newEscrow: revWallet.id
-      // })
     ]
   })
 
@@ -453,7 +443,7 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
   actions = [
     {
       type: ProposalActionEnum.ExecutePlugin,
-      plugin: payPluginSdk.appId,
+      plugin: daoUpdatePluginSdk.appId,
       caller: params.sender.toString(),
       escrow: '',
       executionKey: lease,

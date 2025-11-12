@@ -4,6 +4,7 @@ import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from "../../types"
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import { Address } from "algosdk";
 import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
+import { microAlgo } from "@algorandfoundation/algokit-utils";
 
 type ContractArgs = UpdateAkitaDaoPluginArgs["obj"];
 
@@ -372,7 +373,8 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
         const params = (
           await this.client.params.updateAkitaDaoEscrowForApp({
             ...sendParams,
-            args: { wallet, rekeyBack, appId, newEscrow }
+            args: { wallet, rekeyBack, appId, newEscrow },
+            extraFee: microAlgo(1_000),
           })
         )
 
