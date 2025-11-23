@@ -4,7 +4,7 @@ import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from "../../types"
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import algosdk, { Address } from "algosdk";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
+import { getTxns } from "../utils";
 
 const assetOptInCost = 100_000 // This is the cost for asset opt-in, adjust as necessary
 
@@ -30,8 +30,8 @@ export class OptInPluginSDK extends BaseSDK<OptInPluginClient> {
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
@@ -49,7 +49,7 @@ export class OptInPluginSDK extends BaseSDK<OptInPluginClient> {
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
@@ -68,10 +68,10 @@ export class OptInPluginSDK extends BaseSDK<OptInPluginClient> {
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }

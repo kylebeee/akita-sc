@@ -1,12 +1,11 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import {
   abimethod,
-  Address,
   decodeArc4,
   encodeArc4
 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
+import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList, getStakingPower } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -15,10 +14,13 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
-import { getAkitaAppList, getStakingPower } from '../../../utils/functions'
-import { Operator } from '../../types'
-import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { ERR_BAD_OPERATION, ERR_INVALID_ARG_COUNT } from '../../errors'
+import { Operator } from '../../types'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 
 type StakingPowerGateRegistryInfo = {
   op: Operator
@@ -52,7 +54,7 @@ export class StakingPowerGate extends AkitaBaseContract {
     return id
   }
 
-  private stakingPowerGate(user: Address, op: Operator, asset: uint64, power: uint64): boolean {
+  private stakingPowerGate(user: Account, op: Operator, asset: uint64, power: uint64): boolean {
     const userPower = getStakingPower(
       getAkitaAppList(this.akitaDAO.value).staking,
       user,
@@ -102,7 +104,7 @@ export class StakingPowerGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     const { op, asset, power } = clone(this.registry(registryID).value)
     return this.stakingPowerGate(caller, op, asset, power)

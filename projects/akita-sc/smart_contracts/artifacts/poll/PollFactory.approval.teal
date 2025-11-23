@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 8 2
-    bytecblock "akita_dao" "bc" "wallet" 0xc53b32cc "version" "child_contract_version" "akita_escrow"
+    bytecblock "akita_dao" "bc" "wallet" 0xc53b32cc "version" "child_contract_version" "akita_escrow" 0x151f7c75
     // smart_contracts/poll/factory.algo.ts:9
     // export class PollFactory extends FactoryContract {
     pushbytes 0xea9180dd // method "update(string)void"
@@ -41,7 +41,7 @@ main_create_NoOp@13:
     err
 
 main_update_route@2:
-    // smart_contracts/utils/base-contracts/base.ts:23
+    // smart_contracts/utils/base-contracts/base.ts:46
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -92,28 +92,28 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:17
+    // smart_contracts/utils/base-contracts/base.ts:25
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec 4 // "version"
     // smart_contracts/poll/factory.algo.ts:13
     // this.version.value = version
     uncover 4
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:33
+    // smart_contracts/utils/base-contracts/factory.ts:34
     // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
     bytec 5 // "child_contract_version"
     // smart_contracts/poll/factory.algo.ts:14
     // this.childContractVersion.value = childVersion
     uncover 3
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/poll/factory.algo.ts:15
     // this.akitaDAO.value = akitaDAO
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:47
+    // smart_contracts/utils/base-contracts/base.ts:64
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 6 // "akita_escrow"
     // smart_contracts/poll/factory.algo.ts:16
@@ -265,7 +265,7 @@ new:
     // smart_contracts/poll/factory.algo.ts:48
     // this.akitaDAO.value.id,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/poll/factory.algo.ts:48
@@ -308,7 +308,7 @@ new:
     itxn_field GlobalNumUint
     pushbytes base64(C4EBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(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)
+    pushbytes base64(CyAFAAECCMR3Jg4JYWtpdGFfZGFvBHR5cGUJYm94X2NvdW50CGVuZF90aW1lCXZvdGVzX29uZQl2b3Rlc190d28Ldm90ZXNfdGhyZWUKdm90ZXNfZm91cgp2b3Rlc19maXZlB2dhdGVfaWQMbWF4X3NlbGVjdGVkDG9wdGlvbl9jb3VudAhha2l0YV9hbAQVH3x1MRkURDEYQQA0ggYE4UGQgARbz5EABN0wnHsEWn9JMgQz6SyUBIVN7eA2GgCOBgGYAgoC2QM1A08AAQAjQ4AEn6g1qDYaAI4BAAEAIjYaAUkVJRJEFzYaAklOAkkVIxJENhoDSRUlEkQXNhoESRUlEkQXTgM2GgVJIlkkCEsBFRJEVwIANhoGSU4CTgU2GgdJFSUSRBcyDUQyB0sEDERLBBeBBAxEKE8GZylPBWcnCUxnK08DZ4AIcXVlc3Rpb25MZyJZSSQPQQEFSYEFDkEA/iNESwOAARQSQAAJSwOAASgSQQAXSwIkD0EA30kjCUsDD0EA1iNEJwpLA2cnC0sBSU4CZyoiZ0sCVwIASUUHSwFESSJZSlkkCEsCTgJYVwIAgApvcHRpb25fb25lTGcjSwIMREkkWUpZJAhYVwIAgApvcHRpb25fdHdvTGeBAw9BACMkSwEMREsESYEEWUpZJAhYVwIAgAxvcHRpb25fdGhyZWVMZ0mBBA9BACOBA0sBDERLBEmBBllKWSQIWFcCAIALb3B0aW9uX2ZvdXJMZ0mBBQ9BACKBBEsBDERLBEklWUpZJAhYVwIAgAtvcHRpb25fZml2ZUxnI0MiQv8nIkL+/zYaAUcCIllJTgKBIAskCEwVEkQyByIrZUQNRCJJSwIMQQBNSwJXAgBLAUlOAoEgC4EgWEm8SLGAGE1CUiByZWZ1bmQgZm9yIHBvbGwgdm90ZbIFIQSyCLIHI7IQIrIBsyIqZUQjCSpMZyMIRQFC/6wjQyKAAEkxFiQJSTgQIxJEMRYjCUk4EIEGEkQ2GgFHAiJZSU4CSSULJAhPAhUSRDIHIitlRA5EMQC9RQEURIEFDkEAiUlBAIUjRCIoZUxFB0QxAEUHIicJZUxFBkRLAjgAMQASQQBiSwI4GEsGJwxlSIEoWxJBAFFLAjgZQABKSwI4G4EEEkEAQEsCIsIagAQAtugOEkEAMUsCI8IaSwcSQQAmSwIkwhpLBRYSQQAaI0RLA0k4BzIKEkw4CCEEEhBESwGIAKRII0MiQv/jIkL/eDEWIwlJOBAjEkQ2GgFHAiJZSU4CSSULJAhPAhUSRDIHIitlRA5EMQC9RQEURIEFDkEAJUlBACEjRCInCWVEFERLAkk4BzIKEkw4CCEEEhBESwGIAERII0MiQv/cNhoBSRWBIBJEvUUBgAEAIk8CVCcNTFCwI0M2GgFJFSUSRBcxACIoZUSABndhbGxldGVIcghEEkQoTGcjQ4oBAYAARwMjIillRIABHhJAAAsiKWVEgAEoEkEAOSIoZUQxALFMJwxlSIFoW4AE1XS7ELIashiyGoEGshAisgGztD5JVwQATFcABCcNEkRJFSUSRBeMBCIpZUSAAQoSQAALIillRIABHhJBAIWL/yJZIxJEi/8kW0mMAkAAHiInBGVEIwgnBExnMQAiuUgiKmVEIwgqTGeL/4wAiYsCIxJBAA4iJwVlRCMIJwVMZ0L/2IsCJBJBAA4iJwZlRCMIJwZMZ0L/w4sCgQMSQQAOIicHZUQjCCcHTGdC/62LAoEEEkH/pSInCGVEIwgnCExnQv+Xi/8iWUmMACInCmVEDkQijAGLAYsADEH/fov/VwIAiwElC1tJjAMiJwtlRCMJSwEPREAAFSInBGVEiwQIJwRMZ4sBIwiMAUL/yIsDIxJBAA8iJwVlRIsECCcFTGdC/+GLAyQSQQAPIicGZUSLBAgnBkxnQv/LiwOBAxJBAA8iJwdlRIsECCcHTGdC/7SLA4EEEkH/rCInCGVEiwQIJwhMZ0L/nQ==)
     itxn_field ApprovalProgramPages
     // smart_contracts/poll/factory.algo.ts:45-56
     // const mint = poll.call
@@ -393,7 +393,7 @@ new:
     //   gateID: uint64,
     // ): uint64 {
     itob
-    pushbytes 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -403,7 +403,7 @@ new:
 
 // smart_contracts/utils/base-contracts/factory.ts::FactoryContract.initBoxedContract[routing]() -> void:
 initBoxedContract:
-    // smart_contracts/utils/base-contracts/factory.ts:41
+    // smart_contracts/utils/base-contracts/factory.ts:42
     // initBoxedContract(version: string, size: uint64): void {
     txna ApplicationArgs 1
     dup
@@ -424,50 +424,50 @@ initBoxedContract:
     assert // invalid number of bytes for uint64
     btoi
     swap
-    // smart_contracts/utils/base-contracts/factory.ts:33
+    // smart_contracts/utils/base-contracts/factory.ts:34
     // childContractVersion = GlobalState<string>({ key: BaseFactoryGlobalStateKeyChildContractVersion })
     bytec 5 // "child_contract_version"
-    // smart_contracts/utils/base-contracts/factory.ts:42
+    // smart_contracts/utils/base-contracts/factory.ts:43
     // this.childContractVersion.value = version
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/factory.ts:37
+    // smart_contracts/utils/base-contracts/factory.ts:38
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:43
+    // smart_contracts/utils/base-contracts/factory.ts:44
     // if (!this.boxedContract.exists) {
     box_len
     bury 1
     bnz initBoxedContract_else_body@3
-    // smart_contracts/utils/base-contracts/factory.ts:44
+    // smart_contracts/utils/base-contracts/factory.ts:45
     // assert(Txn.sender === Global.creatorAddress, ERR_NOT_AKITA_DAO)
     txn Sender
     global CreatorAddress
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:37
+    // smart_contracts/utils/base-contracts/factory.ts:38
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:45
+    // smart_contracts/utils/base-contracts/factory.ts:46
     // this.boxedContract.create({ size })
     swap
     box_create
     pop
 
 initBoxedContract_after_if_else@4:
-    // smart_contracts/utils/base-contracts/factory.ts:41
+    // smart_contracts/utils/base-contracts/factory.ts:42
     // initBoxedContract(version: string, size: uint64): void {
     intc_1 // 1
     return
 
 initBoxedContract_else_body@3:
-    // smart_contracts/utils/base-contracts/factory.ts:47
+    // smart_contracts/utils/base-contracts/factory.ts:48
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
@@ -477,16 +477,16 @@ initBoxedContract_else_body@3:
     bytec_2 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/factory.ts:47
+    // smart_contracts/utils/base-contracts/factory.ts:48
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:37
+    // smart_contracts/utils/base-contracts/factory.ts:38
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:48
+    // smart_contracts/utils/base-contracts/factory.ts:49
     // this.boxedContract.resize(size)
     swap
     box_resize
@@ -495,7 +495,7 @@ initBoxedContract_else_body@3:
 
 // smart_contracts/utils/base-contracts/factory.ts::FactoryContract.loadBoxedContract[routing]() -> void:
 loadBoxedContract:
-    // smart_contracts/utils/base-contracts/factory.ts:52
+    // smart_contracts/utils/base-contracts/factory.ts:53
     // loadBoxedContract(offset: uint64, data: bytes): void {
     txna ApplicationArgs 1
     dup
@@ -517,11 +517,11 @@ loadBoxedContract:
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
     swap
-    // smart_contracts/utils/base-contracts/factory.ts:53
+    // smart_contracts/utils/base-contracts/factory.ts:54
     // const expectedPreviousCalls: uint64 = offset / 2032
     pushint 2032 // 2032
     /
-    // smart_contracts/utils/base-contracts/factory.ts:54
+    // smart_contracts/utils/base-contracts/factory.ts:55
     // const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
     txn GroupIndex
     swap
@@ -529,67 +529,67 @@ loadBoxedContract:
     intc_1 // 1
     -
     dup
-    // smart_contracts/utils/base-contracts/factory.ts:56
+    // smart_contracts/utils/base-contracts/factory.ts:57
     // txn.type === TransactionType.ApplicationCall
     gtxns TypeEnum
     pushint 6 // 6
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:56-57
+    // smart_contracts/utils/base-contracts/factory.ts:57-58
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:57
+    // smart_contracts/utils/base-contracts/factory.ts:58
     // && txn.appId === Global.currentApplicationId
     dup
     gtxns ApplicationID
     global CurrentApplicationID
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:56-57
+    // smart_contracts/utils/base-contracts/factory.ts:57-58
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:58
+    // smart_contracts/utils/base-contracts/factory.ts:59
     // && txn.numAppArgs === 3
     dup
     gtxns NumAppArgs
     pushint 3 // 3
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:56-58
+    // smart_contracts/utils/base-contracts/factory.ts:57-59
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:59
+    // smart_contracts/utils/base-contracts/factory.ts:60
     // && txn.onCompletion === OnCompleteAction.NoOp
     dup
     gtxns OnCompletion
-    // smart_contracts/utils/base-contracts/factory.ts:56-59
+    // smart_contracts/utils/base-contracts/factory.ts:57-60
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     // && txn.onCompletion === OnCompleteAction.NoOp
     bnz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:60
+    // smart_contracts/utils/base-contracts/factory.ts:61
     // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
     dup
     intc_0 // 0
     gtxnsas ApplicationArgs
     bytec_3 // method "initBoxedContract(string,uint64)void"
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:56-60
+    // smart_contracts/utils/base-contracts/factory.ts:57-61
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     // && txn.onCompletion === OnCompleteAction.NoOp
     // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/utils/base-contracts/factory.ts:61
+    // smart_contracts/utils/base-contracts/factory.ts:62
     // && txn.sender === Txn.sender
     dup
     gtxns Sender
     txn Sender
     ==
-    // smart_contracts/utils/base-contracts/factory.ts:56-61
+    // smart_contracts/utils/base-contracts/factory.ts:57-62
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
@@ -600,7 +600,7 @@ loadBoxedContract:
     intc_1 // 1
 
 loadBoxedContract_bool_merge@9:
-    // smart_contracts/utils/base-contracts/factory.ts:55-62
+    // smart_contracts/utils/base-contracts/factory.ts:56-63
     // assert((
     //   txn.type === TransactionType.ApplicationCall
     //   && txn.appId === Global.currentApplicationId
@@ -610,23 +610,23 @@ loadBoxedContract_bool_merge@9:
     //   && txn.sender === Txn.sender
     // ), ERR_INVALID_CALL_ORDER)
     assert // Invalid call order
-    // smart_contracts/utils/base-contracts/factory.ts:37
+    // smart_contracts/utils/base-contracts/factory.ts:38
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:63
+    // smart_contracts/utils/base-contracts/factory.ts:64
     // assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
     box_len
     bury 1
     assert // Contract not set
-    // smart_contracts/utils/base-contracts/factory.ts:37
+    // smart_contracts/utils/base-contracts/factory.ts:38
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:64
+    // smart_contracts/utils/base-contracts/factory.ts:65
     // this.boxedContract.replace(offset, data)
     dig 3
     dig 3
     box_replace
-    // smart_contracts/utils/base-contracts/factory.ts:52
+    // smart_contracts/utils/base-contracts/factory.ts:53
     // loadBoxedContract(offset: uint64, data: bytes): void {
     intc_1 // 1
     return
@@ -638,13 +638,13 @@ loadBoxedContract_bool_false@8:
 
 // smart_contracts/utils/base-contracts/factory.ts::FactoryContract.deleteBoxedContract[routing]() -> void:
 deleteBoxedContract:
-    // smart_contracts/utils/base-contracts/factory.ts:68
+    // smart_contracts/utils/base-contracts/factory.ts:69
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
@@ -654,20 +654,20 @@ deleteBoxedContract:
     bytec_2 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/factory.ts:68
+    // smart_contracts/utils/base-contracts/factory.ts:69
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/factory.ts:37
+    // smart_contracts/utils/base-contracts/factory.ts:38
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_1 // "bc"
-    // smart_contracts/utils/base-contracts/factory.ts:69
+    // smart_contracts/utils/base-contracts/factory.ts:70
     // this.boxedContract.delete()
     box_del
     pop
-    // smart_contracts/utils/base-contracts/factory.ts:67
+    // smart_contracts/utils/base-contracts/factory.ts:68
     // deleteBoxedContract(): void {
     intc_1 // 1
     return
@@ -675,7 +675,7 @@ deleteBoxedContract:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseFeeGeneratorContract.updateAkitaDAOEscrow[routing]() -> void:
 updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/base.ts:94
+    // smart_contracts/utils/base-contracts/base.ts:111
     // updateAkitaDAOEscrow(app: Application): void {
     txna ApplicationArgs 1
     dup
@@ -684,13 +684,13 @@ updateAkitaDAOEscrow:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:95
+    // smart_contracts/utils/base-contracts/base.ts:112
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
@@ -700,28 +700,28 @@ updateAkitaDAOEscrow:
     bytec_2 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:95
+    // smart_contracts/utils/base-contracts/base.ts:112
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:47
+    // smart_contracts/utils/base-contracts/base.ts:64
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 6 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:96
+    // smart_contracts/utils/base-contracts/base.ts:113
     // this.akitaDAOEscrow.value = app
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:94
+    // smart_contracts/utils/base-contracts/base.ts:111
     // updateAkitaDAOEscrow(app: Application): void {
     intc_1 // 1
     return
 
 
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
+// smart_contracts/utils/base-contracts/base.ts::UpgradeableAkitaBaseContract.update[routing]() -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:23
+    // smart_contracts/utils/base-contracts/base.ts:46
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txna ApplicationArgs 1
     dup
@@ -734,36 +734,83 @@ update:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:25
+    // smart_contracts/utils/base-contracts/base.ts:48
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
+    dup
     bytec_2 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:25
+    // smart_contracts/utils/base-contracts/base.ts:48
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
+    uncover 2
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:17
+    // smart_contracts/utils/base-contracts/base.ts:50-53
+    // const valid = abiCall<typeof MockDAO.prototype.isValidUpgrade>({
+    //   appId: this.akitaDAO.value,
+    //   args: [Txn.lease, Global.currentApplicationId.id],
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/utils/base-contracts/base.ts:52
+    // args: [Txn.lease, Global.currentApplicationId.id],
+    txn Lease
+    global CurrentApplicationID
+    itob
+    // smart_contracts/utils/base-contracts/base.ts:50-53
+    // const valid = abiCall<typeof MockDAO.prototype.isValidUpgrade>({
+    //   appId: this.akitaDAO.value,
+    //   args: [Txn.lease, Global.currentApplicationId.id],
+    // }).returnValue
+    pushbytes 0x2c2f51c3 // method "isValidUpgrade(byte[32],uint64)bool"
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec 7 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    // smart_contracts/utils/base-contracts/base.ts:55
+    // assert(valid, ERR_INVALID_UPGRADE)
+    assert // Invalid app upgrade
+    // smart_contracts/utils/base-contracts/base.ts:25
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     bytec 4 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:26
+    // smart_contracts/utils/base-contracts/base.ts:57
     // this.version.value = newVersion
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:23
+    // smart_contracts/utils/base-contracts/base.ts:46
     // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_1 // 1
     return
@@ -786,7 +833,7 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
@@ -802,7 +849,7 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:38

@@ -1,7 +1,7 @@
-import { arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Struct, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AddAllowanceInfo, MethodRestriction } from '../account/types';
+import { Account, arc4, bytes, uint64 } from '@algorandfoundation/algorand-typescript';
+import { Struct, Uint8 } from '@algorandfoundation/algorand-typescript/arc4';
 import { CID } from '../../utils/types/base';
+import { AddAllowanceInfo, MethodRestriction } from '../account/types';
 
 export type ProposalStatus = Uint8
 export type ProposalActionType = Uint8
@@ -18,7 +18,7 @@ export type ProposalUpgradeApp = {
 
 export type ProposalAddPlugin = {
   plugin: uint64,
-  caller: Address,
+  caller: Account,
   escrow: string,
   delegationType: Uint8,
   lastValid: uint64,
@@ -39,7 +39,7 @@ export type ProposalAddPlugin = {
 export type ProposalAddNamedPlugin = {
   name: string,
   plugin: uint64,
-  caller: Address,
+  caller: Account,
   escrow: string,
   delegationType: Uint8,
   lastValid: uint64,
@@ -80,14 +80,14 @@ export type ProposalRemoveExecutePlugin = {
 
 export type ProposalRemovePlugin = {
   plugin: uint64
-  caller: Address
+  caller: Account
   escrow: string
 }
 
 export type ProposalRemoveNamedPlugin = {
   name: string
   plugin: uint64
-  caller: Address
+  caller: Account
   escrow: string
 }
 
@@ -128,7 +128,7 @@ export type ProposalDetails = {
   // vote counters
   votes: ProposalVoteTotals
   // the origin address of the proposal creator
-  creator: Address
+  creator: Account
   // the timestamp the proposal went to voting
   votingTs: uint64
   // the timestamp the proposal was created
@@ -154,7 +154,7 @@ export type ProposalVoteTotals = {
 
 export type ProposalVoteKey = {
   proposalID: uint64
-  voter: Address
+  voter: Account
 }
 
 export type ProposalVoteInfo = {
@@ -163,11 +163,9 @@ export type ProposalVoteInfo = {
 }
 
 
-export type ExecutionInfo = {
-  /** whether the txn group has been executed */
-  executed: boolean
-  /** The last round at which this plugin can be called */
-  lastValidRound: uint64
+export type ExecutionMetadata = {
+  proposalID: uint64
+  index: uint64
 }
 
 // distribute Bones for DAU
@@ -195,7 +193,7 @@ export type AkitaDAOState = {
     approval: ProposalSettings
     duration: ProposalSettings
   }
-  revocationAddress: Address
+  revocationAddress: Account
 }
 
 export type AkitaAppList = {

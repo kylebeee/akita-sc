@@ -1,5 +1,5 @@
-import { arc4, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, arc4, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Uint64, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type StakingType = Uint8
 
@@ -30,7 +30,7 @@ export const STAKING_TYPE_HARD: StakingType = new arc4.Uint8(30)
 export const STAKING_TYPE_LOCK: StakingType = new arc4.Uint8(40)
 
 export type StakeKey = {
-  address: Address
+  address: Account
   asset: uint64
   type: StakingType
 }
@@ -47,7 +47,7 @@ export type Escrow = {
 }
 
 export type HeartbeatKey = {
-  address: Address
+  address: Account
   asset: uint64
 }
 

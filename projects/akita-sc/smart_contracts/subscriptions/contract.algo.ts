@@ -5,15 +5,17 @@ import {
   assert,
   assertMatch,
   BoxMap,
+  Bytes,
   bytes,
   clone,
   Global,
   gtxn,
   itxn,
+  op,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
 import { Txn } from '@algorandfoundation/algorand-typescript/op'
-import { Address, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
+import { methodSelector, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   Amounts,
   ServiceID,
@@ -26,10 +28,17 @@ import {
   SubscriptionInfoWithPasses,
   ServicesKey,
   BlockListKey,
-  PassesKey,
   SubscriptionKey,
+  ServiceStatusDraft,
+  TriggerListRequest,
 } from './types'
 import {
+  HighlightMessageNone,
+  MAX_DESCRIPTION_LENGTH,
+  MAX_PASSES,
+  MAX_TITLE_LENGTH,
+  MIN_AMOUNT,
+  MIN_INTERVAL,
   SubscriptionsBoxPrefixBlocks,
   SubscriptionsBoxPrefixPasses,
   SubscriptionsBoxPrefixServices,
@@ -39,8 +48,10 @@ import {
 } from './constants'
 import {
   ERR_ASA_MISMATCH,
-  ERR_BAD_WINDOW,
+  ERR_BAD_DESCRIPTION_LENGTH,
+  ERR_BAD_OFFSET,
   ERR_BLOCKED,
+  ERR_CANNOT_TRIGGER,
   ERR_FAILED_GATE,
   ERR_INVALID_ASSET_RECEIVER,
   ERR_MAX_PASSES_IS_FIVE,
@@ -51,11 +62,12 @@ import {
   ERR_NOT_ENOUGH_FUNDS,
   ERR_PASS_COUNT_OVERFLOW,
   ERR_SERVICE_DOES_NOT_EXIST,
-  ERR_SERVICE_INDEX_MUST_BE_ABOVE_ZERO,
   ERR_SERVICE_IS_NOT_ACTIVE,
+  ERR_SERVICE_IS_NOT_DRAFT,
   ERR_SERVICE_IS_NOT_PAUSED,
   ERR_SERVICE_IS_SHUTDOWN,
   ERR_SUBSCRIPTION_DOES_NOT_EXIST,
+  ERR_TITLE_TOO_LONG,
   ERR_USER_ALREADY_BLOCKED,
   ERR_USER_NOT_BLOCKED,
 } from './errors'
@@ -63,7 +75,7 @@ import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
 import { CID } from '../utils/types/base'
 import { classes } from 'polytype'
 import { AkitaDAOEscrowAccountSubscriptions } from '../arc58/dao/constants'
-import { calcPercent, gateCheck, getSubscriptionFees, getWalletIDUsingAkitaDAO, originOrTxnSender } from '../utils/functions'
+import { calcPercent, gateCheck, getSubscriptionFees, getWalletIDUsingAkitaDAO, originOrTxnSender, referrerOrZeroAddress, sendReferralPayment } from '../utils/functions'
 import { ERR_HAS_GATE } from '../social/errors'
 
 // CONTRACT IMPORTS
@@ -104,7 +116,7 @@ export class Subscriptions extends classes(
    */
   blocks = BoxMap<BlockListKey, bytes<0>>({ keyPrefix: SubscriptionsBoxPrefixBlocks })
 
-  passes = BoxMap<PassesKey, Address[]>({ keyPrefix: SubscriptionsBoxPrefixPasses })
+  passes = BoxMap<SubscriptionKey, Account[]>({ keyPrefix: SubscriptionsBoxPrefixPasses })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -112,16 +124,22 @@ export class Subscriptions extends classes(
     return Global.latestTimestamp - ((Global.latestTimestamp - startDate) % interval)
   }
 
-  private updateStreak(address: Address, id: SubscriptionID, elseStreak: uint64): void {
-    const subKey: SubscriptionKey = { address, id }
-    const sub = clone(this.subscriptions(subKey).value)
+  private getBlockKey(address: Account, blocked: Account): BlockListKey {
+    return {
+      address: address.bytes.slice(0, 16).toFixed({ length: 16 }),
+      blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
+    }
+  }
+
+  private updateStreak(key: SubscriptionKey, elseStreak: uint64): void {
+    const sub = clone(this.subscriptions(key).value)
 
     const currentWindowStart: uint64 = this.getLatestWindowStart(sub.startDate, sub.interval)
     const lastWindowStart: uint64 = currentWindowStart - sub.interval
 
     if (sub.lastPayment < lastWindowStart) {
       // reset the streak
-      this.subscriptions(subKey).value.streak = elseStreak
+      this.subscriptions(key).value.streak = elseStreak
       return
     }
 
@@ -129,7 +147,7 @@ export class Subscriptions extends classes(
     // after a payment was made in the last window
     // but not during the current window
     if (sub.lastPayment >= lastWindowStart && !(sub.lastPayment >= currentWindowStart)) {
-      this.subscriptions(subKey).value.streak += 1
+      this.subscriptions(key).value.streak += 1
     }
   }
 
@@ -140,13 +158,13 @@ export class Subscriptions extends classes(
     if (fees.paymentPercentage > 0) {
       akitaFee = calcPercent(amount, fees.paymentPercentage)
       if (akitaFee === 0 && amount > 0) {
-        akitaFee = 1
+        akitaFee = 2
       }
     }
 
     let triggerFee: uint64 = 0
     if (fees.triggerPercentage > 0) {
-      let triggerFee = calcPercent(amount, fees.triggerPercentage)
+      triggerFee = calcPercent(amount, fees.triggerPercentage)
       if (triggerFee === 0 && amount > 0) {
         triggerFee = 1
       }
@@ -161,38 +179,37 @@ export class Subscriptions extends classes(
     }
   }
 
-  private newServiceID(address: Address): ServiceID {
-    const id: uint64 = this.serviceslist(address.native).exists
-      ? this.serviceslist(address.native).value
+  private newServiceID(address: Account): ServiceID {
+    const id: uint64 = this.serviceslist(address).exists
+      ? this.serviceslist(address).value
       : 0
-    this.serviceslist(address.native).value = id + 1
+    this.serviceslist(address).value = id + 1
     return id
   }
 
-  private newSubscriptionID(address: Address): SubscriptionID {
-    const id: uint64 = this.subscriptionslist(address.native).exists
-      ? this.subscriptionslist(address.native).value
+  private newSubscriptionID(address: Account): SubscriptionID {
+    const id: uint64 = this.subscriptionslist(address).exists
+      ? this.subscriptionslist(address).value
       : 0
-    this.subscriptionslist(address.native).value = id + 1
+    this.subscriptionslist(address).value = id + 1
     return id
   }
 
   private createSubscription(
     payment: gtxn.PaymentTxn,
-    recipient: Address,
+    recipient: Account,
     amount: uint64,
     interval: uint64,
-    serviceID: ServiceID,
+    serviceID: ServiceID
   ): uint64 {
-    const arc4Sender = new Address(Txn.sender)
-    const blocksKey: BlockListKey = {
-      address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
-      blocked: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
-    }
+    const blocksKey = this.getBlockKey(recipient, Txn.sender)
     // ensure they aren't blocked
     assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
     // gate is zero unless the service has a gate
     let gateID: uint64 = 0
+
+    let costs = this.mbr()
+    let mbrAmount = costs.subscriptions
     // index zero is always reserved for donations
     const isDonation = serviceID === 0
     if (!isDonation) {
@@ -209,24 +226,29 @@ export class Subscriptions extends classes(
       amount = service.amount
       interval = service.interval
       gateID = service.gateID
+
+      if (service.passes > 0) {
+        mbrAmount += costs.passes
+      }
     }
 
-    const subscriptionID = this.newSubscriptionID(arc4Sender)
-    const subscriptionKey: SubscriptionKey = { address: arc4Sender, id: subscriptionID }
-
-    const amounts = this.getAmounts(amount)
-
-    const costs = this.mbr(0)
-    let mbrAmount = costs.subscriptions
-    if (subscriptionID === 1) {
+    const subscriptionID = this.newSubscriptionID(Txn.sender)
+    const subscriptionKey: SubscriptionKey = { address: Txn.sender, id: subscriptionID }
+    if (subscriptionID === 0) {
       mbrAmount += costs.subscriptionslist
     }
+
+    const amounts = this.getAmounts(amount)
+    const akitaFees: uint64 = amounts.akitaFee + amounts.triggerFee
+    const { leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, 0, akitaFees)
 
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: amount + mbrAmount,
+        amount: {
+          greaterThanEq: (amount + mbrAmount + referralMbr)
+        },
       },
       ERR_INVALID_PAYMENT
     )
@@ -234,13 +256,13 @@ export class Subscriptions extends classes(
     itxn
       .payment({
         receiver: this.akitaDAOEscrow.value.address,
-        amount: amounts.akitaFee + amounts.triggerFee
+        amount: leftover,
       })
       .submit()
 
     itxn
       .payment({
-        receiver: recipient.native,
+        receiver: recipient,
         amount: amounts.leftOver
       })
       .submit()
@@ -249,7 +271,7 @@ export class Subscriptions extends classes(
     // payment.amount should be allowed to be over if
     // the user wants to provide some assets for the escrow
     // at the same time as they are subscribing
-    const paymentDifference: uint64 = payment.amount - amounts.leftOver
+    const paymentDifference: uint64 = payment.amount - (amount + mbrAmount + referralMbr)
 
     this.subscriptions(subscriptionKey).value = {
       recipient: recipient,
@@ -268,22 +290,21 @@ export class Subscriptions extends classes(
   }
 
   private createAsaSubscription(
-    payment: gtxn.PaymentTxn,
+    mbrPayment: gtxn.PaymentTxn,
     assetXfer: gtxn.AssetTransferTxn,
-    recipient: Address,
+    recipient: Account,
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
   ): uint64 {
-    const arc4Sender = new Address(Txn.sender)
-    const blocksKey: BlockListKey = {
-      address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
-      blocked: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
-    }
+    const blocksKey = this.getBlockKey(recipient, Txn.sender)
     // ensure they aren't blocked
     assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
     // gate is zero unless the service has a gate
     let gateID: uint64 = 0
+
+    const costs = this.mbr()
+    let mbrAmount = costs.subscriptions
     // index zero is always reserved for donations
     const isDonation = serviceID === 0
     if (!isDonation) {
@@ -300,34 +321,46 @@ export class Subscriptions extends classes(
       amount = service.amount
       interval = service.interval
       gateID = service.gateID
+
+      if (service.passes > 0) {
+        mbrAmount += costs.passes
+      }
     }
 
-    const subscriptionID = this.newSubscriptionID(arc4Sender)
-    const subscriptionKey = { address: arc4Sender, id: subscriptionID }
+    const subscriptionID = this.newSubscriptionID(Txn.sender)
+    const subscriptionKey = { address: Txn.sender, id: subscriptionID }
 
-    const costs = this.mbr(0)
-    let mbrAmount = costs.subscriptions
-    if (subscriptionID === 1) {
+    if (subscriptionID === 0) {
       mbrAmount += costs.subscriptionslist
     }
+
+    const amounts = this.getAmounts(amount)
+    const akitaFees: uint64 = amounts.akitaFee + amounts.triggerFee
+    const { leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, assetXfer.xferAsset.id, akitaFees)
 
     if (!this.akitaDAOEscrow.value.address.isOptedIn(assetXfer.xferAsset)) {
       this.optAkitaEscrowInAndSend(
         AkitaDAOEscrowAccountSubscriptions,
         assetXfer.xferAsset,
-        0
+        leftover
       )
-      mbrAmount += (Global.assetOptInMinBalance * 4)
+      mbrAmount += Global.assetOptInMinBalance
+    } else {
+      itxn
+        .assetTransfer({
+          assetReceiver: this.akitaDAOEscrow.value.address,
+          xferAsset: assetXfer.xferAsset,
+          assetAmount: leftover
+        })
+        .submit()
     }
-
-    const amounts = this.getAmounts(amount)
 
     // mbr payment checks
     assertMatch(
-      payment,
+      mbrPayment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: mbrAmount,
+        amount: mbrAmount + referralMbr,
       },
       ERR_INVALID_PAYMENT
     )
@@ -337,22 +370,16 @@ export class Subscriptions extends classes(
       assetXfer,
       {
         assetReceiver: Global.currentApplicationAddress,
-        assetAmount: amount,
+        assetAmount: {
+          greaterThanEq: amount,
+        }
       },
       ERR_INVALID_TRANSFER
     )
 
     itxn
       .assetTransfer({
-        assetReceiver: this.akitaDAOEscrow.value.address,
-        xferAsset: assetXfer.xferAsset,
-        assetAmount: amounts.akitaFee + amounts.triggerFee
-      })
-      .submit()
-
-    itxn
-      .assetTransfer({
-        assetReceiver: recipient.native,
+        assetReceiver: recipient,
         xferAsset: assetXfer.xferAsset,
         assetAmount: amounts.leftOver
       })
@@ -362,7 +389,7 @@ export class Subscriptions extends classes(
     // payment.amount should be allowed to be over if
     // the user wants to provide some assets for the escrow
     // at the same time as they are subscribing
-    const paymentDifference: uint64 = payment.amount - amounts.leftOver
+    const paymentDifference: uint64 = assetXfer.assetAmount - amount
 
     this.subscriptions(subscriptionKey).value = {
       recipient: recipient,
@@ -378,6 +405,51 @@ export class Subscriptions extends classes(
     }
 
     return subscriptionID
+  }
+
+  private canTrigger(key: SubscriptionKey): boolean {
+    if (!this.subscriptions(key).exists) {
+      return false
+    }
+
+    const {
+      recipient,
+      serviceID,
+      lastPayment,
+      startDate,
+      interval,
+      escrowed,
+      amount
+    } = this.subscriptions(key).value
+
+    const blocksKey = this.getBlockKey(recipient, key.address)
+
+    // ensure they are not blocked
+    if (this.blocks(blocksKey).exists) {
+      return false
+    }
+
+    // ensure the service exists & isn't shutdown
+    if (
+      serviceID > 0 &&
+      (
+        !this.services({ address: recipient, id: serviceID }).exists ||
+        this.services({ address: recipient, id: serviceID }).value.status === ServiceStatusShutdown
+      )
+    ) {
+      return false
+    }
+
+    // ensure that the current window has not already had a payment
+    if (lastPayment >= this.getLatestWindowStart(startDate, interval)) {
+      return false
+    }
+
+    if (amount > escrowed) {
+      return false
+    }
+
+    return true
   }
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
@@ -399,7 +471,7 @@ export class Subscriptions extends classes(
    * @param amount The amount of the asa to be used for the subscription
    * @param passes The number of accounts the subscription can be shared with
    * @param gate The gate to be used for the subscription
-   * @param cid The ipfs cid of the subscription contract
+   * @param 
    * or upgrade the subscription to a different service from the user without losing their streak
    */
   newService(
@@ -409,32 +481,37 @@ export class Subscriptions extends classes(
     amount: uint64,
     passes: uint64,
     gateID: uint64,
-    cid: CID
+    title: string,
+    bannerImage: CID,
+    highlightMessage: Uint8,
+    highlightColor: bytes<3>
   ): uint64 {
-    const address = new Address(Txn.sender)
-    const id = this.newServiceID(address)
-    const boxKey: ServicesKey = { address, id }
+    const id = this.newServiceID(Txn.sender)
+    const boxKey: ServicesKey = { address: Txn.sender, id }
 
     // ensure the amount is enough to take fees on
-    assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
+    assert(amount >= MIN_AMOUNT, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
-    assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    assert(interval >= MIN_INTERVAL, ERR_MIN_INTERVAL_IS_SIXTY)
     // family passes have a max of 5
-    assert(passes <= 5, ERR_MAX_PASSES_IS_FIVE)
+    assert(passes <= MAX_PASSES, ERR_MAX_PASSES_IS_FIVE)
+    assert(Bytes(title).length <= MAX_TITLE_LENGTH, ERR_TITLE_TOO_LONG)
 
     const serviceCreationFee = getSubscriptionFees(this.akitaDAO.value).serviceCreationFee
-    const costs = this.mbr(passes)
+    const costs = this.mbr()
 
     let requiredAmount: uint64 = serviceCreationFee + costs.services
     if (asset !== 0) {
       requiredAmount += Global.assetOptInMinBalance
     }
 
+    const { leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, asset, serviceCreationFee)
+
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: requiredAmount,
+        amount: requiredAmount + referralMbr,
       },
       ERR_INVALID_PAYMENT
     )
@@ -442,21 +519,57 @@ export class Subscriptions extends classes(
     itxn
       .payment({
         receiver: this.akitaDAOEscrow.value.address,
-        amount: serviceCreationFee
+        amount: leftover
       })
       .submit()
 
     this.services(boxKey).value = {
-      status: ServiceStatusPaused,
+      status: ServiceStatusDraft,
       interval,
       asset,
       amount,
       passes,
       gateID,
-      cid,
+      title,
+      description: '',
+      bannerImage,
+      highlightMessage,
+      highlightColor
     }
 
     return id
+  }
+
+  setServiceDescription(id: ServiceID, offset: uint64, data: bytes): void {
+    const key: ServicesKey = { address: Txn.sender, id }
+
+    assert(this.services(key).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    assert(this.services(key).value.status === ServiceStatusDraft, ERR_SERVICE_IS_NOT_DRAFT)
+    assert(offset + data.length <= MAX_DESCRIPTION_LENGTH, ERR_BAD_DESCRIPTION_LENGTH)
+
+    let descBytes = Bytes(this.services(key).value.description)
+
+    assert(offset <= descBytes.length, ERR_BAD_OFFSET)
+
+    if (offset < descBytes.length) {
+      descBytes = descBytes.slice(0, offset)
+    }
+
+    this.services(key).value.description = String(descBytes.concat(data))
+  }
+
+  /**
+   * activateService activates an service for a merchant
+   *
+   * @param index The index of the box to be used for the subscription
+   */
+  activateService(id: ServiceID): void {
+    const boxKey: ServicesKey = { address: Txn.sender, id }
+
+    assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+    assert(this.services(boxKey).value.status === ServiceStatusDraft, ERR_SERVICE_IS_NOT_DRAFT)
+
+    this.services(boxKey).value.status = ServiceStatusActive
   }
 
   /**
@@ -467,25 +580,22 @@ export class Subscriptions extends classes(
    * @param index The index of the box to be used for the subscription
    */
   pauseService(id: ServiceID): void {
-    const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
-    // ensure were not using zero as a box index
-    // zero is reserved for non-service based subscriptions
-    assert(id > 0, ERR_SERVICE_INDEX_MUST_BE_ABOVE_ZERO)
+    const boxKey: ServicesKey = { address: Txn.sender, id }
     // ensure the box exists
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
-    // ensure the service isn't already shutdown
+    // ensure the service is active
     assert(this.services(boxKey).value.status === ServiceStatusActive, ERR_SERVICE_IS_NOT_ACTIVE)
 
     this.services(boxKey).value.status = ServiceStatusPaused
   }
 
   /**
-   * activateService activates an service for a merchant
+   * unpauseService activates an service for a merchant
    *
    * @param index The index of the box to be used for the subscription
    */
-  activateService(id: ServiceID): void {
-    const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
+  unpauseService(id: ServiceID): void {
+    const boxKey: ServicesKey = { address: Txn.sender, id }
 
     // ensure the box exists
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -501,7 +611,7 @@ export class Subscriptions extends classes(
    * @param index The index of the box to be used for the subscription
    */
   shutdownService(id: ServiceID): void {
-    const boxKey: ServicesKey = { address: new Address(Txn.sender), id }
+    const boxKey: ServicesKey = { address: Txn.sender, id }
     // ensure the box exists
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
     // ensure the service isn't already shutdown
@@ -515,17 +625,14 @@ export class Subscriptions extends classes(
    * @param payment The payment to cover mbr for blocking
    * @param blocked The address to be blocked
    */
-  block(payment: gtxn.PaymentTxn, blocked: Address): void {
+  block(payment: gtxn.PaymentTxn, blocked: Account): void {
     // const origin = getOrigin(spending)
-    const boxKey: BlockListKey = {
-      address: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
-      blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
-    }
+    const boxKey = this.getBlockKey(Txn.sender, blocked)
 
     // ensure the address is not already blocked
     assert(!this.blocks(boxKey).exists, ERR_USER_ALREADY_BLOCKED)
     // ensure the payment is correct
-    const costs = this.mbr(0)
+    const costs = this.mbr()
     assertMatch(
       payment,
       {
@@ -542,18 +649,15 @@ export class Subscriptions extends classes(
    * unblock removes an address from a merchants blocks
    * @param blocked The address to be unblocked
    */
-  unblock(blocked: Address): void {
-    const boxKey: BlockListKey = {
-      address: Txn.sender.bytes.slice(0, 16).toFixed({ length: 16 }),
-      blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
-    }
+  unblock(blocked: Account): void {
+    const boxKey = this.getBlockKey(Txn.sender, blocked)
 
     // ensure that the address is currently blocked
     assert(this.blocks(boxKey).exists, ERR_USER_NOT_BLOCKED)
 
     this.blocks(boxKey).delete()
 
-    const costs = this.mbr(0)
+    const costs = this.mbr()
 
     itxn.payment({
       receiver: Txn.sender,
@@ -564,15 +668,15 @@ export class Subscriptions extends classes(
   gatedSubscribe(
     payment: gtxn.PaymentTxn,
     gateTxn: gtxn.ApplicationCallTxn,
-    recipient: Address,
+    recipient: Account,
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
   ): uint64 {
     // ensure the amount is enough to take fees on
-    assert(amount >= 3, ERR_MIN_AMOUNT_IS_THREE)
+    assert(amount >= MIN_AMOUNT, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
-    assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    assert(interval >= MIN_INTERVAL, ERR_MIN_INTERVAL_IS_SIXTY)
 
     assert(serviceID !== 0, ERR_NOT_A_SERVICE)
     assert(this.services({ address: recipient, id: serviceID }).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -587,15 +691,15 @@ export class Subscriptions extends classes(
 
   subscribe(
     payment: gtxn.PaymentTxn,
-    recipient: Address,
+    recipient: Account,
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
   ): uint64 {
     // ensure the amount is enough to take fees on
-    assert(amount >= 3, ERR_MIN_AMOUNT_IS_THREE)
+    assert(amount >= MIN_AMOUNT, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
-    assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    assert(interval >= MIN_INTERVAL, ERR_MIN_INTERVAL_IS_SIXTY)
 
     if (serviceID !== 0) {
       assert(this.services({ address: recipient, id: serviceID }).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -610,15 +714,15 @@ export class Subscriptions extends classes(
     payment: gtxn.PaymentTxn,
     assetXfer: gtxn.AssetTransferTxn,
     gateTxn: gtxn.ApplicationCallTxn,
-    recipient: Address,
+    recipient: Account,
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
   ): uint64 {
     // ensure the amount is enough to take fees on
-    assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
+    assert(amount >= MIN_AMOUNT, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
-    assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    assert(interval >= MIN_INTERVAL, ERR_MIN_INTERVAL_IS_SIXTY)
 
     assert(serviceID !== 0, ERR_NOT_A_SERVICE)
     assert(this.services({ address: recipient, id: serviceID }).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -641,15 +745,15 @@ export class Subscriptions extends classes(
   subscribeAsa(
     payment: gtxn.PaymentTxn,
     assetXfer: gtxn.AssetTransferTxn,
-    recipient: Address,
+    recipient: Account,
     amount: uint64,
     interval: uint64,
     serviceID: ServiceID,
   ): uint64 {
     // ensure the amount is enough to take fees on
-    assert(amount > 3, ERR_MIN_AMOUNT_IS_THREE)
+    assert(amount >= MIN_AMOUNT, ERR_MIN_AMOUNT_IS_THREE)
     // ensure payouts cant be too fast
-    assert(interval >= 60, ERR_MIN_INTERVAL_IS_SIXTY)
+    assert(interval >= MIN_INTERVAL, ERR_MIN_INTERVAL_IS_SIXTY)
 
     if (serviceID !== 0) {
       assert(this.services({ address: recipient, id: serviceID }).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -668,7 +772,7 @@ export class Subscriptions extends classes(
   }
 
   deposit(payment: gtxn.PaymentTxn, id: SubscriptionID): void {
-    const subKey = { address: new Address(Txn.sender), id }
+    const subKey = { address: Txn.sender, id }
 
     assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
@@ -686,7 +790,7 @@ export class Subscriptions extends classes(
   }
 
   depositAsa(assetXfer: gtxn.AssetTransferTxn, id: SubscriptionID): void {
-    const subKey: SubscriptionKey = { address: new Address(Txn.sender), id }
+    const subKey: SubscriptionKey = { address: Txn.sender, id }
 
     assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
@@ -700,7 +804,7 @@ export class Subscriptions extends classes(
   }
 
   withdraw(id: SubscriptionID, amount: uint64): void {
-    const subKey: SubscriptionKey = { address: new Address(Txn.sender), id }
+    const subKey: SubscriptionKey = { address: Txn.sender, id }
 
     assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
@@ -728,12 +832,56 @@ export class Subscriptions extends classes(
     this.subscriptions(subKey).value.escrowed -= amount
   }
 
-  gatedTriggerPayment(gateTxn: gtxn.ApplicationCallTxn, address: Address, id: SubscriptionID): void {
-    const subscriptionsKey: SubscriptionKey = { address, id }
-    // ensure a subscription exists
-    assert(this.subscriptions(subscriptionsKey).exists)
+  unsubscribe(id: SubscriptionID): void {
+    const subKey: SubscriptionKey = { address: Txn.sender, id }
 
-    const { serviceID, recipient } = this.subscriptions(subscriptionsKey).value
+    assert(this.subscriptions(subKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
+
+    const sub = clone(this.subscriptions(subKey).value)
+
+    const costs = this.mbr()
+    let mbrRefund: uint64 = costs.subscriptions
+    if (sub.serviceID > 0) {
+      const { passes } = this.services({ address: sub.recipient, id: sub.serviceID }).value
+      if (passes > 0) {
+        mbrRefund += costs.passes
+      }
+    }
+
+    if (sub.asset !== 0) {
+      if (sub.escrowed > 0) {
+        itxn
+          .assetTransfer({
+            assetReceiver: Txn.sender,
+            xferAsset: sub.asset,
+            assetAmount: sub.escrowed
+          })
+          .submit()
+      }
+
+      itxn
+        .payment({
+          receiver: Txn.sender,
+          amount: mbrRefund
+        })
+        .submit()
+    } else {
+      itxn
+        .payment({
+          receiver: Txn.sender,
+          amount: sub.escrowed + mbrRefund
+        })
+        .submit()
+    }
+
+    this.subscriptions(subKey).delete()
+  }
+
+  gatedTriggerPayment(gateTxn: gtxn.ApplicationCallTxn, key: SubscriptionKey): void {
+    // ensure a subscription exists
+    assert(this.subscriptions(key).exists)
+
+    const { serviceID, recipient } = this.subscriptions(key).value
 
     assert(serviceID !== 0, ERR_NOT_A_SERVICE)
     assert(this.services({ address: recipient, id: serviceID }).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -743,42 +891,22 @@ export class Subscriptions extends classes(
     const origin = originOrTxnSender(wallet)
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, gateID), ERR_FAILED_GATE)
 
-    this.triggerPayment(address, id)
+    this.triggerPayment(key)
   }
 
-  triggerPayment(address: Address, id: SubscriptionID): void {
-    const subscriptionsKey: SubscriptionKey = { address, id }
+  triggerPayment(key: SubscriptionKey): void {
 
-    // ensure a subscription exists
-    assert(this.subscriptions(subscriptionsKey).exists)
+    assert(this.canTrigger(key), ERR_CANNOT_TRIGGER)
 
-    const { recipient, serviceID, lastPayment, startDate, interval, escrowed, amount, gateID, asset } = this.subscriptions(subscriptionsKey).value
+    const {
+      recipient,
+      amount,
+      asset,
+      gateID
+    } = this.subscriptions(key).value
 
-    const blocksKey: BlockListKey = {
-      address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
-      blocked: address.bytes.slice(0, 16).toFixed({ length: 16 })
-    }
-
-    // ensure they are not blocked
-    assert(!this.blocks(blocksKey).exists, ERR_BLOCKED)
-
-    if (serviceID > 0) {
-      const servicesKey: ServicesKey = { address: recipient, id: serviceID }
-      // ensure the service isn't shutdown
-      assert(this.services(servicesKey).value.status !== ServiceStatusShutdown, ERR_SERVICE_IS_SHUTDOWN)
-    }
-
-    // ensure that the current window has not already had a payment
-    assert(
-      lastPayment < this.getLatestWindowStart(startDate, interval),
-      ERR_BAD_WINDOW
-    )
-    // ensure the user has enough funds in escrow
-    assert(escrowed >= amount, ERR_NOT_ENOUGH_FUNDS)
-
-    // assert(gateCall(this.akitaDAO.value, address.native, sub.gateID, args), ERR_FAILED_GATE)
     if (gateID !== 0) {
-      assert(Txn.applicationArgs(0) === methodSelector(this.gatedTriggerPayment), ERR_HAS_GATE)
+      assert(Txn.applicationArgs(0) === methodSelector(this.gatedTriggerPayment))
     }
 
     const isAsa = asset !== 0
@@ -805,7 +933,7 @@ export class Subscriptions extends classes(
 
       itxn
         .assetTransfer({
-          assetReceiver: recipient.native,
+          assetReceiver: recipient,
           xferAsset: asset,
           assetAmount: amounts.leftOver
         })
@@ -828,25 +956,24 @@ export class Subscriptions extends classes(
 
       itxn
         .payment({
-          receiver: recipient.native,
+          receiver: recipient,
           amount: amounts.leftOver
         })
         .submit()
     }
 
-    this.updateStreak(address, id, 1)
+    this.updateStreak(key, 1)
 
-    this.subscriptions(subscriptionsKey).value.escrowed -= amount
-    this.subscriptions(subscriptionsKey).value.lastPayment = Global.latestTimestamp
+    this.subscriptions(key).value.escrowed -= amount
+    this.subscriptions(key).value.lastPayment = Global.latestTimestamp
   }
 
-  streakCheck(sender: Address, id: SubscriptionID): void {
-    this.updateStreak(sender, id, 0)
+  streakCheck(key: SubscriptionKey): void {
+    this.updateStreak(key, 0)
   }
 
-  setPasses(id: SubscriptionID, addresses: Address[]): void {
-    const arc4Sender = new Address(Txn.sender)
-    const subscriptionsKey: SubscriptionKey = { address: arc4Sender, id }
+  setPasses(id: SubscriptionID, addresses: Account[]): void {
+    const subscriptionsKey: SubscriptionKey = { address: Txn.sender, id }
 
     assert(this.subscriptions(subscriptionsKey).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
@@ -864,17 +991,25 @@ export class Subscriptions extends classes(
     assert(passes >= addresses.length, ERR_PASS_COUNT_OVERFLOW)
 
     for (let i: uint64 = 0; i < addresses.length; i += 1) {
-      const blockKey: BlockListKey = {
-        address: recipient.bytes.slice(0, 16).toFixed({ length: 16 }),
-        blocked: addresses[i].bytes.slice(0, 16).toFixed({ length: 16 }),
-      }
-      assert(!this.blocks(blockKey).exists, ERR_BLOCKED)
+      assert(!this.blocks(this.getBlockKey(recipient, addresses[i])).exists, ERR_BLOCKED)
     }
 
-    this.passes({ address: arc4Sender, id }).value = clone(addresses)
+    this.passes({ address: Txn.sender, id }).value = clone(addresses)
   }
 
   // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  @abimethod({ readonly: true })
+  triggerList(req: TriggerListRequest[]): boolean[] {
+    const results: boolean[] = []
+    for (let i: uint64 = 0; i < req.length; i += 1) {
+      for (let j: uint64 = 0; j < req[i].ids.length; j += 1) {
+        const key: SubscriptionKey = { address: req[i].address, id: req[i].ids[j] }
+        results.push(this.canTrigger(key))
+      }
+    }
+    return results
+  }
 
   /**
    * isBlocked checks if an address is blocked for a merchant
@@ -882,30 +1017,30 @@ export class Subscriptions extends classes(
    * @param address The address to be checked
    */
   @abimethod({ readonly: true })
-  isBlocked(address: Address, blocked: Address): boolean {
-    return this.blocks({
-      address: address.bytes.slice(0, 16).toFixed({ length: 16 }),
-      blocked: blocked.bytes.slice(0, 16).toFixed({ length: 16 }),
-    }).exists
+  isBlocked(address: Account, blocked: Account): boolean {
+    return this.blocks(this.getBlockKey(address, blocked)).exists
   }
 
   /**
    * serviceIsActive checks if an service is shutdown
    */
   @abimethod({ readonly: true })
-  isShutdown(address: Address, id: uint64): boolean {
-    return this.services({ address, id }).value.status === ServiceStatusShutdown
+  isShutdown(address: Account, id: uint64): boolean {
+    return (
+      this.services({ address, id }).exists &&
+      this.services({ address, id }).value.status === ServiceStatusShutdown
+    )
   }
 
   @abimethod({ readonly: true })
-  getService(address: Address, id: uint64): Service {
+  getService(address: Account, id: uint64): Service {
     const key: ServicesKey = { address, id }
     assert(this.services(key).exists, ERR_SERVICE_DOES_NOT_EXIST)
     return this.services(key).value
   }
 
   @abimethod({ readonly: true })
-  getServicesByAddress(address: Address, start: uint64, windowSize: uint64): Service[] {
+  getServicesByAddress(address: Account, start: uint64, windowSize: uint64): Service[] {
     const services: Service[] = []
     for (let i: uint64 = start; i < start + windowSize; i += 1) {
       const key: ServicesKey = { address, id: i }
@@ -919,31 +1054,46 @@ export class Subscriptions extends classes(
   }
 
   @abimethod({ readonly: true })
-  getSubscription(address: Address, id: uint64): SubscriptionInfo {
-    const key: SubscriptionKey = { address, id }
+  getSubscription(key: SubscriptionKey): SubscriptionInfo {
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
     return this.subscriptions(key).value
   }
 
   @abimethod({ readonly: true })
-  getSubscriptionWithPasses(address: Address, id: uint64): SubscriptionInfoWithPasses {
-    const key = { address, id }
-
+  getSubscriptionWithPasses(key: SubscriptionKey): SubscriptionInfoWithPasses {
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
     const sub = clone(this.subscriptions(key).value)
 
-    const passesKey = { address, id }
-    let passes: Address[] = []
-    if (this.passes(passesKey).exists) {
-      passes = [...passes, ...this.passes(passesKey).value]
+    let title: string = ''
+    let description: string = ''
+    let bannerImage: CID = op.bzero(36)
+    let highlightMessage: Uint8 = HighlightMessageNone
+    let highlightColor: bytes<3> = Bytes('000').toFixed({ length: 3 })
+    if (sub.serviceID !== 0) {
+      const serviceKey: ServicesKey = { address: sub.recipient, id: sub.serviceID }
+      assert(this.services(serviceKey).exists, ERR_SERVICE_DOES_NOT_EXIST);
+      ({ title, description, bannerImage, highlightMessage, highlightColor } = clone(this.services(serviceKey).value))
     }
 
-    return { ...sub, passes }
+    let passes: Account[] = []
+    if (this.passes(key).exists) {
+      passes = [...passes, ...this.passes(key).value]
+    }
+
+    return {
+      ...sub,
+      title,
+      description,
+      bannerImage,
+      highlightMessage,
+      highlightColor,
+      passes
+    }
   }
 
   @abimethod({ readonly: true })
-  isFirstSubscription(address: Address): boolean {
-    return !this.subscriptionslist(address.native).exists
+  isFirstSubscription(address: Account): boolean {
+    return !this.subscriptionslist(address).exists
   }
 }

@@ -15,21 +15,19 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, decodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import {
-  DistributionType,
-  EntryData,
-  EntryKey,
-  PoolStakingType,
-  PoolState,
-  PoolStatus,
-  Reward,
-  StakeEntry,
-} from './types'
+import { classes } from 'polytype'
+import { AkitaDAOEscrowAccountStakingPools } from '../arc58/dao/constants'
 import { RootKey } from '../meta-merkles/types'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { MinDisbursementsMBR } from '../rewards/constants'
+import { UserAllocation } from '../rewards/types'
 import { StakingType } from '../staking/types'
+import { BoxCostPerByte, MAX_UINT64 } from '../utils/constants'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { calcPercent, gateCall, getAkitaAppList, getOtherAppList, getStakingFees, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, percentageOf } from '../utils/functions'
+import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
+
 import {
   DisbursementPhaseAllocation,
   DisbursementPhaseFinalization,
@@ -76,27 +74,30 @@ import {
   PoolUniquesMBR,
   WinnerCountCap,
 } from './constants'
-import { ERR_DAO_NOT_OPTED_IN, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION, ERR_FORBIDDEN, ERR_INVALID_DISBURSEMENT_PHASE, ERR_INVALID_POOL_TYPE_FOR_CHECK, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE, ERR_MUST_BE_ASA, ERR_NOT_ALGO, ERR_NOT_ENOUGH_FUNDS, ERR_NOT_READY_TO_DISBURSE, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT, ERR_RATE_MUST_BE_GREATER_THAN_ZERO, ERR_STAKE_KEY_REQUIRED, ERR_WINNING_TICKETS_ALREADY_EXIST } from './errors'
-import { UserAllocation } from '../rewards/types'
-import { classes } from 'polytype'
-import { RandomnessBeacon } from '../utils/types/randomness-beacon'
-import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
-import { BoxCostPerByte, MAX_UINT64 } from '../utils/constants'
-import { calcPercent, gateCall, getAkitaAppList, getOtherAppList, getStakingFees, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, percentageOf } from '../utils/functions'
-import { AkitaDAOEscrowAccountStakingPools } from '../arc58/dao/constants'
-import { MinDisbursementsMBR } from '../rewards/constants'
+import { ERR_DAO_NOT_OPTED_IN, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION, ERR_FORBIDDEN, ERR_INVALID_DISBURSEMENT_PHASE, ERR_INVALID_POOL_TYPE_FOR_CHECK, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE, ERR_NOT_ALGO, ERR_NOT_ENOUGH_FUNDS, ERR_NOT_READY_TO_DISBURSE, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT, ERR_RATE_MUST_BE_GREATER_THAN_ZERO, ERR_STAKE_KEY_REQUIRED, ERR_WINNING_TICKETS_ALREADY_EXIST } from './errors'
+import {
+  DistributionType,
+  EntryData,
+  EntryKey,
+  PoolStakingType,
+  PoolState,
+  PoolStatus,
+  Reward,
+  StakeEntry,
+} from './types'
 
 import { FunderInfo } from '../utils/types/mbr'
 
 // CONTRACT IMPORTS
-import { BasePool } from './base'
-import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
-import { ChildContract } from '../utils/base-contracts/child'
-import type { Staking } from '../staking/contract.algo'
-import type { Rewards } from '../rewards/contract.algo'
-import type { MetaMerkles } from '../meta-merkles/contract.algo'
 import { Gate } from '../gates/contract.algo'
 import { GateArgs } from '../gates/types'
+import type { MetaMerkles } from '../meta-merkles/contract.algo'
+import type { Rewards } from '../rewards/contract.algo'
+import type { Staking } from '../staking/contract.algo'
+import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
+import { ChildContract } from '../utils/base-contracts/child'
+import type { RandomnessBeacon } from '../utils/types/randomness-beacon'
+import { BasePool } from './base'
 
 const MERKLE_TREE_TYPE_ASSET: uint64 = 1
 
@@ -235,8 +236,8 @@ export class Pool extends classes(
       }
 
       if (this.gateID.value !== 0) {
-        const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, address.native)
-        const origin = originOr(wallet, address.native)
+        const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, address)
+        const origin = originOr(wallet, address)
 
         const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
         if (!passes) {
@@ -624,7 +625,7 @@ export class Pool extends classes(
     // or impact score. In these cases the gate is the only requirement
     // and the stake key is not needed
     assert(
-      this.stakeKey.value.address.native !== Global.zeroAddress || reward.distribution !== DistributionTypePercentage,
+      this.stakeKey.value.address !== Global.zeroAddress || reward.distribution !== DistributionTypePercentage,
       ERR_STAKE_KEY_REQUIRED
     )
 
@@ -860,7 +861,7 @@ export class Pool extends classes(
     for (let i: uint64 = 0; i < entries.length; i++) {
       assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
 
-      if (address.native !== Global.zeroAddress) {
+      if (address !== Global.zeroAddress) {
         const verified = abiCall<typeof MetaMerkles.prototype.verify>({
           appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
           args: [
@@ -887,7 +888,7 @@ export class Pool extends classes(
       const stakeInfo = abiCall<typeof Staking.prototype.getInfo>({
         appId: getAkitaAppList(Global.currentApplicationId).staking,
         args: [
-          new Address(Txn.sender),
+          Txn.sender,
           {
             asset: entries[i].asset,
             type: this.stakingType(),
@@ -899,7 +900,7 @@ export class Pool extends classes(
 
       const entryID = this.newEntryID()
       this.entries(entryID).value = {
-        address: new Address(Txn.sender),
+        address: Txn.sender,
         asset: entries[i].asset,
         quantity: entries[i].quantity,
         gateArgs: clone(args),
@@ -907,7 +908,7 @@ export class Pool extends classes(
       }
 
       const aKey = {
-        address: new Address(Txn.sender),
+        address: Txn.sender,
         asset: entries[i].asset,
       }
 
@@ -1039,7 +1040,7 @@ export class Pool extends classes(
     this.rewards(rewardID).value.qualifiedStake = 0
   }
 
-  check(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
+  check(address: Account, asset: uint64): { valid: boolean, balance: uint64 } {
     const key: EntryKey = { address, asset }
     const id = this.entriesByAddress(key).value
     return this.checkByID(id)
@@ -1069,8 +1070,8 @@ export class Pool extends classes(
 
   /** @returns a boolean indicating if the address has entered the staking pool */
   @abimethod({ readonly: true })
-  isEntered(address: Address): boolean {
-    return this.uniques(address.native).exists;
+  isEntered(address: Account): boolean {
+    return this.uniques(address).exists;
   }
 
   @abimethod({ readonly: true })
@@ -1090,7 +1091,7 @@ export class Pool extends classes(
       stakeKey: this.stakeKey.value,
       minimumStakeAmount: this.minimumStakeAmount.value,
       gateID: this.gateID.value,
-      creator: new Address(this.creator.value),
+      creator: this.creator.value,
     }
   }
 }

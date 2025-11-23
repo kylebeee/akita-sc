@@ -1,4 +1,5 @@
 import {
+  Account,
   arc4,
   assert,
   assertMatch,
@@ -14,9 +15,12 @@ import {
   itxn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
+import { abimethod } from '@algorandfoundation/algorand-typescript/arc4'
 import { btoi, itob, sha256, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
-import { DataKey, MetaMerklesMBRData, RootKey, SchemaList, TypesValue } from './types'
+import { BoxCostPerByte } from '../utils/constants'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
+import { bytes16 } from '../utils/types/base'
+import { Leaf, Proof } from '../utils/types/merkles'
 import {
   maxDataKeyLength,
   maxDataLength,
@@ -77,12 +81,10 @@ import {
   ERR_RESERVED_KEY_PREFIX,
   ERR_TREE_TYPE_KEY_ALREADY_EXISTS,
 } from './errors'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_PAYMENT_AMOUNT, ERR_INVALID_PAYMENT_RECEIVER } from '../utils/errors'
-import { bytes16 } from '../utils/types/base'
-import { Leaf, MetaMerklesInterface, Proof } from '../utils/types/merkles'
-import { BoxCostPerByte } from '../utils/constants'
+import { DataKey, MetaMerklesMBRData, RootKey, SchemaList, TypesValue } from './types'
 
-export class MetaMerkles extends Contract implements MetaMerklesInterface {
+
+export class MetaMerkles extends Contract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -161,7 +163,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
 
     const truncatedAddress = bytes16(Txn.sender.bytes)
 
-    const rootKey: RootKey = { address: new Address(Txn.sender), name }
+    const rootKey: RootKey = { address: Txn.sender, name }
     const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
 
     assert(!this.roots(rootKey).exists, ERR_NAME_TAKEN)
@@ -188,7 +190,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
   deleteRoot(name: string): void {
     const truncatedAddress = bytes16(Txn.sender.bytes)
 
-    const rootKey: RootKey = { address: new Address(Txn.sender), name }
+    const rootKey: RootKey = { address: Txn.sender, name }
     const typeKey: DataKey = { address: truncatedAddress, name, key: treeTypeKey }
 
     assert(this.roots(rootKey).exists, ERR_NO_NAME)
@@ -212,7 +214,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param newRoot the new 32 byte merkle tree root
    */
   updateRoot(name: string, newRoot: bytes<32>): void {
-    const key: RootKey = { address: new Address(Txn.sender), name }
+    const key: RootKey = { address: Txn.sender, name }
     assert(this.roots(key).exists, ERR_NO_NAME)
     this.roots(key).value = newRoot
   }
@@ -227,7 +229,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @param value the metadata value eg. `5` encoded as a bytestring for 5%
    */
   addData(payment: gtxn.PaymentTxn, name: string, key: string, value: string): void {
-    const rootKey: RootKey = { address: new Address(Txn.sender), name }
+    const rootKey: RootKey = { address: Txn.sender, name }
 
     const keyBytes = Bytes(key)
     assert(keyBytes.length <= maxDataKeyLength, ERR_KEY_TOO_LONG)
@@ -290,7 +292,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    *
    * @returns a boolean indicating whether the proof is valid
    */
-  verify(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64): boolean {
+  verify(address: Account, name: string, leaf: Leaf, proof: Proof, type: uint64): boolean {
     const truncatedAddress = bytes16(address.bytes)
 
     const rootKey: RootKey = { address, name }
@@ -324,7 +326,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @returns the value set eg. `5` encoded as a bytestring for 5%
    */
   @abimethod({ readonly: true })
-  read(address: Address, name: string, key: string): string {
+  read(address: Account, name: string, key: string): string {
     const truncatedAddress = bytes16(address.bytes)
     return this.data({ address: truncatedAddress, name, key }).value
   }
@@ -348,7 +350,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * the lists purpose isn't being misused ( 0 if the caller doesnt care )
    * @returns a string of metadata
    */
-  verifiedRead(address: Address, name: string, leaf: Leaf, proof: Proof, type: uint64, key: string): string {
+  verifiedRead(address: Account, name: string, leaf: Leaf, proof: Proof, type: uint64, key: string): string {
     const verified = this.verify(address, name, leaf, proof, type)
     if (!verified) {
       return ''
@@ -376,7 +378,7 @@ export class MetaMerkles extends Contract implements MetaMerklesInterface {
    * @returns a string of metadata
    */
   verifiedMustRead(
-    address: Address,
+    address: Account,
     name: string,
     leaf: Leaf,
     proof: Proof,

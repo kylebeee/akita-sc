@@ -3,8 +3,9 @@ import { UpdateAkitaDaoPluginArgs, UpdateAkitaDaoPluginClient, UpdateAkitaDaoPlu
 import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from "../../types";
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import { Address } from "algosdk";
-import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
+import { getTxns } from "../utils";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
+import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
 
 type ContractArgs = UpdateAkitaDaoPluginArgs["obj"];
 
@@ -27,19 +28,14 @@ type DeleteBoxedContractArgs = (
 )
 
 type UpdateAppArgs = (
-  Omit<ContractArgs['updateApp(uint64,bool,uint64,string)void'], 'wallet' | 'rekeyBack'>
+  Omit<ContractArgs['updateApp(uint64,bool,uint64)void'], 'wallet' | 'rekeyBack'>
+  & { version: string, data: Uint8Array; }
   & MaybeSigner
   & { rekeyBack?: boolean }
 )
 
-type UpdateDaoArgs = (
-  Omit<ContractArgs['updateDao(uint64,bool,uint64,uint64)void'], 'wallet' | 'rekeyBack'>
-  & MaybeSigner
-  & { rekeyBack?: boolean }
-)
-
-type UpdateAkitaDaoForAppArgs = (
-  Omit<ContractArgs['updateAkitaDaoForApp(uint64,bool,uint64,uint64)void'], 'wallet' | 'rekeyBack'>
+type UpdateAkitaDaoAppIDForAppArgs = (
+  Omit<ContractArgs['updateAkitaDaoAppIDForApp(uint64,bool,uint64,uint64)void'], 'wallet' | 'rekeyBack'>
   & MaybeSigner
   & { rekeyBack?: boolean } 
 )
@@ -64,8 +60,8 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
@@ -83,7 +79,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
@@ -95,10 +91,10 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }
@@ -111,8 +107,8 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
@@ -130,7 +126,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
@@ -142,10 +138,10 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }
@@ -158,8 +154,8 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
@@ -177,7 +173,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
@@ -189,10 +185,10 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }
@@ -200,17 +196,17 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
   updateApp(): PluginSDKReturn
   updateApp(args: UpdateAppArgs): PluginSDKReturn
   updateApp(args?: UpdateAppArgs): PluginSDKReturn {
-    const methodName = 'updateApp';
+    const methodNames = ['initBoxedContract', 'loadBoxedContract', 'updateApp'];
     if (args === undefined) {
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: methodNames.map(methodName => this.client.appClient.getABIMethod(methodName).getSelector()),
+        getTxns
       });
     }
 
-    const { sender, signer, appId, newVersion } = args;
+    const { sender, signer, appId, version, data } = args;
 
     const sendParams = {
       ...this.sendParams,
@@ -224,87 +220,75 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: methodNames.map(methodName => this.client.appClient.getABIMethod(methodName).getSelector()),
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
 
-        const params = (
+        const txns: Txn[] = [];
+
+        const initParams = (
+          await this.client.params.initBoxedContract({
+            ...sendParams,
+            args: { wallet, rekeyBack, version, size: data.length }
+          })
+        )
+
+        txns.push({
+          type: 'methodCall',
+          ...initParams
+        })
+
+        // max loadContract calls necessary is 5
+        // max loadContract data size is 2027
+        // [selector:4][wallet:8][rekeyBack:1][offset:8][data:2027] = 2048 bytes (max txn args size)
+        // so we need to split the data into at most 5 chunks
+        for (let i = 0; i < data.length; i += 2027) {
+          const chunk = data.slice(i, i + 2027);
+          const loadParams = (
+            await this.client.params.loadBoxedContract({
+              ...sendParams,
+              args: { wallet, rekeyBack, offset: i, data: chunk }
+            })
+          )
+
+          txns.push({
+            type: 'methodCall',
+            ...loadParams
+          })
+        }
+
+        const updateParams = (
           await this.client.params.updateApp({
             ...sendParams,
-            args: { wallet, rekeyBack, appId, newVersion }
+            args: { wallet, rekeyBack, appId }
           })
         )
 
-        return {
+        txns.push({
           type: 'methodCall',
-          ...params
-        }
-      }
-    });
-  }
+          ...updateParams
+        })
 
-  updateDao(): PluginSDKReturn
-  updateDao(args: UpdateDaoArgs): PluginSDKReturn
-  updateDao(args?: UpdateDaoArgs): PluginSDKReturn {
-    const methodName = 'updateDao';
-    if (args === undefined) {
-      // Called without arguments - return selector for method restrictions
-      return (spendingAddress?: Address | string) => ({
-        appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
-      });
-    }
-
-    const { sender, signer, proposalId, index } = args;
-
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
-
-    return (spendingAddress?: Address | string) => ({
-      appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-      getTxns: async ({ wallet }: PluginHookParams) => {
-
-        const rekeyBack = args.rekeyBack ?? true;
-
-        const params = (
-          await this.client.params.updateDao({
-            ...sendParams,
-            args: { wallet, rekeyBack, proposalId, index }
-          })
-        )
-
-        return {
-          type: 'methodCall',
-          ...params
-        }
+        return txns;
       }
     });
   }
 
   updateAkitaDaoForApp(): PluginSDKReturn
-  updateAkitaDaoForApp(args: UpdateAkitaDaoForAppArgs): PluginSDKReturn
-  updateAkitaDaoForApp(args?: UpdateAkitaDaoForAppArgs): PluginSDKReturn {
+  updateAkitaDaoForApp(args: UpdateAkitaDaoAppIDForAppArgs): PluginSDKReturn
+  updateAkitaDaoForApp(args?: UpdateAkitaDaoAppIDForAppArgs): PluginSDKReturn {
     const methodName = 'updateAkitaDaoForApp';
     if (args === undefined) {
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
-    const { sender, signer, appId, newAkitaDao } = args;
+    const { sender, signer, appId, newAkitaDaoAppId } = args;
 
     const sendParams = {
       ...this.sendParams,
@@ -318,22 +302,22 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
 
         const params = (
-          await this.client.params.updateAkitaDaoForApp({
+          await this.client.params.updateAkitaDaoAppIdForApp({
             ...sendParams,
-            args: { wallet, rekeyBack, appId, newAkitaDao }
+            args: { wallet, rekeyBack, appId, newAkitaDaoAppId }
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }
@@ -346,8 +330,8 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
@@ -365,7 +349,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
@@ -378,10 +362,10 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }

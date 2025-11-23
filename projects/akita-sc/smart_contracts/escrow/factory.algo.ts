@@ -1,12 +1,14 @@
 import { Account, Application, assert, assertMatch, BoxMap, Bytes, bytes, Contract, Global, gtxn, itxn, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { abimethod, Address, compileArc4, DynamicArray, DynamicBytes } from "@algorandfoundation/algorand-typescript/arc4";
-import { Escrow } from "./contract.algo";
+import { abimethod, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { btoi, itob } from "@algorandfoundation/algorand-typescript/op";
-import { ERR_ALREADY_REGISTERED, ERR_FORBIDDEN, ERR_INVALID_APP, ERR_INVALID_CREATOR } from "./errors";
-import { ERR_DOESNT_EXIST } from './errors'
 import { BoxCostPerByte, GLOBAL_STATE_KEY_BYTES_COST } from "../utils/constants";
 import { ERR_INVALID_PAYMENT } from "../utils/errors";
 import { EscrowGlobalStateKeysCreator, MinPages, MinWalletIDsByAccountsMbr } from "./constants";
+import { ERR_ALREADY_REGISTERED, ERR_DOESNT_EXIST, ERR_FORBIDDEN, ERR_INVALID_APP, ERR_INVALID_CREATOR } from "./errors";
+
+// CONTRACT IMPORTS
+import { Escrow } from "./contract.algo";
+
 
 function bytes16(acc: Account): bytes<16> {
   return acc.bytes.slice(0, 16).toFixed({ length: 16 })
@@ -149,45 +151,45 @@ export class EscrowFactory extends Contract {
   }
 
   @abimethod({ readonly: true })
-  exists(address: Address): boolean {
-    return this.walletIDsByAccounts(bytes16(address.native)).exists
+  exists(address: Account): boolean {
+    return this.walletIDsByAccounts(bytes16(address)).exists
   }
 
   @abimethod({ readonly: true })
-  get(address: Address): bytes {
-    if (!this.walletIDsByAccounts(bytes16(address.native)).exists) {
+  get(address: Account): bytes {
+    if (!this.walletIDsByAccounts(bytes16(address)).exists) {
       return Bytes('')
     }
-    return this.walletIDsByAccounts(bytes16(address.native)).value
+    return this.walletIDsByAccounts(bytes16(address)).value
   }
 
   @abimethod({ readonly: true })
-  mustGet(address: Address): bytes {
-    assert(this.walletIDsByAccounts(bytes16(address.native)).exists, 'Account not found')
-    return this.walletIDsByAccounts(bytes16(address.native)).value
+  mustGet(address: Account): bytes {
+    assert(this.walletIDsByAccounts(bytes16(address)).exists, 'Account not found')
+    return this.walletIDsByAccounts(bytes16(address)).value
   }
 
   @abimethod({ readonly: true })
-  getList(addresses: DynamicArray<Address>): DynamicArray<DynamicBytes> {
-    const apps = new DynamicArray<DynamicBytes>()
+  getList(addresses: Account[]): bytes[] {
+    const apps: bytes[] = []
     for (let i: uint64 = 0; i < addresses.length; i++) {
       const address = addresses[i]
-      if (this.walletIDsByAccounts(bytes16(address.native)).exists) {
-        apps.push(new DynamicBytes(this.walletIDsByAccounts(bytes16(address.native)).value))
+      if (this.walletIDsByAccounts(bytes16(address)).exists) {
+        apps.push(this.walletIDsByAccounts(bytes16(address)).value)
       } else {
-        apps.push(new DynamicBytes(''))
+        apps.push(Bytes(''))
       }
     }
     return apps
   }
 
   @abimethod({ readonly: true })
-  mustGetList(addresses: DynamicArray<Address>): DynamicArray<DynamicBytes> {
-    const apps = new DynamicArray<DynamicBytes>()
+  mustGetList(addresses: Account[]): bytes[] {
+    const apps: bytes[] = []
     for (let i: uint64 = 0; i < addresses.length; i++) {
       const address = addresses[i]
-      assert(this.walletIDsByAccounts(bytes16(address.native)).exists, 'Account not found')
-      apps.push(new DynamicBytes(this.walletIDsByAccounts(bytes16(address.native)).value))
+      assert(this.walletIDsByAccounts(bytes16(address)).exists, 'Account not found')
+      apps.push(this.walletIDsByAccounts(bytes16(address)).value)
     }
     return apps
   }

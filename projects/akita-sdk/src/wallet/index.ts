@@ -134,7 +134,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         throw new Error(`All calls must be to the same plugin app ID: ${plugin}, but got ${appId}`);
       }
 
-      txns.push(await getTxns({ wallet: this.client.appId }))
+      txns.push(...(await getTxns({ wallet: this.client.appId })))
     }
 
     let caller = ''
@@ -404,7 +404,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     await this.client.send.arc58RekeyTo({ ...sendParams, args });
   }
 
-  async canCall({ sender, signer, ...args }: CanCallParams): Promise<boolean> {
+  async canCall({ sender, signer, ...args }: CanCallParams): Promise<boolean[]> {
 
     const sendParams = {
       ...this.sendParams,
@@ -412,11 +412,15 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       ...(signer !== undefined && { signer })
     };
 
-    const method = isPluginSDKReturn(args.method)
-      ? args.method().selector
-      : args.method;
+    const methods = isPluginSDKReturn(args.methods)
+      ? args.methods().selectors
+      : args.methods;
 
-    return await this.client.send.arc58CanCall({ ...sendParams, args: { ...args, method } }) as unknown as boolean;
+    const result = await Promise.allSettled(methods.flatMap(method => {
+      return this.client.send.arc58CanCall({ ...sendParams, args: { ...args, method } }) as unknown as Promise<boolean>;
+    }))
+
+    return result.map(x => x.status === 'fulfilled' ? x.value : false)
   }
 
   async usePlugin(params: WalletUsePluginParams): Promise<GroupReturn> {
@@ -471,13 +475,18 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
     let transformedMethods: [Uint8Array<ArrayBufferLike>, number | bigint][] = [];
     if (methods.length > 0) {
-      transformedMethods = methods.map((method) => {
-        const selector = isPluginSDKReturn(method.name)
-          ? method.name().selector
-          : method.name;
-
-        return [selector, method.cooldown];
-      });
+      transformedMethods = methods.reduce<[Uint8Array<ArrayBufferLike>, number | bigint][]>(
+        (acc, method) => {
+          if (isPluginSDKReturn(method.name)) {
+            const selectors = method.name().selectors ?? [];
+            selectors.forEach((selector) => acc.push([selector, method.cooldown]));
+          } else {
+            method.name.forEach(x => acc.push([x, method.cooldown]));
+          }
+          return acc;
+        },
+        []
+      );
     }
 
     const newEscrow = escrow !== '' && !this.escrows.get(escrow);

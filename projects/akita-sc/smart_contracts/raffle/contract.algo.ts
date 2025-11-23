@@ -14,16 +14,25 @@ import {
   GlobalState,
   gtxn,
   itxn,
-  OnCompleteAction,
   op,
   Txn,
-  uint64,
+  uint64
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, Address, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
-import { RandomnessBeacon } from '../utils/types/randomness-beacon'
+import { abiCall, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { classes } from 'polytype'
+import { AkitaDAOEscrowAccountRaffles } from '../arc58/dao/constants'
+import { GateArgs } from '../gates/types'
 import { MAX_UINT64 } from '../utils/constants'
-import { arc4WeightsList, EntryData, FindWinnerCursors, RaffleState } from './types'
+import {
+  ERR_INVALID_ASSET,
+  ERR_INVALID_PAYMENT,
+  ERR_INVALID_TRANSFER,
+} from '../utils/errors'
+import { arc59OptInAndSend, calcPercent, gateCall, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender } from '../utils/functions'
+import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
+import { FunderInfo } from '../utils/types/mbr'
+import { RandomnessBeacon } from '../utils/types/randomness-beacon'
+import { RoyaltyAmounts } from '../utils/types/royalties'
 import {
   ChunkSize,
   RaffleBoxPrefixEntries,
@@ -77,23 +86,15 @@ import {
   ERR_WINNER_ALREADY_FOUND,
   ERR_WINNER_NOT_FOUND,
 } from './errors'
-import {
-  ERR_INVALID_ASSET,
-  ERR_INVALID_PAYMENT,
-  ERR_INVALID_TRANSFER,
-} from '../utils/errors'
+import { arc4WeightsList, EntryData, FindWinnerCursors, RaffleState } from './types'
 
-import { PrizeBox } from '../prize-box/contract.algo'
-import { classes } from 'polytype'
-import { BaseRaffle } from './base'
-import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
-import { arc59OptInAndSend, calcPercent, gateCall, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender } from '../utils/functions'
+// CONTRACT IMPORTS
+import type { PrizeBox } from '../prize-box/contract.algo'
 import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
-import { RoyaltyAmounts } from '../utils/types/royalties'
-import { AkitaDAOEscrowAccountRaffles } from '../arc58/dao/constants'
 import { ChildContract } from '../utils/base-contracts/child'
-import { FunderInfo } from '../utils/types/mbr'
-import { GateArgs } from '../gates/types'
+import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import { BaseRaffle } from './base'
+
 
 export class Raffle extends classes(
   BaseRaffle,
@@ -234,7 +235,7 @@ export class Raffle extends classes(
     ticketAsset: uint64,
     startTimestamp: uint64,
     endTimestamp: uint64,
-    seller: Address,
+    seller: Account,
     funder: FunderInfo,
     creatorRoyalty: uint64, // TODO: implement royalty
     minTickets: uint64,
@@ -253,7 +254,7 @@ export class Raffle extends classes(
     this.startTimestamp.value = startTimestamp
     assert(endTimestamp > startTimestamp && endTimestamp > Global.latestTimestamp, ERR_INVALID_ENDING_ROUND)
     this.endTimestamp.value = endTimestamp
-    this.seller.value = seller.native
+    this.seller.value = seller
     this.funder.value = clone(funder)
     this.minTickets.value = minTickets
     this.maxTickets.value = maxTickets
@@ -795,13 +796,13 @@ export class Raffle extends classes(
       ticketAsset: this.ticketAsset.value.id,
       startTimestamp: this.startTimestamp.value,
       endTimestamp: this.endTimestamp.value,
-      seller: new Address(this.seller.value),
+      seller: this.seller.value,
       minTickets: this.minTickets.value,
       maxTickets: this.maxTickets.value,
       entryCount: this.entryCount.value,
       ticketCount: this.ticketCount.value,
       winningTicket: this.winningTicket.value,
-      winner: new Address(this.winner.value),
+      winner: this.winner.value,
       prize: this.prize.value,
       prizeClaimed: this.prizeClaimed.value,
       gateID: this.gateID.value,

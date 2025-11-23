@@ -1,5 +1,4 @@
-import { abimethod, Application, assert, assertMatch, BoxMap, bytes, clone, Contract, Global, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address } from "@algorandfoundation/algorand-typescript/arc4";
+import { abimethod, Account, Application, assert, assertMatch, BoxMap, bytes, clone, Contract, Global, gtxn, uint64 } from "@algorandfoundation/algorand-typescript";
 
 const ERR_APP_NOT_REGISTERED = 'App not registered'
 const ERR_INVALID_PAYMENT = 'Invalid payment'
@@ -8,9 +7,9 @@ export class AppRegistry extends Contract {
 
   apps = BoxMap<bytes<4>, uint64[]>({ keyPrefix: '' })
 
-  private findMatch(address: Address, apps: uint64[]): uint64 {
+  private findMatch(address: Account, apps: uint64[]): uint64 {
     for (let i: uint64 = 0; i < apps.length; i++) {
-      if (address.native.bytes === this.deriveAddr(apps[i])) {
+      if (address.bytes === this.deriveAddr(apps[i])) {
         return apps[i]
       }
     }
@@ -53,7 +52,7 @@ export class AppRegistry extends Contract {
   }
 
   @abimethod({ readonly: true })
-  exists(address: Address): boolean {
+  exists(address: Account): boolean {
     const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
 
     if (!this.apps(addr4).exists) {
@@ -67,7 +66,7 @@ export class AppRegistry extends Contract {
   }
 
   @abimethod({ readonly: true })
-  get(address: Address): uint64 {
+  get(address: Account): uint64 {
     const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
 
     if (!this.apps(addr4).exists) {
@@ -81,7 +80,7 @@ export class AppRegistry extends Contract {
   }
 
   @abimethod({ readonly: true })
-  mustGet(address: Address): uint64 {
+  mustGet(address: Account): uint64 {
     const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })
 
     if (!this.apps(addr4).exists) {
@@ -97,7 +96,7 @@ export class AppRegistry extends Contract {
   }
 
   @abimethod({ readonly: true })
-  getList(addresses: Address[]): uint64[] {
+  getList(addresses: Account[]): uint64[] {
     let apps: uint64[] = []
     const zero: uint64 = 0
     for (const address of addresses) {
@@ -118,7 +117,7 @@ export class AppRegistry extends Contract {
   }
 
   @abimethod({ readonly: true })
-  mustGetList(addresses: Address[]): uint64[] {
+  mustGetList(addresses: Account[]): uint64[] {
     let apps: uint64[] = []
     for (const address of addresses) {
       const addr4 = address.bytes.slice(0, 4).toFixed({ length: 4 })

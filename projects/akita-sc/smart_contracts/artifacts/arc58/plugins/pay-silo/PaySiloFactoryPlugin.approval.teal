@@ -18,7 +18,7 @@ main_mint_route@3:
     // mint(
     //   wallet: Application,
     //   rekeyBack: boolean,
-    //   recipient: Address
+    //   recipient: Account
     // ): uint64 {
     txn OnCompletion
     !
@@ -44,7 +44,7 @@ mint:
     // mint(
     //   wallet: Application,
     //   rekeyBack: boolean,
-    //   recipient: Address
+    //   recipient: Account
     // ): uint64 {
     txna ApplicationArgs 1
     dup
@@ -69,16 +69,16 @@ mint:
     pushint 32 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -93,10 +93,10 @@ mint:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:288
     // if (!rekeyBack) {
     bnz mint_after_if_else@5
-    // smart_contracts/utils/functions.ts:291
+    // smart_contracts/utils/functions.ts:289
     // return Global.zeroAddress
     global ZeroAddress
 
@@ -148,7 +148,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
     // mint(
     //   wallet: Application,
     //   rekeyBack: boolean,
-    //   recipient: Address
+    //   recipient: Account
     // ): uint64 {
     itob
     pushbytes 0x151f7c75
@@ -159,7 +159,7 @@ mint_after_inlined_smart_contracts/utils/functions.ts::rekeyAddress@6:
     return
 
 mint_after_if_else@5:
-    // smart_contracts/utils/functions.ts:294
+    // smart_contracts/utils/functions.ts:292
     // return wallet.address
     dig 2
     app_params_get AppAddress

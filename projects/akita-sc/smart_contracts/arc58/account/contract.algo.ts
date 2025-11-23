@@ -1,24 +1,24 @@
 import {
-  GlobalState,
-  BoxMap,
-  assert,
-  uint64,
-  Account,
-  TransactionType,
-  Application,
   abimethod,
-  gtxn,
-  itxn,
+  Account,
+  Application,
+  assert,
+  assertMatch,
   Asset,
-  OnCompleteAction,
+  BoxMap,
   Bytes,
   bytes,
-  assertMatch,
   clone,
   contract,
+  GlobalState,
+  gtxn,
+  itxn,
+  OnCompleteAction,
+  TransactionType,
+  uint64,
 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, Contract, methodSelector, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, btoi, Global, len, Txn } from '@algorandfoundation/algorand-typescript/op'
-import { abiCall, Address, Contract, methodSelector, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import {
   AbstractAccountBoxPrefixAllowances,
   AbstractAccountBoxPrefixDomainKeys,
@@ -31,13 +31,14 @@ import {
   AbstractAccountGlobalStateKeysBanner,
   AbstractAccountGlobalStateKeysBio,
   AbstractAccountGlobalStateKeysControlledAddress,
-  AbstractAccountGlobalStateKeysReferrer,
+  AbstractAccountGlobalStateKeysCurrentPlugin,
   AbstractAccountGlobalStateKeysDomain,
   AbstractAccountGlobalStateKeysEscrowFactory,
   AbstractAccountGlobalStateKeysFactoryApp,
   AbstractAccountGlobalStateKeysLastChange,
   AbstractAccountGlobalStateKeysLastUserInteraction,
   AbstractAccountGlobalStateKeysNickname,
+  AbstractAccountGlobalStateKeysReferrer,
   AbstractAccountGlobalStateKeysRekeyIndex,
   AbstractAccountGlobalStateKeysSpendingAddress,
   AbstractAccountNumGlobalBytes,
@@ -49,7 +50,6 @@ import {
   MinExecutionsMBR,
   MinNamedPluginMBR,
   MinPluginMBR,
-  AbstractAccountGlobalStateKeysCurrentPlugin,
 } from './constants'
 import {
   ERR_ADMIN_ONLY,
@@ -66,7 +66,6 @@ import {
   ERR_ESCROW_NAME_REQUIRED,
   ERR_ESCROW_REQUIRED_TO_BE_SET_AS_DEFAULT,
   ERR_EXECUTION_EXPIRED,
-  ERR_EXECUTION_KEY_DOES_NOT_EXIST,
   ERR_EXECUTION_KEY_NOT_FOUND,
   ERR_EXECUTION_KEY_UPDATE_MUST_MATCH_FIRST_VALID,
   ERR_EXECUTION_KEY_UPDATE_MUST_MATCH_LAST_VALID,
@@ -88,6 +87,7 @@ import {
   ERR_ONLY_ADMIN_CAN_UPDATE,
   ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_METHOD_RESTRICTION,
   ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN,
+  ERR_PLUGIN_ALREADY_EXISTS,
   ERR_PLUGIN_DOES_NOT_EXIST,
   ERR_PLUGIN_EXPIRED,
   ERR_PLUGIN_ON_COOLDOWN,
@@ -96,18 +96,16 @@ import {
   ERR_ZERO_ADDRESS_DELEGATION_TYPE,
 } from './errors'
 
-import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, EscrowInfo, EscrowReclaim, ExecutionInfo, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
-import { BoxCostPerByte } from '../../utils/constants'
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyRevocation, GlobalStateKeyVersion } from '../../constants'
-import { getAkitaAppList } from '../../utils/functions'
 import { ARC58WalletIDsByAccountsMbr, NewCostForARC58 } from '../../escrow/constants'
+import { BoxCostPerByte } from '../../utils/constants'
+import { getAkitaAppList } from '../../utils/functions'
+import { AbstractAccountBoxMBRData, AddAllowanceInfo, AllowanceInfo, AllowanceKey, DelegationTypeSelf, EscrowInfo, EscrowReclaim, ExecutionInfo, FundsRequest, MethodInfo, MethodRestriction, MethodValidation, PluginInfo, PluginKey, PluginValidation, SpendAllowanceTypeDrip, SpendAllowanceTypeFlat, SpendAllowanceTypeWindow } from './types'
 import { emptyAllowanceInfo, emptyEscrowInfo, emptyExecutionInfo, emptyPluginInfo } from './utils'
 
 // CONTRACT IMPORTS
-import { AbstractedAccountInterface } from '../../utils/abstract-account'
 import type { EscrowFactory } from '../../escrow/factory.algo'
 import type { Staking } from '../../staking/contract.algo'
-
 
 @contract({
   stateTotals: {
@@ -115,7 +113,7 @@ import type { Staking } from '../../staking/contract.algo'
     globalUints: AbstractAccountNumGlobalUints
   }
 })
-export class AbstractedAccount extends Contract implements AbstractedAccountInterface {
+export class AbstractedAccount extends Contract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -573,30 +571,30 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   @abimethod({ onCreate: 'require' })
   create(
     version: string,
-    controlledAddress: Address,
-    admin: Address,
+    controlledAddress: Account,
+    admin: Account,
     domain: string,
     escrowFactory: uint64,
     revocationApp: uint64,
     nickname: string,
-    referrer: Address
+    referrer: Account
   ): void {
     assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
     assert(admin !== controlledAddress)
 
     this.version.value = version
-    this.admin.value = admin.native
+    this.admin.value = admin
     this.domain.value = domain
     this.controlledAddress.value =
-      controlledAddress.native === Global.zeroAddress
+      controlledAddress === Global.zeroAddress
         ? Global.currentApplicationAddress
-        : controlledAddress.native
+        : controlledAddress
     this.escrowFactory.value = Application(escrowFactory)
     this.spendingAddress.value = Global.zeroAddress;
     this.revocation.value = Application(revocationApp)
     this.nickname.value = nickname
     this.factoryApp.value = Application(Global.callerApplicationId)
-    this.referrer.value = referrer.native
+    this.referrer.value = referrer
 
     this.updateLastUserInteraction()
     this.updateLastChange()
@@ -699,9 +697,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    *
    * @param newAdmin The new admin
   */
-  arc58_changeAdmin(newAdmin: Address): void {
+  arc58_changeAdmin(newAdmin: Account): void {
     assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_ADMIN);
-    this.admin.value = newAdmin.native;
+    this.admin.value = newAdmin;
     this.updateLastUserInteraction()
     this.updateLastChange()
   }
@@ -712,7 +710,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * @param newAdmin The new admin
    *
   */
-  arc58_pluginChangeAdmin(newAdmin: Address): void {
+  arc58_pluginChangeAdmin(newAdmin: Account): void {
     const key = clone(this.currentPlugin.value)
     const { plugin, escrow } = key
 
@@ -728,7 +726,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       'This plugin does not have admin privileges'
     );
 
-    this.admin.value = newAdmin.native;
+    this.admin.value = newAdmin;
     if (this.plugins(key).value.delegationType === DelegationTypeSelf) {
       this.updateLastUserInteraction();
     }
@@ -751,14 +749,14 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * @param address The address to rekey to
    * @param flash Whether or not this should be a flash rekey. If true, the rekey back to the app address must done in the same txn group as this call
   */
-  arc58_rekeyTo(address: Address, flash: boolean): void {
+  arc58_rekeyTo(address: Account, flash: boolean): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
 
     itxn
       .payment({
         sender: this.controlledAddress.value,
-        receiver: address.native,
-        rekeyTo: address.native,
+        receiver: address,
+        rekeyTo: address,
         note: 'rekeying abstracted account'
       })
       .submit();
@@ -781,14 +779,14 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   arc58_canCall(
     plugin: uint64,
     global: boolean,
-    address: Address,
+    address: Account,
     escrow: string,
     method: bytes<4>
   ): boolean {
     if (global) {
       this.pluginCallAllowed(plugin, Global.zeroAddress, escrow, method);
     }
-    return this.pluginCallAllowed(plugin, address.native, escrow, method);
+    return this.pluginCallAllowed(plugin, address, escrow, method);
   }
 
   /**
@@ -883,7 +881,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   */
   arc58_addPlugin(
     plugin: uint64,
-    caller: Address,
+    caller: Account,
     escrow: string,
     admin: boolean,
     delegationType: Uint8,
@@ -898,14 +896,14 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     assert(
       !(
         delegationType === DelegationTypeSelf &&
-        caller.native === Global.zeroAddress
+        caller === Global.zeroAddress
       ),
       ERR_ZERO_ADDRESS_DELEGATION_TYPE
     )
     assert(
       !(
         useExecutionKey &&
-        caller.native !== Global.zeroAddress
+        caller !== Global.zeroAddress
       ),
       ERR_USING_EXECUTION_KEY_REQUIRES_GLOBAL
     )
@@ -916,7 +914,9 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       escrowKey = ''
     }
 
-    const key: PluginKey = { plugin, caller: caller.native, escrow: escrowKey }
+    const key: PluginKey = { plugin, caller, escrow: escrowKey }
+
+    assert(!this.plugins(key).exists, ERR_PLUGIN_ALREADY_EXISTS)
 
     let methodInfos: MethodInfo[] = []
     for (let i: uint64 = 0; i < methods.length; i += 1) {
@@ -960,7 +960,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * @param caller The address of the passkey
    * @param domain The domain to assign to the passkey
   */
-  assignDomain(caller: Address, domain: string): void {
+  assignDomain(caller: Account, domain: string): void {
     assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_ADD_PLUGIN)
 
     if (this.controlledAddress.value !== Global.currentApplicationAddress) {
@@ -973,7 +973,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
         .submit()
     }
 
-    this.domainKeys(caller.native).value = domain
+    this.domainKeys(caller).value = domain
   }
 
   /**
@@ -982,10 +982,10 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * @param app The app to remove
    * @param allowedCaller The address that's allowed to call the app
   */
-  arc58_removePlugin(plugin: uint64, caller: Address, escrow: string): void {
+  arc58_removePlugin(plugin: uint64, caller: Account, escrow: string): void {
     assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
 
-    const key: PluginKey = { plugin, caller: caller.native, escrow }
+    const key: PluginKey = { plugin, caller: caller, escrow }
     assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST)
 
     const methodsLength: uint64 = this.plugins(key).value.methods.length
@@ -1023,7 +1023,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   arc58_addNamedPlugin(
     name: string,
     plugin: uint64,
-    caller: Address,
+    caller: Account,
     escrow: string,
     admin: boolean,
     delegationType: Uint8,
@@ -1039,14 +1039,14 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
     assert(
       !(
         delegationType === DelegationTypeSelf &&
-        caller.native === Global.zeroAddress
+        caller === Global.zeroAddress
       ),
       ERR_ZERO_ADDRESS_DELEGATION_TYPE
     )
     assert(
       !(
         useExecutionKey &&
-        caller.native !== Global.zeroAddress
+        caller !== Global.zeroAddress
       ),
       ERR_USING_EXECUTION_KEY_REQUIRES_GLOBAL
     )
@@ -1057,7 +1057,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       escrowKey = ''
     }
 
-    const key: PluginKey = { plugin, caller: caller.native, escrow: escrowKey }
+    const key: PluginKey = { plugin, caller: caller, escrow: escrowKey }
     this.namedPlugins(name).value = clone(key)
 
     let methodInfos: MethodInfo[] = []
@@ -1243,12 +1243,12 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   */
   arc58_pluginOptinEscrow(
     plugin: uint64,
-    caller: Address,
+    caller: Account,
     escrow: string,
     assets: uint64[],
     mbrPayment: gtxn.PaymentTxn
   ): void {
-    const key: PluginKey = { plugin, caller: caller.native, escrow }
+    const key: PluginKey = { plugin, caller: caller, escrow }
 
     assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST)
     assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
@@ -1258,8 +1258,8 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
 
     assert(
       Txn.sender === Application(plugin).address ||
-      Txn.sender === caller.native ||
-      caller.native === Global.zeroAddress,
+      Txn.sender === caller ||
+      caller === Global.zeroAddress,
       ERR_FORBIDDEN
     )
 
@@ -1395,7 +1395,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   }
 
   arc58_removeExecutionKey(lease: bytes<32>): void {
-    assert(this.executions(lease).exists, ERR_EXECUTION_KEY_DOES_NOT_EXIST)
+    assert(this.executions(lease).exists, ERR_EXECUTION_KEY_NOT_FOUND)
     assert(this.isAdmin() || this.executions(lease).value.lastValid < Global.round, ERR_ADMIN_ONLY)
 
     this.executions(lease).delete()
@@ -1411,8 +1411,8 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
    * because different implementations may have different ways of determining the admin.
   */
   @abimethod({ readonly: true })
-  arc58_getAdmin(): Address {
-    return new Address(this.admin.value)
+  arc58_getAdmin(): Account {
+    return this.admin.value
   }
 
   @abimethod({ readonly: true })
@@ -1487,11 +1487,11 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
   }
 
   @abimethod({ readonly: true })
-  arc58_getDomainKeys(addresses: Address[]): string[] {
+  arc58_getDomainKeys(addresses: Account[]): string[] {
     let result: string[] = []
     for (let i: uint64 = 0; i < addresses.length; i += 1) {
-      if (this.domainKeys(addresses[i].native).exists) {
-        result.push(this.domainKeys(addresses[i].native).value)
+      if (this.domainKeys(addresses[i]).exists) {
+        result.push(this.domainKeys(addresses[i]).value)
         continue
       }
       result.push("")
@@ -1545,7 +1545,7 @@ export class AbstractedAccount extends Contract implements AbstractedAccountInte
       const escrowInfo = abiCall<typeof Staking.prototype.getEscrowInfo>({
         appId: getAkitaAppList(this.akitaDAO.value).staking,
         args: [
-          new Address(this.controlledAddress.value),
+          this.controlledAddress.value,
           asset.id
         ]
       }).returnValue

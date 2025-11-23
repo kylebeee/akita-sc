@@ -1,5 +1,5 @@
-import { Application, itxn, uint64, Contract, GlobalState, Account, Global } from "@algorandfoundation/algorand-typescript";
-import { abimethod, Address } from "@algorandfoundation/algorand-typescript/arc4";
+import { Account, Application, Contract, Global, GlobalState, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod } from "@algorandfoundation/algorand-typescript/arc4";
 import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
 import { PaySiloPluginGlobalStateKeyRecipient } from "./constants";
 import { PaySiloParams } from "./types";
@@ -9,8 +9,8 @@ export class PaySiloPlugin extends Contract {
   recipient = GlobalState<Account>({ key: PaySiloPluginGlobalStateKeyRecipient })
 
   @abimethod({ onCreate: 'require' })
-  create(recipient: Address): void {
-    this.recipient.value = recipient.native
+  create(recipient: Account): void {
+    this.recipient.value = recipient
   }
 
   pay(wallet: Application, rekeyBack: boolean, payments: PaySiloParams[]): void {

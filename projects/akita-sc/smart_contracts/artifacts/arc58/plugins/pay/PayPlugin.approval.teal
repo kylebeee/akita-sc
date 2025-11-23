@@ -36,20 +36,20 @@ main___algots__.defaultCreate@5:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:289
+    // smart_contracts/utils/functions.ts:287
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:288
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:291
+    // smart_contracts/utils/functions.ts:289
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:294
+    // smart_contracts/utils/functions.ts:292
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -97,10 +97,10 @@ pay:
     len
     ==
     assert // invalid number of bytes for (len+(uint8[32],uint64,uint64)[])
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -146,7 +146,7 @@ pay_while_top@2:
     // itxn
     //   .payment({
     //     sender,
-    //     receiver: receiver.native,
+    //     receiver,
     //     amount,
     //     rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
     //   })
@@ -174,7 +174,7 @@ pay_ternary_merge@7:
     // itxn
     //   .payment({
     //     sender,
-    //     receiver: receiver.native,
+    //     receiver,
     //     amount,
     //     rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
     //   })
@@ -186,7 +186,7 @@ pay_ternary_merge@7:
     // itxn
     //   .payment({
     //     sender,
-    //     receiver: receiver.native,
+    //     receiver,
     //     amount,
     //     rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
     //   })
@@ -215,7 +215,7 @@ pay_else_body@9:
     // itxn
     //   .assetTransfer({
     //     sender,
-    //     assetReceiver: receiver.native,
+    //     assetReceiver: receiver,
     //     assetAmount: amount,
     //     xferAsset: asset,
     //     rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
@@ -246,7 +246,7 @@ pay_ternary_merge@12:
     // itxn
     //   .assetTransfer({
     //     sender,
-    //     assetReceiver: receiver.native,
+    //     assetReceiver: receiver,
     //     assetAmount: amount,
     //     xferAsset: asset,
     //     rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
@@ -259,7 +259,7 @@ pay_ternary_merge@12:
     // itxn
     //   .assetTransfer({
     //     sender,
-    //     assetReceiver: receiver.native,
+    //     assetReceiver: receiver,
     //     assetAmount: amount,
     //     xferAsset: asset,
     //     rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),

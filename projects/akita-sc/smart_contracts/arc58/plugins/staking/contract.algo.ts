@@ -1,10 +1,12 @@
-import { Application, itxn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { STAKING_TYPE_HARD, STAKING_TYPE_HEARTBEAT, STAKING_TYPE_LOCK, StakingType } from "../../../staking/types"
+import { Account, Application, itxn, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abiCall, abimethod } from "@algorandfoundation/algorand-typescript/arc4"
 import { classes } from 'polytype'
-import { BaseStaking } from "../../../staking/base"
-import { abiCall, abimethod, Address } from "@algorandfoundation/algorand-typescript/arc4"
-import { Staking } from "../../../staking/contract.algo"
+import { STAKING_TYPE_HARD, STAKING_TYPE_HEARTBEAT, STAKING_TYPE_LOCK, StakingType } from "../../../staking/types"
 import { getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+
+// CONTRACT IMPORTS
+import { BaseStaking } from "../../../staking/base"
+import type { Staking } from "../../../staking/contract.algo"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
 
 export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
@@ -110,7 +112,7 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
   createHeartbeat(
     wallet: Application,
     rekeyBack: boolean,
-    address: Address,
+    address: Account,
     asset: uint64
   ): void {
     const sender = getSpendingAccount(wallet)
@@ -126,7 +128,7 @@ export class StakingPlugin extends classes(BaseStaking, AkitaBaseContract) {
   softCheck(
     wallet: Application,
     rekeyBack: boolean,
-    address: Address,
+    address: Account,
     asset: uint64
   ): void {
     const sender = getSpendingAccount(wallet)

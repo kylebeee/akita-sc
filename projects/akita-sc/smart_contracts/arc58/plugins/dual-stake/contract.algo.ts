@@ -1,9 +1,12 @@
-import { abimethod, Application, assert, Bytes, GlobalState, itxn, itxnCompose, op, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abimethod, Application, assert, Bytes, GlobalState, itxn, itxnCompose, op, uint64 } from "@algorandfoundation/algorand-typescript";
 import { abiCall, Contract } from '@algorandfoundation/algorand-typescript/arc4';
-import { DualStake } from '../../../utils/types/dual-stake';
-import { ERR_NOT_A_DUALSTAKE_APP, ERR_NOT_ENOUGH_OF_ASA } from './errors';
-import { DualStakeGlobalStateKeyAsaID, DualStakeGlobalStateKeyRatePrecision, DualStakePluginGlobalStateKey } from './constants';
 import { getSpendingAccount, rekeyAddress } from '../../../utils/functions';
+import { DualStakeGlobalStateKeyAsaID, DualStakeGlobalStateKeyRatePrecision, DualStakePluginGlobalStateKey } from './constants';
+import { ERR_NOT_A_DUALSTAKE_APP, ERR_NOT_ENOUGH_OF_ASA } from './errors';
+
+// CONTRACT IMPORTS
+import type { DualStake } from '../../../utils/types/dual-stake';
+
 
 export class DualStakePlugin extends Contract {
 
@@ -42,10 +45,10 @@ export class DualStakePlugin extends Contract {
 
     if (rate > 0) {
 
-      itxnCompose.next(
-        DualStake.prototype.mint,
-        { sender, appId }
-      )
+      itxnCompose.next<typeof DualStake.prototype.mint>({
+        sender,
+        appId
+      })
 
       const asaID = op.AppGlobal.getExUint64(appId, Bytes(DualStakeGlobalStateKeyAsaID))[0]
       const precision = op.AppGlobal.getExUint64(appId, Bytes(DualStakeGlobalStateKeyRatePrecision))[0]
@@ -70,14 +73,11 @@ export class DualStakePlugin extends Contract {
 
     // if the rate is 0 we can skip the asset transfer
     // which means we need to set the rekeyTo on the mint txn
-    itxnCompose.next(
-      DualStake.prototype.mint,
-      {
-        sender,
-        appId,
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }
-    )
+    itxnCompose.next<typeof DualStake.prototype.mint>({
+      sender,
+      appId,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
 
     itxnCompose.submit()
   }

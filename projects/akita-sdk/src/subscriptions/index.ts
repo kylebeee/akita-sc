@@ -42,19 +42,19 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     return (await this.client.send.getServicesByAddress({ args: { address, start, windowSize } })).return! as unknown as Service[]
   }
 
-  async getSubscription({ address, id }: { address: string, id: number }): Promise<SubscriptionInfo> {
-    return (await this.client.send.getSubscription({ args: { address, id } })).return!
+  async getSubscription({ address, id }: { address: string, id: bigint }): Promise<SubscriptionInfo> {
+    return (await this.client.send.getSubscription({ args: { key: { address, id }}})).return!
   }
 
-  async getSubscriptionWithPasses({ address, id }: { address: string, id: number }): Promise<SubscriptionInfo> {
-    return (await this.client.send.getSubscriptionWithPasses({ args: { address, id } })).return!
+  async getSubscriptionWithPasses({ address, id }: { address: string, id: bigint }): Promise<SubscriptionInfo> {
+    return (await this.client.send.getSubscriptionWithPasses({ args: { key: { address, id }}})).return!
   }
 
   async isFirstSubscription({ address }: { address: string }): Promise<boolean> {
     return (await this.client.send.isFirstSubscription({ args: { address } })).return!
   }
 
-  async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }: MaybeSigner & Omit<ContractArgs['newService(pay,uint64,uint64,uint64,uint64,uint64,byte[36])uint64'], 'payment'>): Promise<void> {
+  async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }: MaybeSigner & Omit<ContractArgs['newService(pay,uint64,uint64,uint64,uint64,uint64,string,byte[36],uint8,byte[3])uint64'], 'payment'>): Promise<void> {
 
     const sendParams = {
       ...this.sendParams,
@@ -341,7 +341,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     })
   }
 
-  async triggerPayment({ sender, signer, address, id, gateTxn }: MaybeSigner & { address: string, id: bigint | number, gateTxn?: AppCallMethodCall }): Promise<void> {
+  async triggerPayment({ sender, signer, address, id, gateTxn }: MaybeSigner & { address: string, id: bigint, gateTxn?: AppCallMethodCall }): Promise<void> {
     const sendParams = {
       ...this.sendParams,
       ...(sender !== undefined && { sender }),
@@ -352,18 +352,14 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       await this.client.send.gatedTriggerPayment({
         ...sendParams,
         args: {
-          address,
-          id: BigInt(id),
-          gateTxn
+          gateTxn,
+          key: { address, id }
         }
       })
     } else {
       await this.client.send.triggerPayment({
         ...sendParams,
-        args: {
-          address,
-          id: BigInt(id)
-        }
+        args: { key: { address, id }}
       })
     }
   }

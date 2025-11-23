@@ -3,24 +3,26 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 8 4096
-    bytecblock "bc" "spending_address" "akita_dao" "wallet" "clear_program"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:12
+    intcblock 0 1 8 6 4096
+    bytecblock "bc" 0xd2aa7842 "spending_address" "child_contract_version" "akita_dao" "wallet"
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:14
     // export class UpdateAkitaDAOPlugin extends Contract {
     txn NumAppArgs
-    bz main___algots__.defaultCreate@14
+    bz main___algots__.defaultCreate@13
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
     assert
-    pushbytess 0xfd55ae98 0xd2aa7842 0xcb98dee9 0x7110f997 0xa0e20eb5 0x2df3481c 0x3f3e25b8 // method "initBoxedContract(uint64,bool,string,uint64)void", method "loadBoxedContract(uint64,bool,uint64,byte[])void", method "deleteBoxedContract(uint64,bool)void", method "updateApp(uint64,bool,uint64,string)void", method "updateDao(uint64,bool,uint64,uint64)void", method "updateAkitaDaoForApp(uint64,bool,uint64,uint64)void", method "updateAkitaDaoEscrowForApp(uint64,bool,uint64,uint64)void"
+    pushbytes 0xfd55ae98 // method "initBoxedContract(uint64,bool,string,uint64)void"
+    bytec_1 // method "loadBoxedContract(uint64,bool,uint64,byte[])void"
+    pushbytess 0xcb98dee9 0x6ad78c14 0x89e25a24 0x3f3e25b8 // method "deleteBoxedContract(uint64,bool)void", method "updateApp(uint64,bool,uint64)void", method "updateAkitaDaoAppIDForApp(uint64,bool,uint64,uint64)void", method "updateAkitaDaoEscrowForApp(uint64,bool,uint64,uint64)void"
     txna ApplicationArgs 0
-    match initBoxedContract loadBoxedContract deleteBoxedContract updateApp updateDao updateAkitaDaoForApp updateAkitaDaoEscrowForApp
+    match initBoxedContract loadBoxedContract deleteBoxedContract updateApp updateAkitaDaoAppIDForApp updateAkitaDaoEscrowForApp
     err
 
-main___algots__.defaultCreate@14:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:12
+main___algots__.defaultCreate@13:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:14
     // export class UpdateAkitaDAOPlugin extends Contract {
     txn OnCompletion
     !
@@ -32,20 +34,20 @@ main___algots__.defaultCreate@14:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:289
+    // smart_contracts/utils/functions.ts:287
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:288
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:291
+    // smart_contracts/utils/functions.ts:289
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:294
+    // smart_contracts/utils/functions.ts:292
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -55,7 +57,7 @@ rekeyAddress_after_if_else@2:
 
 // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.initBoxedContract[routing]() -> void:
 initBoxedContract:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:28
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:30
     // initBoxedContract(wallet: Application, rekeyBack: boolean, version: string, size: uint64): void {
     txna ApplicationArgs 1
     dup
@@ -91,42 +93,42 @@ initBoxedContract:
     assert // invalid number of bytes for uint64
     btoi
     swap
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:17
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:19
     // childContractVersion = GlobalState<string>({ key: GlobalStateKeyChildContractVersion })
-    pushbytes "child_contract_version"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:29
+    bytec_3 // "child_contract_version"
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:31
     // this.childContractVersion.value = version
     swap
     app_global_put
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:30
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:32
     // if (!this.boxedContract.exists) {
     box_len
     bury 1
     bnz initBoxedContract_else_body@3
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:31
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:33
     // assert(Txn.sender === Global.creatorAddress, ERR_NOT_AKITA_DAO)
     txn Sender
     global CreatorAddress
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:32
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:34
     // this.boxedContract.create({ size })
     swap
     box_create
     pop
 
 initBoxedContract_after_if_else@4:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:38
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:40
     // if (rekeyBack) {
     dup
     bz initBoxedContract_after_if_else@7
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:39-46
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:41-48
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -136,25 +138,25 @@ initBoxedContract_after_if_else@4:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:41
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:43
     // sender: Txn.sender,
     txn Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:42
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:44
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:44
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:46
     // rekeyTo: rekeyAddress(true, wallet),
     intc_1 // 1
     dig 4
     callsub rekeyAddress
     itxn_field RekeyTo
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:43
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:45
     // amount: 0,
     intc_0 // 0
     itxn_field Amount
     itxn_field Receiver
     itxn_field Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:39-45
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:41-47
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -166,7 +168,7 @@ initBoxedContract_after_if_else@4:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:39-46
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:41-48
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -178,38 +180,38 @@ initBoxedContract_after_if_else@4:
     itxn_submit
 
 initBoxedContract_after_if_else@7:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:28
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:30
     // initBoxedContract(wallet: Application, rekeyBack: boolean, version: string, size: uint64): void {
     intc_1 // 1
     return
 
 initBoxedContract_else_body@3:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:34
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:36
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:24
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:26
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:15
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:17
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:24
+    bytec 4 // "akita_dao"
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:26
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
-    bytec_3 // "wallet"
+    bytec 5 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:34
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:36
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:35
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:37
     // this.boxedContract.resize(size)
     swap
     box_resize
@@ -218,7 +220,7 @@ initBoxedContract_else_body@3:
 
 // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.loadBoxedContract[routing]() -> void:
 loadBoxedContract:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:50
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:52
     // loadBoxedContract(wallet: Application, rekeyBack: boolean, offset: uint64, data: bytes): void {
     txna ApplicationArgs 1
     dup
@@ -255,11 +257,11 @@ loadBoxedContract:
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
     swap
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:51
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:53
     // const expectedPreviousCalls: uint64 = offset / 2027
     pushint 2027 // 2027
     /
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:52
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54
     // const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
     txn GroupIndex
     swap
@@ -267,108 +269,108 @@ loadBoxedContract:
     intc_1 // 1
     -
     dup
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56
     // txn.type === TransactionType.ApplicationCall
     gtxns TypeEnum
-    pushint 6 // 6
+    intc_3 // 6
     ==
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54-55
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56-57
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:55
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:57
     // && txn.appId === Global.currentApplicationId
     dup
     gtxns ApplicationID
     global CurrentApplicationID
     ==
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54-55
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56-57
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:58
     // && txn.numAppArgs === 3
     dup
     gtxns NumAppArgs
     pushint 3 // 3
     ==
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54-56
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56-58
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:57
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:59
     // && txn.onCompletion === OnCompleteAction.NoOp
     dup
     gtxns OnCompletion
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54-57
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56-59
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     // && txn.onCompletion === OnCompleteAction.NoOp
     bnz loadBoxedContract_bool_false@8
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:58
-    // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:60
+    // && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
     dup
     intc_0 // 0
     gtxnsas ApplicationArgs
-    pushbytes 0xc53b32cc // method "initBoxedContract(string,uint64)void"
+    bytec_1 // method "loadBoxedContract(uint64,bool,uint64,byte[])void"
     ==
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54-58
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56-60
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     // && txn.onCompletion === OnCompleteAction.NoOp
-    // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    // && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
     bz loadBoxedContract_bool_false@8
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:59
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:61
     // && txn.sender === Txn.sender
     dup
     gtxns Sender
     txn Sender
     ==
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:54-59
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:56-61
     // txn.type === TransactionType.ApplicationCall
     // && txn.appId === Global.currentApplicationId
     // && txn.numAppArgs === 3
     // && txn.onCompletion === OnCompleteAction.NoOp
-    // && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    // && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
     // && txn.sender === Txn.sender
     bz loadBoxedContract_bool_false@8
     intc_1 // 1
 
 loadBoxedContract_bool_merge@9:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:53-60
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:55-62
     // assert((
     //   txn.type === TransactionType.ApplicationCall
     //   && txn.appId === Global.currentApplicationId
     //   && txn.numAppArgs === 3
     //   && txn.onCompletion === OnCompleteAction.NoOp
-    //   && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+    //   && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
     //   && txn.sender === Txn.sender
     // ), ERR_INVALID_CALL_ORDER)
     assert // Invalid call order
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:61
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:63
     // assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
     box_len
     bury 1
     assert // Contract not set
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:62
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:64
     // this.boxedContract.replace(offset, data)
     dig 3
     dig 3
     box_replace
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:64
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:66
     // if (rekeyBack) {
     dig 3
     bz loadBoxedContract_after_if_else@12
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:65-72
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:67-74
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -378,25 +380,25 @@ loadBoxedContract_bool_merge@9:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:67
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:69
     // sender: Txn.sender,
     txn Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:68
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:70
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:70
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:72
     // rekeyTo: rekeyAddress(true, wallet),
     intc_1 // 1
     dig 7
     callsub rekeyAddress
     itxn_field RekeyTo
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:69
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:71
     // amount: 0,
     intc_0 // 0
     itxn_field Amount
     itxn_field Receiver
     itxn_field Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:65-71
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:67-73
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -408,7 +410,7 @@ loadBoxedContract_bool_merge@9:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:65-72
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:67-74
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -420,7 +422,7 @@ loadBoxedContract_bool_merge@9:
     itxn_submit
 
 loadBoxedContract_after_if_else@12:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:50
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:52
     // loadBoxedContract(wallet: Application, rekeyBack: boolean, offset: uint64, data: bytes): void {
     intc_1 // 1
     return
@@ -432,7 +434,7 @@ loadBoxedContract_bool_false@8:
 
 // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.deleteBoxedContract[routing]() -> void:
 deleteBoxedContract:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:76
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:78
     // deleteBoxedContract(wallet: Application, rekeyBack: boolean): void {
     txna ApplicationArgs 1
     dup
@@ -449,39 +451,39 @@ deleteBoxedContract:
     assert // invalid number of bytes for bool8
     intc_0 // 0
     getbit
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:77
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:79
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:24
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:26
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:15
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:17
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:24
+    bytec 4 // "akita_dao"
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:26
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
-    bytec_3 // "wallet"
+    bytec 5 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:77
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:79
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:78
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:80
     // this.boxedContract.delete()
     box_del
     pop
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:80
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:82
     // if (rekeyBack) {
     bz deleteBoxedContract_after_if_else@4
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:81-88
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:83-90
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -491,25 +493,25 @@ deleteBoxedContract:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:83
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:85
     // sender: Txn.sender,
     txn Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:84
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:86
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:86
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:88
     // rekeyTo: rekeyAddress(true, wallet),
     intc_1 // 1
     dig 3
     callsub rekeyAddress
     itxn_field RekeyTo
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:85
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:87
     // amount: 0,
     intc_0 // 0
     itxn_field Amount
     itxn_field Receiver
     itxn_field Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:81-87
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:83-89
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -521,7 +523,7 @@ deleteBoxedContract:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:81-88
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:83-90
     // itxn
     //   .payment({
     //     sender: Txn.sender,
@@ -533,7 +535,7 @@ deleteBoxedContract:
     itxn_submit
 
 deleteBoxedContract_after_if_else@4:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:76
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:78
     // deleteBoxedContract(wallet: Application, rekeyBack: boolean): void {
     intc_1 // 1
     return
@@ -542,8 +544,10 @@ deleteBoxedContract_after_if_else@4:
 // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.updateApp[routing]() -> void:
 updateApp:
     intc_0 // 0
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:92
-    // updateApp(wallet: Application, rekeyBack: boolean, appId: Application, newVersion: string): void {
+    pushbytes ""
+    dup
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:94
+    // updateApp(wallet: Application, rekeyBack: boolean, appId: Application): void {
     txna ApplicationArgs 1
     dup
     len
@@ -569,77 +573,154 @@ updateApp:
     assert // invalid number of bytes for uint64
     btoi
     swap
-    txna ApplicationArgs 4
-    dup
-    cover 2
-    dup
-    intc_0 // 0
-    extract_uint16
-    pushint 2 // 2
-    +
-    swap
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:99
+    // const txn = gtxn.Transaction(Txn.groupIndex - 1)
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:101
+    // txn.type === TransactionType.ApplicationCall
+    gtxns TypeEnum
+    intc_3 // 6
+    ==
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:101-102
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz updateApp_bool_false@8
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:102
+    // && txn.appId === Global.currentApplicationId
+    dup
+    gtxns ApplicationID
+    global CurrentApplicationID
+    ==
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:101-102
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    bz updateApp_bool_false@8
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:103
+    // && txn.numAppArgs === 5
+    dup
+    gtxns NumAppArgs
+    pushint 5 // 5
+    ==
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:101-103
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 5
+    bz updateApp_bool_false@8
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:104
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    dup
+    gtxns OnCompletion
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:101-104
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 5
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    bnz updateApp_bool_false@8
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:105
+    // && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
+    dup
+    intc_0 // 0
+    gtxnsas ApplicationArgs
+    bytec_1 // method "loadBoxedContract(uint64,bool,uint64,byte[])void"
+    ==
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:101-105
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 5
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    // && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
+    bz updateApp_bool_false@8
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:106
+    // && txn.sender === Txn.sender
+    dup
+    gtxns Sender
+    txn Sender
+    ==
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:101-106
+    // txn.type === TransactionType.ApplicationCall
+    // && txn.appId === Global.currentApplicationId
+    // && txn.numAppArgs === 5
+    // && txn.onCompletion === OnCompleteAction.NoOp
+    // && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
+    // && txn.sender === Txn.sender
+    bz updateApp_bool_false@8
+    intc_1 // 1
+
+updateApp_bool_merge@9:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:100-107
+    // assert((
+    //   txn.type === TransactionType.ApplicationCall
+    //   && txn.appId === Global.currentApplicationId
+    //   && txn.numAppArgs === 5
+    //   && txn.onCompletion === OnCompleteAction.NoOp
+    //   && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
+    //   && txn.sender === Txn.sender
+    // ), ERR_INVALID_CALL_ORDER)
+    assert // Invalid call order
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:95
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:109
     // const approvalSize = this.boxedContract.length
     box_len
     swap
     dup
-    uncover 2
+    cover 2
+    bury 9
     assert // Box must have value
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:96
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:110
     // const chunk1 = approvalSize > 4096 ? this.boxedContract.extract(0, 4096) : this.boxedContract.extract(0, approvalSize)
-    intc_3 // 4096
+    intc 4 // 4096
     >
     dup
-    bz updateApp_ternary_false@3
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    bury 7
+    bz updateApp_ternary_false@11
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:96
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:110
     // const chunk1 = approvalSize > 4096 ? this.boxedContract.extract(0, 4096) : this.boxedContract.extract(0, approvalSize)
     intc_0 // 0
-    intc_3 // 4096
+    intc 4 // 4096
     box_extract
     bury 8
 
-updateApp_ternary_merge@4:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:97
+updateApp_ternary_merge@12:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:111
     // const chunk2 = approvalSize > 4096 ? this.boxedContract.extract(4096, approvalSize - 4096) : Bytes('')
-    dup
-    bz updateApp_ternary_false@6
-    dig 1
-    intc_3 // 4096
+    dig 5
+    bz updateApp_ternary_false@14
+    dig 6
+    intc 4 // 4096
     -
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:97
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:111
     // const chunk2 = approvalSize > 4096 ? this.boxedContract.extract(4096, approvalSize - 4096) : Bytes('')
-    intc_3 // 4096
+    intc 4 // 4096
     uncover 2
     box_extract
 
-updateApp_ternary_merge@7:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:99-108
+updateApp_ternary_merge@15:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:113-122
     // abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.update>({
     //   sender,
     //   appId,
-    //   args: [newVersion],
+    //   args: [this.childContractVersion.value],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   onCompletion: OnCompleteAction.UpdateApplication,
     //   approvalProgram: [chunk1, chunk2],
@@ -647,26 +728,42 @@ updateApp_ternary_merge@7:
     //   extraProgramPages: 3,
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:103
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:117
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    dig 4
     dig 6
-    dig 8
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:106
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:120
     // clearStateProgram: this.clearProgram.value,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:19
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
     // clearProgram = GlobalState<bytes>({ key: GlobalStateKeyClearProgram })
-    bytec 4 // "clear_program"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:106
+    pushbytes "clear_program"
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:120
     // clearStateProgram: this.clearProgram.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:99-108
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:116
+    // args: [this.childContractVersion.value],
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:19
+    // childContractVersion = GlobalState<string>({ key: GlobalStateKeyChildContractVersion })
+    bytec_3 // "child_contract_version"
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:116
+    // args: [this.childContractVersion.value],
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:113-122
     // abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.update>({
     //   sender,
     //   appId,
-    //   args: [newVersion],
+    //   args: [this.childContractVersion.value],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   onCompletion: OnCompleteAction.UpdateApplication,
     //   approvalProgram: [chunk1, chunk2],
@@ -675,9 +772,8 @@ updateApp_ternary_merge@7:
     // })
     pushbytes 0xea9180dd // method "update(string)void"
     itxn_field ApplicationArgs
-    dig 6
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:107
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:121
     // extraProgramPages: 3,
     pushint 3 // 3
     itxn_field ExtraProgramPages
@@ -686,264 +782,67 @@ updateApp_ternary_merge@7:
     itxn_field ApprovalProgramPages
     swap
     itxn_field ApprovalProgramPages
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:104
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:118
     // onCompletion: OnCompleteAction.UpdateApplication,
     pushint 4 // 4
     itxn_field OnCompletion
     itxn_field RekeyTo
-    dig 4
-    itxn_field ApplicationID
     dig 2
+    itxn_field ApplicationID
+    dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:99-108
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:113-122
     // abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.update>({
     //   sender,
     //   appId,
-    //   args: [newVersion],
+    //   args: [this.childContractVersion.value],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     //   onCompletion: OnCompleteAction.UpdateApplication,
     //   approvalProgram: [chunk1, chunk2],
     //   clearStateProgram: this.clearProgram.value,
     //   extraProgramPages: 3,
     // })
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:92
-    // updateApp(wallet: Application, rekeyBack: boolean, appId: Application, newVersion: string): void {
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:94
+    // updateApp(wallet: Application, rekeyBack: boolean, appId: Application): void {
     intc_1 // 1
     return
 
-updateApp_ternary_false@6:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:97
+updateApp_ternary_false@14:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:111
     // const chunk2 = approvalSize > 4096 ? this.boxedContract.extract(4096, approvalSize - 4096) : Bytes('')
     pushbytes ""
-    b updateApp_ternary_merge@7
+    b updateApp_ternary_merge@15
 
-updateApp_ternary_false@3:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
+updateApp_ternary_false@11:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:23
     // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
     bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:96
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:110
     // const chunk1 = approvalSize > 4096 ? this.boxedContract.extract(0, 4096) : this.boxedContract.extract(0, approvalSize)
     intc_0 // 0
-    dig 3
-    box_extract
-    bury 8
-    b updateApp_ternary_merge@4
-
-
-// smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.updateDao[routing]() -> void:
-updateDao:
-    intc_0 // 0
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:111
-    // updateDao(wallet: Application, rekeyBack: boolean, proposalID: uint64, index: uint64): void {
-    txna ApplicationArgs 1
-    dup
-    len
-    intc_2 // 8
-    ==
-    assert // invalid number of bytes for uint64
-    btoi
-    dup
-    txna ApplicationArgs 2
-    dup
-    len
-    intc_1 // 1
-    ==
-    assert // invalid number of bytes for bool8
-    intc_0 // 0
-    getbit
-    swap
-    txna ApplicationArgs 3
-    dup
-    cover 2
-    len
-    intc_2 // 8
-    ==
-    assert // invalid number of bytes for uint64
-    txna ApplicationArgs 4
-    dup
-    cover 2
-    len
-    intc_2 // 8
-    ==
-    assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:240
-    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
-    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    // )
-    app_global_get_ex
-    pop
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
-    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
-    bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:114
-    // const approvalSize = this.boxedContract.length
-    box_len
-    swap
-    dup
-    uncover 2
-    assert // Box must have value
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:115
-    // const chunk1 = approvalSize > 4096 ? this.boxedContract.extract(0, 4096) : this.boxedContract.extract(0, approvalSize)
-    intc_3 // 4096
-    >
-    dup
-    bz updateDao_ternary_false@3
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
-    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
-    bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:115
-    // const chunk1 = approvalSize > 4096 ? this.boxedContract.extract(0, 4096) : this.boxedContract.extract(0, approvalSize)
-    intc_0 // 0
-    intc_3 // 4096
-    box_extract
-    bury 8
-
-updateDao_ternary_merge@4:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:116
-    // const chunk2 = approvalSize > 4096 ? this.boxedContract.extract(4096, approvalSize - 4096) : Bytes('')
-    dup
-    bz updateDao_ternary_false@6
-    dig 1
-    intc_3 // 4096
-    -
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
-    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
-    bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:116
-    // const chunk2 = approvalSize > 4096 ? this.boxedContract.extract(4096, approvalSize - 4096) : Bytes('')
-    intc_3 // 4096
-    uncover 2
-    box_extract
-
-updateDao_ternary_merge@7:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:118-127
-    // abiCall<typeof AkitaDAO.prototype.update>({
-    //   sender,
-    //   appId: this.akitaDAO.value,
-    //   args: [proposalID, index],
-    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   onCompletion: OnCompleteAction.UpdateApplication,
-    //   approvalProgram: [chunk1, chunk2],
-    //   clearStateProgram: this.clearProgram.value,
-    //   extraProgramPages: 3,
-    // })
-    itxn_begin
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:120
-    // appId: this.akitaDAO.value,
-    intc_0 // 0
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:15
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_2 // "akita_dao"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:120
-    // appId: this.akitaDAO.value,
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:122
-    // rekeyTo: rekeyAddress(rekeyBack, wallet),
-    dig 7
-    dig 9
-    callsub rekeyAddress
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:125
-    // clearStateProgram: this.clearProgram.value,
-    intc_0 // 0
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:19
-    // clearProgram = GlobalState<bytes>({ key: GlobalStateKeyClearProgram })
-    bytec 4 // "clear_program"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:125
-    // clearStateProgram: this.clearProgram.value,
-    app_global_get_ex
-    assert // check GlobalState exists
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:118-127
-    // abiCall<typeof AkitaDAO.prototype.update>({
-    //   sender,
-    //   appId: this.akitaDAO.value,
-    //   args: [proposalID, index],
-    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   onCompletion: OnCompleteAction.UpdateApplication,
-    //   approvalProgram: [chunk1, chunk2],
-    //   clearStateProgram: this.clearProgram.value,
-    //   extraProgramPages: 3,
-    // })
-    pushbytes 0x7fbc3da2 // method "update(uint64,uint64)void"
-    itxn_field ApplicationArgs
     dig 8
-    itxn_field ApplicationArgs
-    dig 7
-    itxn_field ApplicationArgs
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:126
-    // extraProgramPages: 3,
-    pushint 3 // 3
-    itxn_field ExtraProgramPages
-    itxn_field ClearStateProgramPages
-    dig 10
-    itxn_field ApprovalProgramPages
-    uncover 2
-    itxn_field ApprovalProgramPages
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:123
-    // onCompletion: OnCompleteAction.UpdateApplication,
-    pushint 4 // 4
-    itxn_field OnCompletion
-    itxn_field RekeyTo
-    itxn_field ApplicationID
-    dig 2
-    itxn_field Sender
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:118-127
-    // abiCall<typeof AkitaDAO.prototype.update>({
-    //   sender,
-    //   appId: this.akitaDAO.value,
-    //   args: [proposalID, index],
-    //   rekeyTo: rekeyAddress(rekeyBack, wallet),
-    //   onCompletion: OnCompleteAction.UpdateApplication,
-    //   approvalProgram: [chunk1, chunk2],
-    //   clearStateProgram: this.clearProgram.value,
-    //   extraProgramPages: 3,
-    // })
-    pushint 6 // appl
-    itxn_field TypeEnum
-    intc_0 // 0
-    itxn_field Fee
-    itxn_submit
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:111
-    // updateDao(wallet: Application, rekeyBack: boolean, proposalID: uint64, index: uint64): void {
-    intc_1 // 1
-    return
-
-updateDao_ternary_false@6:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:116
-    // const chunk2 = approvalSize > 4096 ? this.boxedContract.extract(4096, approvalSize - 4096) : Bytes('')
-    pushbytes ""
-    b updateDao_ternary_merge@7
-
-updateDao_ternary_false@3:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:21
-    // boxedContract = Box<bytes>({ key: BoxKeyBoxedContract })
-    bytec_0 // "bc"
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:115
-    // const chunk1 = approvalSize > 4096 ? this.boxedContract.extract(0, 4096) : this.boxedContract.extract(0, approvalSize)
-    intc_0 // 0
-    dig 3
     box_extract
     bury 8
-    b updateDao_ternary_merge@4
+    b updateApp_ternary_merge@12
+
+updateApp_bool_false@8:
+    intc_0 // 0
+    b updateApp_bool_merge@9
 
 
-// smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.updateAkitaDaoForApp[routing]() -> void:
-updateAkitaDaoForApp:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:130-135
-    // updateAkitaDaoForApp(
+// smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.updateAkitaDaoAppIDForApp[routing]() -> void:
+updateAkitaDaoAppIDForApp:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:125-130
+    // updateAkitaDaoAppIDForApp(
     //   wallet: Application,
     //   rekeyBack: boolean,
     //   appId: Application,
-    //   newAkitaDAO: Application
+    //   newAkitaDAOAppID: Application
     // ): void {
     txna ApplicationArgs 1
     dup
@@ -973,16 +872,16 @@ updateAkitaDaoForApp:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -990,24 +889,24 @@ updateAkitaDaoForApp:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:138-143
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:133-138
     // abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.updateAkitaDAO>({
     //   sender,
     //   appId,
-    //   args: [newAkitaDAO],
+    //   args: [newAkitaDAOAppID],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:142
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:137
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:138-143
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:133-138
     // abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.updateAkitaDAO>({
     //   sender,
     //   appId,
-    //   args: [newAkitaDAO],
+    //   args: [newAkitaDAOAppID],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     pushbytes 0x33e92c94 // method "updateAkitaDAO(uint64)void"
@@ -1016,17 +915,17 @@ updateAkitaDaoForApp:
     itxn_field ApplicationArgs
     itxn_field Sender
     itxn_field ApplicationID
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:130-135
-    // updateAkitaDaoForApp(
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:125-130
+    // updateAkitaDaoAppIDForApp(
     //   wallet: Application,
     //   rekeyBack: boolean,
     //   appId: Application,
-    //   newAkitaDAO: Application
+    //   newAkitaDAOAppID: Application
     // ): void {
     intc_1 // 1
     return
@@ -1034,7 +933,7 @@ updateAkitaDaoForApp:
 
 // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::UpdateAkitaDAOPlugin.updateAkitaDaoEscrowForApp[routing]() -> void:
 updateAkitaDaoEscrowForApp:
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:146-151
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:141-146
     // updateAkitaDaoEscrowForApp(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1069,16 +968,16 @@ updateAkitaDaoEscrowForApp:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
-    bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    bytec_2 // "spending_address"
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1086,7 +985,7 @@ updateAkitaDaoEscrowForApp:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:154-159
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:149-154
     // abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.updateAkitaDAOEscrow>({
     //   sender,
     //   appId,
@@ -1094,12 +993,12 @@ updateAkitaDaoEscrowForApp:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:158
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:153
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:154-159
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:149-154
     // abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.updateAkitaDAOEscrow>({
     //   sender,
     //   appId,
@@ -1112,12 +1011,12 @@ updateAkitaDaoEscrowForApp:
     itxn_field ApplicationArgs
     itxn_field Sender
     itxn_field ApplicationID
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:146-151
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:141-146
     // updateAkitaDaoEscrowForApp(
     //   wallet: Application,
     //   rekeyBack: boolean,

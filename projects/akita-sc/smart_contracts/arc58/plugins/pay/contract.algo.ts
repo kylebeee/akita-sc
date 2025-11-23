@@ -1,4 +1,4 @@
-import { Application, itxn, uint64, Contract, Global } from "@algorandfoundation/algorand-typescript";
+import { Application, Contract, Global, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
 import { PayParams } from "./types";
 
@@ -14,7 +14,7 @@ export class PayPlugin extends Contract {
         itxn
           .payment({
             sender,
-            receiver: receiver.native,
+            receiver,
             amount,
             rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),
           })
@@ -23,7 +23,7 @@ export class PayPlugin extends Contract {
         itxn
           .assetTransfer({
             sender,
-            assetReceiver: receiver.native,
+            assetReceiver: receiver,
             assetAmount: amount,
             xferAsset: asset,
             rekeyTo: i < (payments.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet),

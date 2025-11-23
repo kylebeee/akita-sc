@@ -1,6 +1,6 @@
 import { uint64 } from '@algorandfoundation/algorand-typescript'
 import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ProposalActionType, ProposalStatus, PayoutEscrowType, ProposalVoteType } from './types'
+import { PayoutEscrowType, ProposalActionType, ProposalStatus, ProposalVoteType } from './types'
 
 export const AkitaDAONumGlobalBytes = 59
 export const AkitaDAONumGlobalUints = 5
@@ -65,6 +65,7 @@ export const MinDAOPluginMBR: uint64 = 23_700
 export const MinDAOProposalMBR: uint64 = 54_500
 export const MinDAOProposalActionMbr: uint64 = 5
 export const DAOProposalVotesMBR: uint64 = 22_500
+export const DAOExecutionMBR: uint64 = 22_100
 
 // export const DAOExecutionsMBR: uint64 = 0
 
@@ -87,8 +88,7 @@ export const ProposalActionTypeUpgradeApp: ProposalActionType = new Uint8(10)
 export const ProposalActionTypeAddPlugin: ProposalActionType = new Uint8(20)
 export const ProposalActionTypeAddNamedPlugin: ProposalActionType = new Uint8(21)
 export const ProposalActionTypeExecutePlugin: ProposalActionType = new Uint8(30)
-export const ProposalActionTypeExecuteNamedPlugin: ProposalActionType = new Uint8(31)
-export const ProposalActionTypeRemoveExecutePlugin: ProposalActionType = new Uint8(32)
+export const ProposalActionTypeRemoveExecutePlugin: ProposalActionType = new Uint8(31)
 export const ProposalActionTypeRemovePlugin: ProposalActionType = new Uint8(40)
 export const ProposalActionTypeRemoveNamedPlugin: ProposalActionType = new Uint8(41)
 export const ProposalActionTypeAddAllowances: ProposalActionType = new Uint8(50)

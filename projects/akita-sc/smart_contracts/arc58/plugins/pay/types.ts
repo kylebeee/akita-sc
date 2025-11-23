@@ -1,8 +1,7 @@
-import { uint64 } from "@algorandfoundation/algorand-typescript"
-import { Address } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, uint64 } from "@algorandfoundation/algorand-typescript"
 
 export type PayParams = {
-  receiver: Address
+  receiver: Account
   asset: uint64
   amount: uint64
 }

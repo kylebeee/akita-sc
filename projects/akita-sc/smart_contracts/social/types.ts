@@ -1,7 +1,7 @@
 import { Account, bytes, uint64 } from "@algorandfoundation/algorand-typescript"
-import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
-import { CID } from "../utils/types/base"
+import { Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
 import { arc59GetSendAssetInfoResponse } from "../utils/types/asset-inbox"
+import { CID } from "../utils/types/base"
 
 export type FollowsKey = {
   user: Account
@@ -15,7 +15,7 @@ export type BlockListKey = {
 
 export type PostValue = {
   // the creator of the post & recipient of payments
-  creator: Address
+  creator: Account
   // the unix time that the post was created
   timestamp: uint64
   // who's allowed to reply / react using gates
@@ -148,7 +148,7 @@ export type TipAction = Uint8
 
 export type PostMeta = {
   post: {
-    creator: Address
+    creator: Account
     timestamp: uint64
     gateID: uint64
     againstContentPolicy: boolean

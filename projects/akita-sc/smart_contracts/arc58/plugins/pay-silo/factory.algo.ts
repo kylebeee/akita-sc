@@ -1,5 +1,5 @@
-import { Application, uint64, Contract } from "@algorandfoundation/algorand-typescript";
-import { Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
+import { Account, Application, Contract, uint64 } from "@algorandfoundation/algorand-typescript";
+import { compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
 import { PaySiloPlugin } from "./contract.algo";
 
@@ -17,7 +17,7 @@ export class PaySiloFactoryPlugin extends Contract {
   mint(
     wallet: Application,
     rekeyBack: boolean,
-    recipient: Address
+    recipient: Account
   ): uint64 {
     const sender = getSpendingAccount(wallet)
 

@@ -11,18 +11,20 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
-import { abiCall, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { FactoryContract } from '../utils/base-contracts/factory'
-import { Raffle } from './contract.algo'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
-import { PrizeBox } from '../prize-box/contract.algo'
-import { BaseRaffle } from './base'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
 import { getFunder, getNFTFees, getPrizeBoxOwner, royalties } from '../utils/functions'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { ERR_NOT_A_RAFFLE } from './errors'
 import { Proof } from '../utils/types/merkles'
+import { BaseRaffle } from './base'
+import { ERR_NOT_A_RAFFLE } from './errors'
+
+// CONTRACT IMPORTS
+import type { PrizeBox } from '../prize-box/contract.algo'
+import { FactoryContract } from '../utils/base-contracts/factory'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { Raffle } from './contract.algo'
 
 export class RaffleFactory extends classes(
   BaseRaffle,
@@ -95,7 +97,7 @@ export class RaffleFactory extends classes(
           ticketAsset,
           startTimestamp,
           endTimestamp,
-          new Address(Txn.sender),
+          Txn.sender,
           { account: payment.sender, amount: totalMBR },
           creatorRoyalty,
           minTickets,

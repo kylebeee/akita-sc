@@ -2,6 +2,8 @@ import algosdk, { Address, AtomicTransactionComposer, decodeAddress } from "algo
 import { AllowanceInfo as SubAllowanceInfo } from "../generated/AbstractedAccountClient";
 import { AddAllowanceArgs, AllowanceInfo } from "./types";
 import { encodeLease } from "@algorandfoundation/algokit-utils";
+import { PluginHookParams } from "../types";
+import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
 // import { AppCallParams, AppUpdateParams, Txn } from "@algorandfoundation/algokit-utils/types/composer";
 
 
@@ -214,3 +216,5 @@ export class ValueMap<K extends object, V> {
     return this.map[Symbol.iterator]();
   }
 }
+
+export const getTxns = async ({ }: PluginHookParams) => { return [{}] as Txn[] }

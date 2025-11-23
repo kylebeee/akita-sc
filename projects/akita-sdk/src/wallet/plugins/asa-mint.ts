@@ -4,7 +4,7 @@ import { hasSenderSigner, NewContractSDKParams, MaybeSigner } from "../../types"
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import algosdk, { Address } from "algosdk";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
+import { getTxns } from "../utils";
 
 const assetCreateCost = 100_000
 
@@ -46,8 +46,8 @@ export class AsaMintPluginSDK extends BaseSDK<AsaMintPluginClient> {
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
@@ -65,7 +65,7 @@ export class AsaMintPluginSDK extends BaseSDK<AsaMintPluginClient> {
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
@@ -97,10 +97,10 @@ export class AsaMintPluginSDK extends BaseSDK<AsaMintPluginClient> {
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }

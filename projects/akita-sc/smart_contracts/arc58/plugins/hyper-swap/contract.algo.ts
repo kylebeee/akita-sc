@@ -1,13 +1,15 @@
 import { Account, Application, assert, Asset, bytes, Global, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abiCall } from "@algorandfoundation/algorand-typescript/arc4"
 import { classes } from 'polytype'
-import { AbstractedAccount } from "../../account/contract.algo"
-import { abiCall, Address } from "@algorandfoundation/algorand-typescript/arc4"
-import { BaseHyperSwap } from "../../../hyper-swap/base"
-import { HyperSwap } from "../../../hyper-swap/contract.algo"
-import { Proof } from "../../../utils/types/merkles"
-import { AssetInbox } from "../../../utils/types/asset-inbox"
 import { arc58OptInAndSend, getAkitaAppList, getOtherAppList, getPluginAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { Proof } from "../../../utils/types/merkles"
+
+// CONTRACT IMPORTS
+import { BaseHyperSwap } from "../../../hyper-swap/base"
+import type { HyperSwap } from "../../../hyper-swap/contract.algo"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
+import type { AssetInbox } from "../../../utils/types/asset-inbox"
+import type { AbstractedAccount } from "../../account/contract.algo"
 
 export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
 
@@ -19,7 +21,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
       args: [
         getPluginAppList(this.akitaDAO.value).optin,
         true,
-        new Address(Global.currentApplicationAddress),
+        Global.currentApplicationAddress,
         '',
         op.bzero(4).toFixed({ length: 4 }),
       ]
@@ -93,7 +95,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
     wallet: Application,
     rekeyBack: boolean,
     id: uint64,
-    receiver: Address,
+    receiver: Account,
     amount: uint64,
     proof: Proof
   ) {
@@ -123,7 +125,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
     wallet: Application,
     rekeyBack: boolean,
     id: uint64,
-    receiver: Address,
+    receiver: Account,
     asset: uint64,
     amount: uint64,
     proof: Proof
@@ -132,7 +134,7 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
 
     let mbrAmount = this.mbr().hashes
 
-    if (!receiver.native.isOptedIn(Asset(asset))) {
+    if (!receiver.isOptedIn(Asset(asset))) {
       const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
       const canCallData = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
         appId: assetInbox,

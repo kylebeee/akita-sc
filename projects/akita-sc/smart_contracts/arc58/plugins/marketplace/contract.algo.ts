@@ -1,17 +1,20 @@
-import { Marketplace } from '../../../marketplace/marketplace.algo'
-import { Listing } from '../../../marketplace/listing.algo'
 import { Account, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, compileArc4, encodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
-import { Proof } from '../../../utils/types/merkles'
-import { ERR_LISTING_CREATOR_NOT_MARKETPLACE, ERR_NOT_ENOUGH_ASSET } from './errors'
+import { abiCall, abimethod, compileArc4, encodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, Global } from '@algorandfoundation/algorand-typescript/op'
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../../../utils/constants'
-import { ListingGlobalStateKeyGateID, ListingGlobalStateKeyPaymentAsset, ListingGlobalStateKeyPrice } from '../../../marketplace/constants'
-import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { MarketplacePluginGlobalStateKeyFactory } from './constants'
-import { GateArgs } from '../../../gates/types'
 import { GateMustCheckAbiMethod } from '../../../gates/constants'
+import { GateArgs } from '../../../gates/types'
+import { ListingGlobalStateKeyGateID, ListingGlobalStateKeyPaymentAsset, ListingGlobalStateKeyPrice } from '../../../marketplace/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../../../utils/constants'
+import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { Proof } from '../../../utils/types/merkles'
+import { MarketplacePluginGlobalStateKeyFactory } from './constants'
+import { ERR_LISTING_CREATOR_NOT_MARKETPLACE, ERR_NOT_ENOUGH_ASSET } from './errors'
+
+// CONTRACT IMPORTS
+import { Listing } from '../../../marketplace/listing.algo'
+import type { Marketplace } from '../../../marketplace/marketplace.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 
 export class MarketplacePlugin extends AkitaBaseContract {
 
@@ -142,7 +145,7 @@ export class MarketplacePlugin extends AkitaBaseContract {
           appId: gate,
           appArgs: [
             methodSelector(GateMustCheckAbiMethod),
-            new Address(origin),
+            origin,
             gateID,
             encodeArc4(args)
           ],
@@ -188,7 +191,7 @@ export class MarketplacePlugin extends AkitaBaseContract {
           appId: gate,
           appArgs: [
             methodSelector(GateMustCheckAbiMethod),
-            new Address(origin),
+            origin,
             gateID,
             encodeArc4(args)
           ],

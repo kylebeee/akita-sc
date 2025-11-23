@@ -1,4 +1,5 @@
 import {
+  Account,
   Application,
   assert,
   assertMatch,
@@ -10,18 +11,20 @@ import {
   GlobalState,
   gtxn,
   itxn,
-  Txn,
-  uint64,
+  uint64
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
-import { GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
-import { GateFilter, GateFilterEntry, AND, OR, GateFilterEntryWithArgs, GateArgs } from './types'
-import { ERR_INVALID_PAYMENT } from '../utils/errors'
-import { MockGate } from './mock-gate'
-import { BaseGate } from './base'
+import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { ERR_INVALID_PAYMENT } from '../utils/errors'
+import { GateBoxPrefixGateRegistry, GateGlobalStateKeyCursor } from './constants'
 import { ERR_GATE_FAILED } from './errors'
+import { AND, GateArgs, GateFilter, GateFilterEntry, GateFilterEntryWithArgs, OR } from './types'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { BaseGate } from './base'
+import type { MockGate } from './mock-gate'
+
 
 export class Gate extends classes(BaseGate, AkitaBaseContract) {
 
@@ -45,7 +48,7 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
   }
 
   private evaluate(
-    caller: Address,
+    caller: Account,
     filters: GateFilterEntry[],
     start: uint64,
     end: uint64,
@@ -85,7 +88,7 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
     return result
   }
 
-  private evaluateFilter(caller: Address, filter: GateFilterEntry, args: bytes): boolean {
+  private evaluateFilter(caller: Account, filter: GateFilterEntry, args: bytes): boolean {
     return abiCall<typeof MockGate.prototype.check>({
       appId: filter.app,
       args: [caller, filter.registryEntry, args],
@@ -174,13 +177,13 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
     return id
   }
 
-  check(caller: Address, gateID: uint64, args: GateArgs): boolean {
+  check(caller: Account, gateID: uint64, args: GateArgs): boolean {
     assert(this.gateRegistry(gateID).exists)
     const filters = clone(this.gateRegistry(gateID).value)
     return this.evaluate(caller, filters, 0, filters.length - 1, args)
   }
 
-  mustCheck(caller: Address, gateID: uint64, args: GateArgs): void {
+  mustCheck(caller: Account, gateID: uint64, args: GateArgs): void {
     assert(this.check(caller, gateID, args), ERR_GATE_FAILED)
   }
 

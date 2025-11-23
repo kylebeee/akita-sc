@@ -1,35 +1,33 @@
 import { Account, Application, assert, Asset, Bytes, Global, gtxn, itxn, itxnCompose, OnCompleteAction, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../arc58/dao/types"
 import { abiCall, Address, decodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
-import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysWallet, AkitaDAOGlobalStateKeysWalletFees } from "../arc58/dao/constants"
-import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
-import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR, TWENTY_FIVE_PERCENT } from "./constants"
-import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 import { btoi, itob, sha256 } from "@algorandfoundation/algorand-typescript/op"
-import { Proof } from "./types/merkles"
-import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
-import { STAKING_TYPE_LOCK } from "../staking/types"
-import { ONE_YEAR_IN_DAYS, ONE_DAY, ONE_WEEK } from './constants'
-import { EscrowInfo } from "../arc58/account/types"
+import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 import { ERR_ESCROW_DOES_NOT_EXIST } from "../arc58/account/errors"
-import { RewardsInterface } from "./types/rewards"
-import { UserAllocation } from "../rewards/types"
-import { MinDisbursementsMBR, UserAllocationMBR } from "../rewards/constants"
-import { ReferralPaymentInfo } from "./types/referral"
+import { EscrowInfo } from "../arc58/account/types"
+import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysWallet, AkitaDAOGlobalStateKeysWalletFees } from "../arc58/dao/constants"
+import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../arc58/dao/types"
 import { GlobalStateKeyFunder } from "../constants"
-import { FunderInfo } from "./types/mbr"
 import { GateArgs } from "../gates/types"
+import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
+import { MinDisbursementsMBR, UserAllocationMBR } from "../rewards/constants"
+import { UserAllocation } from "../rewards/types"
+import { STAKING_TYPE_LOCK } from "../staking/types"
+import { CreatorRoyaltyDefault, CreatorRoyaltyMaximumSingle, DIVISOR, IMPACT_DIVISOR, ONE_DAY, ONE_WEEK, ONE_YEAR_IN_DAYS } from "./constants"
+import { ERR_ASSETS_AND_AMOUNTS_MISMATCH, ERR_INVALID_PERCENTAGE, ERR_INVALID_PERCENTAGE_OF_ARGS, ERR_NOT_A_PRIZE_BOX } from "./errors"
+import { FunderInfo } from "./types/mbr"
+import { Proof } from "./types/merkles"
+import { ReferralPaymentInfo } from "./types/referral"
 
 // CONTRACT IMPORTS
-import { AssetInbox } from "./types/asset-inbox"
-import { AbstractedAccountInterface } from "./abstract-account"
-import { OptInPluginInterface } from "./types/plugins/optin"
-import type { AkitaSocialImpact } from "../social/contract.algo"
+import type { AbstractedAccount } from "../arc58/account/contract.algo"
+import type { OptInPlugin } from "../arc58/plugins/optin/contract.algo"
 import type { EscrowFactory } from "../escrow/factory.algo"
 import type { Gate } from "../gates/contract.algo"
-import type { AbstractedAccount } from "../arc58/account/contract.algo"
-import type { Staking } from "../staking/contract.algo"
 import type { MetaMerkles } from "../meta-merkles/contract.algo"
+import type { Rewards } from "../rewards/contract.algo"
+import type { AkitaSocialImpact } from "../social/contract.algo"
+import type { Staking } from "../staking/contract.algo"
+import type { AssetInbox } from "./types/asset-inbox"
 
 export function getDAOARC58Wallet(akitaDAO: Application): Application {
   const [walletID] = op.AppGlobal.getExUint64(akitaDAO, Bytes(AkitaDAOGlobalStateKeysWallet))
@@ -121,7 +119,7 @@ export function impactRange(impact: uint64, min: uint64, max: uint64): uint64 {
 export function getUserImpact(akitaDAO: Application, account: Account): uint64 {
   return abiCall<typeof AkitaSocialImpact.prototype.getUserImpact>({
     appId: getAkitaAppList(akitaDAO).impact,
-    args: [new Address(account)]
+    args: [account]
   }).returnValue
 }
 
@@ -171,7 +169,7 @@ export function getWalletIDUsingAkitaDAO(akitaDAO: Application, address: Account
 export function getWalletID(escrowFactory: uint64, address: Account): uint64 {
   const data = abiCall<typeof EscrowFactory.prototype.get>({
     appId: escrowFactory,
-    args: [new Address(address)]
+    args: [address]
   }).returnValue
 
   if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
@@ -195,7 +193,7 @@ export function gateCall(akitaDAO: Application, caller: Account, id: uint64, arg
   return abiCall<typeof Gate.prototype.check>({
     appId: getAkitaAppList(akitaDAO).gate,
     args: [
-      new Address(caller),
+      caller,
       id,
       args,
     ],
@@ -300,7 +298,7 @@ export function arc59OptInAndSend(akitaDAO: Application, recipient: Account, ass
 
   const { mbr, routerOptedIn, receiverAlgoNeededForClaim } = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
     appId: assetInbox,
-    args: [new Address(recipient), asset]
+    args: [recipient, asset]
   }).returnValue
 
   if (mbr || receiverAlgoNeededForClaim) {
@@ -332,7 +330,7 @@ export function arc59OptInAndSend(akitaDAO: Application, recipient: Account, ass
 
   abiCall<typeof AssetInbox.prototype.arc59_sendAsset>({
     appId: assetInbox,
-    args: [xferTxn, new Address(recipient), receiverAlgoNeededForClaim]
+    args: [xferTxn, recipient, receiverAlgoNeededForClaim]
   })
 }
 
@@ -341,29 +339,23 @@ export function arc58OptInAndSend(akitaDAO: Application, recipientWallet: Applic
   const optinPlugin = getPluginAppList(akitaDAO).optin
   const origin = getOriginAccount(recipientWallet)
 
-  itxnCompose.begin(
-    AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
-    {
-      appId: recipientWallet.id,
-      args: [optinPlugin, true, escrow, [], []]
-    }
-  )
+  itxnCompose.begin<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin>({
+    appId: recipientWallet.id,
+    args: [optinPlugin, true, escrow, [], []]
+  })
 
-  itxnCompose.next(
-    OptInPluginInterface.prototype.optIn,
-    {
-      appId: optinPlugin,
-      args: [
-        recipientWallet,
-        true,
-        assets,
-        itxn.payment({
-          receiver: origin,
-          amount: Global.assetOptInMinBalance * assets.length
-        })
-      ]
-    }
-  )
+  itxnCompose.next<typeof OptInPlugin.prototype.optIn>({
+    appId: optinPlugin,
+    args: [
+      recipientWallet,
+      true,
+      assets,
+      itxn.payment({
+        receiver: origin,
+        amount: Global.assetOptInMinBalance * assets.length
+      })
+    ]
+  })
 
   for (let i: uint64 = 0; i < amounts.length; i++) {
     if (amounts[i] > 0) {
@@ -377,10 +369,9 @@ export function arc58OptInAndSend(akitaDAO: Application, recipientWallet: Applic
     }
   }
 
-  itxnCompose.next(
-    AbstractedAccountInterface.prototype.arc58_verifyAuthAddress,
-    { appId: recipientWallet }
-  )
+  itxnCompose.next<typeof AbstractedAccount.prototype.arc58_verifyAuthAddress>({
+    appId: recipientWallet
+  })
 
   itxnCompose.submit()
 }
@@ -396,7 +387,7 @@ export function royalties(akitaDAO: Application, asset: Asset, name: string, pro
   const creatorRoyaltyString = abiCall<typeof MetaMerkles.prototype.verifiedRead>({
     appId: getAkitaAppList(akitaDAO).metaMerkles,
     args: [
-      new Address(asset.creator),
+      asset.creator,
       name,
       sha256(sha256(itob(asset.id))),
       proof,
@@ -427,7 +418,7 @@ export function getFunder(appId: Application): FunderInfo {
   return decodeArc4<FunderInfo>(funderBytes)
 }
 
-export function getStakingPower(stakingApp: uint64, user: Address, asset: uint64): uint64 {
+export function getStakingPower(stakingApp: uint64, user: Account, asset: uint64): uint64 {
   const info = abiCall<typeof Staking.prototype.getInfo>({
     appId: stakingApp,
     args: [
@@ -470,7 +461,7 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
   let id: uint64 = 0
   let cost: uint64 = MinDisbursementsMBR + (UserAllocationMBR * allocations.length)
   if (asset === 0) {
-    id = abiCall<typeof RewardsInterface.prototype.createInstantDisbursement>({
+    id = abiCall<typeof Rewards.prototype.createInstantDisbursement>({
       appId: rewardsApp,
       args: [
         itxn.payment({
@@ -485,7 +476,7 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
   } else {
     if (!Application(rewardsApp).address.isOptedIn(Asset(asset))) {
       cost += Global.assetOptInMinBalance
-      abiCall<typeof RewardsInterface.prototype.optin>({
+      abiCall<typeof Rewards.prototype.optin>({
         appId: rewardsApp,
         args: [
           itxn.payment({
@@ -494,11 +485,10 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
           }),
           asset
         ]
-      }
-      )
+      })
     }
 
-    id = abiCall<typeof RewardsInterface.prototype.createInstantAsaDisbursement>({
+    id = abiCall<typeof Rewards.prototype.createInstantAsaDisbursement>({
       appId: rewardsApp,
       args: [
         itxn.payment({
@@ -520,7 +510,21 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
   return { id, cost }
 }
 
-export function sendReferralPayment(akitaDAO: Application, referrer: Account, asset: uint64, amount: uint64): ReferralPaymentInfo {
+export function referralFee(akitaDAO: Application, asset: uint64): uint64 {
+  const wallet = getWalletIDUsingAkitaDAO(akitaDAO, Txn.sender)
+  const referrer = referrerOrZeroAddress(wallet)
+  const rewardsApp = getAkitaAppList(akitaDAO).rewards
+  let cost: uint64 = MinDisbursementsMBR + UserAllocationMBR
+  if (!Application(rewardsApp).address.isOptedIn(Asset(asset))) {
+    cost += Global.assetOptInMinBalance
+  }
+  return referrer !== Global.zeroAddress ? cost : 0
+}
+
+export function sendReferralPayment(akitaDAO: Application, asset: uint64, amount: uint64): ReferralPaymentInfo {
+  const wallet = getWalletIDUsingAkitaDAO(akitaDAO, Txn.sender)
+  const referrer = referrerOrZeroAddress(wallet)
+  
   let referralFee: uint64 = 0
   if (amount > 0 && referrer !== Global.zeroAddress) {
 
@@ -531,17 +535,17 @@ export function sendReferralPayment(akitaDAO: Application, referrer: Account, as
       referralFee = 1
     }
 
-    const { cost } = createInstantDisbursement(
+    const { cost: referralMbr } = createInstantDisbursement(
       akitaDAO,
       asset,
       Global.latestTimestamp,
       (Global.latestTimestamp + ONE_WEEK),
-      [{ address: new Address(referrer), amount: referralFee }],
+      [{ address: referrer, amount: referralFee }],
       referralFee
     )
 
-    return { leftover: (amount - referralFee), cost }
+    return { leftover: (amount - referralFee), referralMbr }
   }
 
-  return { leftover: amount, cost: 0 }
+  return { leftover: amount, referralMbr: 0 }
 }

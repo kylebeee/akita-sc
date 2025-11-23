@@ -89,13 +89,18 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
           let transformedMethods: [Uint8Array<ArrayBufferLike>, number | bigint][] = [];
           if (methods.length > 0) {
-            transformedMethods = methods.map((method) => {
-              const selector = isPluginSDKReturn(method.name)
-                ? method.name().selector
-                : method.name;
-
-              return [selector, method.cooldown];
-            });
+            transformedMethods = methods.reduce<[Uint8Array<ArrayBufferLike>, number | bigint][]>(
+              (acc, method) => {
+                if (isPluginSDKReturn(method.name)) {
+                  const selectors = method.name().selectors ?? [];
+                  selectors.forEach((selector) => acc.push([selector, method.cooldown]));
+                } else {
+                  method.name.forEach(x => acc.push([x, method.cooldown]));
+                }
+                return acc;
+              },
+              []
+            );
           }
 
           const args: ProposalAddPluginArgs = {

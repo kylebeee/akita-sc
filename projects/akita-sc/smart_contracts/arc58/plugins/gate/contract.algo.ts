@@ -1,9 +1,12 @@
 import { Application, GlobalState, itxn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { abiCall, abimethod } from "@algorandfoundation/algorand-typescript/arc4";
-import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
-import { Gate } from "../../../gates/contract.algo";
-import { BaseGate } from "../../../gates/base";
 import { GateArgs, GateFilter } from "../../../gates/types";
+import { getSpendingAccount, rekeyAddress } from "../../../utils/functions";
+
+// CONTRACT IMPORTS
+import { BaseGate } from "../../../gates/base";
+import { Gate } from "../../../gates/contract.algo";
+
 
 export const GatePluginGlobalStateKeyGateAppID = 'gate_app_id'
 

@@ -1,17 +1,20 @@
 import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { btoi, Global } from '@algorandfoundation/algorand-typescript/op'
-import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { AkitaReferrerGateRegistryMBR } from './constants'
 import { getAkitaAppList, getOtherAppList, getReferrerAccount } from '../../../utils/functions'
-import { EscrowFactory } from '../../../escrow/factory.algo'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
+import { ERR_INVALID_ARG_COUNT } from '../../errors'
+import { AkitaReferrerGateRegistryMBR } from './constants'
 import { ERR_INVALID_WALLET_ID } from './errors'
 
+// CONTRACT IMPORTS
+import type { EscrowFactory } from '../../../escrow/factory.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
+
 export type AkitaReferrerGateRegistryInfo = {
-  referrer: Address
+  referrer: Account
 }
 
 export class AkitaReferrerGate extends AkitaBaseContract {
@@ -77,7 +80,7 @@ export class AkitaReferrerGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 8, ERR_INVALID_ARG_COUNT)
     
     const { referrer } = clone(this.registry(registryID).value)
@@ -92,7 +95,7 @@ export class AkitaReferrerGate extends AkitaBaseContract {
 
     assert(id === args, ERR_INVALID_WALLET_ID)
 
-    return this.referrerGate(wallet, referrer.native)
+    return this.referrerGate(wallet, referrer)
   }
 
   @abimethod({ readonly: true })

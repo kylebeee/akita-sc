@@ -1,7 +1,6 @@
-import { uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, uint64 } from '@algorandfoundation/algorand-typescript'
 
 export type SubscriptionGateRegistryInfo = {
-  merchant: Address
+  merchant: Account
   id: uint64
 }

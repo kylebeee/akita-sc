@@ -1,9 +1,9 @@
-import { uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { StakingType } from '../staking/types'
-import { RootKey } from '../meta-merkles/types'
-import { Proof } from '../utils/types/merkles'
+import { Account, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GateArgs } from '../gates/types'
+import { RootKey } from '../meta-merkles/types'
+import { StakingType } from '../staking/types'
+import { Proof } from '../utils/types/merkles'
 
 export type PoolStatus = Uint8
 export type DistributionType = Uint8
@@ -11,7 +11,7 @@ export type DisbursementPhase = Uint8
 export type PoolStakingType = Uint8
 
 export type EntryKey = {
-    address: Address
+    address: Account
     asset: uint64
 }
 
@@ -22,7 +22,7 @@ export type StakeEntry = {
 }
 
 export type EntryData = {
-    address: Address
+    address: Account
     asset: uint64
     quantity: uint64,
     gateArgs: GateArgs
@@ -68,7 +68,7 @@ export type PoolState = {
     stakeKey: RootKey
     minimumStakeAmount: uint64
     gateID: uint64
-    creator: Address
+    creator: Account
 }
 
 export type PoolMBRData = {

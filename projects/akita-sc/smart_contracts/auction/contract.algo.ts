@@ -1,23 +1,26 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, clone, ensureBudget, Global, GlobalState, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, StaticArray, Uint128, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
-import { BidInfo, FindWinnerCursors, WeightLocation, WeightsList } from './types'
-import { AuctionBoxPrefixBids, AuctionBoxPrefixBidsByAddress, AuctionBoxPrefixLocations, AuctionBoxPrefixWeights, AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyBidID, AuctionGlobalStateKeyBidMinimumIncrease, AuctionGlobalStateKeyBidTotal, AuctionGlobalStateKeyCreatorRoyalty, AuctionGlobalStateKeyEndTimestamp, AuctionGlobalStateKeyFindWinnerCursors, AuctionGlobalStateKeyGateID, AuctionGlobalStateKeyHighestBid, AuctionGlobalStateKeyIsPrizeBox, AuctionGlobalStateKeyMarketplace, AuctionGlobalStateKeyMarketplaceRoyalties, AuctionGlobalStateKeyPrize, AuctionGlobalStateKeyPrizeClaimed, AuctionGlobalStateKeyRaffleAmount, AuctionGlobalStateKeyRafflePrizeClaimed, AuctionGlobalStateKeyRaffleWinner, AuctionGlobalStateKeyRefundCount, AuctionGlobalStateKeyRefundMBRCursor, AuctionGlobalStateKeySalt, AuctionGlobalStateKeySeller, AuctionGlobalStateKeyStartingBid, AuctionGlobalStateKeyStartTimestamp, AuctionGlobalStateKeyUniqueAddressCount, AuctionGlobalStateKeyVRFFailureCount, AuctionGlobalStateKeyWeightedBidTotal, AuctionGlobalStateKeyWeightsBoxCount, AuctionGlobalStateKeyWeightTotals, AuctionGlobalStateKeyWinningTicket, ChunkSize, SNIPE_EXTENSION, SNIPE_RANGE } from './constants'
-import { ERR_ALL_REFUNDS_COMPLETE, ERR_AUCTION_HAS_NOT_ENDED, ERR_AUCTION_NOT_LIVE, ERR_BID_ALREADY_REFUNDED, ERR_BID_NOT_FOUND, ERR_CANNOT_REFUND_MOST_RECENT_BID, ERR_MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS, ERR_MUST_BE_CALLED_FROM_FACTORY, ERR_NOT_ALL_REFUNDS_COMPLETE, ERR_NOT_APPLICABLE_TO_THIS_AUCTION, ERR_NOT_ENOUGH_TIME, ERR_PRIZE_ALREADY_CLAIMED, ERR_PRIZE_NOT_CLAIMED, ERR_RAFFLE_ALREADY_PRIZE_CLAIMED, ERR_RAFFLE_NOT_PRIZE_CLAIMED, ERR_RAFFLE_WINNER_HAS_NOT_CLAIMED, ERR_STILL_HAS_HIGHEST_BIDS_BOXES, ERR_TOO_MANY_PARTICIPANTS, ERR_WINNER_ALREADY_DRAWN, ERR_WINNER_ALREADY_FOUND, ERR_WINNER_NOT_FOUND, ERR_WINNING_NUMBER_NOT_FOUND } from './errors'
-import { RoyaltyAmounts } from '../utils/types/royalties'
-import { ERR_FAILED_GATE, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_PAYMENT } from '../utils/errors'
-import { RandomnessBeacon } from '../utils/types/randomness-beacon'
-import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
-import { MAX_UINT64 } from '../utils/constants'
+import { abiCall, abimethod, StaticArray, Uint128, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
-import { BaseAuction } from './base'
-import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
-import { PrizeBox } from '../prize-box/contract.algo'
-import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender, referrerOrZeroAddress, sendReferralPayment } from '../utils/functions'
 import { AkitaDAOEscrowAccountAuctions } from '../arc58/dao/constants'
 import { ERR_HAS_GATE } from '../social/errors'
+import { MAX_UINT64 } from '../utils/constants'
+import { ERR_FAILED_GATE, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_PAYMENT } from '../utils/errors'
+import { arc59OptInAndSend, calcPercent, gateCheck, getNFTFees, getOtherAppList, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOrTxnSender, sendReferralPayment } from '../utils/functions'
+import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 import { FunderInfo } from '../utils/types/mbr'
-import { ChildContract } from '../utils/base-contracts/child'
+import { RoyaltyAmounts } from '../utils/types/royalties'
+import { AuctionBoxPrefixBids, AuctionBoxPrefixBidsByAddress, AuctionBoxPrefixLocations, AuctionBoxPrefixWeights, AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyBidID, AuctionGlobalStateKeyBidMinimumIncrease, AuctionGlobalStateKeyBidTotal, AuctionGlobalStateKeyCreatorRoyalty, AuctionGlobalStateKeyEndTimestamp, AuctionGlobalStateKeyFindWinnerCursors, AuctionGlobalStateKeyGateID, AuctionGlobalStateKeyHighestBid, AuctionGlobalStateKeyIsPrizeBox, AuctionGlobalStateKeyMarketplace, AuctionGlobalStateKeyMarketplaceRoyalties, AuctionGlobalStateKeyPrize, AuctionGlobalStateKeyPrizeClaimed, AuctionGlobalStateKeyRaffleAmount, AuctionGlobalStateKeyRafflePrizeClaimed, AuctionGlobalStateKeyRaffleWinner, AuctionGlobalStateKeyRefundCount, AuctionGlobalStateKeyRefundMBRCursor, AuctionGlobalStateKeySalt, AuctionGlobalStateKeySeller, AuctionGlobalStateKeyStartingBid, AuctionGlobalStateKeyStartTimestamp, AuctionGlobalStateKeyUniqueAddressCount, AuctionGlobalStateKeyVRFFailureCount, AuctionGlobalStateKeyWeightedBidTotal, AuctionGlobalStateKeyWeightsBoxCount, AuctionGlobalStateKeyWeightTotals, AuctionGlobalStateKeyWinningTicket, ChunkSize, SNIPE_EXTENSION, SNIPE_RANGE } from './constants'
+import { ERR_ALL_REFUNDS_COMPLETE, ERR_AUCTION_HAS_NOT_ENDED, ERR_AUCTION_NOT_LIVE, ERR_BID_ALREADY_REFUNDED, ERR_BID_NOT_FOUND, ERR_CANNOT_REFUND_MOST_RECENT_BID, ERR_MUST_ALLOCATE_AT_LEAST_THREE_HIGHEST_BIDS_CHUNKS, ERR_MUST_BE_CALLED_FROM_FACTORY, ERR_NOT_ALL_REFUNDS_COMPLETE, ERR_NOT_APPLICABLE_TO_THIS_AUCTION, ERR_NOT_ENOUGH_TIME, ERR_PRIZE_ALREADY_CLAIMED, ERR_PRIZE_NOT_CLAIMED, ERR_RAFFLE_ALREADY_PRIZE_CLAIMED, ERR_RAFFLE_NOT_PRIZE_CLAIMED, ERR_RAFFLE_WINNER_HAS_NOT_CLAIMED, ERR_STILL_HAS_HIGHEST_BIDS_BOXES, ERR_TOO_MANY_PARTICIPANTS, ERR_WINNER_ALREADY_DRAWN, ERR_WINNER_ALREADY_FOUND, ERR_WINNER_NOT_FOUND, ERR_WINNING_NUMBER_NOT_FOUND } from './errors'
+import { BidInfo, FindWinnerCursors, WeightLocation, WeightsList } from './types'
+
+// CONTRACT IMPORTS
+import type { PrizeBox } from '../prize-box/contract.algo'
 import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
+import { ChildContract } from '../utils/base-contracts/child'
+import { ContractWithCreatorOnlyOptIn } from '../utils/base-contracts/optin'
+import type { RandomnessBeacon } from '../utils/types/randomness-beacon'
+import { BaseAuction } from './base'
+
 
 export class Auction extends classes(
   BaseAuction,
@@ -122,7 +125,7 @@ export class Auction extends classes(
   /**
    * the addresses associated with highest bid locations
    */
-  locations = BoxMap<uint64, Address>({ keyPrefix: AuctionBoxPrefixLocations })
+  locations = BoxMap<uint64, Account>({ keyPrefix: AuctionBoxPrefixLocations })
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -166,7 +169,7 @@ export class Auction extends classes(
         this.bidsByAddress(Txn.sender).value = loc
         this.weights(loc / ChunkSize).value[loc % ChunkSize] = new Uint64(bidAmount)
         this.weightTotals.value[loc / ChunkSize] = new Uint64(lastWeightedTotal + bidAmount)
-        this.locations(loc).value = new Address(Txn.sender)
+        this.locations(loc).value = Txn.sender
         this.uniqueAddressCount.value += 1
       }
     }
@@ -252,6 +255,7 @@ export class Auction extends classes(
   private completeAlgoPayments(amount: uint64, buySideMarketplace: Account): void {
     // get the royalty payment amounts
     const { creator, akita, marketplace, seller } = this.getAmounts(amount)
+    const akitaAmount: uint64 = !this.isPrizeBox.value ? (akita + creator) : akita
 
     if (this.isPrizeBox.value) {
       itxn
@@ -262,17 +266,16 @@ export class Auction extends classes(
         .submit()
     }
 
-    let leftover: uint64 = 0
-    if (akita > 0) {
-      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-      const referrer = referrerOrZeroAddress(wallet);
-      ({ leftover } = sendReferralPayment(this.akitaDAO.value, referrer, 0, akita))
+    let leftover: uint64 = akitaAmount;
+    let referralMbr: uint64 = 0;
+    if (akitaAmount > 0) {
+      ({ leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, 0, akitaAmount))
     }
 
     itxn
       .payment({
-        receiver: this.akitaDAO.value.address,
-        amount: !this.isPrizeBox.value ? (leftover + creator) : leftover,
+        receiver: this.akitaDAOEscrow.value.address,
+        amount: leftover,
       })
       .submit()
 
@@ -304,6 +307,8 @@ export class Auction extends classes(
   private completeAsaPayments(amount: uint64, buySideMarketplace: Account): void {
     // get the royalty payment amounts
     const { creator, akita, marketplace, seller } = this.getAmounts(amount)
+    // we dont pay royalties on prize boxes
+    const akitaAmount: uint64 = !this.isPrizeBox.value ? akita : (akita + creator)
 
     // pay the creator
     if (!this.isPrizeBox.value && Asset(this.prize.value).creator.isOptedIn(this.bidAsset.value)) {
@@ -323,13 +328,10 @@ export class Auction extends classes(
       )
     }
 
-    // TODO: 
-    let leftover: uint64 = 0
-    let referralAmount: uint64 = 0
-    if (akita > 0) {
-      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-      const referrer = referrerOrZeroAddress(wallet);
-      ({ leftover, cost: referralAmount } = sendReferralPayment(this.akitaDAO.value, referrer, 0, akita))
+    let leftover: uint64 = akitaAmount;
+    let referralMbr: uint64 = 0;
+    if (akitaAmount > 0) {
+      ({ leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, 0, akitaAmount))
     }
 
     // pay akita
@@ -337,8 +339,7 @@ export class Auction extends classes(
       itxn
         .assetTransfer({
           assetReceiver: this.akitaDAO.value.address,
-          // we dont pay royalties on prize boxes
-          assetAmount: !this.isPrizeBox.value ? akita : (akita + creator),
+          assetAmount: leftover,
           xferAsset: this.bidAsset.value,
         })
         .submit()
@@ -346,8 +347,7 @@ export class Auction extends classes(
       this.optAkitaEscrowInAndSend(
         AkitaDAOEscrowAccountAuctions,
         this.bidAsset.value,
-        // we dont pay royalties on prize boxes
-        !this.isPrizeBox.value ? akita : (akita + creator)
+        leftover
       )
     }
 
@@ -775,7 +775,7 @@ export class Auction extends classes(
 
       currentRangeEnd = currentRangeStart + amount
       if (this.winningTicket.value >= currentRangeStart && this.winningTicket.value <= currentRangeEnd) {
-        this.raffleWinner.value = this.locations(startingIndex + i + 1).value.native
+        this.raffleWinner.value = this.locations(startingIndex + i + 1).value
       }
       currentRangeStart = currentRangeEnd + 1
     }
@@ -919,7 +919,7 @@ export class Auction extends classes(
 
   /** @returns a boolean of whether the address has bid in the auction */
   @abimethod({ readonly: true })
-  hasBid(address: Address): boolean {
-    return this.bidsByAddress(address.native).exists
+  hasBid(address: Account): boolean {
+    return this.bidsByAddress(address).exists
   }
 }

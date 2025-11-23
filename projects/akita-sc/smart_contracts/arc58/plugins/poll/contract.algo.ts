@@ -1,17 +1,18 @@
-import { abimethod, Application, assert, Bytes, Contract, Global, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AkitaBaseContract } from "../../../utils/base-contracts/base";
-import { PollPluginGlobalStateKeyFactory } from "./constant";
-import { PollType } from "../../../poll/types";
-import { PollFactory } from "../../../poll/factory.algo";
-import { abiCall, Address, compileArc4, encodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
-import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions";
-import { Poll } from "../../../poll/contract.algo";
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from "../../../utils/constants";
-import { ERR_CREATOR_NOT_POLL_FACTORY } from "./errors";
-import { PollGlobalStateKeyGateID, votesMBR } from "../../../poll/constants";
-import { GateArgs } from "../../../gates/types";
+import { abimethod, Account, Application, assert, Bytes, Global, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abiCall, compileArc4, encodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { GateMustCheckAbiMethod } from "../../../gates/constants";
+import { GateArgs } from "../../../gates/types";
+import { PollGlobalStateKeyGateID, votesMBR } from "../../../poll/constants";
+import { PollType } from "../../../poll/types";
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from "../../../utils/constants";
+import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions";
+import { PollPluginGlobalStateKeyFactory } from "./constant";
+import { ERR_CREATOR_NOT_POLL_FACTORY } from "./errors";
 
+// CONTRACT IMPORTS
+import { Poll } from "../../../poll/contract.algo";
+import type { PollFactory } from "../../../poll/factory.algo";
+import { AkitaBaseContract } from "../../../utils/base-contracts/base";
 
 
 export class PollPluginContract extends AkitaBaseContract {
@@ -73,7 +74,7 @@ export class PollPluginContract extends AkitaBaseContract {
     }).returnValue
   }
 
-  deleteBoxes(wallet: Application, rekeyBack: boolean, pollAppID: uint64, addresses: Address[]): void {
+  deleteBoxes(wallet: Application, rekeyBack: boolean, pollAppID: uint64, addresses: Account[]): void {
     const sender = getSpendingAccount(wallet)
 
     assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
@@ -111,7 +112,7 @@ export class PollPluginContract extends AkitaBaseContract {
             appId: gate,
             appArgs: [
               methodSelector(GateMustCheckAbiMethod),
-              new Address(origin),
+              origin,
               gateID,
               encodeArc4(args)
             ]

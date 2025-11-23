@@ -1,15 +1,17 @@
+import { abimethod, Account, Application, assert, assertMatch, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { classes } from "polytype";
+import { RootKey } from "../meta-merkles/types";
+import { StakingType } from "../staking/types";
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
+import { getFunder, getStakingFees, sendReferralPayment } from "../utils/functions";
+import { ERR_NOT_CREATOR } from "./errors";
+
+// CONTRACT IMPORTS
 import { FactoryContract } from "../utils/base-contracts/factory";
 import { BasePool } from "./base";
-import { abimethod, Account, Application, assert, assertMatch, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
-import { StakingType } from "../staking/types";
-import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
-import { RootKey } from "../meta-merkles/types";
 import { Pool } from "./contract.algo";
-import { getFunder, getStakingFees, getWalletIDUsingAkitaDAO, referrerOrZeroAddress, sendReferralPayment } from "../utils/functions";
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
-import { ERR_NOT_CREATOR } from "./errors";
-// import { MinDisbursementsMBR, UserAllocationMBR } from "../rewards/constants";
+
 
 export class PoolFactory extends classes(
   BasePool,
@@ -58,17 +60,15 @@ export class PoolFactory extends classes(
     )
 
     let leftover: uint64 = creationFee
-    let referralCost: uint64 = 0
+    let referralMbr: uint64 = 0
     if (creationFee > 0) {
-      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-      const referrer = referrerOrZeroAddress(wallet);
-      ({ leftover, cost: referralCost } = sendReferralPayment(this.akitaDAO.value, referrer, 0, creationFee))
+      ({ leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, 0, creationFee))
     }
 
     const totalMBR: uint64 = (
       creationFee +
       childMBR +
-      referralCost
+      referralMbr
     )
 
     assertMatch(

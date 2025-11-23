@@ -1,20 +1,20 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Global, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
 import { MerkleTreeTypeUnspecified } from '../../../meta-merkles/constants'
-import { getAkitaAppList } from '../../../utils/functions'
 import { BoxCostPerBox } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
 import { Proof } from '../../../utils/types/merkles'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
+import { ERR_INVALID_ARG_COUNT } from '../../errors'
 
 // CONTRACT IMPORTS
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import type { MetaMerkles } from '../../../meta-merkles/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 type MerkleAddressGateRegistryInfo = {
-  creator: Address
+  creator: Account
   name: string
 }
 
@@ -79,7 +79,7 @@ export class MerkleAddressGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length >= MinCheckArgsLength, ERR_INVALID_ARG_COUNT)
     const proof = decodeArc4<Proof>(args)
     const { creator, name } = clone(this.registry(registryID).value)

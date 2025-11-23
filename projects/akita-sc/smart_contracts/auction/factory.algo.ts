@@ -1,19 +1,20 @@
-
+import { Account, Application, assert, assertMatch, Asset, Bytes, Global, gtxn, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Txn } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
+import { getFunder, getPrizeBoxOwner, royalties } from '../utils/functions'
+import { Proof } from '../utils/types/merkles'
+import { AuctionGlobalStateKeySeller } from './constants'
+import { ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START, ERR_NOT_AN_AUCTION } from './errors'
+
+// CONTRACT IMPORTS
+import type { PrizeBox } from '../prize-box/contract.algo'
 import { FactoryContract } from '../utils/base-contracts/factory'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { Account, Application, assert, assertMatch, Asset, Bytes, Global, gtxn, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Proof } from '../utils/types/merkles'
-import { abiCall, abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START, ERR_NOT_AN_AUCTION } from './errors'
 import { BaseAuction } from './base'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER, ERR_NOT_PRIZE_BOX_OWNER } from '../utils/errors'
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../utils/constants'
-import { Txn } from '@algorandfoundation/algorand-typescript/op'
 import { Auction } from './contract.algo'
-import { getFunder, getPrizeBoxOwner, royalties } from '../utils/functions'
-import { PrizeBox } from '../prize-box/contract.algo'
-import { AuctionGlobalStateKeySeller } from './constants'
 
 export class AuctionFactory extends classes(
   BaseAuction,
@@ -23,7 +24,7 @@ export class AuctionFactory extends classes(
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
-  private createChildApp(): void { }
+  private createChildApp(): void { } // TODO: 
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
@@ -241,8 +242,7 @@ export class AuctionFactory extends classes(
       .itxn
       .createdApp
 
-    abiCall({
-      method: PrizeBox.prototype.transfer,
+    abiCall<typeof PrizeBox.prototype.transfer>({
       appId: prizeBoxID,
       args: [auctionApp.address]
     })

@@ -1,13 +1,21 @@
-import { Application, assert, Asset, Bytes, Global, GlobalState, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, Contract } from '@algorandfoundation/algorand-typescript/arc4'
-import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
-import { EscrowInfo } from '../../arc58/account/types'
+import { Application, assert, Asset, bytes, Bytes, Global, GlobalState, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Contract } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_ESCROW_DOES_NOT_EXIST, ERR_WRONG_ESCROW_FOR_OPERATION } from '../../arc58/account/errors'
+import { EscrowInfo } from '../../arc58/account/types'
+import { AkitaDAOGlobalStateKeysWallet } from '../../arc58/dao/constants'
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from '../../constants'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
 
 // CONTRACT IMPORTS
 import type { AbstractedAccount } from '../../arc58/account/contract.algo'
-import { AkitaDAOGlobalStateKeysWallet } from '../../arc58/dao/constants'
+
+class MockDAO extends Contract {
+  isValidUpgrade(lease: bytes<32>, appBeingUpgraded: uint64): boolean {
+    return false
+  }
+}
+
+export const ERR_INVALID_UPGRADE = 'Invalid app upgrade'
 
 export class AkitaBaseContract extends Contract {
 
@@ -17,14 +25,6 @@ export class AkitaBaseContract extends Contract {
   version = GlobalState<string>({ key: GlobalStateKeyVersion })
   /** the app ID of the Akita DAO */
   akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-
-  // LIFE CYCLE METHODS ---------------------------------------------------------------------------
-
-  @abimethod({ allowActions: ['UpdateApplication'] })
-  update(newVersion: string): void {
-    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    this.version.value = newVersion
-  }
 
   protected getAkitaDAOWallet(): Application {
     const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
@@ -41,7 +41,24 @@ export class AkitaBaseContract extends Contract {
   opUp(): void { }
 }
 
-export class AkitaBaseFeeGeneratorContract extends AkitaBaseContract {
+export class UpgradeableAkitaBaseContract extends AkitaBaseContract {
+
+  @abimethod({ allowActions: ['UpdateApplication'] })
+  update(newVersion: string): void {
+    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+
+    const valid = abiCall<typeof MockDAO.prototype.isValidUpgrade>({
+      appId: this.akitaDAO.value,
+      args: [Txn.lease, Global.currentApplicationId.id],
+    }).returnValue
+
+    assert(valid, ERR_INVALID_UPGRADE)
+
+    this.version.value = newVersion
+  }
+}
+
+export class AkitaBaseFeeGeneratorContract extends UpgradeableAkitaBaseContract {
 
   /** the app ID for the akita DAO escrow to use */
   akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
@@ -70,7 +87,7 @@ export class AkitaBaseFeeGeneratorContract extends AkitaBaseContract {
       appId,
       args: [
         Global.currentApplicationId.id,
-        new Address(Global.currentApplicationAddress),
+        Global.currentApplicationAddress,
         name,
         [asset.id],
         itxn.payment({

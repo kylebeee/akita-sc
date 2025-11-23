@@ -1,16 +1,16 @@
-import { algo, Config, microAlgo } from '@algorandfoundation/algokit-utils'
-import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
+import { algo, Config, microAlgo } from '@algorandfoundation/algokit-utils';
+import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
-import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
-import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { AsaMintPluginSDK, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK, isFlatAllowance, isWindowAllowance, isDripAllowance, AkitaDaoSDK } from 'akita-sdk'
-import { TimeWarp } from '../../../tests/utils/time'
-import { deployPayPlugin } from '../../../tests/fixtures/plugins/pay'
-import { deployOptInPlugin } from '../../../tests/fixtures/plugins/optin'
-import { deployAsaMintPlugin } from '../../../tests/fixtures/plugins/asa-mint'
-import { ERR_ALLOWANCE_EXCEEDED, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY, ERR_EXECUTION_KEY_NOT_FOUND, ERR_MALFORMED_OFFSETS, ERR_METHOD_ON_COOLDOWN, ERR_PLUGIN_DOES_NOT_EXIST, ERR_PLUGIN_EXPIRED, ERR_PLUGIN_ON_COOLDOWN } from './errors';
 import { AppCallMethodCall } from '@algorandfoundation/algokit-utils/types/composer';
-import { deployAkitaDAO, deployAndSetupAkitaDAO } from '../../../tests/fixtures/dao';
+import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import { AkitaDaoSDK, AsaMintPluginSDK, isDripAllowance, isFlatAllowance, isWindowAllowance, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk';
+import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
+import { deployAndSetupAkitaDAO } from '../../../tests/fixtures/dao';
+import { deployAsaMintPlugin } from '../../../tests/fixtures/plugins/asa-mint';
+import { deployOptInPlugin } from '../../../tests/fixtures/plugins/optin';
+import { deployPayPlugin } from '../../../tests/fixtures/plugins/pay';
+import { TimeWarp } from '../../../tests/utils/time';
+import { ERR_ALLOWANCE_EXCEEDED, ERR_CANNOT_CALL_OTHER_APPS_DURING_REKEY, ERR_EXECUTION_KEY_NOT_FOUND, ERR_MALFORMED_OFFSETS, ERR_METHOD_ON_COOLDOWN, ERR_PLUGIN_DOES_NOT_EXIST, ERR_PLUGIN_EXPIRED, ERR_PLUGIN_ON_COOLDOWN } from './errors';
 
 describe('ARC58 Plugin Permissions', () => {
   const localnet = algorandFixture();
@@ -310,9 +310,9 @@ describe('ARC58 Plugin Permissions', () => {
           })
           .call('') // unnecesary because we're using the default controlled account
           .getTxns({ wallet: wallet.client.appId })
-      ) as AppCallMethodCall
+      ) as AppCallMethodCall[]
 
-      composer.addAppCallMethodCall(payPluginTxn)
+      composer.addAppCallMethodCall(payPluginTxn[0])
       
       group.arc58VerifyAuthAddress()
 
@@ -422,10 +422,10 @@ describe('ARC58 Plugin Permissions', () => {
           })
           .call('') // unnecesary because we're using the default controlled account
           .getTxns({ wallet: wallet.client.appId })
-      ) as AppCallMethodCall
+      ) as AppCallMethodCall[]
 
 
-      composer.addAppCallMethodCall(payPluginTxn)
+      composer.addAppCallMethodCall(payPluginTxn[0])
 
       const assaMintTxn = (
         await asaMintPluginSdk
@@ -445,9 +445,9 @@ describe('ARC58 Plugin Permissions', () => {
           })
           .call('') // unnecesary because we're using the default controlled account
           .getTxns({ wallet: wallet.client.appId })
-      ) as AppCallMethodCall
+      ) as AppCallMethodCall[]
 
-      composer.addAppCallMethodCall(assaMintTxn)
+      composer.addAppCallMethodCall(assaMintTxn[0])
 
       group.arc58VerifyAuthAddress()
 
@@ -695,9 +695,9 @@ describe('ARC58 Plugin Permissions', () => {
           })
           .call('') // unnecesary because we're using the default controlled account
           .getTxns({ wallet: wallet.client.appId })
-      ) as AppCallMethodCall
+      ) as AppCallMethodCall[]
 
-      composer.addAppCallMethodCall(payPluginTxn)
+      composer.addAppCallMethodCall(payPluginTxn[0])
 
       group.arc58VerifyAuthAddress()
 

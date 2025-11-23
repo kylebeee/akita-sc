@@ -4,72 +4,54 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 1 0 2 8
-    bytecblock "akita_dao" 0x151f7c75 "registry_cursor" "version" "wallet"
+    bytecblock "akita_dao" 0x151f7c75 "registry_cursor"
     txn ApplicationID
     bnz main_after_if_else@2
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:24
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
     intc_0 // 1
     app_global_put
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:24
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:27
     // registrationShape = GlobalState<string>({ initialValue: 'address', key: GateGlobalStateKeyRegistrationShape })
     pushbytess "registration_shape" "address" // "registration_shape", "address"
     app_global_put
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:26
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:29
     // checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
     pushbytess "check_shape" "" // "check_shape", ""
     app_global_put
 
 main_after_if_else@2:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:17
-    // export class AkitaReferrerGate extends AkitaBaseContract {
-    pushbytes 0xea9180dd // method "update(string)void"
-    txna ApplicationArgs 0
-    match main_update_route@4
-
-main_switch_case_next@5:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:17
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:20
     // export class AkitaReferrerGate extends AkitaBaseContract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@14
+    bz main_create_NoOp@12
     pushbytess 0x329f04ee 0x77bb79b9 0x6e03f50a 0x90d4fa5d 0x33e92c94 0x854dede0 // method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getEntry(uint64)byte[]", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match cost register check getEntry updateAkitaDAO main_opUp_route@12
+    match cost register check getEntry updateAkitaDAO main_opUp_route@10
     err
 
-main_opUp_route@12:
+main_opUp_route@10:
     // smart_contracts/utils/base-contracts/base.ts:41
     // opUp(): void { }
     intc_0 // 1
     return
 
-main_create_NoOp@14:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:17
+main_create_NoOp@12:
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:20
     // export class AkitaReferrerGate extends AkitaBaseContract {
     pushbytes 0xcd9ad67e // method "create(string,uint64)void"
     txna ApplicationArgs 0
     match create
     err
 
-main_update_route@4:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txn OnCompletion
-    pushint 4 // UpdateApplication
-    ==
-    txn ApplicationID
-    &&
-    assert // OnCompletion must be UpdateApplication && can only call when not creating
-    b update
-
 
 // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts::AkitaReferrerGate.create[routing]() -> void:
 create:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:52
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:55
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -89,21 +71,21 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:17
+    // smart_contracts/utils/base-contracts/base.ts:25
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:54
+    pushbytes "version"
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:57
     // this.version.value = version
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:55
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:58
     // this.akitaDAO.value = Application(akitaDAO)
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:52
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:55
     // @abimethod({ onCreate: 'require' })
     intc_0 // 1
     return
@@ -111,7 +93,7 @@ create:
 
 // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts::AkitaReferrerGate.cost[routing]() -> void:
 cost:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:60
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:63
     // cost(args: bytes): uint64 {
     txna ApplicationArgs 1
     dup
@@ -131,7 +113,7 @@ cost:
 
 // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts::AkitaReferrerGate.register[routing]() -> void:
 register:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:64
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:67
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     txn GroupIndex
     intc_0 // 1
@@ -152,14 +134,14 @@ register:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:65
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:68
     // assert(args.length === 32, ERR_INVALID_ARG_COUNT)
     dup
     len
     pushint 32 // 32
     ==
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:66-73
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:69-76
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -170,10 +152,10 @@ register:
     // )
     dig 1
     gtxns Receiver
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:69
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:72
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:66-73
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:69-76
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -185,10 +167,10 @@ register:
     ==
     uncover 2
     gtxns Amount
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:70
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:73
     // amount: AkitaReferrerGateRegistryMBR
     pushint 18900 // 18900
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:66-73
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:69-76
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -200,35 +182,35 @@ register:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:35
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:38
     // const id = this.registryCursor.value
     intc_1 // 0
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:24
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:35
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:38
     // const id = this.registryCursor.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:36
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:39
     // this.registryCursor.value += 1
     dup
     intc_0 // 1
     +
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:21
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:24
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:36
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:39
     // this.registryCursor.value += 1
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:76
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:79
     // this.registry(id).value = decodeArc4<AkitaReferrerGateRegistryInfo>(args)
     itob
     dup
     uncover 2
     box_put
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:64
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:67
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     bytec_1 // 0x151f7c75
     swap
@@ -240,8 +222,8 @@ register:
 
 // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts::AkitaReferrerGate.check[routing]() -> void:
 check:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:80
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:83
+    // check(caller: Account, registryID: uint64, args: bytes): boolean {
     txna ApplicationArgs 1
     dup
     len
@@ -266,14 +248,14 @@ check:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:81
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:84
     // assert(args.length === 8, ERR_INVALID_ARG_COUNT)
     dup
     len
     intc_3 // 8
     ==
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:83
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:86
     // const { referrer } = clone(this.registry(registryID).value)
     swap
     itob
@@ -281,31 +263,31 @@ check:
     assert // Box must have value
     extract 0 32
     cover 2
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:84
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:87
     // const wallet = Application(btoi(args))
     dup
     btoi
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:86
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:89
     // const appId = getOtherAppList(this.akitaDAO.value).escrow
     intc_1 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:86
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:89
     // const appId = getOtherAppList(this.akitaDAO.value).escrow
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:50
+    // smart_contracts/utils/functions.ts:48
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     dup
     pushbytes "other_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:86
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:89
     // const appId = getOtherAppList(this.akitaDAO.value).escrow
     pushint 24 // 24
     extract_uint64
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:88-91
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:91-94
     // const id = abiCall<typeof EscrowFactory.prototype.mustGet>({
     //   appId,
     //   args: [caller]
@@ -339,30 +321,30 @@ check:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 6 0
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:93
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:96
     // assert(id === args, ERR_INVALID_WALLET_ID)
     uncover 3
     ==
     assert // Invalid wallet ID provided
-    // smart_contracts/utils/functions.ts:40
+    // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:41
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:44
     // const { wallet: factory } = getAkitaAppList(this.akitaDAO.value)
     pushint 88 // 88
     extract_uint64
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:157-160
     // const [referrerBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysReferrer)
     // )
     dig 1
-    // smart_contracts/utils/functions.ts:161
+    // smart_contracts/utils/functions.ts:159
     // Bytes(AbstractAccountGlobalStateKeysReferrer)
     pushbytes "referrer"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:157-160
     // const [referrerBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysReferrer)
@@ -370,7 +352,7 @@ check:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:45
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:48
     // wallet.creator === Application(factory).address &&
     swap
     app_params_get AppCreator
@@ -379,24 +361,24 @@ check:
     app_params_get AppAddress
     assert // application exists
     ==
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:45-46
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:48-49
     // wallet.creator === Application(factory).address &&
     // fetchedReferrer === referrer
     bz check_bool_false@6
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:46
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:49
     // fetchedReferrer === referrer
     dup
     dig 2
     ==
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:45-46
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:48-49
     // wallet.creator === Application(factory).address &&
     // fetchedReferrer === referrer
     bz check_bool_false@6
     intc_0 // 1
 
 check_bool_merge@7:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:80
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:83
+    // check(caller: Account, registryID: uint64, args: bytes): boolean {
     pushbytes 0x00
     intc_1 // 0
     uncover 2
@@ -415,7 +397,7 @@ check_bool_false@6:
 
 // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts::AkitaReferrerGate.getEntry[routing]() -> void:
 getEntry:
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:101
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -424,12 +406,12 @@ getEntry:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:100
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:103
     // return encodeArc4(this.registry(registryID).value)
     itob
     box_get
     assert // Box must have value
-    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/akita-referrer/contract.algo.ts:101
     // @abimethod({ readonly: true })
     dup
     len
@@ -441,56 +423,6 @@ getEntry:
     swap
     concat
     log
-    intc_0 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
-update:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txna ApplicationArgs 1
-    dup
-    intc_1 // 0
-    extract_uint16
-    intc_2 // 2
-    +
-    dig 1
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_1 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    app_global_get_ex
-    assert // check GlobalState exists
-    bytec 4 // "wallet"
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:17
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // this.version.value = newVersion
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_0 // 1
     return
 
@@ -512,14 +444,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_1 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
-    bytec 4 // "wallet"
+    pushbytes "wallet"
     app_global_get_ex
     pop
     // smart_contracts/utils/base-contracts/base.ts:37
@@ -528,7 +460,7 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:38

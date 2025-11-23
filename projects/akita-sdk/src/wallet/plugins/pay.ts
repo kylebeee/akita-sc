@@ -4,7 +4,7 @@ import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from "../../types"
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import { Address } from "algosdk";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
-import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
+import { getTxns } from "../utils";
 
 type CreatePaymentParams = {
   receiver: Address | string,
@@ -37,8 +37,8 @@ export class PayPluginSDK extends BaseSDK<PayPluginClient> {
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({
         appId: this.client.appId,
-        selector: this.client.appClient.getABIMethod(methodName).getSelector(),
-        getTxns: async ({ }: PluginHookParams) => { return {} as Txn }
+        selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
+        getTxns
       });
     }
 
@@ -56,7 +56,7 @@ export class PayPluginSDK extends BaseSDK<PayPluginClient> {
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
-      selector: this.client.appClient.getABIMethod(methodName).getSelector(),
+      selectors: [this.client.appClient.getABIMethod(methodName).getSelector()],
       getTxns: async ({ wallet }: PluginHookParams) => {
 
         const rekeyBack = args.rekeyBack ?? true;
@@ -75,10 +75,10 @@ export class PayPluginSDK extends BaseSDK<PayPluginClient> {
           })
         )
 
-        return {
+        return [{
           type: 'methodCall',
           ...params
-        }
+        }]
       }
     });
   }

@@ -1,8 +1,7 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
-import { Operator, OperatorAndValue } from '../../types'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -11,10 +10,14 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { getAkitaAppList } from '../../../utils/functions'
-import { AkitaSocial } from '../../../social/contract.algo'
-import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { Operator, OperatorAndValue } from '../../types'
+
+// CONTRACT IMPORTS
+import type { AkitaSocial } from '../../../social/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 
 export class SocialModeratorGate extends AkitaBaseContract {
 
@@ -39,7 +42,7 @@ export class SocialModeratorGate extends AkitaBaseContract {
     return id
   }
 
-  private moderatorGate(user: Address, op: Operator, value: uint64): boolean {
+  private moderatorGate(user: Account, op: Operator, value: uint64): boolean {
     const { exists, lastActive } = abiCall<typeof AkitaSocial.prototype.moderatorMeta>({
       appId: getAkitaAppList(this.akitaDAO.value).social,
       args: [user],
@@ -92,7 +95,7 @@ export class SocialModeratorGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     const { op, value } = clone(this.registry(registryID).value)
     return this.moderatorGate(caller, op, value)

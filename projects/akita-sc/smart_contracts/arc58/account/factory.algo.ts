@@ -1,4 +1,5 @@
 import {
+  Account,
   Application,
   assert,
   assertMatch,
@@ -9,20 +10,21 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
+import { abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GlobalStateKeyEscrowFactory, GlobalStateKeyRevocation } from '../../constants'
-import { AbstractedAccount } from './contract.algo'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
-import { abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { ERR_INVALID_PAYMENT } from '../../utils/errors'
-import { FactoryContract } from '../../utils/base-contracts/factory'
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
 import { ARC58WalletIDsByAccountsMbr } from '../../escrow/constants'
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from '../../utils/constants'
+import { ERR_INVALID_PAYMENT } from '../../utils/errors'
+import { costInstantDisbursement, getWalletFees, getWalletIDUsingAkitaDAO, sendReferralPayment } from '../../utils/functions'
 import { AbstractAccountNumGlobalBytes, AbstractAccountNumGlobalUints, AbstractedAccountFactoryGlobalStateKeyDomain } from './constants'
-import { costInstantDisbursement, getWalletFees, getWalletIDUsingAkitaDAO, referrerOrZeroAddress, sendReferralPayment } from '../../utils/functions'
-import { AbstractedAccountFactoryInterface } from '../../utils/abstract-account'
+
+// CONTRACT IMPORTS
+import { FactoryContract } from '../../utils/base-contracts/factory'
+import { AbstractedAccount } from './contract.algo'
 
 
-export class AbstractedAccountFactory extends FactoryContract implements AbstractedAccountFactoryInterface {
+export class AbstractedAccountFactory extends FactoryContract {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -61,10 +63,10 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
 
   newAccount(
     payment: gtxn.PaymentTxn,
-    controlledAddress: Address,
-    admin: Address,
+    controlledAddress: Account,
+    admin: Account,
     nickname: string,
-    referrer: Address
+    referrer: Account
   ): uint64 {
 
     const abstractedAccount = compileArc4(AbstractedAccount)
@@ -81,18 +83,16 @@ export class AbstractedAccountFactory extends FactoryContract implements Abstrac
     )
 
     let leftover: uint64 = creationFee
-    let referralCost: uint64 = 0
+    let referralMbr: uint64 = 0;
     if (creationFee > 0) {
-      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-      const referrer = referrerOrZeroAddress(wallet);
-      ({ leftover, cost: referralCost } = sendReferralPayment(this.akitaDAO.value, referrer, 0, creationFee))
+      ({ leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, 0, creationFee))
     }
 
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: childMBR + referralCost,
+        amount: childMBR + referralMbr,
       },
       ERR_INVALID_PAYMENT
     )

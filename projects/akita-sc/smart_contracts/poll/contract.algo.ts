@@ -10,8 +10,11 @@ import {
   itxn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abimethod, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 import { Global, Txn } from '@algorandfoundation/algorand-typescript/op'
+import { ERR_HAS_GATE } from '../social/errors'
+import { ERR_INVALID_PAYMENT } from '../utils/errors'
+import { gateCheck, getUserImpact } from '../utils/functions'
 import {
   PollGlobalStateKeyBoxCount,
   PollGlobalStateKeyEndTime,
@@ -32,7 +35,6 @@ import {
   PollGlobalStateKeyVotesTwo,
   votesMBR,
 } from './constants'
-import { MultipleChoice, MultipleChoiceImpact, PollType, SingleChoice, SingleChoiceImpact } from './types'
 import {
   ERR_ALREADY_VOTED,
   ERR_BAD_DEPLOYER,
@@ -47,9 +49,7 @@ import {
   ERR_POLL_ACTIVE,
   ERR_POLL_ENDED,
 } from './errors'
-import { ERR_INVALID_PAYMENT } from '../utils/errors'
-import { gateCheck, getUserImpact } from '../utils/functions'
-import { ERR_HAS_GATE } from '../social/errors'
+import { MultipleChoice, MultipleChoiceImpact, PollType, SingleChoice, SingleChoiceImpact } from './types'
 
 // CONTRACT IMPORTS
 import { AkitaBaseContract } from '../utils/base-contracts/base'
@@ -184,16 +184,16 @@ export class Poll extends AkitaBaseContract {
     }
   }
 
-  deleteBoxes(addresses: Address[]): void {
+  deleteBoxes(addresses: Account[]): void {
     assert(Global.latestTimestamp > this.endTime.value, ERR_POLL_ACTIVE)
 
     for (let i: uint64 = 0; i < addresses.length; i += 1) {
 
-      this.votes(addresses[i].native).delete()
+      this.votes(addresses[i]).delete()
 
       itxn
         .payment({
-          receiver: addresses[i].native,
+          receiver: addresses[i],
           amount: votesMBR,
           note: 'MBR refund for poll vote',
         })
@@ -244,7 +244,7 @@ export class Poll extends AkitaBaseContract {
   }
 
   @abimethod({ readonly: true })
-  hasVoted(user: Address): boolean {
-    return this.votes(user.native).exists
+  hasVoted(user: Account): boolean {
+    return this.votes(user).exists
   }
 }

@@ -80,16 +80,16 @@ mint:
     intc_1 // pay
     ==
     assert // transaction type is pay
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     pushbytes "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -238,10 +238,10 @@ mint_while_top@2:
     //     unitName,
     //     total,
     //     decimals,
-    //     manager: manager.native,
-    //     reserve: reserve.native,
-    //     freeze: freeze.native,
-    //     clawback: clawback.native,
+    //     manager,
+    //     reserve,
+    //     freeze,
+    //     clawback,
     //     defaultFrozen,
     //     url,
     //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
@@ -288,10 +288,10 @@ mint_ternary_merge@6:
     //     unitName,
     //     total,
     //     decimals,
-    //     manager: manager.native,
-    //     reserve: reserve.native,
-    //     freeze: freeze.native,
-    //     clawback: clawback.native,
+    //     manager,
+    //     reserve,
+    //     freeze,
+    //     clawback,
     //     defaultFrozen,
     //     url,
     //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
@@ -308,10 +308,10 @@ mint_ternary_merge@6:
     //     unitName,
     //     total,
     //     decimals,
-    //     manager: manager.native,
-    //     reserve: reserve.native,
-    //     freeze: freeze.native,
-    //     clawback: clawback.native,
+    //     manager,
+    //     reserve,
+    //     freeze,
+    //     clawback,
     //     defaultFrozen,
     //     url,
     //     rekeyTo: i < (assets.length - 1) ? Global.zeroAddress : rekeyAddress(rekeyBack, wallet)
@@ -340,11 +340,11 @@ mint_ternary_merge@6:
     b mint_while_top@2
 
 mint_ternary_false@5:
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:288
     // if (!rekeyBack) {
     dig 5
     bnz mint_after_if_else@11
-    // smart_contracts/utils/functions.ts:291
+    // smart_contracts/utils/functions.ts:289
     // return Global.zeroAddress
     global ZeroAddress
     // smart_contracts/arc58/plugins/asa-mint/contract.algo.ts:54
@@ -352,7 +352,7 @@ mint_ternary_false@5:
     b mint_ternary_merge@6
 
 mint_after_if_else@11:
-    // smart_contracts/utils/functions.ts:294
+    // smart_contracts/utils/functions.ts:292
     // return wallet.address
     dig 6
     app_params_get AppAddress

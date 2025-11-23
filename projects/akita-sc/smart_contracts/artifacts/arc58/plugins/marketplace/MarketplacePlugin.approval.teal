@@ -4,68 +4,50 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 8 1 6
-    bytecblock "factory" "akita_dao" "spending_address" "version" 0x3ea11832 0x151f7c75 "akita_al" "gate_id" 0x43922655 "wallet"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:16
-    // export class MarketplacePlugin extends AkitaBaseContract {
-    pushbytes 0xea9180dd // method "update(string)void"
-    txna ApplicationArgs 0
-    match main_update_route@2
-
-main_switch_case_next@3:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:16
+    bytecblock "factory" "akita_dao" "spending_address" 0x3ea11832 0x151f7c75 "akita_al" "gate_id" 0x43922655
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
     // export class MarketplacePlugin extends AkitaBaseContract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@12
+    bz main_create_NoOp@10
     pushbytess 0xdea7cd9d 0x269e4bb0 0x4d96ba44 0x59466ef2 0x33e92c94 0x854dede0 // method "list(uint64,bool,uint64,uint64,uint64,uint64,uint64,address,uint64,address,string,byte[32][])uint64", method "purchase(uint64,bool,uint64,address,byte[][])void", method "changePrice(uint64,bool,uint64,uint64)void", method "delist(uint64,bool,uint64)void", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match list purchase changePrice delist updateAkitaDAO main_opUp_route@10
+    match list purchase changePrice delist updateAkitaDAO main_opUp_route@8
     err
 
-main_opUp_route@10:
+main_opUp_route@8:
     // smart_contracts/utils/base-contracts/base.ts:41
     // opUp(): void { }
     intc_2 // 1
     return
 
-main_create_NoOp@12:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:16
+main_create_NoOp@10:
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:19
     // export class MarketplacePlugin extends AkitaBaseContract {
     pushbytes 0x4eb3dfbc // method "createApplication(string,uint64,uint64)void"
     txna ApplicationArgs 0
     match createApplication
     err
 
-main_update_route@2:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txn OnCompletion
-    pushint 4 // UpdateApplication
-    ==
-    txn ApplicationID
-    &&
-    assert // OnCompletion must be UpdateApplication && can only call when not creating
-    b update
-
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:289
+    // smart_contracts/utils/functions.ts:287
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:288
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:291
+    // smart_contracts/utils/functions.ts:289
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:294
+    // smart_contracts/utils/functions.ts:292
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -75,7 +57,7 @@ rekeyAddress_after_if_else@2:
 
 // smart_contracts/arc58/plugins/marketplace/contract.algo.ts::MarketplacePlugin.createApplication[routing]() -> void:
 createApplication:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:24
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:27
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -102,28 +84,28 @@ createApplication:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:17
+    // smart_contracts/utils/base-contracts/base.ts:25
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:26
+    pushbytes "version"
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:29
     // this.version.value = version
     uncover 3
     app_global_put
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:30
     // this.factory.value = factory
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:28
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:31
     // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:24
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:27
     // @abimethod({ onCreate: 'require' })
     intc_2 // 1
     return
@@ -131,7 +113,7 @@ createApplication:
 
 // smart_contracts/arc58/plugins/marketplace/contract.algo.ts::MarketplacePlugin.list[routing]() -> void:
 list:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:33-46
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:36-49
     // list(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -254,16 +236,16 @@ list:
     len
     ==
     assert // invalid number of bytes for (len+uint8[32][])
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     uncover 2
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -272,20 +254,20 @@ list:
     pop
     dup
     cover 3
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:49
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:52
     // assert(AssetHolding.assetBalance(sender, asset)[0] >= assetAmount, ERR_NOT_ENOUGH_ASSET)
     dig 2
     asset_holding_get AssetBalance
     pop
     <=
     assert // Not enough asset
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:51
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:54
     // if (!this.factory.value.address.isOptedIn(Asset(asset))) {
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:51
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:54
     // if (!this.factory.value.address.isOptedIn(Asset(asset))) {
     app_global_get_ex
     assert // check GlobalState exists
@@ -295,7 +277,7 @@ list:
     asset_holding_get AssetBalance
     bury 1
     bnz list_after_if_else@5
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:52-63
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:55-66
     // abiCall<typeof Marketplace.prototype.optin>({
     //   sender,
     //   appId: this.factory.value,
@@ -309,20 +291,20 @@ list:
     //   ]
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:58
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:61
     // receiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:58
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:61
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:59
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:62
     // amount: Global.assetOptInMinBalance
     global AssetOptInMinBalance
     itxn_field Amount
@@ -330,7 +312,7 @@ list:
     dig 1
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:56-60
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:59-63
     // itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -340,7 +322,7 @@ list:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:52-63
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:55-66
     // abiCall<typeof Marketplace.prototype.optin>({
     //   sender,
     //   appId: this.factory.value,
@@ -354,7 +336,7 @@ list:
     //   ]
     // })
     itxn_next
-    bytec 4 // method "optin(pay,uint64)void"
+    bytec_3 // method "optin(pay,uint64)void"
     itxn_field ApplicationArgs
     dig 14
     itxn_field ApplicationArgs
@@ -367,13 +349,13 @@ list:
     itxn_submit
 
 list_after_if_else@5:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:66
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:69
     // if (!this.factory.value.address.isOptedIn(Asset(paymentAsset))) {
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:66
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:69
     // if (!this.factory.value.address.isOptedIn(Asset(paymentAsset))) {
     app_global_get_ex
     assert // check GlobalState exists
@@ -383,7 +365,7 @@ list_after_if_else@5:
     asset_holding_get AssetBalance
     bury 1
     bnz list_after_if_else@9
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:67-78
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:70-81
     // abiCall<typeof Marketplace.prototype.optin>({
     //   sender,
     //   appId: this.factory.value,
@@ -397,20 +379,20 @@ list_after_if_else@5:
     //   ]
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:73
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:76
     // receiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:73
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:76
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:74
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:77
     // amount: Global.assetOptInMinBalance
     global AssetOptInMinBalance
     itxn_field Amount
@@ -418,7 +400,7 @@ list_after_if_else@5:
     dig 1
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:71-75
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:74-78
     // itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -428,7 +410,7 @@ list_after_if_else@5:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:67-78
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:70-81
     // abiCall<typeof Marketplace.prototype.optin>({
     //   sender,
     //   appId: this.factory.value,
@@ -442,7 +424,7 @@ list_after_if_else@5:
     //   ]
     // })
     itxn_next
-    bytec 4 // method "optin(pay,uint64)void"
+    bytec_3 // method "optin(pay,uint64)void"
     itxn_field ApplicationArgs
     dig 10
     itxn_field ApplicationArgs
@@ -455,35 +437,35 @@ list_after_if_else@5:
     itxn_submit
 
 list_after_if_else@9:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:81
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:84
     // const optinMBR: uint64 = paymentAsset === 0 ? Global.assetOptInMinBalance : Global.assetOptInMinBalance * 2
     dig 7
     bnz list_ternary_false@11
     global AssetOptInMinBalance
 
 list_ternary_merge@12:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:86-88
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:89-91
     // MIN_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * listing.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * listing.globalBytes) +
     pushint 606500 // 606500
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:89
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:92
     // Global.minBalance +
     global MinBalance
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:86-89
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:89-92
     // MIN_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * listing.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * listing.globalBytes) +
     // Global.minBalance +
     +
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:86-90
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:89-93
     // MIN_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * listing.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * listing.globalBytes) +
     // Global.minBalance +
     // optinMBR
     +
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:93-119
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:96-122
     // return abiCall<typeof Marketplace.prototype.list>({
     //   sender,
     //   appId: this.factory.value,
@@ -512,13 +494,13 @@ list_ternary_merge@12:
     //   fee: 0,
     // }).returnValue
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:99
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:102
     // receiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:99
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:102
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
@@ -532,7 +514,7 @@ list_ternary_merge@12:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:97-101
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:100-104
     // itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -542,7 +524,7 @@ list_ternary_merge@12:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:102-107
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:105-110
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: this.factory.value.address,
@@ -550,7 +532,7 @@ list_ternary_merge@12:
     //   xferAsset: asset
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:104
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:107
     // assetReceiver: this.factory.value.address,
     dup
     app_params_get AppAddress
@@ -562,7 +544,7 @@ list_ternary_merge@12:
     itxn_field AssetReceiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:102-107
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:105-110
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: this.factory.value.address,
@@ -573,7 +555,7 @@ list_ternary_merge@12:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:93-119
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:96-122
     // return abiCall<typeof Marketplace.prototype.list>({
     //   sender,
     //   appId: this.factory.value,
@@ -602,12 +584,12 @@ list_ternary_merge@12:
     //   fee: 0,
     // }).returnValue
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:117
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:120
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     dig 15
     dig 17
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:93-119
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:96-122
     // return abiCall<typeof Marketplace.prototype.list>({
     //   sender,
     //   appId: this.factory.value,
@@ -658,11 +640,11 @@ list_ternary_merge@12:
     itxn_field Sender
     intc_3 // appl
     itxn_field TypeEnum
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:118
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:121
     // fee: 0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:93-119
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:96-122
     // return abiCall<typeof Marketplace.prototype.list>({
     //   sender,
     //   appId: this.factory.value,
@@ -696,7 +678,7 @@ list_ternary_merge@12:
     extract 4 0
     swap
     extract 0 4
-    bytec 5 // 0x151f7c75
+    bytec 4 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -704,7 +686,7 @@ list_ternary_merge@12:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:33-46
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:36-49
     // list(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -719,7 +701,7 @@ list_ternary_merge@12:
     //   name: string,
     //   proof: Proof,
     // ): uint64 {
-    bytec 5 // 0x151f7c75
+    bytec 4 // 0x151f7c75
     swap
     concat
     log
@@ -727,7 +709,7 @@ list_ternary_merge@12:
     return
 
 list_ternary_false@11:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:81
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:84
     // const optinMBR: uint64 = paymentAsset === 0 ? Global.assetOptInMinBalance : Global.assetOptInMinBalance * 2
     global AssetOptInMinBalance
     pushint 2 // 2
@@ -737,7 +719,7 @@ list_ternary_false@11:
 
 // smart_contracts/arc58/plugins/marketplace/contract.algo.ts::MarketplacePlugin.purchase[routing]() -> void:
 purchase:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:122-128
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:125-131
     // purchase(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -782,16 +764,16 @@ purchase:
     assert // invalid number of bytes for uint8[32]
     txna ApplicationArgs 5
     cover 2
-    // smart_contracts/utils/functions.ts:151-154
+    // smart_contracts/utils/functions.ts:149-152
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     dup
-    // smart_contracts/utils/functions.ts:153
+    // smart_contracts/utils/functions.ts:151
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:151-154
+    // smart_contracts/utils/functions.ts:149-152
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
@@ -799,16 +781,16 @@ purchase:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dup
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -816,16 +798,16 @@ purchase:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:157-160
     // const [referrerBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysReferrer)
     // )
     dup
-    // smart_contracts/utils/functions.ts:161
+    // smart_contracts/utils/functions.ts:159
     // Bytes(AbstractAccountGlobalStateKeysReferrer)
     pushbytes "referrer"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:157-160
     // const [referrerBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysReferrer)
@@ -833,11 +815,11 @@ purchase:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/utils/functions.ts:230
+    // smart_contracts/utils/functions.ts:228
     // walletAddress: wallet.address,
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/utils/functions.ts:229-234
+    // smart_contracts/utils/functions.ts:227-232
     // return {
     //   walletAddress: wallet.address,
     //   origin,
@@ -850,23 +832,23 @@ purchase:
     concat
     swap
     concat
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:129
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:132
     // const { origin, sender } = getAccounts(wallet)
     dup
     extract 32 32
     cover 2
     extract 64 32
     swap
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:131
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:134
     // assert(appId.creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
     dup
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:131
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:134
     // assert(appId.creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
     app_global_get_ex
     assert // check GlobalState exists
@@ -874,57 +856,57 @@ purchase:
     assert // application exists
     ==
     assert // Creator is not the marketplace
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:133
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:136
     // const price = op.AppGlobal.getExUint64(appId, Bytes(ListingGlobalStateKeyPrice))[0]
     dup
     pushbytes "price"
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:134
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:137
     // const paymentAsset = Asset(op.AppGlobal.getExUint64(appId, Bytes(ListingGlobalStateKeyPaymentAsset))[0])
     pushbytes "payment_asset"
     app_global_get_ex
     pop
     dup
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:136
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:139
     // if (paymentAsset.id === 0) {
     bnz purchase_else_body@11
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:137
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:140
     // if (args.length > 0) {
     dig 4
     intc_0 // 0
     extract_uint16
     bz purchase_else_body@7
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:138
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:141
     // const { gate } = getAkitaAppList(this.akitaDAO.value)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:138
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:141
     // const { gate } = getAkitaAppList(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:40
+    // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
-    bytec 6 // "akita_al"
+    bytec 5 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:138
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:141
     // const { gate } = getAkitaAppList(this.akitaDAO.value)
     pushint 40 // 40
     extract_uint64
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:139
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:142
     // const gateID = op.AppGlobal.getExUint64(appId, Bytes(ListingGlobalStateKeyGateID))[0]
     dig 7
-    bytec 7 // "gate_id"
+    bytec 6 // "gate_id"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:146
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:149
     // gateID,
     itob
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:151-165
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:154-168
     // abiCall<typeof Marketplace.prototype.gatedPurchase>({
     //   sender,
     //   appId: this.factory.value,
@@ -941,13 +923,13 @@ purchase:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:157
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:160
     // receiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:157
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:160
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
@@ -961,7 +943,7 @@ purchase:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:155-159
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:158-162
     // itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -971,12 +953,12 @@ purchase:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:160
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:163
     // gateTxn,
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:144
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:147
     // methodSelector(GateMustCheckAbiMethod),
-    bytec 8 // method "mustCheck(address,uint64,byte[][])void"
+    bytec 7 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
     dig 7
     itxn_field ApplicationArgs
@@ -986,12 +968,12 @@ purchase:
     itxn_field ApplicationArgs
     uncover 2
     itxn_field ApplicationID
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:141-149
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:144-152
     // const gateTxn = itxn.applicationCall({
     //   appId: gate,
     //   appArgs: [
     //     methodSelector(GateMustCheckAbiMethod),
-    //     new Address(origin),
+    //     origin,
     //     gateID,
     //     encodeArc4(args)
     //   ],
@@ -1000,7 +982,7 @@ purchase:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:151-165
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:154-168
     // abiCall<typeof Marketplace.prototype.gatedPurchase>({
     //   sender,
     //   appId: this.factory.value,
@@ -1017,12 +999,12 @@ purchase:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:164
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:167
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 10
     dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:151-165
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:154-168
     // abiCall<typeof Marketplace.prototype.gatedPurchase>({
     //   sender,
     //   appId: this.factory.value,
@@ -1054,7 +1036,7 @@ purchase:
     itxn_submit
 
 purchase_after_if_else@20:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:122-128
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:125-131
     // purchase(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1066,7 +1048,7 @@ purchase_after_if_else@20:
     return
 
 purchase_else_body@7:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:167-180
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:170-183
     // abiCall<typeof Marketplace.prototype.purchase>({
     //   sender,
     //   appId: this.factory.value,
@@ -1082,13 +1064,13 @@ purchase_else_body@7:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:173
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:176
     // receiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:173
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:176
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
@@ -1101,7 +1083,7 @@ purchase_else_body@7:
     dig 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:171-175
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:174-178
     // itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -1111,7 +1093,7 @@ purchase_else_body@7:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:167-180
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:170-183
     // abiCall<typeof Marketplace.prototype.purchase>({
     //   sender,
     //   appId: this.factory.value,
@@ -1127,12 +1109,12 @@ purchase_else_body@7:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:179
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:182
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 10
     dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:167-180
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:170-183
     // abiCall<typeof Marketplace.prototype.purchase>({
     //   sender,
     //   appId: this.factory.value,
@@ -1164,41 +1146,41 @@ purchase_else_body@7:
     b purchase_after_if_else@20
 
 purchase_else_body@11:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:183
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:186
     // if (args.length > 0) {
     dig 4
     intc_0 // 0
     extract_uint16
     bz purchase_else_body@16
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:184
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:187
     // const { gate } = getAkitaAppList(this.akitaDAO.value)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:184
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:187
     // const { gate } = getAkitaAppList(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:40
+    // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
-    bytec 6 // "akita_al"
+    bytec 5 // "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:184
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:187
     // const { gate } = getAkitaAppList(this.akitaDAO.value)
     pushint 40 // 40
     extract_uint64
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:185
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:188
     // const gateID = op.AppGlobal.getExUint64(appId, Bytes(ListingGlobalStateKeyGateID))[0]
     dig 7
-    bytec 7 // "gate_id"
+    bytec 6 // "gate_id"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:192
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:195
     // gateID,
     itob
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:197-212
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:200-215
     // abiCall<typeof Marketplace.prototype.gatedPurchaseAsa>({
     //   sender,
     //   appId: this.factory.value,
@@ -1216,13 +1198,13 @@ purchase_else_body@11:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:203
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:206
     // assetReceiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:203
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:206
     // assetReceiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
@@ -1238,7 +1220,7 @@ purchase_else_body@11:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:201-206
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:204-209
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: this.factory.value.address,
@@ -1249,12 +1231,12 @@ purchase_else_body@11:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:207
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:210
     // gateTxn,
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:190
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:193
     // methodSelector(GateMustCheckAbiMethod),
-    bytec 8 // method "mustCheck(address,uint64,byte[][])void"
+    bytec 7 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
     dig 7
     itxn_field ApplicationArgs
@@ -1264,12 +1246,12 @@ purchase_else_body@11:
     itxn_field ApplicationArgs
     uncover 2
     itxn_field ApplicationID
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:187-195
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:190-198
     // const gateTxn = itxn.applicationCall({
     //   appId: gate,
     //   appArgs: [
     //     methodSelector(GateMustCheckAbiMethod),
-    //     new Address(origin),
+    //     origin,
     //     gateID,
     //     encodeArc4(args)
     //   ],
@@ -1278,7 +1260,7 @@ purchase_else_body@11:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:197-212
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:200-215
     // abiCall<typeof Marketplace.prototype.gatedPurchaseAsa>({
     //   sender,
     //   appId: this.factory.value,
@@ -1296,12 +1278,12 @@ purchase_else_body@11:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:211
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:214
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 10
     dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:197-212
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:200-215
     // abiCall<typeof Marketplace.prototype.gatedPurchaseAsa>({
     //   sender,
     //   appId: this.factory.value,
@@ -1335,7 +1317,7 @@ purchase_else_body@11:
     b purchase_after_if_else@20
 
 purchase_else_body@16:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:214-228
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:217-231
     // abiCall<typeof Marketplace.prototype.purchaseAsa>({
     //   sender,
     //   appId: this.factory.value,
@@ -1352,13 +1334,13 @@ purchase_else_body@16:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:220
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:223
     // assetReceiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:220
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:223
     // assetReceiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
@@ -1373,7 +1355,7 @@ purchase_else_body@16:
     dig 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:218-223
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:221-226
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: this.factory.value.address,
@@ -1384,7 +1366,7 @@ purchase_else_body@16:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:214-228
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:217-231
     // abiCall<typeof Marketplace.prototype.purchaseAsa>({
     //   sender,
     //   appId: this.factory.value,
@@ -1401,12 +1383,12 @@ purchase_else_body@16:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:227
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:230
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 10
     dig 12
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:214-228
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:217-231
     // abiCall<typeof Marketplace.prototype.purchaseAsa>({
     //   sender,
     //   appId: this.factory.value,
@@ -1441,7 +1423,7 @@ purchase_else_body@16:
 
 // smart_contracts/arc58/plugins/marketplace/contract.algo.ts::MarketplacePlugin.changePrice[routing]() -> void:
 changePrice:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:233-238
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:236-241
     // changePrice(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1476,16 +1458,16 @@ changePrice:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1493,16 +1475,16 @@ changePrice:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:241
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:244
     // assert(appId.creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
     dig 1
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:241
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:244
     // assert(appId.creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1510,7 +1492,7 @@ changePrice:
     assert // application exists
     ==
     assert // Creator is not the marketplace
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:243-248
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:246-251
     // abiCall<typeof Listing.prototype.changePrice>({
     //   sender,
     //   appId,
@@ -1518,12 +1500,12 @@ changePrice:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:247
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:250
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:243-248
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:246-251
     // abiCall<typeof Listing.prototype.changePrice>({
     //   sender,
     //   appId,
@@ -1541,7 +1523,7 @@ changePrice:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:233-238
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:236-241
     // changePrice(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1554,7 +1536,7 @@ changePrice:
 
 // smart_contracts/arc58/plugins/marketplace/contract.algo.ts::MarketplacePlugin.delist[routing]() -> void:
 delist:
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:251-255
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:254-258
     // delist(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1582,16 +1564,16 @@ delist:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 2
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1599,16 +1581,16 @@ delist:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:258
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:261
     // assert(appId.creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
     dup
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:20
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:23
     // factory = GlobalState<Application>({ key: MarketplacePluginGlobalStateKeyFactory })
     bytec_0 // "factory"
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:258
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:261
     // assert(appId.creator === this.factory.value.address, ERR_LISTING_CREATOR_NOT_MARKETPLACE)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1616,19 +1598,19 @@ delist:
     assert // application exists
     ==
     assert // Creator is not the marketplace
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:260-264
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:263-267
     // abiCall<typeof Listing.prototype.delist>({
     //   appId,
     //   args: [sender],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:263
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:266
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     swap
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:260-264
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:263-267
     // abiCall<typeof Listing.prototype.delist>({
     //   appId,
     //   args: [sender],
@@ -1645,62 +1627,12 @@ delist:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:251-255
+    // smart_contracts/arc58/plugins/marketplace/contract.algo.ts:254-258
     // delist(
     //   wallet: Application,
     //   rekeyBack: boolean,
     //   appId: Application
     // ): void {
-    intc_2 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
-update:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txna ApplicationArgs 1
-    dup
-    intc_0 // 0
-    extract_uint16
-    pushint 2 // 2
-    +
-    dig 1
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    app_global_get_ex
-    assert // check GlobalState exists
-    bytec 9 // "wallet"
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:17
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // this.version.value = newVersion
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_2 // 1
     return
 
@@ -1722,14 +1654,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
-    bytec 9 // "wallet"
+    pushbytes "wallet"
     app_global_get_ex
     pop
     // smart_contracts/utils/base-contracts/base.ts:37
@@ -1738,7 +1670,7 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:38

@@ -1,15 +1,14 @@
-import { uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address } from "@algorandfoundation/algorand-typescript/arc4";
+import { Account, uint64 } from "@algorandfoundation/algorand-typescript";
 
 export type CreateAssetParams = {
   assetName: string,
   unitName: string,
   total: uint64,
   decimals: uint64,
-  manager: Address,
-  reserve: Address,
-  freeze: Address,
-  clawback: Address,
+  manager: Account,
+  reserve: Account,
+  freeze: Account,
+  clawback: Account,
   defaultFrozen: boolean,
   url: string,
 }

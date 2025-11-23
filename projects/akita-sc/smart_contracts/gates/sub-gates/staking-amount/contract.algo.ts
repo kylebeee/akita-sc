@@ -1,7 +1,8 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { Operator } from '../../types'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { STAKING_TYPE_HEARTBEAT, StakingType } from '../../../staking/types'
+import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -10,14 +11,14 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
-import { STAKING_TYPE_HEARTBEAT, StakingType } from '../../../staking/types'
-import { getAkitaAppList } from '../../../utils/functions'
-import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { ERR_BAD_OPERATION } from '../../errors'
+import { Operator } from '../../types'
 
 // CONTRACT IMPORTS
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import type { Staking } from '../../../staking/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 
 const ERR_INVALID_ARG_COUNT = 'Invalid number of arguments'
 
@@ -56,7 +57,7 @@ export class StakingAmountGate extends AkitaBaseContract {
   }
 
   private stakingAmountGate(
-    user: Address,
+    user: Account,
     op: Operator,
     asset: uint64,
     amount: uint64,
@@ -124,7 +125,7 @@ export class StakingAmountGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     const { op, asset, amount, type, includeEscrowed } = clone(this.registry(registryID).value)
     return this.stakingAmountGate(

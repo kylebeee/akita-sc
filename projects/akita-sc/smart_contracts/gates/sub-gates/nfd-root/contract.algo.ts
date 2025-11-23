@@ -1,15 +1,17 @@
-import { Application, assert, assertMatch, BoxMap, Bytes, bytes, Global, GlobalState, gtxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import { Account, Application, assert, assertMatch, BoxMap, Bytes, bytes, Global, GlobalState, gtxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4'
+import { btoi } from '@algorandfoundation/algorand-typescript/op'
+import { BoxCostPerBox, Uint64ByteLength } from '../../../utils/constants'
+import { NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDMetaKeyVerifiedAddresses } from '../../../utils/constants/nfd'
+import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getOtherAppList } from '../../../utils/functions'
 import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { NFDRegistry } from '../../../utils/types/nfd-registry'
-import { NFD } from '../../../utils/types/nfd'
-import { getOtherAppList } from '../../../utils/functions'
-import { BoxCostPerBox, Uint64ByteLength } from '../../../utils/constants'
-import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { btoi } from '@algorandfoundation/algorand-typescript/op'
-import { NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDMetaKeyVerifiedAddresses } from '../../../utils/constants/nfd'
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import type { NFD } from '../../../utils/types/nfd'
+import type { NFDRegistry } from '../../../utils/types/nfd-registry'
 
 const MinNFDRootGateRegistryMBR: uint64 = 5_700
 
@@ -36,7 +38,7 @@ export class NFDRootGate extends AkitaBaseContract {
     return id
   }
 
-  private nfdGate(user: Address, appID: uint64, root: string): boolean {
+  private nfdGate(user: Account, appID: uint64, root: string): boolean {
     const nfdName = op.AppGlobal.getExBytes(appID, Bytes(NFDGlobalStateKeysName))[0]
     const parentExists = op.AppGlobal.getExBytes(appID, Bytes(NFDGlobalStateKeysParentAppID))[1]
 
@@ -106,7 +108,7 @@ export class NFDRootGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === Uint64ByteLength, ERR_INVALID_ARG_COUNT)
     const root = this.registry(registryID).value
     return this.nfdGate(caller, btoi(args), root)

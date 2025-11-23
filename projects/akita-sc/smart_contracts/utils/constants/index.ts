@@ -20,6 +20,7 @@ export const MAX_IMPACT: uint64 = 1_000
 
 export const IMPACT_DIVISOR: uint64 = MAX_IMPACT // MAX IMPACT
 export const DIVISOR: uint64 = 100_000 // 100%
+export const ONE_HUNDRED_PERCENT: uint64 = 100_000 // 100%
 
 export const MIN_POST_FEE: uint64 = 10 // 0.000010 AKTA or 10 keets
 export const MAX_POST_FEE: uint64 = 100_000_000_000 // 100K AKTA

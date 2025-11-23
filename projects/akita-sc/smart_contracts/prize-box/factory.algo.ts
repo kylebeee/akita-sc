@@ -1,18 +1,20 @@
 import {
   abimethod,
-  assert,
+  Account,
   assertMatch,
   Global,
   gtxn,
   itxn,
-  Txn,
-  uint64,
+  uint64
 } from '@algorandfoundation/algorand-typescript'
-import { Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { PrizeBox } from './contract.algo'
-import { ERR_INVALID_PAYMENT } from '../utils/errors'
-import { FactoryContract } from '../utils/base-contracts/factory'
+import { compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
+import { ERR_INVALID_PAYMENT } from '../utils/errors'
+
+// CONTRACT IMPORTS
+import { FactoryContract } from '../utils/base-contracts/factory'
+import { PrizeBox } from './contract.algo'
+
 
 export class PrizeBoxFactory extends FactoryContract {
 
@@ -25,7 +27,7 @@ export class PrizeBoxFactory extends FactoryContract {
 
   // PRIZE BOX FACTORY METHODS --------------------------------------------------------------------
 
-  mint(payment: gtxn.PaymentTxn, owner: Address): uint64 {
+  mint(payment: gtxn.PaymentTxn, owner: Account): uint64 {
 
     const prizeBox = compileArc4(PrizeBox)
 

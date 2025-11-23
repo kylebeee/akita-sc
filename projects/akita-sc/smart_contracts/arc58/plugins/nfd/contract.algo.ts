@@ -1,12 +1,14 @@
-import { Application, assert, bytes, Bytes, GlobalState, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
-import { NFD } from '../../../utils/types/nfd'
-import { abiCall, abimethod, Address, Contract, DynamicArray, DynamicBytes } from '@algorandfoundation/algorand-typescript/arc4'
-import { NFDRegistry } from '../../../utils/types/nfd-registry'
+import { Account, Application, assert, bytes, Bytes, GlobalState, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, Contract } from '@algorandfoundation/algorand-typescript/arc4'
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
-import { ERR_NOT_AN_NFD } from './errors'
-import { NFDGlobalStateKeySaleAmountKey, NFDPluginGlobalStateKeyRegistry } from './constants'
-import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 import { NFDGlobalStateKeysName } from '../../../utils/constants/nfd'
+import { getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { NFDGlobalStateKeySaleAmountKey, NFDPluginGlobalStateKeyRegistry } from './constants'
+import { ERR_NOT_AN_NFD } from './errors'
+
+// CONTRACT IMPORTS
+import type { NFD } from '../../../utils/types/nfd'
+import type { NFDRegistry } from '../../../utils/types/nfd-registry'
 
 export class NFDPlugin extends Contract {
 
@@ -76,7 +78,7 @@ export class NFDPlugin extends Contract {
     rekeyBack: boolean,
     appId: Application,
     sellAmount: uint64,
-    reservedFor: Address
+    reservedFor: Account
   ): void {
 
     const sender = getSpendingAccount(wallet)
@@ -257,7 +259,7 @@ export class NFDPlugin extends Contract {
     rekeyBack: boolean,
     appId: Application,
     amount: uint64,
-    receiver: Address,
+    receiver: Account,
     note: string,
     asset: uint64,
     otherAssets: uint64[]
@@ -311,7 +313,7 @@ export class NFDPlugin extends Contract {
     rekeyBack: boolean,
     appId: Application,
     fieldName: string,
-    address: Address
+    address: Account
   ): void {
     const sender = getSpendingAccount(wallet)
 

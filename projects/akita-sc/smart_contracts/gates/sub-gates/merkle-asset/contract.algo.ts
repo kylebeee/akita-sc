@@ -1,20 +1,20 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, Global, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
-import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { MerkleTreeTypeCollection } from '../../../meta-merkles/constants'
-import { getAkitaAppList } from '../../../utils/functions'
 import { BoxCostPerBox } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
 import { Proof } from '../../../utils/types/merkles'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, MinMetaMerkleRegistryMBR } from '../../constants'
+import { ERR_INVALID_ARG_COUNT } from '../../errors'
 
 // CONTRACT IMPORTS
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import type { MetaMerkles } from '../../../meta-merkles/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 type MerkleAssetGateRegistryInfo = {
-  creator: Address
+  creator: Account
   name: string
 }
 
@@ -80,11 +80,11 @@ export class MerkleAssetGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length >= MinCheckArgsLength, ERR_INVALID_ARG_COUNT)
     const { asset, proof } = decodeArc4<MerkleAssetGateCheckParams>(args)
 
-    const [holdings, optedIn] = AssetHolding.assetBalance(caller.native, asset)
+    const [holdings, optedIn] = AssetHolding.assetBalance(caller, asset)
     if (!optedIn || holdings === 0) {
       return false
     }

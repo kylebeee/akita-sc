@@ -1,22 +1,21 @@
 import {
-  Contract,
   abimethod,
   Account,
   assert,
+  assertMatch,
+  Contract,
   Global,
   GlobalState,
+  gtxn,
   itxn,
   Txn,
   uint64,
-  assertMatch,
-  gtxn,
 } from '@algorandfoundation/algorand-typescript'
 import { AssetHolding } from '@algorandfoundation/algorand-typescript/op'
-import { Address } from '@algorandfoundation/algorand-typescript/arc4'
-import { ERR_INVALID_ASSET, ERR_NOT_EMPTY, ERR_NOT_OWNER } from './errors'
-import { PrizeBoxGlobalStateKeyOptinCount, PrizeBoxGlobalStateKeyOwner } from './constants'
 import { ERR_INVALID_PAYMENT } from '../utils/errors'
 import { AssetInfo } from '../utils/types/asset'
+import { PrizeBoxGlobalStateKeyOptinCount, PrizeBoxGlobalStateKeyOwner } from './constants'
+import { ERR_INVALID_ASSET, ERR_NOT_EMPTY, ERR_NOT_OWNER } from './errors'
 
 export class PrizeBox extends Contract {
   
@@ -30,8 +29,8 @@ export class PrizeBox extends Contract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
   
   @abimethod({ onCreate: 'require' })
-  create(owner: Address): void {
-    this.owner.value = owner.native
+  create(owner: Account): void {
+    this.owner.value = owner
     this.optinCount.value = 0
   }
 

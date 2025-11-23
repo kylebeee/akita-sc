@@ -1,13 +1,16 @@
-import { Application, assert, assertMatch, BoxMap, bytes, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { btoi, Global } from '@algorandfoundation/algorand-typescript/op'
-import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Global } from '@algorandfoundation/algorand-typescript/op'
+
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { getOtherAppList } from '../../../utils/functions'
-import { Poll } from '../../../poll/contract.algo'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
+import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { PollGateRegistryMBR } from './constants'
+
+// CONTRACT IMPORTS
+import type { Poll } from '../../../poll/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 export type PollGateRegistryInfo = {
   poll: uint64
@@ -36,7 +39,7 @@ export class PollGate extends AkitaBaseContract {
     return id
   }
 
-  private pollGate(user: Address, appId: Application): boolean {
+  private pollGate(user: Account, appId: Application): boolean {
     const { poll } = getOtherAppList(this.akitaDAO.value)
 
     const voted = abiCall<typeof Poll.prototype.hasVoted>({
@@ -80,7 +83,7 @@ export class PollGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     
     const { poll } = this.registry(registryID).value

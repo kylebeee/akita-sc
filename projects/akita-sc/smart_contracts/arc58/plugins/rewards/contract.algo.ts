@@ -1,12 +1,13 @@
 import { Application, Asset, Global, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { BaseRewards } from '../../../rewards/base'
-import { classes } from 'polytype'
 import { abiCall } from '@algorandfoundation/algorand-typescript/arc4'
-import { Rewards } from '../../../rewards/contract.algo'
-
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { classes } from 'polytype'
 import { AllocationReclaimDetails, ClaimDetails, UserAllocation } from '../../../rewards/types'
+import { getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+
+// CONTRACT IMPORTS
+import { BaseRewards } from '../../../rewards/base'
+import type { Rewards } from '../../../rewards/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
 

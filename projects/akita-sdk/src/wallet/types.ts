@@ -82,7 +82,7 @@ export const AddPluginDefaults = {
 export type CanCallParams = (
   Omit<ContractArgs['arc58_canCall(uint64,bool,address,string,byte[4])bool'], 'method'>
   & {
-    method: PluginMethodSpecifier
+    methods: PluginMethodSpecifier
   }
   & MaybeSigner
 )

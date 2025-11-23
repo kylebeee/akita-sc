@@ -1,12 +1,13 @@
-import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
-import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk'
-import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
-import { newWallet, WalletFactorySDK, WalletSDK } from 'akita-sdk'
-import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
-import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint'
+import { Config, microAlgo } from '@algorandfoundation/algokit-utils';
+import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
+import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
+import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import { newWallet, WalletFactorySDK, WalletSDK } from 'akita-sdk';
+import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
+// import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
+import { deployAbstractedAccountFactory } from '../../../../tests/fixtures/abstracted-account';
 import { deployAkitaDAO } from '../../../../tests/fixtures/dao';
+import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint';
 
 describe('Asa Mint plugin contract', () => {
   const localnet = algorandFixture();
@@ -39,7 +40,7 @@ describe('Asa Mint plugin contract', () => {
     })
 
     walletFactory = (
-      await deployAbstractedAccountFactoryAndEscrowFactory({
+      await deployAbstractedAccountFactory({
         fixture: localnet,
         sender,
         signer,
@@ -47,7 +48,7 @@ describe('Asa Mint plugin contract', () => {
           akitaDao: dao.appId,
         }
       })
-    ).abstractAccountFactory;
+    );
 
     wallet = await newWallet({
       algorand,

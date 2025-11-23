@@ -5,14 +5,14 @@
 main:
     intcblock 0 1 8 4
     bytecblock "owner" "optin_count"
-    // smart_contracts/prize-box/contract.algo.ts:21
+    // smart_contracts/prize-box/contract.algo.ts:20
     // export class PrizeBox extends Contract {
     pushbytes 0x2487c32c // method "deleteApplication()void"
     txna ApplicationArgs 0
     match main_deleteApplication_route@2
 
 main_switch_case_next@3:
-    // smart_contracts/prize-box/contract.algo.ts:21
+    // smart_contracts/prize-box/contract.algo.ts:20
     // export class PrizeBox extends Contract {
     txn OnCompletion
     !
@@ -25,7 +25,7 @@ main_switch_case_next@3:
     err
 
 main_create_NoOp@9:
-    // smart_contracts/prize-box/contract.algo.ts:21
+    // smart_contracts/prize-box/contract.algo.ts:20
     // export class PrizeBox extends Contract {
     pushbytes 0xcc694eaa // method "create(address)void"
     txna ApplicationArgs 0
@@ -33,7 +33,7 @@ main_create_NoOp@9:
     err
 
 main_deleteApplication_route@2:
-    // smart_contracts/prize-box/contract.algo.ts:38
+    // smart_contracts/prize-box/contract.algo.ts:37
     // @abimethod({ allowActions: 'DeleteApplication' })
     txn OnCompletion
     pushint 5 // DeleteApplication
@@ -46,7 +46,7 @@ main_deleteApplication_route@2:
 
 // smart_contracts/prize-box/contract.algo.ts::PrizeBox.create[routing]() -> void:
 create:
-    // smart_contracts/prize-box/contract.algo.ts:32
+    // smart_contracts/prize-box/contract.algo.ts:31
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -54,21 +54,21 @@ create:
     pushint 32 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:34
-    // this.owner.value = owner.native
+    // smart_contracts/prize-box/contract.algo.ts:33
+    // this.owner.value = owner
     swap
     app_global_put
-    // smart_contracts/prize-box/contract.algo.ts:28
+    // smart_contracts/prize-box/contract.algo.ts:27
     // optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
     bytec_1 // "optin_count"
-    // smart_contracts/prize-box/contract.algo.ts:35
+    // smart_contracts/prize-box/contract.algo.ts:34
     // this.optinCount.value = 0
     intc_0 // 0
     app_global_put
-    // smart_contracts/prize-box/contract.algo.ts:32
+    // smart_contracts/prize-box/contract.algo.ts:31
     // @abimethod({ onCreate: 'require' })
     intc_1 // 1
     return
@@ -76,14 +76,14 @@ create:
 
 // smart_contracts/prize-box/contract.algo.ts::PrizeBox.deleteApplication[routing]() -> void:
 deleteApplication:
-    // smart_contracts/prize-box/contract.algo.ts:40
+    // smart_contracts/prize-box/contract.algo.ts:39
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     txn Sender
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:40
+    // smart_contracts/prize-box/contract.algo.ts:39
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     app_global_get_ex
     assert // check GlobalState exists
@@ -91,37 +91,37 @@ deleteApplication:
     dig 1
     ==
     assert // Only the owner can withdraw funds
-    // smart_contracts/prize-box/contract.algo.ts:41
+    // smart_contracts/prize-box/contract.algo.ts:40
     // assert(this.optinCount.value === 0, ERR_NOT_EMPTY)
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:28
+    // smart_contracts/prize-box/contract.algo.ts:27
     // optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
     bytec_1 // "optin_count"
-    // smart_contracts/prize-box/contract.algo.ts:41
+    // smart_contracts/prize-box/contract.algo.ts:40
     // assert(this.optinCount.value === 0, ERR_NOT_EMPTY)
     app_global_get_ex
     assert // check GlobalState exists
     !
     assert // Cannot delete application with prizes
-    // smart_contracts/prize-box/contract.algo.ts:42-44
+    // smart_contracts/prize-box/contract.algo.ts:41-43
     // itxn
     //   .payment({ closeRemainderTo: this.owner.value })
     //   .submit()
     itxn_begin
     itxn_field CloseRemainderTo
-    // smart_contracts/prize-box/contract.algo.ts:42-43
+    // smart_contracts/prize-box/contract.algo.ts:41-42
     // itxn
     //   .payment({ closeRemainderTo: this.owner.value })
     intc_1 // 1
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/prize-box/contract.algo.ts:42-44
+    // smart_contracts/prize-box/contract.algo.ts:41-43
     // itxn
     //   .payment({ closeRemainderTo: this.owner.value })
     //   .submit()
     itxn_submit
-    // smart_contracts/prize-box/contract.algo.ts:38
+    // smart_contracts/prize-box/contract.algo.ts:37
     // @abimethod({ allowActions: 'DeleteApplication' })
     intc_1 // 1
     return
@@ -129,7 +129,7 @@ deleteApplication:
 
 // smart_contracts/prize-box/contract.algo.ts::PrizeBox.optin[routing]() -> void:
 optin:
-    // smart_contracts/prize-box/contract.algo.ts:54
+    // smart_contracts/prize-box/contract.algo.ts:53
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     txn GroupIndex
     intc_1 // 1
@@ -146,20 +146,20 @@ optin:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/prize-box/contract.algo.ts:55
+    // smart_contracts/prize-box/contract.algo.ts:54
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     txn Sender
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:55
+    // smart_contracts/prize-box/contract.algo.ts:54
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     app_global_get_ex
     assert // check GlobalState exists
     ==
     assert // Only the owner can withdraw funds
-    // smart_contracts/prize-box/contract.algo.ts:56-63
+    // smart_contracts/prize-box/contract.algo.ts:55-62
     // assertMatch(
     //   payment,
     //   {
@@ -170,10 +170,10 @@ optin:
     // )
     dig 1
     gtxns Receiver
-    // smart_contracts/prize-box/contract.algo.ts:59
+    // smart_contracts/prize-box/contract.algo.ts:58
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/prize-box/contract.algo.ts:56-63
+    // smart_contracts/prize-box/contract.algo.ts:55-62
     // assertMatch(
     //   payment,
     //   {
@@ -185,10 +185,10 @@ optin:
     ==
     uncover 2
     gtxns Amount
-    // smart_contracts/prize-box/contract.algo.ts:60
+    // smart_contracts/prize-box/contract.algo.ts:59
     // amount: Global.assetOptInMinBalance,
     global AssetOptInMinBalance
-    // smart_contracts/prize-box/contract.algo.ts:56-63
+    // smart_contracts/prize-box/contract.algo.ts:55-62
     // assertMatch(
     //   payment,
     //   {
@@ -200,7 +200,7 @@ optin:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/prize-box/contract.algo.ts:65-71
+    // smart_contracts/prize-box/contract.algo.ts:64-70
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Global.currentApplicationAddress,
@@ -209,17 +209,17 @@ optin:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/prize-box/contract.algo.ts:67
+    // smart_contracts/prize-box/contract.algo.ts:66
     // assetReceiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
     swap
     itxn_field XferAsset
-    // smart_contracts/prize-box/contract.algo.ts:68
+    // smart_contracts/prize-box/contract.algo.ts:67
     // assetAmount: 0,
     intc_0 // 0
     itxn_field AssetAmount
     itxn_field AssetReceiver
-    // smart_contracts/prize-box/contract.algo.ts:65-70
+    // smart_contracts/prize-box/contract.algo.ts:64-69
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Global.currentApplicationAddress,
@@ -230,7 +230,7 @@ optin:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/prize-box/contract.algo.ts:65-71
+    // smart_contracts/prize-box/contract.algo.ts:64-70
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Global.currentApplicationAddress,
@@ -239,26 +239,26 @@ optin:
     //   })
     //   .submit()
     itxn_submit
-    // smart_contracts/prize-box/contract.algo.ts:73
+    // smart_contracts/prize-box/contract.algo.ts:72
     // this.optinCount.value += 1
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:28
+    // smart_contracts/prize-box/contract.algo.ts:27
     // optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
     bytec_1 // "optin_count"
-    // smart_contracts/prize-box/contract.algo.ts:73
+    // smart_contracts/prize-box/contract.algo.ts:72
     // this.optinCount.value += 1
     app_global_get_ex
     assert // check GlobalState exists
     intc_1 // 1
     +
-    // smart_contracts/prize-box/contract.algo.ts:28
+    // smart_contracts/prize-box/contract.algo.ts:27
     // optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
     bytec_1 // "optin_count"
-    // smart_contracts/prize-box/contract.algo.ts:73
+    // smart_contracts/prize-box/contract.algo.ts:72
     // this.optinCount.value += 1
     swap
     app_global_put
-    // smart_contracts/prize-box/contract.algo.ts:54
+    // smart_contracts/prize-box/contract.algo.ts:53
     // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
     intc_1 // 1
     return
@@ -266,7 +266,7 @@ optin:
 
 // smart_contracts/prize-box/contract.algo.ts::PrizeBox.transfer[routing]() -> void:
 transfer:
-    // smart_contracts/prize-box/contract.algo.ts:76
+    // smart_contracts/prize-box/contract.algo.ts:75
     // transfer(newOwner: Account): void {
     txna ApplicationArgs 1
     dup
@@ -274,27 +274,27 @@ transfer:
     pushint 32 // 32
     ==
     assert // invalid number of bytes for uint8[32]
-    // smart_contracts/prize-box/contract.algo.ts:77
+    // smart_contracts/prize-box/contract.algo.ts:76
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     txn Sender
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:77
+    // smart_contracts/prize-box/contract.algo.ts:76
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     app_global_get_ex
     assert // check GlobalState exists
     ==
     assert // Only the owner can withdraw funds
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:78
+    // smart_contracts/prize-box/contract.algo.ts:77
     // this.owner.value = newOwner
     swap
     app_global_put
-    // smart_contracts/prize-box/contract.algo.ts:76
+    // smart_contracts/prize-box/contract.algo.ts:75
     // transfer(newOwner: Account): void {
     intc_1 // 1
     return
@@ -303,7 +303,7 @@ transfer:
 // smart_contracts/prize-box/contract.algo.ts::PrizeBox.withdraw[routing]() -> void:
 withdraw:
     pushbytes ""
-    // smart_contracts/prize-box/contract.algo.ts:81
+    // smart_contracts/prize-box/contract.algo.ts:80
     // withdraw(assets: AssetInfo[]): void {
     txna ApplicationArgs 1
     dupn 2
@@ -319,31 +319,31 @@ withdraw:
     len
     ==
     assert // invalid number of bytes for (len+(uint64,uint64)[])
-    // smart_contracts/prize-box/contract.algo.ts:82
+    // smart_contracts/prize-box/contract.algo.ts:81
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     txn Sender
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:82
+    // smart_contracts/prize-box/contract.algo.ts:81
     // assert(Txn.sender === this.owner.value, ERR_NOT_OWNER)
     app_global_get_ex
     assert // check GlobalState exists
     ==
     assert // Only the owner can withdraw funds
-    // smart_contracts/prize-box/contract.algo.ts:84
+    // smart_contracts/prize-box/contract.algo.ts:83
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     intc_0 // 0
 
 withdraw_while_top@2:
-    // smart_contracts/prize-box/contract.algo.ts:84
+    // smart_contracts/prize-box/contract.algo.ts:83
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     dup
     dig 2
     <
     bz withdraw_after_while@13
-    // smart_contracts/prize-box/contract.algo.ts:85
+    // smart_contracts/prize-box/contract.algo.ts:84
     // if (assets[i].asset !== 0) {
     dig 2
     extract 2 0
@@ -358,20 +358,20 @@ withdraw_while_top@2:
     dup
     bury 6
     bz withdraw_else_body@10
-    // smart_contracts/prize-box/contract.algo.ts:87
+    // smart_contracts/prize-box/contract.algo.ts:86
     // Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/prize-box/contract.algo.ts:86-89
+    // smart_contracts/prize-box/contract.algo.ts:85-88
     // const [assetHolding, optedIn] = AssetHolding.assetBalance(
     //   Global.currentApplicationAddress,
     //   assets[i].asset
     // )
     dig 5
     asset_holding_get AssetBalance
-    // smart_contracts/prize-box/contract.algo.ts:90
+    // smart_contracts/prize-box/contract.algo.ts:89
     // assert(optedIn, ERR_INVALID_ASSET)
     assert // Invalid asset
-    // smart_contracts/prize-box/contract.algo.ts:92
+    // smart_contracts/prize-box/contract.algo.ts:91
     // const closeOut = assetHolding === assets[i].amount
     swap
     intc_2 // 8
@@ -379,29 +379,29 @@ withdraw_while_top@2:
     dup
     cover 2
     ==
-    // smart_contracts/prize-box/contract.algo.ts:93
+    // smart_contracts/prize-box/contract.algo.ts:92
     // if (closeOut) {
     bz withdraw_else_body@7
-    // smart_contracts/prize-box/contract.algo.ts:94
+    // smart_contracts/prize-box/contract.algo.ts:93
     // this.optinCount.value -= 1
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:28
+    // smart_contracts/prize-box/contract.algo.ts:27
     // optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
     bytec_1 // "optin_count"
-    // smart_contracts/prize-box/contract.algo.ts:94
+    // smart_contracts/prize-box/contract.algo.ts:93
     // this.optinCount.value -= 1
     app_global_get_ex
     assert // check GlobalState exists
     intc_1 // 1
     -
-    // smart_contracts/prize-box/contract.algo.ts:28
+    // smart_contracts/prize-box/contract.algo.ts:27
     // optinCount = GlobalState<uint64>({ key: PrizeBoxGlobalStateKeyOptinCount })
     bytec_1 // "optin_count"
-    // smart_contracts/prize-box/contract.algo.ts:94
+    // smart_contracts/prize-box/contract.algo.ts:93
     // this.optinCount.value -= 1
     swap
     app_global_put
-    // smart_contracts/prize-box/contract.algo.ts:96-103
+    // smart_contracts/prize-box/contract.algo.ts:95-102
     // itxn
     //   .assetTransfer({
     //     xferAsset: assets[i].asset,
@@ -411,13 +411,13 @@ withdraw_while_top@2:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/prize-box/contract.algo.ts:100
+    // smart_contracts/prize-box/contract.algo.ts:99
     // assetReceiver: this.owner.value,
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:100
+    // smart_contracts/prize-box/contract.algo.ts:99
     // assetReceiver: this.owner.value,
     app_global_get_ex
     assert // check GlobalState exists
@@ -427,7 +427,7 @@ withdraw_while_top@2:
     itxn_field AssetAmount
     dig 3
     itxn_field XferAsset
-    // smart_contracts/prize-box/contract.algo.ts:96-102
+    // smart_contracts/prize-box/contract.algo.ts:95-101
     // itxn
     //   .assetTransfer({
     //     xferAsset: assets[i].asset,
@@ -439,7 +439,7 @@ withdraw_while_top@2:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/prize-box/contract.algo.ts:96-103
+    // smart_contracts/prize-box/contract.algo.ts:95-102
     // itxn
     //   .assetTransfer({
     //     xferAsset: assets[i].asset,
@@ -451,7 +451,7 @@ withdraw_while_top@2:
     itxn_submit
 
 withdraw_after_if_else@12:
-    // smart_contracts/prize-box/contract.algo.ts:84
+    // smart_contracts/prize-box/contract.algo.ts:83
     // for (let i: uint64 = 0; i < assets.length; i += 1) {
     dup
     intc_1 // 1
@@ -460,7 +460,7 @@ withdraw_after_if_else@12:
     b withdraw_while_top@2
 
 withdraw_else_body@7:
-    // smart_contracts/prize-box/contract.algo.ts:105-111
+    // smart_contracts/prize-box/contract.algo.ts:104-110
     // itxn
     //   .assetTransfer({
     //     xferAsset: assets[i].asset,
@@ -469,13 +469,13 @@ withdraw_else_body@7:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/prize-box/contract.algo.ts:109
+    // smart_contracts/prize-box/contract.algo.ts:108
     // assetReceiver: this.owner.value,
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:109
+    // smart_contracts/prize-box/contract.algo.ts:108
     // assetReceiver: this.owner.value,
     app_global_get_ex
     assert // check GlobalState exists
@@ -483,7 +483,7 @@ withdraw_else_body@7:
     itxn_field AssetAmount
     dig 3
     itxn_field XferAsset
-    // smart_contracts/prize-box/contract.algo.ts:105-110
+    // smart_contracts/prize-box/contract.algo.ts:104-109
     // itxn
     //   .assetTransfer({
     //     xferAsset: assets[i].asset,
@@ -494,7 +494,7 @@ withdraw_else_body@7:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/prize-box/contract.algo.ts:105-111
+    // smart_contracts/prize-box/contract.algo.ts:104-110
     // itxn
     //   .assetTransfer({
     //     xferAsset: assets[i].asset,
@@ -506,7 +506,7 @@ withdraw_else_body@7:
     b withdraw_after_if_else@12
 
 withdraw_else_body@10:
-    // smart_contracts/prize-box/contract.algo.ts:114-119
+    // smart_contracts/prize-box/contract.algo.ts:113-118
     // itxn
     //   .payment({
     //     amount: assets[i].amount,
@@ -514,23 +514,23 @@ withdraw_else_body@10:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/prize-box/contract.algo.ts:116
+    // smart_contracts/prize-box/contract.algo.ts:115
     // amount: assets[i].amount,
     intc_2 // 8
     extract_uint64
-    // smart_contracts/prize-box/contract.algo.ts:117
+    // smart_contracts/prize-box/contract.algo.ts:116
     // receiver: this.owner.value,
     intc_0 // 0
-    // smart_contracts/prize-box/contract.algo.ts:26
+    // smart_contracts/prize-box/contract.algo.ts:25
     // owner = GlobalState<Account>({ key: PrizeBoxGlobalStateKeyOwner })
     bytec_0 // "owner"
-    // smart_contracts/prize-box/contract.algo.ts:117
+    // smart_contracts/prize-box/contract.algo.ts:116
     // receiver: this.owner.value,
     app_global_get_ex
     assert // check GlobalState exists
     itxn_field Receiver
     itxn_field Amount
-    // smart_contracts/prize-box/contract.algo.ts:114-118
+    // smart_contracts/prize-box/contract.algo.ts:113-117
     // itxn
     //   .payment({
     //     amount: assets[i].amount,
@@ -540,7 +540,7 @@ withdraw_else_body@10:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/prize-box/contract.algo.ts:114-119
+    // smart_contracts/prize-box/contract.algo.ts:113-118
     // itxn
     //   .payment({
     //     amount: assets[i].amount,
@@ -551,7 +551,7 @@ withdraw_else_body@10:
     b withdraw_after_if_else@12
 
 withdraw_after_while@13:
-    // smart_contracts/prize-box/contract.algo.ts:81
+    // smart_contracts/prize-box/contract.algo.ts:80
     // withdraw(assets: AssetInfo[]): void {
     intc_1 // 1
     return

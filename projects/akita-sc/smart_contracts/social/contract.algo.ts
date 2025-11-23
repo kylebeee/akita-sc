@@ -1,29 +1,29 @@
-import { arc59GetSendAssetInfoResponse } from '../utils/types/asset-inbox'
 import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, clone, Global, GlobalState, gtxn, itxn, itxnCompose, op, Txn, Uint64, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
-import { MetaValue, PostValue, VoteListValue, VotesValue, AkitaSocialImpactMBRData, ImpactMetaValue, FollowsKey, BlockListKey, VoteListKey, ReactionsKey, ReactionListKey, Action, TipAction, ReactionMeta, PostMeta, ViewPayWallValue } from './types'
-import { CID } from '../utils/types/base'
-import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, ONE_DAY, TWO_YEARS, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, ONE_MILLION_AKITA, ONE_YEAR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TWO_HUNDRED_THOUSAND_AKITA, AmendmentMBR, TipSendTypeDirect, TipSendTypeARC59, TipSendTypeARC58, TipActionPost, TipActionReact, ImpactMetaMBR, SubscriptionStateModifierMBR, AkitaSocialboxPrefixPayWall, AkitaSocialGlobalStateKeysPaywallID } from './constants'
-import { NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter } from '../utils/constants/nfd'
-import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAS_GATE, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_NFD, ERR_INVALID_REF_LENGTH, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NFD_CHANGED, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_A_SUBSCRIPTION, ERR_NOT_AN_AKITA_NFT, ERR_NOT_AN_NFD, ERR_NOT_DAO, ERR_NOT_FLAGGED, ERR_NOT_SOCIAL, ERR_NOT_YOUR_POST_TO_EDIT, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFD, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
+import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescript/op'
-import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { akitaSocialFee, gateCheck, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, impactRange, getWalletIDUsingAkitaDAO, originOrTxnSender, originOr, referrerOrZeroAddress, calcPercent, createInstantDisbursement, sendReferralPayment } from '../utils/functions'
-import { NFDRegistry } from '../utils/types/nfd-registry'
-import { NFD } from '../utils/types/nfd'
-import { AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress, ONE_WEEK, TWENTY_FIVE_PERCENT } from '../utils/constants'
-import { STAKING_TYPE_SOFT } from '../staking/types'
 import { classes } from 'polytype'
+import { ERR_NOT_AKITA_DAO } from '../errors'
+import { STAKING_TYPE_SOFT } from '../staking/types'
+import { AkitaCollectionsPrefixAKC, AkitaCollectionsPrefixAOG, AkitaNFTCreatorAddress } from '../utils/constants'
+import { NFDGlobalStateKeysName, NFDGlobalStateKeysParentAppID, NFDGlobalStateKeysTimeChanged, NFDGlobalStateKeysVersion, NFDMetaKeyVerifiedAddresses, NFDMetaKeyVerifiedDiscord, NFDMetaKeyVerifiedDomain, NFDMetaKeyVerifiedTelegram, NFDMetaKeyVerifiedTwitter } from '../utils/constants/nfd'
+import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { akitaSocialFee, gateCheck, getAkitaAppList, getAkitaAssets, getOriginAccount, getOtherAppList, getPluginAppList, getSocialFees, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, referralFee, referrerOrZeroAddress, sendReferralPayment } from '../utils/functions'
+import { arc59GetSendAssetInfoResponse } from '../utils/types/asset-inbox'
+import { CID } from '../utils/types/base'
+import { NFD } from '../utils/types/nfd'
+import { NFDRegistry } from '../utils/types/nfd-registry'
+import { AkitaSocialBoxPrefixActions, AkitaSocialBoxPrefixBanned, AkitaSocialBoxPrefixBlocks, AkitaSocialBoxPrefixFollows, AkitaSocialBoxPrefixMeta, AkitaSocialBoxPrefixModerators, AkitaSocialboxPrefixPayWall, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, AkitaSocialGlobalStateKeysPaywallID, AmendmentMBR, ImpactBoxPrefixMeta, ImpactBoxPrefixSubscriptionStateModifier, ImpactMetaMBR, ONE_DAY, ONE_MILLION_AKITA, ONE_YEAR, SubscriptionStateModifierMBR, TEN_THOUSAND_AKITA, THIRTY_DAYS, TipActionPost, TipActionReact, TipSendTypeARC58, TipSendTypeARC59, TipSendTypeDirect, TWO_HUNDRED_THOUSAND_AKITA, TWO_YEARS } from './constants'
+import { ERR_ALREADY_A_MODERATOR, ERR_ALREADY_AN_ACTION, ERR_ALREADY_BANNED, ERR_ALREADY_FLAGGED, ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAS_GATE, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_NFD, ERR_INVALID_REF_LENGTH, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NFD_CHANGED, ERR_NO_SELF_VOTE, ERR_NOT_A_MODERATOR, ERR_NOT_A_REPLY, ERR_NOT_A_SUBSCRIPTION, ERR_NOT_AN_AKITA_NFT, ERR_NOT_AN_NFD, ERR_NOT_FLAGGED, ERR_NOT_SOCIAL, ERR_NOT_YOUR_POST_TO_EDIT, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_USER_DOES_NOT_OWN_NFD, ERR_USER_DOES_NOT_OWN_NFT, ERR_WRONG_FOLLOWER_KEY } from './errors'
+import { Action, AkitaSocialImpactMBRData, BlockListKey, FollowsKey, ImpactMetaValue, MetaValue, PostMeta, PostValue, ReactionListKey, ReactionMeta, ReactionsKey, TipAction, ViewPayWallValue, VoteListKey, VoteListValue, VotesValue } from './types'
 
 // CONTRACT IMPORTS
-import { BaseSocial } from './base'
-import { AkitaBaseContract, AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
-import { AbstractedAccountInterface } from '../utils/abstract-account'
-import type { AssetInbox } from '../utils/types/asset-inbox'
+import type { AbstractedAccount } from '../arc58/account/contract.algo'
+import type { OptInPlugin } from '../arc58/plugins/optin/contract.algo'
 import type { Staking } from '../staking/contract.algo'
 import type { Subscriptions } from '../subscriptions/contract.algo'
-import { OptInPluginInterface } from '../utils/types/plugins/optin'
-import { ERR_NOT_AKITA_DAO } from '../errors'
+import { AkitaBaseContract, AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
+import type { AssetInbox } from '../utils/types/asset-inbox'
+import { BaseSocial } from './base'
 
 export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContract) {
 
@@ -165,16 +165,16 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   private getUserImpact(account: Account): uint64 {
     const impact = abiCall<typeof AkitaSocialImpact.prototype.getUserImpactWithoutSocial>({
       appId: getAkitaAppList(this.akitaDAO.value).impact,
-      args: [new Address(account)]
+      args: [account]
     }).returnValue
 
     return impact + this.getSocialImpactScore(account)
   }
 
-  private sendPostPayment(referrer: Account) {
+  private sendPostPayment() {
     const akta = getAkitaAssets(this.akitaDAO.value).akta
     const { postFee } = getSocialFees(this.akitaDAO.value)
-    const { leftover } = sendReferralPayment(this.akitaDAO.value, referrer, akta, postFee)
+    const { leftover } = sendReferralPayment(this.akitaDAO.value, akta, postFee)
 
     itxn
       .assetTransfer({
@@ -189,39 +189,33 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const origin = getOriginAccount(wallet)
     const optin = getPluginAppList(this.akitaDAO.value).optin
 
-    itxnCompose.begin(
-      AbstractedAccountInterface.prototype.arc58_rekeyToPlugin,
-      {
-        appId: wallet,
-        args: [
-          optin,
-          true, // global
-          '', // default account
-          [], // no method offsets
-          [] // no funds request
-        ]
-      })
+    itxnCompose.begin<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin>({
+      appId: wallet,
+      args: [
+        optin,
+        true, // global
+        '', // default account
+        [], // no method offsets
+        [] // no funds request
+      ]
+    })
 
-    itxnCompose.next(
-      OptInPluginInterface.prototype.optIn,
-      {
-        appId: optin,
-        args: [
-          wallet,
-          true, // rekey back immediately
-          [asset],
-          itxn.payment({
-            amount: Global.assetOptInMinBalance,
-            receiver: origin
-          })
-        ],
-      }
-    )
+    itxnCompose.next<typeof OptInPlugin.prototype.optIn>({
+      appId: optin,
+      args: [
+        wallet,
+        true, // rekey back immediately
+        [asset],
+        itxn.payment({
+          amount: Global.assetOptInMinBalance,
+          receiver: origin
+        })
+      ],
+    })
 
-    itxnCompose.next(
-      AbstractedAccountInterface.prototype.arc58_verifyAuthAddress,
-      { appId: wallet }
-    )
+    itxnCompose.next<typeof AbstractedAccount.prototype.arc58_verifyAuthAddress>({
+      appId: wallet
+    })
 
     itxnCompose.next(
       itxn.assetTransfer({
@@ -279,7 +273,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
           assetAmount: remainder,
           xferAsset: asset
         }),
-        new Address(creator),
+        creator,
         receiverAlgoNeededForClaim
       ]
     })
@@ -302,13 +296,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     itxn.submitGroup(taxTxn, xferTxn)
   }
 
-  private sendReactionPayments(receiver: Account, wallet: Application, referrer: Account, preReferralTax: uint64): uint64 {
+  private sendReactionPayments(receiver: Account, wallet: Application, preReferralTax: uint64): uint64 {
     const { type, arc59, arc58 } = this.checkTipMbrRequirements(this.akitaDAO.value, receiver, wallet)
     let extraAmount: uint64 = 0
 
     const akta = getAkitaAssets(this.akitaDAO.value).akta
-    const { leftover, cost } = sendReferralPayment(this.akitaDAO.value, referrer, akta, preReferralTax)
-    extraAmount += cost
+    const { leftover } = sendReferralPayment(this.akitaDAO.value, akta, preReferralTax)
     const { reactFee } = getSocialFees(this.akitaDAO.value)
 
     switch (type) {
@@ -339,10 +332,10 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
          * when a user reacts to content other than posts
          * we set the creator to the following:
          * - AssetID: Asset Creator
-         * - Address: Address
+         * - Address: Account
          * -   AppID: Application Creator
          */
-        creator: new Address(creator),
+        creator,
         timestamp: Global.latestTimestamp,
         gateID: 0,
         usePayWall: false,
@@ -423,7 +416,6 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
   private createPost(
     origin: Account,
-    referrer: Account,
     mbrPayment: gtxn.PaymentTxn,
     cid: CID,
     gateID: uint64,
@@ -445,7 +437,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const postID = Txn.txId
     this.posts(postID).value = {
       ref: Bytes(cid),
-      creator: new Address(origin),
+      creator: origin,
       timestamp: Global.latestTimestamp,
       gateID: gateID,
       usePayWall,
@@ -455,7 +447,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     }
     this.updateVotes(postID, true, impact)
     this.createVoteList(postID, true, origin, impact)
-    this.sendPostPayment(referrer)
+    this.sendPostPayment()
   }
 
   private createReply(
@@ -472,19 +464,19 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   ): void {
     assert(!this.isBanned(origin), ERR_BANNED)
     const { creator } = this.posts(ref).value
-    assert(!this.isBlocked(creator.native, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
 
     // update streak before we measure impact
     // this way we guarantee the box exists
     this.updateStreak(origin)
 
     const replyRef = cid.concat(ref)
-    const { wallet } = this.meta(creator.native).value
-    const creatorImpact = this.getUserImpact(creator.native)
+    const { wallet } = this.meta(creator).value
+    const creatorImpact = this.getUserImpact(creator)
     const tax = akitaSocialFee(this.akitaDAO.value, creatorImpact)
 
     let extra = mbrNeeded
-    extra += this.sendReactionPayments(creator.native, Application(wallet), referrer, tax)
+    extra += this.sendReactionPayments(creator, Application(wallet), tax)
     // validate after we send payments, annoying but saves us compute
     this.validatePostPayment(mbrPayment, cid, isAmendment, extra)
 
@@ -492,7 +484,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     this.posts(replyPostID).value = {
       ref: replyRef,
-      creator: new Address(origin),
+      creator: origin,
       timestamp: Global.latestTimestamp,
       gateID: gateID,
       usePayWall,
@@ -518,11 +510,11 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
 
     const { creator } = this.posts(ref).value
-    assert(!this.isBlocked(creator.native, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
 
     const voteListKey = this.vlk(origin, ref)
     assert(!this.votelist(voteListKey).exists, ERR_ALREADY_VOTED)
-    assert(origin !== creator.native, ERR_NO_SELF_VOTE)
+    assert(origin !== creator, ERR_NO_SELF_VOTE)
 
     const senderIsAutomated = this.meta(origin).value.automated
     assert(!senderIsAutomated, ERR_AUTOMATED_ACCOUNT)
@@ -535,12 +527,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const { reactFee, impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
 
     if (isUp) {
-      const { wallet } = this.meta(creator.native).value
+      const { wallet } = this.meta(creator).value
       // calls a transaction
-      const recipientImpact = this.getUserImpact(creator.native)
+      const recipientImpact = this.getUserImpact(creator)
       const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
 
-      const extra = this.sendReactionPayments(creator.native, Application(wallet), referrer, tax)
+      const extra = this.sendReactionPayments(creator, Application(wallet), tax)
       // validate after we send payments, annoying but saves us compute
       assertMatch(
         mbrPayment,
@@ -586,7 +578,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { creator } = this.posts(ref).value
-    assert(!this.isBlocked(creator.native, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
     // sender has NFT
     assert(AssetHolding.assetBalance(origin, NFT)[0] > 0, ERR_USER_DOES_NOT_OWN_NFT)
 
@@ -597,8 +589,8 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     // this way we guarantee the box exists
     this.updateStreak(origin)
 
-    const { wallet } = this.meta(creator.native).value
-    const recipientImpact = this.getUserImpact(creator.native)
+    const { wallet } = this.meta(creator).value
+    const recipientImpact = this.getUserImpact(creator)
     const { impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
     const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
 
@@ -606,7 +598,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const reactionExists = this.reactions(reactionKey).exists
 
     let extra = mbrNeeded
-    extra += this.sendReactionPayments(creator.native, Application(wallet), referrer, tax)
+    extra += this.sendReactionPayments(creator, Application(wallet), tax)
     // validate after we send payments, annoying but saves us compute
     this.validateReactPayment(mbrPayment, reactionExists, extra)
 
@@ -619,20 +611,20 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     this.reactionlist(reactionListKey).create()
   }
 
-  private createFollow(origin: Account, address: Address): void {
+  private createFollow(origin: Account, address: Account): void {
     assert(!this.isBanned(origin), ERR_BANNED)
-    assert(!this.isBlocked(address.native, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(address, origin), ERR_BLOCKED)
 
     const senderIsAutomated = this.meta(origin).value.automated
     assert(!senderIsAutomated, ERR_AUTOMATED_ACCOUNT)
 
-    const { followerIndex } = this.meta(address.native).value
+    const { followerIndex } = this.meta(address).value
 
-    const followsKey: FollowsKey = { user: address.native, index: (followerIndex + 1) }
+    const followsKey: FollowsKey = { user: address, index: (followerIndex + 1) }
     this.follows(followsKey).value = origin
 
-    this.meta(address.native).value.followerIndex += 1
-    this.meta(address.native).value.followerCount += 1
+    this.meta(address).value.followerIndex += 1
+    this.meta(address).value.followerCount += 1
   }
 
   private validateTip(tip: gtxn.AssetTransferTxn, action: TipAction) {
@@ -657,7 +649,9 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     extraAmount: uint64
   ): void {
     const { posts, votes, votelist } = this.mbr(cid)
-    let amount: uint64 = posts + votes + votelist + extraAmount
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const referralFeeAmount = referralFee(this.akitaDAO.value, akta)
+    let amount: uint64 = posts + votes + votelist + referralFeeAmount + extraAmount
     if (isAmendment) {
       amount += AmendmentMBR
     }
@@ -709,10 +703,9 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
-    const referrer = referrerOrZeroAddress(wallet)
 
     this.validateTip(tip, TipActionPost)
-    this.createPost(origin, referrer, mbrPayment, cid, gateID, usePayWall, payWallID, false)
+    this.createPost(origin, mbrPayment, cid, gateID, usePayWall, payWallID, false)
   }
 
   editPost(
@@ -723,18 +716,17 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
-    const referrer = referrerOrZeroAddress(wallet)
 
     assert(this.posts(amendment).exists, ERR_POST_NOT_FOUND)
     const { creator, ref, gateID, usePayWall, payWallID } = this.posts(amendment).value
-    assert(this.isCreator(creator.native, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
+    assert(this.isCreator(creator, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
     assert(!this.isReply(ref), ERR_IS_A_REPLY)
     assert(!this.isAmended(ref), ERR_IS_ALREADY_AMENDED)
 
     this.posts(amendment).value.ref = ref.concat(Bytes('a').concat(Txn.txId))
 
     this.validateTip(tip, TipActionPost)
-    this.createPost(origin, referrer, mbrPayment, cid, gateID, usePayWall, payWallID, true)
+    this.createPost(origin, mbrPayment, cid, gateID, usePayWall, payWallID, true)
   }
 
   gatedReplyPost(
@@ -807,7 +799,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     tip: gtxn.AssetTransferTxn,
     gateTxn: gtxn.ApplicationCallTxn,
     cid: CID,
-    ref: Address,
+    ref: Account,
     gateID: uint64,
     usePayWall: boolean,
     payWallID: uint64
@@ -817,12 +809,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const referrer = referrerOrZeroAddress(wallet)
 
     // if meta doesn't exist they aren't gated
-    assert(this.meta(ref.native).exists, ERR_META_DOESNT_EXIST)
-    const { addressGateID } = this.meta(ref.native).value
+    assert(this.meta(ref).exists, ERR_META_DOESNT_EXIST)
+    const { addressGateID } = this.meta(ref).value
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, addressGateID), ERR_FAILED_GATE)
 
-    const r = ref.native.bytes
-    const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
+    const r = ref.bytes
+    const addedMbr = this.createEmptyPostIfNecessary(r, ref)
 
     this.validateTip(tip, TipActionReact)
     this.createReply(origin, referrer, mbrPayment, addedMbr, cid, r, gateID, usePayWall, payWallID, false)
@@ -832,7 +824,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     mbrPayment: gtxn.PaymentTxn,
     tip: gtxn.AssetTransferTxn,
     cid: CID,
-    ref: Address,
+    ref: Account,
     gateID: uint64,
     usePayWall: boolean,
     payWallID: uint64
@@ -841,13 +833,13 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const origin = originOrTxnSender(wallet)
     const referrer = referrerOrZeroAddress(wallet)
 
-    if (this.meta(ref.native).exists) {
-      const { addressGateID } = this.meta(ref.native).value
+    if (this.meta(ref).exists) {
+      const { addressGateID } = this.meta(ref).value
       assert(addressGateID === 0, ERR_HAS_GATE)
     }
 
-    const r = ref.native.bytes
-    const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
+    const r = ref.bytes
+    const addedMbr = this.createEmptyPostIfNecessary(r, ref)
 
     this.validateTip(tip, TipActionReact)
     this.createReply(origin, referrer, mbrPayment, addedMbr, cid, r, gateID, usePayWall, payWallID, false)
@@ -888,7 +880,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     assert(this.posts(amendment).exists, ERR_REPLY_NOT_FOUND)
     const { creator, ref, gateID, usePayWall, payWallID } = this.posts(amendment).value
-    assert(this.isCreator(creator.native, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
+    assert(this.isCreator(creator, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
     assert(this.isReply(ref), ERR_NOT_A_REPLY)
     assert(!this.isAmended(ref), ERR_IS_ALREADY_AMENDED)
 
@@ -914,7 +906,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     assert(this.posts(amendment).exists, ERR_REPLY_NOT_FOUND)
     const { creator, ref, gateID, usePayWall, payWallID } = this.posts(amendment).value
-    assert(this.isCreator(creator.native, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
+    assert(this.isCreator(creator, wallet), ERR_NOT_YOUR_POST_TO_EDIT)
     assert(this.isReply(ref), ERR_NOT_A_REPLY)
     assert(!this.isAmended(ref), ERR_IS_ALREADY_AMENDED)
 
@@ -966,16 +958,16 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   voteAddress(
     mbrPayment: gtxn.PaymentTxn,
     tip: gtxn.AssetTransferTxn,
-    ref: Address,
+    ref: Account,
     isUp: boolean
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
     const referrer = referrerOrZeroAddress(wallet)
 
-    const r = ref.native.bytes
+    const r = ref.bytes
     const mbrNeeded = this.mbr(Bytes('')).votelist
-    const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
+    const addedMbr = this.createEmptyPostIfNecessary(r, ref)
 
     this.validateTip(tip, TipActionReact)
     this.createVote(origin, referrer, mbrPayment, (mbrNeeded + addedMbr), r, isUp)
@@ -1099,20 +1091,20 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     mbrPayment: gtxn.PaymentTxn,
     tip: gtxn.AssetTransferTxn,
     gateTxn: gtxn.ApplicationCallTxn,
-    ref: Address,
+    ref: Account,
     NFT: uint64
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
     const referrer = referrerOrZeroAddress(wallet)
 
-    if (this.meta(ref.native).exists) {
-      const { addressGateID } = this.meta(ref.native).value
+    if (this.meta(ref).exists) {
+      const { addressGateID } = this.meta(ref).value
       assert(gateCheck(gateTxn, this.akitaDAO.value, origin, addressGateID), ERR_FAILED_GATE)
     }
 
-    const r = ref.native.bytes
-    const addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
+    const r = ref.bytes
+    const addedMbr = this.createEmptyPostIfNecessary(r, ref)
 
     this.validateTip(tip, TipActionReact)
     this.createReaction(origin, referrer, mbrPayment, addedMbr, r, NFT)
@@ -1121,20 +1113,20 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   reactAddress(
     mbrPayment: gtxn.PaymentTxn,
     tip: gtxn.AssetTransferTxn,
-    ref: Address,
+    ref: Account,
     NFT: uint64
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
     const referrer = referrerOrZeroAddress(wallet)
 
-    if (this.meta(ref.native).exists) {
-      const { addressGateID } = this.meta(ref.native).value
+    if (this.meta(ref).exists) {
+      const { addressGateID } = this.meta(ref).value
       assert(addressGateID === 0, ERR_HAS_GATE)
     }
 
-    const r = ref.native.bytes
-    let addedMbr = this.createEmptyPostIfNecessary(r, ref.native)
+    const r = ref.bytes
+    let addedMbr = this.createEmptyPostIfNecessary(r, ref)
 
     this.validateTip(tip, TipActionReact)
     this.createReaction(origin, referrer, mbrPayment, addedMbr, r, NFT)
@@ -1166,7 +1158,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     assert(!this.isBanned(origin), ERR_BANNED)
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const { creator } = this.posts(ref).value
-    assert(!this.isBlocked(creator.native, origin), ERR_BLOCKED)
+    assert(!this.isBlocked(creator, origin), ERR_BLOCKED)
 
     const reactionListKey = this.rlk(origin, ref, NFT)
     assert(this.reactionlist(reactionListKey).exists, ERR_ALREADY_REACTED)
@@ -1186,13 +1178,13 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   gatedFollow(
     mbrPayment: gtxn.PaymentTxn,
     gateTxn: gtxn.ApplicationCallTxn,
-    address: Address
+    address: Account
   ): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
-    assert(this.meta(address.native).exists, ERR_META_DOESNT_EXIST)
-    const { followGateID } = this.meta(address.native).value
+    assert(this.meta(address).exists, ERR_META_DOESNT_EXIST)
+    const { followGateID } = this.meta(address).value
     assert(gateCheck(gateTxn, this.akitaDAO.value, origin, followGateID), ERR_FAILED_GATE)
 
     const { follows } = this.mbr(Bytes(''))
@@ -1208,12 +1200,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     this.createFollow(origin, address)
   }
 
-  follow(mbrPayment: gtxn.PaymentTxn, address: Address): void {
+  follow(mbrPayment: gtxn.PaymentTxn, address: Account): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
-    assert(this.meta(address.native).exists, ERR_META_DOESNT_EXIST)
-    const { followGateID } = this.meta(address.native).value
+    assert(this.meta(address).exists, ERR_META_DOESNT_EXIST)
+    const { followGateID } = this.meta(address).value
     assert(followGateID === 0, ERR_HAS_GATE)
 
     const { follows } = this.mbr(Bytes(''))
@@ -1229,16 +1221,16 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     this.createFollow(origin, address)
   }
 
-  unfollow(address: Address, index: uint64): void {
+  unfollow(address: Account, index: uint64): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
     assert(!this.isBanned(origin), ERR_BANNED)
 
-    const followsKey = { user: address.native, index }
+    const followsKey = { user: address, index }
     assert(this.follows(followsKey).value === origin, ERR_WRONG_FOLLOWER_KEY)
 
-    this.meta(address.native).value.followerCount -= 1
+    this.meta(address).value.followerCount -= 1
 
     this.follows(followsKey).delete()
 
@@ -1252,7 +1244,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
   // we dont remove followers because that requires us to know the index
   // instead, blocking supersedes following
-  block(mbrPayment: gtxn.PaymentTxn, address: Address): void {
+  block(mbrPayment: gtxn.PaymentTxn, address: Account): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
@@ -1267,17 +1259,17 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       ERR_INVALID_PAYMENT
     )
 
-    const blocksKey = this.blk(origin, address.native)
+    const blocksKey = this.blk(origin, address)
     this.blocks(blocksKey).create()
   }
 
-  unblock(address: Address): void {
+  unblock(address: Account): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
     assert(!this.isBanned(origin), ERR_BANNED)
 
-    const blocksKey = this.blk(origin, address.native)
+    const blocksKey = this.blk(origin, address)
     this.blocks(blocksKey).delete()
 
     itxn
@@ -1288,9 +1280,9 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       .submit()
   }
 
-  addModerator(mbrPayment: gtxn.PaymentTxn, address: Address): void {
+  addModerator(mbrPayment: gtxn.PaymentTxn, address: Account): void {
     assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    assert(!this.moderators(address.native).exists, ERR_ALREADY_A_MODERATOR)
+    assert(!this.moderators(address).exists, ERR_ALREADY_A_MODERATOR)
 
     assertMatch(
       mbrPayment,
@@ -1301,14 +1293,14 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       ERR_INVALID_PAYMENT
     )
 
-    this.moderators(address.native).create()
+    this.moderators(address).create()
   }
 
-  removeModerator(address: Address): void {
+  removeModerator(address: Account): void {
     assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    assert(this.moderators(address.native).exists, ERR_NOT_A_MODERATOR)
+    assert(this.moderators(address).exists, ERR_NOT_A_MODERATOR)
 
-    this.moderators(address.native).delete()
+    this.moderators(address).delete()
 
     itxn
       .payment({
@@ -1318,12 +1310,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       .submit()
   }
 
-  ban(mbrPayment: gtxn.PaymentTxn, address: Address, expiration: uint64): void {
+  ban(mbrPayment: gtxn.PaymentTxn, address: Account, expiration: uint64): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
     assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
-    assert(!this.banned(address.native).exists, ERR_ALREADY_BANNED)
+    assert(!this.banned(address).exists, ERR_ALREADY_BANNED)
 
     assertMatch(
       mbrPayment,
@@ -1334,7 +1326,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       ERR_INVALID_PAYMENT
     )
 
-    this.banned(address.native).value = expiration
+    this.banned(address).value = expiration
   }
 
   flagPost(ref: bytes<32>): void {
@@ -1360,12 +1352,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     this.posts(ref).value.againstContentPolicy = false
   }
 
-  unban(address: Address): void {
+  unban(address: Account): void {
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
     assert(this.moderators(origin).exists, ERR_NOT_A_MODERATOR)
-    this.banned(address.native).delete()
+    this.banned(address).delete()
 
     itxn
       .payment({
@@ -1407,15 +1399,15 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
   initMeta(
     mbrPayment: gtxn.PaymentTxn,
-    user: Address,
+    user: Account,
     automated: boolean,
     subscriptionIndex: uint64,
     NFD: uint64,
     akitaNFT: uint64,
   ): uint64 {
-    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, user.native)
-    const origin = originOr(wallet, user.native)
-    const userIsSender = (Txn.sender === user.native)
+    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, user)
+    const origin = originOr(wallet, user)
+    const userIsSender = (Txn.sender === user)
 
     assert(!this.meta(origin).exists, ERR_META_ALREADY_EXISTS)
 
@@ -1455,7 +1447,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
       abiCall<typeof AkitaSocialImpact.prototype.cacheMeta>({
         appId: impact,
         args: [
-          new Address(origin),
+          origin,
           0,
           0,
           0
@@ -1482,7 +1474,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const impactScore = abiCall<typeof AkitaSocialImpact.prototype.cacheMeta>({
       appId: getAkitaAppList(this.akitaDAO.value).impact,
       args: [
-        new Address(origin),
+        origin,
         subscriptionIndex,
         NFD,
         akitaNFT
@@ -1534,7 +1526,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     abiCall<typeof AkitaSocialImpact.prototype.cacheMeta>({
       appId: impact,
       args: [
-        new Address(origin),
+        origin,
         subscriptionIndex,
         NFD,
         akitaNFT
@@ -1545,35 +1537,35 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   // READ ONLY METHODS ----------------------------------------------------------------------------
 
   @abimethod({ readonly: true })
-  getUserSocialImpact(user: Address): uint64 {
-    return this.getSocialImpactScore(user.native)
+  getUserSocialImpact(user: Account): uint64 {
+    return this.getSocialImpactScore(user)
   }
 
   @abimethod({ readonly: true })
-  isFollower(user: Address, index: uint64, follower: Address): boolean {
-    return this.follows({ user: user.native, index }).value === follower.native
+  isFollower(user: Account, index: uint64, follower: Account): boolean {
+    return this.follows({ user, index }).value === follower
   }
 
   @abimethod({ readonly: true })
-  moderatorMeta(user: Address): { exists: boolean; lastActive: uint64 } {
-    if (this.moderators(user.native).exists) {
+  moderatorMeta(user: Account): { exists: boolean; lastActive: uint64 } {
+    if (this.moderators(user).exists) {
       return {
         exists: true,
-        lastActive: this.moderators(user.native).value
+        lastActive: this.moderators(user).value
       }
     }
     return { exists: false, lastActive: 0 }
   }
 
   @abimethod({ readonly: true })
-  getMeta(user: Address): MetaValue {
-    return this.meta(user.native).value
+  getMeta(user: Account): MetaValue {
+    return this.meta(user).value
   }
 
   @abimethod({ readonly: true })
-  getMetaWallet(user: Address): uint64 {
-    if (this.meta(user.native).exists) {
-      return this.meta(user.native).value.wallet
+  getMetaWallet(user: Account): uint64 {
+    if (this.meta(user).exists) {
+      return this.meta(user).value.wallet
     }
     return 0
   }
@@ -1591,7 +1583,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   @abimethod({ readonly: true })
-  reactionMeta(ref: bytes, NFT: uint64, user: Address): ReactionMeta {
+  reactionMeta(ref: bytes, NFT: uint64, user: Account): ReactionMeta {
     const postExists = this.postExists(ref)
     let reactionExists: boolean = false
     if (postExists) {
@@ -1605,8 +1597,8 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
 
     let creatorWallet: uint64 = 0
     let addressGateID: uint64 = 0
-    if (this.meta(user.native).exists) {
-      const { wallet, addressGateID: metaAddressGateID } = this.meta(user.native).value
+    if (this.meta(user).exists) {
+      const { wallet, addressGateID: metaAddressGateID } = this.meta(user).value
       creatorWallet = wallet
       addressGateID = metaAddressGateID
     }
@@ -1629,7 +1621,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   getPostAndCreatorMeta(ref: bytes<32>): { post: PostValue; meta: MetaValue } {
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const post = clone(this.posts(ref).value)
-    const meta = clone(this.meta(post.creator.native).value)
+    const meta = clone(this.meta(post.creator).value)
     return { post, meta }
   }
 
@@ -1648,7 +1640,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   getPostMeta(ref: bytes<32>, NFT: uint64): PostMeta {
     assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
     const post = clone(this.posts(ref).value)
-    const meta = clone(this.meta(post.creator.native).value)
+    const meta = clone(this.meta(post.creator).value)
     const reactionExists = this.reactions({ ref, NFT }).exists
     return { post, meta, reactionExists }
   }
@@ -1677,14 +1669,14 @@ export class AkitaSocialImpact extends AkitaBaseContract {
     return AssetHolding.assetBalance(account, NFT)[0] > 0
   }
 
-  private isSubscribed(account: Account, index: uint64): { active: boolean; serviceID: uint64; streak: uint64 } {
+  private isSubscribed(address: Account, id: uint64): { active: boolean; serviceID: uint64; streak: uint64 } {
     const info = abiCall<typeof Subscriptions.prototype.getSubscription>({
       appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-      args: [new Address(account), index]
+      args: [{address, id}]
     }).returnValue
 
     // ensure they're subscribed to an Akita offering
-    const toAkita = info.recipient.native === this.akitaDAO.value.address
+    const toAkita = info.recipient === this.akitaDAO.value.address
 
     // box index zero is reserved for donations
     // if its higher than zero then they're subscribed to an offer
@@ -1758,7 +1750,7 @@ export class AkitaSocialImpact extends AkitaBaseContract {
     const info = abiCall<typeof Staking.prototype.getInfo>({
       appId: getAkitaAppList(this.akitaDAO.value).staking,
       args: [
-        new Address(account),
+        account,
         {
           asset: akta,
           type: STAKING_TYPE_SOFT,
@@ -1819,10 +1811,10 @@ export class AkitaSocialImpact extends AkitaBaseContract {
     return subscriberImpact
   }
 
-  private getSocialImpactScore(account: Account): uint64 {
+  private getSocialImpactScore(address: Account): uint64 {
     return abiCall<typeof AkitaSocial.prototype.getUserSocialImpact>({
       appId: getAkitaAppList(this.akitaDAO.value).social,
-      args: [new Address(account)]
+      args: [address]
     }).returnValue
   }
 
@@ -1919,11 +1911,11 @@ export class AkitaSocialImpact extends AkitaBaseContract {
 
   // IMPACT METHODS -------------------------------------------------------------------------------
 
-  cacheMeta(address: Address, subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64): uint64 {
+  cacheMeta(address: Account, subscriptionIndex: uint64, NFDAppID: uint64, akitaAssetID: uint64): uint64 {
     assert(Txn.sender === Application(getAkitaAppList(this.akitaDAO.value).social).address, ERR_NOT_SOCIAL)
 
     if (subscriptionIndex !== 0) {
-      assert(this.isSubscribed(address.native, subscriptionIndex).active, ERR_NOT_A_SUBSCRIPTION)
+      assert(this.isSubscribed(address, subscriptionIndex).active, ERR_NOT_A_SUBSCRIPTION)
     }
 
     let nfdTimeChanged: uint64 = 0
@@ -1931,7 +1923,7 @@ export class AkitaSocialImpact extends AkitaBaseContract {
     if (NFDAppID !== 0) {
       const nfdApp = Application(NFDAppID)
       assert(this.isNFD(nfdApp), ERR_NOT_AN_NFD)
-      assert(this.addressVerifiedOnNFD(address.native, nfdApp), ERR_USER_DOES_NOT_OWN_NFD)
+      assert(this.addressVerifiedOnNFD(address, nfdApp), ERR_USER_DOES_NOT_OWN_NFD)
       const [timeChangedBytes] = op.AppGlobal.getExBytes(nfdApp, Bytes(NFDGlobalStateKeysTimeChanged))
       nfdTimeChanged = btoi(timeChangedBytes)
       nfdImpact = this.calcNFDImpactScore(nfdApp)
@@ -1940,10 +1932,10 @@ export class AkitaSocialImpact extends AkitaBaseContract {
     if (akitaAssetID !== 0) {
       const akitaNFT = Asset(akitaAssetID)
       assert(this.isAkitaNFT(akitaNFT), ERR_NOT_AN_AKITA_NFT)
-      assert(this.userHolds(address.native, akitaNFT), ERR_USER_DOES_NOT_OWN_NFT)
+      assert(this.userHolds(address, akitaNFT), ERR_USER_DOES_NOT_OWN_NFT)
     }
 
-    this.meta(address.native).value = {
+    this.meta(address).value = {
       subscriptionIndex,
       NFD: NFDAppID,
       nfdTimeChanged,
@@ -1973,17 +1965,17 @@ export class AkitaSocialImpact extends AkitaBaseContract {
 
   // exists so the social protocol contract can call it without reentrancy issues
   @abimethod({ readonly: true })
-  getUserImpactWithoutSocial(address: Address): uint64 {
-    return this.userImpact(address.native, false)
+  getUserImpactWithoutSocial(address: Account): uint64 {
+    return this.userImpact(address, false)
   }
 
   @abimethod({ readonly: true })
-  getUserImpact(address: Address): uint64 {
-    return this.userImpact(address.native, true)
+  getUserImpact(address: Account): uint64 {
+    return this.userImpact(address, true)
   }
 
   @abimethod({ readonly: true })
-  getMeta(user: Address): ImpactMetaValue {
-    return this.meta(user.native).value
+  getMeta(user: Account): ImpactMetaValue {
+    return this.meta(user).value
   }
 }

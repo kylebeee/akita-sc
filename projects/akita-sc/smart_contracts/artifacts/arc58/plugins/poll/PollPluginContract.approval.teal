@@ -3,69 +3,51 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 8 2
-    bytecblock "akita_dao" "poll_factory" "spending_address" "version" 0x151f7c75 "wallet"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:17
-    // export class PollPluginContract extends AkitaBaseContract {
-    pushbytes 0xea9180dd // method "update(string)void"
-    txna ApplicationArgs 0
-    match main_update_route@2
-
-main_switch_case_next@3:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:17
+    intcblock 0 1 8 6
+    bytecblock "poll_factory" "akita_dao" "spending_address" 0x151f7c75
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:18
     // export class PollPluginContract extends AkitaBaseContract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@11
+    bz main_create_NoOp@9
     pushbytess 0x0dfdd9a1 0x23d3a2e1 0x9b709617 0x33e92c94 0x854dede0 // method "new(uint64,bool,uint8,uint64,uint64,string,string[],uint64)uint64", method "deleteBoxes(uint64,bool,uint64,address[])void", method "vote(uint64,bool,uint64,uint64[],byte[][])void", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match new deleteBoxes vote updateAkitaDAO main_opUp_route@9
+    match new deleteBoxes vote updateAkitaDAO main_opUp_route@7
     err
 
-main_opUp_route@9:
+main_opUp_route@7:
     // smart_contracts/utils/base-contracts/base.ts:41
     // opUp(): void { }
     intc_1 // 1
     return
 
-main_create_NoOp@11:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:17
+main_create_NoOp@9:
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:18
     // export class PollPluginContract extends AkitaBaseContract {
     pushbytes 0x88c940f8 // method "create(string,uint64,uint64)void"
     txna ApplicationArgs 0
     match create
     err
 
-main_update_route@2:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txn OnCompletion
-    pushint 4 // UpdateApplication
-    ==
-    txn ApplicationID
-    &&
-    assert // OnCompletion must be UpdateApplication && can only call when not creating
-    b update
-
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:289
+    // smart_contracts/utils/functions.ts:287
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:290
+    // smart_contracts/utils/functions.ts:288
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:291
+    // smart_contracts/utils/functions.ts:289
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:294
+    // smart_contracts/utils/functions.ts:292
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -75,13 +57,13 @@ rekeyAddress_after_if_else@2:
 
 // smart_contracts/arc58/plugins/poll/contract.algo.ts::PollPluginContract.create[routing]() -> void:
 create:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:26
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
     intc_0 // 0
     extract_uint16
-    intc_3 // 2
+    pushint 2 // 2
     +
     dig 1
     len
@@ -102,28 +84,28 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:17
+    // smart_contracts/utils/base-contracts/base.ts:25
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:27
+    pushbytes "version"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:28
     // this.version.value = version
     uncover 3
     app_global_put
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:22
     // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
-    bytec_1 // "poll_factory"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:28
+    bytec_0 // "poll_factory"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:29
     // this.factory.value = Application(factory)
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:29
+    bytec_1 // "akita_dao"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:30
     // this.akitaDAO.value = Application(akitaDAO)
     swap
     app_global_put
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:26
     // @abimethod({ onCreate: 'require' })
     intc_1 // 1
     return
@@ -131,7 +113,7 @@ create:
 
 // smart_contracts/arc58/plugins/poll/contract.algo.ts::PollPluginContract.new[routing]() -> void:
 new:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:34-43
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:35-44
     // new(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -179,7 +161,7 @@ new:
     dup
     intc_0 // 0
     extract_uint16
-    intc_3 // 2
+    pushint 2 // 2
     +
     dig 1
     len
@@ -192,16 +174,16 @@ new:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 7
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -209,34 +191,34 @@ new:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:49-51
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:50-52
     // MIN_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * poll.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * poll.globalBytes) +
     pushint 813500 // 813500
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:52
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:53
     // Global.minBalance
     global MinBalance
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:49-52
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:50-53
     // MIN_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * poll.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * poll.globalBytes) +
     // Global.minBalance
     +
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:56
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:57
     // receiver: Application(this.factory.value.id).address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:22
     // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
-    bytec_1 // "poll_factory"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:56
+    bytec_0 // "poll_factory"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:57
     // receiver: Application(this.factory.value.id).address,
     app_global_get_ex
     assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:60-73
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:61-74
     // return abiCall<typeof PollFactory.prototype.new>({
     //   sender,
     //   appId: this.factory.value.id,
@@ -255,7 +237,7 @@ new:
     uncover 2
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:55-58
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:56-59
     // const mbrPayment = itxn.payment({
     //   receiver: Application(this.factory.value.id).address,
     //   amount: amount,
@@ -264,7 +246,7 @@ new:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:60-73
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:61-74
     // return abiCall<typeof PollFactory.prototype.new>({
     //   sender,
     //   appId: this.factory.value.id,
@@ -280,12 +262,12 @@ new:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // }).returnValue
     itxn_next
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:72
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:73
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 8
     uncover 9
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:60-73
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:61-74
     // return abiCall<typeof PollFactory.prototype.new>({
     //   sender,
     //   appId: this.factory.value.id,
@@ -317,7 +299,7 @@ new:
     itxn_field RekeyTo
     itxn_field ApplicationID
     itxn_field Sender
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -327,7 +309,7 @@ new:
     extract 4 0
     swap
     extract 0 4
-    bytec 4 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -335,7 +317,7 @@ new:
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:34-43
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:35-44
     // new(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -346,7 +328,7 @@ new:
     //   options: string[],
     //   gateID: uint64,
     // ): uint64 {
-    bytec 4 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     swap
     concat
     log
@@ -356,8 +338,8 @@ new:
 
 // smart_contracts/arc58/plugins/poll/contract.algo.ts::PollPluginContract.deleteBoxes[routing]() -> void:
 deleteBoxes:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:76
-    // deleteBoxes(wallet: Application, rekeyBack: boolean, pollAppID: uint64, addresses: Address[]): void {
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:77
+    // deleteBoxes(wallet: Application, rekeyBack: boolean, pollAppID: uint64, addresses: Account[]): void {
     txna ApplicationArgs 1
     dup
     len
@@ -386,22 +368,22 @@ deleteBoxes:
     extract_uint16
     pushint 32 // 32
     *
-    intc_3 // 2
+    pushint 2 // 2
     +
     dig 1
     len
     ==
     assert // invalid number of bytes for (len+uint8[32][])
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -409,16 +391,16 @@ deleteBoxes:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:79
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:80
     // assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
     dig 1
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:22
     // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
-    bytec_1 // "poll_factory"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:79
+    bytec_0 // "poll_factory"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:80
     // assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -426,7 +408,7 @@ deleteBoxes:
     assert // application exists
     ==
     assert // Creator is not the Poll Factory
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:81-86
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:82-87
     // abiCall<typeof Poll.prototype.deleteBoxes>({
     //   sender,
     //   appId: pollAppID,
@@ -434,12 +416,12 @@ deleteBoxes:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:85
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:86
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:81-86
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:82-87
     // abiCall<typeof Poll.prototype.deleteBoxes>({
     //   sender,
     //   appId: pollAppID,
@@ -452,20 +434,20 @@ deleteBoxes:
     itxn_field ApplicationArgs
     itxn_field ApplicationID
     itxn_field Sender
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:76
-    // deleteBoxes(wallet: Application, rekeyBack: boolean, pollAppID: uint64, addresses: Address[]): void {
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:77
+    // deleteBoxes(wallet: Application, rekeyBack: boolean, pollAppID: uint64, addresses: Account[]): void {
     intc_1 // 1
     return
 
 
 // smart_contracts/arc58/plugins/poll/contract.algo.ts::PollPluginContract.vote[routing]() -> void:
 vote:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:89
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:90
     // vote(wallet: Application, rekeyBack: boolean, pollAppID: uint64, votes: uint64[], args: GateArgs): void {
     txna ApplicationArgs 1
     dup
@@ -502,7 +484,7 @@ vote:
     extract_uint16
     intc_2 // 8
     *
-    intc_3 // 2
+    pushint 2 // 2
     +
     swap
     len
@@ -512,16 +494,16 @@ vote:
     dup
     cover 3
     cover 5
-    // smart_contracts/utils/functions.ts:151-154
+    // smart_contracts/utils/functions.ts:149-152
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     // )
     dup
-    // smart_contracts/utils/functions.ts:153
+    // smart_contracts/utils/functions.ts:151
     // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
     pushbytes "controlled_address"
-    // smart_contracts/utils/functions.ts:151-154
+    // smart_contracts/utils/functions.ts:149-152
     // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
@@ -529,16 +511,16 @@ vote:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dup
-    // smart_contracts/utils/functions.ts:240
+    // smart_contracts/utils/functions.ts:238
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_2 // "spending_address"
-    // smart_contracts/utils/functions.ts:238-241
+    // smart_contracts/utils/functions.ts:236-239
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -546,16 +528,16 @@ vote:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:157-160
     // const [referrerBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysReferrer)
     // )
     dup
-    // smart_contracts/utils/functions.ts:161
+    // smart_contracts/utils/functions.ts:159
     // Bytes(AbstractAccountGlobalStateKeysReferrer)
     pushbytes "referrer"
-    // smart_contracts/utils/functions.ts:159-162
+    // smart_contracts/utils/functions.ts:157-160
     // const [referrerBytes] = op.AppGlobal.getExBytes(
     //   walletID,
     //   Bytes(AbstractAccountGlobalStateKeysReferrer)
@@ -563,11 +545,11 @@ vote:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/utils/functions.ts:230
+    // smart_contracts/utils/functions.ts:228
     // walletAddress: wallet.address,
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/utils/functions.ts:229-234
+    // smart_contracts/utils/functions.ts:227-232
     // return {
     //   walletAddress: wallet.address,
     //   origin,
@@ -580,23 +562,23 @@ vote:
     concat
     swap
     concat
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:90
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:91
     // const { origin, sender } = getAccounts(wallet)
     dup
     extract 32 32
     cover 5
     extract 64 32
     cover 4
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:92
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:93
     // assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
     dup
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:22
     // factory = GlobalState<Application>({ key: PollPluginGlobalStateKeyFactory })
-    bytec_1 // "poll_factory"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:92
+    bytec_0 // "poll_factory"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:93
     // assert(Application(pollAppID).creator === this.factory.value.address, ERR_CREATOR_NOT_POLL_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -604,37 +586,37 @@ vote:
     assert // application exists
     ==
     assert // Creator is not the Poll Factory
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:96
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:97
     // receiver: Application(pollAppID).address,
     app_params_get AppAddress
     swap
     cover 5
     assert // application exists
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:100
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:101
     // if (args.length > 0) {
     intc_0 // 0
     extract_uint16
     bz vote_else_body@6
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:101
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:102
     // const gate = getAkitaAppList(this.akitaDAO.value).gate
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:101
+    bytec_1 // "akita_dao"
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:102
     // const gate = getAkitaAppList(this.akitaDAO.value).gate
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:40
+    // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:101
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:102
     // const gate = getAkitaAppList(this.akitaDAO.value).gate
     pushint 40 // 40
     extract_uint64
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:102
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:103
     // const gateID = op.AppGlobal.getExUint64(pollAppID, Bytes(PollGlobalStateKeyGateID))[0]
     dig 8
     dup
@@ -642,7 +624,7 @@ vote:
     pushbytes "gate_id"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:104-123
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:105-124
     // abiCall<typeof Poll.prototype.gatedVote>({
     //   sender,
     //   appId: pollAppID,
@@ -653,7 +635,7 @@ vote:
     //       appId: gate,
     //       appArgs: [
     //         methodSelector(GateMustCheckAbiMethod),
-    //         new Address(origin),
+    //         origin,
     //         gateID,
     //         encodeArc4(args)
     //       ]
@@ -664,7 +646,7 @@ vote:
     // }
     // )
     itxn_begin
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:97
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:98
     // amount: votesMBR
     pushint 15300 // 15300
     itxn_field Amount
@@ -674,7 +656,7 @@ vote:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:94-98
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:95-99
     // const mbrPayment = itxn.payment({
     //   sender,
     //   receiver: Application(pollAppID).address,
@@ -684,22 +666,22 @@ vote:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:109-118
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:110-119
     // itxn.applicationCall({
     //   sender,
     //   appId: gate,
     //   appArgs: [
     //     methodSelector(GateMustCheckAbiMethod),
-    //     new Address(origin),
+    //     origin,
     //     gateID,
     //     encodeArc4(args)
     //   ]
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:115
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:116
     // gateID,
     itob
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:113
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:114
     // methodSelector(GateMustCheckAbiMethod),
     pushbytes 0x43922655 // method "mustCheck(address,uint64,byte[][])void"
     itxn_field ApplicationArgs
@@ -712,22 +694,22 @@ vote:
     itxn_field ApplicationID
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:109-118
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:110-119
     // itxn.applicationCall({
     //   sender,
     //   appId: gate,
     //   appArgs: [
     //     methodSelector(GateMustCheckAbiMethod),
-    //     new Address(origin),
+    //     origin,
     //     gateID,
     //     encodeArc4(args)
     //   ]
     // }),
-    pushint 6 // 6
+    intc_3 // 6
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:104-123
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:105-124
     // abiCall<typeof Poll.prototype.gatedVote>({
     //   sender,
     //   appId: pollAppID,
@@ -738,7 +720,7 @@ vote:
     //       appId: gate,
     //       appArgs: [
     //         methodSelector(GateMustCheckAbiMethod),
-    //         new Address(origin),
+    //         origin,
     //         gateID,
     //         encodeArc4(args)
     //       ]
@@ -749,12 +731,12 @@ vote:
     // }
     // )
     itxn_next
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:121
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:122
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:104-123
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:105-124
     // abiCall<typeof Poll.prototype.gatedVote>({
     //   sender,
     //   appId: pollAppID,
@@ -765,7 +747,7 @@ vote:
     //       appId: gate,
     //       appArgs: [
     //         methodSelector(GateMustCheckAbiMethod),
-    //         new Address(origin),
+    //         origin,
     //         gateID,
     //         encodeArc4(args)
     //       ]
@@ -782,20 +764,20 @@ vote:
     itxn_field RekeyTo
     itxn_field Sender
     itxn_field ApplicationID
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
 
 vote_after_if_else@9:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:89
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:90
     // vote(wallet: Application, rekeyBack: boolean, pollAppID: uint64, votes: uint64[], args: GateArgs): void {
     intc_1 // 1
     return
 
 vote_else_body@6:
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:125-130
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:126-131
     // abiCall<typeof Poll.prototype.vote>({
     //   sender,
     //   appId: pollAppID,
@@ -803,7 +785,7 @@ vote_else_body@6:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:97
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:98
     // amount: votesMBR
     pushint 15300 // 15300
     itxn_field Amount
@@ -812,7 +794,7 @@ vote_else_body@6:
     uncover 2
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:94-98
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:95-99
     // const mbrPayment = itxn.payment({
     //   sender,
     //   receiver: Application(pollAppID).address,
@@ -822,7 +804,7 @@ vote_else_body@6:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:125-130
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:126-131
     // abiCall<typeof Poll.prototype.vote>({
     //   sender,
     //   appId: pollAppID,
@@ -830,11 +812,11 @@ vote_else_body@6:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:129
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:130
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     cover 2
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/poll/contract.algo.ts:125-130
+    // smart_contracts/arc58/plugins/poll/contract.algo.ts:126-131
     // abiCall<typeof Poll.prototype.vote>({
     //   sender,
     //   appId: pollAppID,
@@ -849,62 +831,12 @@ vote_else_body@6:
     dig 4
     itxn_field ApplicationID
     itxn_field Sender
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
     b vote_after_if_else@9
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
-update:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txna ApplicationArgs 1
-    dup
-    intc_0 // 0
-    extract_uint16
-    intc_3 // 2
-    +
-    dig 1
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    app_global_get_ex
-    assert // check GlobalState exists
-    bytec 5 // "wallet"
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:17
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec_3 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // this.version.value = newVersion
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    intc_1 // 1
-    return
 
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
@@ -924,14 +856,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
-    bytec 5 // "wallet"
+    pushbytes "wallet"
     app_global_get_ex
     pop
     // smart_contracts/utils/base-contracts/base.ts:37
@@ -940,9 +872,9 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:38
     // this.akitaDAO.value = akitaDAO
     swap

@@ -1,5 +1,5 @@
-import { bytes, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, bytes, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
 
 export type TypesValue = {
   // string
@@ -15,7 +15,7 @@ export type SchemaList = SchemaPart[]
 export type SchemaPart = Uint8
 
 export type RootKey = {
-  address: Address
+  address: Account
   name: string
 }
 

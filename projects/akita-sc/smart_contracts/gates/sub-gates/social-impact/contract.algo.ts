@@ -1,8 +1,7 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
-import { Operator, OperatorAndValue } from '../../types'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -11,12 +10,13 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { getAkitaAppList } from '../../../utils/functions'
-import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { Operator, OperatorAndValue } from '../../types'
 
 // CONTRACT IMPORTS
 import type { AkitaSocialImpact } from '../../../social/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 export class SocialImpactGate extends AkitaBaseContract {
 
@@ -40,7 +40,7 @@ export class SocialImpactGate extends AkitaBaseContract {
     return id
   }
 
-  private impactGate(user: Address, op: Operator, value: uint64): boolean {
+  private impactGate(user: Account, op: Operator, value: uint64): boolean {
 
     const impact = abiCall<typeof AkitaSocialImpact.prototype.getUserImpact>({
       appId: getAkitaAppList(this.akitaDAO.value).impact,
@@ -88,7 +88,7 @@ export class SocialImpactGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     const { op, value } = clone(this.registry(registryID).value)
     return this.impactGate(caller, op, value)

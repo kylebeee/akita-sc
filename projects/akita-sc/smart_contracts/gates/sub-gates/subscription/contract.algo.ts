@@ -1,13 +1,16 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { SubscriptionGateRegistryInfo } from './types'
-import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { Subscriptions } from '../../../subscriptions/contract.algo'
-import { getAkitaAppList } from '../../../utils/functions'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
+import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { SubscriptionGateRegistryMBR } from './constants'
+import { SubscriptionGateRegistryInfo } from './types'
+
+// CONTRACT IMPORTS
+import type { Subscriptions } from '../../../subscriptions/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 
 /** [merchant:32][id:8] */
 const RegisterArgsByteLength: uint64 = 40
@@ -34,10 +37,10 @@ export class SubscriptionGate extends AkitaBaseContract {
     return id
   }
 
-  private subscriptionGate(address: Address, merchant: Address, id: uint64): boolean {
+  private subscriptionGate(address: Account, merchant: Account, id: uint64): boolean {
     const info = abiCall<typeof Subscriptions.prototype.getSubscription>({
       appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-      args: [address, id],
+      args: [{address, id}],
     }).returnValue
 
     const toMerchant = info.recipient === merchant
@@ -83,7 +86,7 @@ export class SubscriptionGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     const { merchant, id } = clone(this.registry(registryID).value)
     return this.subscriptionGate(caller, merchant, id)

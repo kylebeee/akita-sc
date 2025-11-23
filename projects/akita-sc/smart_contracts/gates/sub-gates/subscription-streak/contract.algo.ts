@@ -1,9 +1,7 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
-import { SubscriptionStreakGateRegistryInfo } from './types'
-import { Subscriptions } from '../../../subscriptions/contract.algo'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -12,10 +10,15 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { getAkitaAppList } from '../../../utils/functions'
-import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { SubscriptionStreakGateRegistryMBR } from './constants'
+import { SubscriptionStreakGateRegistryInfo } from './types'
+
+// CONTRACT IMPORTS
+import { Subscriptions } from '../../../subscriptions/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 
 /** [merchant:32][id:8][op:1][streak:8] */
 const RegisterByteLength: uint64 = 49
@@ -43,15 +46,15 @@ export class SubscriptionStreakGate extends AkitaBaseContract {
   }
 
   private subscriptionStreakGate(
-    address: Address,
-    merchant: Address,
+    address: Account,
+    merchant: Account,
     id: uint64,
     op: Uint8,
     streak: uint64
   ): boolean {
     const info = abiCall<typeof Subscriptions.prototype.getSubscription>({
       appId: getAkitaAppList(this.akitaDAO.value).subscriptions,
-      args: [address, id],
+      args: [{address, id}],
     }).returnValue
 
     const toMerchant = info.recipient === merchant
@@ -106,7 +109,7 @@ export class SubscriptionStreakGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     const { merchant, id, op, streak } = clone(this.registry(registryID).value)
     return this.subscriptionStreakGate(

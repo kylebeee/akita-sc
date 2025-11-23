@@ -1,12 +1,12 @@
-import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
 // import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { microAlgos } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import algosdk, { makeBasicAccountTransactionSigner, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
-import { microAlgos } from '@algorandfoundation/algokit-utils';
-import { ABSTRACTED_ACCOUNT_MINT_PAYMENT } from '../plugins/abstract_account_plugins.test';
 import { AbstractedAccountClient } from '../../artifacts/arc58/account/AbstractedAccountClient';
 import { AbstractedAccountFactoryFactory } from '../../artifacts/arc58/account/AbstractedAccountFactoryClient';
 import { EscrowFactoryFactory } from '../../artifacts/escrow/EscrowFactoryClient';
+import { ABSTRACTED_ACCOUNT_MINT_PAYMENT } from '../plugins/abstract_account_plugins.test';
 
 const ZERO_ADDRESS = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ';
 const fixture = algorandFixture();
@@ -51,10 +51,11 @@ describe('Rekeying Test', () => {
     const results = await minterFactory.send.create.create({
       args: {
         akitaDao: 0,
+        akitaDaoEscrow: 0,
         version: '1',
-        childVersion: '1',
-        escrowFactoryApp: escrowFactoryResults.appClient.appId,
-        revocationApp: 0,
+        escrowFactory: escrowFactoryResults.appClient.appId,
+        revocation: 0,
+        domain: 'akita.community',
       },
     })
 
@@ -69,7 +70,7 @@ describe('Rekeying Test', () => {
       suggestedParams,
     })
 
-    const mResults = await abstractedAccountFactoryClient.send.mint({
+    const mResults = await abstractedAccountFactoryClient.send.newAccount({
       sender: aliceEOA.addr,
       signer: makeBasicAccountTransactionSigner(aliceEOA),
       args: {
@@ -77,6 +78,7 @@ describe('Rekeying Test', () => {
         controlledAddress: ZERO_ADDRESS,
         admin: aliceEOA.addr.toString(),
         nickname: 'Alice',
+        referrer: ZERO_ADDRESS,
       },
       extraFee: (2_000).microAlgo(),
     })
@@ -89,7 +91,7 @@ describe('Rekeying Test', () => {
       appId: freshAbstractedAccountId,
     })
 
-    await abstractedAccountClient.send.init({ args: {}, extraFee: (3_000).microAlgo() })
+    await abstractedAccountClient.send.register({ args: { escrow: '' }, extraFee: (3_000).microAlgo() })
 
     aliceAbstractedAccount = abstractedAccountClient.appAddress.toString()
 

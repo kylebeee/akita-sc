@@ -1,8 +1,9 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, UserOperatorValueRegistryMBR } from '../../constants'
-import { Operator } from '../../types'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { btoi } from '@algorandfoundation/algorand-typescript/op'
+import { Uint64ByteLength } from '../../../utils/constants'
+import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import { getAkitaAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -11,18 +12,17 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, UserOperatorValueRegistryMBR } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { getAkitaAppList } from '../../../utils/functions'
-import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { btoi } from '@algorandfoundation/algorand-typescript/op'
-import { Uint64ByteLength } from '../../../utils/constants'
+import { Operator } from '../../types'
 
 // CONTRACT IMPORTS
-import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import type { AkitaSocial } from '../../../social/contract.algo'
+import { AkitaBaseContract } from '../../../utils/base-contracts/base'
+
 
 type SocialFollowerIndexGateRegistryInfo = {
-  user: Address
+  user: Account
   op: Operator
   value: uint64
 }
@@ -52,7 +52,7 @@ export class SocialFollowerIndexGate extends AkitaBaseContract {
     return id
   }
 
-  private followerIndexGate(user: Address, index: uint64, follower: Address, op: Operator, value: uint64): boolean {
+  private followerIndexGate(user: Account, index: uint64, follower: Account, op: Operator, value: uint64): boolean {
     const isFollower = abiCall<typeof AkitaSocial.prototype.isFollower>({
       appId: getAkitaAppList(this.akitaDAO.value).social,
       args: [user, index, follower],
@@ -106,7 +106,7 @@ export class SocialFollowerIndexGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === Uint64ByteLength, ERR_INVALID_ARG_COUNT)
     const { user, op, value } = clone(this.registry(registryID).value)
     return this.followerIndexGate(

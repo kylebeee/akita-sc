@@ -1,5 +1,5 @@
-import { bytes, uint64 } from "@algorandfoundation/algorand-typescript"
-import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, bytes, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
 
 export type OfferValue = {
     state: Uint8
@@ -14,12 +14,12 @@ export type OfferValue = {
 
 export type ParticipantKey = {
     id: uint64
-    address: Address
+    address: Account
 }
 
 export type EscrowKey = {
     id: uint64
-    sender: Address
+    sender: Account
     asset: uint64
 }
 

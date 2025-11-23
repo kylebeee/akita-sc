@@ -1,14 +1,16 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, clone, Global, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { Address, Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
-import { calcPercent, getEscrowInfo, getRekeyIndex, getSpendingAccount, mustGetEscrowInfo, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
-import { AkitaBaseContract } from "../../../utils/base-contracts/base";
-import { ERR_INVALID_PAYMENT } from "../../../utils/errors";
-import { ERR_ALREADY_OPTED_IN } from "../optin/errors";
-import { ERR_ESCROW_DOES_NOT_EXIST, ERR_FORBIDDEN } from "../../account/errors";
-import { ERR_ASSET_ALREADY_ALLOCATED, ERR_ESCROW_NOT_ALLOCATABLE, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN, ERR_ESCROW_NOT_IDLE, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE, ERR_ESCROW_NOT_OPTED_IN, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT, ERR_INVALID_SPLIT_TYPE, ERR_OVER_ALLOCATION, ERR_RECEIVE_ESCROW_DOES_NOT_EXIST, ERR_REMAINDER_MUST_BE_LAST, ERR_SPLIT_VALUE_MUST_BE_POSITIVE_OR_REMAINDER, ERR_SPLITS_CANNOT_BE_EMPTY, ERR_SPLITS_CANNOT_BE_MORE_THAN_10 } from "./errors";
-import { RevenueStreamerBoxPrefixEscrows, RevenueStreamerBoxPrefixReceiveAssets, RevenueStreamerBoxPrefixSplits } from "./constants";
-import { ONE_DAY } from "../../../social/constants";
 import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
+import { ONE_DAY } from "../../../social/constants";
+import { ERR_INVALID_PAYMENT } from "../../../utils/errors";
+import { calcPercent, getRekeyIndex, getSpendingAccount, mustGetEscrowInfo, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
+import { ERR_ESCROW_DOES_NOT_EXIST, ERR_FORBIDDEN } from "../../account/errors";
+import { ERR_ALREADY_OPTED_IN } from "../optin/errors";
+import { RevenueStreamerBoxPrefixEscrows, RevenueStreamerBoxPrefixReceiveAssets, RevenueStreamerBoxPrefixSplits } from "./constants";
+import { ERR_ASSET_ALREADY_ALLOCATED, ERR_ESCROW_NOT_ALLOCATABLE, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN, ERR_ESCROW_NOT_IDLE, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE, ERR_ESCROW_NOT_OPTED_IN, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT, ERR_INVALID_SPLIT_TYPE, ERR_OVER_ALLOCATION, ERR_RECEIVE_ESCROW_DOES_NOT_EXIST, ERR_REMAINDER_MUST_BE_LAST, ERR_SPLIT_VALUE_MUST_BE_POSITIVE_OR_REMAINDER, ERR_SPLITS_CANNOT_BE_EMPTY, ERR_SPLITS_CANNOT_BE_MORE_THAN_10 } from "./errors";
+import { EscrowAssetKey, EscrowDisbursementPhaseAllocation, EscrowDisbursementPhaseFinalization, EscrowDisbursementPhaseIdle, ReceiveEscrow, Split, SplitDistributionTypeFlat, SplitDistributionTypePercentage, SplitDistributionTypeRemainder } from "./types";
+
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from "../../../utils/base-contracts/base";
 
 /**
  * high level overview of how revenue manager works:
@@ -20,49 +22,6 @@ import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
  * 2. DAO proposes 'execute plugin' -> revenue-streamer:newReceiveEscrow
  * 
 */
-
-export type EscrowDisbursementPhase = Uint8
-
-export const EscrowDisbursementPhaseIdle: EscrowDisbursementPhase = new Uint8(0)
-export const EscrowDisbursementPhasePreparation: EscrowDisbursementPhase = new Uint8(10)
-export const EscrowDisbursementPhaseAllocation: EscrowDisbursementPhase = new Uint8(20)
-export const EscrowDisbursementPhaseFinalization: EscrowDisbursementPhase = new Uint8(30)
-
-export type ReceiveEscrow = {
-  /** the source address of funds for the escrow */
-  source: Address
-  /** whether the escrow is allocatable for paying the DAO/krby/mods */
-  allocatable: boolean
-  /** whether the account is allowed to opt in */
-  optinAllowed: boolean
-  /** the number of assets the escrow is opted into */
-  optinCount: uint64
-  /** the current phase of the escrow disbursement */
-  phase: EscrowDisbursementPhase
-  /** allocation counter to track the number of assets we need to disburse */
-  allocationCounter: uint64
-  /** the last unix time the escrow was disbursed */
-  lastDisbursement: uint64
-  /** the unix timestamp the escrow was created */
-  creationDate: uint64
-}
-
-export type EscrowAssetKey = {
-  escrow: uint64
-  asset: uint64
-}
-
-export type SplitDistributionType = Uint8
-
-export const SplitDistributionTypeFlat: SplitDistributionType = new Uint8(10)
-export const SplitDistributionTypePercentage: SplitDistributionType = new Uint8(20)
-export const SplitDistributionTypeRemainder: SplitDistributionType = new Uint8(30)
-
-export type Split = {
-  escrow: uint64
-  type: SplitDistributionType
-  value: uint64
-}
 
 export class RevenueStreamer extends AkitaBaseContract {
   /** box map of all the escrows */
@@ -92,7 +51,7 @@ export class RevenueStreamer extends AkitaBaseContract {
 
     const { source, optinAllowed } = this.escrows(wallet.id).value
     const initiator = gtxn.Transaction(getRekeyIndex(wallet)).sender
-    assert(source.native === initiator, ERR_FORBIDDEN)
+    assert(source === initiator, ERR_FORBIDDEN)
     assert(optinAllowed, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN)
 
     for (let i: uint64 = 0; i < assets.length; i++) {
@@ -116,7 +75,7 @@ export class RevenueStreamer extends AkitaBaseContract {
     wallet: Application,
     rekeyBack: boolean,
     escrowID: uint64,
-    source: Address,
+    source: Account,
     allocatable: boolean,
     optinAllowed: boolean,
     splits: Split[]

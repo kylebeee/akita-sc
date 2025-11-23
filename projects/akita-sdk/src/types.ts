@@ -84,8 +84,8 @@ export type PluginHookParams = {
 
 export type PluginSDKReturn = (spendingAddress?: Address | string) => {
   appId: bigint;
-  selector: Uint8Array;
-  getTxns: (params: PluginHookParams) => Promise<Txn>
+  selectors: Uint8Array[];
+  getTxns: (params: PluginHookParams) => Promise<Txn[]>
 }
 
 export function isPluginSDKReturn(value: unknown): value is PluginSDKReturn {
@@ -93,7 +93,7 @@ export function isPluginSDKReturn(value: unknown): value is PluginSDKReturn {
 }
 
 // Helper type for plugin method specifications that allows both string names and method references
-export type PluginMethodSpecifier = PluginSDKReturn | Uint8Array;
+export type PluginMethodSpecifier = PluginSDKReturn | Uint8Array[];
 
 // Type for SDK constructor parameters with proper client factory typing
 export type SDKConstructorParams<TClient extends SDKClient> = NewContractSDKParams & {

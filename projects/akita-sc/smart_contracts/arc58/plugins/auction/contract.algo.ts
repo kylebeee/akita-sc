@@ -1,19 +1,22 @@
 import { abimethod, Account, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
-import { classes } from "polytype"
-import { Proof } from "../../../utils/types/merkles"
-import { abiCall, Address, compileArc4, encodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
-import { ERR_AUCTION_PRIZE_CANNOT_BE_ALGO, ERR_CREATOR_NOT_AUCTION_FACTORY, ERR_NOT_ENOUGH_ASSET } from "./errors"
+import { abiCall, compileArc4, encodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { AssetHolding, btoi, Global } from "@algorandfoundation/algorand-typescript/op"
-import { AuctionFactory } from "../../../auction/factory.algo"
+import { classes } from "polytype"
+import { AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyGateID } from "../../../auction/constants"
+import { GateMustCheckAbiMethod } from "../../../gates/constants"
+import { GateArgs } from "../../../gates/types"
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
+import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { Proof } from "../../../utils/types/merkles"
+import { AuctionPluginGlobalStateKeyFactory } from "./constants"
+import { ERR_AUCTION_PRIZE_CANNOT_BE_ALGO, ERR_CREATOR_NOT_AUCTION_FACTORY, ERR_NOT_ENOUGH_ASSET } from "./errors"
+
+// CONTRACT IMPORTS
 import { BaseAuction } from "../../../auction/base"
 import { Auction } from "../../../auction/contract.algo"
-import { AuctionGlobalStateKeyBidAsset, AuctionGlobalStateKeyBidFee, AuctionGlobalStateKeyGateID } from "../../../auction/constants"
-import { AuctionPluginGlobalStateKeyFactory } from "./constants"
-import { getAccounts, getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import type { AuctionFactory } from "../../../auction/factory.algo"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
-import { GateArgs } from "../../../gates/types"
-import { GateMustCheckAbiMethod } from "../../../gates/constants"
+
 
 export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
 
@@ -193,7 +196,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
       const hasBid = abiCall<typeof Auction.prototype.hasBid>({
         sender,
         appId: appId,
-        args: [new Address(sender)],
+        args: [sender],
         rekeyTo: rekeyAddress(rekeyBack, wallet)
       }).returnValue
 
@@ -225,7 +228,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
               appId: gate,
               appArgs: [
                 methodSelector(GateMustCheckAbiMethod),
-                new Address(origin),
+                origin,
                 gateID,
                 encodeArc4(args)
               ]
@@ -274,7 +277,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
               appId: gate,
               appArgs: [
                 methodSelector(GateMustCheckAbiMethod),
-                new Address(origin),
+                origin,
                 gateID,
                 encodeArc4(args)
               ]

@@ -1,7 +1,7 @@
-import { Account, assert, bytes, Contract, Global, GlobalState, itxn, Txn } from "@algorandfoundation/algorand-typescript"
-import { ERR_ONLY_CREATOR_CAN_REKEY, ERR_ONLY_FACTORY_CAN_DELETE } from "./errors"
-import { abimethod } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, assert, bytes, Contract, Global, GlobalState, itxn, Txn } from "@algorandfoundation/algorand-typescript";
+import { abimethod } from "@algorandfoundation/algorand-typescript/arc4";
 import { EscrowGlobalStateKeysCreator } from "./constants";
+import { ERR_ONLY_CREATOR_CAN_REKEY, ERR_ONLY_FACTORY_CAN_DELETE } from "./errors";
 
 export class Escrow extends Contract {
 

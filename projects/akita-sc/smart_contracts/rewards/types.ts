@@ -1,9 +1,8 @@
-import { uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, uint64 } from '@algorandfoundation/algorand-typescript'
 
 export type DisbursementDetails = {
   /** the creator of the disbursement */
-  creator: Address
+  creator: Account
   /** the disbursement status */
   finalized: boolean
   /** the disbursement title */
@@ -24,7 +23,7 @@ export type DisbursementDetails = {
 
 export type UserAllocationsKey = {
   /** the address of the account */
-  address: Address
+  address: Account
   /** the asset id being distributed */
   asset: uint64
   /** the disbursement id */
@@ -33,14 +32,14 @@ export type UserAllocationsKey = {
 
 export type UserAllocation = {
   /** the address of the account */
-  address: Address
+  address: Account
   /** the amount the user is owed */
   amount: uint64
 }
 
 export type AllocationReclaimDetails = {
   /** the address of the account */
-  address: Address
+  address: Account
   /** the asset id being distributed */
   asset: uint64
 }

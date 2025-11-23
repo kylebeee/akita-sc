@@ -1,21 +1,24 @@
-import { MetaMerkles } from '../meta-merkles/contract.algo'
 import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { classes } from 'polytype'
-import { HashKey, OfferValue, ParticipantKey } from './types'
-import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
-import { abiCall, Address } from '@algorandfoundation/algorand-typescript/arc4'
-import { ERR_BAD_ROOTS, ERR_CANT_VERIFY_LEAF, ERR_INVALID_STATE, ERR_NOT_A_PARTICIPANT, ERR_OFFER_EXPIRED } from './errors'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { MerkleTreeTypeTrade } from '../meta-merkles/constants'
-import { Proof } from '../utils/types/merkles'
+import { abiCall } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
-import { RefundValue } from '../utils/types/mbr'
-import { BaseHyperSwap } from './base'
-import { AssetInbox } from '../utils/types/asset-inbox'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { arc59OptInAndSend, getAkitaAppList, getOtherAppList } from '../utils/functions'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { classes } from 'polytype'
 import { GlobalStateKeyEscrowFactory } from '../constants'
+import { MerkleTreeTypeTrade } from '../meta-merkles/constants'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { arc59OptInAndSend, getAkitaAppList, getOtherAppList } from '../utils/functions'
+import { RefundValue } from '../utils/types/mbr'
+import { Proof } from '../utils/types/merkles'
+import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
+import { ERR_BAD_ROOTS, ERR_CANT_VERIFY_LEAF, ERR_INVALID_STATE, ERR_NOT_A_PARTICIPANT, ERR_OFFER_EXPIRED } from './errors'
+import { HashKey, OfferValue, ParticipantKey } from './types'
+
+// CONTRACT IMPORTS
+import type { MetaMerkles } from '../meta-merkles/contract.algo'
+import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import type { AssetInbox } from '../utils/types/asset-inbox'
+import { BaseHyperSwap } from './base'
+
 
 export class HyperSwap extends classes(
   BaseHyperSwap,
@@ -127,7 +130,7 @@ export class HyperSwap extends classes(
     const id = this.newOfferID()
 
     // automatically set our sender as the first accepted participant
-    this.participants({ id, address: new Address(Txn.sender) }).value = { payor, amount: hyperSwapOfferMBRAmount }
+    this.participants({ id, address: Txn.sender }).value = { payor, amount: hyperSwapOfferMBRAmount }
 
     // create the offering box & default state
     this.offers(id).value = {
@@ -160,7 +163,7 @@ export class HyperSwap extends classes(
     const isParticipant = abiCall<typeof MetaMerkles.prototype.verify>({
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
-        new Address(Global.currentApplicationAddress),
+        Global.currentApplicationAddress,
         String(participantsRoot),
         sha256(sha256(Txn.sender.bytes)),
         proof,
@@ -171,7 +174,7 @@ export class HyperSwap extends classes(
     assert(isParticipant, ERR_NOT_A_PARTICIPANT)
 
     // ensure they haven't already accepted
-    const senderParticipantKey = { id, address: new Address(Txn.sender) }
+    const senderParticipantKey = { id, address: Txn.sender }
     assert(!this.participants(senderParticipantKey).exists)
     // increment the acceptance count
     const newAcceptances: uint64 = acceptances + 1
@@ -209,7 +212,7 @@ export class HyperSwap extends classes(
    * @param amount the amount in the offer leaf
    * @param proof the proof to verify the details are part of the tree
    */
-  escrow(payment: gtxn.PaymentTxn, id: uint64, receiver: Address, amount: uint64, proof: Proof) {
+  escrow(payment: gtxn.PaymentTxn, id: uint64, receiver: Account, amount: uint64, proof: Proof) {
     // ensure this contract currently controls the sender
     // assert(this.controls(sender.address));
     // ensure the offer exists
@@ -218,17 +221,17 @@ export class HyperSwap extends classes(
     // ensure we are still in the collecting acceptances stage
     assert(state === STATE_ESCROWING, ERR_INVALID_STATE)
     // ensure they are a participant
-    const senderParticipantKey = { id, address: new Address(Txn.sender) }
+    const senderParticipantKey = { id, address: Txn.sender }
     assert(this.participants(senderParticipantKey).exists)
     // ensure this leaf has not already been escrowed
-    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(0)}${itob(amount)}`))
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.bytes}${itob(0)}${itob(amount)}`))
     const hashKey: HashKey = { id, hash }
     assert(!this.hashes(hashKey).exists)
     // verify the leaf
     const verified = abiCall<typeof MetaMerkles.prototype.verify>({
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
-        new Address(Global.currentApplicationAddress),
+        Global.currentApplicationAddress,
         String(root),
         hash,
         proof,
@@ -278,7 +281,7 @@ export class HyperSwap extends classes(
     mbrPayment: gtxn.PaymentTxn,
     assetXfer: gtxn.AssetTransferTxn,
     id: uint64,
-    receiver: Address,
+    receiver: Account,
     asset: uint64,
     amount: uint64,
     proof: Proof
@@ -289,17 +292,17 @@ export class HyperSwap extends classes(
     // ensure we are still in the collecting acceptances stage
     assert(state === STATE_ESCROWING, ERR_INVALID_STATE)
     // ensure they are a participant
-    const senderParticipantKey = { id, address: new Address(Txn.sender) }
+    const senderParticipantKey = { id, address: Txn.sender }
     assert(this.participants(senderParticipantKey).exists)
     // ensure this leaf has not already been escrowed
-    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`))
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.bytes}${itob(asset)}${itob(amount)}`))
     const hashKey: HashKey = { id, hash }
     assert(!this.hashes(hashKey).exists)
     // verify the leaf
     const verified = abiCall<typeof MetaMerkles.prototype.verify>({
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
-        new Address(Global.currentApplicationAddress),
+        Global.currentApplicationAddress,
         String(root),
         hash,
         proof,
@@ -314,7 +317,7 @@ export class HyperSwap extends classes(
     let mbrAmount = costs.hashes
 
     // take the worst case possible amount incase we fallback to arc59
-    if (!receiver.native.isOptedIn(Asset(asset))) {
+    if (!receiver.isOptedIn(Asset(asset))) {
       const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
       const canCallData = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
         appId: assetInbox,
@@ -450,7 +453,7 @@ export class HyperSwap extends classes(
     const isParticipant = abiCall<typeof MetaMerkles.prototype.verify>({
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
-        new Address(Global.currentApplicationAddress),
+        Global.currentApplicationAddress,
         String(participantsRoot),
         sha256(sha256(Txn.sender.bytes)),
         proof,
@@ -474,7 +477,7 @@ export class HyperSwap extends classes(
    * @param proof the proof that the leaf is in the tree
    * @param rekeyBack whether the abstracted account should be rekeyed back at the end
    */
-  withdraw(id: uint64, receiver: Address, asset: uint64, amount: uint64, proof: Proof) {
+  withdraw(id: uint64, receiver: Account, asset: uint64, amount: uint64, proof: Proof) {
     // ensure the offer exists
     assert(this.offers(id).exists)
     const { state, escrowed, root } = this.offers(id).value
@@ -483,14 +486,14 @@ export class HyperSwap extends classes(
     // ensure the escrow count isn't zero
     assert(escrowed > 0)
     // ensure this leaf is still escrowed
-    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.native.bytes}${itob(asset)}${itob(amount)}`))
+    const hash = sha256(sha256(Bytes`${Txn.sender.bytes}${receiver.bytes}${itob(asset)}${itob(amount)}`))
     const hashKey: HashKey = { id, hash }
     assert(this.hashes(hashKey).exists)
     // verify the leaf
     const verified = abiCall<typeof MetaMerkles.prototype.verify>({
       appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
       args: [
-        new Address(Global.currentApplicationAddress),
+        Global.currentApplicationAddress,
         String(root),
         hash,
         proof,

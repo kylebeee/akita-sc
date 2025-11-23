@@ -1,19 +1,19 @@
-import { Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abimethod, Address, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, Global } from '@algorandfoundation/algorand-typescript/op'
-import { Operator } from '../../types'
-import {
-  Equal,
-  NotEqual,
-  LessThan,
-  LessThanOrEqualTo,
-  GreaterThan,
-  GreaterThanOrEqualTo,
-} from '../../../utils/operators'
-import { ERR_INVALID_ARG_COUNT } from '../../errors'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
+import {
+  Equal,
+  GreaterThan,
+  GreaterThanOrEqualTo,
+  LessThan,
+  LessThanOrEqualTo,
+  NotEqual,
+} from '../../../utils/operators'
+import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
+import { ERR_INVALID_ARG_COUNT } from '../../errors'
+import { Operator } from '../../types'
 
 type AssetGateRegistryInfo = {
   asset: uint64
@@ -45,8 +45,8 @@ export class AssetGate extends AkitaBaseContract {
   }
 
   // gates based on holding an asset
-  private assetGate(user: Address, asset: uint64, op: Operator, value: uint64): boolean {
-    const [balance, optedIn] = AssetHolding.assetBalance(user.native, asset)
+  private assetGate(user: Account, asset: uint64, op: Operator, value: uint64): boolean {
+    const [balance, optedIn] = AssetHolding.assetBalance(user, asset)
 
     if (!optedIn) {
       return false
@@ -93,7 +93,7 @@ export class AssetGate extends AkitaBaseContract {
     return id
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     const { asset, op, value } = clone(this.registry(registryID).value)
     return this.assetGate(caller, asset, op, value)

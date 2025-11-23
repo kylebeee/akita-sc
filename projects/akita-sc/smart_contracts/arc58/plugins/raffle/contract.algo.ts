@@ -1,26 +1,25 @@
 import { abimethod, Account, Application, assert, Asset, Bytes, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
-import { classes } from "polytype"
-
 import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4"
-
 import { AssetHolding, btoi, Global } from "@algorandfoundation/algorand-typescript/op"
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
-
-import { FactoryContract } from "../../../utils/base-contracts/factory"
-
-import { BaseRaffle } from "../../../raffle/base"
-import { ERR_CREATOR_NOT_RAFFLE_FACTORY, ERR_NOT_ENOUGH_ASSET } from "./errors"
-import { RaffleFactory } from "../../../raffle/factory.algo"
-import { Raffle } from "../../../raffle/contract.algo"
+import { classes } from "polytype"
+import { GateArgs } from "../../../gates/types"
 import { RaffleGlobalStateKeyTicketAsset } from "../../../raffle/constants"
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants"
 import { ERR_NOT_PRIZE_BOX_OWNER } from "../../../utils/errors"
-import { PrizeBox } from "../../../prize-box/contract.algo"
-import { RafflePluginGlobalStateKeyFactory } from "./constants"
 import { getPrizeBoxOwner, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { Proof } from "../../../utils/types/merkles"
-import { GateArgs } from "../../../gates/types"
+import { RafflePluginGlobalStateKeyFactory } from "./constants"
+import { ERR_CREATOR_NOT_RAFFLE_FACTORY, ERR_NOT_ENOUGH_ASSET } from "./errors"
 
-export class RafflePlugin extends classes(BaseRaffle, FactoryContract) {
+// CONTRACT IMPORTS
+import type { PrizeBox } from "../../../prize-box/contract.algo"
+import { BaseRaffle } from "../../../raffle/base"
+import { Raffle } from "../../../raffle/contract.algo"
+import type { RaffleFactory } from "../../../raffle/factory.algo"
+import { AkitaBaseContract } from "../../../utils/base-contracts/base"
+
+
+export class RafflePlugin extends classes(BaseRaffle, AkitaBaseContract) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 

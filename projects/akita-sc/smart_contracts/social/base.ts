@@ -1,14 +1,14 @@
 import { Account, Application, Asset, bytes, Contract, Global, uint64 } from "@algorandfoundation/algorand-typescript";
-import { AkitaSocialMBRData, tipMBRInfo, ViewPayWallValue } from "./types";
-import { ActionsMBR, BannedMBR, BlocksMBR, FollowsMBR, MetaMBR, MinPayWallMBR, MinPostsMBR, ModeratorsMBR, PayWallPayOptionSize, PayWallTypeOneTimePayment, ReactionlistMBR, ReactionsMBR, TipSendTypeARC58, TipSendTypeARC59, TipSendTypeDirect, VotelistMBR, VotesMBR } from "./constants";
-import { abiCall, Address, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
-import { getAkitaAssets, getOtherAppList, getPluginAppList } from "../utils/functions";
+import { abiCall, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { BoxCostPerByte } from "../utils/constants";
+import { getAkitaAssets, getOtherAppList, getPluginAppList } from "../utils/functions";
+import { ActionsMBR, BannedMBR, BlocksMBR, FollowsMBR, MetaMBR, MinPayWallMBR, MinPostsMBR, ModeratorsMBR, PayWallPayOptionSize, ReactionlistMBR, ReactionsMBR, TipSendTypeARC58, TipSendTypeARC59, TipSendTypeDirect, VotelistMBR, VotesMBR } from "./constants";
+import { AkitaSocialMBRData, tipMBRInfo, ViewPayWallValue } from "./types";
 
 // CONTRACT IMPORTS
-import { OptInPluginInterface } from "../utils/types/plugins/optin";
-import type { AssetInbox } from "../utils/types/asset-inbox";
 import type { AbstractedAccount } from "../arc58/account/contract.algo";
+import type { OptInPlugin } from "../arc58/plugins/optin/contract.algo";
+import type { AssetInbox } from "../utils/types/asset-inbox";
 
 export class BaseSocial extends Contract {
 
@@ -42,9 +42,9 @@ export class BaseSocial extends Contract {
       args: [
         getPluginAppList(akitaDAO).optin,
         true,
-        new Address(Global.zeroAddress),
+        Global.zeroAddress,
         '',
-        methodSelector(OptInPluginInterface.prototype.optIn)
+        methodSelector<typeof OptInPlugin.prototype.optIn>()
       ]
     }).returnValue
   }
@@ -88,7 +88,7 @@ export class BaseSocial extends Contract {
     const arc59 = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
       appId: assetInbox,
       args: [
-        new Address(creator),
+        creator,
         akta.id,
       ]
     }).returnValue

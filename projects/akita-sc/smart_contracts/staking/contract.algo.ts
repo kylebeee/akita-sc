@@ -1,5 +1,6 @@
 import {
   abimethod,
+  Account,
   Application,
   arc4,
   assert,
@@ -14,8 +15,17 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
+import { decodeArc4, StaticArray, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding } from '@algorandfoundation/algorand-typescript/op'
-import { Address, decodeArc4, StaticArray, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { classes } from 'polytype'
+import { arc4Zero } from '../utils/constants'
+import {
+  ERR_INVALID_ASSET_AMOUNT,
+  ERR_INVALID_PAYMENT,
+  ERR_INVALID_PAYMENT_AMOUNT,
+  ERR_INVALID_PAYMENT_RECEIVER,
+  ERR_NOT_OPTED_IN,
+} from '../utils/errors'
 import {
   ONE_YEAR,
   StakingBoxPrefixHeartbeats,
@@ -23,22 +33,6 @@ import {
   StakingBoxPrefixStakes,
   StakingGlobalStateKeyHeartbeatManagerAddress,
 } from './constants'
-import {
-  arc4Heartbeat,
-  Escrow,
-  Heartbeats,
-  Stake,
-  STAKING_TYPE_HARD,
-  STAKING_TYPE_HEARTBEAT,
-  STAKING_TYPE_LOCK,
-  STAKING_TYPE_SOFT,
-  StakingType,
-  AssetCheck,
-  Heartbeat,
-  StakeKey,
-  HeartbeatKey,
-  StakeInfo,
-} from './types'
 import {
   ERR_BAD_EXPIRATION,
   ERR_BAD_EXPIRATION_UPDATE,
@@ -54,24 +48,31 @@ import {
   ERR_WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK,
 } from './errors'
 import {
-  ERR_INVALID_ASSET_AMOUNT,
-  ERR_INVALID_PAYMENT,
-  ERR_INVALID_PAYMENT_AMOUNT,
-  ERR_INVALID_PAYMENT_RECEIVER,
-  ERR_NOT_OPTED_IN,
-} from '../utils/errors'
-import { classes } from 'polytype'
-import { arc4Zero } from '../utils/constants'
+  arc4Heartbeat,
+  AssetCheck,
+  Escrow,
+  Heartbeat,
+  HeartbeatKey,
+  Heartbeats,
+  Stake,
+  StakeInfo,
+  StakeKey,
+  STAKING_TYPE_HARD,
+  STAKING_TYPE_HEARTBEAT,
+  STAKING_TYPE_LOCK,
+  STAKING_TYPE_SOFT,
+  StakingType,
+} from './types'
 
 // CONTRACT IMPORTS
-import { BaseStaking } from './base'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { BaseStaking } from './base'
 
 export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
   /** The address that is allowed to call the 'beat' method to create heartbeat records */
-  heartbeatManagerAddress = GlobalState<Address>({ key: StakingGlobalStateKeyHeartbeatManagerAddress })
+  heartbeatManagerAddress = GlobalState<Account>({ key: StakingGlobalStateKeyHeartbeatManagerAddress })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -88,9 +89,9 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, akitaDAO: uint64): void {
+  create(version: string, akitaDAO: Application): void {
     this.version.value = version
-    this.akitaDAO.value = Application(akitaDAO)
+    this.akitaDAO.value = akitaDAO
   }
 
   // STAKING METHODS ------------------------------------------------------------------------------
@@ -104,9 +105,8 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
     assert((inTheFuture && lessThanOneYearInTheFuture) || !locked, ERR_BAD_EXPIRATION)
 
-    const arc4Sender = new Address(Txn.sender)
     const sk: StakeKey = {
-      address: arc4Sender,
+      address: Txn.sender,
       asset: 0,
       type,
     }
@@ -134,7 +134,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
         let lock: uint64 = 0
 
         const hardStakeKey: StakeKey = {
-          address: arc4Sender,
+          address: Txn.sender,
           asset: 0,
           type: STAKING_TYPE_HARD,
         }
@@ -144,7 +144,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
         }
 
         const lockStakeKey: StakeKey = {
-          address: arc4Sender,
+          address: Txn.sender,
           asset: 0,
           type: STAKING_TYPE_LOCK,
         }
@@ -163,7 +163,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
         )
 
         const heartbeatKey: HeartbeatKey = {
-          address: new Address(Txn.sender),
+          address: Txn.sender,
           asset: 0,
         }
 
@@ -247,9 +247,8 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     assert((inTheFuture && lessThanMaxLockup) || !locked, ERR_BAD_EXPIRATION)
 
     const asset = assetXfer.xferAsset.id
-    const arc4Sender = new Address(Txn.sender)
 
-    const sk: StakeKey = { address: arc4Sender, asset, type }
+    const sk: StakeKey = { address: Txn.sender, asset, type }
 
     const isUpdate = this.stakes(sk).exists
 
@@ -271,14 +270,14 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
         const held = new Uint64(holdingAmount)
 
-        const hardStakeKey: StakeKey = { address: arc4Sender, asset, type: STAKING_TYPE_HARD }
+        const hardStakeKey: StakeKey = { address: Txn.sender, asset, type: STAKING_TYPE_HARD }
 
         let hard: uint64 = 0
         if (this.stakes(hardStakeKey).exists) {
           hard = this.stakes(hardStakeKey).value.amount
         }
 
-        const lockStakeKey: StakeKey = { address: arc4Sender, asset, type: STAKING_TYPE_LOCK }
+        const lockStakeKey: StakeKey = { address: Txn.sender, asset, type: STAKING_TYPE_LOCK }
 
         let lock: uint64 = 0
         if (this.stakes(lockStakeKey).exists) {
@@ -291,7 +290,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
         // if they aren't escrowing, we need to make sure the asset transfer is 0, doesn't matter to who in this case
         assert(assetXfer.assetAmount === 0, ERR_INVALID_ASSET_AMOUNT)
 
-        const heartbeatKey: HeartbeatKey = { address: arc4Sender, asset }
+        const heartbeatKey: HeartbeatKey = { address: Txn.sender, asset }
 
         const hbv = new arc4Heartbeat({
           held,
@@ -365,8 +364,8 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
       type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK,
       ERR_WITHDRAW_IS_ONLY_FOR_HARD_OR_LOCK
     )
-    const arc4Sender = new Address(Txn.sender)
-    const sk = { address: arc4Sender, asset, type }
+
+    const sk = { address: Txn.sender, asset, type }
     assert(this.stakes(sk).exists, ERR_NO_LOCK)
 
     const { expiration, amount } = this.stakes(sk).value
@@ -391,8 +390,8 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     this.stakes(sk).delete()
   }
 
-  createHeartbeat(address: Address, asset: uint64): void {
-    assert(Txn.sender === this.heartbeatManagerAddress.value.native, ERR_NOT_HEARTBEAT_MANAGER)
+  createHeartbeat(address: Account, asset: uint64): void {
+    assert(Txn.sender === this.heartbeatManagerAddress.value, ERR_NOT_HEARTBEAT_MANAGER)
 
     const hbk = { address, asset }
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
@@ -400,7 +399,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     const timestamp = new Uint64(Global.latestTimestamp)
     const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
 
-    const [holdings] = AssetHolding.assetBalance(address.native, asset)
+    const [holdings] = AssetHolding.assetBalance(address, asset)
     const held = new Uint64(holdings)
 
     const hardStakeKey = {
@@ -448,7 +447,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     }
   }
 
-  softCheck(address: Address, asset: uint64): { valid: boolean, balance: uint64 } {
+  softCheck(address: Account, asset: uint64): { valid: boolean, balance: uint64 } {
     const sk = { address, asset, type: STAKING_TYPE_SOFT }
     assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
 
@@ -456,18 +455,18 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     const lastUpdate = Global.latestTimestamp
 
     if (asset === 0) {
-      const valid = address.native.balance >= amount
+      const valid = address.balance >= amount
       if (!valid) {
         this.stakes(sk).value = {
-          amount: address.native.balance,
+          amount: address.balance,
           lastUpdate,
           expiration: 0,
         }
       }
-      return { valid, balance: address.native.balance }
+      return { valid, balance: address.balance }
     }
 
-    const [holdingAmount, optedIn] = AssetHolding.assetBalance(address.native, asset)
+    const [holdingAmount, optedIn] = AssetHolding.assetBalance(address, asset)
     assert(optedIn, ERR_NOT_OPTED_IN)
     const valid = holdingAmount >= amount
     if (!valid) {
@@ -499,7 +498,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
 
   @abimethod({ readonly: true })
-  getTimeLeft(address: Address, asset: uint64): uint64 {
+  getTimeLeft(address: Account, asset: uint64): uint64 {
     const sk = { address, asset, type: STAKING_TYPE_LOCK }
 
     if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration) {
@@ -510,7 +509,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  mustGetTimeLeft(address: Address, asset: uint64): uint64 {
+  mustGetTimeLeft(address: Account, asset: uint64): uint64 {
     const sk = { address, asset, type: STAKING_TYPE_LOCK }
     assert(this.stakes(sk).exists, ERR_NO_LOCK)
     assert(Global.latestTimestamp < this.stakes(sk).value.expiration, ERR_LOCKED)
@@ -518,7 +517,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  getInfo(address: Address, stake: StakeInfo): Stake {
+  getInfo(address: Account, stake: StakeInfo): Stake {
     const sk = { address, ...stake }
     if (!this.stakes(sk).exists) {
       return { amount: 0, lastUpdate: 0, expiration: 0 }
@@ -528,7 +527,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  mustGetInfo(address: Address, stake: StakeInfo): Stake {
+  mustGetInfo(address: Account, stake: StakeInfo): Stake {
     const sk = { address, ...stake }
     assert(this.stakes(sk).exists, ERR_NO_LOCK)
 
@@ -536,7 +535,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  getEscrowInfo(address: Address, asset: uint64): Escrow {
+  getEscrowInfo(address: Account, asset: uint64): Escrow {
     const sk = { address, asset, type: STAKING_TYPE_HARD }
     const lk = { address, asset, type: STAKING_TYPE_LOCK }
 
@@ -554,7 +553,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  getHeartbeat(address: Address, asset: uint64): Heartbeats {
+  getHeartbeat(address: Account, asset: uint64): Heartbeats {
     const hbk = { address, asset }
     if (!this.heartbeats(hbk).exists) {
 
@@ -572,14 +571,14 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  mustGetHeartbeat(address: Address, asset: uint64): Heartbeats {
+  mustGetHeartbeat(address: Account, asset: uint64): Heartbeats {
     const hbk = { address, asset }
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
     return decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
   }
 
   @abimethod({ readonly: true })
-  getHeartbeatAverage(address: Address, asset: uint64, includeEscrowed: boolean): uint64 {
+  getHeartbeatAverage(address: Account, asset: uint64, includeEscrowed: boolean): uint64 {
     const hbk = { address, asset }
 
     if (!this.heartbeats(hbk).exists) {
@@ -601,7 +600,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  mustGetHeartbeatAverage(address: Address, asset: uint64, includeEscrowed: boolean): uint64 {
+  mustGetHeartbeatAverage(address: Account, asset: uint64, includeEscrowed: boolean): uint64 {
     const hbk = { address, asset }
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
 
@@ -620,7 +619,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  getInfoList(address: Address, type: StakingType, assets: uint64[]): Stake[] {
+  getInfoList(address: Account, type: StakingType, assets: uint64[]): Stake[] {
     let results: Stake[] = []
     for (let i: uint64 = 0; i < assets.length; i += 1) {
       const sk = { address, asset: assets[i], type }
@@ -642,7 +641,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  mustGetInfoList(address: Address, type: StakingType, assets: uint64[]): Stake[] {
+  mustGetInfoList(address: Account, type: StakingType, assets: uint64[]): Stake[] {
     let results: Stake[] = []
     for (let i: uint64 = 0; i < assets.length; i += 1) {
       const sk = { address, asset: assets[i], type }
@@ -653,7 +652,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  stakeCheck(address: Address, checks: AssetCheck[], type: StakingType, includeEscrowed: boolean): boolean {
+  stakeCheck(address: Account, checks: AssetCheck[], type: StakingType, includeEscrowed: boolean): boolean {
     for (let i: uint64 = 0; i < checks.length; i += 1) {
       const sk = { address, asset: checks[i].asset, type }
       if (!this.stakes(sk).exists) {

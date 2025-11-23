@@ -2,7 +2,6 @@ import {
   Account,
   assert,
   Box,
-  Bytes,
   bytes,
   Global,
   GlobalState,
@@ -10,12 +9,14 @@ import {
   OnCompleteAction,
   TransactionType,
   Txn,
-  uint64,
+  uint64
 } from '@algorandfoundation/algorand-typescript'
-import { Contract, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
+import { methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_NOT_AKITA_DAO } from '../../errors'
-import { AkitaBaseFeeGeneratorContract } from './base'
 import { ERR_CONTRACT_NOT_SET, ERR_INVALID_CALL_ORDER } from '../errors'
+
+// CONTRACT IMPORTS
+import { AkitaBaseFeeGeneratorContract } from './base'
 
 export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
 export const BoxKeyBoxedContract = 'bc'

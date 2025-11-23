@@ -1,34 +1,40 @@
-import { BasePool } from "../../../pool/base";
-import { classes } from 'polytype';
-import { FactoryContract } from "../../../utils/base-contracts/factory";
 import { abimethod, Account, Application, assert, Asset, Bytes, Global, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { PoolPluginGlobalStateKeyFactory } from "./constants";
-import { getSpendingAccount, getStakingFees, rekeyAddress } from "../../../utils/functions";
-import { StakingType } from "../../../staking/types";
-import { Reward, StakeEntry } from "../../../pool/types";
-import { abiCall, Address, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
-import { RootKey } from "../../../meta-merkles/types";
-import { PoolFactory } from "../../../pool/factory.algo";
-import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants";
-import { Pool } from "../../../pool/contract.algo";
-import { ERR_NOT_A_VALID_POOL } from "./errors";
-import { GlobalStateKeyAkitaEscrow } from "../../../constants";
+import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { btoi } from "@algorandfoundation/algorand-typescript/op";
-import { PoolEntriesByAddressMBR, PoolEntriesMBR, PoolUniquesMBR, WinnerCountCap } from "../../../pool/constants";
+import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from "../../../constants";
 import { GateArgs } from "../../../gates/types";
+import { RootKey } from "../../../meta-merkles/types";
+import { PoolEntriesByAddressMBR, PoolEntriesMBR, PoolUniquesMBR, WinnerCountCap } from "../../../pool/constants";
+import { Reward, StakeEntry } from "../../../pool/types";
+import { StakingType } from "../../../staking/types";
+import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants";
+import { getSpendingAccount, getStakingFees, rekeyAddress } from "../../../utils/functions";
+import { PoolPluginGlobalStateKeyFactory } from "./constants";
+import { ERR_NOT_A_VALID_POOL } from "./errors";
 
-export class PoolPlugin extends classes(BasePool, FactoryContract) {
+// CONTRACT IMPORTS
+import { BasePool } from "../../../pool/base";
+import { Pool } from "../../../pool/contract.algo";
+import type { PoolFactory } from "../../../pool/factory.algo";
+
+
+export class PoolPlugin extends BasePool {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
+  version = GlobalState<string>({ key: GlobalStateKeyVersion })
+  /** the factory contract */
   factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
+  /** the Akita DAO */
+  akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, factory: Application): void {
+  create(version: string, factory: Application, akitaDAO: Application): void {
     this.version.value = version
     this.factory.value = factory
+    this.akitaDAO.value = akitaDAO
   }
 
   // POOL PLUGIN METHODS --------------------------------------------------------------------------
@@ -229,7 +235,7 @@ export class PoolPlugin extends classes(BasePool, FactoryContract) {
     const isEntered = abiCall<typeof Pool.prototype.isEntered>({
       sender,
       appId,
-      args: [new Address(sender)]
+      args: [sender]
     }).returnValue
 
     if (!isEntered) {

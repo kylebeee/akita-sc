@@ -4,73 +4,55 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 1 0 2 8
-    bytecblock "akita_dao" 0x151f7c75 "registry_cursor" "" "version" "wallet"
+    bytecblock 0x151f7c75 "akita_dao" "registry_cursor" ""
     txn ApplicationID
     bnz main_after_if_else@2
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:23
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:26
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
     intc_0 // 1
     app_global_put
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:26
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:29
     // registrationShape = GlobalState<string>({ initialValue: '(uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
     pushbytess "registration_shape" "(uint8,uint64)" // "registration_shape", "(uint8,uint64)"
     app_global_put
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:28
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:31
     // checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
     pushbytes "check_shape"
     bytec_3 // ""
     app_global_put
 
 main_after_if_else@2:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:19
-    // export class SocialModeratorGate extends AkitaBaseContract {
-    pushbytes 0xea9180dd // method "update(string)void"
-    txna ApplicationArgs 0
-    match main_update_route@4
-
-main_switch_case_next@5:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:19
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:22
     // export class SocialModeratorGate extends AkitaBaseContract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@15
+    bz main_create_NoOp@13
     pushbytess 0x329f04ee 0x77bb79b9 0x6e03f50a 0x81f16543 0x90d4fa5d 0x33e92c94 0x854dede0 // method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((uint8,uint64))(uint8,uint64)", method "getEntry(uint64)byte[]", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match cost register check getRegistrationShape getEntry updateAkitaDAO main_opUp_route@13
+    match cost register check getRegistrationShape getEntry updateAkitaDAO main_opUp_route@11
     err
 
-main_opUp_route@13:
+main_opUp_route@11:
     // smart_contracts/utils/base-contracts/base.ts:41
     // opUp(): void { }
     intc_0 // 1
     return
 
-main_create_NoOp@15:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:19
+main_create_NoOp@13:
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:22
     // export class SocialModeratorGate extends AkitaBaseContract {
     pushbytes 0xcd9ad67e // method "create(string,uint64)void"
     txna ApplicationArgs 0
     match create
     err
 
-main_update_route@4:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txn OnCompletion
-    pushint 4 // UpdateApplication
-    ==
-    txn ApplicationID
-    &&
-    assert // OnCompletion must be UpdateApplication && can only call when not creating
-    b update
-
 
 // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.create[routing]() -> void:
 create:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:67
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:70
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -90,21 +72,21 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:17
+    // smart_contracts/utils/base-contracts/base.ts:25
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:69
+    pushbytes "version"
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:72
     // this.version.value = version
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:70
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:73
     // this.akitaDAO.value = Application(akitaDAO)
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:67
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:70
     // @abimethod({ onCreate: 'require' })
     intc_0 // 1
     return
@@ -112,7 +94,7 @@ create:
 
 // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.cost[routing]() -> void:
 cost:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:75
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:78
     // cost(args: bytes): uint64 {
     txna ApplicationArgs 1
     dup
@@ -132,7 +114,7 @@ cost:
 
 // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.register[routing]() -> void:
 register:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:79
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:82
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     txn GroupIndex
     intc_0 // 1
@@ -153,14 +135,14 @@ register:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:80
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:83
     // assert(args.length === OperatorAndValueByteLength, ERR_INVALID_ARG_COUNT)
     dup
     len
     pushint 9 // 9
     ==
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:81-88
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:84-91
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -171,10 +153,10 @@ register:
     // )
     dig 1
     gtxns Receiver
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:84
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:87
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:81-88
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:84-91
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -186,10 +168,10 @@ register:
     ==
     uncover 2
     gtxns Amount
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:85
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:88
     // amount: OperatorAndValueRegistryMBR
     pushint 9300 // 9300
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:81-88
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:84-91
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -201,37 +183,37 @@ register:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:37
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:40
     // const id = this.registryCursor.value
     intc_1 // 0
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:23
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:26
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:37
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:40
     // const id = this.registryCursor.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:38
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:41
     // this.registryCursor.value += 1
     dup
     intc_0 // 1
     +
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:23
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:26
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:38
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:41
     // this.registryCursor.value += 1
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:91
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:94
     // this.registry(id).value = decodeArc4<OperatorAndValue>(args)
     itob
     dup
     uncover 2
     box_put
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:79
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:82
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
@@ -242,8 +224,8 @@ register:
 // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.check[routing]() -> void:
 check:
     bytec_3 // ""
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:95
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // check(caller: Account, registryID: uint64, args: bytes): boolean {
     txna ApplicationArgs 1
     dup
     len
@@ -268,12 +250,12 @@ check:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:96
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:99
     // assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     len
     !
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:97
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:100
     // const { op, value } = clone(this.registry(registryID).value)
     itob
     box_get
@@ -284,32 +266,32 @@ check:
     intc_0 // 1
     extract_uint64
     swap
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:43-46
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:46-49
     // const { exists, lastActive } = abiCall<typeof AkitaSocial.prototype.moderatorMeta>({
     //   appId: getAkitaAppList(this.akitaDAO.value).social,
     //   args: [user],
     // }).returnValue
     itxn_begin
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:44
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:47
     // appId: getAkitaAppList(this.akitaDAO.value).social,
     intc_1 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:44
+    bytec_1 // "akita_dao"
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:47
     // appId: getAkitaAppList(this.akitaDAO.value).social,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:40
+    // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:44
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:47
     // appId: getAkitaAppList(this.akitaDAO.value).social,
     pushint 96 // 96
     extract_uint64
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:43-46
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:46-49
     // const { exists, lastActive } = abiCall<typeof AkitaSocial.prototype.moderatorMeta>({
     //   appId: getAkitaAppList(this.akitaDAO.value).social,
     //   args: [user],
@@ -328,7 +310,7 @@ check:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -342,21 +324,21 @@ check:
     pushint 5 // 5
     extract_uint64
     swap
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:48
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:51
     // if (!exists) {
     bnz check_after_if_else@3
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:49
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:52
     // return false
     intc_1 // 0
 
 check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:95
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // check(caller: Account, registryID: uint64, args: bytes): boolean {
     pushbytes 0x00
     intc_1 // 0
     uncover 2
     setbit
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
@@ -364,13 +346,13 @@ check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.al
     return
 
 check_after_if_else@3:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:52
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:55
     // const since: uint64 = Global.latestTimestamp - value
     global LatestTimestamp
     dig 2
     -
     bury 4
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:55
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:58
     // case Equal: return lastActive === since
     dig 2
     pushbytes 0x0a
@@ -379,12 +361,12 @@ check_after_if_else@3:
     dup
     dig 4
     ==
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
     // return this.moderatorGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16
 
 check_after_if_else@5:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:56
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:59
     // case NotEqual: return lastActive !== since
     dig 2
     pushbytes 0x14
@@ -393,12 +375,12 @@ check_after_if_else@5:
     dup
     dig 4
     !=
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
     // return this.moderatorGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16
 
 check_after_if_else@7:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:57
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:60
     // case LessThan: return lastActive < since
     dig 2
     pushbytes 0x1e
@@ -407,12 +389,12 @@ check_after_if_else@7:
     dup
     dig 4
     <
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
     // return this.moderatorGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16
 
 check_after_if_else@9:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:58
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:61
     // case LessThanOrEqualTo: return lastActive <= since
     dig 2
     pushbytes 0x28
@@ -421,12 +403,12 @@ check_after_if_else@9:
     dup
     dig 4
     <=
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
     // return this.moderatorGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16
 
 check_after_if_else@11:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:59
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:62
     // case GreaterThan: return lastActive > since
     dig 2
     pushbytes 0x32
@@ -435,12 +417,12 @@ check_after_if_else@11:
     dup
     dig 4
     >
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
     // return this.moderatorGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16
 
 check_after_if_else@13:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:60
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:63
     // case GreaterThanOrEqualTo: return lastActive >= since
     dig 2
     pushbytes 0x3c
@@ -449,22 +431,22 @@ check_after_if_else@13:
     dup
     dig 4
     >=
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
     // return this.moderatorGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16
 
 check_after_if_else@15:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:61
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:64
     // default: return false
     intc_1 // 0
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:98
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
     // return this.moderatorGate(caller, op, value)
     b check_after_inlined_smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.moderatorGate@16
 
 
 // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.getRegistrationShape[routing]() -> void:
 getRegistrationShape:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:101
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:104
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -472,7 +454,7 @@ getRegistrationShape:
     pushint 9 // 9
     ==
     assert // invalid number of bytes for (uint8,uint64)
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
@@ -482,7 +464,7 @@ getRegistrationShape:
 
 // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts::SocialModeratorGate.getEntry[routing]() -> void:
 getEntry:
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:106
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:109
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -491,12 +473,12 @@ getEntry:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:108
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:111
     // return encodeArc4(this.registry(registryID).value)
     itob
     box_get
     assert // Box must have value
-    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:106
+    // smart_contracts/gates/sub-gates/social-moderator/contract.algo.ts:109
     // @abimethod({ readonly: true })
     dup
     len
@@ -504,60 +486,10 @@ getEntry:
     extract 6 2
     swap
     concat
-    bytec_1 // 0x151f7c75
+    bytec_0 // 0x151f7c75
     swap
     concat
     log
-    intc_0 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
-update:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txna ApplicationArgs 1
-    dup
-    intc_1 // 0
-    extract_uint16
-    intc_2 // 2
-    +
-    dig 1
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_1 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    app_global_get_ex
-    assert // check GlobalState exists
-    bytec 5 // "wallet"
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:17
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // this.version.value = newVersion
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_0 // 1
     return
 
@@ -579,14 +511,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_1 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
-    bytec 5 // "wallet"
+    pushbytes "wallet"
     app_global_get_ex
     pop
     // smart_contracts/utils/base-contracts/base.ts:37
@@ -595,9 +527,9 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:38
     // this.akitaDAO.value = akitaDAO
     swap

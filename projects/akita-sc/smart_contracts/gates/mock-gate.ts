@@ -1,5 +1,5 @@
-import { Bytes, bytes, Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { abimethod, Address } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, Bytes, bytes, Contract, gtxn, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abimethod } from "@algorandfoundation/algorand-typescript/arc4"
 
 export class MockGate extends Contract {
 
@@ -11,7 +11,7 @@ export class MockGate extends Contract {
     return 0
   }
 
-  check(caller: Address, registryID: uint64, args: bytes): boolean {
+  check(caller: Account, registryID: uint64, args: bytes): boolean {
     return false
   }
 

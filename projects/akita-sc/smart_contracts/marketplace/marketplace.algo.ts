@@ -1,16 +1,19 @@
-import { abiCall, abimethod, Address, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { Proof } from '../utils/types/merkles'
-import { Listing } from './listing.algo'
-import { Account, Application, assert, assertMatch, Asset, Bytes, Global, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, assert, assertMatch, Bytes, Global, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
-import { FactoryContract } from '../utils/base-contracts/factory'
+import { ERR_HAS_GATE } from '../social/errors'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { ERR_NOT_A_LISTING, ERR_PRICE_TOO_LOW } from './errors'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { gateCheck, getFunder, getWalletIDUsingAkitaDAO, originOrTxnSender, royalties } from '../utils/functions'
+import { Proof } from '../utils/types/merkles'
 import { ListingGlobalStateKeyGateID } from './constants'
-import { ERR_HAS_GATE } from '../social/errors'
+import { ERR_NOT_A_LISTING, ERR_PRICE_TOO_LOW } from './errors'
+
+// CONTRACT IMPORTS
+import { FactoryContract } from '../utils/base-contracts/factory'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { Listing } from './listing.algo'
+
 
 export class Marketplace extends classes(FactoryContract, ContractWithOptIn) {
 
@@ -146,9 +149,9 @@ export class Marketplace extends classes(FactoryContract, ContractWithOptIn) {
     price: uint64,
     paymentAsset: uint64,
     expiration: uint64,
-    reservedFor: Address,
+    reservedFor: Account,
     gateID: uint64,
-    marketplace: Address,
+    marketplace: Account,
   ): uint64 {
     // TODO: implement this
     return 0

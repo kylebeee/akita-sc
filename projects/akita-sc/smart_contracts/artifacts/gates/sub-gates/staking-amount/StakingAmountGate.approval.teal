@@ -4,73 +4,55 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 2 8
-    bytecblock 0x151f7c75 "akita_dao" "registry_cursor" "" "version" "wallet"
+    bytecblock 0x151f7c75 "akita_dao" "registry_cursor" ""
     txn ApplicationID
     bnz main_after_if_else@2
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:40
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:41
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
     intc_1 // 1
     app_global_put
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:42
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:43
     // registrationShape = GlobalState<string>({ initialValue: '(uint8,uint64,uint8,uint64,bool)', key: GateGlobalStateKeyRegistrationShape })
     pushbytess "registration_shape" "(uint8,uint64,uint8,uint64,bool)" // "registration_shape", "(uint8,uint64,uint8,uint64,bool)"
     app_global_put
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:44
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:45
     // checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
     pushbytes "check_shape"
     bytec_3 // ""
     app_global_put
 
 main_after_if_else@2:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:36
-    // export class StakingAmountGate extends AkitaBaseContract {
-    pushbytes 0xea9180dd // method "update(string)void"
-    txna ApplicationArgs 0
-    match main_update_route@4
-
-main_switch_case_next@5:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:36
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:37
     // export class StakingAmountGate extends AkitaBaseContract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@15
+    bz main_create_NoOp@13
     pushbytess 0x329f04ee 0x77bb79b9 0x6e03f50a 0x35249914 0x90d4fa5d 0x33e92c94 0x854dede0 // method "cost(byte[])uint64", method "register(pay,byte[])uint64", method "check(address,uint64,byte[])bool", method "getRegistrationShape((uint8,uint64,uint8,uint64,bool))(uint8,uint64,uint8,uint64,bool)", method "getEntry(uint64)byte[]", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match cost register check getRegistrationShape getEntry updateAkitaDAO main_opUp_route@13
+    match cost register check getRegistrationShape getEntry updateAkitaDAO main_opUp_route@11
     err
 
-main_opUp_route@13:
+main_opUp_route@11:
     // smart_contracts/utils/base-contracts/base.ts:41
     // opUp(): void { }
     intc_1 // 1
     return
 
-main_create_NoOp@15:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:36
+main_create_NoOp@13:
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:37
     // export class StakingAmountGate extends AkitaBaseContract {
     pushbytes 0xcd9ad67e // method "create(string,uint64)void"
     txna ApplicationArgs 0
     match create
     err
 
-main_update_route@4:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txn OnCompletion
-    pushint 4 // UpdateApplication
-    ==
-    txn ApplicationID
-    &&
-    assert // OnCompletion must be UpdateApplication && can only call when not creating
-    b update
-
 
 // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.create[routing]() -> void:
 create:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:96
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:97
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -90,21 +72,21 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:17
+    // smart_contracts/utils/base-contracts/base.ts:25
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:98
+    pushbytes "version"
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:99
     // this.version.value = version
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:99
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:100
     // this.akitaDAO.value = Application(akitaDAO)
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:96
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:97
     // @abimethod({ onCreate: 'require' })
     intc_1 // 1
     return
@@ -112,7 +94,7 @@ create:
 
 // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.cost[routing]() -> void:
 cost:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:104
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:105
     // cost(args: bytes): uint64 {
     txna ApplicationArgs 1
     dup
@@ -132,7 +114,7 @@ cost:
 
 // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.register[routing]() -> void:
 register:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:108
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:109
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     txn GroupIndex
     intc_1 // 1
@@ -154,14 +136,14 @@ register:
     assert // invalid number of bytes for (len+uint8[])
     dup
     extract 2 0
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:109
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:110
     // assert(args.length === RegisterByteLength, ERR_INVALID_ARG_COUNT)
     dup
     len
     pushint 19 // 19
     ==
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:110-117
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:111-118
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -172,10 +154,10 @@ register:
     // )
     dig 2
     gtxns Receiver
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:113
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:114
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:110-117
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:111-118
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -187,10 +169,10 @@ register:
     ==
     uncover 3
     gtxns Amount
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:114
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:115
     // amount: StakingAmountGateRegistryMBR
     pushint 13300 // 13300
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:110-117
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:111-118
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -202,7 +184,7 @@ register:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:121
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:122
     // assert(params.op.asUint64() <= 6, ERR_BAD_OPERATION)
     swap
     intc_2 // 2
@@ -210,35 +192,35 @@ register:
     pushint 6 // 6
     <=
     assert // bad operation check
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:53
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:54
     // const id = this.registryCursor.value
     intc_0 // 0
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:40
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:41
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:53
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:54
     // const id = this.registryCursor.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:54
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:55
     // this.registryCursor.value += 1
     dup
     intc_1 // 1
     +
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:40
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:41
     // registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
     bytec_2 // "registry_cursor"
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:54
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:55
     // this.registryCursor.value += 1
     swap
     app_global_put
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:123
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:124
     // this.registry(id).value = clone(params)
     itob
     dup
     uncover 2
     box_put
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:108
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:109
     // register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
     bytec_0 // 0x151f7c75
     swap
@@ -251,8 +233,8 @@ register:
 // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.check[routing]() -> void:
 check:
     bytec_3 // ""
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:127
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:128
+    // check(caller: Account, registryID: uint64, args: bytes): boolean {
     txna ApplicationArgs 1
     dup
     len
@@ -277,12 +259,12 @@ check:
     ==
     assert // invalid number of bytes for (len+uint8[])
     extract 2 0
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:128
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:129
     // assert(args.length === 0, ERR_INVALID_ARG_COUNT)
     len
     !
     assert // Invalid number of arguments
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:129
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:130
     // const { op, asset, amount, type, includeEscrowed } = clone(this.registry(registryID).value)
     itob
     box_get
@@ -305,44 +287,44 @@ check:
     pushint 144 // 144
     getbit
     cover 2
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:67
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:68
     // const appId = getAkitaAppList(this.akitaDAO.value).staking
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:67
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:68
     // const appId = getAkitaAppList(this.akitaDAO.value).staking
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:40
+    // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     pushbytes "akita_al"
     app_global_get_ex
     pop
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:67
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:68
     // const appId = getAkitaAppList(this.akitaDAO.value).staking
     intc_0 // 0
     extract_uint64
     cover 2
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:69
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:70
     // if (type === STAKING_TYPE_HEARTBEAT) {
     pushbytes 0x0a
     ==
     bz check_else_body@3
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:70-73
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:71-74
     // staked = abiCall<typeof Staking.prototype.getHeartbeatAverage>({
     //   appId,
     //   args: [user, asset, includeEscrowed],
     // }).returnValue
     itxn_begin
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:72
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:73
     // args: [user, asset, includeEscrowed],
     pushbytes 0x00
     intc_0 // 0
     dig 4
     setbit
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:70-73
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:71-74
     // staked = abiCall<typeof Staking.prototype.getHeartbeatAverage>({
     //   appId,
     //   args: [user, asset, includeEscrowed],
@@ -378,7 +360,7 @@ check:
     bury 7
 
 check_after_if_else@4:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:84
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:85
     // case Equal: return staked === amount
     dig 5
     pushbytes 0x0a
@@ -389,8 +371,8 @@ check_after_if_else@4:
     ==
 
 check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.stakingAmountGate@17:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:127
-    // check(caller: Address, registryID: uint64, args: bytes): boolean {
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:128
+    // check(caller: Account, registryID: uint64, args: bytes): boolean {
     pushbytes 0x00
     intc_0 // 0
     uncover 2
@@ -403,7 +385,7 @@ check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo
     return
 
 check_after_if_else@6:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:85
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:86
     // case NotEqual: return staked !== amount
     dig 5
     pushbytes 0x14
@@ -412,7 +394,7 @@ check_after_if_else@6:
     dig 6
     dig 4
     !=
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:130-137
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:131-138
     // return this.stakingAmountGate(
     //   caller,
     //   op,
@@ -424,7 +406,7 @@ check_after_if_else@6:
     b check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.stakingAmountGate@17
 
 check_after_if_else@8:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:86
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:87
     // case LessThan: return staked < amount
     dig 5
     pushbytes 0x1e
@@ -433,7 +415,7 @@ check_after_if_else@8:
     dig 6
     dig 4
     <
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:130-137
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:131-138
     // return this.stakingAmountGate(
     //   caller,
     //   op,
@@ -445,7 +427,7 @@ check_after_if_else@8:
     b check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.stakingAmountGate@17
 
 check_after_if_else@10:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:87
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:88
     // case LessThanOrEqualTo: return staked <= amount
     dig 5
     pushbytes 0x28
@@ -454,7 +436,7 @@ check_after_if_else@10:
     dig 6
     dig 4
     <=
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:130-137
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:131-138
     // return this.stakingAmountGate(
     //   caller,
     //   op,
@@ -466,7 +448,7 @@ check_after_if_else@10:
     b check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.stakingAmountGate@17
 
 check_after_if_else@12:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:88
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:89
     // case GreaterThan: return staked > amount
     dig 5
     pushbytes 0x32
@@ -475,7 +457,7 @@ check_after_if_else@12:
     dig 6
     dig 4
     >
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:130-137
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:131-138
     // return this.stakingAmountGate(
     //   caller,
     //   op,
@@ -487,7 +469,7 @@ check_after_if_else@12:
     b check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.stakingAmountGate@17
 
 check_after_if_else@14:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:89
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:90
     // case GreaterThanOrEqualTo: return staked >= amount
     dig 5
     pushbytes 0x3c
@@ -496,7 +478,7 @@ check_after_if_else@14:
     dig 6
     dig 4
     >=
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:130-137
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:131-138
     // return this.stakingAmountGate(
     //   caller,
     //   op,
@@ -508,10 +490,10 @@ check_after_if_else@14:
     b check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.stakingAmountGate@17
 
 check_after_if_else@16:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:90
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:91
     // default: return false
     intc_0 // 0
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:130-137
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:131-138
     // return this.stakingAmountGate(
     //   caller,
     //   op,
@@ -523,18 +505,18 @@ check_after_if_else@16:
     b check_after_inlined_smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.stakingAmountGate@17
 
 check_else_body@3:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:75-78
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:76-79
     // const info = abiCall<typeof Staking.prototype.mustGetInfo>({
     //   appId,
     //   args: [user, { asset, type }],
     // }).returnValue
     itxn_begin
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:77
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:78
     // args: [user, { asset, type }],
     dig 5
     dig 4
     concat
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:75-78
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:76-79
     // const info = abiCall<typeof Staking.prototype.mustGetInfo>({
     //   appId,
     //   args: [user, { asset, type }],
@@ -564,7 +546,7 @@ check_else_body@3:
     ==
     assert // invalid number of bytes for (uint64,uint64,uint64)
     pushint 4 // 4
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:80
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:81
     // staked = info.amount
     extract_uint64
     bury 7
@@ -573,7 +555,7 @@ check_else_body@3:
 
 // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.getRegistrationShape[routing]() -> void:
 getRegistrationShape:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:140
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:141
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -591,7 +573,7 @@ getRegistrationShape:
 
 // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts::StakingAmountGate.getEntry[routing]() -> void:
 getEntry:
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:145
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:146
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -600,12 +582,12 @@ getEntry:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:147
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:148
     // return encodeArc4(this.registry(registryID).value)
     itob
     box_get
     assert // Box must have value
-    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:145
+    // smart_contracts/gates/sub-gates/staking-amount/contract.algo.ts:146
     // @abimethod({ readonly: true })
     dup
     len
@@ -617,56 +599,6 @@ getEntry:
     swap
     concat
     log
-    intc_1 // 1
-    return
-
-
-// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.update[routing]() -> void:
-update:
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
-    txna ApplicationArgs 1
-    dup
-    intc_0 // 0
-    extract_uint16
-    intc_2 // 2
-    +
-    dig 1
-    len
-    ==
-    assert // invalid number of bytes for (len+utf8[])
-    extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
-    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
-    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
-    app_global_get_ex
-    assert // check GlobalState exists
-    bytec 5 // "wallet"
-    app_global_get_ex
-    pop
-    // smart_contracts/utils/base-contracts/base.ts:25
-    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-    app_params_get AppAddress
-    assert // application exists
-    ==
-    assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:17
-    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
-    bytec 4 // "version"
-    // smart_contracts/utils/base-contracts/base.ts:26
-    // this.version.value = newVersion
-    swap
-    app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:23
-    // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_1 // 1
     return
 
@@ -688,14 +620,14 @@ updateAkitaDAO:
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:30
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
-    bytec 5 // "wallet"
+    pushbytes "wallet"
     app_global_get_ex
     pop
     // smart_contracts/utils/base-contracts/base.ts:37
@@ -704,7 +636,7 @@ updateAkitaDAO:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:19
+    // smart_contracts/utils/base-contracts/base.ts:27
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:38

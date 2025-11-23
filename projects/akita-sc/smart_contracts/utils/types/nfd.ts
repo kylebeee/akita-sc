@@ -1,11 +1,10 @@
-import { arc4, Bytes, bytes, Contract, Global, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { Address } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, Bytes, bytes, Contract, Global, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 
 export interface PayoutInfo {
   amountToSeller: uint64
-  commissionAddress: Address
+  commissionAddress: Account
   amountToCommission: uint64
-  segmentRootOwner: Address
+  segmentRootOwner: Account
   amountToSegmentRoot: uint64
 }
 
@@ -30,7 +29,7 @@ export class NFD extends Contract {
     return Bytes('')
   }
 
-  offerForSale(sellAmount: uint64, reservedFor: Address): void { }
+  offerForSale(sellAmount: uint64, reservedFor: Account): void { }
 
   cancelSale(): void { }
 
@@ -39,16 +38,16 @@ export class NFD extends Contract {
   mintPayout(oneYearPrice: uint64, segmentPlatformCostInAlgo: uint64): PayoutInfo {
     return {
       amountToSeller: 0,
-      commissionAddress: new Address(Global.zeroAddress),
+      commissionAddress: Global.zeroAddress,
       amountToCommission: 0,
-      segmentRootOwner: new Address(Global.zeroAddress),
+      segmentRootOwner: Global.zeroAddress,
       amountToSegmentRoot: 0,
     }
   }
 
   purchase(payment: gtxn.PaymentTxn): void { }
 
-  isAddressInField(fieldName: string, address: Address): boolean {
+  isAddressInField(fieldName: string, address: Account): boolean {
     return false
   }
 
@@ -66,9 +65,9 @@ export class NFD extends Contract {
 
   vaultOptIn(assets: uint64[]): void { }
 
-  vaultSend(amount: uint64, receiver: Address, note: string, asset: uint64, otherAssets: uint64[]): void { }
+  vaultSend(amount: uint64, receiver: Account, note: string, asset: uint64, otherAssets: uint64[]): void { }
 
   renew(payment: gtxn.PaymentTxn): void { }
 
-  setPrimaryAddress(fieldName: string, address: Address): void { }
+  setPrimaryAddress(fieldName: string, address: Account): void { }
 }

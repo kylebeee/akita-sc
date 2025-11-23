@@ -10,15 +10,20 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
+import { abimethod } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
-import { abimethod, Address } from '@algorandfoundation/algorand-typescript/arc4'
 import {
-  AllocationReclaimDetails,
-  ClaimDetails,
-  DisbursementDetails,
-  UserAllocation,
-  UserAllocationsKey,
-} from './types'
+  ERR_INVALID_PAYMENT,
+  ERR_INVALID_TRANSFER,
+} from '../utils/errors'
+
+import {
+  MinDisbursementsMBR,
+  RewardsBoxPrefixDisbursements,
+  RewardsBoxPrefixUserAllocations,
+  RewardsGlobalStateKeyDisbursementID,
+  UserAllocationMBR,
+} from './constants'
 import {
   ERR_ALLOCATION_ALREADY_EXISTS,
   ERR_ALLOCATION_DOES_NOT_EXIST,
@@ -34,22 +39,20 @@ import {
   ERR_YOU_ARE_NOT_THE_CREATOR,
 } from './errors'
 import {
-  ERR_INVALID_PAYMENT,
-  ERR_INVALID_TRANSFER,
-} from '../utils/errors'
-import {
-  UserAllocationMBR,
-  RewardsBoxPrefixDisbursements,
-  RewardsBoxPrefixUserAllocations,
-  RewardsGlobalStateKeyDisbursementID,
-  MinDisbursementsMBR,
-} from './constants'
-import { BaseRewards } from './base'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import { AkitaBaseContract } from '../utils/base-contracts/base'
-import { RewardsInterface } from '../utils/types/rewards'
+  AllocationReclaimDetails,
+  ClaimDetails,
+  DisbursementDetails,
+  UserAllocation,
+  UserAllocationsKey,
+} from './types'
 
-export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWithOptIn) implements RewardsInterface {
+// CONTRACT IMPORTS
+import { AkitaBaseContract } from '../utils/base-contracts/base'
+import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { BaseRewards } from './base'
+
+
+export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWithOptIn) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
@@ -112,7 +115,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
     )
 
     this.disbursements(id).value = {
-      creator: new Address(Txn.sender),
+      creator: Txn.sender,
       finalized: false,
       title,
       amount: 0,
@@ -136,7 +139,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
     assert(this.disbursements(id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
 
     const { creator, finalized } = this.disbursements(id).value
-    assert(Txn.sender === creator.native, ERR_YOU_ARE_NOT_THE_CREATOR)
+    assert(Txn.sender === creator, ERR_YOU_ARE_NOT_THE_CREATOR)
     assert(finalized === false, ERR_DISBURSEMENT_ALREADY_FINAL)
 
     this.disbursements(id).value.title = title
@@ -240,7 +243,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
     assert(this.disbursements(id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
 
     const { creator, finalized, timeToUnlock, expiration, amount, allocations } = this.disbursements(id).value
-    assert(Txn.sender === creator.native, ERR_YOU_ARE_NOT_THE_CREATOR)
+    assert(Txn.sender === creator, ERR_YOU_ARE_NOT_THE_CREATOR)
     assert(!finalized, ERR_DISBURSEMENT_ALREADY_FINAL)
     assert(
       timeToUnlock >= Global.latestTimestamp || timeToUnlock === 0,
@@ -288,7 +291,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
     )
 
     this.disbursements(id).value = {
-      creator: new Address(Txn.sender),
+      creator: Txn.sender,
       finalized: true,
       title: '',
       amount: sum,
@@ -344,7 +347,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
     )
 
     this.disbursements(id).value = {
-      creator: new Address(Txn.sender),
+      creator: Txn.sender,
       finalized: true,
       title: '',
       amount: sum,
@@ -369,7 +372,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
 
       const userAllocationsKey: UserAllocationsKey = {
         disbursementID: rewards[i].id,
-        address: new Address(Txn.sender),
+        address: Txn.sender,
         asset: rewards[i].asset,
       }
       assert(this.userAllocations(userAllocationsKey).exists, ERR_ALLOCATION_DOES_NOT_EXIST)
@@ -380,7 +383,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
       this.userAllocations(userAllocationsKey).delete()
 
       const creatorMBRRefund = itxn.payment({
-        receiver: creator.native,
+        receiver: creator,
         amount: UserAllocationMBR,
       })
 
@@ -411,7 +414,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
     assert(this.disbursements(id).exists, ERR_DISBURSEMENT_DOES_NOT_EXIST)
     const { creator, finalized, expiration } = this.disbursements(id).value
 
-    assert(creator.native === Txn.sender, ERR_YOU_ARE_NOT_THE_CREATOR)
+    assert(creator === Txn.sender, ERR_YOU_ARE_NOT_THE_CREATOR)
     assert(finalized, ERR_DISBURSEMENT_ALREADY_FINAL)
     assert(expiration <= Global.latestTimestamp, ERR_DISBURSEMENT_NOT_EXPIRED)
 
@@ -433,13 +436,13 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
 
       if (!isAlgo) {
         const xfer = itxn.assetTransfer({
-          assetReceiver: creator.native,
+          assetReceiver: creator,
           assetAmount: userAllocation,
           xferAsset: reclaims[i].asset,
         })
 
         const mbrRefund = itxn.payment({
-          receiver: creator.native,
+          receiver: creator,
           amount: UserAllocationMBR,
         })
 
@@ -447,7 +450,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
       } else {
         itxn
           .payment({
-            receiver: creator.native,
+            receiver: creator,
             amount: userAllocation + UserAllocationMBR,
           })
           .submit()

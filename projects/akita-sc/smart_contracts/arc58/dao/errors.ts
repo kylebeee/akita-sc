@@ -39,6 +39,7 @@ export const ERR_RECEIVE_ESCROW_DOES_NOT_EXIST = 'Receive escrow does not exist'
 
 export const ERR_PROPOSAL_DOES_NOT_EXIST = 'Proposal does not exist'
 export const ERR_PROPOSAL_NOT_APPROVED = 'Proposal is not approved'
+export const ERR_PROPOSAL_VOTE_NOT_FOUND = 'Proposal Vote not found'
 
 export const ERR_PROPOSAL_NOT_UPGRADE_APP = 'Proposal is not an upgrade app'
 export const ERR_EXECUTION_KEY_MISMATCH = 'Execution key mismatch'
