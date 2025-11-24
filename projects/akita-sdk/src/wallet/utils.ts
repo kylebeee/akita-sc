@@ -4,6 +4,7 @@ import { AddAllowanceArgs, AllowanceInfo } from "./types";
 import { encodeLease } from "@algorandfoundation/algokit-utils";
 import { PluginHookParams } from "../types";
 import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
+import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 // import { AppCallParams, AppUpdateParams, Txn } from "@algorandfoundation/algokit-utils/types/composer";
 
 
@@ -92,22 +93,23 @@ export function domainBoxKey(address: string | Address): Uint8Array {
   );
 }
 
-type overWriteProperties = {
+export type OverWriteProperties = {
   sender?: string | algosdk.Address;
   signer?: algosdk.TransactionSigner;
   firstValid?: bigint;
   lastValid?: bigint;
   lease?: Uint8Array | string;
+  fees?: Map<number, AlgoAmount>;
 };
 
 export function forceProperties(
   atc: AtomicTransactionComposer,
-  options: overWriteProperties
+  options: OverWriteProperties
 ): AtomicTransactionComposer {
   const group = atc.clone().buildGroup();
   const newAtc = new algosdk.AtomicTransactionComposer();
 
-  const overWriteProperties = (txn: any, index: number, options: overWriteProperties) => {
+  const overWriteProperties = (txn: any, index: number, options: OverWriteProperties) => {
     txn.txn['group'] = undefined;
 
     txn.txn['lease'] = (options.lease !== undefined && index === 0)
@@ -133,6 +135,10 @@ export function forceProperties(
     txn.txn['lastValid'] = options.lastValid !== undefined
       ? options.lastValid
       : txn.txn['lastValid'];
+
+    txn.txn['fee'] = options.fees !== undefined && options.fees.has(index) && options.fees.get(index)?.microAlgo !== undefined
+      ? options.fees.get(index)?.microAlgo
+      : txn.txn['fee']
   }
 
   group.forEach((t, i) => {

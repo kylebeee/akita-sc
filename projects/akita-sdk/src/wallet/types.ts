@@ -48,6 +48,7 @@ export type WalletUsePluginParams = (
     fundsRequest?: FundsRequest[]
     calls: PluginSDKReturn[]
     lease?: string
+    consolidateFees?: boolean
   }
 ) & MaybeSigner;
 
