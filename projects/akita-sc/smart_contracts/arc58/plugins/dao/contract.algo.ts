@@ -47,39 +47,33 @@ export class AkitaDAOPlugin extends Contract {
       )[0]
     )
 
-    if (!initialized) {
-      return abiCall<typeof AkitaDAO.prototype.newProposalPreInitialized>({
-        sender,
-        appId: this.daoAppID.value,
-        args: [cid, actions],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }).returnValue
-    } else {
 
-      const { totalFee } = abiCall<typeof AkitaDAO.prototype.proposalCost>({
+    let total: uint64 = 0;
+    if (initialized) {
+      ({ total } = abiCall<typeof AkitaDAO.prototype.proposalCost>({
         sender,
         appId: this.daoAppID.value,
         args: [actions],
         rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }).returnValue
-
-      const actionsPayment = itxn.payment({
-        sender,
-        receiver: this.daoAppID.value.address,
-        amount: totalFee,
-      })
-
-      return abiCall<typeof AkitaDAO.prototype.newProposal>({
-        sender,
-        appId: this.daoAppID.value,
-        args: [
-          actionsPayment,
-          cid,
-          actions
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet)
-      }).returnValue
+      }).returnValue)
     }
+
+    const actionsPayment = itxn.payment({
+      sender,
+      receiver: this.daoAppID.value.address,
+      amount: total,
+    })
+
+    return abiCall<typeof AkitaDAO.prototype.newProposal>({
+      sender,
+      appId: this.daoAppID.value,
+      args: [
+        actionsPayment,
+        cid,
+        actions
+      ],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    }).returnValue
   }
 
   editProposal(wallet: Application, rekeyBack: boolean, id: uint64, cid: CID, actions: ProposalAction[]): void {
@@ -92,18 +86,18 @@ export class AkitaDAOPlugin extends Contract {
     }).returnValue
 
     assert(status !== uint8(0), ERR_PROPOSAL_DOES_NOT_EXIST)
-    
-    const { totalFee } = abiCall<typeof AkitaDAO.prototype.proposalCost>({
+
+    const { total } = abiCall<typeof AkitaDAO.prototype.proposalCost>({
       sender,
       appId: this.daoAppID.value,
       args: [actions],
     }).returnValue
 
-    if (feesPaid < totalFee) {
+    if (feesPaid < total) {
       const actionsPayment = itxn.payment({
         sender,
         receiver: this.daoAppID.value.address,
-        amount: totalFee - feesPaid,
+        amount: total - feesPaid,
       })
 
       abiCall<typeof AkitaDAO.prototype.editProposalWithPayment>({

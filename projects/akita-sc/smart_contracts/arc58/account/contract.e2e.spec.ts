@@ -5,7 +5,7 @@ import { AppCallMethodCall } from '@algorandfoundation/algokit-utils/types/compo
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
 import { AkitaDaoSDK, AsaMintPluginSDK, isDripAllowance, isFlatAllowance, isWindowAllowance, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk';
 import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
-import { deployAndSetupAkitaDAO } from '../../../tests/fixtures/dao';
+import { buildAkitaUniverse } from '../../../tests/fixtures/dao';
 import { deployAsaMintPlugin } from '../../../tests/fixtures/plugins/asa-mint';
 import { deployOptInPlugin } from '../../../tests/fixtures/plugins/optin';
 import { deployPayPlugin } from '../../../tests/fixtures/plugins/pay';
@@ -44,7 +44,7 @@ describe('ARC58 Plugin Permissions', () => {
 
     timeWarp = new TimeWarp(algorand);
 
-    ({ dao, walletFactory } = await deployAndSetupAkitaDAO({
+    ({ dao, walletFactory } = await buildAkitaUniverse({
       fixture: localnet,
       sender,
       signer,

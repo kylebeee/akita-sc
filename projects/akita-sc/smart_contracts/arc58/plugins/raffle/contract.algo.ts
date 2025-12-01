@@ -56,7 +56,7 @@ export class RafflePlugin extends classes(BaseRaffle, AkitaBaseContract) {
     assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
 
     if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
-      abiCall<typeof RaffleFactory.prototype.optin>({
+      abiCall<typeof RaffleFactory.prototype.optIn>({
         sender,
         appId: this.factory.value,
         args: [

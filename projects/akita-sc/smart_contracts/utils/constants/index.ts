@@ -68,3 +68,5 @@ export const FIVE_ALGO: uint64 = 5_000_000
 export const ONE_YEAR_IN_DAYS: uint64 = 365
 export const ONE_DAY: uint64 = 86_400
 export const ONE_WEEK: uint64 = 604_800
+
+export const MAX_AVM_BYTE_ARRAY_LENGTH: uint64 = 4096

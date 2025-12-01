@@ -1,9 +1,7 @@
-import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountFactoryClient'
-import { AbstractedAccountFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountClient'
-import { EscrowFactoryClient } from '../../smart_contracts/artifacts/escrow/EscrowFactoryClient';
+import { WalletFactorySDK } from 'akita-sdk';
+import { AbstractedAccountFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountClient';
+import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountFactoryClient';
 import { FixtureAndAccount } from '../types';
-import { WalletFactorySDK } from 'akita-sdk'
-import { deployEscrowFactory } from './escrow';
 
 type CreateArgs = AbstractedAccountFactoryArgs["obj"]['create(uint64,uint64,string,uint64,uint64,string)void']
 type DeployParams = FixtureAndAccount & { args: Partial<CreateArgs> }
@@ -39,7 +37,8 @@ export const deployAbstractedAccountFactory = async ({
       escrowFactory,
       revocation,
       domain
-    }
+    },
+    extraProgramPages: 3
   })
 
   const fundAmount = (

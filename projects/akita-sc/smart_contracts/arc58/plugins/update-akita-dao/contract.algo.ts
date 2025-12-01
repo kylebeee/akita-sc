@@ -1,15 +1,16 @@
-import { Application, assert, Box, Bytes, bytes, Global, GlobalState, gtxn, itxn, OnCompleteAction, op, TransactionType, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
-import { abiCall, Contract, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
+import { Application, assert, Box, Bytes, bytes, Global, GlobalState, gtxn, OnCompleteAction, op, TransactionType, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abiCall, abimethod, Contract, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyChildContractVersion, GlobalStateKeyClearProgram } from "../../../constants"
 import { BoxKeyBoxedContract } from "../../../utils/base-contracts/factory"
 import { ERR_CONTRACT_NOT_SET, ERR_INVALID_CALL_ORDER } from "../../../utils/errors"
-import { getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { getAkitaAppList, getSpendingAccount, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions"
 import { AkitaDAOGlobalStateKeysWallet } from "../../dao/constants"
 import { ERR_NOT_AKITA_DAO } from "../social/errors"
 
 // CONTRACT IMPORTS
-import type { AkitaBaseFeeGeneratorContract } from "../../../utils/base-contracts/base"
-
+import { type AkitaBaseFeeGeneratorContract } from "../../../utils/base-contracts/base"
+import { MAX_AVM_BYTE_ARRAY_LENGTH } from "../../../utils/constants"
+import { AbstractedAccountFactory } from "../../account/factory.algo"
 
 export class UpdateAkitaDAOPlugin extends Contract {
 
@@ -27,68 +28,59 @@ export class UpdateAkitaDAOPlugin extends Contract {
     return Application(walletID)
   }
 
-  initBoxedContract(wallet: Application, rekeyBack: boolean, version: string, size: uint64): void {
+  @abimethod({ onCreate: 'require' })
+  create(akitaDAO: Application, clearProgram: bytes): void {
+    this.akitaDAO.value = akitaDAO
+    this.clearProgram.value = clearProgram
+  }
+
+  setClearProgram(wallet: Application, rekeyBack: boolean, clearProgram: bytes): void {
+    const sender = getSpendingAccount(wallet)
+    assert(sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+
+    this.clearProgram.value = clearProgram
+
+    rekeyBackIfNecessary(rekeyBack, wallet)
+  }
+
+  initBoxedContract(wallet: Application, version: string, size: uint64): void {
+    const sender = getSpendingAccount(wallet)
+    assert(sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+
     this.childContractVersion.value = version
+
     if (!this.boxedContract.exists) {
-      assert(Txn.sender === Global.creatorAddress, ERR_NOT_AKITA_DAO)
       this.boxedContract.create({ size })
     } else {
-      assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
       this.boxedContract.resize(size)
-    }
-
-    if (rekeyBack) {
-      itxn
-        .payment({
-          sender: Txn.sender,
-          receiver: Global.currentApplicationAddress,
-          amount: 0,
-          rekeyTo: rekeyAddress(true, wallet),
-        })
-        .submit()
     }
   }
 
-  loadBoxedContract(wallet: Application, rekeyBack: boolean, offset: uint64, data: bytes): void {
+  loadBoxedContract(wallet: Application, offset: uint64, data: bytes): void {
+    const sender = getSpendingAccount(wallet)
+    assert(sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+
     const expectedPreviousCalls: uint64 = offset / 2027
     const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
     assert((
       txn.type === TransactionType.ApplicationCall
       && txn.appId === Global.currentApplicationId
-      && txn.numAppArgs === 3
+      && txn.numAppArgs === 4
       && txn.onCompletion === OnCompleteAction.NoOp
-      && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
+      && txn.appArgs(0) === methodSelector(this.initBoxedContract)
       && txn.sender === Txn.sender
     ), ERR_INVALID_CALL_ORDER)
     assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
     this.boxedContract.replace(offset, data)
-
-    if (rekeyBack) {
-      itxn
-        .payment({
-          sender: Txn.sender,
-          receiver: Global.currentApplicationAddress,
-          amount: 0,
-          rekeyTo: rekeyAddress(true, wallet),
-        })
-        .submit()
-    }
   }
 
   deleteBoxedContract(wallet: Application, rekeyBack: boolean): void {
-    assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+    const sender = getSpendingAccount(wallet)
+    assert(sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+
     this.boxedContract.delete()
 
-    if (rekeyBack) {
-      itxn
-        .payment({
-          sender: Txn.sender,
-          receiver: Global.currentApplicationAddress,
-          amount: 0,
-          rekeyTo: rekeyAddress(true, wallet),
-        })
-        .submit()
-    }
+    rekeyBackIfNecessary(rekeyBack, wallet)
   }
 
   updateApp(wallet: Application, rekeyBack: boolean, appId: Application): void {
@@ -100,25 +92,32 @@ export class UpdateAkitaDAOPlugin extends Contract {
     assert((
       txn.type === TransactionType.ApplicationCall
       && txn.appId === Global.currentApplicationId
-      && txn.numAppArgs === 5
+      && txn.numAppArgs === 4
       && txn.onCompletion === OnCompleteAction.NoOp
       && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
       && txn.sender === Txn.sender
     ), ERR_INVALID_CALL_ORDER)
 
-    const approvalSize = this.boxedContract.length
-    const chunk1 = approvalSize > 4096 ? this.boxedContract.extract(0, 4096) : this.boxedContract.extract(0, approvalSize)
-    const chunk2 = approvalSize > 4096 ? this.boxedContract.extract(4096, approvalSize - 4096) : Bytes('')
+    const approvalSize: uint64 = this.boxedContract.length
+
+    let chunk1: bytes
+    let chunk2: bytes
+    if (approvalSize > MAX_AVM_BYTE_ARRAY_LENGTH) {
+      chunk1 = this.boxedContract.extract(0, MAX_AVM_BYTE_ARRAY_LENGTH)
+      chunk2 = this.boxedContract.extract(MAX_AVM_BYTE_ARRAY_LENGTH, approvalSize - MAX_AVM_BYTE_ARRAY_LENGTH)
+    } else {
+      chunk1 = this.boxedContract.extract(0, approvalSize)
+      chunk2 = Bytes('')
+    }
 
     abiCall<typeof AkitaBaseFeeGeneratorContract.prototype.update>({
       sender,
       appId,
       args: [this.childContractVersion.value],
-      rekeyTo: rekeyAddress(rekeyBack, wallet),
       onCompletion: OnCompleteAction.UpdateApplication,
       approvalProgram: [chunk1, chunk2],
       clearStateProgram: this.clearProgram.value,
-      extraProgramPages: 3,
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
   }
 
@@ -150,6 +149,24 @@ export class UpdateAkitaDAOPlugin extends Contract {
       sender,
       appId,
       args: [newEscrow],
+      rekeyTo: rekeyAddress(rekeyBack, wallet),
+    })
+  }
+
+  updateRevocation(
+    wallet: Application,
+    rekeyBack: boolean,
+    app: Application
+  ): void {
+    const sender = getSpendingAccount(wallet)
+    assert(sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+
+    const appId = getAkitaAppList(this.akitaDAO.value).wallet
+
+    abiCall<typeof AbstractedAccountFactory.prototype.updateRevocation>({
+      sender,
+      appId,
+      args: [app],
       rekeyTo: rekeyAddress(rekeyBack, wallet),
     })
   }

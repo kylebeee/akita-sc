@@ -19,7 +19,7 @@ export class ContractWithOptIn extends Contract {
    * @param payment The payment transaction
    * @param asset The asset to be opted into
    */
-  optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+  optIn(payment: gtxn.PaymentTxn, asset: uint64): void {
 
     assertMatch(
       payment,

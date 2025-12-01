@@ -13,10 +13,11 @@ export type ServiceID = uint64
 
 export type ServiceStatus = Uint8
 
-export const ServiceStatusDraft: ServiceStatus = new Uint8(0)
-export const ServiceStatusActive: ServiceStatus = new Uint8(10)
-export const ServiceStatusPaused: ServiceStatus = new Uint8(20)
-export const ServiceStatusShutdown: ServiceStatus = new Uint8(30)
+export const ServiceStatusNone: ServiceStatus = new Uint8(0)
+export const ServiceStatusDraft: ServiceStatus = new Uint8(10)
+export const ServiceStatusActive: ServiceStatus = new Uint8(20)
+export const ServiceStatusPaused: ServiceStatus = new Uint8(30)
+export const ServiceStatusShutdown: ServiceStatus = new Uint8(40)
 
 export type Service = {
   status: ServiceStatus
@@ -71,14 +72,15 @@ export type PassesKey = {
   id: uint64
 }
 
-export type SubscriptionInfoWithPasses = {
+export type SubscriptionInfoWithDetails = {
   recipient: Account
-  serviceID: uint64
   startDate: uint64
   amount: uint64
   interval: uint64
   asset: uint64
   gateID: uint64
+  serviceID: uint64
+  status: ServiceStatus
   title: string
   description: string
   bannerImage: CID

@@ -10,7 +10,7 @@ import { AppReturn } from "@algorandfoundation/algokit-utils/types/app";
 import { algo, microAlgo, prepareGroupForSending } from "@algorandfoundation/algokit-utils";
 import { emptySigner, MAX_UINT64 } from "../constants";
 import { EMPTY_CID } from "./constants"
-import { AllowancesToTuple } from '../wallet/utils';
+import { AllowancesToTuple, forceProperties, OverWriteProperties } from '../wallet/utils';
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
 
 export * from './constants';
@@ -554,7 +554,8 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     sender,
     signer,
     cid = EMPTY_CID,
-    actions
+    actions,
+    consolidateFees = true
   }: NewProposalParams<TClient>): Promise<{
     groupId: string;
     confirmedRound: bigint;
@@ -616,6 +617,11 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     const suggestedParams = await this.client.algorand.getSuggestedParams()
     const foundation = (await (await group.composer()).build()).atc
 
+    const maxFees = new Map<number, AlgoAmount>();
+    for (let i = 0; i < length; i += 1) {
+      maxFees.set(i, microAlgo(257_000));
+    }
+
     const populatedGroup = await prepareGroupForSending(
       foundation,
       this.client.algorand.client.algod,
@@ -624,17 +630,29 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
         populateAppCallResources: true
       },
       {
-        maxFees: new Map([
-          [0, algo(1)],
-          ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0)] as [number, AlgoAmount]),
-        ]),
+        maxFees,
         suggestedParams: suggestedParams,
       },
     )
 
-    const groupId = populatedGroup.buildGroup()[0].txn.group!.toString()
+    let overwrite: OverWriteProperties = {}
 
-    const { methodResults, ...rest } = await populatedGroup.execute(this.client.algorand.client.algod, 10)
+    if (consolidateFees) {
+      const feeConsolidation = populatedGroup.clone().buildGroup();
+      const totalFees = feeConsolidation.reduce((acc, txn) => acc + txn.txn.fee, 0n);
+      overwrite.fees = new Map([
+        [0, microAlgo(totalFees)],
+        ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0)] as [number, AlgoAmount]),
+      ])
+    }
+
+    const finalGroup = forceProperties(populatedGroup, overwrite)
+
+    console.log('calc\'d fees', finalGroup.clone().buildGroup().map(txn => txn.txn.fee))
+
+    const groupId = finalGroup.buildGroup()[0].txn.group!.toString()
+
+    const { methodResults, ...rest } = await finalGroup.execute(this.client.algorand.client.algod, 10)
 
     return { groupId, ...rest, return: methodResults ? methodResults[0].returnValue as bigint : undefined }
   }

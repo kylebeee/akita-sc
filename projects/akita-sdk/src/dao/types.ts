@@ -104,7 +104,8 @@ export type FieldUpdate = (
 export type NewProposalParams<TClient extends SDKClient> = (
   {
     cid?: Uint8Array;
-    actions: ProposalAction<TClient>[]
+    actions: ProposalAction<TClient>[],
+    consolidateFees?: boolean
   } & MaybeSigner
 )
 

@@ -4,7 +4,7 @@ import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, GroupR
 import { BaseSDK } from '../base';
 import algosdk, { Address, ALGORAND_ZERO_ADDRESS_STRING, makeEmptyTransactionSigner } from 'algosdk';
 import { MAX_UINT64 } from '../constants';
-import { AllowanceInfoTranslate, AllowancesToTuple, domainBoxKey, executionBoxKey, forceProperties, ValueMap } from './utils';
+import { AllowanceInfoTranslate, AllowancesToTuple, domainBoxKey, executionBoxKey, forceProperties, OverWriteProperties, ValueMap } from './utils';
 import { NewEscrowFeeAmount } from './constants';
 import { algo, encodeLease, microAlgo, prepareGroupForSending } from '@algorandfoundation/algokit-utils';
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
@@ -687,7 +687,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   readonly build = {
 
-    usePlugin: async ({ firstValid = 0n, windowSize, ...args }: BuildWalletUsePluginParams): Promise<ExecutionBuildGroup> => {
+    usePlugin: async ({ firstValid = 0n, windowSize, consolidateFees = true, ...args }: BuildWalletUsePluginParams): Promise<ExecutionBuildGroup> => {
 
       const { lease } = args;
 
@@ -717,7 +717,12 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         numGroupsToBuild = Math.ceil(Number(roundsNeeded) / Number(validityPeriod));
       }
 
-      const populated = await prepareGroupForSending(
+      const maxFees = new Map<number, AlgoAmount>();
+      for (let i = 0; i < length; i += 1) {
+        maxFees.set(i, microAlgo(257_000));
+      }
+
+      const populatedGroup = await prepareGroupForSending(
         f1,
         this.client.algorand.client.algod,
         {
@@ -725,10 +730,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
           populateAppCallResources: true
         },
         {
-          maxFees: new Map([
-            [0, algo(1)],
-            ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0)] as [number, AlgoAmount]),
-          ]),
+          maxFees,
           suggestedParams: suggestedParams,
         },
       )
@@ -761,18 +763,31 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
         console.log(`Building group ${i + 1}/${numGroupsToBuild} with start: ${groupStartRound}, end: ${groupEndRound}`);
 
-        const newAtc = forceProperties(populated, {
+        let overwrite: OverWriteProperties = {
           sender: sendParams.sender,
           signer: sendParams.signer,
           firstValid: groupStartRound,
           lastValid: groupEndRound,
-          lease: groups.lease
-        })
+          lease: groups.lease,
+        }
 
-        const groupID = newAtc.buildGroup()[0].txn.group!
+        if (consolidateFees) {
+          const feeConsolidation = populatedGroup.clone().buildGroup();
+          const totalFees = feeConsolidation.reduce((acc, txn) => acc + txn.txn.fee, 0n);
+          overwrite.fees = new Map([
+            [0, microAlgo(totalFees)],
+            ...Array.from({ length: length - 1 }, (_, i) => [i + 1, microAlgo(0)] as [number, AlgoAmount]),
+          ])
+        }
+
+        const finalGroup = forceProperties(populatedGroup, overwrite)
+
+        console.log('calc\'d fees', finalGroup.clone().buildGroup().map(txn => txn.txn.fee))
+
+        const groupID = finalGroup.buildGroup()[0].txn.group!
 
         groups.ids.push(groupID);
-        groups.atcs.push(newAtc);
+        groups.atcs.push(finalGroup);
       }
 
       return groups;

@@ -1,16 +1,20 @@
-import { AkitaDaoApps, AkitaDaoFactory } from '../../smart_contracts/artifacts/arc58/dao/AkitaDAOClient';
-import { FixtureAndAccount } from '../types';
-import { DEFAULT_ADD_ALLOWANCE_APPROVAL, DEFAULT_ADD_ALLOWANCE_PARTICIPATION, DEFAULT_ADD_ALLOWANCE_PROPOSAL_CREATION, DEFAULT_ADD_ALLOWANCE_PROPOSAL_POWER, DEFAULT_ADD_ALLOWANCE_VOTING_DURATION, DEFAULT_ADD_PLUGIN_APPROVAL, DEFAULT_ADD_PLUGIN_PARTICIPATION, DEFAULT_ADD_PLUGIN_PROPOSAL_CREATION, DEFAULT_ADD_PLUGIN_PROPOSAL_POWER, DEFAULT_ADD_PLUGIN_VOTING_DURATION, DEFAULT_AUCTION_COMPOSABLE_PERCENTAGE, DEFAULT_AUCTION_CREATION_FEE, DEFAULT_AUCTION_RAFFLE_PERCENTAGE, DEFAULT_AUCTION_SALE_IMPACT_MAX, DEFAULT_AUCTION_SALE_IMPACT_TAX_MIN, DEFAULT_IMPACT_TAX_MAX, DEFAULT_IMPACT_TAX_MIN, DEFAULT_KRBY_PERCENTAGE, DEFAULT_MARKETPLACE_COMPOSABLE_PERCENTAGE, DEFAULT_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE, DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM, DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, DEFAULT_MIN_POOL_CREATION_FEE, DEFAULT_MIN_REWARDS_IMPACT, DEFAULT_MODERATOR_PERCENTAGE, DEFAULT_NEW_ESCROW_APPROVAL, DEFAULT_NEW_ESCROW_PARTICIPATION, DEFAULT_NEW_ESCROW_PROPOSAL_CREATION, DEFAULT_NEW_ESCROW_PROPOSAL_POWER, DEFAULT_NEW_ESCROW_VOTING_DURATION, DEFAULT_OMNIGEM_SALE_FEE, DEFAULT_POOL_IMPACT_TAX_MAX, DEFAULT_POOL_IMPACT_TAX_MIN, DEFAULT_POST_FEE, DEFAULT_RAFFLE_COMPOSABLE_PERCENTAGE, DEFAULT_RAFFLE_CREATION_FEE, DEFAULT_RAFFLE_SALE_IMPACT_MAX, DEFAULT_RAFFLE_SALE_IMPACT_TAX_MIN, DEFAULT_REACT_FEE, DEFAULT_REMOVE_ALLOWANCE_APPROVAL, DEFAULT_REMOVE_ALLOWANCE_PARTICIPATION, DEFAULT_REMOVE_ALLOWANCE_PROPOSAL_CREATION, DEFAULT_REMOVE_ALLOWANCE_PROPOSAL_POWER, DEFAULT_REMOVE_ALLOWANCE_VOTING_DURATION, DEFAULT_REMOVE_EXECUTE_PROPOSAL_APPROVAL, DEFAULT_REMOVE_EXECUTE_PROPOSAL_CREATION, DEFAULT_REMOVE_EXECUTE_PROPOSAL_PARTICIPATION, DEFAULT_REMOVE_EXECUTE_PROPOSAL_POWER, DEFAULT_REMOVE_EXECUTE_PROPOSAL_VOTING_DURATION, DEFAULT_REMOVE_PLUGIN_APPROVAL, DEFAULT_REMOVE_PLUGIN_PARTICIPATION, DEFAULT_REMOVE_PLUGIN_PROPOSAL_CREATION, DEFAULT_REMOVE_PLUGIN_PROPOSAL_POWER, DEFAULT_REMOVE_PLUGIN_VOTING_DURATION, DEFAULT_SERVICE_CREATION_FEE, DEFAULT_SHUFFLE_SALE_PERCENTAGE, DEFAULT_SUBSCRIPTION_PAYMENT_PERCENTAGE, DEFAULT_SUBSCRIPTION_TRIGGER_PERCENTAGE, DEFAULT_SWAP_COMPOSABLE_PERCENTAGE, DEFAULT_SWAP_FEE_IMPACT_TAX_MAX, DEFAULT_SWAP_FEE_IMPACT_TAX_MIN, DEFAULT_SWAP_LIQUIDITY_PERCENTAGE, DEFAULT_UPDATE_AKITA_DAO_APP_APPROVAL, DEFAULT_UPDATE_AKITA_DAO_DURATION, DEFAULT_UPDATE_AKITA_DAO_PARTICIPATION, DEFAULT_UPDATE_AKITA_DAO_PROPOSAL_CREATION, DEFAULT_UPDATE_AKITA_DAO_PROPOSAL_POWER, DEFAULT_UPDATE_FIELD_APPROVAL, DEFAULT_UPDATE_FIELD_PARTICIPATION, DEFAULT_UPDATE_FIELD_PROPOSAL_CREATION, DEFAULT_UPDATE_FIELD_PROPOSAL_POWER, DEFAULT_UPDATE_FIELD_VOTING_DURATION, DEFAULT_UPGRADE_APP_APPROVAL, DEFAULT_UPGRADE_APP_PARTICIPATION, DEFAULT_UPGRADE_APP_PROPOSAL_CREATION, DEFAULT_UPGRADE_APP_PROPOSAL_POWER, DEFAULT_UPGRADE_APP_VOTING_DURATION, DEFAULT_WALLET_CREATE_FEE, DEFAULT_WALLET_REFERRER_PERCENTAGE } from '../../smart_contracts/utils/defaults'
-import { AkitaDaoSDK, EMPTY_CID, ProposalAction, ProposalActionEnum, UpdateAkitaDAOPluginSDK, WalletFactorySDK } from 'akita-sdk';
 import { microAlgo } from '@algorandfoundation/algokit-utils';
+import { AkitaDaoSDK, EMPTY_CID, ProposalAction, ProposalActionEnum, RevenueManagerPluginSDK, SDKClient, StakingPoolFactorySDK, SubscriptionsSDK, UpdateAkitaDAOPluginSDK, WalletFactorySDK } from 'akita-sdk';
+import { AkitaDaoApps, AkitaDaoFactory } from '../../smart_contracts/artifacts/arc58/dao/AkitaDAOClient';
+import { EscrowFactoryClient } from '../../smart_contracts/artifacts/escrow/EscrowFactoryClient';
+import { DEFAULT_ADD_ALLOWANCE_APPROVAL, DEFAULT_ADD_ALLOWANCE_PARTICIPATION, DEFAULT_ADD_ALLOWANCE_PROPOSAL_CREATION, DEFAULT_ADD_ALLOWANCE_PROPOSAL_POWER, DEFAULT_ADD_ALLOWANCE_VOTING_DURATION, DEFAULT_ADD_PLUGIN_APPROVAL, DEFAULT_ADD_PLUGIN_PARTICIPATION, DEFAULT_ADD_PLUGIN_PROPOSAL_CREATION, DEFAULT_ADD_PLUGIN_PROPOSAL_POWER, DEFAULT_ADD_PLUGIN_VOTING_DURATION, DEFAULT_AUCTION_COMPOSABLE_PERCENTAGE, DEFAULT_AUCTION_CREATION_FEE, DEFAULT_AUCTION_RAFFLE_PERCENTAGE, DEFAULT_AUCTION_SALE_IMPACT_MAX, DEFAULT_AUCTION_SALE_IMPACT_TAX_MIN, DEFAULT_CREATION, DEFAULT_IMPACT_TAX_MAX, DEFAULT_IMPACT_TAX_MIN, DEFAULT_KRBY_PERCENTAGE, DEFAULT_MARKETPLACE_COMPOSABLE_PERCENTAGE, DEFAULT_MARKETPLACE_ROYALTY_DEFAULT_PERCENTAGE, DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MAXIMUM, DEFAULT_MARKETPLACE_SALE_PERCENTAGE_MINIMUM, DEFAULT_MIN_POOL_CREATION_FEE, DEFAULT_MIN_REWARDS_IMPACT, DEFAULT_MODERATOR_PERCENTAGE, DEFAULT_NEW_ESCROW_APPROVAL, DEFAULT_NEW_ESCROW_PARTICIPATION, DEFAULT_NEW_ESCROW_PROPOSAL_CREATION, DEFAULT_NEW_ESCROW_PROPOSAL_POWER, DEFAULT_NEW_ESCROW_VOTING_DURATION, DEFAULT_OMNIGEM_SALE_FEE, DEFAULT_POOL_IMPACT_TAX_MAX, DEFAULT_POOL_IMPACT_TAX_MIN, DEFAULT_POST_FEE, DEFAULT_RAFFLE_COMPOSABLE_PERCENTAGE, DEFAULT_RAFFLE_CREATION_FEE, DEFAULT_RAFFLE_SALE_IMPACT_MAX, DEFAULT_RAFFLE_SALE_IMPACT_TAX_MIN, DEFAULT_REACT_FEE, DEFAULT_REMOVE_ALLOWANCE_APPROVAL, DEFAULT_REMOVE_ALLOWANCE_PARTICIPATION, DEFAULT_REMOVE_ALLOWANCE_PROPOSAL_CREATION, DEFAULT_REMOVE_ALLOWANCE_PROPOSAL_POWER, DEFAULT_REMOVE_ALLOWANCE_VOTING_DURATION, DEFAULT_REMOVE_EXECUTE_PROPOSAL_APPROVAL, DEFAULT_REMOVE_EXECUTE_PROPOSAL_CREATION, DEFAULT_REMOVE_EXECUTE_PROPOSAL_PARTICIPATION, DEFAULT_REMOVE_EXECUTE_PROPOSAL_POWER, DEFAULT_REMOVE_EXECUTE_PROPOSAL_VOTING_DURATION, DEFAULT_REMOVE_PLUGIN_APPROVAL, DEFAULT_REMOVE_PLUGIN_PARTICIPATION, DEFAULT_REMOVE_PLUGIN_PROPOSAL_CREATION, DEFAULT_REMOVE_PLUGIN_PROPOSAL_POWER, DEFAULT_REMOVE_PLUGIN_VOTING_DURATION, DEFAULT_SERVICE_CREATION_FEE, DEFAULT_SHUFFLE_SALE_PERCENTAGE, DEFAULT_SUBSCRIPTION_PAYMENT_PERCENTAGE, DEFAULT_SUBSCRIPTION_TRIGGER_PERCENTAGE, DEFAULT_SWAP_COMPOSABLE_PERCENTAGE, DEFAULT_SWAP_FEE_IMPACT_TAX_MAX, DEFAULT_SWAP_FEE_IMPACT_TAX_MIN, DEFAULT_SWAP_LIQUIDITY_PERCENTAGE, DEFAULT_TOGGLE_ESCROW_LOCK_APPROVAL, DEFAULT_TOGGLE_ESCROW_LOCK_PARTICIPATION, DEFAULT_TOGGLE_ESCROW_LOCK_PROPOSAL_CREATION, DEFAULT_TOGGLE_ESCROW_LOCK_PROPOSAL_POWER, DEFAULT_TOGGLE_ESCROW_LOCK_VOTING_DURATION, DEFAULT_UPDATE_AKITA_DAO_APP_APPROVAL, DEFAULT_UPDATE_AKITA_DAO_DURATION, DEFAULT_UPDATE_AKITA_DAO_PARTICIPATION, DEFAULT_UPDATE_AKITA_DAO_PROPOSAL_CREATION, DEFAULT_UPDATE_AKITA_DAO_PROPOSAL_POWER, DEFAULT_UPDATE_FIELD_APPROVAL, DEFAULT_UPDATE_FIELD_PARTICIPATION, DEFAULT_UPDATE_FIELD_PROPOSAL_CREATION, DEFAULT_UPDATE_FIELD_PROPOSAL_POWER, DEFAULT_UPDATE_FIELD_VOTING_DURATION, DEFAULT_UPGRADE_APP_APPROVAL, DEFAULT_UPGRADE_APP_PARTICIPATION, DEFAULT_UPGRADE_APP_PROPOSAL_CREATION, DEFAULT_UPGRADE_APP_PROPOSAL_POWER, DEFAULT_UPGRADE_APP_VOTING_DURATION, DEFAULT_WALLET_CREATE_FEE, DEFAULT_WALLET_REFERRER_PERCENTAGE } from '../../smart_contracts/utils/defaults';
+import { FixtureAndAccount } from '../types';
+import { logger } from '../utils/logger';
 import { deployAbstractedAccountFactory } from './abstracted-account';
-import { deployUpdateAkitaDaoPlugin } from './plugins/update-akita-dao';
 import { deployEscrowFactory } from './escrow';
-import { SDKClient } from 'akita-sdk/src/types';
-import { deployPayPlugin } from './plugins/pay';
-import { getApplicationAddress } from 'algosdk';
+import { deployRevenueManagerPlugin } from './plugins/revenue-manager';
+import { deployUpdateAkitaDaoPlugin } from './plugins/update-akita-dao';
+import { deployStakingPoolFactory } from './staking-pool';
+import { deploySubscriptions } from './subscriptions';
 
 type DeployParams = FixtureAndAccount & { apps: Partial<AkitaDaoApps> }
+export const AkitaDAOGlobalStateKeysRevenueSplits = 'revenue_splits'
+
 
 export const deployAkitaDAO = async ({
   fixture,
@@ -28,6 +32,8 @@ export const deployAkitaDAO = async ({
     marketplace = 0n,
     akitaNfd = 0n,
     optin = 0n,
+    revenueManager = 0n,
+    update = 0n,
     social = 0n,
     impact = 0n,
     vrfBeacon = 0n,
@@ -70,6 +76,8 @@ export const deployAkitaDAO = async ({
         marketplace,
         akitaNfd,
         optin,
+        revenueManager,
+        update,
         social,
         impact,
         vrfBeacon,
@@ -164,6 +172,13 @@ export const deployAkitaDAO = async ({
           participation: DEFAULT_REMOVE_ALLOWANCE_PARTICIPATION,
           approval: DEFAULT_REMOVE_ALLOWANCE_APPROVAL
         },
+        toggleEscrowLock: {
+          fee: DEFAULT_TOGGLE_ESCROW_LOCK_PROPOSAL_CREATION,
+          power: DEFAULT_TOGGLE_ESCROW_LOCK_PROPOSAL_POWER,
+          duration: DEFAULT_TOGGLE_ESCROW_LOCK_VOTING_DURATION,
+          participation: DEFAULT_TOGGLE_ESCROW_LOCK_PARTICIPATION,
+          approval: DEFAULT_TOGGLE_ESCROW_LOCK_APPROVAL
+        },
         updateFields: {
           fee: DEFAULT_UPDATE_FIELD_PROPOSAL_CREATION,
           power: DEFAULT_UPDATE_FIELD_PROPOSAL_POWER,
@@ -171,7 +186,8 @@ export const deployAkitaDAO = async ({
           participation: DEFAULT_UPDATE_FIELD_PARTICIPATION,
           approval: DEFAULT_UPDATE_FIELD_APPROVAL
         }
-      }
+      },
+      revenueSplits: []
     }
   })
 
@@ -179,10 +195,7 @@ export const deployAkitaDAO = async ({
 
   client.appClient.fundAppAccount({ amount: microAlgo(1318600n) })
 
-  console.log('Akita DAO deployed with appId:', client.appId, client.appAddress.toString());
-
-  // mint the DAOs ARC58 wallet
-  // await client.send.setup({ args: { nickname: 'Akita DAO' }, extraFee: (100_000).microAlgos() })
+  logger.deploy('Akita DAO', client.appId, client.appAddress.toString());
 
   return new AkitaDaoSDK({
     algorand,
@@ -194,7 +207,17 @@ export const deployAkitaDAO = async ({
   });
 }
 
-export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ walletFactory: WalletFactorySDK, dao: AkitaDaoSDK, daoUpdatePluginSdk: UpdateAkitaDAOPluginSDK }> => {
+export type AkitaUniverse = {
+  dao: AkitaDaoSDK;
+  walletFactory: WalletFactorySDK;
+  subscriptions: SubscriptionsSDK;
+  stakingPoolFactory: StakingPoolFactorySDK;
+  revenueManagerPlugin: RevenueManagerPluginSDK;
+  updatePlugin: UpdateAkitaDAOPluginSDK
+  escrowFactory: EscrowFactoryClient
+}
+
+export const buildAkitaUniverse = async (params: DeployParams): Promise<AkitaUniverse> => {
 
   if (!params.sender) {
     throw new Error('Sender is required to deploy and setup Akita DAO');
@@ -202,185 +225,200 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
 
   const { fixture: localnet } = params;
 
+  logger.startBuild();
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 1: Deploy Core Contracts
+  // ═══════════════════════════════════════════════════════════════════════════
+  logger.phase('DEPLOY_CORE');
+
   const escrowFactory = await deployEscrowFactory({
     fixture: localnet,
     sender: params.sender,
     signer: params.signer
   });
-
-  console.log('Escrow Factory deployed with appId:', escrowFactory.appId, escrowFactory.appAddress.toString());
+  logger.deploy('Escrow Factory', escrowFactory.appId, escrowFactory.appAddress.toString());
 
   const dao = await deployAkitaDAO({ ...params, apps: { ...params.apps, escrow: escrowFactory.appId } });
-  const akitaDao = dao.appId;
 
   const dispenser = await localnet.algorand.account.dispenserFromEnvironment();
-  // also make sure the default sender is funded
   await localnet.algorand.account.ensureFunded(params.sender, dispenser, (100).algos());
   await localnet.algorand.account.ensureFunded(dao.readerAccount, dispenser, (1).algos());
 
-  const abstractAccountFactory = (
-    await deployAbstractedAccountFactory({
-      fixture: localnet,
-      sender: params.sender,
-      signer: params.signer,
-      args: {
-        akitaDao,
-        version: '0.0.1',
-        escrowFactory: escrowFactory.appId,
-      }
-    })
-  );
+  const abstractAccountFactory = await deployAbstractedAccountFactory({
+    fixture: localnet,
+    sender: params.sender,
+    signer: params.signer,
+    args: {
+      akitaDao: dao.appId,
+      version: '0.0.1',
+      escrowFactory: escrowFactory.appId,
+    }
+  });
+  logger.deploy('Wallet Factory', abstractAccountFactory.appId, abstractAccountFactory.client.appAddress.toString());
 
-  console.log('Abstracted Account Factory deployed with appId:', abstractAccountFactory.appId, abstractAccountFactory.client.appAddress.toString());
+  const subscriptionsSdk = await deploySubscriptions({
+    fixture: localnet,
+    sender: params.sender,
+    signer: params.signer,
+    args: {
+      akitaDao: dao.appId,
+      version: '0.0.1',
+      akitaDaoEscrow: 0n,
+    }
+  });
+  logger.deploy('Subscriptions', subscriptionsSdk.appId, subscriptionsSdk.client.appAddress.toString());
 
-  let proposalId: bigint | undefined;
+  const stakingPoolFactorySdk = await deployStakingPoolFactory({
+    fixture: localnet,
+    sender: params.sender,
+    signer: params.signer,
+    args: {
+      akitaDao: dao.appId,
+      version: '0.0.1',
+      akitaDaoEscrow: 0n,
+    }
+  });
+  logger.deploy('Staking Pool Factory', stakingPoolFactorySdk.appId, stakingPoolFactorySdk.client.appAddress.toString());
 
-  let actions: ProposalAction<SDKClient>[] = [
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 2: Configure DAO
+  // ═══════════════════════════════════════════════════════════════════════════
+  logger.phase('CONFIGURE_DAO');
+
+  const updateFieldsProposalId = await proposeAndExecute(dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'akita_al',
       value: { wallet: abstractAccountFactory.appId }
     }
-  ]
+  ]);
+  logger.proposal('UpdateFields: Set wallet factory', updateFieldsProposalId);
 
-  let proposalMbr = await dao.proposalCost({ actions });
+  // Fund DAO with setup cost before creating the wallet
+  const setupCost = await dao.setupCost();
+  await dao.client.appClient.fundAppAccount({ amount: setupCost.microAlgo() });
 
-  console.log('Wallet Factory Proposal MBR:', proposalMbr.microAlgo());
+  await dao.setup();
+  logger.wallet('DAO ARC58 Wallet', dao.wallet.client.appId, dao.wallet.client.appAddress.toString());
 
-  await dao.client.appClient.fundAppAccount({
-    amount: proposalMbr.microAlgo()
-  });
-
-  ({ return: proposalId } = await dao.newProposal({ actions }));
-
-  console.log(`Proposal ID: ${proposalId}`)
-
-  if (proposalId === undefined) {
-    throw new Error('Failed to create proposal');
-  }
-
-  await dao.executeProposal({ proposalId })
-
-  const { returns } = await dao.setup()
-
-  const [walletID] = returns as unknown as bigint[]
-
-  // get the sdk for the DAO's arc58 wallet
-  const wallet = await abstractAccountFactory.get({ appId: walletID });
-
-  console.log('Akita DAO ARC58 Wallet deployed with appId:', wallet.appId, wallet.client.appAddress.toString());
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 3: Deploy & Install Plugins
+  // ═══════════════════════════════════════════════════════════════════════════
+  logger.phase('DEPLOY_PLUGINS');
 
   const walletFactoryRevenueEscrow = 'rev_wallet';
-  const auctionFactoryRevenueEscrow = 'rev_auctions';
-  const marketplaceFactoryRevenueEscrow = 'rev_marketplace';
-  const raffleFactoryRevenueEscrow = 'rev_raffle';
-  const socialFactoryRevenueEscrow = 'rev_social';
+  // const auctionFactoryRevenueEscrow = 'rev_auctions';
+  // const marketplaceFactoryRevenueEscrow = 'rev_marketplace';
+  // const raffleFactoryRevenueEscrow = 'rev_raffle';
+  // const socialFactoryRevenueEscrow = 'rev_social';
   const subscriptionsFactoryRevenueEscrow = 'rev_subscriptions';
+  const stakingPoolFactoryRevenueEscrow = 'rev_pool';
 
+  // Calculate MBR for escrows
   const mbrResults = await Promise.allSettled([
-    wallet.getMbr({ escrow: walletFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
-    wallet.getMbr({ escrow: auctionFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
-    wallet.getMbr({ escrow: marketplaceFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
-    wallet.getMbr({ escrow: raffleFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
-    wallet.getMbr({ escrow: socialFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
-    wallet.getMbr({ escrow: subscriptionsFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
+    dao.wallet.getMbr({ escrow: walletFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
+    dao.wallet.getMbr({ escrow: subscriptionsFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
+    dao.wallet.getMbr({ escrow: stakingPoolFactoryRevenueEscrow, methodCount: 0n, plugin: '', groups: 0n }),
   ]);
 
   let totalMbr = 0n;
   for (const result of mbrResults) {
     if (result.status === 'rejected') {
+      logger.error('MBR calculation failed', result.reason);
       throw result.reason;
     }
-
-    totalMbr += result.value.newEscrowMintCost
+    totalMbr += result.value.newEscrowMintCost;
   }
 
-  actions = [
+  await dao.wallet.client.appClient.fundAppAccount({ amount: totalMbr.microAlgo() });
+
+  const escrows = [
     {
-      type: ProposalActionEnum.NewEscrow,
-      escrow: 'rev_wallet'
+      escrow: walletFactoryRevenueEscrow,
+      source: abstractAccountFactory.client.appAddress.toString()
+    },
+    // {
+    //   escrow: auctionFactoryRevenueEscrow,
+    //   source: abstractAccountFactory.client.appAddress.toString()
+    // },
+    // {
+    //   escrow: marketplaceFactoryRevenueEscrow,
+    //   source: abstractAccountFactory.client.appAddress.toString()
+    // },
+    // {
+    //   escrow: raffleFactoryRevenueEscrow,
+    //   source: abstractAccountFactory.client.appAddress.toString()
+    // },
+    // {
+    //   escrow: socialFactoryRevenueEscrow,
+    //   source: abstractAccountFactory.client.appAddress.toString()
+    // },
+    {
+      escrow: subscriptionsFactoryRevenueEscrow,
+      source: abstractAccountFactory.client.appAddress.toString()
     },
     {
-      type: ProposalActionEnum.NewEscrow,
-      escrow: 'rev_auctions'
-    },
-    {
-      type: ProposalActionEnum.NewEscrow,
-      escrow: 'rev_marketplace'
-    },
-    {
-      type: ProposalActionEnum.NewEscrow,
-      escrow: 'rev_raffle'
-    },
-    {
-      type: ProposalActionEnum.NewEscrow,
-      escrow: 'rev_social'
+      escrow: stakingPoolFactoryRevenueEscrow,
+      source: abstractAccountFactory.client.appAddress.toString()
     }
   ]
 
-  await wallet.client.appClient.fundAppAccount({
-    amount: totalMbr.microAlgo()
-  })
-
-  proposalMbr = await dao.proposalCost({ actions });
-
-  // fund the wallet to cover factory escrows' MBR & proposal box
-  await dao.client.appClient.fundAppAccount({
-    amount: (proposalMbr).microAlgo()
-  });
-
-  // abstract account factory escrow
-  ({ return: proposalId } = await dao.newProposal({ actions }));
-
-  console.log(`Proposal ID: ${proposalId}`)
-
-  if (proposalId === undefined) {
-    throw new Error('Failed to create proposal');
-  }
-
-  await dao.executeProposal({ proposalId })
-
-  actions = [
-    {
-      type: ProposalActionEnum.NewEscrow,
-      escrow: 'rev_subscriptions'
-    }
-  ]
-
-  proposalMbr = await dao.proposalCost({ actions });
-
-  await dao.client.appClient.fundAppAccount({
-    amount: proposalMbr.microAlgo()
-  });
-
-  ({ return: proposalId } = await dao.newProposal({ actions }));
-
-  console.log(`Proposal ID: ${proposalId}`)
-
-  if (proposalId === undefined) {
-    throw new Error('Failed to create proposal');
-  }
-
-  await dao.executeProposal({ proposalId })
-
-  // mint updateAkitaDaoPlugin
-  const daoUpdatePluginSdk = await deployUpdateAkitaDaoPlugin({
+  // Deploy Revenue Manager Plugin
+  const revenueManagerPluginSdk = await deployRevenueManagerPlugin({
     fixture: localnet,
     sender: params.sender,
     signer: params.signer
-  })
+  });
+  logger.plugin('deploy', 'RevenueManagerPlugin', revenueManagerPluginSdk.appId);
 
-  let mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 2n })
+  await localnet.algorand.account.ensureFunded(revenueManagerPluginSdk.client.appAddress, dispenser, (1).algos());
 
-  const paymentAmount = 1_000_000n
-  const fundAmount = mbr.plugins + mbr.executions + paymentAmount
+  const installRevenueManagerProposalId = await proposeAndExecute(dao, [
+    {
+      type: ProposalActionEnum.AddPlugin,
+      client: revenueManagerPluginSdk,
+      global: true,
+      escrow: '',
+      sourceLink: 'https://github.com/kylebee/akita-sc',
+      useExecutionKey: true,
+      fee: DEFAULT_CREATION,
+      power: DEFAULT_UPGRADE_APP_PROPOSAL_POWER,
+      duration: DEFAULT_UPGRADE_APP_VOTING_DURATION,
+      participation: DEFAULT_UPGRADE_APP_PARTICIPATION,
+      approval: DEFAULT_UPGRADE_APP_APPROVAL,
+    }
+  ]);
+  logger.proposal('Install RevenueManagerPlugin (global)', installRevenueManagerProposalId);
 
-  await wallet.client.appClient.fundAppAccount({
-    amount: fundAmount.microAlgo()
-  })
+  // Deploy UpdateAkitaDAO Plugin
+  const daoUpdatePluginSdk = await deployUpdateAkitaDaoPlugin({
+    fixture: localnet,
+    sender: params.sender,
+    signer: params.signer,
+    args: {
+      akitaDao: dao.appId,
+    }
+  });
+  logger.plugin('deploy', 'UpdateAkitaDAOPlugin', daoUpdatePluginSdk.appId);
 
-  // install 'updateAkitaDaoEscrow' caller plugin
-  actions = [
+  await proposeAndExecute(dao, [
+    {
+      type: ProposalActionEnum.UpdateFields,
+      field: 'plugn_al',
+      value: { update: daoUpdatePluginSdk.appId }
+    }
+  ]);
+
+  let mbr = await dao.wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 2n });
+
+  const paymentAmount = 1_000_000n;
+  const fundAmount = mbr.plugins + mbr.executions + paymentAmount;
+
+  await dao.wallet.client.appClient.fundAppAccount({ amount: fundAmount.microAlgo() });
+
+  // Install UpdateAkitaDAO Plugin
+  const installUpdatePluginProposalId = await proposeAndExecute(dao, [
     {
       type: ProposalActionEnum.AddPlugin,
       fee: DEFAULT_UPDATE_AKITA_DAO_PROPOSAL_CREATION,
@@ -393,34 +431,16 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
       global: true,
       useExecutionKey: true,
     }
-  ]
+  ]);
+  logger.proposal('Install UpdateAkitaDAOPlugin (global)', installUpdatePluginProposalId);
 
-  proposalMbr = await dao.proposalCost({ actions });
+  // Get rev_wallet escrow info and update wallet factory escrow
+  const revWallet = await dao.wallet.getEscrow(walletFactoryRevenueEscrow);
 
-  console.log('Fetched proposal action costs: ', proposalMbr.microAlgo());
-
-  await dao.client.appClient.fundAppAccount({
-    amount: proposalMbr.microAlgo()
-  });
-
-  ({ return: proposalId } = await dao.newProposal({ actions }));
-
-  console.log(`Proposal ID: ${proposalId}`)
-
-  if (proposalId === undefined) {
-    throw new Error('Failed to create proposal');
-  }
-
-  await dao.executeProposal({ proposalId })
-
-  // get rev_wallet escrow info
-  const revWallet = await wallet.getEscrow(walletFactoryRevenueEscrow);
-
-  // create the execution with the underlying wallet sdk
-  const { lease, firstValid, lastValid, ids: groups, atcs } = await wallet.build.usePlugin({
+  const { lease, firstValid, lastValid, ids: groups, atcs } = await dao.wallet.build.usePlugin({
     sender: params.sender,
     signer: params.signer,
-    lease: 'my_lease',
+    lease: 'update_escrow_app',
     windowSize: 2000n,
     global: true,
     calls: [
@@ -429,12 +449,9 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
         newEscrow: revWallet.id
       })
     ]
-  })
+  });
 
-  console.log({ firstValid, lastValid });
-
-  // create an execution
-  actions = [
+  const executePluginProposalId = await proposeAndExecute(dao, [
     {
       type: ProposalActionEnum.ExecutePlugin,
       plugin: daoUpdatePluginSdk.appId,
@@ -445,29 +462,102 @@ export const deployAndSetupAkitaDAO = async (params: DeployParams): Promise<{ wa
       firstValid,
       lastValid
     }
-  ]
+  ]);
+  await atcs[0].submit(dao.wallet.client.algorand.client.algod);
+  logger.proposal('Update wallet factory escrow', executePluginProposalId);
 
-  proposalMbr = await dao.proposalCost({ actions });
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 4: Setup Revenue Escrows
+  // ═══════════════════════════════════════════════════════════════════════════
+  logger.phase('SETUP_ESCROWS');
 
-  await dao.client.appClient.fundAppAccount({
-    amount: proposalMbr.microAlgo()
+  for (const { escrow, source } of escrows) {
+    await proposeAndExecute(dao, [{ type: ProposalActionEnum.NewEscrow, escrow }]);
+
+    const newReceiveEscrowPluginBuild = await dao.wallet.build.usePlugin({
+      lease: `new_${escrow}_lease`,
+      global: true,
+      windowSize: 2000n,
+      calls: [
+        revenueManagerPluginSdk.newReceiveEscrowWithRef({
+          escrow,
+          source,
+          allocatable: true,
+          optinAllowed: true,
+          splitRef: {
+            app: dao.appId,
+            key: new Uint8Array(Buffer.from(AkitaDAOGlobalStateKeysRevenueSplits))
+          }
+        })
+      ]
+    });
+
+    await proposeAndExecute(dao, [
+      {
+        type: ProposalActionEnum.ExecutePlugin,
+        plugin: revenueManagerPluginSdk.appId,
+        caller: params.sender.toString(),
+        escrow: '',
+        executionKey: newReceiveEscrowPluginBuild.lease,
+        groups: newReceiveEscrowPluginBuild.ids,
+        firstValid: newReceiveEscrowPluginBuild.firstValid,
+        lastValid: newReceiveEscrowPluginBuild.lastValid
+      },
+      {
+        type: ProposalActionEnum.AddPlugin,
+        client: revenueManagerPluginSdk,
+        global: true,
+        escrow,
+        sourceLink: 'https://github.com/kylebee/akita-sc',
+        useExecutionKey: false,
+        methods: [
+          { name: revenueManagerPluginSdk.optIn(), cooldown: 0n },
+          { name: revenueManagerPluginSdk.startEscrowDisbursement(), cooldown: 0n },
+          { name: revenueManagerPluginSdk.processEscrowAllocation(), cooldown: 0n },
+        ]
+      },
+      { type: ProposalActionEnum.ToggleEscrowLock, escrow }
+    ]);
+
+    await newReceiveEscrowPluginBuild.atcs[0].submit(dao.client.algorand.client.algod);
+    logger.escrow(escrow, 'configure');
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 5: Finalize
+  // ═══════════════════════════════════════════════════════════════════════════
+  logger.phase('FINALIZE');
+
+  logger.completeBuild({
+    dao: dao.appId,
+    wallet: dao.wallet.client.appId,
+    escrowFactory: escrowFactory.appId,
+    walletFactory: abstractAccountFactory.appId,
   });
 
-  ({ return: proposalId } = await dao.newProposal({ actions }));
+  return {
+    dao,
+    walletFactory: abstractAccountFactory,
+    subscriptions: subscriptionsSdk,
+    stakingPoolFactory: stakingPoolFactorySdk,
+    revenueManagerPlugin: revenueManagerPluginSdk,
+    updatePlugin: daoUpdatePluginSdk,
+    escrowFactory: escrowFactory,
+  }
+}
 
-  console.log(`Proposal ID: ${proposalId}`)
+const proposeAndExecute = async (dao: AkitaDaoSDK, actions: ProposalAction<SDKClient>[]): Promise<bigint> => {
+  const info = await dao.proposalCost({ actions });
+
+  await dao.client.appClient.fundAppAccount({ amount: info.total.microAlgo() });
+
+  const { return: proposalId } = await dao.newProposal({ actions });
 
   if (proposalId === undefined) {
     throw new Error('Failed to create proposal');
   }
 
-  await dao.executeProposal({ proposalId })
+  await dao.executeProposal({ proposalId });
 
-  console.log(await wallet.getExecution(lease))
-
-  const executionTxnIds = await atcs[0].submit(wallet.client.algorand.client.algod)
-
-  console.log('Execution txn ids:', executionTxnIds);
-
-  return { walletFactory: abstractAccountFactory, dao, daoUpdatePluginSdk };
+  return proposalId;
 }

@@ -216,8 +216,8 @@ export type AkitaAppList = {
 
 export type PluginAppList = {
   optin: uint64
-  // empty slot
-  // empty slot
+  revenueManager: uint64
+  update: uint64
   // empty slot
   // empty slot
   // empty slot
@@ -264,8 +264,10 @@ export type AkitaDAOApps = {
   marketplace: uint64 // Akita Marketplace
   akitaNfd: uint64 // akita.algo NFD
   optin: uint64 // optin plugin
-  social: uint64 // social plugin
-  impact: uint64 // impact plugin
+  revenueManager: uint64 // revenue manager plugin
+  update: uint64 // update plugin
+  social: uint64 // social
+  impact: uint64 // impact
   vrfBeacon: uint64 // vrf beacon
   nfdRegistry: uint64 // NFD Registry
   assetInbox: uint64 // asset inbox
@@ -519,4 +521,14 @@ export type AkitaDAOMBRData = {
   proposals: uint64
   proposalVotes: uint64
   executions: uint64
+}
+
+export type ProposalCostInfo = {
+  total: uint64
+  mbr: uint64
+  fee: uint64
+  power: uint64
+  duration: uint64
+  participation: uint64
+  approval: uint64
 }

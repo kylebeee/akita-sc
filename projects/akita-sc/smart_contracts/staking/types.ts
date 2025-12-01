@@ -41,6 +41,11 @@ export type Stake = {
   expiration: uint64
 }
 
+export type TotalsInfo = {
+  locked: uint64
+  escrowed: uint64
+}
+
 export type Escrow = {
   hard: uint64
   lock: uint64
@@ -83,4 +88,9 @@ export type StakingMBRData = {
   stakes: uint64
   heartbeats: uint64
   settings: uint64
+}
+
+export type StakeCheck = {
+  valid: boolean
+  balance: uint64
 }
