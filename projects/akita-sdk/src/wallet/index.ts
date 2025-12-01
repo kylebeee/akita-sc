@@ -1,6 +1,6 @@
 import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AbstractedAccountFactory, AllowanceKey, EscrowInfo, PluginKey, type AbstractedAccountClient, ExecutionInfo, AbstractedAccountComposer, PluginInfoFromTuple, EscrowInfoFromTuple } from '../generated/AbstractedAccountClient'
 import { AddAllowanceArgs, AddPluginArgs, AllowanceInfo, BuildWalletUsePluginParams, CanCallParams, ExecutionBuildGroup, MbrParams, MethodOffset, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
-import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn } from '../types';
+import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn, hasSenderSigner } from '../types';
 import { BaseSDK } from '../base';
 import algosdk, { Address, ALGORAND_ZERO_ADDRESS_STRING, makeEmptyTransactionSigner } from 'algosdk';
 import { MAX_UINT64 } from '../constants';
@@ -194,7 +194,11 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     }
 
     if (useExecutionKey) {
-      boxReferences.push(domainBoxKey(sender!))
+      if (!hasSenderSigner(sendParams)) {
+        throw new Error('Sender and signer must be provided');
+      }
+
+      boxReferences.push(domainBoxKey(sendParams.sender))
     }
 
     const group = this.client.newGroup()
@@ -221,9 +225,6 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       });
     }
 
-    if (!!lease) {
-      console.log(`Lease key: ${lease}: ${executionBoxKey(lease).toString()}`);
-    }
 
     const composer = await group.composer()
     for (const txn of txns) {
@@ -781,8 +782,6 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         }
 
         const finalGroup = forceProperties(populatedGroup, overwrite)
-
-        console.log('calc\'d fees', finalGroup.clone().buildGroup().map(txn => txn.txn.fee))
 
         const groupID = finalGroup.buildGroup()[0].txn.group!
 

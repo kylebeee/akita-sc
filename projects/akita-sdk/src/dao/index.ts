@@ -1,13 +1,28 @@
-import { AkitaDaoArgs, AkitaDaoClient, AkitaDaoComposer, AkitaDaoFactory } from '../generated/AkitaDAOClient'
+import { AkitaDaoArgs, AkitaDaoClient, AkitaDaoFactory, ProposalCostInfo, ProposalDetails, ProposalVoteTotals } from '../generated/AkitaDAOClient'
+import {
+  AkitaDaoTypesClient,
+  ProposalAddAllowances,
+  ProposalAddNamedPlugin,
+  ProposalAddPlugin,
+  ProposalExecutePlugin,
+  ProposalNewEscrow,
+  ProposalRemoveAllowances,
+  ProposalRemoveExecutePlugin,
+  ProposalRemoveNamedPlugin,
+  ProposalRemovePlugin,
+  ProposalToggleEscrowLock,
+  ProposalUpdateField,
+  ProposalUpgradeApp
+} from '../generated/AkitaDAOTypesClient'
 import { BaseSDK } from "../base";
 import { GroupReturn, hasSenderSigner, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
-import { AddPluginArgs, WalletSDK } from "../wallet";
-import { AkitaDaoGlobalState, EditProposalParams, NewProposalParams, ProposalAction, ProposalAddPluginArgs } from "./types";
+import { WalletSDK } from "../wallet";
+import { AkitaDaoGlobalState, DecodedProposal, DecodedProposalAction, EditProposalParams, NewProposalParams, ProposalAction, ProposalAddPluginArgs } from "./types";
 import { DAOProposalVotesMBR, ProposalActionEnum } from "./constants";
-import { ABIStruct, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";
-import algosdk, { ALGORAND_ZERO_ADDRESS_STRING, encodeUint64 } from "algosdk";
+import { ABIStruct, getABIDecodedValue, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";
+import { ALGORAND_ZERO_ADDRESS_STRING, encodeUint64 } from "algosdk";
 import { AppReturn } from "@algorandfoundation/algokit-utils/types/app";
-import { algo, microAlgo, prepareGroupForSending } from "@algorandfoundation/algokit-utils";
+import { microAlgo, prepareGroupForSending } from "@algorandfoundation/algokit-utils";
 import { emptySigner, MAX_UINT64 } from "../constants";
 import { EMPTY_CID } from "./constants"
 import { AllowancesToTuple, forceProperties, OverWriteProperties } from '../wallet/utils';
@@ -20,10 +35,12 @@ type ContractArgs = AkitaDaoArgs["obj"]
 
 export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
+  typeClient: AkitaDaoTypesClient
   wallet: WalletSDK;
 
   constructor(params: NewContractSDKParams) {
     super({ factory: AkitaDaoFactory, ...params });
+    this.typeClient = new AkitaDaoTypesClient({ algorand: this.algorand, appId: 0n });
     this.wallet = new WalletSDK(params);
   }
 
@@ -32,7 +49,6 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     const preppedActions: [number | bigint, Uint8Array<ArrayBufferLike>][] = []
     for (let i = 0; i < actions.length; i++) {
       const typedAction = actions[i]
-      // const toAbiStruct = (params: any): ABIStruct => (params)
       let abiAction: ABIStruct
       let structType: string = ''
 
@@ -62,23 +78,29 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             useRounds = false,
             useExecutionKey = false,
             defaultToEscrow = false,
-            fee = 0n,
-            power = 0n,
-            duration = 0n,
-            participation = 0n,
-            approval = 0n,
             sourceLink = '',
             allowances = []
           } = action;
 
-          if (
-            useExecutionKey && (
-              duration === 0n ||
-              participation === 0n ||
-              approval === 0n
-            )
-          ) {
-            throw new Error('Proposal Settings must be set when using execution key');
+          // Default the conditional properties
+          let fee = 0n;
+          let power = 0n;
+          let duration = 0n;
+          let participation = 0n;
+          let approval = 0n;
+
+          // Narrow the type and extract execution key props
+          if (action.useExecutionKey) {
+            fee = action.fee;
+            power = action.power;
+            duration = action.duration;
+            participation = action.participation;
+            approval = action.approval;
+
+            // Move the validation inside the narrowed block
+            if (duration === 0n || participation === 0n || approval === 0n) {
+              throw new Error('Proposal Settings must be set when using execution key');
+            }
           }
 
           const plugin = client.appId;
@@ -148,21 +170,6 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
           abiAction = action;
           structType = 'ProposalExecutePlugin';
-          break;
-        }
-        case ProposalActionEnum.ExecuteNamedPlugin: {
-          const { type, ...action } = typedAction
-
-          if (!this.wallet.namedPlugins.has(action.name)) {
-            try {
-              await this.wallet.getPluginByName(action.name)
-            } catch (e) {
-              throw new Error(`Plugin named: ${action.name} not found`);
-            }
-          }
-
-          abiAction = action;
-          structType = 'ProposalExecuteNamedPlugin';
           break;
         }
         case ProposalActionEnum.RemoveExecutePlugin: {
@@ -297,9 +304,13 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             case 'plugn_al': {
               const currentApps = await this.client.state.global.pluginAppList()
 
-              const { optin = currentApps?.optin ?? 0n } = action.value;
+              const {
+                optin = currentApps?.optin ?? 0n,
+                revenueManager = currentApps?.revenueManager ?? 0n,
+                update = currentApps?.update ?? 0n
+              } = action.value;
 
-              data = getABIEncodedValue({ optin }, 'PluginAppList', this.client.appClient.appSpec.structs)
+              data = getABIEncodedValue({ optin, revenueManager, update }, 'PluginAppList', this.client.appClient.appSpec.structs)
               break;
             }
             case 'other_al': {
@@ -322,8 +333,6 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
                 poll,
                 akitaNfd
               };
-
-              console.log('OtherAppList ABI Data:', abiData);
 
               data = getABIEncodedValue(abiData, 'OtherAppList', this.client.appClient.appSpec.structs)
               break;
@@ -489,7 +498,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
       preppedActions.push([
         typedAction.type,
-        getABIEncodedValue(abiAction, structType, this.client.appClient.appSpec.structs)
+        getABIEncodedValue(abiAction, structType, this.typeClient.appClient.appSpec.structs)
       ])
     }
 
@@ -579,34 +588,25 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
     const group = this.client.newGroup()
 
+    let total = 0n;
     if (initialized) {
-
-      const results = await this.client.send.proposalCost(preppedActions)
-      const cost = results.return?.totalFee ?? 0n;
-
-      const payment = this.client.algorand.createTransaction.payment({
-        ...sendParams,
-        receiver: this.client.appAddress.toString(),
-        amount: microAlgo(cost),
-      })
-
-      group.newProposal({
-        ...sendParams,
-        args: {
-          payment,
-          cid,
-          actions: preppedActions
-        }
-      })
-    } else {
-      group.newProposalPreInitialized({
-        ...sendParams,
-        args: {
-          cid,
-          actions: preppedActions
-        }
-      })
+      ({ total } = await this.client.proposalCost({ args: { actions: preppedActions } }))
     }
+
+    const payment = this.client.algorand.createTransaction.payment({
+      ...sendParams,
+      receiver: this.client.appAddress.toString(),
+      amount: microAlgo(total),
+    })
+
+    group.newProposal({
+      ...sendParams,
+      args: {
+        payment,
+        cid,
+        actions: preppedActions
+      }
+    })
 
     for (let i = 0; i < actions.length; i++) {
       group.opUp({ args: {}, note: `${i}` })
@@ -648,8 +648,6 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
     const finalGroup = forceProperties(populatedGroup, overwrite)
 
-    console.log('calc\'d fees', finalGroup.clone().buildGroup().map(txn => txn.txn.fee))
-
     const groupId = finalGroup.buildGroup()[0].txn.group!.toString()
 
     const { methodResults, ...rest } = await finalGroup.execute(this.client.algorand.client.algod, 10)
@@ -679,7 +677,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
     const req = await Promise.allSettled([
       this.client.state.box.proposals.value(id),
-      this.client.send.proposalCost(preppedActions)
+      this.client.proposalCost({ args: { actions: preppedActions } })
     ])
 
     if (req[0].status === 'rejected' || req[0].value === undefined) {
@@ -693,7 +691,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     }
 
     const results = req[1].value;
-    const cost = results.return?.totalFee ?? 0n;
+    const cost = results.total ?? 0n;
 
     let paymentRequired = feesPaid < cost;
 
@@ -822,19 +820,15 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
       ...(signer !== undefined && { signer })
     };
 
-    const { return: cost } = await this.client.send.setupCost({
+    const cost = await this.client.setupCost({
       ...sendParams,
       args: {}
     });
 
-    if (cost === undefined) {
-      throw new Error('Failed to get setup cost for Akita DAO');
-    }
-
     return cost;
   }
 
-  async proposalCost<TClient extends SDKClient>({ sender, signer, actions }: { actions: ProposalAction<TClient>[] } & MaybeSigner): Promise<bigint> {
+  async proposalCost<TClient extends SDKClient>({ sender, signer, actions }: { actions: ProposalAction<TClient>[] } & MaybeSigner): Promise<ProposalCostInfo> {
 
     const defaultParams = {
       ...this.sendParams,
@@ -848,15 +842,132 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
       ...(signer !== undefined && { signer })
     };
 
-    const { return: requirements } = await this.client.send.proposalCost({
+    const requirements = await this.client.proposalCost({
       ...sendParams,
       args: { actions: await this.prepProposalActions(actions) },
     });
 
-    if (requirements === undefined) {
-      throw new Error('Failed to get proposal cost for Akita DAO');
+    return requirements
+  }
+
+  /**
+   * Maps proposal action type enum to its corresponding struct type name
+   */
+  private getActionStructType(actionType: number): string {
+    switch (actionType) {
+      case ProposalActionEnum.UpgradeApp:
+        return 'ProposalUpgradeApp';
+      case ProposalActionEnum.AddPlugin:
+        return 'ProposalAddPlugin';
+      case ProposalActionEnum.AddNamedPlugin:
+        return 'ProposalAddNamedPlugin';
+      case ProposalActionEnum.ExecutePlugin:
+        return 'ProposalExecutePlugin';
+      case ProposalActionEnum.RemoveExecutePlugin:
+        return 'ProposalRemoveExecutePlugin';
+      case ProposalActionEnum.RemovePlugin:
+        return 'ProposalRemovePlugin';
+      case ProposalActionEnum.RemoveNamedPlugin:
+        return 'ProposalRemoveNamedPlugin';
+      case ProposalActionEnum.AddAllowances:
+        return 'ProposalAddAllowances';
+      case ProposalActionEnum.RemoveAllowances:
+        return 'ProposalRemoveAllowances';
+      case ProposalActionEnum.NewEscrow:
+        return 'ProposalNewEscrow';
+      case ProposalActionEnum.ToggleEscrowLock:
+        return 'ProposalToggleEscrowLock';
+      case ProposalActionEnum.UpdateFields:
+        return 'ProposalUpdateField';
+      default:
+        throw new Error(`Unknown proposal action type: ${actionType}`);
+    }
+  }
+
+  /**
+   * Decodes the raw action bytes into their typed struct representation
+   */
+  private decodeProposalAction(actionType: number, actionData: Uint8Array): DecodedProposalAction {
+    const structType = this.getActionStructType(actionType);
+    const structs = this.typeClient.appClient.appSpec.structs;
+
+    switch (actionType) {
+      case ProposalActionEnum.UpgradeApp: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalUpgradeApp;
+        return { type: ProposalActionEnum.UpgradeApp, ...decoded };
+      }
+      case ProposalActionEnum.AddPlugin: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalAddPlugin;
+        return { type: ProposalActionEnum.AddPlugin, ...decoded };
+      }
+      case ProposalActionEnum.AddNamedPlugin: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalAddNamedPlugin;
+        return { type: ProposalActionEnum.AddNamedPlugin, ...decoded };
+      }
+      case ProposalActionEnum.ExecutePlugin: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalExecutePlugin;
+        return { type: ProposalActionEnum.ExecutePlugin, ...decoded };
+      }
+      case ProposalActionEnum.RemoveExecutePlugin: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalRemoveExecutePlugin;
+        return { type: ProposalActionEnum.RemoveExecutePlugin, ...decoded };
+      }
+      case ProposalActionEnum.RemovePlugin: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalRemovePlugin;
+        return { type: ProposalActionEnum.RemovePlugin, ...decoded };
+      }
+      case ProposalActionEnum.RemoveNamedPlugin: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalRemoveNamedPlugin;
+        return { type: ProposalActionEnum.RemoveNamedPlugin, ...decoded };
+      }
+      case ProposalActionEnum.AddAllowances: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalAddAllowances;
+        return { type: ProposalActionEnum.AddAllowances, ...decoded };
+      }
+      case ProposalActionEnum.RemoveAllowances: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalRemoveAllowances;
+        return { type: ProposalActionEnum.RemoveAllowances, ...decoded };
+      }
+      case ProposalActionEnum.NewEscrow: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalNewEscrow;
+        return { type: ProposalActionEnum.NewEscrow, ...decoded };
+      }
+      case ProposalActionEnum.ToggleEscrowLock: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalToggleEscrowLock;
+        return { type: ProposalActionEnum.ToggleEscrowLock, ...decoded };
+      }
+      case ProposalActionEnum.UpdateFields: {
+        const decoded = getABIDecodedValue(actionData, structType, structs) as ProposalUpdateField;
+        return { type: ProposalActionEnum.UpdateFields, ...decoded };
+      }
+      default:
+        throw new Error(`Unknown proposal action type: ${actionType}`);
+    }
+  }
+
+  /**
+   * Fetches a proposal by ID and decodes all action data into typed structs
+   */
+  async getProposal(proposalId: bigint): Promise<DecodedProposal> {
+    const proposal = await this.client.getProposal({ args: { proposalId } });
+
+    if (!proposal) {
+      throw new Error(`Proposal with id: ${proposalId} not found`);
     }
 
-    return requirements.totalFee;
+    const decodedActions: DecodedProposalAction[] = proposal.actions.map(([actionType, actionData]) => {
+      return this.decodeProposalAction(actionType, actionData);
+    });
+
+    return {
+      status: proposal.status,
+      cid: proposal.cid,
+      votes: proposal.votes,
+      creator: proposal.creator,
+      votingTs: proposal.votingTs,
+      created: proposal.created,
+      feesPaid: proposal.feesPaid,
+      actions: decodedActions
+    };
   }
 }
