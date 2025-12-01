@@ -1,4 +1,5 @@
-import { SubscriptionsArgs, SubscriptionsClient, SubscriptionsFactory } from '../../smart_contracts/artifacts/subscriptions/SubscriptionsClient'
+import { SubscriptionsSDK } from 'akita-sdk';
+import { SubscriptionsArgs, SubscriptionsFactory } from '../../smart_contracts/artifacts/subscriptions/SubscriptionsClient';
 import { FixtureAndAccount } from '../types';
 
 type CreateArgs = SubscriptionsArgs["obj"]['create(string,uint64,uint64)void']
@@ -13,7 +14,7 @@ export const deploySubscriptions = async ({
     version = '0.0.1',
     akitaDaoEscrow,
   }
-}: DeployParams): Promise<SubscriptionsClient> => {
+}: DeployParams): Promise<SubscriptionsSDK> => {
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(
@@ -36,7 +37,12 @@ export const deploySubscriptions = async ({
     }
   })
 
-  console.log('Subscriptions deployed with appId:', client.appId);
-
-  return client;
+  return new SubscriptionsSDK({ 
+    algorand, 
+    factoryParams: { 
+      appId: client.appId,
+      defaultSender: sender,
+      defaultSigner: signer
+    } 
+  });
 };

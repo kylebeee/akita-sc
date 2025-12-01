@@ -15,7 +15,7 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { decodeArc4, StaticArray, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
+import { StaticArray, Uint64 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
 import { arc4Zero } from '../utils/constants'
@@ -31,7 +31,9 @@ import {
   StakingBoxPrefixHeartbeats,
   StakingBoxPrefixSettings,
   StakingBoxPrefixStakes,
+  StakingBoxPrefixTotals,
   StakingGlobalStateKeyHeartbeatManagerAddress,
+  totalsMBR,
 } from './constants'
 import {
   ERR_BAD_EXPIRATION,
@@ -51,10 +53,9 @@ import {
   arc4Heartbeat,
   AssetCheck,
   Escrow,
-  Heartbeat,
   HeartbeatKey,
-  Heartbeats,
   Stake,
+  StakeCheck,
   StakeInfo,
   StakeKey,
   STAKING_TYPE_HARD,
@@ -62,11 +63,14 @@ import {
   STAKING_TYPE_LOCK,
   STAKING_TYPE_SOFT,
   StakingType,
+  TotalsInfo
 } from './types'
 
 // CONTRACT IMPORTS
+import { ERR_ALREADY_OPTED_IN } from '../subscriptions/errors'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { BaseStaking } from './base'
+import { emptyHeartbeat } from './utils'
 
 export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
@@ -82,7 +86,9 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   // 2_500 + (400 * (41 + 128)) = 44,100
   heartbeats = BoxMap<HeartbeatKey, arc4.StaticArray<arc4Heartbeat, 4>>({
     keyPrefix: StakingBoxPrefixHeartbeats,
-  }) 
+  })
+
+  totals = BoxMap<uint64, TotalsInfo>({ keyPrefix: StakingBoxPrefixTotals })
 
   settings = BoxMap<uint64, uint64>({ keyPrefix: StakingBoxPrefixSettings })
 
@@ -94,12 +100,69 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     this.akitaDAO.value = akitaDAO
   }
 
+  init(): void {
+    this.totals(0).value = { locked: 0, escrowed: 0 }
+  }
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
+
+  private updateTotals(asset: uint64, type: StakingType, amount: uint64, isAdd: boolean): void {
+    if (type === STAKING_TYPE_HARD) {
+      if (isAdd) {
+        this.totals(asset).value.escrowed += amount
+      } else {
+        this.totals(asset).value.escrowed -= amount
+      }
+    } else if (type === STAKING_TYPE_LOCK) {
+      if (isAdd) {
+        this.totals(asset).value.locked += amount
+      } else {
+        this.totals(asset).value.locked -= amount
+      }
+    }
+  }
+
   // STAKING METHODS ------------------------------------------------------------------------------
+
+  /**
+   * optin tells the contract to opt into an asa
+   * @param payment The payment transaction
+   * @param asset The asset to be opted into
+   */
+  optIn(payment: gtxn.PaymentTxn, asset: uint64): void {
+    assert(!Global.currentApplicationAddress.isOptedIn(Asset(asset)), ERR_ALREADY_OPTED_IN)
+
+    // totals mbr
+    const mbr: uint64 = (
+      totalsMBR +
+      Global.assetOptInMinBalance
+    )
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: mbr,
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    itxn.assetTransfer({
+      assetReceiver: Global.currentApplicationAddress,
+      assetAmount: 0,
+      xferAsset: asset
+    }).submit()
+
+    this.totals(asset).value = {
+      locked: 0,
+      escrowed: 0,
+    }
+  }
 
   stake(payment: gtxn.PaymentTxn, type: StakingType, amount: uint64, expiration: uint64): void {
     const inTheFuture = expiration > Global.latestTimestamp
     const lessThanOneYearInTheFuture = expiration <= Global.latestTimestamp + ONE_YEAR
-    const locked = type !== STAKING_TYPE_LOCK
+    const locked = type === STAKING_TYPE_LOCK
     const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
     const timestamp = Global.latestTimestamp
 
@@ -118,6 +181,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
       const costs = this.mbr()
 
       if (isEscrow) {
+
         assertMatch(
           payment,
           {
@@ -126,6 +190,9 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
           },
           ERR_INVALID_PAYMENT
         )
+
+        this.updateTotals(0, type, amount, true)
+
       } else if (type === STAKING_TYPE_HEARTBEAT) {
         // when heartbeat staking, the amount is ignored
         // instead we record balances across wallet & escrow
@@ -189,6 +256,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
         )
 
         this.heartbeats(heartbeatKey).value = clone(heartbeats)
+
       } else {
         assert(Txn.sender.balance >= amount, ERR_INSUFFICIENT_BALANCE)
         assertMatch(
@@ -206,6 +274,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
         lastUpdate: timestamp,
         expiration,
       }
+
     } else {
       assert(type !== STAKING_TYPE_HEARTBEAT, ERR_HEARTBEAT_CANNOT_UPDATE)
       const { expiration: currentStakeExpiration, amount: currentStakeAmount } = this.stakes(sk).value
@@ -214,6 +283,8 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
       if (isEscrow) {
         assert(payment.receiver === Global.currentApplicationAddress, ERR_INVALID_PAYMENT_RECEIVER)
         assert(payment.amount === amount, ERR_INVALID_PAYMENT_AMOUNT)
+
+        this.updateTotals(0, type, amount, true)
       } else {
         assert(Txn.sender.balance >= currentStakeAmount + amount, ERR_INSUFFICIENT_BALANCE)
       }
@@ -240,7 +311,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     if (this.settings(assetXfer.xferAsset.id).exists) {
       lessThanMaxLockup = expiration <= Global.latestTimestamp + this.settings(assetXfer.xferAsset.id).value
     }
-    const locked = type !== STAKING_TYPE_LOCK
+    const locked = type === STAKING_TYPE_LOCK
     const isEscrow = type === STAKING_TYPE_HARD || type === STAKING_TYPE_LOCK
     const timestamp = Global.latestTimestamp
 
@@ -262,6 +333,9 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
         assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
         assert(assetXfer.assetAmount === amount, ERR_INVALID_ASSET_AMOUNT)
+
+        this.updateTotals(asset, type, amount, true)
+
       } else if (type === STAKING_TYPE_HEARTBEAT) {
         const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset)
 
@@ -341,6 +415,8 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
       if (isEscrow) {
         assert(assetXfer.assetReceiver === Global.currentApplicationAddress, ERR_INVALID_ASSET_AMOUNT)
         assert(assetXfer.assetAmount === amount, ERR_INVALID_ASSET_AMOUNT)
+
+        this.updateTotals(asset, type, amount, true)
       } else {
         const [holdingAmount, optedIn] = AssetHolding.assetBalance(Txn.sender, asset)
         assert(optedIn, ERR_NOT_OPTED_IN)
@@ -387,6 +463,9 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
         })
         .submit()
     }
+
+    this.updateTotals(asset, type, amount, false)
+
     this.stakes(sk).delete()
   }
 
@@ -397,7 +476,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
 
     const timestamp = new Uint64(Global.latestTimestamp)
-    const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    const heartbeats = clone(this.heartbeats(hbk).value)
 
     const [holdings] = AssetHolding.assetBalance(address, asset)
     const held = new Uint64(holdings)
@@ -433,7 +512,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     for (let i: uint64 = 0; i < 4; i += 1) {
       if (
         i === 3 ||
-        heartbeats[i].timestamp > heartbeats[i + 1].timestamp
+        heartbeats[i].timestamp.asUint64() > heartbeats[i + 1].timestamp.asUint64()
       ) {
         const indexToModify: uint64 = i === 3 ? 0 : i + 1
         this.heartbeats(hbk).value[indexToModify] = new arc4Heartbeat({
@@ -447,7 +526,7 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     }
   }
 
-  softCheck(address: Account, asset: uint64): { valid: boolean, balance: uint64 } {
+  softCheck(address: Account, asset: uint64): StakeCheck {
     const sk = { address, asset, type: STAKING_TYPE_SOFT }
     assert(this.stakes(sk).exists, ERR_STAKE_DOESNT_EXIST)
 
@@ -496,11 +575,31 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
 
   // READ ONLY METHODS ----------------------------------------------------------------------------
 
+  @abimethod({ readonly: true })
+  optInCost(): uint64 {
+    return totalsMBR + Global.assetOptInMinBalance
+  }
+
+  @abimethod({ readonly: true })
+  stakeCost(asset: uint64, type: StakingType): uint64 {
+    const { stakes, heartbeats } = this.mbr()
+    const sk: StakeKey = { address: Txn.sender, asset, type }
+    const isUpdate = this.stakes(sk).exists
+
+    if (isUpdate) {
+      return 0
+    }
+
+    if (type === STAKING_TYPE_HEARTBEAT) {
+      return stakes + heartbeats
+    }
+
+    return stakes
+  }
 
   @abimethod({ readonly: true })
   getTimeLeft(address: Account, asset: uint64): uint64 {
     const sk = { address, asset, type: STAKING_TYPE_LOCK }
-
     if (!this.stakes(sk).exists || Global.latestTimestamp >= this.stakes(sk).value.expiration) {
       return 0
     }
@@ -553,28 +652,25 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
   }
 
   @abimethod({ readonly: true })
-  getHeartbeat(address: Account, asset: uint64): Heartbeats {
+  getHeartbeat(address: Account, asset: uint64): arc4.StaticArray<arc4Heartbeat, 4> {
     const hbk = { address, asset }
     if (!this.heartbeats(hbk).exists) {
-
-      const ehbv: Heartbeat = {
-        held: 0,
-        hard: 0,
-        lock: 0,
-        timestamp: 0,
-      }
-
-      return [ehbv, ehbv, ehbv, ehbv]
+      return new arc4.StaticArray<arc4Heartbeat, 4>(
+        emptyHeartbeat(),
+        emptyHeartbeat(),
+        emptyHeartbeat(),
+        emptyHeartbeat()
+      )
     }
 
-    return decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    return this.heartbeats(hbk).value
   }
 
   @abimethod({ readonly: true })
-  mustGetHeartbeat(address: Account, asset: uint64): Heartbeats {
+  mustGetHeartbeat(address: Account, asset: uint64): arc4.StaticArray<arc4Heartbeat, 4> {
     const hbk = { address, asset }
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
-    return decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    return this.heartbeats(hbk).value
   }
 
   @abimethod({ readonly: true })
@@ -585,18 +681,26 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
       return 0
     }
 
-    const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    const heartbeats = clone(this.heartbeats(hbk).value)
 
     let total: uint64 = 0
+    let count: uint64 = 0
     for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
-      if (includeEscrowed) {
-        total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
-      } else {
-        total += heartbeats[i].held
+      if (heartbeats[i].timestamp.asUint64() > 0) {
+        count += 1
+        if (includeEscrowed) {
+          total += heartbeats[i].held.asUint64() + heartbeats[i].hard.asUint64() + heartbeats[i].lock.asUint64()
+        } else {
+          total += heartbeats[i].held.asUint64()
+        }
       }
     }
 
-    return total / heartbeats.length
+    if (count === 0) {
+      return 0
+    }
+
+    return total / count
   }
 
   @abimethod({ readonly: true })
@@ -604,18 +708,27 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     const hbk = { address, asset }
     assert(this.heartbeats(hbk).exists, ERR_HEARBEAT_NOT_FOUND)
 
-    const heartbeats = decodeArc4<Heartbeats>(this.heartbeats(hbk).value.bytes)
+    const heartbeats = clone(this.heartbeats(hbk).value)
 
     let total: uint64 = 0
-    for (let i: uint64 = 0; i < heartbeats.length; i += 1) {
-      if (includeEscrowed) {
-        total += heartbeats[i].held + heartbeats[i].hard + heartbeats[i].lock
-      } else {
-        total += heartbeats[i].held
+    let count: uint64 = 0
+    for (let i: uint64 = 0; i < 4; i += 1) {
+      // Only count entries with non-zero timestamps (valid entries)
+      if (heartbeats[i].timestamp.asUint64() > 0) {
+        count += 1
+        if (includeEscrowed) {
+          total += heartbeats[i].held.asUint64() + heartbeats[i].hard.asUint64() + heartbeats[i].lock.asUint64()
+        } else {
+          total += heartbeats[i].held.asUint64()
+        }
       }
     }
 
-    return total / heartbeats.length
+    if (count === 0) {
+      return 0
+    }
+
+    return total / count
   }
 
   @abimethod({ readonly: true })
@@ -670,5 +783,14 @@ export class Staking extends classes(BaseStaking, AkitaBaseContract) {
     }
 
     return true
+  }
+
+  @abimethod({ readonly: true })
+  getTotals(assets: uint64[]): TotalsInfo[] {
+    let results: TotalsInfo[] = []
+    for (let i: uint64 = 0; i < assets.length; i += 1) {
+      results.push(this.totals(assets[i]).value)
+    }
+    return results
   }
 }

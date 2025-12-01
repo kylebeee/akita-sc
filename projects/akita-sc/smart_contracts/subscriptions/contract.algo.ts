@@ -4,6 +4,7 @@ import {
   Application,
   assert,
   assertMatch,
+  Asset,
   BoxMap,
   Bytes,
   bytes,
@@ -11,29 +12,22 @@ import {
   Global,
   gtxn,
   itxn,
+  OnCompleteAction,
   op,
+  TransactionType,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { Txn } from '@algorandfoundation/algorand-typescript/op'
 import { methodSelector, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import {
-  Amounts,
-  ServiceID,
-  ServiceStatusActive,
-  ServiceStatusPaused,
-  ServiceStatusShutdown,
-  Service,
-  SubscriptionID,
-  SubscriptionInfo,
-  SubscriptionInfoWithPasses,
-  ServicesKey,
-  BlockListKey,
-  SubscriptionKey,
-  ServiceStatusDraft,
-  TriggerListRequest,
-} from './types'
+import { Txn } from '@algorandfoundation/algorand-typescript/op'
+import { classes } from 'polytype'
+import { AkitaDAOEscrowAccountSubscriptions } from '../arc58/dao/constants'
+import { ERR_HAS_GATE } from '../social/errors'
+import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { calcPercent, gateCheck, getSubscriptionFees, getWalletIDUsingAkitaDAO, originOrTxnSender, referralFee, sendReferralPayment } from '../utils/functions'
+import { CID } from '../utils/types/base'
 import {
   HighlightMessageNone,
+  MAX_DESCRIPTION_CHUNK_SIZE,
   MAX_DESCRIPTION_LENGTH,
   MAX_PASSES,
   MAX_TITLE_LENGTH,
@@ -53,35 +47,51 @@ import {
   ERR_BLOCKED,
   ERR_CANNOT_TRIGGER,
   ERR_FAILED_GATE,
+  ERR_GROUP_INDEX_OUT_OF_BOUNDS,
   ERR_INVALID_ASSET_RECEIVER,
+  ERR_INVALID_SEQUENCE,
   ERR_MAX_PASSES_IS_FIVE,
   ERR_MIN_AMOUNT_IS_THREE,
   ERR_MIN_INTERVAL_IS_SIXTY,
   ERR_NO_DONATIONS,
   ERR_NOT_A_SERVICE,
   ERR_NOT_ENOUGH_FUNDS,
+  ERR_NOT_OPTED_IN,
   ERR_PASS_COUNT_OVERFLOW,
   ERR_SERVICE_DOES_NOT_EXIST,
   ERR_SERVICE_IS_NOT_ACTIVE,
   ERR_SERVICE_IS_NOT_DRAFT,
   ERR_SERVICE_IS_NOT_PAUSED,
   ERR_SERVICE_IS_SHUTDOWN,
+  ERR_SERVICE_NOT_ACTIVATED,
   ERR_SUBSCRIPTION_DOES_NOT_EXIST,
   ERR_TITLE_TOO_LONG,
   ERR_USER_ALREADY_BLOCKED,
   ERR_USER_NOT_BLOCKED,
 } from './errors'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { CID } from '../utils/types/base'
-import { classes } from 'polytype'
-import { AkitaDAOEscrowAccountSubscriptions } from '../arc58/dao/constants'
-import { calcPercent, gateCheck, getSubscriptionFees, getWalletIDUsingAkitaDAO, originOrTxnSender, referrerOrZeroAddress, sendReferralPayment } from '../utils/functions'
-import { ERR_HAS_GATE } from '../social/errors'
+import {
+  Amounts,
+  BlockListKey,
+  Service,
+  ServiceID,
+  ServicesKey,
+  ServiceStatus,
+  ServiceStatusActive,
+  ServiceStatusDraft,
+  ServiceStatusNone,
+  ServiceStatusPaused,
+  ServiceStatusShutdown,
+  SubscriptionID,
+  SubscriptionInfo,
+  SubscriptionInfoWithDetails,
+  SubscriptionKey,
+  TriggerListRequest
+} from './types'
 
 // CONTRACT IMPORTS
-import { BaseSubscriptions } from './base'
 import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { BaseSubscriptions } from './base'
 
 export class Subscriptions extends classes(
   BaseSubscriptions,
@@ -182,7 +192,7 @@ export class Subscriptions extends classes(
   private newServiceID(address: Account): ServiceID {
     const id: uint64 = this.serviceslist(address).exists
       ? this.serviceslist(address).value
-      : 0
+      : 1
     this.serviceslist(address).value = id + 1
     return id
   }
@@ -190,7 +200,7 @@ export class Subscriptions extends classes(
   private newSubscriptionID(address: Account): SubscriptionID {
     const id: uint64 = this.subscriptionslist(address).exists
       ? this.subscriptionslist(address).value
-      : 0
+      : 1
     this.subscriptionslist(address).value = id + 1
     return id
   }
@@ -463,6 +473,29 @@ export class Subscriptions extends classes(
 
   // SUBSCRIPTION METHODS -------------------------------------------------------------------------
 
+  private verifyServiceActivation(): void {
+    let activated = false
+    for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
+      const txn = gtxn.Transaction(i)
+      
+      if (txn.type !== TransactionType.ApplicationCall) {
+        continue
+      }
+
+      assert(txn.appId === Global.currentApplicationId, ERR_INVALID_SEQUENCE)
+      assert(txn.onCompletion === OnCompleteAction.NoOp, ERR_INVALID_SEQUENCE)
+
+      if (txn.appArgs(0) === methodSelector(this.activateService)) {
+        activated = true
+        break
+      }
+
+      assert(txn.appArgs(0) === methodSelector(this.setServiceDescription), ERR_INVALID_SEQUENCE)
+    }
+
+    assert(activated, ERR_SERVICE_NOT_ACTIVATED)
+  }
+
   /**
    * newService creates a new service for a merchant
    * @param payment The payment for the service creation
@@ -502,7 +535,12 @@ export class Subscriptions extends classes(
 
     let requiredAmount: uint64 = serviceCreationFee + costs.services
     if (asset !== 0) {
-      requiredAmount += Global.assetOptInMinBalance
+      assert(Global.currentApplicationAddress.isOptedIn(Asset(asset)), ERR_NOT_OPTED_IN)
+
+      if (!this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
+        requiredAmount += Global.assetOptInMinBalance
+        this.optAkitaEscrowInAndSend(AkitaDAOEscrowAccountSubscriptions, Asset(asset), 0)
+      }
     }
 
     const { leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, asset, serviceCreationFee)
@@ -537,10 +575,26 @@ export class Subscriptions extends classes(
       highlightColor
     }
 
+    this.verifyServiceActivation()
+
     return id
   }
 
-  setServiceDescription(id: ServiceID, offset: uint64, data: bytes): void {
+  setServiceDescription(offset: uint64, data: bytes): void {
+    assert(Txn.groupIndex > 0, ERR_GROUP_INDEX_OUT_OF_BOUNDS)
+    const previousCalls: uint64 = offset / MAX_DESCRIPTION_CHUNK_SIZE
+    const newServiceTxnIndex: uint64 = Txn.groupIndex - 1 - previousCalls
+    const txn = gtxn.Transaction(newServiceTxnIndex)
+    // force the call to be after newService
+    assert(
+      txn.type === TransactionType.ApplicationCall &&
+      txn.appId === Global.currentApplicationId &&
+      txn.onCompletion === OnCompleteAction.NoOp &&
+      txn.appArgs(0) === methodSelector(this.newService),
+      ERR_INVALID_SEQUENCE
+    )
+
+    const id: uint64 = this.serviceslist(Txn.sender).value - 1
     const key: ServicesKey = { address: Txn.sender, id }
 
     assert(this.services(key).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -560,10 +614,10 @@ export class Subscriptions extends classes(
 
   /**
    * activateService activates an service for a merchant
-   *
-   * @param index The index of the box to be used for the subscription
    */
-  activateService(id: ServiceID): void {
+  activateService(): void {
+    const id: uint64 = this.serviceslist(Txn.sender).value - 1
+
     const boxKey: ServicesKey = { address: Txn.sender, id }
 
     assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -1033,6 +1087,63 @@ export class Subscriptions extends classes(
   }
 
   @abimethod({ readonly: true })
+  newServiceCost(asset: uint64): uint64 {
+    const serviceCreationFee = getSubscriptionFees(this.akitaDAO.value).serviceCreationFee
+    const costs = this.mbr()
+    
+    let requiredAmount: uint64 = serviceCreationFee + costs.services
+    if (asset !== 0 && !this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
+      requiredAmount += Global.assetOptInMinBalance
+    }
+
+    const referralCost = referralFee(this.akitaDAO.value, asset)
+
+    return requiredAmount + referralCost
+  }
+
+  @abimethod({ readonly: true })
+  newSubscriptionCost(
+    recipient: Account,
+    asset: uint64,
+    serviceID: ServiceID
+  ): uint64 {
+    const costs = this.mbr()
+    let mbrAmount = costs.subscriptions
+    // index zero is always reserved for donations
+    const isDonation = serviceID === 0
+    if (!isDonation) {
+      const boxKey: ServicesKey = { address: recipient, id: serviceID }
+      // ensure the service exists
+      assert(this.services(boxKey).exists, ERR_SERVICE_DOES_NOT_EXIST)
+      // get the service details
+      const service = clone(this.services(boxKey).value)
+
+      if (service.passes > 0) {
+        mbrAmount += costs.passes
+      }
+    }
+
+    const subscriptionID = this.newSubscriptionID(Txn.sender)
+
+    if (subscriptionID === 0) {
+      mbrAmount += costs.subscriptionslist
+    }
+
+    const referralCost = referralFee(this.akitaDAO.value, asset)
+
+    if (asset !== 0 && !this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
+      mbrAmount += Global.assetOptInMinBalance
+    }
+
+    return mbrAmount + referralCost
+  }
+
+  @abimethod({ readonly: true })
+  blockCost(): uint64 {
+    return this.mbr().blocks
+  }
+
+  @abimethod({ readonly: true })
   getService(address: Account, id: uint64): Service {
     const key: ServicesKey = { address, id }
     assert(this.services(key).exists, ERR_SERVICE_DOES_NOT_EXIST)
@@ -1060,20 +1171,21 @@ export class Subscriptions extends classes(
   }
 
   @abimethod({ readonly: true })
-  getSubscriptionWithPasses(key: SubscriptionKey): SubscriptionInfoWithPasses {
+  getSubscriptionWithDetails(key: SubscriptionKey): SubscriptionInfoWithDetails {
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
 
     const sub = clone(this.subscriptions(key).value)
 
+    let status: ServiceStatus = ServiceStatusNone
     let title: string = ''
-    let description: string = ''
+    let description: string = ''  
     let bannerImage: CID = op.bzero(36)
     let highlightMessage: Uint8 = HighlightMessageNone
     let highlightColor: bytes<3> = Bytes('000').toFixed({ length: 3 })
     if (sub.serviceID !== 0) {
       const serviceKey: ServicesKey = { address: sub.recipient, id: sub.serviceID }
       assert(this.services(serviceKey).exists, ERR_SERVICE_DOES_NOT_EXIST);
-      ({ title, description, bannerImage, highlightMessage, highlightColor } = clone(this.services(serviceKey).value))
+      ({ status, title, description, bannerImage, highlightMessage, highlightColor } = clone(this.services(serviceKey).value))
     }
 
     let passes: Account[] = []
@@ -1083,6 +1195,7 @@ export class Subscriptions extends classes(
 
     return {
       ...sub,
+      status,
       title,
       description,
       bannerImage,
@@ -1095,5 +1208,15 @@ export class Subscriptions extends classes(
   @abimethod({ readonly: true })
   isFirstSubscription(address: Account): boolean {
     return !this.subscriptionslist(address).exists
+  }
+
+  @abimethod({ readonly: true })
+  getServiceList(address: Account): uint64 {
+    return this.serviceslist(address).exists ? this.serviceslist(address).value : 0
+  }
+
+  @abimethod({ readonly: true })
+  getSubscriptionList(address: Account): uint64 {
+    return this.subscriptionslist(address).exists ? this.subscriptionslist(address).value : 0
   }
 }

@@ -12,13 +12,13 @@ main:
     assert // OnCompletion must be NoOp
     txn ApplicationID
     bz main_create_NoOp@19
-    pushbytess 0x1c9ebbdb 0x8f49262d 0x5656acf9 0x3c60dfa0 0x5424a591 0x7b7dc5fc 0xaf1a14f2 0x3ec40aa4 0xbd3cd090 0x33e92c94 0x854dede0 0xd54bbad9 0x3ea11832 // method "createDisbursement(pay,string,uint64,uint64,string)uint64", method "editDisbursement(uint64,string,uint64,uint64,string)void", method "createUserAllocations(pay,uint64,(address,uint64)[])void", method "createAsaUserAllocations(pay,axfer,uint64,(address,uint64)[])void", method "finalizeDisbursement(uint64)void", method "createInstantDisbursement(pay,uint64,uint64,(address,uint64)[])uint64", method "createInstantAsaDisbursement(pay,axfer,uint64,uint64,(address,uint64)[])uint64", method "claimRewards((uint64,uint64)[])void", method "reclaimRewards(uint64,(address,uint64)[])void", method "updateAkitaDAO(uint64)void", method "opUp()void", method "mbr(string,string)(uint64,uint64)", method "optin(pay,uint64)void"
+    pushbytess 0x1c9ebbdb 0x8f49262d 0x5656acf9 0x3c60dfa0 0x5424a591 0x7b7dc5fc 0xaf1a14f2 0x3ec40aa4 0xbd3cd090 0x33e92c94 0x854dede0 0xd54bbad9 0x394eaeb2 // method "createDisbursement(pay,string,uint64,uint64,string)uint64", method "editDisbursement(uint64,string,uint64,uint64,string)void", method "createUserAllocations(pay,uint64,(address,uint64)[])void", method "createAsaUserAllocations(pay,axfer,uint64,(address,uint64)[])void", method "finalizeDisbursement(uint64)void", method "createInstantDisbursement(pay,uint64,uint64,(address,uint64)[])uint64", method "createInstantAsaDisbursement(pay,axfer,uint64,uint64,(address,uint64)[])uint64", method "claimRewards((uint64,uint64)[])void", method "reclaimRewards(uint64,(address,uint64)[])void", method "updateAkitaDAO(uint64)void", method "opUp()void", method "mbr(string,string)(uint64,uint64)", method "optIn(pay,uint64)void"
     txna ApplicationArgs 0
-    match createDisbursement editDisbursement createUserAllocations createAsaUserAllocations finalizeDisbursement createInstantDisbursement createInstantAsaDisbursement claimRewards reclaimRewards updateAkitaDAO main_opUp_route@15 mbr optin
+    match createDisbursement editDisbursement createUserAllocations createAsaUserAllocations finalizeDisbursement createInstantDisbursement createInstantAsaDisbursement claimRewards reclaimRewards updateAkitaDAO main_opUp_route@15 mbr optIn
     err
 
 main_opUp_route@15:
-    // smart_contracts/utils/base-contracts/base.ts:41
+    // smart_contracts/utils/base-contracts/base.ts:42
     // opUp(): void { }
     intc_1 // 1
     return
@@ -54,14 +54,14 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:25
+    // smart_contracts/utils/base-contracts/base.ts:26
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     pushbytes "version"
     // smart_contracts/rewards/contract.algo.ts:90
     // this.version.value = version
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_3 // "akita_dao"
     // smart_contracts/rewards/contract.algo.ts:91
@@ -2230,7 +2230,7 @@ reclaimRewards_after_while@10:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:36
+    // smart_contracts/utils/base-contracts/base.ts:37
     // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
@@ -2239,36 +2239,36 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_3 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
     pushbytes "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_3 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:38
+    // smart_contracts/utils/base-contracts/base.ts:39
     // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:36
+    // smart_contracts/utils/base-contracts/base.ts:37
     // updateAkitaDAO(akitaDAO: Application): void {
     intc_1 // 1
     return
@@ -2309,10 +2309,10 @@ mbr:
     return
 
 
-// smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optin[routing]() -> void:
-optin:
+// smart_contracts/utils/base-contracts/optin.ts::ContractWithOptIn.optIn[routing]() -> void:
+optIn:
     // smart_contracts/utils/base-contracts/optin.ts:22
-    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    // optIn(payment: gtxn.PaymentTxn, asset: uint64): void {
     txn GroupIndex
     intc_1 // 1
     -
@@ -2398,7 +2398,7 @@ optin:
     itxn_field Fee
     itxn_submit
     // smart_contracts/utils/base-contracts/optin.ts:22
-    // optin(payment: gtxn.PaymentTxn, asset: uint64): void {
+    // optIn(payment: gtxn.PaymentTxn, asset: uint64): void {
     intc_1 // 1
     return
 

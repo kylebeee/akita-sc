@@ -33,7 +33,7 @@ main_switch_case_next@6:
     err
 
 main_opUp_route@11:
-    // smart_contracts/utils/base-contracts/base.ts:41
+    // smart_contracts/utils/base-contracts/base.ts:42
     // opUp(): void { }
     intc_1 // 1
     return
@@ -519,14 +519,14 @@ create_bool_merge@5:
     // this.marketplace.value = marketplace
     dig 3
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:25
+    // smart_contracts/utils/base-contracts/base.ts:26
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     pushbytes "version"
     // smart_contracts/marketplace/listing.algo.ts:263
     // this.version.value = version
     dig 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/marketplace/listing.algo.ts:264
@@ -1338,7 +1338,7 @@ purchaseAsa_else_body@19:
     // smart_contracts/marketplace/listing.algo.ts:221
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/marketplace/listing.algo.ts:221
@@ -1388,7 +1388,7 @@ purchaseAsa_else_body@16:
     // smart_contracts/marketplace/listing.algo.ts:203
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/marketplace/listing.algo.ts:203
@@ -1440,7 +1440,7 @@ purchaseAsa_else_body@13:
     // smart_contracts/marketplace/listing.algo.ts:184
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/marketplace/listing.algo.ts:184
@@ -1490,7 +1490,7 @@ purchaseAsa_else_body@10:
     // smart_contracts/marketplace/listing.algo.ts:165
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/marketplace/listing.algo.ts:165
@@ -1895,7 +1895,7 @@ changePrice:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:36
+    // smart_contracts/utils/base-contracts/base.ts:37
     // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
@@ -1904,36 +1904,36 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
     pushbytes "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:38
+    // smart_contracts/utils/base-contracts/base.ts:39
     // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:36
+    // smart_contracts/utils/base-contracts/base.ts:37
     // updateAkitaDAO(akitaDAO: Application): void {
     intc_1 // 1
     return
@@ -2092,7 +2092,7 @@ getAmounts_after_if_else@4:
     // smart_contracts/marketplace/listing.algo.ts:65
     // const { marketplaceSalePercentageMin: min, marketplaceSalePercentageMax: max } = getNFTFees(this.akitaDAO.value)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/marketplace/listing.algo.ts:65
@@ -2397,7 +2397,7 @@ transferPurchaseToBuyer_else_body@6:
     // smart_contracts/marketplace/listing.algo.ts:108
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_2 // "akita_dao"
     // smart_contracts/marketplace/listing.algo.ts:108

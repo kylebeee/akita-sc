@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 8 4 4096 100000 6364136223846793005 50600 1442695040888963407 1442695040888963409 4294967295 13113300 18446744073709551615
-    bytecblock "ticket_asset" "akita_dao" "ticket_count" 0x151f7c75 "entry_count" "winner" "prize" "gate_id" "w_totals" "a" "winning_ticket" "weights_box_count" "seller" "akita_escrow" "w" "max_tickets" "prize_claimed" "refund_mbr_cursor" "end_timestamp" "marketplace" "e" "wallet" "marketplace_royalties" "vrf_failure_count" "is_prize_box" "start_timestamp" "akita_royalty" "find_winner_cursors" "creator_royalty" 0x068101 "akita_al" "other_al" "min_tickets" "entry_id"
+    bytecblock "ticket_asset" "akita_dao" "ticket_count" "entry_count" "winner" 0x151f7c75 "prize" "gate_id" "w_totals" "a" "winning_ticket" "weights_box_count" "seller" "akita_escrow" "w" "max_tickets" "prize_claimed" "refund_mbr_cursor" "end_timestamp" "marketplace" "e" "wallet" "marketplace_royalties" "vrf_failure_count" "other_al" "is_prize_box" "start_timestamp" "akita_royalty" 0x0000 "find_winner_cursors" "creator_royalty" 0x068101 "akita_al" "min_tickets" "entry_id" "plugn_al"
     // smart_contracts/raffle/contract.algo.ts:99-104
     // export class Raffle extends classes(
     //   BaseRaffle,
@@ -35,7 +35,7 @@ main_switch_case_next@6:
     err
 
 main_opUp_route@22:
-    // smart_contracts/utils/base-contracts/base.ts:41
+    // smart_contracts/utils/base-contracts/base.ts:42
     // opUp(): void { }
     intc_1 // 1
     return
@@ -54,7 +54,7 @@ main_create_NoOp@25:
     err
 
 main_update_route@5:
-    // smart_contracts/utils/base-contracts/base.ts:46
+    // smart_contracts/utils/base-contracts/base.ts:47
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     intc_3 // UpdateApplication
@@ -93,9 +93,9 @@ ensure_budget_while_top@1:
     itxn_field TypeEnum
     pushint 5 // DeleteApplication
     itxn_field OnCompletion
-    bytec 29 // 0x068101
+    bytec 31 // 0x068101
     itxn_field ApprovalProgram
-    bytec 29 // 0x068101
+    bytec 31 // 0x068101
     itxn_field ClearStateProgram
     frame_dig -1
     switch ensure_budget_switch_case_0@3 ensure_budget_switch_case_1@4
@@ -216,12 +216,16 @@ getWalletIDUsingAkitaDAO:
     // smart_contracts/utils/functions.ts:164
     // export function getWalletIDUsingAkitaDAO(akitaDAO: Application, address: Account): Application {
     proto 2 1
-    // smart_contracts/utils/functions.ts:53
-    // return op.AppGlobal.getExUint64(akitaDAO, Bytes(AbstractAccountGlobalStateKeysEscrowFactory))[0]
+    // smart_contracts/utils/functions.ts:48
+    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     frame_dig -2
-    pushbytes "escrow_factory"
+    bytec 24 // "other_al"
     app_global_get_ex
     pop
+    // smart_contracts/utils/functions.ts:53
+    // return getOtherAppList(akitaDAO).escrow
+    pushint 24 // 24
+    extract_uint64
     // smart_contracts/utils/functions.ts:170-173
     // const data = abiCall<typeof EscrowFactory.prototype.get>({
     //   appId: escrowFactory,
@@ -243,7 +247,7 @@ getWalletIDUsingAkitaDAO:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -306,7 +310,7 @@ gateCall:
     // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     frame_dig -4
-    bytec 30 // "akita_al"
+    bytec 32 // "akita_al"
     app_global_get_ex
     pop
     // smart_contracts/utils/functions.ts:194
@@ -344,7 +348,7 @@ gateCall:
     extract 4 0
     swap
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -369,7 +373,7 @@ arc59OptInAndSend:
     // smart_contracts/utils/functions.ts:48
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
     frame_dig -5
-    bytec 31 // "other_al"
+    bytec 24 // "other_al"
     app_global_get_ex
     pop
     // smart_contracts/utils/functions.ts:296
@@ -416,7 +420,7 @@ arc59OptInAndSend:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -592,7 +596,7 @@ arc59OptInAndSend_next_field@16:
     extract 4 0
     swap
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     len
@@ -725,7 +729,7 @@ create:
     app_global_put
     // smart_contracts/raffle/contract.algo.ts:131
     // isPrizeBox = GlobalState<boolean>({ key: RaffleGlobalStateKeyIsPrizeBox })
-    bytec 24 // "is_prize_box"
+    bytec 25 // "is_prize_box"
     // smart_contracts/raffle/contract.algo.ts:251
     // this.isPrizeBox.value = isPrizeBox
     uncover 4
@@ -745,7 +749,7 @@ create:
     app_global_put
     // smart_contracts/raffle/contract.algo.ts:111
     // startTimestamp = GlobalState<uint64>({ key: RaffleGlobalStateKeyStartTimestamp })
-    bytec 25 // "start_timestamp"
+    bytec 26 // "start_timestamp"
     // smart_contracts/raffle/contract.algo.ts:254
     // this.startTimestamp.value = startTimestamp
     dig 2
@@ -787,7 +791,7 @@ create_bool_merge@5:
     app_global_put
     // smart_contracts/raffle/contract.algo.ts:117
     // minTickets = GlobalState<uint64>({ key: RaffleGlobalStateKeyMinTickets })
-    bytec 32 // "min_tickets"
+    bytec 33 // "min_tickets"
     // smart_contracts/raffle/contract.algo.ts:259
     // this.minTickets.value = minTickets
     dig 6
@@ -801,7 +805,7 @@ create_bool_merge@5:
     app_global_put
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:261
     // this.entryCount.value = 0
     intc_0 // 0
@@ -822,7 +826,7 @@ create_bool_merge@5:
     app_global_put
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:264
     // this.winner.value = Global.zeroAddress
     global ZeroAddress
@@ -848,14 +852,14 @@ create_bool_merge@5:
     // this.marketplace.value = marketplace
     dig 3
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:268
     // this.akitaDAO.value = akitaDAO
     dig 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:64
+    // smart_contracts/utils/base-contracts/base.ts:59
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 13 // "akita_escrow"
     // smart_contracts/raffle/contract.algo.ts:269
@@ -865,7 +869,7 @@ create_bool_merge@5:
     // smart_contracts/raffle/contract.algo.ts:272
     // const fees = getNFTFees(this.akitaDAO.value)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:272
@@ -892,7 +896,7 @@ create_bool_merge@5:
     // smart_contracts/raffle/contract.algo.ts:275
     // const impact = getUserImpact(this.akitaDAO.value, this.seller.value)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:275
@@ -916,7 +920,7 @@ create_bool_merge@5:
     // smart_contracts/utils/functions.ts:38
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
-    bytec 30 // "akita_al"
+    bytec 32 // "akita_al"
     app_global_get_ex
     pop
     // smart_contracts/utils/functions.ts:121
@@ -942,7 +946,7 @@ create_bool_merge@5:
     extract 4 0
     swap
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -986,14 +990,14 @@ create_ternary_merge@13:
     -
     // smart_contracts/raffle/contract.algo.ts:143
     // akitaRoyalty = GlobalState<uint64>({ key: RaffleGlobalStateKeyAkitaRoyalty })
-    bytec 26 // "akita_royalty"
+    bytec 27 // "akita_royalty"
     // smart_contracts/raffle/contract.algo.ts:276
     // this.akitaRoyalty.value = impactRange(impact, fees.raffleSaleImpactTaxMin, fees.raffleSaleImpactTaxMax)
     swap
     app_global_put
     // smart_contracts/raffle/contract.algo.ts:147
     // entryID = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryID })
-    bytec 33 // "entry_id"
+    bytec 34 // "entry_id"
     // smart_contracts/raffle/contract.algo.ts:278
     // this.entryID.value = 0
     intc_0 // 0
@@ -1214,7 +1218,7 @@ refundMBR:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:312
     // const totalCap: uint64 = this.entryCount.value - 1
     app_global_get_ex
@@ -1226,7 +1230,7 @@ refundMBR:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:314
     // assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
     app_global_get_ex
@@ -1493,7 +1497,7 @@ clearWeightsBoxes_after_while@4:
     // smart_contracts/raffle/contract.algo.ts:343
     // clearWeightsBoxes(): uint64 {
     itob
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
@@ -1525,7 +1529,7 @@ deleteApplication:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:368
     // assert(this.entryCount.value - 1 !== this.refundMBRCursor.value, ERR_ALL_REFUNDS_COMPLETE)
     app_global_get_ex
@@ -1611,7 +1615,7 @@ enter:
     // smart_contracts/raffle/contract.algo.ts:383
     // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:383
@@ -1626,7 +1630,7 @@ enter:
     // smart_contracts/raffle/contract.algo.ts:385
     // assert(gateCall(this.akitaDAO.value, origin, this.gateID.value, args), ERR_FAILED_GATE)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:385
@@ -1735,7 +1739,7 @@ enter_after_if_else@3:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:405
     // const loc = this.entryCount.value
     app_global_get_ex
@@ -1848,7 +1852,7 @@ enter_after_if_else@3:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:418
     // this.entryCount.value += 1
     app_global_get_ex
@@ -1857,7 +1861,7 @@ enter_after_if_else@3:
     +
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:418
     // this.entryCount.value += 1
     swap
@@ -1951,7 +1955,7 @@ enterAsa:
     // smart_contracts/raffle/contract.algo.ts:432
     // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:432
@@ -1966,7 +1970,7 @@ enterAsa:
     // smart_contracts/raffle/contract.algo.ts:434
     // assert(gateCall(this.akitaDAO.value, origin, this.gateID.value, args), ERR_FAILED_GATE)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:434
@@ -2141,7 +2145,7 @@ enterAsa_after_if_else@3:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:464
     // const loc = this.entryCount.value
     app_global_get_ex
@@ -2245,7 +2249,7 @@ enterAsa_after_if_else@3:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:476
     // this.entryCount.value += 1
     app_global_get_ex
@@ -2254,7 +2258,7 @@ enterAsa_after_if_else@3:
     +
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:476
     // this.entryCount.value += 1
     swap
@@ -2331,7 +2335,7 @@ add:
     // smart_contracts/raffle/contract.algo.ts:485
     // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:485
@@ -2346,7 +2350,7 @@ add:
     // smart_contracts/raffle/contract.algo.ts:487
     // assert(gateCall(this.akitaDAO.value, origin, this.gateID.value, args), ERR_FAILED_GATE)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:487
@@ -2595,7 +2599,7 @@ addAsa:
     // smart_contracts/raffle/contract.algo.ts:520
     // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:520
@@ -2610,7 +2614,7 @@ addAsa:
     // smart_contracts/raffle/contract.algo.ts:522
     // assert(gateCall(this.akitaDAO.value, origin, this.gateID.value, args), ERR_FAILED_GATE)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:522
@@ -2904,7 +2908,7 @@ raffle:
     // smart_contracts/raffle/contract.algo.ts:557
     // appId: getOtherAppList(this.akitaDAO.value).vrfBeacon,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:557
@@ -2913,7 +2917,7 @@ raffle:
     assert // check GlobalState exists
     // smart_contracts/utils/functions.ts:48
     // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
-    bytec 31 // "other_al"
+    bytec 24 // "other_al"
     app_global_get_ex
     pop
     // smart_contracts/raffle/contract.algo.ts:557
@@ -2959,7 +2963,7 @@ raffle:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -3145,7 +3149,7 @@ raffle_after_if_else@4:
 raffle_after_if_else@6:
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:30
     // const result = new DynamicArray<arc4.Uint64>()
-    pushbytes 0x0000
+    bytec 28 // 0x0000
     bury 13
     // smart_contracts/utils/types/lib_pcg/pcg64.algo.ts:42
     // if (upperBound !== 0) {
@@ -3405,7 +3409,7 @@ findWinner:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:581
     // assert(this.winner.value === Global.zeroAddress, ERR_WINNER_ALREADY_FOUND)
     app_global_get_ex
@@ -3418,7 +3422,7 @@ findWinner:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:159
     // findWinnerCursors = GlobalState<FindWinnerCursors>({ key: RaffleGlobalStateKeyFindWinnersCursor })
-    bytec 27 // "find_winner_cursors"
+    bytec 29 // "find_winner_cursors"
     // smart_contracts/raffle/contract.algo.ts:177
     // let startingIndex = this.findWinnerCursors.value.index
     app_global_get_ex
@@ -3509,7 +3513,7 @@ findWinner_after_inlined_smart_contracts/raffle/contract.algo.ts::Raffle.getWinn
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:590
     // const remainder: uint64 = this.entryCount.value - startingIndex
     app_global_get_ex
@@ -3618,7 +3622,7 @@ findWinner_while_top@2:
     extract 0 32
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:601
     // this.winner.value = this.entries(startingIndex + i + 1).value.account
     swap
@@ -3645,7 +3649,7 @@ findWinner_after_while@7:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:159
     // findWinnerCursors = GlobalState<FindWinnerCursors>({ key: RaffleGlobalStateKeyFindWinnersCursor })
-    bytec 27 // "find_winner_cursors"
+    bytec 29 // "find_winner_cursors"
     // smart_contracts/raffle/contract.algo.ts:606
     // this.findWinnerCursors.value.index += iterationAmount
     app_global_get_ex
@@ -3664,7 +3668,7 @@ findWinner_after_while@7:
     replace2 8
     // smart_contracts/raffle/contract.algo.ts:159
     // findWinnerCursors = GlobalState<FindWinnerCursors>({ key: RaffleGlobalStateKeyFindWinnersCursor })
-    bytec 27 // "find_winner_cursors"
+    bytec 29 // "find_winner_cursors"
     // smart_contracts/raffle/contract.algo.ts:607
     // this.findWinnerCursors.value.amountIndex = currentRangeStart
     swap
@@ -3721,7 +3725,7 @@ claimRafflePrize:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:611
     // assert(this.winner.value !== Global.zeroAddress, ERR_WINNER_NOT_FOUND)
     app_global_get_ex
@@ -3746,7 +3750,7 @@ claimRafflePrize:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:131
     // isPrizeBox = GlobalState<boolean>({ key: RaffleGlobalStateKeyIsPrizeBox })
-    bytec 24 // "is_prize_box"
+    bytec 25 // "is_prize_box"
     // smart_contracts/raffle/contract.algo.ts:615
     // if (this.isPrizeBox.value) {
     app_global_get_ex
@@ -3773,7 +3777,7 @@ claimRafflePrize:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:618
     // args: [this.winner.value],
     app_global_get_ex
@@ -3809,7 +3813,7 @@ claimRafflePrize_after_if_else@9:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:131
     // isPrizeBox = GlobalState<boolean>({ key: RaffleGlobalStateKeyIsPrizeBox })
-    bytec 24 // "is_prize_box"
+    bytec 25 // "is_prize_box"
     // smart_contracts/raffle/contract.algo.ts:641
     // const amounts = this.getAmounts(this.ticketCount.value, this.isPrizeBox.value)
     app_global_get_ex
@@ -3824,7 +3828,7 @@ claimRafflePrize_after_if_else@9:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:135
     // creatorRoyalty = GlobalState<uint64>({ key: RaffleGlobalStateKeyCreatorRoyalty })
-    bytec 28 // "creator_royalty"
+    bytec 30 // "creator_royalty"
     // smart_contracts/raffle/contract.algo.ts:196
     // if (!isPrizeBox && this.creatorRoyalty.value > 0) {
     app_global_get_ex
@@ -3835,7 +3839,7 @@ claimRafflePrize_after_if_else@9:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:135
     // creatorRoyalty = GlobalState<uint64>({ key: RaffleGlobalStateKeyCreatorRoyalty })
-    bytec 28 // "creator_royalty"
+    bytec 30 // "creator_royalty"
     // smart_contracts/raffle/contract.algo.ts:197
     // creatorAmount = calcPercent(amount, this.creatorRoyalty.value)
     app_global_get_ex
@@ -3860,7 +3864,7 @@ claimRafflePrize_after_if_else@9:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:135
     // creatorRoyalty = GlobalState<uint64>({ key: RaffleGlobalStateKeyCreatorRoyalty })
-    bytec 28 // "creator_royalty"
+    bytec 30 // "creator_royalty"
     // smart_contracts/raffle/contract.algo.ts:198
     // if (creatorAmount === 0 && this.creatorRoyalty.value > 0 && amount > 0) {
     app_global_get_ex
@@ -3883,7 +3887,7 @@ claimRafflePrize_after_if_else@53:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:143
     // akitaRoyalty = GlobalState<uint64>({ key: RaffleGlobalStateKeyAkitaRoyalty })
-    bytec 26 // "akita_royalty"
+    bytec 27 // "akita_royalty"
     // smart_contracts/raffle/contract.algo.ts:204
     // if (this.akitaRoyalty.value > 0) {
     app_global_get_ex
@@ -3894,7 +3898,7 @@ claimRafflePrize_after_if_else@53:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:143
     // akitaRoyalty = GlobalState<uint64>({ key: RaffleGlobalStateKeyAkitaRoyalty })
-    bytec 26 // "akita_royalty"
+    bytec 27 // "akita_royalty"
     // smart_contracts/raffle/contract.algo.ts:205
     // akitaAmount = calcPercent(amount, this.akitaRoyalty.value)
     app_global_get_ex
@@ -4024,7 +4028,7 @@ claimRafflePrize_after_if_else@64:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:643
     // const loc = this.entriesByAddress(this.winner.value).value
     app_global_get_ex
@@ -4126,7 +4130,7 @@ claimRafflePrize_after_if_else@13:
     // smart_contracts/raffle/contract.algo.ts:660
     // receiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:64
+    // smart_contracts/utils/base-contracts/base.ts:59
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 13 // "akita_escrow"
     // smart_contracts/raffle/contract.algo.ts:660
@@ -4385,7 +4389,7 @@ claimRafflePrize_after_if_else@24:
     // smart_contracts/raffle/contract.algo.ts:708
     // if (this.akitaDAOEscrow.value.address.isOptedIn(this.ticketAsset.value)) {
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:64
+    // smart_contracts/utils/base-contracts/base.ts:59
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 13 // "akita_escrow"
     // smart_contracts/raffle/contract.algo.ts:708
@@ -4417,7 +4421,7 @@ claimRafflePrize_after_if_else@24:
     // smart_contracts/raffle/contract.algo.ts:711
     // assetReceiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:64
+    // smart_contracts/utils/base-contracts/base.ts:59
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 13 // "akita_escrow"
     // smart_contracts/raffle/contract.algo.ts:711
@@ -4705,7 +4709,7 @@ claimRafflePrize_else_body@39:
     // smart_contracts/raffle/contract.algo.ts:771
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:771
@@ -4760,7 +4764,7 @@ claimRafflePrize_else_body@35:
     // smart_contracts/raffle/contract.algo.ts:752
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:752
@@ -4812,7 +4816,7 @@ claimRafflePrize_else_body@31:
     // smart_contracts/raffle/contract.algo.ts:734
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:734
@@ -4881,13 +4885,13 @@ claimRafflePrize_else_body@27:
     dup
     cover 2
     bury 9
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
@@ -4896,10 +4900,26 @@ claimRafflePrize_else_body@27:
     app_global_get_ex
     pop
     swap
+    // smart_contracts/utils/functions.ts:43
+    // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
+    dup
+    bytec 35 // "plugn_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/base.ts:77
+    // const { revenueManager } = getPluginAppList(this.akitaDAO.value)
+    dup
+    extract 8 8
+    swap
+    intc_2 // 8
+    extract_uint64
+    // smart_contracts/utils/base-contracts/base.ts:31
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
+    uncover 2
     bytec 21 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:69-72
+    // smart_contracts/utils/base-contracts/base.ts:64-67
     // const escrow = abiCall<typeof AbstractedAccount.prototype.arc58_getEscrows>({
     //   appId,
     //   args: [[name]],
@@ -4907,12 +4927,12 @@ claimRafflePrize_else_body@27:
     itxn_begin
     pushbytes 0xa2403ddf // method "arc58_getEscrows(string[])(uint64,bool)[]"
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:71
+    // smart_contracts/utils/base-contracts/base.ts:66
     // args: [[name]],
     pushbytes 0x000100020007726166666c6573
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/utils/base-contracts/base.ts:69-72
+    // smart_contracts/utils/base-contracts/base.ts:64-67
     // const escrow = abiCall<typeof AbstractedAccount.prototype.arc58_getEscrows>({
     //   appId,
     //   args: [[name]],
@@ -4927,7 +4947,7 @@ claimRafflePrize_else_body@27:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -4941,20 +4961,20 @@ claimRafflePrize_else_body@27:
     len
     ==
     assert // invalid number of bytes for (len+(uint64,bool1)[])
-    // smart_contracts/utils/base-contracts/base.ts:74
+    // smart_contracts/utils/base-contracts/base.ts:69
     // assert(escrow.id !== 0, ERR_ESCROW_DOES_NOT_EXIST)
     extract 6 9
     intc_0 // 0
     extract_uint64
     dup
     assert // Escrow does not exist
-    // smart_contracts/utils/base-contracts/base.ts:84
+    // smart_contracts/utils/base-contracts/base.ts:80
     // assert(id === this.akitaDAOEscrow.value.id, ERR_WRONG_ESCROW_FOR_OPERATION)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:64
+    // smart_contracts/utils/base-contracts/base.ts:59
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 13 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:84
+    // smart_contracts/utils/base-contracts/base.ts:80
     // assert(id === this.akitaDAOEscrow.value.id, ERR_WRONG_ESCROW_FOR_OPERATION)
     app_global_get_ex
     assert // check GlobalState exists
@@ -4962,31 +4982,79 @@ claimRafflePrize_else_body@27:
     dig 1
     ==
     assert // Wrong escrow for this operation
-    // smart_contracts/utils/base-contracts/base.ts:86-98
-    // abiCall<typeof AbstractedAccount.prototype.arc58_pluginOptinEscrow>({
-    //   appId,
+    // smart_contracts/utils/base-contracts/base.ts:82-91
+    // itxnCompose.begin<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin>({
+    //   appId: wallet,
     //   args: [
-    //     Global.currentApplicationId.id,
-    //     Global.currentApplicationAddress,
+    //     revenueManager,
+    //     true,
     //     name,
+    //     [],
+    //     []
+    //   ],
+    // })
+    itxn_begin
+    pushbytes 0x582ff382 // method "arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void"
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    // smart_contracts/utils/base-contracts/base.ts:86
+    // true,
+    pushbytes 0x80
+    itxn_field ApplicationArgs
+    // smart_contracts/utils/base-contracts/base.ts:87
+    // name,
+    pushbytes 0x0007726166666c6573
+    itxn_field ApplicationArgs
+    // smart_contracts/utils/base-contracts/base.ts:88
+    // [],
+    bytec 28 // 0x0000
+    itxn_field ApplicationArgs
+    // smart_contracts/utils/base-contracts/base.ts:89
+    // []
+    bytec 28 // 0x0000
+    itxn_field ApplicationArgs
+    dig 2
+    itxn_field ApplicationID
+    // smart_contracts/utils/base-contracts/base.ts:82-91
+    // itxnCompose.begin<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin>({
+    //   appId: wallet,
+    //   args: [
+    //     revenueManager,
+    //     true,
+    //     name,
+    //     [],
+    //     []
+    //   ],
+    // })
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/base.ts:93-104
+    // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
+    //   appId: revenueManager,
+    //   args: [
+    //     wallet,
+    //     true,
     //     [asset.id],
     //     itxn.payment({
     //       receiver: this.akitaDAOEscrow.value.address,
     //       amount: Global.assetOptInMinBalance,
     //     })
-    //   ],
+    //   ]
     // })
-    itxn_begin
-    // smart_contracts/utils/base-contracts/base.ts:94
+    itxn_next
+    // smart_contracts/utils/base-contracts/base.ts:100
     // receiver: this.akitaDAOEscrow.value.address,
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/utils/base-contracts/base.ts:95
+    // smart_contracts/utils/base-contracts/base.ts:101
     // amount: Global.assetOptInMinBalance,
     global AssetOptInMinBalance
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/utils/base-contracts/base.ts:93-96
+    // smart_contracts/utils/base-contracts/base.ts:99-102
     // itxn.payment({
     //   receiver: this.akitaDAOEscrow.value.address,
     //   amount: Global.assetOptInMinBalance,
@@ -4995,99 +5063,100 @@ claimRafflePrize_else_body@27:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/base.ts:86-98
-    // abiCall<typeof AbstractedAccount.prototype.arc58_pluginOptinEscrow>({
-    //   appId,
+    // smart_contracts/utils/base-contracts/base.ts:93-104
+    // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
+    //   appId: revenueManager,
     //   args: [
-    //     Global.currentApplicationId.id,
-    //     Global.currentApplicationAddress,
-    //     name,
+    //     wallet,
+    //     true,
     //     [asset.id],
     //     itxn.payment({
     //       receiver: this.akitaDAOEscrow.value.address,
     //       amount: Global.assetOptInMinBalance,
     //     })
-    //   ],
+    //   ]
     // })
     itxn_next
-    // smart_contracts/utils/base-contracts/base.ts:89
-    // Global.currentApplicationId.id,
-    global CurrentApplicationID
+    // smart_contracts/utils/base-contracts/base.ts:96
+    // wallet,
+    dig 1
     itob
-    // smart_contracts/utils/base-contracts/base.ts:90
-    // Global.currentApplicationAddress,
-    global CurrentApplicationAddress
-    // smart_contracts/utils/base-contracts/base.ts:92
+    // smart_contracts/utils/base-contracts/base.ts:98
     // [asset.id],
     uncover 3
     itob
     pushbytes 0x0001
     swap
     concat
-    // smart_contracts/utils/base-contracts/base.ts:86-98
-    // abiCall<typeof AbstractedAccount.prototype.arc58_pluginOptinEscrow>({
-    //   appId,
+    // smart_contracts/utils/base-contracts/base.ts:93-104
+    // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
+    //   appId: revenueManager,
     //   args: [
-    //     Global.currentApplicationId.id,
-    //     Global.currentApplicationAddress,
-    //     name,
+    //     wallet,
+    //     true,
     //     [asset.id],
     //     itxn.payment({
     //       receiver: this.akitaDAOEscrow.value.address,
     //       amount: Global.assetOptInMinBalance,
     //     })
-    //   ],
+    //   ]
     // })
-    pushbytes 0x9d3f8918 // method "arc58_pluginOptinEscrow(uint64,address,string,uint64[],pay)void"
-    itxn_field ApplicationArgs
-    uncover 2
+    pushbytes 0x6835e3bc // method "optIn(uint64,bool,uint64[],pay)void"
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:91
-    // name,
-    pushbytes 0x0007726166666c6573
+    // smart_contracts/utils/base-contracts/base.ts:86
+    // true,
+    pushbytes 0x80
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/utils/base-contracts/base.ts:86-98
-    // abiCall<typeof AbstractedAccount.prototype.arc58_pluginOptinEscrow>({
-    //   appId,
+    // smart_contracts/utils/base-contracts/base.ts:93-104
+    // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
+    //   appId: revenueManager,
     //   args: [
-    //     Global.currentApplicationId.id,
-    //     Global.currentApplicationAddress,
-    //     name,
+    //     wallet,
+    //     true,
     //     [asset.id],
     //     itxn.payment({
     //       receiver: this.akitaDAOEscrow.value.address,
     //       amount: Global.assetOptInMinBalance,
     //     })
-    //   ],
+    //   ]
     // })
     pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    itxn_submit
-    // smart_contracts/utils/base-contracts/base.ts:100
+    // smart_contracts/utils/base-contracts/base.ts:106
+    // itxnCompose.next<typeof AbstractedAccount.prototype.arc58_verifyAuthAddress>({ appId: wallet })
+    itxn_next
+    pushbytes 0x6cc3f606 // method "arc58_verifyAuthAddress()void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/utils/base-contracts/base.ts:108
     // if (amount > 0) {
-    bz claimRafflePrize_after_if_else@28
-    // smart_contracts/utils/base-contracts/base.ts:101-107
-    // itxn
-    //   .assetTransfer({
+    bz claimRafflePrize_after_if_else@44
+    // smart_contracts/utils/base-contracts/base.ts:109-115
+    // itxnCompose.next(
+    //   itxn.assetTransfer({
     //     assetReceiver: this.akitaDAOEscrow.value.address,
     //     assetAmount: amount,
     //     xferAsset: asset,
     //   })
-    //   .submit()
-    itxn_begin
-    // smart_contracts/utils/base-contracts/base.ts:103
+    // )
+    itxn_next
+    // smart_contracts/utils/base-contracts/base.ts:111
     // assetReceiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:64
+    // smart_contracts/utils/base-contracts/base.ts:59
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 13 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:103
+    // smart_contracts/utils/base-contracts/base.ts:111
     // assetReceiver: this.akitaDAOEscrow.value.address,
     app_global_get_ex
     assert // check GlobalState exists
@@ -5098,25 +5167,20 @@ claimRafflePrize_else_body@27:
     dig 7
     itxn_field AssetAmount
     itxn_field AssetReceiver
-    // smart_contracts/utils/base-contracts/base.ts:101-106
-    // itxn
-    //   .assetTransfer({
-    //     assetReceiver: this.akitaDAOEscrow.value.address,
-    //     assetAmount: amount,
-    //     xferAsset: asset,
-    //   })
+    // smart_contracts/utils/base-contracts/base.ts:110-114
+    // itxn.assetTransfer({
+    //   assetReceiver: this.akitaDAOEscrow.value.address,
+    //   assetAmount: amount,
+    //   xferAsset: asset,
+    // })
     intc_3 // 4
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/base.ts:101-107
-    // itxn
-    //   .assetTransfer({
-    //     assetReceiver: this.akitaDAOEscrow.value.address,
-    //     assetAmount: amount,
-    //     xferAsset: asset,
-    //   })
-    //   .submit()
+
+claimRafflePrize_after_if_else@44:
+    // smart_contracts/utils/base-contracts/base.ts:118
+    // itxnCompose.submit()
     itxn_submit
     b claimRafflePrize_after_if_else@28
 
@@ -5124,7 +5188,7 @@ claimRafflePrize_else_body@22:
     // smart_contracts/raffle/contract.algo.ts:699
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:699
@@ -5198,7 +5262,7 @@ claimRafflePrize_else_body@4:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:623
     // if (this.winner.value.isOptedIn(Asset(this.prize.value))) {
     app_global_get_ex
@@ -5220,7 +5284,7 @@ claimRafflePrize_else_body@4:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:626
     // assetCloseTo: this.winner.value,
     app_global_get_ex
@@ -5261,7 +5325,7 @@ claimRafflePrize_else_body@7:
     // smart_contracts/raffle/contract.algo.ts:632
     // this.akitaDAO.value,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
     // smart_contracts/raffle/contract.algo.ts:632
@@ -5273,7 +5337,7 @@ claimRafflePrize_else_body@7:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:633
     // this.winner.value,
     app_global_get_ex
@@ -5321,7 +5385,7 @@ isLive:
     intc_0 // 0
     uncover 2
     setbit
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
@@ -5346,7 +5410,7 @@ getState:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:111
     // startTimestamp = GlobalState<uint64>({ key: RaffleGlobalStateKeyStartTimestamp })
-    bytec 25 // "start_timestamp"
+    bytec 26 // "start_timestamp"
     // smart_contracts/raffle/contract.algo.ts:797
     // startTimestamp: this.startTimestamp.value,
     app_global_get_ex
@@ -5376,7 +5440,7 @@ getState:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:117
     // minTickets = GlobalState<uint64>({ key: RaffleGlobalStateKeyMinTickets })
-    bytec 32 // "min_tickets"
+    bytec 33 // "min_tickets"
     // smart_contracts/raffle/contract.algo.ts:800
     // minTickets: this.minTickets.value,
     app_global_get_ex
@@ -5396,7 +5460,7 @@ getState:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:121
     // entryCount = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryCount })
-    bytec 4 // "entry_count"
+    bytec_3 // "entry_count"
     // smart_contracts/raffle/contract.algo.ts:802
     // entryCount: this.entryCount.value,
     app_global_get_ex
@@ -5426,7 +5490,7 @@ getState:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:127
     // winner = GlobalState<Account>({ key: RaffleGlobalStateKeyWinner })
-    bytec 5 // "winner"
+    bytec 4 // "winner"
     // smart_contracts/raffle/contract.algo.ts:805
     // winner: this.winner.value,
     app_global_get_ex
@@ -5476,7 +5540,7 @@ getState:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:147
     // entryID = GlobalState<uint64>({ key: RaffleGlobalStateKeyEntryID })
-    bytec 33 // "entry_id"
+    bytec 34 // "entry_id"
     // smart_contracts/raffle/contract.algo.ts:810
     // entryID: this.entryID.value,
     app_global_get_ex
@@ -5559,7 +5623,7 @@ getState:
     concat
     // smart_contracts/raffle/contract.algo.ts:794
     // getState(): RaffleState {
-    bytec_3 // 0x151f7c75
+    bytec 5 // 0x151f7c75
     swap
     concat
     log
@@ -5569,7 +5633,7 @@ getState:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseFeeGeneratorContract.updateAkitaDAOEscrow[routing]() -> void:
 updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/base.ts:111
+    // smart_contracts/utils/base-contracts/base.ts:121
     // updateAkitaDAOEscrow(app: Application): void {
     txna ApplicationArgs 1
     dup
@@ -5578,36 +5642,36 @@ updateAkitaDAOEscrow:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:112
+    // smart_contracts/utils/base-contracts/base.ts:122
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
     bytec 21 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:112
+    // smart_contracts/utils/base-contracts/base.ts:122
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:64
+    // smart_contracts/utils/base-contracts/base.ts:59
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 13 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:113
+    // smart_contracts/utils/base-contracts/base.ts:123
     // this.akitaDAOEscrow.value = app
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:111
+    // smart_contracts/utils/base-contracts/base.ts:121
     // updateAkitaDAOEscrow(app: Application): void {
     intc_1 // 1
     return
@@ -5615,7 +5679,7 @@ updateAkitaDAOEscrow:
 
 // smart_contracts/utils/base-contracts/base.ts::UpgradeableAkitaBaseContract.update[routing]() -> void:
 update:
-    // smart_contracts/utils/base-contracts/base.ts:46
+    // smart_contracts/utils/base-contracts/base.ts:47
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txna ApplicationArgs 1
     dup
@@ -5628,16 +5692,16 @@ update:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    // smart_contracts/utils/base-contracts/base.ts:48
+    // smart_contracts/utils/base-contracts/base.ts:49
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
@@ -5645,66 +5709,35 @@ update:
     bytec 21 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:48
+    // smart_contracts/utils/base-contracts/base.ts:49
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     uncover 2
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:50-53
-    // const valid = abiCall<typeof MockDAO.prototype.isValidUpgrade>({
-    //   appId: this.akitaDAO.value,
-    //   args: [Txn.lease, Global.currentApplicationId.id],
-    // }).returnValue
-    itxn_begin
-    // smart_contracts/utils/base-contracts/base.ts:52
-    // args: [Txn.lease, Global.currentApplicationId.id],
-    txn Lease
-    global CurrentApplicationID
-    itob
-    // smart_contracts/utils/base-contracts/base.ts:50-53
-    // const valid = abiCall<typeof MockDAO.prototype.isValidUpgrade>({
-    //   appId: this.akitaDAO.value,
-    //   args: [Txn.lease, Global.currentApplicationId.id],
-    // }).returnValue
-    pushbytes 0x2c2f51c3 // method "isValidUpgrade(byte[32],uint64)bool"
-    itxn_field ApplicationArgs
-    swap
-    itxn_field ApplicationArgs
-    itxn_field ApplicationArgs
-    itxn_field ApplicationID
-    pushint 6 // appl
-    itxn_field TypeEnum
-    intc_0 // 0
-    itxn_field Fee
-    itxn_submit
-    itxn LastLog
-    dup
-    extract 4 0
-    swap
-    extract 0 4
-    bytec_3 // 0x151f7c75
+    // smart_contracts/utils/functions.ts:43
+    // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
+    bytec 35 // "plugn_al"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/base.ts:50
+    // const updatePlugin = getPluginAppList(this.akitaDAO.value).update
+    pushint 16 // 16
+    extract_uint64
+    // smart_contracts/utils/base-contracts/base.ts:51
+    // assert(Global.callerApplicationId === updatePlugin, ERR_INVALID_UPGRADE)
+    global CallerApplicationID
     ==
-    assert // Bytes has valid prefix
-    dup
-    len
-    intc_1 // 1
-    ==
-    assert // invalid number of bytes for bool8
-    intc_0 // 0
-    getbit
-    // smart_contracts/utils/base-contracts/base.ts:55
-    // assert(valid, ERR_INVALID_UPGRADE)
     assert // Invalid app upgrade
-    // smart_contracts/utils/base-contracts/base.ts:25
+    // smart_contracts/utils/base-contracts/base.ts:26
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     pushbytes "version"
-    // smart_contracts/utils/base-contracts/base.ts:57
+    // smart_contracts/utils/base-contracts/base.ts:52
     // this.version.value = newVersion
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:46
+    // smart_contracts/utils/base-contracts/base.ts:47
     // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_1 // 1
     return
@@ -5712,7 +5745,7 @@ update:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:36
+    // smart_contracts/utils/base-contracts/base.ts:37
     // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
@@ -5721,36 +5754,36 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:30
+    // smart_contracts/utils/base-contracts/base.ts:31
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
     bytec 21 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:27
+    // smart_contracts/utils/base-contracts/base.ts:28
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_1 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:38
+    // smart_contracts/utils/base-contracts/base.ts:39
     // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:36
+    // smart_contracts/utils/base-contracts/base.ts:37
     // updateAkitaDAO(akitaDAO: Application): void {
     intc_1 // 1
     return
@@ -5864,7 +5897,7 @@ smart_contracts/raffle/contract.algo.ts::Raffle.isLive:
     intc_0 // 0
     // smart_contracts/raffle/contract.algo.ts:111
     // startTimestamp = GlobalState<uint64>({ key: RaffleGlobalStateKeyStartTimestamp })
-    bytec 25 // "start_timestamp"
+    bytec 26 // "start_timestamp"
     // smart_contracts/raffle/contract.algo.ts:789
     // Global.latestTimestamp <= this.startTimestamp.value &&
     app_global_get_ex

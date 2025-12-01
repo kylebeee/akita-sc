@@ -21,8 +21,11 @@ export const MAX_PASSES = 5 // max family passes
 export const MAX_TITLE_LENGTH = 128
 // max description size is set so we can nicely fit SubscriptionInfoWithPasses
 // + a 500 byte cushion as a return value
-// [fixed fields: 144][passes: 160+2+2][title: max 128+2+2][description: 3152+2+2][cushion: 500] = 4096
-export const MAX_DESCRIPTION_LENGTH = 3152
+// [fixed fields: 145][passes: 160+2+2][title: max 128+2+2][description: 3151+2+2][cushion: 500] = 4096
+export const MAX_DESCRIPTION_LENGTH = 3151
+// max description chunk size per transaction
+// [selector:4][offset:8][data:2036] = 2048
+export const MAX_DESCRIPTION_CHUNK_SIZE = 2036
 
 export const HighlightMessageNone: Uint8 = new Uint8(0)
 export const HighlightMessageBestValue: Uint8 = new Uint8(1)

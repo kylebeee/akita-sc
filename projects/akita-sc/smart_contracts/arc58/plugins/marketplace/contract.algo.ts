@@ -52,7 +52,7 @@ export class MarketplacePlugin extends AkitaBaseContract {
     assert(AssetHolding.assetBalance(sender, asset)[0] >= assetAmount, ERR_NOT_ENOUGH_ASSET)
 
     if (!this.factory.value.address.isOptedIn(Asset(asset))) {
-      abiCall<typeof Marketplace.prototype.optin>({
+      abiCall<typeof Marketplace.prototype.optIn>({
         sender,
         appId: this.factory.value,
         args: [
@@ -67,7 +67,7 @@ export class MarketplacePlugin extends AkitaBaseContract {
     }
 
     if (!this.factory.value.address.isOptedIn(Asset(paymentAsset))) {
-      abiCall<typeof Marketplace.prototype.optin>({
+      abiCall<typeof Marketplace.prototype.optIn>({
         sender,
         appId: this.factory.value,
         args: [

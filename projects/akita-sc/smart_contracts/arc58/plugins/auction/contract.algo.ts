@@ -59,7 +59,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     assert(senderPrizeBalance >= prizeAmount, ERR_NOT_ENOUGH_ASSET)
 
     if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
-      abiCall<typeof AuctionFactory.prototype.optin>({
+      abiCall<typeof AuctionFactory.prototype.optIn>({
         sender,
         appId: this.factory.value,
         args: [
@@ -74,7 +74,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     }
 
     if (!this.factory.value.address.isOptedIn(Asset(bidAssetID))) {
-      abiCall<typeof AuctionFactory.prototype.optin>({
+      abiCall<typeof AuctionFactory.prototype.optIn>({
         sender,
         appId: this.factory.value,
         args: [

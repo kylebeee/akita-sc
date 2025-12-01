@@ -58,7 +58,7 @@ export class FactoryContract extends AkitaBaseFeeGeneratorContract {
       && txn.appId === Global.currentApplicationId
       && txn.numAppArgs === 3
       && txn.onCompletion === OnCompleteAction.NoOp
-      && txn.appArgs(0) === methodSelector('initBoxedContract(string,uint64)void')
+      && txn.appArgs(0) === methodSelector(this.initBoxedContract)
       && txn.sender === Txn.sender
     ), ERR_INVALID_CALL_ORDER)
     assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)

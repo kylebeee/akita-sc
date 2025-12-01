@@ -21,6 +21,7 @@ export const AkitaDAOGlobalStateKeysSwapFees = 'swap_fees'
 export const AkitaDAOGlobalStateKeysNFTFees = 'nft_fees'
 
 export const AkitaDAOGlobalStateKeysAkitaAssets = 'akita_assets'
+export const AkitaDAOGlobalStateKeysRevenueSplits = 'revenue_splits'
 export const AkitaDAOGlobalStateKeysUpgradeAppProposalSettings = 'upgrade_app_ps'
 export const AkitaDAOGlobalStateKeysAddPluginProposalSettings = 'add_plugin_ps'
 export const AkitaDAOGlobalStateKeysRemovePluginProposalSettings = 'remove_plugin_ps'
@@ -63,7 +64,7 @@ export const MethodRestrictionByteLength: uint64 = 20
 // export const MinDAOProposalsMBR: uint64 = 42_100
 export const MinDAOPluginMBR: uint64 = 23_700
 export const MinDAOProposalMBR: uint64 = 54_500
-export const MinDAOProposalActionMbr: uint64 = 5
+export const MinDAOProposalActionMbr: uint64 = 7
 export const DAOProposalVotesMBR: uint64 = 22_500
 export const DAOExecutionMBR: uint64 = 22_100
 
@@ -95,7 +96,6 @@ export const ProposalActionTypeAddAllowances: ProposalActionType = new Uint8(50)
 export const ProposalActionTypeRemoveAllowances: ProposalActionType = new Uint8(60)
 export const ProposalActionTypeNewEscrow: ProposalActionType = new Uint8(70)
 export const ProposalActionTypeToggleEscrowLock: ProposalActionType = new Uint8(71)
-export const ProposalActionTypeNewReceiveEscrow: ProposalActionType = new Uint8(72)
 export const ProposalActionTypeUpdateFields: ProposalActionType = new Uint8(80)
 
 // proposal vote types

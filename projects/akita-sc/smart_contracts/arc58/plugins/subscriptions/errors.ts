@@ -1,0 +1,1 @@
+export const ERR_DESCRIPTION_NOT_INITIALIZED = 'Description not initialized'

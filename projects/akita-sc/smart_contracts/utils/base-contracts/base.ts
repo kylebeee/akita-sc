@@ -1,4 +1,4 @@
-import { Application, assert, Asset, bytes, Bytes, Global, GlobalState, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Application, assert, Asset, Bytes, Global, GlobalState, gtxn, itxn, itxnCompose, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, Contract } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_ESCROW_DOES_NOT_EXIST, ERR_WRONG_ESCROW_FOR_OPERATION } from '../../arc58/account/errors'
 import { EscrowInfo } from '../../arc58/account/types'
@@ -8,10 +8,11 @@ import { ERR_NOT_AKITA_DAO } from '../../errors'
 
 // CONTRACT IMPORTS
 import type { AbstractedAccount } from '../../arc58/account/contract.algo'
+import { getPluginAppList } from '../functions'
 
-class MockDAO extends Contract {
-  isValidUpgrade(lease: bytes<32>, appBeingUpgraded: uint64): boolean {
-    return false
+class RevenueManagerPluginStub extends Contract {
+  optIn(wallet: Application, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
+    return
   }
 }
 
@@ -46,14 +47,8 @@ export class UpgradeableAkitaBaseContract extends AkitaBaseContract {
   @abimethod({ allowActions: ['UpdateApplication'] })
   update(newVersion: string): void {
     assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
-
-    const valid = abiCall<typeof MockDAO.prototype.isValidUpgrade>({
-      appId: this.akitaDAO.value,
-      args: [Txn.lease, Global.currentApplicationId.id],
-    }).returnValue
-
-    assert(valid, ERR_INVALID_UPGRADE)
-
+    const updatePlugin = getPluginAppList(this.akitaDAO.value).update
+    assert(Global.callerApplicationId === updatePlugin, ERR_INVALID_UPGRADE)
     this.version.value = newVersion
   }
 }
@@ -78,34 +73,49 @@ export class AkitaBaseFeeGeneratorContract extends UpgradeableAkitaBaseContract 
 
   protected optAkitaEscrowInAndSend(name: string, asset: Asset, amount: uint64): void {
 
-    const appId = this.getAkitaDAOWallet()
+    const wallet = this.getAkitaDAOWallet()
+    const { revenueManager } = getPluginAppList(this.akitaDAO.value)
+    
     const { id } = this.getEscrow(name)
-
     assert(id === this.akitaDAOEscrow.value.id, ERR_WRONG_ESCROW_FOR_OPERATION)
 
-    abiCall<typeof AbstractedAccount.prototype.arc58_pluginOptinEscrow>({
-      appId,
+    itxnCompose.begin<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin>({
+      appId: wallet,
       args: [
-        Global.currentApplicationId.id,
-        Global.currentApplicationAddress,
+        revenueManager,
+        true,
         name,
+        [],
+        []
+      ],
+    })
+
+    itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
+      appId: revenueManager,
+      args: [
+        wallet,
+        true,
         [asset.id],
         itxn.payment({
           receiver: this.akitaDAOEscrow.value.address,
           amount: Global.assetOptInMinBalance,
         })
-      ],
+      ]
     })
 
+    itxnCompose.next<typeof AbstractedAccount.prototype.arc58_verifyAuthAddress>({ appId: wallet })
+
     if (amount > 0) {
-      itxn
-        .assetTransfer({
+      itxnCompose.next(
+        itxn.assetTransfer({
           assetReceiver: this.akitaDAOEscrow.value.address,
           assetAmount: amount,
           xferAsset: asset,
         })
-        .submit()
+      )
     }
+
+    itxnCompose.submit()
   }
 
   updateAkitaDAOEscrow(app: Application): void {

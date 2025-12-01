@@ -1,0 +1,53 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:15
+    // class DAOStub extends Contract {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@5
+    pushbytes 0x2c2f51c3 // method "isValidUpgrade(byte[32],uint64)bool"
+    txna ApplicationArgs 0
+    match main_isValidUpgrade_route@3
+    err
+
+main_isValidUpgrade_route@3:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:16
+    // isValidUpgrade(lease: bytes<32>, appBeingUpgraded: uint64): boolean {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    b isValidUpgrade
+
+main___algots__.defaultCreate@5:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:15
+    // class DAOStub extends Contract {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
+
+
+// smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts::DAOStub.isValidUpgrade[routing]() -> void:
+isValidUpgrade:
+    // smart_contracts/arc58/plugins/update-akita-dao/contract.algo.ts:16
+    // isValidUpgrade(lease: bytes<32>, appBeingUpgraded: uint64): boolean {
+    txna ApplicationArgs 1
+    len
+    pushint 32 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 2
+    len
+    pushint 8 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    pushbytes 0x151f7c7500
+    log
+    pushint 1 // 1
+    return

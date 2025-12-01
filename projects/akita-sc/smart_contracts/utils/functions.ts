@@ -1,7 +1,7 @@
 import { Account, Application, assert, Asset, Bytes, Global, gtxn, itxn, itxnCompose, OnCompleteAction, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
 import { abiCall, Address, decodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { btoi, itob, sha256 } from "@algorandfoundation/algorand-typescript/op"
-import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysEscrowFactory, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
+import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 import { ERR_ESCROW_DOES_NOT_EXIST } from "../arc58/account/errors"
 import { EscrowInfo } from "../arc58/account/types"
 import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysWallet, AkitaDAOGlobalStateKeysWalletFees } from "../arc58/dao/constants"
@@ -50,7 +50,7 @@ export function getOtherAppList(akitaDAO: Application): OtherAppList {
 }
 
 export function getEscrowFactory(akitaDAO: Application): uint64 {
-  return op.AppGlobal.getExUint64(akitaDAO, Bytes(AbstractAccountGlobalStateKeysEscrowFactory))[0]
+  return getOtherAppList(akitaDAO).escrow
 }
 
 export function getWalletFees(akitaDAO: Application): WalletFees {
@@ -476,7 +476,7 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
   } else {
     if (!Application(rewardsApp).address.isOptedIn(Asset(asset))) {
       cost += Global.assetOptInMinBalance
-      abiCall<typeof Rewards.prototype.optin>({
+      abiCall<typeof Rewards.prototype.optIn>({
         appId: rewardsApp,
         args: [
           itxn.payment({
@@ -513,18 +513,18 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
 export function referralFee(akitaDAO: Application, asset: uint64): uint64 {
   const wallet = getWalletIDUsingAkitaDAO(akitaDAO, Txn.sender)
   const referrer = referrerOrZeroAddress(wallet)
-  const rewardsApp = getAkitaAppList(akitaDAO).rewards
-  let cost: uint64 = MinDisbursementsMBR + UserAllocationMBR
-  if (!Application(rewardsApp).address.isOptedIn(Asset(asset))) {
-    cost += Global.assetOptInMinBalance
+
+  if (referrer === Global.zeroAddress) {
+    return 0
   }
-  return referrer !== Global.zeroAddress ? cost : 0
+
+  return costInstantDisbursement(akitaDAO, asset, 1)
 }
 
 export function sendReferralPayment(akitaDAO: Application, asset: uint64, amount: uint64): ReferralPaymentInfo {
   const wallet = getWalletIDUsingAkitaDAO(akitaDAO, Txn.sender)
   const referrer = referrerOrZeroAddress(wallet)
-  
+
   let referralFee: uint64 = 0
   if (amount > 0 && referrer !== Global.zeroAddress) {
 
