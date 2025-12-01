@@ -1,8 +1,10 @@
 export * from './dao'
 export * from './gates'
-export * from './pool'
+export * from './staking-pool'
 export * from './rewards'
 export * from './social'
 export * from './staking'
 export * from './subscriptions'
 export * from './wallet'
+
+export * from './types'

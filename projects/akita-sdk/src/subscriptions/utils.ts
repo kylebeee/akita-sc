@@ -14,3 +14,10 @@ export function bytesToHexColor(bytes: Uint8Array): string {
     .join('')
     .toUpperCase();
 }
+
+export function validateHexColor(hexColor: string): void {
+  const normalized = hexColor.startsWith('#') ? hexColor.slice(1) : hexColor;
+  if (!/^[0-9A-Fa-f]{6}$/.test(normalized)) {
+    throw new Error('Invalid hex color. Must be in the format RRGGBB (6 hexadecimal digits, with or without a leading #).');
+  }
+}

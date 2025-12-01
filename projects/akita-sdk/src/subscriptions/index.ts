@@ -1,13 +1,19 @@
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { BaseSDK } from "../base";
-import { Service, ServicesKey, SubscriptionInfo, SubscriptionsArgs, SubscriptionsClient, SubscriptionsFactory } from '../generated/SubscriptionsClient'
+import { ServiceFromTuple, ServicesKey, SubscriptionInfo, SubscriptionsArgs, SubscriptionsClient, SubscriptionsFactory } from '../generated/SubscriptionsClient'
 import { hasSenderSigner, MaybeSigner, NewContractSDKParams } from "../types";
 import { ValueMap } from "../wallet/utils";
-import { SubscribeParams } from "./types";
-import { Transaction } from "algosdk";
+import { NewServiceArgs, Service, SubscribeArgs, SubscriptionInfoWithDetails } from "./types";
 import { AppCallMethodCall } from "@algorandfoundation/algokit-utils/types/composer";
+import { bytesToHexColor, hexColorToBytes, validateHexColor } from "./utils";
+import { convertToUnixTimestamp } from "../utils";
+import { MAX_DESCRIPTION_CHUNK_SIZE, MAX_DESCRIPTION_LENGTH } from "./constants";
 
 type ContractArgs = SubscriptionsArgs["obj"];
+
+export * from './constants';
+export * from './types';
+export * from './utils';
 
 export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
@@ -18,43 +24,143 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     super({ factory: SubscriptionsFactory, ...params });
   }
 
-  async isBlocked({ address, blocked }: { address: string, blocked: string }): Promise<boolean> {
-    return (await this.client.send.isBlocked({ args: { address, blocked } })).return!
+  /**
+   * Get the cost to create a new service from the contract
+   */
+  async newServiceCost({ sender, signer, asset = 0n }: MaybeSigner & { asset?: bigint | number } = {}): Promise<bigint> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    return (await this.client.newServiceCost({ ...sendParams, args: { asset } }))
   }
 
-  async isShutdown({ address, id }: { address: string, id: bigint | number }): Promise<boolean> {
-    return (await this.client.send.isShutdown({ args: { address, id } })).return!
+  async blockCost({ sender, signer }: MaybeSigner = {}): Promise<bigint> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    return await this.client.blockCost({ ...sendParams, args: [] })
+  }
+
+  /**
+   * Get the cost to create a new subscription from the contract
+   */
+  async newSubscriptionCost({ sender, signer, recipient, asset = 0n, serviceId = 0n }: MaybeSigner & { recipient: string, asset?: bigint | number, serviceId?: bigint | number }): Promise<bigint> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    return (await this.client.newSubscriptionCost({ ...sendParams, args: { recipient, asset, serviceId } }))
+  }
+
+  async isBlocked({ sender, signer, address, blocked }: MaybeSigner & { address: string, blocked: string }): Promise<boolean> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    return (await this.client.isBlocked({ ...sendParams, args: { address, blocked } }))
+  }
+
+  async isShutdown({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint | number }): Promise<boolean> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    return (await this.client.isShutdown({ ...sendParams, args: { address, id } }))
   }
 
   async getServices(): Promise<ValueMap<ServicesKey, Service>> {
+    const rawServices = await this.client.state.box.services.getMap();
+    const transformedEntries = Array.from(rawServices.entries()).map(([key, value]) => [
+      key,
+      {
+        ...value,
+        highlightColor: bytesToHexColor(value.highlightColor)
+      }
+    ] as [ServicesKey, Service]);
+
     this.services = new ValueMap(
       this.serviceMapKeyGenerator,
-      await this.client.state.box.services.getMap()
+      new Map(transformedEntries)
     );
     return this.services
   }
 
-  async getService({ address, id }: { address: string, id: number }): Promise<Service> {
-    return (await this.client.send.getService({ args: { address, id } })).return!
+  async getService({ sender, signer, address, id }: MaybeSigner & { address: string, id: number }): Promise<Service> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    const result = (await this.client.getService({ ...sendParams, args: { address, id } }))
+
+    return {
+      ...result,
+      highlightColor: bytesToHexColor(result.highlightColor)
+    }
   }
 
-  async getServicesByAddress({ address, start = 0n, windowSize = 20n }: { address: string, start?: bigint | number, windowSize?: bigint | number }): Promise<Service[]> {
-    return (await this.client.send.getServicesByAddress({ args: { address, start, windowSize } })).return! as unknown as Service[]
+  async getServicesByAddress({ sender, signer, address, start = 0n, windowSize = 20n }: MaybeSigner & { address: string, start?: bigint | number, windowSize?: bigint | number }): Promise<Service[]> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    const result = await this.client.getServicesByAddress({ ...sendParams, args: { address, start, windowSize } });
+    // The return is an array of tuples, convert to Service objects
+    const tuples = result as unknown as [number, bigint, bigint, bigint, bigint, bigint, string, string, Uint8Array, number, Uint8Array][];
+    return tuples.map(tuple => {
+      const result = ServiceFromTuple(tuple)
+      return {
+        ...result,
+        highlightColor: bytesToHexColor(result.highlightColor)
+      }
+    });
   }
 
-  async getSubscription({ address, id }: { address: string, id: bigint }): Promise<SubscriptionInfo> {
-    return (await this.client.send.getSubscription({ args: { key: { address, id }}})).return!
+  async getSubscription({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint }): Promise<SubscriptionInfo> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    const result = (await this.client.getSubscription({ ...sendParams, args: { key: { address, id } } }))
+    return {
+      ...result,
+      lastPayment: convertToUnixTimestamp(result.lastPayment)
+    }
   }
 
-  async getSubscriptionWithPasses({ address, id }: { address: string, id: bigint }): Promise<SubscriptionInfo> {
-    return (await this.client.send.getSubscriptionWithPasses({ args: { key: { address, id }}})).return!
+  async getSubscriptionWithDetails({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint }): Promise<SubscriptionInfoWithDetails> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    const result = (await this.client.getSubscriptionWithDetails({ ...sendParams, args: { key: { address, id } } }))
+    return {
+      ...result,
+      highlightColor: bytesToHexColor(result.highlightColor),
+      lastPayment: convertToUnixTimestamp(result.lastPayment),
+    }
   }
 
-  async isFirstSubscription({ address }: { address: string }): Promise<boolean> {
-    return (await this.client.send.isFirstSubscription({ args: { address } })).return!
+  async isFirstSubscription({ sender, signer, address }: MaybeSigner & { address: string }): Promise<boolean> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    return (await this.client.isFirstSubscription({ ...sendParams, args: { address } }))
   }
 
-  async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }: MaybeSigner & Omit<ContractArgs['newService(pay,uint64,uint64,uint64,uint64,uint64,string,byte[36],uint8,byte[3])uint64'], 'payment'>): Promise<void> {
+  async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }: NewServiceArgs): Promise<bigint> {
 
     const sendParams = {
       ...this.sendParams,
@@ -66,22 +172,74 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
     }
 
+    validateHexColor(rest.highlightColor);
+    const highlightColor = hexColorToBytes(rest.highlightColor);
+    // Use contract method to get the exact cost
+    const paymentAmount = await this.newServiceCost({ ...sendParams, asset });
+
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
-      amount: microAlgo(0), // TODO: calc costs
+      amount: microAlgo(paymentAmount),
       receiver: this.client.appAddress,
     })
 
-    await this.client.send.newService({
+    if (rest.description.length === 0) {
+      throw new Error('Description cannot be empty');
+    }
+
+    const group = this.client.newGroup();
+
+    group.newService({
       ...sendParams,
       args: {
         payment,
         asset,
         passes,
         gateId,
-        ...rest
+        ...rest,
+        highlightColor
       }
     });
+
+    // chunk description, max is: 3151
+    if (rest.description.length > MAX_DESCRIPTION_LENGTH) {
+      throw new Error(`Description length exceeds maximum of ${MAX_DESCRIPTION_LENGTH} characters`);
+    }
+    // [selector:4][offset:8][data:>=2036]
+    // setServiceDescription(offset: uint64, data: bytes): void {
+    if (rest.description.length > MAX_DESCRIPTION_CHUNK_SIZE) {
+      group.setServiceDescription({
+        ...sendParams,
+        args: {
+          offset: 0n,
+          data: Buffer.from(rest.description).subarray(0, MAX_DESCRIPTION_CHUNK_SIZE)
+        }
+      });
+
+      group.setServiceDescription({
+        ...sendParams,
+        args: {
+          offset: BigInt(MAX_DESCRIPTION_CHUNK_SIZE),
+          data: Buffer.from(rest.description).subarray(MAX_DESCRIPTION_CHUNK_SIZE)
+        }
+      });
+    } else {
+      group.setServiceDescription({
+        ...sendParams,
+        args: {
+          offset: 0n,
+          data: Buffer.from(rest.description)
+        }
+      });
+    }
+
+    group.activateService({
+      ...sendParams,
+      args: []
+    })
+    
+    const result = await group.send({ ...sendParams })    
+    return result.returns[0] as bigint;
   }
 
   async pauseService({ sender, signer, id }: MaybeSigner & ContractArgs['pauseService(uint64)void']): Promise<void> {
@@ -93,20 +251,6 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     }
 
     await this.client.send.pauseService({
-      ...sendParams,
-      args: { id }
-    })
-  }
-
-  async activateService({ sender, signer, id }: MaybeSigner & ContractArgs['activateService(uint64)void']): Promise<void> {
-
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    await this.client.send.activateService({
       ...sendParams,
       args: { id }
     })
@@ -138,9 +282,11 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
     }
 
+    const paymentAmount = await this.blockCost({ sender, signer });
+
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
-      amount: microAlgo(0), // TODO: calc costs
+      amount: microAlgo(paymentAmount),
       receiver: this.client.appAddress,
     })
 
@@ -177,7 +323,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     interval,
     recipient,
     gateTxn
-  }: MaybeSigner & SubscribeParams): Promise<bigint> {
+  }: MaybeSigner & SubscribeArgs): Promise<bigint> {
 
     const sendParams = {
       ...this.sendParams,
@@ -194,9 +340,23 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
     let subscriptionId: bigint | undefined = 0n;
 
+    // Use contract method to get the exact subscription cost
+    const subscribeCost = await this.newSubscriptionCost({
+      ...sendParams,
+      recipient,
+      asset,
+      serviceId
+    });
+
+    // For algo subscriptions, payment includes the subscription amount
+    // For ASA subscriptions, payment only covers MBR
+    const paymentAmount = isAlgoSubscription
+      ? BigInt(amount) + subscribeCost + BigInt(initialDepositAmount)
+      : subscribeCost;
+
     const payment = await this.client.algorand.createTransaction.payment({
       ...sendParams,
-      amount: isAlgoSubscription ? microAlgo(0) : microAlgo(0n + BigInt(initialDepositAmount)), // TODO: calc costs
+      amount: microAlgo(paymentAmount),
       receiver: this.client.appAddress,
     })
 
@@ -269,6 +429,15 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     }
 
     return subscriptionId;
+  }
+
+  async unsubscribe({ sender, signer, id }: MaybeSigner & ContractArgs['unsubscribe(uint64)void']): Promise<void> {
+    const sendParams = {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer })
+    }
+    await this.client.send.unsubscribe({ ...sendParams, args: { id: BigInt(id) } })
   }
 
   async deposit({ sender, signer, asset = 0n, amount, id }: MaybeSigner & { asset?: bigint | number, amount: bigint | number, id: bigint | number }): Promise<void> {
@@ -359,7 +528,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     } else {
       await this.client.send.triggerPayment({
         ...sendParams,
-        args: { key: { address, id }}
+        args: { key: { address, id } }
       })
     }
   }

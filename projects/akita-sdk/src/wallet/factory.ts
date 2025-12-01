@@ -6,12 +6,12 @@ import { emptySigner } from '../constants';
 import { ALGORAND_ZERO_ADDRESS_STRING, Address } from 'algosdk';
 import { microAlgo } from '@algorandfoundation/algokit-utils';
 
-export type FactoryContractArgs = AbstractedAccountFactoryArgs["obj"];
+export type WalletFactoryContractArgs = AbstractedAccountFactoryArgs["obj"];
 
 export type NewParams = (
-  Omit<FactoryContractArgs['newAccount(pay,address,address,string,address)uint64'], 'payment' | 'controlledAddress' | 'admin' | 'referrer'> &
+  Omit<WalletFactoryContractArgs['newAccount(pay,address,address,string,address)uint64'], 'payment' | 'controlledAddress' | 'admin' | 'referrer'> &
   MaybeSigner &
-  Partial<Pick<FactoryContractArgs['newAccount(pay,address,address,string,address)uint64'], 'controlledAddress' | 'admin' | 'referrer'>>
+  Partial<Pick<WalletFactoryContractArgs['newAccount(pay,address,address,string,address)uint64'], 'controlledAddress' | 'admin' | 'referrer'>>
 )
 
 export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
