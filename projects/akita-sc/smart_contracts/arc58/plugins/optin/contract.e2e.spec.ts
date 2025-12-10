@@ -1,15 +1,15 @@
-import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
-import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
-import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { Address, ALGORAND_ZERO_ADDRESS_STRING, decodeUint64, getApplicationAddress } from 'algosdk'
-import { describe, test, beforeAll, beforeEach, expect } from '@jest/globals';
+import { Config, microAlgo } from '@algorandfoundation/algokit-utils';
+import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
+import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
+import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import { Address, ALGORAND_ZERO_ADDRESS_STRING, getApplicationAddress } from 'algosdk';
 
-import { newWallet, OptInPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk'
-import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
-import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint'
-import { OptInPluginFactory } from '../../../artifacts/arc58/plugins/optin/OptInPluginClient';
+import { newWallet, OptInPluginSDK, WalletFactorySDK } from 'akita-sdk';
+import { deployAbstractedAccountFactory } from '../../../../tests/fixtures/abstracted-account';
 import { deployAkitaDAO } from '../../../../tests/fixtures/dao';
-import { EscrowFactoryClient } from '../../../artifacts/escrow/EscrowFactoryClient';
+import { deployEscrowFactory } from '../../../../tests/fixtures/escrow';
+import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint';
+import { OptInPluginFactory } from '../../../artifacts/arc58/plugins/optin/OptInPluginClient';
 
 describe('Optin plugin contract', () => {
   const localnet = algorandFixture();
@@ -37,16 +37,23 @@ describe('Optin plugin contract', () => {
       apps: {}
     });
 
+    const escrowFactory = await deployEscrowFactory({
+      fixture: localnet,
+      sender,
+      signer,
+    })
+
     walletFactory = (
-      await deployAbstractedAccountFactoryAndEscrowFactory({
+      await deployAbstractedAccountFactory({
         fixture: localnet,
         sender,
         signer,
         args: {
           akitaDao: dao.appId,
+          escrowFactory: escrowFactory.appId,
         }
       })
-    ).abstractAccountFactory;
+    );
   })
 
   beforeEach(localnet.newScope)

@@ -4,7 +4,7 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 8 1 6 1398500 50600
-    bytecblock "raffle_factory" "spending_address" 0x151f7c75 "akita_dao" "ticket_asset"
+    bytecblock "raffle_factory" "spending_address" 0x151f7c75 0x394eaeb2 "akita_dao" "ticket_asset"
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:22
     // export class RafflePlugin extends classes(BaseRaffle, AkitaBaseContract) {
     txn OnCompletion
@@ -18,7 +18,7 @@ main:
     err
 
 main_opUp_route@14:
-    // smart_contracts/utils/base-contracts/base.ts:42
+    // smart_contracts/utils/base-contracts/base.ts:43
     // opUp(): void { }
     intc_2 // 1
     return
@@ -34,20 +34,20 @@ main_create_NoOp@16:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:287
+    // smart_contracts/utils/functions.ts:321
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:288
+    // smart_contracts/utils/functions.ts:322
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:289
+    // smart_contracts/utils/functions.ts:323
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:292
+    // smart_contracts/utils/functions.ts:326
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -77,7 +77,7 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:26
+    // smart_contracts/utils/base-contracts/base.ts:27
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     pushbytes "version"
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:32
@@ -239,16 +239,16 @@ newRaffle:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     uncover 2
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -292,7 +292,7 @@ newRaffle:
     //       receiver: this.factory.value.address,
     //       amount: Global.assetOptInMinBalance,
     //     }),
-    //     prizeID,
+    //     Asset(prizeID),
     //   ],
     // })
     itxn_begin
@@ -337,11 +337,11 @@ newRaffle:
     //       receiver: this.factory.value.address,
     //       amount: Global.assetOptInMinBalance,
     //     }),
-    //     prizeID,
+    //     Asset(prizeID),
     //   ],
     // })
     itxn_next
-    pushbytes 0x394eaeb2 // method "optIn(pay,uint64)void"
+    bytec_3 // method "optIn(pay,uint64)void"
     itxn_field ApplicationArgs
     dig 16
     itxn_field ApplicationArgs
@@ -361,40 +361,254 @@ newRaffle_after_if_else@5:
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:75
     // if (!prizeAssetIsAlgo) {
     dig 13
-    bz newRaffle_after_if_else@7
+    bz newRaffle_after_if_else@11
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:76
     // optinMBR = Global.assetOptInMinBalance
     global AssetOptInMinBalance
     bury 18
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:78
+    // if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:78
+    // if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    dig 14
+    asset_holding_get AssetBalance
+    bury 1
+    bnz newRaffle_after_if_else@11
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:79-90
+    // abiCall<typeof RaffleFactory.prototype.optIn>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: this.factory.value.address,
+    //       amount: Global.assetOptInMinBalance
+    //     }),
+    //     Asset(prizeID),
+    //   ]
+    // })
+    itxn_begin
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:85
+    // receiver: this.factory.value.address,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:85
+    // receiver: this.factory.value.address,
+    app_global_get_ex
+    assert // check GlobalState exists
+    dup
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:86
+    // amount: Global.assetOptInMinBalance
+    global AssetOptInMinBalance
+    itxn_field Amount
+    itxn_field Receiver
+    dig 1
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:83-87
+    // itxn.payment({
+    //   sender,
+    //   receiver: this.factory.value.address,
+    //   amount: Global.assetOptInMinBalance
+    // }),
+    intc_2 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:79-90
+    // abiCall<typeof RaffleFactory.prototype.optIn>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: this.factory.value.address,
+    //       amount: Global.assetOptInMinBalance
+    //     }),
+    //     Asset(prizeID),
+    //   ]
+    // })
+    itxn_next
+    bytec_3 // method "optIn(pay,uint64)void"
+    itxn_field ApplicationArgs
+    dig 16
+    itxn_field ApplicationArgs
+    itxn_field Sender
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
 
-newRaffle_after_if_else@7:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:80
+newRaffle_after_if_else@11:
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:95
     // if (!ticketAssetIsAlgo) {
     dig 10
-    bz newRaffle_after_if_else@9
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:81
+    bz newRaffle_after_if_else@18
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:96
     // optinMBR += Global.assetOptInMinBalance
     dig 17
     global AssetOptInMinBalance
     +
     bury 18
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:98
+    // if (!this.factory.value.address.isOptedIn(Asset(ticketAssetID))) {
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:98
+    // if (!this.factory.value.address.isOptedIn(Asset(ticketAssetID))) {
+    app_global_get_ex
+    assert // check GlobalState exists
+    app_params_get AppAddress
+    assert // application exists
+    dig 11
+    asset_holding_get AssetBalance
+    bury 1
+    bnz newRaffle_after_if_else@18
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:99-103
+    // const optinCost = abiCall<typeof RaffleFactory.prototype.optInCost>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [Asset(ticketAssetID)]
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:101
+    // appId: this.factory.value,
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
+    // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
+    bytec_0 // "raffle_factory"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:101
+    // appId: this.factory.value,
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:99-103
+    // const optinCost = abiCall<typeof RaffleFactory.prototype.optInCost>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [Asset(ticketAssetID)]
+    // }).returnValue
+    pushbytes 0x33f78808 // method "optInCost(uint64)uint64"
+    itxn_field ApplicationArgs
+    dig 12
+    dup
+    cover 2
+    itxn_field ApplicationArgs
+    dup
+    itxn_field ApplicationID
+    dig 2
+    dup
+    cover 2
+    itxn_field Sender
+    intc_3 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_2 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    len
+    intc_1 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:105-116
+    // abiCall<typeof RaffleFactory.prototype.optIn>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: this.factory.value.address,
+    //       amount: optinCost
+    //     }),
+    //     Asset(ticketAssetID),
+    //   ]
+    // })
+    itxn_begin
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:111
+    // receiver: this.factory.value.address,
+    dig 1
+    app_params_get AppAddress
+    assert // application exists
+    itxn_field Receiver
+    itxn_field Amount
+    dig 1
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:109-113
+    // itxn.payment({
+    //   sender,
+    //   receiver: this.factory.value.address,
+    //   amount: optinCost
+    // }),
+    intc_2 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:105-116
+    // abiCall<typeof RaffleFactory.prototype.optIn>({
+    //   sender,
+    //   appId: this.factory.value,
+    //   args: [
+    //     itxn.payment({
+    //       sender,
+    //       receiver: this.factory.value.address,
+    //       amount: optinCost
+    //     }),
+    //     Asset(ticketAssetID),
+    //   ]
+    // })
+    itxn_next
+    bytec_3 // method "optIn(pay,uint64)void"
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    itxn_field Sender
+    intc_3 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
 
-newRaffle_after_if_else@9:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:87-89
+newRaffle_after_if_else@18:
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:123-125
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
     intc 4 // 1398500
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:90
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:126
     // Global.minBalance +
     global MinBalance
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:87-90
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:123-126
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
     // Global.minBalance +
     +
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:87-91
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:123-127
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
@@ -402,25 +616,25 @@ newRaffle_after_if_else@9:
     // optinMBR
     dig 18
     +
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:96
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:132
     // receiver: this.factory.value.address,
     intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:96
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:132
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:102
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:138
     // assetReceiver: this.factory.value.address,
     dig 1
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:107-125
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:143-161
     // const raffleApp = abiCall<typeof RaffleFactory.prototype.newRaffle>({
     //   sender,
     //   appId: this.factory.value,
@@ -448,7 +662,7 @@ newRaffle_after_if_else@9:
     dig 2
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:94-98
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:130-134
     // const mbrTxn = itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -458,7 +672,7 @@ newRaffle_after_if_else@9:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:112
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:148
     // prizeTxn,
     itxn_next
     dig 16
@@ -469,7 +683,7 @@ newRaffle_after_if_else@9:
     itxn_field AssetReceiver
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:100-105
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:136-141
     // const prizeTxn = itxn.assetTransfer({
     //   sender,
     //   assetReceiver: this.factory.value.address,
@@ -480,7 +694,7 @@ newRaffle_after_if_else@9:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:107-125
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:143-161
     // const raffleApp = abiCall<typeof RaffleFactory.prototype.newRaffle>({
     //   sender,
     //   appId: this.factory.value,
@@ -501,12 +715,12 @@ newRaffle_after_if_else@9:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // }).returnValue
     itxn_next
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:124
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:160
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     dig 17
     dig 19
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:107-125
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:143-161
     // const raffleApp = abiCall<typeof RaffleFactory.prototype.newRaffle>({
     //   sender,
     //   appId: this.factory.value,
@@ -596,7 +810,7 @@ newRaffle_after_if_else@9:
 
 // smart_contracts/arc58/plugins/raffle/contract.algo.ts::RafflePlugin.newPrizeBoxRaffle[routing]() -> void:
 newPrizeBoxRaffle:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:130-142
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:166-178
     // newPrizeBoxRaffle(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -694,16 +908,16 @@ newPrizeBoxRaffle:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     uncover 2
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -712,28 +926,28 @@ newPrizeBoxRaffle:
     pop
     dup
     cover 3
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:145
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:181
     // assert(getPrizeBoxOwner(this.akitaDAO.value, prizeBox) === sender, ERR_NOT_PRIZE_BOX_OWNER)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_3 // "akita_dao"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:145
+    bytec 4 // "akita_dao"
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:181
     // assert(getPrizeBoxOwner(this.akitaDAO.value, prizeBox) === sender, ERR_NOT_PRIZE_BOX_OWNER)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:411
+    // smart_contracts/utils/functions.ts:445
     // assert(prizeBox.creator === Application(getAkitaAppList(akitaDAO).prizeBox).address, ERR_NOT_A_PRIZE_BOX)
     dig 3
     app_params_get AppCreator
     assert // application exists
-    // smart_contracts/utils/functions.ts:38
+    // smart_contracts/utils/functions.ts:40
     // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
     swap
-    pushbytes "akita_al"
+    pushbytes "aal"
     app_global_get_ex
     pop
-    // smart_contracts/utils/functions.ts:411
+    // smart_contracts/utils/functions.ts:445
     // assert(prizeBox.creator === Application(getAkitaAppList(akitaDAO).prizeBox).address, ERR_NOT_A_PRIZE_BOX)
     pushint 24 // 24
     extract_uint64
@@ -741,37 +955,37 @@ newPrizeBoxRaffle:
     assert // application exists
     ==
     assert // Not a prize box
-    // smart_contracts/utils/functions.ts:412
+    // smart_contracts/utils/functions.ts:446
     // const [ownerBytes] = op.AppGlobal.getExBytes(prizeBox, Bytes(PrizeBoxGlobalStateKeyOwner))
     dig 2
     pushbytes "owner"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:145
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:181
     // assert(getPrizeBoxOwner(this.akitaDAO.value, prizeBox) === sender, ERR_NOT_PRIZE_BOX_OWNER)
     dig 1
     ==
     assert // Not prize box owner
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:147-151
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:183-187
     // abiCall<typeof PrizeBox.prototype.transfer>({
     //   sender,
     //   appId: prizeBox,
     //   args: [this.factory.value.address],
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:150
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:186
     // args: [this.factory.value.address],
     intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:150
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:186
     // args: [this.factory.value.address],
     app_global_get_ex
     assert // check GlobalState exists
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:147-151
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:183-187
     // abiCall<typeof PrizeBox.prototype.transfer>({
     //   sender,
     //   appId: prizeBox,
@@ -788,34 +1002,34 @@ newPrizeBoxRaffle:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:153
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:189
     // let optinMBR: uint64 = 0
     intc_0 // 0
     swap
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:155
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:191
     // if (ticketAssetIsAlgo) {
     bnz newPrizeBoxRaffle_after_if_else@4
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:156
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:192
     // optinMBR += Global.assetOptInMinBalance
     global AssetOptInMinBalance
     bury 1
 
 newPrizeBoxRaffle_after_if_else@4:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:162-164
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:198-200
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
     intc 4 // 1398500
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:165
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:201
     // Global.minBalance +
     global MinBalance
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:162-165
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:198-201
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
     // Global.minBalance +
     +
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:162-166
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:198-202
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * raffle.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * raffle.globalBytes) +
@@ -823,20 +1037,20 @@ newPrizeBoxRaffle_after_if_else@4:
     // optinMBR
     dig 1
     +
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:171
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:207
     // receiver: this.factory.value.address,
     intc_0 // 0
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:171
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:207
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:175-191
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:211-227
     // const raffleApp = abiCall<typeof RaffleFactory.prototype.newPrizeBoxRaffle>({
     //   sender,
     //   appId: this.factory.value,
@@ -861,7 +1075,7 @@ newPrizeBoxRaffle_after_if_else@4:
     dig 2
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:169-173
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:205-209
     // const mbrTxn = itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -871,7 +1085,7 @@ newPrizeBoxRaffle_after_if_else@4:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:175-191
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:211-227
     // const raffleApp = abiCall<typeof RaffleFactory.prototype.newPrizeBoxRaffle>({
     //   sender,
     //   appId: this.factory.value,
@@ -890,12 +1104,12 @@ newPrizeBoxRaffle_after_if_else@4:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // }).returnValue
     itxn_next
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:190
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:226
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     dig 13
     dig 15
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:175-191
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:211-227
     // const raffleApp = abiCall<typeof RaffleFactory.prototype.newPrizeBoxRaffle>({
     //   sender,
     //   appId: this.factory.value,
@@ -954,7 +1168,7 @@ newPrizeBoxRaffle_after_if_else@4:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:130-142
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:166-178
     // newPrizeBoxRaffle(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -978,7 +1192,7 @@ newPrizeBoxRaffle_after_if_else@4:
 
 // smart_contracts/arc58/plugins/raffle/contract.algo.ts::RafflePlugin.enter[routing]() -> void:
 enter:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:196-203
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:232-239
     // enter(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1030,16 +1244,16 @@ enter:
     assert // invalid number of bytes for uint8[32]
     txna ApplicationArgs 6
     cover 4
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1047,7 +1261,7 @@ enter:
     app_global_get_ex
     pop
     cover 3
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:206
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:242
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     dup
     app_params_get AppCreator
@@ -1056,7 +1270,7 @@ enter:
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:206
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:242
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1064,18 +1278,18 @@ enter:
     assert // application exists
     ==
     assert // Creator is not the raffle factory
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:211
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:247
     // const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(appId, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
-    bytec 4 // "ticket_asset"
+    bytec 5 // "ticket_asset"
     app_global_get_ex
     pop
     btoi
     dup
     cover 4
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:212
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:248
     // if (ticketAsset.id === 0) {
     bnz enter_else_body@5
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:213-226
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:249-262
     // abiCall<typeof Raffle.prototype.enter>({
     //   sender,
     //   appId,
@@ -1091,19 +1305,19 @@ enter:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:219
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:255
     // receiver: appId.address,
     dig 7
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:220
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:256
     // amount: amount + mbr,
     dig 8
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:209
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:245
     // const mbr: uint64 = entries + entriesByAddress
     intc 5 // 50600
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:220
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:256
     // amount: amount + mbr,
     +
     itxn_field Amount
@@ -1111,7 +1325,7 @@ enter:
     uncover 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:217-221
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:253-257
     // itxn.payment({
     //   sender,
     //   receiver: appId.address,
@@ -1121,7 +1335,7 @@ enter:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:213-226
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:249-262
     // abiCall<typeof Raffle.prototype.enter>({
     //   sender,
     //   appId,
@@ -1137,12 +1351,12 @@ enter:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:225
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:261
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:213-226
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:249-262
     // abiCall<typeof Raffle.prototype.enter>({
     //   sender,
     //   appId,
@@ -1173,7 +1387,7 @@ enter:
     itxn_submit
 
 enter_after_if_else@9:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:196-203
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:232-239
     // enter(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1186,7 +1400,7 @@ enter_after_if_else@9:
     return
 
 enter_else_body@5:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:228-247
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:264-283
     // abiCall<typeof Raffle.prototype.enterAsa>({
     //   sender,
     //   appId,
@@ -1208,13 +1422,13 @@ enter_else_body@5:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:234
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:270
     // receiver: appId.address,
     dig 7
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:209
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:245
     // const mbr: uint64 = entries + entriesByAddress
     intc 5 // 50600
     itxn_field Amount
@@ -1223,7 +1437,7 @@ enter_else_body@5:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:232-236
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:268-272
     // itxn.payment({
     //   sender,
     //   receiver: appId.address,
@@ -1233,7 +1447,7 @@ enter_else_body@5:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:237-242
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:273-278
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: appId.address,
@@ -1241,7 +1455,7 @@ enter_else_body@5:
     //   xferAsset: ticketAsset,
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:239
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:275
     // assetReceiver: appId.address,
     dup
     app_params_get AppAddress
@@ -1253,7 +1467,7 @@ enter_else_body@5:
     itxn_field AssetReceiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:237-242
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:273-278
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: appId.address,
@@ -1264,7 +1478,7 @@ enter_else_body@5:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:228-247
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:264-283
     // abiCall<typeof Raffle.prototype.enterAsa>({
     //   sender,
     //   appId,
@@ -1286,12 +1500,12 @@ enter_else_body@5:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:246
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:282
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:228-247
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:264-283
     // abiCall<typeof Raffle.prototype.enterAsa>({
     //   sender,
     //   appId,
@@ -1331,7 +1545,7 @@ enter_else_body@5:
 
 // smart_contracts/arc58/plugins/raffle/contract.algo.ts::RafflePlugin.add[routing]() -> void:
 add:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:251-257
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:287-293
     // add(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1375,16 +1589,16 @@ add:
     cover 4
     txna ApplicationArgs 5
     cover 4
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1392,7 +1606,7 @@ add:
     app_global_get_ex
     pop
     cover 3
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:260
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:296
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     dup
     app_params_get AppCreator
@@ -1401,7 +1615,7 @@ add:
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:260
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:296
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1409,18 +1623,18 @@ add:
     assert // application exists
     ==
     assert // Creator is not the raffle factory
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:262
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:298
     // const ticketAsset = Asset(btoi(op.AppGlobal.getExBytes(appId, Bytes(RaffleGlobalStateKeyTicketAsset))[0]))
-    bytec 4 // "ticket_asset"
+    bytec 5 // "ticket_asset"
     app_global_get_ex
     pop
     btoi
     dup
     cover 4
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:263
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:299
     // if (ticketAsset.id === 0) {
     bnz add_else_body@5
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:264-276
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:300-312
     // abiCall<typeof Raffle.prototype.add>({
     //   sender,
     //   appId,
@@ -1435,7 +1649,7 @@ add:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:270
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:306
     // receiver: appId.address,
     dig 6
     dup
@@ -1447,7 +1661,7 @@ add:
     uncover 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:268-272
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:304-308
     // itxn.payment({
     //   sender,
     //   receiver: appId.address,
@@ -1457,7 +1671,7 @@ add:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:264-276
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:300-312
     // abiCall<typeof Raffle.prototype.add>({
     //   sender,
     //   appId,
@@ -1472,12 +1686,12 @@ add:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:275
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:311
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:264-276
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:300-312
     // abiCall<typeof Raffle.prototype.add>({
     //   sender,
     //   appId,
@@ -1505,7 +1719,7 @@ add:
     itxn_submit
 
 add_after_if_else@8:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:251-257
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:287-293
     // add(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1517,7 +1731,7 @@ add_after_if_else@8:
     return
 
 add_else_body@5:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:278-291
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:314-327
     // abiCall<typeof Raffle.prototype.addAsa>({
     //   sender,
     //   appId,
@@ -1533,7 +1747,7 @@ add_else_body@5:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:284
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:320
     // assetReceiver: appId.address,
     dig 6
     dup
@@ -1547,7 +1761,7 @@ add_else_body@5:
     uncover 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:282-287
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:318-323
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: appId.address,
@@ -1558,7 +1772,7 @@ add_else_body@5:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:278-291
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:314-327
     // abiCall<typeof Raffle.prototype.addAsa>({
     //   sender,
     //   appId,
@@ -1574,12 +1788,12 @@ add_else_body@5:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:290
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:326
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:278-291
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:314-327
     // abiCall<typeof Raffle.prototype.addAsa>({
     //   sender,
     //   appId,
@@ -1611,7 +1825,7 @@ add_else_body@5:
 
 // smart_contracts/arc58/plugins/raffle/contract.algo.ts::RafflePlugin.raffle[routing]() -> void:
 raffle:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:295-299
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:331-335
     // raffle(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1639,16 +1853,16 @@ raffle:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 2
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1656,7 +1870,7 @@ raffle:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:302
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:338
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     dup
     app_params_get AppCreator
@@ -1665,7 +1879,7 @@ raffle:
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:302
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:338
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1673,19 +1887,19 @@ raffle:
     assert // application exists
     ==
     assert // Creator is not the raffle factory
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:304-308
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:340-344
     // abiCall<typeof Raffle.prototype.raffle>({
     //   sender,
     //   appId,
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:307
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:343
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     swap
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:304-308
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:340-344
     // abiCall<typeof Raffle.prototype.raffle>({
     //   sender,
     //   appId,
@@ -1701,7 +1915,7 @@ raffle:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:295-299
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:331-335
     // raffle(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1713,7 +1927,7 @@ raffle:
 
 // smart_contracts/arc58/plugins/raffle/contract.algo.ts::RafflePlugin.findWinner[routing]() -> void:
 findWinner:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:311-316
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:347-352
     // findWinner(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1748,16 +1962,16 @@ findWinner:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1765,7 +1979,7 @@ findWinner:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:319
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:355
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     dig 1
     app_params_get AppCreator
@@ -1774,7 +1988,7 @@ findWinner:
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:319
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:355
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1782,7 +1996,7 @@ findWinner:
     assert // application exists
     ==
     assert // Creator is not the raffle factory
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:321-326
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:357-362
     // abiCall<typeof Raffle.prototype.findWinner>({
     //   sender,
     //   appId,
@@ -1790,12 +2004,12 @@ findWinner:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:325
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:361
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:321-326
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:357-362
     // abiCall<typeof Raffle.prototype.findWinner>({
     //   sender,
     //   appId,
@@ -1813,7 +2027,7 @@ findWinner:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:311-316
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:347-352
     // findWinner(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1826,7 +2040,7 @@ findWinner:
 
 // smart_contracts/arc58/plugins/raffle/contract.algo.ts::RafflePlugin.claimRafflePrize[routing]() -> void:
 claimRafflePrize:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:329-333
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:365-369
     // claimRafflePrize(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1854,16 +2068,16 @@ claimRafflePrize:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 2
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1871,7 +2085,7 @@ claimRafflePrize:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:336
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:372
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     dup
     app_params_get AppCreator
@@ -1880,7 +2094,7 @@ claimRafflePrize:
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:336
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:372
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1888,19 +2102,19 @@ claimRafflePrize:
     assert // application exists
     ==
     assert // Creator is not the raffle factory
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:338-342
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:374-378
     // abiCall<typeof Raffle.prototype.claimRafflePrize>({
     //   sender,
     //   appId,
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:341
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:377
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     swap
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:338-342
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:374-378
     // abiCall<typeof Raffle.prototype.claimRafflePrize>({
     //   sender,
     //   appId,
@@ -1916,7 +2130,7 @@ claimRafflePrize:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:329-333
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:365-369
     // claimRafflePrize(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1928,7 +2142,7 @@ claimRafflePrize:
 
 // smart_contracts/arc58/plugins/raffle/contract.algo.ts::RafflePlugin.deleteRaffleApplication[routing]() -> void:
 deleteRaffleApplication:
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:345-349
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:381-385
     // deleteRaffleApplication(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1956,16 +2170,16 @@ deleteRaffleApplication:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 2
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1973,7 +2187,7 @@ deleteRaffleApplication:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:352
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:388
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     dup
     app_params_get AppCreator
@@ -1982,7 +2196,7 @@ deleteRaffleApplication:
     // smart_contracts/arc58/plugins/raffle/contract.algo.ts:26
     // factory = GlobalState<Application>({ key: RafflePluginGlobalStateKeyFactory })
     bytec_0 // "raffle_factory"
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:352
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:388
     // assert(appId.creator === this.factory.value.address, ERR_CREATOR_NOT_RAFFLE_FACTORY)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1990,19 +2204,19 @@ deleteRaffleApplication:
     assert // application exists
     ==
     assert // Creator is not the raffle factory
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:354-358
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:390-394
     // abiCall<typeof Raffle.prototype.deleteApplication>({
     //   sender,
     //   appId,
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:357
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:393
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     swap
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:354-358
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:390-394
     // abiCall<typeof Raffle.prototype.deleteApplication>({
     //   sender,
     //   appId,
@@ -2018,7 +2232,7 @@ deleteRaffleApplication:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:345-349
+    // smart_contracts/arc58/plugins/raffle/contract.algo.ts:381-385
     // deleteRaffleApplication(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -2030,7 +2244,7 @@ deleteRaffleApplication:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
 updateAkitaDAO:
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // updateAkitaDAO(akitaDAO: Application): void {
     txna ApplicationArgs 1
     dup
@@ -2039,36 +2253,36 @@ updateAkitaDAO:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:38
+    // smart_contracts/utils/base-contracts/base.ts:39
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
-    // smart_contracts/utils/base-contracts/base.ts:31
+    // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_3 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:31
+    bytec 4 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
     assert // check GlobalState exists
     pushbytes "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:38
+    // smart_contracts/utils/base-contracts/base.ts:39
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:28
+    // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_3 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:39
+    bytec 4 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:40
     // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:37
+    // smart_contracts/utils/base-contracts/base.ts:38
     // updateAkitaDAO(akitaDAO: Application): void {
     intc_2 // 1
     return

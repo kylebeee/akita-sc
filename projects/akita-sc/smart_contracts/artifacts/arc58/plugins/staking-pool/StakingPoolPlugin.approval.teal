@@ -4,8 +4,8 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 8 1 6 400
-    bytecblock "pool_factory" "spending_address" 0x151f7c75 "akita_dao"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:21
+    bytecblock "pool_factory" "spending_address" "akita_dao" 0x151f7c75
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:22
     // export class StakingPoolPlugin extends BaseStakingPool {
     txn OnCompletion
     !
@@ -18,7 +18,7 @@ main:
     err
 
 main_create_NoOp@11:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:21
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:22
     // export class StakingPoolPlugin extends BaseStakingPool {
     pushbytes 0x88c940f8 // method "create(string,uint64,uint64)void"
     txna ApplicationArgs 0
@@ -28,20 +28,20 @@ main_create_NoOp@11:
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
 rekeyAddress:
-    // smart_contracts/utils/functions.ts:287
+    // smart_contracts/utils/functions.ts:321
     // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
     proto 2 1
-    // smart_contracts/utils/functions.ts:288
+    // smart_contracts/utils/functions.ts:322
     // if (!rekeyBack) {
     frame_dig -2
     bnz rekeyAddress_after_if_else@2
-    // smart_contracts/utils/functions.ts:289
+    // smart_contracts/utils/functions.ts:323
     // return Global.zeroAddress
     global ZeroAddress
     retsub
 
 rekeyAddress_after_if_else@2:
-    // smart_contracts/utils/functions.ts:292
+    // smart_contracts/utils/functions.ts:326
     // return wallet.address
     frame_dig -1
     app_params_get AppAddress
@@ -51,7 +51,7 @@ rekeyAddress_after_if_else@2:
 
 // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts::StakingPoolPlugin.create[routing]() -> void:
 create:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:33
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:34
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -78,28 +78,28 @@ create:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:26
     // version = GlobalState<string>({ key: GlobalStateKeyVersion })
     pushbytes "version"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:35
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:36
     // this.version.value = version
     uncover 3
     app_global_put
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:36
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:37
     // this.factory.value = factory
     uncover 2
     app_global_put
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:29
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:30
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_3 // "akita_dao"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:37
+    bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:38
     // this.akitaDAO.value = akitaDAO
     swap
     app_global_put
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:33
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:34
     // @abimethod({ onCreate: 'require' })
     intc_2 // 1
     return
@@ -107,7 +107,7 @@ create:
 
 // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts::StakingPoolPlugin.newPool[routing]() -> void:
 newPool:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:42-52
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:43-53
     // newPool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -175,72 +175,72 @@ newPool:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 8
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:55
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:56
     // const fees = getStakingFees(this.akitaDAO.value)
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:29
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:30
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_3 // "akita_dao"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:55
+    bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:56
     // const fees = getStakingFees(this.akitaDAO.value)
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/utils/functions.ts:67
+    // smart_contracts/utils/functions.ts:74
     // const [stakingFeesBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysStakingFees))
     pushbytes "staking_fees"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:60
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:61
     // fees.creationFee +
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:60-63
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:61-64
     // fees.creationFee +
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
     pushint 1306000 // 1306000
     +
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:64
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:65
     // Global.minBalance
     global MinBalance
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:60-64
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:61-65
     // fees.creationFee +
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
     // Global.minBalance
     +
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:69
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:70
     // receiver: this.factory.value.address,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:69
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:70
     // receiver: this.factory.value.address,
     app_global_get_ex
     assert // check GlobalState exists
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:73-87
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:74-88
     // abiCall<typeof StakingPoolFactory.prototype.newPool>({
     //   sender,
     //   appId: this.factory.value,
@@ -262,7 +262,7 @@ newPool:
     itxn_field Receiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:67-71
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:68-72
     // const mbrTxn = itxn.payment({
     //   sender,
     //   receiver: this.factory.value.address,
@@ -272,7 +272,7 @@ newPool:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:73-87
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:74-88
     // abiCall<typeof StakingPoolFactory.prototype.newPool>({
     //   sender,
     //   appId: this.factory.value,
@@ -289,12 +289,12 @@ newPool:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:86
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:87
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 9
     uncover 10
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:73-87
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:74-88
     // abiCall<typeof StakingPoolFactory.prototype.newPool>({
     //   sender,
     //   appId: this.factory.value,
@@ -339,13 +339,13 @@ newPool:
     extract 4 0
     swap
     extract 0 4
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     len
     intc_1 // 8
     ==
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:42-52
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:43-53
     // newPool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -362,7 +362,7 @@ newPool:
 
 // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts::StakingPoolPlugin.initPool[routing]() -> void:
 initPool:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:90-94
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:91-95
     // initPool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -390,16 +390,16 @@ initPool:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:95
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:96
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     dup
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:95
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:96
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
@@ -407,16 +407,16 @@ initPool:
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 2
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -424,19 +424,19 @@ initPool:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:99-103
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:100-104
     // abiCall<typeof StakingPool.prototype.init>({
     //   sender,
     //   appId: poolID,
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:102
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:103
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 2
     uncover 3
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:99-103
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:100-104
     // abiCall<typeof StakingPool.prototype.init>({
     //   sender,
     //   appId: poolID,
@@ -452,7 +452,7 @@ initPool:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:90-94
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:91-95
     // initPool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -464,7 +464,7 @@ initPool:
 
 // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts::StakingPoolPlugin.deletePool[routing]() -> void:
 deletePool:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:106-110
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:107-111
     // deletePool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -493,15 +493,15 @@ deletePool:
     assert // invalid number of bytes for uint64
     dup
     btoi
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:111
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:112
     // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:111
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:112
     // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
@@ -511,16 +511,16 @@ deletePool:
     uncover 2
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 3
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -528,7 +528,7 @@ deletePool:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:115-120
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:116-121
     // abiCall<typeof StakingPoolFactory.prototype.deletePool>({
     //   sender,
     //   appId: this.factory.value,
@@ -536,12 +536,12 @@ deletePool:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:119
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:120
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:115-120
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:116-121
     // abiCall<typeof StakingPoolFactory.prototype.deletePool>({
     //   sender,
     //   appId: this.factory.value,
@@ -560,7 +560,7 @@ deletePool:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:106-110
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:107-111
     // deletePool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -572,7 +572,7 @@ deletePool:
 
 // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts::StakingPoolPlugin.addReward[routing]() -> void:
 addReward:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:123-129
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:124-130
     // addReward(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -618,15 +618,15 @@ addReward:
     assert // invalid number of bytes for uint64
     btoi
     cover 3
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:130
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:131
     // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:130
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:131
     // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
@@ -634,16 +634,16 @@ addReward:
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     swap
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -651,7 +651,7 @@ addReward:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:134
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:135
     // if (reward.asset === 0) {
     dup
     extract 0 8
@@ -660,7 +660,7 @@ addReward:
     extract_uint64
     dup
     bnz addReward_else_body@5
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:135-147
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:136-148
     // abiCall<typeof StakingPool.prototype.addReward>({
     //   sender,
     //   appId,
@@ -675,13 +675,13 @@ addReward:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:141
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:142
     // receiver: appId.address,
     dig 5
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:142
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:143
     // amount: amount + this.rewardsMbr(reward.winnerCount)
     dig 6
     dup
@@ -692,7 +692,7 @@ addReward:
     // return MinPoolRewardsMBR + (BoxCostPerByte * winningTickets)
     intc 4 // 400
     *
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:142
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:143
     // amount: amount + this.rewardsMbr(reward.winnerCount)
     dig 7
     +
@@ -701,7 +701,7 @@ addReward:
     dig 4
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:139-143
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:140-144
     // itxn.payment({
     //   sender,
     //   receiver: appId.address,
@@ -711,7 +711,7 @@ addReward:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:135-147
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:136-148
     // abiCall<typeof StakingPool.prototype.addReward>({
     //   sender,
     //   appId,
@@ -726,12 +726,12 @@ addReward:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:146
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:147
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 9
     dig 11
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:135-147
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:136-148
     // abiCall<typeof StakingPool.prototype.addReward>({
     //   sender,
     //   appId,
@@ -759,7 +759,7 @@ addReward:
     itxn_submit
 
 addReward_after_if_else@13:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:123-129
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:124-130
     // addReward(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -771,7 +771,7 @@ addReward_after_if_else@13:
     return
 
 addReward_else_body@5:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:150
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:151
     // if (!appId.address.isOptedIn(Asset(reward.asset))) {
     dig 5
     app_params_get AppAddress
@@ -780,26 +780,26 @@ addReward_else_body@5:
     asset_holding_get AssetBalance
     bury 1
     bnz addReward_after_if_else@9
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:153
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:154
     // const escrowBytes = op.AppGlobal.getExBytes(this.factory.value, Bytes(GlobalStateKeyAkitaEscrow))[0]
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:153
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:154
     // const escrowBytes = op.AppGlobal.getExBytes(this.factory.value, Bytes(GlobalStateKeyAkitaEscrow))[0]
     app_global_get_ex
     assert // check GlobalState exists
     pushbytes "akita_escrow"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:154
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:155
     // const escrow = Application(btoi(escrowBytes));
     btoi
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:155
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:156
     // let optinMBR: uint64 = Global.assetOptInMinBalance * (
     global AssetOptInMinBalance
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:156
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:157
     // !escrow.address.isOptedIn(Asset(reward.asset)) ? 4 : 1
     swap
     app_params_get AppAddress
@@ -812,12 +812,12 @@ addReward_else_body@5:
     pushint 4 // 4
     uncover 2
     select
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:155-157
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:156-158
     // let optinMBR: uint64 = Global.assetOptInMinBalance * (
     //   !escrow.address.isOptedIn(Asset(reward.asset)) ? 4 : 1
     // )
     *
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:161-172
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:162-173
     // abiCall<typeof StakingPool.prototype.optIn>({
     //   sender,
     //   appId,
@@ -827,24 +827,24 @@ addReward_else_body@5:
     //       receiver: appId.address,
     //       amount: optinMBR + rewardsMBR
     //     }),
-    //     reward.asset,
+    //     Asset(reward.asset),
     //   ]
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:167
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:168
     // receiver: appId.address,
     dig 6
     dup
     cover 2
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:168
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:169
     // amount: optinMBR + rewardsMBR
     swap
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:159
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:160
     // const rewardsMBR: uint64 = this.rewardsMbr(WinnerCountCap) * 2
     pushint 8000 // 8000
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:168
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:169
     // amount: optinMBR + rewardsMBR
     +
     itxn_field Amount
@@ -852,7 +852,7 @@ addReward_else_body@5:
     dig 3
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:165-169
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:166-170
     // itxn.payment({
     //   sender,
     //   receiver: appId.address,
@@ -862,7 +862,7 @@ addReward_else_body@5:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:161-172
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:162-173
     // abiCall<typeof StakingPool.prototype.optIn>({
     //   sender,
     //   appId,
@@ -872,7 +872,7 @@ addReward_else_body@5:
     //       receiver: appId.address,
     //       amount: optinMBR + rewardsMBR
     //     }),
-    //     reward.asset,
+    //     Asset(reward.asset),
     //   ]
     // })
     itxn_next
@@ -889,7 +889,7 @@ addReward_else_body@5:
     itxn_submit
 
 addReward_after_if_else@9:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:175-193
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:176-194
     // abiCall<typeof StakingPool.prototype.addRewardAsa>({
     //   sender,
     //   appId,
@@ -910,13 +910,13 @@ addReward_after_if_else@9:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:181
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:182
     // receiver: appId.address,
     dig 5
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:182
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:183
     // amount: this.rewardsMbr(reward.winnerCount)
     dig 6
     dup
@@ -932,7 +932,7 @@ addReward_after_if_else@9:
     dig 4
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:179-183
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:180-184
     // itxn.payment({
     //   sender,
     //   receiver: appId.address,
@@ -942,7 +942,7 @@ addReward_after_if_else@9:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:184-189
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:185-190
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: appId.address,
@@ -950,7 +950,7 @@ addReward_after_if_else@9:
     //   xferAsset: reward.asset
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:186
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:187
     // assetReceiver: appId.address,
     dig 1
     app_params_get AppAddress
@@ -962,7 +962,7 @@ addReward_after_if_else@9:
     itxn_field AssetReceiver
     dup
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:184-189
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:185-190
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: appId.address,
@@ -973,7 +973,7 @@ addReward_after_if_else@9:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:175-193
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:176-194
     // abiCall<typeof StakingPool.prototype.addRewardAsa>({
     //   sender,
     //   appId,
@@ -994,12 +994,12 @@ addReward_after_if_else@9:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:192
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:193
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     dig 9
     dig 11
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:175-193
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:176-194
     // abiCall<typeof StakingPool.prototype.addRewardAsa>({
     //   sender,
     //   appId,
@@ -1036,7 +1036,7 @@ addReward_after_if_else@9:
 
 // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts::StakingPoolPlugin.finalizePool[routing]() -> void:
 finalizePool:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:197-204
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:198-205
     // finalizePool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1085,16 +1085,16 @@ finalizePool:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:205
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:206
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     dig 3
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:205
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:206
     // assert(Application(poolID).creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1102,16 +1102,16 @@ finalizePool:
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     dig 5
-    // smart_contracts/utils/functions.ts:238
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
@@ -1119,7 +1119,7 @@ finalizePool:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:209-218
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:210-219
     // abiCall<typeof StakingPool.prototype.finalize>({
     //   sender,
     //   appId: poolID,
@@ -1131,12 +1131,12 @@ finalizePool:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:217
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:218
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
     uncover 5
     uncover 6
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:209-218
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:210-219
     // abiCall<typeof StakingPool.prototype.finalize>({
     //   sender,
     //   appId: poolID,
@@ -1162,7 +1162,7 @@ finalizePool:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:197-204
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:198-205
     // finalizePool(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1177,7 +1177,8 @@ finalizePool:
 
 // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts::StakingPoolPlugin.enter[routing]() -> void:
 enter:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:221-227
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:222-228
     // enter(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1213,20 +1214,20 @@ enter:
     cover 2
     txna ApplicationArgs 4
     dup
-    cover 2
+    cover 3
     cover 3
     txna ApplicationArgs 5
     cover 3
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:228
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:229
     // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     dup
     app_params_get AppCreator
     assert // application exists
     intc_0 // 0
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:27
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:28
     // factory = GlobalState<Application>({ key: PoolPluginGlobalStateKeyFactory })
     bytec_0 // "pool_factory"
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:228
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:229
     // assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1234,22 +1235,81 @@ enter:
     assert // application exists
     ==
     assert // Not a valid pool
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:161-164
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    dig 1
+    // smart_contracts/utils/functions.ts:163
+    // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    pushbytes "controlled_address"
+    // smart_contracts/utils/functions.ts:161-164
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    app_global_get_ex
+    pop
+    swap
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
-    uncover 2
-    // smart_contracts/utils/functions.ts:238
+    dig 2
+    // smart_contracts/utils/functions.ts:268
     // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     bytec_1 // "spending_address"
-    // smart_contracts/utils/functions.ts:236-239
+    // smart_contracts/utils/functions.ts:266-269
     // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
     //   wallet,
     //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
     // )
     app_global_get_ex
     pop
+    swap
+    // smart_contracts/utils/functions.ts:169-172
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    dig 3
+    // smart_contracts/utils/functions.ts:171
+    // Bytes(AbstractAccountGlobalStateKeysReferrer)
+    pushbytes "referrer"
+    // smart_contracts/utils/functions.ts:169-172
+    // const [referrerBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysReferrer)
+    // )
+    app_global_get_ex
+    pop
+    swap
+    // smart_contracts/utils/functions.ts:258
+    // walletAddress: wallet.address,
+    uncover 4
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/utils/functions.ts:257-262
+    // return {
+    //   walletAddress: wallet.address,
+    //   origin,
+    //   sender,
+    //   referrer
+    // }
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:230
+    // const { origin, sender } = getAccounts(wallet)
+    dup
+    extract 32 32
+    cover 3
+    extract 64 32
     dup
     cover 3
     // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:233
@@ -1260,7 +1320,14 @@ enter:
     pushint 50600 // 50600
     *
     cover 2
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:235-239
+    // smart_contracts/utils/functions.ts:243
+    // return op.AppGlobal.getExUint64(appId, Bytes(PoolGlobalStateKeyGateID))[0]
+    dig 1
+    pushbytes "gate_id"
+    app_global_get_ex
+    pop
+    cover 2
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:237-241
     // const isEntered = abiCall<typeof StakingPool.prototype.isEntered>({
     //   sender,
     //   appId,
@@ -1283,7 +1350,7 @@ enter:
     extract 4 0
     swap
     extract 0 4
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -1293,40 +1360,76 @@ enter:
     assert // invalid number of bytes for bool8
     intc_0 // 0
     getbit
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:241
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:243
     // if (!isEntered) {
     bnz enter_after_if_else@4
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:242
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:244
     // total += PoolUniquesMBR
+    dig 1
     pushint 18900 // 18900
     +
+    bury 2
 
 enter_after_if_else@4:
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:247
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:249
     // receiver: appId.address,
-    dig 4
-    dup
+    dig 6
     app_params_get AppAddress
+    swap
+    bury 11
     assert // application exists
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:251-260
-    // abiCall<typeof StakingPool.prototype.enter>({
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:253
+    // if (gateID !== 0 && args.length > 0) {
+    dup
+    bz enter_else_body@10
+    dig 4
+    intc_0 // 0
+    extract_uint16
+    bz enter_else_body@10
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:256
+    // const { gate } = getAkitaAppList(this.akitaDAO.value)
+    intc_0 // 0
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:30
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_2 // "akita_dao"
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:256
+    // const { gate } = getAkitaAppList(this.akitaDAO.value)
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:40
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    pushbytes "aal"
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:256
+    // const { gate } = getAkitaAppList(this.akitaDAO.value)
+    pushint 40 // 40
+    extract_uint64
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:263
+    // gateID,
+    dig 1
+    itob
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:268-277
+    // abiCall<typeof StakingPool.prototype.gatedEnter>({
     //   sender,
     //   appId,
     //   args: [
     //     mbrPayment,
+    //     gateTxn,
     //     entries,
-    //     args
     //   ],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_begin
-    uncover 2
+    dig 3
     itxn_field Amount
+    dig 11
     itxn_field Receiver
-    dig 1
+    dig 4
     dup
+    cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:245-249
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:247-251
     // const mbrPayment = itxn.payment({
     //   sender,
     //   receiver: appId.address,
@@ -1336,49 +1439,81 @@ enter_after_if_else@4:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:251-260
-    // abiCall<typeof StakingPool.prototype.enter>({
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:273
+    // gateTxn,
+    itxn_next
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:261
+    // methodSelector<typeof Gate.prototype.mustCheck>(),
+    pushbytes 0x43922655 // method "mustCheck(address,uint64,byte[][])void"
+    itxn_field ApplicationArgs
+    dig 6
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    dig 6
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationID
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:257-266
+    // const gateTxn = itxn.applicationCall({
+    //   sender,
+    //   appId: gate,
+    //   appArgs: [
+    //     methodSelector<typeof Gate.prototype.mustCheck>(),
+    //     origin,
+    //     gateID,
+    //     encodeArc4(args)
+    //   ]
+    // })
+    intc_3 // 6
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:268-277
+    // abiCall<typeof StakingPool.prototype.gatedEnter>({
     //   sender,
     //   appId,
     //   args: [
     //     mbrPayment,
+    //     gateTxn,
     //     entries,
-    //     args
     //   ],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:259
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:276
     // rekeyTo: rekeyAddress(rekeyBack, wallet)
-    dig 6
     dig 8
+    dig 10
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:251-260
-    // abiCall<typeof StakingPool.prototype.enter>({
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:268-277
+    // abiCall<typeof StakingPool.prototype.gatedEnter>({
     //   sender,
     //   appId,
     //   args: [
     //     mbrPayment,
+    //     gateTxn,
     //     entries,
-    //     args
     //   ],
     //   rekeyTo: rekeyAddress(rekeyBack, wallet)
     // })
-    pushbytes 0x68558c70 // method "enter(pay,(uint64,uint64,byte[32][])[],byte[][])void"
+    pushbytes 0xfdcfdff6 // method "gatedEnter(pay,appl,(uint64,uint64,byte[32][])[])void"
     itxn_field ApplicationArgs
-    dig 5
-    itxn_field ApplicationArgs
-    dig 4
+    dig 7
     itxn_field ApplicationArgs
     itxn_field RekeyTo
-    itxn_field Sender
+    dig 7
     itxn_field ApplicationID
+    itxn_field Sender
     intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:221-227
+
+enter_after_if_else@13:
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:222-228
     // enter(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1388,6 +1523,76 @@ enter_after_if_else@4:
     // ): void {
     intc_2 // 1
     return
+
+enter_else_body@10:
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:279-287
+    // abiCall<typeof StakingPool.prototype.enter>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     mbrPayment,
+    //     entries
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
+    itxn_begin
+    dig 1
+    itxn_field Amount
+    dig 9
+    itxn_field Receiver
+    dig 2
+    dup
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:247-251
+    // const mbrPayment = itxn.payment({
+    //   sender,
+    //   receiver: appId.address,
+    //   amount: total
+    // })
+    intc_2 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:279-287
+    // abiCall<typeof StakingPool.prototype.enter>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     mbrPayment,
+    //     entries
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
+    itxn_next
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:286
+    // rekeyTo: rekeyAddress(rekeyBack, wallet)
+    dig 8
+    dig 10
+    callsub rekeyAddress
+    // smart_contracts/arc58/plugins/staking-pool/contract.algo.ts:279-287
+    // abiCall<typeof StakingPool.prototype.enter>({
+    //   sender,
+    //   appId,
+    //   args: [
+    //     mbrPayment,
+    //     entries
+    //   ],
+    //   rekeyTo: rekeyAddress(rekeyBack, wallet)
+    // })
+    pushbytes 0xb82ed1b3 // method "enter(pay,(uint64,uint64,byte[32][])[])void"
+    itxn_field ApplicationArgs
+    dig 7
+    itxn_field ApplicationArgs
+    itxn_field RekeyTo
+    dig 7
+    itxn_field ApplicationID
+    itxn_field Sender
+    intc_3 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    b enter_after_if_else@13
 
 
 // smart_contracts/staking-pool/base.ts::BaseStakingPool.mbr[routing]() -> void:
@@ -1432,7 +1637,7 @@ mbr:
     concat
     // smart_contracts/staking-pool/base.ts:13
     // @abimethod({ readonly: true })
-    bytec_2 // 0x151f7c75
+    bytec_3 // 0x151f7c75
     swap
     concat
     log

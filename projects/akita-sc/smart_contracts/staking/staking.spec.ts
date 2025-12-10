@@ -2,6 +2,13 @@ import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
+import {
+  completeBalanceVerification,
+  createExpectedCost,
+  expectBalanceChange,
+  MIN_TXN_FEE,
+  verifyBalanceChange,
+} from '../../tests/utils/balance'
 import { StakingClient, StakingFactory } from '../artifacts/staking/StakingClient'
 
 algokit.Config.configure({ populateAppCallResources: true })
@@ -143,6 +150,15 @@ describe('Staking Contract', () => {
       const newAssetId = BigInt(newAssetTxn.assetId)
 
       const optInMbr = TOTALS_MBR + ASSET_OPT_IN_MBR
+      // Account for: app call fee + payment transaction fee + 1 inner transaction fee
+      // Note: extraFee (1000) in the call covers the inner transaction fee, so we don't double-count it
+      const expectedCost = createExpectedCost(optInMbr, 0, MIN_TXN_FEE * 2n) // app call + payment transaction
+      const verification = await verifyBalanceChange(
+        algorand,
+        deployer.addr.toString(),
+        expectedCost,
+        'opt into a new ASA'
+      )
 
       const payment = await algorand.createTransaction.payment({
         sender: deployer.addr,
@@ -156,6 +172,15 @@ describe('Staking Contract', () => {
         args: { payment, asset: newAssetId },
         extraFee: algokit.microAlgos(1000), // For inner txn
       })
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        deployer.addr.toString()
+      )
+      expectBalanceChange(completed, 'opt into a new ASA')
+      expect(completed.actualCost).toBe(expectedCost.total)
 
       // Verify opt-in by checking totals exist for the asset
       const totals = await client.getTotals({ args: { assets: [newAssetId] } })
@@ -217,6 +242,16 @@ describe('Staking Contract', () => {
         const { algorand } = fixture.context
         const stakeAmount = 1_000_000n // 1 ALGO
 
+        // Soft staking only requires MBR (no escrow)
+        // Account for: app call fee + payment transaction fee
+        const expectedCost = createExpectedCost(STAKES_MBR, 0, MIN_TXN_FEE)
+        const verification = await verifyBalanceChange(
+          algorand,
+          user1.addr.toString(),
+          expectedCost,
+          'create new soft stake for ALGO'
+        )
+
         const payment = await algorand.createTransaction.payment({
           sender: user1.addr,
           receiver: client.appAddress,
@@ -233,6 +268,15 @@ describe('Staking Contract', () => {
             expiration: 0n,
           },
         })
+
+        // Verify balance change matches expected cost
+        const completed = await completeBalanceVerification(
+          verification,
+          algorand,
+          user1.addr.toString()
+        )
+        expectBalanceChange(completed, 'create new soft stake for ALGO')
+        expect(completed.actualCost).toBe(expectedCost.total)
 
         // Verify stake was created
         const info = await client.getInfo({
@@ -331,6 +375,16 @@ describe('Staking Contract', () => {
         const stakeAmount = 5_000_000n // 5 ALGO
         const expiration = BigInt(Math.floor(Date.now() / 1000) + ONE_DAY)
 
+        // Hard staking requires MBR + amount (escrowed)
+        // Account for: app call fee + payment transaction fee
+        const expectedCost = createExpectedCost(STAKES_MBR + stakeAmount, 0, MIN_TXN_FEE)
+        const verification = await verifyBalanceChange(
+          algorand,
+          user1.addr.toString(),
+          expectedCost,
+          'create new hard stake with escrowed ALGO'
+        )
+
         const payment = await algorand.createTransaction.payment({
           sender: user1.addr,
           receiver: client.appAddress,
@@ -347,6 +401,15 @@ describe('Staking Contract', () => {
             expiration,
           },
         })
+
+        // Verify balance change matches expected cost
+        const completed = await completeBalanceVerification(
+          verification,
+          algorand,
+          user1.addr.toString()
+        )
+        expectBalanceChange(completed, 'create new hard stake with escrowed ALGO')
+        expect(completed.actualCost).toBe(expectedCost.total)
 
         // Verify stake was created
         const info = await client.getInfo({
@@ -491,6 +554,16 @@ describe('Staking Contract', () => {
       test('should create a new heartbeat stake', async () => {
         const { algorand } = fixture.context
 
+        // Heartbeat staking requires STAKES_MBR + HEARTBEATS_MBR
+        // Account for: app call fee + payment transaction fee
+        const expectedCost = createExpectedCost(STAKES_MBR + HEARTBEATS_MBR, 0, MIN_TXN_FEE)
+        const verification = await verifyBalanceChange(
+          algorand,
+          user1.addr.toString(),
+          expectedCost,
+          'create new heartbeat stake'
+        )
+
         const payment = await algorand.createTransaction.payment({
           sender: user1.addr,
           receiver: client.appAddress,
@@ -507,6 +580,15 @@ describe('Staking Contract', () => {
             expiration: 0n,
           },
         })
+
+        // Verify balance change matches expected cost
+        const completed = await completeBalanceVerification(
+          verification,
+          algorand,
+          user1.addr.toString()
+        )
+        expectBalanceChange(completed, 'create new heartbeat stake')
+        expect(completed.actualCost).toBe(expectedCost.total)
 
         // Verify heartbeat was created
         const heartbeats = await client.getHeartbeat({
@@ -572,6 +654,15 @@ describe('Staking Contract', () => {
     describe('Soft ASA Staking', () => {
       test('should create a soft stake for ASA', async () => {
         const { algorand } = fixture.context
+        // ASA soft staking only requires MBR (asset transfer is separate)
+        // Account for: app call fee + payment transaction fee + asset transfer fee
+        const expectedCost = createExpectedCost(STAKES_MBR, 0, MIN_TXN_FEE * 2n)
+        const verification = await verifyBalanceChange(
+          algorand,
+          user1.addr.toString(),
+          expectedCost,
+          'create soft stake for ASA'
+        )
         const stakeAmount = 1_000_000_000n // 1000 tokens (6 decimals)
 
         const payment = await algorand.createTransaction.payment({
@@ -600,6 +691,15 @@ describe('Staking Contract', () => {
           },
         })
 
+        // Verify balance change matches expected cost
+        const completed = await completeBalanceVerification(
+          verification,
+          algorand,
+          user1.addr.toString()
+        )
+        expectBalanceChange(completed, 'create soft stake for ASA')
+        expect(completed.actualCost).toBe(expectedCost.total)
+
         const info = await client.getInfo({
           args: {
             address: user1.addr.toString(),
@@ -616,6 +716,17 @@ describe('Staking Contract', () => {
         const { algorand } = fixture.context
         const stakeAmount = 5_000_000_000n // 5000 tokens
         const expiration = BigInt(Math.floor(Date.now() / 1000) + ONE_DAY)
+
+        // Hard ASA staking only requires MBR (asset transfer is separate)
+        // Note: Asset transfer is not included in ALGO payment
+        // Account for: app call fee + payment transaction fee + asset transfer fee
+        const expectedCost = createExpectedCost(STAKES_MBR, 0, MIN_TXN_FEE * 2n)
+        const verification = await verifyBalanceChange(
+          algorand,
+          user1.addr.toString(),
+          expectedCost,
+          'create hard stake for ASA with escrow'
+        )
 
         const payment = await algorand.createTransaction.payment({
           sender: user1.addr,
@@ -641,6 +752,15 @@ describe('Staking Contract', () => {
             expiration,
           },
         })
+
+        // Verify balance change matches expected cost (MBR only, asset transfer is separate)
+        const completed = await completeBalanceVerification(
+          verification,
+          algorand,
+          user1.addr.toString()
+        )
+        expectBalanceChange(completed, 'create hard stake for ASA with escrow')
+        expect(completed.actualCost).toBe(expectedCost.total)
 
         const info = await client.getInfo({
           args: {
@@ -772,10 +892,17 @@ describe('Staking Contract', () => {
         },
       })
 
-      // Get balance before withdraw
-      const balanceBefore = await algorand.account.getInformation(user2.addr)
-
       // Withdraw (hard stakes can be withdrawn anytime)
+      // Withdraw refunds the staked amount, so cost is just fees
+      // Note: The refund increases balance, so actual cost will be minimal
+      const expectedCost = createExpectedCost(0n, 1, 1000n) // 1 inner transaction for refund + extraFee
+      const verification = await verifyBalanceChange(
+        algorand,
+        user2.addr.toString(),
+        expectedCost,
+        'withdraw hard staked ALGO'
+      )
+
       await client.send.withdraw({
         sender: user2.addr,
         signer: makeBasicAccountTransactionSigner(user2),
@@ -786,13 +913,15 @@ describe('Staking Contract', () => {
         extraFee: algokit.microAlgos(1000), // For inner payment txn
       })
 
-      // Get balance after withdraw
-      const balanceAfter = await algorand.account.getInformation(user2.addr)
-
-      // Balance should increase (minus fees)
-      expect(balanceAfter.balance.microAlgos).toBeGreaterThan(
-        balanceBefore.balance.microAlgos - 2000n // account for fees
+      // Verify balance change (refund increases balance, so cost is minimal - just fees)
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        user2.addr.toString()
       )
+      // Note: actualCost will be negative or small because refund increases balance
+      // We just verify the operation completed successfully
+      expect(completed.balanceAfter).toBeGreaterThanOrEqual(completed.balanceBefore - expectedCost.total)
 
       // Verify stake no longer exists
       const info = await client.getInfo({

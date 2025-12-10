@@ -1,5 +1,5 @@
 import { abimethod, Account, Application, assert, Asset, Bytes, Global, GlobalState, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
+import { abiCall, compileArc4, encodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4";
 import { btoi } from "@algorandfoundation/algorand-typescript/op";
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyAkitaEscrow, GlobalStateKeyVersion } from "../../../constants";
 import { GateArgs } from "../../../gates/types";
@@ -8,11 +8,12 @@ import { PoolEntriesByAddressMBR, PoolEntriesMBR, PoolUniquesMBR, WinnerCountCap
 import { Reward, StakeEntry } from "../../../staking-pool/types";
 import { StakingType } from "../../../staking/types";
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../../../utils/constants";
-import { getSpendingAccount, getStakingFees, rekeyAddress } from "../../../utils/functions";
+import { getAccounts, getAkitaAppList, getSpendingAccount, getStakingFees, getStakingPoolGateID, rekeyAddress } from "../../../utils/functions";
 import { PoolPluginGlobalStateKeyFactory } from "./constants";
 import { ERR_NOT_A_VALID_POOL } from "./errors";
 
 // CONTRACT IMPORTS
+import { Gate } from "../../../gates/contract.algo";
 import { BaseStakingPool } from "../../../staking-pool/base";
 import { StakingPool } from "../../../staking-pool/contract.algo";
 import { StakingPoolFactory } from "../../../staking-pool/factory.algo";
@@ -167,7 +168,7 @@ export class StakingPoolPlugin extends BaseStakingPool {
               receiver: appId.address,
               amount: optinMBR + rewardsMBR
             }),
-            reward.asset,
+            Asset(reward.asset),
           ]
         })
       }
@@ -226,11 +227,12 @@ export class StakingPoolPlugin extends BaseStakingPool {
     args: GateArgs
   ): void {
     assert(appId.creator === this.factory.value.address, ERR_NOT_A_VALID_POOL)
-
-    const sender = getSpendingAccount(wallet)
+    const { origin, sender } = getAccounts(wallet)
 
     const entryMBR: uint64 = PoolEntriesMBR + PoolEntriesByAddressMBR
     let total: uint64 = entryMBR * entries.length
+
+    const gateID = getStakingPoolGateID(appId)
 
     const isEntered = abiCall<typeof StakingPool.prototype.isEntered>({
       sender,
@@ -248,15 +250,41 @@ export class StakingPoolPlugin extends BaseStakingPool {
       amount: total
     })
 
-    abiCall<typeof StakingPool.prototype.enter>({
-      sender,
-      appId,
-      args: [
-        mbrPayment,
-        entries,
-        args
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
+    if (gateID !== 0 && args.length > 0) {
+      // We're forced to manually construct an app call here because the abiCall<typeof Gate.prototype.mustCheck>
+      // method immediately invokes & is not passable as an arg to the other call
+      const { gate } = getAkitaAppList(this.akitaDAO.value)
+      const gateTxn = itxn.applicationCall({
+        sender,
+        appId: gate,
+        appArgs: [
+          methodSelector<typeof Gate.prototype.mustCheck>(),
+          origin,
+          gateID,
+          encodeArc4(args)
+        ]
+      })
+
+      abiCall<typeof StakingPool.prototype.gatedEnter>({
+        sender,
+        appId,
+        args: [
+          mbrPayment,
+          gateTxn,
+          entries,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      })
+    } else {
+      abiCall<typeof StakingPool.prototype.enter>({
+        sender,
+        appId,
+        args: [
+          mbrPayment,
+          entries
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      })
+    }
   }
 }

@@ -1,11 +1,11 @@
 import { Account, Application, assert, Asset, Bytes, Global, gtxn, itxn, itxnCompose, OnCompleteAction, op, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
 import { abiCall, Address, decodeArc4, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { btoi, itob, sha256 } from "@algorandfoundation/algorand-typescript/op"
-import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentEscrow, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
+import { AbstractAccountGlobalStateKeysControlledAddress, AbstractAccountGlobalStateKeysCurrentPlugin, AbstractAccountGlobalStateKeysReferrer, AbstractAccountGlobalStateKeysRekeyIndex, AbstractAccountGlobalStateKeysSpendingAddress } from "../arc58/account/constants"
 import { ERR_ESCROW_DOES_NOT_EXIST } from "../arc58/account/errors"
-import { EscrowInfo } from "../arc58/account/types"
-import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysWallet, AkitaDAOGlobalStateKeysWalletFees } from "../arc58/dao/constants"
-import { AkitaAppList, AkitaAssets, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../arc58/dao/types"
+import { EscrowInfo, PluginKey } from "../arc58/account/types"
+import { AkitaDAOGlobalStateKeysAkitaAppList, AkitaDAOGlobalStateKeysAkitaAssets, AkitaDAOGlobalStateKeysAkitaSocialAppList, AkitaDAOGlobalStateKeysNFTFees, AkitaDAOGlobalStateKeysOtherAppList, AkitaDAOGlobalStateKeysPluginAppList, AkitaDAOGlobalStateKeysRevenueSplits, AkitaDAOGlobalStateKeysSocialFees, AkitaDAOGlobalStateKeysStakingFees, AkitaDAOGlobalStateKeysSubscriptionFees, AkitaDAOGlobalStateKeysSwapFees, AkitaDAOGlobalStateKeysWallet, AkitaDAOGlobalStateKeysWalletFees } from "../arc58/dao/constants"
+import { AkitaAppList, AkitaAssets, AkitaSocialAppList, NFTFees, OtherAppList, PluginAppList, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../arc58/dao/types"
 import { GlobalStateKeyFunder } from "../constants"
 import { GateArgs } from "../gates/types"
 import { PrizeBoxGlobalStateKeyOwner } from "../prize-box/constants"
@@ -21,11 +21,13 @@ import { ReferralPaymentInfo } from "./types/referral"
 // CONTRACT IMPORTS
 import type { AbstractedAccount } from "../arc58/account/contract.algo"
 import type { OptInPlugin } from "../arc58/plugins/optin/contract.algo"
+import { Split } from "../arc58/plugins/revenue-manager/types"
 import type { EscrowFactory } from "../escrow/factory.algo"
 import type { Gate } from "../gates/contract.algo"
 import type { MetaMerkles } from "../meta-merkles/contract.algo"
 import type { Rewards } from "../rewards/contract.algo"
-import type { AkitaSocialImpact } from "../social/contract.algo"
+import { AkitaSocialImpact } from "../social/impact.algo"
+import { PoolGlobalStateKeyGateID } from "../staking-pool/constants"
 import type { Staking } from "../staking/contract.algo"
 import type { AssetInbox } from "./types/asset-inbox"
 
@@ -37,6 +39,11 @@ export function getDAOARC58Wallet(akitaDAO: Application): Application {
 export function getAkitaAppList(akitaDAO: Application): AkitaAppList {
   const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
   return decodeArc4<AkitaAppList>(appListBytes)
+}
+
+export function getAkitaSocialAppList(akitaDAO: Application): AkitaSocialAppList {
+  const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaSocialAppList))
+  return decodeArc4<AkitaSocialAppList>(appListBytes)
 }
 
 export function getPluginAppList(akitaDAO: Application): PluginAppList {
@@ -88,6 +95,11 @@ export function getAkitaAssets(akitaDAO: Application): AkitaAssets {
   return decodeArc4<AkitaAssets>(akitaAssetsBytes)
 }
 
+export function getSplits(akitaDAO: Application): Split[] {
+  const [splitsBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysRevenueSplits))
+  return decodeArc4<Split[]>(splitsBytes)
+}
+
 export function calcPercent(a: uint64, p: uint64): uint64 {
   assert(p <= DIVISOR, ERR_INVALID_PERCENTAGE)
   return op.divw(...op.mulw(a, p), DIVISOR)
@@ -118,7 +130,7 @@ export function impactRange(impact: uint64, min: uint64, max: uint64): uint64 {
 
 export function getUserImpact(akitaDAO: Application, account: Account): uint64 {
   return abiCall<typeof AkitaSocialImpact.prototype.getUserImpact>({
-    appId: getAkitaAppList(akitaDAO).impact,
+    appId: getAkitaSocialAppList(akitaDAO).impact,
     args: [account]
   }).returnValue
 }
@@ -200,17 +212,35 @@ export function gateCall(akitaDAO: Application, caller: Account, id: uint64, arg
   }).returnValue
 }
 
-export function gateCheck(gateTxn: gtxn.ApplicationCallTxn, akitaDAO: Application, caller: Account, id: uint64): boolean {
+export function getCheckByIndex(index: uint64, akitaDAO: Application, caller: Account, id: uint64): boolean {
+  const gateTxn = gtxn.ApplicationCallTxn(index)
   return (
-    gateTxn.sender === Txn.sender &&
     gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
     gateTxn.onCompletion === OnCompleteAction.NoOp &&
     gateTxn.numAppArgs === 4 &&
-    // gateTxn.appArgs(0) === methodSelector(Gate.prototype.mustCheck) &&
-    gateTxn.appArgs(0) === methodSelector('mustCheck(address,uint64,byte[])') &&
+    gateTxn.appArgs(0) === methodSelector<typeof Gate.prototype.mustCheck>() &&
     gateTxn.appArgs(1) === new Address(caller).bytes &&
     gateTxn.appArgs(2) === itob(id)
   )
+}
+
+export function gateCheck(gateTxn: gtxn.ApplicationCallTxn, akitaDAO: Application, caller: Account, id: uint64): boolean {
+  return (
+    gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    gateTxn.numAppArgs === 4 &&
+    gateTxn.appArgs(0) === methodSelector<typeof Gate.prototype.mustCheck>() &&
+    gateTxn.appArgs(1) === new Address(caller).bytes &&
+    gateTxn.appArgs(2) === itob(id)
+  )
+}
+
+export function getGateArgs(gateTxn: gtxn.ApplicationCallTxn): GateArgs {
+  return decodeArc4<GateArgs>(gateTxn.appArgs(3))
+}
+
+export function getStakingPoolGateID(appId: Application) {
+  return op.AppGlobal.getExUint64(appId, Bytes(PoolGlobalStateKeyGateID))[0]
 }
 
 export type Arc58Accounts = {
@@ -241,11 +271,15 @@ export function getSpendingAccount(wallet: Application): Account {
 }
 
 export function getEscrow(wallet: Application): string {
-  const [escrowBytes] = op.AppGlobal.getExBytes(
+  // The escrow is stored in the currentPlugin struct (PluginKey)
+  // which contains { plugin: uint64, caller: address, escrow: string }
+  const [currentPluginBytes] = op.AppGlobal.getExBytes(
     wallet,
-    Bytes(AbstractAccountGlobalStateKeysCurrentEscrow)
+    Bytes(AbstractAccountGlobalStateKeysCurrentPlugin)
   )
-  return String(escrowBytes)
+  // Decode the PluginKey struct and extract the escrow field
+  const currentPlugin = decodeArc4<PluginKey>(currentPluginBytes)
+  return currentPlugin.escrow
 }
 
 export function getEscrowInfo(wallet: Application): EscrowInfo {
@@ -483,7 +517,7 @@ export function createInstantDisbursement(akitaDAO: Application, asset: uint64, 
             receiver: Application(rewardsApp).address,
             amount: Global.assetOptInMinBalance
           }),
-          asset
+          Asset(asset)
         ]
       })
     }
@@ -548,4 +582,17 @@ export function sendReferralPayment(akitaDAO: Application, asset: uint64, amount
   }
 
   return { leftover: amount, referralMbr: 0 }
+}
+
+export function splitOptInCount(akitaDAO: Application, escrow: Account, asset: Asset): uint64 {
+  let count: uint64 = 0
+
+  if (!escrow.isOptedIn(asset)) {
+    count += 1
+    // split accounts are dedicated escrows, if the main escrow is not opted in, assume the others aren't either
+    const splits = getSplits(akitaDAO)
+    count += splits.length
+  }
+
+  return count
 }

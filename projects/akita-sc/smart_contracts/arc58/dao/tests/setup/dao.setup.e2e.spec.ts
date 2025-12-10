@@ -148,7 +148,7 @@ describe('ARC58 DAO Setup', () => {
       const proposalId = await proposeAndExecute(dao, [
         {
           type: ProposalActionEnum.UpdateFields,
-          field: 'akita_al',
+          field: 'aal',
           value: { wallet: walletFactory.appId },
         },
       ]);

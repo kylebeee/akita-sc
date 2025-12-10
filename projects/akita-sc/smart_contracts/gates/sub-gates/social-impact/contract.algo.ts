@@ -1,7 +1,7 @@
 import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { getAkitaAppList } from '../../../utils/functions'
+import { getAkitaSocialAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -15,7 +15,7 @@ import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { Operator, OperatorAndValue } from '../../types'
 
 // CONTRACT IMPORTS
-import type { AkitaSocialImpact } from '../../../social/contract.algo'
+import { AkitaSocialImpact } from '../../../social/impact.algo'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 export class SocialImpactGate extends AkitaBaseContract {
@@ -43,7 +43,7 @@ export class SocialImpactGate extends AkitaBaseContract {
   private impactGate(user: Account, op: Operator, value: uint64): boolean {
 
     const impact = abiCall<typeof AkitaSocialImpact.prototype.getUserImpact>({
-      appId: getAkitaAppList(this.akitaDAO.value).impact,
+      appId: getAkitaSocialAppList(this.akitaDAO.value).impact,
       args: [user],
     }).returnValue
 

@@ -1,6 +1,6 @@
 import { BaseSDK } from "../../base";
 import { UpdateAkitaDaoPluginArgs, UpdateAkitaDaoPluginClient, UpdateAkitaDaoPluginFactory } from "../../generated/UpdateAkitaDAOPluginClient";
-import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from "../../types";
+import { NewContractSDKParams, MaybeSigner } from "../../types";
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import { Address } from "algosdk";
 import { getTxns } from "../utils";
@@ -67,15 +67,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     const { sender, signer } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -114,15 +106,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     const { sender, signer, appId, version, data } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -196,15 +180,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     const { sender, signer, appId, newAkitaDaoAppId } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -243,15 +219,7 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
 
     const { sender, signer, appId, newEscrow } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,

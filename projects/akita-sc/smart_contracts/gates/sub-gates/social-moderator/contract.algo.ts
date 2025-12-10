@@ -1,7 +1,7 @@
 import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { getAkitaAppList } from '../../../utils/functions'
+import { getAkitaSocialAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -15,7 +15,7 @@ import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { Operator, OperatorAndValue } from '../../types'
 
 // CONTRACT IMPORTS
-import type { AkitaSocial } from '../../../social/contract.algo'
+import { AkitaSocialModeration } from '../../../social/moderation.algo'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 
@@ -43,8 +43,8 @@ export class SocialModeratorGate extends AkitaBaseContract {
   }
 
   private moderatorGate(user: Account, op: Operator, value: uint64): boolean {
-    const { exists, lastActive } = abiCall<typeof AkitaSocial.prototype.moderatorMeta>({
-      appId: getAkitaAppList(this.akitaDAO.value).social,
+    const { exists, lastActive } = abiCall<typeof AkitaSocialModeration.prototype.moderatorMeta>({
+      appId: getAkitaSocialAppList(this.akitaDAO.value).moderation,
       args: [user],
     }).returnValue
 

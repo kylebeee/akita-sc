@@ -1,6 +1,6 @@
 import { BaseSDK } from "../../base";
 import { OptInPluginArgs, OptInPluginClient, OptInPluginFactory } from "../../generated/OptInPluginClient";
-import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from "../../types";
+import { NewContractSDKParams, MaybeSigner } from "../../types";
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import algosdk, { Address } from "algosdk";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
@@ -37,15 +37,7 @@ export class OptInPluginSDK extends BaseSDK<OptInPluginClient> {
 
     const { sender, signer, assets } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,

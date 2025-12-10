@@ -3,6 +3,7 @@ import crypto from "crypto";
 
 export class TimeWarp {
   public algorand: AlgorandClient;
+  private cumulativeOffset: bigint = 0n;
 
   constructor(algorand: AlgorandClient) {
     this.algorand = algorand;
@@ -62,11 +63,21 @@ export class TimeWarp {
   }
 
   async timeWarp(seconds: bigint): Promise<void> {
-    const ts = (await this.getLatestTimestamp()) + seconds;
     this.algorand.setSuggestedParamsCacheTimeout(0);
-    const current = await this.getLatestTimestamp();
-    await this.algorand.client.algod.setBlockOffsetTimestamp(ts - current).do();
+
+    // Add to cumulative offset
+    this.cumulativeOffset += seconds;
+
+    // Set the block offset timestamp (this applies to all future blocks)
+    // Convert to Number since algod API expects number, not bigint
+    await this.algorand.client.algod.setBlockOffsetTimestamp(Number(this.cumulativeOffset)).do();
+
+    // Advance one round to create a block with the new timestamp
     await this.roundWarp();
+  }
+
+  async resetTimeWarp(): Promise<void> {
+    this.cumulativeOffset = 0n;
     await this.algorand.client.algod.setBlockOffsetTimestamp(0).do();
   }
 }

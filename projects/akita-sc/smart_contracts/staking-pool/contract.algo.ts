@@ -15,7 +15,7 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, decodeArc4, Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
 import { AkitaDAOEscrowAccountStakingPools } from '../arc58/dao/constants'
@@ -24,8 +24,8 @@ import { MinDisbursementsMBR } from '../rewards/constants'
 import { UserAllocation } from '../rewards/types'
 import { StakingType } from '../staking/types'
 import { BoxCostPerByte, MAX_UINT64 } from '../utils/constants'
-import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { calcPercent, gateCall, getAkitaAppList, getOtherAppList, getStakingFees, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, percentageOf } from '../utils/functions'
+import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
+import { calcPercent, gateCheck, getAkitaAppList, getAkitaSocialAppList, getGateArgs, getOtherAppList, getStakingFees, getUserImpact, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, percentageOf, splitOptInCount } from '../utils/functions'
 import { pcg64Init, pcg64Random } from '../utils/types/lib_pcg/pcg64.algo'
 
 import {
@@ -224,7 +224,7 @@ export class StakingPool extends classes(
     }
 
     for (let id = disbursementCursor; id < iterationAmount; id++) {
-      const { disqualified, address, gateArgs, quantity } = clone(this.entries(id).value)
+      const { disqualified, quantity } = clone(this.entries(id).value)
       if (disqualified) {
         continue
       }
@@ -235,18 +235,18 @@ export class StakingPool extends classes(
         continue
       }
 
-      if (this.gateID.value !== 0) {
-        const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, address)
-        const origin = originOr(wallet, address)
+      // if (this.gateID.value !== 0) {
+      //   const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, address)
+      //   const origin = originOr(wallet, address)
 
-        const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
-        if (!passes) {
-          if (this.type.value !== POOL_STAKING_TYPE_HEARTBEAT) {
-            this.entries(id).value.disqualified = true
-          }
-          continue
-        }
-      }
+      //   const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
+      //   if (!passes) {
+      //     if (this.type.value !== POOL_STAKING_TYPE_HEARTBEAT) {
+      //       this.entries(id).value.disqualified = true
+      //     }
+      //     continue
+      //   }
+      // }
 
       count += 1
       total += quantity
@@ -498,7 +498,7 @@ export class StakingPool extends classes(
           address,
           {
             asset: asset,
-            type: this.stakingType(),
+            type: this.type.value,
           },
         ],
       }).returnValue
@@ -519,11 +519,6 @@ export class StakingPool extends classes(
   private validWindow(interval: uint64, last: uint64): boolean {
     const latestWindowStart = this.getLatestWindowStart(interval)
     return latestWindowStart !== Global.latestTimestamp && last < latestWindowStart
-  }
-
-  private stakingType(): StakingType {
-    assert(this.type.value !== POOL_STAKING_TYPE_NONE, 'pool staking type is not set')
-    return new Uint8(this.type.value.asUint64() - 1)
   }
 
   private getStakeValue(id: uint64): { valid: boolean, balance: uint64 } {
@@ -646,6 +641,101 @@ export class StakingPool extends classes(
     return 24_900 * allocations.length
   }
 
+  private createPoolEntries(payment: gtxn.PaymentTxn, entries: StakeEntry[], gateArgs: GateArgs): void {
+    assert(this.isLive(), 'the pool is not live')
+
+    assert(
+      (this.entryID.value + 1) <= this.maxEntries.value ||
+      this.maxEntries.value === 0,
+      'pool has reached maximum entries'
+    )
+
+    // Verify payment for box storage (increased for additional box)
+    const entryMBR: uint64 = PoolEntriesMBR + PoolEntriesByAddressMBR
+    let total: uint64 = entryMBR * entries.length
+    if (!this.uniques(Txn.sender).exists) {
+      total += PoolUniquesMBR
+    }
+
+    assertMatch(
+      payment,
+      {
+        receiver: Global.currentApplicationAddress,
+        amount: { greaterThanEq: total },
+      },
+      ERR_INVALID_PAYMENT
+    )
+
+    const { address, name } = this.stakeKey.value
+
+    for (let i: uint64 = 0; i < entries.length; i++) {
+      assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
+
+      if (address !== Global.zeroAddress) {
+        const verified = abiCall<typeof MetaMerkles.prototype.verify>({
+          appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
+          args: [
+            address,
+            name,
+            sha256(sha256(itob(entries[i].asset))),
+            entries[i].proof,
+            MERKLE_TREE_TYPE_ASSET,
+          ],
+        }).returnValue
+
+        assert(verified, 'failed to verify stake requirements')
+      }
+
+      // check their actual balance if the assets aren't escrowed
+      if (
+        this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
+        this.type.value === POOL_STAKING_TYPE_SOFT
+      ) {
+        let balance: uint64 = 0
+        let optedIn: boolean = false;
+        if (entries[i].asset !== 0) {
+          ([balance, optedIn] = AssetHolding.assetBalance(Txn.sender, entries[i].asset))
+        } else {
+          optedIn = true
+          balance = Txn.sender.balance
+        }
+        assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
+      }
+
+      const stakeInfo = abiCall<typeof Staking.prototype.getInfo>({
+        appId: getAkitaAppList(this.akitaDAO.value).staking,
+        args: [
+          Txn.sender,
+          {
+            asset: entries[i].asset,
+            type: this.type.value,
+          },
+        ],
+      }).returnValue
+
+      assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
+
+      const entryID = this.newEntryID()
+      this.entries(entryID).value = {
+        address: Txn.sender,
+        asset: entries[i].asset,
+        quantity: entries[i].quantity,
+        gateArgs: clone(gateArgs),
+        disqualified: false
+      }
+
+      const aKey = {
+        address: Txn.sender,
+        asset: entries[i].asset,
+      }
+
+      this.entriesByAddress(aKey).value = entryID
+      if (!this.uniques(Txn.sender).exists) {
+        this.uniques(Txn.sender).value = entries.length  // or any non-zero value
+      }
+    }
+  }
+
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
@@ -679,10 +769,11 @@ export class StakingPool extends classes(
     this.akitaDAOEscrow.value = akitaDAOEscrow
 
     const fees = getStakingFees(this.akitaDAO.value)
-    const appList = getAkitaAppList(this.akitaDAO.value)
+
+    const { impact: impactApp } = getAkitaSocialAppList(this.akitaDAO.value);
     // Only get user impact if impact app is configured
-    let impact: uint64 = 0
-    if (appList.impact !== 0) {
+    let impact: uint64 = 0;
+    if (impactApp !== 0) {
       impact = getUserImpact(this.akitaDAO.value, this.creator.value)
     }
     this.akitaRoyalty.value = impactRange(impact, fees.impactTaxMin, fees.impactTaxMax)
@@ -719,19 +810,16 @@ export class StakingPool extends classes(
    * @param payment The payment transaction
    * @param asset The asset to be opted into
    */
-  optIn(payment: gtxn.PaymentTxn, asset: uint64): void {
+  optIn(payment: gtxn.PaymentTxn, asset: Asset): void {
     assert(Txn.sender === this.creator.value, ERR_FORBIDDEN)
 
+    let optinMBR: uint64 = Global.assetOptInMinBalance
     // check if the akita dao escrow is opted in to the asset
     // if it does that means 4 extra optins are needed
-    const daoEscrowNeedsToOptIn = !this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))
-
-    // if the dao escrow needs to opt in, we also may need to opt in the krby & mod escrows
-    const optinMBR: uint64 = (
-      Global.assetOptInMinBalance * (
-        daoEscrowNeedsToOptIn ? 4 : 1
-      )
-    )
+    if (!this.akitaDAOEscrow.value.address.isOptedIn(asset)) {
+      const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
+      optinMBR += Global.assetOptInMinBalance * count
+    }
 
     const rewardsMBR: uint64 = this.rewardsMbr(WinnerCountCap) * 2
 
@@ -754,7 +842,7 @@ export class StakingPool extends classes(
 
     this.optAkitaEscrowInAndSend(
       AkitaDAOEscrowAccountStakingPools,
-      Asset(asset),
+      asset,
       0
     )
   }
@@ -826,99 +914,22 @@ export class StakingPool extends classes(
     this.status.value = PoolStatusFinal
   }
 
-  enter(payment: gtxn.PaymentTxn, entries: StakeEntry[], args: GateArgs): void {
-    // Verify the pool is live
-    assert(this.isLive(), 'the pool is not live')
+  gatedEnter(
+    payment: gtxn.PaymentTxn,
+    gateTxn: gtxn.ApplicationCallTxn,
+    entries: StakeEntry[],
+  ): void {
+    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    const origin = originOrTxnSender(wallet)
 
-    if (this.gateID.value !== 0) {
-      const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, Txn.sender)
-      const origin = originOrTxnSender(wallet)
-      assert(
-        gateCall(Global.currentApplicationId, origin, this.gateID.value, args),
-        'user does not meet gate requirements'
-      )
-    }
+    assert(this.gateID.value !== 0, 'gate id is not set')
+    assert(gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value), ERR_FAILED_GATE)
 
-    assert(
-      (this.entryID.value + 1) < this.maxEntries.value ||
-      this.maxEntries.value === 0,
-      'pool has reached maximum entries'
-    )
+    this.createPoolEntries(payment, entries, getGateArgs(gateTxn))
+  }
 
-    // Verify payment for box storage (increased for additional box)
-    const entryMBR: uint64 = PoolEntriesMBR + PoolEntriesByAddressMBR
-    let total: uint64 = entryMBR * entries.length
-    if (!this.uniques(Txn.sender).exists) {
-      total += PoolUniquesMBR
-    }
-
-    assertMatch(
-      payment,
-      {
-        receiver: Global.currentApplicationAddress,
-        amount: total,
-      },
-      ERR_INVALID_PAYMENT
-    )
-
-    const { address, name } = this.stakeKey.value
-
-    for (let i: uint64 = 0; i < entries.length; i++) {
-      assert(entries[i].quantity >= this.minimumStakeAmount.value, 'quantity is less than minimum stake amount')
-
-      if (address !== Global.zeroAddress) {
-        const verified = abiCall<typeof MetaMerkles.prototype.verify>({
-          appId: getAkitaAppList(this.akitaDAO.value).metaMerkles,
-          args: [
-            address,
-            name,
-            sha256(sha256(itob(entries[i].asset))),
-            entries[i].proof,
-            MERKLE_TREE_TYPE_ASSET,
-          ],
-        }).returnValue
-
-        assert(verified, 'failed to verify stake requirements')
-      }
-
-      // check their actual balance if the assets aren't escrowed
-      if (
-        this.type.value === POOL_STAKING_TYPE_HEARTBEAT ||
-        this.type.value === POOL_STAKING_TYPE_SOFT
-      ) {
-        const [balance, optedIn] = AssetHolding.assetBalance(Txn.sender, entries[i].asset)
-        assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
-      }
-
-      const stakeInfo = abiCall<typeof Staking.prototype.getInfo>({
-        appId: getAkitaAppList(this.akitaDAO.value).staking,
-        args: [
-          Txn.sender,
-          {
-            asset: entries[i].asset,
-            type: this.stakingType(),
-          },
-        ],
-      }).returnValue
-
-      assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
-
-      const entryID = this.newEntryID()
-      this.entries(entryID).value = {
-        address: Txn.sender,
-        asset: entries[i].asset,
-        quantity: entries[i].quantity,
-        gateArgs: clone(args),
-        disqualified: false
-      }
-
-      const aKey = {
-        address: Txn.sender,
-        asset: entries[i].asset,
-      }
-
-      this.entriesByAddress(aKey).value = entryID
-    }
+  enter(payment: gtxn.PaymentTxn, entries: StakeEntry[]): void {
+    this.createPoolEntries(payment, entries, [])
   }
 
   startDisbursement(rewardID: uint64): void {
@@ -1051,7 +1062,45 @@ export class StakingPool extends classes(
     return this.checkByID(id)
   }
 
+  gateCheck(gateTxn: gtxn.ApplicationCallTxn, address: Account, asset: uint64) {
+    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, address)
+    const origin = originOr(wallet, address)
+
+    const passes = gateCheck(gateTxn, this.akitaDAO.value, origin, this.gateID.value)
+    if (!passes && this.type.value !== POOL_STAKING_TYPE_HEARTBEAT) {
+      const key: EntryKey = { address, asset }
+      const id = this.entriesByAddress(key).value
+      this.entries(id).value.disqualified = true
+    }
+  }
+
   // READ ONLY METHODS ----------------------------------------------------------------------------
+
+  /**
+   * Calculates the total cost required to enter the pool
+   * @param address The address that will be entering
+   * @param entryCount The number of entries being added
+   * @returns The total payment amount needed (includes box MBR + any shortfall to meet min balance)
+   */
+  @abimethod({ readonly: true })
+  enterCost(address: Account, entryCount: uint64): uint64 {
+    // Calculate box MBR: (entries + entriesByAddress) per entry
+    const entryMBR: uint64 = PoolEntriesMBR + PoolEntriesByAddressMBR
+    let boxMbr: uint64 = entryMBR * entryCount
+
+    // Add uniques MBR if this is the user's first entry
+    if (!this.uniques(address).exists) {
+      boxMbr += PoolUniquesMBR
+    }
+
+    return boxMbr
+  }
+
+  @abimethod({ readonly: true })
+  optInCost(asset: Asset): uint64 {
+    const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
+    return (Global.assetOptInMinBalance * (1 + count)) + (this.rewardsMbr(WinnerCountCap) * 2)
+  }
 
   /** @returns a boolean of whether sign ups are open */
   @abimethod({ readonly: true })

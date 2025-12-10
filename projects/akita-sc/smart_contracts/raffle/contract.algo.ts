@@ -512,15 +512,19 @@ export class Raffle extends classes(
     this.ticketCount.value += amount.asUint64()
   }
 
+  gatedAddAsa(gateTxn: gtxn.ApplicationCallTxn, assetXfer: gtxn.AssetTransferTxn): void {
+
+  }
+
   addAsa(assetXfer: gtxn.AssetTransferTxn, args: GateArgs): void {
     assert(this.isLive(), ERR_NOT_LIVE)
     assert(this.ticketAsset.value.id !== 0, ERR_TICKET_ASSET_ALGO)
 
-    if (this.gateID.value !== 0) {
-      const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
-      const origin = originOrTxnSender(wallet)
-      assert(gateCall(this.akitaDAO.value, origin, this.gateID.value, args), ERR_FAILED_GATE)
-    }
+    // if (this.gateID.value !== 0) {
+    //   const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    //   const origin = originOrTxnSender(wallet)
+    //   assert(gateCall(this.akitaDAO.value, origin, this.gateID.value, args), ERR_FAILED_GATE)
+    // }
 
     assert(this.entriesByAddress(Txn.sender).exists, ERR_ENTRY_DOES_NOT_EXIST)
 
@@ -549,6 +553,7 @@ export class Raffle extends classes(
   }
 
   raffle(): void {
+
     const roundToUse: uint64 = this.endTimestamp.value + 1 + (4 * this.vrfFailureCount.value)
     assert(Global.round >= roundToUse + 8, ERR_NOT_ENOUGH_TIME)
     assert(this.winningTicket.value === 0, ERR_WINNER_ALREADY_DRAWN)
@@ -576,7 +581,7 @@ export class Raffle extends classes(
   }
 
   findWinner(iterationAmount: uint64): void {
-    assert(Global.latestTimestamp < this.endTimestamp.value, ERR_RAFFLE_HAS_NOT_ENDED)
+    assert(Global.latestTimestamp > this.endTimestamp.value, ERR_RAFFLE_HAS_NOT_ENDED)
     assert(this.winningTicket.value !== 0, ERR_NO_WINNING_TICKET_YET)
     assert(this.winner.value === Global.zeroAddress, ERR_WINNER_ALREADY_FOUND)
 

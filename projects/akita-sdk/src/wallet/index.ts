@@ -1,6 +1,6 @@
 import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AbstractedAccountFactory, AllowanceKey, EscrowInfo, PluginKey, type AbstractedAccountClient, ExecutionInfo, AbstractedAccountComposer, PluginInfoFromTuple, EscrowInfoFromTuple } from '../generated/AbstractedAccountClient'
 import { AddAllowanceArgs, AddPluginArgs, AllowanceInfo, BuildWalletUsePluginParams, CanCallParams, ExecutionBuildGroup, MbrParams, MethodOffset, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
-import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn, hasSenderSigner } from '../types';
+import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn, hasSenderSigner, ExpandedSendParamsWithSigner } from '../types';
 import { BaseSDK } from '../base';
 import algosdk, { Address, ALGORAND_ZERO_ADDRESS_STRING, makeEmptyTransactionSigner } from 'algosdk';
 import { MAX_UINT64 } from '../constants';
@@ -95,13 +95,9 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     fundsRequest = [],
     calls,
     lease = ''
-  }: WalletUsePluginParams): Promise<{ plugin: bigint, caller: string, useRounds: boolean, length: number, group: AbstractedAccountComposer<[]> }> {
+  }: WalletUsePluginParams): Promise<{ plugin: bigint, caller: string, useRounds: boolean, length: number, group: AbstractedAccountComposer<[]>, sendParams: ExpandedSendParamsWithSigner }> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     let spendingAddress = (await this.client.state.global.controlledAddress())!
     if (escrow !== '') {
@@ -225,7 +221,6 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       });
     }
 
-
     const composer = await group.composer()
     for (const txn of txns) {
       switch (txn.type) {
@@ -277,16 +272,12 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
     const length = await (await group.composer()).count()
 
-    return { plugin, caller, useRounds, length, group }
+    return { plugin, caller, useRounds, length, group, sendParams: sendParams as ExpandedSendParamsWithSigner }
   }
 
   async register({ sender, signer, escrow }: ContractArgs['register(string)void'] & MaybeSigner): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.register({
       ...sendParams,
@@ -298,11 +289,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async changeRevocationApp({ sender, signer, app }: MaybeSigner & { app: bigint }): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.setRevocationApp({
       ...sendParams,
@@ -312,11 +299,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async setNickname({ sender, signer, nickname }: MaybeSigner & { nickname: string }): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.setNickname({
       ...sendParams,
@@ -326,11 +309,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async setAvatar({ sender, signer, avatar }: MaybeSigner & { avatar: bigint }): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.setAvatar({
       ...sendParams,
@@ -340,11 +319,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async setBanner({ sender, signer, banner }: MaybeSigner & { banner: bigint }): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.setBanner({
       ...sendParams,
@@ -354,11 +329,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async setBio({ sender, signer, bio }: MaybeSigner & { bio: string }): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.setBio({
       ...sendParams,
@@ -367,11 +338,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
   }
 
   async changeAdmin({ sender, signer, newAdmin }: MaybeSigner & { newAdmin: string }): Promise<void> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.arc58ChangeAdmin({
       ...sendParams,
@@ -381,12 +348,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async verifyAuthAddress(params?: MaybeSigner): Promise<void> {
 
-    const { sender, signer } = params || {};
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams(params);
 
     await this.client.send.arc58VerifyAuthAddress({
       ...sendParams,
@@ -396,22 +358,14 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async rekeyTo({ sender, signer, ...args }: MaybeSigner & ContractArgs['arc58_rekeyTo(address,bool)void']): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.arc58RekeyTo({ ...sendParams, args });
   }
 
   async canCall({ sender, signer, ...args }: CanCallParams): Promise<boolean[]> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     const methods = isPluginSDKReturn(args.methods)
       ? args.methods().selectors
@@ -461,11 +415,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     allowances = []
   }: WalletAddPluginParams<TClient>): Promise<GroupReturn> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     // Get the plugin app ID from the SDK client
     const plugin = client.appId;
@@ -562,11 +512,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async removePlugin({ sender, signer, ...args }: ContractArgs['arc58_removePlugin(uint64,address,string)void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58RemovePlugin({
       ...sendParams,
@@ -576,11 +522,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async newEscrow({ sender, signer, ...args }: ContractArgs['arc58_newEscrow(string)uint64'] & MaybeSigner): Promise<TxnReturn<bigint>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58NewEscrow({
       ...sendParams,
@@ -590,11 +532,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async toggleEscrowLock({ sender, signer, ...args }: ContractArgs['arc58_toggleEscrowLock(string)(uint64,bool)'] & MaybeSigner): Promise<TxnReturn<EscrowInfo>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58ToggleEscrowLock({
       ...sendParams,
@@ -604,11 +542,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async reclaimFunds({ sender, signer, ...args }: ContractArgs['arc58_reclaim(string,(uint64,uint64,bool)[])void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58Reclaim({
       ...sendParams,
@@ -618,22 +552,14 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async optinEscrow({ sender, signer, ...args }: ContractArgs['arc58_optinEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58OptinEscrow({ ...sendParams, args });
   }
 
   async addAllowances({ sender, signer, escrow, allowances }: { escrow: string, allowances: AddAllowanceArgs[] } & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58AddAllowances({
       ...sendParams,
@@ -646,11 +572,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async removeAllowances({ sender, signer, ...args }: ContractArgs['arc58_removeAllowances(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58RemoveAllowances({
       ...sendParams,
@@ -660,11 +582,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async addExecutionKey({ sender, signer, lease, groups, firstValid, lastValid }: ContractArgs['arc58_addExecutionKey(byte[32],byte[32][],uint64,uint64)void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58AddExecutionKey({
       ...sendParams,
@@ -674,11 +592,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async removeExecutionKey({ sender, signer, ...args }: ContractArgs['arc58_removeExecutionKey(byte[32])void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     return await this.client.send.arc58RemoveExecutionKey({
       ...sendParams,
@@ -697,7 +611,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       const validityPeriod = 1000n;
       const start = firstValid !== 0n ? firstValid : BigInt(suggestedParams.firstValid);
 
-      const { useRounds, length, group } = await this.prepareUsePlugin(args);
+      const { useRounds, length, group, sendParams: prepSendParams } = await this.prepareUsePlugin(args);
 
       const foundation = (await (await group.composer()).build()).atc
 
@@ -765,8 +679,8 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
         console.log(`Building group ${i + 1}/${numGroupsToBuild} with start: ${groupStartRound}, end: ${groupEndRound}`);
 
         let overwrite: OverWriteProperties = {
-          sender: sendParams.sender,
-          signer: sendParams.signer,
+          sender: prepSendParams.sender,
+          signer: prepSendParams.signer,
           firstValid: groupStartRound,
           lastValid: groupEndRound,
           lease: groups.lease,

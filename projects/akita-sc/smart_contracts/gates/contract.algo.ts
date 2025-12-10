@@ -234,4 +234,7 @@ export class Gate extends classes(BaseGate, AkitaBaseContract) {
   gateFilterEntryWithArgsShape(shape: GateFilterEntryWithArgs): GateFilterEntryWithArgs {
     return shape;
   }
+
+  @abimethod({ readonly: true })
+  opUp(): void { }
 }

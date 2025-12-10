@@ -160,7 +160,7 @@ describe('ARC58 DAO Voting', () => {
         await proposeAndExecute(dao, [
             {
                 type: ProposalActionEnum.UpdateFields,
-                field: 'akita_al',
+                field: 'aal',
                 value: {
                     wallet: walletFactory.appId,
                     staking: staking.appId,
@@ -243,8 +243,8 @@ describe('ARC58 DAO Voting', () => {
             // Initialize the DAO - after this, proposals require voting
             await dao.initialize();
 
-            const state = await dao.getGlobalState();
-            expect(state.initialized).toBe(1n);
+            const { state } = await dao.getGlobalState();
+            expect(state).toBe(2);
         });
     });
 
@@ -254,7 +254,11 @@ describe('ARC58 DAO Voting', () => {
 
             // Stake Bones with LOCK type for voter1 (1 year lock)
             const stakeAmount = 50_000_000_000n; // 50,000 BONES
-            const expiration = BigInt(Math.floor(Date.now() / 1000) + ONE_YEAR);
+            // Use blockchain timestamp instead of Date.now() since localnet timestamp differs from wall-clock time
+            const status = await algorand.client.algod.status().do();
+            const block = await algorand.client.algod.block(status.lastRound).do();
+            const blockTimestamp = BigInt(block.block.header.timestamp);
+            const expiration = blockTimestamp + BigInt(ONE_YEAR);
 
             // Create MBR payment for stake box
             const stakePayment = await algorand.createTransaction.payment({
@@ -302,7 +306,11 @@ describe('ARC58 DAO Voting', () => {
 
             // Stake for the sender to have voting power
             const stakeAmount = 10_000_000_000n; // 10,000 BONES
-            const expiration = BigInt(Math.floor(Date.now() / 1000) + ONE_YEAR);
+            // Use blockchain timestamp instead of Date.now() since localnet timestamp differs from wall-clock time
+            const status = await algorand.client.algod.status().do();
+            const block = await algorand.client.algod.block(status.lastRound).do();
+            const blockTimestamp = BigInt(block.block.header.timestamp);
+            const expiration = blockTimestamp + BigInt(ONE_YEAR);
 
             // Sender needs to opt into Bones first
             try {
@@ -589,7 +597,11 @@ describe('ARC58 DAO Voting', () => {
 
             // Setup voter2 with a different stake amount (smaller than voter1)
             const stakeAmount2 = 25_000_000_000n; // 25,000 BONES (half of voter1's 50,000)
-            const expiration2 = BigInt(Math.floor(Date.now() / 1000) + ONE_YEAR);
+            // Use blockchain timestamp instead of Date.now() since localnet timestamp differs from wall-clock time
+            const status = await algorand.client.algod.status().do();
+            const block = await algorand.client.algod.block(status.lastRound).do();
+            const blockTimestamp = BigInt(block.block.header.timestamp);
+            const expiration2 = blockTimestamp + BigInt(ONE_YEAR);
 
             const stakePayment2 = await algorand.createTransaction.payment({
                 sender: voter2,

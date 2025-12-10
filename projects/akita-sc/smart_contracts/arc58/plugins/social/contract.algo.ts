@@ -1,16 +1,18 @@
 import { Account, Application, Asset, Bytes, bytes, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, encodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
-import { itob } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
 import { GateMustCheckAbiMethod } from '../../../gates/constants'
 import { GateArgs } from '../../../gates/types'
-import { AmendmentMBR, TipSendTypeARC58, TipSendTypeARC59 } from '../../../social/constants'
-import { getAccounts, getAkitaAppList, getAkitaAssets, getSocialFees, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
+import { AmendmentMBR, TipSendTypeARC58 } from '../../../social/constants'
+import { getAccounts, getAkitaAppList, getAkitaAssets, getAkitaSocialAppList, getSocialFees, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 import { CID } from '../../../utils/types/base'
 
 // CONTRACT IMPORTS
 import { BaseSocial } from '../../../social/base'
 import type { AkitaSocial } from '../../../social/contract.algo'
+import { AkitaSocialGraph } from '../../../social/graph.algo'
+import type { AkitaSocialModeration } from '../../../social/moderation.algo'
+import { RefType } from '../../../social/types'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 
@@ -29,6 +31,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   post(
     wallet: Application,
     rekeyBack: boolean,
+    timestamp: uint64,
+    nonce: bytes<24>,
     cid: CID,
     gateID: uint64,
     usePayWall: boolean,
@@ -36,7 +40,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const akitaSocial = Application(getAkitaAppList(this.akitaDAO.value).social)
+    const akitaSocial = Application(getAkitaSocialAppList(this.akitaDAO.value).social)
     const { posts, votes, votelist } = this.mbr(cid)
     const mbrAmount: uint64 = posts + votes + votelist + AmendmentMBR
     const mbrPayment = itxn.payment({
@@ -60,6 +64,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       args: [
         mbrPayment,
         tip,
+        timestamp,
+        nonce,
         cid,
         gateID,
         usePayWall,
@@ -73,12 +79,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     wallet: Application,
     rekeyBack: boolean,
     cid: CID,
-    gateID: uint64,
     amendment: bytes<32>
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     const { posts, votes, votelist } = this.mbr(cid)
     const mbrAmount: uint64 = posts + votes + votelist + AmendmentMBR
     const mbrPayment = itxn.payment({
@@ -96,6 +101,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       assetAmount: postFee
     })
 
+    // Edit key is derived internally by contract: sha256(creator + originalKey + newCID)
     abiCall<typeof AkitaSocial.prototype.editPost>({
       sender,
       appId: social,
@@ -109,11 +115,14 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     })
   }
 
-  gatedReplyPost(
+  gatedReply(
     wallet: Application,
     rekeyBack: boolean,
+    timestamp: uint64,
+    nonce: bytes<24>,
     cid: CID,
-    ref: bytes<32>,
+    ref: bytes,
+    type: RefType,
     gateID: uint64,
     args: GateArgs,
     usePayWall: boolean,
@@ -121,29 +130,24 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const { origin, sender } = getAccounts(wallet)
 
-    const { social, gate } = getAkitaAppList(this.akitaDAO.value)
+    const { gate } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     const { posts, votes, votelist } = this.mbr(cid)
     let mbrAmount: uint64 = posts + votes + votelist
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
+    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
       sender,
       appId: social,
-      args: [ref]
+      args: [ref.toFixed({ length: 32 }), 0]
     }).returnValue
 
     const creator = info.post.creator
     const creatorWallet = info.meta.wallet
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
 
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
+
+    if (tipInfo.type === TipSendTypeARC58) {
+      mbrAmount += tipInfo.arc58
     }
 
     const mbrPayment = itxn.payment({
@@ -174,15 +178,18 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       ]
     })
 
-    abiCall<typeof AkitaSocial.prototype.gatedReplyPost>({
+    abiCall<typeof AkitaSocial.prototype.gatedReply>({
       sender,
       appId: social,
       args: [
         mbrPayment,
         tip,
         gateTxn,
+        timestamp,
+        nonce,
         cid,
         ref,
+        type,
         gateID,
         usePayWall,
         payWallID
@@ -191,40 +198,36 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     })
   }
 
-  replyPost(
+  reply(
     wallet: Application,
     rekeyBack: boolean,
+    timestamp: uint64,
+    nonce: bytes<24>,
     cid: CID,
-    ref: bytes<32>,
+    ref: bytes,
+    type: RefType,
     gateID: uint64,
     usePayWall: boolean,
     payWallID: uint64
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     const { posts, votes, votelist } = this.mbr(cid)
     let mbrAmount: uint64 = posts + votes + votelist
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
+    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
       sender,
       appId: social,
-      args: [ref]
+      args: [ref.toFixed({ length: 32 }), 0]
     }).returnValue
 
     const creator = info.post.creator
     const creatorWallet = info.meta.wallet
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
 
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
+    if (tipInfo.type === TipSendTypeARC58) {
+      mbrAmount += tipInfo.arc58
     }
 
     const mbrPayment = itxn.payment({
@@ -242,317 +245,17 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       assetAmount: reactFee
     })
 
-    abiCall<typeof AkitaSocial.prototype.replyPost>({
+    abiCall<typeof AkitaSocial.prototype.reply>({
       sender,
       appId: social,
       args: [
         mbrPayment,
         tip,
+        timestamp,
+        nonce,
         cid,
         ref,
-        gateID,
-        usePayWall,
-        payWallID
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  replyAsset(
-    wallet: Application,
-    rekeyBack: boolean,
-    cid: CID,
-    ref: uint64,
-    gateID: uint64,
-    usePayWall: boolean,
-    payWallID: uint64
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    const { posts, votes, votelist } = this.mbr(cid)
-    let mbrAmount: uint64 = posts + votes + votelist
-
-    const postExists = abiCall<typeof AkitaSocial.prototype.postExists>({
-      sender,
-      appId: social,
-      args: [itob(ref)]
-    }).returnValue
-
-    if (!postExists) {
-      mbrAmount += posts
-    }
-
-    const creator = Asset(ref).creator
-    const creatorWallet = abiCall<typeof AkitaSocial.prototype.getMetaWallet>({
-      sender,
-      appId: social,
-      args: [creator]
-    }).returnValue
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.replyAsset>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        cid,
-        ref,
-        gateID,
-        usePayWall,
-        payWallID
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  gatedReplyAddress(
-    wallet: Application,
-    rekeyBack: boolean,
-    cid: CID,
-    ref: Account,
-    gateID: uint64,
-    args: GateArgs,
-    usePayWall: boolean,
-    payWallID: uint64
-  ): void {
-    const { origin, sender } = getAccounts(wallet)
-
-    const { social, gate } = getAkitaAppList(this.akitaDAO.value)
-    const { posts, votes, votelist } = this.mbr(cid)
-    let mbrAmount: uint64 = posts + votes + votelist
-
-    const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
-      sender,
-      appId: social,
-      args: [ref.bytes]
-    }).returnValue
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, ref, Application(info.meta.wallet))
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    const gateTxn = itxn.applicationCall({
-      sender,
-      appId: gate,
-      appArgs: [
-        methodSelector(GateMustCheckAbiMethod),
-        origin,
-        info.meta.addressGateID,
-        encodeArc4(args)
-      ]
-    })
-
-    abiCall<typeof AkitaSocial.prototype.gatedReplyAddress>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        gateTxn,
-        cid,
-        ref,
-        gateID,
-        usePayWall,
-        payWallID
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  replyAddress(
-    wallet: Application,
-    rekeyBack: boolean,
-    cid: CID,
-    ref: Account,
-    gateID: uint64,
-    usePayWall: boolean,
-    payWallID: uint64
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    const { posts, votes, votelist } = this.mbr(cid)
-    let mbrAmount: uint64 = posts + votes + votelist
-
-    const postExists = abiCall<typeof AkitaSocial.prototype.postExists>({
-      sender,
-      appId: social,
-      args: [ref.bytes]
-    }).returnValue
-
-    let creatorWallet: uint64 = 0
-    if (!postExists) {
-      mbrAmount += this.mbr(Bytes('')).posts
-    } else {
-      const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
-        sender,
-        appId: social,
-        args: [ref.bytes]
-      }).returnValue
-      creatorWallet = info.meta.wallet
-    }
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, ref, Application(creatorWallet))
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.replyAddress>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        cid,
-        ref,
-        gateID,
-        usePayWall,
-        payWallID
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  replyApp(
-    wallet: Application,
-    rekeyBack: boolean,
-    cid: CID,
-    ref: uint64,
-    gateID: uint64,
-    usePayWall: boolean,
-    payWallID: uint64
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    const { posts, votes, votelist } = this.mbr(cid)
-    let mbrAmount: uint64 = posts + votes + votelist
-
-    const postExists = abiCall<typeof AkitaSocial.prototype.postExists>({
-      sender,
-      appId: social,
-      args: [itob(ref)]
-    }).returnValue
-
-    if (!postExists) {
-      mbrAmount += posts
-    }
-
-    let creator = Application(ref).creator
-    const creatorWallet = abiCall<typeof AkitaSocial.prototype.getMetaWallet>({
-      sender,
-      appId: social,
-      args: [creator]
-    }).returnValue
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.replyApp>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        cid,
-        ref,
+        type,
         gateID,
         usePayWall,
         payWallID
@@ -570,7 +273,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const { origin, sender } = getAccounts(wallet)
 
-    const { social, gate } = getAkitaAppList(this.akitaDAO.value)
+    const { gate } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     const { posts, votes, votelist } = this.mbr(cid)
     let mbrAmount: uint64 = posts + votes + votelist
 
@@ -582,25 +286,19 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const originalPostRef = postBeingAmended.ref.slice(0, 32).toFixed({ length: 32 })
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
+    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
       sender,
       appId: social,
-      args: [originalPostRef]
+      args: [originalPostRef, 0]
     }).returnValue
 
     const creator = info.post.creator
     const creatorWallet = info.meta.wallet
 
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
+
+    if (tipInfo.type === TipSendTypeARC58) {
+      mbrAmount += tipInfo.arc58
     }
 
     const mbrPayment = itxn.payment({
@@ -629,6 +327,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       ]
     })
 
+    // Edit key is derived internally by contract
     abiCall<typeof AkitaSocial.prototype.gatedEditReply>({
       sender,
       appId: social,
@@ -651,7 +350,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     const { posts, votes, votelist } = this.mbr(cid)
     let mbrAmount: uint64 = posts + votes + votelist
 
@@ -663,25 +362,19 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const originalPostRef = postBeingAmended.ref.slice(0, 32).toFixed({ length: 32 })
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
+    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
       sender,
       appId: social,
-      args: [originalPostRef]
+      args: [originalPostRef, 0]
     }).returnValue
 
     const creator = info.post.creator
     const creatorWallet = info.meta.wallet
 
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
+
+    if (tipInfo.type === TipSendTypeARC58) {
+      mbrAmount += tipInfo.arc58
     }
 
     const mbrPayment = itxn.payment({
@@ -699,6 +392,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       assetAmount: reactFee
     })
 
+    // Edit key is derived internally by contract
     abiCall<typeof AkitaSocial.prototype.editReply>({
       sender,
       appId: social,
@@ -712,37 +406,31 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     })
   }
 
-  votePost(
+  vote(
     wallet: Application,
     rekeyBack: boolean,
-    ref: bytes<32>,
+    ref: bytes,
+    type: RefType,
     isUp: boolean
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
     let mbrAmount: uint64 = this.mbr(Bytes('')).votelist
 
     if (isUp) {
-      const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
+      const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
         sender,
         appId: social,
-        args: [ref]
+        args: [ref.toFixed({ length: 32 }), 0]
       }).returnValue
 
       const creator = info.post.creator
       const creatorWallet = info.meta.wallet
       const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
 
-      switch (tipInfo.type) {
-        case TipSendTypeARC59: {
-          mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-          break
-        }
-        case TipSendTypeARC58: {
-          mbrAmount += tipInfo.arc58
-          break
-        }
+      if (tipInfo.type === TipSendTypeARC58) {
+        mbrAmount += tipInfo.arc58
       }
     }
 
@@ -761,225 +449,14 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       assetAmount: reactFee
     })
 
-    abiCall<typeof AkitaSocial.prototype.votePost>({
+    abiCall<typeof AkitaSocial.prototype.vote>({
       sender,
       appId: social,
       args: [
         mbrPayment,
         tip,
         ref,
-        isUp
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  voteAsset(
-    wallet: Application,
-    rekeyBack: boolean,
-    ref: uint64,
-    isUp: boolean
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    let mbrAmount: uint64 = this.mbr(Bytes('')).votelist
-
-    if (isUp) {
-      const postExists = abiCall<typeof AkitaSocial.prototype.postExists>({
-        sender,
-        appId: social,
-        args: [itob(ref)]
-      }).returnValue
-
-      if (!postExists) {
-        mbrAmount += this.mbr(Bytes('')).posts
-      }
-
-      const creator = Asset(ref).creator
-      const creatorWallet = abiCall<typeof AkitaSocial.prototype.getMetaWallet>({
-        sender,
-        appId: social,
-        args: [creator]
-      }).returnValue
-
-      const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-      switch (tipInfo.type) {
-        case TipSendTypeARC59: {
-          mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-          break
-        }
-        case TipSendTypeARC58: {
-          mbrAmount += tipInfo.arc58
-          break
-        }
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.voteAsset>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        ref,
-        isUp
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  voteAddress(
-    wallet: Application,
-    rekeyBack: boolean,
-    ref: Account,
-    isUp: boolean
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    let mbrAmount: uint64 = this.mbr(Bytes('')).votelist
-
-    if (isUp) {
-      const postExists = abiCall<typeof AkitaSocial.prototype.postExists>({
-        sender,
-        appId: social,
-        args: [ref.bytes]
-      }).returnValue
-
-      let creatorWallet: uint64 = 0
-      if (!postExists) {
-        mbrAmount += this.mbr(Bytes('')).posts
-      } else {
-        const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
-          sender,
-          appId: social,
-          args: [ref.bytes]
-        }).returnValue
-        creatorWallet = info.meta.wallet
-      }
-
-      const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, ref, Application(creatorWallet))
-      switch (tipInfo.type) {
-        case TipSendTypeARC59: {
-          mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-          break
-        }
-        case TipSendTypeARC58: {
-          mbrAmount += tipInfo.arc58
-          break
-        }
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.voteAddress>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        ref,
-        isUp
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  voteApp(
-    wallet: Application,
-    rekeyBack: boolean,
-    ref: uint64,
-    isUp: boolean
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    const { votelist, posts } = this.mbr(Bytes(''))
-    let mbrAmount: uint64 = votelist
-
-    if (isUp) {
-      const postExists = abiCall<typeof AkitaSocial.prototype.postExists>({
-        sender,
-        appId: social,
-        args: [itob(ref)]
-      }).returnValue
-
-      if (!postExists) {
-        mbrAmount += posts
-      }
-
-      const creator = Asset(ref).creator
-      const creatorWallet = abiCall<typeof AkitaSocial.prototype.getMetaWallet>({
-        sender,
-        appId: social,
-        args: [creator]
-      }).returnValue
-
-      const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-      switch (tipInfo.type) {
-        case TipSendTypeARC59: {
-          mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-          break
-        }
-        case TipSendTypeARC58: {
-          mbrAmount += tipInfo.arc58
-          break
-        }
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.voteApp>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        ref,
+        type,
         isUp
       ],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
@@ -994,7 +471,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const { isUp: wasUp } = abiCall<typeof AkitaSocial.prototype.getVote>({
       sender,
@@ -1024,25 +501,17 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       // check if the change is going to make us pay the post creator
       // !wasUp means we are flipping from downvote to upvote
       if (!wasUp) {
-        const info = abiCall<typeof AkitaSocial.prototype.getPostAndCreatorMeta>({
+        const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
           sender,
           appId: social,
-          args: [ref],
+          args: [ref, 0],
         }).returnValue
 
         const creator = info.post.creator
         const creatorWallet = info.meta.wallet
         const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-
-        switch (tipInfo.type) {
-          case TipSendTypeARC59: {
-            mbrPayment.set({ amount: (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim) })
-            break
-          }
-          case TipSendTypeARC58: {
-            mbrPayment.set({ amount: tipInfo.arc58 })
-            break
-          }
+        if (tipInfo.type === TipSendTypeARC58) {
+          mbrPayment.set({ amount: tipInfo.arc58 })
         }
       }
     }
@@ -1060,21 +529,23 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     })
   }
 
-  gatedReactPost(
+  gatedReact(
     wallet: Application,
     rekeyBack: boolean,
-    ref: bytes<32>,
+    ref: bytes,
+    type: RefType,
     NFT: uint64,
     args: GateArgs
   ): void {
     const { origin, sender } = getAccounts(wallet)
 
-    const { social, gate } = getAkitaAppList(this.akitaDAO.value)
+    const { gate } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const { post, meta, reactionExists } = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
       sender,
       appId: social,
-      args: [ref, NFT]
+      args: [ref.toFixed({ length: 32 }), NFT]
     }).returnValue
 
     const { reactions, reactionlist } = this.mbr(Bytes(''))
@@ -1086,16 +557,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const creator = post.creator
     const creatorWallet = meta.wallet
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
+    if (tipInfo.type === TipSendTypeARC58) {
+      mbrAmount += tipInfo.arc58
     }
 
     const mbrPayment = itxn.payment({
@@ -1124,7 +587,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       ]
     })
 
-    abiCall<typeof AkitaSocial.prototype.gatedReactPost>({
+    abiCall<typeof AkitaSocial.prototype.gatedReact>({
       sender,
       appId: social,
       args: [
@@ -1132,26 +595,28 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
         tip,
         gateTxn,
         ref,
+        type,
         NFT
       ],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
   }
 
-  reactPost(
+  react(
     wallet: Application,
     rekeyBack: boolean,
-    ref: bytes<32>,
+    ref: bytes,
+    type: RefType,
     NFT: uint64
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const { post, meta, reactionExists } = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
       sender,
       appId: social,
-      args: [ref, NFT]
+      args: [ref.toFixed({ length: 32 }), NFT]
     }).returnValue
 
     const { reactions, reactionlist } = this.mbr(Bytes(''))
@@ -1163,16 +628,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const creator = post.creator
     const creatorWallet = meta.wallet
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
+    if (tipInfo.type === TipSendTypeARC58) {
+      mbrAmount += tipInfo.arc58
     }
 
     const mbrPayment = itxn.payment({
@@ -1190,298 +647,14 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       assetAmount: reactFee
     })
 
-    abiCall<typeof AkitaSocial.prototype.reactPost>({
+    abiCall<typeof AkitaSocial.prototype.react>({
       sender,
       appId: social,
       args: [
         mbrPayment,
         tip,
         ref,
-        NFT
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  reactAsset(
-    wallet: Application,
-    rekeyBack: boolean,
-    ref: uint64,
-    NFT: uint64
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    const { posts, reactions, reactionlist } = this.mbr(Bytes(''))
-    let mbrAmount: uint64 = reactionlist
-
-    const creator = Asset(ref).creator
-    const { postExists, reactionExists, creatorWallet } = abiCall<typeof AkitaSocial.prototype.reactionMeta>({
-      sender,
-      appId: social,
-      args: [itob(ref), NFT, creator]
-    }).returnValue
-
-    if (!postExists) {
-      mbrAmount += posts
-    }
-
-    if (!reactionExists) {
-      mbrAmount += reactions
-    }
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.reactAsset>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        ref,
-        NFT
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  gatedReactAddress(
-    wallet: Application,
-    rekeyBack: boolean,
-    ref: Account,
-    NFT: uint64,
-    args: GateArgs
-  ): void {
-    const { origin, sender } = getAccounts(wallet)
-
-    const { social, gate } = getAkitaAppList(this.akitaDAO.value)
-
-    const { posts, reactions, reactionlist } = this.mbr(Bytes(''))
-    let mbrAmount: uint64 = reactionlist
-
-    const { postExists, reactionExists, creatorWallet, addressGateID } = abiCall<typeof AkitaSocial.prototype.reactionMeta>({
-      sender,
-      appId: social,
-      args: [ref.bytes, NFT, ref]
-    }).returnValue
-
-    if (!postExists) {
-      mbrAmount += posts
-    }
-
-    if (!reactionExists) {
-      mbrAmount += reactions
-    }
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, ref, Application(creatorWallet))
-
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    const gateTxn = itxn.applicationCall({
-      sender,
-      appId: gate,
-      appArgs: [
-        methodSelector(GateMustCheckAbiMethod),
-        origin,
-        addressGateID,
-        encodeArc4(args)
-      ]
-    })
-
-    abiCall<typeof AkitaSocial.prototype.gatedReactAddress>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        gateTxn,
-        ref,
-        NFT
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  reactAddress(
-    wallet: Application,
-    rekeyBack: boolean,
-    ref: Account,
-    NFT: uint64
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-
-    const { posts, reactions, reactionlist } = this.mbr(Bytes(''))
-    let mbrAmount: uint64 = reactionlist
-
-    const { postExists, reactionExists, creatorWallet } = abiCall<typeof AkitaSocial.prototype.reactionMeta>({
-      sender,
-      appId: social,
-      args: [ref.bytes, NFT, ref]
-    }).returnValue
-
-    if (!postExists) {
-      mbrAmount += posts
-    }
-
-    if (!reactionExists) {
-      mbrAmount += reactions
-    }
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, ref, Application(creatorWallet))
-
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.reactAddress>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        ref,
-        NFT
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  reactApp(
-    wallet: Application,
-    rekeyBack: boolean,
-    ref: uint64,
-    NFT: uint64
-  ): void {
-    const sender = getSpendingAccount(wallet)
-
-    const { social } = getAkitaAppList(this.akitaDAO.value)
-    const { posts, reactions, reactionlist } = this.mbr(Bytes(''))
-    let mbrAmount: uint64 = reactionlist
-
-    const creator = Application(ref).creator
-    const { postExists, reactionExists, creatorWallet } = abiCall<typeof AkitaSocial.prototype.reactionMeta>({
-      sender,
-      appId: social,
-      args: [itob(ref), NFT, creator]
-    }).returnValue
-
-    if (!postExists) {
-      mbrAmount += posts
-    }
-
-    if (!reactionExists) {
-      mbrAmount += reactions
-    }
-
-    const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-
-    switch (tipInfo.type) {
-      case TipSendTypeARC59: {
-        mbrAmount += (tipInfo.arc59.mbr + tipInfo.arc59.receiverAlgoNeededForClaim)
-        break
-      }
-      case TipSendTypeARC58: {
-        mbrAmount += tipInfo.arc58
-        break
-      }
-    }
-
-    const mbrPayment = itxn.payment({
-      sender,
-      receiver: Application(social).address,
-      amount: mbrAmount
-    })
-
-    const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
-    const tip = itxn.assetTransfer({
-      sender,
-      assetReceiver: Application(social).address,
-      xferAsset: akta,
-      assetAmount: reactFee
-    })
-
-    abiCall<typeof AkitaSocial.prototype.reactApp>({
-      sender,
-      appId: social,
-      args: [
-        mbrPayment,
-        tip,
-        ref,
+        type,
         NFT
       ],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
@@ -1496,7 +669,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
     abiCall<typeof AkitaSocial.prototype.deleteReaction>({
       sender,
@@ -1514,7 +687,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const { origin, sender } = getAccounts(wallet)
 
-    const { social, gate } = getAkitaAppList(this.akitaDAO.value)
+    const { gate } = getAkitaAppList(this.akitaDAO.value)
+    const { social, graph } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const { followGateID } = abiCall<typeof AkitaSocial.prototype.getMeta>({
       sender,
@@ -1539,9 +713,9 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       ]
     })
 
-    abiCall<typeof AkitaSocial.prototype.gatedFollow>({
+    abiCall<typeof AkitaSocialGraph.prototype.gatedFollow>({
       sender,
-      appId: gate,
+      appId: graph,
       args: [
         mbrPayment,
         gateTxn,
@@ -1558,7 +732,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social, gate } = getAkitaAppList(this.akitaDAO.value)
+    const { social, graph } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const mbrPayment = itxn.payment({
       sender,
@@ -1566,9 +740,9 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       amount: this.mbr(Bytes('')).follows
     })
 
-    abiCall<typeof AkitaSocial.prototype.follow>({
+    abiCall<typeof AkitaSocialGraph.prototype.follow>({
       sender,
-      appId: gate,
+      appId: graph,
       args: [
         mbrPayment,
         address
@@ -1585,11 +759,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { graph } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    abiCall<typeof AkitaSocial.prototype.unfollow>({
+    abiCall<typeof AkitaSocialGraph.prototype.unfollow>({
       sender,
-      appId: social,
+      appId: graph,
       args: [address, index],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1604,17 +778,17 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { graph } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const mbrPayment = itxn.payment({
       sender,
-      receiver: Application(social).address,
+      receiver: Application(graph).address,
       amount: this.mbr(Bytes('')).blocks
     })
 
-    abiCall<typeof AkitaSocial.prototype.block>({
+    abiCall<typeof AkitaSocialGraph.prototype.block>({
       sender,
-      appId: social,
+      appId: graph,
       args: [mbrPayment, address],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1627,11 +801,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { graph } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    abiCall<typeof AkitaSocial.prototype.unblock>({
+    abiCall<typeof AkitaSocialGraph.prototype.unblock>({
       sender,
-      appId: social,
+      appId: graph,
       args: [address],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1644,17 +818,17 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const mbrPayment = itxn.payment({
       sender,
-      receiver: Application(social).address,
+      receiver: Application(moderation).address,
       amount: this.mbr(Bytes('')).moderators
     })
 
-    abiCall<typeof AkitaSocial.prototype.addModerator>({
+    abiCall<typeof AkitaSocialModeration.prototype.addModerator>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [mbrPayment, address],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1668,11 +842,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    abiCall<typeof AkitaSocial.prototype.removeModerator>({
+    abiCall<typeof AkitaSocialModeration.prototype.removeModerator>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [address],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1686,17 +860,17 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const mbrPayment = itxn.payment({
       sender,
-      receiver: Application(social).address,
+      receiver: Application(moderation).address,
       amount: this.mbr(Bytes('')).banned
     })
 
-    abiCall<typeof AkitaSocial.prototype.ban>({
+    abiCall<typeof AkitaSocialModeration.prototype.ban>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [mbrPayment, address, expiration],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1709,11 +883,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    abiCall<typeof AkitaSocial.prototype.flagPost>({
+    abiCall<typeof AkitaSocialModeration.prototype.flagPost>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [ref],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1726,11 +900,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    abiCall<typeof AkitaSocial.prototype.unflagPost>({
+    abiCall<typeof AkitaSocialModeration.prototype.unflagPost>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [ref],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1743,11 +917,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    abiCall<typeof AkitaSocial.prototype.unban>({
+    abiCall<typeof AkitaSocialModeration.prototype.unban>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [address],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1761,17 +935,17 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const mbrPayment = itxn.payment({
       sender,
-      receiver: Application(social).address,
+      receiver: Application(moderation).address,
       amount: this.mbr(Bytes('')).actions
     })
 
-    abiCall<typeof AkitaSocial.prototype.addAction>({
+    abiCall<typeof AkitaSocialModeration.prototype.addAction>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [
         mbrPayment,
         actionAppID,
@@ -1788,11 +962,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { moderation } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    abiCall<typeof AkitaSocial.prototype.removeAction>({
+    abiCall<typeof AkitaSocialModeration.prototype.removeAction>({
       sender,
-      appId: social,
+      appId: moderation,
       args: [actionAppID],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
@@ -1812,7 +986,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const impact = abiCall<typeof AkitaSocial.prototype.initMeta>({
       sender,
@@ -1844,7 +1018,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const sender = getSpendingAccount(wallet)
 
-    const { social } = getAkitaAppList(this.akitaDAO.value)
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
     abiCall<typeof AkitaSocial.prototype.updateMeta>({
       sender,

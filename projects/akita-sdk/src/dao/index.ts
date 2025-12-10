@@ -15,9 +15,9 @@ import {
   ProposalUpgradeApp
 } from '../generated/AkitaDAOTypesClient'
 import { BaseSDK } from "../base";
-import { GroupReturn, hasSenderSigner, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
+import { GroupReturn, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
 import { WalletSDK } from "../wallet";
-import { AkitaDaoGlobalState, DecodedProposal, DecodedProposalAction, EditProposalParams, NewProposalParams, ProposalAction, ProposalAddPluginArgs } from "./types";
+import { AkitaDaoGlobalState, DecodedProposal, DecodedProposalAction, EditProposalParams, NewProposalParams, ProposalAction, ProposalAddPluginArgs, SplitsToTuples } from "./types";
 import { DAOProposalVotesMBR, ProposalActionEnum } from "./constants";
 import { ABIStruct, getABIDecodedValue, getABIEncodedValue } from "@algorandfoundation/algokit-utils/types/app-arc56";
 import { ALGORAND_ZERO_ADDRESS_STRING, encodeUint64 } from "algosdk";
@@ -261,7 +261,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
               data = encodeUint64(action.value)
               break;
             }
-            case 'akita_al': {
+            case 'aal': {
               const currentApps = await this.client.state.global.akitaAppList()
 
               const {
@@ -277,8 +277,6 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
                 metaMerkles = currentApps?.metaMerkles ?? 0n,
                 marketplace = currentApps?.marketplace ?? 0n,
                 wallet = currentApps?.wallet ?? 0n,
-                social = currentApps?.social ?? 0n,
-                impact = currentApps?.impact ?? 0n
               } = action.value;
 
               const abiData = {
@@ -294,14 +292,32 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
                 metaMerkles,
                 marketplace,
                 wallet,
-                social,
-                impact
               };
 
               data = getABIEncodedValue(abiData, 'AkitaAppList', this.client.appClient.appSpec.structs)
               break;
             }
-            case 'plugn_al': {
+            case 'sal': {
+              const currentApps = await this.client.state.global.akitaSocialAppList()
+
+              const {
+                social = currentApps?.social ?? 0n,
+                graph = currentApps?.graph ?? 0n,
+                impact = currentApps?.impact ?? 0n,
+                moderation = currentApps?.moderation ?? 0n
+              } = action.value;
+
+              const abiData = {
+                social,
+                graph,
+                impact,
+                moderation
+              };
+
+              data = getABIEncodedValue(abiData, 'AkitaSocialAppList', this.client.appClient.appSpec.structs)
+              break;
+            }
+            case 'pal': {
               const currentApps = await this.client.state.global.pluginAppList()
 
               const {
@@ -313,7 +329,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
               data = getABIEncodedValue({ optin, revenueManager, update }, 'PluginAppList', this.client.appClient.appSpec.structs)
               break;
             }
-            case 'other_al': {
+            case 'oal': {
               const currentApps = await this.client.state.global.otherAppList()
 
               const {
@@ -483,6 +499,10 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
               data = getABIEncodedValue(action.value, "ProposalSettings", this.client.appClient.appSpec.structs)
               break;
             }
+            case 'revenue_splits': {
+              data = getABIEncodedValue(SplitsToTuples(action.value), '((uint64,string),uint8,uint64)[]', this.client.appClient.appSpec.structs)
+              break;
+            }
             default:
               throw new Error(`Unsupported field`);
           }
@@ -507,12 +527,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async setup(params?: MaybeSigner): Promise<GroupReturn> {
 
-    const { sender, signer } = params || {};
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams(params);
 
     const group = this.client.newGroup()
 
@@ -546,12 +561,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async initialize(params?: MaybeSigner): Promise<TxnReturn<void>> {
 
-    const { sender, signer } = params || {};
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams(params);
 
     return await this.client.send.initialize({
       ...sendParams,
@@ -571,27 +581,13 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     txIDs: string[];
   } & AppReturn<bigint | undefined>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const preppedActions = await this.prepProposalActions<TClient>(actions)
 
-    // determine which call to use
-    const initialized = (await this.client.state.global.initialized())! === 1n
-
     const group = this.client.newGroup()
 
-    let total = 0n;
-    if (initialized) {
-      ({ total } = await this.client.proposalCost({ args: { actions: preppedActions } }))
-    }
+    const { total } = await this.client.proposalCost({ args: { actions: preppedActions } })
 
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
@@ -663,15 +659,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     actions
   }: EditProposalParams<TClient>): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const preppedActions = await this.prepProposalActions<TClient>(actions)
 
@@ -725,15 +713,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async submitProposal({ sender, signer, proposalId }: ContractArgs['submitProposal(uint64)void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return await this.client.send.submitProposal({
       ...sendParams,
@@ -743,15 +723,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async voteProposal({ proposalId, vote, sender, signer }: ContractArgs['voteProposal(pay,uint64,uint8)void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const mbrPayment = this.client.algorand.createTransaction.payment({
       ...sendParams,
@@ -767,15 +739,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async finalizeProposal({ sender, signer, proposalId }: ContractArgs['finalizeProposal(uint64)void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return await this.client.send.finalizeProposal({
       ...sendParams,
@@ -785,15 +749,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async executeProposal({ proposalId, sender, signer }: ContractArgs['executeProposal(uint64)void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return await this.client.send.executeProposal({
       ...sendParams,
@@ -807,18 +763,11 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async setupCost(params?: MaybeSigner): Promise<bigint> {
 
-    const defaultParams = {
-      ...this.sendParams,
+    const sendParams = this.getSendParams({
       sender: this.readerAccount,
-      signer: emptySigner
-    }
-
-    const { sender, signer } = params || {};
-    const sendParams = {
-      ...defaultParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+      signer: emptySigner,
+      ...params
+    });
 
     const cost = await this.client.setupCost({
       ...sendParams,
@@ -830,17 +779,10 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   async proposalCost<TClient extends SDKClient>({ sender, signer, actions }: { actions: ProposalAction<TClient>[] } & MaybeSigner): Promise<ProposalCostInfo> {
 
-    const defaultParams = {
-      ...this.sendParams,
-      sender: this.readerAccount,
-      signer: emptySigner
-    }
-
-    const sendParams = {
-      ...defaultParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({
+      sender: sender ?? this.readerAccount,
+      signer: signer ?? emptySigner
+    });
 
     const requirements = await this.client.proposalCost({
       ...sendParams,

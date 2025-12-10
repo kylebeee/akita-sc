@@ -1,6 +1,6 @@
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { BaseSDK } from "../base";
-import { 
+import {
   StakingClient, 
   StakingFactory,
   Stake,
@@ -8,7 +8,7 @@ import {
   StakeCheck,
   TotalsInfo
 } from '../generated/StakingClient';
-import { hasSenderSigner, MaybeSigner, NewContractSDKParams } from "../types";
+import { MaybeSigner, NewContractSDKParams } from "../types";
 import {
   StakeArgs,
   WithdrawArgs,
@@ -29,6 +29,7 @@ import {
   OptInArgs
 } from "./types";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
+import { AppReturn } from "@algorandfoundation/algokit-utils/types/app";
 
 export * from './types';
 
@@ -254,18 +255,14 @@ export class StakingSDK extends BaseSDK<StakingClient> {
 
     const { sender, signer, type, asset = 0n, amount } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    // For escrowed staking (Hard/Lock), the payment includes the amount being staked
+    // For non-escrowed staking (Soft/Heartbeat), only the MBR cost is required
+    const isEscrowed = type === StakingType.Hard || type === StakingType.Lock;
 
     let expiration: bigint;
-    if (args.type === StakingType.Hard || args.type === StakingType.Lock) {
+    if (isEscrowed) {
       // ensure args.expiration is in the future
       if (args.expiration < BigInt(Date.now() / 1000)) { // AVM uses unix timestamp in seconds
         throw new Error('Expiration must be in the future');
@@ -279,7 +276,7 @@ export class StakingSDK extends BaseSDK<StakingClient> {
 
     if (asset === 0n) {
 
-      const total = microAlgo(cost + amount);
+      const total = microAlgo(isEscrowed ? cost + amount : cost);
 
       const payment = this.client.algorand.createTransaction.payment({
         ...sendParams,
@@ -329,16 +326,9 @@ export class StakingSDK extends BaseSDK<StakingClient> {
    * @param asset - The asset ID (0 for ALGO)
    * @param type - The staking type
    */
-  async withdraw({ sender, signer, asset, type }: WithdrawArgs): Promise<void> {
-
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    await this.client.send.withdraw({
-      ...sendParams,
+  async withdraw({ sender, signer, asset, type }: WithdrawArgs): Promise<AppReturn<void>> {
+    return await this.client.send.withdraw({
+      ...this.getSendParams({ sender, signer }),
       args: { asset, type }
     });
   }
@@ -348,16 +338,9 @@ export class StakingSDK extends BaseSDK<StakingClient> {
    * @param address - The address to create heartbeat for
    * @param asset - The asset ID (0 for ALGO)
    */
-  async createHeartbeat({ sender, signer, address, asset }: CreateHeartbeatArgs): Promise<void> {
-
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    await this.client.send.createHeartbeat({
-      ...sendParams,
+  async createHeartbeat({ sender, signer, address, asset }: CreateHeartbeatArgs): Promise<AppReturn<void>> {
+    return await this.client.send.createHeartbeat({
+      ...this.getSendParams({ sender, signer }),
       args: { address, asset }
     });
   }
@@ -369,15 +352,7 @@ export class StakingSDK extends BaseSDK<StakingClient> {
    */
   async updateSettings({ sender, signer, asset, value }: UpdateSettingsArgs): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
@@ -396,15 +371,7 @@ export class StakingSDK extends BaseSDK<StakingClient> {
   }
 
   async optIn({ sender, signer, asset }: OptInArgs): Promise<void> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const cost = await this.optInCost();
 

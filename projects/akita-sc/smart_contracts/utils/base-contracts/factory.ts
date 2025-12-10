@@ -16,7 +16,7 @@ import { ERR_NOT_AKITA_DAO } from '../../errors'
 import { ERR_CONTRACT_NOT_SET, ERR_INVALID_CALL_ORDER } from '../errors'
 
 // CONTRACT IMPORTS
-import { AkitaBaseFeeGeneratorContract } from './base'
+import { AkitaFeeGeneratorContractWithOptIn } from './base'
 
 export const BaseFactoryGlobalStateKeyChildContractVersion = 'child_contract_version'
 export const BoxKeyBoxedContract = 'bc'
@@ -26,7 +26,7 @@ export type AppCreatorValue = {
   amount: uint64
 }
 
-export class FactoryContract extends AkitaBaseFeeGeneratorContract {
+export class FactoryContract extends AkitaFeeGeneratorContractWithOptIn {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 

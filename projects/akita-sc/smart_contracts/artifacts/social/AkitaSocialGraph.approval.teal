@@ -1,0 +1,1593 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 0 1 32 8
+    bytecblock "akita_dao" 0x151f7c75 "" "b" "f"
+    // smart_contracts/social/graph.algo.ts:13
+    // export class AkitaSocialGraph extends classes(BaseSocial, AkitaBaseContract) {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@21
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
+    pushbytess 0xb59c8a54 0xaeebb378 0x86675494 0x4b6f907f 0x0aea5a8a 0x4303668e 0x70e5c48b 0x33e92c94 0x854dede0 0x92e6dd3b 0xa134a278 0x344175f0 // method "block(pay,address)void", method "unblock(address)void", method "gatedFollow(pay,appl,address)void", method "follow(pay,address)void", method "unfollow(address,uint64)void", method "isBlocked(address,address)bool", method "isFollower(address,uint64,address)bool", method "updateAkitaDAO(uint64)void", method "opUp()void", method "mbr(byte[])(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)", method "payWallMbr(((uint8,uint64,uint64)[],(uint8,uint64,uint64)[]))uint64", method "checkTipMbrRequirements(uint64,address,uint64)(uint8,uint64)"
+    txna ApplicationArgs 0
+    match block unblock gatedFollow follow unfollow isBlocked isFollower updateAkitaDAO main_opUp_route@14 mbr payWallMbr checkTipMbrRequirements
+    err
+
+main_opUp_route@14:
+    // smart_contracts/utils/base-contracts/base.ts:43
+    // opUp(): void { }
+    intc_1 // 1
+    return
+
+main___algots__.defaultCreate@21:
+    // smart_contracts/social/graph.algo.ts:13
+    // export class AkitaSocialGraph extends classes(BaseSocial, AkitaBaseContract) {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
+
+
+// smart_contracts/utils/functions.ts::originOrTxnSender(walletID: uint64) -> bytes:
+originOrTxnSender:
+    // smart_contracts/utils/functions.ts:145
+    // export function originOrTxnSender(walletID: Application): Account {
+    proto 1 1
+    // smart_contracts/utils/functions.ts:146
+    // return originOr(walletID, Txn.sender)
+    txn Sender
+    // smart_contracts/utils/functions.ts:139
+    // if (walletID.id === 0) {
+    frame_dig -1
+    bnz originOrTxnSender_after_if_else@3
+    frame_dig 0
+
+originOrTxnSender_after_inlined_smart_contracts/utils/functions.ts::originOr@4:
+    // smart_contracts/utils/functions.ts:146
+    // return originOr(walletID, Txn.sender)
+    swap
+    retsub
+
+originOrTxnSender_after_if_else@3:
+    // smart_contracts/utils/functions.ts:161-164
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    frame_dig -1
+    // smart_contracts/utils/functions.ts:163
+    // Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    pushbytes "controlled_address"
+    // smart_contracts/utils/functions.ts:161-164
+    // const [controlledAccountBytes] = op.AppGlobal.getExBytes(
+    //   walletID,
+    //   Bytes(AbstractAccountGlobalStateKeysControlledAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:146
+    // return originOr(walletID, Txn.sender)
+    b originOrTxnSender_after_inlined_smart_contracts/utils/functions.ts::originOr@4
+
+
+// smart_contracts/utils/functions.ts::getWalletIDUsingAkitaDAO(akitaDAO: uint64, address: bytes) -> uint64:
+getWalletIDUsingAkitaDAO:
+    // smart_contracts/utils/functions.ts:176
+    // export function getWalletIDUsingAkitaDAO(akitaDAO: Application, address: Account): Application {
+    proto 2 1
+    // smart_contracts/utils/functions.ts:55
+    // const [otherAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysOtherAppList))
+    frame_dig -2
+    pushbytes "oal"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:60
+    // return getOtherAppList(akitaDAO).escrow
+    pushint 24 // 24
+    extract_uint64
+    // smart_contracts/utils/functions.ts:182-185
+    // const data = abiCall<typeof EscrowFactory.prototype.get>({
+    //   appId: escrowFactory,
+    //   args: [address]
+    // }).returnValue
+    itxn_begin
+    pushbytes 0x3c1a6f33 // method "get(address)byte[]"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    dig 1
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    intc_0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
+    extract 6 0
+    dup
+    // smart_contracts/utils/functions.ts:187
+    // if (Bytes(data).length === 0 || Bytes(data).length !== 8) {
+    len
+    dup
+    bz getWalletIDUsingAkitaDAO_if_body@6
+    frame_dig 1
+    intc_3 // 8
+    !=
+    bz getWalletIDUsingAkitaDAO_after_if_else@7
+
+getWalletIDUsingAkitaDAO_if_body@6:
+    // smart_contracts/utils/functions.ts:188
+    // return 0
+    intc_0 // 0
+
+getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8:
+    // smart_contracts/utils/functions.ts:178
+    // return Application(getWalletID(escrowFactory, address))
+    frame_bury 0
+    retsub
+
+getWalletIDUsingAkitaDAO_after_if_else@7:
+    // smart_contracts/utils/functions.ts:191
+    // return btoi(data)
+    frame_dig 0
+    btoi
+    // smart_contracts/utils/functions.ts:178
+    // return Application(getWalletID(escrowFactory, address))
+    b getWalletIDUsingAkitaDAO_after_inlined_smart_contracts/utils/functions.ts::getWalletID@8
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.block[routing]() -> void:
+block:
+    // smart_contracts/social/graph.algo.ts:63
+    // block(mbrPayment: gtxn.PaymentTxn, address: Account): void {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/social/graph.algo.ts:64
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:64
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    app_global_get_ex
+    assert // check GlobalState exists
+    txn Sender
+    callsub getWalletIDUsingAkitaDAO
+    // smart_contracts/social/graph.algo.ts:65
+    // const origin = originOrTxnSender(wallet)
+    callsub originOrTxnSender
+    // smart_contracts/social/graph.algo.ts:67
+    // assert(!this.isBanned(origin), ERR_BANNED)
+    dup
+    callsub isBanned
+    !
+    assert // This account is banned
+    // smart_contracts/social/graph.algo.ts:69-76
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.mbr(Bytes('')).blocks
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    dig 2
+    gtxns Receiver
+    // smart_contracts/social/graph.algo.ts:72
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/social/graph.algo.ts:69-76
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.mbr(Bytes('')).blocks
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    uncover 3
+    gtxns Amount
+    // smart_contracts/social/graph.algo.ts:73
+    // amount: this.mbr(Bytes('')).blocks
+    bytec_2 // ""
+    callsub smart_contracts/social/base.ts::BaseSocial.mbr
+    intc_3 // 8
+    extract_uint64
+    // smart_contracts/social/graph.algo.ts:69-76
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: this.mbr(Bytes('')).blocks
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    &&
+    assert // Invalid payment
+    // smart_contracts/social/graph.algo.ts:78
+    // const blocksKey = this.blk(origin, address)
+    swap
+    callsub blk
+    // smart_contracts/social/graph.algo.ts:18
+    // blocks = BoxMap<BlockListKey, bytes<0>>({ keyPrefix: AkitaSocialBoxPrefixBlocks })
+    bytec_3 // "b"
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:79
+    // this.blocks(blocksKey).create()
+    intc_0 // 0
+    box_create
+    pop
+    // smart_contracts/social/graph.algo.ts:63
+    // block(mbrPayment: gtxn.PaymentTxn, address: Account): void {
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.unblock[routing]() -> void:
+unblock:
+    // smart_contracts/social/graph.algo.ts:82
+    // unblock(address: Account): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/social/graph.algo.ts:83
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:83
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    app_global_get_ex
+    assert // check GlobalState exists
+    txn Sender
+    callsub getWalletIDUsingAkitaDAO
+    // smart_contracts/social/graph.algo.ts:84
+    // const origin = originOrTxnSender(wallet)
+    callsub originOrTxnSender
+    // smart_contracts/social/graph.algo.ts:86
+    // assert(!this.isBanned(origin), ERR_BANNED)
+    dup
+    callsub isBanned
+    !
+    assert // This account is banned
+    // smart_contracts/social/graph.algo.ts:88
+    // const blocksKey = this.blk(origin, address)
+    dup
+    uncover 2
+    callsub blk
+    // smart_contracts/social/graph.algo.ts:18
+    // blocks = BoxMap<BlockListKey, bytes<0>>({ keyPrefix: AkitaSocialBoxPrefixBlocks })
+    bytec_3 // "b"
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:89
+    // this.blocks(blocksKey).delete()
+    box_del
+    pop
+    // smart_contracts/social/graph.algo.ts:91-96
+    // itxn
+    //   .payment({
+    //     receiver: origin,
+    //     amount: this.mbr(Bytes('')).blocks
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/social/graph.algo.ts:94
+    // amount: this.mbr(Bytes('')).blocks
+    bytec_2 // ""
+    callsub smart_contracts/social/base.ts::BaseSocial.mbr
+    intc_3 // 8
+    extract_uint64
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/social/graph.algo.ts:91-95
+    // itxn
+    //   .payment({
+    //     receiver: origin,
+    //     amount: this.mbr(Bytes('')).blocks
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/social/graph.algo.ts:91-96
+    // itxn
+    //   .payment({
+    //     receiver: origin,
+    //     amount: this.mbr(Bytes('')).blocks
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/social/graph.algo.ts:82
+    // unblock(address: Account): void {
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.gatedFollow[routing]() -> void:
+gatedFollow:
+    // smart_contracts/social/graph.algo.ts:99-103
+    // gatedFollow(
+    //   mbrPayment: gtxn.PaymentTxn,
+    //   gateTxn: gtxn.ApplicationCallTxn,
+    //   address: Account
+    // ): void {
+    txn GroupIndex
+    pushint 2 // 2
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dupn 2
+    gtxns TypeEnum
+    pushint 6 // appl
+    ==
+    assert // transaction type is appl
+    txna ApplicationArgs 1
+    dup
+    cover 2
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/social/graph.algo.ts:104
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:104
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    app_global_get_ex
+    assert // check GlobalState exists
+    txn Sender
+    callsub getWalletIDUsingAkitaDAO
+    // smart_contracts/social/graph.algo.ts:105
+    // const origin = originOrTxnSender(wallet)
+    callsub originOrTxnSender
+    cover 2
+    // smart_contracts/social/graph.algo.ts:108
+    // const { followGateID } = this.getMeta(address)
+    callsub getMeta
+    extract 50 8
+    swap
+    // smart_contracts/social/graph.algo.ts:109
+    // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, followGateID), ERR_FAILED_GATE)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:109
+    // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, followGateID), ERR_FAILED_GATE)
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/utils/functions.ts:229
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    swap
+    gtxns ApplicationID
+    // smart_contracts/utils/functions.ts:40
+    // const [appListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAppList))
+    swap
+    pushbytes "aal"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/functions.ts:229
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    pushint 40 // 40
+    extract_uint64
+    ==
+    // smart_contracts/utils/functions.ts:229-230
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    // gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    bz gatedFollow_bool_false@8
+    // smart_contracts/utils/functions.ts:230
+    // gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    dig 3
+    gtxns OnCompletion
+    // smart_contracts/utils/functions.ts:229-230
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    // gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    bnz gatedFollow_bool_false@8
+    // smart_contracts/utils/functions.ts:231
+    // gateTxn.numAppArgs === 4 &&
+    dig 3
+    gtxns NumAppArgs
+    pushint 4 // 4
+    ==
+    // smart_contracts/utils/functions.ts:229-231
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    // gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    // gateTxn.numAppArgs === 4 &&
+    bz gatedFollow_bool_false@8
+    // smart_contracts/utils/functions.ts:232
+    // gateTxn.appArgs(0) === methodSelector<typeof Gate.prototype.mustCheck>() &&
+    dig 3
+    intc_0 // 0
+    gtxnsas ApplicationArgs
+    pushbytes 0x43922655 // method "mustCheck(address,uint64,byte[][])void"
+    ==
+    // smart_contracts/utils/functions.ts:229-232
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    // gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    // gateTxn.numAppArgs === 4 &&
+    // gateTxn.appArgs(0) === methodSelector<typeof Gate.prototype.mustCheck>() &&
+    bz gatedFollow_bool_false@8
+    // smart_contracts/utils/functions.ts:233
+    // gateTxn.appArgs(1) === new Address(caller).bytes &&
+    dig 3
+    intc_1 // 1
+    gtxnsas ApplicationArgs
+    dig 2
+    ==
+    // smart_contracts/utils/functions.ts:229-233
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    // gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    // gateTxn.numAppArgs === 4 &&
+    // gateTxn.appArgs(0) === methodSelector<typeof Gate.prototype.mustCheck>() &&
+    // gateTxn.appArgs(1) === new Address(caller).bytes &&
+    bz gatedFollow_bool_false@8
+    // smart_contracts/utils/functions.ts:234
+    // gateTxn.appArgs(2) === itob(id)
+    dig 3
+    pushint 2 // 2
+    gtxnsas ApplicationArgs
+    dig 1
+    ==
+    // smart_contracts/utils/functions.ts:229-234
+    // gateTxn.appId === Application(getAkitaAppList(akitaDAO).gate) &&
+    // gateTxn.onCompletion === OnCompleteAction.NoOp &&
+    // gateTxn.numAppArgs === 4 &&
+    // gateTxn.appArgs(0) === methodSelector<typeof Gate.prototype.mustCheck>() &&
+    // gateTxn.appArgs(1) === new Address(caller).bytes &&
+    // gateTxn.appArgs(2) === itob(id)
+    bz gatedFollow_bool_false@8
+    intc_1 // 1
+
+gatedFollow_bool_merge@9:
+    // smart_contracts/social/graph.algo.ts:109
+    // assert(gateCheck(gateTxn, this.akitaDAO.value, origin, followGateID), ERR_FAILED_GATE)
+    assert // Gate check failed
+    // smart_contracts/social/graph.algo.ts:111
+    // const { follows } = this.mbr(Bytes(''))
+    bytec_2 // ""
+    callsub smart_contracts/social/base.ts::BaseSocial.mbr
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/social/graph.algo.ts:112-119
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: follows
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    dig 5
+    dup
+    gtxns Receiver
+    // smart_contracts/social/graph.algo.ts:115
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/social/graph.algo.ts:112-119
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: follows
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    swap
+    gtxns Amount
+    uncover 2
+    ==
+    &&
+    assert // Invalid payment
+    // smart_contracts/social/graph.algo.ts:121
+    // this.createFollow(origin, address)
+    dig 1
+    dig 3
+    callsub createFollow
+    // smart_contracts/social/graph.algo.ts:99-103
+    // gatedFollow(
+    //   mbrPayment: gtxn.PaymentTxn,
+    //   gateTxn: gtxn.ApplicationCallTxn,
+    //   address: Account
+    // ): void {
+    intc_1 // 1
+    return
+
+gatedFollow_bool_false@8:
+    intc_0 // 0
+    b gatedFollow_bool_merge@9
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.follow[routing]() -> void:
+follow:
+    // smart_contracts/social/graph.algo.ts:124
+    // follow(mbrPayment: gtxn.PaymentTxn, address: Account): void {
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/social/graph.algo.ts:125
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:125
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    app_global_get_ex
+    assert // check GlobalState exists
+    txn Sender
+    callsub getWalletIDUsingAkitaDAO
+    // smart_contracts/social/graph.algo.ts:126
+    // const origin = originOrTxnSender(wallet)
+    callsub originOrTxnSender
+    // smart_contracts/social/graph.algo.ts:129
+    // const { followGateID } = this.getMeta(address)
+    dig 1
+    callsub getMeta
+    pushint 50 // 50
+    extract_uint64
+    // smart_contracts/social/graph.algo.ts:130
+    // assert(followGateID === 0, ERR_HAS_GATE)
+    !
+    assert // This has a gate
+    // smart_contracts/social/graph.algo.ts:132
+    // const { follows } = this.mbr(Bytes(''))
+    bytec_2 // ""
+    callsub smart_contracts/social/base.ts::BaseSocial.mbr
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/social/graph.algo.ts:133-140
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: follows
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    dig 3
+    gtxns Receiver
+    // smart_contracts/social/graph.algo.ts:136
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/social/graph.algo.ts:133-140
+    // assertMatch(
+    //   mbrPayment,
+    //   {
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: follows
+    //   },
+    //   ERR_INVALID_PAYMENT
+    // )
+    ==
+    uncover 4
+    gtxns Amount
+    uncover 2
+    ==
+    &&
+    assert // Invalid payment
+    // smart_contracts/social/graph.algo.ts:142
+    // this.createFollow(origin, address)
+    swap
+    callsub createFollow
+    // smart_contracts/social/graph.algo.ts:124
+    // follow(mbrPayment: gtxn.PaymentTxn, address: Account): void {
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.unfollow[routing]() -> void:
+unfollow:
+    // smart_contracts/social/graph.algo.ts:145
+    // unfollow(address: Account, index: uint64): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    // smart_contracts/social/graph.algo.ts:146
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:146
+    // const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    app_global_get_ex
+    assert // check GlobalState exists
+    txn Sender
+    callsub getWalletIDUsingAkitaDAO
+    // smart_contracts/social/graph.algo.ts:147
+    // const origin = originOrTxnSender(wallet)
+    callsub originOrTxnSender
+    // smart_contracts/social/graph.algo.ts:149
+    // assert(!this.isBanned(origin), ERR_BANNED)
+    dup
+    callsub isBanned
+    !
+    assert // This account is banned
+    // smart_contracts/social/graph.algo.ts:151
+    // const followsKey = { user: address, index }
+    swap
+    itob
+    dig 2
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:152
+    // assert(this.follows(followsKey).value === origin, ERR_WRONG_FOLLOWER_KEY)
+    dup
+    extract 0 32
+    swap
+    extract 32 8
+    concat
+    // smart_contracts/social/graph.algo.ts:16
+    // follows = BoxMap<FollowsKey, Account>({ keyPrefix: AkitaSocialBoxPrefixFollows })
+    bytec 4 // "f"
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:152
+    // assert(this.follows(followsKey).value === origin, ERR_WRONG_FOLLOWER_KEY)
+    dup
+    box_get
+    assert // Box must have value
+    dig 2
+    ==
+    assert // Wrong follower key
+    // smart_contracts/social/graph.algo.ts:154
+    // const { followerIndex, followerCount } = this.getMeta(address)
+    dig 2
+    callsub getMeta
+    dup
+    pushint 33 // 33
+    extract_uint64
+    swap
+    pushint 41 // 41
+    extract_uint64
+    // smart_contracts/social/graph.algo.ts:155
+    // this.updateFollowerMeta(address, followerIndex, followerCount - 1)
+    intc_1 // 1
+    -
+    uncover 4
+    cover 2
+    callsub updateFollowerMeta
+    // smart_contracts/social/graph.algo.ts:157
+    // this.follows(followsKey).delete()
+    box_del
+    pop
+    // smart_contracts/social/graph.algo.ts:159-164
+    // itxn
+    //   .payment({
+    //     receiver: origin,
+    //     amount: this.mbr(Bytes('')).follows
+    //   })
+    //   .submit()
+    itxn_begin
+    // smart_contracts/social/graph.algo.ts:162
+    // amount: this.mbr(Bytes('')).follows
+    bytec_2 // ""
+    callsub smart_contracts/social/base.ts::BaseSocial.mbr
+    intc_0 // 0
+    extract_uint64
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/social/graph.algo.ts:159-163
+    // itxn
+    //   .payment({
+    //     receiver: origin,
+    //     amount: this.mbr(Bytes('')).follows
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/social/graph.algo.ts:159-164
+    // itxn
+    //   .payment({
+    //     receiver: origin,
+    //     amount: this.mbr(Bytes('')).follows
+    //   })
+    //   .submit()
+    itxn_submit
+    // smart_contracts/social/graph.algo.ts:145
+    // unfollow(address: Account, index: uint64): void {
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.isBlocked[routing]() -> void:
+isBlocked:
+    // smart_contracts/social/graph.algo.ts:167
+    // @abimethod({ readonly: true })
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/social/graph.algo.ts:169
+    // const blocksKey = this.blk(user, blocked)
+    callsub blk
+    // smart_contracts/social/graph.algo.ts:18
+    // blocks = BoxMap<BlockListKey, bytes<0>>({ keyPrefix: AkitaSocialBoxPrefixBlocks })
+    bytec_3 // "b"
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:170
+    // return this.blocks(blocksKey).exists
+    box_len
+    bury 1
+    // smart_contracts/social/graph.algo.ts:167
+    // @abimethod({ readonly: true })
+    pushbytes 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.isFollower[routing]() -> void:
+isFollower:
+    // smart_contracts/social/graph.algo.ts:173
+    // @abimethod({ readonly: true })
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/social/graph.algo.ts:175
+    // return this.follows({ user, index }).value === follower
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:16
+    // follows = BoxMap<FollowsKey, Account>({ keyPrefix: AkitaSocialBoxPrefixFollows })
+    bytec 4 // "f"
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:175
+    // return this.follows({ user, index }).value === follower
+    box_get
+    assert // Box must have value
+    ==
+    // smart_contracts/social/graph.algo.ts:173
+    // @abimethod({ readonly: true })
+    pushbytes 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/utils/base-contracts/base.ts::AkitaBaseContract.updateAkitaDAO[routing]() -> void:
+updateAkitaDAO:
+    // smart_contracts/utils/base-contracts/base.ts:38
+    // updateAkitaDAO(akitaDAO: Application): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:39
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+    txn Sender
+    // smart_contracts/utils/base-contracts/base.ts:32
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:32
+    // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
+    app_global_get_ex
+    assert // check GlobalState exists
+    pushbytes "wallet"
+    app_global_get_ex
+    pop
+    // smart_contracts/utils/base-contracts/base.ts:39
+    // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+    app_params_get AppAddress
+    assert // application exists
+    ==
+    assert // Only the Akita DAO can call this function
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/utils/base-contracts/base.ts:40
+    // this.akitaDAO.value = akitaDAO
+    swap
+    app_global_put
+    // smart_contracts/utils/base-contracts/base.ts:38
+    // updateAkitaDAO(akitaDAO: Application): void {
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/base.ts::BaseSocial.mbr[routing]() -> void:
+mbr:
+    // smart_contracts/social/base.ts:14
+    // mbr(ref: bytes): AkitaSocialMBRData {
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
+    extract 2 0
+    callsub smart_contracts/social/base.ts::BaseSocial.mbr
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/base.ts::BaseSocial.payWallMbr[routing]() -> void:
+payWallMbr:
+    // smart_contracts/social/base.ts:30
+    // payWallMbr(paywall: ViewPayWallValue): uint64 {
+    txna ApplicationArgs 1
+    // smart_contracts/social/base.ts:33
+    // PayWallPayOptionSize * (paywall.agentPayInfo.length + paywall.userPayInfo.length)
+    dup
+    pushint 2 // 2
+    extract_uint16
+    dig 1
+    len
+    dig 2
+    dig 2
+    uncover 2
+    substring3
+    intc_0 // 0
+    extract_uint16
+    dig 2
+    intc_0 // 0
+    extract_uint16
+    uncover 3
+    swap
+    uncover 3
+    substring3
+    intc_0 // 0
+    extract_uint16
+    +
+    // smart_contracts/social/base.ts:32-34
+    // BoxCostPerByte * (
+    //   PayWallPayOptionSize * (paywall.agentPayInfo.length + paywall.userPayInfo.length)
+    // )
+    pushint 6800 // 6800
+    *
+    // smart_contracts/social/base.ts:31
+    // return MinPayWallMBR + (
+    pushint 5200 // 5200
+    // smart_contracts/social/base.ts:31-35
+    // return MinPayWallMBR + (
+    //   BoxCostPerByte * (
+    //     PayWallPayOptionSize * (paywall.agentPayInfo.length + paywall.userPayInfo.length)
+    //   )
+    // )
+    +
+    // smart_contracts/social/base.ts:30
+    // payWallMbr(paywall: ViewPayWallValue): uint64 {
+    itob
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts/social/base.ts::BaseSocial.checkTipMbrRequirements[routing]() -> void:
+checkTipMbrRequirements:
+    // smart_contracts/social/base.ts:51
+    // checkTipMbrRequirements(akitaDAO: Application, creator: Account, wallet: Application): tipMBRInfo {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    dup
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    cover 2
+    // smart_contracts/utils/functions.ts:94
+    // const akitaAssetsBytes = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysAkitaAssets))[0]
+    swap
+    pushbytes "akita_assets"
+    app_global_get_ex
+    pop
+    // smart_contracts/social/base.ts:52
+    // const akta = Asset(getAkitaAssets(akitaDAO).akta)
+    intc_0 // 0
+    extract_uint64
+    // smart_contracts/social/base.ts:54
+    // if (!creator.isOptedIn(akta) && wallet.id !== 0) {
+    asset_holding_get AssetBalance
+    bury 1
+    bnz checkTipMbrRequirements_after_if_else@6
+    dup
+    bz checkTipMbrRequirements_after_if_else@6
+    // smart_contracts/social/base.ts:39-48
+    // return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+    //   appId,
+    //   args: [
+    //     getPluginAppList(akitaDAO).optin,
+    //     true,
+    //     Global.zeroAddress,
+    //     '',
+    //     methodSelector<typeof OptInPlugin.prototype.optIn>()
+    //   ]
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/utils/functions.ts:50
+    // const [pluginAppListBytes] = op.AppGlobal.getExBytes(akitaDAO, Bytes(AkitaDAOGlobalStateKeysPluginAppList))
+    dig 1
+    pushbytes "pal"
+    app_global_get_ex
+    pop
+    // smart_contracts/social/base.ts:42
+    // getPluginAppList(akitaDAO).optin,
+    extract 0 8
+    // smart_contracts/social/base.ts:44
+    // Global.zeroAddress,
+    global ZeroAddress
+    // smart_contracts/social/base.ts:39-48
+    // return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+    //   appId,
+    //   args: [
+    //     getPluginAppList(akitaDAO).optin,
+    //     true,
+    //     Global.zeroAddress,
+    //     '',
+    //     methodSelector<typeof OptInPlugin.prototype.optIn>()
+    //   ]
+    // }).returnValue
+    pushbytes 0x4727af21 // method "arc58_canCall(uint64,bool,address,string,byte[4])bool"
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    // smart_contracts/social/base.ts:43
+    // true,
+    pushbytes 0x80
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    // smart_contracts/social/base.ts:45
+    // '',
+    pushbytes 0x0000
+    itxn_field ApplicationArgs
+    // smart_contracts/social/base.ts:46
+    // methodSelector<typeof OptInPlugin.prototype.optIn>()
+    pushbytes 0x6835e3bc // method "optIn(uint64,bool,uint64[],pay)void"
+    itxn_field ApplicationArgs
+    dup
+    itxn_field ApplicationID
+    // smart_contracts/social/base.ts:39-48
+    // return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+    //   appId,
+    //   args: [
+    //     getPluginAppList(akitaDAO).optin,
+    //     true,
+    //     Global.zeroAddress,
+    //     '',
+    //     methodSelector<typeof OptInPlugin.prototype.optIn>()
+    //   ]
+    // }).returnValue
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    // smart_contracts/social/base.ts:56
+    // if (canCallArc58OptIn) {
+    bz checkTipMbrRequirements_after_if_else@6
+    // smart_contracts/social/base.ts:59
+    // arc58: Global.assetOptInMinBalance
+    global AssetOptInMinBalance
+    // smart_contracts/social/base.ts:57-60
+    // return {
+    //   type: TipSendTypeARC58,
+    //   arc58: Global.assetOptInMinBalance
+    // }
+    itob
+    // smart_contracts/social/base.ts:58
+    // type: TipSendTypeARC58,
+    pushbytes 0x14
+    // smart_contracts/social/base.ts:57-60
+    // return {
+    //   type: TipSendTypeARC58,
+    //   arc58: Global.assetOptInMinBalance
+    // }
+    swap
+    concat
+
+checkTipMbrRequirements_after_inlined_smart_contracts/social/base.ts::BaseSocial.checkTipMbrRequirements@7:
+    // smart_contracts/social/base.ts:51
+    // checkTipMbrRequirements(akitaDAO: Application, creator: Account, wallet: Application): tipMBRInfo {
+    bytec_1 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+checkTipMbrRequirements_after_if_else@6:
+    // smart_contracts/social/base.ts:64-67
+    // return {
+    //   type: TipSendTypeDirect,
+    //   arc58: 0
+    // }
+    pushbytes 0x0a0000000000000000
+    // smart_contracts/social/base.ts:51
+    // checkTipMbrRequirements(akitaDAO: Application, creator: Account, wallet: Application): tipMBRInfo {
+    b checkTipMbrRequirements_after_inlined_smart_contracts/social/base.ts::BaseSocial.checkTipMbrRequirements@7
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.isBanned(account: bytes) -> uint64:
+isBanned:
+    // smart_contracts/social/graph.algo.ts:20
+    // private isBanned(account: Account): boolean {
+    proto 1 1
+    // smart_contracts/social/graph.algo.ts:21-24
+    // return abiCall<typeof AkitaSocial.prototype.isBanned>({
+    //   appId: this.akitaDAO.value,
+    //   args: [account]
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/social/graph.algo.ts:22
+    // appId: this.akitaDAO.value,
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:22
+    // appId: this.akitaDAO.value,
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/social/graph.algo.ts:21-24
+    // return abiCall<typeof AkitaSocial.prototype.isBanned>({
+    //   appId: this.akitaDAO.value,
+    //   args: [account]
+    // }).returnValue
+    pushbytes 0x84269c78 // method "isBanned(address)bool"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_0 // 0
+    getbit
+    retsub
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.blk(userAddress: bytes, blockedAddress: bytes) -> bytes:
+blk:
+    // smart_contracts/social/graph.algo.ts:28
+    // private blk(userAddress: Account, blockedAddress: Account): BlockListKey {
+    proto 2 1
+    // smart_contracts/social/graph.algo.ts:29
+    // const user = userAddress.bytes.slice(0, 16).toFixed({ length: 16 })
+    frame_dig -2
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    pushint 16 // 16
+    dig 2
+    >=
+    pushint 16 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -2
+    cover 2
+    substring3
+    dup
+    len
+    pushint 16 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/social/graph.algo.ts:30
+    // const blocked = blockedAddress.bytes.slice(0, 16).toFixed({ length: 16 })
+    frame_dig -1
+    len
+    intc_0 // 0
+    dig 1
+    >=
+    intc_0 // 0
+    dig 2
+    uncover 2
+    select
+    pushint 16 // 16
+    dig 2
+    >=
+    pushint 16 // 16
+    uncover 3
+    uncover 2
+    select
+    frame_dig -1
+    cover 2
+    substring3
+    dup
+    len
+    pushint 16 // 16
+    ==
+    assert // Length must be 16
+    // smart_contracts/social/graph.algo.ts:31
+    // return { user, blocked }
+    concat
+    retsub
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.getMeta(address: bytes) -> bytes:
+getMeta:
+    // smart_contracts/social/graph.algo.ts:34
+    // private getMeta(address: Account): MetaValue {
+    proto 1 1
+    // smart_contracts/social/graph.algo.ts:35-38
+    // return abiCall<typeof AkitaSocial.prototype.getMeta>({
+    //   appId: this.akitaDAO.value,
+    //   args: [address]
+    // }).returnValue
+    itxn_begin
+    // smart_contracts/social/graph.algo.ts:36
+    // appId: this.akitaDAO.value,
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:36
+    // appId: this.akitaDAO.value,
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/social/graph.algo.ts:35-38
+    // return abiCall<typeof AkitaSocial.prototype.getMeta>({
+    //   appId: this.akitaDAO.value,
+    //   args: [address]
+    // }).returnValue
+    pushbytes 0x739ea70b // method "getMeta(address)(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64,uint64)"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dup
+    extract 4 0
+    swap
+    extract 0 4
+    bytec_1 // 0x151f7c75
+    ==
+    assert // Bytes has valid prefix
+    dup
+    len
+    pushint 74 // 74
+    ==
+    assert // invalid number of bytes for (bool1,uint64,uint64,uint64,uint64,uint64,uint64,bool1,uint64,uint64,uint64)
+    retsub
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.updateFollowerMeta(account: bytes, newFollowerIndex: uint64, newFollowerCount: uint64) -> void:
+updateFollowerMeta:
+    // smart_contracts/social/graph.algo.ts:41
+    // private updateFollowerMeta(account: Account, newFollowerIndex: uint64, newFollowerCount: uint64): void {
+    proto 3 0
+    // smart_contracts/social/graph.algo.ts:42-45
+    // abiCall<typeof AkitaSocial.prototype.updateFollowerMeta>({
+    //   appId: this.akitaDAO.value,
+    //   args: [account, newFollowerIndex, newFollowerCount]
+    // })
+    itxn_begin
+    // smart_contracts/social/graph.algo.ts:43
+    // appId: this.akitaDAO.value,
+    intc_0 // 0
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/social/graph.algo.ts:43
+    // appId: this.akitaDAO.value,
+    app_global_get_ex
+    assert // check GlobalState exists
+    // smart_contracts/social/graph.algo.ts:44
+    // args: [account, newFollowerIndex, newFollowerCount]
+    frame_dig -2
+    itob
+    frame_dig -1
+    itob
+    // smart_contracts/social/graph.algo.ts:42-45
+    // abiCall<typeof AkitaSocial.prototype.updateFollowerMeta>({
+    //   appId: this.akitaDAO.value,
+    //   args: [account, newFollowerIndex, newFollowerCount]
+    // })
+    pushbytes 0x3306b32a // method "updateFollowerMeta(address,uint64,uint64)void"
+    itxn_field ApplicationArgs
+    frame_dig -3
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
+    retsub
+
+
+// smart_contracts/social/graph.algo.ts::AkitaSocialGraph.createFollow(origin: bytes, address: bytes) -> void:
+createFollow:
+    // smart_contracts/social/graph.algo.ts:48
+    // private createFollow(origin: Account, address: Account): void {
+    proto 2 0
+    // smart_contracts/social/graph.algo.ts:49
+    // assert(!this.isBanned(origin), ERR_BANNED)
+    frame_dig -2
+    callsub isBanned
+    !
+    assert // This account is banned
+    // smart_contracts/social/graph.algo.ts:169
+    // const blocksKey = this.blk(user, blocked)
+    frame_dig -1
+    frame_dig -2
+    callsub blk
+    // smart_contracts/social/graph.algo.ts:18
+    // blocks = BoxMap<BlockListKey, bytes<0>>({ keyPrefix: AkitaSocialBoxPrefixBlocks })
+    bytec_3 // "b"
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:170
+    // return this.blocks(blocksKey).exists
+    box_len
+    bury 1
+    // smart_contracts/social/graph.algo.ts:50
+    // assert(!this.isBlocked(address, origin), ERR_BLOCKED)
+    !
+    assert // This account is blocked by the user
+    // smart_contracts/social/graph.algo.ts:52
+    // const { automated, followerCount, followerIndex } = this.getMeta(origin)
+    frame_dig -2
+    callsub getMeta
+    dup
+    pushint 392 // 392
+    getbit
+    dig 1
+    pushint 41 // 41
+    extract_uint64
+    uncover 2
+    pushint 33 // 33
+    extract_uint64
+    // smart_contracts/social/graph.algo.ts:53
+    // assert(!automated, ERR_AUTOMATED_ACCOUNT)
+    uncover 2
+    !
+    assert // This is an automated account
+    // smart_contracts/social/graph.algo.ts:55
+    // const followsKey: FollowsKey = { user: address, index: (followerIndex + 1) }
+    intc_1 // 1
+    +
+    dup
+    itob
+    frame_dig -1
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:16
+    // follows = BoxMap<FollowsKey, Account>({ keyPrefix: AkitaSocialBoxPrefixFollows })
+    bytec 4 // "f"
+    swap
+    concat
+    // smart_contracts/social/graph.algo.ts:56
+    // this.follows(followsKey).value = origin
+    frame_dig -2
+    box_put
+    // smart_contracts/social/graph.algo.ts:58
+    // this.updateFollowerMeta(address, followerIndex + 1, followerCount + 1)
+    swap
+    intc_1 // 1
+    +
+    frame_dig -1
+    cover 2
+    callsub updateFollowerMeta
+    retsub
+
+
+// smart_contracts/social/base.ts::BaseSocial.mbr(ref: bytes) -> bytes:
+smart_contracts/social/base.ts::BaseSocial.mbr:
+    // smart_contracts/social/base.ts:14
+    // mbr(ref: bytes): AkitaSocialMBRData {
+    proto 1 1
+    // smart_contracts/social/base.ts:18
+    // posts: MinPostsMBR + (BoxCostPerByte * ref.length),
+    frame_dig -1
+    len
+    pushint 400 // 400
+    *
+    pushint 40100 // 40100
+    +
+    // smart_contracts/social/base.ts:15-27
+    // return {
+    //   follows: FollowsMBR,
+    //   blocks: BlocksMBR,
+    //   posts: MinPostsMBR + (BoxCostPerByte * ref.length),
+    //   votes: VotesMBR,
+    //   votelist: VotelistMBR,
+    //   reactions: ReactionsMBR,
+    //   reactionlist: ReactionlistMBR,
+    //   meta: MetaMBR,
+    //   moderators: ModeratorsMBR,
+    //   banned: BannedMBR,
+    //   actions: ActionsMBR
+    // }
+    itob
+    pushbytes 0x0000000000007bd40000000000003d54
+    swap
+    concat
+    // smart_contracts/social/base.ts:19
+    // votes: VotesMBR,
+    pushint 19300 // 19300
+    // smart_contracts/social/base.ts:15-27
+    // return {
+    //   follows: FollowsMBR,
+    //   blocks: BlocksMBR,
+    //   posts: MinPostsMBR + (BoxCostPerByte * ref.length),
+    //   votes: VotesMBR,
+    //   votelist: VotelistMBR,
+    //   reactions: ReactionsMBR,
+    //   reactionlist: ReactionlistMBR,
+    //   meta: MetaMBR,
+    //   moderators: ModeratorsMBR,
+    //   banned: BannedMBR,
+    //   actions: ActionsMBR
+    // }
+    itob
+    swap
+    dig 1
+    concat
+    swap
+    concat
+    // smart_contracts/social/base.ts:21
+    // reactions: ReactionsMBR,
+    pushint 22100 // 22100
+    // smart_contracts/social/base.ts:15-27
+    // return {
+    //   follows: FollowsMBR,
+    //   blocks: BlocksMBR,
+    //   posts: MinPostsMBR + (BoxCostPerByte * ref.length),
+    //   votes: VotesMBR,
+    //   votelist: VotelistMBR,
+    //   reactions: ReactionsMBR,
+    //   reactionlist: ReactionlistMBR,
+    //   meta: MetaMBR,
+    //   moderators: ModeratorsMBR,
+    //   banned: BannedMBR,
+    //   actions: ActionsMBR
+    // }
+    itob
+    concat
+    // smart_contracts/social/base.ts:22
+    // reactionlist: ReactionlistMBR,
+    pushint 18900 // 18900
+    // smart_contracts/social/base.ts:15-27
+    // return {
+    //   follows: FollowsMBR,
+    //   blocks: BlocksMBR,
+    //   posts: MinPostsMBR + (BoxCostPerByte * ref.length),
+    //   votes: VotesMBR,
+    //   votelist: VotelistMBR,
+    //   reactions: ReactionsMBR,
+    //   reactionlist: ReactionlistMBR,
+    //   meta: MetaMBR,
+    //   moderators: ModeratorsMBR,
+    //   banned: BannedMBR,
+    //   actions: ActionsMBR
+    // }
+    itob
+    swap
+    dig 1
+    concat
+    // smart_contracts/social/base.ts:23
+    // meta: MetaMBR,
+    pushint 45300 // 45300
+    // smart_contracts/social/base.ts:15-27
+    // return {
+    //   follows: FollowsMBR,
+    //   blocks: BlocksMBR,
+    //   posts: MinPostsMBR + (BoxCostPerByte * ref.length),
+    //   votes: VotesMBR,
+    //   votelist: VotelistMBR,
+    //   reactions: ReactionsMBR,
+    //   reactionlist: ReactionlistMBR,
+    //   meta: MetaMBR,
+    //   moderators: ModeratorsMBR,
+    //   banned: BannedMBR,
+    //   actions: ActionsMBR
+    // }
+    itob
+    concat
+    dig 1
+    concat
+    swap
+    concat
+    // smart_contracts/social/base.ts:26
+    // actions: ActionsMBR
+    pushint 29700 // 29700
+    // smart_contracts/social/base.ts:15-27
+    // return {
+    //   follows: FollowsMBR,
+    //   blocks: BlocksMBR,
+    //   posts: MinPostsMBR + (BoxCostPerByte * ref.length),
+    //   votes: VotesMBR,
+    //   votelist: VotelistMBR,
+    //   reactions: ReactionsMBR,
+    //   reactionlist: ReactionlistMBR,
+    //   meta: MetaMBR,
+    //   moderators: ModeratorsMBR,
+    //   banned: BannedMBR,
+    //   actions: ActionsMBR
+    // }
+    itob
+    concat
+    retsub

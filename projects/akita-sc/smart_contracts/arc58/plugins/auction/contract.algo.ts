@@ -68,7 +68,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
             receiver: this.factory.value.address,
             amount: Global.assetOptInMinBalance
           }),
-          prizeID,
+          Asset(prizeID),
         ]
       })
     }
@@ -83,7 +83,7 @@ export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
             receiver: this.factory.value.address,
             amount: Global.assetOptInMinBalance
           }),
-          bidAssetID,
+          Asset(bidAssetID),
         ]
       })
     }

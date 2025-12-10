@@ -11,7 +11,7 @@ import {
   LessThanOrEqualTo,
   NotEqual,
 } from '../../../utils/operators'
-import { GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueByteLength, OperatorAndValueRegistryMBR } from '../../constants'
+import { AssetGateRegistryInfoByteLength, GateGlobalStateKeyCheckShape, GateGlobalStateKeyRegistrationShape, GateGlobalStateKeyRegistryCursor, OperatorAndValueRegistryMBR } from '../../constants'
 import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { Operator } from '../../types'
 
@@ -78,7 +78,7 @@ export class AssetGate extends AkitaBaseContract {
   }
 
   register(mbrPayment: gtxn.PaymentTxn, args: bytes): uint64 {
-    assert(args.length === OperatorAndValueByteLength, ERR_INVALID_ARG_COUNT)
+    assert(args.length === AssetGateRegistryInfoByteLength, ERR_INVALID_ARG_COUNT)
     assertMatch(
       mbrPayment,
       {
@@ -87,7 +87,7 @@ export class AssetGate extends AkitaBaseContract {
       },
       ERR_INVALID_PAYMENT
     )
-    
+
     const id = this.newRegistryID()
     this.registry(id).value = decodeArc4<AssetGateRegistryInfo>(args)
     return id

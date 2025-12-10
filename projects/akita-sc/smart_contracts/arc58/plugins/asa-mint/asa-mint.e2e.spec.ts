@@ -4,9 +4,9 @@ import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
 import { newWallet, WalletFactorySDK, WalletSDK } from 'akita-sdk';
 import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
-// import { deployAbstractedAccountFactoryAndEscrowFactory } from '../../../../tests/fixtures/abstracted-account'
 import { deployAbstractedAccountFactory } from '../../../../tests/fixtures/abstracted-account';
 import { deployAkitaDAO } from '../../../../tests/fixtures/dao';
+import { deployEscrowFactory } from '../../../../tests/fixtures/escrow';
 import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint';
 
 describe('Asa Mint plugin contract', () => {
@@ -39,6 +39,12 @@ describe('Asa Mint plugin contract', () => {
       apps: {}
     })
 
+    const escrowFactory = await deployEscrowFactory({
+      fixture: localnet,
+      sender,
+      signer,
+    })
+
     walletFactory = (
       await deployAbstractedAccountFactory({
         fixture: localnet,
@@ -46,6 +52,7 @@ describe('Asa Mint plugin contract', () => {
         signer,
         args: {
           akitaDao: dao.appId,
+          escrowFactory: escrowFactory.appId,
         }
       })
     );

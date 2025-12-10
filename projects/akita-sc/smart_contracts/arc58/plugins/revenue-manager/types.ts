@@ -44,7 +44,7 @@ export const SplitDistributionTypePercentage: SplitDistributionType = new Uint8(
 export const SplitDistributionTypeRemainder: SplitDistributionType = new Uint8(30)
 
 export type Split = {
-  receiver: Account
+  receiver: { wallet: Application, escrow: string }
   type: SplitDistributionType
   value: uint64
 }

@@ -1,18 +1,19 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, clone, Global, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4";
+import { abiCall, decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
 import { ONE_DAY } from "../../../social/constants";
 import { DIVISOR } from "../../../utils/constants";
 import { ERR_INVALID_PAYMENT } from "../../../utils/errors";
-import { calcPercent, getEscrow, getRekeyIndex, getSpendingAccount, mustGetEscrowInfo, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
+import { arc58OptInAndSend, calcPercent, getEscrow, getRekeyIndex, getSpendingAccount, mustGetEscrowInfo, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions";
 import { ERR_ESCROW_DOES_NOT_EXIST, ERR_FORBIDDEN } from "../../account/errors";
 import { ERR_ALREADY_OPTED_IN } from "../optin/errors";
 import { RevenueManagerBoxPrefixEscrows, RevenueManagerBoxPrefixReceiveAssets, RevenueManagerBoxPrefixSplitRefs, RevenueManagerBoxPrefixSplits } from "./constants";
-import { ERR_ASSET_ALREADY_ALLOCATED, ERR_ASSET_NOT_ALLOCATED, ERR_CONTROLLED_ADDRESS_MUST_BE_ESCROW, ERR_ESCROW_NOT_ALLOCATABLE, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN, ERR_ESCROW_NOT_IDLE, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE, ERR_ESCROW_NOT_IN_FINALIZATION_PHASE, ERR_ESCROW_NOT_OPTED_IN, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT, ERR_FLAT_WITH_PERCENTAGE_REQUIRES_REMAINDER, ERR_OVER_ALLOCATION, ERR_PERCENTAGE_EXCEEDS_100, ERR_PERCENTAGE_MUST_BE_NOT_BE_100_WITH_REMAINDER, ERR_RECEIVE_ESCROW_DOES_NOT_EXIST, ERR_REMAINDER_MUST_BE_LAST, ERR_SPLIT_REF_NOT_FOUND, ERR_SPLIT_VALUE_MUST_BE_POSITIVE_OR_REMAINDER, ERR_SPLITS_CANNOT_BE_EMPTY, ERR_SPLITS_CANNOT_BE_MORE_THAN_10, ERR_SPLITS_MUST_TOTAL_100_OR_HAVE_REMAINDER, ERR_SPLITS_OR_REF_REQUIRED } from "./errors";
+import { ERR_ASSET_ALREADY_ALLOCATED, ERR_ASSET_NOT_ALLOCATED, ERR_CONTROLLED_ADDRESS_MUST_BE_ESCROW, ERR_ESCROW_NOT_ALLOCATABLE, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN, ERR_ESCROW_NOT_IDLE, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE, ERR_ESCROW_NOT_IN_FINALIZATION_PHASE, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT, ERR_FLAT_WITH_PERCENTAGE_REQUIRES_REMAINDER, ERR_OVER_ALLOCATION, ERR_PERCENTAGE_EXCEEDS_100, ERR_PERCENTAGE_MUST_BE_NOT_BE_100_WITH_REMAINDER, ERR_RECEIVE_ESCROW_DOES_NOT_EXIST, ERR_REMAINDER_MUST_BE_LAST, ERR_SPLIT_REF_NOT_FOUND, ERR_SPLIT_VALUE_MUST_BE_POSITIVE_OR_REMAINDER, ERR_SPLITS_CANNOT_BE_EMPTY, ERR_SPLITS_CANNOT_BE_MORE_THAN_10, ERR_SPLITS_MUST_TOTAL_100_OR_HAVE_REMAINDER, ERR_SPLITS_OR_REF_REQUIRED } from "./errors";
 import { EscrowAssetKey, EscrowDisbursementPhaseAllocation, EscrowDisbursementPhaseFinalization, EscrowDisbursementPhaseIdle, ReceiveEscrow, Split, SplitDistributionTypeFlat, SplitDistributionTypePercentage, SplitDistributionTypeRemainder, SplitRef, WalletEscrowKey } from "./types";
 
 // CONTRACT IMPORTS
 import { AkitaBaseContract } from "../../../utils/base-contracts/base";
+import type { AbstractedAccount } from "../../account/contract.algo";
 
 /**
  * high level overview of how revenue manager works:
@@ -45,7 +46,7 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
    */
   private resolveSplits(wallet: Application, escrow: string): Split[] {
     const key: WalletEscrowKey = { wallet, escrow }
-    
+
     // Check for direct splits first
     if (this.splits(key).exists) {
       return clone(this.splits(key).value)
@@ -54,7 +55,7 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
     // Fall back to referenced splits
     assert(this.splitRefs(key).exists, ERR_SPLITS_OR_REF_REQUIRED)
     const { app, key: refKey } = this.splitRefs(key).value
-    
+
     // Read splits from the referenced contract's global state
     const [refSplitsBytes, exists] = op.AppGlobal.getExBytes(Application(app), Bytes(refKey))
     assert(exists, ERR_SPLIT_REF_NOT_FOUND)
@@ -110,13 +111,16 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
   */
   optIn(wallet: Application, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     const escrow = getEscrow(wallet)
+    assert(escrow !== '', ERR_ESCROW_DOES_NOT_EXIST)
     const sender = getSpendingAccount(wallet)
 
     assertMatch(
       mbrPayment,
       {
         receiver: sender,
-        amount: Global.assetOptInMinBalance * assets.length
+        amount: {
+          greaterThanEq: Global.assetOptInMinBalance * assets.length
+        }
       },
       ERR_INVALID_PAYMENT
     )
@@ -217,6 +221,7 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
 
   startEscrowDisbursement(wallet: Application, rekeyBack: boolean): void {
     const escrow = getEscrow(wallet)
+    assert(escrow !== '', ERR_ESCROW_DOES_NOT_EXIST)
     const { id: escrowID } = mustGetEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
     assert(this.controls(sender), ERR_FORBIDDEN)
@@ -239,17 +244,18 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
 
   processEscrowAllocation(wallet: Application, rekeyBack: boolean, ids: uint64[]): void {
     const escrow = getEscrow(wallet)
+    assert(escrow !== '', ERR_ESCROW_DOES_NOT_EXIST)
     const { id: escrowID } = mustGetEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
     assert(sender === Application(escrowID).address, ERR_CONTROLLED_ADDRESS_MUST_BE_ESCROW)
-    
+
     const { phase, optinCount, allocationCounter } = this.escrows({ wallet, escrow }).value
     assert(phase === EscrowDisbursementPhaseAllocation, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE)
     const totalAssetsToProcess: uint64 = optinCount + 1 // + 1 to include algo
-    
+
     // Resolve splits (either from direct storage or from referenced contract)
     const splits = this.resolveSplits(wallet, escrow)
-    
+
     // Runtime validation of splits (required since referenced values can change)
     assert(splits.length > 0, ERR_SPLITS_CANNOT_BE_EMPTY)
     assert(splits.length <= 10, ERR_SPLITS_CANNOT_BE_MORE_THAN_10)
@@ -268,7 +274,18 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
       for (let j: uint64 = 0; j < splits.length; j++) {
         const { type, receiver, value } = clone(splits[j])
 
-        assert(receiver.isOptedIn(Asset(asset)), ERR_ESCROW_NOT_OPTED_IN)
+        // we require that all receivers are arc58 accounts
+        const receiverEscrowInfo = abiCall<typeof AbstractedAccount.prototype.arc58_getEscrows>({
+          appId: receiver.wallet,
+          args: [[receiver.escrow]]
+        }).returnValue[0]
+
+        const receiverAddress = Application(receiverEscrowInfo.id).address
+
+        // entrypoint escrows should have the required funds to opt all splits in
+        if (!receiverAddress.isOptedIn(Asset(asset))) {
+          arc58OptInAndSend(this.akitaDAO.value, receiver.wallet, receiver.escrow, [asset], [0])
+        }
 
         let amount: uint64 = 0
         switch (type) {
@@ -292,7 +309,7 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
           itxn
             .payment({
               sender,
-              receiver,
+              receiver: receiverAddress,
               amount
             })
             .submit()
@@ -300,7 +317,7 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
           itxn
             .assetTransfer({
               sender,
-              assetReceiver: receiver,
+              assetReceiver: receiverAddress,
               assetAmount: amount,
               xferAsset: asset
             })
@@ -315,7 +332,7 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
     if ((allocationCounter + ids.length) === totalAssetsToProcess) {
       this.escrows({ wallet, escrow }).value.phase = EscrowDisbursementPhaseFinalization
     }
-    
+
     rekeyBackIfNecessary(rekeyBack, wallet)
   }
 
@@ -326,6 +343,7 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
    */
   finalizeEscrowDisbursement(wallet: Application, rekeyBack: boolean, ids: uint64[]): void {
     const escrow = getEscrow(wallet)
+    assert(escrow !== '', ERR_ESCROW_DOES_NOT_EXIST)
     const { id: escrowID } = mustGetEscrowInfo(wallet)
     const sender = getSpendingAccount(wallet)
     assert(sender === Application(escrowID).address, ERR_CONTROLLED_ADDRESS_MUST_BE_ESCROW)

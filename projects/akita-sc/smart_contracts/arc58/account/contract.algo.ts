@@ -49,7 +49,7 @@ import {
   MinEscrowsMBR,
   MinExecutionsMBR,
   MinNamedPluginMBR,
-  MinPluginMBR,
+  MinPluginMBR
 } from './constants'
 import {
   ERR_ADMIN_ONLY,
@@ -811,10 +811,9 @@ export class AbstractedAccount extends Contract {
 
     assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST)
     this.currentPlugin.value = clone(key)
+    const { escrow: escrowID } = this.plugins(key).value
 
-    if (escrow !== '') {
-      assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
-      const escrowID = this.escrows(escrow).value.id
+    if (escrowID !== 0) {
       const spendingApp = Application(escrowID)
       this.spendingAddress.value = spendingApp.address
       this.transferFunds(escrow, fundsRequest)

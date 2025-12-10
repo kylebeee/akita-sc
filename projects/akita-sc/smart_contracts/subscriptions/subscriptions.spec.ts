@@ -1,9 +1,16 @@
 import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
+import { afterEach, beforeAll, describe, expect, test } from '@jest/globals'
 import { AkitaDaoSDK, ServiceStatus, SubscriptionsSDK } from 'akita-sdk'
 import { buildAkitaUniverse } from '../../tests/fixtures/dao'
+import {
+  completeBalanceVerification,
+  createExpectedCost,
+  expectBalanceChange,
+  MIN_TXN_FEE,
+  verifyBalanceChange,
+} from '../../tests/utils/balance'
 import { TimeWarp } from '../../tests/utils/time'
 
 import {
@@ -73,8 +80,11 @@ describe('Subscriptions Contract Tests', () => {
     console.log('Subscriptions Address:', subscriptions.client.appAddress.toString())
   })
 
-  beforeEach(async () => {
-    await localnet.newScope()
+  afterEach(async () => {
+    // Reset time warp offset between tests to ensure clean state
+    if (timeWarp) {
+      await timeWarp.resetTimeWarp()
+    }
   })
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -87,9 +97,25 @@ describe('Subscriptions Contract Tests', () => {
       const sender = testAccount.toString()
       const signer = testAccount.signer
 
-      // Service creation requires ~100 Algo, ensure we have enough
+      // Get expected cost from contract
+      const expectedPayment = await subscriptions.newServiceCost({ sender, signer, asset: 0n })
+
+      // Verify expected cost before operation
+      // Account for: app call fee + payment transaction fee + 1 opUp transaction fee
+      // Note: opUp calls are separate transactions, not inner transactions
+      const expectedCost = createExpectedCost(expectedPayment, 0, MIN_TXN_FEE * 2n) // payment + 1 opUp
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'create new service'
+      )
+
+      // Fund account with minimum needed + small buffer
       const dispenser = await algorand.account.dispenserFromEnvironment()
-      await algorand.account.ensureFunded(sender, dispenser, (200).algos())
+      const buffer = microAlgo(100_000) // Add 0.1 ALGO buffer for minimum balance
+      const requiredFunding = microAlgo(expectedCost.total).microAlgo + buffer.microAlgo
+      await algorand.account.ensureFunded(sender, dispenser, microAlgo(requiredFunding))
 
       const serviceId = await subscriptions.newService({
         sender,
@@ -105,9 +131,18 @@ describe('Subscriptions Contract Tests', () => {
         highlightMessage: 0,
         highlightColor: '#FF5733',
       })
-      
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      expectBalanceChange(completed, 'create new service')
+      expect(completed.actualCost).toBe(expectedCost.total)
+
       expect(serviceId).toBeDefined()
-      
+
       // Verify service was created by fetching it directly
       const service = await subscriptions.getService({ sender, signer, address: sender, id: Number(serviceId) })
       expect(service).toBeDefined()
@@ -121,8 +156,16 @@ describe('Subscriptions Contract Tests', () => {
       const sender = testAccount.toString()
       const signer = testAccount.signer
 
-      const dispenser = await algorand.account.dispenserFromEnvironment()
-      await algorand.account.ensureFunded(sender, dispenser, (200).algos())
+      // Get expected cost from contract
+      const newServiceCost = await subscriptions.newServiceCost()
+      // Account for: app call fee + payment transaction fee + 1 opUp transaction fee
+      const expectedCost = createExpectedCost(newServiceCost, 0, MIN_TXN_FEE * 2n) // payment + 1 opUp
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'create service with passes'
+      )
 
       const serviceId = await subscriptions.newService({
         sender,
@@ -138,6 +181,15 @@ describe('Subscriptions Contract Tests', () => {
         highlightMessage: 1, // Best Value
         highlightColor: '#00FF00',
       })
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      expectBalanceChange(completed, 'create service with passes')
+      expect(completed.actualCost).toBe(expectedCost.total)
 
       const service = await subscriptions.getService({ sender, signer, address: sender, id: Number(serviceId) })
       expect(service).toBeDefined()
@@ -466,6 +518,32 @@ describe('Subscriptions Contract Tests', () => {
       const recipientAcc = algorand.account.random()
       await algorand.account.ensureFunded(recipientAcc.addr, dispenser, (10).algos())
 
+      // Get expected subscription cost
+      const subscriptionCost = await subscriptions.newSubscriptionCost({
+        sender,
+        signer,
+        recipient: recipientAcc.addr.toString(),
+        asset: 0n,
+        serviceId: 0n, // donation
+      })
+
+      // Verify expected cost before operation
+      // Account for: app call fee + payment transaction fee + 2 opUp transaction fees + 2 inner transaction fees
+      // Note: subscribe creates 2 inner transactions (escrow payment, recipient payment)
+      const donationAmount = 100_000n
+      const expectedCost = createExpectedCost(subscriptionCost + donationAmount, 2, MIN_TXN_FEE * 3n) // 2 inner + payment + 2 opUp
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'subscribe to donation'
+      )
+
+      // Fund subscriber with minimum needed
+      const buffer = microAlgo(100_000)
+      const requiredFunding = microAlgo(expectedCost.total).microAlgo + buffer.microAlgo
+      await algorand.account.ensureFunded(sender, dispenser, microAlgo(requiredFunding))
+
       const subscriptionId = await subscriptions.subscribe({
         sender,
         signer,
@@ -475,6 +553,15 @@ describe('Subscriptions Contract Tests', () => {
         recipient: recipientAcc.addr.toString(),
         serviceId: 0n, // donation
       })
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      expectBalanceChange(completed, 'subscribe to donation')
+      expect(completed.actualCost).toBe(expectedCost.total)
 
       expect(subscriptionId).toBeDefined()
       expect(subscriptionId).toBeGreaterThanOrEqual(0n)
@@ -493,8 +580,18 @@ describe('Subscriptions Contract Tests', () => {
       // Create another account as merchant
       const dispenser = await algorand.account.dispenserFromEnvironment()
       const merchantAcc = algorand.account.random()
-      await algorand.account.ensureFunded(merchantAcc.addr, dispenser, (200).algos())
-      await algorand.account.ensureFunded(sender, dispenser, (10).algos())
+
+      // Fund merchant with minimum needed for service creation
+      const merchantServiceCost = await subscriptions.newServiceCost({
+        sender: merchantAcc.addr.toString(),
+        signer: merchantAcc.signer,
+        asset: 0n
+      })
+      // Account for: app call fee + payment transaction fee + 1 opUp transaction fee
+      const merchantExpectedCost = createExpectedCost(merchantServiceCost, 0, MIN_TXN_FEE * 2n) // payment + 1 opUp
+      const merchantBuffer = microAlgo(100_000)
+      const merchantRequiredFunding = microAlgo(merchantExpectedCost.total).microAlgo + merchantBuffer.microAlgo
+      await algorand.account.ensureFunded(merchantAcc.addr, dispenser, microAlgo(merchantRequiredFunding))
 
       // Merchant creates a service
       const serviceId = await subscriptions.newService({
@@ -512,6 +609,32 @@ describe('Subscriptions Contract Tests', () => {
         highlightColor: '#9933FF',
       })
 
+      // Get expected subscription cost (now that we have serviceId)
+      const subscriptionCost = await subscriptions.newSubscriptionCost({
+        sender,
+        signer,
+        recipient: merchantAcc.addr.toString(),
+        asset: 0n,
+        serviceId,
+      })
+
+      // Fund subscriber with minimum needed (subscription cost + first payment + buffer)
+      const firstPayment = 500_000n
+      // Account for: app call fee + payment transaction fee + 2 opUp transaction fees + 2 inner transaction fees
+      // Note: subscribe creates 2 inner transactions (escrow payment, recipient payment)
+      const subscriberExpectedCost = createExpectedCost(subscriptionCost + firstPayment, 2, MIN_TXN_FEE * 3n) // 2 inner + payment + 2 opUp
+      const subscriberBuffer = microAlgo(100_000)
+      const subscriberRequiredFunding = microAlgo(subscriberExpectedCost.total).microAlgo + subscriberBuffer.microAlgo
+      await algorand.account.ensureFunded(sender, dispenser, microAlgo(subscriberRequiredFunding))
+
+      // Verify expected cost before subscription
+      const subscriberVerification = await verifyBalanceChange(
+        algorand,
+        sender,
+        subscriberExpectedCost,
+        'subscribe to service'
+      )
+
       // User subscribes
       const subscriptionId = await subscriptions.subscribe({
         sender,
@@ -522,6 +645,15 @@ describe('Subscriptions Contract Tests', () => {
         recipient: merchantAcc.addr.toString(),
         serviceId: serviceId,
       })
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        subscriberVerification,
+        algorand,
+        sender
+      )
+      expectBalanceChange(completed, 'subscribe to service')
+      expect(completed.actualCost).toBe(subscriberExpectedCost.total)
 
       expect(subscriptionId).toBeDefined()
 
@@ -607,6 +739,17 @@ describe('Subscriptions Contract Tests', () => {
       const subBefore = await subscriptions.getSubscription({ sender, signer, address: sender, id: subscriptionId })
       const escrowedBefore = subBefore.escrowed
 
+      // Verify expected cost before deposit (deposit amount + transaction fee)
+      const depositAmount = 500_000n
+      // Account for: app call fee + payment transaction fee
+      const expectedCost = createExpectedCost(depositAmount, 0, MIN_TXN_FEE)
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'deposit to subscription'
+      )
+
       await subscriptions.deposit({
         sender,
         signer,
@@ -614,6 +757,15 @@ describe('Subscriptions Contract Tests', () => {
         amount: 500_000n,
         id: subscriptionId
       })
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      expectBalanceChange(completed, 'deposit to subscription')
+      expect(completed.actualCost).toBe(expectedCost.total)
 
       const subAfter = await subscriptions.getSubscription({ sender, signer, address: sender, id: subscriptionId })
       expect(subAfter.escrowed).toBe(escrowedBefore + 500_000n)
@@ -650,6 +802,17 @@ describe('Subscriptions Contract Tests', () => {
 
       const subBefore = await subscriptions.getSubscription({ sender, signer, address: sender, id: subscriptionId })
 
+      // Verify expected cost before withdraw (transaction fee only, amount is refunded)
+      const withdrawAmount = 300_000n
+      // Account for: app call fee (withdraw doesn't have payment transaction)
+      const expectedCost = createExpectedCost(0n, 0, 0n) // No payment, just app call fee
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'withdraw from subscription'
+      )
+
       await subscriptions.withdraw({
         sender,
         signer,
@@ -657,6 +820,16 @@ describe('Subscriptions Contract Tests', () => {
         amount: 300_000n,
         id: subscriptionId
       })
+
+      // Verify balance change - should get refund minus fees
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      // Withdraw refunds the amount, so actual cost should be negative (refund) minus fees
+      const expectedRefund = withdrawAmount - expectedCost.fees
+      expect(completed.balanceAfter - completed.balanceBefore).toBe(expectedRefund)
 
       const subAfter = await subscriptions.getSubscription({ sender, signer, address: sender, id: subscriptionId })
       expect(subAfter.escrowed).toBe(subBefore.escrowed - 300_000n)
@@ -727,8 +900,28 @@ describe('Subscriptions Contract Tests', () => {
         id: subscriptionId
       })
 
-      // Unsubscribe - needs extra fee for inner transaction
+      // Unsubscribe - has 1 inner transaction (refund payment) + opUp
+      // Note: The refund amount is not part of the cost, it's returned to the user
+      const expectedCost = createExpectedCost(0n, 1, 0n) // 1 opUp call, no base payment
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'unsubscribe and get refund'
+      )
+
       await subscriptions.unsubscribe({ sender, signer, id: subscriptionId })
+
+      // Verify balance change (should be minimal - just fees, refund increases balance)
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      // Note: actualCost will be negative or small because refund increases balance
+      // We just verify the operation completed successfully
+      // The refund increases balance, so balanceAfter should be >= balanceBefore - fees
+      expect(completed.balanceAfter).toBeGreaterThanOrEqual(completed.balanceBefore - expectedCost.total)
 
       // Subscription should no longer exist
       let error = 'no error thrown'
@@ -777,15 +970,7 @@ describe('Subscriptions Contract Tests', () => {
         interval: BigInt(MIN_INTERVAL),
         recipient: recipientAcc.addr.toString(),
         serviceId: 0n,
-      })
-
-      // Deposit enough for one more payment
-      await subscriptions.deposit({
-        sender,
-        signer,
-        asset: 0n,
-        amount: 200_000n,
-        id: subscriptionId
+        initialDepositAmount: 200_000n,
       })
 
       // Cannot trigger immediately (within same window)
@@ -808,12 +993,32 @@ describe('Subscriptions Contract Tests', () => {
       // Now triggering should work
       const subBefore = await subscriptions.getSubscription({ sender, signer, address: sender, id: subscriptionId })
 
+      // triggerPayment has 3 inner transactions (akitaFee, triggerFee, leftOver) + opUp
+      // Account for: app call fee + 3 inner transaction fees + 1 opUp transaction fee
+      // Note: triggerPayment has 3 inner transactions (payments), and 1 opUp as separate transaction
+      const expectedCost = createExpectedCost(0n, 3, MIN_TXN_FEE) // 3 inner + 1 opUp
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'trigger payment after interval passes'
+      )
+
       await subscriptions.triggerPayment({
         sender,
         signer,
         address: sender,
         id: subscriptionId
       })
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      expectBalanceChange(completed, 'trigger payment after interval passes')
+      expect(completed.actualCost).toBe(expectedCost.total)
 
       const subAfter = await subscriptions.getSubscription({ sender, signer, address: sender, id: subscriptionId })
       expect(subAfter.escrowed).toBeLessThan(subBefore.escrowed)
@@ -1100,7 +1305,7 @@ describe('Subscriptions Contract Tests', () => {
 
       // Fund subscriber for subscription (extra for passes MBR)
       await algorand.account.ensureFunded(sender, dispenser, (20).algos())
-      
+
       const subscriptionId = await subscriptions.subscribe({
         sender,
         signer,
@@ -1115,12 +1320,30 @@ describe('Subscriptions Contract Tests', () => {
       const passHolder1 = algorand.account.random()
       const passHolder2 = algorand.account.random()
 
+      // Account for: app call fee + 1 opUp transaction fee
+      const expectedCost = createExpectedCost(0n, 0, MIN_TXN_FEE) // 1 opUp as separate transaction
+      const verification = await verifyBalanceChange(
+        algorand,
+        sender,
+        expectedCost,
+        'set passes on subscription'
+      )
+
       await subscriptions.setPasses({
         sender,
         signer,
         id: subscriptionId,
         passes: [passHolder1.addr.toString(), passHolder2.addr.toString()]
       })
+
+      // Verify balance change matches expected cost
+      const completed = await completeBalanceVerification(
+        verification,
+        algorand,
+        sender
+      )
+      expectBalanceChange(completed, 'set passes on subscription')
+      expect(completed.actualCost).toBe(expectedCost.total)
 
       const subWithDetails = await subscriptions.getSubscriptionWithDetails({
         sender,

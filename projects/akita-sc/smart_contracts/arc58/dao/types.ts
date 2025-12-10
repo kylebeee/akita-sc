@@ -3,6 +3,7 @@ import { Struct, Uint8 } from '@algorandfoundation/algorand-typescript/arc4';
 import { CID } from '../../utils/types/base';
 import { AddAllowanceInfo, MethodRestriction } from '../account/types';
 
+export type DaoState = Uint8
 export type ProposalStatus = Uint8
 export type ProposalActionType = Uint8
 export type ProposalVoteType = Uint8
@@ -209,9 +210,13 @@ export type AkitaAppList = {
   metaMerkles: uint64 // Akita MetaMerkles
   marketplace: uint64 // Akita Marketplace
   wallet: uint64 // abstracted account factory
+}
+
+export type AkitaSocialAppList = {
   social: uint64 // akita social
-  impact: uint64 // akita impact
-  // empty slot
+  graph: uint64 // akita social graph
+  impact: uint64 // akita social impact
+  moderation: uint64 // akita social moderation
 }
 
 export type PluginAppList = {
@@ -267,7 +272,9 @@ export type AkitaDAOApps = {
   revenueManager: uint64 // revenue manager plugin
   update: uint64 // update plugin
   social: uint64 // social
-  impact: uint64 // impact
+  graph: uint64 // social graph
+  impact: uint64 // social impact
+  moderation: uint64 // social moderation
   vrfBeacon: uint64 // vrf beacon
   nfdRegistry: uint64 // NFD Registry
   assetInbox: uint64 // asset inbox

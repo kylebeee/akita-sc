@@ -1,5 +1,5 @@
 import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory, type AbstractedAccountFactoryClient } from '../generated/AbstractedAccountFactoryClient';
-import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from '../types';
+import { NewContractSDKParams, MaybeSigner } from '../types';
 import { WalletSDK } from './index';
 import { BaseSDK } from '../base';
 import { emptySigner } from '../constants';
@@ -29,15 +29,7 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
     referrer = ALGORAND_ZERO_ADDRESS_STRING
   }: NewParams): Promise<WalletSDK> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const cost = await this.cost()
 
@@ -99,18 +91,11 @@ export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
 
   async cost(params?: MaybeSigner): Promise<bigint> {
 
-    const defaultParams = {
-      ...this.sendParams,
+    const sendParams = this.getSendParams({
       sender: this.readerAccount,
-      signer: emptySigner
-    }
-
-    const { sender, signer } = params || {};
-    const sendParams = {
-      ...defaultParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+      signer: emptySigner,
+      ...params
+    });
 
     const { return: cost } = await this.client.send.cost({
       ...sendParams,

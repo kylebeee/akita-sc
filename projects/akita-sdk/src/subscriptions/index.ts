@@ -1,7 +1,8 @@
 import { microAlgo } from "@algorandfoundation/algokit-utils";
+import { microAlgos } from "@algorandfoundation/algokit-utils";
 import { BaseSDK } from "../base";
 import { ServiceFromTuple, ServicesKey, SubscriptionInfo, SubscriptionsArgs, SubscriptionsClient, SubscriptionsFactory } from '../generated/SubscriptionsClient'
-import { hasSenderSigner, MaybeSigner, NewContractSDKParams } from "../types";
+import { MaybeSigner, NewContractSDKParams } from "../types";
 import { ValueMap } from "../wallet/utils";
 import { NewServiceArgs, Service, SubscribeArgs, SubscriptionInfoWithDetails } from "./types";
 import { AppCallMethodCall } from "@algorandfoundation/algokit-utils/types/composer";
@@ -28,20 +29,12 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
    * Get the cost to create a new service from the contract
    */
   async newServiceCost({ sender, signer, asset = 0n }: MaybeSigner & { asset?: bigint | number } = {}): Promise<bigint> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     return (await this.client.newServiceCost({ ...sendParams, args: { asset } }))
   }
 
   async blockCost({ sender, signer }: MaybeSigner = {}): Promise<bigint> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     return await this.client.blockCost({ ...sendParams, args: [] })
   }
 
@@ -49,29 +42,17 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
    * Get the cost to create a new subscription from the contract
    */
   async newSubscriptionCost({ sender, signer, recipient, asset = 0n, serviceId = 0n }: MaybeSigner & { recipient: string, asset?: bigint | number, serviceId?: bigint | number }): Promise<bigint> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     return (await this.client.newSubscriptionCost({ ...sendParams, args: { recipient, asset, serviceId } }))
   }
 
   async isBlocked({ sender, signer, address, blocked }: MaybeSigner & { address: string, blocked: string }): Promise<boolean> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     return (await this.client.isBlocked({ ...sendParams, args: { address, blocked } }))
   }
 
   async isShutdown({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint | number }): Promise<boolean> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     return (await this.client.isShutdown({ ...sendParams, args: { address, id } }))
   }
 
@@ -93,11 +74,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
   }
 
   async getService({ sender, signer, address, id }: MaybeSigner & { address: string, id: number }): Promise<Service> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     const result = (await this.client.getService({ ...sendParams, args: { address, id } }))
 
     return {
@@ -107,11 +84,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
   }
 
   async getServicesByAddress({ sender, signer, address, start = 0n, windowSize = 20n }: MaybeSigner & { address: string, start?: bigint | number, windowSize?: bigint | number }): Promise<Service[]> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     const result = await this.client.getServicesByAddress({ ...sendParams, args: { address, start, windowSize } });
     // The return is an array of tuples, convert to Service objects
     const tuples = result as unknown as [number, bigint, bigint, bigint, bigint, bigint, string, string, Uint8Array, number, Uint8Array][];
@@ -125,12 +98,8 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
   }
 
   async getSubscription({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint }): Promise<SubscriptionInfo> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-    const result = (await this.client.getSubscription({ ...sendParams, args: { key: { address, id } } }))
+    const sendParams = this.getSendParams({ sender, signer });
+    const result = (await this.client.mustGetSubscription({ ...sendParams, args: { key: { address, id } } }))
     return {
       ...result,
       lastPayment: convertToUnixTimestamp(result.lastPayment)
@@ -138,11 +107,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
   }
 
   async getSubscriptionWithDetails({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint }): Promise<SubscriptionInfoWithDetails> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     const result = (await this.client.getSubscriptionWithDetails({ ...sendParams, args: { key: { address, id } } }))
     return {
       ...result,
@@ -152,25 +117,13 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
   }
 
   async isFirstSubscription({ sender, signer, address }: MaybeSigner & { address: string }): Promise<boolean> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
     return (await this.client.isFirstSubscription({ ...sendParams, args: { address } }))
   }
 
   async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }: NewServiceArgs): Promise<bigint> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     validateHexColor(rest.highlightColor);
     const highlightColor = hexColorToBytes(rest.highlightColor);
@@ -244,43 +197,47 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
   async pauseService({ sender, signer, id }: MaybeSigner & ContractArgs['pauseService(uint64)void']): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
-    await this.client.send.pauseService({
+    const group = this.client.newGroup();
+
+    group.pauseService({
       ...sendParams,
       args: { id }
-    })
+    });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async shutdownService({ sender, signer, id }: MaybeSigner & ContractArgs['shutdownService(uint64)void']): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
-    await this.client.send.shutdownService({
+    const group = this.client.newGroup();
+
+    group.shutdownService({
       ...sendParams,
       args: { id }
-    })
+    });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async block({ sender, signer, block }: MaybeSigner & { block: string }): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const paymentAmount = await this.blockCost({ sender, signer });
 
@@ -290,27 +247,43 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       receiver: this.client.appAddress,
     })
 
-    await this.client.send.block({
+    const group = this.client.newGroup();
+
+    group.block({
       ...sendParams,
       args: {
         payment,
         blocked: block
       }
-    })
+    });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async unblock({ sender, signer, blocked }: MaybeSigner & ContractArgs['unblock(address)void']): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
-    await this.client.send.unblock({
+    const group = this.client.newGroup();
+
+    group.unblock({
       ...sendParams,
       args: { blocked }
-    })
+    });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async subscribe({
@@ -325,20 +298,10 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     gateTxn
   }: MaybeSigner & SubscribeArgs): Promise<bigint> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const isAlgoSubscription = asset === 0n;
     const isGated = gateTxn !== undefined;
-
-    let subscriptionId: bigint | undefined = 0n;
 
     // Use contract method to get the exact subscription cost
     const subscribeCost = await this.newSubscriptionCost({
@@ -360,13 +323,11 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       receiver: this.client.appAddress,
     })
 
+    const group = this.client.newGroup();
+
     if (isAlgoSubscription) {
       if (isGated) {
-        // const group = this.client.newGroup();
-        // const composer = await group.composer();
-        // composer.addAppCall(gateTxn);
-
-        ({ return: subscriptionId } = await this.client.send.gatedSubscribe({
+        group.gatedSubscribe({
           ...sendParams,
           args: {
             payment,
@@ -376,9 +337,9 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
             recipient,
             serviceId,
           }
-        }));
+        });
       } else {
-        ({ return: subscriptionId } = await this.client.send.subscribe({
+        group.subscribe({
           ...sendParams,
           args: {
             payment,
@@ -387,7 +348,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
             recipient,
             serviceId,
           }
-        }))
+        });
       }
     } else {
       const assetTransfer = this.client.algorand.createTransaction.assetTransfer({
@@ -398,7 +359,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       })
 
       if (isGated) {
-        ({ return: subscriptionId } = await this.client.send.gatedSubscribeAsa({
+        group.gatedSubscribeAsa({
           ...sendParams,
           args: {
             payment,
@@ -408,9 +369,9 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
             recipient,
             serviceId,
           }
-        }));
+        });
       } else {
-        ({ return: subscriptionId } = await this.client.send.subscribeAsa({
+        group.subscribeAsa({
           ...sendParams,
           args: {
             payment,
@@ -420,9 +381,25 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
             recipient,
             serviceId,
           }
-        }))
+        });
       }
     }
+
+    // Add opUp calls to get more reference slots
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+      note: '1'
+    });
+
+    const result = await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
+    const subscriptionId = result.returns[0] as bigint | undefined;
 
     if (subscriptionId === undefined) {
       throw new Error('Subscription failed, no subscription ID returned');
@@ -432,24 +409,28 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
   }
 
   async unsubscribe({ sender, signer, id }: MaybeSigner & ContractArgs['unsubscribe(uint64)void']): Promise<void> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-    await this.client.send.unsubscribe({ ...sendParams, args: { id: BigInt(id) } })
+    const sendParams = this.getSendParams({ sender, signer });
+    
+    const group = this.client.newGroup();
+
+    group.unsubscribe({
+      ...sendParams,
+      args: { id: BigInt(id) }
+    });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async deposit({ sender, signer, asset = 0n, amount, id }: MaybeSigner & { asset?: bigint | number, amount: bigint | number, id: bigint | number }): Promise<void> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const group = this.client.newGroup();
 
     if (asset !== 0n) {
       const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
@@ -459,13 +440,13 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
         receiver: this.client.appAddress,
       })
 
-      await this.client.send.depositAsa({
+      group.depositAsa({
         ...sendParams,
         args: {
           assetXfer,
           id: BigInt(id)
         }
-      })
+      });
     } else {
       const payment = await this.client.algorand.createTransaction.payment({
         ...sendParams,
@@ -473,14 +454,22 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
         receiver: this.client.appAddress,
       })
 
-      await this.client.send.deposit({
+      group.deposit({
         ...sendParams,
         args: {
           payment,
           id: BigInt(id)
         }
-      })
+      });
     }
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async withdraw({
@@ -495,57 +484,75 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       amount: bigint | number,
       id: bigint | number
     }): Promise<void> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
-    await this.client.send.withdraw({
+    const group = this.client.newGroup();
+
+    group.withdraw({
       ...sendParams,
       args: {
         amount: BigInt(amount),
         id: BigInt(id)
       }
-    })
+    });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async triggerPayment({ sender, signer, address, id, gateTxn }: MaybeSigner & { address: string, id: bigint, gateTxn?: AppCallMethodCall }): Promise<void> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
+
+    const group = this.client.newGroup();
 
     if (gateTxn !== undefined) {
-      await this.client.send.gatedTriggerPayment({
+      group.gatedTriggerPayment({
         ...sendParams,
         args: {
           gateTxn,
           key: { address, id }
         }
-      })
+      });
     } else {
-      await this.client.send.triggerPayment({
+      group.triggerPayment({
         ...sendParams,
         args: { key: { address, id } }
-      })
+      });
     }
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 
   async setPasses({ sender, signer, id, passes }: MaybeSigner & { id: bigint | number, passes: string[] }): Promise<void> {
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+    const sendParams = this.getSendParams({ sender, signer });
 
-    await this.client.send.setPasses({
+    const group = this.client.newGroup();
+
+    group.setPasses({
       ...sendParams,
       args: {
         id: BigInt(id),
         addresses: passes
       }
-    })
+    });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+
+    await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
   }
 }

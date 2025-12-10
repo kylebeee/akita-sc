@@ -37,6 +37,8 @@ export const ERR_ESCROW_NOT_LOCKED = 'Escrow is not locked'
 export const ERR_ESCROW_IS_ALREADY_OPTED_IN = 'Escrow is already opted in'
 export const ERR_RECEIVE_ESCROW_DOES_NOT_EXIST = 'Receive escrow does not exist'
 
+export const ERR_DAO_NOT_INITIALIZED = 'DAO is not initialized'
+
 export const ERR_PROPOSAL_DOES_NOT_EXIST = 'Proposal does not exist'
 export const ERR_PROPOSAL_NOT_APPROVED = 'Proposal is not approved'
 export const ERR_PROPOSAL_VOTE_NOT_FOUND = 'Proposal Vote not found'

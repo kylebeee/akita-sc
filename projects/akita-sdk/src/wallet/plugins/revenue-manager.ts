@@ -1,6 +1,6 @@
 import { RevenueManagerPluginArgs, RevenueManagerPluginClient, RevenueManagerPluginFactory } from "../../generated/RevenueManagerPluginClient"
 import { BaseSDK } from "../../base";
-import { hasSenderSigner, MaybeSigner, NewContractSDKParams, PluginHookParams, PluginSDKReturn } from "../../types";
+import { MaybeSigner, NewContractSDKParams, PluginHookParams, PluginSDKReturn } from "../../types";
 import algosdk, { Address } from "algosdk";
 import { getTxns } from "../utils";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
@@ -10,13 +10,13 @@ const assetOptInCost = 100_000 // This is the cost for asset opt-in, adjust as n
 type ContractArgs = RevenueManagerPluginArgs["obj"];
 
 type OptInContractArgs = (
-  Omit<ContractArgs['optIn(uint64,bool,uint64[],pay)void'], 'wallet' | 'rekeyBack'>
+  Omit<ContractArgs['optIn(uint64,bool,uint64[],pay)void'], 'wallet' | 'rekeyBack' | 'mbrPayment'>
   & MaybeSigner
   & { rekeyBack?: boolean }
 );
 
 type NewReceiveEscrowContractArgs = (
-  Omit<ContractArgs['newReceiveEscrow(uint64,bool,string,address,bool,bool,(address,uint8,uint64)[])void'], 'wallet' | 'rekeyBack'>
+  Omit<ContractArgs['newReceiveEscrow(uint64,bool,string,address,bool,bool,((uint64,string),uint8,uint64)[])void'], 'wallet' | 'rekeyBack'>
   & MaybeSigner
   & { rekeyBack?: boolean }
 )
@@ -68,15 +68,7 @@ export class RevenueManagerPluginSDK extends BaseSDK<RevenueManagerPluginClient>
 
     const { sender, signer, assets } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -121,15 +113,7 @@ export class RevenueManagerPluginSDK extends BaseSDK<RevenueManagerPluginClient>
 
     const { sender, signer, escrow, source, allocatable, optinAllowed, splits } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -167,15 +151,7 @@ export class RevenueManagerPluginSDK extends BaseSDK<RevenueManagerPluginClient>
 
     const { sender, signer, escrow, source, allocatable, optinAllowed, splitRef } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -214,15 +190,7 @@ export class RevenueManagerPluginSDK extends BaseSDK<RevenueManagerPluginClient>
 
     const { sender, signer } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -260,15 +228,7 @@ export class RevenueManagerPluginSDK extends BaseSDK<RevenueManagerPluginClient>
 
     const { sender, signer, ids } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,
@@ -306,15 +266,7 @@ export class RevenueManagerPluginSDK extends BaseSDK<RevenueManagerPluginClient>
 
     const { sender, signer, ids } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,

@@ -61,12 +61,18 @@ export class MarketplacePlugin extends AkitaBaseContract {
             receiver: this.factory.value.address,
             amount: Global.assetOptInMinBalance
           }),
-          asset,
+          Asset(asset),
         ]
       })
     }
 
     if (!this.factory.value.address.isOptedIn(Asset(paymentAsset))) {
+      const optinMBR = abiCall<typeof Marketplace.prototype.optInCost>({
+        sender,
+        appId: this.factory.value,
+        args: [Asset(paymentAsset)]
+      }).returnValue
+
       abiCall<typeof Marketplace.prototype.optIn>({
         sender,
         appId: this.factory.value,
@@ -74,9 +80,9 @@ export class MarketplacePlugin extends AkitaBaseContract {
           itxn.payment({
             sender,
             receiver: this.factory.value.address,
-            amount: Global.assetOptInMinBalance
+            amount: optinMBR
           }),
-          paymentAsset,
+          Asset(paymentAsset),
         ]
       })
     }

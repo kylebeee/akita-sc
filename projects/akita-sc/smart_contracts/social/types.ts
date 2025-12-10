@@ -1,7 +1,9 @@
 import { Account, bytes, uint64 } from "@algorandfoundation/algorand-typescript"
 import { Uint8 } from "@algorandfoundation/algorand-typescript/arc4"
-import { arc59GetSendAssetInfoResponse } from "../utils/types/asset-inbox"
 import { CID } from "../utils/types/base"
+
+export type RefType = Uint8
+export type PostType = Uint8
 
 export type FollowsKey = {
   user: Account
@@ -26,15 +28,20 @@ export type PostValue = {
   payWallID: uint64
   // whether the post is in breach of the content policy
   againstContentPolicy: boolean
-  // whether this post is itself an amendment to another post
-  isAmendment: boolean
-  // a dynamic field encompassing: CID, txID reference & amendment data
+  // the type of post (Post=0, Reply=1, EditPost=2, EditReply=3)
+  postType: PostType
+  // a dynamic field encompassing content and references
+  // Post:      CID
+  // Reply:     CID + parentRef
+  // EditPost:  CID + originalKey
+  // EditReply: CID + parentRef + originalKey
+  // When amended, 'a' + nextEditKey is appended
   ref: bytes
-  // 32 = an empty post (no content)(for votes & reactions to non post/comments)
-  // 36 = a post
-  // 69 = an amended post
-  // 68 = a comment
-  // 101 = an amended comment
+}
+
+export type PostCost = {
+  mbr: uint64
+  tip: uint64
 }
 
 export type PayWallType = Uint8 // OneTimePayment | Subscription
@@ -140,7 +147,6 @@ export type TipSendType = Uint8
 
 export type tipMBRInfo = {
   type: TipSendType
-  arc59: arc59GetSendAssetInfoResponse
   arc58: uint64
 }
 
@@ -152,7 +158,7 @@ export type PostMeta = {
     timestamp: uint64
     gateID: uint64
     againstContentPolicy: boolean
-    isAmendment: boolean
+    postType: PostType
     ref: bytes
   },
   meta: {

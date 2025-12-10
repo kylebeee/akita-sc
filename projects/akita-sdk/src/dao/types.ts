@@ -1,4 +1,4 @@
-import { AkitaAppList, AkitaAssets, AkitaDaoArgs, GlobalKeysState, NftFees, OtherAppList, PluginAppList, ProposalSettings, ProposalVoteTotals, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../generated/AkitaDAOClient";
+import { AkitaAppList, AkitaAssets, AkitaDaoArgs, AkitaSocialAppList, GlobalKeysState, NftFees, OtherAppList, PluginAppList, ProposalSettings, ProposalVoteTotals, SocialFees, StakingFees, SubscriptionFees, SwapFees, WalletFees } from "../generated/AkitaDAOClient";
 import { 
   ProposalAddAllowances,
   ProposalAddNamedPlugin,
@@ -93,15 +93,33 @@ export type ProposalAction<TClient extends SDKClient> = (
   }
 )
 
+// [[bigint | number, string], bigint | number, bigint | number][]
+export enum SplitDistributionType {
+  Flat = 10,
+  Percentage = 20,
+  Remainder = 30,
+}
+
+export type Split = {
+  receiver: { wallet: bigint, escrow: string }
+  type: SplitDistributionType
+  value: bigint
+}
+
+export function SplitsToTuples(splits: Split[]): [[bigint | number, string], bigint | number, bigint | number][] {
+  return splits.map((split) => [[split.receiver.wallet, split.receiver.escrow], split.type, split.value])
+}
+
 export type FieldUpdate = (
   | { field: 'content_policy', value: Uint8Array }
   | {
     field: 'proposal_action_limit' | 'min_rewards_impact',
     value: number
   }
-  | { field: 'akita_al', value: Partial<AkitaAppList> }
-  | { field: 'plugn_al', value: Partial<PluginAppList> }
-  | { field: 'other_al', value: Partial<OtherAppList> }
+  | { field: 'aal', value: Partial<AkitaAppList> }
+  | { field: 'sal', value: Partial<AkitaSocialAppList> }
+  | { field: 'pal', value: Partial<PluginAppList> }
+  | { field: 'oal', value: Partial<OtherAppList> }
   | { field: 'wallet_fees', value: WalletFees } // only one value for now so no need for partial
   | { field: 'social_fees', value: Partial<SocialFees> }
   | { field: 'staking_fees', value: Partial<StakingFees> }
@@ -113,6 +131,7 @@ export type FieldUpdate = (
     field: 'upgrade_app_ps' | 'add_plugin_ps' | 'remove_plugin_ps' | 'add_allowance_ps' | 'remove_allowance_ps' | 'new_escrow_ps' | 'update_fields_ps',
     value: Partial<ProposalSettings>
   }
+  | { field: 'revenue_splits', value: Split[] }
 )
 
 export type NewProposalParams<TClient extends SDKClient> = (

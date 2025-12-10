@@ -57,7 +57,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
   // GLOBAL STATE ---------------------------------------------------------------------------------
 
   /** the disbursement id cursor */
-  disbursementID = GlobalState<uint64>({ key: RewardsGlobalStateKeyDisbursementID })
+  disbursementID = GlobalState<uint64>({ initialValue: 1, key: RewardsGlobalStateKeyDisbursementID })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -358,7 +358,7 @@ export class Rewards extends classes(BaseRewards, AkitaBaseContract, ContractWit
       note: '',
     }
 
-    return id 
+    return id
   }
 
   claimRewards(rewards: ClaimDetails[]): void {

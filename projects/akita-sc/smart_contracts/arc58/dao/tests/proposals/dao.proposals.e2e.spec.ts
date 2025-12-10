@@ -30,12 +30,11 @@ describe('ARC58 DAO Proposals', () => {
 
   beforeEach(async () => {
     await fixture.newScope();
-    const {
-      algorand,
-      context: { testAccount },
-    } = fixture;
+    const { algorand } = fixture;
     const dispenser = await algorand.account.dispenserFromEnvironment();
-    await algorand.account.ensureFunded(testAccount.toString(), dispenser, microAlgo(10_000_000n));
+    // Each proposal can cost 7+ ALGO in MBR, ensure we have plenty of funds
+    // Fund the sender from context (not the new testAccount from fixture.newScope)
+    await algorand.account.ensureFunded(context.sender, dispenser, microAlgo(100_000_000n));
   });
 
   describe('Proposal Creation', () => {

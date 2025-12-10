@@ -1,6 +1,6 @@
 import { AlgorandClient } from "@algorandfoundation/algokit-utils/types/algorand-client";
 import { DEFAULT_READER, DEFAULT_SEND_PARAMS } from "./constants";
-import { ExpandedSendParams, NewBaseContractSDKParams } from "./types";
+import { ExpandedSendParams, ExpandedSendParamsWithSigner, hasSenderSigner, MaybeSigner, NewBaseContractSDKParams } from "./types";
 
 export abstract class BaseSDK<T> {
   public appId: bigint;
@@ -31,5 +31,21 @@ export abstract class BaseSDK<T> {
 
   setSendParams(sendParams: ExpandedSendParams): void {
     this.sendParams = sendParams;
+  }
+
+  protected getSendParams({ sender, signer }: MaybeSigner = {}): ExpandedSendParams {
+    return {
+      ...this.sendParams,
+      ...(sender !== undefined && { sender }),
+      ...(signer !== undefined && { signer }),
+    };
+  }
+
+  protected getRequiredSendParams(params: MaybeSigner = {}): ExpandedSendParamsWithSigner {
+    const sendParams = this.getSendParams(params);
+    if (!hasSenderSigner(sendParams)) {
+      throw new Error('Sender and signer must be provided either explicitly or through defaults at SDK instantiation');
+    }
+    return sendParams;
   }
 }

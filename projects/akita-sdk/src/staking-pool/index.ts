@@ -1,14 +1,14 @@
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { BaseSDK } from "../base";
-import { 
-  StakingPoolClient, 
-  StakingPoolFactory, 
+import {
+  StakingPoolClient,
+  StakingPoolFactory,
   StakingPoolArgs,
   StakingPoolState,
   StakingPoolMbrData
 } from '../generated/StakingPoolClient';
-import { hasSenderSigner, MaybeSigner, NewContractSDKParams } from "../types";
-import { 
+import { MaybeSigner, NewContractSDKParams } from "../types";
+import {
   AddRewardParams,
   AddRewardAsaParams,
   FinalizePoolParams,
@@ -21,7 +21,8 @@ import {
   CheckParams,
   CheckResult,
   IsEnteredParams,
-  StakingPoolMbrParams
+  StakingPoolMbrParams,
+  GateCheckParams
 } from "./types";
 
 export * from "./factory";
@@ -58,7 +59,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    * Checks if pool signups are currently open.
    */
   async signUpsOpen(): Promise<boolean> {
-    const { return: isOpen } = await this.client.send.signUpsOpen({ args: {} });
+    const isOpen = await this.client.signUpsOpen();
     return isOpen ?? false;
   }
 
@@ -66,15 +67,15 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    * Checks if the pool is currently live (active).
    */
   async isLive(): Promise<boolean> {
-    const { return: live } = await this.client.send.isLive({ args: {} });
-    return live ?? false;
+    const isLive = await this.client.isLive();
+    return isLive ?? false;
   }
 
   /**
    * Checks if an address is entered in the pool.
    */
   async isEntered({ address }: IsEnteredParams): Promise<boolean> {
-    const { return: entered } = await this.client.send.isEntered({ args: { address } });
+    const entered = await this.client.isEntered({ args: { address } });
     return entered ?? false;
   }
 
@@ -92,6 +93,12 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
       isEligible: result.valid,
       stake: result.balance
     };
+  }
+
+  async gateCheck({ gateTxn, address, asset }: GateCheckParams): Promise<void> {
+    
+    
+    await this.client.send.gateCheck({ args: { gateTxn, address, asset } });
   }
 
   /**
@@ -113,13 +120,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    * Initializes the pool after creation.
    */
   async init(params?: MaybeSigner): Promise<void> {
-    const { sender, signer } = params || {};
-
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams(params);
 
     await this.client.send.init({
       ...sendParams,
@@ -132,15 +133,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async optinAsset({ sender, signer, asset }: OptinAssetParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
@@ -162,15 +155,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async addReward({ sender, signer, reward, amount }: AddRewardAsaParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     // Get MBR for reward
     const mbrData = await this.getMbr({ winningTickets: reward.winnerCount });
@@ -203,11 +188,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async finalize({ sender, signer, signupTimestamp, startTimestamp, endTimestamp }: FinalizePoolParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.finalize({
       ...sendParams,
@@ -220,26 +201,31 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
   }
 
   /**
+   * Gets the cost to enter the pool for a given address and entry count.
+   * This calls the contract's enterCost method which accounts for box MBR and any pool funding shortfall.
+   */
+  async enterCost({ address, entryCount }: { address: string; entryCount: number }): Promise<bigint> {
+    return await this.client.enterCost({
+      args: { address, entryCount }
+    });
+  }
+
+  /**
    * Enters the pool with specified entries.
    */
-  async enter({ sender, signer, entries, args = [] }: EnterPoolParams): Promise<void> {
+  async enter({ sender, signer, entries, gateTxn }: EnterPoolParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    // Get the total cost from the contract (includes box MBR + any pool funding shortfall)
+    const paymentAmount = await this.enterCost({
+      address: sendParams.sender.toString(),
+      entryCount: entries.length
+    });
 
-    // Get MBR for entries
-    const mbrData = await this.getMbr({ winningTickets: 0 });
-
-    const payment = this.client.algorand.createTransaction.payment({
+    const payment = await this.client.algorand.createTransaction.payment({
       ...sendParams,
-      amount: microAlgo(mbrData.entries * BigInt(entries.length) + mbrData.entriesByAddress),
+      amount: microAlgo(paymentAmount),
       receiver: this.client.appAddress,
     });
 
@@ -250,14 +236,28 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
       e.proofs ?? []
     ]);
 
-    await this.client.send.enter({
-      ...sendParams,
-      args: {
-        payment,
-        entries: formattedEntries,
-        args
-      }
-    });
+    const isGated = gateTxn !== undefined;
+
+    if (isGated) {
+      await this.client.send.gatedEnter({
+        ...sendParams,
+        extraFee: microAlgo(1000 * entries.length), // Cover inner transactions to Staking contract
+        args: {
+          payment,
+          gateTxn,
+          entries: formattedEntries,
+        }
+      });
+    } else {
+      await this.client.send.enter({
+        ...sendParams,
+        extraFee: microAlgo(1000 * entries.length), // Cover inner transactions to Staking contract
+        args: {
+          payment,
+          entries: formattedEntries,
+        }
+      });
+    }
   }
 
   /**
@@ -265,11 +265,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async startDisbursement({ sender, signer, rewardId }: StartDisbursementParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.startDisbursement({
       ...sendParams,
@@ -282,11 +278,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async raffle({ sender, signer, rewardId }: RaffleParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.raffle({
       ...sendParams,
@@ -299,11 +291,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async disburseRewards({ sender, signer, rewardId, iterationAmount }: DisburseRewardsParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.disburseRewards({
       ...sendParams,
@@ -319,11 +307,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async finalizeDistribution({ sender, signer, rewardId }: FinalizeDistributionParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.finalizeDistribution({
       ...sendParams,
@@ -336,11 +320,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async updateAkitaDAOEscrow({ sender, signer, app }: MaybeSigner & PoolContractArgs['updateAkitaDAOEscrow(uint64)void']): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.updateAkitaDaoEscrow({
       ...sendParams,
@@ -353,11 +333,7 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
    */
   async updateAkitaDAO({ sender, signer, akitaDao }: MaybeSigner & PoolContractArgs['updateAkitaDAO(uint64)void']): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.updateAkitaDao({
       ...sendParams,

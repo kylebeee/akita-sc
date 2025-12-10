@@ -32,7 +32,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
 
   // SUBSCRIPTIONS PLUGIN METHODS -----------------------------------------------------------------
 
-  optin(
+  optIn(
     wallet: Application,
     rekeyBack: boolean,
     asset: uint64
@@ -50,7 +50,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
           receiver: appId.address,
           amount: Global.assetOptInMinBalance,
         }),
-        asset,
+        Asset(asset),
       ],
       rekeyTo: rekeyAddress(rekeyBack, wallet),
     })

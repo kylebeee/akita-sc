@@ -1,6 +1,6 @@
 import { BaseSDK } from "../../base";
 import { PayPluginArgs, PayPluginClient, PayPluginFactory } from "../../generated/PayPluginClient";
-import { NewContractSDKParams, MaybeSigner, hasSenderSigner } from "../../types";
+import { NewContractSDKParams, MaybeSigner } from "../../types";
 import { PluginHookParams, PluginSDKReturn } from "../../types";
 import { Address } from "algosdk";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
@@ -44,15 +44,7 @@ export class PayPluginSDK extends BaseSDK<PayPluginClient> {
 
     const { sender, signer, payments } = args;
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     return (spendingAddress?: Address | string) => ({
       appId: this.client.appId,

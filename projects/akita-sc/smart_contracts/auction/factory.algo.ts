@@ -12,15 +12,10 @@ import { ERR_BIDS_MUST_ALWAYS_INCREASE, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFT
 // CONTRACT IMPORTS
 import type { PrizeBox } from '../prize-box/contract.algo'
 import { FactoryContract } from '../utils/base-contracts/factory'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { BaseAuction } from './base'
 import { Auction } from './contract.algo'
 
-export class AuctionFactory extends classes(
-  BaseAuction,
-  FactoryContract,
-  ContractWithOptIn,
-) {
+export class AuctionFactory extends classes(BaseAuction, FactoryContract) {
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -57,12 +52,8 @@ export class AuctionFactory extends classes(
     assert(endTimestamp > startTimestamp + 300, ERR_END_MUST_BE_ATLEAST_FIVE_MINUTES_AFTER_START)
 
     const isAlgoBid = bidAssetID === 0
-    const daoEscrowNeedsToOptIn = !this.akitaDAOEscrow.value.address.isOptedIn(Asset(bidAssetID))
-    const optinMBR: uint64 = (
-      Global.assetOptInMinBalance * (
-        isAlgoBid ? 0 : daoEscrowNeedsToOptIn ? 2 : 6
-      )
-    )
+
+    const optinMBR: uint64 = Global.assetOptInMinBalance * (isAlgoBid ? 1 : 2)
 
     const costs = this.mbr()
 

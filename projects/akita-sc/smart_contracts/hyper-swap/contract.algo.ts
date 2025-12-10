@@ -20,11 +20,7 @@ import type { AssetInbox } from '../utils/types/asset-inbox'
 import { BaseHyperSwap } from './base'
 
 
-export class HyperSwap extends classes(
-  BaseHyperSwap,
-  AkitaBaseContract,
-  ContractWithOptIn
-) {
+export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, ContractWithOptIn) {
 
   // GLOBAL STATE ---------------------------------------------------------------------------------
 

@@ -4,12 +4,11 @@ import {
   Application,
   assert,
   assertMatch,
-  Asset,
   Global,
   gtxn,
   itxn,
   Txn,
-  uint64,
+  uint64
 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
@@ -23,14 +22,9 @@ import { ERR_NOT_A_RAFFLE } from './errors'
 // CONTRACT IMPORTS
 import type { PrizeBox } from '../prize-box/contract.algo'
 import { FactoryContract } from '../utils/base-contracts/factory'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
 import { Raffle } from './contract.algo'
 
-export class RaffleFactory extends classes(
-  BaseRaffle,
-  FactoryContract,
-  ContractWithOptIn
-) {
+export class RaffleFactory extends classes(BaseRaffle, FactoryContract) {
 
   // PRIVATE METHODS ------------------------------------------------------------------------------
 
@@ -49,13 +43,17 @@ export class RaffleFactory extends classes(
     weightsListCount: uint64
   ): Application {
 
+    let optinMBR: uint64 = 0
+
+    const isAlgoOrPrizeBox = prizeID === 0 || isPrizeBox
+    if (!isAlgoOrPrizeBox) {
+      optinMBR = Global.assetOptInMinBalance
+    }
+
     const isAlgoTicket = ticketAsset === 0
-    const daoEscrowNeedsToOptIn = !this.akitaDAOEscrow.value.address.isOptedIn(Asset(ticketAsset))
-    const optinMBR: uint64 = (
-      Global.assetOptInMinBalance * (
-        isAlgoTicket ? 0 : daoEscrowNeedsToOptIn ? 2 : 6
-      )
-    )
+    if (!isAlgoTicket) {
+      optinMBR += Global.assetOptInMinBalance
+    }
 
     const costs = this.mbr()
     const childAppMBR: uint64 = Global.minBalance + optinMBR

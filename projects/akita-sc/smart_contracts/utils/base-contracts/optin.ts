@@ -1,6 +1,7 @@
 import {
   assert,
   assertMatch,
+  Asset,
   Contract,
   Global,
   gtxn,
@@ -19,7 +20,7 @@ export class ContractWithOptIn extends Contract {
    * @param payment The payment transaction
    * @param asset The asset to be opted into
    */
-  optIn(payment: gtxn.PaymentTxn, asset: uint64): void {
+  optIn(payment: gtxn.PaymentTxn, asset: Asset): void {
 
     assertMatch(
       payment,
@@ -30,11 +31,13 @@ export class ContractWithOptIn extends Contract {
       ERR_INVALID_PAYMENT
     )
 
-    itxn.assetTransfer({
-      assetReceiver: Global.currentApplicationAddress,
-      assetAmount: 0,
-      xferAsset: asset
-    }).submit()
+    itxn
+      .assetTransfer({
+        assetReceiver: Global.currentApplicationAddress,
+        assetAmount: 0,
+        xferAsset: asset
+      })
+      .submit()
   }
 }
 

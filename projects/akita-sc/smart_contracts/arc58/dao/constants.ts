@@ -1,6 +1,6 @@
 import { uint64 } from '@algorandfoundation/algorand-typescript'
 import { Uint8 } from '@algorandfoundation/algorand-typescript/arc4'
-import { PayoutEscrowType, ProposalActionType, ProposalStatus, ProposalVoteType } from './types'
+import { DaoState, PayoutEscrowType, ProposalActionType, ProposalStatus, ProposalVoteType } from './types'
 
 export const AkitaDAONumGlobalBytes = 59
 export const AkitaDAONumGlobalUints = 5
@@ -10,9 +10,10 @@ export const AkitaDAOGlobalStateKeysContentPolicy = 'content_policy'
 export const AkitaDAOGlobalStateKeysWallet = 'wallet'
 export const AkitaDAOGlobalStateKeysProposalActionLimit = 'proposal_action_limit'
 export const AkitaDAOGlobalStateKeysMinRewardsImpact = 'min_rewards_impact'
-export const AkitaDAOGlobalStateKeysAkitaAppList = 'akita_al'
-export const AkitaDAOGlobalStateKeysPluginAppList = 'plugn_al'
-export const AkitaDAOGlobalStateKeysOtherAppList = 'other_al'
+export const AkitaDAOGlobalStateKeysAkitaAppList = 'aal'
+export const AkitaDAOGlobalStateKeysAkitaSocialAppList = 'sal'
+export const AkitaDAOGlobalStateKeysPluginAppList = 'pal'
+export const AkitaDAOGlobalStateKeysOtherAppList = 'oal'
 export const AkitaDAOGlobalStateKeysWalletFees = 'wallet_fees'
 export const AkitaDAOGlobalStateKeysSocialFees = 'social_fees'
 export const AkitaDAOGlobalStateKeysStakingFees = 'staking_fees'
@@ -45,12 +46,13 @@ export const AkitaDAOEscrowAccountKrby = 'krby'
 export const AkitaDAOEscrowAccountModerators = 'moderators'
 export const AkitaDAOEscrowAccountGovernors = 'governors'
 // escrows - for receives
-export const AkitaDAOEscrowAccountSocial = 'social'
-export const AkitaDAOEscrowAccountStakingPools = 'staking_pools'
-export const AkitaDAOEscrowAccountSubscriptions = 'subscriptions'
-export const AkitaDAOEscrowAccountMarketplace = 'marketplace'
-export const AkitaDAOEscrowAccountAuctions = 'auctions'
-export const AkitaDAOEscrowAccountRaffles = 'raffles'
+export const AkitaDAOEscrowAccountWallet = 'rev_wallet'
+export const AkitaDAOEscrowAccountSocial = 'rev_social'
+export const AkitaDAOEscrowAccountStakingPools = 'rev_pool'
+export const AkitaDAOEscrowAccountSubscriptions = 'rev_subscriptions'
+export const AkitaDAOEscrowAccountMarketplace = 'rev_marketplace'
+export const AkitaDAOEscrowAccountAuctions = 'rev_auctions'
+export const AkitaDAOEscrowAccountRaffles = 'rev_raffles'
 
 export const MethodRestrictionByteLength: uint64 = 20
 
@@ -69,6 +71,10 @@ export const DAOProposalVotesMBR: uint64 = 22_500
 export const DAOExecutionMBR: uint64 = 22_100
 
 // export const DAOExecutionsMBR: uint64 = 0
+
+export const DaoStateDraft: DaoState = new Uint8(0)
+export const DaoStatePartiallyInitialized: DaoState = new Uint8(1)
+export const DaoStateFullyInitialized: DaoState = new Uint8(2)
 
 export const DAOPayoutEscrowIndividualByteLength: uint64 = 32
 export const DAOPayoutEscrowGroupByteLength: uint64 = 8

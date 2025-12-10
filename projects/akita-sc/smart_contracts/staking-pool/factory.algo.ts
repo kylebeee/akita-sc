@@ -1,10 +1,12 @@
-import { abimethod, Account, Application, assert, assertMatch, Global, gtxn, itxn, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Account, Application, assert, assertMatch, Global, gtxn, itxn, OnCompleteAction, Txn, uint64 } from "@algorandfoundation/algorand-typescript";
 import { abiCall, compileArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { classes } from "polytype";
 import { RootKey } from "../meta-merkles/types";
 import { StakingType } from "../staking/types";
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MAX_PROGRAM_PAGES } from "../utils/constants";
+import { ERR_CONTRACT_NOT_SET } from "../utils/errors";
 import { getFunder, getStakingFees, referralFee, sendReferralPayment } from "../utils/functions";
+import { PoolGlobalStateBytesCount, PoolGlobalStateUintCount } from "./constants";
 import { ERR_NOT_CREATOR } from "./errors";
 
 // CONTRACT IMPORTS
@@ -13,10 +15,7 @@ import { BaseStakingPool } from "./base";
 import { StakingPool } from "./contract.algo";
 
 
-export class StakingPoolFactory extends classes(
-  BaseStakingPool,
-  FactoryContract
-) {
+export class StakingPoolFactory extends classes(BaseStakingPool, FactoryContract) {
   // GLOBAL STATE ---------------------------------------------------------------------------------
   // BOXES ----------------------------------------------------------------------------------------
   // PRIVATE METHODS ------------------------------------------------------------------------------
@@ -48,12 +47,14 @@ export class StakingPoolFactory extends classes(
     maxEntries: uint64,
   ): uint64 {
 
+    assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
+
     const pool = compileArc4(StakingPool)
 
     const childMBR: uint64 = (
       MAX_PROGRAM_PAGES +
-      (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
-      (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
+      (GLOBAL_STATE_KEY_UINT_COST * PoolGlobalStateUintCount) +
+      (GLOBAL_STATE_KEY_BYTES_COST * PoolGlobalStateBytesCount) +
       Global.minBalance
     )
 
@@ -85,6 +86,11 @@ export class StakingPoolFactory extends classes(
       })
       .submit()
 
+    // Read approval program from box storage and split into chunks
+    const approvalSize = this.boxedContract.length
+    const chunk1 = this.boxedContract.extract(0, 4096)
+    const chunk2 = this.boxedContract.extract(4096, approvalSize - 4096)
+
     const newPoolApp = pool.call
       .create({
         args: [
@@ -100,6 +106,9 @@ export class StakingPoolFactory extends classes(
           this.akitaDAO.value,
           this.akitaDAOEscrow.value
         ],
+        approvalProgram: [chunk1, chunk2],
+        clearStateProgram: pool.clearStateProgram,
+        extraProgramPages: 3
       })
       .itxn
       .createdApp
@@ -117,6 +126,7 @@ export class StakingPoolFactory extends classes(
     abiCall<typeof StakingPool.prototype.delete>({
       appId,
       args: [Txn.sender],
+      onCompletion: OnCompleteAction.DeleteApplication
     })
 
     itxn
@@ -129,12 +139,10 @@ export class StakingPoolFactory extends classes(
   @abimethod({ readonly: true })
   newPoolCost(): uint64 {
 
-    const pool = compileArc4(StakingPool)
-
     const childMBR: uint64 = (
       MAX_PROGRAM_PAGES +
-      (GLOBAL_STATE_KEY_UINT_COST * pool.globalUints) +
-      (GLOBAL_STATE_KEY_BYTES_COST * pool.globalBytes) +
+      (GLOBAL_STATE_KEY_UINT_COST * PoolGlobalStateUintCount) +
+      (GLOBAL_STATE_KEY_BYTES_COST * PoolGlobalStateBytesCount) +
       Global.minBalance
     )
 

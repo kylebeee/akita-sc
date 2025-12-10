@@ -9,6 +9,7 @@ import {
   EntryData
 } from '../generated/StakingPoolClient';
 import { StakingPoolFactoryArgs } from '../generated/StakingPoolFactoryClient';
+import { AppCallMethodCall } from "@algorandfoundation/algokit-utils/types/composer";
 
 // Re-export types from generated clients for convenience
 export { StakingPoolState, Reward, RootKey, FunderInfo, StakingPoolMbrData, EntryData };
@@ -47,7 +48,7 @@ export type EnterPoolParams = MaybeSigner & {
   /** Array of entries (asset, amount, optional proofs) */
   entries: Entry[];
   /** Optional additional arguments for gated entry */
-  args?: Uint8Array[];
+  gateTxn?: AppCallMethodCall
 };
 
 export type StartDisbursementParams = MaybeSigner & PoolContractArgs['startDisbursement(uint64)void'];
@@ -61,6 +62,8 @@ export type FinalizeDistributionParams = MaybeSigner & PoolContractArgs['finaliz
 export type OptinAssetParams = MaybeSigner & Omit<PoolContractArgs['optIn(pay,uint64)void'], 'payment'>;
 
 export type CheckParams = PoolContractArgs['check(address,uint64)(bool,uint64)'];
+
+export type GateCheckParams = PoolContractArgs['gateCheck(appl,address,uint64)void'];
 
 export type CheckResult = {
   isEligible: boolean;

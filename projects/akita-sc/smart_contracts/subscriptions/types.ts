@@ -39,9 +39,23 @@ export type BlockListKey = {
 }
 
 export type SubscriptionKey = {
-    address: Account;
-    id: uint64;
+  address: Account;
+  id: uint64;
 };
+
+export type SubscriptionInfoWithExistence = {
+  exists: boolean
+  recipient: Account // 32
+  serviceID: ServiceID // 8
+  startDate: uint64 // 8
+  amount: uint64
+  interval: uint64
+  asset: uint64
+  gateID: uint64
+  lastPayment: uint64
+  streak: uint64
+  escrowed: uint64
+}
 
 export type SubscriptionInfo = {
   recipient: Account // 32

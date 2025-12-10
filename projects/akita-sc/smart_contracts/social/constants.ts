@@ -1,6 +1,6 @@
 import { uint64 } from "@algorandfoundation/algorand-typescript";
-import { PayWallType, TipAction, TipSendType } from "./types";
 import { Uint8 } from "@algorandfoundation/algorand-typescript/arc4";
+import { PayWallType, PostType, RefType, TipAction, TipSendType } from "./types";
 
 export const AkitaSocialGlobalStateKeysPaywallID = 'paywall_id'
 
@@ -41,15 +41,31 @@ export const TWO_YEARS: uint64 = 63_072_000
 export const THIRTY_DAYS: uint64 = 2_592_000
 export const ONE_YEAR: uint64 = 31_536_000
 
+// Maximum allowed drift for user-provided timestamps (60 seconds)
+export const MAX_TIMESTAMP_DRIFT: uint64 = 60
+
 export const ONE_MILLION_AKITA: uint64 = 1_000_000_000_000
 export const TWO_HUNDRED_THOUSAND_AKITA: uint64 = 200_000_000_000
 export const TEN_THOUSAND_AKITA: uint64 = 10_000_000_000
 
-export const AmendmentMBR: uint64 = 13_200 // (400 * 33) 'a' + txid
+export const AmendmentMBR: uint64 = 13_200 // (400 * 33) 'a' + nextEditKey
+export const EditBackRefMBR: uint64 = 13_200 // (400 * 33) 'e' + originalKey
 
+export const RefTypePost: RefType = new Uint8(10)
+export const RefTypeAsset: RefType = new Uint8(20)
+export const RefTypeAddress: RefType = new Uint8(30)
+export const RefTypeApp: RefType = new Uint8(40)
+export const RefTypeExternal: RefType = new Uint8(50)
+
+// PostType enum - what kind of post is this
+export const PostTypePost: PostType = new Uint8(0)      // Top-level post
+export const PostTypeReply: PostType = new Uint8(1)     // Reply/comment
+export const PostTypeEditPost: PostType = new Uint8(2)  // Edit of a top-level post
+export const PostTypeEditReply: PostType = new Uint8(3) // Edit of a reply
+
+export const TipSendTypeInvalid: TipSendType = new Uint8(0)
 export const TipSendTypeDirect: TipSendType = new Uint8(10)
-export const TipSendTypeARC59: TipSendType = new Uint8(20)
-export const TipSendTypeARC58: TipSendType = new Uint8(30)
+export const TipSendTypeARC58: TipSendType = new Uint8(20)
 
 export const TipActionPost: TipAction = new Uint8(10)
 export const TipActionReact: TipAction = new Uint8(20)

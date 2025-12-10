@@ -65,7 +65,7 @@ export class RafflePlugin extends classes(BaseRaffle, AkitaBaseContract) {
             receiver: this.factory.value.address,
             amount: Global.assetOptInMinBalance,
           }),
-          prizeID,
+          Asset(prizeID),
         ],
       })
     }
@@ -74,11 +74,47 @@ export class RafflePlugin extends classes(BaseRaffle, AkitaBaseContract) {
     const prizeAssetIsAlgo = prizeID === 0
     if (!prizeAssetIsAlgo) {
       optinMBR = Global.assetOptInMinBalance
+
+      if (!this.factory.value.address.isOptedIn(Asset(prizeID))) {
+        abiCall<typeof RaffleFactory.prototype.optIn>({
+          sender,
+          appId: this.factory.value,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: this.factory.value.address,
+              amount: Global.assetOptInMinBalance
+            }),
+            Asset(prizeID),
+          ]
+        })
+      }
     }
 
     const ticketAssetIsAlgo = ticketAssetID === 0
     if (!ticketAssetIsAlgo) {
       optinMBR += Global.assetOptInMinBalance
+
+      if (!this.factory.value.address.isOptedIn(Asset(ticketAssetID))) {
+        const optinCost = abiCall<typeof RaffleFactory.prototype.optInCost>({
+          sender,
+          appId: this.factory.value,
+          args: [Asset(ticketAssetID)]
+        }).returnValue
+
+        abiCall<typeof RaffleFactory.prototype.optIn>({
+          sender,
+          appId: this.factory.value,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: this.factory.value.address,
+              amount: optinCost
+            }),
+            Asset(ticketAssetID),
+          ]
+        })
+      }
     }
 
     const raffle = compileArc4(Raffle)

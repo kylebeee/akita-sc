@@ -1,7 +1,7 @@
 import { BaseSDK } from "../base";
 import { TxnReturn } from '../types'
 import { GateArgs, GateClient, GateFactory, GateFilterEntryWithArgsFromTuple } from '../generated/GateClient'
-import { hasSenderSigner, MaybeSigner, NewContractSDKParams } from "../types";
+import { MaybeSigner, NewContractSDKParams } from "../types";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { emptySigner } from "../constants";
 import { GateCheckArg, GateEncodingInfo, GateRegistrationArg, GateRegistrationFilterAndArg, GateRegistryConfig, GateType } from "./types";
@@ -398,15 +398,7 @@ export class GateSDK extends BaseSDK<GateClient> {
 
   async register({ sender, signer, args }: { args: GateRegistrationFilterAndArg[] } & MaybeSigner): Promise<TxnReturn<bigint>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const encodedArgs = await this.encodeGateRegistryArgs(args);
 
@@ -427,15 +419,7 @@ export class GateSDK extends BaseSDK<GateClient> {
 
   async check({ sender, signer, caller, gateId, args }: Omit<ContractArgs['check(address,uint64,byte[][])bool'], 'args'> & { args: GateCheckArg[] } & MaybeSigner): Promise<TxnReturn<boolean>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const preppedArgs = await this.encodeGateCheckArgs(args);
 
@@ -447,15 +431,7 @@ export class GateSDK extends BaseSDK<GateClient> {
 
   async mustCheck({ sender, signer, caller, gateId, args }: Omit<ContractArgs['check(address,uint64,byte[][])bool'], 'args'> & { args: GateCheckArg[] } & MaybeSigner): Promise<TxnReturn<void>> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const preppedArgs = await this.encodeGateCheckArgs(args);
 
@@ -466,17 +442,10 @@ export class GateSDK extends BaseSDK<GateClient> {
   }
 
   async getGate({ sender, signer, gateId }: ContractArgs['getGate(uint64)(uint64,uint64,uint64,uint8,byte[])[]'] & MaybeSigner): Promise<any> {
-    const defaultParams = {
-      ...this.sendParams,
-      sender: this.readerAccount,
-      signer: emptySigner
-    }
-
-    const sendParams = {
-      ...defaultParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({
+      sender: sender ?? this.readerAccount,
+      signer: signer ?? emptySigner
+    });
 
     const { return: gates } = await this.client.send.getGate({ ...sendParams, args: { gateId } });
 
@@ -497,17 +466,10 @@ export class GateSDK extends BaseSDK<GateClient> {
 
   async cost({ sender, signer, ...args }: ContractArgs['cost((uint64,uint64,uint8)[],byte[][])uint64'] & MaybeSigner): Promise<bigint> {
 
-    const defaultParams = {
-      ...this.sendParams,
-      sender: this.readerAccount,
-      signer: emptySigner
-    }
-
-    const sendParams = {
-      ...defaultParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({
+      sender: sender ?? this.readerAccount,
+      signer: signer ?? emptySigner
+    });
 
     const { return: cost } = await this.client.send.cost({ ...sendParams, args });
 
@@ -532,15 +494,7 @@ export class GateSDK extends BaseSDK<GateClient> {
       & MaybeSigner
     )): Promise<AppCallMethodCall> => {
 
-      const sendParams = {
-        ...this.sendParams,
-        ...(sender !== undefined && { sender }),
-        ...(signer !== undefined && { signer })
-      };
-
-      if (!hasSenderSigner(sendParams)) {
-        throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-      }
+      const sendParams = this.getRequiredSendParams({ sender, signer });
 
       const preppedArgs = await this.encodeGateCheckArgs(args);
 
@@ -562,15 +516,7 @@ export class GateSDK extends BaseSDK<GateClient> {
       & MaybeSigner
     )): Promise<AppCallMethodCall> => {
 
-      const sendParams = {
-        ...this.sendParams,
-        ...(sender !== undefined && { sender }),
-        ...(signer !== undefined && { signer })
-      };
-
-      if (!hasSenderSigner(sendParams)) {
-        throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-      }
+      const sendParams = this.getRequiredSendParams({ sender, signer });
 
       const preppedArgs = await this.encodeGateCheckArgs(args);
 

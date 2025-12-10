@@ -1,9 +1,9 @@
 import { StakingPoolFactoryArgs, StakingPoolFactoryClient, StakingPoolFactoryFactory } from '../generated/StakingPoolFactoryClient'
-import { hasSenderSigner, MaybeSigner, NewContractSDKParams } from '../types';
+import { MaybeSigner, NewContractSDKParams } from '../types';
 import { StakingPoolSDK } from './index';
 import { BaseSDK } from '../base';
 import { emptySigner } from '../constants';
-import { microAlgo } from '@algorandfoundation/algokit-utils';
+import { microAlgo, microAlgos } from '@algorandfoundation/algokit-utils';
 import { NewPoolParams, DeletePoolParams, StakingPoolMbrParams } from './types';
 import { StakingPoolMbrData } from '../generated/StakingPoolClient';
 
@@ -35,15 +35,7 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
     maxEntries = 0n
   }: NewPoolParams): Promise<StakingPoolSDK> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
-
-    if (!hasSenderSigner(sendParams)) {
-      throw new Error('Sender and signer must be provided either explicitly or through defaults at sdk instantiation');
-    }
+    const sendParams = this.getRequiredSendParams({ sender, signer });
 
     const poolCost = await this.cost();
 
@@ -53,7 +45,9 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
       receiver: this.client.appAddress,
     });
 
-    const { return: appId } = await this.client.send.newPool({
+    const group = this.client.newGroup();
+
+    group.newPool({
       ...sendParams,
       args: {
         payment,
@@ -66,6 +60,24 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
         maxEntries
       }
     });
+
+    // Add opUp calls to get more reference slots for impact/social contract calls
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+    });
+    group.opUp({
+      ...sendParams,
+      args: {},
+      maxFee: microAlgos(1_000),
+      note: '1'
+    });
+
+    const result = await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
+    
+    // Extract appId from the newPool call result
+    const appId = result.returns[0] as bigint | undefined;
 
     if (appId === undefined) {
       throw new Error('Failed to create new staking pool');
@@ -103,18 +115,11 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
    */
   async cost(params?: MaybeSigner): Promise<bigint> {
 
-    const defaultParams = {
-      ...this.sendParams,
+    const sendParams = this.getSendParams({
       sender: this.readerAccount,
-      signer: emptySigner
-    }
-
-    const { sender, signer } = params || {};
-    const sendParams = {
-      ...defaultParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    }
+      signer: emptySigner,
+      ...params
+    });
 
     const cost = await this.client.newPoolCost({
       ...sendParams,
@@ -129,11 +134,7 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
    */
   async deletePool({ sender, signer, appId }: DeletePoolParams): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.deletePool({
       ...sendParams,
@@ -146,11 +147,7 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
    */
   async setEscrow({ sender, signer, escrow }: MaybeSigner & StakingPoolFactoryContractArgs['setEscrow(uint64)void']): Promise<void> {
 
-    const sendParams = {
-      ...this.sendParams,
-      ...(sender !== undefined && { sender }),
-      ...(signer !== undefined && { signer })
-    };
+    const sendParams = this.getSendParams({ sender, signer });
 
     await this.client.send.setEscrow({
       ...sendParams,

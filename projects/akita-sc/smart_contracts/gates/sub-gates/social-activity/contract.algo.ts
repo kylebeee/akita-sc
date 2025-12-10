@@ -1,7 +1,7 @@
 import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { getAkitaAppList } from '../../../utils/functions'
+import { getAkitaSocialAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -46,7 +46,7 @@ export class SocialActivityGate extends AkitaBaseContract {
 
   private activityGate(user: Account, op: Operator, value: uint64): boolean {
     const { lastActive } = abiCall<typeof AkitaSocial.prototype.getMeta>({
-      appId: getAkitaAppList(this.akitaDAO.value).social,
+      appId: getAkitaSocialAppList(this.akitaDAO.value).social,
       args: [user],
     }).returnValue
 

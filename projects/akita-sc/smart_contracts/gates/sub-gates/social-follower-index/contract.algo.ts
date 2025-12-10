@@ -3,7 +3,7 @@ import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/
 import { btoi } from '@algorandfoundation/algorand-typescript/op'
 import { Uint64ByteLength } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
-import { getAkitaAppList } from '../../../utils/functions'
+import { getAkitaSocialAppList } from '../../../utils/functions'
 import {
   Equal,
   GreaterThan,
@@ -17,7 +17,7 @@ import { ERR_INVALID_ARG_COUNT } from '../../errors'
 import { Operator } from '../../types'
 
 // CONTRACT IMPORTS
-import type { AkitaSocial } from '../../../social/contract.algo'
+import { AkitaSocialGraph } from '../../../social/graph.algo'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 
@@ -53,8 +53,8 @@ export class SocialFollowerIndexGate extends AkitaBaseContract {
   }
 
   private followerIndexGate(user: Account, index: uint64, follower: Account, op: Operator, value: uint64): boolean {
-    const isFollower = abiCall<typeof AkitaSocial.prototype.isFollower>({
-      appId: getAkitaAppList(this.akitaDAO.value).social,
+    const isFollower = abiCall<typeof AkitaSocialGraph.prototype.isFollower>({
+      appId: getAkitaSocialAppList(this.akitaDAO.value).graph,
       args: [user, index, follower],
     }).returnValue
 

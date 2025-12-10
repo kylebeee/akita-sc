@@ -84,20 +84,16 @@ import {
   SubscriptionID,
   SubscriptionInfo,
   SubscriptionInfoWithDetails,
+  SubscriptionInfoWithExistence,
   SubscriptionKey,
   TriggerListRequest
 } from './types'
 
 // CONTRACT IMPORTS
-import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
-import { ContractWithOptIn } from '../utils/base-contracts/optin'
+import { AkitaFeeGeneratorContractWithOptIn } from '../utils/base-contracts/base'
 import { BaseSubscriptions } from './base'
 
-export class Subscriptions extends classes(
-  BaseSubscriptions,
-  AkitaBaseFeeGeneratorContract,
-  ContractWithOptIn
-) {
+export class Subscriptions extends classes(BaseSubscriptions, AkitaFeeGeneratorContractWithOptIn) {
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -349,12 +345,11 @@ export class Subscriptions extends classes(
     const { leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, assetXfer.xferAsset.id, akitaFees)
 
     if (!this.akitaDAOEscrow.value.address.isOptedIn(assetXfer.xferAsset)) {
-      this.optAkitaEscrowInAndSend(
+      mbrAmount += this.optAkitaEscrowInAndSend(
         AkitaDAOEscrowAccountSubscriptions,
         assetXfer.xferAsset,
         leftover
       )
-      mbrAmount += Global.assetOptInMinBalance
     } else {
       itxn
         .assetTransfer({
@@ -477,7 +472,7 @@ export class Subscriptions extends classes(
     let activated = false
     for (let i: uint64 = (Txn.groupIndex + 1); i < Global.groupSize; i += 1) {
       const txn = gtxn.Transaction(i)
-      
+
       if (txn.type !== TransactionType.ApplicationCall) {
         continue
       }
@@ -538,8 +533,7 @@ export class Subscriptions extends classes(
       assert(Global.currentApplicationAddress.isOptedIn(Asset(asset)), ERR_NOT_OPTED_IN)
 
       if (!this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
-        requiredAmount += Global.assetOptInMinBalance
-        this.optAkitaEscrowInAndSend(AkitaDAOEscrowAccountSubscriptions, Asset(asset), 0)
+        requiredAmount += this.optAkitaEscrowInAndSend(AkitaDAOEscrowAccountSubscriptions, Asset(asset), 0)
       }
     }
 
@@ -1090,7 +1084,7 @@ export class Subscriptions extends classes(
   newServiceCost(asset: uint64): uint64 {
     const serviceCreationFee = getSubscriptionFees(this.akitaDAO.value).serviceCreationFee
     const costs = this.mbr()
-    
+
     let requiredAmount: uint64 = serviceCreationFee + costs.services
     if (asset !== 0 && !this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
       requiredAmount += Global.assetOptInMinBalance
@@ -1165,7 +1159,31 @@ export class Subscriptions extends classes(
   }
 
   @abimethod({ readonly: true })
-  getSubscription(key: SubscriptionKey): SubscriptionInfo {
+  getSubscription(key: SubscriptionKey): SubscriptionInfoWithExistence {
+    if (!this.subscriptions(key).exists) {
+      return {
+        exists: false,
+        recipient: Global.zeroAddress,
+        serviceID: 0,
+        startDate: 0,
+        amount: 0,
+        interval: 0,
+        asset: 0,
+        gateID: 0,
+        lastPayment: 0,
+        streak: 0,
+        escrowed: 0,
+      }
+    }
+
+    return {
+      exists: true,
+      ...this.subscriptions(key).value,
+    }
+  }
+
+  @abimethod({ readonly: true })
+  mustGetSubscription(key: SubscriptionKey): SubscriptionInfo {
     assert(this.subscriptions(key).exists, ERR_SUBSCRIPTION_DOES_NOT_EXIST)
     return this.subscriptions(key).value
   }
@@ -1178,7 +1196,7 @@ export class Subscriptions extends classes(
 
     let status: ServiceStatus = ServiceStatusNone
     let title: string = ''
-    let description: string = ''  
+    let description: string = ''
     let bannerImage: CID = op.bzero(36)
     let highlightMessage: Uint8 = HighlightMessageNone
     let highlightColor: bytes<3> = Bytes('000').toFixed({ length: 3 })
