@@ -353,7 +353,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
     amount: uint64,
     interval: uint64,
     index: uint64,
-    args: GateArgs // TODO: gated subscribeAsa
+    args: GateArgs
   ): void {
     const { origin, sender } = getAccounts(wallet)
 

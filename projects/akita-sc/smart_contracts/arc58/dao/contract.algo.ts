@@ -180,10 +180,6 @@ export class AkitaDAO extends Contract {
 
     for (let i: uint64 = 0; i < actions.length; i++) {
       switch (actions[i].type) {
-        case ProposalActionTypeUpgradeApp: {
-          // TODO: make sure its an app we control
-          break;
-        }
         case ProposalActionTypeAddPlugin: {
           const { plugin, caller, escrow, fee, power, duration, participation, approval, useExecutionKey } = decodeArc4<ProposalAddPlugin>(actions[i].data)
           if (useExecutionKey) {
