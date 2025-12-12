@@ -31,6 +31,7 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
     marketplace,
     stakeKey,
     minimumStakeAmount,
+    allowLateSignups = false,
     gateId = 0n,
     maxEntries = 0n
   }: NewPoolParams): Promise<StakingPoolSDK> {
@@ -56,6 +57,7 @@ export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
         marketplace,
         stakeKey,
         minimumStakeAmount,
+        allowLateSignups,
         gateId,
         maxEntries
       }

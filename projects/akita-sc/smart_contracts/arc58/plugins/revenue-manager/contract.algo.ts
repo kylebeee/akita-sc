@@ -129,7 +129,8 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
 
     const { source, optinAllowed } = this.escrows({ wallet, escrow }).value
     const initiator = gtxn.Transaction(getRekeyIndex(wallet)).sender
-    assert(source === initiator, ERR_FORBIDDEN)
+    const isChild = Global.callerApplicationId !== 0 && Application(Global.callerApplicationId).creator === source
+    assert(source === initiator || isChild, ERR_FORBIDDEN)
     assert(optinAllowed, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN)
 
     for (let i: uint64 = 0; i < assets.length; i++) {

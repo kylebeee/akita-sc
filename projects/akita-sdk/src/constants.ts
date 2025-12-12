@@ -21,7 +21,7 @@ export const DEFAULT_SEND_PARAMS: SendParams & { maxFee: AlgoAmount } = {
   /** Whether to use simulate to automatically calculate required app call inner transaction fees and cover them in the parent app call transaction fee */
   coverAppCallInnerTransactionFees: true,
   /** the maximum fee to pay */
-  maxFee: microAlgo(1_000_000n)
+  maxFee: microAlgo(257_000n)
 }
 
 export const MAX_UINT64 = BigInt("18446744073709551615"); // 2^64 - 1, the maximum value for a 64-bit unsigned integer

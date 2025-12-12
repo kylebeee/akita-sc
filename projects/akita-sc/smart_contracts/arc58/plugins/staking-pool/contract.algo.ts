@@ -48,6 +48,7 @@ export class StakingPoolPlugin extends BaseStakingPool {
     marketplace: Account,
     stakeKey: RootKey,
     minimumStakeAmount: uint64,
+    allowLateSignups: boolean,
     gateID: uint64,
     maxEntries: uint64,
   ): void {
@@ -81,6 +82,7 @@ export class StakingPoolPlugin extends BaseStakingPool {
         marketplace,
         stakeKey,
         minimumStakeAmount,
+        allowLateSignups,
         gateID,
         maxEntries,
       ],

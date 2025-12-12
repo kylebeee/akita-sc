@@ -243,6 +243,7 @@ rekeyAddress_after_if_else@2:
 // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts::RevenueManagerPlugin.optIn[routing]() -> void:
 optIn:
     bytec_1 // ""
+    dup
     // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:112
     // optIn(wallet: Application, rekeyBack: boolean, assets: uint64[], mbrPayment: gtxn.PaymentTxn): void {
     txna ApplicationArgs 1
@@ -384,15 +385,10 @@ optIn:
     pop
     dup
     extract 0 32
-    swap
+    cover 2
     pushint 257 // 257
     getbit
-    // smart_contracts/utils/functions.ts:300-303
-    // const [rekeyIndexBytes] = op.AppGlobal.getExUint64(
-    //   wallet,
-    //   Bytes(AbstractAccountGlobalStateKeysRekeyIndex)
-    // )
-    uncover 2
+    swap
     // smart_contracts/utils/functions.ts:302
     // Bytes(AbstractAccountGlobalStateKeysRekeyIndex)
     pushbytes "rekey_index"
@@ -407,41 +403,58 @@ optIn:
     // const initiator = gtxn.Transaction(getRekeyIndex(wallet)).sender
     gtxns Sender
     // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:132
-    // assert(source === initiator, ERR_FORBIDDEN)
-    uncover 2
+    // const isChild = Global.callerApplicationId !== 0 && Application(Global.callerApplicationId).creator === source
+    global CallerApplicationID
+    bz optIn_bool_false@4
+    global CallerApplicationID
+    app_params_get AppCreator
+    assert // application exists
+    dig 3
     ==
-    assert // only the creator wallet can delete a spending account
+    bz optIn_bool_false@4
+    intc_1 // 1
+
+optIn_bool_merge@5:
     // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:133
+    // assert(source === initiator || isChild, ERR_FORBIDDEN)
+    dig 3
+    dig 2
+    ==
+    ||
+    assert // only the creator wallet can delete a spending account
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:134
     // assert(optinAllowed, ERR_ESCROW_NOT_ALLOWED_TO_OPTIN)
+    dig 1
     assert // Escrow is not allowed to opt-in
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:135
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:136
     // for (let i: uint64 = 0; i < assets.length; i++) {
     intc_0 // 0
+    bury 11
 
-optIn_while_top@2:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:135
-    // for (let i: uint64 = 0; i < assets.length; i++) {
-    dup
-    dig 4
-    <
-    bz optIn_after_while@9
+optIn_while_top@6:
     // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:136
+    // for (let i: uint64 = 0; i < assets.length; i++) {
+    dig 10
+    dig 6
+    <
+    bz optIn_after_while@13
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:137
     // assert(!sender.isOptedIn(Asset(assets[i])), ERR_ALREADY_OPTED_IN)
-    dig 4
+    dig 6
     extract 2 0
-    dig 1
+    dig 11
     intc_2 // 8
     *
     extract_uint64
     dup
-    bury 9
-    dig 3
+    bury 11
+    dig 5
     swap
     asset_holding_get AssetBalance
     bury 1
     !
     assert // already opted in
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:138-146
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:139-147
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -452,35 +465,35 @@ optIn_while_top@2:
     //   })
     //   .submit();
     itxn_begin
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:144
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:145
     // rekeyTo: rekeyAddress(rekeyBack && (i === (assets.length - 1)), wallet)
+    dig 7
+    bz optIn_bool_false@10
     dig 5
-    bz optIn_bool_false@6
-    dig 3
     intc_1 // 1
     -
-    dig 1
+    dig 11
     ==
-    bz optIn_bool_false@6
+    bz optIn_bool_false@10
     intc_1 // 1
 
-optIn_bool_merge@7:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:144
+optIn_bool_merge@11:
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:145
     // rekeyTo: rekeyAddress(rekeyBack && (i === (assets.length - 1)), wallet)
-    dig 7
+    dig 9
     callsub rekeyAddress
     itxn_field RekeyTo
-    dig 7
+    dig 9
     itxn_field XferAsset
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:142
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:143
     // assetAmount: 0,
     intc_0 // 0
     itxn_field AssetAmount
-    dig 2
+    dig 4
     dup
     itxn_field AssetReceiver
     itxn_field Sender
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:138-145
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:139-146
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -493,7 +506,7 @@ optIn_bool_merge@7:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:138-146
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:139-147
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -504,28 +517,28 @@ optIn_bool_merge@7:
     //   })
     //   .submit();
     itxn_submit
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:135
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:136
     // for (let i: uint64 = 0; i < assets.length; i++) {
-    dup
+    dig 10
     intc_1 // 1
     +
-    bury 1
-    b optIn_while_top@2
+    bury 11
+    b optIn_while_top@6
 
-optIn_bool_false@6:
+optIn_bool_false@10:
     intc_0 // 0
-    b optIn_bool_merge@7
+    b optIn_bool_merge@11
 
-optIn_after_while@9:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:149
+optIn_after_while@13:
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:150
     // this.escrows({ wallet, escrow }).value.optinCount += assets.length
-    dig 1
+    dig 3
     dup
     box_get
     assert // Box must have value
     pushint 33 // 33
     extract_uint64
-    dig 5
+    dig 7
     +
     itob
     pushint 33 // 33
@@ -536,10 +549,14 @@ optIn_after_while@9:
     intc_1 // 1
     return
 
+optIn_bool_false@4:
+    intc_0 // 0
+    b optIn_bool_merge@5
+
 
 // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts::RevenueManagerPlugin.newReceiveEscrow[routing]() -> void:
 newReceiveEscrow:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:156-164
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:157-165
     // newReceiveEscrow(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -614,26 +631,26 @@ newReceiveEscrow:
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:166
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:167
     // assert(this.controls(sender), ERR_FORBIDDEN)
     callsub controls
     assert // only the creator wallet can delete a spending account
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:167
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:168
     // assert(splits.length > 0, ERR_SPLITS_CANNOT_BE_EMPTY)
     dup
     intc_0 // 0
     extract_uint16
     dup
     assert // Splits cannot be empty
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:168
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:169
     // assert(splits.length <= 10, ERR_SPLITS_CANNOT_BE_MORE_THAN_10)
     pushint 10 // 10
     <=
     assert // Splits cannot be more than 10
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:178
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:179
     // creationDate: Global.latestTimestamp,
     global LatestTimestamp
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:170-179
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:171-180
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -654,10 +671,10 @@ newReceiveEscrow:
     uncover 3
     swap
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:174
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:175
     // optinCount: 0,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:170-179
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:171-180
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -672,10 +689,10 @@ newReceiveEscrow:
     swap
     dig 1
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:175
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:176
     // phase: EscrowDisbursementPhaseIdle,
     bytec 4 // 0x00
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:170-179
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:171-180
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -694,7 +711,7 @@ newReceiveEscrow:
     swap
     itob
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:170
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:171
     // this.escrows({ wallet, escrow }).value = {
     dig 4
     itob
@@ -714,7 +731,7 @@ newReceiveEscrow:
     bytec_3 // "e"
     dig 1
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:170-179
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:171-180
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -727,7 +744,7 @@ newReceiveEscrow:
     // }
     uncover 2
     box_put
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:182
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:183
     // this.validateSplits(splits)
     swap
     callsub validateSplits
@@ -736,18 +753,18 @@ newReceiveEscrow:
     pushbytes "s"
     uncover 2
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:184
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:185
     // this.splits({ wallet, escrow }).value = clone(splits)
     dup
     box_del
     pop
     swap
     box_put
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:186
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:187
     // rekeyBackIfNecessary(rekeyBack, wallet)
     swap
     callsub rekeyBackIfNecessary
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:156-164
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:157-165
     // newReceiveEscrow(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -763,7 +780,7 @@ newReceiveEscrow:
 
 // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts::RevenueManagerPlugin.newReceiveEscrowWithRef[routing]() -> void:
 newReceiveEscrowWithRef:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:193-201
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:194-202
     // newReceiveEscrowWithRef(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -838,14 +855,14 @@ newReceiveEscrowWithRef:
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:203
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:204
     // assert(this.controls(sender), ERR_FORBIDDEN)
     callsub controls
     assert // only the creator wallet can delete a spending account
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:213
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:214
     // creationDate: Global.latestTimestamp,
     global LatestTimestamp
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:205-214
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:206-215
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -866,10 +883,10 @@ newReceiveEscrowWithRef:
     uncover 3
     swap
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:209
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:210
     // optinCount: 0,
     intc_0 // 0
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:205-214
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:206-215
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -884,10 +901,10 @@ newReceiveEscrowWithRef:
     swap
     dig 1
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:210
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:211
     // phase: EscrowDisbursementPhaseIdle,
     bytec 4 // 0x00
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:205-214
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:206-215
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -906,7 +923,7 @@ newReceiveEscrowWithRef:
     swap
     itob
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:205
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:206
     // this.escrows({ wallet, escrow }).value = {
     dig 4
     itob
@@ -926,7 +943,7 @@ newReceiveEscrowWithRef:
     bytec_3 // "e"
     dig 1
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:205-214
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:206-215
     // this.escrows({ wallet, escrow }).value = {
     //   source,
     //   allocatable,
@@ -944,18 +961,18 @@ newReceiveEscrowWithRef:
     pushbytes "r"
     swap
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:217
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:218
     // this.splitRefs({ wallet, escrow }).value = clone(splitRef)
     dup
     box_del
     pop
     swap
     box_put
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:219
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:220
     // rekeyBackIfNecessary(rekeyBack, wallet)
     swap
     callsub rekeyBackIfNecessary
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:193-201
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:194-202
     // newReceiveEscrowWithRef(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -971,7 +988,7 @@ newReceiveEscrowWithRef:
 
 // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts::RevenueManagerPlugin.startEscrowDisbursement[routing]() -> void:
 startEscrowDisbursement:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:222
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:223
     // startEscrowDisbursement(wallet: Application, rekeyBack: boolean): void {
     txna ApplicationArgs 1
     dup
@@ -988,17 +1005,17 @@ startEscrowDisbursement:
     assert // invalid number of bytes for bool8
     intc_0 // 0
     getbit
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:223
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:224
     // const escrow = getEscrow(wallet)
     dig 1
     callsub getEscrow
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:224
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:225
     // assert(escrow !== '', ERR_ESCROW_DOES_NOT_EXIST)
     dup
     bytec_1 // ""
     !=
     assert // Escrow does not exist
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:225
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:226
     // const { id: escrowID } = mustGetEscrowInfo(wallet)
     dig 2
     callsub mustGetEscrowInfo
@@ -1020,19 +1037,19 @@ startEscrowDisbursement:
     // )
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:227
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:228
     // assert(this.controls(sender), ERR_FORBIDDEN)
     dup
     callsub controls
     assert // only the creator wallet can delete a spending account
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:228
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:229
     // assert(sender === Application(escrowID).address, ERR_CONTROLLED_ADDRESS_MUST_BE_ESCROW)
     swap
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Controlled address must be escrow
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:230
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:231
     // assert(this.escrows({ wallet, escrow }).exists, ERR_ESCROW_DOES_NOT_EXIST)
     dig 2
     itob
@@ -1052,13 +1069,13 @@ startEscrowDisbursement:
     bytec_3 // "e"
     swap
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:230
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:231
     // assert(this.escrows({ wallet, escrow }).exists, ERR_ESCROW_DOES_NOT_EXIST)
     dup
     box_len
     bury 1
     assert // Escrow does not exist
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:232
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:233
     // const { phase, allocatable, lastDisbursement, creationDate } = this.escrows({ wallet, escrow }).value
     dup
     box_get
@@ -1074,17 +1091,17 @@ startEscrowDisbursement:
     uncover 3
     pushint 58 // 58
     extract_uint64
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:233
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:234
     // assert(phase === EscrowDisbursementPhaseIdle, ERR_ESCROW_NOT_IDLE)
     uncover 3
     bytec 4 // 0x00
     ==
     assert // Escrow is not in idle phase
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:234
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:235
     // assert(allocatable, ERR_ESCROW_NOT_ALLOCATABLE)
     uncover 2
     assert // Escrow is not allocatable
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:236
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:237
     // const latestWindow: uint64 = Global.latestTimestamp - ((Global.latestTimestamp - creationDate) % ONE_DAY)
     global LatestTimestamp
     dup
@@ -1093,29 +1110,29 @@ startEscrowDisbursement:
     pushint 86400 // 86400
     %
     -
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:237
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:238
     // assert(latestWindow >= lastDisbursement, ERR_ESCROW_NOT_READY_FOR_DISBURSEMENT)
     dup
     uncover 2
     >=
     assert // Escrow is not ready for disbursement
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:239
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:240
     // this.escrows({ wallet, escrow }).value.phase = EscrowDisbursementPhaseAllocation
     dig 1
     pushint 41 // 41
     bytec 6 // 0x14
     box_replace
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:240
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:241
     // this.escrows({ wallet, escrow }).value.lastDisbursement = latestWindow
     itob
     pushint 50 // 50
     swap
     box_replace
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:242
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:243
     // rekeyBackIfNecessary(rekeyBack, wallet)
     swap
     callsub rekeyBackIfNecessary
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:222
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:223
     // startEscrowDisbursement(wallet: Application, rekeyBack: boolean): void {
     intc_1 // 1
     return
@@ -1127,7 +1144,7 @@ processEscrowAllocation:
     dupn 8
     bytec_1 // ""
     dupn 10
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:245
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:246
     // processEscrowAllocation(wallet: Application, rekeyBack: boolean, ids: uint64[]): void {
     txna ApplicationArgs 1
     dup
@@ -1162,17 +1179,17 @@ processEscrowAllocation:
     len
     ==
     assert // invalid number of bytes for (len+uint64[])
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:246
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:247
     // const escrow = getEscrow(wallet)
     dup
     callsub getEscrow
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:247
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:248
     // assert(escrow !== '', ERR_ESCROW_DOES_NOT_EXIST)
     dup
     bytec_1 // ""
     !=
     assert // Escrow does not exist
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:248
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:249
     // const { id: escrowID } = mustGetEscrowInfo(wallet)
     dig 1
     callsub mustGetEscrowInfo
@@ -1199,13 +1216,13 @@ processEscrowAllocation:
     dup
     cover 2
     cover 4
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:250
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:251
     // assert(sender === Application(escrowID).address, ERR_CONTROLLED_ADDRESS_MUST_BE_ESCROW)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Controlled address must be escrow
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:252
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:253
     // const { phase, optinCount, allocationCounter } = this.escrows({ wallet, escrow }).value
     swap
     itob
@@ -1228,7 +1245,7 @@ processEscrowAllocation:
     concat
     dup
     cover 2
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:252
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:253
     // const { phase, optinCount, allocationCounter } = this.escrows({ wallet, escrow }).value
     box_get
     assert // Box must have value
@@ -1241,13 +1258,13 @@ processEscrowAllocation:
     pushint 42 // 42
     extract_uint64
     cover 3
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:253
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:254
     // assert(phase === EscrowDisbursementPhaseAllocation, ERR_ESCROW_NOT_IN_ALLOCATION_PHASE)
     swap
     bytec 6 // 0x14
     ==
     assert // Escrow is not in allocation phase
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:254
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:255
     // const totalAssetsToProcess: uint64 = optinCount + 1 // + 1 to include algo
     intc_1 // 1
     +
@@ -1271,7 +1288,7 @@ processEscrowAllocation:
     bury 24
 
 processEscrowAllocation_after_inlined_smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts::RevenueManagerPlugin.resolveSplits@43:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:260
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:261
     // assert(splits.length > 0, ERR_SPLITS_CANNOT_BE_EMPTY)
     dig 23
     dup
@@ -1279,28 +1296,28 @@ processEscrowAllocation_after_inlined_smart_contracts/arc58/plugins/revenue-mana
     extract_uint16
     dup
     assert // Splits cannot be empty
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:261
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:262
     // assert(splits.length <= 10, ERR_SPLITS_CANNOT_BE_MORE_THAN_10)
     pushint 10 // 10
     <=
     assert // Splits cannot be more than 10
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:262
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:263
     // this.validateSplits(splits)
     callsub validateSplits
     bury 24
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:265
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:266
     // for (let i: uint64 = 0; i < ids.length; i += 1) {
     intc_0 // 0
     bury 18
 
 processEscrowAllocation_while_top@2:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:265
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:266
     // for (let i: uint64 = 0; i < ids.length; i += 1) {
     dig 17
     dig 8
     <
     bz processEscrowAllocation_after_while@28
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:266
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:267
     // const asset = ids[i]
     dig 8
     extract 2 0
@@ -1310,7 +1327,7 @@ processEscrowAllocation_while_top@2:
     extract_uint64
     dup
     bury 20
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:267
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:268
     // assert(!this.receiveAssets({ escrow: escrowID, asset }).exists, ERR_ASSET_ALREADY_ALLOCATED)
     dig 7
     itob
@@ -1326,18 +1343,18 @@ processEscrowAllocation_while_top@2:
     concat
     dup
     bury 29
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:267
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:268
     // assert(!this.receiveAssets({ escrow: escrowID, asset }).exists, ERR_ASSET_ALREADY_ALLOCATED)
     box_len
     bury 1
     !
     assert // Asset is already allocated
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:269-271
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:270-272
     // const balance: uint64 = asset === 0
     //   ? op.balance(Global.currentApplicationAddress) - Global.minBalance
     //   : AssetHolding.assetBalance(sender, asset)[0]
     bnz processEscrowAllocation_ternary_false@5
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:270
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:271
     // ? op.balance(Global.currentApplicationAddress) - Global.minBalance
     global CurrentApplicationAddress
     balance
@@ -1345,14 +1362,14 @@ processEscrowAllocation_while_top@2:
     -
 
 processEscrowAllocation_ternary_merge@6:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:274
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:275
     // for (let j: uint64 = 0; j < splits.length; j++) {
     intc_0 // 0
     bury 17
     bury 14
 
 processEscrowAllocation_while_top@7:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:274
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:275
     // for (let j: uint64 = 0; j < splits.length; j++) {
     dig 23
     intc_0 // 0
@@ -1362,7 +1379,7 @@ processEscrowAllocation_while_top@7:
     dig 16
     >
     bz processEscrowAllocation_after_while@27
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:275
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:276
     // const { type, receiver, value } = clone(splits[j])
     dig 23
     extract 2 0
@@ -1400,13 +1417,13 @@ processEscrowAllocation_while_top@7:
     pushint 3 // 3
     extract_uint64
     bury 14
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:278-281
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:279-282
     // const receiverEscrowInfo = abiCall<typeof AbstractedAccount.prototype.arc58_getEscrows>({
     //   appId: receiver.wallet,
     //   args: [[receiver.escrow]]
     // }).returnValue[0]
     itxn_begin
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:279
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:280
     // appId: receiver.wallet,
     dup
     intc_0 // 0
@@ -1423,7 +1440,7 @@ processEscrowAllocation_while_top@7:
     dup
     cover 2
     bury 17
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:280
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:281
     // args: [[receiver.escrow]]
     dup
     intc_2 // 8
@@ -1443,7 +1460,7 @@ processEscrowAllocation_while_top@7:
     bytec 9 // 0x00010002
     swap
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:278-281
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:279-282
     // const receiverEscrowInfo = abiCall<typeof AbstractedAccount.prototype.arc58_getEscrows>({
     //   appId: receiver.wallet,
     //   args: [[receiver.escrow]]
@@ -1476,7 +1493,7 @@ processEscrowAllocation_while_top@7:
     len
     ==
     assert // invalid number of bytes for (len+(uint64,bool1)[])
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:283
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:284
     // const receiverAddress = Application(receiverEscrowInfo.id).address
     extract 6 9
     intc_0 // 0
@@ -1487,19 +1504,19 @@ processEscrowAllocation_while_top@7:
     cover 2
     bury 27
     assert // application exists
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:286
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:287
     // if (!receiverAddress.isOptedIn(Asset(asset))) {
     dig 19
     asset_holding_get AssetBalance
     bury 1
     bnz processEscrowAllocation_after_if_else@11
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:287
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:288
     // arc58OptInAndSend(this.akitaDAO.value, receiver.wallet, receiver.escrow, [asset], [0])
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec 7 // "akita_dao"
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:287
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:288
     // arc58OptInAndSend(this.akitaDAO.value, receiver.wallet, receiver.escrow, [asset], [0])
     app_global_get_ex
     assert // check GlobalState exists
@@ -1738,16 +1755,16 @@ processEscrowAllocation_after_while@38:
     itxn_submit
 
 processEscrowAllocation_after_if_else@11:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:290
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:291
     // let amount: uint64 = 0
     intc_0 // 0
     bury 20
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:292
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:293
     // case SplitDistributionTypeFlat:
     dig 22
     pushbytes 0x0a
     ==
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:292-294
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:293-295
     // case SplitDistributionTypeFlat:
     //   amount = value
     //   break
@@ -1756,7 +1773,7 @@ processEscrowAllocation_after_if_else@11:
     bury 20
 
 processEscrowAllocation_block@21:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:305
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:306
     // assert(amount <= remaining, ERR_OVER_ALLOCATION)
     dig 19
     dup
@@ -1765,16 +1782,16 @@ processEscrowAllocation_block@21:
     cover 2
     <=
     assert // Over allocation of assets in the escrow
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:306
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:307
     // remaining -= amount
     swap
     -
     bury 14
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:308
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:309
     // if (asset === 0) {
     dig 18
     bnz processEscrowAllocation_else_body@24
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:309-315
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:310-316
     // itxn
     //   .payment({
     //     sender,
@@ -1789,7 +1806,7 @@ processEscrowAllocation_block@21:
     itxn_field Receiver
     dig 5
     itxn_field Sender
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:309-314
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:310-315
     // itxn
     //   .payment({
     //     sender,
@@ -1800,7 +1817,7 @@ processEscrowAllocation_block@21:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:309-315
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:310-316
     // itxn
     //   .payment({
     //     sender,
@@ -1812,7 +1829,7 @@ processEscrowAllocation_block@21:
     b processEscrowAllocation_while_top@7
 
 processEscrowAllocation_else_body@24:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:317-324
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:318-325
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -1830,7 +1847,7 @@ processEscrowAllocation_else_body@24:
     itxn_field AssetReceiver
     dig 5
     itxn_field Sender
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:317-323
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:318-324
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -1842,7 +1859,7 @@ processEscrowAllocation_else_body@24:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:317-324
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:318-325
     // itxn
     //   .assetTransfer({
     //     sender,
@@ -1855,12 +1872,12 @@ processEscrowAllocation_else_body@24:
     b processEscrowAllocation_while_top@7
 
 processEscrowAllocation_after_if_else@14:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:295
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:296
     // case SplitDistributionTypePercentage:
     dig 22
     bytec 6 // 0x14
     ==
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:295-298
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:296-299
     // case SplitDistributionTypePercentage:
     //   // Calculate percentage on remaining balance (after flat amounts)
     //   amount = calcPercent(remaining, value)
@@ -1880,17 +1897,17 @@ processEscrowAllocation_after_if_else@14:
     intc 4 // 100000
     divw
     bury 20
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:298
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:299
     // break
     b processEscrowAllocation_block@21
 
 processEscrowAllocation_after_if_else@17:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:299
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:300
     // case SplitDistributionTypeRemainder:
     dig 22
     bytec 5 // 0x1e
     ==
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:299-302
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:300-303
     // case SplitDistributionTypeRemainder:
     //   // Remainder gets whatever is left
     //   amount = remaining
@@ -1898,18 +1915,18 @@ processEscrowAllocation_after_if_else@17:
     bz processEscrowAllocation_block@21
     dig 13
     bury 20
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:302
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:303
     // break
     b processEscrowAllocation_block@21
 
 processEscrowAllocation_after_while@27:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:328
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:329
     // this.receiveAssets({ escrow: escrowID, asset }).create()
     dig 26
     intc_0 // 0
     box_create
     pop
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:265
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:266
     // for (let i: uint64 = 0; i < ids.length; i += 1) {
     dig 17
     intc_1 // 1
@@ -1918,7 +1935,7 @@ processEscrowAllocation_after_while@27:
     b processEscrowAllocation_while_top@2
 
 processEscrowAllocation_ternary_false@5:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:271
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:272
     // : AssetHolding.assetBalance(sender, asset)[0]
     dig 5
     dig 19
@@ -1927,7 +1944,7 @@ processEscrowAllocation_ternary_false@5:
     b processEscrowAllocation_ternary_merge@6
 
 processEscrowAllocation_after_while@28:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:331
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:332
     // this.escrows({ wallet, escrow }).value.allocationCounter += ids.length
     dig 3
     dup
@@ -1944,14 +1961,14 @@ processEscrowAllocation_after_while@28:
     pushint 42 // 42
     uncover 2
     box_replace
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:332
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:333
     // if ((allocationCounter + ids.length) === totalAssetsToProcess) {
     dig 3
     +
     dig 2
     ==
     bz processEscrowAllocation_after_if_else@30
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:333
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:334
     // this.escrows({ wallet, escrow }).value.phase = EscrowDisbursementPhaseFinalization
     dig 3
     pushint 41 // 41
@@ -1959,12 +1976,12 @@ processEscrowAllocation_after_while@28:
     box_replace
 
 processEscrowAllocation_after_if_else@30:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:336
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:337
     // rekeyBackIfNecessary(rekeyBack, wallet)
     dig 9
     dig 11
     callsub rekeyBackIfNecessary
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:245
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:246
     // processEscrowAllocation(wallet: Application, rekeyBack: boolean, ids: uint64[]): void {
     intc_1 // 1
     return
@@ -2007,14 +2024,14 @@ processEscrowAllocation_after_if_else@42:
     // assert(exists, ERR_SPLIT_REF_NOT_FOUND)
     assert // Referenced splits not found in target contract
     bury 24
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:257
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:258
     // const splits = this.resolveSplits(wallet, escrow)
     b processEscrowAllocation_after_inlined_smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts::RevenueManagerPlugin.resolveSplits@43
 
 
 // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts::RevenueManagerPlugin.finalizeEscrowDisbursement[routing]() -> void:
 finalizeEscrowDisbursement:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:344
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:345
     // finalizeEscrowDisbursement(wallet: Application, rekeyBack: boolean, ids: uint64[]): void {
     txna ApplicationArgs 1
     dup
@@ -2049,17 +2066,17 @@ finalizeEscrowDisbursement:
     len
     ==
     assert // invalid number of bytes for (len+uint64[])
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:345
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:346
     // const escrow = getEscrow(wallet)
     dup
     callsub getEscrow
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:346
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:347
     // assert(escrow !== '', ERR_ESCROW_DOES_NOT_EXIST)
     dup
     bytec_1 // ""
     !=
     assert // Escrow does not exist
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:347
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:348
     // const { id: escrowID } = mustGetEscrowInfo(wallet)
     dig 1
     callsub mustGetEscrowInfo
@@ -2084,13 +2101,13 @@ finalizeEscrowDisbursement:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:349
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:350
     // assert(sender === Application(escrowID).address, ERR_CONTROLLED_ADDRESS_MUST_BE_ESCROW)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Controlled address must be escrow
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:351
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:352
     // const { phase, allocationCounter } = this.escrows({ wallet, escrow }).value
     swap
     itob
@@ -2111,7 +2128,7 @@ finalizeEscrowDisbursement:
     swap
     concat
     dup
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:351
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:352
     // const { phase, allocationCounter } = this.escrows({ wallet, escrow }).value
     box_get
     assert // Box must have value
@@ -2121,23 +2138,23 @@ finalizeEscrowDisbursement:
     pushint 42 // 42
     extract_uint64
     swap
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:352
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:353
     // assert(phase === EscrowDisbursementPhaseFinalization, ERR_ESCROW_NOT_IN_FINALIZATION_PHASE)
     bytec 5 // 0x1e
     ==
     assert // Escrow is not in finalization phase
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:355
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:356
     // for (let i: uint64 = 0; i < ids.length; i++) {
     intc_0 // 0
 
 finalizeEscrowDisbursement_while_top@2:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:355
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:356
     // for (let i: uint64 = 0; i < ids.length; i++) {
     dup
     dig 5
     <
     bz finalizeEscrowDisbursement_after_while@4
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:356
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:357
     // const asset = ids[i]
     dig 5
     extract 2 0
@@ -2148,7 +2165,7 @@ finalizeEscrowDisbursement_while_top@2:
     *
     intc_2 // 8
     extract3 // on error: index access is out of bounds
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:357
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:358
     // assert(this.receiveAssets({ escrow: escrowID, asset }).exists, ERR_ASSET_NOT_ALLOCATED)
     dig 5
     itob
@@ -2159,17 +2176,17 @@ finalizeEscrowDisbursement_while_top@2:
     pushbytes "a"
     swap
     concat
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:357
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:358
     // assert(this.receiveAssets({ escrow: escrowID, asset }).exists, ERR_ASSET_NOT_ALLOCATED)
     dup
     box_len
     bury 1
     assert // Asset was not allocated
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:358
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:359
     // this.receiveAssets({ escrow: escrowID, asset }).delete()
     box_del
     pop
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:355
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:356
     // for (let i: uint64 = 0; i < ids.length; i++) {
     intc_1 // 1
     +
@@ -2177,7 +2194,7 @@ finalizeEscrowDisbursement_while_top@2:
     b finalizeEscrowDisbursement_while_top@2
 
 finalizeEscrowDisbursement_after_while@4:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:362
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:363
     // this.escrows({ wallet, escrow }).value.allocationCounter -= ids.length
     dig 2
     dup
@@ -2194,13 +2211,13 @@ finalizeEscrowDisbursement_after_while@4:
     pushint 42 // 42
     uncover 2
     box_replace
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:365
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:366
     // if ((allocationCounter - ids.length) === 0) {
     dig 2
     swap
     -
     bnz finalizeEscrowDisbursement_after_if_else@6
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:366
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:367
     // this.escrows({ wallet, escrow }).value.phase = EscrowDisbursementPhaseIdle
     dig 2
     pushint 41 // 41
@@ -2208,12 +2225,12 @@ finalizeEscrowDisbursement_after_while@4:
     box_replace
 
 finalizeEscrowDisbursement_after_if_else@6:
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:369
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:370
     // rekeyBackIfNecessary(rekeyBack, wallet)
     dig 6
     dig 8
     callsub rekeyBackIfNecessary
-    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:344
+    // smart_contracts/arc58/plugins/revenue-manager/contract.algo.ts:345
     // finalizeEscrowDisbursement(wallet: Application, rekeyBack: boolean, ids: uint64[]): void {
     intc_1 // 1
     return

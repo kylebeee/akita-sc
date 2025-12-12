@@ -5,9 +5,10 @@ import {
   StakingPoolFactory,
   StakingPoolArgs,
   StakingPoolState,
-  StakingPoolMbrData
+  StakingPoolMbrData,
+  Reward
 } from '../generated/StakingPoolClient';
-import { MaybeSigner, NewContractSDKParams } from "../types";
+import { GroupReturn, MaybeSigner, NewContractSDKParams } from "../types";
 import {
   AddRewardParams,
   AddRewardAsaParams,
@@ -114,6 +115,22 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
     return mbrData;
   }
 
+
+  async getReward(rewardId: number): Promise<Reward> {
+    const reward = await this.client.state.box.rewards.value(rewardId);
+
+    if (reward === undefined) {
+      throw new Error('Failed to get reward');
+    }
+
+    return reward;
+  }
+
+  async getRewards(): Promise<Map<number, Reward>> {
+    const rewards = await this.client.state.box.rewards.getMap();
+    return new Map(Array.from(rewards.entries()).map(([key, value]) => [Number(key), value]));
+  }
+
   // ========== Write Methods ==========
 
   /**
@@ -131,23 +148,34 @@ export class StakingPoolSDK extends BaseSDK<StakingPoolClient> {
   /**
    * Opts the pool contract into an asset.
    */
-  async optinAsset({ sender, signer, asset }: OptinAssetParams): Promise<void> {
+  async optIn({ sender, signer, asset }: OptinAssetParams): Promise<GroupReturn> {
 
     const sendParams = this.getRequiredSendParams({ sender, signer });
 
+    const cost = await this.client.optInCost({ args: { asset } });
+
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
-      amount: microAlgo(100_000), // Standard ASA opt-in MBR
+      amount: microAlgo(cost),
       receiver: this.client.appAddress,
     });
 
-    await this.client.send.optIn({
+    const group = this.client.newGroup();
+
+    group.optIn({
       ...sendParams,
       args: {
         payment,
         asset
       }
     });
+
+    group.opUp({
+      ...sendParams,
+      args: {},
+    });
+
+    return await group.send({ ...sendParams, });
   }
 
   /**

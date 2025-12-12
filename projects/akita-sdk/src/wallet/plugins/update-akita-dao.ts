@@ -9,18 +9,6 @@ import { Txn } from "@algorandfoundation/algokit-utils/types/composer";
 
 type ContractArgs = UpdateAkitaDaoPluginArgs["obj"];
 
-type InitBoxedContractArgs = (
-  Omit<ContractArgs['initBoxedContract(uint64,string,uint64)void'], 'wallet' | 'rekeyBack'>
-  & MaybeSigner
-  & { rekeyBack?: boolean }
-);
-
-type LoadBoxedContractArgs = (
-  Omit<ContractArgs['loadBoxedContract(uint64,uint64,byte[])void'], 'wallet' | 'rekeyBack'>
-  & MaybeSigner
-  & { rekeyBack?: boolean }
-)
-
 type DeleteBoxedContractArgs = (
   Omit<ContractArgs['deleteBoxedContract(uint64,bool)void'], 'wallet' | 'rekeyBack'>
   & MaybeSigner
@@ -165,10 +153,10 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
     });
   }
 
-  updateAkitaDaoForApp(): PluginSDKReturn
-  updateAkitaDaoForApp(args: UpdateAkitaDaoAppIDForAppArgs): PluginSDKReturn
-  updateAkitaDaoForApp(args?: UpdateAkitaDaoAppIDForAppArgs): PluginSDKReturn {
-    const methodName = 'updateAkitaDaoForApp';
+  updateAkitaDaoAppIDForApp(): PluginSDKReturn
+  updateAkitaDaoAppIDForApp(args: UpdateAkitaDaoAppIDForAppArgs): PluginSDKReturn
+  updateAkitaDaoAppIDForApp(args?: UpdateAkitaDaoAppIDForAppArgs): PluginSDKReturn {
+    const methodName = 'updateAkitaDaoAppIDForApp';
     if (args === undefined) {
       // Called without arguments - return selector for method restrictions
       return (spendingAddress?: Address | string) => ({

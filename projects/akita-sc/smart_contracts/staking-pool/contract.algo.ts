@@ -15,12 +15,12 @@ import {
   Txn,
   uint64,
 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, decodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod, decodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
 import { AkitaDAOEscrowAccountStakingPools } from '../arc58/dao/constants'
 import { RootKey } from '../meta-merkles/types'
-import { MinDisbursementsMBR } from '../rewards/constants'
+import { MinDisbursementsMBR, UserAllocationMBR } from '../rewards/constants'
 import { UserAllocation } from '../rewards/types'
 import { StakingType } from '../staking/types'
 import { BoxCostPerByte, MAX_UINT64 } from '../utils/constants'
@@ -76,6 +76,7 @@ import {
 } from './constants'
 import { ERR_DAO_NOT_OPTED_IN, ERR_DISBURSEMENT_NOT_READY_FOR_FINALIZATION, ERR_FORBIDDEN, ERR_INVALID_DISBURSEMENT_PHASE, ERR_INVALID_POOL_TYPE_FOR_CHECK, ERR_MAX_ENTRIES_CANNOT_BE_GREATER_THAN_RATE, ERR_NOT_ALGO, ERR_NOT_ENOUGH_FUNDS, ERR_NOT_READY_TO_DISBURSE, ERR_RATE_MUST_BE_GREATER_THAN_WINNER_COUNT, ERR_RATE_MUST_BE_GREATER_THAN_ZERO, ERR_STAKE_KEY_REQUIRED, ERR_WINNING_TICKETS_ALREADY_EXIST } from './errors'
 import {
+  AddRewardParams,
   DistributionType,
   EntryData,
   EntryKey,
@@ -193,20 +194,25 @@ export class StakingPool extends classes(
 
     this.akitaRoyaltyAmount.value = amount
 
+    // Skip payment if royalty amount is 0
+    if (amount === 0) {
+      return
+    }
+
     // pay the akita dao
     if (asset === 0) {
       itxn
         .payment({
-          receiver: Global.zeroAddress,
+          receiver: this.akitaDAOEscrow.value.address,
           amount,
         })
         .submit()
     } else {
-      assert(Global.zeroAddress.isOptedIn(Asset(asset)), ERR_DAO_NOT_OPTED_IN)
+      assert(this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset)), ERR_DAO_NOT_OPTED_IN)
 
       itxn
         .assetTransfer({
-          assetReceiver: Global.zeroAddress,
+          assetReceiver: this.akitaDAOEscrow.value.address,
           assetAmount: amount,
           xferAsset: asset,
         })
@@ -223,7 +229,7 @@ export class StakingPool extends classes(
       iterationAmount = this.entryID.value - disbursementCursor
     }
 
-    for (let id = disbursementCursor; id < iterationAmount; id++) {
+    for (let id = disbursementCursor; id < (disbursementCursor + iterationAmount); id++) {
       const { disqualified, quantity } = clone(this.entries(id).value)
       if (disqualified) {
         continue
@@ -235,19 +241,6 @@ export class StakingPool extends classes(
         continue
       }
 
-      // if (this.gateID.value !== 0) {
-      //   const wallet = getWalletIDUsingAkitaDAO(Global.currentApplicationId, address)
-      //   const origin = originOr(wallet, address)
-
-      //   const passes = gateCall(Global.currentApplicationId, origin, this.gateID.value, gateArgs)
-      //   if (!passes) {
-      //     if (this.type.value !== POOL_STAKING_TYPE_HEARTBEAT) {
-      //       this.entries(id).value.disqualified = true
-      //     }
-      //     continue
-      //   }
-      // }
-
       count += 1
       total += quantity
     }
@@ -258,7 +251,7 @@ export class StakingPool extends classes(
     if (this.entryID.value === disbursementCursor) {
       // end the phase & payout royalties
       this.rewards(rewardID).value.phase = DisbursementPhaseAllocation
-      this.rewards(rewardID).value.disbursementCursor = 0
+      this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
 
       this.payAkitaRoyalty(distribution, rate, asset, this.rewards(rewardID).value.qualifiedStakers)
     } else {
@@ -284,7 +277,7 @@ export class StakingPool extends classes(
     let allocations: UserAllocation[] = []
     let sum: uint64 = 0
 
-    for (let id = disbursementCursor; id < iterationAmount; id++) {
+    for (let id = disbursementCursor; id < (disbursementCursor + iterationAmount); id++) {
       const { disqualified, quantity, address } = this.entries(id).value
       if (disqualified) {
         continue
@@ -301,7 +294,7 @@ export class StakingPool extends classes(
 
     if (this.entryID.value === (disbursementCursor + iterationAmount)) {
       this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-      this.rewards(rewardID).value.disbursementCursor = 0
+      this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
     }
   }
 
@@ -317,7 +310,14 @@ export class StakingPool extends classes(
     const total: uint64 = (qualifiedStakers * amount) - this.akitaRoyaltyAmount.value
     const percentageAkitaFee = calcPercent(amount, this.akitaRoyalty.value)
     const adjustedAmount: uint64 = amount - percentageAkitaFee
-    const [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
+
+    // For ALGO (asset=0), use contract balance; for ASAs, use AssetHolding
+    let balance: uint64
+    if (asset === 0) {
+      balance = Global.currentApplicationAddress.balance
+    } else {
+      [balance] = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)
+    }
 
     assert(balance >= total, ERR_NOT_ENOUGH_FUNDS)
 
@@ -328,7 +328,7 @@ export class StakingPool extends classes(
     let allocations: UserAllocation[] = []
     let sum: uint64 = 0
 
-    for (let id = disbursementCursor; id < iterationAmount; id++) {
+    for (let id = disbursementCursor; id < (disbursementCursor + iterationAmount); id++) {
       const { disqualified, address } = this.entries(id).value
       if (disqualified) {
         continue
@@ -344,7 +344,7 @@ export class StakingPool extends classes(
 
     if (this.entryID.value === newCursorValue) {
       this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-      this.rewards(rewardID).value.disbursementCursor = 0
+      this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
     }
   }
 
@@ -354,11 +354,17 @@ export class StakingPool extends classes(
       disbursementCursor,
       qualifiedStakers,
       asset,
-      rate: sum
+      rate
     } = this.rewards(rewardID).value
 
-    const balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
-    const actualSum: uint64 = sum - this.akitaRoyaltyAmount.value
+    // For ALGO (asset=0), use contract balance; for ASAs, use AssetHolding
+    let balance: uint64
+    if (asset === 0) {
+      balance = Global.currentApplicationAddress.balance
+    } else {
+      balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
+    }
+    const actualSum: uint64 = rate - this.akitaRoyaltyAmount.value
     assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
 
     if ((disbursementCursor + iterationAmount) > this.entryID.value) {
@@ -367,22 +373,24 @@ export class StakingPool extends classes(
 
     const amount: uint64 = actualSum / qualifiedStakers
     let allocations: UserAllocation[] = []
-    for (let id = disbursementCursor; id < iterationAmount; id++) {
+    let allocSum: uint64 = 0
+    for (let id = disbursementCursor; id < (disbursementCursor + iterationAmount); id++) {
       const { disqualified, address } = this.entries(id).value
       if (disqualified) {
         continue
       }
 
       allocations.push({ address, amount })
+      allocSum += amount
     }
 
     const newCursorValue: uint64 = disbursementCursor + iterationAmount
     this.rewards(rewardID).value.disbursementCursor = newCursorValue
-    this.createRewardAllocations(activeDisbursementID, asset, allocations, sum)
+    this.createRewardAllocations(activeDisbursementID, asset, allocations, allocSum)
 
     if (this.entryID.value === newCursorValue) {
       this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-      this.rewards(rewardID).value.disbursementCursor = 0
+      this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
     }
   }
 
@@ -397,7 +405,13 @@ export class StakingPool extends classes(
       raffleCursor,
     } = clone(this.rewards(rewardID).value)
 
-    const balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
+    // For ALGO (asset=0), use contract balance; for ASAs, use AssetHolding
+    let balance: uint64
+    if (asset === 0) {
+      balance = Global.currentApplicationAddress.balance
+    } else {
+      balance = AssetHolding.assetBalance(Global.currentApplicationAddress, asset)[0]
+    }
     const actualSum: uint64 = sum - this.akitaRoyaltyAmount.value
     assert(balance >= actualSum, ERR_NOT_ENOUGH_FUNDS)
 
@@ -416,7 +430,7 @@ export class StakingPool extends classes(
     let currentRangeEnd: uint64 = 0
 
     let allocations: UserAllocation[] = []
-    for (let i = disbursementCursor; i < iterationAmount; i++) {
+    for (let i = disbursementCursor; i < (disbursementCursor + iterationAmount); i++) {
       const { disqualified, address, asset, quantity } = this.entries(i).value
 
       currentRangeEnd = currentRangeStart + quantity
@@ -429,7 +443,7 @@ export class StakingPool extends classes(
         if (ticket === tickets.length - 1) {
           // we didnt find enough winners, reset raffle
           if (winnerCount !== disbursed) {
-            this.rewards(rewardID).value.disbursementCursor = 0
+            this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
             this.rewards(rewardID).value.raffleCursor = {
               ticket: 0,
               stake: 0,
@@ -445,7 +459,7 @@ export class StakingPool extends classes(
         iterationAmount -= i
         ticket++
         currentTicket = tickets[ticket]
-        this.rewards(rewardID).value.disbursementCursor = 0
+        this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
         i = 0
         stake = 0
         currentRangeEnd = 0
@@ -457,7 +471,7 @@ export class StakingPool extends classes(
 
     if (winnerCount === disbursed) {
       this.rewards(rewardID).value.phase = DisbursementPhaseFinalization
-      this.rewards(rewardID).value.disbursementCursor = 0
+      this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
       this.rewards(rewardID).value.raffleCursor = {
         ticket: 0,
         stake: 0,
@@ -540,7 +554,7 @@ export class StakingPool extends classes(
 
   private createRewards(title: string, timeToUnlock: uint64, expiration: uint64): uint64 {
 
-    const rewardsApp = Application(getAkitaAppList(Global.currentApplicationId).rewards)
+    const rewardsApp = Application(getAkitaAppList(this.akitaDAO.value).rewards)
     const rewardMBR: uint64 = MinDisbursementsMBR + (BoxCostPerByte * Bytes(title).length)
 
     const mbrPayment = itxn.payment({
@@ -613,7 +627,7 @@ export class StakingPool extends classes(
     })
   }
 
-  private validateReward(reward: Reward): void {
+  private validateReward(reward: AddRewardParams): void {
     // stake key is optional if the distribution type is not percentage based
     // we use this to qualify stakes for the pool but in some cases users may
     // want to distribute rewards on something else like subscription status
@@ -638,7 +652,7 @@ export class StakingPool extends classes(
   }
 
   private calculateAllocationMBR(allocations: UserAllocation[]): uint64 {
-    return 24_900 * allocations.length
+    return UserAllocationMBR * allocations.length
   }
 
   private createPoolEntries(payment: gtxn.PaymentTxn, entries: StakeEntry[], gateArgs: GateArgs): void {
@@ -702,18 +716,21 @@ export class StakingPool extends classes(
         assert(optedIn && balance >= entries[i].quantity, 'user does not have min balance')
       }
 
-      const stakeInfo = abiCall<typeof Staking.prototype.getInfo>({
-        appId: getAkitaAppList(this.akitaDAO.value).staking,
-        args: [
-          Txn.sender,
-          {
-            asset: entries[i].asset,
-            type: this.type.value,
-          },
-        ],
-      }).returnValue
+      // Skip staking check for NONE type pools
+      if (this.type.value !== POOL_STAKING_TYPE_NONE) {
+        const stakeInfo = abiCall<typeof Staking.prototype.getInfo>({
+          appId: getAkitaAppList(this.akitaDAO.value).staking,
+          args: [
+            Txn.sender,
+            {
+              asset: entries[i].asset,
+              type: this.type.value,
+            },
+          ],
+        }).returnValue
 
-      assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
+        assert(stakeInfo.amount >= entries[i].quantity, 'user does not have enough staked')
+      }
 
       const entryID = this.newEntryID()
       this.entries(entryID).value = {
@@ -747,6 +764,7 @@ export class StakingPool extends classes(
     marketplace: Account,
     stakeKey: RootKey,
     minimumStakeAmount: uint64,
+    allowLateSignups: boolean,
     gateID: uint64,
     maxEntries: uint64,
     akitaDAO: Application,
@@ -761,6 +779,7 @@ export class StakingPool extends classes(
 
     this.stakeKey.value = clone(stakeKey)
     this.minimumStakeAmount.value = minimumStakeAmount
+    this.allowLateSignups.value = allowLateSignups
     this.gateID.value = gateID
     this.maxEntries.value = maxEntries
 
@@ -847,9 +866,11 @@ export class StakingPool extends classes(
     )
   }
 
-  addReward(payment: gtxn.PaymentTxn, reward: Reward): void {
+  addReward(payment: gtxn.PaymentTxn, reward: AddRewardParams): void {
     assert(Txn.sender === this.creator.value, ERR_FORBIDDEN)
-    assert(reward.asset === 0, ERR_NOT_ALGO)
+    if (Txn.applicationArgs(0) === methodSelector(this.addReward)) {
+      assert(reward.asset === 0, ERR_NOT_ALGO)
+    }
 
     this.validateReward(reward)
 
@@ -865,10 +886,26 @@ export class StakingPool extends classes(
     )
 
     const id = this.newRewardID()
-    this.rewards(id).value = clone(reward)
+    this.rewards(id).value = {
+      ...clone(reward),
+      qualifiedStakers: 0,
+      qualifiedStake: 0,
+      winningTickets: [] as uint64[],
+      raffleCursor: {
+        ticket: 0,
+        stake: 0,
+        disbursed: 0
+      },
+      vrfFailureCount: 0,
+      phase: DisbursementPhaseIdle,
+      disbursementCursor: 1,
+      activeDisbursementID: 0,
+      activeDisbursementRoundStart: 0,
+      lastDisbursementTimestamp: 0
+    }
   }
 
-  addRewardAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, reward: Reward): void {
+  addRewardAsa(payment: gtxn.PaymentTxn, assetXfer: gtxn.AssetTransferTxn, reward: AddRewardParams): void {
     assertMatch(
       assetXfer,
       {
@@ -943,14 +980,14 @@ export class StakingPool extends classes(
 
     const disbursementID = this.createRewards(
       `${this.title.value} - Rewards`,
-      Global.latestTimestamp,
+      0,
       Global.latestTimestamp + expiration
     )
 
     this.rewards(rewardID).value.qualifiedStakers = 0
     this.rewards(rewardID).value.qualifiedStake = 0
     this.rewards(rewardID).value.phase = DisbursementPhasePreparation
-    this.rewards(rewardID).value.disbursementCursor = 0
+    this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
     this.rewards(rewardID).value.activeDisbursementID = disbursementID
     this.rewards(rewardID).value.activeDisbursementRoundStart = Global.round
     this.rewards(rewardID).value.lastDisbursementTimestamp = Global.latestTimestamp
@@ -1051,7 +1088,7 @@ export class StakingPool extends classes(
     this.rewards(rewardID).value.phase = DisbursementPhaseIdle
     this.rewards(rewardID).value.activeDisbursementID = 0
     this.rewards(rewardID).value.activeDisbursementRoundStart = 0
-    this.rewards(rewardID).value.disbursementCursor = 0
+    this.rewards(rewardID).value.disbursementCursor = 1 // Entry IDs start at 1
     this.rewards(rewardID).value.qualifiedStakers = 0
     this.rewards(rewardID).value.qualifiedStake = 0
   }

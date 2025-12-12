@@ -180,6 +180,15 @@ export class AkitaDAO extends Contract {
 
     for (let i: uint64 = 0; i < actions.length; i++) {
       switch (actions[i].type) {
+        case ProposalActionTypeUpgradeApp: {
+          // UpgradeApp actions are validated later during execution
+          // They need execution key and wallet build validation
+          const { groups, firstValid, lastValid } = decodeArc4<ProposalUpgradeApp>(actions[i].data)
+          assert(groups.length > 0, 'Upgrade app action must have at least one group')
+          assert(firstValid > 0, 'First valid round must be greater than zero')
+          assert(lastValid > firstValid, 'Last valid round must be greater than first valid')
+          break
+        }
         case ProposalActionTypeAddPlugin: {
           const { plugin, caller, escrow, fee, power, duration, participation, approval, useExecutionKey } = decodeArc4<ProposalAddPlugin>(actions[i].data)
           if (useExecutionKey) {

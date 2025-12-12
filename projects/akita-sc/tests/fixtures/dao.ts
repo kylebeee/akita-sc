@@ -10,6 +10,7 @@ import { deployEscrowFactory } from './escrow';
 import { deployOptInPlugin } from './plugins/optin';
 import { deployRevenueManagerPlugin } from './plugins/revenue-manager';
 import { deployUpdateAkitaDaoPlugin } from './plugins/update-akita-dao';
+import { deployRewards } from './rewards';
 import { deploySocialSystem } from './social';
 import { deployStaking } from './staking';
 import { deployStakingPoolFactory } from './staking-pool';
@@ -250,9 +251,26 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   });
   logger.deploy('Escrow Factory', escrowFactory.appId, escrowFactory.appAddress.toString());
 
-  const dao = await deployAkitaDAO({ ...params, apps: { ...params.apps, escrow: escrowFactory.appId } });
-
   const dispenser = await localnet.algorand.account.dispenserFromEnvironment();
+
+  // Deploy DAO first (with rewards: 0n - will be updated later)
+  const dao = await deployAkitaDAO({ ...params, apps: { ...params.apps, escrow: escrowFactory.appId, rewards: 0n } });
+
+  // Now deploy Rewards contract with the actual DAO app ID
+  const rewardsClient = await deployRewards({
+    fixture: localnet,
+    sender: params.sender,
+    signer: params.signer,
+    args: {
+      akitaDao: dao.appId,
+      version: '0.0.1',
+    }
+  });
+  logger.deploy('Rewards', rewardsClient.appId, rewardsClient.appAddress.toString());
+
+  // Fund the rewards contract
+  await localnet.algorand.account.ensureFunded(rewardsClient.appAddress, dispenser, (10).algos());
+
   // Fund sender with enough ALGO to cover all proposals and executions during setup
   // Each proposal costs ~1-20 ALGO and we make 15+ proposals during buildAkitaUniverse
   await localnet.algorand.account.ensureFunded(params.sender, dispenser, (500).algos());
@@ -289,7 +307,6 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     args: {
       akitaDao: dao.appId,
       version: '0.0.1',
-      akitaDaoEscrow: 0n,
     }
   });
   logger.deploy('Staking Pool Factory', stakingPoolFactorySdk.appId, stakingPoolFactorySdk.client.appAddress.toString());
@@ -526,6 +543,18 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     }
   ]);
   logger.proposal('Install UpdateAkitaDAOPlugin (global)', installUpdatePluginProposalId);
+
+  // Update the DAO's akitaAppList with the rewards app ID (DAO was deployed with rewards: 0n)
+  const updateRewardsInDaoProposalId = await proposeAndExecute(dao, [
+    {
+      type: ProposalActionEnum.UpdateFields,
+      field: 'aal',
+      value: {
+        rewards: rewardsClient.appId
+      }
+    }
+  ]);
+  logger.proposal('UpdateFields: Set rewards app in akitaAppList', updateRewardsInDaoProposalId);
 
   const krbyEscrow = 'rec_krby'
   const modEscrow = 'rec_mod'

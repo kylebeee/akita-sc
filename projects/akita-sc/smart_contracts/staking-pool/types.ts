@@ -34,6 +34,15 @@ export type EntryValue = {
     quantity: uint64
 }
 
+export type AddRewardParams = {
+    asset: uint64 // the reward asset
+    distribution: DistributionType // the way we want to distribute it
+    rate: uint64 // the rate at which we distribute the reward
+    expiration: uint64 // the number seconds after disbursement to expire the reward
+    interval: uint64 // how often this reward is eligible to be disbursed
+    winnerCount: uint64 // shuffle distribution only: the number of winners to select
+}
+
 export type Reward = {
     asset: uint64 // the reward asset
     distribution: DistributionType // the way we want to distribute it

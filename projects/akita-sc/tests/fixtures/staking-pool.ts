@@ -12,7 +12,7 @@ export const deployStakingPoolFactory = async ({
   signer,
   args: {
     akitaDao = 0n,
-    akitaDaoEscrow,
+    akitaDaoEscrow = 0n,
     version = '0.0.1',
     childVersion = '0.0.1',
   }
@@ -26,10 +26,6 @@ export const deployStakingPoolFactory = async ({
       defaultSigner: signer,
     }
   )
-
-  if (akitaDaoEscrow === undefined) {
-    throw new Error('akitaDaoEscrow is required to deploy Staking Pool Factory')
-  }
 
   const { appClient: client } = await factory.send.create.create({
     args: {

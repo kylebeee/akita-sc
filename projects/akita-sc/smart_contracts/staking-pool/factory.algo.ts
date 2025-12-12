@@ -43,6 +43,7 @@ export class StakingPoolFactory extends classes(BaseStakingPool, FactoryContract
     marketplace: Account,
     stakeKey: RootKey,
     minimumStakeAmount: uint64,
+    allowLateSignups: boolean,
     gateID: uint64,
     maxEntries: uint64,
   ): uint64 {
@@ -101,6 +102,7 @@ export class StakingPoolFactory extends classes(BaseStakingPool, FactoryContract
           marketplace,
           stakeKey,
           minimumStakeAmount,
+          allowLateSignups,
           gateID,
           maxEntries,
           this.akitaDAO.value,

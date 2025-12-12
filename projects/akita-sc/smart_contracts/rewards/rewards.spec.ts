@@ -1,6 +1,7 @@
 import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
+import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
 import { TimeWarp } from '../../tests/utils/time'
@@ -37,7 +38,7 @@ const calculateDisbursementMBR = (title: string, note: string): bigint => {
 describe('Rewards Contract Tests', () => {
   const localnet = algorandFixture()
 
-  let deployer: algosdk.Account
+  let deployer: algosdk.Address & TransactionSignerAccount & algosdk.Account
   let client: RewardsClient
   let timeWarp: TimeWarp
   let algorand: import('@algorandfoundation/algokit-utils').AlgorandClient

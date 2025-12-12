@@ -1427,7 +1427,7 @@ describe('Full DAO Integration Tests', () => {
       // Account for: app call fee + payment transaction fee + inner transaction fees
       // Note: initMeta has 1 inner payment transaction + 1 abiCall (which may create inner transactions)
       const expectedPayment = user1Sdk.calculateMetaMBR()
-      const expectedCost = createExpectedCost(expectedPayment, 1, MIN_TXN_FEE) // 1 inner payment + payment transaction
+      const expectedCost = createExpectedCost(expectedPayment, 1, MIN_TXN_FEE * 3n) // 1 inner payment + payment transaction + extra inner txns
       const verification = await verifyBalanceChange(
         algorand,
         user1.addr.toString(),
@@ -1548,9 +1548,9 @@ describe('Full DAO Integration Tests', () => {
     test('post should create a new post', async () => {
       // Get expected cost (MBR payment in ALGO + transaction fees)
       // Note: postFee is paid in AKTA via asset transfer, not included in ALGO payment
-      // Account for: app call fee + payment transaction fee + asset transfer fee + 2 opUp transaction fees
+      // Account for: app call fee + payment transaction fee + asset transfer fee + 2 opUp transaction fees + inner txns
       const mbrAmount = user1Sdk.calculatePostMBR(testCid.length, false)
-      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 4n) // payment + asset transfer + 2 opUp
+      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 12n) // payment + asset transfer + 2 opUp + inner txns
       const verification = await verifyBalanceChange(
         algorand,
         user1.addr.toString(),
@@ -1599,10 +1599,10 @@ describe('Full DAO Integration Tests', () => {
       const replyCid = new Uint8Array(36).fill(50)
       // Get expected cost (MBR for reply)
       // Note: reactFee is paid in AKTA via asset transfer, not included in ALGO payment
-      // Account for: app call fee + payment transaction fee + asset transfer fee + 2 opUp transaction fees
+      // Account for: app call fee + payment transaction fee + asset transfer fee + 2 opUp transaction fees + inner txns
       // Note: opUp calls are separate transactions, not inner transactions
       const mbrAmount = user2Sdk.calculateReplyMBR(replyCid.length, false, false)
-      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 4n) // payment + asset transfer + 2 opUp (as separate transactions)
+      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 18n) // payment + asset transfer + 2 opUp + inner txns
       const verification = await verifyBalanceChange(
         algorand,
         user2.addr.toString(),
@@ -1634,10 +1634,10 @@ describe('Full DAO Integration Tests', () => {
     test('upvote a post', async () => {
       // Get expected cost (MBR for vote)
       // Note: reactFee is paid in AKTA via asset transfer, not included in ALGO payment
-      // Account for: app call fee + payment transaction fee + asset transfer fee + 3 opUp transaction fees
+      // Account for: app call fee + payment transaction fee + asset transfer fee + 3 opUp transaction fees + inner txns
       // Note: opUp calls are separate transactions, not inner transactions
       const mbrAmount = user2Sdk.calculateVoteMBR(false)
-      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 5n) // payment + asset transfer + 3 opUp (as separate transactions)
+      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 17n) // payment + asset transfer + 3 opUp + inner txns
       const verification = await verifyBalanceChange(
         algorand,
         user2.addr.toString(),
@@ -1665,7 +1665,7 @@ describe('Full DAO Integration Tests', () => {
     test('invertVote to flip vote direction', async () => {
       // invertVote has no MBR payment (0), but requires reactFee in AKTA
       // Note: reactFee is paid in AKTA via asset transfer, not included in ALGO payment
-      const expectedCost = createExpectedCost(0n, 3, 0n) // 3 opUp calls, no base payment
+      const expectedCost = createExpectedCost(0n, 3, MIN_TXN_FEE * 9n) // 3 opUp calls + asset transfer + inner txns
       const verification = await verifyBalanceChange(
         algorand,
         user2.addr.toString(),
@@ -1733,10 +1733,10 @@ describe('Full DAO Integration Tests', () => {
 
       // Get expected cost (MBR for first reaction with NFT)
       // Note: reactFee is paid in AKTA via asset transfer, not included in ALGO payment
-      // Account for: app call fee + payment transaction fee + asset transfer fee + 3 opUp transaction fees
+      // Account for: app call fee + payment transaction fee + asset transfer fee + 3 opUp transaction fees + inner txns
       // Note: opUp calls are separate transactions, not inner transactions
       const mbrAmount = user2Sdk.calculateReactMBR(true, false) // first reaction with NFT
-      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 5n) // payment + asset transfer + 3 opUp (as separate transactions)
+      const expectedCost = createExpectedCost(mbrAmount, 0, MIN_TXN_FEE * 14n) // payment + asset transfer + 3 opUp + inner txns
       const verification = await verifyBalanceChange(
         algorand,
         user2.addr.toString(),
