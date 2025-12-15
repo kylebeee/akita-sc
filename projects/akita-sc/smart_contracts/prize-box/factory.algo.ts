@@ -1,6 +1,7 @@
 import {
   abimethod,
   Account,
+  Application,
   assertMatch,
   Global,
   gtxn,
@@ -21,8 +22,10 @@ export class PrizeBoxFactory extends FactoryContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string): void {
+  create(version: string, akitaDAO: Application): void {
+    this.version.value = version
     this.childContractVersion.value = version
+    this.akitaDAO.value = akitaDAO
   }
 
   // PRIZE BOX FACTORY METHODS --------------------------------------------------------------------

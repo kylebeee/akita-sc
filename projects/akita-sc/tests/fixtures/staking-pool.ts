@@ -1,4 +1,4 @@
-import { StakingPoolFactorySDK } from 'akita-sdk';
+import { StakingPoolFactorySDK } from 'akita-sdk/staking-pool';
 import { StakingPoolFactory } from '../../smart_contracts/artifacts/staking-pool/StakingPoolClient';
 import { StakingPoolFactoryArgs, StakingPoolFactoryFactory } from '../../smart_contracts/artifacts/staking-pool/StakingPoolFactoryClient';
 import { FixtureAndAccount } from '../types';

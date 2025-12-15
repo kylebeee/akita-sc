@@ -235,7 +235,7 @@ create:
     // this.akitaDAO.value = akitaDAO
     uncover 6
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 4 // "akita_escrow"
     // smart_contracts/arc58/account/factory.algo.ts:50
@@ -734,7 +734,7 @@ newAccount_after_if_else@3:
     // smart_contracts/arc58/account/factory.algo.ts:134
     // receiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 4 // "akita_escrow"
     // smart_contracts/arc58/account/factory.algo.ts:134
@@ -1442,7 +1442,7 @@ deleteBoxedContract:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaFeeGeneratorContractWithOptIn.optIn[routing]() -> void:
 optIn:
-    // smart_contracts/utils/base-contracts/base.ts:145
+    // smart_contracts/utils/base-contracts/base.ts:150
     // optIn(payment: gtxn.PaymentTxn, asset: Asset): void {
     txn GroupIndex
     intc_1 // 1
@@ -1459,21 +1459,21 @@ optIn:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:147
+    // smart_contracts/utils/base-contracts/base.ts:152
     // const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:147
+    // smart_contracts/utils/base-contracts/base.ts:152
     // const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
     app_global_get_ex
     assert // check GlobalState exists
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 4 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:147
+    // smart_contracts/utils/base-contracts/base.ts:152
     // const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1481,7 +1481,7 @@ optIn:
     assert // application exists
     dig 2
     callsub splitOptInCount
-    // smart_contracts/utils/base-contracts/base.ts:149-156
+    // smart_contracts/utils/base-contracts/base.ts:154-161
     // assertMatch(
     //   payment,
     //   {
@@ -1492,10 +1492,10 @@ optIn:
     // )
     dig 2
     gtxns Receiver
-    // smart_contracts/utils/base-contracts/base.ts:152
+    // smart_contracts/utils/base-contracts/base.ts:157
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/utils/base-contracts/base.ts:149-156
+    // smart_contracts/utils/base-contracts/base.ts:154-161
     // assertMatch(
     //   payment,
     //   {
@@ -1507,14 +1507,14 @@ optIn:
     ==
     uncover 3
     gtxns Amount
-    // smart_contracts/utils/base-contracts/base.ts:153
+    // smart_contracts/utils/base-contracts/base.ts:158
     // amount: Global.assetOptInMinBalance * (1 + count),
     global AssetOptInMinBalance
     intc_1 // 1
     uncover 4
     +
     *
-    // smart_contracts/utils/base-contracts/base.ts:149-156
+    // smart_contracts/utils/base-contracts/base.ts:154-161
     // assertMatch(
     //   payment,
     //   {
@@ -1526,7 +1526,7 @@ optIn:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/utils/base-contracts/base.ts:158-164
+    // smart_contracts/utils/base-contracts/base.ts:163-169
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Global.currentApplicationAddress,
@@ -1535,17 +1535,17 @@ optIn:
     //   })
     //   .submit()
     itxn_begin
-    // smart_contracts/utils/base-contracts/base.ts:160
+    // smart_contracts/utils/base-contracts/base.ts:165
     // assetReceiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
     swap
     itxn_field XferAsset
-    // smart_contracts/utils/base-contracts/base.ts:161
+    // smart_contracts/utils/base-contracts/base.ts:166
     // assetAmount: 0,
     intc_0 // 0
     itxn_field AssetAmount
     itxn_field AssetReceiver
-    // smart_contracts/utils/base-contracts/base.ts:158-163
+    // smart_contracts/utils/base-contracts/base.ts:163-168
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Global.currentApplicationAddress,
@@ -1556,7 +1556,7 @@ optIn:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/base.ts:158-164
+    // smart_contracts/utils/base-contracts/base.ts:163-169
     // itxn
     //   .assetTransfer({
     //     assetReceiver: Global.currentApplicationAddress,
@@ -1565,7 +1565,7 @@ optIn:
     //   })
     //   .submit()
     itxn_submit
-    // smart_contracts/utils/base-contracts/base.ts:145
+    // smart_contracts/utils/base-contracts/base.ts:150
     // optIn(payment: gtxn.PaymentTxn, asset: Asset): void {
     intc_1 // 1
     return
@@ -1573,7 +1573,7 @@ optIn:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaFeeGeneratorContractWithOptIn.optInCost[routing]() -> void:
 optInCost:
-    // smart_contracts/utils/base-contracts/base.ts:167
+    // smart_contracts/utils/base-contracts/base.ts:172
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -1582,21 +1582,21 @@ optInCost:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:169
+    // smart_contracts/utils/base-contracts/base.ts:174
     // const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/utils/base-contracts/base.ts:169
+    // smart_contracts/utils/base-contracts/base.ts:174
     // const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
     app_global_get_ex
     assert // check GlobalState exists
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 4 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:169
+    // smart_contracts/utils/base-contracts/base.ts:174
     // const count = splitOptInCount(this.akitaDAO.value, this.akitaDAOEscrow.value.address, asset)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1604,14 +1604,14 @@ optInCost:
     assert // application exists
     uncover 2
     callsub splitOptInCount
-    // smart_contracts/utils/base-contracts/base.ts:170
+    // smart_contracts/utils/base-contracts/base.ts:175
     // return Global.assetOptInMinBalance * (1 + count)
     global AssetOptInMinBalance
     intc_1 // 1
     uncover 2
     +
     *
-    // smart_contracts/utils/base-contracts/base.ts:167
+    // smart_contracts/utils/base-contracts/base.ts:172
     // @abimethod({ readonly: true })
     itob
     bytec_3 // 0x151f7c75
@@ -1624,7 +1624,7 @@ optInCost:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseFeeGeneratorContract.updateAkitaDAOEscrow[routing]() -> void:
 updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/base.ts:132
+    // smart_contracts/utils/base-contracts/base.ts:137
     // updateAkitaDAOEscrow(app: Application): void {
     txna ApplicationArgs 1
     dup
@@ -1633,7 +1633,7 @@ updateAkitaDAOEscrow:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:133
+    // smart_contracts/utils/base-contracts/base.ts:138
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
@@ -1649,20 +1649,20 @@ updateAkitaDAOEscrow:
     bytec_2 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:133
+    // smart_contracts/utils/base-contracts/base.ts:138
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 4 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:134
+    // smart_contracts/utils/base-contracts/base.ts:139
     // this.akitaDAOEscrow.value = app
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:132
+    // smart_contracts/utils/base-contracts/base.ts:137
     // updateAkitaDAOEscrow(app: Application): void {
     intc_1 // 1
     return

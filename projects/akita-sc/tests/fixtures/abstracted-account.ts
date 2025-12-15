@@ -1,4 +1,4 @@
-import { WalletFactorySDK } from 'akita-sdk';
+import { WalletFactorySDK } from 'akita-sdk/wallet';
 import { AbstractedAccountFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountClient';
 import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountFactoryClient';
 import { FixtureAndAccount } from '../types';

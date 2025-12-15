@@ -263,91 +263,6 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
   subscribe(
     wallet: Application,
     rekeyBack: boolean,
-    recipient: Account,
-    amount: uint64,
-    interval: uint64,
-    index: uint64,
-    args: GateArgs
-  ): void {
-    const { origin, sender } = getAccounts(wallet)
-
-    const appId = Application(getAkitaAppList(this.akitaDAO.value).subscriptions)
-
-    const costs = this.mbr()
-    let mbrAmount = costs.subscriptions
-
-    const firstSubscription = abiCall<typeof Subscriptions.prototype.isFirstSubscription>({
-      sender,
-      appId,
-      args: [sender],
-      rekeyTo: rekeyAddress(rekeyBack, wallet),
-    }).returnValue
-
-    if (firstSubscription) {
-      mbrAmount += costs.subscriptionslist
-    }
-
-    if (args.length > 0) {
-
-      const gate = getAkitaAppList(this.akitaDAO.value).gate
-
-      const service = abiCall<typeof Subscriptions.prototype.getService>({
-        sender,
-        appId,
-        args: [recipient, index],
-      }).returnValue
-
-      const gateTxn = itxn.applicationCall({
-        sender,
-        appId: gate,
-        appArgs: [
-          methodSelector(GateMustCheckAbiMethod),
-          origin,
-          service.gateID,
-          encodeArc4(args)
-        ]
-      })
-
-      abiCall<typeof Subscriptions.prototype.gatedSubscribe>({
-        sender,
-        appId,
-        args: [
-          itxn.payment({
-            sender,
-            receiver: appId.address,
-            amount: amount + mbrAmount,
-          }),
-          gateTxn,
-          recipient,
-          amount,
-          interval,
-          index,
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      })
-    } else {
-      abiCall<typeof Subscriptions.prototype.subscribe>({
-        sender,
-        appId: appId,
-        args: [
-          itxn.payment({
-            sender,
-            receiver: appId.address,
-            amount: amount + mbrAmount,
-          }),
-          recipient,
-          amount,
-          interval,
-          index,
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      })
-    }
-  }
-
-  subscribeAsa(
-    wallet: Application,
-    rekeyBack: boolean,
     asset: uint64,
     recipient: Account,
     amount: uint64,
@@ -373,12 +288,13 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
       mbrAmount += costs.subscriptionslist
     }
 
-    if (!this.akitaDAO.value.address.isOptedIn(Asset(asset))) {
+    // For ASA subscriptions, check if opt-in is needed
+    const isAsa = asset !== 0
+    if (isAsa && !this.akitaDAO.value.address.isOptedIn(Asset(asset))) {
       mbrAmount += Global.assetOptInMinBalance
     }
 
     if (args.length > 0) {
-
       const gate = getAkitaAppList(this.akitaDAO.value).gate
 
       const service = abiCall<typeof Subscriptions.prototype.getService>({
@@ -398,46 +314,91 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
         ]
       })
 
-      abiCall<typeof Subscriptions.prototype.gatedSubscribeAsa>({
-        sender,
-        appId,
-        args: [
-          itxn.payment({
-            sender,
-            receiver: appId.address,
-            amount: mbrAmount,
-          }),
-          itxn.assetTransfer({
-            sender,
-            assetReceiver: appId.address,
-            xferAsset: asset,
-            assetAmount: amount,
-          }),
-          gateTxn,
-          recipient,
-          amount,
-          interval,
-          index,
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      })
+      if (isAsa) {
+        abiCall<typeof Subscriptions.prototype.gatedSubscribeAsa>({
+          sender,
+          appId,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: appId.address,
+              amount: mbrAmount,
+            }),
+            itxn.assetTransfer({
+              sender,
+              assetReceiver: appId.address,
+              xferAsset: asset,
+              assetAmount: amount,
+            }),
+            gateTxn,
+            recipient,
+            amount,
+            interval,
+            index,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
+        })
+      } else {
+        abiCall<typeof Subscriptions.prototype.gatedSubscribe>({
+          sender,
+          appId,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: appId.address,
+              amount: amount + mbrAmount,
+            }),
+            gateTxn,
+            recipient,
+            amount,
+            interval,
+            index,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
+        })
+      }
     } else {
-      abiCall<typeof Subscriptions.prototype.subscribe>({
-        sender,
-        appId: appId,
-        args: [
-          itxn.payment({
-            sender,
-            receiver: appId.address,
-            amount: amount + mbrAmount,
-          }),
-          recipient,
-          amount,
-          interval,
-          index,
-        ],
-        rekeyTo: rekeyAddress(rekeyBack, wallet),
-      })
+      if (isAsa) {
+        abiCall<typeof Subscriptions.prototype.subscribeAsa>({
+          sender,
+          appId: appId,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: appId.address,
+              amount: mbrAmount,
+            }),
+            itxn.assetTransfer({
+              sender,
+              assetReceiver: appId.address,
+              xferAsset: asset,
+              assetAmount: amount,
+            }),
+            recipient,
+            amount,
+            interval,
+            index,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
+        })
+      } else {
+        abiCall<typeof Subscriptions.prototype.subscribe>({
+          sender,
+          appId: appId,
+          args: [
+            itxn.payment({
+              sender,
+              receiver: appId.address,
+              amount: amount + mbrAmount,
+            }),
+            recipient,
+            amount,
+            interval,
+            index,
+          ],
+          rekeyTo: rekeyAddress(rekeyBack, wallet),
+        })
+      }
     }
   }
 

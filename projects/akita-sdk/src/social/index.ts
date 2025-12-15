@@ -2,6 +2,8 @@ import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { AlgorandClient } from "@algorandfoundation/algokit-utils/types/algorand-client";
 import { AppFactoryAppClientParams } from "@algorandfoundation/algokit-utils/types/app-factory";
 import { DEFAULT_READER, DEFAULT_SEND_PARAMS } from "../constants";
+import { ENV_VAR_NAMES, resolveAppIdWithClient, getAppIdFromEnv, detectNetworkFromClient, AkitaNetwork } from "../config";
+import { OptionalAppIdFactoryParams } from "../types";
 import {
   AkitaDaoClient,
   AkitaDaoFactory,
@@ -87,10 +89,11 @@ export type SocialSDKConstructorParams = {
   algorand: AlgorandClient;
   /** The Akita DAO app ID for fetching social fees and AKTA asset ID (optional for standalone tests) */
   daoAppId?: bigint;
-  socialFactoryParams: AppFactoryAppClientParams;
-  graphFactoryParams: AppFactoryAppClientParams;
-  impactFactoryParams: AppFactoryAppClientParams;
-  moderationFactoryParams: AppFactoryAppClientParams;
+  /** Factory params with optional appId - will resolve from environment if not provided */
+  socialFactoryParams?: OptionalAppIdFactoryParams;
+  graphFactoryParams?: OptionalAppIdFactoryParams;
+  impactFactoryParams?: OptionalAppIdFactoryParams;
+  moderationFactoryParams?: OptionalAppIdFactoryParams;
   readerAccount?: string;
   sendParams?: ExpandedSendParams;
   ipfsUrl?: string;
@@ -119,6 +122,9 @@ export class SocialSDK {
   public readerAccount: string;
   public sendParams: ExpandedSendParams;
   public ipfsUrl: string;
+  
+  /** The detected network for this SDK instance */
+  public network: AkitaNetwork;
 
   // Cached DAO data (to avoid repeated calls)
   private _socialFees: SocialFees | null = null;
@@ -127,16 +133,17 @@ export class SocialSDK {
   constructor({
     algorand,
     daoAppId,
-    socialFactoryParams,
-    graphFactoryParams,
-    impactFactoryParams,
-    moderationFactoryParams,
+    socialFactoryParams = {},
+    graphFactoryParams = {},
+    impactFactoryParams = {},
+    moderationFactoryParams = {},
     readerAccount = DEFAULT_READER,
     sendParams = DEFAULT_SEND_PARAMS,
     ipfsUrl = '',
   }: SocialSDKConstructorParams) {
     this.algorand = algorand;
-    this.daoAppId = daoAppId;
+    this.network = detectNetworkFromClient(algorand);
+    this.daoAppId = daoAppId ?? getAppIdFromEnv(ENV_VAR_NAMES.DAO_APP_ID);
     this.readerAccount = readerAccount;
     this.sendParams = { ...sendParams };
     this.ipfsUrl = ipfsUrl;
@@ -149,15 +156,33 @@ export class SocialSDK {
       this.sendParams.signer = socialFactoryParams.defaultSigner;
     }
 
-    // Initialize all clients
-    this.socialClient = new AkitaSocialFactory({ algorand }).getAppClientById(socialFactoryParams);
-    this.graphClient = new AkitaSocialGraphFactory({ algorand }).getAppClientById(graphFactoryParams);
-    this.impactClient = new AkitaSocialImpactFactory({ algorand }).getAppClientById(impactFactoryParams);
-    this.moderationClient = new AkitaSocialModerationFactory({ algorand }).getAppClientById(moderationFactoryParams);
+    // Resolve app IDs from params, environment, or network config
+    const resolvedSocialAppId = resolveAppIdWithClient(algorand, socialFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_APP_ID, 'SocialSDK.social');
+    const resolvedGraphAppId = resolveAppIdWithClient(algorand, graphFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_GRAPH_APP_ID, 'SocialSDK.graph');
+    const resolvedImpactAppId = resolveAppIdWithClient(algorand, impactFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_IMPACT_APP_ID, 'SocialSDK.impact');
+    const resolvedModerationAppId = resolveAppIdWithClient(algorand, moderationFactoryParams.appId, ENV_VAR_NAMES.SOCIAL_MODERATION_APP_ID, 'SocialSDK.moderation');
+
+    // Initialize all clients with resolved app IDs
+    this.socialClient = new AkitaSocialFactory({ algorand }).getAppClientById({
+      ...socialFactoryParams,
+      appId: resolvedSocialAppId,
+    });
+    this.graphClient = new AkitaSocialGraphFactory({ algorand }).getAppClientById({
+      ...graphFactoryParams,
+      appId: resolvedGraphAppId,
+    });
+    this.impactClient = new AkitaSocialImpactFactory({ algorand }).getAppClientById({
+      ...impactFactoryParams,
+      appId: resolvedImpactAppId,
+    });
+    this.moderationClient = new AkitaSocialModerationFactory({ algorand }).getAppClientById({
+      ...moderationFactoryParams,
+      appId: resolvedModerationAppId,
+    });
 
     // Only create DAO client when a valid daoAppId is provided
-    if (daoAppId !== undefined && daoAppId > 0n) {
-      this.daoClient = new AkitaDaoFactory({ algorand }).getAppClientById({ appId: daoAppId });
+    if (this.daoAppId !== undefined && this.daoAppId > 0n) {
+      this.daoClient = new AkitaDaoFactory({ algorand }).getAppClientById({ appId: this.daoAppId });
     }
 
     this.socialAppId = this.socialClient.appId;

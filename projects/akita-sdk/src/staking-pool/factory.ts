@@ -2,6 +2,7 @@ import { StakingPoolFactoryArgs, StakingPoolFactoryClient, StakingPoolFactoryFac
 import { MaybeSigner, NewContractSDKParams } from '../types';
 import { StakingPoolSDK } from './index';
 import { BaseSDK } from '../base';
+import { ENV_VAR_NAMES } from '../config';
 import { emptySigner } from '../constants';
 import { microAlgo, microAlgos } from '@algorandfoundation/algokit-utils';
 import { NewPoolParams, DeletePoolParams, StakingPoolMbrParams } from './types';
@@ -16,7 +17,7 @@ export type StakingPoolFactoryContractArgs = StakingPoolFactoryArgs["obj"];
 export class StakingPoolFactorySDK extends BaseSDK<StakingPoolFactoryClient> {
 
   constructor(params: NewContractSDKParams) {
-    super({ factory: StakingPoolFactoryFactory, ...params });
+    super({ factory: StakingPoolFactoryFactory, ...params }, ENV_VAR_NAMES.STAKING_POOL_FACTORY_APP_ID);
   }
 
   /**

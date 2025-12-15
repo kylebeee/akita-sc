@@ -1,4 +1,4 @@
-import { UpdateAkitaDAOPluginSDK } from 'akita-sdk';
+import { UpdateAkitaDAOPluginSDK } from 'akita-sdk/wallet';
 import { UpdateAkitaDaoPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/update-akita-dao/UpdateAkitaDAOPluginClient';
 import { FixtureAndAccount } from '../../types';
 

@@ -6,8 +6,115 @@
   "types": "dist/esm/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/esm/index.d.ts",
       "require": "./dist/cjs/index.js",
       "import": "./dist/esm/index.js"
+    },
+    "./auction": {
+      "types": "./dist/esm/auction/index.d.ts",
+      "require": "./dist/cjs/auction/index.js",
+      "import": "./dist/esm/auction/index.js"
+    },
+    "./dao": {
+      "types": "./dist/esm/dao/index.d.ts",
+      "require": "./dist/cjs/dao/index.js",
+      "import": "./dist/esm/dao/index.js"
+    },
+    "./escrow": {
+      "types": "./dist/esm/escrow/index.d.ts",
+      "require": "./dist/cjs/escrow/index.js",
+      "import": "./dist/esm/escrow/index.js"
+    },
+    "./gates": {
+      "types": "./dist/esm/gates/index.d.ts",
+      "require": "./dist/cjs/gates/index.js",
+      "import": "./dist/esm/gates/index.js"
+    },
+    "./hyper-swap": {
+      "types": "./dist/esm/hyper-swap/index.d.ts",
+      "require": "./dist/cjs/hyper-swap/index.js",
+      "import": "./dist/esm/hyper-swap/index.js"
+    },
+    "./marketplace": {
+      "types": "./dist/esm/marketplace/index.d.ts",
+      "require": "./dist/cjs/marketplace/index.js",
+      "import": "./dist/esm/marketplace/index.js"
+    },
+    "./meta-merkles": {
+      "types": "./dist/esm/meta-merkles/index.d.ts",
+      "require": "./dist/cjs/meta-merkles/index.js",
+      "import": "./dist/esm/meta-merkles/index.js"
+    },
+    "./poll": {
+      "types": "./dist/esm/poll/index.d.ts",
+      "require": "./dist/cjs/poll/index.js",
+      "import": "./dist/esm/poll/index.js"
+    },
+    "./prize-box": {
+      "types": "./dist/esm/prize-box/index.d.ts",
+      "require": "./dist/cjs/prize-box/index.js",
+      "import": "./dist/esm/prize-box/index.js"
+    },
+    "./raffle": {
+      "types": "./dist/esm/raffle/index.d.ts",
+      "require": "./dist/cjs/raffle/index.js",
+      "import": "./dist/esm/raffle/index.js"
+    },
+    "./rewards": {
+      "types": "./dist/esm/rewards/index.d.ts",
+      "require": "./dist/cjs/rewards/index.js",
+      "import": "./dist/esm/rewards/index.js"
+    },
+    "./social": {
+      "types": "./dist/esm/social/index.d.ts",
+      "require": "./dist/cjs/social/index.js",
+      "import": "./dist/esm/social/index.js"
+    },
+    "./staking": {
+      "types": "./dist/esm/staking/index.d.ts",
+      "require": "./dist/cjs/staking/index.js",
+      "import": "./dist/esm/staking/index.js"
+    },
+    "./staking-pool": {
+      "types": "./dist/esm/staking-pool/index.d.ts",
+      "require": "./dist/cjs/staking-pool/index.js",
+      "import": "./dist/esm/staking-pool/index.js"
+    },
+    "./subscriptions": {
+      "types": "./dist/esm/subscriptions/index.d.ts",
+      "require": "./dist/cjs/subscriptions/index.js",
+      "import": "./dist/esm/subscriptions/index.js"
+    },
+    "./wallet": {
+      "types": "./dist/esm/wallet/index.d.ts",
+      "require": "./dist/cjs/wallet/index.js",
+      "import": "./dist/esm/wallet/index.js"
+    },
+    "./types": {
+      "types": "./dist/esm/types.d.ts",
+      "require": "./dist/cjs/types.js",
+      "import": "./dist/esm/types.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "auction": ["./dist/esm/auction/index.d.ts"],
+      "dao": ["./dist/esm/dao/index.d.ts"],
+      "escrow": ["./dist/esm/escrow/index.d.ts"],
+      "gates": ["./dist/esm/gates/index.d.ts"],
+      "hyper-swap": ["./dist/esm/hyper-swap/index.d.ts"],
+      "marketplace": ["./dist/esm/marketplace/index.d.ts"],
+      "meta-merkles": ["./dist/esm/meta-merkles/index.d.ts"],
+      "poll": ["./dist/esm/poll/index.d.ts"],
+      "prize-box": ["./dist/esm/prize-box/index.d.ts"],
+      "raffle": ["./dist/esm/raffle/index.d.ts"],
+      "rewards": ["./dist/esm/rewards/index.d.ts"],
+      "social": ["./dist/esm/social/index.d.ts"],
+      "staking": ["./dist/esm/staking/index.d.ts"],
+      "staking-pool": ["./dist/esm/staking-pool/index.d.ts"],
+      "subscriptions": ["./dist/esm/subscriptions/index.d.ts"],
+      "wallet": ["./dist/esm/wallet/index.d.ts"],
+      "types": ["./dist/esm/types.d.ts"]
     }
   },
   "files": [
@@ -26,6 +133,10 @@
   "description": "",
   "dependencies": {
     "@noble/hashes": "^1.7.1"
+  },
+  "peerDependencies": {
+    "@algorandfoundation/algokit-utils": "9.1.2",
+    "algosdk": "3.5.2"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",

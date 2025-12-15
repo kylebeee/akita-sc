@@ -54,6 +54,11 @@ export class UpgradeableAkitaBaseContract extends AkitaBaseContract {
   }
 }
 
+export type AkitaConfig = {
+  akitaDAO: Application,
+  akitaDAOEscrow: Application
+}
+
 export class AkitaBaseFeeGeneratorContract extends UpgradeableAkitaBaseContract {
 
   /** the app ID for the akita DAO escrow to use */

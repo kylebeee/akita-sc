@@ -20,7 +20,7 @@ import {
   SocialSDK,
   VOTELIST_MBR,
   VOTES_MBR
-} from 'akita-sdk'
+} from 'akita-sdk/social'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
 import {
   completeBalanceVerification,
@@ -1243,7 +1243,7 @@ describe('Direct Contract Operations', () => {
 // ============================================================================
 // Test Suite: Full Integration with Akita Universe (requires full DAO)
 // ============================================================================
-import { ProposalActionEnum } from 'akita-sdk'
+import { ProposalActionEnum } from 'akita-sdk/dao'
 import { AkitaUniverse, buildAkitaUniverse } from '../../tests/fixtures/dao'
 
 // NOTE: These tests require buildAkitaUniverse which takes 5-10 minutes

@@ -1,15 +1,10 @@
 import { algo, microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
-import {
-  AkitaDaoSDK,
-  ProposalActionEnum,
-  RevenueManagerPluginSDK,
-  StakingPoolFactorySDK,
-  SubscriptionsSDK,
-  UpdateAkitaDAOPluginSDK,
-  WalletFactorySDK,
-} from 'akita-sdk';
+import { AkitaDaoSDK, ProposalActionEnum } from 'akita-sdk/dao';
+import { StakingPoolFactorySDK } from 'akita-sdk/staking-pool';
+import { SubscriptionsSDK } from 'akita-sdk/subscriptions';
+import { RevenueManagerPluginSDK, UpdateAkitaDAOPluginSDK, WalletFactorySDK } from 'akita-sdk/wallet';
 import type { TransactionSigner } from 'algosdk';
 import { deployAbstractedAccountFactory } from '../../../../../tests/fixtures/abstracted-account';
 import { AkitaDAOGlobalStateKeysRevenueSplits, deployAkitaDAO } from '../../../../../tests/fixtures/dao';
@@ -178,6 +173,10 @@ describe('ARC58 DAO Setup', () => {
         fixture,
         sender,
         signer,
+        args: {
+          akitaDao: dao.appId,
+          version: '0.0.1',
+        }
       });
 
       expect(revenueManagerPlugin.appId).toBeGreaterThan(0n);

@@ -2,6 +2,7 @@ import { AbstractAccountBoxMbrData, AbstractedAccountArgs, AbstractedAccountFact
 import { AddAllowanceArgs, AddPluginArgs, AllowanceInfo, BuildWalletUsePluginParams, CanCallParams, ExecutionBuildGroup, MbrParams, MethodOffset, PluginInfo, RekeyArgs, WalletAddPluginParams, WalletGlobalState, WalletUsePluginParams } from './types';
 import { isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, GroupReturn, TxnReturn, hasSenderSigner, ExpandedSendParamsWithSigner } from '../types';
 import { BaseSDK } from '../base';
+import { ENV_VAR_NAMES } from '../config';
 import algosdk, { Address, ALGORAND_ZERO_ADDRESS_STRING, makeEmptyTransactionSigner } from 'algosdk';
 import { MAX_UINT64 } from '../constants';
 import { AllowanceInfoTranslate, AllowancesToTuple, domainBoxKey, executionBoxKey, forceProperties, OverWriteProperties, ValueMap } from './utils';
@@ -38,7 +39,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
   public executions: Map<Uint8Array, ExecutionInfo> = new Map();
 
   constructor(params: NewContractSDKParams) {
-    super({ factory: AbstractedAccountFactory, ...params });
+    super({ factory: AbstractedAccountFactory, ...params }, ENV_VAR_NAMES.WALLET_APP_ID);
   }
 
   private async updateCache(key: PluginKey, allowances?: bigint[]): Promise<void> {
@@ -380,9 +381,11 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
   async usePlugin(params: WalletUsePluginParams): Promise<GroupReturn> {
 
+    const sendParams = this.getSendParams(params);
+      
     const { plugin, caller, group } = await this.prepareUsePlugin(params);
 
-    const result = await group.send();
+    const result = await group.send({ ...sendParams });
 
     const { escrow = '', fundsRequest } = params;
 

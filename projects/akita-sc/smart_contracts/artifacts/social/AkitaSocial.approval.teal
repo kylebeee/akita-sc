@@ -882,7 +882,7 @@ create:
     // this.akitaDAO.value = akitaDAO
     uncover 2
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
     // smart_contracts/social/contract.algo.ts:700
@@ -969,7 +969,7 @@ init:
     // smart_contracts/social/contract.algo.ts:715
     // if (!this.akitaDAOEscrow.value.address.isOptedIn(akta)) {
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
     // smart_contracts/social/contract.algo.ts:715
@@ -1009,7 +1009,7 @@ init:
     bytec 15 // "pal"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:78
+    // smart_contracts/utils/base-contracts/base.ts:83
     // const { revenueManager } = getPluginAppList(this.akitaDAO.value)
     dup
     extract 8 8
@@ -1023,7 +1023,7 @@ init:
     bytec 11 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:65-68
+    // smart_contracts/utils/base-contracts/base.ts:70-73
     // const escrow = abiCall<typeof AbstractedAccount.prototype.arc58_getEscrows>({
     //   appId,
     //   args: [[name]],
@@ -1031,12 +1031,12 @@ init:
     itxn_begin
     pushbytes 0xa2403ddf // method "arc58_getEscrows(string[])(uint64,bool)[]"
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:67
+    // smart_contracts/utils/base-contracts/base.ts:72
     // args: [[name]],
     pushbytes 0x00010002000a7265765f736f6369616c
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/utils/base-contracts/base.ts:65-68
+    // smart_contracts/utils/base-contracts/base.ts:70-73
     // const escrow = abiCall<typeof AbstractedAccount.prototype.arc58_getEscrows>({
     //   appId,
     //   args: [[name]],
@@ -1065,20 +1065,20 @@ init:
     len
     ==
     assert // invalid number of bytes for (len+(uint64,bool1)[])
-    // smart_contracts/utils/base-contracts/base.ts:70
+    // smart_contracts/utils/base-contracts/base.ts:75
     // assert(escrow.id !== 0, ERR_ESCROW_DOES_NOT_EXIST)
     extract 6 9
     intc_0 // 0
     extract_uint64
     dup
     assert // Escrow does not exist
-    // smart_contracts/utils/base-contracts/base.ts:81
+    // smart_contracts/utils/base-contracts/base.ts:86
     // assert(id === this.akitaDAOEscrow.value.id, ERR_WRONG_ESCROW_FOR_OPERATION)
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:81
+    // smart_contracts/utils/base-contracts/base.ts:86
     // assert(id === this.akitaDAOEscrow.value.id, ERR_WRONG_ESCROW_FOR_OPERATION)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1086,7 +1086,7 @@ init:
     dig 1
     ==
     assert // Wrong escrow for this operation
-    // smart_contracts/utils/base-contracts/base.ts:83-92
+    // smart_contracts/utils/base-contracts/base.ts:88-97
     // itxnCompose.begin<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin>({
     //   appId: wallet,
     //   args: [
@@ -1102,25 +1102,25 @@ init:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:87
+    // smart_contracts/utils/base-contracts/base.ts:92
     // true,
     bytec 12 // 0x80
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:88
+    // smart_contracts/utils/base-contracts/base.ts:93
     // name,
     pushbytes 0x000a7265765f736f6369616c
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:89
+    // smart_contracts/utils/base-contracts/base.ts:94
     // [0], // all the akita escrows have method restrictions with optin being index 0
     pushbytes 0x00010000000000000000
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:90
+    // smart_contracts/utils/base-contracts/base.ts:95
     // []
     bytec 13 // 0x0000
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationID
-    // smart_contracts/utils/base-contracts/base.ts:83-92
+    // smart_contracts/utils/base-contracts/base.ts:88-97
     // itxnCompose.begin<typeof AbstractedAccount.prototype.arc58_rekeyToPlugin>({
     //   appId: wallet,
     //   args: [
@@ -1135,7 +1135,7 @@ init:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/base.ts:96
+    // smart_contracts/utils/base-contracts/base.ts:101
     // this.akitaDAOEscrow.value.address,
     app_params_get AppAddress
     assert // application exists
@@ -1168,12 +1168,12 @@ init:
     bury 4
 
 init_after_if_else@7:
-    // smart_contracts/utils/base-contracts/base.ts:100
+    // smart_contracts/utils/base-contracts/base.ts:105
     // const mbrAmount: uint64 = Global.assetOptInMinBalance * optInCount
     global AssetOptInMinBalance
     dig 4
     *
-    // smart_contracts/utils/base-contracts/base.ts:102-113
+    // smart_contracts/utils/base-contracts/base.ts:107-118
     // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
     //   appId: revenueManager,
     //   args: [
@@ -1187,13 +1187,13 @@ init_after_if_else@7:
     //   ]
     // })
     itxn_next
-    // smart_contracts/utils/base-contracts/base.ts:109
+    // smart_contracts/utils/base-contracts/base.ts:114
     // receiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:109
+    // smart_contracts/utils/base-contracts/base.ts:114
     // receiver: this.akitaDAOEscrow.value.address,
     app_global_get_ex
     assert // check GlobalState exists
@@ -1201,7 +1201,7 @@ init_after_if_else@7:
     assert // application exists
     itxn_field Receiver
     itxn_field Amount
-    // smart_contracts/utils/base-contracts/base.ts:108-111
+    // smart_contracts/utils/base-contracts/base.ts:113-116
     // itxn.payment({
     //   receiver: this.akitaDAOEscrow.value.address,
     //   amount: mbrAmount
@@ -1210,7 +1210,7 @@ init_after_if_else@7:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/base.ts:102-113
+    // smart_contracts/utils/base-contracts/base.ts:107-118
     // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
     //   appId: revenueManager,
     //   args: [
@@ -1224,19 +1224,19 @@ init_after_if_else@7:
     //   ]
     // })
     itxn_next
-    // smart_contracts/utils/base-contracts/base.ts:105
+    // smart_contracts/utils/base-contracts/base.ts:110
     // wallet,
     dig 1
     dup
     itob
-    // smart_contracts/utils/base-contracts/base.ts:107
+    // smart_contracts/utils/base-contracts/base.ts:112
     // [asset.id],
     dig 2
     itob
     bytec 22 // 0x0001
     swap
     concat
-    // smart_contracts/utils/base-contracts/base.ts:102-113
+    // smart_contracts/utils/base-contracts/base.ts:107-118
     // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
     //   appId: revenueManager,
     //   args: [
@@ -1253,14 +1253,14 @@ init_after_if_else@7:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
-    // smart_contracts/utils/base-contracts/base.ts:87
+    // smart_contracts/utils/base-contracts/base.ts:92
     // true,
     bytec 12 // 0x80
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     dig 3
     itxn_field ApplicationID
-    // smart_contracts/utils/base-contracts/base.ts:102-113
+    // smart_contracts/utils/base-contracts/base.ts:107-118
     // itxnCompose.next<typeof RevenueManagerPluginStub.prototype.optIn>({
     //   appId: revenueManager,
     //   args: [
@@ -1277,7 +1277,7 @@ init_after_if_else@7:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/base.ts:115
+    // smart_contracts/utils/base-contracts/base.ts:120
     // itxnCompose.next<typeof AbstractedAccount.prototype.arc58_verifyAuthAddress>({ appId: wallet })
     itxn_next
     bytec 31 // method "arc58_verifyAuthAddress()void"
@@ -1287,7 +1287,7 @@ init_after_if_else@7:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/utils/base-contracts/base.ts:127
+    // smart_contracts/utils/base-contracts/base.ts:132
     // itxnCompose.submit()
     itxn_submit
 
@@ -5056,7 +5056,7 @@ checkTipMbrRequirements:
 
 // smart_contracts/utils/base-contracts/base.ts::AkitaBaseFeeGeneratorContract.updateAkitaDAOEscrow[routing]() -> void:
 updateAkitaDAOEscrow:
-    // smart_contracts/utils/base-contracts/base.ts:132
+    // smart_contracts/utils/base-contracts/base.ts:137
     // updateAkitaDAOEscrow(app: Application): void {
     txna ApplicationArgs 1
     dup
@@ -5065,7 +5065,7 @@ updateAkitaDAOEscrow:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/utils/base-contracts/base.ts:133
+    // smart_contracts/utils/base-contracts/base.ts:138
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     txn Sender
     // smart_contracts/utils/base-contracts/base.ts:32
@@ -5081,20 +5081,20 @@ updateAkitaDAOEscrow:
     bytec 11 // "wallet"
     app_global_get_ex
     pop
-    // smart_contracts/utils/base-contracts/base.ts:133
+    // smart_contracts/utils/base-contracts/base.ts:138
     // assert(Txn.sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
     app_params_get AppAddress
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
-    // smart_contracts/utils/base-contracts/base.ts:134
+    // smart_contracts/utils/base-contracts/base.ts:139
     // this.akitaDAOEscrow.value = app
     swap
     app_global_put
-    // smart_contracts/utils/base-contracts/base.ts:132
+    // smart_contracts/utils/base-contracts/base.ts:137
     // updateAkitaDAOEscrow(app: Application): void {
     intc_1 // 1
     return
@@ -6164,7 +6164,7 @@ sendReactionPayments:
     // smart_contracts/social/contract.algo.ts:249
     // assetReceiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
     // smart_contracts/social/contract.algo.ts:249
@@ -6229,7 +6229,7 @@ sendReactionPayments_after_if_else@2:
     // smart_contracts/social/contract.algo.ts:269
     // assetReceiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
     // smart_contracts/social/contract.algo.ts:269
@@ -7008,7 +7008,7 @@ createPost_ternary_merge@12:
     // smart_contracts/social/contract.algo.ts:208
     // assetReceiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
     // smart_contracts/social/contract.algo.ts:208
@@ -7553,7 +7553,7 @@ createVote_else_body@2:
     // smart_contracts/social/contract.algo.ts:567
     // assetReceiver: this.akitaDAOEscrow.value.address,
     intc_0 // 0
-    // smart_contracts/utils/base-contracts/base.ts:60
+    // smart_contracts/utils/base-contracts/base.ts:65
     // akitaDAOEscrow = GlobalState<Application>({ key: GlobalStateKeyAkitaEscrow })
     bytec 7 // "akita_escrow"
     // smart_contracts/social/contract.algo.ts:567

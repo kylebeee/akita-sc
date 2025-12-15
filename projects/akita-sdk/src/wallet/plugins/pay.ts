@@ -63,7 +63,6 @@ export class PayPluginSDK extends BaseSDK<PayPluginClient> {
           await this.client.params.pay({
             ...sendParams,
             args: { wallet, payments: paymentsTuple, rekeyBack },
-            extraFee: microAlgo(1_000 * payments.length),
           })
         )
 

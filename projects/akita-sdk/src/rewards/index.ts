@@ -1,9 +1,650 @@
+import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { BaseSDK } from "../base";
-import { RewardsClient, RewardsFactory } from '../generated/RewardsClient'
-import { NewContractSDKParams } from "../types";
+import { ENV_VAR_NAMES } from "../config";
+import {
+  RewardsClient,
+  RewardsFactory,
+  RewardsComposer,
+  DisbursementDetails,
+  RewardsMbrData,
+} from '../generated/RewardsClient';
+import { MaybeSigner, NewContractSDKParams } from "../types";
+import {
+  GetMbrParams,
+  GetDisbursementParams,
+  GetUserAllocationParams,
+  RewardsGlobalState,
+  OptInAssetParams,
+  CreateDisbursementParams,
+  EditDisbursementParams,
+  CreateUserAllocationsParams,
+  CreateAsaUserAllocationsParams,
+  FinalizeDisbursementParams,
+  CreateInstantDisbursementParams,
+  CreateInstantAsaDisbursementParams,
+  ClaimRewardsParams,
+  ReclaimRewardsParams,
+  UpdateAkitaDaoParams,
+  UserAllocation,
+} from "./types";
 
+export * from "./types";
+
+/** Base references available per transaction */
+const BASE_REFERENCES = 8;
+/** References added by each opUp call */
+const REFERENCES_PER_OPUP = 8;
+
+/**
+ * SDK for interacting with the Rewards contract.
+ * Use this to create disbursements, manage allocations, and claim/reclaim rewards.
+ */
 export class RewardsSDK extends BaseSDK<RewardsClient> {
+
   constructor(params: NewContractSDKParams) {
-    super({ factory: RewardsFactory, ...params });
+    super({ factory: RewardsFactory, ...params }, ENV_VAR_NAMES.REWARDS_APP_ID);
+  }
+
+  // ========== OpUp Helpers ==========
+
+  /**
+   * Calculates the number of opUp calls needed for a given reference count.
+   * @param referencesNeeded - Number of references needed for the operation
+   * @param baseReferences - Base references available (default 8)
+   * @returns Number of opUp calls needed (0 if none needed)
+   */
+  private calculateOpUpsNeeded(referencesNeeded: number, baseReferences = BASE_REFERENCES): number {
+    if (referencesNeeded <= baseReferences) {
+      return 0;
+    }
+    return Math.ceil((referencesNeeded - baseReferences) / REFERENCES_PER_OPUP);
+  }
+
+  /**
+   * Adds the required number of opUp calls to a transaction group.
+   * Each opUp call adds 8 more reference slots to the group.
+   */
+  private addOpUps<T extends unknown[]>(
+    group: RewardsComposer<T>,
+    count: number,
+    sendParams: { sender?: string | import('algosdk').Address; signer?: import('algosdk').TransactionSigner }
+  ): void {
+    for (let i = 0; i < count; i++) {
+      group.opUp({
+        ...sendParams,
+        args: {},
+        // Add unique note to avoid duplicate transaction issues
+        note: i > 0 ? `opUp-${i}` : undefined,
+      });
+    }
+  }
+
+  // ========== Read Methods ==========
+
+  /**
+   * Gets the current global state of the rewards contract.
+   */
+  async getState(): Promise<RewardsGlobalState> {
+    const state = await this.client.state.global.getAll();
+
+    return {
+      disbursementId: state.disbursementId ?? 1n,
+      version: state.version ?? '',
+      akitaDao: state.akitaDao ?? 0n,
+    };
+  }
+
+  /**
+   * Gets the MBR (Minimum Balance Requirement) data for creating disbursements.
+   * @param title - The disbursement title
+   * @param note - The disbursement note
+   */
+  async mbr({ title, note }: GetMbrParams): Promise<RewardsMbrData> {
+    return await this.client.mbr({ args: { title, note } });
+  }
+
+  /**
+   * Gets a specific disbursement by ID.
+   */
+  async getDisbursement({ id }: GetDisbursementParams): Promise<DisbursementDetails> {
+    const disbursement = await this.client.state.box.disbursements.value(id);
+
+    if (disbursement === undefined) {
+      throw new Error(`Disbursement ${id} not found`);
+    }
+
+    return disbursement;
+  }
+
+  /**
+   * Gets all disbursements as a map.
+   */
+  async getDisbursements(): Promise<Map<bigint, DisbursementDetails>> {
+    const disbursements = await this.client.state.box.disbursements.getMap();
+    return new Map(Array.from(disbursements.entries()).map(([key, value]) => [BigInt(key), value]));
+  }
+
+  /**
+   * Gets a user's allocation for a specific disbursement and asset.
+   */
+  async getUserAllocation({ address, disbursementId, asset }: GetUserAllocationParams): Promise<bigint> {
+    const allocation = await this.client.state.box.userAllocations.value({
+      address,
+      disbursementId: BigInt(disbursementId),
+      asset: BigInt(asset),
+    });
+
+    if (allocation === undefined) {
+      throw new Error(`Allocation not found for address ${address}, disbursement ${disbursementId}`);
+    }
+
+    return allocation;
+  }
+
+  /**
+   * Checks if a user has an allocation for a specific disbursement and asset.
+   */
+  async hasAllocation({ address, disbursementId, asset }: GetUserAllocationParams): Promise<boolean> {
+    try {
+      const allocation = await this.client.state.box.userAllocations.value({
+        address,
+        disbursementId: BigInt(disbursementId),
+        asset: BigInt(asset),
+      });
+      return allocation !== undefined;
+    } catch {
+      return false;
+    }
+  }
+
+  // ========== Write Methods ==========
+
+  /**
+   * Opts the rewards contract into an asset.
+   */
+  async optIn({ sender, signer, asset }: OptInAssetParams): Promise<void> {
+    const sendParams = this.getRequiredSendParams({ sender, signer });
+
+    // Asset opt-in costs 100,000 microAlgo
+    const payment = await this.client.algorand.createTransaction.payment({
+      ...sendParams,
+      amount: microAlgo(100_000),
+      receiver: this.client.appAddress,
+    });
+
+    await this.client.send.optIn({
+      ...sendParams,
+      args: {
+        payment,
+        asset,
+      },
+    });
+  }
+
+  /**
+   * Creates a new disbursement.
+   * Returns the disbursement ID.
+   */
+  async createDisbursement({
+    sender,
+    signer,
+    title,
+    timeToUnlock,
+    expiration,
+    note,
+  }: CreateDisbursementParams): Promise<bigint> {
+    const sendParams = this.getRequiredSendParams({ sender, signer });
+
+    // Get MBR for this disbursement
+    const mbrData = await this.mbr({ title, note });
+
+    const mbrPayment = await this.client.algorand.createTransaction.payment({
+      ...sendParams,
+      amount: microAlgo(mbrData.disbursements),
+      receiver: this.client.appAddress,
+    });
+
+    const { return: disbursementId } = await this.client.send.createDisbursement({
+      ...sendParams,
+      args: {
+        mbrPayment,
+        title,
+        timeToUnlock,
+        expiration,
+        note,
+      },
+    });
+
+    if (disbursementId === undefined) {
+      throw new Error('Failed to create disbursement');
+    }
+
+    return disbursementId;
+  }
+
+  /**
+   * Edits an existing disbursement (only before finalization).
+   */
+  async editDisbursement({
+    sender,
+    signer,
+    id,
+    title,
+    timeToUnlock,
+    expiration,
+    note,
+  }: EditDisbursementParams): Promise<void> {
+    const sendParams = this.getSendParams({ sender, signer });
+
+    await this.client.send.editDisbursement({
+      ...sendParams,
+      args: {
+        id,
+        title,
+        timeToUnlock,
+        expiration,
+        note,
+      },
+    });
+  }
+
+  /**
+   * Helper to format allocations for the contract.
+   */
+  private formatAllocations(allocations: UserAllocation[]): [string, bigint | number][] {
+    return allocations.map(a => [a.address, a.amount]);
+  }
+
+  /**
+   * Calculates the total amount from allocations.
+   */
+  private sumAllocations(allocations: UserAllocation[]): bigint {
+    return allocations.reduce((sum, a) => sum + BigInt(a.amount), 0n);
+  }
+
+  /**
+   * Creates ALGO allocations for a disbursement.
+   * The payment includes both MBR for the boxes and the actual ALGO to distribute.
+   * Automatically adds opUp calls for large allocation batches.
+   */
+  async createUserAllocations({
+    sender,
+    signer,
+    id,
+    allocations,
+  }: CreateUserAllocationsParams): Promise<void> {
+    const sendParams = this.getRequiredSendParams({ sender, signer });
+
+    // Get disbursement to calculate MBR
+    const disbursement = await this.getDisbursement({ id });
+    const mbrData = await this.mbr({ title: disbursement.title, note: disbursement.note });
+
+    // MBR per allocation + total ALGO to distribute
+    const mbrAmount = mbrData.userAllocations * BigInt(allocations.length);
+    const totalAmount = this.sumAllocations(allocations);
+
+    const payment = await this.client.algorand.createTransaction.payment({
+      ...sendParams,
+      amount: microAlgo(mbrAmount + totalAmount),
+      receiver: this.client.appAddress,
+    });
+
+    // Each allocation needs ~1 box reference, plus 1 for disbursement box
+    const referencesNeeded = allocations.length + 1;
+    const opUpsNeeded = this.calculateOpUpsNeeded(referencesNeeded);
+
+    if (opUpsNeeded === 0) {
+      // No opUps needed, send directly
+      await this.client.send.createUserAllocations({
+        ...sendParams,
+        args: {
+          payment,
+          id,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+    } else {
+      // Use transaction group with opUps
+      const group = this.client.newGroup();
+
+      group.createUserAllocations({
+        ...sendParams,
+        args: {
+          payment,
+          id,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+
+      this.addOpUps(group, opUpsNeeded, sendParams);
+
+      await group.send(sendParams);
+    }
+  }
+
+  /**
+   * Creates ASA allocations for a disbursement.
+   * Requires both an MBR payment and an asset transfer.
+   * Automatically adds opUp calls for large allocation batches.
+   */
+  async createAsaUserAllocations({
+    sender,
+    signer,
+    id,
+    asset,
+    allocations,
+  }: CreateAsaUserAllocationsParams): Promise<void> {
+    const sendParams = this.getRequiredSendParams({ sender, signer });
+
+    // Get disbursement to calculate MBR
+    const disbursement = await this.getDisbursement({ id });
+    const mbrData = await this.mbr({ title: disbursement.title, note: disbursement.note });
+
+    const mbrAmount = mbrData.userAllocations * BigInt(allocations.length);
+    const totalAmount = this.sumAllocations(allocations);
+
+    const mbrPayment = await this.client.algorand.createTransaction.payment({
+      ...sendParams,
+      amount: microAlgo(mbrAmount),
+      receiver: this.client.appAddress,
+    });
+
+    const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
+      ...sendParams,
+      amount: totalAmount,
+      assetId: BigInt(asset),
+      receiver: this.client.appAddress,
+    });
+
+    // Each allocation needs ~1 box reference, plus 1 for disbursement box, plus 1 for asset
+    const referencesNeeded = allocations.length + 2;
+    const opUpsNeeded = this.calculateOpUpsNeeded(referencesNeeded);
+
+    if (opUpsNeeded === 0) {
+      await this.client.send.createAsaUserAllocations({
+        ...sendParams,
+        args: {
+          mbrPayment,
+          assetXfer,
+          id,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+    } else {
+      const group = this.client.newGroup();
+
+      group.createAsaUserAllocations({
+        ...sendParams,
+        args: {
+          mbrPayment,
+          assetXfer,
+          id,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+
+      this.addOpUps(group, opUpsNeeded, sendParams);
+
+      await group.send(sendParams);
+    }
+  }
+
+  /**
+   * Finalizes a disbursement, locking it for distribution.
+   */
+  async finalizeDisbursement({ sender, signer, id }: FinalizeDisbursementParams): Promise<void> {
+    const sendParams = this.getSendParams({ sender, signer });
+
+    await this.client.send.finalizeDisbursement({
+      ...sendParams,
+      args: { id },
+    });
+  }
+
+  /**
+   * Creates and finalizes an ALGO disbursement in a single call.
+   * Returns the disbursement ID.
+   * Automatically adds opUp calls for large allocation batches.
+   */
+  async createInstantDisbursement({
+    sender,
+    signer,
+    timeToUnlock,
+    expiration,
+    allocations,
+  }: CreateInstantDisbursementParams): Promise<bigint> {
+    const sendParams = this.getRequiredSendParams({ sender, signer });
+
+    // MinDisbursementsMBR (35,300) + UserAllocationMBR (25,300) per allocation
+    const MIN_DISBURSEMENTS_MBR = 35_300n;
+    const USER_ALLOCATION_MBR = 25_300n;
+
+    const mbrAmount = MIN_DISBURSEMENTS_MBR + (USER_ALLOCATION_MBR * BigInt(allocations.length));
+    const totalAmount = this.sumAllocations(allocations);
+
+    const mbrPayment = await this.client.algorand.createTransaction.payment({
+      ...sendParams,
+      amount: microAlgo(mbrAmount + totalAmount),
+      receiver: this.client.appAddress,
+    });
+
+    // Each allocation needs ~1 box reference, plus 1 for disbursement box
+    const referencesNeeded = allocations.length + 1;
+    const opUpsNeeded = this.calculateOpUpsNeeded(referencesNeeded);
+
+    let disbursementId: bigint | undefined;
+
+    if (opUpsNeeded === 0) {
+      const result = await this.client.send.createInstantDisbursement({
+        ...sendParams,
+        args: {
+          mbrPayment,
+          timeToUnlock,
+          expiration,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+      disbursementId = result.return;
+    } else {
+      const group = this.client.newGroup();
+
+      group.createInstantDisbursement({
+        ...sendParams,
+        args: {
+          mbrPayment,
+          timeToUnlock,
+          expiration,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+
+      this.addOpUps(group, opUpsNeeded, sendParams);
+
+      const result = await group.send(sendParams);
+      disbursementId = result.returns?.[0];
+    }
+
+    if (disbursementId === undefined) {
+      throw new Error('Failed to create instant disbursement');
+    }
+
+    return disbursementId;
+  }
+
+  /**
+   * Creates and finalizes an ASA disbursement in a single call.
+   * Returns the disbursement ID.
+   * Automatically adds opUp calls for large allocation batches.
+   */
+  async createInstantAsaDisbursement({
+    sender,
+    signer,
+    timeToUnlock,
+    expiration,
+    asset,
+    allocations,
+  }: CreateInstantAsaDisbursementParams): Promise<bigint> {
+    const sendParams = this.getRequiredSendParams({ sender, signer });
+
+    // MinDisbursementsMBR (35,300) + UserAllocationMBR (25,300) per allocation
+    const MIN_DISBURSEMENTS_MBR = 35_300n;
+    const USER_ALLOCATION_MBR = 25_300n;
+
+    const mbrAmount = MIN_DISBURSEMENTS_MBR + (USER_ALLOCATION_MBR * BigInt(allocations.length));
+    const totalAmount = this.sumAllocations(allocations);
+
+    const mbrPayment = await this.client.algorand.createTransaction.payment({
+      ...sendParams,
+      amount: microAlgo(mbrAmount),
+      receiver: this.client.appAddress,
+    });
+
+    const assetXfer = await this.client.algorand.createTransaction.assetTransfer({
+      ...sendParams,
+      amount: totalAmount,
+      assetId: BigInt(asset),
+      receiver: this.client.appAddress,
+    });
+
+    // Each allocation needs ~1 box reference, plus 1 for disbursement box, plus 1 for asset
+    const referencesNeeded = allocations.length + 2;
+    const opUpsNeeded = this.calculateOpUpsNeeded(referencesNeeded);
+
+    let disbursementId: bigint | undefined;
+
+    if (opUpsNeeded === 0) {
+      const result = await this.client.send.createInstantAsaDisbursement({
+        ...sendParams,
+        args: {
+          mbrPayment,
+          assetXfer,
+          timeToUnlock,
+          expiration,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+      disbursementId = result.return;
+    } else {
+      const group = this.client.newGroup();
+
+      group.createInstantAsaDisbursement({
+        ...sendParams,
+        args: {
+          mbrPayment,
+          assetXfer,
+          timeToUnlock,
+          expiration,
+          allocations: this.formatAllocations(allocations),
+        },
+      });
+
+      this.addOpUps(group, opUpsNeeded, sendParams);
+
+      const result = await group.send(sendParams);
+      disbursementId = result.returns?.[0];
+    }
+
+    if (disbursementId === undefined) {
+      throw new Error('Failed to create instant ASA disbursement');
+    }
+
+    return disbursementId;
+  }
+
+  /**
+   * Claims rewards from one or more disbursements.
+   * The caller claims their allocated rewards.
+   * Automatically adds opUp calls for claiming from many disbursements.
+   */
+  async claimRewards({ sender, signer, rewards }: ClaimRewardsParams): Promise<void> {
+    const sendParams = this.getSendParams({ sender, signer });
+
+    // Format rewards as [id, asset] tuples
+    const formattedRewards: [bigint | number, bigint | number][] = rewards.map(r => [r.id, r.asset]);
+
+    // Each claim needs references for: disbursement box, allocation box, possibly asset
+    // Plus inner transactions use references
+    const referencesNeeded = rewards.length * 3;
+    const opUpsNeeded = this.calculateOpUpsNeeded(referencesNeeded);
+
+    if (opUpsNeeded === 0) {
+      await this.client.send.claimRewards({
+        ...sendParams,
+        // Extra fee for inner transactions (2 per claim: MBR refund + reward transfer)
+        extraFee: microAlgo(2000 * rewards.length),
+        args: {
+          rewards: formattedRewards,
+        },
+      });
+    } else {
+      const group = this.client.newGroup();
+
+      group.claimRewards({
+        ...sendParams,
+        extraFee: microAlgo(2000 * rewards.length),
+        args: {
+          rewards: formattedRewards,
+        },
+      });
+
+      this.addOpUps(group, opUpsNeeded, sendParams);
+
+      await group.send(sendParams);
+    }
+  }
+
+  /**
+   * Reclaims unclaimed rewards after a disbursement has expired.
+   * Only the disbursement creator can reclaim.
+   * Automatically adds opUp calls for reclaiming many allocations.
+   */
+  async reclaimRewards({ sender, signer, id, reclaims }: ReclaimRewardsParams): Promise<void> {
+    const sendParams = this.getSendParams({ sender, signer });
+
+    // Format reclaims as [address, asset] tuples
+    const formattedReclaims: [string, bigint | number][] = reclaims.map(r => [r.address, r.asset]);
+
+    // Each reclaim needs references for: allocation box, possibly asset, receiver account
+    const referencesNeeded = reclaims.length * 2 + 1; // +1 for disbursement box
+    const opUpsNeeded = this.calculateOpUpsNeeded(referencesNeeded);
+
+    if (opUpsNeeded === 0) {
+      await this.client.send.reclaimRewards({
+        ...sendParams,
+        // Extra fee for inner transactions (2 per reclaim: asset transfer + MBR refund)
+        extraFee: microAlgo(2000 * reclaims.length),
+        args: {
+          id,
+          reclaims: formattedReclaims,
+        },
+      });
+    } else {
+      const group = this.client.newGroup();
+
+      group.reclaimRewards({
+        ...sendParams,
+        extraFee: microAlgo(2000 * reclaims.length),
+        args: {
+          id,
+          reclaims: formattedReclaims,
+        },
+      });
+
+      this.addOpUps(group, opUpsNeeded, sendParams);
+
+      await group.send(sendParams);
+    }
+  }
+
+  /**
+   * Updates the Akita DAO reference.
+   */
+  async updateAkitaDao({ sender, signer, akitaDao }: UpdateAkitaDaoParams): Promise<void> {
+    const sendParams = this.getSendParams({ sender, signer });
+
+    await this.client.send.updateAkitaDao({
+      ...sendParams,
+      args: { akitaDao },
+    });
   }
 }

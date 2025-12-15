@@ -1,7 +1,8 @@
 import { algo, microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
-import { AkitaDaoSDK, EMPTY_CID, ProposalActionEnum, WalletFactorySDK } from 'akita-sdk';
+import { AkitaDaoSDK, EMPTY_CID, ProposalActionEnum } from 'akita-sdk/dao';
+import { WalletFactorySDK } from 'akita-sdk/wallet';
 import type { TransactionSigner } from 'algosdk';
 import { deployAbstractedAccountFactory } from '../../../../../tests/fixtures/abstracted-account';
 import { deployAkitaDAO } from '../../../../../tests/fixtures/dao';
@@ -115,7 +116,7 @@ describe('ARC58 DAO Voting', () => {
         const bonesResult = await algorand.send.assetCreate({
             sender,
             signer,
-            total: 1_000_000_000_000n, // 1 trillion with 6 decimals
+            total: 1_000_000_000_000_000n,
             decimals: 6,
             assetName: 'Bones',
             unitName: 'BONES',

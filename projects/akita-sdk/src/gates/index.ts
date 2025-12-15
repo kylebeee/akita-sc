@@ -1,4 +1,5 @@
 import { BaseSDK } from "../base";
+import { ENV_VAR_NAMES } from "../config";
 import { TxnReturn } from '../types'
 import { GateArgs, GateClient, GateFactory, GateFilterEntryWithArgsFromTuple } from '../generated/GateClient'
 import { MaybeSigner, NewContractSDKParams } from "../types";
@@ -117,7 +118,7 @@ export class GateSDK extends BaseSDK<GateClient> {
   }
 
   constructor(params: NewContractSDKParams & { gateRegistry: GateRegistryConfig }) {
-    super({ factory: GateFactory, ...params });
+    super({ factory: GateFactory, ...params }, ENV_VAR_NAMES.GATE_APP_ID);
     Object.entries(params.gateRegistry).forEach(([type, contractId]) => {
       if (contractId !== undefined) {
         this.contractIdToType.set(contractId, type as GateType);

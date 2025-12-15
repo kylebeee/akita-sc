@@ -1,14 +1,12 @@
-import { Config, microAlgo } from '@algorandfoundation/algokit-utils';
+import { Config } from '@algorandfoundation/algokit-utils';
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import { AkitaDaoSDK, newWallet, WalletFactorySDK, WalletSDK } from 'akita-sdk';
-import { ALGORAND_ZERO_ADDRESS_STRING, getApplicationAddress } from 'algosdk';
-import { buildAkitaUniverse } from '../../../tests/fixtures/dao';
+import { AkitaDaoSDK } from 'akita-sdk/dao';
+import { newWallet, WalletFactorySDK } from 'akita-sdk/wallet';
 import { deployAbstractedAccountFactory } from '../../../tests/fixtures/abstracted-account';
+import { buildAkitaUniverse, deployAkitaDAO } from '../../../tests/fixtures/dao';
 import { deployEscrowFactory } from '../../../tests/fixtures/escrow';
-import { deployAkitaDAO } from '../../../tests/fixtures/dao';
-import { ERR_NOT_AKITA_DAO } from '../../errors';
 
 describe('ARC58 Factory', () => {
   const localnet = algorandFixture();

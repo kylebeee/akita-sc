@@ -1,14 +1,16 @@
 
-import { Contract } from "@algorandfoundation/algorand-typescript";
+import { abimethod, Contract } from "@algorandfoundation/algorand-typescript";
+import { AuctionMBRBids, AuctionMBRBidsByAddress, AuctionMBRLocations, AuctionMBRWeights } from "./constants";
 import { AuctionMBRData } from "./types";
 
 export class BaseAuction extends Contract {
-  protected mbr(): AuctionMBRData {
+  @abimethod({ readonly: true })
+  mbr(): AuctionMBRData {
     return {
-      bids: 34_900,
-      weights: 13_113_300,
-      bidsByAddress: 18_500,
-      locations: 18_900,
+      bids: AuctionMBRBids,
+      weights: AuctionMBRWeights,
+      bidsByAddress: AuctionMBRBidsByAddress,
+      locations: AuctionMBRLocations,
     }
   }
 }

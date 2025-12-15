@@ -1,0 +1,58 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    // smart_contracts/utils/types/mock-randomness-beacon.algo.ts:7
+    // export class MockRandomnessBeacon extends Contract {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@5
+    pushbytes 0x189392c5 // method "get(uint64,byte[])byte[]"
+    txna ApplicationArgs 0
+    match main_get_route@3
+    err
+
+main_get_route@3:
+    // smart_contracts/utils/types/mock-randomness-beacon.algo.ts:12
+    // get(round: uint64, userData: bytes): bytes {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    b get
+
+main___algots__.defaultCreate@5:
+    // smart_contracts/utils/types/mock-randomness-beacon.algo.ts:7
+    // export class MockRandomnessBeacon extends Contract {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
+
+
+// smart_contracts/utils/types/mock-randomness-beacon.algo.ts::MockRandomnessBeacon.get[routing]() -> void:
+get:
+    // smart_contracts/utils/types/mock-randomness-beacon.algo.ts:12
+    // get(round: uint64, userData: bytes): bytes {
+    txna ApplicationArgs 1
+    len
+    pushint 8 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    txna ApplicationArgs 2
+    dup
+    pushint 0 // 0
+    extract_uint16
+    pushint 2 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for (len+uint8[])
+    pushbytes 0x151f7c7500200102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20
+    log
+    pushint 1 // 1
+    return

@@ -44,6 +44,7 @@ export const AuctionGlobalStateKeyRefundMBRCursor = 'refund_mbr_cursor'
 export const AuctionGlobalStateKeyWinningTicket = 'winning_ticket'
 export const AuctionGlobalStateKeyRaffleWinner = 'raffle_winner'
 export const AuctionGlobalStateKeySalt = 'salt'
+export const AuctionGlobalStateKeyRaffleRound = 'raffle_round'
 
 export const AuctionBoxPrefixBids = 'b'
 export const AuctionBoxPrefixWeights = 'w'
@@ -59,4 +60,10 @@ export const ChunkSize: uint64 = 4096
 export const MaxChunksPerGroup: uint64 = 4
 // 4 accounts per txn * 16 group size = 64
 export const MaxRefundIterationsPerGroup: uint64 = 64
+
+// MBR (Minimum Balance Requirement) values for auction boxes
+export const AuctionMBRBids: uint64 = 34_900
+export const AuctionMBRWeights: uint64 = 13_113_300
+export const AuctionMBRBidsByAddress: uint64 = 18_500
+export const AuctionMBRLocations: uint64 = 18_900
 

@@ -2,7 +2,17 @@ import { algo, Config } from '@algorandfoundation/algokit-utils';
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { AlgorandFixture } from '@algorandfoundation/algokit-utils/types/testing';
-import { AkitaDaoSDK, ProposalAction, ProposalActionEnum, SDKClient, type UpdateAkitaDAOPluginSDK, type WalletAddPluginParams, type WalletFactorySDK } from 'akita-sdk';
+import { AuctionFactorySDK } from 'akita-sdk/auction';
+import { AkitaDaoSDK, ProposalAction, ProposalActionEnum } from 'akita-sdk/dao';
+import { MarketplaceSDK } from 'akita-sdk/marketplace';
+import { PollFactorySDK } from 'akita-sdk/poll';
+import { PrizeBoxFactorySDK } from 'akita-sdk/prize-box';
+import { RaffleFactorySDK } from 'akita-sdk/raffle';
+import { SocialSDK } from 'akita-sdk/social';
+import { StakingPoolFactorySDK } from 'akita-sdk/staking-pool';
+import { SubscriptionsSDK } from 'akita-sdk/subscriptions';
+import { SDKClient } from 'akita-sdk/types';
+import { type UpdateAkitaDAOPluginSDK, type WalletAddPluginParams, type WalletFactorySDK } from 'akita-sdk/wallet';
 import type { TransactionSigner } from 'algosdk';
 import { buildAkitaUniverse, deployAkitaDAO } from '../../../../../tests/fixtures/dao';
 import type { AkitaDaoApps } from '../../../../artifacts/arc58/dao/AkitaDAOClient';
@@ -23,6 +33,15 @@ export interface DaoTestContext {
   walletFactory?: WalletFactorySDK;
   daoUpdatePluginSdk?: UpdateAkitaDAOPluginSDK;
   escrowFactory?: bigint;
+  // Additional upgradeable apps
+  auctionFactory?: AuctionFactorySDK;
+  marketplace?: MarketplaceSDK;
+  raffleFactory?: RaffleFactorySDK;
+  pollFactory?: PollFactorySDK;
+  prizeBoxFactory?: PrizeBoxFactorySDK;
+  stakingPoolFactory?: StakingPoolFactorySDK;
+  subscriptions?: SubscriptionsSDK;
+  social?: SocialSDK;
 }
 
 let configured = false;
@@ -52,14 +71,43 @@ export const bootstrapDaoTestContext = async (options: BootstrapDaoTestContextOp
   await algorand.account.ensureFunded(sender, dispenser, algo(options.fundAmount ?? 200));
 
   if (options.useFullSetup) {
-    const { dao, walletFactory, updatePlugin, escrowFactory } = await buildAkitaUniverse({
+    const {
+      dao,
+      walletFactory,
+      updatePlugin,
+      escrowFactory,
+      auctionFactory,
+      marketplace,
+      raffleFactory,
+      pollFactory,
+      prizeBoxFactory,
+      stakingPoolFactory,
+      subscriptions,
+      social,
+    } = await buildAkitaUniverse({
       fixture,
       sender,
       signer,
       apps: options.apps ?? {}
     });
 
-    return { fixture, dao, sender, signer, walletFactory, daoUpdatePluginSdk: updatePlugin, escrowFactory: escrowFactory.appId };
+    return {
+      fixture,
+      dao,
+      sender,
+      signer,
+      walletFactory,
+      daoUpdatePluginSdk: updatePlugin,
+      escrowFactory: escrowFactory.appId,
+      auctionFactory,
+      marketplace,
+      raffleFactory,
+      pollFactory,
+      prizeBoxFactory,
+      stakingPoolFactory,
+      subscriptions,
+      social,
+    };
   }
 
   const dao = await deployAkitaDAO({

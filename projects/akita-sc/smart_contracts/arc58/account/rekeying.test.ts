@@ -2,7 +2,7 @@ import { Config, microAlgo } from '@algorandfoundation/algokit-utils';
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import { newWallet, PayPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk';
+import { newWallet, PayPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk/wallet';
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk';
 import { deployAbstractedAccountFactory } from '../../../tests/fixtures/abstracted-account';
 import { deployAkitaDAO } from '../../../tests/fixtures/dao';

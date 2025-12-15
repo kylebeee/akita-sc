@@ -1,13 +1,14 @@
-import { Contract } from "@algorandfoundation/algorand-typescript";
-import { RaffleMBRData } from "./types";
+import { abimethod, Contract } from "@algorandfoundation/algorand-typescript";
 import { EntriesByAddressMBR, EntriesMBR, WeightsMBR } from "./constants";
+import { RaffleMBRData } from "./types";
 
 export class BaseRaffle extends Contract {
-    protected mbr(): RaffleMBRData {
-        return {
-            entries: EntriesMBR,
-            weights: WeightsMBR,
-            entriesByAddress: EntriesByAddressMBR
-        }
+  @abimethod({ readonly: true })
+  mbr(): RaffleMBRData {
+    return {
+      entries: EntriesMBR,
+      weights: WeightsMBR,
+      entriesByAddress: EntriesByAddressMBR
     }
+  }
 }

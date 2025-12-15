@@ -1,22 +1,21 @@
-import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, Bytes, Global, GlobalState, gtxn, itxn, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall } from '@algorandfoundation/algorand-typescript/arc4'
+import { Account, Application, assert, assertMatch, Asset, BoxMap, bytes, Bytes, Global, GlobalState, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4'
 import { AssetHolding, itob, sha256 } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
-import { GlobalStateKeyEscrowFactory } from '../constants'
 import { MerkleTreeTypeTrade } from '../meta-merkles/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { arc59OptInAndSend, getAkitaAppList, getOtherAppList } from '../utils/functions'
+import { arc58OptInAndSend, getAkitaAppList, getPluginAppList } from '../utils/functions'
 import { RefundValue } from '../utils/types/mbr'
 import { Proof } from '../utils/types/merkles'
 import { HyperSwapBoxPrefixHashes, HyperSwapBoxPrefixOffers, HyperSwapBoxPrefixParticipants, HyperSwapGlobalStateKeyOfferCursor, STATE_CANCEL_COMPLETED, STATE_CANCELLED, STATE_COMPLETED, STATE_DISBURSING, STATE_ESCROWING, STATE_OFFERED } from './constants'
-import { ERR_BAD_ROOTS, ERR_CANT_VERIFY_LEAF, ERR_INVALID_STATE, ERR_NOT_A_PARTICIPANT, ERR_OFFER_EXPIRED } from './errors'
+import { ERR_BAD_ROOTS, ERR_CANT_VERIFY_LEAF, ERR_INVALID_STATE, ERR_NOT_A_PARTICIPANT, ERR_OFFER_EXPIRED, ERR_RECEIVER_NOT_OPTED_IN } from './errors'
 import { HashKey, OfferValue, ParticipantKey } from './types'
 
 // CONTRACT IMPORTS
+import type { AbstractedAccount } from '../arc58/account/contract.algo'
 import type { MetaMerkles } from '../meta-merkles/contract.algo'
 import { AkitaBaseContract } from '../utils/base-contracts/base'
 import { ContractWithOptIn } from '../utils/base-contracts/optin'
-import type { AssetInbox } from '../utils/types/asset-inbox'
 import { BaseHyperSwap } from './base'
 
 
@@ -26,8 +25,6 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
 
   /** global counter for offers */
   offerCursor = GlobalState<uint64>({ key: HyperSwapGlobalStateKeyOfferCursor })
-  /** ths factory app for spending accounts */
-  escrowFactory = GlobalState<Application>({ key: GlobalStateKeyEscrowFactory })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -48,12 +45,10 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
 
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
-  create(
-    version: string,
-    spendingAccountFactory: uint64
-  ): void {
+  @abimethod({ onCreate: 'require' })
+  create(version: string, akitaDAO: Application): void {
     this.version.value = version
-    this.escrowFactory.value = Application(spendingAccountFactory)
+    this.akitaDAO.value = akitaDAO
   }
 
   // HYPER SWAP METHODS ---------------------------------------------------------------------------
@@ -209,13 +204,13 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
    * @param proof the proof to verify the details are part of the tree
    */
   escrow(payment: gtxn.PaymentTxn, id: uint64, receiver: Account, amount: uint64, proof: Proof) {
-    // ensure this contract currently controls the sender
-    // assert(this.controls(sender.address));
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const { state, root, escrowed, leaves } = this.offers(id).value
-    // ensure we are still in the collecting acceptances stage
+    const { state, root, escrowed, leaves, expiration } = this.offers(id).value
+    // ensure we are still in the escrowing stage
     assert(state === STATE_ESCROWING, ERR_INVALID_STATE)
+    // ensure the offer hasn't expired
+    assert(expiration > Global.latestTimestamp, ERR_OFFER_EXPIRED)
     // ensure they are a participant
     const senderParticipantKey = { id, address: Txn.sender }
     assert(this.participants(senderParticipantKey).exists)
@@ -284,9 +279,11 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
   ) {
     // ensure the offer exists
     assert(this.offers(id).exists)
-    const { state, root, escrowed, leaves } = this.offers(id).value
-    // ensure we are still in the collecting acceptances stage
+    const { state, root, escrowed, leaves, expiration } = this.offers(id).value
+    // ensure we are still in the escrowing stage
     assert(state === STATE_ESCROWING, ERR_INVALID_STATE)
+    // ensure the offer hasn't expired
+    assert(expiration > Global.latestTimestamp, ERR_OFFER_EXPIRED)
     // ensure they are a participant
     const senderParticipantKey = { id, address: Txn.sender }
     assert(this.participants(senderParticipantKey).exists)
@@ -312,20 +309,9 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
     const costs = this.mbr()
     let mbrAmount = costs.hashes
 
-    // take the worst case possible amount incase we fallback to arc59
+    // collect opt-in MBR if receiver is not opted into the asset
     if (!receiver.isOptedIn(Asset(asset))) {
-      const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
-      const canCallData = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
-        appId: assetInbox,
-        args: [receiver, asset],
-      }).returnValue
-
-      const mbr = canCallData.mbr
-      const receiverAlgoNeededForClaim = canCallData.receiverAlgoNeededForClaim
-
-      if (mbr || receiverAlgoNeededForClaim) {
-        mbrAmount += canCallData.mbr + canCallData.receiverAlgoNeededForClaim
-      }
+      mbrAmount += Global.assetOptInMinBalance
     }
 
     assertMatch(
@@ -364,17 +350,17 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
   /**
    * Disburses assets for a leaf in the tree, ensuring ordered processing
    *
-   *
    * @param id the id of the offer
-   * @param receiver the recipient abstracted account app id for the address in the leaf
+   * @param receiverWallet the receiver's ARC58 wallet app id (0 if not an ARC58 wallet)
+   * @param receiver the recipient address in the leaf
    * @param asset the asset being transferred
    * @param amount the amount being transferred
    */
-  disburse(id: uint64, receiver: Account, asset: uint64, amount: uint64) {
+  disburse(id: uint64, receiverWallet: uint64, receiver: Account, asset: uint64, amount: uint64) {
     // ensure the offer exists
     assert(this.offers(id).exists)
     const { state, escrowed } = this.offers(id).value
-    // ensure we are still in the collecting acceptances stage
+    // ensure we are in the disbursing stage
     assert(state === STATE_DISBURSING)
 
     // ensure this leaf is escrowed
@@ -387,6 +373,7 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
 
     // process the transfer
     if (asset === 0) {
+      // ALGO transfer - direct payment
       itxn
         .payment({ amount, receiver })
         .submit()
@@ -398,32 +385,61 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
           receiver: payor,
         })
         .submit()
-    } else if (!AssetHolding.assetBalance(receiver, asset)[1]) {
-      arc59OptInAndSend(this.akitaDAO.value, receiver, asset, amount, false)
-      // refund the account that covered the MBR
-      itxn
-        .payment({
-          amount: refundAmount,
-          receiver: payor,
-        })
-        .submit()
-
     } else {
-      itxn
-        .assetTransfer({
-          xferAsset: asset,
-          assetAmount: amount,
-          assetReceiver: receiver,
-        })
-        .submit()
+      // ASA transfer - check if receiver needs opt-in
+      const [, isOptedIn] = AssetHolding.assetBalance(receiver, asset)
 
-      // refund the account that covered the MBR
-      itxn
-        .payment({
-          amount: refundAmount,
-          receiver: payor,
-        })
-        .submit()
+      if (!isOptedIn) {
+        // receiver not opted in - try ARC58 opt-in if they have an ARC58 wallet
+        assert(receiverWallet !== 0, ERR_RECEIVER_NOT_OPTED_IN)
+        assert(Application(receiverWallet).address === receiver, 'receiverWallet address mismatch')
+
+        // verify the ARC58 wallet allows opt-in from this plugin
+        const optinPlugin = getPluginAppList(this.akitaDAO.value).optin
+        const canOptIn = abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
+          appId: receiverWallet,
+          args: [
+            optinPlugin,
+            true,
+            Global.currentApplicationAddress,
+            '',
+            op.bzero(4).toFixed({ length: 4 }),
+          ]
+        }).returnValue
+
+        assert(canOptIn, ERR_RECEIVER_NOT_OPTED_IN)
+
+        // use escrowed MBR to opt in the receiver via ARC58
+        arc58OptInAndSend(this.akitaDAO.value, Application(receiverWallet), '', [asset], [amount])
+
+        // refund remaining MBR (total - opt-in cost) to payor
+        const optInCost = Global.assetOptInMinBalance
+        if (refundAmount > optInCost) {
+          itxn
+            .payment({
+              amount: refundAmount - optInCost,
+              receiver: payor,
+            })
+            .submit()
+        }
+      } else {
+        // receiver is opted in - direct asset transfer
+        itxn
+          .assetTransfer({
+            xferAsset: asset,
+            assetAmount: amount,
+            assetReceiver: receiver,
+          })
+          .submit()
+
+        // refund the full MBR to payor
+        itxn
+          .payment({
+            amount: refundAmount,
+            receiver: payor,
+          })
+          .submit()
+      }
     }
 
     const newEscrowed: uint64 = escrowed - 1
@@ -537,5 +553,60 @@ export class HyperSwap extends classes(BaseHyperSwap, AkitaBaseContract, Contrac
     }
   }
 
-  // TODO: clean up methods for deleting boxes
+  // CLEANUP METHODS --------------------------------------------------------------------------------
+
+  /**
+   * Cleans up participant box and refunds MBR
+   * Can only be called when offer is completed, cancelled+completed, or expired
+   *
+   * @param id the id of the offer
+   * @param participant the participant address to clean up
+   */
+  cleanupParticipant(id: uint64, participant: Account) {
+    assert(this.offers(id).exists)
+    const { state, expiration, acceptances } = this.offers(id).value
+
+    // can only cleanup if completed, cancel_completed, or expired (while in OFFERED state)
+    const isCompleted = state === STATE_COMPLETED || state === STATE_CANCEL_COMPLETED
+    const isExpired = state === STATE_OFFERED && expiration <= Global.latestTimestamp
+    assert(isCompleted || isExpired, ERR_INVALID_STATE)
+
+    const participantKey: ParticipantKey = { id, address: participant }
+    assert(this.participants(participantKey).exists)
+
+    const { payor, amount } = this.participants(participantKey).value
+    this.participants(participantKey).delete()
+
+    // decrement acceptances to track cleanup progress
+    this.offers(id).value.acceptances = acceptances - 1
+
+    // refund the MBR to the original payor
+    itxn
+      .payment({
+        amount,
+        receiver: payor,
+      })
+      .submit()
+  }
+
+  /**
+   * Cleans up the offer box after all participants have been cleaned up
+   * Can only be called when offer is completed, cancelled+completed, or expired
+   *
+   * @param id the id of the offer
+   */
+  cleanupOffer(id: uint64) {
+    assert(this.offers(id).exists)
+    const { state, expiration, acceptances } = this.offers(id).value
+
+    // can only cleanup if completed, cancel_completed, or expired (while in OFFERED state)
+    const isCompleted = state === STATE_COMPLETED || state === STATE_CANCEL_COMPLETED
+    const isExpired = state === STATE_OFFERED && expiration <= Global.latestTimestamp
+    assert(isCompleted || isExpired, ERR_INVALID_STATE)
+
+    // ensure all participant boxes have been cleaned up
+    assert(acceptances === 0, 'all participants must be cleaned up first')
+
+    this.offers(id).delete()
+  }
 }

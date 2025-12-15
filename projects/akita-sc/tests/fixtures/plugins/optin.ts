@@ -1,8 +1,8 @@
 
 
+import { OptInPluginSDK } from 'akita-sdk/wallet';
 import { OptInPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/optin/OptInPluginClient';
 import { FixtureAndAccount } from '../../types';
-import { OptInPluginSDK } from 'akita-sdk'
 
 type DeployParams = FixtureAndAccount
 

@@ -1,4 +1,4 @@
-import { SocialSDK } from 'akita-sdk';
+import { SocialSDK } from 'akita-sdk/social';
 import { AkitaSocialClient, AkitaSocialFactory } from '../../smart_contracts/artifacts/social/AkitaSocialClient';
 import { AkitaSocialGraphClient, AkitaSocialGraphFactory } from '../../smart_contracts/artifacts/social/AkitaSocialGraphClient';
 import { AkitaSocialImpactClient, AkitaSocialImpactFactory } from '../../smart_contracts/artifacts/social/AkitaSocialImpactClient';

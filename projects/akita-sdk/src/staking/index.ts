@@ -1,5 +1,6 @@
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { BaseSDK } from "../base";
+import { ENV_VAR_NAMES } from "../config";
 import {
   StakingClient, 
   StakingFactory,
@@ -40,7 +41,7 @@ export * from './types';
 export class StakingSDK extends BaseSDK<StakingClient> {
 
   constructor(params: NewContractSDKParams) {
-    super({ factory: StakingFactory, ...params });
+    super({ factory: StakingFactory, ...params }, ENV_VAR_NAMES.STAKING_APP_ID);
   }
 
   async softCheck({ address, asset }: SoftCheckArgs): Promise<StakeCheck> {

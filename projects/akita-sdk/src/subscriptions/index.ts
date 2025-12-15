@@ -1,6 +1,8 @@
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 import { microAlgos } from "@algorandfoundation/algokit-utils";
+import { isValidAddress } from "algosdk";
 import { BaseSDK } from "../base";
+import { ENV_VAR_NAMES } from "../config";
 import { ServiceFromTuple, ServicesKey, SubscriptionInfo, SubscriptionsArgs, SubscriptionsClient, SubscriptionsFactory } from '../generated/SubscriptionsClient'
 import { MaybeSigner, NewContractSDKParams } from "../types";
 import { ValueMap } from "../wallet/utils";
@@ -9,6 +11,9 @@ import { AppCallMethodCall } from "@algorandfoundation/algokit-utils/types/compo
 import { bytesToHexColor, hexColorToBytes, validateHexColor } from "./utils";
 import { convertToUnixTimestamp } from "../utils";
 import { MAX_DESCRIPTION_CHUNK_SIZE, MAX_DESCRIPTION_LENGTH } from "./constants";
+
+// Re-export key types from generated client
+export { ServicesKey } from '../generated/SubscriptionsClient';
 
 type ContractArgs = SubscriptionsArgs["obj"];
 
@@ -22,7 +27,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
   public services: ValueMap<ServicesKey, Service> = new ValueMap(this.serviceMapKeyGenerator);
 
   constructor(params: NewContractSDKParams) {
-    super({ factory: SubscriptionsFactory, ...params });
+    super({ factory: SubscriptionsFactory, ...params }, ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID);
   }
 
   /**
@@ -121,6 +126,16 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     return (await this.client.isFirstSubscription({ ...sendParams, args: { address } }))
   }
 
+  async getSubscriptionList({ sender, signer, address }: MaybeSigner & { address: string }): Promise<bigint> {
+    const sendParams = this.getSendParams({ sender, signer });
+    return (await this.client.getSubscriptionList({ ...sendParams, args: { address } }))
+  }
+
+  async getServiceList({ sender, signer, address }: MaybeSigner & { address: string }): Promise<bigint> {
+    const sendParams = this.getSendParams({ sender, signer });
+    return (await this.client.getServiceList({ ...sendParams, args: { address } }))
+  }
+
   async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }: NewServiceArgs): Promise<bigint> {
 
     const sendParams = this.getRequiredSendParams({ sender, signer });
@@ -133,7 +148,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
       amount: microAlgo(paymentAmount),
-      receiver: this.client.appAddress,
+      receiver: this.client.appAddress.toString(),
     })
 
     if (rest.description.length === 0) {
@@ -244,7 +259,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     const payment = this.client.algorand.createTransaction.payment({
       ...sendParams,
       amount: microAlgo(paymentAmount),
-      receiver: this.client.appAddress,
+      receiver: this.client.appAddress.toString(),
     })
 
     const group = this.client.newGroup();
@@ -300,6 +315,12 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
     const sendParams = this.getRequiredSendParams({ sender, signer });
 
+    // Debug address validation
+    console.log('[subscribe] recipient:', recipient, 'type:', typeof recipient, 'isValidAddress:', isValidAddress(recipient));
+    console.log('[subscribe] sender:', sendParams.sender, 'type:', typeof sendParams.sender, 'constructor:', sendParams.sender?.constructor?.name);
+    console.log('[subscribe] appAddress:', this.client.appAddress, 'type:', typeof this.client.appAddress, 'constructor:', this.client.appAddress?.constructor?.name);
+    console.log('[subscribe] appAddress.toString():', this.client.appAddress?.toString?.());
+
     const isAlgoSubscription = asset === 0n;
     const isGated = gateTxn !== undefined;
 
@@ -320,7 +341,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     const payment = await this.client.algorand.createTransaction.payment({
       ...sendParams,
       amount: microAlgo(paymentAmount),
-      receiver: this.client.appAddress,
+      receiver: this.client.appAddress.toString(), // Convert Address to string to avoid instanceof issues
     })
 
     const group = this.client.newGroup();
@@ -355,7 +376,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
         ...sendParams,
         amount: 0n,
         assetId: asset,
-        receiver: this.client.appAddress,
+        receiver: this.client.appAddress.toString(),
       })
 
       if (isGated) {
@@ -437,7 +458,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
         ...sendParams,
         amount: BigInt(amount),
         assetId: BigInt(asset),
-        receiver: this.client.appAddress,
+        receiver: this.client.appAddress.toString(),
       })
 
       group.depositAsa({
@@ -451,7 +472,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       const payment = await this.client.algorand.createTransaction.payment({
         ...sendParams,
         amount: microAlgo(amount),
-        receiver: this.client.appAddress,
+        receiver: this.client.appAddress.toString(),
       })
 
       group.deposit({

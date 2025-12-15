@@ -56,7 +56,6 @@ export class OptInPluginSDK extends BaseSDK<OptInPluginClient> {
           await this.client.params.optIn({
             ...sendParams,
             args: { wallet, ...args, rekeyBack, mbrPayment },
-            extraFee: microAlgo(1_000 * assets.length),
           })
         )
 

@@ -1,16 +1,19 @@
-
-
-import { PayPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/pay/PayPluginClient';
+import { SubscriptionsPluginSDK } from 'akita-sdk/wallet';
+import { SubscriptionsPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/subscriptions/SubscriptionsPluginClient';
 import { FixtureAndAccount } from '../../types';
-import { PayPluginSDK } from 'akita-sdk'
 
-type DeployParams = FixtureAndAccount
+type DeployParams = FixtureAndAccount & {
+  args?: {
+    akitaDao: bigint;
+    version?: string;
+  }
+}
 
-export const deploySubscriptionsPlugin = async ({ fixture, sender, signer }: DeployParams): Promise<PayPluginSDK> => {
+export const deploySubscriptionsPlugin = async ({ fixture, sender, signer, args }: DeployParams): Promise<SubscriptionsPluginSDK> => {
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(
-    PayPluginFactory,
+    SubscriptionsPluginFactory,
     {
       defaultSender: sender,
       defaultSigner: signer,
@@ -20,9 +23,16 @@ export const deploySubscriptionsPlugin = async ({ fixture, sender, signer }: Dep
   const { appClient: client } = await factory.deploy({
     onUpdate: 'append',
     onSchemaBreak: 'append',
+    createParams: {
+      method: 'create',
+      args: {
+        akitaDao: args?.akitaDao ?? 0n,
+        version: args?.version ?? '0.0.1',
+      }
+    }
   })
 
-  console.log('PayPlugin deployed with appId:', client.appId);
+  console.log('SubscriptionsPlugin deployed with appId:', client.appId);
 
-  return new PayPluginSDK({ algorand, factoryParams: { appId: client.appId } });
+  return new SubscriptionsPluginSDK({ algorand, factoryParams: { appId: client.appId } });
 };

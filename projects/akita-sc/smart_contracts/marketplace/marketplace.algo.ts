@@ -1,5 +1,5 @@
 import { Account, Application, assert, assertMatch, Bytes, Global, gtxn, itxn, op, Txn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall, abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
+import { abimethod, compileArc4 } from '@algorandfoundation/algorand-typescript/arc4'
 import { ERR_HAS_GATE } from '../social/errors'
 import { GLOBAL_STATE_KEY_BYTES_COST, GLOBAL_STATE_KEY_UINT_COST, MIN_PROGRAM_PAGES } from '../utils/constants'
 import { ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
@@ -103,6 +103,14 @@ export class Marketplace extends FactoryContract {
       .itxn
       .createdApp
 
+    // Fund child app with base minBalance first
+    itxn
+      .payment({
+        receiver: listingApp.address,
+        amount: Global.minBalance
+      })
+      .submit()
+
     // optin child contract to sale asset
     listing.call.optin({
       appId: listingApp,
@@ -173,7 +181,11 @@ export class Marketplace extends FactoryContract {
       ERR_INVALID_PAYMENT
     )
 
-    abiCall<typeof Listing.prototype.purchase>({
+    // Get funder info BEFORE purchase call (which deletes the app)
+    const { account: creator, amount } = getFunder(appId)
+
+    const listing = compileArc4(Listing)
+    listing.call.purchase({
       appId,
       args: [
         itxn.payment({
@@ -184,8 +196,6 @@ export class Marketplace extends FactoryContract {
         marketplace
       ],
     })
-
-    const { account: creator, amount } = getFunder(appId)
 
     itxn
       .payment({
@@ -209,7 +219,11 @@ export class Marketplace extends FactoryContract {
       ERR_INVALID_PAYMENT
     )
 
-    abiCall<typeof Listing.prototype.purchase>({
+    // Get funder info BEFORE purchase call (which deletes the app)
+    const { account: creator, amount } = getFunder(appId)
+
+    const listing = compileArc4(Listing)
+    listing.call.purchase({
       appId,
       args: [
         itxn.payment({
@@ -220,8 +234,6 @@ export class Marketplace extends FactoryContract {
         marketplace
       ],
     })
-
-    const { account: creator, amount } = getFunder(appId)
 
     itxn
       .payment({
@@ -257,7 +269,11 @@ export class Marketplace extends FactoryContract {
       ERR_INVALID_TRANSFER
     )
 
-    abiCall<typeof Listing.prototype.purchaseAsa>({
+    // Get funder info BEFORE purchase call (which deletes the app)
+    const { account: receiver, amount } = getFunder(appId)
+
+    const listing = compileArc4(Listing)
+    listing.call.purchaseAsa({
       appId,
       args: [
         itxn.assetTransfer({
@@ -270,8 +286,6 @@ export class Marketplace extends FactoryContract {
       ],
     })
 
-    const { account: receiver, amount } = getFunder(appId)
-
     itxn
       .payment({ amount, receiver })
       .submit()
@@ -280,12 +294,14 @@ export class Marketplace extends FactoryContract {
   delist(appId: Application): void {
     assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_A_LISTING)
 
-    abiCall<typeof Listing.prototype.delist>({
+    // Get funder info BEFORE delist call (which deletes the app)
+    const { account: receiver, amount } = getFunder(appId)
+
+    const listing = compileArc4(Listing)
+    listing.call.delist({
       appId,
       args: [Txn.sender],
     })
-
-    const { account: receiver, amount } = getFunder(appId)
 
     itxn
       .payment({ amount, receiver })

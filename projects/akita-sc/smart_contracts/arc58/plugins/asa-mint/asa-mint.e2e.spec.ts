@@ -1,105 +1,83 @@
-import { Config, microAlgo } from '@algorandfoundation/algokit-utils';
-import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
+import * as algokit from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
+import { SigningAccount, TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account';
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import { newWallet, WalletFactorySDK, WalletSDK } from 'akita-sdk';
-import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
-import { deployAbstractedAccountFactory } from '../../../../tests/fixtures/abstracted-account';
-import { deployAkitaDAO } from '../../../../tests/fixtures/dao';
-import { deployEscrowFactory } from '../../../../tests/fixtures/escrow';
-import { deployAsaMintPlugin } from '../../../../tests/fixtures/plugins/asa-mint';
+import { newWallet, WalletSDK } from 'akita-sdk/wallet';
+import algosdk, { ALGORAND_ZERO_ADDRESS_STRING, makeBasicAccountTransactionSigner } from 'algosdk';
+import { AkitaUniverse, buildAkitaUniverse } from '../../../../tests/fixtures/dao';
+
+algokit.Config.configure({ populateAppCallResources: true });
+
+const fixture = algorandFixture();
 
 describe('Asa Mint plugin contract', () => {
-  const localnet = algorandFixture();
-
-  /** the wallet factory contract sdk */
-  let walletFactory: WalletFactorySDK;
-  /** the wallet sdk */
+  let deployer: algosdk.Account;
+  let user: algosdk.Account;
+  let akitaUniverse: AkitaUniverse;
+  let dispenser: algosdk.Address & TransactionSignerAccount & { account: SigningAccount };
+  let algorand: import('@algorandfoundation/algokit-utils').AlgorandClient;
   let wallet: WalletSDK;
 
   beforeAll(async () => {
-    Config.configure({
-      debug: true,
-      // traceAll: true,
-    })
-    registerDebugEventHandlers()
+    await fixture.beforeEach();
+    algorand = fixture.context.algorand;
+    dispenser = await algorand.account.dispenserFromEnvironment();
 
-    await localnet.newScope();
-    const { algorand, context: { testAccount } } = localnet
-    const sender = testAccount.toString()
-    const signer = testAccount.signer
+    const ctx = fixture.context;
+    deployer = await ctx.generateAccount({ initialFunds: algokit.microAlgos(2_000_000_000) });
+    user = await ctx.generateAccount({ initialFunds: algokit.microAlgos(500_000_000) });
 
-    const dispenser = await algorand.account.dispenserFromEnvironment();
-    await algorand.account.ensureFunded(sender, dispenser, (100).algos());
+    await algorand.account.ensureFunded(deployer.addr, dispenser, (2000).algo());
+    await algorand.account.ensureFunded(user.addr, dispenser, (500).algo());
 
-    const dao = await deployAkitaDAO({
-      fixture: localnet,
-      sender,
-      signer,
-      apps: {}
-    })
+    // Build the full Akita DAO universe
+    akitaUniverse = await buildAkitaUniverse({
+      fixture,
+      sender: deployer.addr,
+      signer: makeBasicAccountTransactionSigner(deployer),
+      apps: {},
+    });
 
-    const escrowFactory = await deployEscrowFactory({
-      fixture: localnet,
-      sender,
-      signer,
-    })
-
-    walletFactory = (
-      await deployAbstractedAccountFactory({
-        fixture: localnet,
-        sender,
-        signer,
-        args: {
-          akitaDao: dao.appId,
-          escrowFactory: escrowFactory.appId,
-        }
-      })
-    );
-
+    // Create a user wallet for testing
     wallet = await newWallet({
       algorand,
       factoryParams: {
-        appId: walletFactory.appId,
-        defaultSender: sender,
-        defaultSigner: signer,
+        appId: akitaUniverse.walletFactory.appId,
+        defaultSender: user.addr,
+        defaultSigner: makeBasicAccountTransactionSigner(user),
       },
-      sender,
-      signer,
+      sender: user.addr,
+      signer: makeBasicAccountTransactionSigner(user),
       nickname: 'Test Wallet',
-    })
-  })
+    });
+  });
 
-  beforeEach(localnet.newScope)
+  beforeEach(fixture.newScope);
 
   describe('AsaMint', () => {
     test('mint OK', async () => {
-      const { algorand, context: { testAccount } } = localnet
-      const sender = testAccount.toString()
-      const signer = testAccount.signer
+      const asaMintSdk = akitaUniverse.asaMintPlugin;
 
-      const asaMintSdk = await deployAsaMintPlugin({ fixture: localnet, sender, signer })
+      const mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n });
 
-      const mbr = await wallet.getMbr({ escrow: '', methodCount: 0n, plugin: '', groups: 0n })
+      let walletInfo = await algorand.account.getInformation(wallet.client.appAddress);
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos);
 
-      let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
+      const fundAmount = mbr.plugins;
 
-      const fundAmount = mbr.plugins
-
-      console.log('funding wallet with:', fundAmount, 'microAlgos')
+      console.log('funding wallet with:', fundAmount, 'microAlgos');
 
       await wallet.client.appClient.fundAppAccount({
-        amount: microAlgo(fundAmount)
-      })
+        amount: algokit.microAlgo(fundAmount)
+      });
 
       await wallet.addPlugin({
         client: asaMintSdk,
         global: true,
       });
 
-      walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos)
+      walletInfo = await algorand.account.getInformation(wallet.client.appAddress);
+      expect(walletInfo.balance.microAlgos).toEqual(walletInfo.minBalance.microAlgos);
 
       const results = await wallet.usePlugin({
         global: true,
@@ -119,19 +97,19 @@ describe('Asa Mint plugin contract', () => {
             }]
           }),
         ]
-      })
+      });
 
-      const takta = results.returns[1][0]
+      const takta = results.returns[1][0];
 
-      expect(takta).toBeGreaterThan(0n)
+      expect(takta).toBeGreaterThan(0n);
 
-      expect(results.txIds.length).toBe(4)
+      expect(results.txIds.length).toBe(4);
 
-      const plugins = await wallet.getPlugins()
-      expect(plugins.size).toBe(1)
+      const plugins = await wallet.getPlugins();
+      expect(plugins.size).toBe(1);
 
-      walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
-      expect(walletInfo?.assets?.length).toBe(1)
-    })
-  })
-})
+      walletInfo = await algorand.account.getInformation(wallet.client.appAddress);
+      expect(walletInfo?.assets?.length).toBe(1);
+    });
+  });
+});

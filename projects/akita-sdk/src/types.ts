@@ -100,11 +100,22 @@ export type SDKConstructorParams<TClient extends SDKClient> = NewContractSDKPara
   factory: ClientFactory<TClient>;
 };
 
+/**
+ * Factory params with optional appId - can be resolved from environment
+ */
+export type OptionalAppIdFactoryParams = Omit<AppFactoryAppClientParams, 'appId'> & {
+  appId?: bigint;
+};
+
+/**
+ * Parameters for constructing SDK instances
+ * appId is optional - if not provided, will be resolved from environment variables
+ */
 export interface NewContractSDKParams {
-  factoryParams: AppFactoryAppClientParams
+  factoryParams: OptionalAppIdFactoryParams;
   algorand: AlgorandClient;
-  readerAccount?: string
-  sendParams?: SendParams
+  readerAccount?: string;
+  sendParams?: SendParams;
 }
 
 export interface PluginCallParams {

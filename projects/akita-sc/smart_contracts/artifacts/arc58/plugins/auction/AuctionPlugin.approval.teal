@@ -18,11 +18,19 @@ main_switch_case_next@5:
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@20
-    pushbytess 0x9e0b907d 0x8b9d5e93 0xe24dbbd2 0xbccfba49 0x6e4422eb 0x2916dbfd 0xbd320465 0xa4385e1b 0x0ee563e7 0x91db48f0 0x33e92c94 0x854dede0 // method "new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64)uint64", method "clearWeightsBoxes(uint64,bool,uint64,uint64)void", method "deleteAuctionApp(uint64,bool,uint64)void", method "bid(uint64,bool,uint64,uint64,byte[][],address)void", method "refundBid(uint64,bool,uint64,uint64)void", method "claimPrize(uint64,bool,uint64)void", method "claimRafflePrize(uint64,bool,uint64)void", method "raffle(uint64,bool,uint64)void", method "findWinner(uint64,bool,uint64,uint64)void", method "cancel(uint64,bool,uint64)void", method "updateAkitaDAO(uint64)void", method "opUp()void"
+    bz main_create_NoOp@21
+    pushbytess 0x9e0b907d 0x8b9d5e93 0xe24dbbd2 0xbccfba49 0x6e4422eb 0x2916dbfd 0xbd320465 0xa4385e1b 0x0ee563e7 0x91db48f0 0x33e92c94 0x854dede0 0x73111070 // method "new(uint64,bool,uint64,uint64,string,byte[32][],uint64,uint64,uint64,uint64,uint64,uint64,uint64,address,uint64)uint64", method "clearWeightsBoxes(uint64,bool,uint64,uint64)void", method "deleteAuctionApp(uint64,bool,uint64)void", method "bid(uint64,bool,uint64,uint64,byte[][],address)void", method "refundBid(uint64,bool,uint64,uint64)void", method "claimPrize(uint64,bool,uint64)void", method "claimRafflePrize(uint64,bool,uint64)void", method "raffle(uint64,bool,uint64)void", method "findWinner(uint64,bool,uint64,uint64)void", method "cancel(uint64,bool,uint64)void", method "updateAkitaDAO(uint64)void", method "opUp()void", method "mbr()(uint64,uint64,uint64,uint64)"
     txna ApplicationArgs 0
-    match new clearWeightsBoxes deleteAuctionApp bid refundBid claimPrize claimRafflePrize raffle findWinner cancel updateAkitaDAO main_opUp_route@18
+    match new clearWeightsBoxes deleteAuctionApp bid refundBid claimPrize claimRafflePrize raffle findWinner cancel updateAkitaDAO main_opUp_route@18 main_mbr_route@19
     err
+
+main_mbr_route@19:
+    // smart_contracts/auction/base.ts:7
+    // @abimethod({ readonly: true })
+    pushbytes 0x151f7c7500000000000088540000000000c817d4000000000000484400000000000049d4
+    log
+    intc_2 // 1
+    return
 
 main_opUp_route@18:
     // smart_contracts/utils/base-contracts/base.ts:43
@@ -30,7 +38,7 @@ main_opUp_route@18:
     intc_2 // 1
     return
 
-main_create_NoOp@20:
+main_create_NoOp@21:
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:21
     // export class AuctionPlugin extends classes(BaseAuction, AkitaBaseContract) {
     pushbytes 0x88c940f8 // method "create(string,uint64,uint64)void"
@@ -507,7 +515,7 @@ new_ternary_merge@12:
     // MAX_PROGRAM_PAGES +
     // (GLOBAL_STATE_KEY_UINT_COST * auction.globalUints) +
     // (GLOBAL_STATE_KEY_BYTES_COST * auction.globalBytes) +
-    pushint 1562500 // 1562500
+    pushint 1591000 // 1591000
     // smart_contracts/arc58/plugins/auction/contract.algo.ts:104
     // Global.minBalance +
     global MinBalance

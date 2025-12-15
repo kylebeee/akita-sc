@@ -48,12 +48,10 @@ export class MerkleAddressGate extends AkitaBaseContract {
   // LIFE CYCLE METHODS ---------------------------------------------------------------------------
 
   @abimethod({ onCreate: 'require' })
-  create(version: string, akitaDAO: uint64, registrationShape: string, checkShape: string): void {
+  create(version: string, akitaDAO: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
     this.registryCursor.value = 1
-    this.registrationShape.value = registrationShape
-    this.checkShape.value = checkShape
   }
 
   // MERKLE ADDRESS GATE METHODS ------------------------------------------------------------------

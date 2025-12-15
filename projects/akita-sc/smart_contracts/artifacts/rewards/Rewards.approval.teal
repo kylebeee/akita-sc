@@ -2286,7 +2286,7 @@ updateAkitaDAO:
 // smart_contracts/rewards/base.ts::BaseRewards.mbr[routing]() -> void:
 mbr:
     // smart_contracts/rewards/base.ts:7
-    // mbr(title: string, note: string): RewardsMBRData {
+    // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
     intc_0 // 0
@@ -2454,10 +2454,11 @@ newDisbursementID:
 
 // smart_contracts/rewards/base.ts::BaseRewards.mbr(title: bytes, note: bytes) -> bytes:
 smart_contracts/rewards/base.ts::BaseRewards.mbr:
-    // smart_contracts/rewards/base.ts:7
+    // smart_contracts/rewards/base.ts:7-8
+    // @abimethod({ readonly: true })
     // mbr(title: string, note: string): RewardsMBRData {
     proto 2 1
-    // smart_contracts/rewards/base.ts:9
+    // smart_contracts/rewards/base.ts:10
     // disbursements: MinDisbursementsMBR + (BoxCostPerByte * (Bytes(title).length + Bytes(note).length)),
     frame_dig -2
     len
@@ -2468,16 +2469,16 @@ smart_contracts/rewards/base.ts::BaseRewards.mbr:
     *
     intc 5 // 35300
     +
-    // smart_contracts/rewards/base.ts:8-11
+    // smart_contracts/rewards/base.ts:9-12
     // return {
     //   disbursements: MinDisbursementsMBR + (BoxCostPerByte * (Bytes(title).length + Bytes(note).length)),
     //   userAllocations: UserAllocationMBR
     // }
     itob
-    // smart_contracts/rewards/base.ts:10
+    // smart_contracts/rewards/base.ts:11
     // userAllocations: UserAllocationMBR
     intc 4 // 25300
-    // smart_contracts/rewards/base.ts:8-11
+    // smart_contracts/rewards/base.ts:9-12
     // return {
     //   disbursements: MinDisbursementsMBR + (BoxCostPerByte * (Bytes(title).length + Bytes(note).length)),
     //   userAllocations: UserAllocationMBR

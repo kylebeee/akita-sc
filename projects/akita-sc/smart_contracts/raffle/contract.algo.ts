@@ -86,9 +86,10 @@ import {
   ERR_WINNER_ALREADY_FOUND,
   ERR_WINNER_NOT_FOUND,
 } from './errors'
-import { arc4WeightsList, EntryData, FindWinnerCursors, RaffleState } from './types'
+import { EntryData, FindWinnerCursors, RaffleState } from './types'
 
 // CONTRACT IMPORTS
+import { WeightsList } from '../auction/types'
 import type { PrizeBox } from '../prize-box/contract.algo'
 import { AkitaBaseFeeGeneratorContract } from '../utils/base-contracts/base'
 import { ChildContract } from '../utils/base-contracts/child'
@@ -167,7 +168,7 @@ export class Raffle extends classes(
   /** The entries for the raffle */
   entries = BoxMap<uint64, EntryData>({ keyPrefix: RaffleBoxPrefixEntries })
   /** weights set for bidders */
-  weights = BoxMap<uint64, arc4WeightsList>({ keyPrefix: RaffleBoxPrefixWeights })
+  weights = BoxMap<uint64, WeightsList>({ keyPrefix: RaffleBoxPrefixWeights })
   /** The address map of entries for the raffle */
   entriesByAddress = BoxMap<Account, uint64>({ keyPrefix: RaffleBoxPrefixEntriesByAddress })
 
@@ -249,7 +250,10 @@ export class Raffle extends classes(
 
     this.prize.value = prize
     this.isPrizeBox.value = isPrizeBox
-    assert(Asset(ticketAsset).total > 0, ERR_INVALID_ASSET)
+    // ticketAsset 0 represents ALGO tickets, only validate actual ASA
+    if (ticketAsset !== 0) {
+      assert(Asset(ticketAsset).total > 0, ERR_INVALID_ASSET)
+    }
     this.ticketAsset.value = Asset(ticketAsset)
     this.startTimestamp.value = startTimestamp
     assert(endTimestamp > startTimestamp && endTimestamp > Global.latestTimestamp, ERR_INVALID_ENDING_ROUND)
@@ -279,6 +283,7 @@ export class Raffle extends classes(
     this.weightsBoxCount.value = 0
     this.weightTotals.value = new arc4.StaticArray<Uint64, 15>()
     this.refundMBRCursor.value = 0
+    this.vrfFailureCount.value = 0
   }
 
   init(payment: gtxn.PaymentTxn, weightListLength: uint64) {
@@ -286,25 +291,22 @@ export class Raffle extends classes(
     assert(weightListLength >= 4, ERR_MUST_ALLOCATE_AT_LEAST_FOUR_HIGHEST_BIDS_CHUNKS)
     assert(weightListLength < 16, ERR_MUST_ALLOCATE_AT_MOST_FIFTEEN_HIGHEST_BIDS_CHUNKS)
 
-    const isAlgoBid = this.ticketAsset.value.id === 0
-    const optinMBR: uint64 = isAlgoBid
-      ? Global.assetOptInMinBalance
-      : Global.assetOptInMinBalance * 2
-
-    const childAppMBR: uint64 = Global.minBalance + optinMBR + (weightListLength * this.mbr().weights)
+    // Base MBR and asset opt-in MBR are handled by factory before this call
+    // This init only expects the weights MBR
+    const weightsMBR: uint64 = (weightListLength * this.mbr().weights)
 
     assertMatch(
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: childAppMBR,
+        amount: weightsMBR,
       },
       ERR_INVALID_PAYMENT
     )
 
     this.weightsBoxCount.value = weightListLength
     for (let i: uint64 = 0; i < weightListLength; i += 1) {
-      this.weights(i).value = new arc4.StaticArray<Uint64, 4096>()
+      this.weights(i).create()
     }
   }
 
@@ -791,8 +793,8 @@ export class Raffle extends classes(
   @abimethod({ readonly: true })
   isLive(): boolean {
     return (
-      Global.latestTimestamp <= this.startTimestamp.value &&
-      Global.latestTimestamp >= this.endTimestamp.value
+      Global.latestTimestamp >= this.startTimestamp.value &&
+      Global.latestTimestamp <= this.endTimestamp.value
     )
   }
 

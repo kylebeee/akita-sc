@@ -2,6 +2,7 @@ import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory, type Abs
 import { NewContractSDKParams, MaybeSigner } from '../types';
 import { WalletSDK } from './index';
 import { BaseSDK } from '../base';
+import { ENV_VAR_NAMES } from '../config';
 import { emptySigner } from '../constants';
 import { ALGORAND_ZERO_ADDRESS_STRING, Address } from 'algosdk';
 import { microAlgo } from '@algorandfoundation/algokit-utils';
@@ -17,7 +18,7 @@ export type NewParams = (
 export class WalletFactorySDK extends BaseSDK<AbstractedAccountFactoryClient> {
 
   constructor(params: NewContractSDKParams) {
-    super({ factory: AbstractedAccountFactoryFactory, ...params });
+    super({ factory: AbstractedAccountFactoryFactory, ...params }, ENV_VAR_NAMES.WALLET_FACTORY_APP_ID);
   }
 
   async new({

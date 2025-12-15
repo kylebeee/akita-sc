@@ -4,26 +4,55 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 2 8 15300
-    bytecblock "akita_dao" "type" "box_count" "end_time" "votes_one" "votes_two" "votes_three" "votes_four" "votes_five" "gate_id" "max_selected" "option_count" 0x151f7c75
+    bytecblock "votes_one" "votes_two" "votes_three" "votes_four" "votes_five" "akita_dao" "type" "box_count" "end_time" "gate_id" "max_selected" "option_count" 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/poll/contract.algo.ts:82
+    // votesOne = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesOne })
+    bytec_0 // "votes_one"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/poll/contract.algo.ts:83
+    // votesTwo = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesTwo })
+    bytec_1 // "votes_two"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/poll/contract.algo.ts:84
+    // votesThree = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesThree })
+    bytec_2 // "votes_three"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/poll/contract.algo.ts:85
+    // votesFour = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFour })
+    bytec_3 // "votes_four"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/poll/contract.algo.ts:86
+    // votesFive = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFive })
+    bytec 4 // "votes_five"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
     // smart_contracts/poll/contract.algo.ts:57
     // export class Poll extends AkitaBaseContract {
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    bz main_create_NoOp@10
+    bz main_create_NoOp@12
     pushbytess 0xe1419080 0x5bcf9100 0xdd309c7b 0x5a7f4932 0x33e92c94 0x854dede0 // method "deleteBoxes(address[])void", method "gatedVote(pay,appl,uint64[])void", method "vote(pay,uint64[])void", method "hasVoted(address)bool", method "updateAkitaDAO(uint64)void", method "opUp()void"
     txna ApplicationArgs 0
-    match deleteBoxes gatedVote vote hasVoted updateAkitaDAO main_opUp_route@8
+    match deleteBoxes gatedVote vote hasVoted updateAkitaDAO main_opUp_route@10
     err
 
-main_opUp_route@8:
+main_opUp_route@10:
     // smart_contracts/utils/base-contracts/base.ts:43
     // opUp(): void { }
     intc_1 // 1
     return
 
-main_create_NoOp@10:
+main_create_NoOp@12:
     // smart_contracts/poll/contract.algo.ts:57
     // export class Poll extends AkitaBaseContract {
     pushbytes 0x9fa835a8 // method "create(uint64,uint8,uint64,uint64,string,string[],uint64)void"
@@ -100,22 +129,22 @@ create:
     <
     assert // End time must be in the future
     // smart_contracts/poll/contract.algo.ts:153
-    // assert(type.asUint64() < 4, ERR_INVALID_POLL_TYPE)
+    // assert(type.asUint64() < MultipleChoiceImpact.asUint64(), ERR_INVALID_POLL_TYPE)
     dig 4
     btoi
-    pushint 4 // 4
+    pushint 40 // 40
     <
     assert // Invalid poll type
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec 5 // "akita_dao"
     // smart_contracts/poll/contract.algo.ts:155
     // this.akitaDAO.value = Application(akitaDAO)
     uncover 6
     app_global_put
     // smart_contracts/poll/contract.algo.ts:62
     // type = GlobalState<Uint8>({ key: PollGlobalStateKeyType })
-    bytec_1 // "type"
+    bytec 6 // "type"
     // smart_contracts/poll/contract.algo.ts:156
     // this.type.value = type
     uncover 5
@@ -129,7 +158,7 @@ create:
     app_global_put
     // smart_contracts/poll/contract.algo.ts:66
     // endTime = GlobalState<uint64>({ key: PollGlobalStateKeyEndTime })
-    bytec_3 // "end_time"
+    bytec 8 // "end_time"
     // smart_contracts/poll/contract.algo.ts:158
     // this.endTime.value = endTime
     uncover 3
@@ -209,7 +238,7 @@ create_after_if_else@12:
     app_global_put
     // smart_contracts/poll/contract.algo.ts:72
     // boxCount = GlobalState<uint64>({ key: PollGlobalStateKeyBoxCount })
-    bytec_2 // "box_count"
+    bytec 7 // "box_count"
     // smart_contracts/poll/contract.algo.ts:169
     // this.boxCount.value = 0
     intc_0 // 0
@@ -392,7 +421,7 @@ deleteBoxes:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:66
     // endTime = GlobalState<uint64>({ key: PollGlobalStateKeyEndTime })
-    bytec_3 // "end_time"
+    bytec 8 // "end_time"
     // smart_contracts/poll/contract.algo.ts:188
     // assert(Global.latestTimestamp > this.endTime.value, ERR_POLL_ACTIVE)
     app_global_get_ex
@@ -467,7 +496,7 @@ deleteBoxes_while_top@2:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:72
     // boxCount = GlobalState<uint64>({ key: PollGlobalStateKeyBoxCount })
-    bytec_2 // "box_count"
+    bytec 7 // "box_count"
     // smart_contracts/poll/contract.algo.ts:202
     // this.boxCount.value -= 1
     app_global_get_ex
@@ -476,7 +505,7 @@ deleteBoxes_while_top@2:
     -
     // smart_contracts/poll/contract.algo.ts:72
     // boxCount = GlobalState<uint64>({ key: PollGlobalStateKeyBoxCount })
-    bytec_2 // "box_count"
+    bytec 7 // "box_count"
     // smart_contracts/poll/contract.algo.ts:202
     // this.boxCount.value -= 1
     swap
@@ -542,7 +571,7 @@ gatedVote:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:66
     // endTime = GlobalState<uint64>({ key: PollGlobalStateKeyEndTime })
-    bytec_3 // "end_time"
+    bytec 8 // "end_time"
     // smart_contracts/poll/contract.algo.ts:213
     // assert(Global.latestTimestamp <= this.endTime.value, ERR_POLL_ENDED)
     app_global_get_ex
@@ -574,7 +603,7 @@ gatedVote_bool_merge@5:
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec 5 // "akita_dao"
     // smart_contracts/poll/contract.algo.ts:216
     // assert(gateCheck(gateTxn, this.akitaDAO.value, Txn.sender, this.gateID.value), ERR_FAILED_GATE)
     app_global_get_ex
@@ -776,7 +805,7 @@ vote:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:66
     // endTime = GlobalState<uint64>({ key: PollGlobalStateKeyEndTime })
-    bytec_3 // "end_time"
+    bytec 8 // "end_time"
     // smart_contracts/poll/contract.algo.ts:230
     // assert(Global.latestTimestamp <= this.endTime.value, ERR_POLL_ENDED)
     app_global_get_ex
@@ -919,7 +948,7 @@ updateAkitaDAO:
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec 5 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:32
     // const [walletID] = op.AppGlobal.getExUint64(this.akitaDAO.value, Bytes(AkitaDAOGlobalStateKeysWallet))
     app_global_get_ex
@@ -935,7 +964,7 @@ updateAkitaDAO:
     assert // Only the Akita DAO can call this function
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec 5 // "akita_dao"
     // smart_contracts/utils/base-contracts/base.ts:40
     // this.akitaDAO.value = akitaDAO
     swap
@@ -961,7 +990,7 @@ createVote:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:62
     // type = GlobalState<Uint8>({ key: PollGlobalStateKeyType })
-    bytec_1 // "type"
+    bytec 6 // "type"
     // smart_contracts/poll/contract.algo.ts:97
     // if (this.type.value === SingleChoiceImpact || this.type.value === MultipleChoiceImpact) {
     app_global_get_ex
@@ -972,7 +1001,7 @@ createVote:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:62
     // type = GlobalState<Uint8>({ key: PollGlobalStateKeyType })
-    bytec_1 // "type"
+    bytec 6 // "type"
     // smart_contracts/poll/contract.algo.ts:97
     // if (this.type.value === SingleChoiceImpact || this.type.value === MultipleChoiceImpact) {
     app_global_get_ex
@@ -987,7 +1016,7 @@ createVote_if_body@2:
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
-    bytec_0 // "akita_dao"
+    bytec 5 // "akita_dao"
     // smart_contracts/poll/contract.algo.ts:98
     // impact = getUserImpact(this.akitaDAO.value, Txn.sender)
     app_global_get_ex
@@ -1045,7 +1074,7 @@ createVote_after_if_else@3:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:62
     // type = GlobalState<Uint8>({ key: PollGlobalStateKeyType })
-    bytec_1 // "type"
+    bytec 6 // "type"
     // smart_contracts/poll/contract.algo.ts:101
     // if (this.type.value === SingleChoice || this.type.value === SingleChoiceImpact) {
     app_global_get_ex
@@ -1056,7 +1085,7 @@ createVote_after_if_else@3:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:62
     // type = GlobalState<Uint8>({ key: PollGlobalStateKeyType })
-    bytec_1 // "type"
+    bytec 6 // "type"
     // smart_contracts/poll/contract.algo.ts:101
     // if (this.type.value === SingleChoice || this.type.value === SingleChoiceImpact) {
     app_global_get_ex
@@ -1086,8 +1115,8 @@ createVote_if_body@5:
     // this.votesOne.value += 1
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:82
-    // votesOne = GlobalState<uint64>({ key: PollGlobalStateKeyVotesOne })
-    bytec 4 // "votes_one"
+    // votesOne = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesOne })
+    bytec_0 // "votes_one"
     // smart_contracts/poll/contract.algo.ts:105
     // this.votesOne.value += 1
     app_global_get_ex
@@ -1095,8 +1124,8 @@ createVote_if_body@5:
     intc_1 // 1
     +
     // smart_contracts/poll/contract.algo.ts:82
-    // votesOne = GlobalState<uint64>({ key: PollGlobalStateKeyVotesOne })
-    bytec 4 // "votes_one"
+    // votesOne = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesOne })
+    bytec_0 // "votes_one"
     // smart_contracts/poll/contract.algo.ts:105
     // this.votesOne.value += 1
     swap
@@ -1114,7 +1143,7 @@ createVote_after_if_else@38:
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:72
     // boxCount = GlobalState<uint64>({ key: PollGlobalStateKeyBoxCount })
-    bytec_2 // "box_count"
+    bytec 7 // "box_count"
     // smart_contracts/poll/contract.algo.ts:136
     // this.boxCount.value += 1
     app_global_get_ex
@@ -1123,7 +1152,7 @@ createVote_after_if_else@38:
     +
     // smart_contracts/poll/contract.algo.ts:72
     // boxCount = GlobalState<uint64>({ key: PollGlobalStateKeyBoxCount })
-    bytec_2 // "box_count"
+    bytec 7 // "box_count"
     // smart_contracts/poll/contract.algo.ts:136
     // this.boxCount.value += 1
     swap
@@ -1143,8 +1172,8 @@ createVote_else_body@7:
     // this.votesTwo.value += 1
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:83
-    // votesTwo = GlobalState<uint64>({ key: PollGlobalStateKeyVotesTwo })
-    bytec 5 // "votes_two"
+    // votesTwo = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesTwo })
+    bytec_1 // "votes_two"
     // smart_contracts/poll/contract.algo.ts:107
     // this.votesTwo.value += 1
     app_global_get_ex
@@ -1152,8 +1181,8 @@ createVote_else_body@7:
     intc_1 // 1
     +
     // smart_contracts/poll/contract.algo.ts:83
-    // votesTwo = GlobalState<uint64>({ key: PollGlobalStateKeyVotesTwo })
-    bytec 5 // "votes_two"
+    // votesTwo = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesTwo })
+    bytec_1 // "votes_two"
     // smart_contracts/poll/contract.algo.ts:107
     // this.votesTwo.value += 1
     swap
@@ -1171,8 +1200,8 @@ createVote_else_body@9:
     // this.votesThree.value += 1
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:84
-    // votesThree = GlobalState<uint64>({ key: PollGlobalStateKeyVotesThree })
-    bytec 6 // "votes_three"
+    // votesThree = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesThree })
+    bytec_2 // "votes_three"
     // smart_contracts/poll/contract.algo.ts:109
     // this.votesThree.value += 1
     app_global_get_ex
@@ -1180,8 +1209,8 @@ createVote_else_body@9:
     intc_1 // 1
     +
     // smart_contracts/poll/contract.algo.ts:84
-    // votesThree = GlobalState<uint64>({ key: PollGlobalStateKeyVotesThree })
-    bytec 6 // "votes_three"
+    // votesThree = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesThree })
+    bytec_2 // "votes_three"
     // smart_contracts/poll/contract.algo.ts:109
     // this.votesThree.value += 1
     swap
@@ -1199,8 +1228,8 @@ createVote_else_body@11:
     // this.votesFour.value += 1
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:85
-    // votesFour = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFour })
-    bytec 7 // "votes_four"
+    // votesFour = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFour })
+    bytec_3 // "votes_four"
     // smart_contracts/poll/contract.algo.ts:111
     // this.votesFour.value += 1
     app_global_get_ex
@@ -1208,8 +1237,8 @@ createVote_else_body@11:
     intc_1 // 1
     +
     // smart_contracts/poll/contract.algo.ts:85
-    // votesFour = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFour })
-    bytec 7 // "votes_four"
+    // votesFour = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFour })
+    bytec_3 // "votes_four"
     // smart_contracts/poll/contract.algo.ts:111
     // this.votesFour.value += 1
     swap
@@ -1227,8 +1256,8 @@ createVote_else_body@13:
     // this.votesFive.value += 1
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:86
-    // votesFive = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFive })
-    bytec 8 // "votes_five"
+    // votesFive = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFive })
+    bytec 4 // "votes_five"
     // smart_contracts/poll/contract.algo.ts:113
     // this.votesFive.value += 1
     app_global_get_ex
@@ -1236,8 +1265,8 @@ createVote_else_body@13:
     intc_1 // 1
     +
     // smart_contracts/poll/contract.algo.ts:86
-    // votesFive = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFive })
-    bytec 8 // "votes_five"
+    // votesFive = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFive })
+    bytec 4 // "votes_five"
     // smart_contracts/poll/contract.algo.ts:113
     // this.votesFive.value += 1
     swap
@@ -1304,8 +1333,8 @@ createVote_while_top@21:
     // this.votesOne.value += impact
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:82
-    // votesOne = GlobalState<uint64>({ key: PollGlobalStateKeyVotesOne })
-    bytec 4 // "votes_one"
+    // votesOne = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesOne })
+    bytec_0 // "votes_one"
     // smart_contracts/poll/contract.algo.ts:122
     // this.votesOne.value += impact
     app_global_get_ex
@@ -1313,8 +1342,8 @@ createVote_while_top@21:
     frame_dig 4
     +
     // smart_contracts/poll/contract.algo.ts:82
-    // votesOne = GlobalState<uint64>({ key: PollGlobalStateKeyVotesOne })
-    bytec 4 // "votes_one"
+    // votesOne = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesOne })
+    bytec_0 // "votes_one"
     // smart_contracts/poll/contract.algo.ts:122
     // this.votesOne.value += impact
     swap
@@ -1340,8 +1369,8 @@ createVote_else_body@24:
     // this.votesTwo.value += impact
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:83
-    // votesTwo = GlobalState<uint64>({ key: PollGlobalStateKeyVotesTwo })
-    bytec 5 // "votes_two"
+    // votesTwo = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesTwo })
+    bytec_1 // "votes_two"
     // smart_contracts/poll/contract.algo.ts:124
     // this.votesTwo.value += impact
     app_global_get_ex
@@ -1349,8 +1378,8 @@ createVote_else_body@24:
     frame_dig 4
     +
     // smart_contracts/poll/contract.algo.ts:83
-    // votesTwo = GlobalState<uint64>({ key: PollGlobalStateKeyVotesTwo })
-    bytec 5 // "votes_two"
+    // votesTwo = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesTwo })
+    bytec_1 // "votes_two"
     // smart_contracts/poll/contract.algo.ts:124
     // this.votesTwo.value += impact
     swap
@@ -1368,8 +1397,8 @@ createVote_else_body@26:
     // this.votesThree.value += impact
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:84
-    // votesThree = GlobalState<uint64>({ key: PollGlobalStateKeyVotesThree })
-    bytec 6 // "votes_three"
+    // votesThree = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesThree })
+    bytec_2 // "votes_three"
     // smart_contracts/poll/contract.algo.ts:126
     // this.votesThree.value += impact
     app_global_get_ex
@@ -1377,8 +1406,8 @@ createVote_else_body@26:
     frame_dig 4
     +
     // smart_contracts/poll/contract.algo.ts:84
-    // votesThree = GlobalState<uint64>({ key: PollGlobalStateKeyVotesThree })
-    bytec 6 // "votes_three"
+    // votesThree = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesThree })
+    bytec_2 // "votes_three"
     // smart_contracts/poll/contract.algo.ts:126
     // this.votesThree.value += impact
     swap
@@ -1396,8 +1425,8 @@ createVote_else_body@28:
     // this.votesFour.value += impact
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:85
-    // votesFour = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFour })
-    bytec 7 // "votes_four"
+    // votesFour = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFour })
+    bytec_3 // "votes_four"
     // smart_contracts/poll/contract.algo.ts:128
     // this.votesFour.value += impact
     app_global_get_ex
@@ -1405,8 +1434,8 @@ createVote_else_body@28:
     frame_dig 4
     +
     // smart_contracts/poll/contract.algo.ts:85
-    // votesFour = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFour })
-    bytec 7 // "votes_four"
+    // votesFour = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFour })
+    bytec_3 // "votes_four"
     // smart_contracts/poll/contract.algo.ts:128
     // this.votesFour.value += impact
     swap
@@ -1424,8 +1453,8 @@ createVote_else_body@30:
     // this.votesFive.value += impact
     intc_0 // 0
     // smart_contracts/poll/contract.algo.ts:86
-    // votesFive = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFive })
-    bytec 8 // "votes_five"
+    // votesFive = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFive })
+    bytec 4 // "votes_five"
     // smart_contracts/poll/contract.algo.ts:130
     // this.votesFive.value += impact
     app_global_get_ex
@@ -1433,8 +1462,8 @@ createVote_else_body@30:
     frame_dig 4
     +
     // smart_contracts/poll/contract.algo.ts:86
-    // votesFive = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFive })
-    bytec 8 // "votes_five"
+    // votesFive = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFive })
+    bytec 4 // "votes_five"
     // smart_contracts/poll/contract.algo.ts:130
     // this.votesFive.value += impact
     swap

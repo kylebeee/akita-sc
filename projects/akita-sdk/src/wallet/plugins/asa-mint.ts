@@ -85,7 +85,6 @@ export class AsaMintPluginSDK extends BaseSDK<AsaMintPluginClient> {
           await this.client.params.mint({
             ...sendParams,
             args: { wallet, assets: assetsTuple, rekeyBack, mbrPayment },
-            extraFee: microAlgo(1_000 * assets.length),
           })
         )
 

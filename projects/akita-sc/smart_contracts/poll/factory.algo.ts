@@ -32,12 +32,7 @@ export class PollFactory extends FactoryContract {
       payment,
       {
         receiver: Global.currentApplicationAddress,
-        amount: (
-          MIN_PROGRAM_PAGES +
-          (GLOBAL_STATE_KEY_UINT_COST * poll.globalUints) +
-          (GLOBAL_STATE_KEY_BYTES_COST * poll.globalBytes) +
-          Global.minBalance
-        ),
+        amount: this.newPollCost(),
       },
       ERR_INVALID_PAYMENT
     )
@@ -65,5 +60,16 @@ export class PollFactory extends FactoryContract {
       .submit()
 
     return mint.id
+  }
+
+  @abimethod({ readonly: true })
+  newPollCost(): uint64 {
+    const poll = compileArc4(Poll)
+    return (
+      MIN_PROGRAM_PAGES +
+      (GLOBAL_STATE_KEY_UINT_COST * poll.globalUints) +
+      (GLOBAL_STATE_KEY_BYTES_COST * poll.globalBytes) +
+      Global.minBalance
+    )
   }
 }

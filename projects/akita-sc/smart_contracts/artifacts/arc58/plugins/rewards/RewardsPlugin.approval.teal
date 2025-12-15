@@ -7,33 +7,29 @@ main:
     bytecblock "akita_dao" "spending_address" "aal" 0x151f7c75
     // smart_contracts/arc58/plugins/rewards/contract.algo.ts:12
     // export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
-    txn NumAppArgs
-    bz main___algots__.defaultCreate@19
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
-    assert
+    bz main_create_NoOp@16
     pushbytess 0x08c25eff 0xaee023c5 0x504e47fd 0x5c2c910f 0x8699ed4c 0xe440a3a6 0x7b1d2236 0x33e92c94 0x854dede0 0xd54bbad9 // method "createDisbursement(uint64,bool,string,uint64,uint64,string)uint64", method "editDisbursement(uint64,bool,uint64,string,uint64,uint64,string)void", method "createUserAllocations(uint64,bool,uint64,(address,uint64)[],uint64)void", method "createAsaUserAllocations(uint64,bool,uint64,uint64,(address,uint64)[],uint64)void", method "finalizeDisbursement(uint64,bool,uint64)void", method "claimRewards(uint64,bool,(uint64,uint64)[])void", method "reclaimRewards(uint64,bool,uint64,(address,uint64)[])void", method "updateAkitaDAO(uint64)void", method "opUp()void", method "mbr(string,string)(uint64,uint64)"
     txna ApplicationArgs 0
-    match createDisbursement editDisbursement createUserAllocations createAsaUserAllocations finalizeDisbursement claimRewards reclaimRewards updateAkitaDAO main_opUp_route@14 mbr
+    match createDisbursement editDisbursement createUserAllocations createAsaUserAllocations finalizeDisbursement claimRewards reclaimRewards updateAkitaDAO main_opUp_route@13 mbr
     err
 
-main_opUp_route@14:
+main_opUp_route@13:
     // smart_contracts/utils/base-contracts/base.ts:43
     // opUp(): void { }
     intc_2 // 1
     return
 
-main___algots__.defaultCreate@19:
+main_create_NoOp@16:
     // smart_contracts/arc58/plugins/rewards/contract.algo.ts:12
     // export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
-    txn OnCompletion
-    !
-    txn ApplicationID
-    !
-    &&
-    return // on error: OnCompletion must be NoOp && can only call when creating
+    pushbytes 0xcd9ad67e // method "create(string,uint64)void"
+    txna ApplicationArgs 0
+    match create
+    err
 
 
 // smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
@@ -59,9 +55,51 @@ rekeyAddress_after_if_else@2:
     retsub
 
 
+// smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.create[routing]() -> void:
+create:
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:14
+    // @abimethod({ onCreate: 'require' })
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16
+    intc_3 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for (len+utf8[])
+    extract 2 0
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    // smart_contracts/utils/base-contracts/base.ts:27
+    // version = GlobalState<string>({ key: GlobalStateKeyVersion })
+    pushbytes "version"
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:16
+    // this.version.value = version
+    uncover 2
+    app_global_put
+    // smart_contracts/utils/base-contracts/base.ts:29
+    // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
+    bytec_0 // "akita_dao"
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:17
+    // this.akitaDAO.value = akitaDAO
+    swap
+    app_global_put
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:14
+    // @abimethod({ onCreate: 'require' })
+    intc_2 // 1
+    return
+
+
 // smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.createDisbursement[routing]() -> void:
 createDisbursement:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:14-21
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:20-27
     // createDisbursement(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -138,20 +176,20 @@ createDisbursement:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:24
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:30
     // const { disbursements: mbrAmount } = this.mbr(title, note)
     uncover 5
     swap
     callsub smart_contracts/rewards/base.ts::BaseRewards.mbr
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:31
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:31
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     app_global_get_ex
     assert // check GlobalState exists
@@ -160,11 +198,11 @@ createDisbursement:
     bytec_2 // "aal"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:25
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:31
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     intc_1 // 8
     extract_uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:27-42
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:33-48
     // return abiCall<typeof Rewards.prototype.createDisbursement>({
     //   sender,
     //   appId: rewardsID,
@@ -182,7 +220,7 @@ createDisbursement:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // }).returnValue
     itxn_begin
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:34
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:40
     // receiver: Application(rewardsID).address,
     dup
     app_params_get AppAddress
@@ -192,7 +230,7 @@ createDisbursement:
     itxn_field Amount
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:31-35
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:37-41
     // itxn.payment({
     //   sender,
     //   amount: mbrAmount,
@@ -202,7 +240,7 @@ createDisbursement:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:27-42
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:33-48
     // return abiCall<typeof Rewards.prototype.createDisbursement>({
     //   sender,
     //   appId: rewardsID,
@@ -220,12 +258,12 @@ createDisbursement:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // }).returnValue
     itxn_next
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:41
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:47
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 6
     uncover 7
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:27-42
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:33-48
     // return abiCall<typeof Rewards.prototype.createDisbursement>({
     //   sender,
     //   appId: rewardsID,
@@ -273,7 +311,7 @@ createDisbursement:
     intc_1 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:14-21
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:20-27
     // createDisbursement(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -292,7 +330,7 @@ createDisbursement:
 
 // smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.editDisbursement[routing]() -> void:
 editDisbursement:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:45-53
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:51-59
     // editDisbursement(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -372,7 +410,7 @@ editDisbursement:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:56-61
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:62-67
     // abiCall<typeof Rewards.prototype.editDisbursement>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -380,13 +418,13 @@ editDisbursement:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:58
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:64
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:58
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:64
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     app_global_get_ex
     assert // check GlobalState exists
@@ -395,16 +433,16 @@ editDisbursement:
     bytec_2 // "aal"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:58
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:64
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_1 // 8
     extract_uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:60
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:66
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 7
     uncover 8
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:56-61
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:62-67
     // abiCall<typeof Rewards.prototype.editDisbursement>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -431,7 +469,7 @@ editDisbursement:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:45-53
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:51-59
     // editDisbursement(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -447,7 +485,7 @@ editDisbursement:
 
 // smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.createUserAllocations[routing]() -> void:
 createUserAllocations:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:64-70
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:70-76
     // createUserAllocations(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -513,13 +551,13 @@ createUserAllocations:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:72
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:78
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:72
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:78
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     app_global_get_ex
     assert // check GlobalState exists
@@ -528,11 +566,11 @@ createUserAllocations:
     bytec_2 // "aal"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:72
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:78
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     intc_1 // 8
     extract_uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:74
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:80
     // const mbrAmount: uint64 = this.mbr('', '').userAllocations * allocations.length
     pushbytes ""
     dup
@@ -541,7 +579,7 @@ createUserAllocations:
     extract_uint64
     uncover 4
     *
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:76-89
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:82-95
     // abiCall<typeof Rewards.prototype.createUserAllocations>({
     //   sender,
     //   appId: rewardsID,
@@ -557,11 +595,11 @@ createUserAllocations:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:82
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:88
     // amount: mbrAmount + sum,
     uncover 2
     +
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:83
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:89
     // receiver: Application(rewardsID).address,
     dig 1
     app_params_get AppAddress
@@ -570,7 +608,7 @@ createUserAllocations:
     itxn_field Amount
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:80-84
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:86-90
     // itxn.payment({
     //   sender,
     //   amount: mbrAmount + sum,
@@ -580,7 +618,7 @@ createUserAllocations:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:76-89
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:82-95
     // abiCall<typeof Rewards.prototype.createUserAllocations>({
     //   sender,
     //   appId: rewardsID,
@@ -596,12 +634,12 @@ createUserAllocations:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:88
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:94
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 4
     uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:76-89
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:82-95
     // abiCall<typeof Rewards.prototype.createUserAllocations>({
     //   sender,
     //   appId: rewardsID,
@@ -630,7 +668,7 @@ createUserAllocations:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:64-70
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:70-76
     // createUserAllocations(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -644,7 +682,7 @@ createUserAllocations:
 
 // smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.createAsaUserAllocations[routing]() -> void:
 createAsaUserAllocations:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:92-99
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:98-105
     // createAsaUserAllocations(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -726,13 +764,13 @@ createAsaUserAllocations:
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:101
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:107
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:101
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:107
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     app_global_get_ex
     assert // check GlobalState exists
@@ -741,13 +779,13 @@ createAsaUserAllocations:
     bytec_2 // "aal"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:101
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:107
     // const rewardsID = getAkitaAppList(this.akitaDAO.value).rewards
     intc_1 // 8
     extract_uint64
     dup
     cover 3
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:104
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:110
     // let mbrAmount: uint64 = this.mbr('', '').userAllocations * allocations.length
     pushbytes ""
     dup
@@ -757,7 +795,7 @@ createAsaUserAllocations:
     uncover 2
     *
     cover 2
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:105
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:111
     // if (!rewardsApp.address.isOptedIn(Asset(assetID))) {
     app_params_get AppAddress
     assert // application exists
@@ -765,13 +803,13 @@ createAsaUserAllocations:
     asset_holding_get AssetBalance
     bury 1
     bnz createAsaUserAllocations_after_if_else@3
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:106
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:112
     // mbrAmount += Global.assetOptInMinBalance
     global AssetOptInMinBalance
     +
 
 createAsaUserAllocations_after_if_else@3:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:109-128
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:115-134
     // abiCall<typeof Rewards.prototype.createAsaUserAllocations>({
     //   sender,
     //   appId: rewardsApp,
@@ -793,7 +831,7 @@ createAsaUserAllocations_after_if_else@3:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:116
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:122
     // receiver: rewardsApp.address,
     dig 1
     dup
@@ -806,7 +844,7 @@ createAsaUserAllocations_after_if_else@3:
     dup
     cover 2
     itxn_field Sender
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:113-117
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:119-123
     // itxn.payment({
     //   sender,
     //   amount: mbrAmount,
@@ -816,7 +854,7 @@ createAsaUserAllocations_after_if_else@3:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:118-123
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:124-129
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: rewardsApp.address,
@@ -824,7 +862,7 @@ createAsaUserAllocations_after_if_else@3:
     //   xferAsset: assetID,
     // }),
     itxn_next
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:120
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:126
     // assetReceiver: rewardsApp.address,
     dup
     app_params_get AppAddress
@@ -836,7 +874,7 @@ createAsaUserAllocations_after_if_else@3:
     itxn_field AssetReceiver
     dig 1
     itxn_field Sender
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:118-123
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:124-129
     // itxn.assetTransfer({
     //   sender,
     //   assetReceiver: rewardsApp.address,
@@ -847,7 +885,7 @@ createAsaUserAllocations_after_if_else@3:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:109-128
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:115-134
     // abiCall<typeof Rewards.prototype.createAsaUserAllocations>({
     //   sender,
     //   appId: rewardsApp,
@@ -869,12 +907,12 @@ createAsaUserAllocations_after_if_else@3:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_next
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:127
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:133
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     dig 8
     dig 10
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:109-128
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:115-134
     // abiCall<typeof Rewards.prototype.createAsaUserAllocations>({
     //   sender,
     //   appId: rewardsApp,
@@ -909,7 +947,7 @@ createAsaUserAllocations_after_if_else@3:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:92-99
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:98-105
     // createAsaUserAllocations(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -924,7 +962,7 @@ createAsaUserAllocations_after_if_else@3:
 
 // smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.finalizeDisbursement[routing]() -> void:
 finalizeDisbursement:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:131-135
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:137-141
     // finalizeDisbursement(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -968,7 +1006,7 @@ finalizeDisbursement:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:138-143
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:144-149
     // abiCall<typeof Rewards.prototype.finalizeDisbursement>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -976,13 +1014,13 @@ finalizeDisbursement:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:140
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:146
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:140
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:146
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     app_global_get_ex
     assert // check GlobalState exists
@@ -991,16 +1029,16 @@ finalizeDisbursement:
     bytec_2 // "aal"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:140
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:146
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_1 // 8
     extract_uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:142
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:148
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:138-143
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:144-149
     // abiCall<typeof Rewards.prototype.finalizeDisbursement>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -1019,7 +1057,7 @@ finalizeDisbursement:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:131-135
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:137-141
     // finalizeDisbursement(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1031,7 +1069,7 @@ finalizeDisbursement:
 
 // smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.claimRewards[routing]() -> void:
 claimRewards:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:146-150
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:152-156
     // claimRewards(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1081,7 +1119,7 @@ claimRewards:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:153-158
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:159-164
     // abiCall<typeof Rewards.prototype.claimRewards>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -1089,13 +1127,13 @@ claimRewards:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:155
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:161
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:155
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:161
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     app_global_get_ex
     assert // check GlobalState exists
@@ -1104,16 +1142,16 @@ claimRewards:
     bytec_2 // "aal"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:155
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:161
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_1 // 8
     extract_uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:157
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:163
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 3
     uncover 4
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:153-158
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:159-164
     // abiCall<typeof Rewards.prototype.claimRewards>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -1132,7 +1170,7 @@ claimRewards:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:146-150
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:152-156
     // claimRewards(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1144,7 +1182,7 @@ claimRewards:
 
 // smart_contracts/arc58/plugins/rewards/contract.algo.ts::RewardsPlugin.reclaimRewards[routing]() -> void:
 reclaimRewards:
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:161-166
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:167-172
     // reclaimRewards(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1201,7 +1239,7 @@ reclaimRewards:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:169-174
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:175-180
     // abiCall<typeof Rewards.prototype.reclaimRewards>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -1209,13 +1247,13 @@ reclaimRewards:
     //   rekeyTo: rekeyAddress(rekeyBack, wallet),
     // })
     itxn_begin
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:171
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:177
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_0 // 0
     // smart_contracts/utils/base-contracts/base.ts:29
     // akitaDAO = GlobalState<Application>({ key: GlobalStateKeyAkitaDAO })
     bytec_0 // "akita_dao"
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:171
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:177
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     app_global_get_ex
     assert // check GlobalState exists
@@ -1224,16 +1262,16 @@ reclaimRewards:
     bytec_2 // "aal"
     app_global_get_ex
     pop
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:171
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:177
     // appId: getAkitaAppList(this.akitaDAO.value).rewards,
     intc_1 // 8
     extract_uint64
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:173
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:179
     // rekeyTo: rekeyAddress(rekeyBack, wallet),
     uncover 4
     uncover 5
     callsub rekeyAddress
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:169-174
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:175-180
     // abiCall<typeof Rewards.prototype.reclaimRewards>({
     //   sender,
     //   appId: getAkitaAppList(this.akitaDAO.value).rewards,
@@ -1254,7 +1292,7 @@ reclaimRewards:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:161-166
+    // smart_contracts/arc58/plugins/rewards/contract.algo.ts:167-172
     // reclaimRewards(
     //   wallet: Application,
     //   rekeyBack: boolean,
@@ -1314,7 +1352,7 @@ updateAkitaDAO:
 // smart_contracts/rewards/base.ts::BaseRewards.mbr[routing]() -> void:
 mbr:
     // smart_contracts/rewards/base.ts:7
-    // mbr(title: string, note: string): RewardsMBRData {
+    // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
     intc_0 // 0
@@ -1348,10 +1386,11 @@ mbr:
 
 // smart_contracts/rewards/base.ts::BaseRewards.mbr(title: bytes, note: bytes) -> bytes:
 smart_contracts/rewards/base.ts::BaseRewards.mbr:
-    // smart_contracts/rewards/base.ts:7
+    // smart_contracts/rewards/base.ts:7-8
+    // @abimethod({ readonly: true })
     // mbr(title: string, note: string): RewardsMBRData {
     proto 2 1
-    // smart_contracts/rewards/base.ts:9
+    // smart_contracts/rewards/base.ts:10
     // disbursements: MinDisbursementsMBR + (BoxCostPerByte * (Bytes(title).length + Bytes(note).length)),
     frame_dig -2
     len
@@ -1362,16 +1401,16 @@ smart_contracts/rewards/base.ts::BaseRewards.mbr:
     *
     pushint 35300 // 35300
     +
-    // smart_contracts/rewards/base.ts:8-11
+    // smart_contracts/rewards/base.ts:9-12
     // return {
     //   disbursements: MinDisbursementsMBR + (BoxCostPerByte * (Bytes(title).length + Bytes(note).length)),
     //   userAllocations: UserAllocationMBR
     // }
     itob
-    // smart_contracts/rewards/base.ts:10
+    // smart_contracts/rewards/base.ts:11
     // userAllocations: UserAllocationMBR
     pushint 25300 // 25300
-    // smart_contracts/rewards/base.ts:8-11
+    // smart_contracts/rewards/base.ts:9-12
     // return {
     //   disbursements: MinDisbursementsMBR + (BoxCostPerByte * (Bytes(title).length + Bytes(note).length)),
     //   userAllocations: UserAllocationMBR

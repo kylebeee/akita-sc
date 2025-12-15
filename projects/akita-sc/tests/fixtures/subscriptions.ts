@@ -1,4 +1,4 @@
-import { SubscriptionsSDK } from 'akita-sdk';
+import { SubscriptionsSDK } from 'akita-sdk/subscriptions';
 import { SubscriptionsArgs, SubscriptionsFactory } from '../../smart_contracts/artifacts/subscriptions/SubscriptionsClient';
 import { FixtureAndAccount } from '../types';
 
@@ -37,12 +37,12 @@ export const deploySubscriptions = async ({
     }
   })
 
-  return new SubscriptionsSDK({ 
-    algorand, 
-    factoryParams: { 
+  return new SubscriptionsSDK({
+    algorand,
+    factoryParams: {
       appId: client.appId,
       defaultSender: sender,
       defaultSigner: signer
-    } 
+    }
   });
 };

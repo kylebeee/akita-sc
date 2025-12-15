@@ -109,6 +109,14 @@ export class RaffleFactory extends classes(BaseRaffle, FactoryContract) {
       .itxn
       .createdApp
 
+    // Fund child app with base minBalance first
+    itxn
+      .payment({
+        receiver: appId.address,
+        amount: Global.minBalance
+      })
+      .submit()
+
     if (!isAlgoTicket) {
       raffle.call.optin({
         appId,
@@ -122,7 +130,7 @@ export class RaffleFactory extends classes(BaseRaffle, FactoryContract) {
       })
     }
 
-    abiCall<typeof Raffle.prototype.init>({
+    raffle.call.init({
       appId,
       args: [
         itxn.payment({
@@ -246,19 +254,7 @@ export class RaffleFactory extends classes(BaseRaffle, FactoryContract) {
       weightsListCount
     )
 
-    const costs = this.mbr()
-    const childAppMBR: uint64 = (weightsListCount * costs.weights)
-
-    abiCall<typeof Raffle.prototype.init>({
-      appId: raffleApp,
-      args: [
-        itxn.payment({
-          receiver: raffleApp.address,
-          amount: childAppMBR,
-        }),
-        weightsListCount,
-      ],
-    })
+    // Note: init is already called by createChildApp, so we don't call it again
 
     abiCall<typeof PrizeBox.prototype.transfer>({
       appId: prizeBox.id,
@@ -271,11 +267,11 @@ export class RaffleFactory extends classes(BaseRaffle, FactoryContract) {
   deleteRaffle(appId: Application): void {
     assert(appId.creator === Global.currentApplicationAddress, ERR_NOT_A_RAFFLE)
 
-    abiCall<typeof Raffle.prototype.deleteApplication>({
-      appId
-    })
-
+    // Get funder info BEFORE delete call (which deletes the app)
     const { account: receiver, amount } = getFunder(appId)
+
+    const raffle = compileArc4(Raffle)
+    raffle.call.deleteApplication({ appId })
 
     itxn
       .payment({ amount, receiver })

@@ -1,7 +1,7 @@
 import { microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import { ProposalActionEnum } from 'akita-sdk';
+import { ProposalActionEnum } from 'akita-sdk/dao';
 import { deployOptInPlugin } from '../../../../../tests/fixtures/plugins/optin';
 import { logger } from '../../../../../tests/utils/logger';
 import {

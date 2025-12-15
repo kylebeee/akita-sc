@@ -1,31 +1,20 @@
-import { Account, Application, assert, Asset, bytes, Global, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript"
-import { abiCall } from "@algorandfoundation/algorand-typescript/arc4"
+import { Account, Application, Asset, bytes, Global, itxn, uint64 } from "@algorandfoundation/algorand-typescript"
+import { abiCall, abimethod } from "@algorandfoundation/algorand-typescript/arc4"
 import { classes } from 'polytype'
-import { arc58OptInAndSend, getAkitaAppList, getOtherAppList, getPluginAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
+import { getAkitaAppList, getSpendingAccount, rekeyAddress } from "../../../utils/functions"
 import { Proof } from "../../../utils/types/merkles"
 
 // CONTRACT IMPORTS
 import { BaseHyperSwap } from "../../../hyper-swap/base"
 import type { HyperSwap } from "../../../hyper-swap/contract.algo"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
-import type { AssetInbox } from "../../../utils/types/asset-inbox"
-import type { AbstractedAccount } from "../../account/contract.algo"
 
 export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
 
-  // PRIVATE METHODS ------------------------------------------------------------------------------
-
-  private canCallArc58OptIn(appId: Application): boolean {
-    return abiCall<typeof AbstractedAccount.prototype.arc58_canCall>({
-      appId,
-      args: [
-        getPluginAppList(this.akitaDAO.value).optin,
-        true,
-        Global.currentApplicationAddress,
-        '',
-        op.bzero(4).toFixed({ length: 4 }),
-      ]
-    }).returnValue
+  @abimethod({ onCreate: 'require' })
+  create(version: string, akitaDAO: Application): void {
+    this.version.value = version
+    this.akitaDAO.value = akitaDAO
   }
 
   // HYPER SWAP PLUGIN METHODS --------------------------------------------------------------------
@@ -96,117 +85,88 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
     rekeyBack: boolean,
     id: uint64,
     receiver: Account,
-    amount: uint64,
-    proof: Proof
-  ) {
-    const sender = getSpendingAccount(wallet)
-
-    const appId = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
-
-    abiCall<typeof HyperSwap.prototype.escrow>({
-      sender,
-      appId,
-      args: [
-        itxn.payment({
-          sender,
-          receiver: appId.address,
-          amount: amount + this.mbr().hashes
-        }),
-        id,
-        receiver,
-        amount,
-        proof,
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
-  }
-
-  escrowAsa(
-    wallet: Application,
-    rekeyBack: boolean,
-    id: uint64,
-    receiver: Account,
     asset: uint64,
     amount: uint64,
     proof: Proof
   ) {
     const sender = getSpendingAccount(wallet)
-
-    let mbrAmount = this.mbr().hashes
-
-    if (!receiver.isOptedIn(Asset(asset))) {
-      const assetInbox = getOtherAppList(this.akitaDAO.value).assetInbox
-      const canCallData = abiCall<typeof AssetInbox.prototype.arc59_getSendAssetInfo>({
-        appId: assetInbox,
-        args: [receiver, asset]
-      }).returnValue
-
-      const mbr = canCallData.mbr
-      const receiverAlgoNeededForClaim = canCallData.receiverAlgoNeededForClaim
-
-      if (mbr || receiverAlgoNeededForClaim) {
-        mbrAmount += canCallData.mbr + canCallData.receiverAlgoNeededForClaim
-      }
-    }
-
     const hyperSwapApp = Application(getAkitaAppList(this.akitaDAO.value).hyperSwap)
 
-    if (!hyperSwapApp.address.isOptedIn(Asset(asset))) {
-      mbrAmount += Global.assetOptInMinBalance
-    }
+    if (asset === 0) {
+      // ALGO escrow
+      abiCall<typeof HyperSwap.prototype.escrow>({
+        sender,
+        appId: hyperSwapApp,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: hyperSwapApp.address,
+            amount: amount + this.mbr().hashes
+          }),
+          id,
+          receiver,
+          amount,
+          proof,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      })
+    } else {
+      // ASA escrow
+      let mbrAmount = this.mbr().hashes
 
-    abiCall<typeof HyperSwap.prototype.escrowAsa>({
-      sender,
-      appId: hyperSwapApp,
-      args: [
-        itxn.payment({
-          sender,
-          receiver: hyperSwapApp.address,
-          amount: mbrAmount
-        }),
-        itxn.assetTransfer({
-          sender,
-          assetReceiver: hyperSwapApp.address,
-          assetAmount: amount,
-          xferAsset: asset
-        }),
-        id,
-        receiver,
-        asset,
-        amount,
-        proof,
-      ],
-      rekeyTo: rekeyAddress(rekeyBack, wallet)
-    })
+      // collect opt-in MBR if receiver is not opted into the asset
+      if (!receiver.isOptedIn(Asset(asset))) {
+        mbrAmount += Global.assetOptInMinBalance
+      }
+
+      // collect opt-in MBR if HyperSwap contract needs to opt in
+      if (!hyperSwapApp.address.isOptedIn(Asset(asset))) {
+        mbrAmount += Global.assetOptInMinBalance
+      }
+
+      abiCall<typeof HyperSwap.prototype.escrowAsa>({
+        sender,
+        appId: hyperSwapApp,
+        args: [
+          itxn.payment({
+            sender,
+            receiver: hyperSwapApp.address,
+            amount: mbrAmount
+          }),
+          itxn.assetTransfer({
+            sender,
+            assetReceiver: hyperSwapApp.address,
+            assetAmount: amount,
+            xferAsset: asset
+          }),
+          id,
+          receiver,
+          asset,
+          amount,
+          proof,
+        ],
+        rekeyTo: rekeyAddress(rekeyBack, wallet)
+      })
+    }
   }
 
   disburse(
     wallet: Application,
     rekeyBack: boolean,
     id: uint64,
-    receiverWallet: Application,
+    receiverWallet: uint64,
     receiver: Account,
     asset: uint64,
     amount: uint64
   ) {
     const sender = getSpendingAccount(wallet)
 
-    // if we can and need to opt the receiver in ahead of time
-    if (receiverWallet.id !== 0) {
-      assert(receiverWallet.address === receiver, 'receiverAppID address mismatch')
-      if (!receiverWallet.address.isOptedIn(Asset(asset))) {
-        const canCallArc58OptIn = this.canCallArc58OptIn(receiverWallet)
-        if (canCallArc58OptIn) {
-          arc58OptInAndSend(this.akitaDAO.value, receiverWallet, '', [asset], [0])
-        }
-      }
-    }
-
     abiCall<typeof HyperSwap.prototype.disburse>({
       sender,
       appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
       args: [
         id,
+        receiverWallet,
         receiver,
         asset,
         amount,
@@ -227,6 +187,25 @@ export class HyperSwapPlugin extends classes(BaseHyperSwap, AkitaBaseContract) {
       sender,
       appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
       args: [id, proof],
+      rekeyTo: rekeyAddress(rekeyBack, wallet)
+    })
+  }
+
+  withdraw(
+    wallet: Application,
+    rekeyBack: boolean,
+    id: uint64,
+    receiver: Account,
+    asset: uint64,
+    amount: uint64,
+    proof: Proof
+  ) {
+    const sender = getSpendingAccount(wallet)
+
+    abiCall<typeof HyperSwap.prototype.withdraw>({
+      sender,
+      appId: Application(getAkitaAppList(this.akitaDAO.value).hyperSwap),
+      args: [id, receiver, asset, amount, proof],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
   }

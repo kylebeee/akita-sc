@@ -1,0 +1,36 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    // smart_contracts/mocks/social/mock.algo.ts:3
+    // export class MockAkitaSocial extends Contract {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@5
+    pushbytes 0x1d5c561b // method "ping()uint64"
+    txna ApplicationArgs 0
+    match main_ping_route@3
+    err
+
+main_ping_route@3:
+    // smart_contracts/mocks/social/mock.algo.ts:5
+    // ping(): uint64 {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    pushbytes 0x151f7c7500000000000003f0
+    log
+    pushint 1 // 1
+    return
+
+main___algots__.defaultCreate@5:
+    // smart_contracts/mocks/social/mock.algo.ts:3
+    // export class MockAkitaSocial extends Contract {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating

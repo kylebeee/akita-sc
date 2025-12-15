@@ -1,0 +1,332 @@
+{
+  "version": 3,
+  "sources": [
+    "../../../mock-randomness-beacon.algo.ts"
+  ],
+  "mappings": ";AAMA;;AAAA;;;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;AAKE;;AAAA;AAAA;;AAAA;AAAA;AAAA;;;AALF;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAKE;;;AAAA;AAAA;;AAAA;AAAA;AAAA;;;AAAA;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AAAA;;AAAA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "@algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "3": {
+      "op": "bz main___algots__.defaultCreate@5",
+      "stack_out": []
+    },
+    "6": {
+      "op": "pushbytes 0x189392c5 // method \"get(uint64,byte[])byte[]\"",
+      "defined_out": [
+        "Method(get(uint64,byte[])byte[])"
+      ],
+      "stack_out": [
+        "Method(get(uint64,byte[])byte[])"
+      ]
+    },
+    "12": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(get(uint64,byte[])byte[])",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(get(uint64,byte[])byte[])",
+        "tmp%2#0"
+      ]
+    },
+    "15": {
+      "op": "match main_get_route@3",
+      "stack_out": []
+    },
+    "19": {
+      "op": "err"
+    },
+    "20": {
+      "block": "main_get_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "22": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "23": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%4#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%4#0",
+        "tmp%5#0"
+      ]
+    },
+    "25": {
+      "op": "&&",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "26": {
+      "error": "OnCompletion must be NoOp && can only call when not creating",
+      "op": "assert // OnCompletion must be NoOp && can only call when not creating",
+      "stack_out": []
+    },
+    "27": {
+      "op": "b get"
+    },
+    "30": {
+      "block": "main___algots__.defaultCreate@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "32": {
+      "op": "!",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "33": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%10#0",
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0",
+        "tmp%10#0"
+      ]
+    },
+    "35": {
+      "op": "!",
+      "defined_out": [
+        "tmp%11#0",
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0",
+        "tmp%11#0"
+      ]
+    },
+    "36": {
+      "op": "&&",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "37": {
+      "error": "OnCompletion must be NoOp && can only call when creating",
+      "op": "return // on error: OnCompletion must be NoOp && can only call when creating",
+      "defined_out": [],
+      "stack_out": []
+    },
+    "38": {
+      "subroutine": "smart_contracts/utils/types/mock-randomness-beacon.algo.ts::MockRandomnessBeacon.get[routing]",
+      "params": {},
+      "block": "get",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "41": {
+      "op": "len",
+      "defined_out": [
+        "len%0#0"
+      ],
+      "stack_out": [
+        "len%0#0"
+      ]
+    },
+    "42": {
+      "op": "pushint 8 // 8",
+      "defined_out": [
+        "8",
+        "len%0#0"
+      ],
+      "stack_out": [
+        "len%0#0",
+        "8"
+      ]
+    },
+    "44": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0"
+      ],
+      "stack_out": [
+        "eq%0#0"
+      ]
+    },
+    "45": {
+      "error": "invalid number of bytes for uint64",
+      "op": "assert // invalid number of bytes for uint64",
+      "stack_out": []
+    },
+    "46": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "49": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "50": {
+      "op": "pushint 0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%2#0 (copy)",
+        "0"
+      ]
+    },
+    "52": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "53": {
+      "op": "pushint 2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "55": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "add%0#0"
+      ]
+    },
+    "56": {
+      "op": "swap",
+      "stack_out": [
+        "add%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "57": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%1#0"
+      ],
+      "stack_out": [
+        "add%0#0",
+        "len%1#0"
+      ]
+    },
+    "58": {
+      "op": "==",
+      "defined_out": [
+        "eq%1#0"
+      ],
+      "stack_out": [
+        "eq%1#0"
+      ]
+    },
+    "59": {
+      "error": "invalid number of bytes for (len+uint8[])",
+      "op": "assert // invalid number of bytes for (len+uint8[])",
+      "stack_out": []
+    },
+    "60": {
+      "op": "pushbytes 0x151f7c7500200102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20",
+      "defined_out": [
+        "0x151f7c7500200102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
+      ],
+      "stack_out": [
+        "0x151f7c7500200102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20"
+      ]
+    },
+    "100": {
+      "op": "log",
+      "stack_out": []
+    },
+    "101": {
+      "op": "pushint 1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "103": {
+      "op": "return",
+      "stack_out": []
+    }
+  }
+}

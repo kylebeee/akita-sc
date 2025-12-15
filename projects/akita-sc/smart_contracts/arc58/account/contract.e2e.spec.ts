@@ -3,7 +3,8 @@ import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-de
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { AppCallMethodCall } from '@algorandfoundation/algokit-utils/types/composer';
 import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import { AkitaDaoSDK, AsaMintPluginSDK, isDripAllowance, isFlatAllowance, isWindowAllowance, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk';
+import { AkitaDaoSDK } from 'akita-sdk/dao';
+import { AsaMintPluginSDK, isDripAllowance, isFlatAllowance, isWindowAllowance, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk/wallet';
 import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';
 import { buildAkitaUniverse } from '../../../tests/fixtures/dao';
 import { deployAsaMintPlugin } from '../../../tests/fixtures/plugins/asa-mint';
@@ -229,6 +230,7 @@ describe('ARC58 Plugin Permissions', () => {
         client: payPluginSdk,
         global: true,
         cooldown: 100n,
+        useRounds: true, // Use round-based cooldown for more reliable testing
       });
 
       let walletInfo = await algorand.account.getInformation(wallet.client.appAddress)
@@ -255,6 +257,11 @@ describe('ARC58 Plugin Permissions', () => {
       const globalPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId })!;
       expect(globalPluginInfo).toBeDefined();
       expect(globalPluginInfo!.lastCalled).toBeGreaterThan(0n);
+
+      // Re-fund wallet so the second call can proceed far enough to hit cooldown check
+      await wallet.client.appClient.fundAppAccount({
+        amount: paymentAmount.microAlgo()
+      })
 
       let error = 'no error thrown'
       try {
@@ -313,7 +320,7 @@ describe('ARC58 Plugin Permissions', () => {
       ) as AppCallMethodCall[]
 
       composer.addAppCallMethodCall(payPluginTxn[0])
-      
+
       group.arc58VerifyAuthAddress()
 
       let error = 'no error thrown'
@@ -535,6 +542,7 @@ describe('ARC58 Plugin Permissions', () => {
       await wallet.addPlugin({
         client: payPluginSdk,
         caller: sender,
+        useRounds: true, // Use round-based cooldown for more reliable testing
         methods: [
           { name: payPluginSdk.pay(), cooldown: 100n },
         ]
@@ -563,6 +571,11 @@ describe('ARC58 Plugin Permissions', () => {
       const localPluginInfo = wallet.plugins.get({ plugin: payPluginSdk.appId, caller: sender })!;
       expect(localPluginInfo).toBeDefined();
       expect(localPluginInfo.lastCalled).toBeGreaterThan(0n);
+
+      // Re-fund wallet so the second call can proceed far enough to hit cooldown check
+      await wallet.client.appClient.fundAppAccount({
+        amount: paymentAmount.microAlgo()
+      })
 
       let error = 'no error thrown'
       try {

@@ -1,8 +1,8 @@
 
 
+import { PayPluginSDK } from 'akita-sdk/wallet';
 import { PayPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/pay/PayPluginClient';
 import { FixtureAndAccount } from '../../types';
-import { PayPluginSDK } from 'akita-sdk'
 
 type DeployParams = FixtureAndAccount
 

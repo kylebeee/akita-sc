@@ -1,5 +1,5 @@
-import { GateRegistryConfig, GateSDK } from 'akita-sdk';
-import { GateArgs, GateClient, GateFactory } from '../../../smart_contracts/artifacts/gates/GateClient'
+import { GateRegistryConfig, GateSDK } from 'akita-sdk/gates';
+import { GateArgs, GateClient, GateFactory } from '../../../smart_contracts/artifacts/gates/GateClient';
 import { FixtureAndAccount } from '../../types';
 
 type CreateArgs = GateArgs["obj"]["create(string,uint64)void"]

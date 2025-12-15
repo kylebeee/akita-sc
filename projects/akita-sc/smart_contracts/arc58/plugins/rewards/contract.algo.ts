@@ -1,5 +1,5 @@
 import { Application, Asset, Global, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
-import { abiCall } from '@algorandfoundation/algorand-typescript/arc4'
+import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
 import { AllocationReclaimDetails, ClaimDetails, UserAllocation } from '../../../rewards/types'
 import { getAkitaAppList, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
@@ -10,6 +10,12 @@ import type { Rewards } from '../../../rewards/contract.algo'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 export class RewardsPlugin extends classes(BaseRewards, AkitaBaseContract) {
+
+  @abimethod({ onCreate: 'require' })
+  create(version: string, akitaDAO: Application): void {
+    this.version.value = version
+    this.akitaDAO.value = akitaDAO
+  }
 
   createDisbursement(
     wallet: Application,

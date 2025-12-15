@@ -269,9 +269,10 @@ export class MetaMerkles extends Contract {
 
     assert(this.data(dataKey).exists, ERR_NO_DATA)
 
-    this.data(dataKey).delete()
-
+    // Calculate MBR before deleting (need the value length)
     const costs = this.mbr('', '', name, key, this.data(dataKey).value)
+
+    this.data(dataKey).delete()
 
     itxn
       .payment({

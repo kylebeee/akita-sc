@@ -1,5 +1,4 @@
-import { GateSDK } from 'akita-sdk';
-import { AssetGateArgs, AssetGateClient, AssetGateFactory } from '../../../../smart_contracts/artifacts/gates/sub-gates/asset/AssetGateClient'
+import { AssetGateArgs, AssetGateClient, AssetGateFactory } from '../../../../smart_contracts/artifacts/gates/sub-gates/asset/AssetGateClient';
 import { FixtureAndAccount } from '../../../types';
 
 type CreateArgs = AssetGateArgs["obj"]["create(string,uint64)void"]

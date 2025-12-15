@@ -1,6 +1,6 @@
-import { AsaMintPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/asa-mint/AsaMintPluginClient'
+import { AsaMintPluginSDK } from 'akita-sdk/wallet';
+import { AsaMintPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/asa-mint/AsaMintPluginClient';
 import { FixtureAndAccount } from '../../types';
-import { AsaMintPluginSDK } from 'akita-sdk'
 
 type DeployParams = FixtureAndAccount
 

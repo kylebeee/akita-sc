@@ -1,5 +1,5 @@
 import { Account, Application, assert, assertMatch, Asset, BoxMap, Bytes, bytes, clone, Global, gtxn, itxn, op, uint64 } from "@algorandfoundation/algorand-typescript";
-import { abiCall, decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4";
+import { abiCall, abimethod, decodeArc4 } from "@algorandfoundation/algorand-typescript/arc4";
 import { AssetHolding } from "@algorandfoundation/algorand-typescript/op";
 import { ONE_DAY } from "../../../social/constants";
 import { DIVISOR } from "../../../utils/constants";
@@ -103,6 +103,12 @@ export class RevenueManagerPlugin extends AkitaBaseContract {
     assert(!hasFlat || hasRemainder || totalPercentage === 0 || totalPercentage === DIVISOR, ERR_FLAT_WITH_PERCENTAGE_REQUIRES_REMAINDER)
     // If no remainder, percentages must total exactly 100% (unless using only flat amounts)
     assert(hasRemainder || totalPercentage === DIVISOR || (totalPercentage === 0 && hasFlat), ERR_SPLITS_MUST_TOTAL_100_OR_HAVE_REMAINDER)
+  }
+
+  @abimethod({ onCreate: 'require' })
+  create(version: string, akitaDAO: Application): void {
+    this.version.value = version
+    this.akitaDAO.value = akitaDAO
   }
 
   /**

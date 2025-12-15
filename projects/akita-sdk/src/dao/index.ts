@@ -15,6 +15,7 @@ import {
   ProposalUpgradeApp
 } from '../generated/AkitaDAOTypesClient'
 import { BaseSDK } from "../base";
+import { ENV_VAR_NAMES } from "../config";
 import { GroupReturn, isPluginSDKReturn, MaybeSigner, NewContractSDKParams, SDKClient, TxnReturn } from "../types";
 import { WalletSDK } from "../wallet";
 import { AkitaDaoGlobalState, DecodedProposal, DecodedProposalAction, EditProposalParams, NewProposalParams, ProposalAction, ProposalAddPluginArgs, SplitsToTuples } from "./types";
@@ -39,9 +40,13 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
   wallet: WalletSDK;
 
   constructor(params: NewContractSDKParams) {
-    super({ factory: AkitaDaoFactory, ...params });
+    super({ factory: AkitaDaoFactory, ...params }, ENV_VAR_NAMES.DAO_APP_ID);
     this.typeClient = new AkitaDaoTypesClient({ algorand: this.algorand, appId: 0n });
-    this.wallet = new WalletSDK(params);
+    // Pass the resolved appId to WalletSDK
+    this.wallet = new WalletSDK({
+      ...params,
+      factoryParams: { ...params.factoryParams, appId: this.appId }
+    });
   }
 
   private async prepProposalActions<TClient extends SDKClient>(actions: ProposalAction<TClient>[]): Promise<any> {

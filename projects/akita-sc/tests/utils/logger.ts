@@ -20,13 +20,14 @@ const C = {
   cyan: '\x1b[38;2;80;200;220m',
 } as const;
 
-type LogPhase = 'DEPLOY_CORE' | 'DEPLOY_PLUGINS' | 'CONFIGURE_DAO' | 'SETUP_ESCROWS' | 'FINALIZE';
+type LogPhase = 'DEPLOY_CORE' | 'DEPLOY_PLUGINS' | 'CONFIGURE_DAO' | 'SETUP_ESCROWS' | 'SETUP_BONES' | 'FINALIZE';
 
 const PHASE_LABELS: Record<LogPhase, string> = {
   DEPLOY_CORE: 'Deploy Core',
   DEPLOY_PLUGINS: 'Deploy Plugins',
   CONFIGURE_DAO: 'Configure DAO',
   SETUP_ESCROWS: 'Setup Escrows',
+  SETUP_BONES: 'Setup Bones',
   FINALIZE: 'Finalize',
 };
 
@@ -103,17 +104,18 @@ class FixtureLogger {
     log(`    ${C.purple}↳${C.reset} ${C.gray}addr:${C.reset} ${C.purple}${address}${C.reset}`);
   }
 
-  plugin(action: 'deploy' | 'install', name: string, appId?: bigint | number): void {
+  plugin(action: 'deploy' | 'install' | 'remove', name: string, appId?: bigint | number): void {
     if (!this.enabled || this.mode === 'silent') return;
     
     if (this.mode === 'compact') {
-      const icon = action === 'deploy' ? '🔌' : '📋';
+      const icon = action === 'deploy' ? '🔌' : action === 'install' ? '📋' : '🗑️';
       const suffix = appId ? ` ${C.gray}→${C.reset} ${C.pink}${appId}${C.reset}` : '';
       log(`${C.gray}  ${icon}${C.reset} ${C.pink}${name}${C.reset}${suffix}`);
       return;
     }
     
-    log(`${C.gray}[${++this.stepCounter}]${C.reset} 🔌 ${action === 'deploy' ? 'Deploy' : 'Install'} ${C.pink}${name}${C.reset}`);
+    const verbs = { deploy: 'Deploy', install: 'Install', remove: 'Remove' };
+    log(`${C.gray}[${++this.stepCounter}]${C.reset} 🔌 ${verbs[action]} ${C.pink}${name}${C.reset}`);
     if (appId) log(`    ${C.purple}↳${C.reset} ${C.gray}id:${C.reset} ${C.pink}${appId}${C.reset}`);
   }
 
@@ -130,7 +132,7 @@ class FixtureLogger {
     log(`${C.gray}[${++this.stepCounter}]${C.reset} 📋 ${C.purple}${action}${C.reset}${id}`);
   }
 
-  escrow(name: string, action: 'create' | 'lock' | 'unlock' | 'configure'): void {
+  escrow(name: string, action: 'create' | 'lock' | 'unlock' | 'configure' | 'optin'): void {
     if (!this.enabled || this.mode === 'silent') return;
     
     if (this.mode === 'compact') {
@@ -138,7 +140,7 @@ class FixtureLogger {
       return;
     }
     
-    const verbs = { create: 'Create', lock: 'Lock', unlock: 'Unlock', configure: 'Configure' };
+    const verbs = { create: 'Create', lock: 'Lock', unlock: 'Unlock', configure: 'Configure', optin: 'Opt-in' };
     log(`${C.gray}[${++this.stepCounter}]${C.reset} 🔐 ${verbs[action]} escrow ${C.pink}"${name}"${C.reset}`);
   }
 

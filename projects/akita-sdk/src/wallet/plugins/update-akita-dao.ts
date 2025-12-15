@@ -220,7 +220,6 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient>
           await this.client.params.updateAkitaDaoEscrowForApp({
             ...sendParams,
             args: { wallet, rekeyBack, appId, newEscrow },
-            extraFee: microAlgo(1_000),
           })
         )
 

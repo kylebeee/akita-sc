@@ -79,11 +79,11 @@ export class Poll extends AkitaBaseContract {
   optionFour = GlobalState<string>({ key: PollGlobalStateKeyOptionFour })
   optionFive = GlobalState<string>({ key: PollGlobalStateKeyOptionFive })
   /** the number of votes for each option */
-  votesOne = GlobalState<uint64>({ key: PollGlobalStateKeyVotesOne })
-  votesTwo = GlobalState<uint64>({ key: PollGlobalStateKeyVotesTwo })
-  votesThree = GlobalState<uint64>({ key: PollGlobalStateKeyVotesThree })
-  votesFour = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFour })
-  votesFive = GlobalState<uint64>({ key: PollGlobalStateKeyVotesFive })
+  votesOne = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesOne })
+  votesTwo = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesTwo })
+  votesThree = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesThree })
+  votesFour = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFour })
+  votesFive = GlobalState<uint64>({ initialValue: 0, key: PollGlobalStateKeyVotesFive })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -150,7 +150,7 @@ export class Poll extends AkitaBaseContract {
   ): void {
     assert(Global.callerApplicationId !== 0, ERR_BAD_DEPLOYER)
     assert(Global.latestTimestamp < endTime, ERR_INVALID_END_TIME)
-    assert(type.asUint64() < 4, ERR_INVALID_POLL_TYPE)
+    assert(type.asUint64() < MultipleChoiceImpact.asUint64(), ERR_INVALID_POLL_TYPE)
 
     this.akitaDAO.value = Application(akitaDAO)
     this.type.value = type

@@ -1,4 +1,3 @@
-- app registry
 - abstracted account (arc58)
 - abstracted account factory
 - infinity dao
@@ -14,25 +13,28 @@
 - nfd arc58 plugin
 - optin arc58 pluigin
 - pay arc58 plugin
+- pay silo factory
 - pay silo arc58 plugin
 - poll arc58 plugin
-- staking pool arc58 plugin
 - raffle arc58 plugin
-- revenue streamer arc58 plugin
+- revenue manager arc58 plugin
 - rewards arc58 plugin
 - akita social arc58 plugin
 - staking arc58 plugin
+- staking pool arc58 plugin
 - subscriptions arc58 plugin
 - auction (crack auction, option to use bid fees for VRF raffle for losers)
 - auction factory
 - escrow
 - escrow factory
 - gate
+- akita referrer subgate
 - asset subgate
 - merkle address subgate
 - merkle asset subgate
 - nfd subgate
 - nfd root subgate
+- poll subgate
 - social activity subgate
 - social follower count subgate
 - social follower index subgate
@@ -48,14 +50,16 @@
 - meta merkles ( onchain verifiable metadata for asset groups )
 - poll
 - poll factory
-- staking pool
-- staking pool factory
 - prize box
 - prize box factory
 - raffle
 - raffle factory
 - rewards
 - akita social
+- akita social graph
 - akita social impact
+- akita social moderation
 - staking
+- staking pool
+- staking pool factory
 - subscriptions
