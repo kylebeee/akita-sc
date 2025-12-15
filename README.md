@@ -1,6 +1,6 @@
 # Akita Smart Contracts
 
-A comprehensive suite of Algorand smart contracts powering the Akita ecosystem — built with [Puya](https://github.com/algorandfoundation/puya) and [AlgoKit](https://github.com/algorandfoundation/algokit-cli).
+A comprehensive suite of Algorand smart contracts powering the Akita ecosystem — built with [Puya Ts](https://github.com/algorandfoundation/puya-ts) and [AlgoKit](https://github.com/algorandfoundation/algokit-cli).
 
 ## Overview
 
@@ -47,14 +47,14 @@ Flexible staking system with:
 
 Recurring payment and membership system:
 - Subscription tiers and streaks
-- Automated payment processing
+- Service declaration & parameter locking
 - Subscription-gated access control
 
 ### 🎁 Rewards
 
-Token distribution and rewards management:
-- Claimable reward pools
-- Distribution scheduling
+Free public good for token distribution:
+- Group distributions
+- Claimable rewards w/ expirations
 
 ### 🌐 Social
 
@@ -69,21 +69,22 @@ Decentralized social primitives:
 NFT and ASA marketplace:
 - Listing creation and management
 - Buy/sell operations
-- Fee distribution
+- Double-sided marketplace incentivizing site integration
 
 ### 🔨 Auctions
 
 Auction system with factory pattern:
-- English auctions
-- Reserve prices
-- Automatic settlement
+- Bid fees for weighted raffle mechanics
+- Double-sided marketplace incentivizing site integration
+- Multi-dapp participation support
 
 ### 🎟️ Raffles
 
 Verifiable random raffles:
+
+- Tickets in any ASA
 - VRF-based winner selection
-- Multiple prize support
-- Factory deployment
+- Double-sided marketplace incentivizing site integration
 
 ### 📊 Polls
 
@@ -92,11 +93,9 @@ On-chain voting and polling:
 - Time-bounded voting
 - Gate-restricted participation
 
-### 🎁 Prize Boxes
+### 📦 Prize Boxes
 
-Randomized prize distribution:
-- Configurable prize tiers
-- VRF-based randomness
+Bundle assets for sale, auction, or raffle as a single package.
 
 ### 🚪 Gates
 
@@ -123,18 +122,11 @@ Composable access control system with 16 sub-gates:
 
 ### 🔄 HyperSwap
 
-DEX integration for token swaps within abstracted accounts.
+Peer-to-peer swap engine supporting practically limitless unique assets and parties in a simulated atomic transaction group.
 
 ### 🌳 Meta Merkles
 
-On-chain merkle tree management for:
-- Address allowlists
-- Asset allowlists
-- Proof verification
-
-### 💼 Escrow
-
-Secure escrow system with factory deployment for trustless transactions.
+On-chain metadata contract using merkle roots as namespaces for efficient metadata about sets of assets, addresses, apps, and more. Ingestible by other contracts for composable data verification.
 
 ---
 
@@ -151,7 +143,7 @@ Wallet plugins extend abstracted account functionality:
 | `daoPlugin` | DAO interactions |
 | `dualStakePlugin` | Dual token staking |
 | `gatePlugin` | Gate verification |
-| `hyperSwapPlugin` | DEX swaps |
+| `hyperSwapPlugin` | P2P multi-party swaps |
 | `marketplacePlugin` | Marketplace operations |
 | `nfdPlugin` | NFD operations |
 | `paySiloPlugin` | Pay silo interactions |
@@ -275,79 +267,34 @@ Wallet plugins extend abstracted account functionality:
 
 ---
 
-## Development
-
-### Requirements
-
-- [AlgoKit](https://github.com/algorandfoundation/algokit-cli) (+ Algorand localnet)
-- Node.js & npm
-- [Puya](https://github.com/algorandfoundation/puya) compiler v5.2+
-
-```bash
-# Install Puya compiler
-pipx install puyapy
-```
-
-### Project Structure
-
-```
-akita-sc/
-├── projects/
-│   ├── akita-sc/           # Smart contracts
-│   │   ├── smart_contracts/
-│   │   │   ├── arc58/      # Abstracted accounts, DAO, plugins
-│   │   │   ├── auction/
-│   │   │   ├── escrow/
-│   │   │   ├── gates/
-│   │   │   ├── hyper-swap/
-│   │   │   ├── marketplace/
-│   │   │   ├── meta-merkles/
-│   │   │   ├── poll/
-│   │   │   ├── prize-box/
-│   │   │   ├── raffle/
-│   │   │   ├── rewards/
-│   │   │   ├── social/
-│   │   │   ├── staking/
-│   │   │   ├── staking-pool/
-│   │   │   └── subscriptions/
-│   │   ├── tests/
-│   │   └── scripts/
-│   └── akita-sdk/          # TypeScript SDK
-│       └── src/
-```
-
-### Getting Started
-
-```bash
-# Start localnet
-algokit localnet start
-
-# Install dependencies
-cd projects/akita-sc
-npm install
-
-# Compile contracts
-npm run compile
-
-# Run tests
-npm test
-```
-
----
-
 ## SDK
 
-The `akita-sdk` package provides TypeScript bindings for all contracts:
+The `akita-sdk` package provides modular TypeScript bindings — import only what you need:
+
+| Package | Import |
+|---------|--------|
+| Auction | `akita-sdk/auction` |
+| DAO | `akita-sdk/dao` |
+| Escrow | `akita-sdk/escrow` |
+| Gates | `akita-sdk/gates` |
+| HyperSwap | `akita-sdk/hyper-swap` |
+| Marketplace | `akita-sdk/marketplace` |
+| Meta Merkles | `akita-sdk/meta-merkles` |
+| Poll | `akita-sdk/poll` |
+| Prize Box | `akita-sdk/prize-box` |
+| Raffle | `akita-sdk/raffle` |
+| Rewards | `akita-sdk/rewards` |
+| Social | `akita-sdk/social` |
+| Staking | `akita-sdk/staking` |
+| Staking Pool | `akita-sdk/staking-pool` |
+| Subscriptions | `akita-sdk/subscriptions` |
+| Wallet | `akita-sdk/wallet` |
 
 ```typescript
-import { AkitaSDK } from '@akita/sdk';
-
-const sdk = new AkitaSDK({ network: 'testnet' });
-
-// Interact with contracts
-const wallet = await sdk.wallet.create();
-await sdk.staking.stake(amount);
-await sdk.subscriptions.subscribe(tier);
+// Import specific modules
+import { WalletClient } from 'akita-sdk/wallet';
+import { StakingClient } from 'akita-sdk/staking';
+import { SubscriptionsClient } from 'akita-sdk/subscriptions';
 ```
 
 See [`projects/akita-sdk`](./projects/akita-sdk) for full documentation.
