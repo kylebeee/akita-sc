@@ -146,16 +146,14 @@ Examples:
 
 // Create AlgorandClient for a specific network
 function createAlgorandClient(network: Network): AlgorandClient {
-  // For non-localnet, use fromEnvironment which reads from environment variables
-  // Set ALGORAND_NETWORK environment variable to 'testnet' or 'mainnet'
-  if (network === 'localnet') {
-    // For localnet, we'll use the fixture's client
-    // This function won't be called for localnet, but included for completeness
-    return AlgorandClient.fromEnvironment()
-  } else {
-    // For testnet/mainnet, set ALGORAND_NETWORK env var before running
-    // or use environment-specific config
-    return AlgorandClient.fromEnvironment()
+  switch (network) {
+    case 'testnet':
+      return AlgorandClient.testNet()
+    case 'mainnet':
+      return AlgorandClient.mainNet()
+    case 'localnet':
+    default:
+      return AlgorandClient.fromEnvironment()
   }
 }
 
@@ -329,7 +327,7 @@ function generateNetworkAppIds(
 ): string {
   const timestamp = new Date().toISOString()
   const networkUpper = network.toUpperCase()
-  
+
   return `/**
  * ${network.charAt(0).toUpperCase() + network.slice(1)} app IDs
  * 
@@ -424,24 +422,24 @@ async function updateNetworksFile(
 ): Promise<void> {
   const fs = await import('fs/promises')
   const path = await import('path')
-  
+
   // Path to the SDK's networks.ts file (relative to this script)
   const networksFilePath = path.join(__dirname, '../../akita-sdk/src/networks.ts')
-  
+
   try {
     // Read the current file
     let content = await fs.readFile(networksFilePath, 'utf-8')
-    
+
     // Generate the new app IDs block
     const newAppIds = generateNetworkAppIds(universe, network, apps)
-    
+
     // Create regex to match the existing network's app IDs block
     const networkUpper = network.toUpperCase()
     const regex = new RegExp(
       `\\/\\*\\*\\s*\\n\\s*\\*\\s*${network.charAt(0).toUpperCase() + network.slice(1)}\\s+app\\s+IDs[\\s\\S]*?export\\s+const\\s+${networkUpper}_APP_IDS:\\s*NetworkAppIds\\s*=\\s*\\{[\\s\\S]*?\\};`,
       'g'
     )
-    
+
     if (regex.test(content)) {
       // Replace existing block
       content = content.replace(regex, newAppIds)
@@ -450,7 +448,7 @@ async function updateNetworksFile(
       console.warn(`   You may need to add it manually.`)
       return
     }
-    
+
     // Write the updated file
     await fs.writeFile(networksFilePath, content, 'utf-8')
     console.log(`📄 SDK networks.ts updated with ${network} app IDs: ${networksFilePath}`)
@@ -812,8 +810,8 @@ async function deploy() {
       initialBalance = BigInt(accountInfo.amount)
       // Estimated actual costs: ~287-317 ALGO (see DEPLOYMENT_COSTS.md for breakdown)
       // We recommend 500-600 ALGO minimum for safety buffer
-      const minBalance = 500_000_000_000n // 500 ALGO recommended minimum
-      const absoluteMinimum = 350_000_000_000n // 350 ALGO absolute minimum
+      const minBalance = 500_000_000n // 500 ALGO recommended minimum
+      const absoluteMinimum = 350_000_000n // 350 ALGO absolute minimum
 
       if (initialBalance < absoluteMinimum) {
         console.log(`❌ Error: Account balance is ${initialBalance / 1_000_000n} ALGO.`)
@@ -875,6 +873,7 @@ async function deploy() {
       sender,
       signer,
       apps: options.apps,
+      network: options.network,
     })
 
     // Calculate actual costs (for testnet/mainnet)
@@ -889,10 +888,10 @@ async function deploy() {
       console.log(`   Actual cost: ${actualCost / 1_000_000n} ALGO`)
       console.log(`   Estimated cost: ~287-317 ALGO`)
       if (actualCost > 0n) {
-        const diff = actualCost - 300_000_000_000n // Compare to ~300 ALGO midpoint
-        if (diff > 50_000_000_000n) {
+        const diff = actualCost - 300_000_000n // Compare to ~300 ALGO midpoint
+        if (diff > 50_000_000n) {
           console.log(`   ⚠️  Cost is ${diff / 1_000_000n} ALGO higher than estimated`)
-        } else if (diff < -50_000_000_000n) {
+        } else if (diff < -50_000_000n) {
           console.log(`   ✅ Cost is ${(-diff) / 1_000_000n} ALGO lower than estimated`)
         } else {
           console.log(`   ✅ Cost is within estimated range`)

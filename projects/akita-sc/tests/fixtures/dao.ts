@@ -84,6 +84,7 @@ import { deploySubscriptions } from './subscriptions';
 type DeployParams = FixtureAndAccount & { apps?: Partial<AkitaDaoApps> }
 type BuildUniverseParams = DeployParams & {
   aktaAssetId?: bigint
+  network?: 'localnet' | 'testnet' | 'mainnet'
 }
 export const AkitaDAOGlobalStateKeysRevenueSplits = 'revenue_splits'
 
@@ -332,7 +333,8 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     throw new Error('Sender is required to deploy and setup Akita DAO');
   }
 
-  const { fixture: localnet, aktaAssetId } = params;
+  const { fixture, aktaAssetId, network = 'localnet' } = params;
+  const isLocalnet = network === 'localnet';
 
   logger.startBuild();
 
@@ -342,20 +344,21 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.phase('DEPLOY_CORE');
 
   const escrowFactory = await deployEscrowFactory({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer
   });
   logger.deploy('Escrow Factory', escrowFactory.appId, escrowFactory.appAddress.toString());
 
-  const dispenser = await localnet.algorand.account.dispenserFromEnvironment();
+  // Get dispenser only on fixture (for auto-funding during tests)
+  const dispenser = isLocalnet ? await fixture.algorand.account.dispenserFromEnvironment() : null;
 
   // Deploy DAO first (with rewards: 0n - will be updated later)
   const dao = await deployAkitaDAO({ ...params, apps: { ...params.apps, escrow: escrowFactory.appId } });
 
   // Now deploy Rewards contract with the actual DAO app ID
   const rewardsClient = await deployRewards({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -365,16 +368,25 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   });
   logger.deploy('Rewards', rewardsClient.appId, rewardsClient.appAddress.toString());
 
-  // Fund the rewards contract
-  await localnet.algorand.account.ensureFunded(rewardsClient.appAddress, dispenser, (10).algos());
-
-  // Fund sender with enough ALGO to cover all proposals and executions during setup
-  // Each proposal costs ~1-20 ALGO and we make 15+ proposals during buildAkitaUniverse
-  await localnet.algorand.account.ensureFunded(params.sender, dispenser, (500).algos());
-  await localnet.algorand.account.ensureFunded(dao.readerAccount, dispenser, (1).algos());
+  // Fund the rewards contract (on fixture use dispenser, on testnet/mainnet use direct payment)
+  if (isLocalnet && dispenser) {
+    await fixture.algorand.account.ensureFunded(rewardsClient.appAddress, dispenser, (10).algos());
+    // Fund sender with enough ALGO to cover all proposals and executions during setup
+    // Each proposal costs ~1-20 ALGO and we make 15+ proposals during buildAkitaUniverse
+    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (500).algos());
+    await fixture.algorand.account.ensureFunded(dao.readerAccount, dispenser, (1).algos());
+  } else {
+    // On testnet/mainnet, fund contracts directly from the sender account
+    await fixture.algorand.send.payment({
+      sender: params.sender,
+      signer: params.signer,
+      receiver: rewardsClient.appAddress,
+      amount: (10).algos(),
+    });
+  }
 
   const abstractAccountFactory = await deployAbstractedAccountFactory({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -386,7 +398,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.deploy('Wallet Factory', abstractAccountFactory.appId, abstractAccountFactory.client.appAddress.toString());
 
   const subscriptionsSdk = await deploySubscriptions({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -398,7 +410,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.deploy('Subscriptions', subscriptionsSdk.appId, subscriptionsSdk.client.appAddress.toString());
 
   const stakingPoolFactorySdk = await deployStakingPoolFactory({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -409,7 +421,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.deploy('Staking Pool Factory', stakingPoolFactorySdk.appId, stakingPoolFactorySdk.client.appAddress.toString());
 
   const stakingClient = await deployStaking({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -424,7 +436,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   await stakingClient.send.init({ args: {} });
 
   const stakingSdk = new StakingSDK({
-    algorand: localnet.algorand,
+    algorand: fixture.algorand,
     factoryParams: {
       appId: stakingClient.appId,
       defaultSender: params.sender,
@@ -435,7 +447,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Social System (Social, Graph, Impact contracts) with escrow = 0n initially
   const socialSystem = await deploySocialSystem({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -453,7 +465,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Auction Factory (with escrow = 0n initially, will be updated later)
   const auctionFactoryResult = await deployAuctionFactory({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -467,7 +479,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Marketplace (with escrow = 0n initially, will be updated later)
   const marketplaceResult = await deployMarketplace({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -481,7 +493,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Raffle Factory (with escrow = 0n initially, will be updated later)
   const raffleFactoryResult = await deployRaffleFactory({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -495,7 +507,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Poll Factory (with escrow = 0n initially, will be updated later)
   const pollFactoryResult = await deployPollFactory({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -509,7 +521,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Prize Box Factory
   const prizeBoxFactoryResult = await deployPrizeBoxFactory({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -521,7 +533,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy MetaMerkles
   const metaMerklesResult = await deployMetaMerkles({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
   });
@@ -529,7 +541,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Gate
   const gateResult = await deployGate({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -541,7 +553,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy HyperSwap (standalone)
   const hyperSwapResult = await deployHyperSwap({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -553,7 +565,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy all subgates
   const subgatesResult = await deployAllSubgates({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -693,7 +705,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy Revenue Manager Plugin
   const revenueManagerPluginSdk = await deployRevenueManagerPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -703,7 +715,16 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   });
   logger.plugin('deploy', 'RevenueManagerPlugin', revenueManagerPluginSdk.appId);
 
-  await localnet.algorand.account.ensureFunded(revenueManagerPluginSdk.client.appAddress, dispenser, (1).algos());
+  if (isLocalnet && dispenser) {
+    await fixture.algorand.account.ensureFunded(revenueManagerPluginSdk.client.appAddress, dispenser, (1).algos());
+  } else {
+    await fixture.algorand.send.payment({
+      sender: params.sender,
+      signer: params.signer,
+      receiver: revenueManagerPluginSdk.client.appAddress,
+      amount: (1).algos(),
+    });
+  }
 
   await proposeAndExecute(dao, [{
     type: ProposalActionEnum.UpdateFields,
@@ -732,7 +753,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy UpdateAkitaDAO Plugin
   const daoUpdatePluginSdk = await deployUpdateAkitaDaoPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -833,13 +854,15 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   // ═══════════════════════════════════════════════════════════════════════════
   logger.phase('SETUP_ESCROWS');
 
-  // Ensure sender has enough funds for the remaining proposals
-  await localnet.algorand.account.ensureFunded(params.sender, dispenser, (200).algos());
+  // Ensure sender has enough funds for the remaining proposals (fixture only)
+  if (isLocalnet && dispenser) {
+    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (200).algos());
+  }
 
   const recipientEscrows = [krbyEscrow, modEscrow, govEscrow]
 
   const optInPluginSDK = await deployOptInPlugin({
-    fixture: localnet,
+    fixture: fixture,
     sender: params.sender,
     signer: params.signer,
   })
@@ -856,21 +879,21 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Deploy additional wallet plugins (not installed on DAO, but available for wallet use)
   const asaMintPluginSDK = await deployAsaMintPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
   });
   logger.plugin('deploy', 'AsaMintPlugin', asaMintPluginSDK.appId);
 
   const payPluginSDK = await deployPayPlugin({
-    fixture: localnet,
+    fixture: fixture,
     sender: params.sender,
     signer: params.signer,
   });
   logger.plugin('deploy', 'PayPlugin', payPluginSDK.appId);
 
   const hyperSwapPluginSDK = await deployHyperSwapPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -881,7 +904,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'HyperSwapPlugin', hyperSwapPluginSDK.appId);
 
   const subscriptionsPluginSDK = await deploySubscriptionsPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -894,7 +917,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   // Deploy remaining wallet plugins
   // Note: Some plugins require factory/DAO IDs, so they're deployed after those contracts exist
   const auctionPluginSDK = await deployAuctionPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -906,7 +929,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'AuctionPlugin', auctionPluginSDK.appId);
 
   const daoPluginSDK = await deployDAOPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -918,21 +941,21 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   // DualStakePlugin and GatePlugin need registry/gateAppID - these can be 0n for now (will be set when used)
   // NFDPlugin needs registry - can be 0n for now
   const dualStakePluginSDK = await deployDualStakePlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
   });
   logger.plugin('deploy', 'DualStakePlugin', dualStakePluginSDK.appId);
 
   const gatePluginSDK = await deployGatePlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
   });
   logger.plugin('deploy', 'GatePlugin', gatePluginSDK.appId);
 
   const marketplacePluginSDK = await deployMarketplacePlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -944,7 +967,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'MarketplacePlugin', marketplacePluginSDK.appId);
 
   const nfdPluginSDK = await deployNFDPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
   });
@@ -952,7 +975,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // PaySiloPlugin needs a recipient - using sender as default
   const paySiloPluginSDK = await deployPaySiloPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -962,14 +985,14 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'PaySiloPlugin', paySiloPluginSDK.appId);
 
   const paySiloFactoryPluginSDK = await deployPaySiloFactoryPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
   });
   logger.plugin('deploy', 'PaySiloFactoryPlugin', paySiloFactoryPluginSDK.appId);
 
   const pollPluginSDK = await deployPollPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -981,7 +1004,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'PollPlugin', pollPluginSDK.appId);
 
   const rafflePluginSDK = await deployRafflePlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -992,7 +1015,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'RafflePlugin', rafflePluginSDK.appId);
 
   const rewardsPluginSDK = await deployRewardsPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -1004,7 +1027,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // SocialPlugin needs escrow - using DAO wallet address as escrow
   const socialPluginSDK = await deploySocialPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -1016,7 +1039,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'SocialPlugin', socialPluginSDK.appId);
 
   const stakingPluginSDK = await deployStakingPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -1027,7 +1050,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   logger.plugin('deploy', 'StakingPlugin', stakingPluginSDK.appId);
 
   const stakingPoolPluginSDK = await deployStakingPoolPlugin({
-    fixture: localnet,
+    fixture,
     sender: params.sender,
     signer: params.signer,
     args: {
@@ -1080,8 +1103,10 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     ]
   }])
 
-  // Ensure sender has enough funds for the revenue escrow proposals
-  await localnet.algorand.account.ensureFunded(params.sender, dispenser, (200).algos());
+  // Ensure sender has enough funds for the revenue escrow proposals (fixture only)
+  if (isLocalnet && dispenser) {
+    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (200).algos());
+  }
 
   const escrows = [
     {
@@ -1135,8 +1160,10 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   ]
 
   for (const { escrow, source, appToUpdate, alreadyCreated } of escrows) {
-    // Ensure sender has enough funds for this escrow's proposals
-    await localnet.algorand.account.ensureFunded(params.sender, dispenser, (50).algos());
+    // Ensure sender has enough funds for this escrow's proposals (fixture only)
+    if (isLocalnet && dispenser) {
+      await fixture.algorand.account.ensureFunded(params.sender, dispenser, (50).algos());
+    }
 
     // Only create escrow if it hasn't been created already
     if (!alreadyCreated) {
@@ -1195,8 +1222,10 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
     // Update the app's akitaDaoEscrow with the new escrow ID (skip wallet factory as it's done separately above)
     if (appToUpdate && escrow !== walletFactoryRevenueEscrow) {
-      // Ensure sender has enough funds for the update proposal
-      await localnet.algorand.account.ensureFunded(params.sender, dispenser, (50).algos());
+      // Ensure sender has enough funds for the update proposal (fixture only)
+      if (isLocalnet && dispenser) {
+        await fixture.algorand.account.ensureFunded(params.sender, dispenser, (50).algos());
+      }
 
       const escrowInfo = await dao.wallet.getEscrow(escrow);
 
@@ -1237,8 +1266,10 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   // ═══════════════════════════════════════════════════════════════════════════
   logger.phase('SETUP_BONES');
 
-  // Ensure sender has enough funds for the bones setup
-  await localnet.algorand.account.ensureFunded(params.sender, dispenser, (300).algos());
+  // Ensure sender has enough funds for the bones setup (fixture only)
+  if (isLocalnet && dispenser) {
+    await fixture.algorand.account.ensureFunded(params.sender, dispenser, (300).algos());
+  }
 
   // Add asa-mint plugin to DAO wallet (global, no escrow)
   await proposeAndExecute(dao, [
@@ -1255,7 +1286,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Mint the Bones token (total supply: 1,000,000,000 BONES with 6 decimals)
   // Get wallet assets before minting to know what's new
-  const walletAssetsBefore = (await localnet.algorand.account.getInformation(dao.wallet.client.appAddress)).assets ?? [];
+  const walletAssetsBefore = (await fixture.algorand.account.getInformation(dao.wallet.client.appAddress)).assets ?? [];
   const assetIdsBefore = new Set(walletAssetsBefore.map(a => a.assetId));
 
   // Mint the Bones token using the wallet's usePlugin directly (no execution key needed)
@@ -1321,8 +1352,10 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
   // Create each bones escrow, add optin plugin, opt into Bones, remove optin plugin
   for (const escrow of bonesEscrowNames) {
-    // Ensure sender has enough funds for this escrow's proposals
-    await localnet.algorand.account.ensureFunded(params.sender, dispenser, (50).algos());
+    // Ensure sender has enough funds for this escrow's proposals (fixture only)
+    if (isLocalnet && dispenser) {
+      await fixture.algorand.account.ensureFunded(params.sender, dispenser, (50).algos());
+    }
 
     // Create the escrow
     await proposeAndExecute(dao, [{ type: ProposalActionEnum.NewEscrow, escrow }]);
@@ -1405,7 +1438,7 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
 
     // Fund and initialize the social contract to opt it into AKTA
     // The social contract's init() method opts it into the AKTA asset
-    await localnet.algorand.send.payment({
+    await fixture.algorand.send.payment({
       sender: params.sender,
       signer: params.signer,
       receiver: socialSystem.socialClient.appAddress,
