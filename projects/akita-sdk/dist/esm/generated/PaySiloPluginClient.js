@@ -1,0 +1,381 @@
+import { AppClient as _AppClient, } from '@algorandfoundation/algokit-utils/types/app-client';
+import { AppFactory as _AppFactory } from '@algorandfoundation/algokit-utils/types/app-factory';
+export const APP_SPEC = { "name": "PaySiloPlugin", "structs": {}, "methods": [{ "name": "create", "args": [{ "type": "address", "name": "recipient" }], "returns": { "type": "void" }, "actions": { "create": ["NoOp"], "call": [] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "pay", "args": [{ "type": "uint64", "name": "wallet" }, { "type": "bool", "name": "rekeyBack" }, { "type": "(uint64,uint64)[]", "name": "payments" }], "returns": { "type": "void" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }], "arcs": [22, 28], "networks": {}, "state": { "schema": { "global": { "ints": 0, "bytes": 1 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": { "recipient": { "keyType": "AVMString", "valueType": "address", "key": "cmVjaXBpZW50" } }, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": {} } }, "bareActions": { "create": [], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [22], "errorMessage": "OnCompletion must be NoOp" }, { "pc": [71], "errorMessage": "application exists" }, { "pc": [195, 254], "errorMessage": "check GlobalState exists" }, { "pc": [172], "errorMessage": "index access is out of bounds" }, { "pc": [133], "errorMessage": "invalid number of bytes for (len+(uint64,uint64)[])" }, { "pc": [109], "errorMessage": "invalid number of bytes for bool8" }, { "pc": [99], "errorMessage": "invalid number of bytes for uint64" }, { "pc": [81], "errorMessage": "invalid number of bytes for uint8[32]" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBpbnRjYmxvY2sgMCAxIDE2IDgKICAgIGJ5dGVjYmxvY2sgInJlY2lwaWVudCIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6NwogICAgLy8gZXhwb3J0IGNsYXNzIFBheVNpbG9QbHVnaW4gZXh0ZW5kcyBDb250cmFjdCB7CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIG11c3QgYmUgTm9PcAogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGJ6IG1haW5fY3JlYXRlX05vT3BANQogICAgcHVzaGJ5dGVzIDB4ZTA0NzUyNjIgLy8gbWV0aG9kICJwYXkodWludDY0LGJvb2wsKHVpbnQ2NCx1aW50NjQpW10pdm9pZCIKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDAKICAgIG1hdGNoIHBheQogICAgZXJyCgptYWluX2NyZWF0ZV9Ob09wQDU6CiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjcKICAgIC8vIGV4cG9ydCBjbGFzcyBQYXlTaWxvUGx1Z2luIGV4dGVuZHMgQ29udHJhY3QgewogICAgcHVzaGJ5dGVzIDB4Y2M2OTRlYWEgLy8gbWV0aG9kICJjcmVhdGUoYWRkcmVzcyl2b2lkIgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggY3JlYXRlCiAgICBlcnIKCgovLyBzbWFydF9jb250cmFjdHMvdXRpbHMvZnVuY3Rpb25zLnRzOjpyZWtleUFkZHJlc3MocmVrZXlCYWNrOiB1aW50NjQsIHdhbGxldDogdWludDY0KSAtPiBieXRlczoKcmVrZXlBZGRyZXNzOgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Z1bmN0aW9ucy50czozMjEKICAgIC8vIGV4cG9ydCBmdW5jdGlvbiByZWtleUFkZHJlc3MocmVrZXlCYWNrOiBib29sZWFuLCB3YWxsZXQ6IEFwcGxpY2F0aW9uKTogQWNjb3VudCB7CiAgICBwcm90byAyIDEKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9mdW5jdGlvbnMudHM6MzIyCiAgICAvLyBpZiAoIXJla2V5QmFjaykgewogICAgZnJhbWVfZGlnIC0yCiAgICBibnogcmVrZXlBZGRyZXNzX2FmdGVyX2lmX2Vsc2VAMgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Z1bmN0aW9ucy50czozMjMKICAgIC8vIHJldHVybiBHbG9iYWwuemVyb0FkZHJlc3MKICAgIGdsb2JhbCBaZXJvQWRkcmVzcwogICAgcmV0c3ViCgpyZWtleUFkZHJlc3NfYWZ0ZXJfaWZfZWxzZUAyOgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Z1bmN0aW9ucy50czozMjYKICAgIC8vIHJldHVybiB3YWxsZXQuYWRkcmVzcwogICAgZnJhbWVfZGlnIC0xCiAgICBhcHBfcGFyYW1zX2dldCBBcHBBZGRyZXNzCiAgICBhc3NlcnQgLy8gYXBwbGljYXRpb24gZXhpc3RzCiAgICByZXRzdWIKCgovLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjpQYXlTaWxvUGx1Z2luLmNyZWF0ZVtyb3V0aW5nXSgpIC0+IHZvaWQ6CmNyZWF0ZToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MTEKICAgIC8vIEBhYmltZXRob2QoeyBvbkNyZWF0ZTogJ3JlcXVpcmUnIH0pCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBkdXAKICAgIGxlbgogICAgcHVzaGludCAzMiAvLyAzMgogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgdWludDhbMzJdCiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjkKICAgIC8vIHJlY2lwaWVudCA9IEdsb2JhbFN0YXRlPEFjY291bnQ+KHsga2V5OiBQYXlTaWxvUGx1Z2luR2xvYmFsU3RhdGVLZXlSZWNpcGllbnQgfSkKICAgIGJ5dGVjXzAgLy8gInJlY2lwaWVudCIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MTMKICAgIC8vIHRoaXMucmVjaXBpZW50LnZhbHVlID0gcmVjaXBpZW50CiAgICBzd2FwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoxMQogICAgLy8gQGFiaW1ldGhvZCh7IG9uQ3JlYXRlOiAncmVxdWlyZScgfSkKICAgIGludGNfMSAvLyAxCiAgICByZXR1cm4KCgovLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjpQYXlTaWxvUGx1Z2luLnBheVtyb3V0aW5nXSgpIC0+IHZvaWQ6CnBheToKICAgIGludGNfMCAvLyAwCiAgICBkdXAKICAgIHB1c2hieXRlcyAiIgogICAgZHVwCiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjE2CiAgICAvLyBwYXkod2FsbGV0OiBBcHBsaWNhdGlvbiwgcmVrZXlCYWNrOiBib29sZWFuLCBwYXltZW50czogUGF5U2lsb1BhcmFtc1tdKTogdm9pZCB7CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBkdXAKICAgIGxlbgogICAgaW50Y18zIC8vIDgKICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIHVpbnQ2NAogICAgYnRvaQogICAgZHVwCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAyCiAgICBkdXAKICAgIGxlbgogICAgaW50Y18xIC8vIDEKICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIGJvb2w4CiAgICBpbnRjXzAgLy8gMAogICAgZ2V0Yml0CiAgICBzd2FwCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAzCiAgICBkdXAKICAgIGNvdmVyIDIKICAgIGR1cAogICAgaW50Y18wIC8vIDAKICAgIGV4dHJhY3RfdWludDE2CiAgICBkdXAKICAgIGNvdmVyIDMKICAgIGludGNfMiAvLyAxNgogICAgKgogICAgcHVzaGludCAyIC8vIDIKICAgICsKICAgIHN3YXAKICAgIGxlbgogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbisodWludDY0LHVpbnQ2NClbXSkKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9mdW5jdGlvbnMudHM6MjY4CiAgICAvLyBCeXRlcyhBYnN0cmFjdEFjY291bnRHbG9iYWxTdGF0ZUtleXNTcGVuZGluZ0FkZHJlc3MpCiAgICBwdXNoYnl0ZXMgInNwZW5kaW5nX2FkZHJlc3MiCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvZnVuY3Rpb25zLnRzOjI2Ni0yNjkKICAgIC8vIGNvbnN0IFtzcGVuZGluZ0FkZHJlc3NCeXRlc10gPSBvcC5BcHBHbG9iYWwuZ2V0RXhCeXRlcygKICAgIC8vICAgd2FsbGV0LAogICAgLy8gICBCeXRlcyhBYnN0cmFjdEFjY291bnRHbG9iYWxTdGF0ZUtleXNTcGVuZGluZ0FkZHJlc3MpCiAgICAvLyApCiAgICBhcHBfZ2xvYmFsX2dldF9leAogICAgcG9wCiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjE5CiAgICAvLyBmb3IgKGxldCBpOiB1aW50NjQgPSAwOyBpIDwgcGF5bWVudHMubGVuZ3RoOyBpKyspIHsKICAgIGludGNfMCAvLyAwCgpwYXlfd2hpbGVfdG9wQDI6CiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjE5CiAgICAvLyBmb3IgKGxldCBpOiB1aW50NjQgPSAwOyBpIDwgcGF5bWVudHMubGVuZ3RoOyBpKyspIHsKICAgIGR1cAogICAgZGlnIDMKICAgIDwKICAgIGJ6IHBheV9hZnRlcl93aGlsZUAxNQogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoyMAogICAgLy8gY29uc3QgeyBhc3NldCwgYW1vdW50IH0gPSBwYXltZW50c1tpXTsKICAgIGRpZyAzCiAgICBleHRyYWN0IDIgMAogICAgZGlnIDEKICAgIGludGNfMiAvLyAxNgogICAgKgogICAgaW50Y18yIC8vIDE2CiAgICBleHRyYWN0MyAvLyBvbiBlcnJvcjogaW5kZXggYWNjZXNzIGlzIG91dCBvZiBib3VuZHMKICAgIGR1cAogICAgaW50Y18wIC8vIDAKICAgIGV4dHJhY3RfdWludDY0CiAgICBkdXAKICAgIGNvdmVyIDIKICAgIGJ1cnkgOQogICAgaW50Y18zIC8vIDgKICAgIGV4dHJhY3RfdWludDY0CiAgICBidXJ5IDkKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MjIKICAgIC8vIGlmIChhc3NldCA9PT0gMCkgewogICAgYm56IHBheV9lbHNlX2JvZHlAOQogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoyMy0zMAogICAgLy8gaXR4bgogICAgLy8gICAucGF5bWVudCh7CiAgICAvLyAgICAgc2VuZGVyLAogICAgLy8gICAgIHJlY2VpdmVyOiB0aGlzLnJlY2lwaWVudC52YWx1ZSwKICAgIC8vICAgICBhbW91bnQsCiAgICAvLyAgICAgcmVrZXlUbzogaSA8IChwYXltZW50cy5sZW5ndGggLSAxKSA/IEdsb2JhbC56ZXJvQWRkcmVzcyA6IHJla2V5QWRkcmVzcyhyZWtleUJhY2ssIHdhbGxldCksCiAgICAvLyAgIH0pCiAgICAvLyAgIC5zdWJtaXQoKQogICAgaXR4bl9iZWdpbgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoyNgogICAgLy8gcmVjZWl2ZXI6IHRoaXMucmVjaXBpZW50LnZhbHVlLAogICAgaW50Y18wIC8vIDAKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6OQogICAgLy8gcmVjaXBpZW50ID0gR2xvYmFsU3RhdGU8QWNjb3VudD4oeyBrZXk6IFBheVNpbG9QbHVnaW5HbG9iYWxTdGF0ZUtleVJlY2lwaWVudCB9KQogICAgYnl0ZWNfMCAvLyAicmVjaXBpZW50IgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoyNgogICAgLy8gcmVjZWl2ZXI6IHRoaXMucmVjaXBpZW50LnZhbHVlLAogICAgYXBwX2dsb2JhbF9nZXRfZXgKICAgIHN3YXAKICAgIGJ1cnkgMTEKICAgIGFzc2VydCAvLyBjaGVjayBHbG9iYWxTdGF0ZSBleGlzdHMKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MjgKICAgIC8vIHJla2V5VG86IGkgPCAocGF5bWVudHMubGVuZ3RoIC0gMSkgPyBHbG9iYWwuemVyb0FkZHJlc3MgOiByZWtleUFkZHJlc3MocmVrZXlCYWNrLCB3YWxsZXQpLAogICAgZGlnIDIKICAgIGludGNfMSAvLyAxCiAgICAtCiAgICBkaWcgMQogICAgPgogICAgYnogcGF5X3Rlcm5hcnlfZmFsc2VANgogICAgZ2xvYmFsIFplcm9BZGRyZXNzCgpwYXlfdGVybmFyeV9tZXJnZUA3OgogICAgaXR4bl9maWVsZCBSZWtleVRvCiAgICBkaWcgNwogICAgaXR4bl9maWVsZCBBbW91bnQKICAgIGRpZyA5CiAgICBpdHhuX2ZpZWxkIFJlY2VpdmVyCiAgICBkaWcgMQogICAgaXR4bl9maWVsZCBTZW5kZXIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MjMtMjkKICAgIC8vIGl0eG4KICAgIC8vICAgLnBheW1lbnQoewogICAgLy8gICAgIHNlbmRlciwKICAgIC8vICAgICByZWNlaXZlcjogdGhpcy5yZWNpcGllbnQudmFsdWUsCiAgICAvLyAgICAgYW1vdW50LAogICAgLy8gICAgIHJla2V5VG86IGkgPCAocGF5bWVudHMubGVuZ3RoIC0gMSkgPyBHbG9iYWwuemVyb0FkZHJlc3MgOiByZWtleUFkZHJlc3MocmVrZXlCYWNrLCB3YWxsZXQpLAogICAgLy8gICB9KQogICAgaW50Y18xIC8vIDEKICAgIGl0eG5fZmllbGQgVHlwZUVudW0KICAgIGludGNfMCAvLyAwCiAgICBpdHhuX2ZpZWxkIEZlZQogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoyMy0zMAogICAgLy8gaXR4bgogICAgLy8gICAucGF5bWVudCh7CiAgICAvLyAgICAgc2VuZGVyLAogICAgLy8gICAgIHJlY2VpdmVyOiB0aGlzLnJlY2lwaWVudC52YWx1ZSwKICAgIC8vICAgICBhbW91bnQsCiAgICAvLyAgICAgcmVrZXlUbzogaSA8IChwYXltZW50cy5sZW5ndGggLSAxKSA/IEdsb2JhbC56ZXJvQWRkcmVzcyA6IHJla2V5QWRkcmVzcyhyZWtleUJhY2ssIHdhbGxldCksCiAgICAvLyAgIH0pCiAgICAvLyAgIC5zdWJtaXQoKQogICAgaXR4bl9zdWJtaXQKCnBheV9hZnRlcl9pZl9lbHNlQDE0OgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoxOQogICAgLy8gZm9yIChsZXQgaTogdWludDY0ID0gMDsgaSA8IHBheW1lbnRzLmxlbmd0aDsgaSsrKSB7CiAgICBkdXAKICAgIGludGNfMSAvLyAxCiAgICArCiAgICBidXJ5IDEKICAgIGIgcGF5X3doaWxlX3RvcEAyCgpwYXlfdGVybmFyeV9mYWxzZUA2OgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoyOAogICAgLy8gcmVrZXlUbzogaSA8IChwYXltZW50cy5sZW5ndGggLSAxKSA/IEdsb2JhbC56ZXJvQWRkcmVzcyA6IHJla2V5QWRkcmVzcyhyZWtleUJhY2ssIHdhbGxldCksCiAgICBkaWcgNAogICAgZGlnIDYKICAgIGNhbGxzdWIgcmVrZXlBZGRyZXNzCiAgICBiIHBheV90ZXJuYXJ5X21lcmdlQDcKCnBheV9lbHNlX2JvZHlAOToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MzItNDAKICAgIC8vIGl0eG4KICAgIC8vICAgLmFzc2V0VHJhbnNmZXIoewogICAgLy8gICAgIHNlbmRlciwKICAgIC8vICAgICBhc3NldFJlY2VpdmVyOiB0aGlzLnJlY2lwaWVudC52YWx1ZSwKICAgIC8vICAgICBhc3NldEFtb3VudDogYW1vdW50LAogICAgLy8gICAgIHhmZXJBc3NldDogYXNzZXQsCiAgICAvLyAgICAgcmVrZXlUbzogaSA8IChwYXltZW50cy5sZW5ndGggLSAxKSA/IEdsb2JhbC56ZXJvQWRkcmVzcyA6IHJla2V5QWRkcmVzcyhyZWtleUJhY2ssIHdhbGxldCksCiAgICAvLyAgIH0pCiAgICAvLyAgIC5zdWJtaXQoKQogICAgaXR4bl9iZWdpbgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czozNQogICAgLy8gYXNzZXRSZWNlaXZlcjogdGhpcy5yZWNpcGllbnQudmFsdWUsCiAgICBpbnRjXzAgLy8gMAogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czo5CiAgICAvLyByZWNpcGllbnQgPSBHbG9iYWxTdGF0ZTxBY2NvdW50Pih7IGtleTogUGF5U2lsb1BsdWdpbkdsb2JhbFN0YXRlS2V5UmVjaXBpZW50IH0pCiAgICBieXRlY18wIC8vICJyZWNpcGllbnQiCiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjM1CiAgICAvLyBhc3NldFJlY2VpdmVyOiB0aGlzLnJlY2lwaWVudC52YWx1ZSwKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBzd2FwCiAgICBidXJ5IDEwCiAgICBhc3NlcnQgLy8gY2hlY2sgR2xvYmFsU3RhdGUgZXhpc3RzCiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjM4CiAgICAvLyByZWtleVRvOiBpIDwgKHBheW1lbnRzLmxlbmd0aCAtIDEpID8gR2xvYmFsLnplcm9BZGRyZXNzIDogcmVrZXlBZGRyZXNzKHJla2V5QmFjaywgd2FsbGV0KSwKICAgIGRpZyAyCiAgICBpbnRjXzEgLy8gMQogICAgLQogICAgZGlnIDEKICAgID4KICAgIGJ6IHBheV90ZXJuYXJ5X2ZhbHNlQDExCiAgICBnbG9iYWwgWmVyb0FkZHJlc3MKCnBheV90ZXJuYXJ5X21lcmdlQDEyOgogICAgaXR4bl9maWVsZCBSZWtleVRvCiAgICBkaWcgNgogICAgaXR4bl9maWVsZCBYZmVyQXNzZXQKICAgIGRpZyA3CiAgICBpdHhuX2ZpZWxkIEFzc2V0QW1vdW50CiAgICBkaWcgOAogICAgaXR4bl9maWVsZCBBc3NldFJlY2VpdmVyCiAgICBkaWcgMQogICAgaXR4bl9maWVsZCBTZW5kZXIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MzItMzkKICAgIC8vIGl0eG4KICAgIC8vICAgLmFzc2V0VHJhbnNmZXIoewogICAgLy8gICAgIHNlbmRlciwKICAgIC8vICAgICBhc3NldFJlY2VpdmVyOiB0aGlzLnJlY2lwaWVudC52YWx1ZSwKICAgIC8vICAgICBhc3NldEFtb3VudDogYW1vdW50LAogICAgLy8gICAgIHhmZXJBc3NldDogYXNzZXQsCiAgICAvLyAgICAgcmVrZXlUbzogaSA8IChwYXltZW50cy5sZW5ndGggLSAxKSA/IEdsb2JhbC56ZXJvQWRkcmVzcyA6IHJla2V5QWRkcmVzcyhyZWtleUJhY2ssIHdhbGxldCksCiAgICAvLyAgIH0pCiAgICBwdXNoaW50IDQgLy8gNAogICAgaXR4bl9maWVsZCBUeXBlRW51bQogICAgaW50Y18wIC8vIDAKICAgIGl0eG5fZmllbGQgRmVlCiAgICAvLyBzbWFydF9jb250cmFjdHMvYXJjNTgvcGx1Z2lucy9wYXktc2lsby9jb250cmFjdC5hbGdvLnRzOjMyLTQwCiAgICAvLyBpdHhuCiAgICAvLyAgIC5hc3NldFRyYW5zZmVyKHsKICAgIC8vICAgICBzZW5kZXIsCiAgICAvLyAgICAgYXNzZXRSZWNlaXZlcjogdGhpcy5yZWNpcGllbnQudmFsdWUsCiAgICAvLyAgICAgYXNzZXRBbW91bnQ6IGFtb3VudCwKICAgIC8vICAgICB4ZmVyQXNzZXQ6IGFzc2V0LAogICAgLy8gICAgIHJla2V5VG86IGkgPCAocGF5bWVudHMubGVuZ3RoIC0gMSkgPyBHbG9iYWwuemVyb0FkZHJlc3MgOiByZWtleUFkZHJlc3MocmVrZXlCYWNrLCB3YWxsZXQpLAogICAgLy8gICB9KQogICAgLy8gICAuc3VibWl0KCkKICAgIGl0eG5fc3VibWl0CiAgICBiIHBheV9hZnRlcl9pZl9lbHNlQDE0CgpwYXlfdGVybmFyeV9mYWxzZUAxMToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9hcmM1OC9wbHVnaW5zL3BheS1zaWxvL2NvbnRyYWN0LmFsZ28udHM6MzgKICAgIC8vIHJla2V5VG86IGkgPCAocGF5bWVudHMubGVuZ3RoIC0gMSkgPyBHbG9iYWwuemVyb0FkZHJlc3MgOiByZWtleUFkZHJlc3MocmVrZXlCYWNrLCB3YWxsZXQpLAogICAgZGlnIDQKICAgIGRpZyA2CiAgICBjYWxsc3ViIHJla2V5QWRkcmVzcwogICAgYiBwYXlfdGVybmFyeV9tZXJnZUAxMgoKcGF5X2FmdGVyX3doaWxlQDE1OgogICAgLy8gc21hcnRfY29udHJhY3RzL2FyYzU4L3BsdWdpbnMvcGF5LXNpbG8vY29udHJhY3QuYWxnby50czoxNgogICAgLy8gcGF5KHdhbGxldDogQXBwbGljYXRpb24sIHJla2V5QmFjazogYm9vbGVhbiwgcGF5bWVudHM6IFBheVNpbG9QYXJhbXNbXSk6IHZvaWQgewogICAgaW50Y18xIC8vIDEKICAgIHJldHVybgo=", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CyAEAAEQCCYBCXJlY2lwaWVudDEZFEQxGEEADoAE4EdSYjYaAI4BAC4AgATMaU6qNhoAjgEAEgCKAgGL/kAAAzIDiYv/cghEiTYaAUkVgSASRChMZyNDIkmAAEk2GgFJFSUSRBdJNhoCSRUjEkQiU0w2GgNJTgJJIllJTgMkC4ECCEwVEkSAEHNwZW5kaW5nX2FkZHJlc3NlSCJJSwMMQQCQSwNXAgBLASQLJFhJIltJTgJFCSVbRQlAADuxIihlTEULREsCIwlLAQ1BAB8yA7IgSweyCEsJsgdLAbIAI7IQIrIBs0kjCEUBQv+uSwRLBoj/REL/2bEiKGVMRQpESwIjCUsBDUEAHzIDsiBLBrIRSweyEksIshRLAbIAgQSyECKyAbNC/71LBEsGiP8JQv/ZI0M=", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
+class BinaryStateValue {
+    constructor(value) {
+        this.value = value;
+    }
+    asByteArray() {
+        return this.value;
+    }
+    asString() {
+        return this.value !== undefined ? Buffer.from(this.value).toString('utf-8') : undefined;
+    }
+}
+/**
+ * Exposes methods for constructing `AppClient` params objects for ABI calls to the PaySiloPlugin smart contract
+ */
+export class PaySiloPluginParamsFactory {
+    /**
+     * Gets available create ABI call param factories
+     */
+    static get create() {
+        return {
+            _resolveByMethod(params) {
+                switch (params.method) {
+                    case 'create':
+                    case 'create(address)void':
+                        return PaySiloPluginParamsFactory.create.create(params);
+                }
+                throw new Error(`Unknown ' + verb + ' method`);
+            },
+            /**
+             * Constructs create ABI call params for the PaySiloPlugin smart contract using the create(address)void ABI method
+             *
+             * @param params Parameters for the call
+             * @returns An `AppClientMethodCallParams` object for the call
+             */
+            create(params) {
+                return {
+                    ...params,
+                    method: 'create(address)void',
+                    args: Array.isArray(params.args) ? params.args : [params.args.recipient],
+                };
+            },
+        };
+    }
+    /**
+     * Constructs a no op call for the pay(uint64,bool,(uint64,uint64)[])void ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static pay(params) {
+        return {
+            ...params,
+            method: 'pay(uint64,bool,(uint64,uint64)[])void',
+            args: Array.isArray(params.args) ? params.args : [params.args.wallet, params.args.rekeyBack, params.args.payments],
+        };
+    }
+}
+/**
+ * A factory to create and deploy one or more instance of the PaySiloPlugin smart contract and to create one or more app clients to interact with those (or other) app instances
+ */
+export class PaySiloPluginFactory {
+    /**
+     * Creates a new instance of `PaySiloPluginFactory`
+     *
+     * @param params The parameters to initialise the app factory with
+     */
+    constructor(params) {
+        /**
+         * Get parameters to create transactions (create and deploy related calls) for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
+         */
+        this.params = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the PaySiloPlugin smart contract using the create(address)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create params
+                 */
+                create: (params) => {
+                    return this.appFactory.params.create(PaySiloPluginParamsFactory.create.create(params));
+                },
+            },
+        };
+        /**
+         * Create transactions for the current app
+         */
+        this.createTransaction = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the PaySiloPlugin smart contract using the create(address)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create transaction
+                 */
+                create: (params) => {
+                    return this.appFactory.createTransaction.create(PaySiloPluginParamsFactory.create.create(params));
+                },
+            },
+        };
+        /**
+         * Send calls to the current app
+         */
+        this.send = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the PaySiloPlugin smart contract using an ABI method call using the create(address)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create result
+                 */
+                create: async (params) => {
+                    const result = await this.appFactory.send.create(PaySiloPluginParamsFactory.create.create(params));
+                    return { result: { ...result.result, return: result.result.return }, appClient: new PaySiloPluginClient(result.appClient) };
+                },
+            },
+        };
+        this.appFactory = new _AppFactory({
+            ...params,
+            appSpec: APP_SPEC,
+        });
+    }
+    /** The name of the app (from the ARC-32 / ARC-56 app spec or override). */
+    get appName() {
+        return this.appFactory.appName;
+    }
+    /** The ARC-56 app spec being used */
+    get appSpec() {
+        return APP_SPEC;
+    }
+    /** A reference to the underlying `AlgorandClient` this app factory is using. */
+    get algorand() {
+        return this.appFactory.algorand;
+    }
+    /**
+     * Returns a new `AppClient` client for an app instance of the given ID.
+     *
+     * Automatically populates appName, defaultSender and source maps from the factory
+     * if not specified in the params.
+     * @param params The parameters to create the app client
+     * @returns The `AppClient`
+     */
+    getAppClientById(params) {
+        return new PaySiloPluginClient(this.appFactory.getAppClientById(params));
+    }
+    /**
+     * Returns a new `AppClient` client, resolving the app by creator address and name
+     * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
+     *
+     * Automatically populates appName, defaultSender and source maps from the factory
+     * if not specified in the params.
+     * @param params The parameters to create the app client
+     * @returns The `AppClient`
+     */
+    async getAppClientByCreatorAndName(params) {
+        return new PaySiloPluginClient(await this.appFactory.getAppClientByCreatorAndName(params));
+    }
+    /**
+     * Idempotently deploys the PaySiloPlugin smart contract.
+     *
+     * @param params The arguments for the contract calls and any additional parameters for the call
+     * @returns The deployment result
+     */
+    async deploy(params = {}) {
+        const result = await this.appFactory.deploy({
+            ...params,
+            createParams: params.createParams?.method ? PaySiloPluginParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams : undefined,
+        });
+        return { result: result.result, appClient: new PaySiloPluginClient(result.appClient) };
+    }
+}
+/**
+ * A client to make calls to the PaySiloPlugin smart contract
+ */
+export class PaySiloPluginClient {
+    constructor(appClientOrParams) {
+        /**
+         * Get parameters to create transactions for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
+         */
+        this.params = {
+            /**
+             * Makes a clear_state call to an existing instance of the PaySiloPlugin smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.params.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the PaySiloPlugin smart contract using the `pay(uint64,bool,(uint64,uint64)[])void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            pay: (params) => {
+                return this.appClient.params.call(PaySiloPluginParamsFactory.pay(params));
+            },
+        };
+        /**
+         * Create transactions for the current app
+         */
+        this.createTransaction = {
+            /**
+             * Makes a clear_state call to an existing instance of the PaySiloPlugin smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.createTransaction.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the PaySiloPlugin smart contract using the `pay(uint64,bool,(uint64,uint64)[])void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            pay: (params) => {
+                return this.appClient.createTransaction.call(PaySiloPluginParamsFactory.pay(params));
+            },
+        };
+        /**
+         * Send calls to the current app
+         */
+        this.send = {
+            /**
+             * Makes a clear_state call to an existing instance of the PaySiloPlugin smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.send.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the PaySiloPlugin smart contract using the `pay(uint64,bool,(uint64,uint64)[])void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            pay: async (params) => {
+                const result = await this.appClient.send.call(PaySiloPluginParamsFactory.pay(params));
+                return { ...result, return: result.return };
+            },
+        };
+        /**
+         * Methods to access state for the current PaySiloPlugin app
+         */
+        this.state = {
+            /**
+             * Methods to access global state for the current PaySiloPlugin app
+             */
+            global: {
+                /**
+                 * Get all current keyed values from global state
+                 */
+                getAll: async () => {
+                    const result = await this.appClient.state.global.getAll();
+                    return {
+                        recipient: result.recipient,
+                    };
+                },
+                /**
+                 * Get the current value of the recipient key in global state
+                 */
+                recipient: async () => { return (await this.appClient.state.global.getValue("recipient")); },
+            },
+        };
+        this.appClient = appClientOrParams instanceof _AppClient ? appClientOrParams : new _AppClient({
+            ...appClientOrParams,
+            appSpec: APP_SPEC,
+        });
+    }
+    /**
+     * Returns a new `PaySiloPluginClient` client, resolving the app by creator address and name
+     * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
+     * @param params The parameters to create the app client
+     */
+    static async fromCreatorAndName(params) {
+        return new PaySiloPluginClient(await _AppClient.fromCreatorAndName({ ...params, appSpec: APP_SPEC }));
+    }
+    /**
+     * Returns an `PaySiloPluginClient` instance for the current network based on
+     * pre-determined network-specific app IDs specified in the ARC-56 app spec.
+     *
+     * If no IDs are in the app spec or the network isn't recognised, an error is thrown.
+     * @param params The parameters to create the app client
+     */
+    static async fromNetwork(params) {
+        return new PaySiloPluginClient(await _AppClient.fromNetwork({ ...params, appSpec: APP_SPEC }));
+    }
+    /** The ID of the app instance this client is linked to. */
+    get appId() {
+        return this.appClient.appId;
+    }
+    /** The app address of the app instance this client is linked to. */
+    get appAddress() {
+        return this.appClient.appAddress;
+    }
+    /** The name of the app. */
+    get appName() {
+        return this.appClient.appName;
+    }
+    /** The ARC-56 app spec being used */
+    get appSpec() {
+        return this.appClient.appSpec;
+    }
+    /** A reference to the underlying `AlgorandClient` this app client is using. */
+    get algorand() {
+        return this.appClient.algorand;
+    }
+    /**
+     * Clone this app client with different params
+     *
+     * @param params The params to use for the the cloned app client. Omit a param to keep the original value. Set a param to override the original value. Setting to undefined will clear the original value.
+     * @returns A new app client with the altered params
+     */
+    clone(params) {
+        return new PaySiloPluginClient(this.appClient.clone(params));
+    }
+    newGroup() {
+        const client = this;
+        const composer = this.algorand.newGroup();
+        let promiseChain = Promise.resolve();
+        const resultMappers = [];
+        return {
+            /**
+             * Add a pay(uint64,bool,(uint64,uint64)[])void method call against the PaySiloPlugin contract
+             */
+            pay(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.pay(params)));
+                resultMappers.push(undefined);
+                return this;
+            },
+            /**
+             * Add a clear state call to the PaySiloPlugin contract
+             */
+            clearState(params) {
+                promiseChain = promiseChain.then(() => composer.addAppCall(client.params.clearState(params)));
+                return this;
+            },
+            addTransaction(txn, signer) {
+                promiseChain = promiseChain.then(() => composer.addTransaction(txn, signer));
+                return this;
+            },
+            async composer() {
+                await promiseChain;
+                return composer;
+            },
+            async simulate(options) {
+                await promiseChain;
+                const result = await (!options ? composer.simulate() : composer.simulate(options));
+                return {
+                    ...result,
+                    returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i](val) : val.returnValue)
+                };
+            },
+            async send(params) {
+                await promiseChain;
+                const result = await composer.send(params);
+                return {
+                    ...result,
+                    returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i](val) : val.returnValue)
+                };
+            }
+        };
+    }
+}
+//# sourceMappingURL=PaySiloPluginClient.js.map

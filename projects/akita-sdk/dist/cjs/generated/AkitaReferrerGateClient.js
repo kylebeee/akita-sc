@@ -1,0 +1,710 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AkitaReferrerGateClient = exports.AkitaReferrerGateFactory = exports.AkitaReferrerGateParamsFactory = exports.APP_SPEC = void 0;
+exports.AkitaReferrerGateRegistryInfoFromTuple = AkitaReferrerGateRegistryInfoFromTuple;
+const app_arc56_1 = require("@algorandfoundation/algokit-utils/types/app-arc56");
+const app_client_1 = require("@algorandfoundation/algokit-utils/types/app-client");
+const app_factory_1 = require("@algorandfoundation/algokit-utils/types/app-factory");
+exports.APP_SPEC = { "name": "AkitaReferrerGate", "structs": { "AkitaReferrerGateRegistryInfo": [{ "name": "referrer", "type": "address" }] }, "methods": [{ "name": "create", "args": [{ "type": "string", "name": "version" }, { "type": "uint64", "name": "akitaDAO" }], "returns": { "type": "void" }, "actions": { "create": ["NoOp"], "call": [] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "cost", "args": [{ "type": "byte[]", "name": "args" }], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "register", "args": [{ "type": "pay", "name": "mbrPayment" }, { "type": "byte[]", "name": "args" }], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "check", "args": [{ "type": "address", "name": "caller" }, { "type": "uint64", "name": "registryID" }, { "type": "byte[]", "name": "args" }], "returns": { "type": "bool" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "getEntry", "args": [{ "type": "uint64", "name": "registryID" }], "returns": { "type": "byte[]" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": true, "events": [], "recommendations": {} }, { "name": "updateAkitaDAO", "args": [{ "type": "uint64", "name": "akitaDAO" }], "returns": { "type": "void" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "opUp", "args": [], "returns": { "type": "void" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }], "arcs": [22, 28], "networks": {}, "state": { "schema": { "global": { "ints": 2, "bytes": 3 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": { "registryCursor": { "keyType": "AVMString", "valueType": "AVMUint64", "key": "cmVnaXN0cnlfY3Vyc29y" }, "registrationShape": { "keyType": "AVMString", "valueType": "AVMString", "key": "cmVnaXN0cmF0aW9uX3NoYXBl", "desc": "the abi string for the register args" }, "checkShape": { "keyType": "AVMString", "valueType": "AVMString", "key": "Y2hlY2tfc2hhcGU=", "desc": "the abi string for the check args" }, "version": { "keyType": "AVMString", "valueType": "AVMString", "key": "dmVyc2lvbg==", "desc": "the current version of the contract" }, "akitaDAO": { "keyType": "AVMString", "valueType": "AVMUint64", "key": "YWtpdGFfZGFv", "desc": "the app ID of the Akita DAO" } }, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": { "registry": { "keyType": "uint64", "valueType": "AkitaReferrerGateRegistryInfo", "prefix": "" } } } }, "bareActions": { "create": [], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [353, 503], "errorMessage": "Box must have value" }, { "pc": [412], "errorMessage": "Bytes has valid prefix" }, { "pc": [271, 349], "errorMessage": "Invalid number of arguments" }, { "pc": [289], "errorMessage": "Invalid payment" }, { "pc": [428], "errorMessage": "Invalid wallet ID provided" }, { "pc": [97], "errorMessage": "OnCompletion must be NoOp" }, { "pc": [547], "errorMessage": "Only the Akita DAO can call this function" }, { "pc": [458, 462, 545], "errorMessage": "application exists" }, { "pc": [293, 364, 532], "errorMessage": "check GlobalState exists" }, { "pc": [222, 262, 341, 421], "errorMessage": "invalid number of bytes for (len+uint8[])" }, { "pc": [181], "errorMessage": "invalid number of bytes for (len+utf8[])" }, { "pc": [192, 327, 499, 525], "errorMessage": "invalid number of bytes for uint64" }, { "pc": [319], "errorMessage": "invalid number of bytes for uint8[32]" }, { "pc": [249], "errorMessage": "transaction type is pay" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBpbnRjYmxvY2sgMSAwIDIgOAogICAgYnl0ZWNibG9jayAiYWtpdGFfZGFvIiAweDE1MWY3Yzc1ICJyZWdpc3RyeV9jdXJzb3IiCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYm56IG1haW5fYWZ0ZXJfaWZfZWxzZUAyCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6MjQKICAgIC8vIHJlZ2lzdHJ5Q3Vyc29yID0gR2xvYmFsU3RhdGU8dWludDY0Pih7IGluaXRpYWxWYWx1ZTogMSwga2V5OiBHYXRlR2xvYmFsU3RhdGVLZXlSZWdpc3RyeUN1cnNvciB9KQogICAgYnl0ZWNfMiAvLyAicmVnaXN0cnlfY3Vyc29yIgogICAgaW50Y18wIC8vIDEKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6MjcKICAgIC8vIHJlZ2lzdHJhdGlvblNoYXBlID0gR2xvYmFsU3RhdGU8c3RyaW5nPih7IGluaXRpYWxWYWx1ZTogJ2FkZHJlc3MnLCBrZXk6IEdhdGVHbG9iYWxTdGF0ZUtleVJlZ2lzdHJhdGlvblNoYXBlIH0pCiAgICBwdXNoYnl0ZXNzICJyZWdpc3RyYXRpb25fc2hhcGUiICJhZGRyZXNzIiAvLyAicmVnaXN0cmF0aW9uX3NoYXBlIiwgImFkZHJlc3MiCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjI5CiAgICAvLyBjaGVja1NoYXBlID0gR2xvYmFsU3RhdGU8c3RyaW5nPih7IGluaXRpYWxWYWx1ZTogJycsIGtleTogR2F0ZUdsb2JhbFN0YXRlS2V5Q2hlY2tTaGFwZSB9KQogICAgcHVzaGJ5dGVzcyAiY2hlY2tfc2hhcGUiICIiIC8vICJjaGVja19zaGFwZSIsICIiCiAgICBhcHBfZ2xvYmFsX3B1dAoKbWFpbl9hZnRlcl9pZl9lbHNlQDI6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6MjAKICAgIC8vIGV4cG9ydCBjbGFzcyBBa2l0YVJlZmVycmVyR2F0ZSBleHRlbmRzIEFraXRhQmFzZUNvbnRyYWN0IHsKICAgIHR4biBPbkNvbXBsZXRpb24KICAgICEKICAgIGFzc2VydCAvLyBPbkNvbXBsZXRpb24gbXVzdCBiZSBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYnogbWFpbl9jcmVhdGVfTm9PcEAxMgogICAgcHVzaGJ5dGVzcyAweDMyOWYwNGVlIDB4NzdiYjc5YjkgMHg2ZTAzZjUwYSAweDkwZDRmYTVkIDB4MzNlOTJjOTQgMHg4NTRkZWRlMCAvLyBtZXRob2QgImNvc3QoYnl0ZVtdKXVpbnQ2NCIsIG1ldGhvZCAicmVnaXN0ZXIocGF5LGJ5dGVbXSl1aW50NjQiLCBtZXRob2QgImNoZWNrKGFkZHJlc3MsdWludDY0LGJ5dGVbXSlib29sIiwgbWV0aG9kICJnZXRFbnRyeSh1aW50NjQpYnl0ZVtdIiwgbWV0aG9kICJ1cGRhdGVBa2l0YURBTyh1aW50NjQpdm9pZCIsIG1ldGhvZCAib3BVcCgpdm9pZCIKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDAKICAgIG1hdGNoIGNvc3QgcmVnaXN0ZXIgY2hlY2sgZ2V0RW50cnkgdXBkYXRlQWtpdGFEQU8gbWFpbl9vcFVwX3JvdXRlQDEwCiAgICBlcnIKCm1haW5fb3BVcF9yb3V0ZUAxMDoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjQzCiAgICAvLyBvcFVwKCk6IHZvaWQgeyB9CiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgptYWluX2NyZWF0ZV9Ob09wQDEyOgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjIwCiAgICAvLyBleHBvcnQgY2xhc3MgQWtpdGFSZWZlcnJlckdhdGUgZXh0ZW5kcyBBa2l0YUJhc2VDb250cmFjdCB7CiAgICBwdXNoYnl0ZXMgMHhjZDlhZDY3ZSAvLyBtZXRob2QgImNyZWF0ZShzdHJpbmcsdWludDY0KXZvaWQiCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAwCiAgICBtYXRjaCBjcmVhdGUKICAgIGVycgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo6QWtpdGFSZWZlcnJlckdhdGUuY3JlYXRlW3JvdXRpbmddKCkgLT4gdm9pZDoKY3JlYXRlOgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjU1CiAgICAvLyBAYWJpbWV0aG9kKHsgb25DcmVhdGU6ICdyZXF1aXJlJyB9KQogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgZHVwCiAgICBpbnRjXzEgLy8gMAogICAgZXh0cmFjdF91aW50MTYKICAgIGludGNfMiAvLyAyCiAgICArCiAgICBkaWcgMQogICAgbGVuCiAgICA9PQogICAgYXNzZXJ0IC8vIGludmFsaWQgbnVtYmVyIG9mIGJ5dGVzIGZvciAobGVuK3V0ZjhbXSkKICAgIGV4dHJhY3QgMiAwCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAyCiAgICBkdXAKICAgIGxlbgogICAgaW50Y18zIC8vIDgKICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIHVpbnQ2NAogICAgYnRvaQogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MjcKICAgIC8vIHZlcnNpb24gPSBHbG9iYWxTdGF0ZTxzdHJpbmc+KHsga2V5OiBHbG9iYWxTdGF0ZUtleVZlcnNpb24gfSkKICAgIHB1c2hieXRlcyAidmVyc2lvbiIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo1NwogICAgLy8gdGhpcy52ZXJzaW9uLnZhbHVlID0gdmVyc2lvbgogICAgdW5jb3ZlciAyCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MjkKICAgIC8vIGFraXRhREFPID0gR2xvYmFsU3RhdGU8QXBwbGljYXRpb24+KHsga2V5OiBHbG9iYWxTdGF0ZUtleUFraXRhREFPIH0pCiAgICBieXRlY18wIC8vICJha2l0YV9kYW8iCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NTgKICAgIC8vIHRoaXMuYWtpdGFEQU8udmFsdWUgPSBBcHBsaWNhdGlvbihha2l0YURBTykKICAgIHN3YXAKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NTUKICAgIC8vIEBhYmltZXRob2QoeyBvbkNyZWF0ZTogJ3JlcXVpcmUnIH0pCiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgoKLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjpBa2l0YVJlZmVycmVyR2F0ZS5jb3N0W3JvdXRpbmddKCkgLT4gdm9pZDoKY29zdDoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo2MwogICAgLy8gY29zdChhcmdzOiBieXRlcyk6IHVpbnQ2NCB7CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBkdXAKICAgIGludGNfMSAvLyAwCiAgICBleHRyYWN0X3VpbnQxNgogICAgaW50Y18yIC8vIDIKICAgICsKICAgIHN3YXAKICAgIGxlbgogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1aW50OFtdKQogICAgcHVzaGJ5dGVzIDB4MTUxZjdjNzUwMDAwMDAwMDAwMDA0OWQ0CiAgICBsb2cKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCgovLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6OkFraXRhUmVmZXJyZXJHYXRlLnJlZ2lzdGVyW3JvdXRpbmddKCkgLT4gdm9pZDoKcmVnaXN0ZXI6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NjcKICAgIC8vIHJlZ2lzdGVyKG1iclBheW1lbnQ6IGd0eG4uUGF5bWVudFR4biwgYXJnczogYnl0ZXMpOiB1aW50NjQgewogICAgdHhuIEdyb3VwSW5kZXgKICAgIGludGNfMCAvLyAxCiAgICAtCiAgICBkdXAKICAgIGd0eG5zIFR5cGVFbnVtCiAgICBpbnRjXzAgLy8gcGF5CiAgICA9PQogICAgYXNzZXJ0IC8vIHRyYW5zYWN0aW9uIHR5cGUgaXMgcGF5CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBkdXAKICAgIGludGNfMSAvLyAwCiAgICBleHRyYWN0X3VpbnQxNgogICAgaW50Y18yIC8vIDIKICAgICsKICAgIGRpZyAxCiAgICBsZW4KICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIChsZW4rdWludDhbXSkKICAgIGV4dHJhY3QgMiAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NjgKICAgIC8vIGFzc2VydChhcmdzLmxlbmd0aCA9PT0gMzIsIEVSUl9JTlZBTElEX0FSR19DT1VOVCkKICAgIGR1cAogICAgbGVuCiAgICBwdXNoaW50IDMyIC8vIDMyCiAgICA9PQogICAgYXNzZXJ0IC8vIEludmFsaWQgbnVtYmVyIG9mIGFyZ3VtZW50cwogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjY5LTc2CiAgICAvLyBhc3NlcnRNYXRjaCgKICAgIC8vICAgbWJyUGF5bWVudCwKICAgIC8vICAgewogICAgLy8gICAgIHJlY2VpdmVyOiBHbG9iYWwuY3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcywKICAgIC8vICAgICBhbW91bnQ6IEFraXRhUmVmZXJyZXJHYXRlUmVnaXN0cnlNQlIKICAgIC8vICAgfSwKICAgIC8vICAgRVJSX0lOVkFMSURfUEFZTUVOVAogICAgLy8gKQogICAgZGlnIDEKICAgIGd0eG5zIFJlY2VpdmVyCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NzIKICAgIC8vIHJlY2VpdmVyOiBHbG9iYWwuY3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcywKICAgIGdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NjktNzYKICAgIC8vIGFzc2VydE1hdGNoKAogICAgLy8gICBtYnJQYXltZW50LAogICAgLy8gICB7CiAgICAvLyAgICAgcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgLy8gICAgIGFtb3VudDogQWtpdGFSZWZlcnJlckdhdGVSZWdpc3RyeU1CUgogICAgLy8gICB9LAogICAgLy8gICBFUlJfSU5WQUxJRF9QQVlNRU5UCiAgICAvLyApCiAgICA9PQogICAgdW5jb3ZlciAyCiAgICBndHhucyBBbW91bnQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo3MwogICAgLy8gYW1vdW50OiBBa2l0YVJlZmVycmVyR2F0ZVJlZ2lzdHJ5TUJSCiAgICBwdXNoaW50IDE4OTAwIC8vIDE4OTAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NjktNzYKICAgIC8vIGFzc2VydE1hdGNoKAogICAgLy8gICBtYnJQYXltZW50LAogICAgLy8gICB7CiAgICAvLyAgICAgcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgLy8gICAgIGFtb3VudDogQWtpdGFSZWZlcnJlckdhdGVSZWdpc3RyeU1CUgogICAgLy8gICB9LAogICAgLy8gICBFUlJfSU5WQUxJRF9QQVlNRU5UCiAgICAvLyApCiAgICA9PQogICAgJiYKICAgIGFzc2VydCAvLyBJbnZhbGlkIHBheW1lbnQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czozOAogICAgLy8gY29uc3QgaWQgPSB0aGlzLnJlZ2lzdHJ5Q3Vyc29yLnZhbHVlCiAgICBpbnRjXzEgLy8gMAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjI0CiAgICAvLyByZWdpc3RyeUN1cnNvciA9IEdsb2JhbFN0YXRlPHVpbnQ2ND4oeyBpbml0aWFsVmFsdWU6IDEsIGtleTogR2F0ZUdsb2JhbFN0YXRlS2V5UmVnaXN0cnlDdXJzb3IgfSkKICAgIGJ5dGVjXzIgLy8gInJlZ2lzdHJ5X2N1cnNvciIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czozOAogICAgLy8gY29uc3QgaWQgPSB0aGlzLnJlZ2lzdHJ5Q3Vyc29yLnZhbHVlCiAgICBhcHBfZ2xvYmFsX2dldF9leAogICAgYXNzZXJ0IC8vIGNoZWNrIEdsb2JhbFN0YXRlIGV4aXN0cwogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjM5CiAgICAvLyB0aGlzLnJlZ2lzdHJ5Q3Vyc29yLnZhbHVlICs9IDEKICAgIGR1cAogICAgaW50Y18wIC8vIDEKICAgICsKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czoyNAogICAgLy8gcmVnaXN0cnlDdXJzb3IgPSBHbG9iYWxTdGF0ZTx1aW50NjQ+KHsgaW5pdGlhbFZhbHVlOiAxLCBrZXk6IEdhdGVHbG9iYWxTdGF0ZUtleVJlZ2lzdHJ5Q3Vyc29yIH0pCiAgICBieXRlY18yIC8vICJyZWdpc3RyeV9jdXJzb3IiCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6MzkKICAgIC8vIHRoaXMucmVnaXN0cnlDdXJzb3IudmFsdWUgKz0gMQogICAgc3dhcAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo3OQogICAgLy8gdGhpcy5yZWdpc3RyeShpZCkudmFsdWUgPSBkZWNvZGVBcmM0PEFraXRhUmVmZXJyZXJHYXRlUmVnaXN0cnlJbmZvPihhcmdzKQogICAgaXRvYgogICAgZHVwCiAgICB1bmNvdmVyIDIKICAgIGJveF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo2NwogICAgLy8gcmVnaXN0ZXIobWJyUGF5bWVudDogZ3R4bi5QYXltZW50VHhuLCBhcmdzOiBieXRlcyk6IHVpbnQ2NCB7CiAgICBieXRlY18xIC8vIDB4MTUxZjdjNzUKICAgIHN3YXAKICAgIGNvbmNhdAogICAgbG9nCiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgoKLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjpBa2l0YVJlZmVycmVyR2F0ZS5jaGVja1tyb3V0aW5nXSgpIC0+IHZvaWQ6CmNoZWNrOgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjgzCiAgICAvLyBjaGVjayhjYWxsZXI6IEFjY291bnQsIHJlZ2lzdHJ5SUQ6IHVpbnQ2NCwgYXJnczogYnl0ZXMpOiBib29sZWFuIHsKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGR1cAogICAgbGVuCiAgICBwdXNoaW50IDMyIC8vIDMyCiAgICA9PQogICAgYXNzZXJ0IC8vIGludmFsaWQgbnVtYmVyIG9mIGJ5dGVzIGZvciB1aW50OFszMl0KICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDIKICAgIGR1cAogICAgbGVuCiAgICBpbnRjXzMgLy8gOAogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgdWludDY0CiAgICBidG9pCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAzCiAgICBkdXAKICAgIGludGNfMSAvLyAwCiAgICBleHRyYWN0X3VpbnQxNgogICAgaW50Y18yIC8vIDIKICAgICsKICAgIGRpZyAxCiAgICBsZW4KICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIChsZW4rdWludDhbXSkKICAgIGV4dHJhY3QgMiAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6ODQKICAgIC8vIGFzc2VydChhcmdzLmxlbmd0aCA9PT0gOCwgRVJSX0lOVkFMSURfQVJHX0NPVU5UKQogICAgZHVwCiAgICBsZW4KICAgIGludGNfMyAvLyA4CiAgICA9PQogICAgYXNzZXJ0IC8vIEludmFsaWQgbnVtYmVyIG9mIGFyZ3VtZW50cwogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjg2CiAgICAvLyBjb25zdCB7IHJlZmVycmVyIH0gPSBjbG9uZSh0aGlzLnJlZ2lzdHJ5KHJlZ2lzdHJ5SUQpLnZhbHVlKQogICAgc3dhcAogICAgaXRvYgogICAgYm94X2dldAogICAgYXNzZXJ0IC8vIEJveCBtdXN0IGhhdmUgdmFsdWUKICAgIGV4dHJhY3QgMCAzMgogICAgY292ZXIgMgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjg3CiAgICAvLyBjb25zdCB3YWxsZXQgPSBBcHBsaWNhdGlvbihidG9pKGFyZ3MpKQogICAgZHVwCiAgICBidG9pCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6ODkKICAgIC8vIGNvbnN0IGFwcElkID0gZ2V0T3RoZXJBcHBMaXN0KHRoaXMuYWtpdGFEQU8udmFsdWUpLmVzY3JvdwogICAgaW50Y18xIC8vIDAKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjI5CiAgICAvLyBha2l0YURBTyA9IEdsb2JhbFN0YXRlPEFwcGxpY2F0aW9uPih7IGtleTogR2xvYmFsU3RhdGVLZXlBa2l0YURBTyB9KQogICAgYnl0ZWNfMCAvLyAiYWtpdGFfZGFvIgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjg5CiAgICAvLyBjb25zdCBhcHBJZCA9IGdldE90aGVyQXBwTGlzdCh0aGlzLmFraXRhREFPLnZhbHVlKS5lc2Nyb3cKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBhc3NlcnQgLy8gY2hlY2sgR2xvYmFsU3RhdGUgZXhpc3RzCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvZnVuY3Rpb25zLnRzOjU1CiAgICAvLyBjb25zdCBbb3RoZXJBcHBMaXN0Qnl0ZXNdID0gb3AuQXBwR2xvYmFsLmdldEV4Qnl0ZXMoYWtpdGFEQU8sIEJ5dGVzKEFraXRhREFPR2xvYmFsU3RhdGVLZXlzT3RoZXJBcHBMaXN0KSkKICAgIGR1cAogICAgcHVzaGJ5dGVzICJvYWwiCiAgICBhcHBfZ2xvYmFsX2dldF9leAogICAgcG9wCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6ODkKICAgIC8vIGNvbnN0IGFwcElkID0gZ2V0T3RoZXJBcHBMaXN0KHRoaXMuYWtpdGFEQU8udmFsdWUpLmVzY3JvdwogICAgcHVzaGludCAyNCAvLyAyNAogICAgZXh0cmFjdF91aW50NjQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo5MS05NAogICAgLy8gY29uc3QgaWQgPSBhYmlDYWxsPHR5cGVvZiBFc2Nyb3dGYWN0b3J5LnByb3RvdHlwZS5tdXN0R2V0Pih7CiAgICAvLyAgIGFwcElkLAogICAgLy8gICBhcmdzOiBbY2FsbGVyXQogICAgLy8gfSkucmV0dXJuVmFsdWUKICAgIGl0eG5fYmVnaW4KICAgIHB1c2hieXRlcyAweDJiNTYwMmEzIC8vIG1ldGhvZCAibXVzdEdldChhZGRyZXNzKWJ5dGVbXSIKICAgIGl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCiAgICB1bmNvdmVyIDQKICAgIGl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCiAgICBpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uSUQKICAgIHB1c2hpbnQgNiAvLyBhcHBsCiAgICBpdHhuX2ZpZWxkIFR5cGVFbnVtCiAgICBpbnRjXzEgLy8gMAogICAgaXR4bl9maWVsZCBGZWUKICAgIGl0eG5fc3VibWl0CiAgICBpdHhuIExhc3RMb2cKICAgIGR1cAogICAgZXh0cmFjdCA0IDAKICAgIGRpZyAxCiAgICBleHRyYWN0IDAgNAogICAgYnl0ZWNfMSAvLyAweDE1MWY3Yzc1CiAgICA9PQogICAgYXNzZXJ0IC8vIEJ5dGVzIGhhcyB2YWxpZCBwcmVmaXgKICAgIGR1cAogICAgaW50Y18xIC8vIDAKICAgIGV4dHJhY3RfdWludDE2CiAgICBpbnRjXzIgLy8gMgogICAgKwogICAgc3dhcAogICAgbGVuCiAgICA9PQogICAgYXNzZXJ0IC8vIGludmFsaWQgbnVtYmVyIG9mIGJ5dGVzIGZvciAobGVuK3VpbnQ4W10pCiAgICBleHRyYWN0IDYgMAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9ha2l0YS1yZWZlcnJlci9jb250cmFjdC5hbGdvLnRzOjk2CiAgICAvLyBhc3NlcnQoaWQgPT09IGFyZ3MsIEVSUl9JTlZBTElEX1dBTExFVF9JRCkKICAgIHVuY292ZXIgMwogICAgPT0KICAgIGFzc2VydCAvLyBJbnZhbGlkIHdhbGxldCBJRCBwcm92aWRlZAogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Z1bmN0aW9ucy50czo0MAogICAgLy8gY29uc3QgW2FwcExpc3RCeXRlc10gPSBvcC5BcHBHbG9iYWwuZ2V0RXhCeXRlcyhha2l0YURBTywgQnl0ZXMoQWtpdGFEQU9HbG9iYWxTdGF0ZUtleXNBa2l0YUFwcExpc3QpKQogICAgcHVzaGJ5dGVzICJhYWwiCiAgICBhcHBfZ2xvYmFsX2dldF9leAogICAgcG9wCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NDQKICAgIC8vIGNvbnN0IHsgd2FsbGV0OiBmYWN0b3J5IH0gPSBnZXRBa2l0YUFwcExpc3QodGhpcy5ha2l0YURBTy52YWx1ZSkKICAgIHB1c2hpbnQgODggLy8gODgKICAgIGV4dHJhY3RfdWludDY0CiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvZnVuY3Rpb25zLnRzOjE2OS0xNzIKICAgIC8vIGNvbnN0IFtyZWZlcnJlckJ5dGVzXSA9IG9wLkFwcEdsb2JhbC5nZXRFeEJ5dGVzKAogICAgLy8gICB3YWxsZXRJRCwKICAgIC8vICAgQnl0ZXMoQWJzdHJhY3RBY2NvdW50R2xvYmFsU3RhdGVLZXlzUmVmZXJyZXIpCiAgICAvLyApCiAgICBkaWcgMQogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Z1bmN0aW9ucy50czoxNzEKICAgIC8vIEJ5dGVzKEFic3RyYWN0QWNjb3VudEdsb2JhbFN0YXRlS2V5c1JlZmVycmVyKQogICAgcHVzaGJ5dGVzICJyZWZlcnJlciIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9mdW5jdGlvbnMudHM6MTY5LTE3MgogICAgLy8gY29uc3QgW3JlZmVycmVyQnl0ZXNdID0gb3AuQXBwR2xvYmFsLmdldEV4Qnl0ZXMoCiAgICAvLyAgIHdhbGxldElELAogICAgLy8gICBCeXRlcyhBYnN0cmFjdEFjY291bnRHbG9iYWxTdGF0ZUtleXNSZWZlcnJlcikKICAgIC8vICkKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBwb3AKICAgIGNvdmVyIDIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo0OAogICAgLy8gd2FsbGV0LmNyZWF0b3IgPT09IEFwcGxpY2F0aW9uKGZhY3RvcnkpLmFkZHJlc3MgJiYKICAgIHN3YXAKICAgIGFwcF9wYXJhbXNfZ2V0IEFwcENyZWF0b3IKICAgIGFzc2VydCAvLyBhcHBsaWNhdGlvbiBleGlzdHMKICAgIHN3YXAKICAgIGFwcF9wYXJhbXNfZ2V0IEFwcEFkZHJlc3MKICAgIGFzc2VydCAvLyBhcHBsaWNhdGlvbiBleGlzdHMKICAgID09CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6NDgtNDkKICAgIC8vIHdhbGxldC5jcmVhdG9yID09PSBBcHBsaWNhdGlvbihmYWN0b3J5KS5hZGRyZXNzICYmCiAgICAvLyBmZXRjaGVkUmVmZXJyZXIgPT09IHJlZmVycmVyCiAgICBieiBjaGVja19ib29sX2ZhbHNlQDYKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo0OQogICAgLy8gZmV0Y2hlZFJlZmVycmVyID09PSByZWZlcnJlcgogICAgZHVwCiAgICBkaWcgMgogICAgPT0KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo0OC00OQogICAgLy8gd2FsbGV0LmNyZWF0b3IgPT09IEFwcGxpY2F0aW9uKGZhY3RvcnkpLmFkZHJlc3MgJiYKICAgIC8vIGZldGNoZWRSZWZlcnJlciA9PT0gcmVmZXJyZXIKICAgIGJ6IGNoZWNrX2Jvb2xfZmFsc2VANgogICAgaW50Y18wIC8vIDEKCmNoZWNrX2Jvb2xfbWVyZ2VANzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czo4MwogICAgLy8gY2hlY2soY2FsbGVyOiBBY2NvdW50LCByZWdpc3RyeUlEOiB1aW50NjQsIGFyZ3M6IGJ5dGVzKTogYm9vbGVhbiB7CiAgICBwdXNoYnl0ZXMgMHgwMAogICAgaW50Y18xIC8vIDAKICAgIHVuY292ZXIgMgogICAgc2V0Yml0CiAgICBieXRlY18xIC8vIDB4MTUxZjdjNzUKICAgIHN3YXAKICAgIGNvbmNhdAogICAgbG9nCiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgpjaGVja19ib29sX2ZhbHNlQDY6CiAgICBpbnRjXzEgLy8gMAogICAgYiBjaGVja19ib29sX21lcmdlQDcKCgovLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6OkFraXRhUmVmZXJyZXJHYXRlLmdldEVudHJ5W3JvdXRpbmddKCkgLT4gdm9pZDoKZ2V0RW50cnk6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6MTAxCiAgICAvLyBAYWJpbWV0aG9kKHsgcmVhZG9ubHk6IHRydWUgfSkKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGR1cAogICAgbGVuCiAgICBpbnRjXzMgLy8gOAogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgdWludDY0CiAgICBidG9pCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL2FraXRhLXJlZmVycmVyL2NvbnRyYWN0LmFsZ28udHM6MTAzCiAgICAvLyByZXR1cm4gZW5jb2RlQXJjNCh0aGlzLnJlZ2lzdHJ5KHJlZ2lzdHJ5SUQpLnZhbHVlKQogICAgaXRvYgogICAgYm94X2dldAogICAgYXNzZXJ0IC8vIEJveCBtdXN0IGhhdmUgdmFsdWUKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvYWtpdGEtcmVmZXJyZXIvY29udHJhY3QuYWxnby50czoxMDEKICAgIC8vIEBhYmltZXRob2QoeyByZWFkb25seTogdHJ1ZSB9KQogICAgZHVwCiAgICBsZW4KICAgIGl0b2IKICAgIGV4dHJhY3QgNiAyCiAgICBzd2FwCiAgICBjb25jYXQKICAgIGJ5dGVjXzEgLy8gMHgxNTFmN2M3NQogICAgc3dhcAogICAgY29uY2F0CiAgICBsb2cKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCgovLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czo6QWtpdGFCYXNlQ29udHJhY3QudXBkYXRlQWtpdGFEQU9bcm91dGluZ10oKSAtPiB2b2lkOgp1cGRhdGVBa2l0YURBTzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjM4CiAgICAvLyB1cGRhdGVBa2l0YURBTyhha2l0YURBTzogQXBwbGljYXRpb24pOiB2b2lkIHsKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGR1cAogICAgbGVuCiAgICBpbnRjXzMgLy8gOAogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgdWludDY0CiAgICBidG9pCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czozOQogICAgLy8gYXNzZXJ0KFR4bi5zZW5kZXIgPT09IHRoaXMuZ2V0QWtpdGFEQU9XYWxsZXQoKS5hZGRyZXNzLCBFUlJfTk9UX0FLSVRBX0RBTykKICAgIHR4biBTZW5kZXIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjMyCiAgICAvLyBjb25zdCBbd2FsbGV0SURdID0gb3AuQXBwR2xvYmFsLmdldEV4VWludDY0KHRoaXMuYWtpdGFEQU8udmFsdWUsIEJ5dGVzKEFraXRhREFPR2xvYmFsU3RhdGVLZXlzV2FsbGV0KSkKICAgIGludGNfMSAvLyAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czoyOQogICAgLy8gYWtpdGFEQU8gPSBHbG9iYWxTdGF0ZTxBcHBsaWNhdGlvbj4oeyBrZXk6IEdsb2JhbFN0YXRlS2V5QWtpdGFEQU8gfSkKICAgIGJ5dGVjXzAgLy8gImFraXRhX2RhbyIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjMyCiAgICAvLyBjb25zdCBbd2FsbGV0SURdID0gb3AuQXBwR2xvYmFsLmdldEV4VWludDY0KHRoaXMuYWtpdGFEQU8udmFsdWUsIEJ5dGVzKEFraXRhREFPR2xvYmFsU3RhdGVLZXlzV2FsbGV0KSkKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBhc3NlcnQgLy8gY2hlY2sgR2xvYmFsU3RhdGUgZXhpc3RzCiAgICBwdXNoYnl0ZXMgIndhbGxldCIKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBwb3AKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjM5CiAgICAvLyBhc3NlcnQoVHhuLnNlbmRlciA9PT0gdGhpcy5nZXRBa2l0YURBT1dhbGxldCgpLmFkZHJlc3MsIEVSUl9OT1RfQUtJVEFfREFPKQogICAgYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwogICAgYXNzZXJ0IC8vIGFwcGxpY2F0aW9uIGV4aXN0cwogICAgPT0KICAgIGFzc2VydCAvLyBPbmx5IHRoZSBBa2l0YSBEQU8gY2FuIGNhbGwgdGhpcyBmdW5jdGlvbgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MjkKICAgIC8vIGFraXRhREFPID0gR2xvYmFsU3RhdGU8QXBwbGljYXRpb24+KHsga2V5OiBHbG9iYWxTdGF0ZUtleUFraXRhREFPIH0pCiAgICBieXRlY18wIC8vICJha2l0YV9kYW8iCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czo0MAogICAgLy8gdGhpcy5ha2l0YURBTy52YWx1ZSA9IGFraXRhREFPCiAgICBzd2FwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MzgKICAgIC8vIHVwZGF0ZUFraXRhREFPKGFraXRhREFPOiBBcHBsaWNhdGlvbik6IHZvaWQgewogICAgaW50Y18wIC8vIDEKICAgIHJldHVybgo=", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CyAEAQACCCYDCWFraXRhX2RhbwQVH3x1D3JlZ2lzdHJ5X2N1cnNvcjEYQAAxKiJnggIScmVnaXN0cmF0aW9uX3NoYXBlB2FkZHJlc3NnggILY2hlY2tfc2hhcGUAZzEZFEQxGEEANIIGBDKfBO4Ed7t5uQRuA/UKBJDU+l0EM+kslASFTe3gNhoAjgYAOwBYAJ8BVAFuAAEAIkOABM2a1n42GgCOAQABADYaAUkjWSQISwEVEkRXAgA2GgJJFSUSRBeAB3ZlcnNpb25PAmcoTGciQzYaAUkjWSQITBUSRIAMFR98dQAAAAAAAEnUsCJDMRYiCUk4ECISRDYaAUkjWSQISwEVEkRXAgBJFYEgEkRLATgHMgoSTwI4CIHUkwESEEQjKmVESSIIKkxnFklPAr8pTFCwIkM2GgFJFYEgEkQ2GgJJFSUSRBc2GgNJI1kkCEsBFRJEVwIASRUlEkRMFr5EVwAgTgJJFyMoZURJgANvYWxlSIEYW7GABCtWAqOyGk8EshqyGIEGshAjsgGztD5JVwQASwFXAAQpEkRJI1kkCEwVEkRXBgBPAxJEgANhYWxlSIFYW0sBgAhyZWZlcnJlcmVITgJMcgdETHIIRBJBABVJSwISQQAOIoABACNPAlQpTFCwIkMjQv/vNhoBSRUlEkQXFr5ESRUWVwYCTFApTFCwIkM2GgFJFSUSRBcxACMoZUSABndhbGxldGVIcghEEkQoTGciQw==", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
+class BinaryStateValue {
+    constructor(value) {
+        this.value = value;
+    }
+    asByteArray() {
+        return this.value;
+    }
+    asString() {
+        return this.value !== undefined ? Buffer.from(this.value).toString('utf-8') : undefined;
+    }
+}
+/**
+ * Converts the ABI tuple representation of a AkitaReferrerGateRegistryInfo to the struct representation
+ */
+function AkitaReferrerGateRegistryInfoFromTuple(abiTuple) {
+    return (0, app_arc56_1.getABIStructFromABITuple)(abiTuple, exports.APP_SPEC.structs.AkitaReferrerGateRegistryInfo, exports.APP_SPEC.structs);
+}
+/**
+ * Exposes methods for constructing `AppClient` params objects for ABI calls to the AkitaReferrerGate smart contract
+ */
+class AkitaReferrerGateParamsFactory {
+    /**
+     * Gets available create ABI call param factories
+     */
+    static get create() {
+        return {
+            _resolveByMethod(params) {
+                switch (params.method) {
+                    case 'create':
+                    case 'create(string,uint64)void':
+                        return AkitaReferrerGateParamsFactory.create.create(params);
+                }
+                throw new Error(`Unknown ' + verb + ' method`);
+            },
+            /**
+             * Constructs create ABI call params for the AkitaReferrerGate smart contract using the create(string,uint64)void ABI method
+             *
+             * @param params Parameters for the call
+             * @returns An `AppClientMethodCallParams` object for the call
+             */
+            create(params) {
+                return {
+                    ...params,
+                    method: 'create(string,uint64)void',
+                    args: Array.isArray(params.args) ? params.args : [params.args.version, params.args.akitaDao],
+                };
+            },
+        };
+    }
+    /**
+     * Constructs a no op call for the cost(byte[])uint64 ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static cost(params) {
+        return {
+            ...params,
+            method: 'cost(byte[])uint64',
+            args: Array.isArray(params.args) ? params.args : [params.args.args],
+        };
+    }
+    /**
+     * Constructs a no op call for the register(pay,byte[])uint64 ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static register(params) {
+        return {
+            ...params,
+            method: 'register(pay,byte[])uint64',
+            args: Array.isArray(params.args) ? params.args : [params.args.mbrPayment, params.args.args],
+        };
+    }
+    /**
+     * Constructs a no op call for the check(address,uint64,byte[])bool ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static check(params) {
+        return {
+            ...params,
+            method: 'check(address,uint64,byte[])bool',
+            args: Array.isArray(params.args) ? params.args : [params.args.caller, params.args.registryId, params.args.args],
+        };
+    }
+    /**
+     * Constructs a no op call for the getEntry(uint64)byte[] ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static getEntry(params) {
+        return {
+            ...params,
+            method: 'getEntry(uint64)byte[]',
+            args: Array.isArray(params.args) ? params.args : [params.args.registryId],
+        };
+    }
+    /**
+     * Constructs a no op call for the updateAkitaDAO(uint64)void ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static updateAkitaDao(params) {
+        return {
+            ...params,
+            method: 'updateAkitaDAO(uint64)void',
+            args: Array.isArray(params.args) ? params.args : [params.args.akitaDao],
+        };
+    }
+    /**
+     * Constructs a no op call for the opUp()void ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static opUp(params) {
+        return {
+            ...params,
+            method: 'opUp()void',
+            args: Array.isArray(params.args) ? params.args : [],
+        };
+    }
+}
+exports.AkitaReferrerGateParamsFactory = AkitaReferrerGateParamsFactory;
+/**
+ * A factory to create and deploy one or more instance of the AkitaReferrerGate smart contract and to create one or more app clients to interact with those (or other) app instances
+ */
+class AkitaReferrerGateFactory {
+    /**
+     * Creates a new instance of `AkitaReferrerGateFactory`
+     *
+     * @param params The parameters to initialise the app factory with
+     */
+    constructor(params) {
+        /**
+         * Get parameters to create transactions (create and deploy related calls) for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
+         */
+        this.params = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the AkitaReferrerGate smart contract using the create(string,uint64)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create params
+                 */
+                create: (params) => {
+                    return this.appFactory.params.create(AkitaReferrerGateParamsFactory.create.create(params));
+                },
+            },
+        };
+        /**
+         * Create transactions for the current app
+         */
+        this.createTransaction = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the AkitaReferrerGate smart contract using the create(string,uint64)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create transaction
+                 */
+                create: (params) => {
+                    return this.appFactory.createTransaction.create(AkitaReferrerGateParamsFactory.create.create(params));
+                },
+            },
+        };
+        /**
+         * Send calls to the current app
+         */
+        this.send = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the AkitaReferrerGate smart contract using an ABI method call using the create(string,uint64)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create result
+                 */
+                create: async (params) => {
+                    const result = await this.appFactory.send.create(AkitaReferrerGateParamsFactory.create.create(params));
+                    return { result: { ...result.result, return: result.result.return }, appClient: new AkitaReferrerGateClient(result.appClient) };
+                },
+            },
+        };
+        this.appFactory = new app_factory_1.AppFactory({
+            ...params,
+            appSpec: exports.APP_SPEC,
+        });
+    }
+    /** The name of the app (from the ARC-32 / ARC-56 app spec or override). */
+    get appName() {
+        return this.appFactory.appName;
+    }
+    /** The ARC-56 app spec being used */
+    get appSpec() {
+        return exports.APP_SPEC;
+    }
+    /** A reference to the underlying `AlgorandClient` this app factory is using. */
+    get algorand() {
+        return this.appFactory.algorand;
+    }
+    /**
+     * Returns a new `AppClient` client for an app instance of the given ID.
+     *
+     * Automatically populates appName, defaultSender and source maps from the factory
+     * if not specified in the params.
+     * @param params The parameters to create the app client
+     * @returns The `AppClient`
+     */
+    getAppClientById(params) {
+        return new AkitaReferrerGateClient(this.appFactory.getAppClientById(params));
+    }
+    /**
+     * Returns a new `AppClient` client, resolving the app by creator address and name
+     * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
+     *
+     * Automatically populates appName, defaultSender and source maps from the factory
+     * if not specified in the params.
+     * @param params The parameters to create the app client
+     * @returns The `AppClient`
+     */
+    async getAppClientByCreatorAndName(params) {
+        return new AkitaReferrerGateClient(await this.appFactory.getAppClientByCreatorAndName(params));
+    }
+    /**
+     * Idempotently deploys the AkitaReferrerGate smart contract.
+     *
+     * @param params The arguments for the contract calls and any additional parameters for the call
+     * @returns The deployment result
+     */
+    async deploy(params = {}) {
+        const result = await this.appFactory.deploy({
+            ...params,
+            createParams: params.createParams?.method ? AkitaReferrerGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams : undefined,
+        });
+        return { result: result.result, appClient: new AkitaReferrerGateClient(result.appClient) };
+    }
+}
+exports.AkitaReferrerGateFactory = AkitaReferrerGateFactory;
+/**
+ * A client to make calls to the AkitaReferrerGate smart contract
+ */
+class AkitaReferrerGateClient {
+    constructor(appClientOrParams) {
+        /**
+         * Get parameters to create transactions for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
+         */
+        this.params = {
+            /**
+             * Makes a clear_state call to an existing instance of the AkitaReferrerGate smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.params.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `cost(byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            cost: (params) => {
+                return this.appClient.params.call(AkitaReferrerGateParamsFactory.cost(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `register(pay,byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            register: (params) => {
+                return this.appClient.params.call(AkitaReferrerGateParamsFactory.register(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `check(address,uint64,byte[])bool` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            check: (params) => {
+                return this.appClient.params.call(AkitaReferrerGateParamsFactory.check(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            getEntry: (params) => {
+                return this.appClient.params.call(AkitaReferrerGateParamsFactory.getEntry(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `updateAkitaDAO(uint64)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            updateAkitaDao: (params) => {
+                return this.appClient.params.call(AkitaReferrerGateParamsFactory.updateAkitaDao(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `opUp()void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            opUp: (params = { args: [] }) => {
+                return this.appClient.params.call(AkitaReferrerGateParamsFactory.opUp(params));
+            },
+        };
+        /**
+         * Create transactions for the current app
+         */
+        this.createTransaction = {
+            /**
+             * Makes a clear_state call to an existing instance of the AkitaReferrerGate smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.createTransaction.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `cost(byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            cost: (params) => {
+                return this.appClient.createTransaction.call(AkitaReferrerGateParamsFactory.cost(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `register(pay,byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            register: (params) => {
+                return this.appClient.createTransaction.call(AkitaReferrerGateParamsFactory.register(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `check(address,uint64,byte[])bool` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            check: (params) => {
+                return this.appClient.createTransaction.call(AkitaReferrerGateParamsFactory.check(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            getEntry: (params) => {
+                return this.appClient.createTransaction.call(AkitaReferrerGateParamsFactory.getEntry(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `updateAkitaDAO(uint64)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            updateAkitaDao: (params) => {
+                return this.appClient.createTransaction.call(AkitaReferrerGateParamsFactory.updateAkitaDao(params));
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `opUp()void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            opUp: (params = { args: [] }) => {
+                return this.appClient.createTransaction.call(AkitaReferrerGateParamsFactory.opUp(params));
+            },
+        };
+        /**
+         * Send calls to the current app
+         */
+        this.send = {
+            /**
+             * Makes a clear_state call to an existing instance of the AkitaReferrerGate smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.send.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `cost(byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            cost: async (params) => {
+                const result = await this.appClient.send.call(AkitaReferrerGateParamsFactory.cost(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `register(pay,byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            register: async (params) => {
+                const result = await this.appClient.send.call(AkitaReferrerGateParamsFactory.register(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `check(address,uint64,byte[])bool` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            check: async (params) => {
+                const result = await this.appClient.send.call(AkitaReferrerGateParamsFactory.check(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            getEntry: async (params) => {
+                const result = await this.appClient.send.call(AkitaReferrerGateParamsFactory.getEntry(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `updateAkitaDAO(uint64)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            updateAkitaDao: async (params) => {
+                const result = await this.appClient.send.call(AkitaReferrerGateParamsFactory.updateAkitaDao(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the AkitaReferrerGate smart contract using the `opUp()void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            opUp: async (params = { args: [] }) => {
+                const result = await this.appClient.send.call(AkitaReferrerGateParamsFactory.opUp(params));
+                return { ...result, return: result.return };
+            },
+        };
+        /**
+         * Methods to access state for the current AkitaReferrerGate app
+         */
+        this.state = {
+            /**
+             * Methods to access global state for the current AkitaReferrerGate app
+             */
+            global: {
+                /**
+                 * Get all current keyed values from global state
+                 */
+                getAll: async () => {
+                    const result = await this.appClient.state.global.getAll();
+                    return {
+                        registryCursor: result.registryCursor,
+                        registrationShape: result.registrationShape,
+                        checkShape: result.checkShape,
+                        version: result.version,
+                        akitaDao: result.akitaDAO,
+                    };
+                },
+                /**
+                 * Get the current value of the registryCursor key in global state
+                 */
+                registryCursor: async () => { return (await this.appClient.state.global.getValue("registryCursor")); },
+                /**
+                 * Get the current value of the registrationShape key in global state
+                 */
+                registrationShape: async () => { return (await this.appClient.state.global.getValue("registrationShape")); },
+                /**
+                 * Get the current value of the checkShape key in global state
+                 */
+                checkShape: async () => { return (await this.appClient.state.global.getValue("checkShape")); },
+                /**
+                 * Get the current value of the version key in global state
+                 */
+                version: async () => { return (await this.appClient.state.global.getValue("version")); },
+                /**
+                 * Get the current value of the akitaDAO key in global state
+                 */
+                akitaDao: async () => { return (await this.appClient.state.global.getValue("akitaDAO")); },
+            },
+            /**
+             * Methods to access box state for the current AkitaReferrerGate app
+             */
+            box: {
+                /**
+                 * Get all current keyed values from box state
+                 */
+                getAll: async () => {
+                    const result = await this.appClient.state.box.getAll();
+                    return {};
+                },
+                /**
+                 * Get values from the registry map in box state
+                 */
+                registry: {
+                    /**
+                     * Get all current values of the registry map in box state
+                     */
+                    getMap: async () => { return (await this.appClient.state.box.getMap("registry")); },
+                    /**
+                     * Get a current value of the registry map by key from box state
+                     */
+                    value: async (key) => { return await this.appClient.state.box.getMapValue("registry", key); },
+                },
+            },
+        };
+        this.appClient = appClientOrParams instanceof app_client_1.AppClient ? appClientOrParams : new app_client_1.AppClient({
+            ...appClientOrParams,
+            appSpec: exports.APP_SPEC,
+        });
+    }
+    /**
+     * Checks for decode errors on the given return value and maps the return value to the return type for the given method
+     * @returns The typed return value or undefined if there was no value
+     */
+    decodeReturnValue(method, returnValue) {
+        return returnValue !== undefined ? (0, app_arc56_1.getArc56ReturnValue)(returnValue, this.appClient.getABIMethod(method), exports.APP_SPEC.structs) : undefined;
+    }
+    /**
+     * Returns a new `AkitaReferrerGateClient` client, resolving the app by creator address and name
+     * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
+     * @param params The parameters to create the app client
+     */
+    static async fromCreatorAndName(params) {
+        return new AkitaReferrerGateClient(await app_client_1.AppClient.fromCreatorAndName({ ...params, appSpec: exports.APP_SPEC }));
+    }
+    /**
+     * Returns an `AkitaReferrerGateClient` instance for the current network based on
+     * pre-determined network-specific app IDs specified in the ARC-56 app spec.
+     *
+     * If no IDs are in the app spec or the network isn't recognised, an error is thrown.
+     * @param params The parameters to create the app client
+     */
+    static async fromNetwork(params) {
+        return new AkitaReferrerGateClient(await app_client_1.AppClient.fromNetwork({ ...params, appSpec: exports.APP_SPEC }));
+    }
+    /** The ID of the app instance this client is linked to. */
+    get appId() {
+        return this.appClient.appId;
+    }
+    /** The app address of the app instance this client is linked to. */
+    get appAddress() {
+        return this.appClient.appAddress;
+    }
+    /** The name of the app. */
+    get appName() {
+        return this.appClient.appName;
+    }
+    /** The ARC-56 app spec being used */
+    get appSpec() {
+        return this.appClient.appSpec;
+    }
+    /** A reference to the underlying `AlgorandClient` this app client is using. */
+    get algorand() {
+        return this.appClient.algorand;
+    }
+    /**
+     * Clone this app client with different params
+     *
+     * @param params The params to use for the the cloned app client. Omit a param to keep the original value. Set a param to override the original value. Setting to undefined will clear the original value.
+     * @returns A new app client with the altered params
+     */
+    clone(params) {
+        return new AkitaReferrerGateClient(this.appClient.clone(params));
+    }
+    /**
+     * Makes a readonly (simulated) call to the AkitaReferrerGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+     *
+     * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+     *
+     * @param params The params for the smart contract call
+     * @returns The call result
+     */
+    async getEntry(params) {
+        const result = await this.appClient.send.call(AkitaReferrerGateParamsFactory.getEntry(params));
+        return result.return;
+    }
+    newGroup() {
+        const client = this;
+        const composer = this.algorand.newGroup();
+        let promiseChain = Promise.resolve();
+        const resultMappers = [];
+        return {
+            /**
+             * Add a cost(byte[])uint64 method call against the AkitaReferrerGate contract
+             */
+            cost(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.cost(params)));
+                resultMappers.push((v) => client.decodeReturnValue('cost(byte[])uint64', v));
+                return this;
+            },
+            /**
+             * Add a register(pay,byte[])uint64 method call against the AkitaReferrerGate contract
+             */
+            register(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.register(params)));
+                resultMappers.push((v) => client.decodeReturnValue('register(pay,byte[])uint64', v));
+                return this;
+            },
+            /**
+             * Add a check(address,uint64,byte[])bool method call against the AkitaReferrerGate contract
+             */
+            check(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.check(params)));
+                resultMappers.push((v) => client.decodeReturnValue('check(address,uint64,byte[])bool', v));
+                return this;
+            },
+            /**
+             * Add a getEntry(uint64)byte[] method call against the AkitaReferrerGate contract
+             */
+            getEntry(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.getEntry(params)));
+                resultMappers.push((v) => client.decodeReturnValue('getEntry(uint64)byte[]', v));
+                return this;
+            },
+            /**
+             * Add a updateAkitaDAO(uint64)void method call against the AkitaReferrerGate contract
+             */
+            updateAkitaDao(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.updateAkitaDao(params)));
+                resultMappers.push(undefined);
+                return this;
+            },
+            /**
+             * Add a opUp()void method call against the AkitaReferrerGate contract
+             */
+            opUp(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.opUp(params)));
+                resultMappers.push(undefined);
+                return this;
+            },
+            /**
+             * Add a clear state call to the AkitaReferrerGate contract
+             */
+            clearState(params) {
+                promiseChain = promiseChain.then(() => composer.addAppCall(client.params.clearState(params)));
+                return this;
+            },
+            addTransaction(txn, signer) {
+                promiseChain = promiseChain.then(() => composer.addTransaction(txn, signer));
+                return this;
+            },
+            async composer() {
+                await promiseChain;
+                return composer;
+            },
+            async simulate(options) {
+                await promiseChain;
+                const result = await (!options ? composer.simulate() : composer.simulate(options));
+                return {
+                    ...result,
+                    returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i](val) : val.returnValue)
+                };
+            },
+            async send(params) {
+                await promiseChain;
+                const result = await composer.send(params);
+                return {
+                    ...result,
+                    returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i](val) : val.returnValue)
+                };
+            }
+        };
+    }
+}
+exports.AkitaReferrerGateClient = AkitaReferrerGateClient;
+//# sourceMappingURL=AkitaReferrerGateClient.js.map

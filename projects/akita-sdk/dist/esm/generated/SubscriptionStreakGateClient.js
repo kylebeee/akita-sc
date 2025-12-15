@@ -1,0 +1,770 @@
+import { getArc56ReturnValue, getABIStructFromABITuple } from '@algorandfoundation/algokit-utils/types/app-arc56';
+import { AppClient as _AppClient, } from '@algorandfoundation/algokit-utils/types/app-client';
+import { AppFactory as _AppFactory } from '@algorandfoundation/algokit-utils/types/app-factory';
+export const APP_SPEC = { "name": "SubscriptionStreakGate", "structs": { "SubscriptionStreakGateRegistryInfo": [{ "name": "merchant", "type": "address" }, { "name": "id", "type": "uint64" }, { "name": "op", "type": "uint8" }, { "name": "streak", "type": "uint64" }] }, "methods": [{ "name": "create", "args": [{ "type": "string", "name": "version" }, { "type": "uint64", "name": "akitaDAO" }], "returns": { "type": "void" }, "actions": { "create": ["NoOp"], "call": [] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "cost", "args": [{ "type": "byte[]", "name": "args" }], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "register", "args": [{ "type": "pay", "name": "mbrPayment" }, { "type": "byte[]", "name": "args" }], "returns": { "type": "uint64" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "check", "args": [{ "type": "address", "name": "caller" }, { "type": "uint64", "name": "registryID" }, { "type": "byte[]", "name": "args" }], "returns": { "type": "bool" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "getRegistrationShape", "args": [{ "type": "(address,uint64,uint8,uint64)", "struct": "SubscriptionStreakGateRegistryInfo", "name": "shape" }], "returns": { "type": "(address,uint64,uint8,uint64)", "struct": "SubscriptionStreakGateRegistryInfo" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": true, "events": [], "recommendations": {} }, { "name": "getEntry", "args": [{ "type": "uint64", "name": "registryID" }], "returns": { "type": "byte[]" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": true, "events": [], "recommendations": {} }, { "name": "updateAkitaDAO", "args": [{ "type": "uint64", "name": "akitaDAO" }], "returns": { "type": "void" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }, { "name": "opUp", "args": [], "returns": { "type": "void" }, "actions": { "create": [], "call": ["NoOp"] }, "readonly": false, "events": [], "recommendations": {} }], "arcs": [22, 28], "networks": {}, "state": { "schema": { "global": { "ints": 2, "bytes": 3 }, "local": { "ints": 0, "bytes": 0 } }, "keys": { "global": { "registryCursor": { "keyType": "AVMString", "valueType": "AVMUint64", "key": "cmVnaXN0cnlfY3Vyc29y" }, "registrationShape": { "keyType": "AVMString", "valueType": "AVMString", "key": "cmVnaXN0cmF0aW9uX3NoYXBl", "desc": "the abi string for the register args" }, "checkShape": { "keyType": "AVMString", "valueType": "AVMString", "key": "Y2hlY2tfc2hhcGU=", "desc": "the abi string for the check args" }, "version": { "keyType": "AVMString", "valueType": "AVMString", "key": "dmVyc2lvbg==", "desc": "the current version of the contract" }, "akitaDAO": { "keyType": "AVMString", "valueType": "AVMUint64", "key": "YWtpdGFfZGFv", "desc": "the app ID of the Akita DAO" } }, "local": {}, "box": {} }, "maps": { "global": {}, "local": {}, "box": { "registry": { "keyType": "uint64", "valueType": "SubscriptionStreakGateRegistryInfo", "prefix": "" } } } }, "bareActions": { "create": [], "call": [] }, "sourceInfo": { "approval": { "sourceInfo": [{ "pc": [381, 667], "errorMessage": "Box must have value" }, { "pc": [461], "errorMessage": "Bytes has valid prefix" }, { "pc": [301, 378], "errorMessage": "Invalid number of arguments" }, { "pc": [319], "errorMessage": "Invalid payment" }, { "pc": [119], "errorMessage": "OnCompletion must be NoOp" }, { "pc": [712], "errorMessage": "Only the Akita DAO can call this function" }, { "pc": [710], "errorMessage": "application exists" }, { "pc": [323, 409, 697], "errorMessage": "check GlobalState exists" }, { "pc": [466], "errorMessage": "invalid number of bytes for (bool1,uint8[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)" }, { "pc": [252, 292, 372], "errorMessage": "invalid number of bytes for (len+uint8[])" }, { "pc": [210], "errorMessage": "invalid number of bytes for (len+utf8[])" }, { "pc": [648], "errorMessage": "invalid number of bytes for (uint8[32],uint64,uint8,uint64)" }, { "pc": [222, 358, 663, 690], "errorMessage": "invalid number of bytes for uint64" }, { "pc": [349], "errorMessage": "invalid number of bytes for uint8[32]" }, { "pc": [279], "errorMessage": "transaction type is pay" }], "pcOffsetMethod": "none" }, "clear": { "sourceInfo": [], "pcOffsetMethod": "none" } }, "source": { "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYXJjNC9pbmRleC5kLnRzOjpDb250cmFjdC5hcHByb3ZhbFByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBpbnRjYmxvY2sgMSAwIDkzIDIKICAgIGJ5dGVjYmxvY2sgMHgxNTFmN2M3NSAiYWtpdGFfZGFvIiAicmVnaXN0cnlfY3Vyc29yIgogICAgdHhuIEFwcGxpY2F0aW9uSUQKICAgIGJueiBtYWluX2FmdGVyX2lmX2Vsc2VAMgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6MzAKICAgIC8vIHJlZ2lzdHJ5Q3Vyc29yID0gR2xvYmFsU3RhdGU8dWludDY0Pih7IGluaXRpYWxWYWx1ZTogMSwga2V5OiBHYXRlR2xvYmFsU3RhdGVLZXlSZWdpc3RyeUN1cnNvciB9KQogICAgYnl0ZWNfMiAvLyAicmVnaXN0cnlfY3Vyc29yIgogICAgaW50Y18wIC8vIDEKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czozMgogICAgLy8gcmVnaXN0cmF0aW9uU2hhcGUgPSBHbG9iYWxTdGF0ZTxzdHJpbmc+KHsgaW5pdGlhbFZhbHVlOiAnKGFkZHJlc3MsdWludDY0LHVpbnQ4LHVpbnQ2NCknLCBrZXk6IEdhdGVHbG9iYWxTdGF0ZUtleVJlZ2lzdHJhdGlvblNoYXBlIH0pCiAgICBwdXNoYnl0ZXNzICJyZWdpc3RyYXRpb25fc2hhcGUiICIoYWRkcmVzcyx1aW50NjQsdWludDgsdWludDY0KSIgLy8gInJlZ2lzdHJhdGlvbl9zaGFwZSIsICIoYWRkcmVzcyx1aW50NjQsdWludDgsdWludDY0KSIKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czozNAogICAgLy8gY2hlY2tTaGFwZSA9IEdsb2JhbFN0YXRlPHN0cmluZz4oeyBpbml0aWFsVmFsdWU6ICcnLCBrZXk6IEdhdGVHbG9iYWxTdGF0ZUtleUNoZWNrU2hhcGUgfSkKICAgIHB1c2hieXRlc3MgImNoZWNrX3NoYXBlIiAiIiAvLyAiY2hlY2tfc2hhcGUiLCAiIgogICAgYXBwX2dsb2JhbF9wdXQKCm1haW5fYWZ0ZXJfaWZfZWxzZUAyOgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6MjYKICAgIC8vIGV4cG9ydCBjbGFzcyBTdWJzY3JpcHRpb25TdHJlYWtHYXRlIGV4dGVuZHMgQWtpdGFCYXNlQ29udHJhY3QgewogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgYXNzZXJ0IC8vIE9uQ29tcGxldGlvbiBtdXN0IGJlIE5vT3AKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICBieiBtYWluX2NyZWF0ZV9Ob09wQDEzCiAgICBwdXNoYnl0ZXNzIDB4MzI5ZjA0ZWUgMHg3N2JiNzliOSAweDZlMDNmNTBhIDB4Mjc5NmU5N2IgMHg5MGQ0ZmE1ZCAweDMzZTkyYzk0IDB4ODU0ZGVkZTAgLy8gbWV0aG9kICJjb3N0KGJ5dGVbXSl1aW50NjQiLCBtZXRob2QgInJlZ2lzdGVyKHBheSxieXRlW10pdWludDY0IiwgbWV0aG9kICJjaGVjayhhZGRyZXNzLHVpbnQ2NCxieXRlW10pYm9vbCIsIG1ldGhvZCAiZ2V0UmVnaXN0cmF0aW9uU2hhcGUoKGFkZHJlc3MsdWludDY0LHVpbnQ4LHVpbnQ2NCkpKGFkZHJlc3MsdWludDY0LHVpbnQ4LHVpbnQ2NCkiLCBtZXRob2QgImdldEVudHJ5KHVpbnQ2NClieXRlW10iLCBtZXRob2QgInVwZGF0ZUFraXRhREFPKHVpbnQ2NCl2b2lkIiwgbWV0aG9kICJvcFVwKCl2b2lkIgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggY29zdCByZWdpc3RlciBjaGVjayBnZXRSZWdpc3RyYXRpb25TaGFwZSBnZXRFbnRyeSB1cGRhdGVBa2l0YURBTyBtYWluX29wVXBfcm91dGVAMTEKICAgIGVycgoKbWFpbl9vcFVwX3JvdXRlQDExOgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6NDMKICAgIC8vIG9wVXAoKTogdm9pZCB7IH0KICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCm1haW5fY3JlYXRlX05vT3BAMTM6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czoyNgogICAgLy8gZXhwb3J0IGNsYXNzIFN1YnNjcmlwdGlvblN0cmVha0dhdGUgZXh0ZW5kcyBBa2l0YUJhc2VDb250cmFjdCB7CiAgICBwdXNoYnl0ZXMgMHhjZDlhZDY3ZSAvLyBtZXRob2QgImNyZWF0ZShzdHJpbmcsdWludDY0KXZvaWQiCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAwCiAgICBtYXRjaCBjcmVhdGUKICAgIGVycgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjpTdWJzY3JpcHRpb25TdHJlYWtHYXRlLmNyZWF0ZVtyb3V0aW5nXSgpIC0+IHZvaWQ6CmNyZWF0ZToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjg0CiAgICAvLyBAYWJpbWV0aG9kKHsgb25DcmVhdGU6ICdyZXF1aXJlJyB9KQogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgZHVwCiAgICBpbnRjXzEgLy8gMAogICAgZXh0cmFjdF91aW50MTYKICAgIGludGNfMyAvLyAyCiAgICArCiAgICBkaWcgMQogICAgbGVuCiAgICA9PQogICAgYXNzZXJ0IC8vIGludmFsaWQgbnVtYmVyIG9mIGJ5dGVzIGZvciAobGVuK3V0ZjhbXSkKICAgIGV4dHJhY3QgMiAwCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAyCiAgICBkdXAKICAgIGxlbgogICAgcHVzaGludCA4IC8vIDgKICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIHVpbnQ2NAogICAgYnRvaQogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MjcKICAgIC8vIHZlcnNpb24gPSBHbG9iYWxTdGF0ZTxzdHJpbmc+KHsga2V5OiBHbG9iYWxTdGF0ZUtleVZlcnNpb24gfSkKICAgIHB1c2hieXRlcyAidmVyc2lvbiIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjg2CiAgICAvLyB0aGlzLnZlcnNpb24udmFsdWUgPSB2ZXJzaW9uCiAgICB1bmNvdmVyIDIKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czoyOQogICAgLy8gYWtpdGFEQU8gPSBHbG9iYWxTdGF0ZTxBcHBsaWNhdGlvbj4oeyBrZXk6IEdsb2JhbFN0YXRlS2V5QWtpdGFEQU8gfSkKICAgIGJ5dGVjXzEgLy8gImFraXRhX2RhbyIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjg3CiAgICAvLyB0aGlzLmFraXRhREFPLnZhbHVlID0gQXBwbGljYXRpb24oYWtpdGFEQU8pCiAgICBzd2FwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6ODQKICAgIC8vIEBhYmltZXRob2QoeyBvbkNyZWF0ZTogJ3JlcXVpcmUnIH0pCiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgoKLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OlN1YnNjcmlwdGlvblN0cmVha0dhdGUuY29zdFtyb3V0aW5nXSgpIC0+IHZvaWQ6CmNvc3Q6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo5MgogICAgLy8gY29zdChhcmdzOiBieXRlcyk6IHVpbnQ2NCB7CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBkdXAKICAgIGludGNfMSAvLyAwCiAgICBleHRyYWN0X3VpbnQxNgogICAgaW50Y18zIC8vIDIKICAgICsKICAgIHN3YXAKICAgIGxlbgogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1aW50OFtdKQogICAgcHVzaGJ5dGVzIDB4MTUxZjdjNzUwMDAwMDAwMDAwMDA2MmQ0CiAgICBsb2cKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCgovLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo6U3Vic2NyaXB0aW9uU3RyZWFrR2F0ZS5yZWdpc3Rlcltyb3V0aW5nXSgpIC0+IHZvaWQ6CnJlZ2lzdGVyOgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OTYKICAgIC8vIHJlZ2lzdGVyKG1iclBheW1lbnQ6IGd0eG4uUGF5bWVudFR4biwgYXJnczogYnl0ZXMpOiB1aW50NjQgewogICAgdHhuIEdyb3VwSW5kZXgKICAgIGludGNfMCAvLyAxCiAgICAtCiAgICBkdXAKICAgIGd0eG5zIFR5cGVFbnVtCiAgICBpbnRjXzAgLy8gcGF5CiAgICA9PQogICAgYXNzZXJ0IC8vIHRyYW5zYWN0aW9uIHR5cGUgaXMgcGF5CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBkdXAKICAgIGludGNfMSAvLyAwCiAgICBleHRyYWN0X3VpbnQxNgogICAgaW50Y18zIC8vIDIKICAgICsKICAgIGRpZyAxCiAgICBsZW4KICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIChsZW4rdWludDhbXSkKICAgIGV4dHJhY3QgMiAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo5NwogICAgLy8gYXNzZXJ0KGFyZ3MubGVuZ3RoID09PSBSZWdpc3RlckJ5dGVMZW5ndGgsIEVSUl9JTlZBTElEX0FSR19DT1VOVCkKICAgIGR1cAogICAgbGVuCiAgICBwdXNoaW50IDQ5IC8vIDQ5CiAgICA9PQogICAgYXNzZXJ0IC8vIEludmFsaWQgbnVtYmVyIG9mIGFyZ3VtZW50cwogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OTgtMTA1CiAgICAvLyBhc3NlcnRNYXRjaCgKICAgIC8vICAgbWJyUGF5bWVudCwKICAgIC8vICAgewogICAgLy8gICAgIHJlY2VpdmVyOiBHbG9iYWwuY3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcywKICAgIC8vICAgICBhbW91bnQ6IFN1YnNjcmlwdGlvblN0cmVha0dhdGVSZWdpc3RyeU1CUiwKICAgIC8vICAgfSwKICAgIC8vICAgRVJSX0lOVkFMSURfUEFZTUVOVAogICAgLy8gKQogICAgZGlnIDEKICAgIGd0eG5zIFJlY2VpdmVyCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czoxMDEKICAgIC8vIHJlY2VpdmVyOiBHbG9iYWwuY3VycmVudEFwcGxpY2F0aW9uQWRkcmVzcywKICAgIGdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo5OC0xMDUKICAgIC8vIGFzc2VydE1hdGNoKAogICAgLy8gICBtYnJQYXltZW50LAogICAgLy8gICB7CiAgICAvLyAgICAgcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgLy8gICAgIGFtb3VudDogU3Vic2NyaXB0aW9uU3RyZWFrR2F0ZVJlZ2lzdHJ5TUJSLAogICAgLy8gICB9LAogICAgLy8gICBFUlJfSU5WQUxJRF9QQVlNRU5UCiAgICAvLyApCiAgICA9PQogICAgdW5jb3ZlciAyCiAgICBndHhucyBBbW91bnQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjEwMgogICAgLy8gYW1vdW50OiBTdWJzY3JpcHRpb25TdHJlYWtHYXRlUmVnaXN0cnlNQlIsCiAgICBwdXNoaW50IDI1MzAwIC8vIDI1MzAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo5OC0xMDUKICAgIC8vIGFzc2VydE1hdGNoKAogICAgLy8gICBtYnJQYXltZW50LAogICAgLy8gICB7CiAgICAvLyAgICAgcmVjZWl2ZXI6IEdsb2JhbC5jdXJyZW50QXBwbGljYXRpb25BZGRyZXNzLAogICAgLy8gICAgIGFtb3VudDogU3Vic2NyaXB0aW9uU3RyZWFrR2F0ZVJlZ2lzdHJ5TUJSLAogICAgLy8gICB9LAogICAgLy8gICBFUlJfSU5WQUxJRF9QQVlNRU5UCiAgICAvLyApCiAgICA9PQogICAgJiYKICAgIGFzc2VydCAvLyBJbnZhbGlkIHBheW1lbnQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjQzCiAgICAvLyBjb25zdCBpZCA9IHRoaXMucmVnaXN0cnlDdXJzb3IudmFsdWUKICAgIGludGNfMSAvLyAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czozMAogICAgLy8gcmVnaXN0cnlDdXJzb3IgPSBHbG9iYWxTdGF0ZTx1aW50NjQ+KHsgaW5pdGlhbFZhbHVlOiAxLCBrZXk6IEdhdGVHbG9iYWxTdGF0ZUtleVJlZ2lzdHJ5Q3Vyc29yIH0pCiAgICBieXRlY18yIC8vICJyZWdpc3RyeV9jdXJzb3IiCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo0MwogICAgLy8gY29uc3QgaWQgPSB0aGlzLnJlZ2lzdHJ5Q3Vyc29yLnZhbHVlCiAgICBhcHBfZ2xvYmFsX2dldF9leAogICAgYXNzZXJ0IC8vIGNoZWNrIEdsb2JhbFN0YXRlIGV4aXN0cwogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NDQKICAgIC8vIHRoaXMucmVnaXN0cnlDdXJzb3IudmFsdWUgKz0gMQogICAgZHVwCiAgICBpbnRjXzAgLy8gMQogICAgKwogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6MzAKICAgIC8vIHJlZ2lzdHJ5Q3Vyc29yID0gR2xvYmFsU3RhdGU8dWludDY0Pih7IGluaXRpYWxWYWx1ZTogMSwga2V5OiBHYXRlR2xvYmFsU3RhdGVLZXlSZWdpc3RyeUN1cnNvciB9KQogICAgYnl0ZWNfMiAvLyAicmVnaXN0cnlfY3Vyc29yIgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NDQKICAgIC8vIHRoaXMucmVnaXN0cnlDdXJzb3IudmFsdWUgKz0gMQogICAgc3dhcAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjEwOAogICAgLy8gdGhpcy5yZWdpc3RyeShpZCkudmFsdWUgPSBkZWNvZGVBcmM0PFN1YnNjcmlwdGlvblN0cmVha0dhdGVSZWdpc3RyeUluZm8+KGFyZ3MpCiAgICBpdG9iCiAgICBkdXAKICAgIHVuY292ZXIgMgogICAgYm94X3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OTYKICAgIC8vIHJlZ2lzdGVyKG1iclBheW1lbnQ6IGd0eG4uUGF5bWVudFR4biwgYXJnczogYnl0ZXMpOiB1aW50NjQgewogICAgYnl0ZWNfMCAvLyAweDE1MWY3Yzc1CiAgICBzd2FwCiAgICBjb25jYXQKICAgIGxvZwogICAgaW50Y18wIC8vIDEKICAgIHJldHVybgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjpTdWJzY3JpcHRpb25TdHJlYWtHYXRlLmNoZWNrW3JvdXRpbmddKCkgLT4gdm9pZDoKY2hlY2s6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czoxMTIKICAgIC8vIGNoZWNrKGNhbGxlcjogQWNjb3VudCwgcmVnaXN0cnlJRDogdWludDY0LCBhcmdzOiBieXRlcyk6IGJvb2xlYW4gewogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgZHVwCiAgICBsZW4KICAgIHB1c2hpbnQgMzIgLy8gMzIKICAgID09CiAgICBhc3NlcnQgLy8gaW52YWxpZCBudW1iZXIgb2YgYnl0ZXMgZm9yIHVpbnQ4WzMyXQogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMgogICAgZHVwCiAgICBsZW4KICAgIHB1c2hpbnQgOCAvLyA4CiAgICA9PQogICAgYXNzZXJ0IC8vIGludmFsaWQgbnVtYmVyIG9mIGJ5dGVzIGZvciB1aW50NjQKICAgIGJ0b2kKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDMKICAgIGR1cAogICAgaW50Y18xIC8vIDAKICAgIGV4dHJhY3RfdWludDE2CiAgICBpbnRjXzMgLy8gMgogICAgKwogICAgZGlnIDEKICAgIGxlbgogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKGxlbit1aW50OFtdKQogICAgZXh0cmFjdCAyIDAKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjExMwogICAgLy8gYXNzZXJ0KGFyZ3MubGVuZ3RoID09PSAwLCBFUlJfSU5WQUxJRF9BUkdfQ09VTlQpCiAgICBsZW4KICAgICEKICAgIGFzc2VydCAvLyBJbnZhbGlkIG51bWJlciBvZiBhcmd1bWVudHMKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjExNAogICAgLy8gY29uc3QgeyBtZXJjaGFudCwgaWQsIG9wLCBzdHJlYWsgfSA9IGNsb25lKHRoaXMucmVnaXN0cnkocmVnaXN0cnlJRCkudmFsdWUpCiAgICBpdG9iCiAgICBib3hfZ2V0CiAgICBhc3NlcnQgLy8gQm94IG11c3QgaGF2ZSB2YWx1ZQogICAgZHVwCiAgICBleHRyYWN0IDAgMzIKICAgIGRpZyAxCiAgICBleHRyYWN0IDMyIDgKICAgIGRpZyAyCiAgICBleHRyYWN0IDQwIDEKICAgIGNvdmVyIDQKICAgIHVuY292ZXIgMgogICAgcHVzaGludCA0MSAvLyA0MQogICAgZXh0cmFjdF91aW50NjQKICAgIGNvdmVyIDMKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjU1LTU4CiAgICAvLyBjb25zdCBpbmZvID0gYWJpQ2FsbDx0eXBlb2YgU3Vic2NyaXB0aW9ucy5wcm90b3R5cGUuZ2V0U3Vic2NyaXB0aW9uPih7CiAgICAvLyAgIGFwcElkOiBnZXRBa2l0YUFwcExpc3QodGhpcy5ha2l0YURBTy52YWx1ZSkuc3Vic2NyaXB0aW9ucywKICAgIC8vICAgYXJnczogW3thZGRyZXNzLCBpZH1dLAogICAgLy8gfSkucmV0dXJuVmFsdWUKICAgIGl0eG5fYmVnaW4KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjU2CiAgICAvLyBhcHBJZDogZ2V0QWtpdGFBcHBMaXN0KHRoaXMuYWtpdGFEQU8udmFsdWUpLnN1YnNjcmlwdGlvbnMsCiAgICBpbnRjXzEgLy8gMAogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MjkKICAgIC8vIGFraXRhREFPID0gR2xvYmFsU3RhdGU8QXBwbGljYXRpb24+KHsga2V5OiBHbG9iYWxTdGF0ZUtleUFraXRhREFPIH0pCiAgICBieXRlY18xIC8vICJha2l0YV9kYW8iCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo1NgogICAgLy8gYXBwSWQ6IGdldEFraXRhQXBwTGlzdCh0aGlzLmFraXRhREFPLnZhbHVlKS5zdWJzY3JpcHRpb25zLAogICAgYXBwX2dsb2JhbF9nZXRfZXgKICAgIGFzc2VydCAvLyBjaGVjayBHbG9iYWxTdGF0ZSBleGlzdHMKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9mdW5jdGlvbnMudHM6NDAKICAgIC8vIGNvbnN0IFthcHBMaXN0Qnl0ZXNdID0gb3AuQXBwR2xvYmFsLmdldEV4Qnl0ZXMoYWtpdGFEQU8sIEJ5dGVzKEFraXRhREFPR2xvYmFsU3RhdGVLZXlzQWtpdGFBcHBMaXN0KSkKICAgIHB1c2hieXRlcyAiYWFsIgogICAgYXBwX2dsb2JhbF9nZXRfZXgKICAgIHBvcAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NTYKICAgIC8vIGFwcElkOiBnZXRBa2l0YUFwcExpc3QodGhpcy5ha2l0YURBTy52YWx1ZSkuc3Vic2NyaXB0aW9ucywKICAgIHB1c2hpbnQgMzIgLy8gMzIKICAgIGV4dHJhY3RfdWludDY0CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo1NwogICAgLy8gYXJnczogW3thZGRyZXNzLCBpZH1dLAogICAgdW5jb3ZlciAzCiAgICB1bmNvdmVyIDIKICAgIGNvbmNhdAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NTUtNTgKICAgIC8vIGNvbnN0IGluZm8gPSBhYmlDYWxsPHR5cGVvZiBTdWJzY3JpcHRpb25zLnByb3RvdHlwZS5nZXRTdWJzY3JpcHRpb24+KHsKICAgIC8vICAgYXBwSWQ6IGdldEFraXRhQXBwTGlzdCh0aGlzLmFraXRhREFPLnZhbHVlKS5zdWJzY3JpcHRpb25zLAogICAgLy8gICBhcmdzOiBbe2FkZHJlc3MsIGlkfV0sCiAgICAvLyB9KS5yZXR1cm5WYWx1ZQogICAgcHVzaGJ5dGVzIDB4MjViODEyYTcgLy8gbWV0aG9kICJnZXRTdWJzY3JpcHRpb24oKGFkZHJlc3MsdWludDY0KSkoYm9vbCxhZGRyZXNzLHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KSIKICAgIGl0eG5fZmllbGQgQXBwbGljYXRpb25BcmdzCiAgICBpdHhuX2ZpZWxkIEFwcGxpY2F0aW9uQXJncwogICAgaXR4bl9maWVsZCBBcHBsaWNhdGlvbklECiAgICBwdXNoaW50IDYgLy8gYXBwbAogICAgaXR4bl9maWVsZCBUeXBlRW51bQogICAgaW50Y18xIC8vIDAKICAgIGl0eG5fZmllbGQgRmVlCiAgICBpdHhuX3N1Ym1pdAogICAgaXR4biBMYXN0TG9nCiAgICBkdXAKICAgIGNvdmVyIDIKICAgIGR1cAogICAgZXh0cmFjdCA0IDAKICAgIGRpZyAxCiAgICBleHRyYWN0IDAgNAogICAgYnl0ZWNfMCAvLyAweDE1MWY3Yzc1CiAgICA9PQogICAgYXNzZXJ0IC8vIEJ5dGVzIGhhcyB2YWxpZCBwcmVmaXgKICAgIGxlbgogICAgcHVzaGludCAxMDUgLy8gMTA1CiAgICA9PQogICAgYXNzZXJ0IC8vIGludmFsaWQgbnVtYmVyIG9mIGJ5dGVzIGZvciAoYm9vbDEsdWludDhbMzJdLHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0LHVpbnQ2NCx1aW50NjQsdWludDY0KQogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NjAKICAgIC8vIGNvbnN0IHRvTWVyY2hhbnQgPSBpbmZvLnJlY2lwaWVudCA9PT0gbWVyY2hhbnQKICAgIGR1cAogICAgZXh0cmFjdCA1IDMyCiAgICB1bmNvdmVyIDIKICAgID09CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo2MwogICAgLy8gR2xvYmFsLmxhdGVzdFRpbWVzdGFtcCAtICgoKEdsb2JhbC5sYXRlc3RUaW1lc3RhbXAgLSBpbmZvLnN0YXJ0RGF0ZSkgJSBpbmZvLmludGVydmFsKSArIGluZm8uaW50ZXJ2YWwpCiAgICBnbG9iYWwgTGF0ZXN0VGltZXN0YW1wCiAgICBkdXAKICAgIGRpZyAzCiAgICBwdXNoaW50IDQ1IC8vIDQ1CiAgICBleHRyYWN0X3VpbnQ2NAogICAgLQogICAgZGlnIDMKICAgIHB1c2hpbnQgNjEgLy8gNjEKICAgIGV4dHJhY3RfdWludDY0CiAgICBzd2FwCiAgICBkaWcgMQogICAgJQogICAgKwogICAgLQogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NjUKICAgIC8vIGNvbnN0IG5vdFN0YWxlID0gaW5mby5sYXN0UGF5bWVudCA+IGxhc3RXaW5kb3dTdGFydAogICAgdW5jb3ZlciAyCiAgICBwdXNoaW50IDg1IC8vIDg1CiAgICBleHRyYWN0X3VpbnQ2NAogICAgPAogICAgc3dhcAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NjcKICAgIC8vIGlmICghKHRvTWVyY2hhbnQgJiYgbm90U3RhbGUpKSB7CiAgICBieiBjaGVja19pZl9ib2R5QDMKICAgIGR1cAogICAgYm56IGNoZWNrX2FmdGVyX2lmX2Vsc2VANAoKY2hlY2tfaWZfYm9keUAzOgogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6NjgKICAgIC8vIHJldHVybiBmYWxzZQogICAgaW50Y18xIC8vIDAKCmNoZWNrX2FmdGVyX2lubGluZWRfc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OlN1YnNjcmlwdGlvblN0cmVha0dhdGUuc3Vic2NyaXB0aW9uU3RyZWFrR2F0ZUAxNzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjExMgogICAgLy8gY2hlY2soY2FsbGVyOiBBY2NvdW50LCByZWdpc3RyeUlEOiB1aW50NjQsIGFyZ3M6IGJ5dGVzKTogYm9vbGVhbiB7CiAgICBwdXNoYnl0ZXMgMHgwMAogICAgaW50Y18xIC8vIDAKICAgIHVuY292ZXIgMgogICAgc2V0Yml0CiAgICBieXRlY18wIC8vIDB4MTUxZjdjNzUKICAgIHN3YXAKICAgIGNvbmNhdAogICAgbG9nCiAgICBpbnRjXzAgLy8gMQogICAgcmV0dXJuCgpjaGVja19hZnRlcl9pZl9lbHNlQDQ6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo3MgogICAgLy8gY2FzZSBFcXVhbDogcmV0dXJuIGluZm8uc3RyZWFrID09PSBzdHJlYWsKICAgIGRpZyAzCiAgICBwdXNoYnl0ZXMgMHgwYQogICAgPT0KICAgIGJ6IGNoZWNrX2FmdGVyX2lmX2Vsc2VANgogICAgZGlnIDEKICAgIGludGNfMiAvLyA5MwogICAgZXh0cmFjdF91aW50NjQKICAgIGRpZyAzCiAgICA9PQogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6MTE1LTEyMQogICAgLy8gcmV0dXJuIHRoaXMuc3Vic2NyaXB0aW9uU3RyZWFrR2F0ZSgKICAgIC8vICAgY2FsbGVyLAogICAgLy8gICBtZXJjaGFudCwKICAgIC8vICAgaWQsCiAgICAvLyAgIG9wLAogICAgLy8gICBzdHJlYWsKICAgIC8vICkKICAgIGIgY2hlY2tfYWZ0ZXJfaW5saW5lZF9zbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo6U3Vic2NyaXB0aW9uU3RyZWFrR2F0ZS5zdWJzY3JpcHRpb25TdHJlYWtHYXRlQDE3CgpjaGVja19hZnRlcl9pZl9lbHNlQDY6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo3MwogICAgLy8gY2FzZSBOb3RFcXVhbDogcmV0dXJuIGluZm8uc3RyZWFrICE9PSBzdHJlYWsKICAgIGRpZyAzCiAgICBwdXNoYnl0ZXMgMHgxNAogICAgPT0KICAgIGJ6IGNoZWNrX2FmdGVyX2lmX2Vsc2VAOAogICAgZGlnIDEKICAgIGludGNfMiAvLyA5MwogICAgZXh0cmFjdF91aW50NjQKICAgIGRpZyAzCiAgICAhPQogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6MTE1LTEyMQogICAgLy8gcmV0dXJuIHRoaXMuc3Vic2NyaXB0aW9uU3RyZWFrR2F0ZSgKICAgIC8vICAgY2FsbGVyLAogICAgLy8gICBtZXJjaGFudCwKICAgIC8vICAgaWQsCiAgICAvLyAgIG9wLAogICAgLy8gICBzdHJlYWsKICAgIC8vICkKICAgIGIgY2hlY2tfYWZ0ZXJfaW5saW5lZF9zbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo6U3Vic2NyaXB0aW9uU3RyZWFrR2F0ZS5zdWJzY3JpcHRpb25TdHJlYWtHYXRlQDE3CgpjaGVja19hZnRlcl9pZl9lbHNlQDg6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo3NAogICAgLy8gY2FzZSBMZXNzVGhhbjogcmV0dXJuIGluZm8uc3RyZWFrIDwgc3RyZWFrCiAgICBkaWcgMwogICAgcHVzaGJ5dGVzIDB4MWUKICAgID09CiAgICBieiBjaGVja19hZnRlcl9pZl9lbHNlQDEwCiAgICBkaWcgMQogICAgaW50Y18yIC8vIDkzCiAgICBleHRyYWN0X3VpbnQ2NAogICAgZGlnIDMKICAgIDwKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjExNS0xMjEKICAgIC8vIHJldHVybiB0aGlzLnN1YnNjcmlwdGlvblN0cmVha0dhdGUoCiAgICAvLyAgIGNhbGxlciwKICAgIC8vICAgbWVyY2hhbnQsCiAgICAvLyAgIGlkLAogICAgLy8gICBvcCwKICAgIC8vICAgc3RyZWFrCiAgICAvLyApCiAgICBiIGNoZWNrX2FmdGVyX2lubGluZWRfc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OlN1YnNjcmlwdGlvblN0cmVha0dhdGUuc3Vic2NyaXB0aW9uU3RyZWFrR2F0ZUAxNwoKY2hlY2tfYWZ0ZXJfaWZfZWxzZUAxMDoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjc1CiAgICAvLyBjYXNlIExlc3NUaGFuT3JFcXVhbFRvOiByZXR1cm4gaW5mby5zdHJlYWsgPD0gc3RyZWFrCiAgICBkaWcgMwogICAgcHVzaGJ5dGVzIDB4MjgKICAgID09CiAgICBieiBjaGVja19hZnRlcl9pZl9lbHNlQDEyCiAgICBkaWcgMQogICAgaW50Y18yIC8vIDkzCiAgICBleHRyYWN0X3VpbnQ2NAogICAgZGlnIDMKICAgIDw9CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czoxMTUtMTIxCiAgICAvLyByZXR1cm4gdGhpcy5zdWJzY3JpcHRpb25TdHJlYWtHYXRlKAogICAgLy8gICBjYWxsZXIsCiAgICAvLyAgIG1lcmNoYW50LAogICAgLy8gICBpZCwKICAgIC8vICAgb3AsCiAgICAvLyAgIHN0cmVhawogICAgLy8gKQogICAgYiBjaGVja19hZnRlcl9pbmxpbmVkX3NtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjpTdWJzY3JpcHRpb25TdHJlYWtHYXRlLnN1YnNjcmlwdGlvblN0cmVha0dhdGVAMTcKCmNoZWNrX2FmdGVyX2lmX2Vsc2VAMTI6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo3NgogICAgLy8gY2FzZSBHcmVhdGVyVGhhbjogcmV0dXJuIGluZm8uc3RyZWFrID4gc3RyZWFrCiAgICBkaWcgMwogICAgcHVzaGJ5dGVzIDB4MzIKICAgID09CiAgICBieiBjaGVja19hZnRlcl9pZl9lbHNlQDE0CiAgICBkaWcgMQogICAgaW50Y18yIC8vIDkzCiAgICBleHRyYWN0X3VpbnQ2NAogICAgZGlnIDMKICAgID4KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjExNS0xMjEKICAgIC8vIHJldHVybiB0aGlzLnN1YnNjcmlwdGlvblN0cmVha0dhdGUoCiAgICAvLyAgIGNhbGxlciwKICAgIC8vICAgbWVyY2hhbnQsCiAgICAvLyAgIGlkLAogICAgLy8gICBvcCwKICAgIC8vICAgc3RyZWFrCiAgICAvLyApCiAgICBiIGNoZWNrX2FmdGVyX2lubGluZWRfc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OlN1YnNjcmlwdGlvblN0cmVha0dhdGUuc3Vic2NyaXB0aW9uU3RyZWFrR2F0ZUAxNwoKY2hlY2tfYWZ0ZXJfaWZfZWxzZUAxNDoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjc3CiAgICAvLyBjYXNlIEdyZWF0ZXJUaGFuT3JFcXVhbFRvOiByZXR1cm4gaW5mby5zdHJlYWsgPj0gc3RyZWFrCiAgICBkaWcgMwogICAgcHVzaGJ5dGVzIDB4M2MKICAgID09CiAgICBieiBjaGVja19hZnRlcl9pZl9lbHNlQDE2CiAgICBkaWcgMQogICAgaW50Y18yIC8vIDkzCiAgICBleHRyYWN0X3VpbnQ2NAogICAgZGlnIDMKICAgID49CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czoxMTUtMTIxCiAgICAvLyByZXR1cm4gdGhpcy5zdWJzY3JpcHRpb25TdHJlYWtHYXRlKAogICAgLy8gICBjYWxsZXIsCiAgICAvLyAgIG1lcmNoYW50LAogICAgLy8gICBpZCwKICAgIC8vICAgb3AsCiAgICAvLyAgIHN0cmVhawogICAgLy8gKQogICAgYiBjaGVja19hZnRlcl9pbmxpbmVkX3NtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjpTdWJzY3JpcHRpb25TdHJlYWtHYXRlLnN1YnNjcmlwdGlvblN0cmVha0dhdGVAMTcKCmNoZWNrX2FmdGVyX2lmX2Vsc2VAMTY6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo3OAogICAgLy8gZGVmYXVsdDogcmV0dXJuIGZhbHNlCiAgICBpbnRjXzEgLy8gMAogICAgLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6MTE1LTEyMQogICAgLy8gcmV0dXJuIHRoaXMuc3Vic2NyaXB0aW9uU3RyZWFrR2F0ZSgKICAgIC8vICAgY2FsbGVyLAogICAgLy8gICBtZXJjaGFudCwKICAgIC8vICAgaWQsCiAgICAvLyAgIG9wLAogICAgLy8gICBzdHJlYWsKICAgIC8vICkKICAgIGIgY2hlY2tfYWZ0ZXJfaW5saW5lZF9zbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czo6U3Vic2NyaXB0aW9uU3RyZWFrR2F0ZS5zdWJzY3JpcHRpb25TdHJlYWtHYXRlQDE3CgoKLy8gc21hcnRfY29udHJhY3RzL2dhdGVzL3N1Yi1nYXRlcy9zdWJzY3JpcHRpb24tc3RyZWFrL2NvbnRyYWN0LmFsZ28udHM6OlN1YnNjcmlwdGlvblN0cmVha0dhdGUuZ2V0UmVnaXN0cmF0aW9uU2hhcGVbcm91dGluZ10oKSAtPiB2b2lkOgpnZXRSZWdpc3RyYXRpb25TaGFwZToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjEyNAogICAgLy8gQGFiaW1ldGhvZCh7IHJlYWRvbmx5OiB0cnVlIH0pCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBkdXAKICAgIGxlbgogICAgcHVzaGludCA0OSAvLyA0OQogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgKHVpbnQ4WzMyXSx1aW50NjQsdWludDgsdWludDY0KQogICAgYnl0ZWNfMCAvLyAweDE1MWY3Yzc1CiAgICBzd2FwCiAgICBjb25jYXQKICAgIGxvZwogICAgaW50Y18wIC8vIDEKICAgIHJldHVybgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjpTdWJzY3JpcHRpb25TdHJlYWtHYXRlLmdldEVudHJ5W3JvdXRpbmddKCkgLT4gdm9pZDoKZ2V0RW50cnk6CiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czoxMjkKICAgIC8vIEBhYmltZXRob2QoeyByZWFkb25seTogdHJ1ZSB9KQogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMQogICAgZHVwCiAgICBsZW4KICAgIHB1c2hpbnQgOCAvLyA4CiAgICA9PQogICAgYXNzZXJ0IC8vIGludmFsaWQgbnVtYmVyIG9mIGJ5dGVzIGZvciB1aW50NjQKICAgIGJ0b2kKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9nYXRlcy9zdWItZ2F0ZXMvc3Vic2NyaXB0aW9uLXN0cmVhay9jb250cmFjdC5hbGdvLnRzOjEzMQogICAgLy8gcmV0dXJuIGVuY29kZUFyYzQodGhpcy5yZWdpc3RyeShyZWdpc3RyeUlEKS52YWx1ZSkKICAgIGl0b2IKICAgIGJveF9nZXQKICAgIGFzc2VydCAvLyBCb3ggbXVzdCBoYXZlIHZhbHVlCiAgICAvLyBzbWFydF9jb250cmFjdHMvZ2F0ZXMvc3ViLWdhdGVzL3N1YnNjcmlwdGlvbi1zdHJlYWsvY29udHJhY3QuYWxnby50czoxMjkKICAgIC8vIEBhYmltZXRob2QoeyByZWFkb25seTogdHJ1ZSB9KQogICAgZHVwCiAgICBsZW4KICAgIGl0b2IKICAgIGV4dHJhY3QgNiAyCiAgICBzd2FwCiAgICBjb25jYXQKICAgIGJ5dGVjXzAgLy8gMHgxNTFmN2M3NQogICAgc3dhcAogICAgY29uY2F0CiAgICBsb2cKICAgIGludGNfMCAvLyAxCiAgICByZXR1cm4KCgovLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czo6QWtpdGFCYXNlQ29udHJhY3QudXBkYXRlQWtpdGFEQU9bcm91dGluZ10oKSAtPiB2b2lkOgp1cGRhdGVBa2l0YURBTzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjM4CiAgICAvLyB1cGRhdGVBa2l0YURBTyhha2l0YURBTzogQXBwbGljYXRpb24pOiB2b2lkIHsKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIGR1cAogICAgbGVuCiAgICBwdXNoaW50IDggLy8gOAogICAgPT0KICAgIGFzc2VydCAvLyBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBmb3IgdWludDY0CiAgICBidG9pCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czozOQogICAgLy8gYXNzZXJ0KFR4bi5zZW5kZXIgPT09IHRoaXMuZ2V0QWtpdGFEQU9XYWxsZXQoKS5hZGRyZXNzLCBFUlJfTk9UX0FLSVRBX0RBTykKICAgIHR4biBTZW5kZXIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjMyCiAgICAvLyBjb25zdCBbd2FsbGV0SURdID0gb3AuQXBwR2xvYmFsLmdldEV4VWludDY0KHRoaXMuYWtpdGFEQU8udmFsdWUsIEJ5dGVzKEFraXRhREFPR2xvYmFsU3RhdGVLZXlzV2FsbGV0KSkKICAgIGludGNfMSAvLyAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czoyOQogICAgLy8gYWtpdGFEQU8gPSBHbG9iYWxTdGF0ZTxBcHBsaWNhdGlvbj4oeyBrZXk6IEdsb2JhbFN0YXRlS2V5QWtpdGFEQU8gfSkKICAgIGJ5dGVjXzEgLy8gImFraXRhX2RhbyIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjMyCiAgICAvLyBjb25zdCBbd2FsbGV0SURdID0gb3AuQXBwR2xvYmFsLmdldEV4VWludDY0KHRoaXMuYWtpdGFEQU8udmFsdWUsIEJ5dGVzKEFraXRhREFPR2xvYmFsU3RhdGVLZXlzV2FsbGV0KSkKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBhc3NlcnQgLy8gY2hlY2sgR2xvYmFsU3RhdGUgZXhpc3RzCiAgICBwdXNoYnl0ZXMgIndhbGxldCIKICAgIGFwcF9nbG9iYWxfZ2V0X2V4CiAgICBwb3AKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy91dGlscy9iYXNlLWNvbnRyYWN0cy9iYXNlLnRzOjM5CiAgICAvLyBhc3NlcnQoVHhuLnNlbmRlciA9PT0gdGhpcy5nZXRBa2l0YURBT1dhbGxldCgpLmFkZHJlc3MsIEVSUl9OT1RfQUtJVEFfREFPKQogICAgYXBwX3BhcmFtc19nZXQgQXBwQWRkcmVzcwogICAgYXNzZXJ0IC8vIGFwcGxpY2F0aW9uIGV4aXN0cwogICAgPT0KICAgIGFzc2VydCAvLyBPbmx5IHRoZSBBa2l0YSBEQU8gY2FuIGNhbGwgdGhpcyBmdW5jdGlvbgogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MjkKICAgIC8vIGFraXRhREFPID0gR2xvYmFsU3RhdGU8QXBwbGljYXRpb24+KHsga2V5OiBHbG9iYWxTdGF0ZUtleUFraXRhREFPIH0pCiAgICBieXRlY18xIC8vICJha2l0YV9kYW8iCiAgICAvLyBzbWFydF9jb250cmFjdHMvdXRpbHMvYmFzZS1jb250cmFjdHMvYmFzZS50czo0MAogICAgLy8gdGhpcy5ha2l0YURBTy52YWx1ZSA9IGFraXRhREFPCiAgICBzd2FwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL3V0aWxzL2Jhc2UtY29udHJhY3RzL2Jhc2UudHM6MzgKICAgIC8vIHVwZGF0ZUFraXRhREFPKGFraXRhREFPOiBBcHBsaWNhdGlvbik6IHZvaWQgewogICAgaW50Y18wIC8vIDEKICAgIHJldHVybgo=", "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBAYWxnb3JhbmRmb3VuZGF0aW9uL2FsZ29yYW5kLXR5cGVzY3JpcHQvYmFzZS1jb250cmFjdC5kLnRzOjpCYXNlQ29udHJhY3QuY2xlYXJTdGF0ZVByb2dyYW0oKSAtPiB1aW50NjQ6Cm1haW46CiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCg==" }, "byteCode": { "approval": "CyAEAQBdAiYDBBUffHUJYWtpdGFfZGFvD3JlZ2lzdHJ5X2N1cnNvcjEYQABHKiJnggIScmVnaXN0cmF0aW9uX3NoYXBlHShhZGRyZXNzLHVpbnQ2NCx1aW50OCx1aW50NjQpZ4ICC2NoZWNrX3NoYXBlAGcxGRREMRhBADuCBwQynwTuBHe7ebkEbgP1CgQnlul7BJDU+l0EM+kslASFTe3gNhoAjgcAPABZAKABywHaAfUAAQAiQ4AEzZrWfjYaAI4BAAEANhoBSSNZJQhLARUSRFcCADYaAkkVgQgSRBeAB3ZlcnNpb25PAmcpTGciQzYaAUkjWSUITBUSRIAMFR98dQAAAAAAAGLUsCJDMRYiCUk4ECISRDYaAUkjWSUISwEVEkRXAgBJFYExEkRLATgHMgoSTwI4CIHUxQESEEQjKmVESSIIKkxnFklPAr8oTFCwIkM2GgFJFYEgEkQ2GgJJFYEIEkQXNhoDSSNZJQhLARUSRFcCABUURBa+RElXACBLAVcgCEsCVygBTgRPAoEpW04DsSMpZUSAA2FhbGVIgSBbTwNPAlCABCW4EqeyGrIashiBBrIQI7IBs7Q+SU4CSVcEAEsBVwAEKBJEFYFpEkRJVwUgTwISMgdJSwOBLVsJSwOBPVtMSwEYCAlPAoFVWwxMQQAESUAADiOAAQAjTwJUKExQsCJDSwOAAQoSQQAKSwEkW0sDEkL/4EsDgAEUEkEACksBJFtLAxNC/81LA4ABHhJBAApLASRbSwMMQv+6SwOAASgSQQAKSwEkW0sDDkL/p0sDgAEyEkEACksBJFtLAw1C/5RLA4ABPBJBAApLASRbSwMPQv+BI0L/fTYaAUkVgTESRChMULAiQzYaAUkVgQgSRBcWvkRJFRZXBgJMUChMULAiQzYaAUkVgQgSRBcxACMpZUSABndhbGxldGVIcghEEkQpTGciQw==", "clear": "C4EBQw==" }, "events": [], "templateVariables": {} };
+class BinaryStateValue {
+    constructor(value) {
+        this.value = value;
+    }
+    asByteArray() {
+        return this.value;
+    }
+    asString() {
+        return this.value !== undefined ? Buffer.from(this.value).toString('utf-8') : undefined;
+    }
+}
+/**
+ * Converts the ABI tuple representation of a SubscriptionStreakGateRegistryInfo to the struct representation
+ */
+export function SubscriptionStreakGateRegistryInfoFromTuple(abiTuple) {
+    return getABIStructFromABITuple(abiTuple, APP_SPEC.structs.SubscriptionStreakGateRegistryInfo, APP_SPEC.structs);
+}
+/**
+ * Exposes methods for constructing `AppClient` params objects for ABI calls to the SubscriptionStreakGate smart contract
+ */
+export class SubscriptionStreakGateParamsFactory {
+    /**
+     * Gets available create ABI call param factories
+     */
+    static get create() {
+        return {
+            _resolveByMethod(params) {
+                switch (params.method) {
+                    case 'create':
+                    case 'create(string,uint64)void':
+                        return SubscriptionStreakGateParamsFactory.create.create(params);
+                }
+                throw new Error(`Unknown ' + verb + ' method`);
+            },
+            /**
+             * Constructs create ABI call params for the SubscriptionStreakGate smart contract using the create(string,uint64)void ABI method
+             *
+             * @param params Parameters for the call
+             * @returns An `AppClientMethodCallParams` object for the call
+             */
+            create(params) {
+                return {
+                    ...params,
+                    method: 'create(string,uint64)void',
+                    args: Array.isArray(params.args) ? params.args : [params.args.version, params.args.akitaDao],
+                };
+            },
+        };
+    }
+    /**
+     * Constructs a no op call for the cost(byte[])uint64 ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static cost(params) {
+        return {
+            ...params,
+            method: 'cost(byte[])uint64',
+            args: Array.isArray(params.args) ? params.args : [params.args.args],
+        };
+    }
+    /**
+     * Constructs a no op call for the register(pay,byte[])uint64 ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static register(params) {
+        return {
+            ...params,
+            method: 'register(pay,byte[])uint64',
+            args: Array.isArray(params.args) ? params.args : [params.args.mbrPayment, params.args.args],
+        };
+    }
+    /**
+     * Constructs a no op call for the check(address,uint64,byte[])bool ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static check(params) {
+        return {
+            ...params,
+            method: 'check(address,uint64,byte[])bool',
+            args: Array.isArray(params.args) ? params.args : [params.args.caller, params.args.registryId, params.args.args],
+        };
+    }
+    /**
+     * Constructs a no op call for the getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64) ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static getRegistrationShape(params) {
+        return {
+            ...params,
+            method: 'getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)',
+            args: Array.isArray(params.args) ? params.args : [params.args.shape],
+        };
+    }
+    /**
+     * Constructs a no op call for the getEntry(uint64)byte[] ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static getEntry(params) {
+        return {
+            ...params,
+            method: 'getEntry(uint64)byte[]',
+            args: Array.isArray(params.args) ? params.args : [params.args.registryId],
+        };
+    }
+    /**
+     * Constructs a no op call for the updateAkitaDAO(uint64)void ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static updateAkitaDao(params) {
+        return {
+            ...params,
+            method: 'updateAkitaDAO(uint64)void',
+            args: Array.isArray(params.args) ? params.args : [params.args.akitaDao],
+        };
+    }
+    /**
+     * Constructs a no op call for the opUp()void ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static opUp(params) {
+        return {
+            ...params,
+            method: 'opUp()void',
+            args: Array.isArray(params.args) ? params.args : [],
+        };
+    }
+}
+/**
+ * A factory to create and deploy one or more instance of the SubscriptionStreakGate smart contract and to create one or more app clients to interact with those (or other) app instances
+ */
+export class SubscriptionStreakGateFactory {
+    /**
+     * Creates a new instance of `SubscriptionStreakGateFactory`
+     *
+     * @param params The parameters to initialise the app factory with
+     */
+    constructor(params) {
+        /**
+         * Get parameters to create transactions (create and deploy related calls) for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
+         */
+        this.params = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the SubscriptionStreakGate smart contract using the create(string,uint64)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create params
+                 */
+                create: (params) => {
+                    return this.appFactory.params.create(SubscriptionStreakGateParamsFactory.create.create(params));
+                },
+            },
+        };
+        /**
+         * Create transactions for the current app
+         */
+        this.createTransaction = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the SubscriptionStreakGate smart contract using the create(string,uint64)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create transaction
+                 */
+                create: (params) => {
+                    return this.appFactory.createTransaction.create(SubscriptionStreakGateParamsFactory.create.create(params));
+                },
+            },
+        };
+        /**
+         * Send calls to the current app
+         */
+        this.send = {
+            /**
+             * Gets available create methods
+             */
+            create: {
+                /**
+                 * Creates a new instance of the SubscriptionStreakGate smart contract using an ABI method call using the create(string,uint64)void ABI method.
+                 *
+                 * @param params The params for the smart contract call
+                 * @returns The create result
+                 */
+                create: async (params) => {
+                    const result = await this.appFactory.send.create(SubscriptionStreakGateParamsFactory.create.create(params));
+                    return { result: { ...result.result, return: result.result.return }, appClient: new SubscriptionStreakGateClient(result.appClient) };
+                },
+            },
+        };
+        this.appFactory = new _AppFactory({
+            ...params,
+            appSpec: APP_SPEC,
+        });
+    }
+    /** The name of the app (from the ARC-32 / ARC-56 app spec or override). */
+    get appName() {
+        return this.appFactory.appName;
+    }
+    /** The ARC-56 app spec being used */
+    get appSpec() {
+        return APP_SPEC;
+    }
+    /** A reference to the underlying `AlgorandClient` this app factory is using. */
+    get algorand() {
+        return this.appFactory.algorand;
+    }
+    /**
+     * Returns a new `AppClient` client for an app instance of the given ID.
+     *
+     * Automatically populates appName, defaultSender and source maps from the factory
+     * if not specified in the params.
+     * @param params The parameters to create the app client
+     * @returns The `AppClient`
+     */
+    getAppClientById(params) {
+        return new SubscriptionStreakGateClient(this.appFactory.getAppClientById(params));
+    }
+    /**
+     * Returns a new `AppClient` client, resolving the app by creator address and name
+     * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
+     *
+     * Automatically populates appName, defaultSender and source maps from the factory
+     * if not specified in the params.
+     * @param params The parameters to create the app client
+     * @returns The `AppClient`
+     */
+    async getAppClientByCreatorAndName(params) {
+        return new SubscriptionStreakGateClient(await this.appFactory.getAppClientByCreatorAndName(params));
+    }
+    /**
+     * Idempotently deploys the SubscriptionStreakGate smart contract.
+     *
+     * @param params The arguments for the contract calls and any additional parameters for the call
+     * @returns The deployment result
+     */
+    async deploy(params = {}) {
+        const result = await this.appFactory.deploy({
+            ...params,
+            createParams: params.createParams?.method ? SubscriptionStreakGateParamsFactory.create._resolveByMethod(params.createParams) : params.createParams ? params.createParams : undefined,
+        });
+        return { result: result.result, appClient: new SubscriptionStreakGateClient(result.appClient) };
+    }
+}
+/**
+ * A client to make calls to the SubscriptionStreakGate smart contract
+ */
+export class SubscriptionStreakGateClient {
+    constructor(appClientOrParams) {
+        /**
+         * Get parameters to create transactions for the current app. A good mental model for this is that these parameters represent a deferred transaction creation.
+         */
+        this.params = {
+            /**
+             * Makes a clear_state call to an existing instance of the SubscriptionStreakGate smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.params.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `cost(byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            cost: (params) => {
+                return this.appClient.params.call(SubscriptionStreakGateParamsFactory.cost(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `register(pay,byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            register: (params) => {
+                return this.appClient.params.call(SubscriptionStreakGateParamsFactory.register(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `check(address,uint64,byte[])bool` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            check: (params) => {
+                return this.appClient.params.call(SubscriptionStreakGateParamsFactory.check(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            getRegistrationShape: (params) => {
+                return this.appClient.params.call(SubscriptionStreakGateParamsFactory.getRegistrationShape(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            getEntry: (params) => {
+                return this.appClient.params.call(SubscriptionStreakGateParamsFactory.getEntry(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `updateAkitaDAO(uint64)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            updateAkitaDao: (params) => {
+                return this.appClient.params.call(SubscriptionStreakGateParamsFactory.updateAkitaDao(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `opUp()void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call params
+             */
+            opUp: (params = { args: [] }) => {
+                return this.appClient.params.call(SubscriptionStreakGateParamsFactory.opUp(params));
+            },
+        };
+        /**
+         * Create transactions for the current app
+         */
+        this.createTransaction = {
+            /**
+             * Makes a clear_state call to an existing instance of the SubscriptionStreakGate smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.createTransaction.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `cost(byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            cost: (params) => {
+                return this.appClient.createTransaction.call(SubscriptionStreakGateParamsFactory.cost(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `register(pay,byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            register: (params) => {
+                return this.appClient.createTransaction.call(SubscriptionStreakGateParamsFactory.register(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `check(address,uint64,byte[])bool` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            check: (params) => {
+                return this.appClient.createTransaction.call(SubscriptionStreakGateParamsFactory.check(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            getRegistrationShape: (params) => {
+                return this.appClient.createTransaction.call(SubscriptionStreakGateParamsFactory.getRegistrationShape(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            getEntry: (params) => {
+                return this.appClient.createTransaction.call(SubscriptionStreakGateParamsFactory.getEntry(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `updateAkitaDAO(uint64)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            updateAkitaDao: (params) => {
+                return this.appClient.createTransaction.call(SubscriptionStreakGateParamsFactory.updateAkitaDao(params));
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `opUp()void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call transaction
+             */
+            opUp: (params = { args: [] }) => {
+                return this.appClient.createTransaction.call(SubscriptionStreakGateParamsFactory.opUp(params));
+            },
+        };
+        /**
+         * Send calls to the current app
+         */
+        this.send = {
+            /**
+             * Makes a clear_state call to an existing instance of the SubscriptionStreakGate smart contract.
+             *
+             * @param params The params for the bare (raw) call
+             * @returns The clearState result
+             */
+            clearState: (params) => {
+                return this.appClient.send.bare.clearState(params);
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `cost(byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            cost: async (params) => {
+                const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.cost(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `register(pay,byte[])uint64` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            register: async (params) => {
+                const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.register(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `check(address,uint64,byte[])bool` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            check: async (params) => {
+                const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.check(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            getRegistrationShape: async (params) => {
+                const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.getRegistrationShape(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+             *
+             * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            getEntry: async (params) => {
+                const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.getEntry(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `updateAkitaDAO(uint64)void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            updateAkitaDao: async (params) => {
+                const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.updateAkitaDao(params));
+                return { ...result, return: result.return };
+            },
+            /**
+             * Makes a call to the SubscriptionStreakGate smart contract using the `opUp()void` ABI method.
+             *
+             * @param params The params for the smart contract call
+             * @returns The call result
+             */
+            opUp: async (params = { args: [] }) => {
+                const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.opUp(params));
+                return { ...result, return: result.return };
+            },
+        };
+        /**
+         * Methods to access state for the current SubscriptionStreakGate app
+         */
+        this.state = {
+            /**
+             * Methods to access global state for the current SubscriptionStreakGate app
+             */
+            global: {
+                /**
+                 * Get all current keyed values from global state
+                 */
+                getAll: async () => {
+                    const result = await this.appClient.state.global.getAll();
+                    return {
+                        registryCursor: result.registryCursor,
+                        registrationShape: result.registrationShape,
+                        checkShape: result.checkShape,
+                        version: result.version,
+                        akitaDao: result.akitaDAO,
+                    };
+                },
+                /**
+                 * Get the current value of the registryCursor key in global state
+                 */
+                registryCursor: async () => { return (await this.appClient.state.global.getValue("registryCursor")); },
+                /**
+                 * Get the current value of the registrationShape key in global state
+                 */
+                registrationShape: async () => { return (await this.appClient.state.global.getValue("registrationShape")); },
+                /**
+                 * Get the current value of the checkShape key in global state
+                 */
+                checkShape: async () => { return (await this.appClient.state.global.getValue("checkShape")); },
+                /**
+                 * Get the current value of the version key in global state
+                 */
+                version: async () => { return (await this.appClient.state.global.getValue("version")); },
+                /**
+                 * Get the current value of the akitaDAO key in global state
+                 */
+                akitaDao: async () => { return (await this.appClient.state.global.getValue("akitaDAO")); },
+            },
+            /**
+             * Methods to access box state for the current SubscriptionStreakGate app
+             */
+            box: {
+                /**
+                 * Get all current keyed values from box state
+                 */
+                getAll: async () => {
+                    const result = await this.appClient.state.box.getAll();
+                    return {};
+                },
+                /**
+                 * Get values from the registry map in box state
+                 */
+                registry: {
+                    /**
+                     * Get all current values of the registry map in box state
+                     */
+                    getMap: async () => { return (await this.appClient.state.box.getMap("registry")); },
+                    /**
+                     * Get a current value of the registry map by key from box state
+                     */
+                    value: async (key) => { return await this.appClient.state.box.getMapValue("registry", key); },
+                },
+            },
+        };
+        this.appClient = appClientOrParams instanceof _AppClient ? appClientOrParams : new _AppClient({
+            ...appClientOrParams,
+            appSpec: APP_SPEC,
+        });
+    }
+    /**
+     * Checks for decode errors on the given return value and maps the return value to the return type for the given method
+     * @returns The typed return value or undefined if there was no value
+     */
+    decodeReturnValue(method, returnValue) {
+        return returnValue !== undefined ? getArc56ReturnValue(returnValue, this.appClient.getABIMethod(method), APP_SPEC.structs) : undefined;
+    }
+    /**
+     * Returns a new `SubscriptionStreakGateClient` client, resolving the app by creator address and name
+     * using AlgoKit app deployment semantics (i.e. looking for the app creation transaction note).
+     * @param params The parameters to create the app client
+     */
+    static async fromCreatorAndName(params) {
+        return new SubscriptionStreakGateClient(await _AppClient.fromCreatorAndName({ ...params, appSpec: APP_SPEC }));
+    }
+    /**
+     * Returns an `SubscriptionStreakGateClient` instance for the current network based on
+     * pre-determined network-specific app IDs specified in the ARC-56 app spec.
+     *
+     * If no IDs are in the app spec or the network isn't recognised, an error is thrown.
+     * @param params The parameters to create the app client
+     */
+    static async fromNetwork(params) {
+        return new SubscriptionStreakGateClient(await _AppClient.fromNetwork({ ...params, appSpec: APP_SPEC }));
+    }
+    /** The ID of the app instance this client is linked to. */
+    get appId() {
+        return this.appClient.appId;
+    }
+    /** The app address of the app instance this client is linked to. */
+    get appAddress() {
+        return this.appClient.appAddress;
+    }
+    /** The name of the app. */
+    get appName() {
+        return this.appClient.appName;
+    }
+    /** The ARC-56 app spec being used */
+    get appSpec() {
+        return this.appClient.appSpec;
+    }
+    /** A reference to the underlying `AlgorandClient` this app client is using. */
+    get algorand() {
+        return this.appClient.algorand;
+    }
+    /**
+     * Clone this app client with different params
+     *
+     * @param params The params to use for the the cloned app client. Omit a param to keep the original value. Set a param to override the original value. Setting to undefined will clear the original value.
+     * @returns A new app client with the altered params
+     */
+    clone(params) {
+        return new SubscriptionStreakGateClient(this.appClient.clone(params));
+    }
+    /**
+     * Makes a readonly (simulated) call to the SubscriptionStreakGate smart contract using the `getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)` ABI method.
+     *
+     * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+     *
+     * @param params The params for the smart contract call
+     * @returns The call result
+     */
+    async getRegistrationShape(params) {
+        const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.getRegistrationShape(params));
+        return result.return;
+    }
+    /**
+     * Makes a readonly (simulated) call to the SubscriptionStreakGate smart contract using the `getEntry(uint64)byte[]` ABI method.
+     *
+     * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+     *
+     * @param params The params for the smart contract call
+     * @returns The call result
+     */
+    async getEntry(params) {
+        const result = await this.appClient.send.call(SubscriptionStreakGateParamsFactory.getEntry(params));
+        return result.return;
+    }
+    newGroup() {
+        const client = this;
+        const composer = this.algorand.newGroup();
+        let promiseChain = Promise.resolve();
+        const resultMappers = [];
+        return {
+            /**
+             * Add a cost(byte[])uint64 method call against the SubscriptionStreakGate contract
+             */
+            cost(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.cost(params)));
+                resultMappers.push((v) => client.decodeReturnValue('cost(byte[])uint64', v));
+                return this;
+            },
+            /**
+             * Add a register(pay,byte[])uint64 method call against the SubscriptionStreakGate contract
+             */
+            register(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.register(params)));
+                resultMappers.push((v) => client.decodeReturnValue('register(pay,byte[])uint64', v));
+                return this;
+            },
+            /**
+             * Add a check(address,uint64,byte[])bool method call against the SubscriptionStreakGate contract
+             */
+            check(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.check(params)));
+                resultMappers.push((v) => client.decodeReturnValue('check(address,uint64,byte[])bool', v));
+                return this;
+            },
+            /**
+             * Add a getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64) method call against the SubscriptionStreakGate contract
+             */
+            getRegistrationShape(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.getRegistrationShape(params)));
+                resultMappers.push((v) => client.decodeReturnValue('getRegistrationShape((address,uint64,uint8,uint64))(address,uint64,uint8,uint64)', v));
+                return this;
+            },
+            /**
+             * Add a getEntry(uint64)byte[] method call against the SubscriptionStreakGate contract
+             */
+            getEntry(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.getEntry(params)));
+                resultMappers.push((v) => client.decodeReturnValue('getEntry(uint64)byte[]', v));
+                return this;
+            },
+            /**
+             * Add a updateAkitaDAO(uint64)void method call against the SubscriptionStreakGate contract
+             */
+            updateAkitaDao(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.updateAkitaDao(params)));
+                resultMappers.push(undefined);
+                return this;
+            },
+            /**
+             * Add a opUp()void method call against the SubscriptionStreakGate contract
+             */
+            opUp(params) {
+                promiseChain = promiseChain.then(async () => composer.addAppCallMethodCall(await client.params.opUp(params)));
+                resultMappers.push(undefined);
+                return this;
+            },
+            /**
+             * Add a clear state call to the SubscriptionStreakGate contract
+             */
+            clearState(params) {
+                promiseChain = promiseChain.then(() => composer.addAppCall(client.params.clearState(params)));
+                return this;
+            },
+            addTransaction(txn, signer) {
+                promiseChain = promiseChain.then(() => composer.addTransaction(txn, signer));
+                return this;
+            },
+            async composer() {
+                await promiseChain;
+                return composer;
+            },
+            async simulate(options) {
+                await promiseChain;
+                const result = await (!options ? composer.simulate() : composer.simulate(options));
+                return {
+                    ...result,
+                    returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i](val) : val.returnValue)
+                };
+            },
+            async send(params) {
+                await promiseChain;
+                const result = await composer.send(params);
+                return {
+                    ...result,
+                    returns: result.returns?.map((val, i) => resultMappers[i] !== undefined ? resultMappers[i](val) : val.returnValue)
+                };
+            }
+        };
+    }
+}
+//# sourceMappingURL=SubscriptionStreakGateClient.js.map
