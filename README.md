@@ -292,9 +292,9 @@ The `akita-sdk` package provides modular TypeScript bindings — import only wha
 
 ```typescript
 // Import specific modules
-import { WalletClient } from 'akita-sdk/wallet';
-import { StakingClient } from 'akita-sdk/staking';
-import { SubscriptionsClient } from 'akita-sdk/subscriptions';
+import { WalletSDK } from 'akita-sdk/wallet';
+import { StakingSDK } from 'akita-sdk/staking';
+import { SubscriptionsSDK } from 'akita-sdk/subscriptions';
 ```
 
 See [`projects/akita-sdk`](./projects/akita-sdk) for full documentation.
