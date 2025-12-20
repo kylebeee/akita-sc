@@ -381,14 +381,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     const isGated = gateTxn !== undefined;
 
     // Check if we need to opt the contract into the asset (ASA subscriptions only)
-    let needsOptIn = false;
-    let optInCost = 0n;
-    if (!isAlgoSubscription) {
-      needsOptIn = !(await this.isOptedInToAsset(asset));
-      if (needsOptIn) {
-        optInCost = await this.optInCost({ ...sendParams, asset });
-      }
-    }
+    const needsOptIn = !(await this.isOptedInToAsset(asset));
 
     // Use contract method to get the exact subscription cost
     const subscribeCost = await this.newSubscriptionCost({
@@ -403,7 +396,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     // If we need to opt in, add the opt-in cost to the payment
     const paymentAmount = isAlgoSubscription
       ? BigInt(amount) + subscribeCost + BigInt(initialDepositAmount)
-      : subscribeCost + optInCost;
+      : subscribeCost
 
     const payment = await this.client.algorand.createTransaction.payment({
       ...sendParams,
@@ -415,6 +408,7 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
     // If contract needs to opt into the asset, add the opt-in call first
     if (needsOptIn) {
+      const optInCost = await this.optInCost({ ...sendParams, asset });
       const optInPayment = await this.client.algorand.createTransaction.payment({
         ...sendParams,
         amount: microAlgo(optInCost),
