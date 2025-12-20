@@ -303,4 +303,10 @@ See [`projects/akita-sdk`](./projects/akita-sdk) for full documentation.
 
 ## License
 
-MIT
+This project is licensed under the **Akita Business Source License**.
+
+**Before January 1, 2029:** You may use, copy, modify, and redistribute the code for any purpose, including production use, **except** you may not use it to provide a competing commercial service. Internal use and building applications that interact with the official Akita protocol are permitted.
+
+**On and after January 1, 2029:** The code becomes available under the **GNU General Public License v2** (or later).
+
+See the [LICENSE](./LICENSE) file for full details.
