@@ -366,7 +366,7 @@ export class SubscriptionsSDK extends BaseSDK {
         else {
             const assetTransfer = this.client.algorand.createTransaction.assetTransfer({
                 ...sendParams,
-                amount: 0n,
+                amount: BigInt(amount) + BigInt(initialDepositAmount),
                 assetId: asset,
                 receiver: this.client.appAddress.toString(),
             });
@@ -409,6 +409,7 @@ export class SubscriptionsSDK extends BaseSDK {
             maxFee: microAlgos(1000),
             note: '1'
         });
+        console.log('group built:', (await (await group.composer()).build()).transactions);
         const result = await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
         // If we added an opt-in call, the subscription ID will be at index 1, otherwise index 0
         const returnIndex = needsOptIn ? 1 : 0;
