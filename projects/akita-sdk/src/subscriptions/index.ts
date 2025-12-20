@@ -51,6 +51,37 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     return (await this.client.newSubscriptionCost({ ...sendParams, args: { recipient, asset, serviceId } }))
   }
 
+  /**
+   * Get the cost to opt the contract into an asset
+   */
+  async optInCost({ sender, signer, asset }: MaybeSigner & { asset: bigint | number }): Promise<bigint> {
+    const sendParams = this.getSendParams({ sender, signer });
+    return (await this.client.optInCost({ ...sendParams, args: { asset } }))
+  }
+
+  /**
+   * Check if the contract is opted into a specific asset
+   */
+  async isOptedInToAsset(asset: bigint | number): Promise<boolean> {
+    try {
+      const appAddress = this.client.appAddress.toString();
+      const assetId = BigInt(asset);
+
+      // Use the algod endpoint /v2/accounts/{address}/assets/{asset-id}
+      const algod = this.client.algorand.client.algod;
+      // If the asset-holding exists, we're opted in. If it 404s, we're not.
+      const response = await algod.accountAssetInformation(appAddress, assetId).do();
+      return !!response.assetHolding;
+    } catch (error: any) {
+      // If not opted in, algod returns 404 for this endpoint
+      if (error?.response?.status === 404) {
+        return false;
+      }
+      console.warn('[SubscriptionsSDK] Error checking asset opt-in:', error);
+      return false;
+    }
+  }
+
   async isBlocked({ sender, signer, address, blocked }: MaybeSigner & { address: string, blocked: string }): Promise<boolean> {
     const sendParams = this.getSendParams({ sender, signer });
     return (await this.client.isBlocked({ ...sendParams, args: { address, blocked } }))
@@ -142,6 +173,18 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
     validateHexColor(rest.highlightColor);
     const highlightColor = hexColorToBytes(rest.highlightColor);
+    
+    // Check if we need to opt the contract into the asset (ASA services only)
+    const isAsaService = asset !== 0n;
+    let needsOptIn = false;
+    let optInCost = 0n;
+    if (isAsaService) {
+      needsOptIn = !(await this.isOptedInToAsset(asset));
+      if (needsOptIn) {
+        optInCost = await this.optInCost({ ...sendParams, asset });
+      }
+    }
+    
     // Use contract method to get the exact cost
     const paymentAmount = await this.newServiceCost({ ...sendParams, asset });
 
@@ -156,6 +199,23 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     }
 
     const group = this.client.newGroup();
+
+    // If contract needs to opt into the asset, add the opt-in call first
+    if (needsOptIn) {
+      const optInPayment = await this.client.algorand.createTransaction.payment({
+        ...sendParams,
+        amount: microAlgo(optInCost),
+        receiver: this.client.appAddress.toString(),
+      });
+      
+      group.optIn({
+        ...sendParams,
+        args: {
+          payment: optInPayment,
+          asset: BigInt(asset),
+        }
+      });
+    }
 
     group.newService({
       ...sendParams,
@@ -206,8 +266,10 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
       args: []
     })
     
-    const result = await group.send({ ...sendParams })    
-    return result.returns[0] as bigint;
+    const result = await group.send({ ...sendParams })
+    // If we added an opt-in call, the service ID will be at index 1, otherwise index 0
+    const returnIndex = needsOptIn ? 1 : 0;
+    return result.returns[returnIndex] as bigint;
   }
 
   async pauseService({ sender, signer, id }: MaybeSigner & ContractArgs['pauseService(uint64)void']): Promise<void> {
@@ -315,14 +377,18 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
     const sendParams = this.getRequiredSendParams({ sender, signer });
 
-    // Debug address validation
-    console.log('[subscribe] recipient:', recipient, 'type:', typeof recipient, 'isValidAddress:', isValidAddress(recipient));
-    console.log('[subscribe] sender:', sendParams.sender, 'type:', typeof sendParams.sender, 'constructor:', sendParams.sender?.constructor?.name);
-    console.log('[subscribe] appAddress:', this.client.appAddress, 'type:', typeof this.client.appAddress, 'constructor:', this.client.appAddress?.constructor?.name);
-    console.log('[subscribe] appAddress.toString():', this.client.appAddress?.toString?.());
-
     const isAlgoSubscription = asset === 0n;
     const isGated = gateTxn !== undefined;
+
+    // Check if we need to opt the contract into the asset (ASA subscriptions only)
+    let needsOptIn = false;
+    let optInCost = 0n;
+    if (!isAlgoSubscription) {
+      needsOptIn = !(await this.isOptedInToAsset(asset));
+      if (needsOptIn) {
+        optInCost = await this.optInCost({ ...sendParams, asset });
+      }
+    }
 
     // Use contract method to get the exact subscription cost
     const subscribeCost = await this.newSubscriptionCost({
@@ -334,9 +400,10 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
 
     // For algo subscriptions, payment includes the subscription amount
     // For ASA subscriptions, payment only covers MBR
+    // If we need to opt in, add the opt-in cost to the payment
     const paymentAmount = isAlgoSubscription
       ? BigInt(amount) + subscribeCost + BigInt(initialDepositAmount)
-      : subscribeCost;
+      : subscribeCost + optInCost;
 
     const payment = await this.client.algorand.createTransaction.payment({
       ...sendParams,
@@ -345,6 +412,23 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     })
 
     const group = this.client.newGroup();
+
+    // If contract needs to opt into the asset, add the opt-in call first
+    if (needsOptIn) {
+      const optInPayment = await this.client.algorand.createTransaction.payment({
+        ...sendParams,
+        amount: microAlgo(optInCost),
+        receiver: this.client.appAddress.toString(),
+      });
+      
+      group.optIn({
+        ...sendParams,
+        args: {
+          payment: optInPayment,
+          asset: BigInt(asset),
+        }
+      });
+    }
 
     if (isAlgoSubscription) {
       if (isGated) {
@@ -420,7 +504,9 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     });
 
     const result = await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
-    const subscriptionId = result.returns[0] as bigint | undefined;
+    // If we added an opt-in call, the subscription ID will be at index 1, otherwise index 0
+    const returnIndex = needsOptIn ? 1 : 0;
+    const subscriptionId = result.returns[returnIndex] as bigint | undefined;
 
     if (subscriptionId === undefined) {
       throw new Error('Subscription failed, no subscription ID returned');

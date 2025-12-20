@@ -6,3 +6,4 @@ export class MockPrizeBoxFactory extends Contract {
         return 1005
     }
 }
+

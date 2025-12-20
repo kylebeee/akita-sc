@@ -6,3 +6,4 @@ export class MockSubscriptions extends Contract {
         return 1007
     }
 }
+

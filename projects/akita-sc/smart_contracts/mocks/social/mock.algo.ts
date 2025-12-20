@@ -6,3 +6,4 @@ export class MockAkitaSocial extends Contract {
         return 1008
     }
 }
+

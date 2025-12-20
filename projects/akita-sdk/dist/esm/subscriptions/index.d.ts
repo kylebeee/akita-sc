@@ -28,6 +28,16 @@ export declare class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
         asset?: bigint | number;
         serviceId?: bigint | number;
     }): Promise<bigint>;
+    /**
+     * Get the cost to opt the contract into an asset
+     */
+    optInCost({ sender, signer, asset }: MaybeSigner & {
+        asset: bigint | number;
+    }): Promise<bigint>;
+    /**
+     * Check if the contract is opted into a specific asset
+     */
+    isOptedInToAsset(asset: bigint | number): Promise<boolean>;
     isBlocked({ sender, signer, address, blocked }: MaybeSigner & {
         address: string;
         blocked: string;

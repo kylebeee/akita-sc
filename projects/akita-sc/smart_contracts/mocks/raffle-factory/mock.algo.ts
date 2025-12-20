@@ -6,3 +6,4 @@ export class MockRaffleFactory extends Contract {
         return 1003
     }
 }
+

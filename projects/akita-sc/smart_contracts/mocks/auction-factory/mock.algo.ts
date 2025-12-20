@@ -6,3 +6,4 @@ export class MockAuctionFactory extends Contract {
         return 1001
     }
 }
+

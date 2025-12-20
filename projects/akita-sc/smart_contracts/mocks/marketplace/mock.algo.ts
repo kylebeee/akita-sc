@@ -6,3 +6,4 @@ export class MockMarketplace extends Contract {
         return 1002
     }
 }
+

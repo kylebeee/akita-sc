@@ -6,3 +6,4 @@ export class MockPollFactory extends Contract {
         return 1004
     }
 }
+

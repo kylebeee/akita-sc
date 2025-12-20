@@ -6,3 +6,4 @@ export class MockStakingPoolFactory extends Contract {
         return 1006
     }
 }
+
