@@ -50,7 +50,6 @@ describe('Subscriptions Contract Tests', () => {
   let dao: AkitaDaoSDK
   let subscriptions: SubscriptionsSDK
   let timeWarp: TimeWarp
-  let bonesAssetId: bigint // Pre-existing ASA that escrow is opted into
 
   beforeAll(async () => {
     await localnet.newScope()
@@ -69,7 +68,6 @@ describe('Subscriptions Contract Tests', () => {
 
     dao = result.dao
     subscriptions = result.subscriptions
-    bonesAssetId = result.bonesAssetId
 
     // Fund the subscriptions contract
     const dispenser = await algorand.account.dispenserFromEnvironment()
@@ -4575,7 +4573,9 @@ describe('Subscriptions Contract Tests', () => {
 
       expect(subscription.asset).toBe(testAssetId)
       expect(subscription.amount).toBe(donationAmount)
-      expect(subscription.escrowed).toBe(donationAmount)
+      // escrowed is 0 since subscription amount is sent to recipient immediately
+      // and no initialDepositAmount was provided
+      expect(subscription.escrowed).toBe(0n)
     })
 
     test('subscribe to ASA service', async () => {
@@ -4590,16 +4590,7 @@ describe('Subscriptions Contract Tests', () => {
       const merchantAcc = algorand.account.random()
       await algorand.account.ensureFunded(merchantAcc.addr, dispenser, (200).algos())
 
-      // Transfer some ASA to the merchant for testing
-      await algorand.send.assetTransfer({
-        sender,
-        signer,
-        assetId: testAssetId,
-        amount: 100_000_000n,
-        receiver: merchantAcc.addr,
-      })
-
-      // Merchant opts into ASA (needed to receive payments)
+      // Merchant opts into ASA first (needed to receive payments and transfers)
       await algorand.send.assetOptIn({
         sender: merchantAcc.addr,
         signer: merchantAcc.signer,
@@ -4624,12 +4615,7 @@ describe('Subscriptions Contract Tests', () => {
         highlightColor: '#AABBCC',
       })
 
-      // Activate the service
-      await subscriptions.activate({
-        sender: merchantAcc.addr.toString(),
-        signer: merchantAcc.signer,
-        id: Number(serviceId)
-      })
+      // Service is automatically activated by newService method
 
       // User subscribes to ASA service
       const subscriptionId = await subscriptions.subscribe({
@@ -4686,14 +4672,15 @@ describe('Subscriptions Contract Tests', () => {
         serviceId: 0n,
       })
 
-      // Check initial escrowed amount
+      // Check initial escrowed amount - should be 0 since subscription amount
+      // is sent to recipient immediately and no initialDepositAmount was provided
       const subBefore = await subscriptions.getSubscription({
         sender,
         signer,
         address: sender,
         id: subscriptionId
       })
-      expect(subBefore.escrowed).toBe(initialAmount)
+      expect(subBefore.escrowed).toBe(0n)
 
       // Deposit more ASA
       const depositAmount = 1_000_000n
@@ -4712,7 +4699,7 @@ describe('Subscriptions Contract Tests', () => {
         address: sender,
         id: subscriptionId
       })
-      expect(subAfter.escrowed).toBe(initialAmount + depositAmount)
+      expect(subAfter.escrowed).toBe(depositAmount) // Was 0, now has deposit
     })
 
     test('withdraw ASA from subscription', async () => {
@@ -4732,31 +4719,34 @@ describe('Subscriptions Contract Tests', () => {
         assetId: testAssetId,
       })
 
-      const initialAmount = 1_000_000n
+      const subscriptionAmount = 100_000n
+      const initialDepositAmount = 900_000n // extra deposit on top of subscription amount
 
       const subscriptionId = await subscriptions.subscribe({
         sender,
         signer,
         asset: testAssetId,
-        amount: 100_000n,
+        amount: subscriptionAmount,
         interval: BigInt(MIN_INTERVAL),
         recipient: recipientAcc.addr.toString(),
         serviceId: 0n,
-        initialDepositAmount: initialAmount - 100_000n, // initial deposit on top of subscription amount
+        initialDepositAmount,
       })
 
-      // Check initial escrowed amount
+      // Check initial escrowed amount - this is just the initialDepositAmount
+      // (subscription amount was sent to recipient immediately)
       const subBefore = await subscriptions.getSubscription({
         sender,
         signer,
         address: sender,
         id: subscriptionId
       })
-      expect(subBefore.escrowed).toBe(initialAmount)
+      expect(subBefore.escrowed).toBe(initialDepositAmount)
 
       // Check sender's ASA balance before withdrawal
-      const senderInfoBefore = await algorand.account.getAssetInformation(sender, testAssetId)
-      const balanceBefore = senderInfoBefore.balance
+      const algod = algorand.client.algod
+      const senderInfoBefore = await algod.accountAssetInformation(sender, Number(testAssetId)).do()
+      const balanceBefore = BigInt(senderInfoBefore.assetHolding?.amount ?? 0)
 
       // Withdraw some ASA
       const withdrawAmount = 500_000n
@@ -4775,11 +4765,11 @@ describe('Subscriptions Contract Tests', () => {
         address: sender,
         id: subscriptionId
       })
-      expect(subAfter.escrowed).toBe(initialAmount - withdrawAmount)
+      expect(subAfter.escrowed).toBe(initialDepositAmount - withdrawAmount)
 
       // Verify sender received the ASA
-      const senderInfoAfter = await algorand.account.getAssetInformation(sender, testAssetId)
-      expect(senderInfoAfter.balance).toBe(balanceBefore + withdrawAmount)
+      const senderInfoAfter = await algod.accountAssetInformation(sender, Number(testAssetId)).do()
+      expect(BigInt(senderInfoAfter.assetHolding?.amount ?? 0)).toBe(balanceBefore + withdrawAmount)
     })
 
     test('trigger payment for ASA subscription', async () => {
@@ -4814,22 +4804,24 @@ describe('Subscriptions Contract Tests', () => {
       })
 
       // Get initial states
+      const algod = algorand.client.algod
       const subBefore = await subscriptions.getSubscription({
         sender,
         signer,
         address: sender,
         id: subscriptionId
       })
-      const recipientBalanceBefore = (await algorand.account.getAssetInformation(
+      const recipientInfoBefore = await algod.accountAssetInformation(
         recipientAcc.addr.toString(),
-        testAssetId
-      )).balance
+        Number(testAssetId)
+      ).do()
+      const recipientBalanceBefore = BigInt(recipientInfoBefore.assetHolding?.amount ?? 0)
 
       // Wait for interval to pass
-      await timeWarp.advanceTime(MIN_INTERVAL + 1)
+      await timeWarp.timeWarp(BigInt(MIN_INTERVAL + 1))
 
       // Trigger payment
-      await subscriptions.trigger({
+      await subscriptions.triggerPayment({
         sender,
         signer,
         address: sender,
@@ -4846,10 +4838,11 @@ describe('Subscriptions Contract Tests', () => {
       expect(subAfter.escrowed).toBeLessThan(subBefore.escrowed)
 
       // Verify recipient received ASA (minus fees)
-      const recipientBalanceAfter = (await algorand.account.getAssetInformation(
+      const recipientInfoAfter = await algod.accountAssetInformation(
         recipientAcc.addr.toString(),
-        testAssetId
-      )).balance
+        Number(testAssetId)
+      ).do()
+      const recipientBalanceAfter = BigInt(recipientInfoAfter.assetHolding?.amount ?? 0)
       expect(recipientBalanceAfter).toBeGreaterThan(recipientBalanceBefore)
     })
 
@@ -4885,6 +4878,7 @@ describe('Subscriptions Contract Tests', () => {
       })
 
       // Check escrowed amount
+      const algod = algorand.client.algod
       const subBefore = await subscriptions.getSubscription({
         sender,
         signer,
@@ -4893,18 +4887,19 @@ describe('Subscriptions Contract Tests', () => {
       })
 
       // Get sender ASA balance before unsubscribe
-      const senderBalanceBefore = (await algorand.account.getAssetInformation(sender, testAssetId)).balance
+      const senderInfoBefore = await algod.accountAssetInformation(sender, Number(testAssetId)).do()
+      const senderBalanceBefore = BigInt(senderInfoBefore.assetHolding?.amount ?? 0)
 
       // Unsubscribe
       await subscriptions.unsubscribe({
         sender,
         signer,
-        asset: testAssetId,
         id: subscriptionId
       })
 
       // Verify sender received escrowed ASA back
-      const senderBalanceAfter = (await algorand.account.getAssetInformation(sender, testAssetId)).balance
+      const senderInfoAfter = await algod.accountAssetInformation(sender, Number(testAssetId)).do()
+      const senderBalanceAfter = BigInt(senderInfoAfter.assetHolding?.amount ?? 0)
       expect(senderBalanceAfter).toBe(senderBalanceBefore + subBefore.escrowed)
     })
 
@@ -4937,14 +4932,14 @@ describe('Subscriptions Contract Tests', () => {
         serviceId: 0n,
       })
 
-      // Initial escrowed is just the subscription amount
+      // Initial escrowed is 0 since subscription amount is sent to recipient immediately
       let sub = await subscriptions.getSubscription({
         sender,
         signer,
         address: sender,
         id: subscriptionId
       })
-      expect(sub.escrowed).toBe(subscriptionAmount)
+      expect(sub.escrowed).toBe(0n)
 
       // First deposit
       await subscriptions.deposit({
@@ -4960,7 +4955,7 @@ describe('Subscriptions Contract Tests', () => {
         address: sender,
         id: subscriptionId
       })
-      expect(sub.escrowed).toBe(300_000n)
+      expect(sub.escrowed).toBe(200_000n)
 
       // Second deposit
       await subscriptions.deposit({
@@ -4976,7 +4971,7 @@ describe('Subscriptions Contract Tests', () => {
         address: sender,
         id: subscriptionId
       })
-      expect(sub.escrowed).toBe(800_000n)
+      expect(sub.escrowed).toBe(700_000n)
 
       // First withdrawal
       await subscriptions.withdraw({
@@ -4992,9 +4987,9 @@ describe('Subscriptions Contract Tests', () => {
         address: sender,
         id: subscriptionId
       })
-      expect(sub.escrowed).toBe(700_000n)
+      expect(sub.escrowed).toBe(600_000n)
 
-      // Second withdrawal
+      // Second withdrawal (600k - 300k = 300k)
       await subscriptions.withdraw({
         sender,
         signer,
@@ -5008,7 +5003,7 @@ describe('Subscriptions Contract Tests', () => {
         address: sender,
         id: subscriptionId
       })
-      expect(sub.escrowed).toBe(400_000n)
+      expect(sub.escrowed).toBe(300_000n)
     })
 
     test('cannot withdraw more ASA than escrowed', async () => {
@@ -5076,6 +5071,13 @@ describe('Subscriptions Contract Tests', () => {
         assetId: testAssetId,
       })
 
+      // Third party must opt into ASA to receive trigger fee
+      await algorand.send.assetOptIn({
+        sender: thirdPartyAcc.addr,
+        signer: thirdPartyAcc.signer,
+        assetId: testAssetId,
+      })
+
       const subscriptionAmount = 100_000n
       const initialDeposit = 500_000n
 
@@ -5099,10 +5101,10 @@ describe('Subscriptions Contract Tests', () => {
       })
 
       // Wait for interval to pass
-      await timeWarp.advanceTime(MIN_INTERVAL + 1)
+      await timeWarp.timeWarp(BigInt(MIN_INTERVAL + 1))
 
       // Third party triggers payment
-      await subscriptions.trigger({
+      await subscriptions.triggerPayment({
         sender: thirdPartyAcc.addr.toString(),
         signer: thirdPartyAcc.signer,
         address: sender,
@@ -5154,12 +5156,7 @@ describe('Subscriptions Contract Tests', () => {
         highlightColor: '#AABBCC',
       })
 
-      // Activate service
-      await subscriptions.activate({
-        sender: merchantAcc.addr.toString(),
-        signer: merchantAcc.signer,
-        id: Number(serviceId)
-      })
+      // Service is automatically activated by newService method
 
       // Verify service has passes enabled
       const service = await subscriptions.getService({
