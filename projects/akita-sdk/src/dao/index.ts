@@ -108,8 +108,14 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
   }
 
   private async prepProposalActions<TClient extends SDKClient>(actions: ProposalAction<TClient>[]): Promise<any> {
-    // Get wallet lazily - only fetches app ID on first access
-    const wallet = await this.getWallet();
+    // Only fetch wallet when needed for validation (ExecutePlugin, RemoveExecutePlugin, RemovePlugin, RemoveNamedPlugin)
+    const needsWallet = actions.some(a => 
+      a.type === ProposalActionEnum.ExecutePlugin ||
+      a.type === ProposalActionEnum.RemoveExecutePlugin ||
+      a.type === ProposalActionEnum.RemovePlugin ||
+      a.type === ProposalActionEnum.RemoveNamedPlugin
+    );
+    const wallet = needsWallet ? await this.getWallet() : null;
     
     // parse args & rebuild
     const preppedActions: [number | bigint, Uint8Array<ArrayBufferLike>][] = []
@@ -226,9 +232,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
           const { type, ...action } = typedAction
           const { plugin, escrow } = action
 
-          if (!wallet.plugins.has({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })) {
+          if (!wallet!.plugins.has({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })) {
             try {
-              await wallet.getPluginByKey({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })
+              await wallet!.getPluginByKey({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })
             } catch (e) {
               throw new Error(`Plugin: ${plugin} for escrow: ${escrow} not found`);
             }
@@ -241,9 +247,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
         case ProposalActionEnum.RemoveExecutePlugin: {
           const { type, ...action } = typedAction
 
-          if (!wallet.executions.has(action.executionKey)) {
+          if (!wallet!.executions.has(action.executionKey)) {
             try {
-              await wallet.getExecution(action.executionKey)
+              await wallet!.getExecution(action.executionKey)
             } catch (e) {
               throw new Error(`Execution with key: ${action.executionKey} not found`);
             }
@@ -257,9 +263,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
           const { type, ...action } = typedAction
           const { plugin, caller, escrow } = action;
 
-          if (!wallet.plugins.has({ plugin, caller, escrow })) {
+          if (!wallet!.plugins.has({ plugin, caller, escrow })) {
             try {
-              await wallet.getPluginByKey({ plugin, caller, escrow })
+              await wallet!.getPluginByKey({ plugin, caller, escrow })
             } catch (e) {
               throw new Error(`Plugin: ${plugin} with caller: ${caller} for escrow: ${escrow} not found`);
             }
@@ -273,9 +279,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
           const { type, ...action } = typedAction
           const { name } = action;
 
-          if (!wallet.namedPlugins.has(name)) {
+          if (!wallet!.namedPlugins.has(name)) {
             try {
-              await wallet.getPluginByName(name)
+              await wallet!.getPluginByName(name)
             } catch (e) {
               throw new Error(`Plugin named: ${name} not found`);
             }

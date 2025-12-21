@@ -1085,10 +1085,9 @@ export class Subscriptions extends classes(BaseSubscriptions, AkitaFeeGeneratorC
     const serviceCreationFee = getSubscriptionFees(this.akitaDAO.value).serviceCreationFee
     const costs = this.mbr()
 
-    let requiredAmount: uint64 = serviceCreationFee + costs.services
-    if (asset !== 0 && !this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
-      requiredAmount += Global.assetOptInMinBalance
-    }
+    // Note: Escrow opt-in costs are NOT included here because they are paid
+    // via inner transactions from the contract's balance in newService()
+    const requiredAmount: uint64 = serviceCreationFee + costs.services
 
     const referralCost = referralFee(this.akitaDAO.value, asset)
 
@@ -1125,9 +1124,8 @@ export class Subscriptions extends classes(BaseSubscriptions, AkitaFeeGeneratorC
 
     const referralCost = referralFee(this.akitaDAO.value, asset)
 
-    if (asset !== 0 && !this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
-      mbrAmount += Global.assetOptInMinBalance
-    }
+    // Note: Escrow opt-in costs are NOT included here because they are paid
+    // via inner transactions from the contract's balance in createAsaSubscription()
 
     return mbrAmount + referralCost
   }

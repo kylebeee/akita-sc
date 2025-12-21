@@ -73,8 +73,12 @@ export class AkitaDaoSDK extends BaseSDK {
         this._walletInitPromise = Promise.resolve(wallet);
     }
     async prepProposalActions(actions) {
-        // Get wallet lazily - only fetches app ID on first access
-        const wallet = await this.getWallet();
+        // Only fetch wallet when needed for validation (ExecutePlugin, RemoveExecutePlugin, RemovePlugin, RemoveNamedPlugin)
+        const needsWallet = actions.some(a => a.type === ProposalActionEnum.ExecutePlugin ||
+            a.type === ProposalActionEnum.RemoveExecutePlugin ||
+            a.type === ProposalActionEnum.RemovePlugin ||
+            a.type === ProposalActionEnum.RemoveNamedPlugin);
+        const wallet = needsWallet ? await this.getWallet() : null;
         // parse args & rebuild
         const preppedActions = [];
         for (let i = 0; i < actions.length; i++) {

@@ -45,9 +45,13 @@ export class SubscriptionsSDK extends BaseSDK {
      * Check if the contract is opted into a specific asset
      */
     async isOptedInToAsset(asset) {
+        const assetId = BigInt(asset);
+        // ALGO (asset 0) doesn't require opt-in - accounts can always hold ALGO
+        if (assetId === 0n) {
+            return true;
+        }
         try {
             const appAddress = this.client.appAddress.toString();
-            const assetId = BigInt(asset);
             // Use the algod endpoint /v2/accounts/{address}/assets/{asset-id}
             const algod = this.client.algorand.client.algod;
             // If the asset-holding exists, we're opted in. If it 404s, we're not.
@@ -352,7 +356,7 @@ export class SubscriptionsSDK extends BaseSDK {
             }
         }
         else {
-            const assetTransfer = this.client.algorand.createTransaction.assetTransfer({
+            const assetTransfer = await this.client.algorand.createTransaction.assetTransfer({
                 ...sendParams,
                 amount: BigInt(amount) + BigInt(initialDepositAmount),
                 assetId: asset,
