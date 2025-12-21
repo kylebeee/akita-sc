@@ -10,8 +10,26 @@ export * from "./types";
 type ContractArgs = AkitaDaoArgs["obj"];
 export declare class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
     typeClient: AkitaDaoTypesClient;
-    wallet: WalletSDK;
+    private _wallet;
+    private _walletInitPromise;
+    private _constructorParams;
     constructor(params: NewContractSDKParams);
+    /**
+     * Get the wallet SDK associated with this DAO.
+     * Lazily fetches the wallet app ID from the DAO's global state on first access.
+     */
+    getWallet(): Promise<WalletSDK>;
+    private _initializeWallet;
+    /**
+     * @deprecated Use getWallet() instead for proper async initialization.
+     * This getter exists for backwards compatibility but will throw if the wallet
+     * hasn't been initialized yet via getWallet() or setup().
+     */
+    get wallet(): WalletSDK;
+    /**
+     * Allows setting the wallet directly (used by setup() and for testing)
+     */
+    set wallet(wallet: WalletSDK);
     private prepProposalActions;
     setup(params?: MaybeSigner): Promise<GroupReturn>;
     initialize(params?: MaybeSigner): Promise<TxnReturn<void>>;

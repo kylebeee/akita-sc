@@ -1199,14 +1199,12 @@ newService_ternary_merge@19:
     bury 1
     bnz newService_after_if_else@5
     // smart_contracts/subscriptions/contract.algo.ts:536
-    // requiredAmount += this.optAkitaEscrowInAndSend(AkitaDAOEscrowAccountSubscriptions, Asset(asset), 0)
+    // this.optAkitaEscrowInAndSend(AkitaDAOEscrowAccountSubscriptions, Asset(asset), 0)
     bytec 24 // "rev_subscriptions"
     dig 9
     intc_0 // 0
     callsub optAkitaEscrowInAndSend
-    dig 14
-    +
-    bury 14
+    pop
 
 newService_after_if_else@5:
     // smart_contracts/subscriptions/contract.algo.ts:540
@@ -1544,7 +1542,7 @@ setServiceDescription:
     assert // Group index out of bounds
     // smart_contracts/subscriptions/contract.algo.ts:579
     // const previousCalls: uint64 = offset / MAX_DESCRIPTION_CHUNK_SIZE
-    pushint 2036 // 2036
+    pushint 2034 // 2034
     /
     // smart_contracts/subscriptions/contract.algo.ts:580
     // const newServiceTxnIndex: uint64 = Txn.groupIndex - 1 - previousCalls
@@ -6129,7 +6127,7 @@ createAsaSubscription_after_if_else@6:
     // AkitaDAOEscrowAccountSubscriptions,
     bytec 24 // "rev_subscriptions"
     // smart_contracts/subscriptions/contract.algo.ts:348-352
-    // mbrAmount += this.optAkitaEscrowInAndSend(
+    // this.optAkitaEscrowInAndSend(
     //   AkitaDAOEscrowAccountSubscriptions,
     //   assetXfer.xferAsset,
     //   leftover
@@ -6137,9 +6135,7 @@ createAsaSubscription_after_if_else@6:
     frame_dig 5
     frame_dig 2
     callsub optAkitaEscrowInAndSend
-    frame_dig 7
-    +
-    frame_bury 7
+    pop
 
 createAsaSubscription_after_if_else@10:
     // smart_contracts/subscriptions/contract.algo.ts:364-371

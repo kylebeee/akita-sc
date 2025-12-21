@@ -156,14 +156,7 @@ class SubscriptionsSDK extends base_1.BaseSDK {
         const highlightColor = (0, utils_2.hexColorToBytes)(rest.highlightColor);
         // Check if we need to opt the contract into the asset (ASA services only)
         const isAsaService = asset !== 0n;
-        let needsOptIn = false;
-        let optInCost = 0n;
-        if (isAsaService) {
-            needsOptIn = !(await this.isOptedInToAsset(asset));
-            if (needsOptIn) {
-                optInCost = await this.optInCost({ ...sendParams, asset });
-            }
-        }
+        const needsOptIn = isAsaService && !(await this.isOptedInToAsset(asset));
         // Use contract method to get the exact cost
         const paymentAmount = await this.newServiceCost({ ...sendParams, asset });
         const payment = this.client.algorand.createTransaction.payment({
@@ -177,6 +170,7 @@ class SubscriptionsSDK extends base_1.BaseSDK {
         const group = this.client.newGroup();
         // If contract needs to opt into the asset, add the opt-in call first
         if (needsOptIn) {
+            const optInCost = await this.optInCost({ ...sendParams, asset });
             const optInPayment = await this.client.algorand.createTransaction.payment({
                 ...sendParams,
                 amount: (0, algokit_utils_1.microAlgo)(optInCost),
@@ -205,8 +199,8 @@ class SubscriptionsSDK extends base_1.BaseSDK {
         if (rest.description.length > constants_1.MAX_DESCRIPTION_LENGTH) {
             throw new Error(`Description length exceeds maximum of ${constants_1.MAX_DESCRIPTION_LENGTH} characters`);
         }
-        // [selector:4][offset:8][data:>=2036]
-        // setServiceDescription(offset: uint64, data: bytes): void {
+        // setServiceDescription(offset: uint64, data: bytes): void
+        // [selector:4][offset:8][data_length:2][data:N] = 2048, max data = 2034 bytes
         if (rest.description.length > constants_1.MAX_DESCRIPTION_CHUNK_SIZE) {
             group.setServiceDescription({
                 ...sendParams,

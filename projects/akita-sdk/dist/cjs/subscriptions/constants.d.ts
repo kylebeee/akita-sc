@@ -24,4 +24,5 @@ export declare enum HighlightMessage {
     EarlyAccess = 15
 }
 export declare const MAX_DESCRIPTION_LENGTH = 3151;
-export declare const MAX_DESCRIPTION_CHUNK_SIZE = 2036;
+export declare const MAX_DESCRIPTION_CHUNK_SIZE = 2034;
+export declare const MAX_LOAD_DESCRIPTION_CHUNK_SIZE = 2026;

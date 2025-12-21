@@ -23,9 +23,10 @@ export const MAX_TITLE_LENGTH = 128
 // + a 500 byte cushion as a return value
 // [fixed fields: 145][passes: 160+2+2][title: max 128+2+2][description: 3151+2+2][cushion: 500] = 4096
 export const MAX_DESCRIPTION_LENGTH = 3151
-// max description chunk size per transaction
-// [selector:4][offset:8][data:2036] = 2048
-export const MAX_DESCRIPTION_CHUNK_SIZE = 2036
+// max description chunk size for Subscriptions.setServiceDescription(offset, data)
+// [selector:4][offset:8][data_length:2][data:N] = 2048
+// overhead = 14 bytes, max data = 2034 bytes
+export const MAX_DESCRIPTION_CHUNK_SIZE = 2034
 
 export const HighlightMessageNone: Uint8 = new Uint8(0)
 export const HighlightMessageBestValue: Uint8 = new Uint8(1)

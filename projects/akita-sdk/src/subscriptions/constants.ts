@@ -26,6 +26,13 @@ export enum HighlightMessage {
 }
 
 export const MAX_DESCRIPTION_LENGTH = 3151
-// max description chunk size per transaction
-// [selector:4][offset:8][data:2036] = 2048
-export const MAX_DESCRIPTION_CHUNK_SIZE = 2036
+
+// max chunk size for Subscriptions.setServiceDescription(offset, data)
+// [selector:4][offset:8][data_length:2][data:N] = 2048
+// overhead = 14 bytes, max data = 2034 bytes
+export const MAX_DESCRIPTION_CHUNK_SIZE = 2034
+
+// max chunk size for SubscriptionsPlugin.loadDescription(wallet, offset, data)
+// [selector:4][wallet:8][offset:8][data_length:2][data:N] = 2048
+// overhead = 22 bytes, max data = 2026 bytes
+export const MAX_LOAD_DESCRIPTION_CHUNK_SIZE = 2026

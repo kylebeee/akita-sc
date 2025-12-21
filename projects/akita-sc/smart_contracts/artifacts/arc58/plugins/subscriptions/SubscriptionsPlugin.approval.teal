@@ -3,7 +3,7 @@
 
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
-    intcblock 0 1 8 6 2036
+    intcblock 0 1 8 6 2034
     bytecblock "akita_dao" "aal" 0x151f7c75 "spending_address" "d" 0x1795a0d0 0x43922655 0xd1079cae 0xcf16011d "controlled_address"
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:20
     // export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseContract) {
@@ -352,8 +352,8 @@ loadDescription:
     <=
     assert // Description length exceeds maximum
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:70
-    // const expectedPreviousCalls: uint64 = offset / MAX_DESCRIPTION_CHUNK_SIZE
-    intc 4 // 2036
+    // const expectedPreviousCalls: uint64 = offset / MAX_LOAD_DESCRIPTION_CHUNK_SIZE
+    pushint 2026 // 2026
     /
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:71
     // const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
@@ -829,7 +829,7 @@ newService_bool_merge@9:
     assert // Box must have value
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:142
     // if (size > MAX_DESCRIPTION_CHUNK_SIZE) {
-    intc 4 // 2036
+    intc 4 // 2034
     >
     bz newService_else_body@12
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:23
@@ -838,7 +838,7 @@ newService_bool_merge@9:
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:143
     // const chunk = this.description.extract(0, MAX_DESCRIPTION_CHUNK_SIZE)
     intc_0 // 0
-    intc 4 // 2036
+    intc 4 // 2034
     box_extract
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:145-149
     // itxnCompose.next<typeof Subscriptions.prototype.setServiceDescription>({
@@ -890,14 +890,14 @@ newService_bool_merge@9:
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:154
     // args: [0, this.description.extract(MAX_DESCRIPTION_CHUNK_SIZE, size - MAX_DESCRIPTION_CHUNK_SIZE)],
     uncover 3
-    intc 4 // 2036
+    intc 4 // 2034
     -
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:23
     // description = Box<bytes>({ key: BoxKeySubscriptionsDescription })
     bytec 4 // "d"
     // smart_contracts/arc58/plugins/subscriptions/contract.algo.ts:154
     // args: [0, this.description.extract(MAX_DESCRIPTION_CHUNK_SIZE, size - MAX_DESCRIPTION_CHUNK_SIZE)],
-    intc 4 // 2036
+    intc 4 // 2034
     uncover 2
     box_extract
     dup

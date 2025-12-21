@@ -345,7 +345,7 @@ export class Subscriptions extends classes(BaseSubscriptions, AkitaFeeGeneratorC
     const { leftover, referralMbr } = sendReferralPayment(this.akitaDAO.value, assetXfer.xferAsset.id, akitaFees)
 
     if (!this.akitaDAOEscrow.value.address.isOptedIn(assetXfer.xferAsset)) {
-      mbrAmount += this.optAkitaEscrowInAndSend(
+      this.optAkitaEscrowInAndSend(
         AkitaDAOEscrowAccountSubscriptions,
         assetXfer.xferAsset,
         leftover
@@ -533,7 +533,7 @@ export class Subscriptions extends classes(BaseSubscriptions, AkitaFeeGeneratorC
       assert(Global.currentApplicationAddress.isOptedIn(Asset(asset)), ERR_NOT_OPTED_IN)
 
       if (!this.akitaDAOEscrow.value.address.isOptedIn(Asset(asset))) {
-        requiredAmount += this.optAkitaEscrowInAndSend(AkitaDAOEscrowAccountSubscriptions, Asset(asset), 0)
+        this.optAkitaEscrowInAndSend(AkitaDAOEscrowAccountSubscriptions, Asset(asset), 0)
       }
     }
 

@@ -115,7 +115,7 @@ export const TESTNET_APP_IDS = {
     prizeBoxFactory: 751971937n,
     // Plugins
     revenueManagerPlugin: 751972084n,
-    updatePlugin: 751972139n,
+    updatePlugin: 752472935n,
     optinPlugin: 751968346n,
     asaMintPlugin: 751968373n,
     payPlugin: 751968379n,
@@ -192,7 +192,7 @@ export const MAINNET_APP_IDS = {
     prizeBoxFactory: 3368394289n,
     // Plugins
     revenueManagerPlugin: 3368395771n,
-    updatePlugin: 3368396455n,
+    updatePlugin: 3378277726n,
     optinPlugin: 3368398585n,
     asaMintPlugin: 3368398964n,
     payPlugin: 3368399056n,

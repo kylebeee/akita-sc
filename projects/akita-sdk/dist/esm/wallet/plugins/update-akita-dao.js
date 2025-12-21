@@ -59,12 +59,12 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
                     type: 'methodCall',
                     ...initParams
                 });
-                // max loadContract calls necessary is 4
-                // max loadContract data size is 2036
-                // [selector:4][offset:8][data:>=2036] = 2048 bytes (max txn args size)
-                // so we need to split the data into at most 4 chunks
-                for (let i = 0; i < data.length; i += 2036) {
-                    const chunk = data.slice(i, i + 2036);
+                // max loadContract data size is 2026 bytes
+                // ABI encoding overhead: [selector:4][wallet:8][offset:8][data_length:2] = 22 bytes
+                // 2048 - 22 = 2026 bytes max per chunk
+                const CHUNK_SIZE = 2026;
+                for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+                    const chunk = data.slice(i, i + CHUNK_SIZE);
                     const loadParams = (await this.client.params.loadBoxedContract({
                         ...sendParams,
                         args: { wallet, offset: i, data: chunk }

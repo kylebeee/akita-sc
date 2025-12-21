@@ -60,7 +60,10 @@ export class UpdateAkitaDAOPlugin extends Contract {
     const sender = getSpendingAccount(wallet)
     assert(sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
 
-    const expectedPreviousCalls: uint64 = offset / 2027
+    // max chunk size is 2026 bytes
+    // ABI encoding overhead: [selector:4][wallet:8][offset:8][data_length:2] = 22 bytes
+    // 2048 - 22 = 2026 bytes max per chunk
+    const expectedPreviousCalls: uint64 = offset / 2026
     const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
     assert((
       txn.type === TransactionType.ApplicationCall

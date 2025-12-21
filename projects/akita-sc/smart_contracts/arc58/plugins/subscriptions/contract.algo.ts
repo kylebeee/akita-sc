@@ -14,7 +14,7 @@ import type { Subscriptions } from "../../../subscriptions/contract.algo"
 import { ERR_BAD_DESCRIPTION_LENGTH } from "../../../subscriptions/errors"
 import { AkitaBaseContract } from "../../../utils/base-contracts/base"
 import { ERR_INVALID_CALL_ORDER } from "../../../utils/errors"
-import { BoxKeySubscriptionsDescription } from "./constants"
+import { BoxKeySubscriptionsDescription, MAX_LOAD_DESCRIPTION_CHUNK_SIZE } from "./constants"
 import { ERR_DESCRIPTION_NOT_INITIALIZED } from "./errors"
 
 export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseContract) {
@@ -67,7 +67,7 @@ export class SubscriptionsPlugin extends classes(BaseSubscriptions, AkitaBaseCon
 
   loadDescription(wallet: Application, offset: uint64, data: bytes): void {
     assert(offset + data.length <= MAX_DESCRIPTION_LENGTH, ERR_BAD_DESCRIPTION_LENGTH)
-    const expectedPreviousCalls: uint64 = offset / MAX_DESCRIPTION_CHUNK_SIZE
+    const expectedPreviousCalls: uint64 = offset / MAX_LOAD_DESCRIPTION_CHUNK_SIZE
     const txn = gtxn.Transaction(Txn.groupIndex - expectedPreviousCalls - 1)
     assert((
       txn.type === TransactionType.ApplicationCall

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MAX_DESCRIPTION_CHUNK_SIZE = exports.MAX_DESCRIPTION_LENGTH = exports.HighlightMessage = exports.ServiceStatus = void 0;
+exports.MAX_LOAD_DESCRIPTION_CHUNK_SIZE = exports.MAX_DESCRIPTION_CHUNK_SIZE = exports.MAX_DESCRIPTION_LENGTH = exports.HighlightMessage = exports.ServiceStatus = void 0;
 var ServiceStatus;
 (function (ServiceStatus) {
     ServiceStatus[ServiceStatus["None"] = 0] = "None";
@@ -29,7 +29,12 @@ var HighlightMessage;
     HighlightMessage[HighlightMessage["EarlyAccess"] = 15] = "EarlyAccess";
 })(HighlightMessage || (exports.HighlightMessage = HighlightMessage = {}));
 exports.MAX_DESCRIPTION_LENGTH = 3151;
-// max description chunk size per transaction
-// [selector:4][offset:8][data:2036] = 2048
-exports.MAX_DESCRIPTION_CHUNK_SIZE = 2036;
+// max chunk size for Subscriptions.setServiceDescription(offset, data)
+// [selector:4][offset:8][data_length:2][data:N] = 2048
+// overhead = 14 bytes, max data = 2034 bytes
+exports.MAX_DESCRIPTION_CHUNK_SIZE = 2034;
+// max chunk size for SubscriptionsPlugin.loadDescription(wallet, offset, data)
+// [selector:4][wallet:8][offset:8][data_length:2][data:N] = 2048
+// overhead = 22 bytes, max data = 2026 bytes
+exports.MAX_LOAD_DESCRIPTION_CHUNK_SIZE = 2026;
 //# sourceMappingURL=constants.js.map

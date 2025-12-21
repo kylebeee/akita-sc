@@ -37,19 +37,80 @@ type ContractArgs = AkitaDaoArgs["obj"]
 export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
 
   typeClient: AkitaDaoTypesClient
-  wallet: WalletSDK;
+  private _wallet: WalletSDK | null = null;
+  private _walletInitPromise: Promise<WalletSDK> | null = null;
+  private _constructorParams: NewContractSDKParams;
 
   constructor(params: NewContractSDKParams) {
     super({ factory: AkitaDaoFactory, ...params }, ENV_VAR_NAMES.DAO_APP_ID);
     this.typeClient = new AkitaDaoTypesClient({ algorand: this.algorand, appId: 0n });
-    // Pass the resolved appId to WalletSDK
-    this.wallet = new WalletSDK({
-      ...params,
-      factoryParams: { ...params.factoryParams, appId: this.appId }
+    this._constructorParams = params;
+  }
+
+  /**
+   * Get the wallet SDK associated with this DAO.
+   * Lazily fetches the wallet app ID from the DAO's global state on first access.
+   */
+  async getWallet(): Promise<WalletSDK> {
+    if (this._wallet) {
+      return this._wallet;
+    }
+
+    // Use a promise to prevent multiple concurrent initializations
+    if (!this._walletInitPromise) {
+      this._walletInitPromise = this._initializeWallet();
+    }
+
+    return this._walletInitPromise;
+  }
+
+  private async _initializeWallet(): Promise<WalletSDK> {
+    // Fetch wallet app ID from DAO global state
+    const walletAppId = await this.client.state.global.wallet();
+    if (!walletAppId) {
+      throw new Error('Could not read wallet app ID from DAO global state. Has the DAO been set up?');
+    }
+
+    this._wallet = new WalletSDK({
+      ...this._constructorParams,
+      factoryParams: {
+        ...this._constructorParams.factoryParams,
+        appId: walletAppId,
+        defaultSender: this.sendParams.sender,
+        defaultSigner: this.sendParams.signer
+      }
     });
+
+    return this._wallet;
+  }
+
+  /**
+   * @deprecated Use getWallet() instead for proper async initialization.
+   * This getter exists for backwards compatibility but will throw if the wallet
+   * hasn't been initialized yet via getWallet() or setup().
+   */
+  get wallet(): WalletSDK {
+    if (!this._wallet) {
+      throw new Error(
+        'Wallet not initialized. Call "await dao.getWallet()" first to initialize the wallet SDK, ' +
+        'or use "await dao.setup()" to create a new DAO with its wallet.'
+      );
+    }
+    return this._wallet;
+  }
+
+  /**
+   * Allows setting the wallet directly (used by setup() and for testing)
+   */
+  set wallet(wallet: WalletSDK) {
+    this._wallet = wallet;
+    this._walletInitPromise = Promise.resolve(wallet);
   }
 
   private async prepProposalActions<TClient extends SDKClient>(actions: ProposalAction<TClient>[]): Promise<any> {
+    // Get wallet lazily - only fetches app ID on first access
+    const wallet = await this.getWallet();
+    
     // parse args & rebuild
     const preppedActions: [number | bigint, Uint8Array<ArrayBufferLike>][] = []
     for (let i = 0; i < actions.length; i++) {
@@ -165,9 +226,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
           const { type, ...action } = typedAction
           const { plugin, escrow } = action
 
-          if (!this.wallet.plugins.has({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })) {
+          if (!wallet.plugins.has({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })) {
             try {
-              await this.wallet.getPluginByKey({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })
+              await wallet.getPluginByKey({ plugin, caller: ALGORAND_ZERO_ADDRESS_STRING, escrow })
             } catch (e) {
               throw new Error(`Plugin: ${plugin} for escrow: ${escrow} not found`);
             }
@@ -180,9 +241,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
         case ProposalActionEnum.RemoveExecutePlugin: {
           const { type, ...action } = typedAction
 
-          if (!this.wallet.executions.has(action.executionKey)) {
+          if (!wallet.executions.has(action.executionKey)) {
             try {
-              await this.wallet.getExecution(action.executionKey)
+              await wallet.getExecution(action.executionKey)
             } catch (e) {
               throw new Error(`Execution with key: ${action.executionKey} not found`);
             }
@@ -196,9 +257,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
           const { type, ...action } = typedAction
           const { plugin, caller, escrow } = action;
 
-          if (!this.wallet.plugins.has({ plugin, caller, escrow })) {
+          if (!wallet.plugins.has({ plugin, caller, escrow })) {
             try {
-              await this.wallet.getPluginByKey({ plugin, caller, escrow })
+              await wallet.getPluginByKey({ plugin, caller, escrow })
             } catch (e) {
               throw new Error(`Plugin: ${plugin} with caller: ${caller} for escrow: ${escrow} not found`);
             }
@@ -212,9 +273,9 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
           const { type, ...action } = typedAction
           const { name } = action;
 
-          if (!this.wallet.namedPlugins.has(name)) {
+          if (!wallet.namedPlugins.has(name)) {
             try {
-              await this.wallet.getPluginByName(name)
+              await wallet.getPluginByName(name)
             } catch (e) {
               throw new Error(`Plugin named: ${name} not found`);
             }
