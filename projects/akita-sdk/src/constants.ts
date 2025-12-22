@@ -3,7 +3,7 @@ import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { makeEmptyTransactionSigner } from "algosdk";
 import { microAlgo } from "@algorandfoundation/algokit-utils";
 
-export const DEFAULT_READER: string = "A7NMWS3NT3IUDMLVO26ULGXGIIOUQ3ND2TXSER6EBGRZNOBOUIQXHIBGDE" // "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA"
+export const DEFAULT_READER: string = "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA" // "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA"
 
 export const emptySigner = makeEmptyTransactionSigner();
 

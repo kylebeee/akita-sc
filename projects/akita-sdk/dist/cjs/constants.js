@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MAX_UINT64 = exports.DEFAULT_SEND_PARAMS = exports.SIMULATE_PARAMS = exports.emptySigner = exports.DEFAULT_READER = void 0;
 const algosdk_1 = require("algosdk");
 const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
-exports.DEFAULT_READER = "A7NMWS3NT3IUDMLVO26ULGXGIIOUQ3ND2TXSER6EBGRZNOBOUIQXHIBGDE"; // "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA"
+exports.DEFAULT_READER = "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA"; // "Y76M3MSY6DKBRHBL7C3NNDXGS5IIMQVQVUAB6MP4XEMMGVF2QWNPL226CA"
 exports.emptySigner = (0, algosdk_1.makeEmptyTransactionSigner)();
 exports.SIMULATE_PARAMS = {
     allowMoreLogging: true,
