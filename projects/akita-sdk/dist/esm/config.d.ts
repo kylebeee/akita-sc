@@ -129,19 +129,20 @@ export declare function getAppIdFromEnv(envVarName: string): bigint | undefined;
 export declare function getConfigFromEnv(): AkitaConfig;
 /**
  * Attempts to detect the network from an AlgorandClient instance
- * Priority: environment variable > URL detection
+ * Priority: explicitly set network > environment variable > URL detection
  * Throws if network cannot be determined
  */
 export declare function detectNetworkFromClient(algorand: AlgorandClient): AkitaNetwork;
 /**
  * Sets the current network context
- * Called internally when SDKs are initialized
+ * Call this before initializing SDKs to avoid auto-detection
  */
 export declare function setCurrentNetwork(network: AkitaNetwork): void;
 /**
  * Gets the current network context
+ * Returns undefined if not explicitly set
  */
-export declare function getCurrentNetwork(): AkitaNetwork;
+export declare function getCurrentNetwork(): AkitaNetwork | undefined;
 /**
  * Mapping of SDK class names to their corresponding environment variable names
  */

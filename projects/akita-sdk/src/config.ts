@@ -280,11 +280,18 @@ const LOCALNET_URL_PATTERNS = [
 
 /**
  * Attempts to detect the network from an AlgorandClient instance
- * Priority: environment variable > URL detection
+ * Priority: explicitly set network > environment variable > URL detection
  * Throws if network cannot be determined
  */
 export function detectNetworkFromClient(algorand: AlgorandClient): AkitaNetwork {
-  // First check environment variable (explicit override)
+  // First check if network was explicitly set via setCurrentNetwork()
+  // This is the recommended approach for Next.js apps where env vars are statically inlined
+  const explicitNetwork = getCurrentNetwork();
+  if (explicitNetwork !== undefined) {
+    return explicitNetwork;
+  }
+  
+  // Then check environment variable
   try {
     return getNetworkFromEnv();
   } catch {
@@ -339,11 +346,11 @@ export function detectNetworkFromClient(algorand: AlgorandClient): AkitaNetwork 
 }
 
 // Store the current network context (set when SDK is initialized with an AlgorandClient)
-let _currentNetwork: AkitaNetwork = 'localnet';
+let _currentNetwork: AkitaNetwork | undefined = undefined;
 
 /**
  * Sets the current network context
- * Called internally when SDKs are initialized
+ * Call this before initializing SDKs to avoid auto-detection
  */
 export function setCurrentNetwork(network: AkitaNetwork): void {
   _currentNetwork = network;
@@ -351,8 +358,9 @@ export function setCurrentNetwork(network: AkitaNetwork): void {
 
 /**
  * Gets the current network context
+ * Returns undefined if not explicitly set
  */
-export function getCurrentNetwork(): AkitaNetwork {
+export function getCurrentNetwork(): AkitaNetwork | undefined {
   return _currentNetwork;
 }
 
@@ -434,15 +442,22 @@ export function resolveAppId(
   
   // 3. Try to get from baked-in network config
   const targetNetwork = network ?? getCurrentNetwork();
-  const networkAppId = getAppIdFromNetwork(targetNetwork, envVarName);
-  if (networkAppId !== undefined) {
-    return networkAppId;
+  if (targetNetwork !== undefined) {
+    const networkAppId = getAppIdFromNetwork(targetNetwork, envVarName);
+    if (networkAppId !== undefined) {
+      return networkAppId;
+    }
   }
   
   // No app ID found - provide helpful error
-  const networkHint = targetNetwork === 'localnet' 
-    ? ' For localnet, you must provide app IDs explicitly or set environment variables.'
-    : ` The baked-in ${targetNetwork} app IDs may not be configured yet.`;
+  let networkHint = '';
+  if (targetNetwork === undefined) {
+    networkHint = ' Network could not be determined - call setCurrentNetwork() first.';
+  } else if (targetNetwork === 'localnet') {
+    networkHint = ' For localnet, you must provide app IDs explicitly or set environment variables.';
+  } else {
+    networkHint = ` The baked-in ${targetNetwork} app IDs may not be configured yet.`;
+  }
   
   throw new Error(
     `No app ID provided for ${sdkName}. ` +
