@@ -105,7 +105,12 @@ export interface AkitaConfig {
 }
 /**
  * Gets the current network from environment variables
- * Defaults to 'localnet' if not set
+ * Throws an error if no valid network is configured
+ *
+ * Checks multiple env var names for compatibility:
+ * - ALGORAND_NETWORK (SDK standard)
+ * - ALGOD_NETWORK (common alternative)
+ * - NEXT_PUBLIC_* variants (for Next.js client-side)
  */
 export declare function getNetworkFromEnv(): AkitaNetwork;
 /**
@@ -124,7 +129,8 @@ export declare function getAppIdFromEnv(envVarName: string): bigint | undefined;
 export declare function getConfigFromEnv(): AkitaConfig;
 /**
  * Attempts to detect the network from an AlgorandClient instance
- * by checking the algod URL
+ * Priority: environment variable > URL detection
+ * Throws if network cannot be determined
  */
 export declare function detectNetworkFromClient(algorand: AlgorandClient): AkitaNetwork;
 /**

@@ -105,14 +105,28 @@ exports.ENV_VAR_NAMES = {
 // ============================================================================
 /**
  * Gets the current network from environment variables
- * Defaults to 'localnet' if not set
+ * Throws an error if no valid network is configured
+ *
+ * Checks multiple env var names for compatibility:
+ * - ALGORAND_NETWORK (SDK standard)
+ * - ALGOD_NETWORK (common alternative)
+ * - NEXT_PUBLIC_* variants (for Next.js client-side)
  */
 function getNetworkFromEnv() {
-    const network = getEnvVar(exports.ENV_VAR_NAMES.NETWORK);
-    if (network === 'testnet' || network === 'mainnet' || network === 'localnet') {
-        return network;
+    // Check multiple env var names for compatibility
+    const envVarNames = [
+        exports.ENV_VAR_NAMES.NETWORK, // ALGORAND_NETWORK
+        'ALGOD_NETWORK',
+        'NEXT_PUBLIC_ALGORAND_NETWORK',
+        'NEXT_PUBLIC_ALGOD_NETWORK',
+    ];
+    for (const name of envVarNames) {
+        const network = getEnvVar(name);
+        if (network === 'testnet' || network === 'mainnet' || network === 'localnet') {
+            return network;
+        }
     }
-    return 'localnet';
+    throw new Error(`No valid network configured. Set one of these environment variables to 'localnet', 'testnet', or 'mainnet': ${envVarNames.join(', ')}`);
 }
 /**
  * Gets an environment variable value
@@ -207,13 +221,16 @@ const LOCALNET_URL_PATTERNS = [
 ];
 /**
  * Attempts to detect the network from an AlgorandClient instance
- * by checking the algod URL
+ * Priority: environment variable > URL detection
+ * Throws if network cannot be determined
  */
 function detectNetworkFromClient(algorand) {
     // First check environment variable (explicit override)
-    const envNetwork = getNetworkFromEnv();
-    if (envNetwork !== 'localnet') {
-        return envNetwork;
+    try {
+        return getNetworkFromEnv();
+    }
+    catch {
+        // No env var set, try URL detection
     }
     // Try to detect from client URL
     try {
@@ -248,9 +265,11 @@ function detectNetworkFromClient(algorand) {
         }
     }
     catch {
-        // Ignore errors, fall back to env or default
+        // Ignore URL detection errors
     }
-    return envNetwork;
+    // Neither env var nor URL detection worked
+    throw new Error('Could not detect network. Set ALGORAND_NETWORK, ALGOD_NETWORK, or NEXT_PUBLIC_ALGOD_NETWORK ' +
+        'environment variable, or use an AlgorandClient configured with a recognizable network URL.');
 }
 // Store the current network context (set when SDK is initialized with an AlgorandClient)
 let _currentNetwork = 'localnet';
