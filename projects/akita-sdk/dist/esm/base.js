@@ -49,6 +49,12 @@ export class BaseSDK {
         }
         return sendParams;
     }
+    getReaderSendParams({ sender } = {}) {
+        return {
+            ...this.sendParams,
+            ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
+        };
+    }
 }
 /**
  * Override this in subclasses to specify the environment variable name for the app ID

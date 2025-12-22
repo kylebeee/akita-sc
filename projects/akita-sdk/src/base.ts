@@ -72,4 +72,11 @@ export abstract class BaseSDK<T> {
     }
     return sendParams;
   }
+
+  protected getReaderSendParams({ sender }: { sender?: string } = {}): ExpandedSendParams {
+    return {
+      ...this.sendParams,
+      ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
+    };
+  }
 }

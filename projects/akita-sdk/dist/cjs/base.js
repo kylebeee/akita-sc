@@ -52,6 +52,12 @@ class BaseSDK {
         }
         return sendParams;
     }
+    getReaderSendParams({ sender } = {}) {
+        return {
+            ...this.sendParams,
+            ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
+        };
+    }
 }
 exports.BaseSDK = BaseSDK;
 /**

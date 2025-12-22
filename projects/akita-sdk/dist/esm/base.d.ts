@@ -18,4 +18,7 @@ export declare abstract class BaseSDK<T> {
     setSendParams(sendParams: ExpandedSendParams): void;
     protected getSendParams({ sender, signer }?: MaybeSigner): ExpandedSendParams;
     protected getRequiredSendParams(params?: MaybeSigner): ExpandedSendParamsWithSigner;
+    protected getReaderSendParams({ sender }?: {
+        sender?: string;
+    }): ExpandedSendParams;
 }

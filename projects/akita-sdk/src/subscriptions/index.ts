@@ -115,8 +115,8 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     return this.services
   }
 
-  async getService({ sender, signer, address, id }: MaybeSigner & { address: string, id: number }): Promise<Service> {
-    const sendParams = this.getSendParams({ sender, signer });
+  async getService({ sender, address, id }: { sender?: string } & { address: string, id: number }): Promise<Service> {
+    const sendParams = this.getReaderSendParams({ sender });
     const result = (await this.client.getService({ ...sendParams, args: { address, id } }))
 
     return {
@@ -125,8 +125,8 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     }
   }
 
-  async getServicesByAddress({ sender, signer, address, start = 0n, windowSize = 20n }: MaybeSigner & { address: string, start?: bigint | number, windowSize?: bigint | number }): Promise<Service[]> {
-    const sendParams = this.getSendParams({ sender, signer });
+  async getServicesByAddress({ sender, address, start = 0n, windowSize = 20n }: { sender?: string } & { address: string, start?: bigint | number, windowSize?: bigint | number }): Promise<Service[]> {
+    const sendParams = this.getReaderSendParams({ sender });
     const result = await this.client.getServicesByAddress({ ...sendParams, args: { address, start, windowSize } });
     // The return is an array of tuples, convert to Service objects
     const tuples = result as unknown as [number, bigint, bigint, bigint, bigint, bigint, string, string, Uint8Array, number, Uint8Array][];
@@ -139,8 +139,8 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     });
   }
 
-  async getSubscription({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint }): Promise<SubscriptionInfo> {
-    const sendParams = this.getSendParams({ sender, signer });
+  async getSubscription({ sender, address, id }: { sender?: string } & { address: string, id: bigint }): Promise<SubscriptionInfo> {
+    const sendParams = this.getReaderSendParams({ sender });
     const result = (await this.client.mustGetSubscription({ ...sendParams, args: { key: { address, id } } }))
     return {
       ...result,
@@ -148,8 +148,8 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     }
   }
 
-  async getSubscriptionWithDetails({ sender, signer, address, id }: MaybeSigner & { address: string, id: bigint }): Promise<SubscriptionInfoWithDetails> {
-    const sendParams = this.getSendParams({ sender, signer });
+  async getSubscriptionWithDetails({ sender, address, id }: { sender?: string } & { address: string, id: bigint }): Promise<SubscriptionInfoWithDetails> {
+    const sendParams = this.getReaderSendParams({ sender });
     const result = (await this.client.getSubscriptionWithDetails({ ...sendParams, args: { key: { address, id } } }))
     return {
       ...result,
@@ -158,18 +158,18 @@ export class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
     }
   }
 
-  async isFirstSubscription({ sender, signer, address }: MaybeSigner & { address: string }): Promise<boolean> {
-    const sendParams = this.getSendParams({ sender, signer });
+  async isFirstSubscription({ sender, address }: { sender?: string } & { address: string }): Promise<boolean> {
+    const sendParams = this.getReaderSendParams({ sender });
     return (await this.client.isFirstSubscription({ ...sendParams, args: { address } }))
   }
 
-  async getSubscriptionList({ sender, signer, address }: MaybeSigner & { address: string }): Promise<bigint> {
-    const sendParams = this.getSendParams({ sender, signer });
+  async getSubscriptionList({ sender, address }: { sender?: string } & { address: string }): Promise<bigint> {
+    const sendParams = this.getReaderSendParams({ sender });
     return (await this.client.getSubscriptionList({ ...sendParams, args: { address } }))
   }
 
-  async getServiceList({ sender, signer, address }: MaybeSigner & { address: string }): Promise<bigint> {
-    const sendParams = this.getSendParams({ sender, signer });
+  async getServiceList({ sender, address }: { sender?: string } & { address: string }): Promise<bigint> {
+    const sendParams = this.getReaderSendParams({ sender });
     return (await this.client.getServiceList({ ...sendParams, args: { address } }))
   }
 

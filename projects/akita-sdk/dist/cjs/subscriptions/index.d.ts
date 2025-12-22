@@ -47,30 +47,44 @@ export declare class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
         id: bigint | number;
     }): Promise<boolean>;
     getServices(): Promise<ValueMap<ServicesKey, Service>>;
-    getService({ sender, signer, address, id }: MaybeSigner & {
+    getService({ sender, address, id }: {
+        sender?: string;
+    } & {
         address: string;
         id: number;
     }): Promise<Service>;
-    getServicesByAddress({ sender, signer, address, start, windowSize }: MaybeSigner & {
+    getServicesByAddress({ sender, address, start, windowSize }: {
+        sender?: string;
+    } & {
         address: string;
         start?: bigint | number;
         windowSize?: bigint | number;
     }): Promise<Service[]>;
-    getSubscription({ sender, signer, address, id }: MaybeSigner & {
+    getSubscription({ sender, address, id }: {
+        sender?: string;
+    } & {
         address: string;
         id: bigint;
     }): Promise<SubscriptionInfo>;
-    getSubscriptionWithDetails({ sender, signer, address, id }: MaybeSigner & {
+    getSubscriptionWithDetails({ sender, address, id }: {
+        sender?: string;
+    } & {
         address: string;
         id: bigint;
     }): Promise<SubscriptionInfoWithDetails>;
-    isFirstSubscription({ sender, signer, address }: MaybeSigner & {
+    isFirstSubscription({ sender, address }: {
+        sender?: string;
+    } & {
         address: string;
     }): Promise<boolean>;
-    getSubscriptionList({ sender, signer, address }: MaybeSigner & {
+    getSubscriptionList({ sender, address }: {
+        sender?: string;
+    } & {
         address: string;
     }): Promise<bigint>;
-    getServiceList({ sender, signer, address }: MaybeSigner & {
+    getServiceList({ sender, address }: {
+        sender?: string;
+    } & {
         address: string;
     }): Promise<bigint>;
     newService({ sender, signer, asset, passes, gateId, ...rest }: NewServiceArgs): Promise<bigint>;

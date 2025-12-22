@@ -87,16 +87,16 @@ export class SubscriptionsSDK extends BaseSDK {
         this.services = new ValueMap(this.serviceMapKeyGenerator, new Map(transformedEntries));
         return this.services;
     }
-    async getService({ sender, signer, address, id }) {
-        const sendParams = this.getSendParams({ sender, signer });
+    async getService({ sender, address, id }) {
+        const sendParams = this.getReaderSendParams({ sender });
         const result = (await this.client.getService({ ...sendParams, args: { address, id } }));
         return {
             ...result,
             highlightColor: bytesToHexColor(result.highlightColor)
         };
     }
-    async getServicesByAddress({ sender, signer, address, start = 0n, windowSize = 20n }) {
-        const sendParams = this.getSendParams({ sender, signer });
+    async getServicesByAddress({ sender, address, start = 0n, windowSize = 20n }) {
+        const sendParams = this.getReaderSendParams({ sender });
         const result = await this.client.getServicesByAddress({ ...sendParams, args: { address, start, windowSize } });
         // The return is an array of tuples, convert to Service objects
         const tuples = result;
@@ -108,16 +108,16 @@ export class SubscriptionsSDK extends BaseSDK {
             };
         });
     }
-    async getSubscription({ sender, signer, address, id }) {
-        const sendParams = this.getSendParams({ sender, signer });
+    async getSubscription({ sender, address, id }) {
+        const sendParams = this.getReaderSendParams({ sender });
         const result = (await this.client.mustGetSubscription({ ...sendParams, args: { key: { address, id } } }));
         return {
             ...result,
             lastPayment: convertToUnixTimestamp(result.lastPayment)
         };
     }
-    async getSubscriptionWithDetails({ sender, signer, address, id }) {
-        const sendParams = this.getSendParams({ sender, signer });
+    async getSubscriptionWithDetails({ sender, address, id }) {
+        const sendParams = this.getReaderSendParams({ sender });
         const result = (await this.client.getSubscriptionWithDetails({ ...sendParams, args: { key: { address, id } } }));
         return {
             ...result,
@@ -125,16 +125,16 @@ export class SubscriptionsSDK extends BaseSDK {
             lastPayment: convertToUnixTimestamp(result.lastPayment),
         };
     }
-    async isFirstSubscription({ sender, signer, address }) {
-        const sendParams = this.getSendParams({ sender, signer });
+    async isFirstSubscription({ sender, address }) {
+        const sendParams = this.getReaderSendParams({ sender });
         return (await this.client.isFirstSubscription({ ...sendParams, args: { address } }));
     }
-    async getSubscriptionList({ sender, signer, address }) {
-        const sendParams = this.getSendParams({ sender, signer });
+    async getSubscriptionList({ sender, address }) {
+        const sendParams = this.getReaderSendParams({ sender });
         return (await this.client.getSubscriptionList({ ...sendParams, args: { address } }));
     }
-    async getServiceList({ sender, signer, address }) {
-        const sendParams = this.getSendParams({ sender, signer });
+    async getServiceList({ sender, address }) {
+        const sendParams = this.getReaderSendParams({ sender });
         return (await this.client.getServiceList({ ...sendParams, args: { address } }));
     }
     async newService({ sender, signer, asset = 0n, passes = 0n, gateId = 0n, ...rest }) {
