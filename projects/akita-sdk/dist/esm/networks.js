@@ -158,7 +158,7 @@ export const TESTNET_APP_IDS = {
     subscriptionGate: 751971974n,
     subscriptionStreakGate: 751971976n,
     // Assets
-    akta: 0n,
+    akta: 752884771n,
     bones: 751973254n,
     usdc: 10458941n, // Testnet USDC
     // External Apps
