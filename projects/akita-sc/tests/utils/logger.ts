@@ -20,9 +20,10 @@ const C = {
   cyan: '\x1b[38;2;80;200;220m',
 } as const;
 
-type LogPhase = 'DEPLOY_CORE' | 'DEPLOY_PLUGINS' | 'CONFIGURE_DAO' | 'SETUP_ESCROWS' | 'SETUP_BONES' | 'FINALIZE';
+type LogPhase = 'CREATE_TEST_ASSETS' | 'DEPLOY_CORE' | 'DEPLOY_PLUGINS' | 'CONFIGURE_DAO' | 'SETUP_ESCROWS' | 'SETUP_BONES' | 'FINALIZE';
 
 const PHASE_LABELS: Record<LogPhase, string> = {
+  CREATE_TEST_ASSETS: 'Create Test Assets',
   DEPLOY_CORE: 'Deploy Core',
   DEPLOY_PLUGINS: 'Deploy Plugins',
   CONFIGURE_DAO: 'Configure DAO',

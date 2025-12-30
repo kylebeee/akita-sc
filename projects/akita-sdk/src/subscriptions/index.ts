@@ -11,6 +11,7 @@ import { AppCallMethodCall } from "@algorandfoundation/algokit-utils/types/compo
 import { bytesToHexColor, hexColorToBytes, validateHexColor } from "./utils";
 import { convertToUnixTimestamp } from "../utils";
 import { MAX_DESCRIPTION_CHUNK_SIZE, MAX_DESCRIPTION_LENGTH } from "./constants";
+import { SIMULATE_PARAMS } from "../constants";
 
 // Re-export key types from generated client
 export { ServicesKey } from '../generated/SubscriptionsClient';

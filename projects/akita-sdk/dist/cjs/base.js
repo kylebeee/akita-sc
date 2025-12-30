@@ -4,6 +4,7 @@ exports.BaseSDK = void 0;
 const constants_1 = require("./constants");
 const config_1 = require("./config");
 const types_1 = require("./types");
+const algosdk_1 = require("algosdk");
 class BaseSDK {
     constructor({ factoryParams, algorand, factory, readerAccount, sendParams }, envVarName) {
         this.readerAccount = constants_1.DEFAULT_READER;
@@ -56,6 +57,7 @@ class BaseSDK {
         return {
             ...this.sendParams,
             ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
+            signer: (0, algosdk_1.makeEmptyTransactionSigner)()
         };
     }
 }

@@ -289,7 +289,9 @@ function generateEnvFile(
     `SUBSCRIPTION_STREAK_GATE_APP_ID=${universe.subgates.subscriptionStreakGate.appId}`,
     ``,
     `# Assets`,
+    `AKTA_ASSET_ID=${universe.aktaAssetId}`,
     `BONES_ASSET_ID=${universe.bonesAssetId}`,
+    `USDC_ASSET_ID=${universe.usdcAssetId}`,
   ]
 
   // Add OtherAppList configuration if provided
@@ -403,8 +405,9 @@ export const ${networkUpper}_APP_IDS: NetworkAppIds = {
   subscriptionStreakGate: ${universe.subgates.subscriptionStreakGate.appId}n,
   
   // Assets
-  akta: 0n,
+  akta: ${universe.aktaAssetId}n,
   bones: ${universe.bonesAssetId}n,
+  usdc: ${universe.usdcAssetId}n,
   
   // External Apps
   vrfBeacon: ${apps?.vrfBeacon ?? 0n}n,
@@ -722,8 +725,10 @@ async function formatSummary(
           address: universe.subgates.subscriptionStreakGate.client.appAddress.toString(),
         },
       },
-      // Bones Token
+      // Test/Token Assets
+      aktaAssetId: universe.aktaAssetId.toString(),
       bonesAssetId: universe.bonesAssetId.toString(),
+      usdcAssetId: universe.usdcAssetId.toString(),
     },
   }
 

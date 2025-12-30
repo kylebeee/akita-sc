@@ -1,6 +1,7 @@
 import { DEFAULT_READER, DEFAULT_SEND_PARAMS } from "./constants";
 import { resolveAppIdWithClient, detectNetworkFromClient } from "./config";
 import { hasSenderSigner } from "./types";
+import { makeEmptyTransactionSigner } from "algosdk";
 export class BaseSDK {
     constructor({ factoryParams, algorand, factory, readerAccount, sendParams }, envVarName) {
         this.readerAccount = DEFAULT_READER;
@@ -53,6 +54,7 @@ export class BaseSDK {
         return {
             ...this.sendParams,
             ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
+            signer: makeEmptyTransactionSigner()
         };
     }
 }

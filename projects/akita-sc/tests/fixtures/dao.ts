@@ -1,4 +1,6 @@
 import { microAlgo } from '@algorandfoundation/algokit-utils';
+import { AlgorandFixture } from '@algorandfoundation/algokit-utils/types/testing';
+import { setCurrentNetwork } from 'akita-sdk';
 import { AuctionFactorySDK } from 'akita-sdk/auction';
 import { AkitaDaoSDK, EMPTY_CID, ProposalAction, ProposalActionEnum, SplitDistributionType } from 'akita-sdk/dao';
 import { MarketplaceSDK } from 'akita-sdk/marketplace';
@@ -34,7 +36,7 @@ import {
   UpdateAkitaDAOPluginSDK,
   WalletFactorySDK
 } from 'akita-sdk/wallet';
-import { ALGORAND_ZERO_ADDRESS_STRING, getApplicationAddress } from 'algosdk';
+import algosdk, { ALGORAND_ZERO_ADDRESS_STRING, getApplicationAddress } from 'algosdk';
 import { AkitaDaoApps, AkitaDaoFactory } from '../../smart_contracts/artifacts/arc58/dao/AkitaDAOClient';
 import { EscrowFactoryClient } from '../../smart_contracts/artifacts/escrow/EscrowFactoryClient';
 import { GateClient } from '../../smart_contracts/artifacts/gates/GateClient';
@@ -84,7 +86,61 @@ import { deploySubscriptions } from './subscriptions';
 type DeployParams = FixtureAndAccount & { apps?: Partial<AkitaDaoApps> }
 type BuildUniverseParams = DeployParams & {
   aktaAssetId?: bigint
+  usdcAssetId?: bigint
   network?: 'localnet' | 'testnet' | 'mainnet'
+}
+
+// Asset configurations for localnet test assets (matching mainnet decimals)
+const TEST_AKTA_CONFIG = {
+  name: 'Akita (Test)',
+  unitName: 'AKTA',
+  decimals: 0,
+  total: 1_000_000_000n, // 1 billion (AKTA has 0 decimals on mainnet)
+}
+
+const TEST_USDC_CONFIG = {
+  name: 'USD Coin (Test)',
+  unitName: 'USDC',
+  decimals: 6,
+  total: 10_000_000_000_000_000n, // 10 billion with 6 decimals
+}
+
+/**
+ * Create a test asset on localnet
+ */
+async function createTestAsset(
+  fixture: AlgorandFixture,
+  sender: string,
+  signer: algosdk.TransactionSigner,
+  config: { name: string; unitName: string; decimals: number; total: bigint }
+): Promise<bigint> {
+  const { algorand } = fixture.context
+  const suggestedParams = await algorand.client.algod.getTransactionParams().do()
+  
+  const txn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+    sender,
+    total: config.total,
+    decimals: config.decimals,
+    defaultFrozen: false,
+    unitName: config.unitName,
+    assetName: config.name,
+    manager: sender,
+    reserve: sender,
+    freeze: sender,
+    clawback: sender,
+    suggestedParams,
+  })
+  
+  const signedTxn = await signer([txn], [0])
+  const { txid } = await algorand.client.algod.sendRawTransaction(signedTxn[0]).do()
+  
+  // Wait for confirmation
+  const result = await algosdk.waitForConfirmation(algorand.client.algod, txid, 4)
+  const assetId = BigInt(result.assetIndex!)
+  
+  logger.deploy(`Test Asset: ${config.unitName}`, assetId, sender)
+  
+  return assetId
 }
 export const AkitaDAOGlobalStateKeysRevenueSplits = 'revenue_splits'
 
@@ -323,8 +379,10 @@ export type AkitaUniverse = {
   hyperSwap: { client: HyperSwapClient; appId: bigint };
   metaMerkles: { client: MetaMerklesClient; appId: bigint };
   subgates: SubgateClients;
-  // Bones token
+  // Test/Token assets
+  aktaAssetId: bigint;
   bonesAssetId: bigint;
+  usdcAssetId: bigint;
 }
 
 export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<AkitaUniverse> => {
@@ -333,10 +391,37 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     throw new Error('Sender is required to deploy and setup Akita DAO');
   }
 
-  const { fixture, aktaAssetId, network = 'localnet' } = params;
+  const { fixture, aktaAssetId: providedAktaAssetId, usdcAssetId: providedUsdcAssetId, network = 'localnet' } = params;
   const isLocalnet = network === 'localnet';
 
+  // Set the current network so SDKs can resolve app IDs correctly
+  setCurrentNetwork(network);
+
   logger.startBuild();
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 0: Create Test Assets (localnet only)
+  // ═══════════════════════════════════════════════════════════════════════════
+  let aktaAssetId = providedAktaAssetId ?? 0n;
+  let usdcAssetId = providedUsdcAssetId ?? 0n;
+
+  if (isLocalnet) {
+    logger.phase('CREATE_TEST_ASSETS');
+    
+    if (!params.signer) {
+      throw new Error('Signer is required to create test assets');
+    }
+
+    // Create test AKTA asset if not provided
+    if (!providedAktaAssetId || providedAktaAssetId === 0n) {
+      aktaAssetId = await createTestAsset(fixture as AlgorandFixture, params.sender.toString(), params.signer, TEST_AKTA_CONFIG);
+    }
+    
+    // Create test USDC asset if not provided
+    if (!providedUsdcAssetId || providedUsdcAssetId === 0n) {
+      usdcAssetId = await createTestAsset(fixture as AlgorandFixture, params.sender.toString(), params.signer, TEST_USDC_CONFIG);
+    }
+  }
 
   // ═══════════════════════════════════════════════════════════════════════════
   // PHASE 1: Deploy Core Contracts
@@ -1315,15 +1400,20 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   const bonesAssetId = mintBonesResult.returns[1][0] as bigint;
   logger.proposal('Mint Bones Token', bonesAssetId);
 
-  // Update the DAO's akita_assets with the Bones asset ID
+  // Update the DAO's akita_assets with AKTA (if available) and Bones asset IDs
+  const akitaAssetsUpdate: { akta?: bigint; bones: bigint } = { bones: bonesAssetId };
+  if (aktaAssetId && aktaAssetId > 0n) {
+    akitaAssetsUpdate.akta = aktaAssetId;
+  }
+  
   await proposeAndExecute(dao, [
     {
       type: ProposalActionEnum.UpdateFields,
       field: 'akita_assets',
-      value: { bones: bonesAssetId }
+      value: akitaAssetsUpdate
     }
   ]);
-  logger.proposal('UpdateFields: Set Bones asset', 0n);
+  logger.proposal(`UpdateFields: Set assets (AKTA: ${aktaAssetId}, BONES: ${bonesAssetId})`, 0n);
 
   // Add pay plugin to DAO wallet (global, no escrow)
   await proposeAndExecute(dao, [
@@ -1424,18 +1514,8 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
   }
   logger.proposal('Distribute Bones to escrows', 0n);
 
-  // If AKTA asset ID is provided, configure it in the DAO and opt contracts into it
+  // Initialize social contract to opt it into AKTA (if AKTA is available)
   if (aktaAssetId && aktaAssetId > 0n) {
-    // First, update the DAO with the AKTA asset so it knows about it
-    await proposeAndExecute(dao, [
-      {
-        type: ProposalActionEnum.UpdateFields,
-        field: 'akita_assets',
-        value: { akta: aktaAssetId }
-      }
-    ]);
-    logger.proposal('UpdateFields: Set AKTA asset', 0n);
-
     // Fund and initialize the social contract to opt it into AKTA
     // The social contract's init() method opts it into the AKTA asset
     await fixture.algorand.send.payment({
@@ -1499,8 +1579,10 @@ export const buildAkitaUniverse = async (params: BuildUniverseParams): Promise<A
     hyperSwap: hyperSwapResult,
     metaMerkles: metaMerklesResult,
     subgates: subgatesResult,
-    // Bones token
+    // Test/Token assets
+    aktaAssetId,
     bonesAssetId,
+    usdcAssetId,
   }
 }
 

@@ -1,7 +1,8 @@
 import { AlgorandClient } from "@algorandfoundation/algokit-utils/types/algorand-client";
-import { DEFAULT_READER, DEFAULT_SEND_PARAMS } from "./constants";
+import { DEFAULT_READER, DEFAULT_SEND_PARAMS, SIMULATE_PARAMS } from "./constants";
 import { resolveAppIdWithClient, ENV_VAR_NAMES, detectNetworkFromClient, getCurrentNetwork, AkitaNetwork } from "./config";
 import { ExpandedSendParams, ExpandedSendParamsWithSigner, hasSenderSigner, MaybeSigner, NewBaseContractSDKParams } from "./types";
+import { makeEmptyTransactionSigner } from "algosdk";
 
 export abstract class BaseSDK<T> {
   public appId: bigint;
@@ -77,6 +78,7 @@ export abstract class BaseSDK<T> {
     return {
       ...this.sendParams,
       ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
+      signer: makeEmptyTransactionSigner()
     };
   }
 }
