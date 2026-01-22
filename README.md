@@ -188,7 +188,7 @@ Wallet plugins extend abstracted account functionality:
 | Contract | Testnet | Mainnet |
 |----------|---------|---------|
 | `social` | `751971872` | `3368393551` |
-| `socialGraph` | `751971844` | `3368393480` |
+| `socialGraph` | `754162173` | `3414941676` |
 | `socialImpact` | `751971843` | `3368393419` |
 | `socialModeration` | `751971873` | `3368393629` |
 | `pollFactory` | `751971931` | `3368394268` |
@@ -222,11 +222,11 @@ Wallet plugins extend abstracted account functionality:
 | `rafflePlugin` | `751972341` | `3368399868` |
 | `revenueManagerPlugin` | `751972084` | `3368395771` |
 | `rewardsPlugin` | `751972347` | `3368399956` |
-| `socialPlugin` | `751972357` | `3368400007` |
+| `socialPlugin` | `754162312` | `3414942259` |
 | `stakingPlugin` | `751972363` | `3368400044` |
 | `stakingPoolPlugin` | `751972365` | `3368400148` |
-| `subscriptionsPlugin` | `751968395` | `3368399152` |
-| `updatePlugin` | `751972139` | `3368396455` |
+| `subscriptionsPlugin` | `752474150` | `3378296099` |
+| `updatePlugin` | `752472935` | `3378277726` |
 
 ### Sub-Gates
 
@@ -241,7 +241,7 @@ Wallet plugins extend abstracted account functionality:
 | `pollGate` | `751971963` | `3368394595` |
 | `socialActivityGate` | `751971965` | `3368394606` |
 | `socialFollowerCountGate` | `751971970` | `3368394601` |
-| `socialFollowerIndexGate` | `751971969` | `3368394597` |
+| `socialFollowerIndexGate` | `754162353` | `3414942860` |
 | `socialImpactGate` | `751971971` | `3368394605` |
 | `socialModeratorGate` | `751971972` | `3368394602` |
 | `stakingAmountGate` | `751971968` | `3368394603` |
