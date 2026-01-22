@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { WalletFactorySDK } from 'akita-sdk/wallet';
 import { AbstractedAccountFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountClient';
 import { AbstractedAccountFactoryArgs, AbstractedAccountFactoryFactory } from '../../smart_contracts/artifacts/arc58/account/AbstractedAccountFactoryClient';
@@ -19,6 +20,9 @@ export const deployAbstractedAccountFactory = async ({
     domain = 'akita.community'
   }
 }: DeployParams): Promise<WalletFactorySDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(

@@ -657,6 +657,19 @@ export class SocialSDK {
   }
 
   /**
+   * Get vote data for multiple post references at once
+   * Returns an array of VoteListValue in the same order as the input refs
+   * For posts the user hasn't voted on, returns { impact: 0n, isUp: false }
+   * This method is more efficient than calling getVote multiple times and won't error on missing votes
+   */
+  async getVotes({ sender, signer, refs }: MaybeSigner & { refs: PostRef[] }): Promise<VoteListValue[]> {
+    const sendParams = this.getSendParams({ sender, signer });
+    const result = await this.socialClient.getVotes({ ...sendParams, args: { refs } });
+    // Transform tuples [impact, isUp] to VoteListValue objects
+    return result.map(([impact, isUp]) => ({ impact, isUp }));
+  }
+
+  /**
    * Get post metadata including reaction status
    */
   async getPostMeta({ sender, signer, ref, nft }: MaybeSigner & { ref: PostRef; nft: bigint | number }): Promise<any> {
@@ -677,11 +690,23 @@ export class SocialSDK {
   }
 
   /**
-   * Check if an account is a follower of a user at a specific index
+   * Check if one account is following another
+   * @param follower - The account that may be following
+   * @param user - The account that may be followed
    */
-  async isFollower({ sender, signer, user, index, follower }: MaybeSigner & { user: string; index: bigint | number; follower: string }): Promise<boolean> {
+  async isFollowing({ sender, signer, follower, user }: MaybeSigner & { follower: string; user: string }): Promise<boolean> {
     const sendParams = this.getSendParams({ sender, signer });
-    return await this.graphClient.isFollower({ ...sendParams, args: { user, index, follower } });
+    return await this.graphClient.isFollowing({ ...sendParams, args: { follower, user } });
+  }
+
+  /**
+   * Get the follow index for a follower-user pair
+   * @param follower - The account that is following
+   * @param user - The account that is followed
+   */
+  async getFollowIndex({ sender, signer, follower, user }: MaybeSigner & { follower: string; user: string }): Promise<bigint> {
+    const sendParams = this.getSendParams({ sender, signer });
+    return await this.graphClient.getFollowIndex({ ...sendParams, args: { follower, user } });
   }
 
   // ============================================================================
@@ -1475,13 +1500,12 @@ export class SocialSDK {
     sender,
     signer,
     address,
-    index,
   }: UnfollowArgs): Promise<void> {
     const sendParams = this.getRequiredSendParams({ sender, signer });
 
     await this.graphClient.send.unfollow({
       ...sendParams,
-      args: { address, index },
+      args: { address },
     });
   }
 

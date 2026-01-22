@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { SocialSDK } from 'akita-sdk/social';
 import { AkitaSocialClient, AkitaSocialFactory } from '../../smart_contracts/artifacts/social/AkitaSocialClient';
 import { AkitaSocialGraphClient, AkitaSocialGraphFactory } from '../../smart_contracts/artifacts/social/AkitaSocialGraphClient';
@@ -31,6 +32,9 @@ export const deploySocialSystem = async ({
     signer,
     args: { akitaDao, akitaDaoEscrow, version }
 }: DeploySocialSystemParams): Promise<SocialContractsResult> => {
+    // Ensure network is set for SDK initialization (fixtures are always localnet)
+    setCurrentNetwork('localnet');
+    
     const { algorand } = fixture.context;
 
     // 1. Deploy AkitaSocialImpact first (no dependencies)
@@ -51,7 +55,7 @@ export const deploySocialSystem = async ({
     const impactClient = impactResults.appClient;
     logger.deploy('AkitaSocialImpact', impactClient.appId, impactClient.appAddress.toString());
 
-    // 2. Deploy AkitaSocialGraph (bare create, then update akitaDAO)
+    // 2. Deploy AkitaSocialGraph with DAO reference
     const graphFactory = algorand.client.getTypedAppFactory(
         AkitaSocialGraphFactory,
         {
@@ -60,11 +64,13 @@ export const deploySocialSystem = async ({
         }
     );
 
-    const graphResults = await graphFactory.send.create.bare({});
+    const graphResults = await graphFactory.send.create.create({
+        args: {
+            akitaDao: akitaDao,
+            version,
+        }
+    });
     const graphClient = graphResults.appClient;
-
-    // Note: updateAkitaDao requires sender to be the DAO wallet
-    // For testing, we skip this step and use direct contract calls where needed
     logger.deploy('AkitaSocialGraph', graphClient.appId, graphClient.appAddress.toString());
 
     // 3. Deploy AkitaSocial (requires DAO and escrow)
@@ -182,6 +188,7 @@ export const deploySocial = async ({
 type DeploySocialGraphParams = FixtureAndAccount & {
     args: {
         akitaDao: bigint;
+        version: string;
     }
 }
 
@@ -189,7 +196,7 @@ export const deploySocialGraph = async ({
     fixture,
     sender,
     signer,
-    args: { akitaDao }
+    args: { akitaDao, version }
 }: DeploySocialGraphParams) => {
     const { algorand } = fixture.context;
 
@@ -201,11 +208,13 @@ export const deploySocialGraph = async ({
         }
     );
 
-    const results = await factory.send.create.bare({});
+    const results = await factory.send.create.create({
+        args: {
+            akitaDao,
+            version,
+        }
+    });
     const client = results.appClient;
-
-    // Note: updateAkitaDao requires sender to be the DAO wallet
-    // Skip for standalone tests
     logger.deploy('AkitaSocialGraph', client.appId, client.appAddress.toString());
 
     return client;

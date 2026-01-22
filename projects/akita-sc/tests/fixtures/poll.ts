@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { PollFactorySDK } from 'akita-sdk/poll';
 import { PollFactoryClient, PollFactoryFactory } from '../../smart_contracts/artifacts/poll/PollFactoryClient';
 import { FixtureAndAccount } from '../types';
@@ -17,6 +18,9 @@ export const deployPollFactory = async ({
     signer,
     args,
 }: DeployPollFactoryParams): Promise<{ client: PollFactoryClient; sdk: PollFactorySDK }> => {
+    // Ensure network is set for SDK initialization (fixtures are always localnet)
+    setCurrentNetwork('localnet');
+    
     const { algorand } = fixture.context;
 
     const factory = algorand.client.getTypedAppFactory(PollFactoryFactory, {

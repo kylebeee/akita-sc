@@ -165,9 +165,10 @@ export class WalletSDK extends BaseSDK {
         // inject our wallet ID and get back the transactions
         let plugin = 0n;
         let txns = [];
+        let totalOpUpCount = 0;
         for (let i = 0; i < calls.length; i++) {
             const call = calls[i];
-            const { appId, getTxns } = call(spendingAddress);
+            const { appId, getTxns, opUpCount = 0 } = call(spendingAddress);
             if (i === 0) {
                 plugin = appId;
             }
@@ -175,6 +176,7 @@ export class WalletSDK extends BaseSDK {
                 throw new Error(`All calls must be to the same plugin app ID: ${plugin}, but got ${appId}`);
             }
             txns.push(...(await getTxns({ wallet: this.client.appId })));
+            totalOpUpCount += opUpCount;
         }
         let caller = '';
         if (global) {
@@ -336,6 +338,23 @@ export class WalletSDK extends BaseSDK {
             }
         }
         group.arc58VerifyAuthAddress({ ...sendParams, args: {} });
+        // Add opUp transactions if requested by plugin calls
+        // These are added after verifyAuthAddr and provide additional resource reference slots
+        if (totalOpUpCount > 0 && hasSenderSigner(sendParams)) {
+            const opUpComposer = await group.composer();
+            for (let i = 0; i < Math.min(totalOpUpCount, (16 - (txns.length + 2))); i++) {
+                opUpComposer.addAppCallMethodCall({
+                    sender: sendParams.sender,
+                    signer: sendParams.signer,
+                    appId: plugin,
+                    method: algosdk.ABIMethod.fromSignature('opUp()void'),
+                    args: [],
+                    maxFee: microAlgo(1000),
+                    // Add unique note to differentiate opUp calls
+                    note: new TextEncoder().encode(String(i))
+                });
+            }
+        }
         const length = await (await group.composer()).count();
         return { plugin, caller, useRounds, length, group, sendParams: sendParams };
     }

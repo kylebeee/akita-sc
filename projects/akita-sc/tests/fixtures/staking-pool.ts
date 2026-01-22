@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { StakingPoolFactorySDK } from 'akita-sdk/staking-pool';
 import { StakingPoolFactory } from '../../smart_contracts/artifacts/staking-pool/StakingPoolClient';
 import { StakingPoolFactoryArgs, StakingPoolFactoryFactory } from '../../smart_contracts/artifacts/staking-pool/StakingPoolFactoryClient';
@@ -17,6 +18,9 @@ export const deployStakingPoolFactory = async ({
     childVersion = '0.0.1',
   }
 }: DeployParams): Promise<StakingPoolFactorySDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(

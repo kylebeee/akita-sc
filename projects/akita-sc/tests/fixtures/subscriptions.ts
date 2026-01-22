@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { SubscriptionsSDK } from 'akita-sdk/subscriptions';
 import { SubscriptionsArgs, SubscriptionsFactory } from '../../smart_contracts/artifacts/subscriptions/SubscriptionsClient';
 import { FixtureAndAccount } from '../types';
@@ -15,6 +16,9 @@ export const deploySubscriptions = async ({
     akitaDaoEscrow,
   }
 }: DeployParams): Promise<SubscriptionsSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(

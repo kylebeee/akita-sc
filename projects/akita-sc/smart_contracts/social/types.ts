@@ -6,8 +6,8 @@ export type RefType = Uint8
 export type PostType = Uint8
 
 export type FollowsKey = {
-  user: Account
-  index: uint64
+  user: bytes<16>
+  follower: bytes<16>
 }
 
 export type BlockListKey = {

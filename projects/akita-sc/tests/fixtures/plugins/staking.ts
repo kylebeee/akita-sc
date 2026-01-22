@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { StakingPluginSDK } from 'akita-sdk/wallet';
 import { StakingPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/staking/StakingPluginClient';
 import { FixtureAndAccount } from '../../types';
@@ -10,6 +11,9 @@ type DeployParams = FixtureAndAccount & {
 }
 
 export const deployStakingPlugin = async ({ fixture, sender, signer, args: { akitaDao, version } }: DeployParams): Promise<StakingPluginSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factoryClient = algorand.client.getTypedAppFactory(

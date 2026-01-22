@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { RaffleFactorySDK } from 'akita-sdk/raffle';
 import { RaffleFactoryClient, RaffleFactoryFactory } from '../../smart_contracts/artifacts/raffle/RaffleFactoryClient';
 import { FixtureAndAccount } from '../types';
@@ -17,6 +18,9 @@ export const deployRaffleFactory = async ({
     signer,
     args,
 }: DeployRaffleFactoryParams): Promise<{ client: RaffleFactoryClient; sdk: RaffleFactorySDK }> => {
+    // Ensure network is set for SDK initialization (fixtures are always localnet)
+    setCurrentNetwork('localnet');
+    
     const { algorand } = fixture.context;
 
     const factory = algorand.client.getTypedAppFactory(RaffleFactoryFactory, {

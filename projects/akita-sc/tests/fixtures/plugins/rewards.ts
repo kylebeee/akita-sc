@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { RewardsPluginSDK } from 'akita-sdk/wallet';
 import { RewardsPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/rewards/RewardsPluginClient';
 import { FixtureAndAccount } from '../../types';
@@ -10,6 +11,9 @@ type DeployParams = FixtureAndAccount & {
 }
 
 export const deployRewardsPlugin = async ({ fixture, sender, signer, args: { akitaDao, version } }: DeployParams): Promise<RewardsPluginSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(

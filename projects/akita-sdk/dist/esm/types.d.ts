@@ -58,6 +58,12 @@ export type PluginSDKReturn = (spendingAddress?: Address | string) => {
     appId: bigint;
     selectors: Uint8Array[];
     getTxns: (params: PluginHookParams) => Promise<Txn[]>;
+    /**
+     * Number of opUp transactions to add after verifyAuthAddr.
+     * Complex operations like voting need additional opUp calls
+     * to provide extra resource reference slots for inner transactions.
+     */
+    opUpCount?: number;
 };
 export declare function isPluginSDKReturn(value: unknown): value is PluginSDKReturn;
 export type PluginMethodSpecifier = PluginSDKReturn | Uint8Array[];
