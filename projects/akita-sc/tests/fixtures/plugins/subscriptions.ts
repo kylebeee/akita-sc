@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { SubscriptionsPluginSDK } from 'akita-sdk/wallet';
 import { SubscriptionsPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/subscriptions/SubscriptionsPluginClient';
 import { FixtureAndAccount } from '../../types';
@@ -10,6 +11,9 @@ type DeployParams = FixtureAndAccount & {
 }
 
 export const deploySubscriptionsPlugin = async ({ fixture, sender, signer, args }: DeployParams): Promise<SubscriptionsPluginSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(

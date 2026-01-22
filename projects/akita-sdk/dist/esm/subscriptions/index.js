@@ -10,6 +10,11 @@ import { MAX_DESCRIPTION_CHUNK_SIZE, MAX_DESCRIPTION_LENGTH } from "./constants"
 export * from './constants';
 export * from './types';
 export * from './utils';
+const toBigInt = (value) => typeof value === 'bigint' ? value : BigInt(Math.floor(value));
+const toSeconds = (value, unit) => {
+    const normalized = toBigInt(value);
+    return unit === 'milliseconds' ? normalized / 1000n : normalized;
+};
 export class SubscriptionsSDK extends BaseSDK {
     constructor(params) {
         super({ factory: SubscriptionsFactory, ...params }, ENV_VAR_NAMES.SUBSCRIPTIONS_APP_ID);
@@ -124,6 +129,47 @@ export class SubscriptionsSDK extends BaseSDK {
             highlightColor: bytesToHexColor(result.highlightColor),
             lastPayment: convertToUnixTimestamp(result.lastPayment),
         };
+    }
+    /**
+     * Compute paid-up status and current payment window for a subscription.
+     *
+     * Defaults align with SDK-returned data:
+     * - startDate: seconds (on-chain)
+     * - interval: seconds (on-chain)
+     * - lastPayment: milliseconds (SDK converts it)
+     * - now: milliseconds (Date.now())
+     */
+    getSubscriptionStatus(subscription, options = {}) {
+        const { now = Date.now(), nowUnit = 'milliseconds', startDateUnit = 'seconds', lastPaymentUnit = 'milliseconds', intervalUnit = 'seconds', } = options;
+        const nowSec = toSeconds(now, nowUnit);
+        const startSec = toSeconds(subscription.startDate, startDateUnit);
+        const lastPaymentSec = toSeconds(subscription.lastPayment, lastPaymentUnit);
+        const intervalSec = toSeconds(subscription.interval, intervalUnit);
+        if (intervalSec <= 0n || nowSec < startSec) {
+            return {
+                paidUp: false,
+                windowStart: startSec,
+                now: nowSec,
+                startDate: startSec,
+                lastPayment: lastPaymentSec,
+                interval: intervalSec,
+            };
+        }
+        const windowStart = nowSec - ((nowSec - startSec) % intervalSec);
+        return {
+            paidUp: lastPaymentSec >= windowStart,
+            windowStart,
+            now: nowSec,
+            startDate: startSec,
+            lastPayment: lastPaymentSec,
+            interval: intervalSec,
+        };
+    }
+    /**
+     * Convenience wrapper for paid-up boolean.
+     */
+    isSubscriptionPaidUp(subscription, options = {}) {
+        return this.getSubscriptionStatus(subscription, options).paidUp;
     }
     async isFirstSubscription({ sender, address }) {
         const sendParams = this.getReaderSendParams({ sender });

@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { PaySiloFactoryPluginSDK } from 'akita-sdk/wallet';
 import { PaySiloFactoryPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/pay-silo/PaySiloFactoryPluginClient';
 import { FixtureAndAccount } from '../../types';
@@ -5,6 +6,9 @@ import { FixtureAndAccount } from '../../types';
 type DeployParams = FixtureAndAccount
 
 export const deployPaySiloFactoryPlugin = async ({ fixture, sender, signer }: DeployParams): Promise<PaySiloFactoryPluginSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(

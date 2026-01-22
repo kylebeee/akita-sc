@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { AuctionFactorySDK } from 'akita-sdk/auction';
 import { FixtureAndAccount } from '../types';
 import { AuctionFactoryClient, AuctionFactoryFactory } from '../../smart_contracts/artifacts/auction/AuctionFactoryClient';
@@ -18,6 +19,9 @@ export const deployAuctionFactory = async ({
   signer,
   args,
 }: DeployAuctionFactoryParams): Promise<{ client: AuctionFactoryClient; sdk: AuctionFactorySDK }> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(AuctionFactoryFactory, {

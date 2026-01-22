@@ -2,7 +2,7 @@ import { BaseSDK } from "../base";
 import { ServicesKey, SubscriptionInfo, SubscriptionsArgs, SubscriptionsClient } from '../generated/SubscriptionsClient';
 import { MaybeSigner, NewContractSDKParams } from "../types";
 import { ValueMap } from "../wallet/utils";
-import { NewServiceArgs, Service, SubscribeArgs, SubscriptionInfoWithDetails } from "./types";
+import { NewServiceArgs, PaidUpCheckOptions, Service, SubscribeArgs, SubscriptionInfoWithDetails, SubscriptionStatus } from "./types";
 import { AppCallMethodCall } from "@algorandfoundation/algokit-utils/types/composer";
 export { ServicesKey } from '../generated/SubscriptionsClient';
 type ContractArgs = SubscriptionsArgs["obj"];
@@ -72,6 +72,20 @@ export declare class SubscriptionsSDK extends BaseSDK<SubscriptionsClient> {
         address: string;
         id: bigint;
     }): Promise<SubscriptionInfoWithDetails>;
+    /**
+     * Compute paid-up status and current payment window for a subscription.
+     *
+     * Defaults align with SDK-returned data:
+     * - startDate: seconds (on-chain)
+     * - interval: seconds (on-chain)
+     * - lastPayment: milliseconds (SDK converts it)
+     * - now: milliseconds (Date.now())
+     */
+    getSubscriptionStatus(subscription: SubscriptionInfo, options?: PaidUpCheckOptions): SubscriptionStatus;
+    /**
+     * Convenience wrapper for paid-up boolean.
+     */
+    isSubscriptionPaidUp(subscription: SubscriptionInfo, options?: PaidUpCheckOptions): boolean;
     isFirstSubscription({ sender, address }: {
         sender?: string;
     } & {

@@ -1,7 +1,5 @@
 import { Account, Application, assert, assertMatch, BoxMap, bytes, clone, Global, GlobalState, gtxn, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, decodeArc4, encodeArc4 } from '@algorandfoundation/algorand-typescript/arc4'
-import { btoi } from '@algorandfoundation/algorand-typescript/op'
-import { Uint64ByteLength } from '../../../utils/constants'
 import { ERR_INVALID_PAYMENT } from '../../../utils/errors'
 import { getAkitaSocialAppList } from '../../../utils/functions'
 import {
@@ -37,8 +35,8 @@ export class SocialFollowerIndexGate extends AkitaBaseContract {
   registryCursor = GlobalState<uint64>({ initialValue: 1, key: GateGlobalStateKeyRegistryCursor })
   /** the abi string for the register args */
   registrationShape = GlobalState<string>({ initialValue: '(address,uint8,uint64)', key: GateGlobalStateKeyRegistrationShape })
-  /** the abi string for the check args */
-  checkShape = GlobalState<string>({ initialValue: 'uint64', key: GateGlobalStateKeyCheckShape })
+  /** the abi string for the check args - no args needed, index is looked up automatically */
+  checkShape = GlobalState<string>({ initialValue: '', key: GateGlobalStateKeyCheckShape })
 
   // BOXES ----------------------------------------------------------------------------------------
 
@@ -52,15 +50,24 @@ export class SocialFollowerIndexGate extends AkitaBaseContract {
     return id
   }
 
-  private followerIndexGate(user: Account, index: uint64, follower: Account, op: Operator, value: uint64): boolean {
-    const isFollower = abiCall<typeof AkitaSocialGraph.prototype.isFollower>({
-      appId: getAkitaSocialAppList(this.akitaDAO.value).graph,
-      args: [user, index, follower],
+  private followerIndexGate(user: Account, follower: Account, op: Operator, value: uint64): boolean {
+    const graph = getAkitaSocialAppList(this.akitaDAO.value).graph
+    
+    // Check if follower is actually following the user
+    const isFollowing = abiCall<typeof AkitaSocialGraph.prototype.isFollowing>({
+      appId: graph,
+      args: [follower, user],
     }).returnValue
 
-    if (!isFollower) {
+    if (!isFollowing) {
       return false
     }
+
+    // Get the follow index from the box value
+    const index = abiCall<typeof AkitaSocialGraph.prototype.getFollowIndex>({
+      appId: graph,
+      args: [follower, user],
+    }).returnValue
 
     switch (op) {
       case Equal: return index === value
@@ -105,11 +112,10 @@ export class SocialFollowerIndexGate extends AkitaBaseContract {
   }
 
   check(caller: Account, registryID: uint64, args: bytes): boolean {
-    assert(args.length === Uint64ByteLength, ERR_INVALID_ARG_COUNT)
+    // No args needed - the follow index is looked up automatically from the graph
     const { user, op, value } = clone(this.registry(registryID).value)
     return this.followerIndexGate(
       user,
-      btoi(args),
       caller,
       op,
       value

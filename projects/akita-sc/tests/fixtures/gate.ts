@@ -1,4 +1,4 @@
-import { GateSDK } from 'akita-sdk';
+import { GateSDK, setCurrentNetwork } from 'akita-sdk';
 import { GateFactory } from '../../smart_contracts/artifacts/gates/GateClient';
 import { FixtureAndAccount } from '../types';
 
@@ -15,6 +15,9 @@ export const deployGate = async ({
     signer,
     args,
 }: DeployGateParams): Promise<GateSDK> => {
+    // Ensure network is set for SDK initialization (fixtures are always localnet)
+    setCurrentNetwork('localnet');
+    
     const { algorand } = fixture.context;
 
     const factory = algorand.client.getTypedAppFactory(GateFactory, {

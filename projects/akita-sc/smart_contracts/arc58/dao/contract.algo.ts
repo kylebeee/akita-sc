@@ -370,6 +370,24 @@ export class AkitaDAO extends Contract {
     assert(settings.power <= 1_000, ERR_INVALID_MAX_POWER)
   }
 
+  private getGovernancePower(account: Account): uint64 {
+    const { staking } = this.akitaAppList.value
+    const { akta, bones } = this.akitaAssets.value
+
+    if (akta === 0 || bones === 0) {
+      return 0
+    }
+
+    const aktaPower = getStakingPower(staking, account, akta)
+    const bonesPower = getStakingPower(staking, account, bones)
+
+    if (aktaPower === 0 || bonesPower === 0) {
+      return 0
+    }
+
+    return (aktaPower + bonesPower) / 2
+  }
+
   private createOrUpdateProposal(
     id: uint64,
     cid: CID,
@@ -405,11 +423,7 @@ export class AkitaDAO extends Contract {
       return id
     }
 
-    const userPower = getStakingPower(
-      this.akitaAppList.value.staking,
-      origin,
-      this.akitaAssets.value.bones
-    )
+    const userPower = this.getGovernancePower(origin)
 
     assert(userPower >= powerRequired, ERR_INSUFFICIENT_PROPOSAL_THRESHOLD)
 
@@ -1063,9 +1077,7 @@ export class AkitaDAO extends Contract {
       }
     }
 
-    const { staking } = this.akitaAppList.value
-    const { bones } = this.akitaAssets.value
-    const power = getStakingPower(staking, voter, bones)
+    const power = this.getGovernancePower(voter)
 
     // getStakingPower will return 0 if the unlock is within 1 week
     assert(power > 0, ERR_FORBIDDEN)
@@ -1102,14 +1114,20 @@ export class AkitaDAO extends Contract {
     assert(status === ProposalStatusVoting, ERR_INVALID_PROPOSAL_STATE)
 
     // get total lock staked bones
-    const totals = abiCall<typeof Staking.prototype.getTotals>({
-      appId: this.akitaAppList.value.staking,
-      args: [
-        [this.akitaAssets.value.bones]
-      ]
-    }).returnValue
+    const { akta, bones } = this.akitaAssets.value
+    let locked: uint64 = 0
+    if (akta > 0 && bones > 0) {
+      const totals = abiCall<typeof Staking.prototype.getTotals>({
+        appId: this.akitaAppList.value.staking,
+        args: [
+          [akta, bones]
+        ]
+      }).returnValue
 
-    const { locked } = totals[0]
+      const lockedAkta = totals[0].locked
+      const lockedBones = totals[1].locked
+      locked = (lockedAkta + lockedBones) / 2
+    }
 
     const totalVotes: uint64 = approvals + rejections + abstains
 

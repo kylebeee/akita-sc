@@ -90,12 +90,13 @@ type BuildUniverseParams = DeployParams & {
   network?: 'localnet' | 'testnet' | 'mainnet'
 }
 
-// Asset configurations for localnet test assets (matching mainnet decimals)
+// Asset configurations for localnet test assets
+// Note: Using 6 decimals to match the fee structure (DEFAULT_POST_FEE = 100_000_000 = 100 AKTA)
 const TEST_AKTA_CONFIG = {
   name: 'Akita (Test)',
   unitName: 'AKTA',
-  decimals: 0,
-  total: 1_000_000_000n, // 1 billion (AKTA has 0 decimals on mainnet)
+  decimals: 6,
+  total: 1_000_000_000_000_000n, // 1 billion AKTA with 6 decimals
 }
 
 const TEST_USDC_CONFIG = {
@@ -177,6 +178,9 @@ export const deployAkitaDAO = async ({
   sender,
   signer
 }: DeployParams): Promise<AkitaDaoSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context
 
   const factory = algorand.client.getTypedAppFactory(

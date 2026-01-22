@@ -1,4 +1,4 @@
-import { HyperSwapSDK } from 'akita-sdk';
+import { HyperSwapSDK, setCurrentNetwork } from 'akita-sdk';
 import { HyperSwapFactory } from '../../smart_contracts/artifacts/hyper-swap/HyperSwapClient';
 import { FixtureAndAccount } from '../types';
 
@@ -15,6 +15,9 @@ export const deployHyperSwap = async ({
   signer,
   args,
 }: DeployHyperSwapParams): Promise<HyperSwapSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(HyperSwapFactory, {

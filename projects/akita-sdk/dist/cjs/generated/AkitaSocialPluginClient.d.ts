@@ -177,11 +177,10 @@ export type AkitaSocialPluginArgs = {
             rekeyBack: boolean;
             address: string;
         };
-        'unfollow(uint64,bool,address,uint64)void': {
+        'unfollow(uint64,bool,address)void': {
             wallet: bigint | number;
             rekeyBack: boolean;
             address: string;
-            index: bigint | number;
         };
         'block(uint64,bool,address)void': {
             wallet: bigint | number;
@@ -288,7 +287,7 @@ export type AkitaSocialPluginArgs = {
         'deleteReaction(uint64,bool,byte[32],uint64)void': [wallet: bigint | number, rekeyBack: boolean, ref: Uint8Array, nft: bigint | number];
         'gatedFollow(uint64,bool,address,byte[][])void': [wallet: bigint | number, rekeyBack: boolean, address: string, args: Uint8Array[]];
         'follow(uint64,bool,address)void': [wallet: bigint | number, rekeyBack: boolean, address: string];
-        'unfollow(uint64,bool,address,uint64)void': [wallet: bigint | number, rekeyBack: boolean, address: string, index: bigint | number];
+        'unfollow(uint64,bool,address)void': [wallet: bigint | number, rekeyBack: boolean, address: string];
         'block(uint64,bool,address)void': [wallet: bigint | number, rekeyBack: boolean, address: string];
         'unblock(uint64,bool,address)void': [wallet: bigint | number, rekeyBack: boolean, address: string];
         'addModerator(uint64,bool,address)void': [wallet: bigint | number, rekeyBack: boolean, address: string];
@@ -326,7 +325,7 @@ export type AkitaSocialPluginReturns = {
     'deleteReaction(uint64,bool,byte[32],uint64)void': void;
     'gatedFollow(uint64,bool,address,byte[][])void': void;
     'follow(uint64,bool,address)void': void;
-    'unfollow(uint64,bool,address,uint64)void': void;
+    'unfollow(uint64,bool,address)void': void;
     'block(uint64,bool,address)void': void;
     'unblock(uint64,bool,address)void': void;
     'addModerator(uint64,bool,address)void': void;
@@ -408,10 +407,10 @@ export type AkitaSocialPluginTypes = {
         argsObj: AkitaSocialPluginArgs['obj']['follow(uint64,bool,address)void'];
         argsTuple: AkitaSocialPluginArgs['tuple']['follow(uint64,bool,address)void'];
         returns: AkitaSocialPluginReturns['follow(uint64,bool,address)void'];
-    }> & Record<'unfollow(uint64,bool,address,uint64)void' | 'unfollow', {
-        argsObj: AkitaSocialPluginArgs['obj']['unfollow(uint64,bool,address,uint64)void'];
-        argsTuple: AkitaSocialPluginArgs['tuple']['unfollow(uint64,bool,address,uint64)void'];
-        returns: AkitaSocialPluginReturns['unfollow(uint64,bool,address,uint64)void'];
+    }> & Record<'unfollow(uint64,bool,address)void' | 'unfollow', {
+        argsObj: AkitaSocialPluginArgs['obj']['unfollow(uint64,bool,address)void'];
+        argsTuple: AkitaSocialPluginArgs['tuple']['unfollow(uint64,bool,address)void'];
+        returns: AkitaSocialPluginReturns['unfollow(uint64,bool,address)void'];
     }> & Record<'block(uint64,bool,address)void' | 'block', {
         argsObj: AkitaSocialPluginArgs['obj']['block(uint64,bool,address)void'];
         argsTuple: AkitaSocialPluginArgs['tuple']['block(uint64,bool,address)void'];
@@ -684,12 +683,12 @@ export declare abstract class AkitaSocialPluginParamsFactory {
      */
     static follow(params: CallParams<AkitaSocialPluginArgs['obj']['follow(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['follow(uint64,bool,address)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
-     * Constructs a no op call for the unfollow(uint64,bool,address,uint64)void ABI method
+     * Constructs a no op call for the unfollow(uint64,bool,address)void ABI method
      *
      * @param params Parameters for the call
      * @returns An `AppClientMethodCallParams` object for the call
      */
-    static unfollow(params: CallParams<AkitaSocialPluginArgs['obj']['unfollow(uint64,bool,address,uint64)void'] | AkitaSocialPluginArgs['tuple']['unfollow(uint64,bool,address,uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    static unfollow(params: CallParams<AkitaSocialPluginArgs['obj']['unfollow(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['unfollow(uint64,bool,address)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
      * Constructs a no op call for the block(uint64,bool,address)void ABI method
      *
@@ -1286,12 +1285,12 @@ export declare class AkitaSocialPluginClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
-         * Makes a call to the AkitaSocialPlugin smart contract using the `unfollow(uint64,bool,address,uint64)void` ABI method.
+         * Makes a call to the AkitaSocialPlugin smart contract using the `unfollow(uint64,bool,address)void` ABI method.
          *
          * @param params The params for the smart contract call
          * @returns The call params
          */
-        unfollow: (params: CallParams<AkitaSocialPluginArgs["obj"]["unfollow(uint64,bool,address,uint64)void"] | AkitaSocialPluginArgs["tuple"]["unfollow(uint64,bool,address,uint64)void"]> & {
+        unfollow: (params: CallParams<AkitaSocialPluginArgs["obj"]["unfollow(uint64,bool,address)void"] | AkitaSocialPluginArgs["tuple"]["unfollow(uint64,bool,address)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
@@ -1629,12 +1628,12 @@ export declare class AkitaSocialPluginClient {
             signers: Map<number, TransactionSigner>;
         }>;
         /**
-         * Makes a call to the AkitaSocialPlugin smart contract using the `unfollow(uint64,bool,address,uint64)void` ABI method.
+         * Makes a call to the AkitaSocialPlugin smart contract using the `unfollow(uint64,bool,address)void` ABI method.
          *
          * @param params The params for the smart contract call
          * @returns The call transaction
          */
-        unfollow: (params: CallParams<AkitaSocialPluginArgs["obj"]["unfollow(uint64,bool,address,uint64)void"] | AkitaSocialPluginArgs["tuple"]["unfollow(uint64,bool,address,uint64)void"]> & {
+        unfollow: (params: CallParams<AkitaSocialPluginArgs["obj"]["unfollow(uint64,bool,address)void"] | AkitaSocialPluginArgs["tuple"]["unfollow(uint64,bool,address)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -2118,15 +2117,15 @@ export declare class AkitaSocialPluginClient {
             transaction: Transaction;
         }>;
         /**
-         * Makes a call to the AkitaSocialPlugin smart contract using the `unfollow(uint64,bool,address,uint64)void` ABI method.
+         * Makes a call to the AkitaSocialPlugin smart contract using the `unfollow(uint64,bool,address)void` ABI method.
          *
          * @param params The params for the smart contract call
          * @returns The call result
          */
-        unfollow: (params: CallParams<AkitaSocialPluginArgs["obj"]["unfollow(uint64,bool,address,uint64)void"] | AkitaSocialPluginArgs["tuple"]["unfollow(uint64,bool,address,uint64)void"]> & SendParams & {
+        unfollow: (params: CallParams<AkitaSocialPluginArgs["obj"]["unfollow(uint64,bool,address)void"] | AkitaSocialPluginArgs["tuple"]["unfollow(uint64,bool,address)void"]> & SendParams & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
-            return: (undefined | AkitaSocialPluginReturns["unfollow(uint64,bool,address,uint64)void"]);
+            return: (undefined | AkitaSocialPluginReturns["unfollow(uint64,bool,address)void"]);
             groupId: string;
             txIds: string[];
             returns?: ABIReturn[] | undefined | undefined;
@@ -2579,13 +2578,13 @@ export type AkitaSocialPluginComposer<TReturns extends [...any[]] = []> = {
      */
     follow(params?: CallParams<AkitaSocialPluginArgs['obj']['follow(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['follow(uint64,bool,address)void']>): AkitaSocialPluginComposer<[...TReturns, AkitaSocialPluginReturns['follow(uint64,bool,address)void'] | undefined]>;
     /**
-     * Calls the unfollow(uint64,bool,address,uint64)void ABI method.
+     * Calls the unfollow(uint64,bool,address)void ABI method.
      *
      * @param args The arguments for the contract call
      * @param params Any additional parameters for the call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    unfollow(params?: CallParams<AkitaSocialPluginArgs['obj']['unfollow(uint64,bool,address,uint64)void'] | AkitaSocialPluginArgs['tuple']['unfollow(uint64,bool,address,uint64)void']>): AkitaSocialPluginComposer<[...TReturns, AkitaSocialPluginReturns['unfollow(uint64,bool,address,uint64)void'] | undefined]>;
+    unfollow(params?: CallParams<AkitaSocialPluginArgs['obj']['unfollow(uint64,bool,address)void'] | AkitaSocialPluginArgs['tuple']['unfollow(uint64,bool,address)void']>): AkitaSocialPluginComposer<[...TReturns, AkitaSocialPluginReturns['unfollow(uint64,bool,address)void'] | undefined]>;
     /**
      * Calls the block(uint64,bool,address)void ABI method.
      *

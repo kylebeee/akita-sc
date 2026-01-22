@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { MarketplaceSDK } from 'akita-sdk/marketplace';
 import { MarketplaceClient, MarketplaceFactory } from '../../smart_contracts/artifacts/marketplace/MarketplaceClient';
 import { FixtureAndAccount } from '../types';
@@ -17,6 +18,9 @@ export const deployMarketplace = async ({
     signer,
     args,
 }: DeployMarketplaceParams): Promise<{ client: MarketplaceClient; sdk: MarketplaceSDK }> => {
+    // Ensure network is set for SDK initialization (fixtures are always localnet)
+    setCurrentNetwork('localnet');
+    
     const { algorand } = fixture.context;
 
     const factory = algorand.client.getTypedAppFactory(MarketplaceFactory, {

@@ -115,7 +115,6 @@ export type FollowArgs = MaybeSigner & {
 
 export type UnfollowArgs = MaybeSigner & {
   address: string;
-  index: bigint | number;
 };
 
 export type BlockArgs = MaybeSigner & {

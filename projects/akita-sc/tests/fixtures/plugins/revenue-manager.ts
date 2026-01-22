@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { RevenueManagerPluginSDK } from 'akita-sdk/wallet';
 import { RevenueManagerPluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/revenue-manager/RevenueManagerPluginClient';
 import { FixtureAndAccount } from '../../types';
@@ -10,6 +11,9 @@ type DeployParams = FixtureAndAccount & {
 }
 
 export const deployRevenueManagerPlugin = async ({ fixture, sender, signer, args: { akitaDao, version } }: DeployParams): Promise<RevenueManagerPluginSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factory = algorand.client.getTypedAppFactory(

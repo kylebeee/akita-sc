@@ -275,6 +275,15 @@ export declare class SocialSDK {
         ref: PostRef;
     }): Promise<VoteListValue>;
     /**
+     * Get vote data for multiple post references at once
+     * Returns an array of VoteListValue in the same order as the input refs
+     * For posts the user hasn't voted on, returns { impact: 0n, isUp: false }
+     * This method is more efficient than calling getVote multiple times and won't error on missing votes
+     */
+    getVotes({ sender, signer, refs }: MaybeSigner & {
+        refs: PostRef[];
+    }): Promise<VoteListValue[]>;
+    /**
      * Get post metadata including reaction status
      */
     getPostMeta({ sender, signer, ref, nft }: MaybeSigner & {
@@ -289,13 +298,23 @@ export declare class SocialSDK {
         blocked: string;
     }): Promise<boolean>;
     /**
-     * Check if an account is a follower of a user at a specific index
+     * Check if one account is following another
+     * @param follower - The account that may be following
+     * @param user - The account that may be followed
      */
-    isFollower({ sender, signer, user, index, follower }: MaybeSigner & {
-        user: string;
-        index: bigint | number;
+    isFollowing({ sender, signer, follower, user }: MaybeSigner & {
         follower: string;
+        user: string;
     }): Promise<boolean>;
+    /**
+     * Get the follow index for a follower-user pair
+     * @param follower - The account that is following
+     * @param user - The account that is followed
+     */
+    getFollowIndex({ sender, signer, follower, user }: MaybeSigner & {
+        follower: string;
+        user: string;
+    }): Promise<bigint>;
     /**
      * Get user impact score (including social impact)
      */
@@ -436,7 +455,7 @@ export declare class SocialSDK {
     /**
      * Unfollow a user
      */
-    unfollow({ sender, signer, address, index, }: UnfollowArgs): Promise<void>;
+    unfollow({ sender, signer, address, }: UnfollowArgs): Promise<void>;
     /**
      * Block a user
      *

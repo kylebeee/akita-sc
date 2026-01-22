@@ -155,7 +155,7 @@ export type SocialFollowerIndexGateTypes = {
                  */
                 registrationShape: string;
                 /**
-                 * the abi string for the check args
+                 * the abi string for the check args - no args needed, index is looked up automatically
                  */
                 checkShape: string;
                 /**

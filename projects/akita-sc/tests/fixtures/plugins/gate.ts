@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { GatePluginSDK } from 'akita-sdk/wallet';
 import { GatePluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/gate/GatePluginClient';
 import { FixtureAndAccount } from '../../types';
@@ -9,6 +10,9 @@ type DeployParams = FixtureAndAccount & {
 }
 
 export const deployGatePlugin = async ({ fixture, sender, signer, args }: DeployParams): Promise<GatePluginSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factoryClient = algorand.client.getTypedAppFactory(

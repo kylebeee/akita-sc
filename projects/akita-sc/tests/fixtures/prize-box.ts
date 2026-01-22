@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { PrizeBoxFactorySDK } from 'akita-sdk/prize-box';
 import { PrizeBoxFactoryClient, PrizeBoxFactoryFactory } from '../../smart_contracts/artifacts/prize-box/PrizeBoxFactoryClient';
 import { FixtureAndAccount } from '../types';
@@ -15,6 +16,9 @@ export const deployPrizeBoxFactory = async ({
     signer,
     args,
 }: DeployPrizeBoxFactoryParams): Promise<{ client: PrizeBoxFactoryClient; sdk: PrizeBoxFactorySDK }> => {
+    // Ensure network is set for SDK initialization (fixtures are always localnet)
+    setCurrentNetwork('localnet');
+    
     const { algorand } = fixture.context;
 
     const factory = algorand.client.getTypedAppFactory(PrizeBoxFactoryFactory, {

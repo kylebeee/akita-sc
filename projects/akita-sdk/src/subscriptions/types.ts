@@ -32,3 +32,22 @@ export type SubscriptionInfoWithDetails = Omit<SubscriptionInfoWithDetailsContra
   highlightMessage: HighlightMessage;
   highlightColor: string;
 }
+
+export type SubscriptionTimestampUnit = 'seconds' | 'milliseconds'
+
+export type PaidUpCheckOptions = {
+  now?: bigint | number
+  nowUnit?: SubscriptionTimestampUnit
+  startDateUnit?: SubscriptionTimestampUnit
+  lastPaymentUnit?: SubscriptionTimestampUnit
+  intervalUnit?: SubscriptionTimestampUnit
+}
+
+export type SubscriptionStatus = {
+  paidUp: boolean
+  windowStart: bigint
+  now: bigint
+  startDate: bigint
+  lastPayment: bigint
+  interval: bigint
+}

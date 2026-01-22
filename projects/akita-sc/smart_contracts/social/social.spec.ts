@@ -523,35 +523,13 @@ describe('SDK Read Methods', () => {
       })
     })
 
-    describe('isFollower', () => {
-      test('should throw or return false for non-existent follow', async () => {
-        try {
-          const result = await sdk.isFollower({
-            user: user1.addr.toString(),
-            index: 0n,
-            follower: user2.addr.toString(),
-          })
-          expect(result).toBe(false)
-        } catch (error: any) {
-          // Box doesn't exist
-          expect(error.message).toContain('Box')
-        }
-      })
-
-      test('should handle various index values', async () => {
-        const indices = [0n, 1n, 10n, 100n, 1000n]
-        for (const index of indices) {
-          try {
-            const result = await sdk.isFollower({
-              user: user1.addr.toString(),
-              index,
-              follower: user2.addr.toString(),
-            })
-            expect(result).toBe(false)
-          } catch (error: any) {
-            expect(error.message).toContain('Box')
-          }
-        }
+    describe('isFollowing', () => {
+      test('should return false for non-existent follow', async () => {
+        const result = await sdk.isFollowing({
+          follower: user2.addr.toString(),
+          user: user1.addr.toString(),
+        })
+        expect(result).toBe(false)
       })
     })
   })

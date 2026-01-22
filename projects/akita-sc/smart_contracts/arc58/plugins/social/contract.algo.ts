@@ -3,7 +3,7 @@ import { abiCall, abimethod, encodeArc4, methodSelector } from '@algorandfoundat
 import { classes } from 'polytype'
 import { GateMustCheckAbiMethod } from '../../../gates/constants'
 import { GateArgs } from '../../../gates/types'
-import { AmendmentMBR, TipSendTypeARC58 } from '../../../social/constants'
+import { AmendmentMBR, ImpactMetaMBR, TipSendTypeARC58 } from '../../../social/constants'
 import { getAccounts, getAkitaAppList, getAkitaAssets, getAkitaSocialAppList, getSocialFees, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 import { CID } from '../../../utils/types/base'
 
@@ -42,7 +42,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const akitaSocial = Application(getAkitaSocialAppList(this.akitaDAO.value).social)
     const { posts, votes, votelist } = this.mbr(cid)
-    const mbrAmount: uint64 = posts + votes + votelist + AmendmentMBR
+    // AmendmentMBR is only for editPost, not regular posts
+    const mbrAmount: uint64 = posts + votes + votelist
     const mbrPayment = itxn.payment({
       sender,
       receiver: akitaSocial.address,
@@ -698,7 +699,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const mbrPayment = itxn.payment({
       sender,
-      receiver: Application(social).address,
+      receiver: Application(graph).address,
       amount: this.mbr(Bytes('')).follows
     })
 
@@ -732,11 +733,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   ): void {
     const sender = getSpendingAccount(wallet)
 
-    const { social, graph } = getAkitaSocialAppList(this.akitaDAO.value)
+    const { graph } = getAkitaSocialAppList(this.akitaDAO.value)
 
     const mbrPayment = itxn.payment({
       sender,
-      receiver: Application(social).address,
+      receiver: Application(graph).address,
       amount: this.mbr(Bytes('')).follows
     })
 
@@ -754,8 +755,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   unfollow(
     wallet: Application,
     rekeyBack: boolean,
-    address: Account,
-    index: uint64
+    address: Account
   ): void {
     const sender = getSpendingAccount(wallet)
 
@@ -764,7 +764,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     abiCall<typeof AkitaSocialGraph.prototype.unfollow>({
       sender,
       appId: graph,
-      args: [address, index],
+      args: [address],
       rekeyTo: rekeyAddress(rekeyBack, wallet)
     })
   }
@@ -981,9 +981,6 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     NFD: uint64,
     akitaNFT: uint64
   ): uint64 {
-
-    // TODO: ????
-
     const sender = getSpendingAccount(wallet)
 
     const { social } = getAkitaSocialAppList(this.akitaDAO.value)
@@ -992,7 +989,11 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       sender,
       appId: social,
       args: [
-        itxn.payment({}),
+        itxn.payment({
+          sender,
+          receiver: Application(social).address,
+          amount: this.mbr(Bytes('')).meta + ImpactMetaMBR
+        }),
         user,
         automated,
         subscriptionIndex,

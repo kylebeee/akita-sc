@@ -881,6 +881,39 @@ async function deploy() {
       network: options.network,
     })
 
+    // For localnet, transfer AKTA to the KMD dispenser so mock-init scripts can fund test wallets
+    if (options.network === 'localnet' && universe.aktaAssetId > 0n) {
+      console.log('\n💰 Transferring AKTA to KMD dispenser for testing...')
+      try {
+        // Get the KMD dispenser account
+        const dispenser = await algorand.account.kmd.getLocalNetDispenserAccount()
+        const dispenserAddr = dispenser.addr.toString()
+        
+        // First, opt the dispenser into AKTA
+        await algorand.send.assetOptIn({
+          sender: dispenserAddr,
+          signer: dispenser.signer,
+          assetId: universe.aktaAssetId,
+        })
+        console.log(`   Dispenser opted into AKTA ✓`)
+        
+        // Transfer 500M AKTA to dispenser for testing (AKTA has 6 decimals)
+        const transferAmount = 500_000_000_000_000n // 500M AKTA with 6 decimals
+        await algorand.send.assetTransfer({
+          sender,
+          signer,
+          receiver: dispenserAddr,
+          assetId: universe.aktaAssetId,
+          amount: transferAmount,
+        })
+        console.log(`   Transferred ${transferAmount} AKTA to dispenser ✓`)
+        console.log(`   Dispenser: ${dispenserAddr}`)
+      } catch (e) {
+        console.log(`   ⚠️  Failed to transfer AKTA to dispenser: ${e instanceof Error ? e.message : e}`)
+        console.log(`   (This is okay if you don't need AKTA for testing)`)
+      }
+    }
+
     // Calculate actual costs (for testnet/mainnet)
     let actualCost = 0n
     if (options.network !== 'localnet') {

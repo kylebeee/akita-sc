@@ -1,3 +1,4 @@
+import { setCurrentNetwork } from 'akita-sdk';
 import { DualStakePluginSDK } from 'akita-sdk/wallet';
 import { DualStakePluginFactory } from '../../../smart_contracts/artifacts/arc58/plugins/dual-stake/DualStakePluginClient';
 import { FixtureAndAccount } from '../../types';
@@ -9,6 +10,9 @@ type DeployParams = FixtureAndAccount & {
 }
 
 export const deployDualStakePlugin = async ({ fixture, sender, signer, args }: DeployParams): Promise<DualStakePluginSDK> => {
+  // Ensure network is set for SDK initialization (fixtures are always localnet)
+  setCurrentNetwork('localnet');
+  
   const { algorand } = fixture.context;
 
   const factoryClient = algorand.client.getTypedAppFactory(

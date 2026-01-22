@@ -910,12 +910,13 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
     const origin = originOrTxnSender(wallet)
 
-    const { refBytes, creator: fallback } = this.toBytes32(type, ref)
-    assert(this.posts(refBytes).exists, ERR_POST_NOT_FOUND)
-    const { creator } = this.posts(refBytes).value
+    let { refBytes, creator } = this.toBytes32(type, ref)
+    if (type === RefTypePost) {
+      assert(this.posts(refBytes).exists, ERR_POST_NOT_FOUND);
+      ({ creator } = this.posts(refBytes).value);
+    }
 
-    const c = (fallback === Global.zeroAddress) ? creator : fallback
-    const addedMbr = this.createEmptyPostIfNecessary(refBytes, c)
+    const addedMbr = this.createEmptyPostIfNecessary(refBytes, creator)
 
     this.validateTip(tip, TipActionReact)
     const mbrNeeded: uint64 = this.mbr(Bytes('')).votelist + addedMbr
@@ -1190,6 +1191,24 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     assert(this.votelist(voteListKey).exists, ERR_HAVENT_VOTED)
 
     return this.votelist(voteListKey).value
+  }
+
+  @abimethod({ readonly: true })
+  getVotes(refs: bytes<32>[]): VoteListValue[] {
+    const wallet = getWalletIDUsingAkitaDAO(this.akitaDAO.value, Txn.sender)
+    const origin = originOrTxnSender(wallet)
+
+    const votes: VoteListValue[] = []
+    for (const ref of refs) {
+      const voteListKey: VoteListKey = { user: b16(origin.bytes), ref: b16(ref) }
+      if (this.votelist(voteListKey).exists) {
+        votes.push(this.votelist(voteListKey).value)
+      } else {
+        votes.push({ impact: 0, isUp: false })
+      }
+    }
+
+    return votes
   }
 
   @abimethod({ readonly: true })

@@ -318,6 +318,9 @@ export type AkitaSocialArgs = {
         'getVote(byte[32])(uint64,bool)': {
             ref: Uint8Array;
         };
+        'getVotes(byte[32][])(uint64,bool)[]': {
+            refs: Uint8Array[];
+        };
         'getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)': {
             ref: Uint8Array;
             nft: bigint | number;
@@ -371,6 +374,7 @@ export type AkitaSocialArgs = {
         'getMeta(address)(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64,uint64)': [user: string];
         'getPost(byte[32])(address,uint64,uint64,bool,uint64,bool,uint8,byte[])': [ref: Uint8Array];
         'getVote(byte[32])(uint64,bool)': [ref: Uint8Array];
+        'getVotes(byte[32][])(uint64,bool)[]': [refs: Uint8Array[]];
         'getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)': [ref: Uint8Array, nft: bigint | number];
         'mbr(byte[])(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)': [ref: Uint8Array];
         'payWallMbr(((uint8,uint64,uint64)[],(uint8,uint64,uint64)[]))uint64': [paywall: ViewPayWallValue];
@@ -408,6 +412,7 @@ export type AkitaSocialReturns = {
     'getMeta(address)(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64,uint64)': MetaValue;
     'getPost(byte[32])(address,uint64,uint64,bool,uint64,bool,uint8,byte[])': PostValue;
     'getVote(byte[32])(uint64,bool)': VoteListValue;
+    'getVotes(byte[32][])(uint64,bool)[]': [bigint, boolean][];
     'getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)': PostMeta;
     'mbr(byte[])(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)': AkitaSocialMbrData;
     'payWallMbr(((uint8,uint64,uint64)[],(uint8,uint64,uint64)[]))uint64': bigint;
@@ -516,6 +521,10 @@ export type AkitaSocialTypes = {
         argsObj: AkitaSocialArgs['obj']['getVote(byte[32])(uint64,bool)'];
         argsTuple: AkitaSocialArgs['tuple']['getVote(byte[32])(uint64,bool)'];
         returns: AkitaSocialReturns['getVote(byte[32])(uint64,bool)'];
+    }> & Record<'getVotes(byte[32][])(uint64,bool)[]' | 'getVotes', {
+        argsObj: AkitaSocialArgs['obj']['getVotes(byte[32][])(uint64,bool)[]'];
+        argsTuple: AkitaSocialArgs['tuple']['getVotes(byte[32][])(uint64,bool)[]'];
+        returns: AkitaSocialReturns['getVotes(byte[32][])(uint64,bool)[]'];
     }> & Record<'getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)' | 'getPostMeta', {
         argsObj: AkitaSocialArgs['obj']['getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)'];
         argsTuple: AkitaSocialArgs['tuple']['getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)'];
@@ -902,6 +911,13 @@ export declare abstract class AkitaSocialParamsFactory {
      * @returns An `AppClientMethodCallParams` object for the call
      */
     static getVote(params: CallParams<AkitaSocialArgs['obj']['getVote(byte[32])(uint64,bool)'] | AkitaSocialArgs['tuple']['getVote(byte[32])(uint64,bool)']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    /**
+     * Constructs a no op call for the getVotes(byte[32][])(uint64,bool)[] ABI method
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static getVotes(params: CallParams<AkitaSocialArgs['obj']['getVotes(byte[32][])(uint64,bool)[]'] | AkitaSocialArgs['tuple']['getVotes(byte[32][])(uint64,bool)[]']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
      * Constructs a no op call for the getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool) ABI method
      *
@@ -1697,6 +1713,17 @@ export declare class AkitaSocialClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
+         * Makes a call to the AkitaSocial smart contract using the `getVotes(byte[32][])(uint64,bool)[]` ABI method.
+         *
+         * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+         *
+         * @param params The params for the smart contract call
+         * @returns The call params
+         */
+        getVotes: (params: CallParams<AkitaSocialArgs["obj"]["getVotes(byte[32][])(uint64,bool)[]"] | AkitaSocialArgs["tuple"]["getVotes(byte[32][])(uint64,bool)[]"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<AppCallMethodCall>;
+        /**
          * Makes a call to the AkitaSocial smart contract using the `getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
@@ -2079,6 +2106,21 @@ export declare class AkitaSocialClient {
          * @returns The call transaction
          */
         getVote: (params: CallParams<AkitaSocialArgs["obj"]["getVote(byte[32])(uint64,bool)"] | AkitaSocialArgs["tuple"]["getVote(byte[32])(uint64,bool)"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            transactions: Transaction[];
+            methodCalls: Map<number, import("algosdk").ABIMethod>;
+            signers: Map<number, TransactionSigner>;
+        }>;
+        /**
+         * Makes a call to the AkitaSocial smart contract using the `getVotes(byte[32][])(uint64,bool)[]` ABI method.
+         *
+         * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+         *
+         * @param params The params for the smart contract call
+         * @returns The call transaction
+         */
+        getVotes: (params: CallParams<AkitaSocialArgs["obj"]["getVotes(byte[32][])(uint64,bool)[]"] | AkitaSocialArgs["tuple"]["getVotes(byte[32][])(uint64,bool)[]"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -2629,6 +2671,26 @@ export declare class AkitaSocialClient {
             transaction: Transaction;
         }>;
         /**
+         * Makes a call to the AkitaSocial smart contract using the `getVotes(byte[32][])(uint64,bool)[]` ABI method.
+         *
+         * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+         *
+         * @param params The params for the smart contract call
+         * @returns The call result
+         */
+        getVotes: (params: CallParams<AkitaSocialArgs["obj"]["getVotes(byte[32][])(uint64,bool)[]"] | AkitaSocialArgs["tuple"]["getVotes(byte[32][])(uint64,bool)[]"]> & SendParams & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            return: (undefined | AkitaSocialReturns["getVotes(byte[32][])(uint64,bool)[]"]);
+            groupId: string;
+            txIds: string[];
+            returns?: ABIReturn[] | undefined | undefined;
+            confirmations: modelsv2.PendingTransactionResponse[];
+            transactions: Transaction[];
+            confirmation: modelsv2.PendingTransactionResponse;
+            transaction: Transaction;
+        }>;
+        /**
          * Makes a call to the AkitaSocial smart contract using the `getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
@@ -2809,6 +2871,15 @@ export declare class AkitaSocialClient {
      * @returns The call result
      */
     getVote(params: CallParams<AkitaSocialArgs['obj']['getVote(byte[32])(uint64,bool)'] | AkitaSocialArgs['tuple']['getVote(byte[32])(uint64,bool)']>): Promise<VoteListValue>;
+    /**
+     * Makes a readonly (simulated) call to the AkitaSocial smart contract using the `getVotes(byte[32][])(uint64,bool)[]` ABI method.
+     *
+     * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
+     *
+     * @param params The params for the smart contract call
+     * @returns The call result
+     */
+    getVotes(params: CallParams<AkitaSocialArgs['obj']['getVotes(byte[32][])(uint64,bool)[]'] | AkitaSocialArgs['tuple']['getVotes(byte[32][])(uint64,bool)[]']>): Promise<[bigint, boolean][]>;
     /**
      * Makes a readonly (simulated) call to the AkitaSocial smart contract using the `getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool)` ABI method.
      *
@@ -3127,6 +3198,14 @@ export type AkitaSocialComposer<TReturns extends [...any[]] = []> = {
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
     getVote(params?: CallParams<AkitaSocialArgs['obj']['getVote(byte[32])(uint64,bool)'] | AkitaSocialArgs['tuple']['getVote(byte[32])(uint64,bool)']>): AkitaSocialComposer<[...TReturns, AkitaSocialReturns['getVote(byte[32])(uint64,bool)'] | undefined]>;
+    /**
+     * Calls the getVotes(byte[32][])(uint64,bool)[] ABI method.
+     *
+     * @param args The arguments for the contract call
+     * @param params Any additional parameters for the call
+     * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+     */
+    getVotes(params?: CallParams<AkitaSocialArgs['obj']['getVotes(byte[32][])(uint64,bool)[]'] | AkitaSocialArgs['tuple']['getVotes(byte[32][])(uint64,bool)[]']>): AkitaSocialComposer<[...TReturns, AkitaSocialReturns['getVotes(byte[32][])(uint64,bool)[]'] | undefined]>;
     /**
      * Calls the getPostMeta(byte[32],uint64)((address,uint64,uint64,bool,uint8,byte[]),(bool,uint64,uint64,uint64,uint64,uint64,uint64,bool,uint64,uint64),bool) ABI method.
      *

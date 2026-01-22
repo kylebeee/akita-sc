@@ -43,9 +43,9 @@ const ASSET_OPT_IN_MBR = 100_000n;
  *
  * Requirements for voting:
  * - DAO must be initialized
- * - Users must have Bones ASA staked with LOCK type
+ * - Users must have Akta + Bones ASA staked with LOCK type
  * - Lock expiration must be > 1 week in the future
- * - Voting power = stake amount * (remaining days / 365)
+ * - Voting power = average of Akta + Bones stake power
  */
 describe('ARC58 DAO Voting', () => {
     // Core contracts
@@ -56,7 +56,8 @@ describe('ARC58 DAO Voting', () => {
     let walletFactory: WalletFactorySDK;
     let staking: StakingClient;
 
-    // Governance token (Bones)
+    // Governance tokens (Akta + Bones)
+    let aktaAssetId: bigint;
     let bonesAssetId: bigint;
 
     // Additional voter accounts
@@ -112,6 +113,18 @@ describe('ARC58 DAO Voting', () => {
             args: { akitaDao: dao.appId },
         });
 
+        // Create Akta governance token
+        const aktaResult = await algorand.send.assetCreate({
+            sender,
+            signer,
+            total: 1_000_000_000_000_000n,
+            decimals: 6,
+            assetName: 'Akta',
+            unitName: 'AKTA',
+            defaultFrozen: false,
+        });
+        aktaAssetId = BigInt(aktaResult.confirmation.assetIndex!);
+
         // Create Bones governance token
         const bonesResult = await algorand.send.assetCreate({
             sender,
@@ -127,8 +140,8 @@ describe('ARC58 DAO Voting', () => {
         // Fund staking contract to cover inner transaction fees
         await algorand.account.ensureFunded(staking.appAddress, dispenser, algo(1));
 
-        // Opt staking contract into Bones and initialize totals box
-        const optInPayment = await algorand.createTransaction.payment({
+        // Opt staking contract into Akta and initialize totals box
+        const optInAktaPayment = await algorand.createTransaction.payment({
             sender,
             signer,
             receiver: staking.appAddress.toString(),
@@ -139,7 +152,25 @@ describe('ARC58 DAO Voting', () => {
             sender,
             signer,
             args: {
-                payment: optInPayment,
+                payment: optInAktaPayment,
+                asset: aktaAssetId,
+            },
+            extraFee: microAlgo(1000), // Extra fee to cover inner transaction via fee pooling
+        });
+
+        // Opt staking contract into Bones and initialize totals box
+        const optInBonesPayment = await algorand.createTransaction.payment({
+            sender,
+            signer,
+            receiver: staking.appAddress.toString(),
+            amount: microAlgo(TOTALS_MBR + ASSET_OPT_IN_MBR),
+        });
+
+        await staking.send.optIn({
+            sender,
+            signer,
+            args: {
+                payment: optInBonesPayment,
                 asset: bonesAssetId,
             },
             extraFee: microAlgo(1000), // Extra fee to cover inner transaction via fee pooling
@@ -169,12 +200,13 @@ describe('ARC58 DAO Voting', () => {
             },
         ]);
 
-        // Configure DAO with Bones asset
+        // Configure DAO with Akta + Bones assets
         await proposeAndExecute(dao, [
             {
                 type: ProposalActionEnum.UpdateFields,
                 field: 'akita_assets',
                 value: {
+                    akta: aktaAssetId,
                     bones: bonesAssetId,
                 },
             },
@@ -185,7 +217,13 @@ describe('ARC58 DAO Voting', () => {
         await dao.client.appClient.fundAppAccount({ amount: setupCost.microAlgo() });
         await dao.setup();
 
-        // Voters opt into Bones
+        // Voters opt into Akta + Bones
+        await algorand.send.assetOptIn({
+            sender: voter1,
+            signer: voter1Signer,
+            assetId: aktaAssetId,
+        });
+
         await algorand.send.assetOptIn({
             sender: voter1,
             signer: voter1Signer,
@@ -195,16 +233,38 @@ describe('ARC58 DAO Voting', () => {
         await algorand.send.assetOptIn({
             sender: voter2,
             signer: voter2Signer,
+            assetId: aktaAssetId,
+        });
+
+        await algorand.send.assetOptIn({
+            sender: voter2,
+            signer: voter2Signer,
             assetId: bonesAssetId,
         });
 
-        // Distribute Bones to voters
+        // Distribute Akta + Bones to voters
+        await algorand.send.assetTransfer({
+            sender,
+            signer,
+            assetId: aktaAssetId,
+            receiver: voter1,
+            amount: 100_000_000_000n, // 100,000 AKTA
+        });
+
         await algorand.send.assetTransfer({
             sender,
             signer,
             assetId: bonesAssetId,
             receiver: voter1,
             amount: 100_000_000_000n, // 100,000 BONES
+        });
+
+        await algorand.send.assetTransfer({
+            sender,
+            signer,
+            assetId: aktaAssetId,
+            receiver: voter2,
+            amount: 100_000_000_000n, // 100,000 AKTA
         });
 
         await algorand.send.assetTransfer({
@@ -250,27 +310,56 @@ describe('ARC58 DAO Voting', () => {
     });
 
     describe('Post-Initialization Voting', () => {
-        test('should setup voting power for voters by staking Bones', async () => {
+        test('should setup voting power for voters by staking Akta + Bones', async () => {
             const { algorand } = fixture.context;
 
-            // Stake Bones with LOCK type for voter1 (1 year lock)
-            const stakeAmount = 50_000_000_000n; // 50,000 BONES
+            // Stake Akta + Bones with LOCK type for voter1 (1 year lock)
+            const stakeAmount = 50_000_000_000n; // 50,000 tokens
             // Use blockchain timestamp instead of Date.now() since localnet timestamp differs from wall-clock time
             const status = await algorand.client.algod.status().do();
             const block = await algorand.client.algod.block(status.lastRound).do();
             const blockTimestamp = BigInt(block.block.header.timestamp);
             const expiration = blockTimestamp + BigInt(ONE_YEAR);
 
-            // Create MBR payment for stake box
-            const stakePayment = await algorand.createTransaction.payment({
+            // Create MBR payment for Akta stake box
+            const aktaStakePayment = await algorand.createTransaction.payment({
                 sender: voter1,
                 signer: voter1Signer,
                 receiver: staking.appAddress.toString(),
                 amount: microAlgo(STAKES_MBR),
             });
 
-            // Create asset transfer for the stake
-            const assetXfer = await algorand.createTransaction.assetTransfer({
+            // Create asset transfer for the Akta stake
+            const aktaAssetXfer = await algorand.createTransaction.assetTransfer({
+                sender: voter1,
+                signer: voter1Signer,
+                assetId: aktaAssetId,
+                receiver: staking.appAddress.toString(),
+                amount: stakeAmount,
+            });
+
+            await staking.send.stakeAsa({
+                sender: voter1,
+                signer: voter1Signer,
+                args: {
+                    payment: aktaStakePayment,
+                    assetXfer: aktaAssetXfer,
+                    type: STAKING_TYPE_LOCK,
+                    amount: stakeAmount,
+                    expiration,
+                },
+            });
+
+            // Create MBR payment for Bones stake box
+            const bonesStakePayment = await algorand.createTransaction.payment({
+                sender: voter1,
+                signer: voter1Signer,
+                receiver: staking.appAddress.toString(),
+                amount: microAlgo(STAKES_MBR),
+            });
+
+            // Create asset transfer for the Bones stake
+            const bonesAssetXfer = await algorand.createTransaction.assetTransfer({
                 sender: voter1,
                 signer: voter1Signer,
                 assetId: bonesAssetId,
@@ -282,8 +371,8 @@ describe('ARC58 DAO Voting', () => {
                 sender: voter1,
                 signer: voter1Signer,
                 args: {
-                    payment: stakePayment,
-                    assetXfer,
+                    payment: bonesStakePayment,
+                    assetXfer: bonesAssetXfer,
                     type: STAKING_TYPE_LOCK,
                     amount: stakeAmount,
                     expiration,
@@ -291,14 +380,22 @@ describe('ARC58 DAO Voting', () => {
             });
 
             // Verify stake was created
-            const stakeInfo = await staking.getInfo({
+            const aktaStakeInfo = await staking.getInfo({
+                args: {
+                    address: voter1,
+                    stake: { asset: aktaAssetId, type: STAKING_TYPE_LOCK },
+                },
+            });
+
+            const bonesStakeInfo = await staking.getInfo({
                 args: {
                     address: voter1,
                     stake: { asset: bonesAssetId, type: STAKING_TYPE_LOCK },
                 },
             });
 
-            expect(stakeInfo?.amount).toBe(stakeAmount);
+            expect(aktaStakeInfo?.amount).toBe(stakeAmount);
+            expect(bonesStakeInfo?.amount).toBe(stakeAmount);
         });
 
         test('should create a proposal as initialized DAO member', async () => {
@@ -306,14 +403,24 @@ describe('ARC58 DAO Voting', () => {
             const { algorand } = fixture.context;
 
             // Stake for the sender to have voting power
-            const stakeAmount = 10_000_000_000n; // 10,000 BONES
+            const stakeAmount = 10_000_000_000n; // 10,000 tokens
             // Use blockchain timestamp instead of Date.now() since localnet timestamp differs from wall-clock time
             const status = await algorand.client.algod.status().do();
             const block = await algorand.client.algod.block(status.lastRound).do();
             const blockTimestamp = BigInt(block.block.header.timestamp);
             const expiration = blockTimestamp + BigInt(ONE_YEAR);
 
-            // Sender needs to opt into Bones first
+            // Sender needs to opt into Akta + Bones first
+            try {
+                await algorand.send.assetOptIn({
+                    sender,
+                    signer,
+                    assetId: aktaAssetId,
+                });
+            } catch {
+                // Already opted in
+            }
+
             try {
                 await algorand.send.assetOptIn({
                     sender,
@@ -324,17 +431,44 @@ describe('ARC58 DAO Voting', () => {
                 // Already opted in
             }
 
-            // Transfer some Bones to sender
-            // Note: sender is the creator, they already have Bones from creation
+            // Transfer some Akta + Bones to sender
+            // Note: sender is the creator, they already have tokens from creation
 
-            const stakePayment = await algorand.createTransaction.payment({
+            const aktaStakePayment = await algorand.createTransaction.payment({
                 sender,
                 signer,
                 receiver: staking.appAddress.toString(),
                 amount: microAlgo(STAKES_MBR),
             });
 
-            const assetXfer = await algorand.createTransaction.assetTransfer({
+            const aktaAssetXfer = await algorand.createTransaction.assetTransfer({
+                sender,
+                signer,
+                assetId: aktaAssetId,
+                receiver: staking.appAddress.toString(),
+                amount: stakeAmount,
+            });
+
+            await staking.send.stakeAsa({
+                sender,
+                signer,
+                args: {
+                    payment: aktaStakePayment,
+                    assetXfer: aktaAssetXfer,
+                    type: STAKING_TYPE_LOCK,
+                    amount: stakeAmount,
+                    expiration,
+                },
+            });
+
+            const bonesStakePayment = await algorand.createTransaction.payment({
+                sender,
+                signer,
+                receiver: staking.appAddress.toString(),
+                amount: microAlgo(STAKES_MBR),
+            });
+
+            const bonesAssetXfer = await algorand.createTransaction.assetTransfer({
                 sender,
                 signer,
                 assetId: bonesAssetId,
@@ -346,8 +480,8 @@ describe('ARC58 DAO Voting', () => {
                 sender,
                 signer,
                 args: {
-                    payment: stakePayment,
-                    assetXfer,
+                    payment: bonesStakePayment,
+                    assetXfer: bonesAssetXfer,
                     type: STAKING_TYPE_LOCK,
                     amount: stakeAmount,
                     expiration,
@@ -597,21 +731,48 @@ describe('ARC58 DAO Voting', () => {
             const { algorand } = fixture.context;
 
             // Setup voter2 with a different stake amount (smaller than voter1)
-            const stakeAmount2 = 25_000_000_000n; // 25,000 BONES (half of voter1's 50,000)
+            const stakeAmount2 = 25_000_000_000n; // 25,000 tokens (half of voter1's 50,000)
             // Use blockchain timestamp instead of Date.now() since localnet timestamp differs from wall-clock time
             const status = await algorand.client.algod.status().do();
             const block = await algorand.client.algod.block(status.lastRound).do();
             const blockTimestamp = BigInt(block.block.header.timestamp);
             const expiration2 = blockTimestamp + BigInt(ONE_YEAR);
 
-            const stakePayment2 = await algorand.createTransaction.payment({
+            const aktaStakePayment2 = await algorand.createTransaction.payment({
                 sender: voter2,
                 signer: voter2Signer,
                 receiver: staking.appAddress.toString(),
                 amount: microAlgo(STAKES_MBR),
             });
 
-            const assetXfer2 = await algorand.createTransaction.assetTransfer({
+            const aktaAssetXfer2 = await algorand.createTransaction.assetTransfer({
+                sender: voter2,
+                signer: voter2Signer,
+                assetId: aktaAssetId,
+                receiver: staking.appAddress.toString(),
+                amount: stakeAmount2,
+            });
+
+            await staking.send.stakeAsa({
+                sender: voter2,
+                signer: voter2Signer,
+                args: {
+                    payment: aktaStakePayment2,
+                    assetXfer: aktaAssetXfer2,
+                    type: STAKING_TYPE_LOCK,
+                    amount: stakeAmount2,
+                    expiration: expiration2,
+                },
+            });
+
+            const bonesStakePayment2 = await algorand.createTransaction.payment({
+                sender: voter2,
+                signer: voter2Signer,
+                receiver: staking.appAddress.toString(),
+                amount: microAlgo(STAKES_MBR),
+            });
+
+            const bonesAssetXfer2 = await algorand.createTransaction.assetTransfer({
                 sender: voter2,
                 signer: voter2Signer,
                 assetId: bonesAssetId,
@@ -623,8 +784,8 @@ describe('ARC58 DAO Voting', () => {
                 sender: voter2,
                 signer: voter2Signer,
                 args: {
-                    payment: stakePayment2,
-                    assetXfer: assetXfer2,
+                    payment: bonesStakePayment2,
+                    assetXfer: bonesAssetXfer2,
                     type: STAKING_TYPE_LOCK,
                     amount: stakeAmount2,
                     expiration: expiration2,
@@ -678,7 +839,7 @@ describe('ARC58 DAO Voting', () => {
             const proposalAfterVoter2 = await dao.getProposal(proposalId!);
             const totalApprovals = proposalAfterVoter2.votes.approvals;
 
-            // Voter1 (50,000 BONES stake) should have more power than voter2 (25,000 BONES stake)
+            // Voter1 (50,000 stake) should have more power than voter2 (25,000 stake)
             const voter2Power = totalApprovals - voter1Power;
             expect(voter1Power).toBeGreaterThan(voter2Power);
         });
