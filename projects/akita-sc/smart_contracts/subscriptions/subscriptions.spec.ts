@@ -1,7 +1,7 @@
 import { Config, microAlgo } from '@algorandfoundation/algokit-utils'
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { afterEach, beforeAll, describe, expect, test } from '@jest/globals'
+import { afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { AkitaDaoSDK } from 'akita-sdk/dao'
 import { ServiceStatus, SubscriptionsSDK } from 'akita-sdk/subscriptions'
 import { buildAkitaUniverse } from '../../tests/fixtures/dao'

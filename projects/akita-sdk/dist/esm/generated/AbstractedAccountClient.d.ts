@@ -94,13 +94,14 @@ export type PluginInfo = {
     admin: boolean;
     useRounds: boolean;
     useExecutionKey: boolean;
+    coverFees: boolean;
     lastCalled: bigint;
     start: bigint;
 };
 /**
  * Converts the ABI tuple representation of a PluginInfo to the struct representation
  */
-export declare function PluginInfoFromTuple(abiTuple: [bigint, number, bigint, bigint, [Uint8Array, bigint, bigint][], boolean, boolean, boolean, bigint, bigint]): PluginInfo;
+export declare function PluginInfoFromTuple(abiTuple: [bigint, number, bigint, bigint, [Uint8Array, bigint, bigint][], boolean, boolean, boolean, boolean, bigint, bigint]): PluginInfo;
 export type PluginKey = {
     plugin: bigint;
     caller: string;
@@ -265,7 +266,7 @@ export type AbstractedAccountArgs = {
              */
             fundsRequest: [bigint | number, bigint | number][];
         };
-        'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void': {
+        'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void': {
             plugin: bigint | number;
             caller: string;
             /**
@@ -297,6 +298,7 @@ export type AbstractedAccountArgs = {
              */
             useRounds: boolean;
             useExecutionKey: boolean;
+            coverFees: boolean;
             defaultToEscrow: boolean;
         };
         'assignDomain(address,string)void': {
@@ -314,7 +316,7 @@ export type AbstractedAccountArgs = {
             caller: string;
             escrow: string;
         };
-        'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void': {
+        'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void': {
             /**
              * The plugin name
              */
@@ -350,6 +352,7 @@ export type AbstractedAccountArgs = {
              */
             useRounds: boolean;
             useExecutionKey: boolean;
+            coverFees: boolean;
             defaultToEscrow: boolean;
         };
         'arc58_removeNamedPlugin(string)void': {
@@ -433,10 +436,10 @@ export type AbstractedAccountArgs = {
             lease: Uint8Array;
         };
         'arc58_getAdmin()address': Record<string, never>;
-        'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]': {
+        'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]': {
             keys: [bigint | number, string, string][];
         };
-        'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]': {
+        'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]': {
             names: string[];
         };
         'arc58_getEscrows(string[])(uint64,bool)[]': {
@@ -482,10 +485,10 @@ export type AbstractedAccountArgs = {
         'arc58_canCall(uint64,bool,address,string,byte[4])bool': [plugin: bigint | number, global: boolean, address: string, escrow: string, method: Uint8Array];
         'arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void': [plugin: bigint | number, global: boolean, escrow: string, methodOffsets: bigint[] | number[], fundsRequest: [bigint | number, bigint | number][]];
         'arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void': [name: string, global: boolean, escrow: string, methodOffsets: bigint[] | number[], fundsRequest: [bigint | number, bigint | number][]];
-        'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void': [plugin: bigint | number, caller: string, escrow: string, admin: boolean, delegationType: bigint | number, lastValid: bigint | number, cooldown: bigint | number, methods: [Uint8Array, bigint | number][], useRounds: boolean, useExecutionKey: boolean, defaultToEscrow: boolean];
+        'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void': [plugin: bigint | number, caller: string, escrow: string, admin: boolean, delegationType: bigint | number, lastValid: bigint | number, cooldown: bigint | number, methods: [Uint8Array, bigint | number][], useRounds: boolean, useExecutionKey: boolean, coverFees: boolean, defaultToEscrow: boolean];
         'assignDomain(address,string)void': [caller: string, domain: string];
         'arc58_removePlugin(uint64,address,string)void': [plugin: bigint | number, caller: string, escrow: string];
-        'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void': [name: string, plugin: bigint | number, caller: string, escrow: string, admin: boolean, delegationType: bigint | number, lastValid: bigint | number, cooldown: bigint | number, methods: [Uint8Array, bigint | number][], useRounds: boolean, useExecutionKey: boolean, defaultToEscrow: boolean];
+        'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void': [name: string, plugin: bigint | number, caller: string, escrow: string, admin: boolean, delegationType: bigint | number, lastValid: bigint | number, cooldown: bigint | number, methods: [Uint8Array, bigint | number][], useRounds: boolean, useExecutionKey: boolean, coverFees: boolean, defaultToEscrow: boolean];
         'arc58_removeNamedPlugin(string)void': [name: string];
         'arc58_newEscrow(string)uint64': [escrow: string];
         'arc58_toggleEscrowLock(string)(uint64,bool)': [escrow: string];
@@ -497,8 +500,8 @@ export type AbstractedAccountArgs = {
         'arc58_addExecutionKey(byte[32],byte[32][],uint64,uint64)void': [lease: Uint8Array, groups: Uint8Array[], firstValid: bigint | number, lastValid: bigint | number];
         'arc58_removeExecutionKey(byte[32])void': [lease: Uint8Array];
         'arc58_getAdmin()address': [];
-        'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]': [keys: [bigint | number, string, string][]];
-        'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]': [names: string[]];
+        'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]': [keys: [bigint | number, string, string][]];
+        'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]': [names: string[]];
         'arc58_getEscrows(string[])(uint64,bool)[]': [escrows: string[]];
         'arc58_getAllowances(string,uint64[])(uint8,uint64,uint64,uint64,uint64,uint64,uint64,bool)[]': [escrow: string, assets: bigint[] | number[]];
         'arc58_getExecutions(byte[32][])(byte[32][],uint64,uint64)[]': [leases: Uint8Array[]];
@@ -527,10 +530,10 @@ export type AbstractedAccountReturns = {
     'arc58_canCall(uint64,bool,address,string,byte[4])bool': boolean;
     'arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void': void;
     'arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void': void;
-    'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void': void;
+    'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void': void;
     'assignDomain(address,string)void': void;
     'arc58_removePlugin(uint64,address,string)void': void;
-    'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void': void;
+    'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void': void;
     'arc58_removeNamedPlugin(string)void': void;
     'arc58_newEscrow(string)uint64': bigint;
     'arc58_toggleEscrowLock(string)(uint64,bool)': EscrowInfo;
@@ -542,8 +545,8 @@ export type AbstractedAccountReturns = {
     'arc58_addExecutionKey(byte[32],byte[32][],uint64,uint64)void': void;
     'arc58_removeExecutionKey(byte[32])void': void;
     'arc58_getAdmin()address': string;
-    'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]': [bigint, number, bigint, bigint, [Uint8Array, bigint, bigint][], boolean, boolean, boolean, bigint, bigint][];
-    'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]': [bigint, number, bigint, bigint, [Uint8Array, bigint, bigint][], boolean, boolean, boolean, bigint, bigint][];
+    'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]': [bigint, number, bigint, bigint, [Uint8Array, bigint, bigint][], boolean, boolean, boolean, boolean, bigint, bigint][];
+    'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]': [bigint, number, bigint, bigint, [Uint8Array, bigint, bigint][], boolean, boolean, boolean, boolean, bigint, bigint][];
     'arc58_getEscrows(string[])(uint64,bool)[]': [bigint, boolean][];
     'arc58_getAllowances(string,uint64[])(uint8,uint64,uint64,uint64,uint64,uint64,uint64,bool)[]': [number, bigint, bigint, bigint, bigint, bigint, bigint, boolean][];
     'arc58_getExecutions(byte[32][])(byte[32][],uint64,uint64)[]': [Uint8Array[], bigint, bigint][];
@@ -625,10 +628,10 @@ export type AbstractedAccountTypes = {
         argsObj: AbstractedAccountArgs['obj']['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void'];
         argsTuple: AbstractedAccountArgs['tuple']['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void'];
         returns: AbstractedAccountReturns['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void'];
-    }> & Record<'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void' | 'arc58_addPlugin', {
-        argsObj: AbstractedAccountArgs['obj']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'];
-        argsTuple: AbstractedAccountArgs['tuple']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'];
-        returns: AbstractedAccountReturns['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'];
+    }> & Record<'arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void' | 'arc58_addPlugin', {
+        argsObj: AbstractedAccountArgs['obj']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'];
+        argsTuple: AbstractedAccountArgs['tuple']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'];
+        returns: AbstractedAccountReturns['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'];
     }> & Record<'assignDomain(address,string)void' | 'assignDomain', {
         argsObj: AbstractedAccountArgs['obj']['assignDomain(address,string)void'];
         argsTuple: AbstractedAccountArgs['tuple']['assignDomain(address,string)void'];
@@ -637,10 +640,10 @@ export type AbstractedAccountTypes = {
         argsObj: AbstractedAccountArgs['obj']['arc58_removePlugin(uint64,address,string)void'];
         argsTuple: AbstractedAccountArgs['tuple']['arc58_removePlugin(uint64,address,string)void'];
         returns: AbstractedAccountReturns['arc58_removePlugin(uint64,address,string)void'];
-    }> & Record<'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void' | 'arc58_addNamedPlugin', {
-        argsObj: AbstractedAccountArgs['obj']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'];
-        argsTuple: AbstractedAccountArgs['tuple']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'];
-        returns: AbstractedAccountReturns['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'];
+    }> & Record<'arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void' | 'arc58_addNamedPlugin', {
+        argsObj: AbstractedAccountArgs['obj']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'];
+        argsTuple: AbstractedAccountArgs['tuple']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'];
+        returns: AbstractedAccountReturns['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'];
     }> & Record<'arc58_removeNamedPlugin(string)void' | 'arc58_removeNamedPlugin', {
         argsObj: AbstractedAccountArgs['obj']['arc58_removeNamedPlugin(string)void'];
         argsTuple: AbstractedAccountArgs['tuple']['arc58_removeNamedPlugin(string)void'];
@@ -685,14 +688,14 @@ export type AbstractedAccountTypes = {
         argsObj: AbstractedAccountArgs['obj']['arc58_getAdmin()address'];
         argsTuple: AbstractedAccountArgs['tuple']['arc58_getAdmin()address'];
         returns: AbstractedAccountReturns['arc58_getAdmin()address'];
-    }> & Record<'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]' | 'arc58_getPlugins', {
-        argsObj: AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'];
-        argsTuple: AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'];
-        returns: AbstractedAccountReturns['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'];
-    }> & Record<'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]' | 'arc58_getNamedPlugins', {
-        argsObj: AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'];
-        argsTuple: AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'];
-        returns: AbstractedAccountReturns['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'];
+    }> & Record<'arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]' | 'arc58_getPlugins', {
+        argsObj: AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'];
+        argsTuple: AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'];
+        returns: AbstractedAccountReturns['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'];
+    }> & Record<'arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]' | 'arc58_getNamedPlugins', {
+        argsObj: AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'];
+        argsTuple: AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'];
+        returns: AbstractedAccountReturns['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'];
     }> & Record<'arc58_getEscrows(string[])(uint64,bool)[]' | 'arc58_getEscrows', {
         argsObj: AbstractedAccountArgs['obj']['arc58_getEscrows(string[])(uint64,bool)[]'];
         argsTuple: AbstractedAccountArgs['tuple']['arc58_getEscrows(string[])(uint64,bool)[]'];
@@ -1107,14 +1110,14 @@ export declare abstract class AbstractedAccountParamsFactory {
      */
     static arc58RekeyToNamedPlugin(params: CallParams<AbstractedAccountArgs['obj']['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void'] | AbstractedAccountArgs['tuple']['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
-     * Constructs a no op call for the arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void ABI method
+     * Constructs a no op call for the arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void ABI method
      *
      * Add an app to the list of approved plugins
      *
      * @param params Parameters for the call
      * @returns An `AppClientMethodCallParams` object for the call
      */
-    static arc58AddPlugin(params: CallParams<AbstractedAccountArgs['obj']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    static arc58AddPlugin(params: CallParams<AbstractedAccountArgs['obj']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
      * Constructs a no op call for the assignDomain(address,string)void ABI method
      *
@@ -1134,14 +1137,14 @@ export declare abstract class AbstractedAccountParamsFactory {
      */
     static arc58RemovePlugin(params: CallParams<AbstractedAccountArgs['obj']['arc58_removePlugin(uint64,address,string)void'] | AbstractedAccountArgs['tuple']['arc58_removePlugin(uint64,address,string)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
-     * Constructs a no op call for the arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void ABI method
+     * Constructs a no op call for the arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void ABI method
      *
      * Add a named plugin
      *
      * @param params Parameters for the call
      * @returns An `AppClientMethodCallParams` object for the call
      */
-    static arc58AddNamedPlugin(params: CallParams<AbstractedAccountArgs['obj']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    static arc58AddNamedPlugin(params: CallParams<AbstractedAccountArgs['obj']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
      * Constructs a no op call for the arc58_removeNamedPlugin(string)void ABI method
      *
@@ -1240,19 +1243,19 @@ export declare abstract class AbstractedAccountParamsFactory {
      */
     static arc58GetAdmin(params: CallParams<AbstractedAccountArgs['obj']['arc58_getAdmin()address'] | AbstractedAccountArgs['tuple']['arc58_getAdmin()address']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
-     * Constructs a no op call for the arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[] ABI method
+     * Constructs a no op call for the arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[] ABI method
      *
      * @param params Parameters for the call
      * @returns An `AppClientMethodCallParams` object for the call
      */
-    static arc58GetPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    static arc58GetPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
-     * Constructs a no op call for the arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[] ABI method
+     * Constructs a no op call for the arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[] ABI method
      *
      * @param params Parameters for the call
      * @returns An `AppClientMethodCallParams` object for the call
      */
-    static arc58GetNamedPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    static arc58GetNamedPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
     /**
      * Constructs a no op call for the arc58_getEscrows(string[])(uint64,bool)[] ABI method
      *
@@ -2004,14 +2007,14 @@ export declare class AbstractedAccountClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void` ABI method.
          *
          * Add an app to the list of approved plugins
          *
          * @param params The params for the smart contract call
          * @returns The call params
          */
-        arc58AddPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]> & {
+        arc58AddPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
@@ -2037,14 +2040,14 @@ export declare class AbstractedAccountClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void` ABI method.
          *
          * Add a named plugin
          *
          * @param params The params for the smart contract call
          * @returns The call params
          */
-        arc58AddNamedPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]> & {
+        arc58AddNamedPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
@@ -2169,25 +2172,25 @@ export declare class AbstractedAccountClient {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
          *
          * @param params The params for the smart contract call
          * @returns The call params
          */
-        arc58GetPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]> & {
+        arc58GetPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
          *
          * @param params The params for the smart contract call
          * @returns The call params
          */
-        arc58GetNamedPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]> & {
+        arc58GetNamedPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
         /**
@@ -2500,14 +2503,14 @@ export declare class AbstractedAccountClient {
             signers: Map<number, TransactionSigner>;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void` ABI method.
          *
          * Add an app to the list of approved plugins
          *
          * @param params The params for the smart contract call
          * @returns The call transaction
          */
-        arc58AddPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]> & {
+        arc58AddPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -2545,14 +2548,14 @@ export declare class AbstractedAccountClient {
             signers: Map<number, TransactionSigner>;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void` ABI method.
          *
          * Add a named plugin
          *
          * @param params The params for the smart contract call
          * @returns The call transaction
          */
-        arc58AddNamedPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]> & {
+        arc58AddNamedPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -2725,14 +2728,14 @@ export declare class AbstractedAccountClient {
             signers: Map<number, TransactionSigner>;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
          *
          * @param params The params for the smart contract call
          * @returns The call transaction
          */
-        arc58GetPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]> & {
+        arc58GetPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -2740,14 +2743,14 @@ export declare class AbstractedAccountClient {
             signers: Map<number, TransactionSigner>;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
          *
          * @param params The params for the smart contract call
          * @returns The call transaction
          */
-        arc58GetNamedPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]> & {
+        arc58GetNamedPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -3174,17 +3177,17 @@ export declare class AbstractedAccountClient {
             transaction: Transaction;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void` ABI method.
          *
          * Add an app to the list of approved plugins
          *
          * @param params The params for the smart contract call
          * @returns The call result
          */
-        arc58AddPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]> & SendParams & {
+        arc58AddPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]> & SendParams & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
-            return: (undefined | AbstractedAccountReturns["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]);
+            return: (undefined | AbstractedAccountReturns["arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]);
             groupId: string;
             txIds: string[];
             returns?: ABIReturn[] | undefined | undefined;
@@ -3234,17 +3237,17 @@ export declare class AbstractedAccountClient {
             transaction: Transaction;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void` ABI method.
          *
          * Add a named plugin
          *
          * @param params The params for the smart contract call
          * @returns The call result
          */
-        arc58AddNamedPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]> & SendParams & {
+        arc58AddNamedPlugin: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"] | AbstractedAccountArgs["tuple"]["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]> & SendParams & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
-            return: (undefined | AbstractedAccountReturns["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void"]);
+            return: (undefined | AbstractedAccountReturns["arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"]);
             groupId: string;
             txIds: string[];
             returns?: ABIReturn[] | undefined | undefined;
@@ -3474,17 +3477,17 @@ export declare class AbstractedAccountClient {
             transaction: Transaction;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
          *
          * @param params The params for the smart contract call
          * @returns The call result
          */
-        arc58GetPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]> & SendParams & {
+        arc58GetPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]> & SendParams & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
-            return: (undefined | AbstractedAccountReturns["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]);
+            return: (undefined | AbstractedAccountReturns["arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]);
             groupId: string;
             txIds: string[];
             returns?: ABIReturn[] | undefined | undefined;
@@ -3494,17 +3497,17 @@ export declare class AbstractedAccountClient {
             transaction: Transaction;
         }>;
         /**
-         * Makes a call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+         * Makes a call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
          *
          * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
          *
          * @param params The params for the smart contract call
          * @returns The call result
          */
-        arc58GetNamedPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]> & SendParams & {
+        arc58GetNamedPlugins: (params: CallParams<AbstractedAccountArgs["obj"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"] | AbstractedAccountArgs["tuple"]["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]> & SendParams & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
-            return: (undefined | AbstractedAccountReturns["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]"]);
+            return: (undefined | AbstractedAccountReturns["arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"]);
             groupId: string;
             txIds: string[];
             returns?: ABIReturn[] | undefined | undefined;
@@ -3668,23 +3671,23 @@ export declare class AbstractedAccountClient {
      */
     arc58GetAdmin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_getAdmin()address'] | AbstractedAccountArgs['tuple']['arc58_getAdmin()address']>): Promise<string>;
     /**
-     * Makes a readonly (simulated) call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+     * Makes a readonly (simulated) call to the AbstractedAccount smart contract using the `arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
      *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    arc58GetPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]']>): Promise<[bigint, number, bigint, bigint, [Uint8Array<ArrayBufferLike>, bigint, bigint][], boolean, boolean, boolean, bigint, bigint][]>;
+    arc58GetPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]']>): Promise<[bigint, number, bigint, bigint, [Uint8Array<ArrayBufferLike>, bigint, bigint][], boolean, boolean, boolean, boolean, bigint, bigint][]>;
     /**
-     * Makes a readonly (simulated) call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]` ABI method.
+     * Makes a readonly (simulated) call to the AbstractedAccount smart contract using the `arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]` ABI method.
      *
      * This method is a readonly method; calling it with onComplete of NoOp will result in a simulated transaction rather than a real transaction.
      *
      * @param params The params for the smart contract call
      * @returns The call result
      */
-    arc58GetNamedPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]']>): Promise<[bigint, number, bigint, bigint, [Uint8Array<ArrayBufferLike>, bigint, bigint][], boolean, boolean, boolean, bigint, bigint][]>;
+    arc58GetNamedPlugins(params: CallParams<AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]']>): Promise<[bigint, number, bigint, bigint, [Uint8Array<ArrayBufferLike>, bigint, bigint][], boolean, boolean, boolean, boolean, bigint, bigint][]>;
     /**
      * Makes a readonly (simulated) call to the AbstractedAccount smart contract using the `arc58_getEscrows(string[])(uint64,bool)[]` ABI method.
      *
@@ -4059,7 +4062,7 @@ export type AbstractedAccountComposer<TReturns extends [...any[]] = []> = {
      */
     arc58RekeyToNamedPlugin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void'] | AbstractedAccountArgs['tuple']['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_rekeyToNamedPlugin(string,bool,string,uint64[],(uint64,uint64)[])void'] | undefined]>;
     /**
-     * Calls the arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void ABI method.
+     * Calls the arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void ABI method.
      *
      * Add an app to the list of approved plugins
      *
@@ -4067,7 +4070,7 @@ export type AbstractedAccountComposer<TReturns extends [...any[]] = []> = {
      * @param params Any additional parameters for the call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    arc58AddPlugin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] | undefined]>;
+    arc58AddPlugin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'] | undefined]>;
     /**
      * Calls the assignDomain(address,string)void ABI method.
      *
@@ -4089,7 +4092,7 @@ export type AbstractedAccountComposer<TReturns extends [...any[]] = []> = {
      */
     arc58RemovePlugin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_removePlugin(uint64,address,string)void'] | AbstractedAccountArgs['tuple']['arc58_removePlugin(uint64,address,string)void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_removePlugin(uint64,address,string)void'] | undefined]>;
     /**
-     * Calls the arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void ABI method.
+     * Calls the arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void ABI method.
      *
      * Add a named plugin
      *
@@ -4097,7 +4100,7 @@ export type AbstractedAccountComposer<TReturns extends [...any[]] = []> = {
      * @param params Any additional parameters for the call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    arc58AddNamedPlugin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'] | undefined]>;
+    arc58AddNamedPlugin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'] | AbstractedAccountArgs['tuple']['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'] | undefined]>;
     /**
      * Calls the arc58_removeNamedPlugin(string)void ABI method.
      *
@@ -4207,21 +4210,21 @@ export type AbstractedAccountComposer<TReturns extends [...any[]] = []> = {
      */
     arc58GetAdmin(params?: CallParams<AbstractedAccountArgs['obj']['arc58_getAdmin()address'] | AbstractedAccountArgs['tuple']['arc58_getAdmin()address']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_getAdmin()address'] | undefined]>;
     /**
-     * Calls the arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[] ABI method.
+     * Calls the arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[] ABI method.
      *
      * @param args The arguments for the contract call
      * @param params Any additional parameters for the call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    arc58GetPlugins(params?: CallParams<AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | undefined]>;
+    arc58GetPlugins(params?: CallParams<AbstractedAccountArgs['obj']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | undefined]>;
     /**
-     * Calls the arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[] ABI method.
+     * Calls the arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[] ABI method.
      *
      * @param args The arguments for the contract call
      * @param params Any additional parameters for the call
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
-    arc58GetNamedPlugins(params?: CallParams<AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,uint64,uint64)[]'] | undefined]>;
+    arc58GetNamedPlugins(params?: CallParams<AbstractedAccountArgs['obj']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | AbstractedAccountArgs['tuple']['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]']>): AbstractedAccountComposer<[...TReturns, AbstractedAccountReturns['arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]'] | undefined]>;
     /**
      * Calls the arc58_getEscrows(string[])(uint64,bool)[] ABI method.
      *

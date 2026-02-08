@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SigningAccount, TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { beforeAll, describe, expect, test } from '@jest/globals'
+import { beforeAll, describe, expect, test } from 'vitest'
 import { EscrowFactorySDK, EscrowSDK } from 'akita-sdk/escrow'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
 import { AkitaUniverse, buildAkitaUniverse } from '../../tests/fixtures/dao'

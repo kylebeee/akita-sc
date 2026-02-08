@@ -46,6 +46,7 @@ const constants_1 = require("../constants");
 const utils_1 = require("./utils");
 const constants_2 = require("./constants");
 const algokit_utils_1 = require("@algorandfoundation/algokit-utils");
+const prepare_1 = require("../simulate/prepare");
 __exportStar(require("./constants"), exports);
 __exportStar(require("./factory"), exports);
 __exportStar(require("./plugins"), exports);
@@ -66,15 +67,20 @@ class WalletSDK extends base_1.BaseSDK {
         this.allowances = new utils_1.ValueMap(this.allowanceMapKeyGenerator);
         this.executions = new Map();
         this.build = {
-            usePlugin: async ({ firstValid = 0n, windowSize, consolidateFees = true, ...args }) => {
+            usePlugin: async ({ firstValid = 0n, windowSize = 0n, consolidateFees = true, skipSignatures = false, ...args }) => {
                 const { lease } = args;
-                const suggestedParams = await this.client.algorand.getSuggestedParams();
+                const [suggestedParams, { useRounds, length, group, sendParams }, admin] = await Promise.all([
+                    this.client.algorand.getSuggestedParams(),
+                    this.prepareUsePlugin(args),
+                    this.client.state.global.admin()
+                ]);
                 const validityPeriod = 1000n;
                 const start = firstValid !== 0n ? firstValid : BigInt(suggestedParams.firstValid);
-                const { useRounds, length, group, sendParams: prepSendParams } = await this.prepareUsePlugin(args);
-                const foundation = (await (await group.composer()).build()).atc;
-                const admin = (await this.client.state.global.admin());
-                const f1 = (0, utils_1.forceProperties)(foundation, { sender: admin, signer: (0, algosdk_1.makeEmptyTransactionSigner)() });
+                if (windowSize === 0n) {
+                    windowSize = BigInt(suggestedParams.lastValid) - BigInt(suggestedParams.firstValid);
+                }
+                const f = (await (await group.composer()).build()).atc;
+                const f1 = (0, utils_1.forceProperties)(f, { sender: admin, signer: (0, algosdk_1.makeEmptyTransactionSigner)() });
                 let numGroupsToBuild;
                 let endTarget;
                 if (useRounds) {
@@ -87,29 +93,70 @@ class WalletSDK extends base_1.BaseSDK {
                     endTarget = start + roundsNeeded;
                     numGroupsToBuild = Math.ceil(Number(roundsNeeded) / Number(validityPeriod));
                 }
-                const maxFees = new Map();
-                for (let i = 0; i < length; i += 1) {
-                    maxFees.set(i, (0, algokit_utils_1.microAlgo)(257000));
-                }
-                const populatedGroup = await (0, algokit_utils_1.prepareGroupForSending)(f1, this.client.algorand.client.algod, {
+                const maxFees = new Map([
+                    ...Array.from({ length: length }, (_, i) => [i, (0, algokit_utils_1.microAlgo)(BigInt(suggestedParams.minFee) * 272n)]),
+                ]);
+                // Use prepareGroupWithCost to get both the prepared group and cost information
+                const { atc: populatedGroup, expectedCost } = await (0, prepare_1.prepareGroupWithCost)(f1, this.client.algorand.client.algod, {
                     coverAppCallInnerTransactionFees: true,
                     populateAppCallResources: true
                 }, {
                     maxFees,
                     suggestedParams: suggestedParams,
-                });
-                let groups = {
+                }, admin);
+                // Determine which signer to use at build time
+                const signerToUse = skipSignatures
+                    ? (0, algosdk_1.makeEmptyTransactionSigner)() // Placeholder - will be replaced at send() time
+                    : sendParams.signer;
+                const groups = {
                     lease: (0, algokit_utils_1.encodeLease)(lease),
                     firstValid: start,
                     lastValid: endTarget,
                     useRounds,
                     ids: [],
-                    atcs: []
-                };
-                const sendParams = {
-                    ...this.sendParams,
-                    ...(args.sender !== undefined && { sender: args.sender }),
-                    ...(args.signer !== undefined && { signer: args.signer })
+                    atcs: [],
+                    expectedCost,
+                    send: async (options) => {
+                        // Get current round to determine which group is valid
+                        const status = await this.client.algorand.client.algod.status().do();
+                        const currentRound = BigInt(status.lastRound);
+                        // Find the group whose validity window includes the current round
+                        let selectedIndex = -1;
+                        for (let i = 0; i < groups.atcs.length; i++) {
+                            const groupStart = groups.firstValid + (BigInt(i) * validityPeriod);
+                            const groupEnd = i === groups.atcs.length - 1
+                                ? groups.lastValid
+                                : groupStart + validityPeriod - 1n;
+                            if (currentRound >= groupStart && currentRound <= groupEnd) {
+                                selectedIndex = i;
+                                break;
+                            }
+                        }
+                        if (selectedIndex === -1) {
+                            throw new Error(`No valid group for current round ${currentRound}. ` +
+                                `Window: ${groups.firstValid}-${groups.lastValid}`);
+                        }
+                        const atc = groups.atcs[selectedIndex];
+                        if (skipSignatures) {
+                            if (!options?.signer) {
+                                throw new Error('signer is required when skipSignatures is true');
+                            }
+                            const signedAtc = (0, utils_1.forceProperties)(atc, { signer: options.signer });
+                            // Use AlgoKit Utils TransactionComposer to send and get proper confirmations
+                            return await this.client.algorand.newGroup()
+                                .addAtc(signedAtc)
+                                .send();
+                        }
+                        else {
+                            const finalAtc = options?.signer
+                                ? (0, utils_1.forceProperties)(atc, { signer: options.signer })
+                                : atc;
+                            // Use AlgoKit Utils TransactionComposer to send and get proper confirmations
+                            return await this.client.algorand.newGroup()
+                                .addAtc(finalAtc)
+                                .send();
+                        }
+                    }
                 };
                 for (let i = 0; i < numGroupsToBuild; i++) {
                     const groupStartRound = start + (BigInt(i) * validityPeriod);
@@ -123,8 +170,8 @@ class WalletSDK extends base_1.BaseSDK {
                     }
                     console.log(`Building group ${i + 1}/${numGroupsToBuild} with start: ${groupStartRound}, end: ${groupEndRound}`);
                     let overwrite = {
-                        sender: prepSendParams.sender,
-                        signer: prepSendParams.signer,
+                        sender: sendParams.sender,
+                        signer: signerToUse,
                         firstValid: groupStartRound,
                         lastValid: groupEndRound,
                         lease: groups.lease,
@@ -379,9 +426,12 @@ class WalletSDK extends base_1.BaseSDK {
         group.arc58VerifyAuthAddress({ ...sendParams, args: {} });
         // Add opUp transactions if requested by plugin calls
         // These are added after verifyAuthAddr and provide additional resource reference slots
-        if (totalOpUpCount > 0 && (0, types_1.hasSenderSigner)(sendParams)) {
+        const hasSigner = (0, types_1.hasSenderSigner)(sendParams);
+        const opUpLimit = Math.min(totalOpUpCount, (16 - (txns.length + 2)));
+        console.log(`[WalletSDK] opUp debug: totalOpUpCount=${totalOpUpCount}, hasSigner=${hasSigner}, txnsLength=${txns.length}, opUpLimit=${opUpLimit}`);
+        if (totalOpUpCount > 0 && hasSigner) {
             const opUpComposer = await group.composer();
-            for (let i = 0; i < Math.min(totalOpUpCount, (16 - (txns.length + 2))); i++) {
+            for (let i = 0; i < opUpLimit; i++) {
                 opUpComposer.addAppCallMethodCall({
                     sender: sendParams.sender,
                     signer: sendParams.signer,
@@ -395,6 +445,7 @@ class WalletSDK extends base_1.BaseSDK {
             }
         }
         const length = await (await group.composer()).count();
+        console.log(`[WalletSDK] Final group length: ${length} (rekey + ${txns.length} plugin txns + verifyAuth + ${opUpLimit} opUps)`);
         return { plugin, caller, useRounds, length, group, sendParams: sendParams };
     }
     async register({ sender, signer, escrow }) {
@@ -471,15 +522,51 @@ class WalletSDK extends base_1.BaseSDK {
     }
     async usePlugin(params) {
         const sendParams = this.getSendParams(params);
-        const { plugin, caller, group } = await this.prepareUsePlugin(params);
-        const result = await group.send({ ...sendParams });
-        const { escrow = '', fundsRequest } = params;
+        const { plugin, caller, length, group, sendParams: preparedSendParams } = await this.prepareUsePlugin(params);
+        const { escrow = '', fundsRequest, consolidateFees = false } = params;
+        let result;
+        if (consolidateFees) {
+            // Build the ATC from the group
+            const atc = (await (await group.composer()).build()).atc;
+            const appliedAtc = (0, utils_1.forceProperties)(atc, {
+                sender: preparedSendParams.sender,
+                signer: preparedSendParams.signer
+            });
+            // Get suggested params for fee calculation
+            const suggestedParams = await this.client.algorand.getSuggestedParams();
+            // Set max fees for all transactions to allow prepareGroupWithCost to work
+            const maxFees = new Map(Array.from({ length }, (_, i) => [i, (0, algokit_utils_1.microAlgo)(BigInt(suggestedParams.minFee) * 272n)]));
+            // Use prepareGroupWithCost to populate resources and calculate fees
+            const { atc: populatedAtc } = await (0, prepare_1.prepareGroupWithCost)(appliedAtc, this.client.algorand.client.algod, {
+                coverAppCallInnerTransactionFees: true,
+                populateAppCallResources: true
+            }, {
+                maxFees,
+                suggestedParams
+            });
+            // Consolidate all fees to the first transaction
+            const feeGroup = populatedAtc.clone().buildGroup();
+            const totalFees = feeGroup.reduce((acc, txn) => acc + txn.txn.fee, 0n);
+            const consolidatedAtc = (0, utils_1.forceProperties)(populatedAtc, {
+                fees: new Map([
+                    [0, (0, algokit_utils_1.microAlgo)(totalFees)],
+                    ...Array.from({ length: length - 1 }, (_, i) => [i + 1, (0, algokit_utils_1.microAlgo)(0n)]),
+                ])
+            });
+            // Use AlgoKit Utils TransactionComposer to send and get proper confirmations
+            result = await this.client.algorand.newGroup()
+                .addAtc(consolidatedAtc)
+                .send();
+        }
+        else {
+            result = await group.send({ ...sendParams });
+        }
         await this.updateCache({ plugin, caller, escrow }, fundsRequest?.map(({ asset }) => asset)).catch(error => {
             console.warn('Failed to update plugin cache:', error);
         });
         return result;
     }
-    async addPlugin({ sender, signer, name = '', client, caller, global = false, methods = [], escrow = '', admin = false, delegationType = 0n, lastValid = constants_1.MAX_UINT64, cooldown = 0n, useRounds = false, useExecutionKey = false, defaultToEscrow = false, allowances = [] }) {
+    async addPlugin({ sender, signer, name = '', client, caller, global = false, methods = [], escrow = '', admin = false, delegationType = 0n, lastValid = constants_1.MAX_UINT64, cooldown = 0n, useRounds = false, useExecutionKey = false, coverFees = false, defaultToEscrow = false, allowances = [] }) {
         const sendParams = this.getSendParams({ sender, signer });
         // Get the plugin app ID from the SDK client
         const plugin = client.appId;
@@ -500,6 +587,13 @@ class WalletSDK extends base_1.BaseSDK {
             }, []);
         }
         const newEscrow = escrow !== '' && !this.escrows.get(escrow);
+        // Check if controlled address differs from app address - requires extra fee for MBR transfer inner txn
+        const controlledAddress = await this.client.state.global.controlledAddress();
+        const hasExternalControlledAddress = controlledAddress !== this.client.appAddress.toString();
+        // Calculate extra fee:
+        // - NewEscrowFeeAmount (6000) if creating a new escrow
+        // - 1000 if controlled address is external (for MBR transfer inner txn)
+        const extraFee = (0, algokit_utils_1.microAlgo)((newEscrow ? constants_2.NewEscrowFeeAmount : 0n) + (hasExternalControlledAddress ? 1000n : 0n));
         const args = {
             plugin,
             caller: caller,
@@ -511,6 +605,7 @@ class WalletSDK extends base_1.BaseSDK {
             methods: transformedMethods,
             useRounds,
             useExecutionKey,
+            coverFees,
             defaultToEscrow
         };
         const group = this.client.newGroup();
@@ -518,14 +613,14 @@ class WalletSDK extends base_1.BaseSDK {
             group.arc58AddNamedPlugin({
                 ...sendParams,
                 args: { name, ...args },
-                extraFee: (0, algokit_utils_1.microAlgo)(newEscrow ? constants_2.NewEscrowFeeAmount : 0n)
+                extraFee
             });
         }
         else {
             group.arc58AddPlugin({
                 ...sendParams,
                 args,
-                extraFee: (0, algokit_utils_1.microAlgo)(newEscrow ? constants_2.NewEscrowFeeAmount : 0n)
+                extraFee
             });
         }
         if (allowances.length > 0) {

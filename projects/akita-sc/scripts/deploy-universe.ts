@@ -228,6 +228,7 @@ function generateEnvFile(
     `SUBSCRIPTIONS_APP_ID=${universe.subscriptions.appId}`,
     `STAKING_POOL_FACTORY_APP_ID=${universe.stakingPoolFactory.appId}`,
     `STAKING_APP_ID=${universe.staking.appId}`,
+    `REWARDS_APP_ID=${universe.rewards.appId}`,
     ``,
     `# Social System`,
     `SOCIAL_APP_ID=${universe.social.socialAppId}`,
@@ -344,6 +345,7 @@ export const ${networkUpper}_APP_IDS: NetworkAppIds = {
   subscriptions: ${universe.subscriptions.appId}n,
   stakingPoolFactory: ${universe.stakingPoolFactory.appId}n,
   staking: ${universe.staking.appId}n,
+  rewards: ${universe.rewards.appId}n,
   
   // Social System
   social: ${universe.social.socialAppId}n,

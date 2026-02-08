@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SimulateBuilder = void 0;
+const algosdk_1 = __importDefault(require("algosdk"));
 const ZERO = 0n;
 function applyHint(base, hint) {
     if (!hint)
@@ -32,15 +36,29 @@ function aggregatePayments(payments) {
         totalAlgo,
     };
 }
+/**
+ * Collect payment information from a transaction group.
+ * Uses typed SDK Transaction properties (txn.payment, txn.assetTransfer, etc.)
+ * since this receives TransactionWithSigner[] from atc.buildGroup().
+ *
+ * SDK Transaction properties:
+ * - Payment: txn.payment.amount, txn.payment.closeRemainderTo
+ * - Asset Transfer: txn.assetTransfer.amount, txn.assetTransfer.assetIndex,
+ *                   txn.assetTransfer.closeRemainderTo
+ */
 function collectPayments(group, hints) {
     const payments = [];
     for (const { txn } of group) {
         if (!txn)
             continue;
         const type = txn.type;
-        const tx = txn;
-        if (type === "pay") {
-            const amount = BigInt(tx.amount ?? tx.amt ?? 0);
+        if (type === algosdk_1.default.TransactionType.pay) {
+            // Payment transaction - use typed SDK properties
+            const payment = txn.payment;
+            const amount = payment?.amount ?? 0n;
+            // Note: closeRemainderTo amount is the remaining balance after the payment
+            // It's calculated by the network and not known at build time
+            // Hints can be used to provide this information if needed
             const base = {
                 asset: 0n,
                 amount,
@@ -50,9 +68,13 @@ function collectPayments(group, hints) {
             };
             payments.push(applyHint(base, hints.get(0n)));
         }
-        else if (type === "axfer") {
-            const assetId = BigInt(tx.assetIndex ?? tx.xaid ?? 0);
-            const amount = BigInt(tx.assetAmount ?? tx.aamt ?? 0);
+        else if (type === algosdk_1.default.TransactionType.axfer) {
+            // Asset transfer - use typed SDK properties
+            const assetTransfer = txn.assetTransfer;
+            const assetId = assetTransfer?.assetIndex ?? 0n;
+            const amount = assetTransfer?.amount ?? 0n;
+            // Note: closeRemainderTo for assets also sends remaining balance to the close address
+            // Hints can be used to provide this information if needed
             const base = {
                 asset: assetId,
                 amount,

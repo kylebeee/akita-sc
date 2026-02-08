@@ -1,5 +1,5 @@
 /**
- * Jest Setup File
+ * Vitest Setup File
  * 
  * Suppresses noisy AlgoKit SDK logs while preserving our structured fixture logs.
  * 
@@ -7,6 +7,11 @@
  * - FIXTURE_LOGS=false   → Disable fixture logs
  * - ALGOKIT_LOGS=true    → Enable AlgoKit SDK logs (info/debug)
  */
+
+import { afterAll } from 'vitest';
+
+// Set network for SDKs that need to detect it
+process.env.ALGORAND_NETWORK = 'localnet';
 
 const originalConsoleLog = console.log;
 const originalConsoleInfo = console.info;

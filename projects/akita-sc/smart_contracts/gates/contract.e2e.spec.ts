@@ -1,7 +1,7 @@
 import { Config, microAlgo } from '@algorandfoundation/algokit-utils';
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { GateSDK, LogicalOperator, Operator } from 'akita-sdk/gates';
 import { AsaMintPluginSDK, newWallet, WalletFactorySDK, WalletSDK } from 'akita-sdk/wallet';
 import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';

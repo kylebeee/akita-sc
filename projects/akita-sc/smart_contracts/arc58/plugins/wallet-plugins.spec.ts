@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SigningAccount, TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { beforeAll, describe, expect, test } from '@jest/globals'
+import { beforeAll, describe, expect, test } from 'vitest'
 import {
   OptInPluginSDK,
   PayPluginSDK,
@@ -310,7 +310,9 @@ describe('Plugin SDK Integration with WalletSDK', () => {
         ]
       })
 
-      expect(buildResult.lease).toBe('test_lease')
+      // Lease is returned as a 32-byte Uint8Array, decode and check prefix
+      const leaseString = new TextDecoder().decode(buildResult.lease).replace(/\0+$/, '')
+      expect(leaseString).toBe('test_lease')
       expect(buildResult.ids).toBeDefined()
       expect(buildResult.atcs).toBeDefined()
       expect(buildResult.atcs.length).toBeGreaterThan(0)

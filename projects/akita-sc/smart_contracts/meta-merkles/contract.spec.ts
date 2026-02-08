@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import {
   MerkleTreeType,
   MetaMerklesSDK,

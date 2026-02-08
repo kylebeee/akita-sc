@@ -1,7 +1,8 @@
 import { GlobalKeysState, PluginInfo as ClientPluginInfo, AbstractedAccountArgs, AbstractedAccountReturns } from "../generated/AbstractedAccountClient";
-import { MaybeSigner, SDKClient, AkitaSDK, PluginMethodSpecifier, PluginSDKReturn } from "../types";
+import { MaybeSigner, SDKClient, AkitaSDK, PluginMethodSpecifier, PluginSDKReturn, GroupReturn } from "../types";
 import { ABIReturn, AppReturn } from "@algorandfoundation/algokit-utils/types/app";
 import algosdk, { modelsv2, Transaction } from "algosdk";
+import { ExpectedCost } from "../simulate/types";
 
 type ContractArgs = AbstractedAccountArgs["obj"];
 
@@ -36,7 +37,7 @@ export type RekeyArgs = {
   fundsRequest: [number | bigint, number | bigint][]
 }
 
-export type AddPluginArgs = Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'], 'name'>
+export type AddPluginArgs = Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'], 'name'>
 
 // Updated plugin parameters to support fluent transaction API
 export type WalletUsePluginParams = (
@@ -57,9 +58,14 @@ export type BuildWalletUsePluginParams = (
   & {
     lease: string,
     firstValid?: bigint,
-    windowSize: bigint
+    windowSize?: bigint,
+    skipSignatures?: boolean
   }
 )
+
+export type SendOptions = {
+  signer?: algosdk.TransactionSigner
+}
 
 export type ExecutionBuildGroup = {
   lease: Uint8Array
@@ -68,6 +74,8 @@ export type ExecutionBuildGroup = {
   useRounds: boolean
   ids: Uint8Array[]
   atcs: algosdk.AtomicTransactionComposer[]
+  expectedCost: ExpectedCost
+  send: (options?: SendOptions) => Promise<GroupReturn>
 }
 
 // Default values for addPlugin method
@@ -78,6 +86,7 @@ export const AddPluginDefaults = {
   useRounds: false,
   admin: false,
   delegationType: 0n,
+  coverFees: false,
 }
 
 export type CanCallParams = (
@@ -157,7 +166,7 @@ export function isDripAllowance(info: AllowanceInfo): info is Extract<AllowanceI
 }
 
 type BaseWalletAddPluginParams<TClient extends SDKClient> =
-  Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool)void'], 'methods'>> &
+  Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'], 'methods'>> &
   MaybeSigner &
   {
     client: AkitaSDK<TClient>

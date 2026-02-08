@@ -51,3 +51,11 @@ export {
   HighlightMessage,
 } from './subscriptions'
 export { WalletSDK, WalletFactorySDK } from './wallet'
+
+// Simulate types for transaction cost estimation
+export type { 
+  ExpectedCost, 
+  AssetPayment, 
+  AccountDelta,
+  SimulatePayload 
+} from './simulate/types'

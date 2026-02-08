@@ -142,5 +142,60 @@ export class UpdateAkitaDAOPluginSDK extends BaseSDK {
             }
         });
     }
+    updateFactoryChildContract(args) {
+        const methodNames = ['initBoxedContract', 'loadBoxedContract', 'updateFactoryChildContract'];
+        if (args === undefined) {
+            // Called without arguments - return selector for method restrictions
+            return (spendingAddress) => ({
+                appId: this.client.appId,
+                selectors: methodNames.map(methodName => this.client.appClient.getABIMethod(methodName).getSelector()),
+                getTxns
+            });
+        }
+        const { sender, signer, factoryAppId, version, data } = args;
+        const sendParams = this.getRequiredSendParams({ sender, signer });
+        return (spendingAddress) => ({
+            appId: this.client.appId,
+            selectors: methodNames.map(methodName => this.client.appClient.getABIMethod(methodName).getSelector()),
+            getTxns: async ({ wallet }) => {
+                const rekeyBack = args.rekeyBack ?? true;
+                const txns = [];
+                // Step 1: Upload contract to plugin's box storage
+                const initParams = (await this.client.params.initBoxedContract({
+                    ...sendParams,
+                    args: { wallet, version, size: data.length }
+                }));
+                txns.push({
+                    type: 'methodCall',
+                    ...initParams
+                });
+                // max loadContract data size is 2026 bytes
+                // ABI encoding overhead: [selector:4][wallet:8][offset:8][data_length:2] = 22 bytes
+                // 2048 - 22 = 2026 bytes max per chunk
+                const CHUNK_SIZE = 2026;
+                for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+                    const chunk = data.slice(i, i + CHUNK_SIZE);
+                    const loadParams = (await this.client.params.loadBoxedContract({
+                        ...sendParams,
+                        args: { wallet, offset: i, data: chunk }
+                    }));
+                    txns.push({
+                        type: 'methodCall',
+                        ...loadParams
+                    });
+                }
+                // Step 2: Transfer contract from plugin's box to factory's box
+                const updateFactoryParams = (await this.client.params.updateFactoryChildContract({
+                    ...sendParams,
+                    args: { wallet, rekeyBack, factoryAppId }
+                }));
+                txns.push({
+                    type: 'methodCall',
+                    ...updateFactoryParams
+                });
+                return txns;
+            }
+        });
+    }
 }
 //# sourceMappingURL=update-akita-dao.js.map

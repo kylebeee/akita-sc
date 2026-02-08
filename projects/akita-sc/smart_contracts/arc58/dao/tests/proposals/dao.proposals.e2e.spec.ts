@@ -1,6 +1,6 @@
 import { microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { ProposalActionEnum } from 'akita-sdk/dao';
 import { logger } from '../../../../../tests/utils/logger';
 import {
@@ -123,14 +123,10 @@ describe('ARC58 DAO Proposals', () => {
       expect(proposal.created).toBeGreaterThan(0n);
     });
 
-    test('should return empty proposal for non-existent ID', async () => {
+    test('should throw error for non-existent proposal ID', async () => {
       const { dao } = context;
 
-      const proposal = await dao.getProposal(999999n);
-
-      expect(proposal.status).toBe(0);
-      expect(proposal.created).toBe(0n);
-      expect(proposal.actions).toHaveLength(0);
+      await expect(dao.getProposal(999999n)).rejects.toThrow('Proposal does not exist');
     });
   });
 

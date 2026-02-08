@@ -314,11 +314,13 @@ export class AuctionSDK extends BaseSDK<AuctionClient> {
       args: {},
     });
 
-    // Add opUp call to expand reference limit (8 base + 8 opUp = 16 references)
-    group.opUp({
-      ...sendParams,
-      args: {},
-    });
+    for (let i = 0; i < 6; i++) {
+      group.opUp({
+        ...sendParams,
+        args: {},
+        note: i > 0 ? `${i}` : undefined,
+      });
+    }
 
     await group.send(sendParams);
   }

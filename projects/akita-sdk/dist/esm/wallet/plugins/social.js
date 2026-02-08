@@ -255,7 +255,9 @@ export class SocialPluginSDK extends BaseSDK {
                         type: 'methodCall',
                         ...params
                     }];
-            }
+            },
+            // React needs opUp transactions for resource reference slots
+            opUpCount: 2
         });
     }
     gatedReact(args) {
@@ -282,7 +284,9 @@ export class SocialPluginSDK extends BaseSDK {
                         type: 'methodCall',
                         ...params
                     }];
-            }
+            },
+            // Gated react needs opUp transactions for resource reference slots
+            opUpCount: 2
         });
     }
     deleteReaction(args) {
@@ -309,7 +313,9 @@ export class SocialPluginSDK extends BaseSDK {
                         type: 'methodCall',
                         ...params
                     }];
-            }
+            },
+            // Delete reaction needs opUp transactions for resource reference slots
+            opUpCount: 2
         });
     }
     follow(args) {

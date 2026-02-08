@@ -1914,32 +1914,33 @@ deleteAuctionApp:
     txn Sender
     ==
     assert // Not prize box owner
-    // smart_contracts/auction/factory.algo.ts:309
-    // auction.call.deleteApplication({ appId })
-    itxn_begin
-    pushbytes 0x2487c32c // method "deleteApplication()void"
-    itxn_field ApplicationArgs
-    pushint 5 // 5
-    itxn_field OnCompletion
-    dup
-    itxn_field ApplicationID
-    intc_3 // appl
-    itxn_field TypeEnum
-    intc_0 // 0
-    itxn_field Fee
-    itxn_submit
     // smart_contracts/utils/functions.ts:451
     // const [funderBytes] = op.AppGlobal.getExBytes(appId, Bytes(GlobalStateKeyFunder))
+    dup
     bytec 14 // "funder"
     app_global_get_ex
     pop
-    // smart_contracts/auction/factory.algo.ts:311
+    // smart_contracts/auction/factory.algo.ts:307
     // const { account: receiver, amount } = getFunder(appId)
     dup
     extract 0 32
     swap
     pushint 32 // 32
     extract_uint64
+    // smart_contracts/auction/factory.algo.ts:311
+    // auction.call.deleteApplication({ appId })
+    itxn_begin
+    pushbytes 0x2487c32c // method "deleteApplication()void"
+    itxn_field ApplicationArgs
+    pushint 5 // 5
+    itxn_field OnCompletion
+    uncover 2
+    itxn_field ApplicationID
+    intc_3 // appl
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    itxn_submit
     // smart_contracts/auction/factory.algo.ts:313-315
     // itxn
     //   .payment({ amount, receiver })

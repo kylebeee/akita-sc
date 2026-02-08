@@ -1,0 +1,297 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 1 0 8 32
+    bytecblock "spending_address"
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:11
+    // export class TestCloseOutPlugin extends Contract {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@9
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
+    pushbytess 0xf37fcf11 0xd3d4540e // method "closeOutAlgo(uint64,bool,address,uint64,address)void", method "closeOutAsset(uint64,bool,uint64,address,address)void"
+    txna ApplicationArgs 0
+    match closeOutAlgo closeOutAsset
+    err
+
+main___algots__.defaultCreate@9:
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:11
+    // export class TestCloseOutPlugin extends Contract {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
+
+
+// smart_contracts/utils/functions.ts::rekeyAddress(rekeyBack: uint64, wallet: uint64) -> bytes:
+rekeyAddress:
+    // smart_contracts/utils/functions.ts:321
+    // export function rekeyAddress(rekeyBack: boolean, wallet: Application): Account {
+    proto 2 1
+    // smart_contracts/utils/functions.ts:322
+    // if (!rekeyBack) {
+    frame_dig -2
+    bnz rekeyAddress_after_if_else@2
+    // smart_contracts/utils/functions.ts:323
+    // return Global.zeroAddress
+    global ZeroAddress
+    retsub
+
+rekeyAddress_after_if_else@2:
+    // smart_contracts/utils/functions.ts:326
+    // return wallet.address
+    frame_dig -1
+    app_params_get AppAddress
+    assert // application exists
+    retsub
+
+
+// smart_contracts/arc58/plugins/test-close-out/contract.algo.ts::TestCloseOutPlugin.closeOutAlgo[routing]() -> void:
+closeOutAlgo:
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:18-24
+    // closeOutAlgo(
+    //   wallet: Application,
+    //   rekeyBack: boolean,
+    //   receiver: Account,
+    //   amount: uint64,
+    //   closeTo: Account
+    // ): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_0 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_1 // 0
+    getbit
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 4
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 5
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/utils/functions.ts:266-269
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    dig 4
+    // smart_contracts/utils/functions.ts:268
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    bytec_0 // "spending_address"
+    // smart_contracts/utils/functions.ts:266-269
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    app_global_get_ex
+    pop
+    swap
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:27-35
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver,
+    //     amount,
+    //     closeRemainderTo: closeTo,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:33
+    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    uncover 4
+    uncover 5
+    callsub rekeyAddress
+    itxn_field RekeyTo
+    itxn_field CloseRemainderTo
+    itxn_field Sender
+    itxn_field Amount
+    itxn_field Receiver
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:27-34
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver,
+    //     amount,
+    //     closeRemainderTo: closeTo,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
+    //   })
+    intc_0 // 1
+    itxn_field TypeEnum
+    intc_1 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:27-35
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver,
+    //     amount,
+    //     closeRemainderTo: closeTo,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:18-24
+    // closeOutAlgo(
+    //   wallet: Application,
+    //   rekeyBack: boolean,
+    //   receiver: Account,
+    //   amount: uint64,
+    //   closeTo: Account
+    // ): void {
+    intc_0 // 1
+    return
+
+
+// smart_contracts/arc58/plugins/test-close-out/contract.algo.ts::TestCloseOutPlugin.closeOutAsset[routing]() -> void:
+closeOutAsset:
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:42-48
+    // closeOutAsset(
+    //   wallet: Application,
+    //   rekeyBack: boolean,
+    //   asset: Asset,
+    //   receiver: Account,
+    //   assetCloseTo: Account
+    // ): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_0 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    intc_1 // 0
+    getbit
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 4
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 5
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    // smart_contracts/utils/functions.ts:266-269
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    dig 4
+    // smart_contracts/utils/functions.ts:268
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    bytec_0 // "spending_address"
+    // smart_contracts/utils/functions.ts:266-269
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    app_global_get_ex
+    pop
+    swap
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:51-60
+    // itxn
+    //   .assetTransfer({
+    //     sender,
+    //     assetReceiver: receiver,
+    //     assetAmount: 0,
+    //     xferAsset: asset,
+    //     assetCloseTo,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:58
+    // rekeyTo: rekeyAddress(rekeyBack, wallet),
+    uncover 4
+    uncover 5
+    callsub rekeyAddress
+    itxn_field RekeyTo
+    itxn_field AssetCloseTo
+    uncover 2
+    itxn_field XferAsset
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:55
+    // assetAmount: 0,
+    intc_1 // 0
+    itxn_field AssetAmount
+    itxn_field Sender
+    itxn_field AssetReceiver
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:51-59
+    // itxn
+    //   .assetTransfer({
+    //     sender,
+    //     assetReceiver: receiver,
+    //     assetAmount: 0,
+    //     xferAsset: asset,
+    //     assetCloseTo,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
+    //   })
+    pushint 4 // 4
+    itxn_field TypeEnum
+    intc_1 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:51-60
+    // itxn
+    //   .assetTransfer({
+    //     sender,
+    //     assetReceiver: receiver,
+    //     assetAmount: 0,
+    //     xferAsset: asset,
+    //     assetCloseTo,
+    //     rekeyTo: rekeyAddress(rekeyBack, wallet),
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/arc58/plugins/test-close-out/contract.algo.ts:42-48
+    // closeOutAsset(
+    //   wallet: Application,
+    //   rekeyBack: boolean,
+    //   asset: Asset,
+    //   receiver: Account,
+    //   assetCloseTo: Account
+    // ): void {
+    intc_0 // 1
+    return

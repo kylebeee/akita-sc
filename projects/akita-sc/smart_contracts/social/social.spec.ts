@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SigningAccount, TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { beforeAll, describe, expect, test } from '@jest/globals'
+import { beforeAll, describe, expect, test } from 'vitest'
 import {
   AMENDMENT_MBR,
   BLOCKS_MBR,
@@ -87,7 +87,12 @@ describe('Social Contracts Deployment', () => {
       }
     )
 
-    const graphResults = await graphFactory.send.create.bare({})
+    const graphResults = await graphFactory.send.create.create({
+      args: {
+        akitaDao: 0n,
+        version: '0.0.1',
+      }
+    })
     graphClient = graphResults.appClient
 
     // Deploy AkitaSocial contract (now fits in 3 extra pages!)
@@ -165,7 +170,12 @@ describe('SDK MBR Calculations', () => {
       defaultSender: deployer.addr,
       defaultSigner: makeBasicAccountTransactionSigner(deployer),
     })
-    const graphResults = await graphFactory.send.create.bare({})
+    const graphResults = await graphFactory.send.create.create({
+      args: {
+        akitaDao: 0n,
+        version: '0.0.1',
+      }
+    })
 
     const socialFactory = algorand.client.getTypedAppFactory(AkitaSocialFactory, {
       defaultSender: deployer.addr,
@@ -387,7 +397,12 @@ describe('SDK Configuration', () => {
       defaultSender: deployer.addr,
       defaultSigner: makeBasicAccountTransactionSigner(deployer),
     })
-    const graphResults = await graphFactory.send.create.bare({})
+    const graphResults = await graphFactory.send.create.create({
+      args: {
+        akitaDao: 0n,
+        version: '0.0.1',
+      }
+    })
     graphAppId = graphResults.appClient.appId
 
     const socialFactory = algorand.client.getTypedAppFactory(AkitaSocialFactory, {
@@ -465,7 +480,12 @@ describe('SDK Read Methods', () => {
       defaultSender: deployer.addr,
       defaultSigner: makeBasicAccountTransactionSigner(deployer),
     })
-    const graphResults = await graphFactory.send.create.bare({})
+    const graphResults = await graphFactory.send.create.create({
+      args: {
+        akitaDao: 0n,
+        version: '0.0.1',
+      }
+    })
 
     const socialFactory = algorand.client.getTypedAppFactory(AkitaSocialFactory, {
       defaultSender: deployer.addr,
@@ -653,7 +673,12 @@ describe('SDK Write Methods (without DAO)', () => {
       defaultSender: deployer.addr,
       defaultSigner: makeBasicAccountTransactionSigner(deployer),
     })
-    const graphResults = await graphFactory.send.create.bare({})
+    const graphResults = await graphFactory.send.create.create({
+      args: {
+        akitaDao: 0n,
+        version: '0.0.1',
+      }
+    })
     // Fund for inner txns
     await graphResults.appClient.appClient.fundAppAccount({ amount: algokit.microAlgos(1_000_000) })
 
@@ -977,7 +1002,12 @@ describe('Social Operations Success Cases', () => {
       defaultSender: deployer.addr,
       defaultSigner: makeBasicAccountTransactionSigner(deployer),
     })
-    const graphResults = await graphFactory.send.create.bare({})
+    const graphResults = await graphFactory.send.create.create({
+      args: {
+        akitaDao: 0n,
+        version: '0.0.1',
+      }
+    })
     graphClient = graphResults.appClient
     await graphClient.appClient.fundAppAccount({ amount: algokit.microAlgos(10_000_000) })
 
@@ -1192,7 +1222,12 @@ describe('Direct Contract Operations', () => {
       defaultSender: deployer.addr,
       defaultSigner: makeBasicAccountTransactionSigner(deployer),
     })
-    const graphResults = await graphFactory.send.create.bare({})
+    const graphResults = await graphFactory.send.create.create({
+      args: {
+        akitaDao: 0n,
+        version: '0.0.1',
+      }
+    })
     graphClient = graphResults.appClient
 
   }, 180_000)

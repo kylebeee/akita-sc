@@ -104,6 +104,26 @@ export type DeleteReactionArgs = MaybeSigner & {
   nft: bigint | number;
 };
 
+/**
+ * Reaction data for a specific NFT on a post
+ */
+export type PostReactionData = {
+  /** The NFT asset ID used for this reaction */
+  nftId: bigint;
+  /** Number of users who reacted with this NFT */
+  count: bigint;
+};
+
+/**
+ * Return type for getPostReactions
+ */
+export type PostReactionsResult = {
+  /** List of reactions grouped by NFT */
+  reactions: PostReactionData[];
+  /** Set of NFT IDs that the current user has reacted with (if userAddress provided) */
+  userReactedNfts: Set<bigint>;
+};
+
 // ============================================================================
 // Graph-related types (follows/blocks)
 // ============================================================================

@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { SigningAccount, TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account';
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { AsaMintPluginSDK, DualStakePluginSDK, newWallet, WalletSDK } from 'akita-sdk/wallet';
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk';
 import { AkitaUniverse, buildAkitaUniverse } from '../../../../tests/fixtures/dao';

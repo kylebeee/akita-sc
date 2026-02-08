@@ -1,6 +1,6 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
 import {
   completeBalanceVerification,

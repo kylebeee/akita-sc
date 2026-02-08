@@ -304,11 +304,11 @@ export class AuctionFactory extends classes(BaseAuction, FactoryContract) {
     const seller = Account(op.AppGlobal.getExBytes(appId, Bytes(AuctionGlobalStateKeySeller))[0])
     assert(seller === Txn.sender, ERR_NOT_PRIZE_BOX_OWNER)
 
-    const auction = compileArc4(Auction)
-
-    auction.call.deleteApplication({ appId })
-
     const { account: receiver, amount } = getFunder(appId)
+
+    const auction = compileArc4(Auction)
+    
+    auction.call.deleteApplication({ appId })
 
     itxn
       .payment({ amount, receiver })

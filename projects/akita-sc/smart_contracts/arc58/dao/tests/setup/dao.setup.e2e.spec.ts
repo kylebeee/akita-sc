@@ -1,6 +1,6 @@
 import { algo, microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
-import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { AkitaDaoSDK, ProposalActionEnum } from 'akita-sdk/dao';
 import { StakingPoolFactorySDK } from 'akita-sdk/staking-pool';
 import { SubscriptionsSDK } from 'akita-sdk/subscriptions';

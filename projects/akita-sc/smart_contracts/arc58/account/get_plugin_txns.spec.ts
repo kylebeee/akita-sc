@@ -1,4 +1,4 @@
-import { describe, test, expect } from '@jest/globals'
+import { describe, test, expect } from 'vitest'
 
 const BRANCHING_OPCODES = ['b', 'bz', 'bnz', 'callsub', 'retsub', 'match', 'switch']
 const MAX_AVM_VERSION = 10

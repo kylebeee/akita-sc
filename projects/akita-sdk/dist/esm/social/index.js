@@ -1,4 +1,5 @@
 import { microAlgo } from "@algorandfoundation/algokit-utils";
+import algosdk, { makeEmptyTransactionSigner } from "algosdk";
 import { DEFAULT_READER, DEFAULT_SEND_PARAMS } from "../constants";
 import { ENV_VAR_NAMES, resolveAppIdWithClient, getAppIdFromEnv, detectNetworkFromClient } from "../config";
 import { AkitaDaoFactory, } from '../generated/AkitaDAOClient';
@@ -100,6 +101,13 @@ export class SocialSDK {
             throw new Error('Sender and signer must be provided either explicitly or through defaults at SDK instantiation');
         }
         return sendParams;
+    }
+    getReaderSendParams({ sender } = {}) {
+        return {
+            ...this.sendParams,
+            ...(sender !== undefined ? { sender } : { sender: this.readerAccount }),
+            signer: makeEmptyTransactionSigner()
+        };
     }
     // ============================================================================
     // Post Key Methods - Deterministic key derivation for posts
@@ -509,7 +517,7 @@ export class SocialSDK {
      * @param user - The account that may be followed
      */
     async isFollowing({ sender, signer, follower, user }) {
-        const sendParams = this.getSendParams({ sender, signer });
+        const sendParams = this.getReaderSendParams();
         return await this.graphClient.isFollowing({ ...sendParams, args: { follower, user } });
     }
     /**
@@ -1102,6 +1110,105 @@ export class SocialSDK {
             note: '2'
         });
         await group.send({ populateAppCallResources: true, coverAppCallInnerTransactionFees: true });
+    }
+    // ============================================================================
+    // READ METHODS - Reactions
+    // ============================================================================
+    /**
+     * Get all reactions for a post
+     *
+     * @param ref - The 32-byte post reference
+     * @param userAddress - Optional user address to check which NFTs they've reacted with
+     * @returns Object containing reactions array and set of NFT IDs the user has reacted with
+     */
+    async getPostReactions({ ref, userAddress, }) {
+        const appId = this.socialAppId;
+        const reactions = [];
+        const userReactedNfts = new Set();
+        try {
+            // Get all boxes for the social app
+            const boxesResponse = await this.algorand.client.algod.getApplicationBoxes(Number(appId)).do();
+            // Reaction box prefix is 'r' (ASCII 114)
+            const reactionPrefix = new Uint8Array([114]); // 'r'
+            // Reaction list box prefix is 'e' (ASCII 101) - for checking user reactions
+            const reactionListPrefix = new Uint8Array([101]); // 'e'
+            // Process each box
+            for (const box of boxesResponse.boxes) {
+                const boxName = box.name;
+                // Check if this is a reactions box (prefix 'r' + ref + NFT)
+                // Box name should be: 1 byte prefix + 32 byte ref + 8 byte NFT = 41 bytes
+                if (boxName.length === 41 && boxName[0] === reactionPrefix[0]) {
+                    // Extract the ref from bytes 1-33
+                    const boxRef = boxName.slice(1, 33);
+                    // Check if this box is for our post
+                    if (this.compareBytes(boxRef, ref)) {
+                        // Extract NFT ID from bytes 33-41 (8 bytes, big-endian uint64)
+                        const nftIdBytes = boxName.slice(33, 41);
+                        const nftId = this.bytesToBigInt(nftIdBytes);
+                        // Read the box value to get the count
+                        try {
+                            const boxValue = await this.algorand.client.algod.getApplicationBoxByName(Number(appId), boxName).do();
+                            const count = this.bytesToBigInt(boxValue.value);
+                            reactions.push({ nftId, count });
+                        }
+                        catch {
+                            // Box read failed, skip this reaction
+                        }
+                    }
+                }
+                // Check if user has reacted (if userAddress provided)
+                // Reaction list box: 'e' + user (16 bytes) + ref (16 bytes) + NFT (8 bytes) = 41 bytes
+                if (userAddress && boxName.length === 41 && boxName[0] === reactionListPrefix[0]) {
+                    // Extract user address bytes (first 16 bytes of address decoded)
+                    const userBytes = this.addressToBytes16(userAddress);
+                    const boxUserBytes = boxName.slice(1, 17);
+                    // Extract ref bytes (next 16 bytes - truncated ref)
+                    const boxRefBytes = boxName.slice(17, 33);
+                    const refFirst16 = ref.slice(0, 16);
+                    // Check if this is a reaction by our user on our post
+                    if (this.compareBytes(boxUserBytes, userBytes) && this.compareBytes(boxRefBytes, refFirst16)) {
+                        // Extract NFT ID from bytes 33-41
+                        const nftIdBytes = boxName.slice(33, 41);
+                        const nftId = this.bytesToBigInt(nftIdBytes);
+                        userReactedNfts.add(nftId);
+                    }
+                }
+            }
+        }
+        catch (error) {
+            // If box reading fails entirely, return empty results
+            console.error('Failed to fetch post reactions:', error);
+        }
+        return { reactions, userReactedNfts };
+    }
+    /**
+     * Compare two Uint8Arrays for equality
+     */
+    compareBytes(a, b) {
+        if (a.length !== b.length)
+            return false;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i])
+                return false;
+        }
+        return true;
+    }
+    /**
+     * Convert Uint8Array to bigint (big-endian)
+     */
+    bytesToBigInt(bytes) {
+        let result = 0n;
+        for (const byte of bytes) {
+            result = (result << 8n) | BigInt(byte);
+        }
+        return result;
+    }
+    /**
+     * Convert address to first 16 bytes for reaction list lookup
+     */
+    addressToBytes16(address) {
+        const decoded = algosdk.decodeAddress(address);
+        return decoded.publicKey.slice(0, 16);
     }
     // ============================================================================
     // WRITE METHODS - Graph Operations (follows/blocks)

@@ -1,7 +1,7 @@
-import { Application, assert, Box, Bytes, bytes, Global, GlobalState, gtxn, OnCompleteAction, op, TransactionType, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
+import { Application, assert, Box, Bytes, bytes, Global, GlobalState, gtxn, itxnCompose, OnCompleteAction, op, TransactionType, Txn, uint64 } from "@algorandfoundation/algorand-typescript"
 import { abiCall, abimethod, Contract, methodSelector } from "@algorandfoundation/algorand-typescript/arc4"
 import { GlobalStateKeyAkitaDAO, GlobalStateKeyChildContractVersion, GlobalStateKeyClearProgram } from "../../../constants"
-import { BoxKeyBoxedContract } from "../../../utils/base-contracts/factory"
+import { BoxKeyBoxedContract, FactoryContract } from "../../../utils/base-contracts/factory"
 import { ERR_CONTRACT_NOT_SET, ERR_INVALID_CALL_ORDER } from "../../../utils/errors"
 import { getAkitaAppList, getSpendingAccount, rekeyAddress, rekeyBackIfNecessary } from "../../../utils/functions"
 import { AkitaDAOGlobalStateKeysWallet } from "../../dao/constants"
@@ -11,6 +11,9 @@ import { ERR_NOT_AKITA_DAO } from "../social/errors"
 import { type AkitaBaseFeeGeneratorContract } from "../../../utils/base-contracts/base"
 import { MAX_AVM_BYTE_ARRAY_LENGTH } from "../../../utils/constants"
 import { AbstractedAccountFactory } from "../../account/factory.algo"
+
+/** Maximum chunk size for loading boxed contract data (2048 - ABI overhead) */
+const FACTORY_LOAD_CHUNK_SIZE: uint64 = 2032
 
 export class UpdateAkitaDAOPlugin extends Contract {
 
@@ -172,5 +175,73 @@ export class UpdateAkitaDAOPlugin extends Contract {
       args: [app],
       rekeyTo: rekeyAddress(rekeyBack, wallet),
     })
+  }
+
+  /**
+   * Updates the factory's child contract bytecode using the contract stored in this plugin's box.
+   * This allows the factory to deploy new wallets with the updated AbstractedAccount contract.
+   * 
+   * The contract must first be uploaded to this plugin via initBoxedContract/loadBoxedContract,
+   * then this method transfers it to the factory's box storage via inner transactions.
+   * 
+   * Uses itxnCompose to group all inner transactions together so the factory's loadBoxedContract
+   * validation (which checks gtxn for initBoxedContract) works correctly.
+   * 
+   * @param wallet - The DAO wallet app
+   * @param rekeyBack - Whether to rekey the wallet back after the operation
+   * @param factoryAppId - The factory app to update (e.g., walletFactory)
+   */
+  updateFactoryChildContract(
+    wallet: Application,
+    rekeyBack: boolean,
+    factoryAppId: Application
+  ): void {
+    const sender = getSpendingAccount(wallet)
+    assert(sender === this.getAkitaDAOWallet().address, ERR_NOT_AKITA_DAO)
+
+    // Require the contract to be uploaded in the same txn group
+    // The call before must be a call to loadBoxedContract on this plugin
+    const txn = gtxn.Transaction(Txn.groupIndex - 1)
+    assert((
+      txn.type === TransactionType.ApplicationCall
+      && txn.appId === Global.currentApplicationId
+      && txn.numAppArgs === 4
+      && txn.onCompletion === OnCompleteAction.NoOp
+      && txn.appArgs(0) === methodSelector(this.loadBoxedContract)
+      && txn.sender === Txn.sender
+    ), ERR_INVALID_CALL_ORDER)
+
+    assert(this.boxedContract.exists, ERR_CONTRACT_NOT_SET)
+
+    const contractSize: uint64 = this.boxedContract.length
+    const version = this.childContractVersion.value
+
+    // Start the inner transaction group with factory.initBoxedContract
+    itxnCompose.begin<typeof FactoryContract.prototype.initBoxedContract>({
+      sender,
+      appId: factoryAppId,
+      args: [version, contractSize],
+    })
+
+    // Load contract data in chunks to the factory's box
+    // Factory expects chunks of 2032 bytes max
+    // All loadBoxedContract calls must be in the same group as initBoxedContract
+    for (let offset: uint64 = 0; offset < contractSize; offset += FACTORY_LOAD_CHUNK_SIZE) {
+      const remaining: uint64 = contractSize - offset
+      const chunkSize = remaining < FACTORY_LOAD_CHUNK_SIZE ? remaining : FACTORY_LOAD_CHUNK_SIZE
+      const chunk = this.boxedContract.extract(offset, chunkSize)
+
+      const isLastChunk = offset + chunkSize >= contractSize
+
+      itxnCompose.next<typeof FactoryContract.prototype.loadBoxedContract>({
+        sender,
+        appId: factoryAppId,
+        args: [offset, chunk],
+        rekeyTo: isLastChunk ? rekeyAddress(rekeyBack, wallet) : Global.zeroAddress,
+      })
+    }
+
+    // Submit all inner transactions as a single group
+    itxnCompose.submit()
   }
 }

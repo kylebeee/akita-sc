@@ -149,6 +149,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             cooldown = 0n,
             useRounds = false,
             useExecutionKey = false,
+            coverFees = false,
             defaultToEscrow = false,
             sourceLink = '',
             allowances = []
@@ -208,6 +209,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             methods: transformedMethods,
             useRounds,
             useExecutionKey,
+            coverFees,
             defaultToEscrow,
             fee,
             power,

@@ -85,6 +85,20 @@ export type UpdateAkitaDaoPluginArgs = {
             rekeyBack: boolean;
             app: bigint | number;
         };
+        'updateFactoryChildContract(uint64,bool,uint64)void': {
+            /**
+             * - The DAO wallet app
+             */
+            wallet: bigint | number;
+            /**
+             * - Whether to rekey the wallet back after the operation
+             */
+            rekeyBack: boolean;
+            /**
+             * - The factory app to update (e.g., walletFactory)
+             */
+            factoryAppId: bigint | number;
+        };
     };
     /**
      * The tuple representation of the arguments for each method
@@ -99,6 +113,7 @@ export type UpdateAkitaDaoPluginArgs = {
         'updateAkitaDaoAppIDForApp(uint64,bool,uint64,uint64)void': [wallet: bigint | number, rekeyBack: boolean, appId: bigint | number, newAkitaDaoAppId: bigint | number];
         'updateAkitaDaoEscrowForApp(uint64,bool,uint64,uint64)void': [wallet: bigint | number, rekeyBack: boolean, appId: bigint | number, newEscrow: bigint | number];
         'updateRevocation(uint64,bool,uint64)void': [wallet: bigint | number, rekeyBack: boolean, app: bigint | number];
+        'updateFactoryChildContract(uint64,bool,uint64)void': [wallet: bigint | number, rekeyBack: boolean, factoryAppId: bigint | number];
     };
 };
 /**
@@ -114,6 +129,7 @@ export type UpdateAkitaDaoPluginReturns = {
     'updateAkitaDaoAppIDForApp(uint64,bool,uint64,uint64)void': void;
     'updateAkitaDaoEscrowForApp(uint64,bool,uint64,uint64)void': void;
     'updateRevocation(uint64,bool,uint64)void': void;
+    'updateFactoryChildContract(uint64,bool,uint64)void': void;
 };
 /**
  * Defines the types of available calls and state of the UpdateAkitaDaoPlugin smart contract.
@@ -158,6 +174,10 @@ export type UpdateAkitaDaoPluginTypes = {
         argsObj: UpdateAkitaDaoPluginArgs['obj']['updateRevocation(uint64,bool,uint64)void'];
         argsTuple: UpdateAkitaDaoPluginArgs['tuple']['updateRevocation(uint64,bool,uint64)void'];
         returns: UpdateAkitaDaoPluginReturns['updateRevocation(uint64,bool,uint64)void'];
+    }> & Record<'updateFactoryChildContract(uint64,bool,uint64)void' | 'updateFactoryChildContract', {
+        argsObj: UpdateAkitaDaoPluginArgs['obj']['updateFactoryChildContract(uint64,bool,uint64)void'];
+        argsTuple: UpdateAkitaDaoPluginArgs['tuple']['updateFactoryChildContract(uint64,bool,uint64)void'];
+        returns: UpdateAkitaDaoPluginReturns['updateFactoryChildContract(uint64,bool,uint64)void'];
     }>;
     /**
      * Defines the shape of the state of the application.
@@ -330,6 +350,23 @@ export declare abstract class UpdateAkitaDaoPluginParamsFactory {
      * @returns An `AppClientMethodCallParams` object for the call
      */
     static updateRevocation(params: CallParams<UpdateAkitaDaoPluginArgs['obj']['updateRevocation(uint64,bool,uint64)void'] | UpdateAkitaDaoPluginArgs['tuple']['updateRevocation(uint64,bool,uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
+    /**
+     * Constructs a no op call for the updateFactoryChildContract(uint64,bool,uint64)void ABI method
+     *
+    * Updates the factory's child contract bytecode using the contract stored in this plugin's box.
+    This allows the factory to deploy new wallets with the updated AbstractedAccount contract.
+    
+    The contract must first be uploaded to this plugin via initBoxedContract/loadBoxedContract,
+    then this method transfers it to the factory's box storage via inner transactions.
+    
+    Uses itxnCompose to group all inner transactions together so the factory's loadBoxedContract
+    validation (which checks gtxn for initBoxedContract) works correctly.
+  
+     *
+     * @param params Parameters for the call
+     * @returns An `AppClientMethodCallParams` object for the call
+     */
+    static updateFactoryChildContract(params: CallParams<UpdateAkitaDaoPluginArgs['obj']['updateFactoryChildContract(uint64,bool,uint64)void'] | UpdateAkitaDaoPluginArgs['tuple']['updateFactoryChildContract(uint64,bool,uint64)void']> & CallOnComplete): AppClientMethodCallParams & CallOnComplete;
 }
 /**
  * A factory to create and deploy one or more instance of the UpdateAkitaDAOPlugin smart contract and to create one or more app clients to interact with those (or other) app instances
@@ -756,6 +793,25 @@ export declare class UpdateAkitaDaoPluginClient {
         updateRevocation: (params: CallParams<UpdateAkitaDaoPluginArgs["obj"]["updateRevocation(uint64,bool,uint64)void"] | UpdateAkitaDaoPluginArgs["tuple"]["updateRevocation(uint64,bool,uint64)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<AppCallMethodCall>;
+        /**
+         * Makes a call to the UpdateAkitaDAOPlugin smart contract using the `updateFactoryChildContract(uint64,bool,uint64)void` ABI method.
+         *
+        * Updates the factory's child contract bytecode using the contract stored in this plugin's box.
+        This allows the factory to deploy new wallets with the updated AbstractedAccount contract.
+        
+        The contract must first be uploaded to this plugin via initBoxedContract/loadBoxedContract,
+        then this method transfers it to the factory's box storage via inner transactions.
+        
+        Uses itxnCompose to group all inner transactions together so the factory's loadBoxedContract
+        validation (which checks gtxn for initBoxedContract) works correctly.
+    
+         *
+         * @param params The params for the smart contract call
+         * @returns The call params
+         */
+        updateFactoryChildContract: (params: CallParams<UpdateAkitaDaoPluginArgs["obj"]["updateFactoryChildContract(uint64,bool,uint64)void"] | UpdateAkitaDaoPluginArgs["tuple"]["updateFactoryChildContract(uint64,bool,uint64)void"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<AppCallMethodCall>;
     };
     /**
      * Create transactions for the current app
@@ -866,6 +922,29 @@ export declare class UpdateAkitaDaoPluginClient {
          * @returns The call transaction
          */
         updateRevocation: (params: CallParams<UpdateAkitaDaoPluginArgs["obj"]["updateRevocation(uint64,bool,uint64)void"] | UpdateAkitaDaoPluginArgs["tuple"]["updateRevocation(uint64,bool,uint64)void"]> & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            transactions: Transaction[];
+            methodCalls: Map<number, import("algosdk").ABIMethod>;
+            signers: Map<number, TransactionSigner>;
+        }>;
+        /**
+         * Makes a call to the UpdateAkitaDAOPlugin smart contract using the `updateFactoryChildContract(uint64,bool,uint64)void` ABI method.
+         *
+        * Updates the factory's child contract bytecode using the contract stored in this plugin's box.
+        This allows the factory to deploy new wallets with the updated AbstractedAccount contract.
+        
+        The contract must first be uploaded to this plugin via initBoxedContract/loadBoxedContract,
+        then this method transfers it to the factory's box storage via inner transactions.
+        
+        Uses itxnCompose to group all inner transactions together so the factory's loadBoxedContract
+        validation (which checks gtxn for initBoxedContract) works correctly.
+    
+         *
+         * @param params The params for the smart contract call
+         * @returns The call transaction
+         */
+        updateFactoryChildContract: (params: CallParams<UpdateAkitaDaoPluginArgs["obj"]["updateFactoryChildContract(uint64,bool,uint64)void"] | UpdateAkitaDaoPluginArgs["tuple"]["updateFactoryChildContract(uint64,bool,uint64)void"]> & {
             onComplete?: OnApplicationComplete.NoOpOC;
         }) => Promise<{
             transactions: Transaction[];
@@ -1037,6 +1116,34 @@ export declare class UpdateAkitaDaoPluginClient {
             confirmation: modelsv2.PendingTransactionResponse;
             transaction: Transaction;
         }>;
+        /**
+         * Makes a call to the UpdateAkitaDAOPlugin smart contract using the `updateFactoryChildContract(uint64,bool,uint64)void` ABI method.
+         *
+        * Updates the factory's child contract bytecode using the contract stored in this plugin's box.
+        This allows the factory to deploy new wallets with the updated AbstractedAccount contract.
+        
+        The contract must first be uploaded to this plugin via initBoxedContract/loadBoxedContract,
+        then this method transfers it to the factory's box storage via inner transactions.
+        
+        Uses itxnCompose to group all inner transactions together so the factory's loadBoxedContract
+        validation (which checks gtxn for initBoxedContract) works correctly.
+    
+         *
+         * @param params The params for the smart contract call
+         * @returns The call result
+         */
+        updateFactoryChildContract: (params: CallParams<UpdateAkitaDaoPluginArgs["obj"]["updateFactoryChildContract(uint64,bool,uint64)void"] | UpdateAkitaDaoPluginArgs["tuple"]["updateFactoryChildContract(uint64,bool,uint64)void"]> & SendParams & {
+            onComplete?: OnApplicationComplete.NoOpOC;
+        }) => Promise<{
+            return: (undefined | UpdateAkitaDaoPluginReturns["updateFactoryChildContract(uint64,bool,uint64)void"]);
+            groupId: string;
+            txIds: string[];
+            returns?: ABIReturn[] | undefined | undefined;
+            confirmations: modelsv2.PendingTransactionResponse[];
+            transactions: Transaction[];
+            confirmation: modelsv2.PendingTransactionResponse;
+            transaction: Transaction;
+        }>;
     };
     /**
      * Clone this app client with different params
@@ -1151,6 +1258,24 @@ export type UpdateAkitaDaoPluginComposer<TReturns extends [...any[]] = []> = {
      * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
      */
     updateRevocation(params?: CallParams<UpdateAkitaDaoPluginArgs['obj']['updateRevocation(uint64,bool,uint64)void'] | UpdateAkitaDaoPluginArgs['tuple']['updateRevocation(uint64,bool,uint64)void']>): UpdateAkitaDaoPluginComposer<[...TReturns, UpdateAkitaDaoPluginReturns['updateRevocation(uint64,bool,uint64)void'] | undefined]>;
+    /**
+     * Calls the updateFactoryChildContract(uint64,bool,uint64)void ABI method.
+     *
+    * Updates the factory's child contract bytecode using the contract stored in this plugin's box.
+    This allows the factory to deploy new wallets with the updated AbstractedAccount contract.
+    
+    The contract must first be uploaded to this plugin via initBoxedContract/loadBoxedContract,
+    then this method transfers it to the factory's box storage via inner transactions.
+    
+    Uses itxnCompose to group all inner transactions together so the factory's loadBoxedContract
+    validation (which checks gtxn for initBoxedContract) works correctly.
+  
+     *
+     * @param args The arguments for the contract call
+     * @param params Any additional parameters for the call
+     * @returns The typed transaction composer so you can fluently chain multiple calls or call execute to execute all queued up transactions
+     */
+    updateFactoryChildContract(params?: CallParams<UpdateAkitaDaoPluginArgs['obj']['updateFactoryChildContract(uint64,bool,uint64)void'] | UpdateAkitaDaoPluginArgs['tuple']['updateFactoryChildContract(uint64,bool,uint64)void']>): UpdateAkitaDaoPluginComposer<[...TReturns, UpdateAkitaDaoPluginReturns['updateFactoryChildContract(uint64,bool,uint64)void'] | undefined]>;
     /**
      * Makes a clear_state call to an existing instance of the UpdateAkitaDAOPlugin smart contract.
      *

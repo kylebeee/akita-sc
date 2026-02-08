@@ -1,0 +1,214 @@
+#pragma version 11
+#pragma typetrack false
+
+// @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
+main:
+    intcblock 8 1 0
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:19
+    // export class TestProxyRekeyPlugin extends Contract {
+    txn NumAppArgs
+    bz main___algots__.defaultCreate@5
+    pushbytes 0x31758ff1 // method "proxyPay(uint64,bool,uint64,address,uint64,uint64)void"
+    txna ApplicationArgs 0
+    match main_proxyPay_route@3
+    err
+
+main_proxyPay_route@3:
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:25-32
+    // proxyPay(
+    //   wallet: Application,
+    //   rekeyBack: boolean,
+    //   payPlugin: Application,
+    //   receiver: Account,
+    //   asset: uint64,
+    //   amount: uint64,
+    // ): void {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    b proxyPay
+
+main___algots__.defaultCreate@5:
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:19
+    // export class TestProxyRekeyPlugin extends Contract {
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
+
+
+// smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts::TestProxyRekeyPlugin.proxyPay[routing]() -> void:
+proxyPay:
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:25-32
+    // proxyPay(
+    //   wallet: Application,
+    //   rekeyBack: boolean,
+    //   payPlugin: Application,
+    //   receiver: Account,
+    //   asset: uint64,
+    //   amount: uint64,
+    // ): void {
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_0 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    dup
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for bool8
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_0 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 4
+    dup
+    len
+    pushint 32 // 32
+    ==
+    assert // invalid number of bytes for uint8[32]
+    txna ApplicationArgs 5
+    dup
+    len
+    intc_0 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    txna ApplicationArgs 6
+    dup
+    len
+    intc_0 // 8
+    ==
+    assert // invalid number of bytes for uint64
+    btoi
+    // smart_contracts/utils/functions.ts:266-269
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    uncover 5
+    // smart_contracts/utils/functions.ts:268
+    // Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    pushbytes "spending_address"
+    // smart_contracts/utils/functions.ts:266-269
+    // const [spendingAddressBytes] = op.AppGlobal.getExBytes(
+    //   wallet,
+    //   Bytes(AbstractAccountGlobalStateKeysSpendingAddress)
+    // )
+    app_global_get_ex
+    pop
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:35-42
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 0,
+    //     rekeyTo: payPlugin.address,
+    //   })
+    //   .submit();
+    itxn_begin
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:38
+    // receiver: Global.currentApplicationAddress,
+    global CurrentApplicationAddress
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:40
+    // rekeyTo: payPlugin.address,
+    dig 5
+    app_params_get AppAddress
+    assert // application exists
+    itxn_field RekeyTo
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:39
+    // amount: 0,
+    intc_2 // 0
+    itxn_field Amount
+    itxn_field Receiver
+    itxn_field Sender
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:35-41
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 0,
+    //     rekeyTo: payPlugin.address,
+    //   })
+    intc_1 // 1
+    itxn_field TypeEnum
+    intc_2 // 0
+    itxn_field Fee
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:35-42
+    // itxn
+    //   .payment({
+    //     sender,
+    //     receiver: Global.currentApplicationAddress,
+    //     amount: 0,
+    //     rekeyTo: payPlugin.address,
+    //   })
+    //   .submit();
+    itxn_submit
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:44-51
+    // abiCall<typeof PayPlugin.prototype.pay>({
+    //   appId: payPlugin,
+    //   args: [
+    //     wallet,
+    //     rekeyBack,
+    //     [{ receiver, asset, amount }]
+    //   ]
+    // });
+    itxn_begin
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:49
+    // [{ receiver, asset, amount }]
+    swap
+    itob
+    uncover 2
+    swap
+    concat
+    swap
+    itob
+    concat
+    pushbytes 0x0001
+    swap
+    concat
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:44-51
+    // abiCall<typeof PayPlugin.prototype.pay>({
+    //   appId: payPlugin,
+    //   args: [
+    //     wallet,
+    //     rekeyBack,
+    //     [{ receiver, asset, amount }]
+    //   ]
+    // });
+    pushbytes 0xf9738492 // method "pay(uint64,bool,(address,uint64,uint64)[])void"
+    itxn_field ApplicationArgs
+    uncover 3
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    itxn_field ApplicationID
+    pushint 6 // appl
+    itxn_field TypeEnum
+    intc_2 // 0
+    itxn_field Fee
+    itxn_submit
+    // smart_contracts/arc58/plugins/test-proxy-rekey/contract.algo.ts:25-32
+    // proxyPay(
+    //   wallet: Application,
+    //   rekeyBack: boolean,
+    //   payPlugin: Application,
+    //   receiver: Account,
+    //   asset: uint64,
+    //   amount: uint64,
+    // ): void {
+    intc_1 // 1
+    return

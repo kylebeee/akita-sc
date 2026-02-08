@@ -385,7 +385,12 @@ export class AkitaDAO extends Contract {
       return 0
     }
 
-    return (aktaPower + bonesPower) / 2
+    // Only the equally staked portion counts toward governance power.
+    if (aktaPower < bonesPower) {
+      return aktaPower
+    }
+
+    return bonesPower
   }
 
   private createOrUpdateProposal(
@@ -507,6 +512,7 @@ export class AkitaDAO extends Contract {
       methods,
       useRounds,
       useExecutionKey,
+      coverFees,
       defaultToEscrow,
       fee,
       power,
@@ -541,6 +547,7 @@ export class AkitaDAO extends Contract {
           methods,
           useRounds,
           useExecutionKey,
+          coverFees,
           defaultToEscrow
         ]
       })
@@ -558,6 +565,7 @@ export class AkitaDAO extends Contract {
           methods,
           useRounds,
           useExecutionKey,
+          coverFees,
           defaultToEscrow
         ]
       })
@@ -1113,7 +1121,7 @@ export class AkitaDAO extends Contract {
     assert(Txn.sender === creator, ERR_INCORRECT_SENDER)
     assert(status === ProposalStatusVoting, ERR_INVALID_PROPOSAL_STATE)
 
-    // get total lock staked bones
+    // get total lock staked
     const { akta, bones } = this.akitaAssets.value
     let locked: uint64 = 0
     if (akta > 0 && bones > 0) {
@@ -1126,7 +1134,7 @@ export class AkitaDAO extends Contract {
 
       const lockedAkta = totals[0].locked
       const lockedBones = totals[1].locked
-      locked = (lockedAkta + lockedBones) / 2
+      locked = lockedAkta < lockedBones ? lockedAkta : lockedBones
     }
 
     const totalVotes: uint64 = approvals + rejections + abstains
@@ -1315,24 +1323,8 @@ export class AkitaDAO extends Contract {
 
   @abimethod({ readonly: true })
   getProposal(proposalID: uint64): ProposalDetails {
-    if (this.proposals(proposalID).exists) {
-      return this.proposals(proposalID).value
-    } else {
-      return {
-        status: uint8(0),
-        cid: op.bzero(36).toFixed({ length: 36 }),
-        votes: {
-          approvals: 0,
-          rejections: 0,
-          abstains: 0,
-        },
-        creator: Global.zeroAddress,
-        votingTs: 0,
-        created: 0,
-        feesPaid: 0,
-        actions: []
-      }
-    }
+    assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
+    return this.proposals(proposalID).value
   }
 
   @abimethod({ readonly: true })

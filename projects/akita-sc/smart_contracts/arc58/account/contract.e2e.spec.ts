@@ -2,7 +2,7 @@ import { algo, Config, microAlgo } from '@algorandfoundation/algokit-utils';
 import { registerDebugEventHandlers } from '@algorandfoundation/algokit-utils-debug';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { AppCallMethodCall } from '@algorandfoundation/algokit-utils/types/composer';
-import { beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import { AkitaDaoSDK } from 'akita-sdk/dao';
 import { AsaMintPluginSDK, isDripAllowance, isFlatAllowance, isWindowAllowance, newWallet, OptInPluginSDK, PayPluginSDK, WalletFactorySDK, WalletSDK } from 'akita-sdk/wallet';
 import { ALGORAND_ZERO_ADDRESS_STRING } from 'algosdk';

@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { SigningAccount, TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { afterAll, beforeAll, describe, expect, test } from '@jest/globals'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { StakingSDK, StakingType } from 'akita-sdk/staking'
 import { DisbursementPhase, Reward, StakingPoolFactorySDK, StakingPoolSDK } from 'akita-sdk/staking-pool'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
@@ -255,7 +255,8 @@ describe('Staking Pool Contract', () => {
       // Verify expected cost before operation (opUp calls add 2 extra transactions)
       // Account for: app call fee + payment transaction fee + 2 opUp transaction fees + inner txns
       // Note: opUp calls are separate transactions, not inner transactions
-      const expectedCost = createExpectedCost(expectedPayment, 0, MIN_TXN_FEE * 10n) // payment + 2 opUp + inner txns
+      // coverAppCallInnerTransactionFees adds fees for inner txns
+      const expectedCost = createExpectedCost(expectedPayment, 0, MIN_TXN_FEE * 11n) // payment + 2 opUp + inner txns + covered fees
       const verification = await verifyBalanceChange(
         algorand,
         creator.addr.toString(),
@@ -3003,22 +3004,22 @@ describe('Staking Pool Contract', () => {
       const evenUser2 = algosdk.generateAccount()
       const evenUser3 = algosdk.generateAccount()
 
-      // Fund all users
+      // Fund all users using dispenser (deployer may be low on funds by now)
       await algorand.send.payment({
-        sender: deployer.addr,
-        signer: makeBasicAccountTransactionSigner(deployer),
+        sender: dispenser.addr,
+        signer: dispenser.signer,
         receiver: evenUser1.addr,
         amount: algokit.microAlgos(50_000_000),
       })
       await algorand.send.payment({
-        sender: deployer.addr,
-        signer: makeBasicAccountTransactionSigner(deployer),
+        sender: dispenser.addr,
+        signer: dispenser.signer,
         receiver: evenUser2.addr,
         amount: algokit.microAlgos(50_000_000),
       })
       await algorand.send.payment({
-        sender: deployer.addr,
-        signer: makeBasicAccountTransactionSigner(deployer),
+        sender: dispenser.addr,
+        signer: dispenser.signer,
         receiver: evenUser3.addr,
         amount: algokit.microAlgos(50_000_000),
       })

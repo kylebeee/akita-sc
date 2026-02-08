@@ -1,5 +1,10 @@
 import { uint64 } from "@algorandfoundation/algorand-typescript"
 
+/** Maximum number of inner transactions allowed in a group */
+export const MAX_INNER_TXN_COUNT: uint64 = 256
+/** Maximum number of outer transactions allowed in a group */
+export const MAX_OUTER_TXN_COUNT: uint64 = 16
+
 export const AbstractAccountNumGlobalBytes: uint64 = 9 // 450_000
 export const AbstractAccountNumGlobalUints: uint64 = 9 // 256_500
 

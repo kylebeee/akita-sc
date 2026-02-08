@@ -112,7 +112,7 @@ class AkitaDaoSDK extends base_1.BaseSDK {
                 case constants_1.ProposalActionEnum.AddPlugin:
                 case constants_1.ProposalActionEnum.AddNamedPlugin: {
                     const { type, ...action } = typedAction;
-                    let { name = '', client, caller, global = false, methods = [], escrow = '', admin = false, delegationType = 0n, lastValid = constants_2.MAX_UINT64, cooldown = 0n, useRounds = false, useExecutionKey = false, defaultToEscrow = false, sourceLink = '', allowances = [] } = action;
+                    let { name = '', client, caller, global = false, methods = [], escrow = '', admin = false, delegationType = 0n, lastValid = constants_2.MAX_UINT64, cooldown = 0n, useRounds = false, useExecutionKey = false, coverFees = false, defaultToEscrow = false, sourceLink = '', allowances = [] } = action;
                     // Default the conditional properties
                     let fee = 0n;
                     let power = 0n;
@@ -159,6 +159,7 @@ class AkitaDaoSDK extends base_1.BaseSDK {
                         methods: transformedMethods,
                         useRounds,
                         useExecutionKey,
+                        coverFees,
                         defaultToEscrow,
                         fee,
                         power,

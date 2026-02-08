@@ -1,6 +1,6 @@
 import { algo, microAlgo } from '@algorandfoundation/algokit-utils';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
-import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { AkitaDaoSDK, EMPTY_CID, ProposalActionEnum } from 'akita-sdk/dao';
 import { WalletFactorySDK } from 'akita-sdk/wallet';
 import type { TransactionSigner } from 'algosdk';
@@ -25,11 +25,32 @@ const STAKING_TYPE_LOCK = 40;
 
 // One year in seconds (max lock time)
 const ONE_YEAR = 31_536_000;
+const ONE_DAY = 86_400n;
+const ONE_WEEK = 604_800n;
+const ONE_YEAR_IN_DAYS = 365n;
 
 // MBR costs from staking constants
 const STAKES_MBR = 28_900n;
 const TOTALS_MBR = 12_500n;
 const ASSET_OPT_IN_MBR = 100_000n;
+
+const toBigInt = (value: bigint | number) => BigInt(value);
+
+const calcPower = (amount: bigint | number, expiration: bigint | number, now: bigint | number) => {
+    const exp = toBigInt(expiration);
+    const current = toBigInt(now);
+    if (exp <= current) {
+        return 0n;
+    }
+    const remainingTime = exp - current;
+    if (remainingTime < ONE_WEEK) {
+        return 0n;
+    }
+    const remainingDays = remainingTime / ONE_DAY;
+    // Match contract formula: ((amount / ONE_YEAR_IN_DAYS) * remainingDays) / 1_000_000
+    return ((toBigInt(amount) / ONE_YEAR_IN_DAYS) * remainingDays) / 1_000_000n;
+};
+
 
 /**
  * Tests for DAO voting functionality after initialization.
@@ -45,7 +66,7 @@ const ASSET_OPT_IN_MBR = 100_000n;
  * - DAO must be initialized
  * - Users must have Akta + Bones ASA staked with LOCK type
  * - Lock expiration must be > 1 week in the future
- * - Voting power = average of Akta + Bones stake power
+ * - Voting power = min(Akta power, Bones power)
  */
 describe('ARC58 DAO Voting', () => {
     // Core contracts
@@ -842,6 +863,277 @@ describe('ARC58 DAO Voting', () => {
             // Voter1 (50,000 stake) should have more power than voter2 (25,000 stake)
             const voter2Power = totalApprovals - voter1Power;
             expect(voter1Power).toBeGreaterThan(voter2Power);
+        });
+
+        test('should cap voting power to equal stake across tokens', async () => {
+            const { algorand } = fixture.context;
+            const dispenser = await algorand.account.dispenserFromEnvironment();
+
+            const voter3Account = await algorand.account.random();
+            const voter3 = voter3Account.addr.toString();
+            const voter3Signer = voter3Account.signer;
+            await algorand.account.ensureFunded(voter3, dispenser, algo(100));
+
+            const voter4Account = await algorand.account.random();
+            const voter4 = voter4Account.addr.toString();
+            const voter4Signer = voter4Account.signer;
+            await algorand.account.ensureFunded(voter4, dispenser, algo(100));
+
+            await algorand.send.assetOptIn({
+                sender: voter3,
+                signer: voter3Signer,
+                assetId: aktaAssetId,
+            });
+            await algorand.send.assetOptIn({
+                sender: voter3,
+                signer: voter3Signer,
+                assetId: bonesAssetId,
+            });
+            await algorand.send.assetOptIn({
+                sender: voter4,
+                signer: voter4Signer,
+                assetId: aktaAssetId,
+            });
+            await algorand.send.assetOptIn({
+                sender: voter4,
+                signer: voter4Signer,
+                assetId: bonesAssetId,
+            });
+
+            await algorand.send.assetTransfer({
+                sender,
+                signer,
+                assetId: aktaAssetId,
+                receiver: voter3,
+                amount: 10_000_000_000n, // 10,000 AKTA
+            });
+            await algorand.send.assetTransfer({
+                sender,
+                signer,
+                assetId: bonesAssetId,
+                receiver: voter3,
+                amount: 10_000_000_000n, // 10,000 BONES
+            });
+            await algorand.send.assetTransfer({
+                sender,
+                signer,
+                assetId: aktaAssetId,
+                receiver: voter4,
+                amount: 10_000_000_000n, // 10,000 AKTA
+            });
+            await algorand.send.assetTransfer({
+                sender,
+                signer,
+                assetId: bonesAssetId,
+                receiver: voter4,
+                amount: 100_000_000_000n, // 100,000 BONES
+            });
+
+            const status = await algorand.client.algod.status().do();
+            const block = await algorand.client.algod.block(status.lastRound).do();
+            const blockTimestamp = BigInt(block.block.header.timestamp);
+            const expiration = blockTimestamp + BigInt(ONE_YEAR);
+
+            const voter3AktaPayment = await algorand.createTransaction.payment({
+                sender: voter3,
+                signer: voter3Signer,
+                receiver: staking.appAddress.toString(),
+                amount: microAlgo(STAKES_MBR),
+            });
+            const voter3AktaXfer = await algorand.createTransaction.assetTransfer({
+                sender: voter3,
+                signer: voter3Signer,
+                assetId: aktaAssetId,
+                receiver: staking.appAddress.toString(),
+                amount: 10_000_000_000n,
+            });
+            await staking.send.stakeAsa({
+                sender: voter3,
+                signer: voter3Signer,
+                args: {
+                    payment: voter3AktaPayment,
+                    assetXfer: voter3AktaXfer,
+                    type: STAKING_TYPE_LOCK,
+                    amount: 10_000_000_000n,
+                    expiration,
+                },
+            });
+
+            const voter3BonesPayment = await algorand.createTransaction.payment({
+                sender: voter3,
+                signer: voter3Signer,
+                receiver: staking.appAddress.toString(),
+                amount: microAlgo(STAKES_MBR),
+            });
+            const voter3BonesXfer = await algorand.createTransaction.assetTransfer({
+                sender: voter3,
+                signer: voter3Signer,
+                assetId: bonesAssetId,
+                receiver: staking.appAddress.toString(),
+                amount: 10_000_000_000n,
+            });
+            await staking.send.stakeAsa({
+                sender: voter3,
+                signer: voter3Signer,
+                args: {
+                    payment: voter3BonesPayment,
+                    assetXfer: voter3BonesXfer,
+                    type: STAKING_TYPE_LOCK,
+                    amount: 10_000_000_000n,
+                    expiration,
+                },
+            });
+
+            const voter4AktaPayment = await algorand.createTransaction.payment({
+                sender: voter4,
+                signer: voter4Signer,
+                receiver: staking.appAddress.toString(),
+                amount: microAlgo(STAKES_MBR),
+            });
+            const voter4AktaXfer = await algorand.createTransaction.assetTransfer({
+                sender: voter4,
+                signer: voter4Signer,
+                assetId: aktaAssetId,
+                receiver: staking.appAddress.toString(),
+                amount: 10_000_000_000n,
+            });
+            await staking.send.stakeAsa({
+                sender: voter4,
+                signer: voter4Signer,
+                args: {
+                    payment: voter4AktaPayment,
+                    assetXfer: voter4AktaXfer,
+                    type: STAKING_TYPE_LOCK,
+                    amount: 10_000_000_000n,
+                    expiration,
+                },
+            });
+
+            const voter4BonesPayment = await algorand.createTransaction.payment({
+                sender: voter4,
+                signer: voter4Signer,
+                receiver: staking.appAddress.toString(),
+                amount: microAlgo(STAKES_MBR),
+            });
+            const voter4BonesXfer = await algorand.createTransaction.assetTransfer({
+                sender: voter4,
+                signer: voter4Signer,
+                assetId: bonesAssetId,
+                receiver: staking.appAddress.toString(),
+                amount: 100_000_000_000n,
+            });
+            await staking.send.stakeAsa({
+                sender: voter4,
+                signer: voter4Signer,
+                args: {
+                    payment: voter4BonesPayment,
+                    assetXfer: voter4BonesXfer,
+                    type: STAKING_TYPE_LOCK,
+                    amount: 100_000_000_000n,
+                    expiration,
+                },
+            });
+
+            const costInfo = await dao.proposalCost({
+                actions: [
+                    {
+                        type: ProposalActionEnum.UpdateFields,
+                        field: 'min_rewards_impact',
+                        value: 800,
+                    },
+                ],
+            });
+
+            await dao.client.appClient.fundAppAccount({ amount: costInfo.total.microAlgo() });
+
+            const { return: proposalId } = await dao.newProposal({
+                cid: EMPTY_CID,
+                actions: [
+                    {
+                        type: ProposalActionEnum.UpdateFields,
+                        field: 'min_rewards_impact',
+                        value: 800,
+                    },
+                ],
+            });
+
+            await dao.submitProposal({ proposalId: proposalId! });
+
+            // Get staking info before voting to capture state
+            const voter3AktaInfo = await staking.getInfo({
+                args: {
+                    address: voter3,
+                    stake: { asset: aktaAssetId, type: STAKING_TYPE_LOCK },
+                },
+            });
+            const voter3BonesInfo = await staking.getInfo({
+                args: {
+                    address: voter3,
+                    stake: { asset: bonesAssetId, type: STAKING_TYPE_LOCK },
+                },
+            });
+
+            // Get the current round's timestamp just before voting - this matches what Global.latestTimestamp will see
+            const preVote3Status = await algorand.client.algod.status().do();
+            const preVote3Block = await algorand.client.algod.block(preVote3Status.lastRound).do();
+            const voter3Timestamp = BigInt(preVote3Block.block.header.timestamp);
+
+            const voter3VoteResult = await dao.voteProposal({
+                sender: voter3,
+                signer: voter3Signer,
+                proposalId: proposalId!,
+                vote: VOTE_APPROVE,
+            } as Parameters<typeof dao.voteProposal>[0]);
+
+            const proposalAfterVoter3 = await dao.getProposal(proposalId!);
+            const voter3Power = proposalAfterVoter3.votes.approvals;
+
+            const voter3AktaPower = calcPower(voter3AktaInfo.amount, voter3AktaInfo.expiration, voter3Timestamp);
+            const voter3BonesPower = calcPower(voter3BonesInfo.amount, voter3BonesInfo.expiration, voter3Timestamp);
+            const voter3ExpectedPower = voter3AktaPower < voter3BonesPower ? voter3AktaPower : voter3BonesPower;
+            
+            expect(voter3Power).toBe(voter3ExpectedPower);
+
+            // Get staking info before voting to capture state
+            const voter4AktaInfo = await staking.getInfo({
+                args: {
+                    address: voter4,
+                    stake: { asset: aktaAssetId, type: STAKING_TYPE_LOCK },
+                },
+            });
+            const voter4BonesInfo = await staking.getInfo({
+                args: {
+                    address: voter4,
+                    stake: { asset: bonesAssetId, type: STAKING_TYPE_LOCK },
+                },
+            });
+
+            // Get the current round's timestamp just before voting - this matches what Global.latestTimestamp will see
+            const preVote4Status = await algorand.client.algod.status().do();
+            const preVote4Block = await algorand.client.algod.block(preVote4Status.lastRound).do();
+            const voter4Timestamp = BigInt(preVote4Block.block.header.timestamp);
+
+            await dao.voteProposal({
+                sender: voter4,
+                signer: voter4Signer,
+                proposalId: proposalId!,
+                vote: VOTE_APPROVE,
+            } as Parameters<typeof dao.voteProposal>[0]);
+
+            const proposalAfterVoter4 = await dao.getProposal(proposalId!);
+            const voter4Power = proposalAfterVoter4.votes.approvals - voter3Power;
+
+            const voter4AktaPower = calcPower(voter4AktaInfo.amount, voter4AktaInfo.expiration, voter4Timestamp);
+            const voter4BonesPower = calcPower(voter4BonesInfo.amount, voter4BonesInfo.expiration, voter4Timestamp);
+            const voter4ExpectedPower = voter4AktaPower < voter4BonesPower ? voter4AktaPower : voter4BonesPower;
+            
+            // Voter4's power should match expected calculation (capped at equal stake)
+            expect(voter4Power).toBe(voter4ExpectedPower);
+            
+            // Voter4's extra BONES (100k vs 10k) should not give more power than voter3's equal stake.
+            // Power is based on min(AKTA, BONES), so voter4's power is limited by their AKTA stake.
+            // Due to time decay (voter4 votes slightly later), voter4's power may be slightly less than voter3's.
+            expect(voter4Power).toBeLessThanOrEqual(voter3Power);
         });
     });
 });

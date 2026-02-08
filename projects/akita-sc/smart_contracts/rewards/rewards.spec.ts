@@ -1,7 +1,7 @@
 import * as algokit from '@algorandfoundation/algokit-utils'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals'
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { RewardsSDK, UserAllocation } from 'akita-sdk/rewards'
 import algosdk, { makeBasicAccountTransactionSigner } from 'algosdk'
 import { TimeWarp } from '../../tests/utils/time'

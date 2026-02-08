@@ -14,6 +14,7 @@ exports.AddPluginDefaults = {
     useRounds: false,
     admin: false,
     delegationType: 0n,
+    coverFees: false,
 };
 // allowance info type guards
 function isFlatAllowance(info) {

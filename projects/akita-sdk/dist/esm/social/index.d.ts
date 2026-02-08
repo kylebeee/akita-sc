@@ -56,6 +56,9 @@ export declare class SocialSDK {
     setSendParams(sendParams: ExpandedSendParams): void;
     private getSendParams;
     private getRequiredSendParams;
+    protected getReaderSendParams({ sender }?: {
+        sender?: string;
+    }): ExpandedSendParams;
     /**
      * Generate a random 24-byte nonce for post key derivation
      * The contract will combine this with the chain timestamp to derive the full key.
@@ -444,6 +447,35 @@ export declare class SocialSDK {
         ref: PostRef;
         nft: bigint | number;
     }): Promise<void>;
+    /**
+     * Get all reactions for a post
+     *
+     * @param ref - The 32-byte post reference
+     * @param userAddress - Optional user address to check which NFTs they've reacted with
+     * @returns Object containing reactions array and set of NFT IDs the user has reacted with
+     */
+    getPostReactions({ ref, userAddress, }: {
+        ref: PostRef;
+        userAddress?: string;
+    }): Promise<{
+        reactions: Array<{
+            nftId: bigint;
+            count: bigint;
+        }>;
+        userReactedNfts: Set<bigint>;
+    }>;
+    /**
+     * Compare two Uint8Arrays for equality
+     */
+    private compareBytes;
+    /**
+     * Convert Uint8Array to bigint (big-endian)
+     */
+    private bytesToBigInt;
+    /**
+     * Convert address to first 16 bytes for reaction list lookup
+     */
+    private addressToBytes16;
     /**
      * Follow a user
      *

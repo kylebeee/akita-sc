@@ -97,6 +97,7 @@ export type PluginInfo = {
   admin: boolean;
   useRounds: boolean;
   useExecutionKey: boolean;
+  coverFees: boolean;
   lastCalled: uint64;
   start: uint64;
 }

@@ -43,6 +43,8 @@ import {
   AbstractAccountGlobalStateKeysSpendingAddress,
   AbstractAccountNumGlobalBytes,
   AbstractAccountNumGlobalUints,
+  MAX_INNER_TXN_COUNT,
+  MAX_OUTER_TXN_COUNT,
   MethodRestrictionByteLength,
   MinAllowanceMBR,
   MinDomainKeysMBR,
@@ -823,14 +825,31 @@ export class AbstractedAccount extends Contract {
 
     this.assertValidGroup(key, methodOffsets)
 
-    itxn
-      .payment({
-        sender: this.spendingAddress.value,
-        receiver: this.spendingAddress.value,
-        rekeyTo: pluginApp.address,
-        note: 'rekeying to plugin app'
-      })
-      .submit();
+    // Reimburse caller for fees if plugin has coverFees enabled
+    if (this.plugins(key).value.coverFees) {
+      // Cap at protocol max inner + outer transactions
+      const maxFee: uint64 = (MAX_INNER_TXN_COUNT + MAX_OUTER_TXN_COUNT) * Global.minTxnFee
+      const reimbursement = Txn.fee < maxFee ? Txn.fee : maxFee
+
+      itxn
+        .payment({
+          sender: this.controlledAddress.value,
+          receiver: Txn.sender,
+          amount: reimbursement,
+          rekeyTo: pluginApp.address,
+          note: 'rekeying to plugin app & reimbursing caller'
+        })
+        .submit()
+    } else {
+      itxn
+        .payment({
+          sender: this.spendingAddress.value,
+          receiver: this.spendingAddress.value,
+          rekeyTo: pluginApp.address,
+          note: 'rekeying to plugin app'
+        })
+        .submit();
+    }
 
     /** track the index of the transaction that triggered the rekey */
     this.rekeyIndex.value = Txn.groupIndex
@@ -889,6 +908,7 @@ export class AbstractedAccount extends Contract {
     methods: MethodRestriction[],
     useRounds: boolean,
     useExecutionKey: boolean,
+    coverFees: boolean,
     defaultToEscrow: boolean
   ): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
@@ -945,6 +965,7 @@ export class AbstractedAccount extends Contract {
       methods: clone(methodInfos),
       useRounds,
       useExecutionKey,
+      coverFees,
       lastCalled: 0,
       start: epochRef,
     }
@@ -1031,6 +1052,7 @@ export class AbstractedAccount extends Contract {
     methods: MethodRestriction[],
     useRounds: boolean,
     useExecutionKey: boolean,
+    coverFees: boolean,
     defaultToEscrow: boolean
   ): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
@@ -1087,6 +1109,7 @@ export class AbstractedAccount extends Contract {
       methods: clone(methodInfos),
       useRounds,
       useExecutionKey,
+      coverFees,
       lastCalled: 0,
       start: epochRef
     }

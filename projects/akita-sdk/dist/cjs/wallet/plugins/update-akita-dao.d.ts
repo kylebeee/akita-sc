@@ -18,6 +18,13 @@ type UpdateAkitaDaoAppIDForAppArgs = (Omit<ContractArgs['updateAkitaDaoAppIDForA
 type UpdateAkitaDaoEscrowForAppArgs = (Omit<ContractArgs['updateAkitaDaoEscrowForApp(uint64,bool,uint64,uint64)void'], 'wallet' | 'rekeyBack'> & MaybeSigner & {
     rekeyBack?: boolean;
 });
+type UpdateFactoryChildContractArgs = ({
+    factoryAppId: bigint | number;
+    version: string;
+    data: Uint8Array;
+} & MaybeSigner & {
+    rekeyBack?: boolean;
+});
 export declare class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPluginClient> {
     constructor(params: NewContractSDKParams);
     deleteBoxedContract(): PluginSDKReturn;
@@ -28,5 +35,31 @@ export declare class UpdateAkitaDAOPluginSDK extends BaseSDK<UpdateAkitaDaoPlugi
     updateAkitaDaoAppIDForApp(args: UpdateAkitaDaoAppIDForAppArgs): PluginSDKReturn;
     updateAkitaDaoEscrowForApp(): PluginSDKReturn;
     updateAkitaDaoEscrowForApp(args: UpdateAkitaDaoEscrowForAppArgs): PluginSDKReturn;
+    /**
+     * Updates a factory's child contract bytecode stored in its box.
+     * This allows the factory to deploy new instances with the updated contract code.
+     *
+     * The flow is:
+     * 1. Upload contract to this plugin's box via initBoxedContract/loadBoxedContract
+     * 2. Call updateFactoryChildContract which transfers the data to the factory's box
+     *
+     * @example
+     * ```typescript
+     * // Update wallet factory's child contract (AbstractedAccount)
+     * await dao.wallet.usePlugin({
+     *   calls: [
+     *     updatePlugin.updateFactoryChildContract({
+     *       sender,
+     *       signer,
+     *       factoryAppId: appIds.walletFactory,
+     *       version: '1.0.1',
+     *       data: compiledAbstractedAccount.approvalProgram,
+     *     }),
+     *   ],
+     * });
+     * ```
+     */
+    updateFactoryChildContract(): PluginSDKReturn;
+    updateFactoryChildContract(args: UpdateFactoryChildContractArgs): PluginSDKReturn;
 }
 export {};
