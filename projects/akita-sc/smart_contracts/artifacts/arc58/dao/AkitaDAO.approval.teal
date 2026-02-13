@@ -4,13 +4,13 @@
 // @algorandfoundation/algorand-typescript/arc4/index.d.ts::Contract.approvalProgram() -> uint64:
 main:
     intcblock 0 1 8 2 100000 1000 1000000
-    bytecblock 0x151f7c75 "wallet" 0x00 "" "l" "oal" 0x14 "initialized" 0x28 "aal" 0x1e "akita_assets" 0x32 "proposal_action_limit" "pal" "upgrade_app_ps" "add_plugin_ps" "remove_plugin_ps" "add_allowance_ps" "remove_allowance_ps" "new_escrow_ps" "update_fields_ps" 0x0a "version" "content_policy" "min_rewards_impact" "sal" "wallet_fees" "social_fees" "staking_fees" "subscription_fees" "nft_fees" "swap_fees" "revenue_splits" 0x02 0x15 0x00010002 "proposal_id" 0x002a 0x1f 0x29 0x0000 0x3c 0x46 0x47 0x50 0x000a "p" 0x000000000000016d00000000000f4240 "remove_execute_plugin_ps" "toggle_escrow_lock_ps" 0x37def5a2 0x000000000000000000000000000000000000000000000000 0x0077
+    bytecblock 0x00 0x151f7c75 "wallet" "" "l" "oal" 0x14 "initialized" 0x28 "aal" 0x1e "akita_assets" 0x32 "proposal_action_limit" "pal" "upgrade_app_ps" "add_plugin_ps" "remove_plugin_ps" "add_allowance_ps" "remove_allowance_ps" "new_escrow_ps" "update_fields_ps" 0x0a "version" "content_policy" "min_rewards_impact" "sal" "wallet_fees" "social_fees" "staking_fees" "subscription_fees" "nft_fees" "swap_fees" "revenue_splits" 0x02 0x15 0x00010002 "proposal_id" 0x002a 0x1f 0x29 0x0000 0x3c 0x46 0x47 0x50 0x000a "p" 0x000000000000016d00000000000f4240 "remove_execute_plugin_ps" "toggle_escrow_lock_ps" 0x89a76826 0x000000000000000000000000000000000000000000000000 0x0077
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/arc58/dao/contract.algo.ts:30
     // state = GlobalState<DaoState>({ initialValue: DaoStateDraft, key: AkitaDAOGlobalStateKeysInitialized })
     bytec 7 // "initialized"
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     app_global_put
     // smart_contracts/arc58/dao/contract.algo.ts:32
     // version = GlobalState<string>({ initialValue: '', key: GlobalStateKeyVersion })
@@ -41,7 +41,7 @@ main_switch_case_next@5:
     err
 
 main_opUp_route@23:
-    // smart_contracts/arc58/dao/contract.algo.ts:1336
+    // smart_contracts/arc58/dao/contract.algo.ts:1338
     // opUp(): void { }
     intc_1 // 1
     return
@@ -56,7 +56,7 @@ main_create_NoOp@25:
     err
 
 main_update_route@4:
-    // smart_contracts/arc58/dao/contract.algo.ts:918
+    // smart_contracts/arc58/dao/contract.algo.ts:920
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txn OnCompletion
     pushint 4 // UpdateApplication
@@ -148,7 +148,7 @@ getOrigin:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -284,7 +284,7 @@ getStakingPower:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     len
@@ -356,7 +356,7 @@ getStakingPower_after_if_else@5:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.create[routing]() -> void:
 create:
-    // smart_contracts/arc58/dao/contract.algo.ts:761
+    // smart_contracts/arc58/dao/contract.algo.ts:763
     // @abimethod({ onCreate: 'require' })
     txna ApplicationArgs 1
     dup
@@ -408,20 +408,20 @@ create:
     ==
     assert // invalid number of bytes for ((uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64),(uint64,uint64,uint64,uint64,uint64))
     txna ApplicationArgs 8
-    // smart_contracts/arc58/dao/contract.algo.ts:782
+    // smart_contracts/arc58/dao/contract.algo.ts:784
     // assert(this.version.value === '', ERR_ALREADY_INITIALIZED)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:32
     // version = GlobalState<string>({ initialValue: '', key: GlobalStateKeyVersion })
     bytec 23 // "version"
-    // smart_contracts/arc58/dao/contract.algo.ts:782
+    // smart_contracts/arc58/dao/contract.algo.ts:784
     // assert(this.version.value === '', ERR_ALREADY_INITIALIZED)
     app_global_get_ex
     assert // check GlobalState exists
     bytec_3 // ""
     ==
     assert // Already initialized
-    // smart_contracts/arc58/dao/contract.algo.ts:783
+    // smart_contracts/arc58/dao/contract.algo.ts:785
     // assert(version !== '', ERR_VERSION_CANNOT_BE_EMPTY)
     dig 7
     bytec_3 // ""
@@ -430,18 +430,18 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:32
     // version = GlobalState<string>({ initialValue: '', key: GlobalStateKeyVersion })
     bytec 23 // "version"
-    // smart_contracts/arc58/dao/contract.algo.ts:785
+    // smart_contracts/arc58/dao/contract.algo.ts:787
     // this.version.value = version
     uncover 8
     app_global_put
     // smart_contracts/arc58/dao/contract.algo.ts:36
     // proposalActionLimit = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysProposalActionLimit })
     bytec 13 // "proposal_action_limit"
-    // smart_contracts/arc58/dao/contract.algo.ts:786
+    // smart_contracts/arc58/dao/contract.algo.ts:788
     // this.proposalActionLimit.value = 5
     pushint 5 // 5
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:787
+    // smart_contracts/arc58/dao/contract.algo.ts:789
     // this.akitaAssets.value = { akta, bones: 0 }
     uncover 6
     itob
@@ -451,73 +451,73 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:62
     // akitaAssets = GlobalState<AkitaAssets>({ key: AkitaDAOGlobalStateKeysAkitaAssets })
     bytec 11 // "akita_assets"
-    // smart_contracts/arc58/dao/contract.algo.ts:787
+    // smart_contracts/arc58/dao/contract.algo.ts:789
     // this.akitaAssets.value = { akta, bones: 0 }
     swap
     app_global_put
     // smart_contracts/arc58/dao/contract.algo.ts:38
     // contentPolicy = GlobalState<CID>({ key: AkitaDAOGlobalStateKeysContentPolicy })
     bytec 24 // "content_policy"
-    // smart_contracts/arc58/dao/contract.algo.ts:788
+    // smart_contracts/arc58/dao/contract.algo.ts:790
     // this.contentPolicy.value = contentPolicy
     uncover 6
     app_global_put
     // smart_contracts/arc58/dao/contract.algo.ts:40
     // minRewardsImpact = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysMinRewardsImpact })
     bytec 25 // "min_rewards_impact"
-    // smart_contracts/arc58/dao/contract.algo.ts:789
+    // smart_contracts/arc58/dao/contract.algo.ts:791
     // this.minRewardsImpact.value = minRewardsImpact
     uncover 5
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:792
+    // smart_contracts/arc58/dao/contract.algo.ts:794
     // staking: apps.staking,
     dig 3
     extract 0 8
-    // smart_contracts/arc58/dao/contract.algo.ts:793
+    // smart_contracts/arc58/dao/contract.algo.ts:795
     // rewards: apps.rewards,
     dig 4
     extract 8 8
-    // smart_contracts/arc58/dao/contract.algo.ts:794
+    // smart_contracts/arc58/dao/contract.algo.ts:796
     // pool: apps.pool,
     dig 5
     extract 16 8
-    // smart_contracts/arc58/dao/contract.algo.ts:795
+    // smart_contracts/arc58/dao/contract.algo.ts:797
     // prizeBox: apps.prizeBox,
     dig 6
     extract 24 8
-    // smart_contracts/arc58/dao/contract.algo.ts:796
+    // smart_contracts/arc58/dao/contract.algo.ts:798
     // subscriptions: apps.subscriptions,
     dig 7
     extract 32 8
-    // smart_contracts/arc58/dao/contract.algo.ts:797
+    // smart_contracts/arc58/dao/contract.algo.ts:799
     // gate: apps.gate,
     dig 8
     extract 40 8
-    // smart_contracts/arc58/dao/contract.algo.ts:798
+    // smart_contracts/arc58/dao/contract.algo.ts:800
     // auction: apps.auction,
     dig 9
     extract 48 8
-    // smart_contracts/arc58/dao/contract.algo.ts:799
+    // smart_contracts/arc58/dao/contract.algo.ts:801
     // hyperSwap: apps.hyperSwap,
     dig 10
     extract 56 8
-    // smart_contracts/arc58/dao/contract.algo.ts:800
+    // smart_contracts/arc58/dao/contract.algo.ts:802
     // raffle: apps.raffle,
     dig 11
     extract 64 8
-    // smart_contracts/arc58/dao/contract.algo.ts:801
+    // smart_contracts/arc58/dao/contract.algo.ts:803
     // metaMerkles: apps.metaMerkles,
     dig 12
     extract 72 8
-    // smart_contracts/arc58/dao/contract.algo.ts:802
+    // smart_contracts/arc58/dao/contract.algo.ts:804
     // marketplace: apps.marketplace,
     dig 13
     extract 80 8
-    // smart_contracts/arc58/dao/contract.algo.ts:803
+    // smart_contracts/arc58/dao/contract.algo.ts:805
     // wallet: apps.wallet,
     dig 14
     extract 176 8
-    // smart_contracts/arc58/dao/contract.algo.ts:791-804
+    // smart_contracts/arc58/dao/contract.algo.ts:793-806
     // this.akitaAppList.value = {
     //   staking: apps.staking,
     //   rewards: apps.rewards,
@@ -558,7 +558,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:42
     // akitaAppList = GlobalState<AkitaAppList>({ key: AkitaDAOGlobalStateKeysAkitaAppList })
     bytec 9 // "aal"
-    // smart_contracts/arc58/dao/contract.algo.ts:791-804
+    // smart_contracts/arc58/dao/contract.algo.ts:793-806
     // this.akitaAppList.value = {
     //   staking: apps.staking,
     //   rewards: apps.rewards,
@@ -575,23 +575,23 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:807
+    // smart_contracts/arc58/dao/contract.algo.ts:809
     // social: apps.social,
     dig 3
     extract 120 8
-    // smart_contracts/arc58/dao/contract.algo.ts:808
+    // smart_contracts/arc58/dao/contract.algo.ts:810
     // graph: apps.graph,
     dig 4
     extract 128 8
-    // smart_contracts/arc58/dao/contract.algo.ts:809
+    // smart_contracts/arc58/dao/contract.algo.ts:811
     // impact: apps.impact,
     dig 5
     extract 136 8
-    // smart_contracts/arc58/dao/contract.algo.ts:810
+    // smart_contracts/arc58/dao/contract.algo.ts:812
     // moderation: apps.moderation
     dig 6
     extract 144 8
-    // smart_contracts/arc58/dao/contract.algo.ts:806-811
+    // smart_contracts/arc58/dao/contract.algo.ts:808-813
     // this.akitaSocialAppList.value = {
     //   social: apps.social,
     //   graph: apps.graph,
@@ -608,7 +608,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:44
     // akitaSocialAppList = GlobalState<AkitaSocialAppList>({ key: AkitaDAOGlobalStateKeysAkitaSocialAppList })
     bytec 26 // "sal"
-    // smart_contracts/arc58/dao/contract.algo.ts:806-811
+    // smart_contracts/arc58/dao/contract.algo.ts:808-813
     // this.akitaSocialAppList.value = {
     //   social: apps.social,
     //   graph: apps.graph,
@@ -617,19 +617,19 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:814
+    // smart_contracts/arc58/dao/contract.algo.ts:816
     // optin: apps.optin,
     dig 3
     extract 96 8
-    // smart_contracts/arc58/dao/contract.algo.ts:815
+    // smart_contracts/arc58/dao/contract.algo.ts:817
     // revenueManager: apps.revenueManager,
     dig 4
     extract 104 8
-    // smart_contracts/arc58/dao/contract.algo.ts:816
+    // smart_contracts/arc58/dao/contract.algo.ts:818
     // update: apps.update
     dig 5
     extract 112 8
-    // smart_contracts/arc58/dao/contract.algo.ts:813-817
+    // smart_contracts/arc58/dao/contract.algo.ts:815-819
     // this.pluginAppList.value = {
     //   optin: apps.optin,
     //   revenueManager: apps.revenueManager,
@@ -642,7 +642,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:46
     // pluginAppList = GlobalState<PluginAppList>({ key: AkitaDAOGlobalStateKeysPluginAppList })
     bytec 14 // "pal"
-    // smart_contracts/arc58/dao/contract.algo.ts:813-817
+    // smart_contracts/arc58/dao/contract.algo.ts:815-819
     // this.pluginAppList.value = {
     //   optin: apps.optin,
     //   revenueManager: apps.revenueManager,
@@ -650,31 +650,31 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:820
+    // smart_contracts/arc58/dao/contract.algo.ts:822
     // vrfBeacon: apps.vrfBeacon,
     dig 3
     extract 152 8
-    // smart_contracts/arc58/dao/contract.algo.ts:821
+    // smart_contracts/arc58/dao/contract.algo.ts:823
     // nfdRegistry: apps.nfdRegistry,
     dig 4
     extract 160 8
-    // smart_contracts/arc58/dao/contract.algo.ts:822
+    // smart_contracts/arc58/dao/contract.algo.ts:824
     // assetInbox: apps.assetInbox,
     dig 5
     extract 168 8
-    // smart_contracts/arc58/dao/contract.algo.ts:823
+    // smart_contracts/arc58/dao/contract.algo.ts:825
     // escrow: apps.escrow,
     dig 6
     extract 184 8
-    // smart_contracts/arc58/dao/contract.algo.ts:824
+    // smart_contracts/arc58/dao/contract.algo.ts:826
     // akitaNfd: apps.akitaNfd,
     dig 7
     extract 88 8
-    // smart_contracts/arc58/dao/contract.algo.ts:825
+    // smart_contracts/arc58/dao/contract.algo.ts:827
     // poll: apps.poll
     uncover 8
     extract 192 8
-    // smart_contracts/arc58/dao/contract.algo.ts:819-826
+    // smart_contracts/arc58/dao/contract.algo.ts:821-828
     // this.otherAppList.value = {
     //   vrfBeacon: apps.vrfBeacon,
     //   nfdRegistry: apps.nfdRegistry,
@@ -697,7 +697,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:48
     // otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
     bytec 5 // "oal"
-    // smart_contracts/arc58/dao/contract.algo.ts:819-826
+    // smart_contracts/arc58/dao/contract.algo.ts:821-828
     // this.otherAppList.value = {
     //   vrfBeacon: apps.vrfBeacon,
     //   nfdRegistry: apps.nfdRegistry,
@@ -708,15 +708,15 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:829
+    // smart_contracts/arc58/dao/contract.algo.ts:831
     // createFee: fees.walletCreateFee,
     dig 2
     extract 0 8
-    // smart_contracts/arc58/dao/contract.algo.ts:830
+    // smart_contracts/arc58/dao/contract.algo.ts:832
     // referrerPercentage: fees.walletReferrerPercentage
     dig 3
     extract 8 8
-    // smart_contracts/arc58/dao/contract.algo.ts:828-831
+    // smart_contracts/arc58/dao/contract.algo.ts:830-833
     // this.walletFees.value = {
     //   createFee: fees.walletCreateFee,
     //   referrerPercentage: fees.walletReferrerPercentage
@@ -725,30 +725,30 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:50
     // walletFees = GlobalState<WalletFees>({ key: AkitaDAOGlobalStateKeysWalletFees })
     bytec 27 // "wallet_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:828-831
+    // smart_contracts/arc58/dao/contract.algo.ts:830-833
     // this.walletFees.value = {
     //   createFee: fees.walletCreateFee,
     //   referrerPercentage: fees.walletReferrerPercentage
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:834
+    // smart_contracts/arc58/dao/contract.algo.ts:836
     // postFee: fees.postFee,
     dig 2
     extract 16 8
-    // smart_contracts/arc58/dao/contract.algo.ts:835
+    // smart_contracts/arc58/dao/contract.algo.ts:837
     // reactFee: fees.reactFee,
     dig 3
     extract 24 8
-    // smart_contracts/arc58/dao/contract.algo.ts:836
+    // smart_contracts/arc58/dao/contract.algo.ts:838
     // impactTaxMin: fees.impactTaxMin,
     dig 4
     extract 32 8
-    // smart_contracts/arc58/dao/contract.algo.ts:837
+    // smart_contracts/arc58/dao/contract.algo.ts:839
     // impactTaxMax: fees.impactTaxMax,
     dig 5
     extract 40 8
-    // smart_contracts/arc58/dao/contract.algo.ts:833-838
+    // smart_contracts/arc58/dao/contract.algo.ts:835-840
     // this.socialFees.value = {
     //   postFee: fees.postFee,
     //   reactFee: fees.reactFee,
@@ -765,7 +765,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:52
     // socialFees = GlobalState<SocialFees>({ key: AkitaDAOGlobalStateKeysSocialFees })
     bytec 28 // "social_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:833-838
+    // smart_contracts/arc58/dao/contract.algo.ts:835-840
     // this.socialFees.value = {
     //   postFee: fees.postFee,
     //   reactFee: fees.reactFee,
@@ -774,19 +774,19 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:841
+    // smart_contracts/arc58/dao/contract.algo.ts:843
     // creationFee: fees.poolCreationFee,
     dig 2
     extract 48 8
-    // smart_contracts/arc58/dao/contract.algo.ts:842
+    // smart_contracts/arc58/dao/contract.algo.ts:844
     // impactTaxMin: fees.poolImpactTaxMin,
     dig 3
     extract 56 8
-    // smart_contracts/arc58/dao/contract.algo.ts:843
+    // smart_contracts/arc58/dao/contract.algo.ts:845
     // impactTaxMax: fees.poolImpactTaxMax
     dig 4
     extract 64 8
-    // smart_contracts/arc58/dao/contract.algo.ts:840-844
+    // smart_contracts/arc58/dao/contract.algo.ts:842-846
     // this.stakingFees.value = {
     //   creationFee: fees.poolCreationFee,
     //   impactTaxMin: fees.poolImpactTaxMin,
@@ -799,7 +799,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:54
     // stakingFees = GlobalState<StakingFees>({ key: AkitaDAOGlobalStateKeysStakingFees })
     bytec 29 // "staking_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:840-844
+    // smart_contracts/arc58/dao/contract.algo.ts:842-846
     // this.stakingFees.value = {
     //   creationFee: fees.poolCreationFee,
     //   impactTaxMin: fees.poolImpactTaxMin,
@@ -807,19 +807,19 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:847
+    // smart_contracts/arc58/dao/contract.algo.ts:849
     // serviceCreationFee: fees.subscriptionServiceCreationFee,
     dig 2
     extract 72 8
-    // smart_contracts/arc58/dao/contract.algo.ts:848
+    // smart_contracts/arc58/dao/contract.algo.ts:850
     // paymentPercentage: fees.subscriptionPaymentPercentage,
     dig 3
     extract 80 8
-    // smart_contracts/arc58/dao/contract.algo.ts:849
+    // smart_contracts/arc58/dao/contract.algo.ts:851
     // triggerPercentage: fees.subscriptionTriggerPercentage,
     dig 4
     extract 88 8
-    // smart_contracts/arc58/dao/contract.algo.ts:846-850
+    // smart_contracts/arc58/dao/contract.algo.ts:848-852
     // this.subscriptionFees.value = {
     //   serviceCreationFee: fees.subscriptionServiceCreationFee,
     //   paymentPercentage: fees.subscriptionPaymentPercentage,
@@ -832,7 +832,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:56
     // subscriptionFees = GlobalState<SubscriptionFees>({ key: AkitaDAOGlobalStateKeysSubscriptionFees })
     bytec 30 // "subscription_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:846-850
+    // smart_contracts/arc58/dao/contract.algo.ts:848-852
     // this.subscriptionFees.value = {
     //   serviceCreationFee: fees.subscriptionServiceCreationFee,
     //   paymentPercentage: fees.subscriptionPaymentPercentage,
@@ -840,67 +840,67 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:853
+    // smart_contracts/arc58/dao/contract.algo.ts:855
     // marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
     dig 2
     extract 96 8
-    // smart_contracts/arc58/dao/contract.algo.ts:854
+    // smart_contracts/arc58/dao/contract.algo.ts:856
     // marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
     dig 3
     extract 104 8
-    // smart_contracts/arc58/dao/contract.algo.ts:855
+    // smart_contracts/arc58/dao/contract.algo.ts:857
     // marketplaceComposablePercentage: fees.marketplaceComposablePercentage,
     dig 4
     extract 112 8
-    // smart_contracts/arc58/dao/contract.algo.ts:856
+    // smart_contracts/arc58/dao/contract.algo.ts:858
     // marketplaceRoyaltyDefaultPercentage: fees.marketplaceRoyaltyDefaultPercentage,
     dig 5
     extract 120 8
-    // smart_contracts/arc58/dao/contract.algo.ts:857
+    // smart_contracts/arc58/dao/contract.algo.ts:859
     // shuffleSalePercentage: fees.shuffleSalePercentage,
     dig 6
     extract 128 8
-    // smart_contracts/arc58/dao/contract.algo.ts:858
+    // smart_contracts/arc58/dao/contract.algo.ts:860
     // omnigemSaleFee: fees.omnigemSaleFee,
     dig 7
     extract 136 8
-    // smart_contracts/arc58/dao/contract.algo.ts:859
+    // smart_contracts/arc58/dao/contract.algo.ts:861
     // auctionCreationFee: fees.auctionCreationFee,
     dig 8
     extract 144 8
-    // smart_contracts/arc58/dao/contract.algo.ts:860
+    // smart_contracts/arc58/dao/contract.algo.ts:862
     // auctionSaleImpactTaxMin: fees.auctionSaleImpactTaxMin,
     dig 9
     extract 152 8
-    // smart_contracts/arc58/dao/contract.algo.ts:861
+    // smart_contracts/arc58/dao/contract.algo.ts:863
     // auctionSaleImpactTaxMax: fees.auctionSaleImpactTaxMax,
     dig 10
     extract 160 8
-    // smart_contracts/arc58/dao/contract.algo.ts:862
+    // smart_contracts/arc58/dao/contract.algo.ts:864
     // auctionComposablePercentage: fees.auctionComposablePercentage,
     dig 11
     extract 168 8
-    // smart_contracts/arc58/dao/contract.algo.ts:863
+    // smart_contracts/arc58/dao/contract.algo.ts:865
     // auctionRafflePercentage: fees.auctionRafflePercentage,
     dig 12
     extract 176 8
-    // smart_contracts/arc58/dao/contract.algo.ts:864
+    // smart_contracts/arc58/dao/contract.algo.ts:866
     // raffleCreationFee: fees.raffleCreationFee,
     dig 13
     extract 184 8
-    // smart_contracts/arc58/dao/contract.algo.ts:865
+    // smart_contracts/arc58/dao/contract.algo.ts:867
     // raffleSaleImpactTaxMin: fees.raffleSaleImpactTaxMin,
     dig 14
     extract 192 8
-    // smart_contracts/arc58/dao/contract.algo.ts:866
+    // smart_contracts/arc58/dao/contract.algo.ts:868
     // raffleSaleImpactTaxMax: fees.raffleSaleImpactTaxMax,
     dig 15
     extract 200 8
-    // smart_contracts/arc58/dao/contract.algo.ts:867
+    // smart_contracts/arc58/dao/contract.algo.ts:869
     // raffleComposablePercentage: fees.raffleComposablePercentage,
     dig 16
     extract 208 8
-    // smart_contracts/arc58/dao/contract.algo.ts:852-868
+    // smart_contracts/arc58/dao/contract.algo.ts:854-870
     // this.nftFees.value = {
     //   marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
     //   marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
@@ -950,7 +950,7 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:58
     // nftFees = GlobalState<NFTFees>({ key: AkitaDAOGlobalStateKeysNFTFees })
     bytec 31 // "nft_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:852-868
+    // smart_contracts/arc58/dao/contract.algo.ts:854-870
     // this.nftFees.value = {
     //   marketplaceSalePercentageMin: fees.marketplaceSalePercentageMin,
     //   marketplaceSalePercentageMax: fees.marketplaceSalePercentageMax,
@@ -970,15 +970,15 @@ create:
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:871
+    // smart_contracts/arc58/dao/contract.algo.ts:873
     // impactTaxMin: fees.swapFeeImpactTaxMin,
     dig 2
     extract 216 8
-    // smart_contracts/arc58/dao/contract.algo.ts:872
+    // smart_contracts/arc58/dao/contract.algo.ts:874
     // impactTaxMax: fees.swapFeeImpactTaxMax,
     uncover 3
     extract 224 8
-    // smart_contracts/arc58/dao/contract.algo.ts:870-873
+    // smart_contracts/arc58/dao/contract.algo.ts:872-875
     // this.swapFees.value = {
     //   impactTaxMin: fees.swapFeeImpactTaxMin,
     //   impactTaxMax: fees.swapFeeImpactTaxMax,
@@ -987,91 +987,91 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:60
     // swapFees = GlobalState<SwapFees>({ key: AkitaDAOGlobalStateKeysSwapFees })
     bytec 32 // "swap_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:870-873
+    // smart_contracts/arc58/dao/contract.algo.ts:872-875
     // this.swapFees.value = {
     //   impactTaxMin: fees.swapFeeImpactTaxMin,
     //   impactTaxMax: fees.swapFeeImpactTaxMax,
     // }
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:875
+    // smart_contracts/arc58/dao/contract.algo.ts:877
     // this.upgradeAppProposalSettings.value = clone(proposalSettings.upgradeApp)
     dig 1
     extract 0 40
     // smart_contracts/arc58/dao/contract.algo.ts:68
     // upgradeAppProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysUpgradeAppProposalSettings })
     bytec 15 // "upgrade_app_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:875
+    // smart_contracts/arc58/dao/contract.algo.ts:877
     // this.upgradeAppProposalSettings.value = clone(proposalSettings.upgradeApp)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:876
+    // smart_contracts/arc58/dao/contract.algo.ts:878
     // this.addPluginProposalSettings.value = clone(proposalSettings.addPlugin)
     dig 1
     extract 40 40
     // smart_contracts/arc58/dao/contract.algo.ts:70
     // addPluginProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysAddPluginProposalSettings })
     bytec 16 // "add_plugin_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:876
+    // smart_contracts/arc58/dao/contract.algo.ts:878
     // this.addPluginProposalSettings.value = clone(proposalSettings.addPlugin)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:877
+    // smart_contracts/arc58/dao/contract.algo.ts:879
     // this.removeExecutePluginProposalSettings.value = clone(proposalSettings.removeExecutePlugin)
     dig 1
     extract 80 40
     // smart_contracts/arc58/dao/contract.algo.ts:74
     // removeExecutePluginProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysRemoveExecutePluginProposalSettings })
     bytec 49 // "remove_execute_plugin_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:877
+    // smart_contracts/arc58/dao/contract.algo.ts:879
     // this.removeExecutePluginProposalSettings.value = clone(proposalSettings.removeExecutePlugin)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:878
+    // smart_contracts/arc58/dao/contract.algo.ts:880
     // this.removePluginProposalSettings.value = clone(proposalSettings.removePlugin)
     dig 1
     extract 120 40
     // smart_contracts/arc58/dao/contract.algo.ts:72
     // removePluginProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysRemovePluginProposalSettings })
     bytec 17 // "remove_plugin_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:878
+    // smart_contracts/arc58/dao/contract.algo.ts:880
     // this.removePluginProposalSettings.value = clone(proposalSettings.removePlugin)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:879
+    // smart_contracts/arc58/dao/contract.algo.ts:881
     // this.addAllowancesProposalSettings.value = clone(proposalSettings.addAllowance)
     dig 1
     extract 160 40
     // smart_contracts/arc58/dao/contract.algo.ts:76
     // addAllowancesProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysAddAllowancesProposalSettings })
     bytec 18 // "add_allowance_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:879
+    // smart_contracts/arc58/dao/contract.algo.ts:881
     // this.addAllowancesProposalSettings.value = clone(proposalSettings.addAllowance)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:880
+    // smart_contracts/arc58/dao/contract.algo.ts:882
     // this.removeAllowancesProposalSettings.value = clone(proposalSettings.removeAllowance)
     dig 1
     extract 200 40
     // smart_contracts/arc58/dao/contract.algo.ts:78
     // removeAllowancesProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings })
     bytec 19 // "remove_allowance_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:880
+    // smart_contracts/arc58/dao/contract.algo.ts:882
     // this.removeAllowancesProposalSettings.value = clone(proposalSettings.removeAllowance)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:881
+    // smart_contracts/arc58/dao/contract.algo.ts:883
     // this.newEscrowProposalSettings.value = clone(proposalSettings.newEscrow)
     dig 1
     extract 240 40
     // smart_contracts/arc58/dao/contract.algo.ts:80
     // newEscrowProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysNewEscrowProposalSettings })
     bytec 20 // "new_escrow_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:881
+    // smart_contracts/arc58/dao/contract.algo.ts:883
     // this.newEscrowProposalSettings.value = clone(proposalSettings.newEscrow)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:882
+    // smart_contracts/arc58/dao/contract.algo.ts:884
     // this.toggleEscrowLockProposalSettings.value = clone(proposalSettings.toggleEscrowLock)
     dig 1
     pushints 280 40 // 280, 40
@@ -1079,11 +1079,11 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:82
     // toggleEscrowLockProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysToggleEscrowLockProposalSettings })
     bytec 50 // "toggle_escrow_lock_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:882
+    // smart_contracts/arc58/dao/contract.algo.ts:884
     // this.toggleEscrowLockProposalSettings.value = clone(proposalSettings.toggleEscrowLock)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:883
+    // smart_contracts/arc58/dao/contract.algo.ts:885
     // this.updateFieldsProposalSettings.value = clone(proposalSettings.updateFields)
     swap
     pushints 320 40 // 320, 40
@@ -1091,25 +1091,25 @@ create:
     // smart_contracts/arc58/dao/contract.algo.ts:84
     // updateFieldsProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings })
     bytec 21 // "update_fields_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:883
+    // smart_contracts/arc58/dao/contract.algo.ts:885
     // this.updateFieldsProposalSettings.value = clone(proposalSettings.updateFields)
     swap
     app_global_put
     // smart_contracts/arc58/dao/contract.algo.ts:64
     // revenueSplits = GlobalState<Split[]>({ key: AkitaDAOGlobalStateKeysRevenueSplits })
     bytec 33 // "revenue_splits"
-    // smart_contracts/arc58/dao/contract.algo.ts:885
+    // smart_contracts/arc58/dao/contract.algo.ts:887
     // this.revenueSplits.value = clone(revenueSplits)
     swap
     app_global_put
     // smart_contracts/arc58/dao/contract.algo.ts:86
     // proposalID = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysProposalID })
     bytec 37 // "proposal_id"
-    // smart_contracts/arc58/dao/contract.algo.ts:887
+    // smart_contracts/arc58/dao/contract.algo.ts:889
     // this.proposalID.value = 1
     intc_1 // 1
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:761
+    // smart_contracts/arc58/dao/contract.algo.ts:763
     // @abimethod({ onCreate: 'require' })
     intc_1 // 1
     return
@@ -1117,7 +1117,7 @@ create:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.update[routing]() -> void:
 update:
-    // smart_contracts/arc58/dao/contract.algo.ts:918
+    // smart_contracts/arc58/dao/contract.algo.ts:920
     // @abimethod({ allowActions: ['UpdateApplication'] })
     txna ApplicationArgs 1
     dup
@@ -1130,14 +1130,14 @@ update:
     ==
     assert // invalid number of bytes for (len+utf8[])
     extract 2 0
-    // smart_contracts/arc58/dao/contract.algo.ts:920
+    // smart_contracts/arc58/dao/contract.algo.ts:922
     // assert(Txn.sender === this.wallet.value.address, ERR_NOT_AKITA_DAO)
     txn Sender
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:920
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:922
     // assert(Txn.sender === this.wallet.value.address, ERR_NOT_AKITA_DAO)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1145,19 +1145,19 @@ update:
     assert // application exists
     ==
     assert // Only the Akita DAO can call this function
-    // smart_contracts/arc58/dao/contract.algo.ts:921
+    // smart_contracts/arc58/dao/contract.algo.ts:923
     // const updatePlugin = this.pluginAppList.value.update
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:46
     // pluginAppList = GlobalState<PluginAppList>({ key: AkitaDAOGlobalStateKeysPluginAppList })
     bytec 14 // "pal"
-    // smart_contracts/arc58/dao/contract.algo.ts:921
+    // smart_contracts/arc58/dao/contract.algo.ts:923
     // const updatePlugin = this.pluginAppList.value.update
     app_global_get_ex
     assert // check GlobalState exists
     pushint 16 // 16
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:922
+    // smart_contracts/arc58/dao/contract.algo.ts:924
     // assert(Global.callerApplicationId === updatePlugin, ERR_INVALID_UPGRADE)
     global CallerApplicationID
     ==
@@ -1165,11 +1165,11 @@ update:
     // smart_contracts/arc58/dao/contract.algo.ts:32
     // version = GlobalState<string>({ initialValue: '', key: GlobalStateKeyVersion })
     bytec 23 // "version"
-    // smart_contracts/arc58/dao/contract.algo.ts:923
+    // smart_contracts/arc58/dao/contract.algo.ts:925
     // this.version.value = newVersion
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:918
+    // smart_contracts/arc58/dao/contract.algo.ts:920
     // @abimethod({ allowActions: ['UpdateApplication'] })
     intc_1 // 1
     return
@@ -1177,7 +1177,7 @@ update:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setup[routing]() -> void:
 setup:
-    // smart_contracts/arc58/dao/contract.algo.ts:927
+    // smart_contracts/arc58/dao/contract.algo.ts:929
     // setup(nickname: string): uint64 {
     txna ApplicationArgs 1
     dup
@@ -1189,34 +1189,34 @@ setup:
     len
     ==
     assert // invalid number of bytes for (len+utf8[])
-    // smart_contracts/arc58/dao/contract.algo.ts:928
+    // smart_contracts/arc58/dao/contract.algo.ts:930
     // assert(!this.wallet.hasValue, ERR_WALLET_ALREADY_SETUP)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:928
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:930
     // assert(!this.wallet.hasValue, ERR_WALLET_ALREADY_SETUP)
     app_global_get_ex
     bury 1
     !
     assert // Wallet already setup
-    // smart_contracts/arc58/dao/contract.algo.ts:930
+    // smart_contracts/arc58/dao/contract.algo.ts:932
     // const { wallet: appId } = this.akitaAppList.value
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:42
     // akitaAppList = GlobalState<AkitaAppList>({ key: AkitaDAOGlobalStateKeysAkitaAppList })
     bytec 9 // "aal"
-    // smart_contracts/arc58/dao/contract.algo.ts:930
+    // smart_contracts/arc58/dao/contract.algo.ts:932
     // const { wallet: appId } = this.akitaAppList.value
     app_global_get_ex
     assert // check GlobalState exists
     pushint 88 // 88
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:932
+    // smart_contracts/arc58/dao/contract.algo.ts:934
     // const cost = this.setupCost()
     callsub smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setupCost
-    // smart_contracts/arc58/dao/contract.algo.ts:934-946
+    // smart_contracts/arc58/dao/contract.algo.ts:936-948
     // const walletID = abiCall<typeof AbstractedAccountFactory.prototype.newAccount>({
     //   appId,
     //   args: [
@@ -1231,14 +1231,14 @@ setup:
     //   ]
     // }).returnValue
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:938
+    // smart_contracts/arc58/dao/contract.algo.ts:940
     // receiver: Application(appId).address,
     dig 1
     app_params_get AppAddress
     assert // application exists
     itxn_field Receiver
     itxn_field Amount
-    // smart_contracts/arc58/dao/contract.algo.ts:937-940
+    // smart_contracts/arc58/dao/contract.algo.ts:939-942
     // itxn.payment({
     //   receiver: Application(appId).address,
     //   amount: cost,
@@ -1247,7 +1247,7 @@ setup:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/arc58/dao/contract.algo.ts:934-946
+    // smart_contracts/arc58/dao/contract.algo.ts:936-948
     // const walletID = abiCall<typeof AbstractedAccountFactory.prototype.newAccount>({
     //   appId,
     //   args: [
@@ -1262,16 +1262,16 @@ setup:
     //   ]
     // }).returnValue
     itxn_next
-    // smart_contracts/arc58/dao/contract.algo.ts:941
+    // smart_contracts/arc58/dao/contract.algo.ts:943
     // Global.zeroAddress,
     global ZeroAddress
-    // smart_contracts/arc58/dao/contract.algo.ts:942
+    // smart_contracts/arc58/dao/contract.algo.ts:944
     // Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/dao/contract.algo.ts:944
+    // smart_contracts/arc58/dao/contract.algo.ts:946
     // Global.zeroAddress,
     global ZeroAddress
-    // smart_contracts/arc58/dao/contract.algo.ts:934-946
+    // smart_contracts/arc58/dao/contract.algo.ts:936-948
     // const walletID = abiCall<typeof AbstractedAccountFactory.prototype.newAccount>({
     //   appId,
     //   args: [
@@ -1305,7 +1305,7 @@ setup:
     extract 4 0
     swap
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -1317,14 +1317,14 @@ setup:
     btoi
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:948
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:950
     // this.wallet.value = Application(walletID)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:927
+    // smart_contracts/arc58/dao/contract.algo.ts:929
     // setup(nickname: string): uint64 {
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     swap
     concat
     log
@@ -1334,7 +1334,7 @@ setup:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.partiallyInitialize[routing]() -> void:
 partiallyInitialize:
-    // smart_contracts/arc58/dao/contract.algo.ts:954
+    // smart_contracts/arc58/dao/contract.algo.ts:956
     // assert(Txn.sender === Global.creatorAddress, ERR_FORBIDDEN)
     txn Sender
     global CreatorAddress
@@ -1343,11 +1343,11 @@ partiallyInitialize:
     // smart_contracts/arc58/dao/contract.algo.ts:30
     // state = GlobalState<DaoState>({ initialValue: DaoStateDraft, key: AkitaDAOGlobalStateKeysInitialized })
     bytec 7 // "initialized"
-    // smart_contracts/arc58/dao/contract.algo.ts:955
+    // smart_contracts/arc58/dao/contract.algo.ts:957
     // this.state.value = DaoStatePartiallyInitialized
     pushbytes 0x01
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:953
+    // smart_contracts/arc58/dao/contract.algo.ts:955
     // partiallyInitialize(): void {
     intc_1 // 1
     return
@@ -1355,7 +1355,7 @@ partiallyInitialize:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.initialize[routing]() -> void:
 initialize:
-    // smart_contracts/arc58/dao/contract.algo.ts:959
+    // smart_contracts/arc58/dao/contract.algo.ts:961
     // assert(Txn.sender === Global.creatorAddress, ERR_FORBIDDEN)
     txn Sender
     global CreatorAddress
@@ -1364,11 +1364,11 @@ initialize:
     // smart_contracts/arc58/dao/contract.algo.ts:30
     // state = GlobalState<DaoState>({ initialValue: DaoStateDraft, key: AkitaDAOGlobalStateKeysInitialized })
     bytec 7 // "initialized"
-    // smart_contracts/arc58/dao/contract.algo.ts:960
+    // smart_contracts/arc58/dao/contract.algo.ts:962
     // this.state.value = DaoStateFullyInitialized
     bytec 34 // 0x02
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:958
+    // smart_contracts/arc58/dao/contract.algo.ts:960
     // initialize(): void {
     intc_1 // 1
     return
@@ -1380,7 +1380,7 @@ newProposal:
     dupn 15
     bytec_3 // ""
     dupn 3
-    // smart_contracts/arc58/dao/contract.algo.ts:965
+    // smart_contracts/arc58/dao/contract.algo.ts:967
     // newProposal(payment: gtxn.PaymentTxn, cid: CID, actions: ProposalAction[]): uint64 {
     txn GroupIndex
     intc_1 // 1
@@ -1397,13 +1397,13 @@ newProposal:
     ==
     assert // invalid number of bytes for uint8[36]
     txna ApplicationArgs 2
-    // smart_contracts/arc58/dao/contract.algo.ts:966
+    // smart_contracts/arc58/dao/contract.algo.ts:968
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:48
     // otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
     bytec 5 // "oal"
-    // smart_contracts/arc58/dao/contract.algo.ts:966
+    // smart_contracts/arc58/dao/contract.algo.ts:968
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1412,7 +1412,7 @@ newProposal:
     txn Sender
     callsub getOrigin
     swap
-    // smart_contracts/arc58/dao/contract.algo.ts:967
+    // smart_contracts/arc58/dao/contract.algo.ts:969
     // const { total, power } = this.proposalCost(actions)
     callsub smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost
     swap
@@ -1422,32 +1422,32 @@ newProposal:
     swap
     pushint 24 // 24
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:969
+    // smart_contracts/arc58/dao/contract.algo.ts:971
     // let fee: uint64 = 0
     intc_0 // 0
-    // smart_contracts/arc58/dao/contract.algo.ts:971
+    // smart_contracts/arc58/dao/contract.algo.ts:973
     // this.state.value === DaoStateFullyInitialized ||
     dup
     // smart_contracts/arc58/dao/contract.algo.ts:30
     // state = GlobalState<DaoState>({ initialValue: DaoStateDraft, key: AkitaDAOGlobalStateKeysInitialized })
     bytec 7 // "initialized"
-    // smart_contracts/arc58/dao/contract.algo.ts:971
+    // smart_contracts/arc58/dao/contract.algo.ts:973
     // this.state.value === DaoStateFullyInitialized ||
     app_global_get_ex
     assert // check GlobalState exists
     bytec 34 // 0x02
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:971-972
+    // smart_contracts/arc58/dao/contract.algo.ts:973-974
     // this.state.value === DaoStateFullyInitialized ||
     // (this.state.value === DaoStatePartiallyInitialized && Txn.sender !== Global.creatorAddress)
     bnz newProposal_if_body@4
-    // smart_contracts/arc58/dao/contract.algo.ts:972
+    // smart_contracts/arc58/dao/contract.algo.ts:974
     // (this.state.value === DaoStatePartiallyInitialized && Txn.sender !== Global.creatorAddress)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:30
     // state = GlobalState<DaoState>({ initialValue: DaoStateDraft, key: AkitaDAOGlobalStateKeysInitialized })
     bytec 7 // "initialized"
-    // smart_contracts/arc58/dao/contract.algo.ts:972
+    // smart_contracts/arc58/dao/contract.algo.ts:974
     // (this.state.value === DaoStatePartiallyInitialized && Txn.sender !== Global.creatorAddress)
     app_global_get_ex
     assert // check GlobalState exists
@@ -1464,7 +1464,7 @@ newProposal_if_body@4:
     bury 1
 
 newProposal_after_if_else@5:
-    // smart_contracts/arc58/dao/contract.algo.ts:977-984
+    // smart_contracts/arc58/dao/contract.algo.ts:979-986
     // assertMatch(
     //   payment,
     //   {
@@ -1476,10 +1476,10 @@ newProposal_after_if_else@5:
     dig 6
     dup
     gtxns Receiver
-    // smart_contracts/arc58/dao/contract.algo.ts:980
+    // smart_contracts/arc58/dao/contract.algo.ts:982
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/dao/contract.algo.ts:977-984
+    // smart_contracts/arc58/dao/contract.algo.ts:979-986
     // assertMatch(
     //   payment,
     //   {
@@ -1819,7 +1819,7 @@ newProposal_after_if_else@16:
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
+    bytec_2 // "wallet"
     // smart_contracts/arc58/dao/contract.algo.ts:124
     // appId: this.wallet.value,
     app_global_get_ex
@@ -1834,7 +1834,7 @@ newProposal_after_if_else@16:
     //   appId: this.wallet.value,
     //   args: [[key]]
     // }).returnValue[0]
-    bytec 51 // method "arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"
+    bytec 51 // method "arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,bool,uint64,uint64)[]"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
@@ -1848,7 +1848,7 @@ newProposal_after_if_else@16:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     // smart_contracts/arc58/dao/contract.algo.ts:208
@@ -1943,7 +1943,7 @@ newProposal_after_if_else@21:
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
+    bytec_2 // "wallet"
     // smart_contracts/arc58/dao/contract.algo.ts:171
     // appId: this.wallet.value,
     app_global_get_ex
@@ -1977,7 +1977,7 @@ newProposal_after_if_else@21:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     // smart_contracts/arc58/dao/contract.algo.ts:175
@@ -2774,7 +2774,7 @@ newProposal_after_if_else@64:
     b newProposal_while_top@7
 
 newProposal_after_while@68:
-    // smart_contracts/arc58/dao/contract.algo.ts:988
+    // smart_contracts/arc58/dao/contract.algo.ts:990
     // return this.createOrUpdateProposal(0, cid, actions, origin, fee, power)
     intc_0 // 0
     dig 6
@@ -2784,10 +2784,10 @@ newProposal_after_while@68:
     dig 6
     callsub createOrUpdateProposal
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:965
+    // smart_contracts/arc58/dao/contract.algo.ts:967
     // newProposal(payment: gtxn.PaymentTxn, cid: CID, actions: ProposalAction[]): uint64 {
     itob
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     swap
     concat
     log
@@ -2797,7 +2797,7 @@ newProposal_after_while@68:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.editProposal[routing]() -> void:
 editProposal:
-    // smart_contracts/arc58/dao/contract.algo.ts:991
+    // smart_contracts/arc58/dao/contract.algo.ts:993
     // editProposal(id: uint64, cid: CID, actions: ProposalAction[]): void {
     txna ApplicationArgs 1
     dup
@@ -2813,12 +2813,12 @@ editProposal:
     ==
     assert // invalid number of bytes for uint8[36]
     txna ApplicationArgs 3
-    // smart_contracts/arc58/dao/contract.algo.ts:992
+    // smart_contracts/arc58/dao/contract.algo.ts:994
     // assert(this.validEditOrSubmit(id), ERR_INVALID_PROPOSAL_STATE)
     dig 2
     callsub validEditOrSubmit
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:994
+    // smart_contracts/arc58/dao/contract.algo.ts:996
     // const { feesPaid } = this.proposals(id).value
     dig 2
     itob
@@ -2827,19 +2827,19 @@ editProposal:
     bytec 4 // "l"
     swap
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:994
+    // smart_contracts/arc58/dao/contract.algo.ts:996
     // const { feesPaid } = this.proposals(id).value
     pushint 109 // 109
     intc_2 // 8
     box_extract
     btoi
-    // smart_contracts/arc58/dao/contract.algo.ts:995
+    // smart_contracts/arc58/dao/contract.algo.ts:997
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:48
     // otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
     bytec 5 // "oal"
-    // smart_contracts/arc58/dao/contract.algo.ts:995
+    // smart_contracts/arc58/dao/contract.algo.ts:997
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     app_global_get_ex
     assert // check GlobalState exists
@@ -2847,7 +2847,7 @@ editProposal:
     extract_uint64
     txn Sender
     callsub getOrigin
-    // smart_contracts/arc58/dao/contract.algo.ts:996
+    // smart_contracts/arc58/dao/contract.algo.ts:998
     // const { total, power } = this.proposalCost(actions)
     uncover 2
     callsub smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost
@@ -2857,13 +2857,13 @@ editProposal:
     uncover 2
     pushint 24 // 24
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:998
+    // smart_contracts/arc58/dao/contract.algo.ts:1000
     // assert(total <= feesPaid, ERR_PAYMENT_REQUIRED)
     dig 1
     uncover 5
     <=
     assert // Payment required
-    // smart_contracts/arc58/dao/contract.algo.ts:1000
+    // smart_contracts/arc58/dao/contract.algo.ts:1002
     // this.createOrUpdateProposal(id, cid, actions, origin, total, power)
     uncover 5
     uncover 5
@@ -2873,7 +2873,7 @@ editProposal:
     uncover 5
     callsub createOrUpdateProposal
     popn 2
-    // smart_contracts/arc58/dao/contract.algo.ts:991
+    // smart_contracts/arc58/dao/contract.algo.ts:993
     // editProposal(id: uint64, cid: CID, actions: ProposalAction[]): void {
     intc_1 // 1
     return
@@ -2881,7 +2881,7 @@ editProposal:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.editProposalWithPayment[routing]() -> void:
 editProposalWithPayment:
-    // smart_contracts/arc58/dao/contract.algo.ts:1003
+    // smart_contracts/arc58/dao/contract.algo.ts:1005
     // editProposalWithPayment(payment: gtxn.PaymentTxn, id: uint64, cid: CID, actions: ProposalAction[]): void {
     txn GroupIndex
     intc_1 // 1
@@ -2905,12 +2905,12 @@ editProposalWithPayment:
     ==
     assert // invalid number of bytes for uint8[36]
     txna ApplicationArgs 3
-    // smart_contracts/arc58/dao/contract.algo.ts:1004
+    // smart_contracts/arc58/dao/contract.algo.ts:1006
     // assert(this.validEditOrSubmit(id), ERR_INVALID_PROPOSAL_STATE)
     dig 2
     callsub validEditOrSubmit
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:1006
+    // smart_contracts/arc58/dao/contract.algo.ts:1008
     // const { feesPaid } = this.proposals(id).value
     dig 2
     itob
@@ -2919,19 +2919,19 @@ editProposalWithPayment:
     bytec 4 // "l"
     swap
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:1006
+    // smart_contracts/arc58/dao/contract.algo.ts:1008
     // const { feesPaid } = this.proposals(id).value
     pushint 109 // 109
     intc_2 // 8
     box_extract
     btoi
-    // smart_contracts/arc58/dao/contract.algo.ts:1007
+    // smart_contracts/arc58/dao/contract.algo.ts:1009
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:48
     // otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
     bytec 5 // "oal"
-    // smart_contracts/arc58/dao/contract.algo.ts:1007
+    // smart_contracts/arc58/dao/contract.algo.ts:1009
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     app_global_get_ex
     assert // check GlobalState exists
@@ -2939,7 +2939,7 @@ editProposalWithPayment:
     extract_uint64
     txn Sender
     callsub getOrigin
-    // smart_contracts/arc58/dao/contract.algo.ts:1008
+    // smart_contracts/arc58/dao/contract.algo.ts:1010
     // const { total, power } = this.proposalCost(actions)
     uncover 2
     callsub smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost
@@ -2949,13 +2949,13 @@ editProposalWithPayment:
     uncover 2
     pushint 24 // 24
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1010
+    // smart_contracts/arc58/dao/contract.algo.ts:1012
     // assert(total > feesPaid, ERR_PAYMENT_NOT_REQUIRED)
     dig 1
     dig 5
     >
     assert // Payment not required
-    // smart_contracts/arc58/dao/contract.algo.ts:1012-1019
+    // smart_contracts/arc58/dao/contract.algo.ts:1014-1021
     // assertMatch(
     //   payment,
     //   {
@@ -2966,10 +2966,10 @@ editProposalWithPayment:
     // )
     dig 7
     gtxns Receiver
-    // smart_contracts/arc58/dao/contract.algo.ts:1015
+    // smart_contracts/arc58/dao/contract.algo.ts:1017
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/dao/contract.algo.ts:1012-1019
+    // smart_contracts/arc58/dao/contract.algo.ts:1014-1021
     // assertMatch(
     //   payment,
     //   {
@@ -2981,12 +2981,12 @@ editProposalWithPayment:
     ==
     uncover 8
     gtxns Amount
-    // smart_contracts/arc58/dao/contract.algo.ts:1016
+    // smart_contracts/arc58/dao/contract.algo.ts:1018
     // amount: total - feesPaid
     dig 3
     uncover 7
     -
-    // smart_contracts/arc58/dao/contract.algo.ts:1012-1019
+    // smart_contracts/arc58/dao/contract.algo.ts:1014-1021
     // assertMatch(
     //   payment,
     //   {
@@ -2998,7 +2998,7 @@ editProposalWithPayment:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/arc58/dao/contract.algo.ts:1021
+    // smart_contracts/arc58/dao/contract.algo.ts:1023
     // this.createOrUpdateProposal(id, cid, actions, origin, total, power)
     uncover 5
     uncover 5
@@ -3008,7 +3008,7 @@ editProposalWithPayment:
     uncover 5
     callsub createOrUpdateProposal
     popn 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1003
+    // smart_contracts/arc58/dao/contract.algo.ts:1005
     // editProposalWithPayment(payment: gtxn.PaymentTxn, id: uint64, cid: CID, actions: ProposalAction[]): void {
     intc_1 // 1
     return
@@ -3016,7 +3016,7 @@ editProposalWithPayment:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.deleteProposal[routing]() -> void:
 deleteProposal:
-    // smart_contracts/arc58/dao/contract.algo.ts:1024
+    // smart_contracts/arc58/dao/contract.algo.ts:1026
     // deleteProposal(proposalID: uint64): void {
     txna ApplicationArgs 1
     dup
@@ -3025,7 +3025,7 @@ deleteProposal:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/dao/contract.algo.ts:1025
+    // smart_contracts/arc58/dao/contract.algo.ts:1027
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     itob
     // smart_contracts/arc58/dao/contract.algo.ts:93
@@ -3034,12 +3034,12 @@ deleteProposal:
     swap
     concat
     dupn 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1025
+    // smart_contracts/arc58/dao/contract.algo.ts:1027
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/arc58/dao/contract.algo.ts:1027
+    // smart_contracts/arc58/dao/contract.algo.ts:1029
     // const { status, creator } = this.proposals(proposalID).value
     dup
     intc_0 // 0
@@ -3050,20 +3050,20 @@ deleteProposal:
     pushints 61 32 // 61, 32
     box_extract
     swap
-    // smart_contracts/arc58/dao/contract.algo.ts:1029
+    // smart_contracts/arc58/dao/contract.algo.ts:1031
     // status === ProposalStatusDraft ||
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1029-1030
+    // smart_contracts/arc58/dao/contract.algo.ts:1031-1032
     // status === ProposalStatusDraft ||
     // status === ProposalStatusExecuted,
     bnz deleteProposal_bool_true@3
-    // smart_contracts/arc58/dao/contract.algo.ts:1030
+    // smart_contracts/arc58/dao/contract.algo.ts:1032
     // status === ProposalStatusExecuted,
     dig 1
     bytec 12 // 0x32
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1029-1030
+    // smart_contracts/arc58/dao/contract.algo.ts:1031-1032
     // status === ProposalStatusDraft ||
     // status === ProposalStatusExecuted,
     bz deleteProposal_bool_false@4
@@ -3072,20 +3072,20 @@ deleteProposal_bool_true@3:
     intc_1 // 1
 
 deleteProposal_bool_merge@5:
-    // smart_contracts/arc58/dao/contract.algo.ts:1028-1032
+    // smart_contracts/arc58/dao/contract.algo.ts:1030-1034
     // assert(
     //   status === ProposalStatusDraft ||
     //   status === ProposalStatusExecuted,
     //   ERR_INVALID_PROPOSAL_STATE
     // )
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:1034
+    // smart_contracts/arc58/dao/contract.algo.ts:1036
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:48
     // otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
     bytec 5 // "oal"
-    // smart_contracts/arc58/dao/contract.algo.ts:1034
+    // smart_contracts/arc58/dao/contract.algo.ts:1036
     // const origin = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     app_global_get_ex
     assert // check GlobalState exists
@@ -3093,17 +3093,17 @@ deleteProposal_bool_merge@5:
     extract_uint64
     txn Sender
     callsub getOrigin
-    // smart_contracts/arc58/dao/contract.algo.ts:1035
+    // smart_contracts/arc58/dao/contract.algo.ts:1037
     // assert(origin === creator, ERR_INCORRECT_SENDER)
     dig 1
     ==
     assert // Incorrect sender
-    // smart_contracts/arc58/dao/contract.algo.ts:1037
+    // smart_contracts/arc58/dao/contract.algo.ts:1039
     // this.proposals(proposalID).delete()
     dig 2
     box_del
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1024
+    // smart_contracts/arc58/dao/contract.algo.ts:1026
     // deleteProposal(proposalID: uint64): void {
     intc_1 // 1
     return
@@ -3115,7 +3115,7 @@ deleteProposal_bool_false@4:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.submitProposal[routing]() -> void:
 submitProposal:
-    // smart_contracts/arc58/dao/contract.algo.ts:1040
+    // smart_contracts/arc58/dao/contract.algo.ts:1042
     // submitProposal(proposalID: uint64): void {
     txna ApplicationArgs 1
     dup
@@ -3124,12 +3124,12 @@ submitProposal:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/dao/contract.algo.ts:1041
+    // smart_contracts/arc58/dao/contract.algo.ts:1043
     // assert(this.validEditOrSubmit(proposalID), ERR_INVALID_PROPOSAL_STATE)
     dup
     callsub validEditOrSubmit
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:1043
+    // smart_contracts/arc58/dao/contract.algo.ts:1045
     // this.proposals(proposalID).value.votingTs = Global.latestTimestamp
     global LatestTimestamp
     swap
@@ -3139,7 +3139,7 @@ submitProposal:
     bytec 4 // "l"
     swap
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:1043
+    // smart_contracts/arc58/dao/contract.algo.ts:1045
     // this.proposals(proposalID).value.votingTs = Global.latestTimestamp
     swap
     itob
@@ -3147,12 +3147,12 @@ submitProposal:
     pushint 93 // 93
     uncover 2
     box_replace
-    // smart_contracts/arc58/dao/contract.algo.ts:1044
+    // smart_contracts/arc58/dao/contract.algo.ts:1046
     // this.proposals(proposalID).value.status = ProposalStatusVoting
     intc_0 // 0
     bytec 6 // 0x14
     box_replace
-    // smart_contracts/arc58/dao/contract.algo.ts:1040
+    // smart_contracts/arc58/dao/contract.algo.ts:1042
     // submitProposal(proposalID: uint64): void {
     intc_1 // 1
     return
@@ -3163,7 +3163,7 @@ voteProposal:
     intc_0 // 0
     bytec_3 // ""
     dup
-    // smart_contracts/arc58/dao/contract.algo.ts:1047
+    // smart_contracts/arc58/dao/contract.algo.ts:1049
     // voteProposal(mbrPayment: gtxn.PaymentTxn, proposalID: uint64, vote: ProposalVoteType): void {
     txn GroupIndex
     intc_1 // 1
@@ -3187,20 +3187,20 @@ voteProposal:
     intc_1 // 1
     ==
     assert // invalid number of bytes for uint8
-    // smart_contracts/arc58/dao/contract.algo.ts:1048
+    // smart_contracts/arc58/dao/contract.algo.ts:1050
     // assert(this.state.value !== DaoStateDraft, ERR_DAO_NOT_INITIALIZED)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:30
     // state = GlobalState<DaoState>({ initialValue: DaoStateDraft, key: AkitaDAOGlobalStateKeysInitialized })
     bytec 7 // "initialized"
-    // smart_contracts/arc58/dao/contract.algo.ts:1048
+    // smart_contracts/arc58/dao/contract.algo.ts:1050
     // assert(this.state.value !== DaoStateDraft, ERR_DAO_NOT_INITIALIZED)
     app_global_get_ex
     assert // check GlobalState exists
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     !=
     assert // DAO is not initialized
-    // smart_contracts/arc58/dao/contract.algo.ts:1049
+    // smart_contracts/arc58/dao/contract.algo.ts:1051
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     itob
     // smart_contracts/arc58/dao/contract.algo.ts:93
@@ -3210,13 +3210,13 @@ voteProposal:
     concat
     dup
     cover 3
-    // smart_contracts/arc58/dao/contract.algo.ts:1049
+    // smart_contracts/arc58/dao/contract.algo.ts:1051
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     dup
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/arc58/dao/contract.algo.ts:1051-1058
+    // smart_contracts/arc58/dao/contract.algo.ts:1053-1060
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -3227,10 +3227,10 @@ voteProposal:
     // )
     dig 2
     gtxns Receiver
-    // smart_contracts/arc58/dao/contract.algo.ts:1054
+    // smart_contracts/arc58/dao/contract.algo.ts:1056
     // receiver: Global.currentApplicationAddress,
     global CurrentApplicationAddress
-    // smart_contracts/arc58/dao/contract.algo.ts:1051-1058
+    // smart_contracts/arc58/dao/contract.algo.ts:1053-1060
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -3242,10 +3242,10 @@ voteProposal:
     ==
     uncover 3
     gtxns Amount
-    // smart_contracts/arc58/dao/contract.algo.ts:1055
+    // smart_contracts/arc58/dao/contract.algo.ts:1057
     // amount: DAOProposalVotesMBR,
     pushint 22500 // 22500
-    // smart_contracts/arc58/dao/contract.algo.ts:1051-1058
+    // smart_contracts/arc58/dao/contract.algo.ts:1053-1060
     // assertMatch(
     //   mbrPayment,
     //   {
@@ -3257,24 +3257,24 @@ voteProposal:
     ==
     &&
     assert // Invalid payment
-    // smart_contracts/arc58/dao/contract.algo.ts:1060
+    // smart_contracts/arc58/dao/contract.algo.ts:1062
     // const { status } = this.proposals(proposalID).value
     dup
     intc_0 // 0
     intc_1 // 1
     box_extract
-    // smart_contracts/arc58/dao/contract.algo.ts:1061
+    // smart_contracts/arc58/dao/contract.algo.ts:1063
     // assert(status === ProposalStatusVoting, ERR_INVALID_PROPOSAL_STATE)
     bytec 6 // 0x14
     ==
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:1063
+    // smart_contracts/arc58/dao/contract.algo.ts:1065
     // const voter = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:48
     // otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
     bytec 5 // "oal"
-    // smart_contracts/arc58/dao/contract.algo.ts:1063
+    // smart_contracts/arc58/dao/contract.algo.ts:1065
     // const voter = getOrigin(this.otherAppList.value.escrow, Txn.sender)
     app_global_get_ex
     assert // check GlobalState exists
@@ -3284,14 +3284,14 @@ voteProposal:
     callsub getOrigin
     dup
     cover 3
-    // smart_contracts/arc58/dao/contract.algo.ts:1064
+    // smart_contracts/arc58/dao/contract.algo.ts:1066
     // const proposal = clone(this.proposals(proposalID).value)
     swap
     box_get
     swap
     cover 3
     assert // Box must have value
-    // smart_contracts/arc58/dao/contract.algo.ts:1066
+    // smart_contracts/arc58/dao/contract.algo.ts:1068
     // if (this.proposalVotes({ proposalID, voter }).exists) {
     concat
     // smart_contracts/arc58/dao/contract.algo.ts:95
@@ -3300,12 +3300,12 @@ voteProposal:
     swap
     concat
     dup
-    // smart_contracts/arc58/dao/contract.algo.ts:1066
+    // smart_contracts/arc58/dao/contract.algo.ts:1068
     // if (this.proposalVotes({ proposalID, voter }).exists) {
     box_len
     bury 1
     bz voteProposal_after_if_else@18
-    // smart_contracts/arc58/dao/contract.algo.ts:1067
+    // smart_contracts/arc58/dao/contract.algo.ts:1069
     // const { type, power: previousPower } = this.proposalVotes({ proposalID, voter }).value
     dup
     box_get
@@ -3318,17 +3318,17 @@ voteProposal:
     intc_1 // 1
     extract_uint64
     bury 7
-    // smart_contracts/arc58/dao/contract.algo.ts:1070
+    // smart_contracts/arc58/dao/contract.algo.ts:1072
     // case ProposalVoteTypeApprove: {
     bytec 22 // 0x0a
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1070-1073
+    // smart_contracts/arc58/dao/contract.algo.ts:1072-1075
     // case ProposalVoteTypeApprove: {
     //   proposal.votes.approvals -= previousPower
     //   break;
     // }
     bz voteProposal_after_if_else@6
-    // smart_contracts/arc58/dao/contract.algo.ts:1071
+    // smart_contracts/arc58/dao/contract.algo.ts:1073
     // proposal.votes.approvals -= previousPower
     dig 3
     pushints 37 24 // 37, 24
@@ -3348,27 +3348,27 @@ voteProposal:
     bury 2
 
 voteProposal_after_if_else@18:
-    // smart_contracts/arc58/dao/contract.algo.ts:1088
+    // smart_contracts/arc58/dao/contract.algo.ts:1090
     // const power = this.getGovernancePower(voter)
     dig 2
     callsub getGovernancePower
     dup
     bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1091
+    // smart_contracts/arc58/dao/contract.algo.ts:1093
     // assert(power > 0, ERR_FORBIDDEN)
     assert // only the creator wallet can delete a spending account
-    // smart_contracts/arc58/dao/contract.algo.ts:1094
+    // smart_contracts/arc58/dao/contract.algo.ts:1096
     // case ProposalVoteTypeApprove: {
     dig 4
     bytec 22 // 0x0a
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1094-1097
+    // smart_contracts/arc58/dao/contract.algo.ts:1096-1099
     // case ProposalVoteTypeApprove: {
     //   proposal.votes.approvals += power
     //   break;
     // }
     bz voteProposal_after_if_else@22
-    // smart_contracts/arc58/dao/contract.algo.ts:1095
+    // smart_contracts/arc58/dao/contract.algo.ts:1097
     // proposal.votes.approvals += power
     dig 1
     dup
@@ -3384,7 +3384,7 @@ voteProposal_after_if_else@18:
     bury 2
 
 voteProposal_block@33:
-    // smart_contracts/arc58/dao/contract.algo.ts:1112
+    // smart_contracts/arc58/dao/contract.algo.ts:1114
     // this.proposals(proposalID).value = clone(proposal)
     dig 3
     dup
@@ -3392,7 +3392,7 @@ voteProposal_block@33:
     pop
     dig 2
     box_put
-    // smart_contracts/arc58/dao/contract.algo.ts:1113
+    // smart_contracts/arc58/dao/contract.algo.ts:1115
     // this.proposalVotes({ proposalID, voter }).value = { type: vote, power }
     dig 6
     itob
@@ -3402,24 +3402,24 @@ voteProposal_block@33:
     dig 1
     swap
     box_put
-    // smart_contracts/arc58/dao/contract.algo.ts:1047
+    // smart_contracts/arc58/dao/contract.algo.ts:1049
     // voteProposal(mbrPayment: gtxn.PaymentTxn, proposalID: uint64, vote: ProposalVoteType): void {
     intc_1 // 1
     return
 
 voteProposal_after_if_else@22:
-    // smart_contracts/arc58/dao/contract.algo.ts:1098
+    // smart_contracts/arc58/dao/contract.algo.ts:1100
     // case ProposalVoteTypeReject: {
     dig 4
     bytec 6 // 0x14
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1098-1101
+    // smart_contracts/arc58/dao/contract.algo.ts:1100-1103
     // case ProposalVoteTypeReject: {
     //   proposal.votes.rejections += power
     //   break;
     // }
     bz voteProposal_after_if_else@26
-    // smart_contracts/arc58/dao/contract.algo.ts:1099
+    // smart_contracts/arc58/dao/contract.algo.ts:1101
     // proposal.votes.rejections += power
     dig 1
     dup
@@ -3433,23 +3433,23 @@ voteProposal_after_if_else@22:
     replace2 8
     replace2 37
     bury 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1100
+    // smart_contracts/arc58/dao/contract.algo.ts:1102
     // break;
     b voteProposal_block@33
 
 voteProposal_after_if_else@26:
-    // smart_contracts/arc58/dao/contract.algo.ts:1102
+    // smart_contracts/arc58/dao/contract.algo.ts:1104
     // case ProposalVoteTypeAbstain: {
     dig 4
     bytec 10 // 0x1e
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1102-1105
+    // smart_contracts/arc58/dao/contract.algo.ts:1104-1107
     // case ProposalVoteTypeAbstain: {
     //   proposal.votes.abstains += power
     //   break;
     // }
     assert // Invalid proposal action
-    // smart_contracts/arc58/dao/contract.algo.ts:1103
+    // smart_contracts/arc58/dao/contract.algo.ts:1105
     // proposal.votes.abstains += power
     dig 1
     dup
@@ -3463,23 +3463,23 @@ voteProposal_after_if_else@26:
     replace2 16
     replace2 37
     bury 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1104
+    // smart_contracts/arc58/dao/contract.algo.ts:1106
     // break;
     b voteProposal_block@33
 
 voteProposal_after_if_else@6:
-    // smart_contracts/arc58/dao/contract.algo.ts:1074
+    // smart_contracts/arc58/dao/contract.algo.ts:1076
     // case ProposalVoteTypeReject: {
     dig 7
     bytec 6 // 0x14
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1074-1077
+    // smart_contracts/arc58/dao/contract.algo.ts:1076-1079
     // case ProposalVoteTypeReject: {
     //   proposal.votes.rejections -= previousPower
     //   break;
     // }
     bz voteProposal_after_if_else@10
-    // smart_contracts/arc58/dao/contract.algo.ts:1075
+    // smart_contracts/arc58/dao/contract.algo.ts:1077
     // proposal.votes.rejections -= previousPower
     dig 3
     pushints 37 24 // 37, 24
@@ -3497,23 +3497,23 @@ voteProposal_after_if_else@6:
     replace2 8
     replace2 37
     bury 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1076
+    // smart_contracts/arc58/dao/contract.algo.ts:1078
     // break;
     b voteProposal_after_if_else@18
 
 voteProposal_after_if_else@10:
-    // smart_contracts/arc58/dao/contract.algo.ts:1078
+    // smart_contracts/arc58/dao/contract.algo.ts:1080
     // case ProposalVoteTypeAbstain: {
     dig 7
     bytec 10 // 0x1e
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1078-1081
+    // smart_contracts/arc58/dao/contract.algo.ts:1080-1083
     // case ProposalVoteTypeAbstain: {
     //   proposal.votes.abstains -= previousPower
     //   break;
     // }
     assert // Invalid proposal action
-    // smart_contracts/arc58/dao/contract.algo.ts:1079
+    // smart_contracts/arc58/dao/contract.algo.ts:1081
     // proposal.votes.abstains -= previousPower
     dig 3
     pushints 37 24 // 37, 24
@@ -3531,7 +3531,7 @@ voteProposal_after_if_else@10:
     replace2 16
     replace2 37
     bury 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1080
+    // smart_contracts/arc58/dao/contract.algo.ts:1082
     // break;
     b voteProposal_after_if_else@18
 
@@ -3540,7 +3540,7 @@ voteProposal_after_if_else@10:
 finalizeProposal:
     bytec_3 // ""
     dup
-    // smart_contracts/arc58/dao/contract.algo.ts:1116
+    // smart_contracts/arc58/dao/contract.algo.ts:1118
     // finalizeProposal(proposalID: uint64): void {
     txna ApplicationArgs 1
     dup
@@ -3549,7 +3549,7 @@ finalizeProposal:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/dao/contract.algo.ts:1117
+    // smart_contracts/arc58/dao/contract.algo.ts:1119
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     itob
     // smart_contracts/arc58/dao/contract.algo.ts:93
@@ -3558,12 +3558,12 @@ finalizeProposal:
     swap
     concat
     dupn 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1117
+    // smart_contracts/arc58/dao/contract.algo.ts:1119
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/arc58/dao/contract.algo.ts:1119
+    // smart_contracts/arc58/dao/contract.algo.ts:1121
     // const { status, creator, votes: { approvals, rejections, abstains }, votingTs, actions } = clone(this.proposals(proposalID).value)
     dup
     box_get
@@ -3605,23 +3605,23 @@ finalizeProposal:
     cover 2
     substring3
     cover 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1121
+    // smart_contracts/arc58/dao/contract.algo.ts:1123
     // assert(Txn.sender === creator, ERR_INCORRECT_SENDER)
     txn Sender
     ==
     assert // Incorrect sender
-    // smart_contracts/arc58/dao/contract.algo.ts:1122
+    // smart_contracts/arc58/dao/contract.algo.ts:1124
     // assert(status === ProposalStatusVoting, ERR_INVALID_PROPOSAL_STATE)
     bytec 6 // 0x14
     ==
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:1125
+    // smart_contracts/arc58/dao/contract.algo.ts:1127
     // const { akta, bones } = this.akitaAssets.value
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:62
     // akitaAssets = GlobalState<AkitaAssets>({ key: AkitaDAOGlobalStateKeysAkitaAssets })
     bytec 11 // "akita_assets"
-    // smart_contracts/arc58/dao/contract.algo.ts:1125
+    // smart_contracts/arc58/dao/contract.algo.ts:1127
     // const { akta, bones } = this.akitaAssets.value
     app_global_get_ex
     assert // check GlobalState exists
@@ -3633,16 +3633,16 @@ finalizeProposal:
     intc_2 // 8
     extract_uint64
     swap
-    // smart_contracts/arc58/dao/contract.algo.ts:1126
+    // smart_contracts/arc58/dao/contract.algo.ts:1128
     // let locked: uint64 = 0
     intc_0 // 0
     swap
-    // smart_contracts/arc58/dao/contract.algo.ts:1127
+    // smart_contracts/arc58/dao/contract.algo.ts:1129
     // if (akta > 0 && bones > 0) {
     bz finalizeProposal_after_if_else@5
     dig 1
     bz finalizeProposal_after_if_else@5
-    // smart_contracts/arc58/dao/contract.algo.ts:1128-1133
+    // smart_contracts/arc58/dao/contract.algo.ts:1130-1135
     // const totals = abiCall<typeof Staking.prototype.getTotals>({
     //   appId: this.akitaAppList.value.staking,
     //   args: [
@@ -3650,19 +3650,19 @@ finalizeProposal:
     //   ]
     // }).returnValue
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:1129
+    // smart_contracts/arc58/dao/contract.algo.ts:1131
     // appId: this.akitaAppList.value.staking,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:42
     // akitaAppList = GlobalState<AkitaAppList>({ key: AkitaDAOGlobalStateKeysAkitaAppList })
     bytec 9 // "aal"
-    // smart_contracts/arc58/dao/contract.algo.ts:1129
+    // smart_contracts/arc58/dao/contract.algo.ts:1131
     // appId: this.akitaAppList.value.staking,
     app_global_get_ex
     assert // check GlobalState exists
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1131
+    // smart_contracts/arc58/dao/contract.algo.ts:1133
     // [akta, bones]
     dig 3
     itob
@@ -3672,7 +3672,7 @@ finalizeProposal:
     dig 3
     itob
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:1128-1133
+    // smart_contracts/arc58/dao/contract.algo.ts:1130-1135
     // const totals = abiCall<typeof Staking.prototype.getTotals>({
     //   appId: this.akitaAppList.value.staking,
     //   args: [
@@ -3693,7 +3693,7 @@ finalizeProposal:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -3707,19 +3707,19 @@ finalizeProposal:
     len
     ==
     assert // invalid number of bytes for (len+(uint64,uint64)[])
-    // smart_contracts/arc58/dao/contract.algo.ts:1135
+    // smart_contracts/arc58/dao/contract.algo.ts:1137
     // const lockedAkta = totals[0].locked
     dup
     extract 6 16
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1136
+    // smart_contracts/arc58/dao/contract.algo.ts:1138
     // const lockedBones = totals[1].locked
     swap
     extract 22 16
     intc_0 // 0
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1137
+    // smart_contracts/arc58/dao/contract.algo.ts:1139
     // locked = lockedAkta < lockedBones ? lockedAkta : lockedBones
     dup2
     <
@@ -3729,7 +3729,7 @@ finalizeProposal:
     bury 1
 
 finalizeProposal_after_if_else@5:
-    // smart_contracts/arc58/dao/contract.algo.ts:1140
+    // smart_contracts/arc58/dao/contract.algo.ts:1142
     // const totalVotes: uint64 = approvals + rejections + abstains
     dig 7
     dig 7
@@ -3741,7 +3741,7 @@ finalizeProposal_after_if_else@5:
     dig 7
     +
     bury 11
-    // smart_contracts/arc58/dao/contract.algo.ts:1144
+    // smart_contracts/arc58/dao/contract.algo.ts:1146
     // if (rejections > 0) {
     bz finalizeProposal_else_body@7
     // smart_contracts/utils/functions.ts:109
@@ -3761,7 +3761,7 @@ finalizeProposal_after_if_else@5:
     divw
 
 finalizeProposal_after_if_else@8:
-    // smart_contracts/arc58/dao/contract.algo.ts:1150
+    // smart_contracts/arc58/dao/contract.algo.ts:1152
     // const { duration, participation, approval } = this.proposalCost(actions)
     dig 4
     callsub smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost
@@ -3775,7 +3775,7 @@ finalizeProposal_after_if_else@8:
     uncover 2
     pushint 48 // 48
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1152
+    // smart_contracts/arc58/dao/contract.algo.ts:1154
     // assert(Global.latestTimestamp > (votingTs + duration), ERR_VOTING_DURATION_NOT_MET)
     global LatestTimestamp
     dig 9
@@ -3796,16 +3796,16 @@ finalizeProposal_after_if_else@8:
     mulw
     intc 4 // 100000
     divw
-    // smart_contracts/arc58/dao/contract.algo.ts:1154
+    // smart_contracts/arc58/dao/contract.algo.ts:1156
     // assert(totalVotes >= participationThreshold, ERR_VOTING_PARTICIPATION_NOT_MET)
     dig 12
     <=
     assert // Voting participation not met
-    // smart_contracts/arc58/dao/contract.algo.ts:1156
+    // smart_contracts/arc58/dao/contract.algo.ts:1158
     // if (approvalPercentage >= approval) {
     >=
     bz finalizeProposal_else_body@10
-    // smart_contracts/arc58/dao/contract.algo.ts:1157
+    // smart_contracts/arc58/dao/contract.algo.ts:1159
     // this.proposals(proposalID).value.status = ProposalStatusApproved
     dig 8
     intc_0 // 0
@@ -3813,13 +3813,13 @@ finalizeProposal_after_if_else@8:
     box_replace
 
 finalizeProposal_after_if_else@11:
-    // smart_contracts/arc58/dao/contract.algo.ts:1116
+    // smart_contracts/arc58/dao/contract.algo.ts:1118
     // finalizeProposal(proposalID: uint64): void {
     intc_1 // 1
     return
 
 finalizeProposal_else_body@10:
-    // smart_contracts/arc58/dao/contract.algo.ts:1159
+    // smart_contracts/arc58/dao/contract.algo.ts:1161
     // this.proposals(proposalID).value.status = ProposalStatusRejected
     dig 8
     intc_0 // 0
@@ -3828,7 +3828,7 @@ finalizeProposal_else_body@10:
     b finalizeProposal_after_if_else@11
 
 finalizeProposal_else_body@7:
-    // smart_contracts/arc58/dao/contract.algo.ts:1147
+    // smart_contracts/arc58/dao/contract.algo.ts:1149
     // approvalPercentage = ONE_HUNDRED_PERCENT
     intc 4 // 100000
     b finalizeProposal_after_if_else@8
@@ -3839,7 +3839,7 @@ executeProposal:
     intc_0 // 0
     dupn 4
     bytec_3 // ""
-    // smart_contracts/arc58/dao/contract.algo.ts:1163
+    // smart_contracts/arc58/dao/contract.algo.ts:1165
     // executeProposal(proposalID: uint64): void {
     txna ApplicationArgs 1
     dup
@@ -3848,7 +3848,7 @@ executeProposal:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/dao/contract.algo.ts:1164
+    // smart_contracts/arc58/dao/contract.algo.ts:1166
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     itob
     dup
@@ -3858,12 +3858,12 @@ executeProposal:
     swap
     concat
     dupn 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1164
+    // smart_contracts/arc58/dao/contract.algo.ts:1166
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/arc58/dao/contract.algo.ts:1166
+    // smart_contracts/arc58/dao/contract.algo.ts:1168
     // const { status, actions } = clone(this.proposals(proposalID).value)
     dup
     box_get
@@ -3872,17 +3872,17 @@ executeProposal:
     intc_0 // 0
     intc_1 // 1
     box_extract
-    // smart_contracts/arc58/dao/contract.algo.ts:1168
+    // smart_contracts/arc58/dao/contract.algo.ts:1170
     // assert(status === ProposalStatusApproved, ERR_INVALID_PROPOSAL_STATE)
     bytec 8 // 0x28
     ==
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:1170
+    // smart_contracts/arc58/dao/contract.algo.ts:1172
     // for (let i: uint64 = 0; i < actions.length; i++) {
     intc_0 // 0
 
 executeProposal_while_top@2:
-    // smart_contracts/arc58/dao/contract.algo.ts:1170
+    // smart_contracts/arc58/dao/contract.algo.ts:1172
     // for (let i: uint64 = 0; i < actions.length; i++) {
     dig 2
     pushint 119 // 119
@@ -3892,7 +3892,7 @@ executeProposal_while_top@2:
     dig 1
     >
     bz executeProposal_after_while@52
-    // smart_contracts/arc58/dao/contract.algo.ts:1172
+    // smart_contracts/arc58/dao/contract.algo.ts:1174
     // const { type, data } = actions[i]
     dig 2
     dup
@@ -3971,11 +3971,11 @@ executeProposal_while_top@2:
     bury 12
     extract 2 0
     bury 10
-    // smart_contracts/arc58/dao/contract.algo.ts:1175
+    // smart_contracts/arc58/dao/contract.algo.ts:1177
     // case ProposalActionTypeUpgradeApp:
     bytec 22 // 0x0a
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1175-1180
+    // smart_contracts/arc58/dao/contract.algo.ts:1177-1182
     // case ProposalActionTypeUpgradeApp:
     //   const { executionKey, groups, firstValid, lastValid } = decodeArc4<ProposalUpgradeApp>(data)
     //   // track the proposal that created the execution by lease so they can be verified without explicit proposal id being provided
@@ -3983,7 +3983,7 @@ executeProposal_while_top@2:
     //   this.newExecution(executionKey, groups, firstValid, lastValid)
     //   break
     bz executeProposal_after_if_else@6
-    // smart_contracts/arc58/dao/contract.algo.ts:1176
+    // smart_contracts/arc58/dao/contract.algo.ts:1178
     // const { executionKey, groups, firstValid, lastValid } = decodeArc4<ProposalUpgradeApp>(data)
     dig 9
     dup
@@ -4001,7 +4001,7 @@ executeProposal_while_top@2:
     uncover 3
     pushint 52 // 52
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1178
+    // smart_contracts/arc58/dao/contract.algo.ts:1180
     // this.executions(executionKey).value = { proposalID, index: i }
     dig 4
     itob
@@ -4013,11 +4013,11 @@ executeProposal_while_top@2:
     pushbytes "x"
     dig 5
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:1178
+    // smart_contracts/arc58/dao/contract.algo.ts:1180
     // this.executions(executionKey).value = { proposalID, index: i }
     swap
     box_put
-    // smart_contracts/arc58/dao/contract.algo.ts:1179
+    // smart_contracts/arc58/dao/contract.algo.ts:1181
     // this.newExecution(executionKey, groups, firstValid, lastValid)
     callsub newExecution
     pop
@@ -4028,19 +4028,19 @@ executeProposal_block@51:
     b executeProposal_while_top@2
 
 executeProposal_after_if_else@6:
-    // smart_contracts/arc58/dao/contract.algo.ts:1181
+    // smart_contracts/arc58/dao/contract.algo.ts:1183
     // case ProposalActionTypeExecutePlugin: {
     dig 6
     bytec 10 // 0x1e
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1181-1185
+    // smart_contracts/arc58/dao/contract.algo.ts:1183-1187
     // case ProposalActionTypeExecutePlugin: {
     //   const { executionKey, groups, firstValid, lastValid } = decodeArc4<ProposalExecutePlugin>(data)
     //   this.newExecution(executionKey, groups, firstValid, lastValid)
     //   break
     // }
     bz executeProposal_after_if_else@10
-    // smart_contracts/arc58/dao/contract.algo.ts:1182
+    // smart_contracts/arc58/dao/contract.algo.ts:1184
     // const { executionKey, groups, firstValid, lastValid } = decodeArc4<ProposalExecutePlugin>(data)
     dig 9
     dup
@@ -4058,55 +4058,55 @@ executeProposal_after_if_else@6:
     uncover 3
     pushint 54 // 54
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1183
+    // smart_contracts/arc58/dao/contract.algo.ts:1185
     // this.newExecution(executionKey, groups, firstValid, lastValid)
     callsub newExecution
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1184
+    // smart_contracts/arc58/dao/contract.algo.ts:1186
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@10:
-    // smart_contracts/arc58/dao/contract.algo.ts:1186
+    // smart_contracts/arc58/dao/contract.algo.ts:1188
     // case ProposalActionTypeRemoveExecutePlugin: {
     dig 6
     bytec 39 // 0x1f
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1186-1190
+    // smart_contracts/arc58/dao/contract.algo.ts:1188-1192
     // case ProposalActionTypeRemoveExecutePlugin: {
     //   const { executionKey } = decodeArc4<ProposalRemoveExecutePlugin>(data)
     //   this.removeExecution(executionKey)
     //   break
     // }
     bz executeProposal_after_if_else@14
-    // smart_contracts/arc58/dao/contract.algo.ts:1187
+    // smart_contracts/arc58/dao/contract.algo.ts:1189
     // const { executionKey } = decodeArc4<ProposalRemoveExecutePlugin>(data)
     dig 9
     extract 2 32
-    // smart_contracts/arc58/dao/contract.algo.ts:747-750
+    // smart_contracts/arc58/dao/contract.algo.ts:749-752
     // abiCall<typeof AbstractedAccount.prototype.arc58_removeExecutionKey>({
     //   appId: this.wallet.value,
     //   args: [key]
     // })
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:748
+    // smart_contracts/arc58/dao/contract.algo.ts:750
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:748
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:750
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:749
+    // smart_contracts/arc58/dao/contract.algo.ts:751
     // args: [key]
     dig 1
     len
     pushint 32 // 32
     ==
     assert // invalid size
-    // smart_contracts/arc58/dao/contract.algo.ts:747-750
+    // smart_contracts/arc58/dao/contract.algo.ts:749-752
     // abiCall<typeof AbstractedAccount.prototype.arc58_removeExecutionKey>({
     //   appId: this.wallet.value,
     //   args: [key]
@@ -4120,23 +4120,23 @@ executeProposal_after_if_else@10:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/dao/contract.algo.ts:1189
+    // smart_contracts/arc58/dao/contract.algo.ts:1191
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@14:
-    // smart_contracts/arc58/dao/contract.algo.ts:1191
+    // smart_contracts/arc58/dao/contract.algo.ts:1193
     // case ProposalActionTypeAddPlugin: {
     dig 6
     bytec 6 // 0x14
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1191-1194
+    // smart_contracts/arc58/dao/contract.algo.ts:1193-1196
     // case ProposalActionTypeAddPlugin: {
     //   this.addPlugin({ name: '', ...decodeArc4<ProposalAddPlugin>(data) })
     //   break
     // }
     bz executeProposal_after_if_else@18
-    // smart_contracts/arc58/dao/contract.algo.ts:1192
+    // smart_contracts/arc58/dao/contract.algo.ts:1194
     // this.addPlugin({ name: '', ...decodeArc4<ProposalAddPlugin>(data) })
     dig 9
     dup
@@ -4237,7 +4237,7 @@ executeProposal_after_if_else@14:
     len
     uncover 2
     +
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     uncover 15
     setbit
@@ -4294,44 +4294,44 @@ executeProposal_after_if_else@14:
     concat
     callsub addPlugin
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1193
+    // smart_contracts/arc58/dao/contract.algo.ts:1195
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@18:
-    // smart_contracts/arc58/dao/contract.algo.ts:1195
+    // smart_contracts/arc58/dao/contract.algo.ts:1197
     // case ProposalActionTypeAddNamedPlugin: {
     dig 6
     bytec 35 // 0x15
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1195-1198
+    // smart_contracts/arc58/dao/contract.algo.ts:1197-1200
     // case ProposalActionTypeAddNamedPlugin: {
     //   this.addPlugin(decodeArc4<ProposalAddNamedPlugin>(data))
     //   break
     // }
     bz executeProposal_after_if_else@22
-    // smart_contracts/arc58/dao/contract.algo.ts:1196
+    // smart_contracts/arc58/dao/contract.algo.ts:1198
     // this.addPlugin(decodeArc4<ProposalAddNamedPlugin>(data))
     dig 8
     callsub addPlugin
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1197
+    // smart_contracts/arc58/dao/contract.algo.ts:1199
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@22:
-    // smart_contracts/arc58/dao/contract.algo.ts:1199
+    // smart_contracts/arc58/dao/contract.algo.ts:1201
     // case ProposalActionTypeRemovePlugin: {
     dig 6
     bytec 8 // 0x28
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1199-1202
+    // smart_contracts/arc58/dao/contract.algo.ts:1201-1204
     // case ProposalActionTypeRemovePlugin: {
     //   this.removePlugin({ name: '', ...decodeArc4<ProposalRemovePlugin>(data) })
     //   break
     // }
     bz executeProposal_after_if_else@26
-    // smart_contracts/arc58/dao/contract.algo.ts:1200
+    // smart_contracts/arc58/dao/contract.algo.ts:1202
     // this.removePlugin({ name: '', ...decodeArc4<ProposalRemovePlugin>(data) })
     dig 9
     dup
@@ -4364,45 +4364,45 @@ executeProposal_after_if_else@22:
     concat
     callsub removePlugin
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1201
+    // smart_contracts/arc58/dao/contract.algo.ts:1203
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@26:
-    // smart_contracts/arc58/dao/contract.algo.ts:1203
+    // smart_contracts/arc58/dao/contract.algo.ts:1205
     // case ProposalActionTypeRemoveNamedPlugin: {
     dig 6
     bytec 40 // 0x29
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1203-1206
+    // smart_contracts/arc58/dao/contract.algo.ts:1205-1208
     // case ProposalActionTypeRemoveNamedPlugin: {
     //   this.removePlugin(decodeArc4<ProposalRemoveNamedPlugin>(data))
     //   break
     // }
     bz executeProposal_after_if_else@30
-    // smart_contracts/arc58/dao/contract.algo.ts:1204
+    // smart_contracts/arc58/dao/contract.algo.ts:1206
     // this.removePlugin(decodeArc4<ProposalRemoveNamedPlugin>(data))
     dig 8
     callsub removePlugin
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1205
+    // smart_contracts/arc58/dao/contract.algo.ts:1207
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@30:
-    // smart_contracts/arc58/dao/contract.algo.ts:1207
+    // smart_contracts/arc58/dao/contract.algo.ts:1209
     // case ProposalActionTypeAddAllowances: {
     dig 6
     bytec 12 // 0x32
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1207-1211
+    // smart_contracts/arc58/dao/contract.algo.ts:1209-1213
     // case ProposalActionTypeAddAllowances: {
     //   const { escrow, allowances } = decodeArc4<ProposalAddAllowances>(data)
     //   this.addAllowances(escrow, allowances)
     //   break
     // }
     bz executeProposal_after_if_else@34
-    // smart_contracts/arc58/dao/contract.algo.ts:1208
+    // smart_contracts/arc58/dao/contract.algo.ts:1210
     // const { escrow, allowances } = decodeArc4<ProposalAddAllowances>(data)
     dig 8
     dup
@@ -4422,28 +4422,28 @@ executeProposal_after_if_else@30:
     uncover 3
     uncover 2
     substring3
-    // smart_contracts/arc58/dao/contract.algo.ts:1209
+    // smart_contracts/arc58/dao/contract.algo.ts:1211
     // this.addAllowances(escrow, allowances)
     callsub addAllowances
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1210
+    // smart_contracts/arc58/dao/contract.algo.ts:1212
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@34:
-    // smart_contracts/arc58/dao/contract.algo.ts:1212
+    // smart_contracts/arc58/dao/contract.algo.ts:1214
     // case ProposalActionTypeRemoveAllowances: {
     dig 6
     bytec 42 // 0x3c
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1212-1216
+    // smart_contracts/arc58/dao/contract.algo.ts:1214-1218
     // case ProposalActionTypeRemoveAllowances: {
     //   const { escrow, assets } = decodeArc4<ProposalRemoveAllowances>(data)
     //   this.removeAllowances(escrow, assets)
     //   break
     // }
     bz executeProposal_after_if_else@38
-    // smart_contracts/arc58/dao/contract.algo.ts:1213
+    // smart_contracts/arc58/dao/contract.algo.ts:1215
     // const { escrow, assets } = decodeArc4<ProposalRemoveAllowances>(data)
     dig 8
     dup
@@ -4462,23 +4462,23 @@ executeProposal_after_if_else@34:
     uncover 3
     uncover 2
     substring3
-    // smart_contracts/arc58/dao/contract.algo.ts:587-590
+    // smart_contracts/arc58/dao/contract.algo.ts:589-592
     // abiCall<typeof AbstractedAccount.prototype.arc58_removeAllowances>({
     //   appId: this.wallet.value,
     //   args: [escrow, assets]
     // })
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:588
+    // smart_contracts/arc58/dao/contract.algo.ts:590
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:588
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:590
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:587-590
+    // smart_contracts/arc58/dao/contract.algo.ts:589-592
     // abiCall<typeof AbstractedAccount.prototype.arc58_removeAllowances>({
     //   appId: this.wallet.value,
     //   args: [escrow, assets]
@@ -4494,24 +4494,24 @@ executeProposal_after_if_else@34:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/dao/contract.algo.ts:1215
+    // smart_contracts/arc58/dao/contract.algo.ts:1217
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@38:
-    // smart_contracts/arc58/dao/contract.algo.ts:1217
+    // smart_contracts/arc58/dao/contract.algo.ts:1219
     // case ProposalActionTypeNewEscrow: {
     dig 6
     bytec 43 // 0x46
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1217-1221
+    // smart_contracts/arc58/dao/contract.algo.ts:1219-1223
     // case ProposalActionTypeNewEscrow: {
     //   const { escrow } = decodeArc4<ProposalNewEscrow>(data)
     //   this.newEscrow(escrow)
     //   break
     // }
     bz executeProposal_after_if_else@42
-    // smart_contracts/arc58/dao/contract.algo.ts:1218
+    // smart_contracts/arc58/dao/contract.algo.ts:1220
     // const { escrow } = decodeArc4<ProposalNewEscrow>(data)
     dig 8
     dup
@@ -4520,23 +4520,23 @@ executeProposal_after_if_else@38:
     dig 1
     len
     substring3
-    // smart_contracts/arc58/dao/contract.algo.ts:615-618
+    // smart_contracts/arc58/dao/contract.algo.ts:617-620
     // return abiCall<typeof AbstractedAccount.prototype.arc58_newEscrow>({
     //   appId: this.wallet.value,
     //   args: [escrow]
     // }).returnValue
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:616
+    // smart_contracts/arc58/dao/contract.algo.ts:618
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:616
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:618
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:615-618
+    // smart_contracts/arc58/dao/contract.algo.ts:617-620
     // return abiCall<typeof AbstractedAccount.prototype.arc58_newEscrow>({
     //   appId: this.wallet.value,
     //   args: [escrow]
@@ -4555,31 +4555,31 @@ executeProposal_after_if_else@38:
     extract 4 0
     swap
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     len
     intc_2 // 8
     ==
     assert // invalid number of bytes for uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1220
+    // smart_contracts/arc58/dao/contract.algo.ts:1222
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@42:
-    // smart_contracts/arc58/dao/contract.algo.ts:1222
+    // smart_contracts/arc58/dao/contract.algo.ts:1224
     // case ProposalActionTypeToggleEscrowLock: {
     dig 6
     bytec 44 // 0x47
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1222-1226
+    // smart_contracts/arc58/dao/contract.algo.ts:1224-1228
     // case ProposalActionTypeToggleEscrowLock: {
     //   const { escrow } = decodeArc4<ProposalToggleEscrowLock>(data)
     //   this.toggleEscrowLock(escrow)
     //   break
     // }
     bz executeProposal_after_if_else@46
-    // smart_contracts/arc58/dao/contract.algo.ts:1223
+    // smart_contracts/arc58/dao/contract.algo.ts:1225
     // const { escrow } = decodeArc4<ProposalToggleEscrowLock>(data)
     dig 8
     dup
@@ -4588,23 +4588,23 @@ executeProposal_after_if_else@42:
     dig 1
     len
     substring3
-    // smart_contracts/arc58/dao/contract.algo.ts:622-625
+    // smart_contracts/arc58/dao/contract.algo.ts:624-627
     // return abiCall<typeof AbstractedAccount.prototype.arc58_toggleEscrowLock>({
     //   appId: this.wallet.value,
     //   args: [escrow]
     // }).returnValue
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:623
+    // smart_contracts/arc58/dao/contract.algo.ts:625
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:623
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:625
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:622-625
+    // smart_contracts/arc58/dao/contract.algo.ts:624-627
     // return abiCall<typeof AbstractedAccount.prototype.arc58_toggleEscrowLock>({
     //   appId: this.wallet.value,
     //   args: [escrow]
@@ -4623,31 +4623,31 @@ executeProposal_after_if_else@42:
     extract 4 0
     swap
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     len
     pushint 9 // 9
     ==
     assert // invalid number of bytes for (uint64,bool1)
-    // smart_contracts/arc58/dao/contract.algo.ts:1225
+    // smart_contracts/arc58/dao/contract.algo.ts:1227
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@46:
-    // smart_contracts/arc58/dao/contract.algo.ts:1227
+    // smart_contracts/arc58/dao/contract.algo.ts:1229
     // case ProposalActionTypeUpdateFields: {
     dig 6
     bytec 45 // 0x50
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1227-1231
+    // smart_contracts/arc58/dao/contract.algo.ts:1229-1233
     // case ProposalActionTypeUpdateFields: {
     //   const { field, value } = decodeArc4<ProposalUpdateField>(data)
     //   this.updateField(field, value)
     //   break
     // }
     bz executeProposal_block@51
-    // smart_contracts/arc58/dao/contract.algo.ts:1228
+    // smart_contracts/arc58/dao/contract.algo.ts:1230
     // const { field, value } = decodeArc4<ProposalUpdateField>(data)
     dig 8
     dup
@@ -4669,17 +4669,17 @@ executeProposal_after_if_else@46:
     substring3
     extract 2 0
     bury 7
-    // smart_contracts/arc58/dao/contract.algo.ts:630
+    // smart_contracts/arc58/dao/contract.algo.ts:632
     // case AkitaDAOGlobalStateKeysContentPolicy: {
     bytec 24 // "content_policy"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:630-633
+    // smart_contracts/arc58/dao/contract.algo.ts:632-635
     // case AkitaDAOGlobalStateKeysContentPolicy: {
     //   this.contentPolicy.value = value.toFixed({ length: 36 })
     //   break
     // }
     bz executeProposal_after_if_else@55
-    // smart_contracts/arc58/dao/contract.algo.ts:631
+    // smart_contracts/arc58/dao/contract.algo.ts:633
     // this.contentPolicy.value = value.toFixed({ length: 36 })
     dig 5
     dup
@@ -4690,75 +4690,75 @@ executeProposal_after_if_else@46:
     // smart_contracts/arc58/dao/contract.algo.ts:38
     // contentPolicy = GlobalState<CID>({ key: AkitaDAOGlobalStateKeysContentPolicy })
     bytec 24 // "content_policy"
-    // smart_contracts/arc58/dao/contract.algo.ts:631
+    // smart_contracts/arc58/dao/contract.algo.ts:633
     // this.contentPolicy.value = value.toFixed({ length: 36 })
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:632
+    // smart_contracts/arc58/dao/contract.algo.ts:634
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@55:
-    // smart_contracts/arc58/dao/contract.algo.ts:634
+    // smart_contracts/arc58/dao/contract.algo.ts:636
     // case AkitaDAOGlobalStateKeysProposalActionLimit: {
     dig 7
     bytec 13 // "proposal_action_limit"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:634-637
+    // smart_contracts/arc58/dao/contract.algo.ts:636-639
     // case AkitaDAOGlobalStateKeysProposalActionLimit: {
     //   this.proposalActionLimit.value = btoi(value)
     //   break
     // }
     bz executeProposal_after_if_else@57
-    // smart_contracts/arc58/dao/contract.algo.ts:635
+    // smart_contracts/arc58/dao/contract.algo.ts:637
     // this.proposalActionLimit.value = btoi(value)
     dig 5
     btoi
     // smart_contracts/arc58/dao/contract.algo.ts:36
     // proposalActionLimit = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysProposalActionLimit })
     bytec 13 // "proposal_action_limit"
-    // smart_contracts/arc58/dao/contract.algo.ts:635
+    // smart_contracts/arc58/dao/contract.algo.ts:637
     // this.proposalActionLimit.value = btoi(value)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:636
+    // smart_contracts/arc58/dao/contract.algo.ts:638
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@57:
-    // smart_contracts/arc58/dao/contract.algo.ts:638
+    // smart_contracts/arc58/dao/contract.algo.ts:640
     // case AkitaDAOGlobalStateKeysMinRewardsImpact: {
     dig 7
     bytec 25 // "min_rewards_impact"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:638-641
+    // smart_contracts/arc58/dao/contract.algo.ts:640-643
     // case AkitaDAOGlobalStateKeysMinRewardsImpact: {
     //   this.minRewardsImpact.value = btoi(value)
     //   break
     // }
     bz executeProposal_after_if_else@59
-    // smart_contracts/arc58/dao/contract.algo.ts:639
+    // smart_contracts/arc58/dao/contract.algo.ts:641
     // this.minRewardsImpact.value = btoi(value)
     dig 5
     btoi
     // smart_contracts/arc58/dao/contract.algo.ts:40
     // minRewardsImpact = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysMinRewardsImpact })
     bytec 25 // "min_rewards_impact"
-    // smart_contracts/arc58/dao/contract.algo.ts:639
+    // smart_contracts/arc58/dao/contract.algo.ts:641
     // this.minRewardsImpact.value = btoi(value)
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:640
+    // smart_contracts/arc58/dao/contract.algo.ts:642
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@59:
-    // smart_contracts/arc58/dao/contract.algo.ts:642
+    // smart_contracts/arc58/dao/contract.algo.ts:644
     // case AkitaDAOGlobalStateKeysAkitaAppList: {
     dig 7
     bytec 9 // "aal"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:642-646
+    // smart_contracts/arc58/dao/contract.algo.ts:644-648
     // case AkitaDAOGlobalStateKeysAkitaAppList: {
     //   const akitaAppList = decodeArc4<AkitaAppList>(value)
     //   this.akitaAppList.value = clone(akitaAppList)
@@ -4768,21 +4768,21 @@ executeProposal_after_if_else@59:
     // smart_contracts/arc58/dao/contract.algo.ts:42
     // akitaAppList = GlobalState<AkitaAppList>({ key: AkitaDAOGlobalStateKeysAkitaAppList })
     bytec 9 // "aal"
-    // smart_contracts/arc58/dao/contract.algo.ts:644
+    // smart_contracts/arc58/dao/contract.algo.ts:646
     // this.akitaAppList.value = clone(akitaAppList)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:645
+    // smart_contracts/arc58/dao/contract.algo.ts:647
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@61:
-    // smart_contracts/arc58/dao/contract.algo.ts:647
+    // smart_contracts/arc58/dao/contract.algo.ts:649
     // case AkitaDAOGlobalStateKeysAkitaSocialAppList: {
     dig 7
     bytec 26 // "sal"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:647-651
+    // smart_contracts/arc58/dao/contract.algo.ts:649-653
     // case AkitaDAOGlobalStateKeysAkitaSocialAppList: {
     //   const akitaSocialAppList = decodeArc4<AkitaSocialAppList>(value)
     //   this.akitaSocialAppList.value = clone(akitaSocialAppList)
@@ -4792,21 +4792,21 @@ executeProposal_after_if_else@61:
     // smart_contracts/arc58/dao/contract.algo.ts:44
     // akitaSocialAppList = GlobalState<AkitaSocialAppList>({ key: AkitaDAOGlobalStateKeysAkitaSocialAppList })
     bytec 26 // "sal"
-    // smart_contracts/arc58/dao/contract.algo.ts:649
+    // smart_contracts/arc58/dao/contract.algo.ts:651
     // this.akitaSocialAppList.value = clone(akitaSocialAppList)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:650
+    // smart_contracts/arc58/dao/contract.algo.ts:652
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@63:
-    // smart_contracts/arc58/dao/contract.algo.ts:652
+    // smart_contracts/arc58/dao/contract.algo.ts:654
     // case AkitaDAOGlobalStateKeysPluginAppList: {
     dig 7
     bytec 14 // "pal"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:652-656
+    // smart_contracts/arc58/dao/contract.algo.ts:654-658
     // case AkitaDAOGlobalStateKeysPluginAppList: {
     //   const pluginAppList = decodeArc4<PluginAppList>(value)
     //   this.pluginAppList.value = clone(pluginAppList)
@@ -4816,21 +4816,21 @@ executeProposal_after_if_else@63:
     // smart_contracts/arc58/dao/contract.algo.ts:46
     // pluginAppList = GlobalState<PluginAppList>({ key: AkitaDAOGlobalStateKeysPluginAppList })
     bytec 14 // "pal"
-    // smart_contracts/arc58/dao/contract.algo.ts:654
+    // smart_contracts/arc58/dao/contract.algo.ts:656
     // this.pluginAppList.value = clone(pluginAppList)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:655
+    // smart_contracts/arc58/dao/contract.algo.ts:657
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@65:
-    // smart_contracts/arc58/dao/contract.algo.ts:657
+    // smart_contracts/arc58/dao/contract.algo.ts:659
     // case AkitaDAOGlobalStateKeysOtherAppList: {
     dig 7
     bytec 5 // "oal"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:657-661
+    // smart_contracts/arc58/dao/contract.algo.ts:659-663
     // case AkitaDAOGlobalStateKeysOtherAppList: {
     //   const otherAppList = decodeArc4<OtherAppList>(value)
     //   this.otherAppList.value = clone(otherAppList)
@@ -4840,21 +4840,21 @@ executeProposal_after_if_else@65:
     // smart_contracts/arc58/dao/contract.algo.ts:48
     // otherAppList = GlobalState<OtherAppList>({ key: AkitaDAOGlobalStateKeysOtherAppList })
     bytec 5 // "oal"
-    // smart_contracts/arc58/dao/contract.algo.ts:659
+    // smart_contracts/arc58/dao/contract.algo.ts:661
     // this.otherAppList.value = clone(otherAppList)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:660
+    // smart_contracts/arc58/dao/contract.algo.ts:662
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@67:
-    // smart_contracts/arc58/dao/contract.algo.ts:662
+    // smart_contracts/arc58/dao/contract.algo.ts:664
     // case AkitaDAOGlobalStateKeysWalletFees: {
     dig 7
     bytec 27 // "wallet_fees"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:662-666
+    // smart_contracts/arc58/dao/contract.algo.ts:664-668
     // case AkitaDAOGlobalStateKeysWalletFees: {
     //   const walletFees = decodeArc4<WalletFees>(value)
     //   this.walletFees.value = clone(walletFees)
@@ -4864,21 +4864,21 @@ executeProposal_after_if_else@67:
     // smart_contracts/arc58/dao/contract.algo.ts:50
     // walletFees = GlobalState<WalletFees>({ key: AkitaDAOGlobalStateKeysWalletFees })
     bytec 27 // "wallet_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:664
+    // smart_contracts/arc58/dao/contract.algo.ts:666
     // this.walletFees.value = clone(walletFees)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:665
+    // smart_contracts/arc58/dao/contract.algo.ts:667
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@69:
-    // smart_contracts/arc58/dao/contract.algo.ts:667
+    // smart_contracts/arc58/dao/contract.algo.ts:669
     // case AkitaDAOGlobalStateKeysSocialFees: {
     dig 7
     bytec 28 // "social_fees"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:667-671
+    // smart_contracts/arc58/dao/contract.algo.ts:669-673
     // case AkitaDAOGlobalStateKeysSocialFees: {
     //   const socialFees = decodeArc4<SocialFees>(value)
     //   this.socialFees.value = clone(socialFees)
@@ -4888,21 +4888,21 @@ executeProposal_after_if_else@69:
     // smart_contracts/arc58/dao/contract.algo.ts:52
     // socialFees = GlobalState<SocialFees>({ key: AkitaDAOGlobalStateKeysSocialFees })
     bytec 28 // "social_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:669
+    // smart_contracts/arc58/dao/contract.algo.ts:671
     // this.socialFees.value = clone(socialFees)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:670
+    // smart_contracts/arc58/dao/contract.algo.ts:672
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@71:
-    // smart_contracts/arc58/dao/contract.algo.ts:672
+    // smart_contracts/arc58/dao/contract.algo.ts:674
     // case AkitaDAOGlobalStateKeysStakingFees: {
     dig 7
     bytec 29 // "staking_fees"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:672-676
+    // smart_contracts/arc58/dao/contract.algo.ts:674-678
     // case AkitaDAOGlobalStateKeysStakingFees: {
     //   const stakingFees = decodeArc4<StakingFees>(value)
     //   this.stakingFees.value = clone(stakingFees)
@@ -4912,21 +4912,21 @@ executeProposal_after_if_else@71:
     // smart_contracts/arc58/dao/contract.algo.ts:54
     // stakingFees = GlobalState<StakingFees>({ key: AkitaDAOGlobalStateKeysStakingFees })
     bytec 29 // "staking_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:674
+    // smart_contracts/arc58/dao/contract.algo.ts:676
     // this.stakingFees.value = clone(stakingFees)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:675
+    // smart_contracts/arc58/dao/contract.algo.ts:677
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@73:
-    // smart_contracts/arc58/dao/contract.algo.ts:677
+    // smart_contracts/arc58/dao/contract.algo.ts:679
     // case AkitaDAOGlobalStateKeysSubscriptionFees: {
     dig 7
     bytec 30 // "subscription_fees"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:677-681
+    // smart_contracts/arc58/dao/contract.algo.ts:679-683
     // case AkitaDAOGlobalStateKeysSubscriptionFees: {
     //   const subscriptionFees = decodeArc4<SubscriptionFees>(value)
     //   this.subscriptionFees.value = clone(subscriptionFees)
@@ -4936,21 +4936,21 @@ executeProposal_after_if_else@73:
     // smart_contracts/arc58/dao/contract.algo.ts:56
     // subscriptionFees = GlobalState<SubscriptionFees>({ key: AkitaDAOGlobalStateKeysSubscriptionFees })
     bytec 30 // "subscription_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:679
+    // smart_contracts/arc58/dao/contract.algo.ts:681
     // this.subscriptionFees.value = clone(subscriptionFees)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:680
+    // smart_contracts/arc58/dao/contract.algo.ts:682
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@75:
-    // smart_contracts/arc58/dao/contract.algo.ts:682
+    // smart_contracts/arc58/dao/contract.algo.ts:684
     // case AkitaDAOGlobalStateKeysNFTFees: {
     dig 7
     bytec 31 // "nft_fees"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:682-686
+    // smart_contracts/arc58/dao/contract.algo.ts:684-688
     // case AkitaDAOGlobalStateKeysNFTFees: {
     //   const nftFees = decodeArc4<NFTFees>(value)
     //   this.nftFees.value = clone(nftFees)
@@ -4960,21 +4960,21 @@ executeProposal_after_if_else@75:
     // smart_contracts/arc58/dao/contract.algo.ts:58
     // nftFees = GlobalState<NFTFees>({ key: AkitaDAOGlobalStateKeysNFTFees })
     bytec 31 // "nft_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:684
+    // smart_contracts/arc58/dao/contract.algo.ts:686
     // this.nftFees.value = clone(nftFees)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:685
+    // smart_contracts/arc58/dao/contract.algo.ts:687
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@77:
-    // smart_contracts/arc58/dao/contract.algo.ts:687
+    // smart_contracts/arc58/dao/contract.algo.ts:689
     // case AkitaDAOGlobalStateKeysSwapFees: {
     dig 7
     bytec 32 // "swap_fees"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:687-691
+    // smart_contracts/arc58/dao/contract.algo.ts:689-693
     // case AkitaDAOGlobalStateKeysSwapFees: {
     //   const swapFees = decodeArc4<SwapFees>(value)
     //   this.swapFees.value = clone(swapFees)
@@ -4984,21 +4984,21 @@ executeProposal_after_if_else@77:
     // smart_contracts/arc58/dao/contract.algo.ts:60
     // swapFees = GlobalState<SwapFees>({ key: AkitaDAOGlobalStateKeysSwapFees })
     bytec 32 // "swap_fees"
-    // smart_contracts/arc58/dao/contract.algo.ts:689
+    // smart_contracts/arc58/dao/contract.algo.ts:691
     // this.swapFees.value = clone(swapFees)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:690
+    // smart_contracts/arc58/dao/contract.algo.ts:692
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@79:
-    // smart_contracts/arc58/dao/contract.algo.ts:692
+    // smart_contracts/arc58/dao/contract.algo.ts:694
     // case AkitaDAOGlobalStateKeysAkitaAssets: {
     dig 7
     bytec 11 // "akita_assets"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:692-695
+    // smart_contracts/arc58/dao/contract.algo.ts:694-697
     // case AkitaDAOGlobalStateKeysAkitaAssets: {
     //   this.akitaAssets.value = decodeArc4<AkitaAssets>(value)
     //   break
@@ -5007,21 +5007,21 @@ executeProposal_after_if_else@79:
     // smart_contracts/arc58/dao/contract.algo.ts:62
     // akitaAssets = GlobalState<AkitaAssets>({ key: AkitaDAOGlobalStateKeysAkitaAssets })
     bytec 11 // "akita_assets"
-    // smart_contracts/arc58/dao/contract.algo.ts:693
+    // smart_contracts/arc58/dao/contract.algo.ts:695
     // this.akitaAssets.value = decodeArc4<AkitaAssets>(value)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:694
+    // smart_contracts/arc58/dao/contract.algo.ts:696
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@81:
-    // smart_contracts/arc58/dao/contract.algo.ts:696
+    // smart_contracts/arc58/dao/contract.algo.ts:698
     // case AkitaDAOGlobalStateKeysUpgradeAppProposalSettings: {
     dig 7
     bytec 15 // "upgrade_app_ps"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:696-700
+    // smart_contracts/arc58/dao/contract.algo.ts:698-702
     // case AkitaDAOGlobalStateKeysUpgradeAppProposalSettings: {
     //   const upgradeAppSettings = decodeArc4<ProposalSettings>(value)
     //   this.upgradeAppProposalSettings.value = clone(upgradeAppSettings)
@@ -5031,21 +5031,21 @@ executeProposal_after_if_else@81:
     // smart_contracts/arc58/dao/contract.algo.ts:68
     // upgradeAppProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysUpgradeAppProposalSettings })
     bytec 15 // "upgrade_app_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:698
+    // smart_contracts/arc58/dao/contract.algo.ts:700
     // this.upgradeAppProposalSettings.value = clone(upgradeAppSettings)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:699
+    // smart_contracts/arc58/dao/contract.algo.ts:701
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@83:
-    // smart_contracts/arc58/dao/contract.algo.ts:701
+    // smart_contracts/arc58/dao/contract.algo.ts:703
     // case AkitaDAOGlobalStateKeysAddPluginProposalSettings: {
     dig 7
     bytec 16 // "add_plugin_ps"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:701-705
+    // smart_contracts/arc58/dao/contract.algo.ts:703-707
     // case AkitaDAOGlobalStateKeysAddPluginProposalSettings: {
     //   const addPluginSettings = decodeArc4<ProposalSettings>(value)
     //   this.addPluginProposalSettings.value = clone(addPluginSettings)
@@ -5055,21 +5055,21 @@ executeProposal_after_if_else@83:
     // smart_contracts/arc58/dao/contract.algo.ts:70
     // addPluginProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysAddPluginProposalSettings })
     bytec 16 // "add_plugin_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:703
+    // smart_contracts/arc58/dao/contract.algo.ts:705
     // this.addPluginProposalSettings.value = clone(addPluginSettings)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:704
+    // smart_contracts/arc58/dao/contract.algo.ts:706
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@85:
-    // smart_contracts/arc58/dao/contract.algo.ts:706
+    // smart_contracts/arc58/dao/contract.algo.ts:708
     // case AkitaDAOGlobalStateKeysRemovePluginProposalSettings: {
     dig 7
     bytec 17 // "remove_plugin_ps"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:706-710
+    // smart_contracts/arc58/dao/contract.algo.ts:708-712
     // case AkitaDAOGlobalStateKeysRemovePluginProposalSettings: {
     //   const removePluginSettings = decodeArc4<ProposalSettings>(value)
     //   this.removePluginProposalSettings.value = clone(removePluginSettings)
@@ -5079,21 +5079,21 @@ executeProposal_after_if_else@85:
     // smart_contracts/arc58/dao/contract.algo.ts:72
     // removePluginProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysRemovePluginProposalSettings })
     bytec 17 // "remove_plugin_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:708
+    // smart_contracts/arc58/dao/contract.algo.ts:710
     // this.removePluginProposalSettings.value = clone(removePluginSettings)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:709
+    // smart_contracts/arc58/dao/contract.algo.ts:711
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@87:
-    // smart_contracts/arc58/dao/contract.algo.ts:711
+    // smart_contracts/arc58/dao/contract.algo.ts:713
     // case AkitaDAOGlobalStateKeysAddAllowancesProposalSettings: {
     dig 7
     bytec 18 // "add_allowance_ps"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:711-715
+    // smart_contracts/arc58/dao/contract.algo.ts:713-717
     // case AkitaDAOGlobalStateKeysAddAllowancesProposalSettings: {
     //   const addAllowanceSettings = decodeArc4<ProposalSettings>(value)
     //   this.addAllowancesProposalSettings.value = clone(addAllowanceSettings)
@@ -5103,21 +5103,21 @@ executeProposal_after_if_else@87:
     // smart_contracts/arc58/dao/contract.algo.ts:76
     // addAllowancesProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysAddAllowancesProposalSettings })
     bytec 18 // "add_allowance_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:713
+    // smart_contracts/arc58/dao/contract.algo.ts:715
     // this.addAllowancesProposalSettings.value = clone(addAllowanceSettings)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:714
+    // smart_contracts/arc58/dao/contract.algo.ts:716
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@89:
-    // smart_contracts/arc58/dao/contract.algo.ts:716
+    // smart_contracts/arc58/dao/contract.algo.ts:718
     // case AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings: {
     dig 7
     bytec 19 // "remove_allowance_ps"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:716-720
+    // smart_contracts/arc58/dao/contract.algo.ts:718-722
     // case AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings: {
     //   const removeAllowanceSettings = decodeArc4<ProposalSettings>(value)
     //   this.removeAllowancesProposalSettings.value = clone(removeAllowanceSettings)
@@ -5127,21 +5127,21 @@ executeProposal_after_if_else@89:
     // smart_contracts/arc58/dao/contract.algo.ts:78
     // removeAllowancesProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysRemoveAllowancesProposalSettings })
     bytec 19 // "remove_allowance_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:718
+    // smart_contracts/arc58/dao/contract.algo.ts:720
     // this.removeAllowancesProposalSettings.value = clone(removeAllowanceSettings)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:719
+    // smart_contracts/arc58/dao/contract.algo.ts:721
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@91:
-    // smart_contracts/arc58/dao/contract.algo.ts:721
+    // smart_contracts/arc58/dao/contract.algo.ts:723
     // case AkitaDAOGlobalStateKeysNewEscrowProposalSettings: {
     dig 7
     bytec 20 // "new_escrow_ps"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:721-725
+    // smart_contracts/arc58/dao/contract.algo.ts:723-727
     // case AkitaDAOGlobalStateKeysNewEscrowProposalSettings: {
     //   const newEscrowSettings = decodeArc4<ProposalSettings>(value)
     //   this.newEscrowProposalSettings.value = clone(newEscrowSettings)
@@ -5151,21 +5151,21 @@ executeProposal_after_if_else@91:
     // smart_contracts/arc58/dao/contract.algo.ts:80
     // newEscrowProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysNewEscrowProposalSettings })
     bytec 20 // "new_escrow_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:723
+    // smart_contracts/arc58/dao/contract.algo.ts:725
     // this.newEscrowProposalSettings.value = clone(newEscrowSettings)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:724
+    // smart_contracts/arc58/dao/contract.algo.ts:726
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@93:
-    // smart_contracts/arc58/dao/contract.algo.ts:726
+    // smart_contracts/arc58/dao/contract.algo.ts:728
     // case AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings: {
     dig 7
     bytec 21 // "update_fields_ps"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:726-730
+    // smart_contracts/arc58/dao/contract.algo.ts:728-732
     // case AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings: {
     //   const updateFieldsSettings = decodeArc4<ProposalSettings>(value)
     //   this.updateFieldsProposalSettings.value = clone(updateFieldsSettings)
@@ -5175,21 +5175,21 @@ executeProposal_after_if_else@93:
     // smart_contracts/arc58/dao/contract.algo.ts:84
     // updateFieldsProposalSettings = GlobalState<ProposalSettings>({ key: AkitaDAOGlobalStateKeysUpdateFieldsProposalSettings })
     bytec 21 // "update_fields_ps"
-    // smart_contracts/arc58/dao/contract.algo.ts:728
+    // smart_contracts/arc58/dao/contract.algo.ts:730
     // this.updateFieldsProposalSettings.value = clone(updateFieldsSettings)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:729
+    // smart_contracts/arc58/dao/contract.algo.ts:731
     // break
     b executeProposal_block@51
 
 executeProposal_after_if_else@95:
-    // smart_contracts/arc58/dao/contract.algo.ts:731
+    // smart_contracts/arc58/dao/contract.algo.ts:733
     // case AkitaDAOGlobalStateKeysRevenueSplits: {
     dig 7
     bytec 33 // "revenue_splits"
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:731-735
+    // smart_contracts/arc58/dao/contract.algo.ts:733-737
     // case AkitaDAOGlobalStateKeysRevenueSplits: {
     //   const revenueSplits = decodeArc4<Split[]>(value)
     //   this.revenueSplits.value = clone(revenueSplits)
@@ -5199,22 +5199,22 @@ executeProposal_after_if_else@95:
     // smart_contracts/arc58/dao/contract.algo.ts:64
     // revenueSplits = GlobalState<Split[]>({ key: AkitaDAOGlobalStateKeysRevenueSplits })
     bytec 33 // "revenue_splits"
-    // smart_contracts/arc58/dao/contract.algo.ts:733
+    // smart_contracts/arc58/dao/contract.algo.ts:735
     // this.revenueSplits.value = clone(revenueSplits)
     dig 6
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:734
+    // smart_contracts/arc58/dao/contract.algo.ts:736
     // break
     b executeProposal_block@51
 
 executeProposal_after_while@52:
-    // smart_contracts/arc58/dao/contract.algo.ts:1235
+    // smart_contracts/arc58/dao/contract.algo.ts:1237
     // this.proposals(proposalID).value.status = ProposalStatusExecuted
     dig 2
     intc_0 // 0
     bytec 12 // 0x32
     box_replace
-    // smart_contracts/arc58/dao/contract.algo.ts:1163
+    // smart_contracts/arc58/dao/contract.algo.ts:1165
     // executeProposal(proposalID: uint64): void {
     intc_1 // 1
     return
@@ -5223,7 +5223,7 @@ executeProposal_after_while@52:
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.deleteProposalVotes[routing]() -> void:
 deleteProposalVotes:
     bytec_3 // ""
-    // smart_contracts/arc58/dao/contract.algo.ts:1238
+    // smart_contracts/arc58/dao/contract.algo.ts:1240
     // deleteProposalVotes(proposalID: uint64, voters: Account[]): void {
     txna ApplicationArgs 1
     dup
@@ -5248,7 +5248,7 @@ deleteProposalVotes:
     len
     ==
     assert // invalid number of bytes for (len+uint8[32][])
-    // smart_contracts/arc58/dao/contract.algo.ts:1239
+    // smart_contracts/arc58/dao/contract.algo.ts:1241
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     itob
     dup
@@ -5258,23 +5258,23 @@ deleteProposalVotes:
     swap
     concat
     dupn 2
-    // smart_contracts/arc58/dao/contract.algo.ts:1239
+    // smart_contracts/arc58/dao/contract.algo.ts:1241
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/arc58/dao/contract.algo.ts:1241
+    // smart_contracts/arc58/dao/contract.algo.ts:1243
     // this.proposals(proposalID).value.status === ProposalStatusApproved ||
     intc_0 // 0
     intc_1 // 1
     box_extract
     bytec 8 // 0x28
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1241-1242
+    // smart_contracts/arc58/dao/contract.algo.ts:1243-1244
     // this.proposals(proposalID).value.status === ProposalStatusApproved ||
     // this.proposals(proposalID).value.status === ProposalStatusRejected ||
     bnz deleteProposalVotes_bool_true@4
-    // smart_contracts/arc58/dao/contract.algo.ts:1242
+    // smart_contracts/arc58/dao/contract.algo.ts:1244
     // this.proposals(proposalID).value.status === ProposalStatusRejected ||
     dup
     intc_0 // 0
@@ -5282,11 +5282,11 @@ deleteProposalVotes:
     box_extract
     bytec 10 // 0x1e
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1241-1242
+    // smart_contracts/arc58/dao/contract.algo.ts:1243-1244
     // this.proposals(proposalID).value.status === ProposalStatusApproved ||
     // this.proposals(proposalID).value.status === ProposalStatusRejected ||
     bnz deleteProposalVotes_bool_true@4
-    // smart_contracts/arc58/dao/contract.algo.ts:1243
+    // smart_contracts/arc58/dao/contract.algo.ts:1245
     // this.proposals(proposalID).value.status === ProposalStatusExecuted,
     dup
     intc_0 // 0
@@ -5294,7 +5294,7 @@ deleteProposalVotes:
     box_extract
     bytec 12 // 0x32
     ==
-    // smart_contracts/arc58/dao/contract.algo.ts:1241-1243
+    // smart_contracts/arc58/dao/contract.algo.ts:1243-1245
     // this.proposals(proposalID).value.status === ProposalStatusApproved ||
     // this.proposals(proposalID).value.status === ProposalStatusRejected ||
     // this.proposals(proposalID).value.status === ProposalStatusExecuted,
@@ -5304,7 +5304,7 @@ deleteProposalVotes_bool_true@4:
     intc_1 // 1
 
 deleteProposalVotes_bool_merge@6:
-    // smart_contracts/arc58/dao/contract.algo.ts:1240-1245
+    // smart_contracts/arc58/dao/contract.algo.ts:1242-1247
     // assert(
     //   this.proposals(proposalID).value.status === ProposalStatusApproved ||
     //   this.proposals(proposalID).value.status === ProposalStatusRejected ||
@@ -5312,19 +5312,19 @@ deleteProposalVotes_bool_merge@6:
     //   ERR_INVALID_PROPOSAL_STATE
     // )
     assert // invalid proposal state
-    // smart_contracts/arc58/dao/contract.algo.ts:1247
+    // smart_contracts/arc58/dao/contract.algo.ts:1249
     // for (let i: uint64 = 0; i < voters.length; i++) {
     intc_0 // 0
     bury 5
 
 deleteProposalVotes_while_top@7:
-    // smart_contracts/arc58/dao/contract.algo.ts:1247
+    // smart_contracts/arc58/dao/contract.algo.ts:1249
     // for (let i: uint64 = 0; i < voters.length; i++) {
     dig 4
     dig 3
     <
     bz deleteProposalVotes_after_while@9
-    // smart_contracts/arc58/dao/contract.algo.ts:1248
+    // smart_contracts/arc58/dao/contract.algo.ts:1250
     // assert(this.proposalVotes({ proposalID, voter: voters[i] }).exists, ERR_PROPOSAL_VOTE_NOT_FOUND)
     dig 3
     extract 2 0
@@ -5343,17 +5343,17 @@ deleteProposalVotes_while_top@7:
     pushbytes "v"
     swap
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:1248
+    // smart_contracts/arc58/dao/contract.algo.ts:1250
     // assert(this.proposalVotes({ proposalID, voter: voters[i] }).exists, ERR_PROPOSAL_VOTE_NOT_FOUND)
     dup
     box_len
     bury 1
     assert // Proposal Vote not found
-    // smart_contracts/arc58/dao/contract.algo.ts:1249
+    // smart_contracts/arc58/dao/contract.algo.ts:1251
     // this.proposalVotes({ proposalID, voter: voters[i] }).delete()
     box_del
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1247
+    // smart_contracts/arc58/dao/contract.algo.ts:1249
     // for (let i: uint64 = 0; i < voters.length; i++) {
     intc_1 // 1
     +
@@ -5361,7 +5361,7 @@ deleteProposalVotes_while_top@7:
     b deleteProposalVotes_while_top@7
 
 deleteProposalVotes_after_while@9:
-    // smart_contracts/arc58/dao/contract.algo.ts:1238
+    // smart_contracts/arc58/dao/contract.algo.ts:1240
     // deleteProposalVotes(proposalID: uint64, voters: Account[]): void {
     intc_1 // 1
     return
@@ -5373,11 +5373,11 @@ deleteProposalVotes_bool_false@5:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setupCost[routing]() -> void:
 setupCost:
-    // smart_contracts/arc58/dao/contract.algo.ts:1253
+    // smart_contracts/arc58/dao/contract.algo.ts:1255
     // @abimethod({ readonly: true })
     callsub smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setupCost
     itob
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     swap
     concat
     log
@@ -5387,12 +5387,12 @@ setupCost:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost[routing]() -> void:
 proposalCost:
-    // smart_contracts/arc58/dao/contract.algo.ts:1259
+    // smart_contracts/arc58/dao/contract.algo.ts:1261
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     callsub smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost
     pop
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     swap
     concat
     log
@@ -5402,7 +5402,7 @@ proposalCost:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposal[routing]() -> void:
 getProposal:
-    // smart_contracts/arc58/dao/contract.algo.ts:1324
+    // smart_contracts/arc58/dao/contract.algo.ts:1326
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -5411,7 +5411,7 @@ getProposal:
     ==
     assert // invalid number of bytes for uint64
     btoi
-    // smart_contracts/arc58/dao/contract.algo.ts:1326
+    // smart_contracts/arc58/dao/contract.algo.ts:1328
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     itob
     // smart_contracts/arc58/dao/contract.algo.ts:93
@@ -5419,19 +5419,19 @@ getProposal:
     bytec 4 // "l"
     swap
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:1326
+    // smart_contracts/arc58/dao/contract.algo.ts:1328
     // assert(this.proposals(proposalID).exists, ERR_PROPOSAL_DOES_NOT_EXIST)
     dup
     box_len
     bury 1
     assert // Proposal does not exist
-    // smart_contracts/arc58/dao/contract.algo.ts:1327
+    // smart_contracts/arc58/dao/contract.algo.ts:1329
     // return this.proposals(proposalID).value
     box_get
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1324
+    // smart_contracts/arc58/dao/contract.algo.ts:1326
     // @abimethod({ readonly: true })
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     swap
     concat
     log
@@ -5441,7 +5441,7 @@ getProposal:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.mustGetExecution[routing]() -> void:
 mustGetExecution:
-    // smart_contracts/arc58/dao/contract.algo.ts:1330
+    // smart_contracts/arc58/dao/contract.algo.ts:1332
     // @abimethod({ readonly: true })
     txna ApplicationArgs 1
     dup
@@ -5454,19 +5454,19 @@ mustGetExecution:
     pushbytes "x"
     swap
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:1332
+    // smart_contracts/arc58/dao/contract.algo.ts:1334
     // assert(this.executions(lease).exists, ERR_EXECUTION_KEY_NOT_FOUND)
     dup
     box_len
     bury 1
     assert // Execution key not found
-    // smart_contracts/arc58/dao/contract.algo.ts:1333
+    // smart_contracts/arc58/dao/contract.algo.ts:1335
     // return this.executions(lease).value
     box_get
     pop
-    // smart_contracts/arc58/dao/contract.algo.ts:1330
+    // smart_contracts/arc58/dao/contract.algo.ts:1332
     // @abimethod({ readonly: true })
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     swap
     concat
     log
@@ -5490,7 +5490,7 @@ pluginExists:
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
+    bytec_2 // "wallet"
     // smart_contracts/arc58/dao/contract.algo.ts:115
     // appId: this.wallet.value,
     app_global_get_ex
@@ -5505,7 +5505,7 @@ pluginExists:
     //   appId: this.wallet.value,
     //   args: [[key]]
     // }).returnValue[0]
-    bytec 51 // method "arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"
+    bytec 51 // method "arc58_getPlugins((uint64,address,string)[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,bool,uint64,uint64)[]"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
@@ -5519,7 +5519,7 @@ pluginExists:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     // smart_contracts/arc58/dao/contract.algo.ts:119
@@ -5567,7 +5567,7 @@ namedPluginExists:
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
+    bytec_2 // "wallet"
     // smart_contracts/arc58/dao/contract.algo.ts:131
     // appId: this.wallet.value,
     app_global_get_ex
@@ -5588,7 +5588,7 @@ namedPluginExists:
     //   appId: this.wallet.value,
     //   args: [[name]]
     // }).returnValue[0]
-    pushbytes 0x56dc162c // method "arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,uint64,uint64)[]"
+    pushbytes 0x05794d7d // method "arc58_getNamedPlugins(string[])(uint64,uint8,uint64,uint64,(byte[4],uint64,uint64)[],bool,bool,bool,bool,bool,uint64,uint64)[]"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
@@ -5602,7 +5602,7 @@ namedPluginExists:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     // smart_contracts/arc58/dao/contract.algo.ts:135
@@ -5649,7 +5649,7 @@ escrowExists:
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
+    bytec_2 // "wallet"
     // smart_contracts/arc58/dao/contract.algo.ts:140
     // appId: this.wallet.value,
     app_global_get_ex
@@ -5684,7 +5684,7 @@ escrowExists:
     extract 4 0
     dig 1
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -5728,7 +5728,7 @@ allowanceCheck:
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
+    bytec_2 // "wallet"
     // smart_contracts/arc58/dao/contract.algo.ts:149
     // appId: this.wallet.value,
     app_global_get_ex
@@ -5762,7 +5762,7 @@ allowanceCheck:
     extract 4 0
     swap
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -5815,7 +5815,7 @@ allowanceCheck_while_top@2:
     !=
     // smart_contracts/arc58/dao/contract.algo.ts:158
     // existences.push(exists)
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     uncover 2
     setbit
@@ -5935,7 +5935,7 @@ allowanceCheck_else_body@5:
 allowanceCheck_after_while@7:
     // smart_contracts/arc58/dao/contract.algo.ts:166
     // return { existences, anyExist, allExist }
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 12
     setbit
@@ -6000,7 +6000,7 @@ validEditOrSubmit:
     swap
     // smart_contracts/arc58/dao/contract.algo.ts:355
     // status === ProposalStatusDraft &&
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     ==
     // smart_contracts/arc58/dao/contract.algo.ts:355-356
     // status === ProposalStatusDraft &&
@@ -6389,7 +6389,7 @@ createOrUpdateProposal_after_if_else@5:
     assert // invalid size
     // smart_contracts/arc58/dao/contract.algo.ts:444
     // status: ProposalStatusDraft,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     // smart_contracts/arc58/dao/contract.algo.ts:443-456
     // this.proposals(id).value = {
     //   status: ProposalStatusDraft,
@@ -6626,7 +6626,7 @@ addPlugin_after_if_else@2:
     bytec_3 // ""
     !=
     bz addPlugin_else_body@5
-    // smart_contracts/arc58/dao/contract.algo.ts:536-553
+    // smart_contracts/arc58/dao/contract.algo.ts:536-554
     // abiCall<typeof AbstractedAccount.prototype.arc58_addNamedPlugin>({
     //   appId: this.wallet.value,
     //   args: [
@@ -6642,6 +6642,7 @@ addPlugin_after_if_else@2:
     //     useRounds,
     //     useExecutionKey,
     //     coverFees,
+    //     false,
     //     defaultToEscrow
     //   ]
     // })
@@ -6651,36 +6652,36 @@ addPlugin_after_if_else@2:
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
+    bytec_2 // "wallet"
     // smart_contracts/arc58/dao/contract.algo.ts:537
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
     // smart_contracts/arc58/dao/contract.algo.ts:548
     // useRounds,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 10
     setbit
     // smart_contracts/arc58/dao/contract.algo.ts:549
     // useExecutionKey,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 11
     setbit
     // smart_contracts/arc58/dao/contract.algo.ts:550
     // coverFees,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 12
     setbit
-    // smart_contracts/arc58/dao/contract.algo.ts:551
+    // smart_contracts/arc58/dao/contract.algo.ts:552
     // defaultToEscrow
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 13
     setbit
-    // smart_contracts/arc58/dao/contract.algo.ts:536-553
+    // smart_contracts/arc58/dao/contract.algo.ts:536-554
     // abiCall<typeof AbstractedAccount.prototype.arc58_addNamedPlugin>({
     //   appId: this.wallet.value,
     //   args: [
@@ -6696,10 +6697,11 @@ addPlugin_after_if_else@2:
     //     useRounds,
     //     useExecutionKey,
     //     coverFees,
+    //     false,
     //     defaultToEscrow
     //   ]
     // })
-    pushbytes 0xffb8e918 // method "arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"
+    pushbytes 0x572fd1ea // method "arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool,bool)void"
     itxn_field ApplicationArgs
     frame_dig 0
     itxn_field ApplicationArgs
@@ -6711,7 +6713,7 @@ addPlugin_after_if_else@2:
     itxn_field ApplicationArgs
     // smart_contracts/arc58/dao/contract.algo.ts:543
     // false,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     itxn_field ApplicationArgs
     frame_dig 6
     itxn_field ApplicationArgs
@@ -6727,9 +6729,11 @@ addPlugin_after_if_else@2:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
+    bytec_0 // 0x00
+    itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/arc58/dao/contract.algo.ts:536-553
+    // smart_contracts/arc58/dao/contract.algo.ts:536-554
     // abiCall<typeof AbstractedAccount.prototype.arc58_addNamedPlugin>({
     //   appId: this.wallet.value,
     //   args: [
@@ -6745,6 +6749,7 @@ addPlugin_after_if_else@2:
     //     useRounds,
     //     useExecutionKey,
     //     coverFees,
+    //     false,
     //     defaultToEscrow
     //   ]
     // })
@@ -6755,7 +6760,7 @@ addPlugin_after_if_else@2:
     itxn_submit
 
 addPlugin_after_if_else@7:
-    // smart_contracts/arc58/dao/contract.algo.ts:574
+    // smart_contracts/arc58/dao/contract.algo.ts:576
     // if (escrow !== '' && allowances.length > 0) {
     frame_dig 5
     bytec_3 // ""
@@ -6765,7 +6770,7 @@ addPlugin_after_if_else@7:
     intc_0 // 0
     extract_uint16
     bz addPlugin_after_if_else@10
-    // smart_contracts/arc58/dao/contract.algo.ts:575
+    // smart_contracts/arc58/dao/contract.algo.ts:577
     // this.addAllowances(escrow, allowances)
     frame_dig 5
     frame_dig 19
@@ -6778,7 +6783,7 @@ addPlugin_after_if_else@10:
     retsub
 
 addPlugin_else_body@5:
-    // smart_contracts/arc58/dao/contract.algo.ts:555-571
+    // smart_contracts/arc58/dao/contract.algo.ts:556-573
     // abiCall<typeof AbstractedAccount.prototype.arc58_addPlugin>({
     //   appId: this.wallet.value,
     //   args: [
@@ -6793,45 +6798,46 @@ addPlugin_else_body@5:
     //     useRounds,
     //     useExecutionKey,
     //     coverFees,
+    //     false,
     //     defaultToEscrow
     //   ]
     // })
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:556
+    // smart_contracts/arc58/dao/contract.algo.ts:557
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:556
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:557
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:566
+    // smart_contracts/arc58/dao/contract.algo.ts:567
     // useRounds,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 10
     setbit
-    // smart_contracts/arc58/dao/contract.algo.ts:567
+    // smart_contracts/arc58/dao/contract.algo.ts:568
     // useExecutionKey,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 11
     setbit
-    // smart_contracts/arc58/dao/contract.algo.ts:568
+    // smart_contracts/arc58/dao/contract.algo.ts:569
     // coverFees,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 12
     setbit
-    // smart_contracts/arc58/dao/contract.algo.ts:569
+    // smart_contracts/arc58/dao/contract.algo.ts:571
     // defaultToEscrow
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     intc_0 // 0
     frame_dig 13
     setbit
-    // smart_contracts/arc58/dao/contract.algo.ts:555-571
+    // smart_contracts/arc58/dao/contract.algo.ts:556-573
     // abiCall<typeof AbstractedAccount.prototype.arc58_addPlugin>({
     //   appId: this.wallet.value,
     //   args: [
@@ -6846,10 +6852,11 @@ addPlugin_else_body@5:
     //     useRounds,
     //     useExecutionKey,
     //     coverFees,
+    //     false,
     //     defaultToEscrow
     //   ]
     // })
-    pushbytes 0xdb0d6dbd // method "arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void"
+    pushbytes 0x5672462e // method "arc58_addPlugin(uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool,bool)void"
     itxn_field ApplicationArgs
     frame_dig 2
     itxn_field ApplicationArgs
@@ -6857,9 +6864,9 @@ addPlugin_else_body@5:
     itxn_field ApplicationArgs
     frame_dig 4
     itxn_field ApplicationArgs
-    // smart_contracts/arc58/dao/contract.algo.ts:561
+    // smart_contracts/arc58/dao/contract.algo.ts:562
     // false,
-    bytec_2 // 0x00
+    bytec_0 // 0x00
     itxn_field ApplicationArgs
     frame_dig 6
     itxn_field ApplicationArgs
@@ -6875,9 +6882,11 @@ addPlugin_else_body@5:
     itxn_field ApplicationArgs
     swap
     itxn_field ApplicationArgs
+    bytec_0 // 0x00
+    itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     itxn_field ApplicationID
-    // smart_contracts/arc58/dao/contract.algo.ts:555-571
+    // smart_contracts/arc58/dao/contract.algo.ts:556-573
     // abiCall<typeof AbstractedAccount.prototype.arc58_addPlugin>({
     //   appId: this.wallet.value,
     //   args: [
@@ -6892,6 +6901,7 @@ addPlugin_else_body@5:
     //     useRounds,
     //     useExecutionKey,
     //     coverFees,
+    //     false,
     //     defaultToEscrow
     //   ]
     // })
@@ -6905,26 +6915,26 @@ addPlugin_else_body@5:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.addAllowances(escrow: bytes, allowances: bytes) -> bytes:
 addAllowances:
-    // smart_contracts/arc58/dao/contract.algo.ts:579
+    // smart_contracts/arc58/dao/contract.algo.ts:581
     // private addAllowances(escrow: string, allowances: AddAllowanceInfo[]): void {
     proto 2 1
-    // smart_contracts/arc58/dao/contract.algo.ts:580-583
+    // smart_contracts/arc58/dao/contract.algo.ts:582-585
     // abiCall<typeof AbstractedAccount.prototype.arc58_addAllowances>({
     //   appId: this.wallet.value,
     //   args: [escrow, allowances]
     // })
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:581
+    // smart_contracts/arc58/dao/contract.algo.ts:583
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:581
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:583
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:582
+    // smart_contracts/arc58/dao/contract.algo.ts:584
     // args: [escrow, allowances]
     frame_dig -2
     len
@@ -6932,7 +6942,7 @@ addAllowances:
     extract 6 2
     frame_dig -2
     concat
-    // smart_contracts/arc58/dao/contract.algo.ts:580-583
+    // smart_contracts/arc58/dao/contract.algo.ts:582-585
     // abiCall<typeof AbstractedAccount.prototype.arc58_addAllowances>({
     //   appId: this.wallet.value,
     //   args: [escrow, allowances]
@@ -6954,10 +6964,10 @@ addAllowances:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.removePlugin(data: bytes) -> bytes:
 removePlugin:
-    // smart_contracts/arc58/dao/contract.algo.ts:593
+    // smart_contracts/arc58/dao/contract.algo.ts:595
     // private removePlugin(data: ProposalRemoveNamedPlugin): void {
     proto 1 1
-    // smart_contracts/arc58/dao/contract.algo.ts:594
+    // smart_contracts/arc58/dao/contract.algo.ts:596
     // const { name, plugin, caller, escrow } = data
     frame_dig -1
     intc_0 // 0
@@ -6988,7 +6998,7 @@ removePlugin:
     dup
     cover 2
     extract 2 0
-    // smart_contracts/arc58/dao/contract.algo.ts:596
+    // smart_contracts/arc58/dao/contract.algo.ts:598
     // if (this.plugins({ plugin, escrow }).exists) {
     dup
     len
@@ -7007,41 +7017,41 @@ removePlugin:
     swap
     concat
     dup
-    // smart_contracts/arc58/dao/contract.algo.ts:596
+    // smart_contracts/arc58/dao/contract.algo.ts:598
     // if (this.plugins({ plugin, escrow }).exists) {
     box_len
     bury 1
     bz removePlugin_after_if_else@2
-    // smart_contracts/arc58/dao/contract.algo.ts:597
+    // smart_contracts/arc58/dao/contract.algo.ts:599
     // this.plugins({ plugin, escrow }).delete()
     frame_dig 5
     box_del
     pop
 
 removePlugin_after_if_else@2:
-    // smart_contracts/arc58/dao/contract.algo.ts:600
+    // smart_contracts/arc58/dao/contract.algo.ts:602
     // if (name !== '') {
     frame_dig 1
     bytec_3 // ""
     !=
     bz removePlugin_after_if_else@5
-    // smart_contracts/arc58/dao/contract.algo.ts:601-604
+    // smart_contracts/arc58/dao/contract.algo.ts:603-606
     // abiCall<typeof AbstractedAccount.prototype.arc58_removeNamedPlugin>({
     //   appId: this.wallet.value,
     //   args: [name]
     // })
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:602
+    // smart_contracts/arc58/dao/contract.algo.ts:604
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:602
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:604
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:601-604
+    // smart_contracts/arc58/dao/contract.algo.ts:603-606
     // abiCall<typeof AbstractedAccount.prototype.arc58_removeNamedPlugin>({
     //   appId: this.wallet.value,
     //   args: [name]
@@ -7056,30 +7066,30 @@ removePlugin_after_if_else@2:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/arc58/dao/contract.algo.ts:605
+    // smart_contracts/arc58/dao/contract.algo.ts:607
     // return
     frame_dig -1
     frame_bury 0
     retsub
 
 removePlugin_after_if_else@5:
-    // smart_contracts/arc58/dao/contract.algo.ts:608-611
+    // smart_contracts/arc58/dao/contract.algo.ts:610-613
     // abiCall<typeof AbstractedAccount.prototype.arc58_removePlugin>({
     //   appId: this.wallet.value,
     //   args: [plugin, caller, escrow]
     // })
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:609
+    // smart_contracts/arc58/dao/contract.algo.ts:611
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:609
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:611
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:608-611
+    // smart_contracts/arc58/dao/contract.algo.ts:610-613
     // abiCall<typeof AbstractedAccount.prototype.arc58_removePlugin>({
     //   appId: this.wallet.value,
     //   args: [plugin, caller, escrow]
@@ -7105,26 +7115,26 @@ removePlugin_after_if_else@5:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.newExecution(key: bytes, groups: bytes, firstValid: uint64, lastValid: uint64) -> bytes:
 newExecution:
-    // smart_contracts/arc58/dao/contract.algo.ts:739
+    // smart_contracts/arc58/dao/contract.algo.ts:741
     // private newExecution(key: bytes<32>, groups: bytes<32>[], firstValid: uint64, lastValid: uint64): void {
     proto 4 1
-    // smart_contracts/arc58/dao/contract.algo.ts:740-743
+    // smart_contracts/arc58/dao/contract.algo.ts:742-745
     // abiCall<typeof AbstractedAccount.prototype.arc58_addExecutionKey>({
     //   appId: this.wallet.value,
     //   args: [key, groups, firstValid, lastValid]
     // })
     itxn_begin
-    // smart_contracts/arc58/dao/contract.algo.ts:741
+    // smart_contracts/arc58/dao/contract.algo.ts:743
     // appId: this.wallet.value,
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:34
     // wallet = GlobalState<Application>({ key: AkitaDAOGlobalStateKeysWallet })
-    bytec_1 // "wallet"
-    // smart_contracts/arc58/dao/contract.algo.ts:741
+    bytec_2 // "wallet"
+    // smart_contracts/arc58/dao/contract.algo.ts:743
     // appId: this.wallet.value,
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:742
+    // smart_contracts/arc58/dao/contract.algo.ts:744
     // args: [key, groups, firstValid, lastValid]
     frame_dig -4
     len
@@ -7135,7 +7145,7 @@ newExecution:
     itob
     frame_dig -1
     itob
-    // smart_contracts/arc58/dao/contract.algo.ts:740-743
+    // smart_contracts/arc58/dao/contract.algo.ts:742-745
     // abiCall<typeof AbstractedAccount.prototype.arc58_addExecutionKey>({
     //   appId: this.wallet.value,
     //   args: [key, groups, firstValid, lastValid]
@@ -7161,17 +7171,17 @@ newExecution:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.newProposalID() -> uint64:
 newProposalID:
-    // smart_contracts/arc58/dao/contract.algo.ts:754
+    // smart_contracts/arc58/dao/contract.algo.ts:756
     // const id = this.proposalID.value
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:86
     // proposalID = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysProposalID })
     bytec 37 // "proposal_id"
-    // smart_contracts/arc58/dao/contract.algo.ts:754
+    // smart_contracts/arc58/dao/contract.algo.ts:756
     // const id = this.proposalID.value
     app_global_get_ex
     assert // check GlobalState exists
-    // smart_contracts/arc58/dao/contract.algo.ts:755
+    // smart_contracts/arc58/dao/contract.algo.ts:757
     // this.proposalID.value += 1
     dup
     intc_1 // 1
@@ -7179,30 +7189,30 @@ newProposalID:
     // smart_contracts/arc58/dao/contract.algo.ts:86
     // proposalID = GlobalState<uint64>({ key: AkitaDAOGlobalStateKeysProposalID })
     bytec 37 // "proposal_id"
-    // smart_contracts/arc58/dao/contract.algo.ts:755
+    // smart_contracts/arc58/dao/contract.algo.ts:757
     // this.proposalID.value += 1
     swap
     app_global_put
-    // smart_contracts/arc58/dao/contract.algo.ts:756
+    // smart_contracts/arc58/dao/contract.algo.ts:758
     // return id
     retsub
 
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setupCost() -> uint64:
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setupCost:
-    // smart_contracts/arc58/dao/contract.algo.ts:1255
+    // smart_contracts/arc58/dao/contract.algo.ts:1257
     // const { wallet: appId } = this.akitaAppList.value
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:42
     // akitaAppList = GlobalState<AkitaAppList>({ key: AkitaDAOGlobalStateKeysAkitaAppList })
     bytec 9 // "aal"
-    // smart_contracts/arc58/dao/contract.algo.ts:1255
+    // smart_contracts/arc58/dao/contract.algo.ts:1257
     // const { wallet: appId } = this.akitaAppList.value
     app_global_get_ex
     assert // check GlobalState exists
     pushint 88 // 88
     extract_uint64
-    // smart_contracts/arc58/dao/contract.algo.ts:1256
+    // smart_contracts/arc58/dao/contract.algo.ts:1258
     // return abiCall<typeof AbstractedAccountFactory.prototype.cost>({ appId }).returnValue
     itxn_begin
     pushbytes 0x9b67fa6d // method "cost()uint64"
@@ -7218,7 +7228,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setupCost:
     extract 4 0
     swap
     extract 0 4
-    bytec_0 // 0x151f7c75
+    bytec_1 // 0x151f7c75
     ==
     assert // Bytes has valid prefix
     dup
@@ -7232,7 +7242,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.setupCost:
 
 // smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost(actions: bytes) -> bytes, bytes:
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost:
-    // smart_contracts/arc58/dao/contract.algo.ts:1259-1260
+    // smart_contracts/arc58/dao/contract.algo.ts:1261-1262
     // @abimethod({ readonly: true })
     // proposalCost(actions: ProposalAction[]): ProposalCostInfo {
     proto 1 2
@@ -7313,10 +7323,10 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_while@55
     pushint 54500 // 54500
     +
     frame_bury 11
-    // smart_contracts/arc58/dao/contract.algo.ts:1263
+    // smart_contracts/arc58/dao/contract.algo.ts:1265
     // total: 0,
     intc_0 // 0
-    // smart_contracts/arc58/dao/contract.algo.ts:1262-1270
+    // smart_contracts/arc58/dao/contract.algo.ts:1264-1272
     // let info: ProposalCostInfo = {
     //   total: 0,
     //   mbr: 0,
@@ -7330,19 +7340,19 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_while@55
     frame_bury 5
     pushbytes 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
     frame_bury 7
-    // smart_contracts/arc58/dao/contract.algo.ts:1272
+    // smart_contracts/arc58/dao/contract.algo.ts:1274
     // for (let i: uint64 = 0; i < actions.length; i++) {
     intc_0 // 0
     frame_bury 14
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_while_top@3:
-    // smart_contracts/arc58/dao/contract.algo.ts:1272
+    // smart_contracts/arc58/dao/contract.algo.ts:1274
     // for (let i: uint64 = 0; i < actions.length; i++) {
     frame_dig 14
     frame_dig 10
     <
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_while@19
-    // smart_contracts/arc58/dao/contract.algo.ts:1274
+    // smart_contracts/arc58/dao/contract.algo.ts:1276
     // const { type, data } = actions[i]
     frame_dig -1
     extract 2 0
@@ -7412,7 +7422,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_while_top@3:
     frame_bury 8
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51:
-    // smart_contracts/arc58/dao/contract.algo.ts:1278
+    // smart_contracts/arc58/dao/contract.algo.ts:1280
     // info.total += settings.fee
     frame_dig 7
     dup
@@ -7428,7 +7438,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_
     uncover 2
     swap
     replace2 0
-    // smart_contracts/arc58/dao/contract.algo.ts:1279
+    // smart_contracts/arc58/dao/contract.algo.ts:1281
     // info.fee += settings.fee
     dup
     pushint 16 // 16
@@ -7438,11 +7448,11 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_
     itob
     replace2 16
     frame_bury 7
-    // smart_contracts/arc58/dao/contract.algo.ts:1281
+    // smart_contracts/arc58/dao/contract.algo.ts:1283
     // if (type === ProposalActionTypeUpgradeApp) {
     frame_dig 12
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_else_body@6
-    // smart_contracts/arc58/dao/contract.algo.ts:1282
+    // smart_contracts/arc58/dao/contract.algo.ts:1284
     // mbr += DAOExecutionMBR
     frame_dig 11
     pushint 22100 // 22100
@@ -7450,7 +7460,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_
     frame_bury 11
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@10:
-    // smart_contracts/arc58/dao/contract.algo.ts:1287
+    // smart_contracts/arc58/dao/contract.algo.ts:1289
     // if (settings.power > info.power) {
     frame_dig 8
     dup
@@ -7463,7 +7473,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     extract_uint64
     >
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@12
-    // smart_contracts/arc58/dao/contract.algo.ts:1288
+    // smart_contracts/arc58/dao/contract.algo.ts:1290
     // info.power = settings.power
     frame_dig 7
     frame_dig 3
@@ -7471,7 +7481,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     frame_bury 7
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@12:
-    // smart_contracts/arc58/dao/contract.algo.ts:1291
+    // smart_contracts/arc58/dao/contract.algo.ts:1293
     // if (settings.duration > info.duration) {
     frame_dig 8
     dup
@@ -7484,7 +7494,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     extract_uint64
     >
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@14
-    // smart_contracts/arc58/dao/contract.algo.ts:1292
+    // smart_contracts/arc58/dao/contract.algo.ts:1294
     // info.duration = settings.duration
     frame_dig 7
     frame_dig 0
@@ -7492,7 +7502,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     frame_bury 7
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@14:
-    // smart_contracts/arc58/dao/contract.algo.ts:1295
+    // smart_contracts/arc58/dao/contract.algo.ts:1297
     // if (settings.participation > info.participation) {
     frame_dig 8
     dup
@@ -7505,7 +7515,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     extract_uint64
     >
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@16
-    // smart_contracts/arc58/dao/contract.algo.ts:1296
+    // smart_contracts/arc58/dao/contract.algo.ts:1298
     // info.participation = settings.participation
     frame_dig 7
     frame_dig 1
@@ -7513,7 +7523,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     frame_bury 7
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@16:
-    // smart_contracts/arc58/dao/contract.algo.ts:1299
+    // smart_contracts/arc58/dao/contract.algo.ts:1301
     // if (settings.approval > info.approval) {
     frame_dig 8
     dup
@@ -7526,7 +7536,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     extract_uint64
     >
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_while_top@3
-    // smart_contracts/arc58/dao/contract.algo.ts:1300
+    // smart_contracts/arc58/dao/contract.algo.ts:1302
     // info.approval = settings.approval
     frame_dig 7
     frame_dig 2
@@ -7535,7 +7545,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_while_top@3
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_else_body@6:
-    // smart_contracts/arc58/dao/contract.algo.ts:1283
+    // smart_contracts/arc58/dao/contract.algo.ts:1285
     // } else if (type === ProposalActionTypeAddPlugin || type === ProposalActionTypeAddNamedPlugin) {
     frame_dig 9
     bytec 6 // 0x14
@@ -7547,13 +7557,13 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_else_body@6:
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@10
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_if_body@8:
-    // smart_contracts/arc58/dao/contract.algo.ts:1284
+    // smart_contracts/arc58/dao/contract.algo.ts:1286
     // mbr += this.pluginsMbr(String(op.bzero(24)))
     frame_dig 11
     // smart_contracts/arc58/dao/contract.algo.ts:101
     // return MinDAOPluginMBR + (BoxCostPerByte * Bytes(escrow).length)
     pushint 33300 // 33300
-    // smart_contracts/arc58/dao/contract.algo.ts:1284
+    // smart_contracts/arc58/dao/contract.algo.ts:1286
     // mbr += this.pluginsMbr(String(op.bzero(24)))
     +
     frame_bury 11
@@ -7589,7 +7599,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_block@32:
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7648,7 +7658,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     box_get
     pop
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7674,7 +7684,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7708,7 +7718,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_block@39:
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7734,7 +7744,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7760,7 +7770,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7786,7 +7796,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7812,7 +7822,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
@@ -7838,12 +7848,12 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     app_global_get_ex
     assert // check GlobalState exists
     frame_bury 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1276
+    // smart_contracts/arc58/dao/contract.algo.ts:1278
     // const settings = this.getProposalSettings(type, data)
     b smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_inlined_smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.getProposalSettings@51
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_while@19:
-    // smart_contracts/arc58/dao/contract.algo.ts:1307
+    // smart_contracts/arc58/dao/contract.algo.ts:1309
     // if (info.total < mbr) {
     frame_dig 7
     intc_0 // 0
@@ -7851,31 +7861,31 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_while@19
     frame_dig 11
     <
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_else_body@21
-    // smart_contracts/arc58/dao/contract.algo.ts:1308
+    // smart_contracts/arc58/dao/contract.algo.ts:1310
     // info.total = mbr
     frame_dig 11
     itob
     frame_dig 7
     dig 1
     replace2 0
-    // smart_contracts/arc58/dao/contract.algo.ts:1309
+    // smart_contracts/arc58/dao/contract.algo.ts:1311
     // info.mbr = mbr
     swap
     replace2 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1310
+    // smart_contracts/arc58/dao/contract.algo.ts:1312
     // info.fee = 0
     frame_dig 5
     replace2 16
     frame_bury 7
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@22:
-    // smart_contracts/arc58/dao/contract.algo.ts:1316
+    // smart_contracts/arc58/dao/contract.algo.ts:1318
     // if (this.state.value !== DaoStateFullyInitialized && Txn.sender === Global.creatorAddress) {
     intc_0 // 0
     // smart_contracts/arc58/dao/contract.algo.ts:30
     // state = GlobalState<DaoState>({ initialValue: DaoStateDraft, key: AkitaDAOGlobalStateKeysInitialized })
     bytec 7 // "initialized"
-    // smart_contracts/arc58/dao/contract.algo.ts:1316
+    // smart_contracts/arc58/dao/contract.algo.ts:1318
     // if (this.state.value !== DaoStateFullyInitialized && Txn.sender === Global.creatorAddress) {
     app_global_get_ex
     assert // check GlobalState exists
@@ -7886,21 +7896,21 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     global CreatorAddress
     ==
     bz smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@25
-    // smart_contracts/arc58/dao/contract.algo.ts:1317
+    // smart_contracts/arc58/dao/contract.algo.ts:1319
     // info.total = 0
     frame_dig 7
     frame_dig 5
     dup
     cover 2
     replace2 0
-    // smart_contracts/arc58/dao/contract.algo.ts:1318
+    // smart_contracts/arc58/dao/contract.algo.ts:1320
     // info.fee = 0
     swap
     replace2 16
     frame_bury 7
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@25:
-    // smart_contracts/arc58/dao/contract.algo.ts:1321
+    // smart_contracts/arc58/dao/contract.algo.ts:1323
     // return info
     frame_dig 7
     frame_dig -1
@@ -7909,7 +7919,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_after_if_else@
     retsub
 
 smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_else_body@21:
-    // smart_contracts/arc58/dao/contract.algo.ts:1312
+    // smart_contracts/arc58/dao/contract.algo.ts:1314
     // info.mbr = mbr
     frame_dig 11
     dup
@@ -7917,7 +7927,7 @@ smart_contracts/arc58/dao/contract.algo.ts::AkitaDAO.proposalCost_else_body@21:
     frame_dig 7
     swap
     replace2 8
-    // smart_contracts/arc58/dao/contract.algo.ts:1313
+    // smart_contracts/arc58/dao/contract.algo.ts:1315
     // info.fee = info.total - mbr
     dup
     intc_0 // 0

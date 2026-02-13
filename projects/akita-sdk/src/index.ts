@@ -52,6 +52,9 @@ export {
 } from './subscriptions'
 export { WalletSDK, WalletFactorySDK } from './wallet'
 
+// Connect protocol types and URI helpers
+export * from './connect'
+
 // Simulate types for transaction cost estimation
 export type { 
   ExpectedCost, 

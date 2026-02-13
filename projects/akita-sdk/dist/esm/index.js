@@ -19,4 +19,6 @@ export { StakingSDK } from './staking';
 export { StakingPoolSDK, StakingPoolFactorySDK } from './staking-pool';
 export { SubscriptionsSDK, bytesToHexColor, hexColorToBytes, ServiceStatus, HighlightMessage, } from './subscriptions';
 export { WalletSDK, WalletFactorySDK } from './wallet';
+// Connect protocol types and URI helpers
+export * from './connect';
 //# sourceMappingURL=index.js.map

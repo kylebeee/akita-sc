@@ -98,6 +98,7 @@ export type PluginInfo = {
   useRounds: boolean;
   useExecutionKey: boolean;
   coverFees: boolean;
+  canReclaim: boolean;
   lastCalled: uint64;
   start: uint64;
 }

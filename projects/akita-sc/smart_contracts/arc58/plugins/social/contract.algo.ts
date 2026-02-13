@@ -1,9 +1,9 @@
-import { Account, Application, Asset, Bytes, bytes, itxn, uint64 } from '@algorandfoundation/algorand-typescript'
+import { Account, Application, Asset, Bytes, bytes, Global, itxn, op, uint64 } from '@algorandfoundation/algorand-typescript'
 import { abiCall, abimethod, encodeArc4, methodSelector } from '@algorandfoundation/algorand-typescript/arc4'
 import { classes } from 'polytype'
 import { GateMustCheckAbiMethod } from '../../../gates/constants'
 import { GateArgs } from '../../../gates/types'
-import { AmendmentMBR, ImpactMetaMBR, TipSendTypeARC58 } from '../../../social/constants'
+import { AmendmentMBR, ImpactMetaMBR, RefTypeAddress, RefTypeApp, RefTypeAsset, RefTypePost, TipSendTypeARC58 } from '../../../social/constants'
 import { getAccounts, getAkitaAppList, getAkitaAssets, getAkitaSocialAppList, getSocialFees, getSpendingAccount, rekeyAddress } from '../../../utils/functions'
 import { CID } from '../../../utils/types/base'
 
@@ -12,7 +12,7 @@ import { BaseSocial } from '../../../social/base'
 import type { AkitaSocial } from '../../../social/contract.algo'
 import { AkitaSocialGraph } from '../../../social/graph.algo'
 import type { AkitaSocialModeration } from '../../../social/moderation.algo'
-import { RefType } from '../../../social/types'
+import { MetaValue, PostValue, RefType } from '../../../social/types'
 import { AkitaBaseContract } from '../../../utils/base-contracts/base'
 
 
@@ -24,6 +24,63 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
   create(version: string, akitaDAO: uint64, escrow: uint64): void {
     this.version.value = version
     this.akitaDAO.value = Application(akitaDAO)
+  }
+
+  // PRIVATE METHODS ------------------------------------------------------------------------------
+
+  private getCreatorDetails(type: RefType, sender: Account, ref: bytes<32>): { postExists: boolean, creator: Account, creatorWallet: uint64, gateID: uint64 } {
+    const { social } = getAkitaSocialAppList(this.akitaDAO.value)
+
+    let creator = Global.zeroAddress
+    let creatorWallet: uint64 = 0
+    let gateID: uint64 = 0
+    // we can assume the post exists if the type is a post
+    let postMustExist = type === RefTypePost
+    let postExists = postMustExist
+
+    // if the type is not a post, we need to check if the post exists
+    if (!postMustExist) {
+      postExists = abiCall<typeof AkitaSocial.prototype.getPostExists>({
+        sender,
+        appId: social,
+        args: [ref.toFixed({ length: 32 })]
+      }).returnValue
+    }
+
+    if (postExists) {
+      ({ creator, gateID } = abiCall<typeof AkitaSocial.prototype.getPost>({
+        sender,
+        appId: social,
+        args: [ref],
+      }).returnValue);
+    } else {
+      // Derive creator from ref type (matches toBytes32 in social contract)
+      if (type === RefTypeAddress) {
+        creator = Account(ref)
+      } else if (type === RefTypeAsset) {
+        creator = Asset(op.btoi(ref.slice(0, 8))).creator
+      } else if (type === RefTypeApp) {
+        creator = Application(op.btoi(ref.slice(0, 8))).creator
+      }
+    }
+
+    const metaExists = abiCall<typeof AkitaSocial.prototype.getMetaExists>({
+      sender,
+      appId: social,
+      args: [creator]
+    }).returnValue
+
+    if (!metaExists) {
+      return { postExists, creator, creatorWallet, gateID };
+    }
+
+    ({ wallet: creatorWallet } = abiCall<typeof AkitaSocial.prototype.getMeta>({
+      sender,
+      appId: social,
+      args: [creator],
+    }).returnValue);
+
+    return { postExists, creator, creatorWallet, gateID };
   }
 
   // AKITA SOCIAL PLUGIN METHODS ------------------------------------------------------------------
@@ -136,16 +193,13 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const { posts, votes, votelist } = this.mbr(cid)
     let mbrAmount: uint64 = posts + votes + votelist
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
-      sender,
-      appId: social,
-      args: [ref.toFixed({ length: 32 }), 0]
-    }).returnValue
+    const { postExists, creator, creatorWallet, gateID: postGateID } = this.getCreatorDetails(type, sender, ref.toFixed({ length: 32 }))
 
-    const creator = info.post.creator
-    const creatorWallet = info.meta.wallet
+    if (!postExists) {
+      mbrAmount += this.mbr(op.bzero(0)).posts
+    }
+
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
-
 
     if (tipInfo.type === TipSendTypeARC58) {
       mbrAmount += tipInfo.arc58
@@ -174,7 +228,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       appArgs: [
         methodSelector(GateMustCheckAbiMethod),
         origin,
-        info.post.gateID,
+        postGateID,
         encodeArc4(args)
       ]
     })
@@ -217,14 +271,12 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const { posts, votes, votelist } = this.mbr(cid)
     let mbrAmount: uint64 = posts + votes + votelist
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
-      sender,
-      appId: social,
-      args: [ref.toFixed({ length: 32 }), 0]
-    }).returnValue
+    const { postExists, creator, creatorWallet } = this.getCreatorDetails(type, sender, ref.toFixed({ length: 32 }))
 
-    const creator = info.post.creator
-    const creatorWallet = info.meta.wallet
+    if (!postExists) {
+      mbrAmount += this.mbr(op.bzero(0)).posts
+    }
+
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
 
     if (tipInfo.type === TipSendTypeARC58) {
@@ -287,15 +339,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const originalPostRef = postBeingAmended.ref.slice(0, 32).toFixed({ length: 32 })
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
-      sender,
-      appId: social,
-      args: [originalPostRef, 0]
-    }).returnValue
-
-    const creator = info.post.creator
-    const creatorWallet = info.meta.wallet
-
+    const { creator, creatorWallet, gateID: postGateID } = this.getCreatorDetails(RefTypePost, sender, originalPostRef)
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
 
     if (tipInfo.type === TipSendTypeARC58) {
@@ -323,7 +367,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       appArgs: [
         methodSelector(GateMustCheckAbiMethod),
         origin,
-        info.post.gateID,
+        postGateID,
         encodeArc4(args)
       ]
     })
@@ -363,15 +407,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const originalPostRef = postBeingAmended.ref.slice(0, 32).toFixed({ length: 32 })
 
-    const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
-      sender,
-      appId: social,
-      args: [originalPostRef, 0]
-    }).returnValue
-
-    const creator = info.post.creator
-    const creatorWallet = info.meta.wallet
-
+    const { creator, creatorWallet } = this.getCreatorDetails(RefTypePost, sender, originalPostRef)
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
 
     if (tipInfo.type === TipSendTypeARC58) {
@@ -417,17 +453,16 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const sender = getSpendingAccount(wallet)
 
     const { social } = getAkitaSocialAppList(this.akitaDAO.value)
-    let mbrAmount: uint64 = this.mbr(Bytes('')).votelist
+    const { votelist, posts } = this.mbr(op.bzero(0))
+    let mbrAmount: uint64 = votelist
+
+    const { postExists, creator, creatorWallet } = this.getCreatorDetails(type, sender, ref.toFixed({ length: 32 }))
+
+    if (!postExists) {
+      mbrAmount += posts
+    }
 
     if (isUp) {
-      const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
-        sender,
-        appId: social,
-        args: [ref.toFixed({ length: 32 }), 0]
-      }).returnValue
-
-      const creator = info.post.creator
-      const creatorWallet = info.meta.wallet
       const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
 
       if (tipInfo.type === TipSendTypeARC58) {
@@ -502,14 +537,8 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       // check if the change is going to make us pay the post creator
       // !wasUp means we are flipping from downvote to upvote
       if (!wasUp) {
-        const info = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
-          sender,
-          appId: social,
-          args: [ref, 0],
-        }).returnValue
-
-        const creator = info.post.creator
-        const creatorWallet = info.meta.wallet
+        // this is kind of gross but internally RefTypePost just enforces a trust assumption that the post exists
+        const { creator, creatorWallet } = this.getCreatorDetails(RefTypePost, sender, ref.toFixed({ length: 32 }))
         const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
         if (tipInfo.type === TipSendTypeARC58) {
           mbrPayment.set({ amount: tipInfo.arc58 })
@@ -543,20 +572,24 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const { gate } = getAkitaAppList(this.akitaDAO.value)
     const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    const { post, meta, reactionExists } = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
+    const reactionExists = abiCall<typeof AkitaSocial.prototype.getReactionExists>({
       sender,
       appId: social,
       args: [ref.toFixed({ length: 32 }), NFT]
     }).returnValue
 
-    const { reactions, reactionlist } = this.mbr(Bytes(''))
+    const { reactions, reactionlist, posts } = this.mbr(op.bzero(0))
 
     let mbrAmount: uint64 = reactionExists
       ? reactionlist
       : reactions + reactionlist
 
-    const creator = post.creator
-    const creatorWallet = meta.wallet
+    const { postExists, creator, creatorWallet, gateID: postGateID } = this.getCreatorDetails(type, sender, ref.toFixed({ length: 32 }))
+
+    if (!postExists) {
+      mbrAmount += posts
+    }
+
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
     if (tipInfo.type === TipSendTypeARC58) {
       mbrAmount += tipInfo.arc58
@@ -583,7 +616,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
       appArgs: [
         methodSelector(GateMustCheckAbiMethod),
         origin,
-        post.gateID,
+        postGateID,
         encodeArc4(args)
       ]
     })
@@ -614,20 +647,24 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
 
     const { social } = getAkitaSocialAppList(this.akitaDAO.value)
 
-    const { post, meta, reactionExists } = abiCall<typeof AkitaSocial.prototype.getPostMeta>({
+    const reactionExists = abiCall<typeof AkitaSocial.prototype.getReactionExists>({
       sender,
       appId: social,
       args: [ref.toFixed({ length: 32 }), NFT]
     }).returnValue
 
-    const { reactions, reactionlist } = this.mbr(Bytes(''))
+    const { reactions, reactionlist, posts } = this.mbr(op.bzero(0))
 
     let mbrAmount: uint64 = reactionExists
       ? reactionlist
       : reactions + reactionlist
 
-    const creator = post.creator
-    const creatorWallet = meta.wallet
+    const { postExists, creator, creatorWallet } = this.getCreatorDetails(type, sender, ref.toFixed({ length: 32 }))
+
+    if (!postExists) {
+      mbrAmount += posts
+    }
+
     const tipInfo = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(creatorWallet))
     if (tipInfo.type === TipSendTypeARC58) {
       mbrAmount += tipInfo.arc58
@@ -700,7 +737,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const mbrPayment = itxn.payment({
       sender,
       receiver: Application(graph).address,
-      amount: this.mbr(Bytes('')).follows
+      amount: this.mbr(op.bzero(0)).follows
     })
 
     const gateTxn = itxn.applicationCall({
@@ -738,7 +775,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const mbrPayment = itxn.payment({
       sender,
       receiver: Application(graph).address,
-      amount: this.mbr(Bytes('')).follows
+      amount: this.mbr(op.bzero(0)).follows
     })
 
     abiCall<typeof AkitaSocialGraph.prototype.follow>({
@@ -783,7 +820,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const mbrPayment = itxn.payment({
       sender,
       receiver: Application(graph).address,
-      amount: this.mbr(Bytes('')).blocks
+      amount: this.mbr(op.bzero(0)).blocks
     })
 
     abiCall<typeof AkitaSocialGraph.prototype.block>({
@@ -823,7 +860,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const mbrPayment = itxn.payment({
       sender,
       receiver: Application(moderation).address,
-      amount: this.mbr(Bytes('')).moderators
+      amount: this.mbr(op.bzero(0)).moderators
     })
 
     abiCall<typeof AkitaSocialModeration.prototype.addModerator>({
@@ -865,7 +902,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const mbrPayment = itxn.payment({
       sender,
       receiver: Application(moderation).address,
-      amount: this.mbr(Bytes('')).banned
+      amount: this.mbr(op.bzero(0)).banned
     })
 
     abiCall<typeof AkitaSocialModeration.prototype.ban>({
@@ -940,7 +977,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
     const mbrPayment = itxn.payment({
       sender,
       receiver: Application(moderation).address,
-      amount: this.mbr(Bytes('')).actions
+      amount: this.mbr(op.bzero(0)).actions
     })
 
     abiCall<typeof AkitaSocialModeration.prototype.addAction>({
@@ -992,7 +1029,7 @@ export class AkitaSocialPlugin extends classes(BaseSocial, AkitaBaseContract) {
         itxn.payment({
           sender,
           receiver: Application(social).address,
-          amount: this.mbr(Bytes('')).meta + ImpactMetaMBR
+          amount: this.mbr(op.bzero(0)).meta + ImpactMetaMBR
         }),
         user,
         automated,

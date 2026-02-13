@@ -42,12 +42,12 @@ export declare class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     rekeyTo({ sender, signer, ...args }: MaybeSigner & ContractArgs['arc58_rekeyTo(address,bool)void']): Promise<void>;
     canCall({ sender, signer, ...args }: CanCallParams): Promise<boolean[]>;
     usePlugin(params: WalletUsePluginParams): Promise<GroupReturn>;
-    addPlugin<TClient extends SDKClient>({ sender, signer, name, client, caller, global, methods, escrow, admin, delegationType, lastValid, cooldown, useRounds, useExecutionKey, coverFees, defaultToEscrow, allowances }: WalletAddPluginParams<TClient>): Promise<GroupReturn>;
+    addPlugin<TClient extends SDKClient>({ sender, signer, name, client, caller, global, methods, escrow, admin, delegationType, lastValid, cooldown, useRounds, useExecutionKey, coverFees, canReclaim, defaultToEscrow, allowances }: WalletAddPluginParams<TClient>): Promise<GroupReturn>;
     removePlugin({ sender, signer, ...args }: ContractArgs['arc58_removePlugin(uint64,address,string)void'] & MaybeSigner): Promise<TxnReturn<void>>;
     newEscrow({ sender, signer, ...args }: ContractArgs['arc58_newEscrow(string)uint64'] & MaybeSigner): Promise<TxnReturn<bigint>>;
     toggleEscrowLock({ sender, signer, ...args }: ContractArgs['arc58_toggleEscrowLock(string)(uint64,bool)'] & MaybeSigner): Promise<TxnReturn<EscrowInfo>>;
     reclaimFunds({ sender, signer, ...args }: ContractArgs['arc58_reclaim(string,(uint64,uint64,bool)[])void'] & MaybeSigner): Promise<TxnReturn<void>>;
-    optinEscrow({ sender, signer, ...args }: ContractArgs['arc58_optinEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>>;
+    optinEscrow({ sender, signer, ...args }: ContractArgs['arc58_optInEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>>;
     addAllowances({ sender, signer, escrow, allowances }: {
         escrow: string;
         allowances: AddAllowanceArgs[];

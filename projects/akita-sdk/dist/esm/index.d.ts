@@ -16,4 +16,5 @@ export { StakingSDK } from './staking';
 export { StakingPoolSDK, StakingPoolFactorySDK } from './staking-pool';
 export { SubscriptionsSDK, bytesToHexColor, hexColorToBytes, ServicesKey, type Service, type NewServiceArgs, type SubscribeArgs, type SubscriptionInfoWithDetails, ServiceStatus, HighlightMessage, } from './subscriptions';
 export { WalletSDK, WalletFactorySDK } from './wallet';
+export * from './connect';
 export type { ExpectedCost, AssetPayment, AccountDelta, SimulatePayload } from './simulate/types';

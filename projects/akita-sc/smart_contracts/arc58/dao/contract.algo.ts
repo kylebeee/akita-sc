@@ -548,6 +548,7 @@ export class AkitaDAO extends Contract {
           useRounds,
           useExecutionKey,
           coverFees,
+          false,
           defaultToEscrow
         ]
       })
@@ -566,6 +567,7 @@ export class AkitaDAO extends Contract {
           useRounds,
           useExecutionKey,
           coverFees,
+          false,
           defaultToEscrow
         ]
       })

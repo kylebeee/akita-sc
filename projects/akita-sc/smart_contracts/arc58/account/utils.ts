@@ -12,6 +12,7 @@ export function emptyPluginInfo(): PluginInfo {
     useRounds: false,
     useExecutionKey: false,
     coverFees: false,
+    canReclaim: false,
     lastCalled: 0,
     start: 0,
   };

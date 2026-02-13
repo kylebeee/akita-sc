@@ -28,7 +28,7 @@ export type RekeyArgs = {
     methodOffsets: bigint[] | number[];
     fundsRequest: [number | bigint, number | bigint][];
 };
-export type AddPluginArgs = Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'], 'name'>;
+export type AddPluginArgs = Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool,bool)void'], 'name'>;
 export type WalletUsePluginParams = (Omit<ContractArgs['arc58_rekeyToPlugin(uint64,bool,string,uint64[],(uint64,uint64)[])void'], 'plugin' | 'global' | 'escrow' | 'methodOffsets' | 'fundsRequest'> & {
     name?: string;
     global?: boolean;
@@ -65,6 +65,7 @@ export declare const AddPluginDefaults: {
     admin: boolean;
     delegationType: bigint;
     coverFees: boolean;
+    canReclaim: boolean;
 };
 export type CanCallParams = (Omit<ContractArgs['arc58_canCall(uint64,bool,address,string,byte[4])bool'], 'method'> & {
     methods: PluginMethodSpecifier;
@@ -119,7 +120,7 @@ export declare function isWindowAllowance(info: AllowanceInfo): info is Extract<
 export declare function isDripAllowance(info: AllowanceInfo): info is Extract<AllowanceInfo, {
     type: 'drip';
 }>;
-type BaseWalletAddPluginParams<TClient extends SDKClient> = Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'], 'methods'>> & MaybeSigner & {
+type BaseWalletAddPluginParams<TClient extends SDKClient> = Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool,bool)void'], 'methods'>> & MaybeSigner & {
     client: AkitaSDK<TClient>;
     methods?: PluginMethodDefinition[];
     allowances?: AddAllowanceArgs[];

@@ -3,7 +3,7 @@ import { abiCall, abimethod } from '@algorandfoundation/algorand-typescript/arc4
 import { AssetHolding, btoi, itob } from '@algorandfoundation/algorand-typescript/op'
 import { classes } from 'polytype'
 import { ERR_FAILED_GATE, ERR_INVALID_PAYMENT, ERR_INVALID_TRANSFER } from '../utils/errors'
-import { akitaSocialFee, gateCheck, getAkitaAssets, getAkitaSocialAppList, getOriginAccount, getPluginAppList, getSocialFees, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, referralFee, sendReferralPayment } from '../utils/functions'
+import { akitaSocialFee, calcPercent, gateCheck, getAkitaAssets, getAkitaSocialAppList, getOriginAccount, getPluginAppList, getSocialFees, getWalletIDUsingAkitaDAO, impactRange, originOr, originOrTxnSender, referralFee, sendReferralPayment } from '../utils/functions'
 import { CID } from '../utils/types/base'
 import { AkitaSocialBoxPrefixMeta, AkitaSocialboxPrefixPayWall, AkitaSocialBoxPrefixPosts, AkitaSocialBoxPrefixReactionList, AkitaSocialBoxPrefixReactions, AkitaSocialBoxPrefixVoteList, AkitaSocialBoxPrefixVotes, AkitaSocialGlobalStateKeysPaywallID, AmendmentMBR, EditBackRefMBR, ImpactMetaMBR, MAX_TIMESTAMP_DRIFT, ONE_DAY, PostTypeEditPost, PostTypeEditReply, PostTypePost, PostTypeReply, RefTypeAddress, RefTypeApp, RefTypeAsset, RefTypeExternal, RefTypePost, TipActionPost, TipActionReact, TipSendTypeARC58, TWO_YEARS } from './constants'
 import { ERR_ALREADY_REACTED, ERR_ALREADY_VOTED, ERR_AUTOMATED_ACCOUNT, ERR_BANNED, ERR_BLOCKED, ERR_HAS_GATE, ERR_HAVENT_VOTED, ERR_INVALID_APP, ERR_INVALID_ASSET, ERR_INVALID_PAYWALL, ERR_INVALID_REF_LENGTH, ERR_INVALID_REPLY_TYPE, ERR_IS_A_REPLY, ERR_IS_ALREADY_AMENDED, ERR_META_ALREADY_EXISTS, ERR_META_DOESNT_EXIST, ERR_NO_SELF_VOTE, ERR_NOT_A_REPLY, ERR_NOT_GRAPH, ERR_NOT_YOUR_POST_TO_EDIT, ERR_POST_NOT_FOUND, ERR_REPLY_NOT_FOUND, ERR_TIMESTAMP_TOO_OLD, ERR_USER_DOES_NOT_OWN_NFT } from './errors'
@@ -287,18 +287,35 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     }
   }
 
-  private sendReactionPayments(receiver: Account, wallet: Application, preReferralTax: uint64): uint64 {
-    const { type, arc58 } = this.checkTipMbrRequirements(this.akitaDAO.value, receiver, wallet)
-    const akta = getAkitaAssets(this.akitaDAO.value).akta
-    const { leftover } = sendReferralPayment(this.akitaDAO.value, akta, preReferralTax)
-    const { reactFee } = getSocialFees(this.akitaDAO.value)
+  private tipCreator(creator: Account, fee: uint64, tax: uint64): uint64 {
+    if (creator === Global.zeroAddress) {
+      const akta = Asset(getAkitaAssets(this.akitaDAO.value).akta)
+      itxn
+        .assetTransfer({
+          assetReceiver: this.akitaDAOEscrow.value.address,
+          assetAmount: fee,
+          xferAsset: akta
+        })
+        .submit()
+      return 0
+    }
 
+    let wallet: uint64 = 0
+    if (this.meta(creator).exists) {
+      wallet = this.meta(creator).value.wallet
+    }
+
+    const { type, arc58 } = this.checkTipMbrRequirements(this.akitaDAO.value, creator, Application(wallet))
+    const akta = getAkitaAssets(this.akitaDAO.value).akta
+    const { leftover } = sendReferralPayment(this.akitaDAO.value, akta, tax)
+    const { reactFee } = getSocialFees(this.akitaDAO.value)
+    
     if (type === TipSendTypeARC58) {
-      this.arc58SendReactionPayments(wallet, akta, leftover, (reactFee - preReferralTax))
+      this.arc58SendReactionPayments(Application(wallet), akta, leftover, (reactFee - tax))
       return arc58
     }
 
-    this.sendDirectReactionPayments(receiver, akta, leftover, (reactFee - preReferralTax))
+    this.sendDirectReactionPayments(creator, akta, leftover, (reactFee - tax))
     return 0
   }
 
@@ -470,14 +487,16 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     // this way we guarantee the box exists
     this.updateStreak(origin)
 
-    const { wallet } = this.meta(creator).value
+    const { reactFee } = getSocialFees(this.akitaDAO.value)
     const creatorImpact = this.getUserImpact(creator)
-    const tax = akitaSocialFee(this.akitaDAO.value, creatorImpact)
+    const taxPercentage = akitaSocialFee(this.akitaDAO.value, creatorImpact)
+    const tax = calcPercent(reactFee, taxPercentage)
 
     const isEditReply = postType === PostTypeEditReply
     // For edits, we need extra MBR for the back-reference (originalKey)
     let extra = mbrNeeded
-    extra += this.sendReactionPayments(creator, Application(wallet), tax)
+    extra += this.tipCreator(creator, reactFee, tax)
+
     if (isEditReply) {
       extra += EditBackRefMBR
     }
@@ -537,12 +556,12 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     const { reactFee, impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
 
     if (isUp) {
-      const { wallet } = this.meta(creator).value
       // calls a transaction
       const recipientImpact = this.getUserImpact(creator)
-      const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
+      const taxPercentage = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
+      const tax = calcPercent(reactFee, taxPercentage)
 
-      const extra = this.sendReactionPayments(creator, Application(wallet), tax)
+      const extra = this.tipCreator(creator, reactFee, tax)
       // validate after we send payments, annoying but saves us compute
       assertMatch(
         mbrPayment,
@@ -599,16 +618,16 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
     // this way we guarantee the box exists
     this.updateStreak(origin)
 
-    const { wallet } = this.meta(creator).value
+    const { reactFee, impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
     const recipientImpact = this.getUserImpact(creator)
-    const { impactTaxMin, impactTaxMax } = getSocialFees(this.akitaDAO.value)
     const tax = impactRange(recipientImpact, impactTaxMin, impactTaxMax)
 
     const reactionKey: ReactionsKey = { ref, NFT }
     const reactionExists = this.reactions(reactionKey).exists
 
     let extra = mbrNeeded
-    extra += this.sendReactionPayments(creator, Application(wallet), tax)
+    extra += this.tipCreator(creator, reactFee, tax)
+
     // validate after we send payments, annoying but saves us compute
     this.validateReactPayment(mbrPayment, reactionExists, extra)
 
@@ -1172,8 +1191,19 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   @abimethod({ readonly: true })
+  getMetaExists(user: Account): boolean {
+    return this.meta(user).exists
+  }
+
+  @abimethod({ readonly: true })
   getMeta(user: Account): MetaValue {
     return this.meta(user).value
+  }
+
+
+  @abimethod({ readonly: true })
+  getPostExists(ref: bytes<32>): boolean {
+    return this.posts(ref).exists
   }
 
   @abimethod({ readonly: true })
@@ -1212,14 +1242,7 @@ export class AkitaSocial extends classes(BaseSocial, AkitaBaseFeeGeneratorContra
   }
 
   @abimethod({ readonly: true })
-  getPostMeta(ref: bytes<32>, NFT: uint64): PostMeta {
-    assert(this.posts(ref).exists, ERR_POST_NOT_FOUND)
-    const post = clone(this.posts(ref).value)
-    const meta = clone(this.meta(post.creator).value)
-    let reactionExists = false
-    if (this.reactions({ ref, NFT }).exists) {
-      reactionExists = true
-    }
-    return { post, meta, reactionExists }
+  getReactionExists(ref: bytes<32>, NFT: uint64): boolean {
+    return this.reactions({ ref, NFT }).exists
   }
 }

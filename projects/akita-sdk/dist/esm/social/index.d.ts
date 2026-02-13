@@ -287,13 +287,6 @@ export declare class SocialSDK {
         refs: PostRef[];
     }): Promise<VoteListValue[]>;
     /**
-     * Get post metadata including reaction status
-     */
-    getPostMeta({ sender, signer, ref, nft }: MaybeSigner & {
-        ref: PostRef;
-        nft: bigint | number;
-    }): Promise<any>;
-    /**
      * Check if a user is blocked by another user
      */
     isBlocked({ sender, signer, user, blocked }: MaybeSigner & {

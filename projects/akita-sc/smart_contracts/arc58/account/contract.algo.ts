@@ -470,6 +470,56 @@ export class AbstractedAccount extends Contract {
     }
   }
 
+  private optInEscrow(escrow: string, assets: uint64[]): void {
+    const escrowAddress = Application(this.escrows(escrow).value.id).address
+
+    itxn
+      .payment({
+        sender: this.controlledAddress.value,
+        receiver: escrowAddress,
+        amount: Global.assetOptInMinBalance * assets.length
+      })
+      .submit();
+
+    for (let i: uint64 = 0; i < assets.length; i += 1) {
+      itxn
+        .assetTransfer({
+          sender: escrowAddress,
+          assetReceiver: escrowAddress,
+          assetAmount: 0,
+          xferAsset: assets[i]
+        })
+        .submit();
+    }
+  }
+
+  private reclaim(escrow: string, reclaims: EscrowReclaim[], allowCloseOut: boolean): void {
+    const sender = Application(this.escrows(escrow).value.id).address
+
+    for (let i: uint64 = 0; i < reclaims.length; i += 1) {
+      if (reclaims[i].asset === 0) {
+        itxn.payment({
+          sender,
+          receiver: this.controlledAddress.value,
+          amount: reclaims[i].amount
+        }).submit();
+      } else {
+        const xfer = itxn.assetTransfer({
+          sender,
+          assetReceiver: this.controlledAddress.value,
+          assetAmount: reclaims[i].amount,
+          xferAsset: reclaims[i].asset
+        })
+
+        if (allowCloseOut && reclaims[i].closeOut) {
+          xfer.set({ assetCloseTo: this.controlledAddress.value });
+        }
+
+        xfer.submit();
+      }
+    }
+  }
+
   private transferFunds(escrow: string, fundsRequests: FundsRequest[]): void {
     const escrowID = this.escrows(escrow).value.id;
     const escrowAddress = Application(escrowID).address;
@@ -567,8 +617,11 @@ export class AbstractedAccount extends Contract {
    * @param version The version of the abstracted account application
    * @param controlledAddress The address of the abstracted account. If zeroAddress, then the address of the contract account will be used
    * @param admin The address of the admin for this application
-   * @param revocationApp The application ID of the revocation app associated with this abstracted account
+   * @param domain The domain associated with the admin account
+   * @param escrowFactory The app ID of the escrow factory to use for creating escrows
+   * @param revocationApp The app ID of the revocation app associated with this abstracted account
    * @param nickname A user-friendly name for this abstracted account
+   * @param referrer The address that referred the creation of this wallet
   */
   @abimethod({ onCreate: 'require' })
   create(
@@ -606,6 +659,8 @@ export class AbstractedAccount extends Contract {
    * Register the abstracted account with the escrow factory.
    * This allows apps to correlate the account with the app without needing
    * it to be explicitly provided.
+   *
+   * @param escrow The name of the escrow to register, or empty string for the main account
    */
   register(escrow: string): void {
     let app: uint64 = 0
@@ -635,6 +690,11 @@ export class AbstractedAccount extends Contract {
 
   // ABSTRACTED ACCOUNT METHODS -------------------------------------------------------------------
 
+  /**
+   * Set the domain associated with the admin account
+   *
+   * @param domain The domain to associate with the admin account
+   */
   setDomain(domain: string): void {
     assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_UPDATE)
     this.domain.value = domain
@@ -643,7 +703,7 @@ export class AbstractedAccount extends Contract {
   /**
    * Changes the revocation app associated with the contract
    *
-   * @param app the new revocation app
+   * @param app The app ID of the new revocation app
   */
   setRevocationApp(app: uint64): void {
     assert(this.isAdmin(), ERR_ONLY_ADMIN_CAN_CHANGE_REVOKE)
@@ -769,13 +829,14 @@ export class AbstractedAccount extends Contract {
   }
 
   /**
-   * check whether the plugin can be used
+   * Check whether the plugin can be used
    *
-   * @param plugin the plugin to be rekeyed to
-   * @param global whether this is callable globally
-   * @param address the address that will trigger the plugin
-   * @param method the method being called on the plugin, if applicable
-   * @returns whether the plugin can be called with these parameters
+   * @param plugin The app ID of the plugin to check
+   * @param global Whether to check the global (zero address) caller
+   * @param address The address that will trigger the plugin
+   * @param escrow The escrow associated with the plugin
+   * @param method The method selector being called on the plugin
+   * @returns Whether the plugin can be called with these parameters
   */
   @abimethod({ readonly: true })
   arc58_canCall(
@@ -794,11 +855,11 @@ export class AbstractedAccount extends Contract {
   /**
    * Temporarily rekey to an approved plugin app address
    *
-   * @param plugin The app to rekey to
+   * @param plugin The app ID of the plugin to rekey to
    * @param global Whether the plugin is callable globally
-   * @param methodOffsets The indices of the methods being used in the group if the plugin has method restrictions these indices are required to match the methods used on each subsequent call to the plugin within the group
-   * @param fundsRequest If the plugin is using an escrow, this is the list of funds to transfer to the escrow for the plugin to be able to use during execution
-   * 
+   * @param escrow The escrow associated with the plugin
+   * @param methodOffsets The indices of the methods being used in the group. If the plugin has method restrictions, these indices must match the methods used on each subsequent call to the plugin within the group
+   * @param fundsRequest If the plugin is using an escrow, this is the list of funds to transfer to the escrow for the plugin to use during execution
   */
   arc58_rekeyToPlugin(
     plugin: uint64,
@@ -864,9 +925,9 @@ export class AbstractedAccount extends Contract {
    *
    * @param name The name of the plugin to rekey to
    * @param global Whether the plugin is callable globally
-   * @param methodOffsets The indices of the methods being used in the group if the plugin has method restrictions these indices are required to match the methods used on each subsequent call to the plugin within the group
-   * @param fundsRequest If the plugin is using an escrow, this is the list of funds to transfer to the escrow for the plugin to be able to use during execution
-   *
+   * @param escrow The escrow associated with the plugin
+   * @param methodOffsets The indices of the methods being used in the group. If the plugin has method restrictions, these indices must match the methods used on each subsequent call to the plugin within the group
+   * @param fundsRequest If the plugin is using an escrow, this is the list of funds to transfer to the escrow for the plugin to use during execution
   */
   arc58_rekeyToNamedPlugin(
     name: string,
@@ -886,16 +947,19 @@ export class AbstractedAccount extends Contract {
   /**
    * Add an app to the list of approved plugins
    *
-   * @param app The app to add
-   * @param allowedCaller The address of that's allowed to call the app
-   * or the global zero address for any address
-   * @param admin Whether the plugin has permissions to change the admin account
-   * @param delegationType the ownership of the delegation for last_interval updates
+   * @param plugin The app ID of the plugin to add
+   * @param caller The address allowed to call the plugin, or the global zero address for any address
    * @param escrow The escrow account to use for the plugin, if any. If empty, no escrow will be used, if the named escrow does not exist, it will be created
+   * @param admin Whether the plugin has permissions to change the admin account
+   * @param delegationType The ownership of the delegation for last_interval updates
    * @param lastValid The timestamp or round when the permission expires
    * @param cooldown The number of seconds or rounds that must pass before the plugin can be called again
    * @param methods The methods that are allowed to be called for the plugin by the address
    * @param useRounds Whether the plugin uses rounds for cooldowns and lastValid, defaults to timestamp
+   * @param useExecutionKey Whether the plugin requires an execution key to be used
+   * @param coverFees Whether the plugin reimburses the caller for transaction fees
+   * @param canReclaim Whether the plugin is allowed to reclaim funds from escrows via arc58_pluginReclaim
+   * @param defaultToEscrow Whether to use the named escrow as the default escrow (plugin key uses empty string)
   */
   arc58_addPlugin(
     plugin: uint64,
@@ -909,6 +973,7 @@ export class AbstractedAccount extends Contract {
     useRounds: boolean,
     useExecutionKey: boolean,
     coverFees: boolean,
+    canReclaim: boolean,
     defaultToEscrow: boolean
   ): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
@@ -966,6 +1031,7 @@ export class AbstractedAccount extends Contract {
       useRounds,
       useExecutionKey,
       coverFees,
+      canReclaim: escrow !== '' ? canReclaim : false,
       lastCalled: 0,
       start: epochRef,
     }
@@ -999,8 +1065,9 @@ export class AbstractedAccount extends Contract {
   /**
    * Remove an app from the list of approved plugins
    *
-   * @param app The app to remove
-   * @param allowedCaller The address that's allowed to call the app
+   * @param plugin The app ID of the plugin to remove
+   * @param caller The address that was allowed to call the plugin
+   * @param escrow The escrow associated with the plugin
   */
   arc58_removePlugin(plugin: uint64, caller: Account, escrow: string): void {
     assert(this.isAdmin() || this.canRevoke(), ERR_ONLY_ADMIN_OR_REVOCATION_APP_CAN_REMOVE_PLUGIN);
@@ -1008,19 +1075,7 @@ export class AbstractedAccount extends Contract {
     const key: PluginKey = { plugin, caller: caller, escrow }
     assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST)
 
-    const methodsLength: uint64 = this.plugins(key).value.methods.length
-
     this.plugins(key).delete();
-
-    if (this.controlledAddress.value !== Global.currentApplicationAddress) {
-      itxn
-        .payment({
-          receiver: this.controlledAddress.value,
-          amount: this.pluginsMbr(escrow, methodsLength)
-        })
-        .submit()
-    }
-
     this.updateLastUserInteraction();
     this.updateLastChange();
   }
@@ -1029,16 +1084,19 @@ export class AbstractedAccount extends Contract {
    * Add a named plugin
    *
    * @param name The plugin name
-   * @param app The app to add
-   * @param allowedCaller The address that's allowed to call the app
-   * or the global zero address for any address
-   * @param admin Whether the plugin has permissions to change the admin account
-   * @param delegationType the ownership of the delegation for last_interval updates
+   * @param plugin The app ID of the plugin to add
+   * @param caller The address allowed to call the plugin, or the global zero address for any address
    * @param escrow The escrow account to use for the plugin, if any. If empty, no escrow will be used, if the named escrow does not exist, it will be created
+   * @param admin Whether the plugin has permissions to change the admin account
+   * @param delegationType The ownership of the delegation for last_interval updates
    * @param lastValid The timestamp or round when the permission expires
    * @param cooldown The number of seconds or rounds that must pass before the plugin can be called again
    * @param methods The methods that are allowed to be called for the plugin by the address
    * @param useRounds Whether the plugin uses rounds for cooldowns and lastValid, defaults to timestamp
+   * @param useExecutionKey Whether the plugin requires an execution key to be used
+   * @param coverFees Whether the plugin reimburses the caller for transaction fees
+   * @param canReclaim Whether the plugin is allowed to reclaim funds from escrows via arc58_pluginReclaim
+   * @param defaultToEscrow Whether to use the named escrow as the default escrow (plugin key uses empty string)
   */
   arc58_addNamedPlugin(
     name: string,
@@ -1053,6 +1111,7 @@ export class AbstractedAccount extends Contract {
     useRounds: boolean,
     useExecutionKey: boolean,
     coverFees: boolean,
+    canReclaim: boolean,
     defaultToEscrow: boolean
   ): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY);
@@ -1110,6 +1169,7 @@ export class AbstractedAccount extends Contract {
       useRounds,
       useExecutionKey,
       coverFees,
+      canReclaim: escrow !== '' ? canReclaim : false,
       lastCalled: 0,
       start: epochRef
     }
@@ -1185,36 +1245,38 @@ export class AbstractedAccount extends Contract {
   arc58_reclaim(escrow: string, reclaims: EscrowReclaim[]): void {
     assert(this.isAdmin(), ERR_FORBIDDEN);
     assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST);
-    const sender = Application(this.escrows(escrow).value.id).address
+    this.reclaim(escrow, reclaims, true);
+  }
 
-    for (let i: uint64 = 0; i < reclaims.length; i += 1) {
-      if (reclaims[i].asset === 0) {
-        const pmt = itxn.payment({
-          sender,
-          receiver: this.controlledAddress.value,
-          amount: reclaims[i].amount
-        })
+  /**
+   * Transfer funds from an escrow back to the controlled address via a plugin / allowed caller.
+   * The plugin must have canReclaim set to true. CloseOut on asset transfers is blocked when the escrow is locked.
+   *
+   * @param plugin The plugin app ID
+   * @param caller The address allowed to call the plugin
+   * @param escrow The escrow to reclaim funds from
+   * @param reclaims The list of reclaims to make from the escrow
+  */
+  arc58_pluginReclaim(
+    plugin: uint64,
+    caller: Account,
+    escrow: string,
+    reclaims: EscrowReclaim[]
+  ): void {
+    const key: PluginKey = { plugin, caller: caller, escrow }
 
-        if (reclaims[i].closeOut) {
-          pmt.set({ closeRemainderTo: this.controlledAddress.value });
-        }
+    assert(this.plugins(key).exists, ERR_PLUGIN_DOES_NOT_EXIST)
+    assert(this.plugins(key).value.canReclaim, ERR_FORBIDDEN)
+    assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
 
-        pmt.submit();
-      } else {
-        const xfer = itxn.assetTransfer({
-          sender,
-          assetReceiver: this.controlledAddress.value,
-          assetAmount: reclaims[i].amount,
-          xferAsset: reclaims[i].asset
-        })
+    assert(
+      Txn.sender === Application(plugin).address ||
+      Txn.sender === caller ||
+      caller === Global.zeroAddress,
+      ERR_FORBIDDEN
+    )
 
-        if (reclaims[i].closeOut) {
-          xfer.set({ assetCloseTo: this.controlledAddress.value });
-        }
-
-        xfer.submit();
-      }
-    }
+    this.reclaim(escrow, reclaims, !this.escrows(escrow).value.locked);
   }
 
   /**
@@ -1223,47 +1285,23 @@ export class AbstractedAccount extends Contract {
    * @param escrow The escrow to opt-in to
    * @param assets The list of assets to opt-in to
   */
-  arc58_optinEscrow(escrow: string, assets: uint64[]): void {
+  arc58_optInEscrow(escrow: string, assets: uint64[]): void {
     assert(this.isAdmin(), ERR_FORBIDDEN)
     assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
-    const escrowID = this.escrows(escrow).value.id
-    const escrowAddress = Application(escrowID).address
     assert(!this.escrows(escrow).value.locked, ERR_ESCROW_LOCKED)
-
-    itxn
-      .payment({
-        sender: this.controlledAddress.value,
-        receiver: escrowAddress,
-        amount: Global.assetOptInMinBalance * assets.length
-      })
-      .submit();
-
-    for (let i: uint64 = 0; i < assets.length; i += 1) {
-      assert(
-        this.allowances({ escrow, asset: assets[i] }).exists,
-        ERR_ALLOWANCE_DOES_NOT_EXIST
-      );
-
-      itxn
-        .assetTransfer({
-          sender: escrowAddress,
-          assetReceiver: escrowAddress,
-          assetAmount: 0,
-          xferAsset: assets[i]
-        })
-        .submit();
-    }
+    this.optInEscrow(escrow, assets);
   }
 
   /**
    * Opt-in an escrow account to assets via a plugin / allowed caller
    *
-   * @param app The app related to the escrow optin
-   * @param allowedCaller The address allowed to call the plugin related to the escrow optin
+   * @param plugin The plugin app ID
+   * @param caller The address allowed to call the plugin
+   * @param escrow The escrow to opt-in assets for
    * @param assets The list of assets to opt-in to
    * @param mbrPayment The payment txn that is used to pay for the asset opt-in
   */
-  arc58_pluginOptinEscrow(
+  arc58_pluginOptInEscrow(
     plugin: uint64,
     caller: Account,
     escrow: string,
@@ -1276,16 +1314,12 @@ export class AbstractedAccount extends Contract {
     assert(this.escrows(escrow).exists, ERR_ESCROW_DOES_NOT_EXIST)
     assert(!this.escrows(escrow).value.locked, ERR_ESCROW_LOCKED)
 
-    const escrowID = this.escrows(escrow).value.id
-
     assert(
       Txn.sender === Application(plugin).address ||
       Txn.sender === caller ||
       caller === Global.zeroAddress,
       ERR_FORBIDDEN
     )
-
-    const escrowAddress = Application(escrowID).address
 
     assertMatch(
       mbrPayment,
@@ -1296,29 +1330,7 @@ export class AbstractedAccount extends Contract {
       ERR_INVALID_PAYMENT
     )
 
-    itxn
-      .payment({
-        sender: this.controlledAddress.value,
-        receiver: escrowAddress,
-        amount: Global.assetOptInMinBalance * assets.length
-      })
-      .submit();
-
-    for (let i: uint64 = 0; i < assets.length; i += 1) {
-      assert(
-        this.allowances({ escrow, asset: assets[i] }).exists,
-        ERR_ALLOWANCE_DOES_NOT_EXIST
-      );
-
-      itxn
-        .assetTransfer({
-          sender: escrowAddress,
-          assetReceiver: escrowAddress,
-          assetAmount: 0,
-          xferAsset: assets[i]
-        })
-        .submit();
-    }
+    this.optInEscrow(escrow, assets);
   }
 
   /**
@@ -1397,6 +1409,14 @@ export class AbstractedAccount extends Contract {
     this.updateLastChange()
   }
 
+  /**
+   * Add or extend an execution key for pre-authorized plugin usage
+   *
+   * @param lease The 32-byte lease key that uniquely identifies this execution
+   * @param groups The list of 32-byte group IDs that are authorized under this key
+   * @param firstValid The first round or timestamp when this key becomes valid
+   * @param lastValid The last round or timestamp when this key expires
+  */
   arc58_addExecutionKey(lease: bytes<32>, groups: bytes<32>[], firstValid: uint64, lastValid: uint64): void {
     assert(this.isAdmin(), ERR_ADMIN_ONLY)
     if (!this.executions(lease).exists) {
@@ -1416,6 +1436,11 @@ export class AbstractedAccount extends Contract {
     this.updateLastChange()
   }
 
+  /**
+   * Remove an execution key. Can be called by admin at any time, or by anyone after the key has expired.
+   *
+   * @param lease The 32-byte lease key identifying the execution to remove
+  */
   arc58_removeExecutionKey(lease: bytes<32>): void {
     assert(this.executions(lease).exists, ERR_EXECUTION_KEY_NOT_FOUND)
     assert(this.isAdmin() || this.executions(lease).value.lastValid < Global.round, ERR_ADMIN_ONLY)
@@ -1437,6 +1462,12 @@ export class AbstractedAccount extends Contract {
     return this.admin.value
   }
 
+  /**
+   * Get plugin info for a list of plugin keys
+   *
+   * @param keys The plugin keys to look up
+   * @returns The plugin info for each key, or empty plugin info if the key does not exist
+  */
   @abimethod({ readonly: true })
   arc58_getPlugins(keys: PluginKey[]): PluginInfo[] {
     let plugins: PluginInfo[] = []
@@ -1450,6 +1481,12 @@ export class AbstractedAccount extends Contract {
     return plugins
   }
 
+  /**
+   * Get plugin info for a list of named plugins
+   *
+   * @param names The plugin names to look up
+   * @returns The plugin info for each name, or empty plugin info if the name does not exist
+  */
   @abimethod({ readonly: true })
   arc58_getNamedPlugins(names: string[]): PluginInfo[] {
     let plugins: PluginInfo[] = []
@@ -1468,6 +1505,12 @@ export class AbstractedAccount extends Contract {
     return plugins
   }
 
+  /**
+   * Get escrow info for a list of escrow names
+   *
+   * @param escrows The escrow names to look up
+   * @returns The escrow info for each name, or empty escrow info if the name does not exist
+  */
   @abimethod({ readonly: true })
   arc58_getEscrows(escrows: string[]): EscrowInfo[] {
     let result: EscrowInfo[] = []
@@ -1481,6 +1524,13 @@ export class AbstractedAccount extends Contract {
     return result
   }
 
+  /**
+   * Get allowance info for a list of assets on a given escrow
+   *
+   * @param escrow The escrow to look up allowances for
+   * @param assets The asset IDs to look up allowances for
+   * @returns The allowance info for each asset, or empty allowance info if no allowance exists
+  */
   @abimethod({ readonly: true })
   arc58_getAllowances(escrow: string, assets: uint64[]): AllowanceInfo[] {
     let result: AllowanceInfo[] = []
@@ -1495,6 +1545,12 @@ export class AbstractedAccount extends Contract {
     return result
   }
 
+  /**
+   * Get execution key info for a list of leases
+   *
+   * @param leases The 32-byte lease keys to look up
+   * @returns The execution info for each lease, or empty execution info if the lease does not exist
+  */
   @abimethod({ readonly: true })
   arc58_getExecutions(leases: bytes<32>[]): ExecutionInfo[] {
     let result: ExecutionInfo[] = []
@@ -1508,6 +1564,12 @@ export class AbstractedAccount extends Contract {
     return result
   }
 
+  /**
+   * Get domain key assignments for a list of addresses
+   *
+   * @param addresses The addresses to look up domain keys for
+   * @returns The domain string for each address, or empty string if no domain is assigned
+  */
   @abimethod({ readonly: true })
   arc58_getDomainKeys(addresses: Account[]): string[] {
     let result: string[] = []
@@ -1521,6 +1583,15 @@ export class AbstractedAccount extends Contract {
     return result
   }
 
+  /**
+   * Calculate the minimum balance requirements for various box operations
+   *
+   * @param escrow The escrow name to calculate MBR for
+   * @param methodCount The number of method restrictions on the plugin
+   * @param plugin The plugin name to calculate named plugin MBR for
+   * @param groups The number of execution groups to calculate MBR for
+   * @returns The MBR costs for plugins, named plugins, escrows, allowances, domain keys, executions, and new escrow creation
+  */
   @abimethod({ readonly: true })
   mbr(
     escrow: string,
@@ -1547,7 +1618,12 @@ export class AbstractedAccount extends Contract {
     }
   }
 
-  /** Get the balance of a set of assets in the account */
+  /**
+   * Get the balance of a set of assets in the account, including staked amounts
+   *
+   * @param assets The asset IDs to check balances for (0 for ALGO)
+   * @returns The balance for each asset including any staked amounts
+  */
   @abimethod({ readonly: true })
   balance(assets: uint64[]): uint64[] {
     let amounts: uint64[] = []

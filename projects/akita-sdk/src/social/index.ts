@@ -678,13 +678,6 @@ export class SocialSDK {
     return result.map(([impact, isUp]) => ({ impact, isUp }));
   }
 
-  /**
-   * Get post metadata including reaction status
-   */
-  async getPostMeta({ sender, signer, ref, nft }: MaybeSigner & { ref: PostRef; nft: bigint | number }): Promise<any> {
-    const sendParams = this.getSendParams({ sender, signer });
-    return await this.socialClient.getPostMeta({ ...sendParams, args: { ref, nft } });
-  }
 
   // ============================================================================
   // READ METHODS - Graph Contract

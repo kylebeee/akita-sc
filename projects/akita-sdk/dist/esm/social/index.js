@@ -494,13 +494,6 @@ export class SocialSDK {
         // Transform tuples [impact, isUp] to VoteListValue objects
         return result.map(([impact, isUp]) => ({ impact, isUp }));
     }
-    /**
-     * Get post metadata including reaction status
-     */
-    async getPostMeta({ sender, signer, ref, nft }) {
-        const sendParams = this.getSendParams({ sender, signer });
-        return await this.socialClient.getPostMeta({ ...sendParams, args: { ref, nft } });
-    }
     // ============================================================================
     // READ METHODS - Graph Contract
     // ============================================================================

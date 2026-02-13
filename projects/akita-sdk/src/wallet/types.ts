@@ -37,7 +37,7 @@ export type RekeyArgs = {
   fundsRequest: [number | bigint, number | bigint][]
 }
 
-export type AddPluginArgs = Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'], 'name'>
+export type AddPluginArgs = Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool,bool)void'], 'name'>
 
 // Updated plugin parameters to support fluent transaction API
 export type WalletUsePluginParams = (
@@ -87,6 +87,7 @@ export const AddPluginDefaults = {
   admin: false,
   delegationType: 0n,
   coverFees: false,
+  canReclaim: true,
 }
 
 export type CanCallParams = (
@@ -166,7 +167,7 @@ export function isDripAllowance(info: AllowanceInfo): info is Extract<AllowanceI
 }
 
 type BaseWalletAddPluginParams<TClient extends SDKClient> =
-  Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool)void'], 'methods'>> &
+  Partial<Omit<ContractArgs['arc58_addNamedPlugin(string,uint64,address,string,bool,uint8,uint64,uint64,(byte[4],uint64)[],bool,bool,bool,bool,bool)void'], 'methods'>> &
   MaybeSigner &
   {
     client: AkitaSDK<TClient>

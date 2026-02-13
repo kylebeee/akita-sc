@@ -99,7 +99,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     fundsRequest = [],
     calls,
     lease = ''
-  }: WalletUsePluginParams): Promise<{ plugin: bigint, caller: string, useRounds: boolean, length: number, group: AbstractedAccountComposer<[]>, sendParams: ExpandedSendParamsWithSigner }> {
+  }: WalletUsePluginParams): Promise<{ plugins: bigint[], caller: string, useRounds: boolean, length: number, group: AbstractedAccountComposer<[]>, sendParams: ExpandedSendParamsWithSigner }> {
 
     const sendParams = this.getSendParams({ sender, signer });
 
@@ -118,25 +118,20 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       spendingAddress = algosdk.getApplicationAddress(id).toString();
     }
 
-    // call the functions provided by the plugin SDK to
-    // inject our wallet ID and get back the transactions
-    let plugin = 0n
-    let txns: Txn[] = []
-    let totalOpUpCount = 0
-    for (let i = 0; i < calls.length; i++) {
-      const call = calls[i];
+    // Group calls into segments by consecutive appId
+    type PluginSegment = { appId: bigint; txns: Txn[]; opUpCount: number };
+    const segments: PluginSegment[] = [];
+
+    for (const call of calls) {
       const { appId, getTxns, opUpCount = 0 } = call(spendingAddress);
-
-      if (i === 0) {
-        plugin = appId;
+      const callTxns = await getTxns({ wallet: this.client.appId });
+      const last = segments[segments.length - 1];
+      if (last && last.appId === appId) {
+        last.txns.push(...callTxns);
+        last.opUpCount += opUpCount;
+      } else {
+        segments.push({ appId, txns: callTxns, opUpCount });
       }
-
-      if (appId !== plugin) {
-        throw new Error(`All calls must be to the same plugin app ID: ${plugin}, but got ${appId}`);
-      }
-
-      txns.push(...(await getTxns({ wallet: this.client.appId })))
-      totalOpUpCount += opUpCount;
     }
 
     let caller = ''
@@ -150,157 +145,195 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       throw new Error('Sender must be provided for non-global plugin calls');
     }
 
-    // calculate method offsets
-    const methodOffsets: number[] = []
-    const key: PluginKey = { plugin, caller, escrow }
-    let methods: MethodOffset[] = []
-    let useRounds = false;
-    let useExecutionKey = false;
-    if (this.plugins.has(key)) {
-      ({ methods, useRounds, useExecutionKey } = this.plugins.get(key)!);
-    } else {
-      ({ methods, useRounds, useExecutionKey } = await this.getPluginByKey(key))
-    }
-
-    const methodSignatures: string[] = []
-
-    if (methods.length > 0) {
-      for (let i = 0; i < methods.length; i++) {
-        methodSignatures.push(methods[i].name.toString());
-      }
-
-      for (const txn of txns) {
-        if (txn.type === 'methodCall' && 'appId' in txn && txn.appId === plugin) {
-          const selector = txn.method.getSelector()
-
-          if (!methodSignatures.includes(selector.toString())) {
-            throw new Error(`Transaction selector does not match any allowed method signatures`);
-          }
-
-          methodOffsets.push(methodSignatures.indexOf(selector.toString()));
-        }
-      }
-    }
-
-    const rekeyArgs: RekeyArgs = {
-      global,
-      escrow,
-      methodOffsets,
-      fundsRequest: fundsRequest?.map(({ asset, amount }) => ([asset, amount]))
-    }
-
-    let boxReferences: (BoxIdentifier | BoxReference)[] = [];
-
-    if (lease !== '') {
-      boxReferences.push(executionBoxKey(lease));
-    }
-
-    if (useExecutionKey) {
-      if (!hasSenderSigner(sendParams)) {
-        throw new Error('Sender and signer must be provided');
-      }
-
-      boxReferences.push(domainBoxKey(sendParams.sender))
-    }
-
     const group = this.client.newGroup()
+    let totalOpUpCount = 0;
+    let lastUseRounds = false;
+    let lastPluginAppId = 0n;
 
-    if (name) {
-      group.arc58RekeyToNamedPlugin({
+    for (let segIdx = 0; segIdx < segments.length; segIdx++) {
+      const segment = segments[segIdx];
+      const isFirstSegment = segIdx === 0;
+      lastPluginAppId = segment.appId;
+      totalOpUpCount += segment.opUpCount;
+
+      // Fetch plugin info and calculate method offsets for this segment
+      const key: PluginKey = { plugin: segment.appId, caller, escrow }
+      let methods: MethodOffset[] = []
+      let useRounds = false;
+      let useExecutionKey = false;
+      if (this.plugins.has(key)) {
+        ({ methods, useRounds, useExecutionKey } = this.plugins.get(key)!);
+      } else {
+        ({ methods, useRounds, useExecutionKey } = await this.getPluginByKey(key))
+      }
+      lastUseRounds = useRounds;
+
+      const methodOffsets: number[] = []
+      const methodSignatures: string[] = []
+
+      if (methods.length > 0) {
+        for (let i = 0; i < methods.length; i++) {
+          methodSignatures.push(methods[i].name.toString());
+        }
+
+        for (const txn of segment.txns) {
+          if (txn.type === 'methodCall' && 'appId' in txn && txn.appId === segment.appId) {
+            const selector = txn.method.getSelector()
+
+            if (!methodSignatures.includes(selector.toString())) {
+              throw new Error(`Transaction selector does not match any allowed method signatures`);
+            }
+
+            methodOffsets.push(methodSignatures.indexOf(selector.toString()));
+          }
+        }
+      }
+
+      const rekeyArgs: RekeyArgs = {
+        global,
+        escrow,
+        methodOffsets,
+        // fundsRequest only on the first segment's rekey
+        fundsRequest: isFirstSegment ? fundsRequest?.map(({ asset, amount }) => ([asset, amount])) : []
+      }
+
+      let boxReferences: (BoxIdentifier | BoxReference)[] = [];
+
+      // Lease/execution key box references only on first segment
+      if (isFirstSegment) {
+        if (lease !== '') {
+          boxReferences.push(executionBoxKey(lease));
+        }
+
+        if (useExecutionKey) {
+          if (!hasSenderSigner(sendParams)) {
+            throw new Error('Sender and signer must be provided');
+          }
+          boxReferences.push(domainBoxKey(sendParams.sender))
+        }
+      }
+
+      // Add rekey for this segment
+      if (name && segments.length === 1) {
+        group.arc58RekeyToNamedPlugin({
+          ...sendParams,
+          args: {
+            name,
+            ...rekeyArgs
+          },
+          extraFee: isFirstSegment ? microAlgo(1_000n + BigInt(fundsRequest.length * 1_000)) : microAlgo(1_000n),
+          boxReferences: boxReferences.length > 0 ? boxReferences : undefined
+        });
+      } else {
+        group.arc58RekeyToPlugin({
+          ...sendParams,
+          args: {
+            plugin: segment.appId,
+            ...rekeyArgs
+          },
+          extraFee: isFirstSegment ? microAlgo(1_000n + BigInt(fundsRequest.length * 1_000)) : microAlgo(1_000n),
+          boxReferences: boxReferences.length > 0 ? boxReferences : undefined
+        });
+      }
+
+      // Add segment transactions
+      const composer = await group.composer()
+      for (const txn of segment.txns) {
+        switch (txn.type) {
+          case 'pay': { composer.addPayment(txn); break; }
+          case 'assetCreate': { composer.addAssetCreate(txn); break; }
+          case 'assetConfig': { composer.addAssetConfig(txn); break; }
+          case 'assetFreeze': { composer.addAssetFreeze(txn); break; }
+          case 'assetDestroy': { composer.addAssetDestroy(txn); break; }
+          case 'assetTransfer': { composer.addAssetTransfer(txn); break; }
+          case 'assetOptIn': { composer.addAssetOptIn(txn); break; }
+          case 'assetOptOut': { composer.addAssetOptOut(txn); break; }
+          case 'appCall': {
+            if ('appId' in txn && 'approvalProgram' in txn) {
+              composer.addAppUpdate(txn);
+            } else if ('appId' in txn) {
+              composer.addAppCall(txn);
+            } else {
+              composer.addAppCreate(txn);
+            }
+            break;
+          }
+          case 'keyReg': {
+            if ('voteKey' in txn) {
+              composer.addOnlineKeyRegistration(txn);
+            } else {
+              composer.addOfflineKeyRegistration(txn);
+            }
+            break;
+          }
+          case 'txnWithSigner': { composer.addTransaction(txn.txn, txn.signer); break; }
+          case 'atc': { composer.addAtc(txn.atc); break; }
+          case 'methodCall': {
+            if ('appId' in txn && 'approvalProgram' in txn) {
+              composer.addAppUpdateMethodCall(txn);
+            } else if ('appId' in txn) {
+              composer.addAppCallMethodCall(txn);
+            } else {
+              composer.addAppCreateMethodCall(txn);
+            }
+            break;
+          }
+          default: {
+            throw new Error(`Unknown transaction type`);
+          }
+        }
+      }
+
+      // Add verifyAuthAddress after this segment's transactions
+      // Note differentiates each verifyAuth so they have unique txn IDs within the group
+      group.arc58VerifyAuthAddress({
         ...sendParams,
-        args: {
-          name,
-          ...rekeyArgs
-        },
-        extraFee: microAlgo(1_000n + BigInt(fundsRequest.length * 1_000)),
-        boxReferences: boxReferences.length > 0 ? boxReferences : undefined
-      });
-    } else {
-      group.arc58RekeyToPlugin({
-        ...sendParams,
-        args: {
-          plugin,
-          ...rekeyArgs
-        },
-        extraFee: microAlgo(1_000n + BigInt(fundsRequest.length * 1_000)),
-        boxReferences: boxReferences.length > 0 ? boxReferences : undefined
-      });
+        args: {},
+        ...(segments.length > 1 ? { note: new TextEncoder().encode(`v${segIdx}`) } : {})
+      })
+
     }
 
-    const composer = await group.composer()
-    for (const txn of txns) {
-      switch (txn.type) {
-        case 'pay': { composer.addPayment(txn); break; }
-        case 'assetCreate': { composer.addAssetCreate(txn); break; }
-        case 'assetConfig': { composer.addAssetConfig(txn); break; }
-        case 'assetFreeze': { composer.addAssetFreeze(txn); break; }
-        case 'assetDestroy': { composer.addAssetDestroy(txn); break; }
-        case 'assetTransfer': { composer.addAssetTransfer(txn); break; }
-        case 'assetOptIn': { composer.addAssetOptIn(txn); break; }
-        case 'assetOptOut': { composer.addAssetOptOut(txn); break; }
-        case 'appCall': {
-          if ('appId' in txn && 'approvalProgram' in txn) {
-            composer.addAppUpdate(txn);
-          } else if ('appId' in txn) {
-            composer.addAppCall(txn);
-          } else {
-            composer.addAppCreate(txn);
+    // Calculate actual txn count manually, accounting for companion transactions
+    // (ABI method calls with transaction-type args like `pay` expand to multiple txns)
+    const ABI_TXN_TYPES = ['txn', 'pay', 'keyreg', 'acfg', 'axfer', 'afrz', 'appl'];
+    let actualTxnCount = 0;
+    for (const segment of segments) {
+      actualTxnCount += 2; // rekey + verifyAuth
+      for (const txn of segment.txns) {
+        actualTxnCount += 1;
+        if (txn.type === 'methodCall') {
+          for (const arg of txn.method.args) {
+            if (typeof arg.type === 'string' && ABI_TXN_TYPES.includes(arg.type)) {
+              actualTxnCount += 1;
+            }
           }
-          break;
-        }
-        case 'keyReg': {
-          if ('voteKey' in txn) {
-            composer.addOnlineKeyRegistration(txn);
-          } else {
-            composer.addOfflineKeyRegistration(txn);
-          }
-          break;
-        }
-        case 'txnWithSigner': { composer.addTransaction(txn.txn, txn.signer); break; }
-        case 'atc': { composer.addAtc(txn.atc); break; }
-        case 'methodCall': {
-          if ('appId' in txn && 'approvalProgram' in txn) {
-            composer.addAppUpdateMethodCall(txn);
-          } else if ('appId' in txn) {
-            composer.addAppCallMethodCall(txn);
-          } else {
-            composer.addAppCreateMethodCall(txn);
-          }
-          break;
-        }
-        default: {
-          throw new Error(`Unknown transaction type`);
         }
       }
     }
 
-    group.arc58VerifyAuthAddress({ ...sendParams, args: {} })
-
-    // Add opUp transactions if requested by plugin calls
-    // These are added after verifyAuthAddr and provide additional resource reference slots
+    // Add opUp transactions after all segments, using the last segment's appId
     const hasSigner = hasSenderSigner(sendParams);
-    const opUpLimit = Math.min(totalOpUpCount, (16 - (txns.length + 2)));
-    console.log(`[WalletSDK] opUp debug: totalOpUpCount=${totalOpUpCount}, hasSigner=${hasSigner}, txnsLength=${txns.length}, opUpLimit=${opUpLimit}`);
-    if (totalOpUpCount > 0 && hasSigner) {
+    const opUpLimit = Math.min(totalOpUpCount, (16 - actualTxnCount));
+    if (totalOpUpCount > 0 && hasSigner && opUpLimit > 0) {
       const opUpComposer = await group.composer();
       for (let i = 0; i < opUpLimit; i++) {
         opUpComposer.addAppCallMethodCall({
           sender: sendParams.sender,
           signer: sendParams.signer,
-          appId: plugin,
+          appId: lastPluginAppId,
           method: algosdk.ABIMethod.fromSignature('opUp()void'),
           args: [],
           maxFee: microAlgo(1_000),
-          // Add unique note to differentiate opUp calls
           note: new TextEncoder().encode(String(i))
         });
       }
     }
 
     const length = await (await group.composer()).count()
-    console.log(`[WalletSDK] Final group length: ${length} (rekey + ${txns.length} plugin txns + verifyAuth + ${opUpLimit} opUps)`)
+    const plugins = [...new Set(segments.map(s => s.appId))];
 
-    return { plugin, caller, useRounds, length, group, sendParams: sendParams as ExpandedSendParamsWithSigner }
+    return { plugins, caller, useRounds: lastUseRounds, length, group, sendParams: sendParams as ExpandedSendParamsWithSigner }
   }
 
   async register({ sender, signer, escrow }: ContractArgs['register(string)void'] & MaybeSigner): Promise<void> {
@@ -409,8 +442,8 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
   async usePlugin(params: WalletUsePluginParams): Promise<GroupReturn> {
 
     const sendParams = this.getSendParams(params);
-      
-    const { plugin, caller, length, group, sendParams: preparedSendParams } = await this.prepareUsePlugin(params);
+
+    const { plugins, caller, length, group, sendParams: preparedSendParams } = await this.prepareUsePlugin(params);
     const { escrow = '', fundsRequest, consolidateFees = false } = params;
 
     let result: GroupReturn;
@@ -418,14 +451,14 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     if (consolidateFees) {
       // Build the ATC from the group
       const atc = (await (await group.composer()).build()).atc;
-      const appliedAtc = forceProperties(atc, { 
-        sender: preparedSendParams.sender, 
-        signer: preparedSendParams.signer 
+      const appliedAtc = forceProperties(atc, {
+        sender: preparedSendParams.sender,
+        signer: preparedSendParams.signer
       });
 
       // Get suggested params for fee calculation
       const suggestedParams = await this.client.algorand.getSuggestedParams();
-      
+
       // Set max fees for all transactions to allow prepareGroupWithCost to work
       const maxFees = new Map<number, AlgoAmount>(
         Array.from({ length }, (_, i) => [i, microAlgo(BigInt(suggestedParams.minFee) * 272n)])
@@ -448,7 +481,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       // Consolidate all fees to the first transaction
       const feeGroup = populatedAtc.clone().buildGroup();
       const totalFees = feeGroup.reduce((acc, txn) => acc + txn.txn.fee, 0n);
-      
+
       const consolidatedAtc = forceProperties(populatedAtc, {
         fees: new Map([
           [0, microAlgo(totalFees)],
@@ -464,12 +497,14 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       result = await group.send({ ...sendParams });
     }
 
-    await this.updateCache(
-      { plugin, caller, escrow },
-      fundsRequest?.map(({ asset }) => asset)
-    ).catch(error => {
-      console.warn('Failed to update plugin cache:', error);
-    });
+    for (const plugin of plugins) {
+      await this.updateCache(
+        { plugin, caller, escrow },
+        fundsRequest?.map(({ asset }) => asset)
+      ).catch(error => {
+        console.warn('Failed to update plugin cache:', error);
+      });
+    }
 
     return result;
   }
@@ -490,6 +525,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     useRounds = false,
     useExecutionKey = false,
     coverFees = false,
+    canReclaim = true,
     defaultToEscrow = false,
     allowances = []
   }: WalletAddPluginParams<TClient>): Promise<GroupReturn> {
@@ -542,6 +578,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
       useRounds,
       useExecutionKey,
       coverFees,
+      canReclaim,
       defaultToEscrow
     }
 
@@ -639,11 +676,11 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
     });
   }
 
-  async optinEscrow({ sender, signer, ...args }: ContractArgs['arc58_optinEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>> {
+  async optinEscrow({ sender, signer, ...args }: ContractArgs['arc58_optInEscrow(string,uint64[])void'] & MaybeSigner): Promise<TxnReturn<void>> {
 
     const sendParams = this.getSendParams({ sender, signer });
 
-    return await this.client.send.arc58OptinEscrow({ ...sendParams, args });
+    return await this.client.send.arc58OptInEscrow({ ...sendParams, args });
   }
 
   async addAllowances({ sender, signer, escrow, allowances }: { escrow: string, allowances: AddAllowanceArgs[] } & MaybeSigner): Promise<TxnReturn<void>> {
@@ -697,7 +734,7 @@ export class WalletSDK extends BaseSDK<AbstractedAccountClient> {
 
       const [
         suggestedParams,
-        { useRounds, length, group, sendParams },
+        { plugins: _plugins, useRounds, length, group, sendParams },
         admin
       ] = await Promise.all([
         this.client.algorand.getSuggestedParams(),

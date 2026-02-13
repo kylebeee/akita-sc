@@ -7,6 +7,7 @@ export const AddPluginDefaults = {
     admin: false,
     delegationType: 0n,
     coverFees: false,
+    canReclaim: true,
 };
 // allowance info type guards
 export function isFlatAllowance(info) {

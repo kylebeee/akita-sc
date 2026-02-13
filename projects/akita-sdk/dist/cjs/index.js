@@ -78,4 +78,6 @@ Object.defineProperty(exports, "HighlightMessage", { enumerable: true, get: func
 var wallet_1 = require("./wallet");
 Object.defineProperty(exports, "WalletSDK", { enumerable: true, get: function () { return wallet_1.WalletSDK; } });
 Object.defineProperty(exports, "WalletFactorySDK", { enumerable: true, get: function () { return wallet_1.WalletFactorySDK; } });
+// Connect protocol types and URI helpers
+__exportStar(require("./connect"), exports);
 //# sourceMappingURL=index.js.map

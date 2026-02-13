@@ -210,6 +210,7 @@ export class AkitaDaoSDK extends BaseSDK<AkitaDaoClient> {
             useRounds,
             useExecutionKey,
             coverFees,
+            canReclaim: false,
             defaultToEscrow,
             fee,
             power,
